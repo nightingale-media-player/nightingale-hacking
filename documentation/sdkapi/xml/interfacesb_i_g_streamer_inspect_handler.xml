@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="36"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="36"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_18bd3b24ad62ea1b0dc0b9070112ff3ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="37"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="37"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_1f7263a033fe16dad585cf03a3eddd107" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="46"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="46"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_10f9d96cd5aed8c2f39e95ce9e796c9fa" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -85,13 +85,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="48"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="48"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_114c13d4c7d43e46e969ba659e490b18a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_1a083d0bf4648ea77715e7dc9b2f09909" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIGStreamerInspectHandler::beginFactoryInfo</definition>
-        <argsstring>(in ACString aLongName, in ACString aClass, in ACString aDescription, in ACString aAuthor, in ACString aRankName, in long aRank)</argsstring>
+        <argsstring>(in ACString aShortName, in ACString aLongName, in ACString aClass, in ACString aDescription, in ACString aAuthor, in ACString aRankName, in long aRank)</argsstring>
         <name>beginFactoryInfo</name>
+        <param>
+          <type>in ACString</type>
+          <declname>aShortName</declname>
+        </param>
         <param>
           <type>in ACString</type>
           <declname>aLongName</declname>
@@ -122,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="55"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="56"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_1e971d0f0c889591a50ad834f12a35c39" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -135,7 +139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="56"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="57"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_14e99d90445d98fa185d18cb87b320f53" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -164,7 +168,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="61"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="62"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_g_streamer_inspect_handler_11ea93a03be8174e4f48a12ca7fe3e8d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -177,16 +181,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="62"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="63"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="35" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="34" bodyend="63"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="35" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="34" bodyend="64"/>
     <listofallmembers>
-      <member refid="interfacesb_i_g_streamer_inspect_handler_114c13d4c7d43e46e969ba659e490b18a" prot="public" virt="non-virtual"><scope>sbIGStreamerInspectHandler</scope><name>beginFactoryInfo</name></member>
+      <member refid="interfacesb_i_g_streamer_inspect_handler_1a083d0bf4648ea77715e7dc9b2f09909" prot="public" virt="non-virtual"><scope>sbIGStreamerInspectHandler</scope><name>beginFactoryInfo</name></member>
       <member refid="interfacesb_i_g_streamer_inspect_handler_1869417f3bd69f74a22403bde92e8ddc5" prot="public" virt="non-virtual"><scope>sbIGStreamerInspectHandler</scope><name>beginInspect</name></member>
       <member refid="interfacesb_i_g_streamer_inspect_handler_14e99d90445d98fa185d18cb87b320f53" prot="public" virt="non-virtual"><scope>sbIGStreamerInspectHandler</scope><name>beginPadTemplateInfo</name></member>
       <member refid="interfacesb_i_g_streamer_inspect_handler_1f7263a033fe16dad585cf03a3eddd107" prot="public" virt="non-virtual"><scope>sbIGStreamerInspectHandler</scope><name>beginPluginInfo</name></member>

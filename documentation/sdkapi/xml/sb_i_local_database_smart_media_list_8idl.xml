@@ -5,33 +5,33 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <incdepgraph>
-      <node id="353">
-        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
-        <link refid="sbILocalDatabaseSmartMediaList.idl"/>
-        <childnode refid="354" relation="include">
-        </childnode>
-        <childnode refid="355" relation="include">
-        </childnode>
-      </node>
-      <node id="355">
-        <label>sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="356" relation="include">
-        </childnode>
-      </node>
-      <node id="356">
-        <label>sbIMediaItem.idl</label>
-        <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="357" relation="include">
-        </childnode>
-      </node>
-      <node id="354">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="357">
+      <node id="385">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="354" relation="include">
+        <childnode refid="382" relation="include">
+        </childnode>
+      </node>
+      <node id="381">
+        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+        <link refid="sbILocalDatabaseSmartMediaList.idl"/>
+        <childnode refid="382" relation="include">
+        </childnode>
+        <childnode refid="383" relation="include">
+        </childnode>
+      </node>
+      <node id="384">
+        <label>sbIMediaItem.idl</label>
+        <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="385" relation="include">
+        </childnode>
+      </node>
+      <node id="382">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="383">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="384" relation="include">
         </childnode>
       </node>
     </incdepgraph>
@@ -97,7 +97,7 @@
 <codeline lineno="85"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="86"><highlight class="normal"></highlight></codeline>
 <codeline lineno="87"><highlight class="normal"></highlight></codeline>
-<codeline lineno="97"><highlight class="normal">[scriptable,<sp/>uuid(66fa49fd-0e57-4222-b408-072ff7d7b1c8)]</highlight></codeline>
+<codeline lineno="97"><highlight class="normal">[scriptable,<sp/>uuid(908211a1-2466-4642-bab9-75b228ff1532)]</highlight></codeline>
 <codeline lineno="98" refid="interfacesb_i_local_database_smart_media_list" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_local_database_smart_media_list" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseSmartMediaList</ref><sp/>:<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref></highlight></codeline>
 <codeline lineno="99"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="100" refid="interfacesb_i_local_database_smart_media_list_15bbe1321375bf1a864036fb4cb0c18f6" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>MATCH_TYPE_ANY<sp/><sp/>=<sp/>0;</highlight></codeline>
@@ -148,7 +148,9 @@
 <codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="198"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSmartMediaListListener(in<sp/><ref refid="interfacesb_i_local_database_smart_media_list_listener" kindref="compound">sbILocalDatabaseSmartMediaListListener</ref><sp/>aListener);</highlight></codeline>
 <codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSmartMediaListListener(in<sp/><ref refid="interfacesb_i_local_database_smart_media_list_listener" kindref="compound">sbILocalDatabaseSmartMediaListListener</ref><sp/>aListener);</highlight></codeline>
-<codeline lineno="200"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="200"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="205" refid="interfacesb_i_local_database_smart_media_list_186151dce910894790ad5ba7942fdb9c4" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>AString<sp/>sourceLibraryGuid;</highlight></codeline>
+<codeline lineno="206"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl"/>
   </compounddef>

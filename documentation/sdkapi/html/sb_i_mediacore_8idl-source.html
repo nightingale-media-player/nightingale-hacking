@@ -90,20 +90,27 @@
 <a name="l00022"></a>00022 <span class="comment">// </span>
 <a name="l00023"></a>00023 <span class="comment">// END SONGBIRD GPL</span>
 <a name="l00024"></a>00024 <span class="comment">//</span>
-<a name="l00025"></a>00025 <span class="comment"> */</span>
+<a name="l00025"></a>00025 <span class="comment">*/</span>
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 interface sbIMediacoreCapabilities;
-<a name="l00030"></a>00030 
-<a name="l00031"></a>00031 [scriptable, uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]
-<a name="l00032"></a><a class="code" href="interfacesb_i_mediacore.html">00032</a> interface <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> : <span class="keyword">public</span> nsISupports
-<a name="l00033"></a>00033 {
-<a name="l00034"></a><a class="code" href="interfacesb_i_mediacore.html#460c0a4b2c903b57fa3418ffd54a1a26">00034</a>   readonly AString instanceName;
-<a name="l00035"></a><a class="code" href="interfacesb_i_mediacore.html#621b7311e25d32c6706cad18b4ca4b29">00035</a>   readonly sbIMediacoreCapabilities capabilities;
-<a name="l00036"></a><a class="code" href="interfacesb_i_mediacore.html#cc13508b26ba6a9dfde737a605017ec3">00036</a>   readonly nsIPropertyBag2 properties;
-<a name="l00037"></a>00037 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00029"></a>00029 interface <a class="code" href="interfacesb_i_mediacore_capabilities.html">sbIMediacoreCapabilities</a>;
+<a name="l00030"></a>00030 interface <a class="code" href="interfacesb_i_mediacore_sequencer.html">sbIMediacoreSequencer</a>;
+<a name="l00031"></a>00031 interface <a class="code" href="interfacesb_i_mediacore_status.html">sbIMediacoreStatus</a>;
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033 [scriptable, uuid(b22e7f79-c036-4d8e-bfe1-6bcc13d02d5b)]
+<a name="l00034"></a><a class="code" href="interfacesb_i_mediacore.html">00034</a> interface <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> : nsISupports
+<a name="l00035"></a>00035 {
+<a name="l00036"></a><a class="code" href="interfacesb_i_mediacore.html#46c2dcdf9bc4fa6e259ff9b68533f247">00036</a>   readonly attribute AString instanceName;
+<a name="l00037"></a><a class="code" href="interfacesb_i_mediacore.html#3eca4625a4dcfde56cb80daa2c346150">00037</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_capabilities.html">sbIMediacoreCapabilities</a> capabilities;
+<a name="l00038"></a>00038 
+<a name="l00039"></a><a class="code" href="interfacesb_i_mediacore.html#c708754dcb043792c7f4d357adb1f44c">00039</a>   readonly attribute <a class="code" href="interfacesb_i_mediacore_status.html">sbIMediacoreStatus</a> status;
+<a name="l00040"></a>00040 
+<a name="l00041"></a><a class="code" href="interfacesb_i_mediacore.html#36d61f19eb1c80305373295f99377a7e">00041</a>   attribute <a class="code" href="interfacesb_i_mediacore_sequencer.html">sbIMediacoreSequencer</a> sequencer;
+<a name="l00042"></a>00042 
+<a name="l00043"></a>00043   <span class="keywordtype">void</span> shutdown();
+<a name="l00044"></a>00044 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

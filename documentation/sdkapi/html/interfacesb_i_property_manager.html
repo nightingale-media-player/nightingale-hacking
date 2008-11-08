@@ -98,10 +98,10 @@ nsIStringBundle&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el"
 AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_manager.html#b2fe14aa7edc7b1e9c11cd2ee882de43">getStringFromName</a> (in nsIStringBundle aBundle, in AString aName)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Helper to get a display value, using a string name, from a bundle. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="469d065d7dba3802517e87eb06d80afb"></a><!-- doxytag: member="sbIPropertyManager::getPropertySort" ref="469d065d7dba3802517e87eb06d80afb" args="(in AString aID, in boolean aIsAscending)" -->
-<a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_manager.html#469d065d7dba3802517e87eb06d80afb">getPropertySort</a> (in AString aID, in boolean aIsAscending)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="aee78a65de81a831ddfc69761be35d7a"></a><!-- doxytag: member="sbIPropertyManager::getDependentProperties" ref="aee78a65de81a831ddfc69761be35d7a" args="(in AString aID)" -->
+<a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_manager.html#aee78a65de81a831ddfc69761be35d7a">getDependentProperties</a> (in AString aID)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Gets a sort for the given property based on the property's sort profile. The array returned is suitable for passing to a view's setSort() method. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get all the properties that in any way depend on the given property. For example, the secondary sort of property A may include property B. <br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fb62e82a29db1da94a9acd2c2bd8599b"></a><!-- doxytag: member="sbIPropertyManager::propertyIDs" ref="fb62e82a29db1da94a9acd2c2bd8599b" args="" -->
 readonly attribute nsIStringEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_manager.html#fb62e82a29db1da94a9acd2c2bd8599b">propertyIDs</a></td></tr>
@@ -204,7 +204,7 @@ false if property is not in system </dd></dl>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:41 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:38 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

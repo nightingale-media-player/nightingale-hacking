@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="71" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="72" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="72" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_service_1beb715363cf06a28e74775c4de15be08" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="72" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="72" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="73" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="73" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_service_13baee414464ebd6aa06b1a2673bbb348" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -43,7 +43,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="73" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="73" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="74" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="74" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_service_1c72c851a256bf9ebb033290c5f0a1946" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="75" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="75" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="76" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_service_1a6bba6bc63d10570066b873e7d35b915" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="76" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="76" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="77" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="77" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_g_streamer_service_119072192e938629e52b31a30d8f2c2f3" prot="public" static="no" mutable="no">
         <type>const unsigned long</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="77" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="77" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="78" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="78" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -104,14 +104,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="79"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="80"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="70" bodyfile="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" bodystart="69" bodyend="80"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="71" bodyfile="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" bodystart="70" bodyend="81"/>
     <listofallmembers>
       <member refid="interfacesb_i_g_streamer_service_1e613745e1dc3d5468f81070c4e749414" prot="public" virt="non-virtual"><scope>sbIGStreamerService</scope><name>inspect</name></member>
       <member refid="interfacesb_i_g_streamer_service_13baee414464ebd6aa06b1a2673bbb348" prot="public" virt="non-virtual"><scope>sbIGStreamerService</scope><name>PAD_DIRECTION_SINK</name></member>

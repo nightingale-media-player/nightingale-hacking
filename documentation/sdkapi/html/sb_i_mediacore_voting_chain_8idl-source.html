@@ -94,12 +94,20 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 [scriptable, uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]
-<a name="l00030"></a><a class="code" href="interfacesb_i_mediacore_voting_chain.html">00030</a> interface <a class="code" href="interfacesb_i_mediacore_voting_chain.html">sbIMediacoreVotingChain</a> : <span class="keyword">public</span> nsISupports
-<a name="l00031"></a>00031 {
-<a name="l00032"></a>00032   
-<a name="l00033"></a>00033 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00029"></a>00029 interface nsIArray;
+<a name="l00030"></a>00030 
+<a name="l00031"></a>00031 interface <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a>;
+<a name="l00032"></a>00032 
+<a name="l00033"></a>00033 [scriptable, uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]
+<a name="l00034"></a><a class="code" href="interfacesb_i_mediacore_voting_chain.html">00034</a> interface <a class="code" href="interfacesb_i_mediacore_voting_chain.html">sbIMediacoreVotingChain</a> : nsISupports
+<a name="l00035"></a>00035 {
+<a name="l00040"></a><a class="code" href="interfacesb_i_mediacore_voting_chain.html#58905a490a26d8921b74b884627c1d27">00040</a>   readonly attribute <span class="keywordtype">boolean</span> valid;
+<a name="l00041"></a>00041   
+<a name="l00049"></a><a class="code" href="interfacesb_i_mediacore_voting_chain.html#c07fba0e6d179c877b1ceb80d4748885">00049</a>   readonly attribute nsIArray mediacoreChain;
+<a name="l00050"></a>00050 
+<a name="l00051"></a>00051   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getVote(in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aMediacore);
+<a name="l00052"></a>00052 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyBuilder.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="529">
+      <node id="604">
         <label>components/property/public/sbIPropertyBuilder.idl</label>
         <link refid="sbIPropertyBuilder.idl"/>
-        <childnode refid="530" relation="include">
+        <childnode refid="605" relation="include">
         </childnode>
       </node>
-      <node id="530">
+      <node id="605">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -73,7 +73,7 @@
 <codeline lineno="56" refid="interfacesb_i_property_builder_12e89cc3b9d6b58de39b95e13ede3e14b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>remoteReadable;</highlight></codeline>
 <codeline lineno="57"><highlight class="normal"></highlight></codeline>
 <codeline lineno="58" refid="interfacesb_i_property_builder_1dae9d9d3a0c2b0cef82a46914e3bc25a" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>remoteWritable;</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight></codeline>
 <codeline lineno="60"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_property_info" kindref="compound" tooltip="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</ref><sp/></highlight><highlight class="keyword">get</highlight><highlight class="normal">();</highlight></codeline>
 <codeline lineno="61"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="62"><highlight class="normal"></highlight></codeline>

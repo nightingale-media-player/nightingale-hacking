@@ -56,6 +56,19 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="91" bodyend="-1"/>
       </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_media_list_view_selection_1183d7ed2ca944b91a6c08ba4b6cb9ba9" prot="public" static="no" mutable="no">
+        <type>readonly attribute nsISimpleEnumerator</type>
+        <definition>readonly attribute nsISimpleEnumerator sbIMediaListViewSelection::selectedMediaItems</definition>
+        <argsstring></argsstring>
+        <name>selectedMediaItems</name>
+        <briefdescription>
+<para>Get an enumertaor of all the selected media items. The elements contained in the enumerator implement <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref>. This differs from selectedIndexedMediaItems in that there is no indices involved. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="98" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="98" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_media_list_view_selection_12bb3b38fee48e8de18e7c9592aad5481" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
         <definition>attribute boolean sbIMediaListViewSelection::selectionNotificationsSuppressed</definition>
@@ -67,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="158" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="158" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="165" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="165" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -119,7 +132,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="97"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="104"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_174c6fb37b3de3f36b046b16b53bcae26" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -144,7 +157,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="104"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="111"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_1da9932015ef0aa56d4ec53830a8cbc83" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -169,7 +182,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="110"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="117"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_186a4f4abcaeb6275f4d2c9c0bff3638c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -194,7 +207,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="116"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="123"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_1232e421b82277a448009575111fbf6d1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -230,7 +243,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="123"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="130"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_1b9161555a5771ddf0c0e671f1d7963f2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -266,7 +279,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="130"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="137"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_11c7fa66d2dadfa7361fc5bae59d8412d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -279,7 +292,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="135"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="142"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_1253e423d676145fd5512433df75896ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -292,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="140"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="147"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_100a6cebac8fd19901fe32b29340ed86d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -317,7 +330,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="147"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="154"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_media_list_view_selection_1a9f8a6664e5f8b75f6d21d8fccc585dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -342,7 +355,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="153"/>
+        <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="160"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -350,91 +363,91 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="582">
+      <node id="716">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="579" relation="public-inheritance">
+        <childnode refid="713" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="578">
+      <node id="712">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="579" relation="usage">
+        <childnode refid="713" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="586">
+      <node id="720">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="579" relation="usage">
+        <childnode refid="713" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="582" relation="usage">
+        <childnode refid="716" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="587">
+      <node id="721">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="583">
+      <node id="717">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="584" relation="usage">
+        <childnode refid="718" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="586" relation="usage">
+        <childnode refid="720" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="587" relation="usage">
+        <childnode refid="721" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="588" relation="usage">
+        <childnode refid="722" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="581">
+      <node id="715">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="582" relation="public-inheritance">
+        <childnode refid="716" relation="public-inheritance">
         </childnode>
-        <childnode refid="583" relation="usage">
+        <childnode refid="717" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="585" relation="usage">
+        <childnode refid="719" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="580">
+      <node id="714">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="579">
+      <node id="713">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="580" relation="public-inheritance">
+        <childnode refid="714" relation="public-inheritance">
         </childnode>
-        <childnode refid="581" relation="usage">
+        <childnode refid="715" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="584">
+      <node id="718">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="585" relation="usage">
+        <childnode refid="719" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="585">
+      <node id="719">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="588">
+      <node id="722">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="61" bodyend="159"/>
+    <location file="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" line="62" bodyfile="c:/builds/songbird/trunk/components/library/base/public/sbIMediaListViewSelection.idl" bodystart="61" bodyend="166"/>
     <listofallmembers>
       <member refid="interfacesb_i_media_list_view_selection_100a6cebac8fd19901fe32b29340ed86d" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>addListener</name></member>
       <member refid="interfacesb_i_media_list_view_selection_186a4f4abcaeb6275f4d2c9c0bff3638c" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>clear</name></member>
@@ -447,6 +460,7 @@
       <member refid="interfacesb_i_media_list_view_selection_1910695d47f815bb408f0ebd4346bb9ff" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>select</name></member>
       <member refid="interfacesb_i_media_list_view_selection_1253e423d676145fd5512433df75896ca" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>selectAll</name></member>
       <member refid="interfacesb_i_media_list_view_selection_16018342e4f7ac53e288bdcd6d7474483" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>selectedIndexedMediaItems</name></member>
+      <member refid="interfacesb_i_media_list_view_selection_1183d7ed2ca944b91a6c08ba4b6cb9ba9" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>selectedMediaItems</name></member>
       <member refid="interfacesb_i_media_list_view_selection_12bb3b38fee48e8de18e7c9592aad5481" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>selectionNotificationsSuppressed</name></member>
       <member refid="interfacesb_i_media_list_view_selection_11c7fa66d2dadfa7361fc5bae59d8412d" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>selectNone</name></member>
       <member refid="interfacesb_i_media_list_view_selection_174c6fb37b3de3f36b046b16b53bcae26" prot="public" virt="non-virtual"><scope>sbIMediaListViewSelection</scope><name>selectOnly</name></member>

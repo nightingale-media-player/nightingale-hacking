@@ -6,55 +6,55 @@
     <includedby refid="sb_i_media_item_8idl" local="yes">components/library/base/public/sbIMediaItem.idl</includedby>
     <includedby refid="sb_i_local_database_resource_property_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</includedby>
     <incdepgraph>
-      <node id="260">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="259">
+      <node id="275">
         <label>components/library/base/public/sbILibraryResource.idl</label>
         <link refid="sbILibraryResource.idl"/>
-        <childnode refid="260" relation="include">
+        <childnode refid="276" relation="include">
         </childnode>
+      </node>
+      <node id="276">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="267">
+      <node id="277">
+        <label>components/library/base/public/sbILibraryResource.idl</label>
+        <link refid="sbILibraryResource.idl"/>
+        <childnode refid="278" relation="include">
+        </childnode>
+        <childnode refid="283" relation="include">
+        </childnode>
+      </node>
+      <node id="280">
+        <label>components/library/base/public/sbILibrary.idl</label>
+        <link refid="sb_i_library_8idl"/>
+        <childnode refid="281" relation="include">
+        </childnode>
+      </node>
+      <node id="283">
         <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
         <link refid="sb_i_local_database_resource_property_8idl"/>
       </node>
-      <node id="266">
-        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
-        <link refid="sb_i_local_database_smart_media_list_8idl"/>
-      </node>
-      <node id="265">
+      <node id="281">
         <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
         <link refid="sb_i_device_library_8idl-source"/>
       </node>
-      <node id="263">
-        <label>components/library/base/public/sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="264" relation="include">
-        </childnode>
-        <childnode refid="266" relation="include">
-        </childnode>
+      <node id="282">
+        <label>components/library/localdatabase/public/sbILocalDatabaseSmartMediaList.idl</label>
+        <link refid="sb_i_local_database_smart_media_list_8idl"/>
       </node>
-      <node id="262">
+      <node id="278">
         <label>components/library/base/public/sbIMediaItem.idl</label>
         <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="263" relation="include">
+        <childnode refid="279" relation="include">
         </childnode>
       </node>
-      <node id="264">
-        <label>components/library/base/public/sbILibrary.idl</label>
-        <link refid="sb_i_library_8idl"/>
-        <childnode refid="265" relation="include">
+      <node id="279">
+        <label>components/library/base/public/sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="280" relation="include">
         </childnode>
-      </node>
-      <node id="261">
-        <label>components/library/base/public/sbILibraryResource.idl</label>
-        <link refid="sbILibraryResource.idl"/>
-        <childnode refid="262" relation="include">
-        </childnode>
-        <childnode refid="267" relation="include">
+        <childnode refid="282" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

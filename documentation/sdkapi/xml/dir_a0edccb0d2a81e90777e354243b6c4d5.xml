@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_a0edccb0d2a81e90777e354243b6c4d5" kind="dir">
+    <compoundname>components/mediaimport/directory/</compoundname>
+    <innerdir refid="dir_f587d103301583eb709c86cfa3696e71">components/mediaimport/directory/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediaimport/directory/"/>
+  </compounddef>
+</doxygen>

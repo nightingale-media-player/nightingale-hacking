@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_83120810b2d5f6effe142f2a22f89bd8" kind="dir">
+    <compoundname>components/moz/clipboard/</compoundname>
+    <innerdir refid="dir_eef94657cc24c9c2eac0acdd2e1117c0">components/moz/clipboard/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/moz/clipboard/"/>
+  </compounddef>
+</doxygen>

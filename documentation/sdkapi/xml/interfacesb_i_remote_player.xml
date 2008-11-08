@@ -556,10 +556,10 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="926"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_1ac9ad2ffa2d215fde852f5e60fb46522" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_14dfda1d7200c1352df379de9aaabff05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createTextProperty</definition>
-        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createTextProperty</name>
         <param>
           <type>in AString</type>
@@ -577,7 +577,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -590,12 +590,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1019"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1020"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_10de54d9078e851474f1dfa681ccfa3ef" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_1e2e259029c8482884e8ce0affe937d9d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createDateTimeProperty</definition>
-        <argsstring>(in AString ID, in AString displayName, in PRInt32 timeType,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName, in PRInt32 timeType,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createDateTimeProperty</name>
         <param>
           <type>in AString</type>
@@ -617,7 +617,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -630,12 +630,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1069"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1070"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_15c91f87c6bbc7003060b80af25b47b87" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_16bea2108a67ffcc802bd01d1b57f8b8e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createURIProperty</definition>
-        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createURIProperty</name>
         <param>
           <type>in AString</type>
@@ -653,7 +653,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -666,12 +666,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1113"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1114"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_1a6eaf97973530f55c30b175c1c21090b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_150333645402635636a14974a5eb2a3bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createNumberProperty</definition>
-        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createNumberProperty</name>
         <param>
           <type>in AString</type>
@@ -689,7 +689,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -702,12 +702,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1157"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1158"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_13f26ffea9a43eb73155e4bdc60dea018" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_1160e82055e4c3979e5a7eadcc5490ff1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createImageProperty</definition>
-        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createImageProperty</name>
         <param>
           <type>in AString</type>
@@ -725,7 +725,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -738,12 +738,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1202"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1203"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_166fc10eedf0996035546ef1a32fb4687" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_144e39deef844afb1d4e16d1607a143d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createRatingsProperty</definition>
-        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createRatingsProperty</name>
         <param>
           <type>in AString</type>
@@ -761,7 +761,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -774,12 +774,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1246"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1247"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_151ed26be394b51d700ef4ec729ed6996" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_1b837e39cbe099b07fe8fce3271cc3297" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createButtonProperty</definition>
-        <argsstring>(in AString ID, in AString displayName, in AString buttonLabel,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName, in AString buttonLabel,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createButtonProperty</name>
         <param>
           <type>in AString</type>
@@ -801,7 +801,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -814,12 +814,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1293"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1294"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_remote_player_17406e1090a542be74360e4910531a896" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_remote_player_1dd5ed5eeeb47a678f3db79528c7f7f43" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbIRemotePlayer::createDownloadButtonProperty</definition>
-        <argsstring>(in AString ID, in AString displayName, in AString buttonLabel,[optional] in boolean readOnly,[optional] in boolean hidden,[optional] in unsigned long nullSort)</argsstring>
+        <argsstring>(in AString ID, in AString displayName, in AString buttonLabel,[optional] in boolean readOnly,[optional] in boolean viewable,[optional] in unsigned long nullSort)</argsstring>
         <name>createDownloadButtonProperty</name>
         <param>
           <type>in AString</type>
@@ -841,7 +841,7 @@
         <param>
           <attributes>[optional]</attributes>
           <type>in boolean</type>
-          <declname>hidden</declname>
+          <declname>viewable</declname>
         </param>
         <param>
           <attributes>[optional]</attributes>
@@ -854,7 +854,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1355"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="1356"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -862,59 +862,59 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="864">
+      <node id="997">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
-      <node id="863">
+      <node id="996">
         <label>sbIRemoteCommands</label>
         <link refid="interfacesb_i_remote_commands"/>
-        <childnode refid="862" relation="usage">
+        <childnode refid="995" relation="usage">
           <edgelabel>owner</edgelabel>
         </childnode>
       </node>
-      <node id="866">
+      <node id="999">
         <label>sbIRemoteMediaList</label>
         <link refid="interfacesb_i_remote_media_list"/>
       </node>
-      <node id="862">
+      <node id="995">
         <label>sbIRemotePlayer</label>
         <link refid="interfacesb_i_remote_player"/>
-        <childnode refid="863" relation="usage">
+        <childnode refid="996" relation="usage">
           <edgelabel>commands</edgelabel>
         </childnode>
-        <childnode refid="864" relation="usage">
+        <childnode refid="997" relation="usage">
           <edgelabel>webLibrary
 mainLibrary
 siteLibrary</edgelabel>
         </childnode>
-        <childnode refid="865" relation="usage">
+        <childnode refid="998" relation="usage">
           <edgelabel>webPlaylist</edgelabel>
         </childnode>
-        <childnode refid="866" relation="usage">
+        <childnode refid="999" relation="usage">
           <edgelabel>downloadMediaList</edgelabel>
         </childnode>
       </node>
-      <node id="865">
+      <node id="998">
         <label>sbIRemoteWebPlaylist</label>
         <link refid="interfacesb_i_remote_web_playlist"/>
-        <childnode refid="866" relation="usage">
+        <childnode refid="999" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="117" bodyend="1357"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemotePlayer.idl" bodystart="117" bodyend="1358"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_player_1bd522fc6038ff7711fd69341104e1690" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>addListener</name></member>
       <member refid="interfacesb_i_remote_player_18770671b2f3151a1ee8eb6f5728fff31" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>commands</name></member>
-      <member refid="interfacesb_i_remote_player_151ed26be394b51d700ef4ec729ed6996" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createButtonProperty</name></member>
-      <member refid="interfacesb_i_remote_player_10de54d9078e851474f1dfa681ccfa3ef" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createDateTimeProperty</name></member>
-      <member refid="interfacesb_i_remote_player_17406e1090a542be74360e4910531a896" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createDownloadButtonProperty</name></member>
-      <member refid="interfacesb_i_remote_player_13f26ffea9a43eb73155e4bdc60dea018" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createImageProperty</name></member>
-      <member refid="interfacesb_i_remote_player_1a6eaf97973530f55c30b175c1c21090b" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createNumberProperty</name></member>
-      <member refid="interfacesb_i_remote_player_166fc10eedf0996035546ef1a32fb4687" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createRatingsProperty</name></member>
-      <member refid="interfacesb_i_remote_player_1ac9ad2ffa2d215fde852f5e60fb46522" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createTextProperty</name></member>
-      <member refid="interfacesb_i_remote_player_15c91f87c6bbc7003060b80af25b47b87" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createURIProperty</name></member>
+      <member refid="interfacesb_i_remote_player_1b837e39cbe099b07fe8fce3271cc3297" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createButtonProperty</name></member>
+      <member refid="interfacesb_i_remote_player_1e2e259029c8482884e8ce0affe937d9d" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createDateTimeProperty</name></member>
+      <member refid="interfacesb_i_remote_player_1dd5ed5eeeb47a678f3db79528c7f7f43" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createDownloadButtonProperty</name></member>
+      <member refid="interfacesb_i_remote_player_1160e82055e4c3979e5a7eadcc5490ff1" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createImageProperty</name></member>
+      <member refid="interfacesb_i_remote_player_150333645402635636a14974a5eb2a3bf" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createNumberProperty</name></member>
+      <member refid="interfacesb_i_remote_player_144e39deef844afb1d4e16d1607a143d2" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createRatingsProperty</name></member>
+      <member refid="interfacesb_i_remote_player_14dfda1d7200c1352df379de9aaabff05" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createTextProperty</name></member>
+      <member refid="interfacesb_i_remote_player_16bea2108a67ffcc802bd01d1b57f8b8e" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>createURIProperty</name></member>
       <member refid="interfacesb_i_remote_player_18c2f87ff4c285ffe551e184c83d56999" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>currentAlbum</name></member>
       <member refid="interfacesb_i_remote_player_18076bb11fe8b51db9aec8823531677f6" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>currentArtist</name></member>
       <member refid="interfacesb_i_remote_player_103b3d78103d3cb016a9094f2f87d5a75" prot="public" virt="non-virtual"><scope>sbIRemotePlayer</scope><name>currentTrack</name></member>

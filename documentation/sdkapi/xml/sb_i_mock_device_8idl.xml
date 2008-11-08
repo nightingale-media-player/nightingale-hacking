@@ -4,19 +4,19 @@
     <compoundname>sbIMockDevice.idl</compoundname>
     <includes refid="sb_i_device_8idl" local="yes">sbIDevice.idl</includes>
     <incdepgraph>
-      <node id="116">
-        <label>components/devices/device/test/sbIMockDevice.idl</label>
-        <link refid="sbIMockDevice.idl"/>
-        <childnode refid="117" relation="include">
-        </childnode>
-      </node>
-      <node id="117">
+      <node id="137">
         <label>sbIDevice.idl</label>
         <link refid="sb_i_device_8idl"/>
-        <childnode refid="118" relation="include">
+        <childnode refid="138" relation="include">
         </childnode>
       </node>
-      <node id="118">
+      <node id="136">
+        <label>components/devices/device/test/sbIMockDevice.idl</label>
+        <link refid="sbIMockDevice.idl"/>
+        <childnode refid="137" relation="include">
+        </childnode>
+      </node>
+      <node id="138">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

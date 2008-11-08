@@ -4,13 +4,13 @@
     <compoundname>sbITemporaryFileService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="494">
+      <node id="566">
         <label>components/moz/temporaryfileservice/public/sbITemporaryFileService.idl</label>
         <link refid="sbITemporaryFileService.idl"/>
-        <childnode refid="495" relation="include">
+        <childnode refid="567" relation="include">
         </childnode>
       </node>
-      <node id="495">
+      <node id="567">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

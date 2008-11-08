@@ -5,22 +5,22 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="576">
-        <label>sbIRemoteMediaList.idl</label>
-        <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="575" relation="include">
-        </childnode>
+      <node id="650">
+        <label>nsISupports.idl</label>
       </node>
-      <node id="574">
+      <node id="649">
         <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
         <link refid="sbIScriptableFilterResult.idl"/>
-        <childnode refid="575" relation="include">
+        <childnode refid="650" relation="include">
         </childnode>
-        <childnode refid="576" relation="include">
+        <childnode refid="651" relation="include">
         </childnode>
       </node>
-      <node id="575">
-        <label>nsISupports.idl</label>
+      <node id="651">
+        <label>sbIRemoteMediaList.idl</label>
+        <link refid="sb_i_remote_media_list_8idl"/>
+        <childnode refid="650" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_scriptable_filter_result" prot="public">sbIScriptableFilterResult</innerclass>

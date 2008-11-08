@@ -241,86 +241,86 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_library" kindref="compound">sbILibrary</ref> </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="363">
+      <node id="381">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="364" relation="public-inheritance">
+        <childnode refid="382" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="369">
+      <node id="387">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="364" relation="usage">
+        <childnode refid="382" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="363" relation="usage">
+        <childnode refid="381" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="370">
+      <node id="388">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="366">
+      <node id="384">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="367" relation="usage">
+        <childnode refid="385" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="369" relation="usage">
+        <childnode refid="387" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="370" relation="usage">
+        <childnode refid="388" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="371" relation="usage">
+        <childnode refid="389" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="362">
+      <node id="380">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="363" relation="public-inheritance">
+        <childnode refid="381" relation="public-inheritance">
         </childnode>
-        <childnode refid="366" relation="usage">
+        <childnode refid="384" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="368" relation="usage">
+        <childnode refid="386" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="365">
+      <node id="383">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="364">
+      <node id="382">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="365" relation="public-inheritance">
+        <childnode refid="383" relation="public-inheritance">
         </childnode>
-        <childnode refid="362" relation="usage">
+        <childnode refid="380" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="361">
+      <node id="379">
         <label>sbILibraryManager</label>
         <link refid="interfacesb_i_library_manager"/>
-        <childnode refid="362" relation="usage">
+        <childnode refid="380" relation="usage">
           <edgelabel>mainLibrary</edgelabel>
         </childnode>
       </node>
-      <node id="367">
+      <node id="385">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="368" relation="usage">
+        <childnode refid="386" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="368">
+      <node id="386">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="371">
+      <node id="389">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>

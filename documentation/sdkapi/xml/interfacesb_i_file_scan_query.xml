@@ -309,11 +309,11 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/mediaimport/filescan/public/sbIFileScan.idl" line="237"/>
       </memberdef>
-      <memberdef kind="function" id="interfacesb_i_file_scan_query_1fbb61d763fac766339eca3b9b7ceff2a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_file_scan_query_14409208a77a4d738ada57d6a8a83a77e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIArray</type>
-        <definition>nsIArray sbIFileScanQuery::getResultRangeAsURIs</definition>
+        <definition>nsIArray sbIFileScanQuery::getResultRangeAsURIStrings</definition>
         <argsstring>(in unsigned long aStartIndex, in unsigned long aEndIndex)</argsstring>
-        <name>getResultRangeAsURIs</name>
+        <name>getResultRangeAsURIStrings</name>
         <param>
           <type>in unsigned long</type>
           <declname>aStartIndex</declname>
@@ -377,7 +377,7 @@ function ScanBeneathADirectory(aPath) {
       <member refid="interfacesb_i_file_scan_query_1f0a881a77fe077adbf324aabcc9ae22f" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getFilePath</name></member>
       <member refid="interfacesb_i_file_scan_query_19b70b9b17a1f255f18a5acc4cc131b32" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getLastFileFound</name></member>
       <member refid="interfacesb_i_file_scan_query_1709a8fd34deb76351ee54757fc77fd1c" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getRecurse</name></member>
-      <member refid="interfacesb_i_file_scan_query_1fbb61d763fac766339eca3b9b7ceff2a" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getResultRangeAsURIs</name></member>
+      <member refid="interfacesb_i_file_scan_query_14409208a77a4d738ada57d6a8a83a77e" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>getResultRangeAsURIStrings</name></member>
       <member refid="interfacesb_i_file_scan_query_1435818abd81b45e710d869a6c2190904" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>isCancelled</name></member>
       <member refid="interfacesb_i_file_scan_query_1bbff3f54a1ee4d59dd913b473f3daa7f" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>isScanning</name></member>
       <member refid="interfacesb_i_file_scan_query_1fcc736deb7bea39e3229b84f4c68feed" prot="public" virt="non-virtual"><scope>sbIFileScanQuery</scope><name>searchHidden</name></member>

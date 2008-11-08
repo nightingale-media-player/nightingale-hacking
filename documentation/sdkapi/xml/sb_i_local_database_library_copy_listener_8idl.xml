@@ -4,14 +4,14 @@
     <compoundname>sbILocalDatabaseLibraryCopyListener.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="330">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="329">
+      <node id="354">
         <label>components/library/localdatabase/public/sbILocalDatabaseLibraryCopyListener.idl</label>
         <link refid="sbILocalDatabaseLibraryCopyListener.idl"/>
-        <childnode refid="330" relation="include">
+        <childnode refid="355" relation="include">
         </childnode>
+      </node>
+      <node id="355">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_local_database_library_copy_listener" prot="public">sbILocalDatabaseLibraryCopyListener</innerclass>

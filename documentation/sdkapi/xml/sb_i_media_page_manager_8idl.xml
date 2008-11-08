@@ -4,14 +4,14 @@
     <compoundname>sbIMediaPageManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="469">
+      <node id="542">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="541">
         <label>components/mediapages/public/sbIMediaPageManager.idl</label>
         <link refid="sbIMediaPageManager.idl"/>
-        <childnode refid="470" relation="include">
+        <childnode refid="542" relation="include">
         </childnode>
-      </node>
-      <node id="470">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_media_page_manager" prot="public">sbIMediaPageManager</innerclass>

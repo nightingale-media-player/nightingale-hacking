@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVotingChain.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="382">
+      <node id="458">
         <label>components/mediacore/base/public/sbIMediacoreVotingChain.idl</label>
         <link refid="sbIMediacoreVotingChain.idl"/>
-        <childnode refid="383" relation="include">
+        <childnode refid="459" relation="include">
         </childnode>
       </node>
-      <node id="383">
+      <node id="459">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -48,11 +48,19 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">[scriptable,<sp/>uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]</highlight></codeline>
-<codeline lineno="30" refid="interfacesb_i_mediacore_voting_chain" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_voting_chain" kindref="compound">sbIMediacoreVotingChain</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>nsISupports</highlight></codeline>
-<codeline lineno="31"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal"></highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(4cf9bef7-6131-4681-b905-f7cdc48805d1)]</highlight></codeline>
+<codeline lineno="34" refid="interfacesb_i_mediacore_voting_chain" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_voting_chain" kindref="compound">sbIMediacoreVotingChain</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="40" refid="interfacesb_i_mediacore_voting_chain_158905a490a26d8921b74b884627c1d27" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>valid;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="49" refid="interfacesb_i_mediacore_voting_chain_1c07fba0e6d179c877b1ceb80d4748885" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>nsIArray<sp/>mediacoreChain;</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"></highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getVote(in<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>aMediacore);</highlight></codeline>
+<codeline lineno="52"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVotingChain.idl"/>
   </compounddef>

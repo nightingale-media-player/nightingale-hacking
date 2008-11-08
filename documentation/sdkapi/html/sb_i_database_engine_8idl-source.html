@@ -94,19 +94,26 @@
 <a name="l00026"></a>00026 
 <a name="l00033"></a>00033 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00034"></a>00034 
-<a name="l00035"></a>00035 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
-<a name="l00036"></a>00036 [ref] native stlCStringRef(std::string);
+<a name="l00035"></a>00035 interface nsIFile;
+<a name="l00036"></a>00036 
 <a name="l00037"></a>00037 
-<a name="l00046"></a>00046 [uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]
-<a name="l00047"></a><a class="code" href="interfacesb_i_database_engine.html">00047</a> interface <a class="code" href="interfacesb_i_database_engine.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</a> : nsISupports
-<a name="l00048"></a>00048 {
-<a name="l00055"></a>00055   [noscript] <span class="keywordtype">void</span> AddPersistentQuery(in CDatabaseQueryPtr aDBQuery, in ACString aTableName);
-<a name="l00056"></a>00056 
-<a name="l00063"></a>00063   [noscript] <span class="keywordtype">void</span> RemovePersistentQuery(in CDatabaseQueryPtr aDBQuery);
-<a name="l00064"></a>00064 
-<a name="l00071"></a>00071   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
-<a name="l00072"></a>00072 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00038"></a>00038 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
+<a name="l00039"></a>00039 [ref] native stlCStringRef(std::string);
+<a name="l00040"></a>00040 
+<a name="l00049"></a>00049 [scriptable, uuid(35e0ae00-ac6e-11dd-ad8b-0800200c9a66)]
+<a name="l00050"></a><a class="code" href="interfacesb_i_database_engine.html">00050</a> interface <a class="code" href="interfacesb_i_database_engine.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</a> : nsISupports
+<a name="l00051"></a>00051 {
+<a name="l00058"></a>00058   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
+<a name="l00059"></a>00059 
+<a name="l00067"></a>00067   <span class="keywordtype">void</span> closeDatabase(in AString aDatabaseGUID);
+<a name="l00068"></a>00068 
+<a name="l00072"></a>00072   <span class="keywordtype">void</span> dumpDatabase(in AString aDatabaseGUID, in nsIFile aOutFile);
+<a name="l00073"></a>00073   
+<a name="l00078"></a>00078   <span class="keywordtype">void</span> dumpMemoryStatistics();
+<a name="l00079"></a>00079 
+<a name="l00086"></a>00086   <span class="keywordtype">void</span> releaseMemory();
+<a name="l00087"></a>00087 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:20 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

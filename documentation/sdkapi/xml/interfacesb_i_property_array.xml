@@ -98,14 +98,14 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="806">
+      <node id="938">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="807">
+      <node id="939">
         <label>sbIMutablePropertyArray</label>
         <link refid="interfacesb_i_mutable_property_array"/>
-        <childnode refid="806" relation="public-inheritance">
+        <childnode refid="938" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

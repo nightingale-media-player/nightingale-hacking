@@ -14,7 +14,7 @@
           <declname>aJobProgress</declname>
         </param>
         <briefdescription>
-<para>Notification that an object implmenting <ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref> has changed. </para>        </briefdescription>
+<para>Notification that an object implementing <ref refid="interfacesb_i_job_progress" kindref="compound">sbIJobProgress</ref> has changed. </para>        </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>

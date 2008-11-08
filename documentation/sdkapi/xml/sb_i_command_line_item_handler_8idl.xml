@@ -4,13 +4,13 @@
     <compoundname>sbICommandLineItemHandler.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="27">
+      <node id="41">
         <label>components/commandline/public/sbICommandLineItemHandler.idl</label>
         <link refid="sbICommandLineItemHandler.idl"/>
-        <childnode refid="28" relation="include">
+        <childnode refid="42" relation="include">
         </childnode>
       </node>
-      <node id="28">
+      <node id="42">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

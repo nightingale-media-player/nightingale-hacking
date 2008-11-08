@@ -95,17 +95,19 @@
 <a name="l00032"></a>00032 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00033"></a>00033 
 <a name="l00034"></a>00034 interface nsIArray;
-<a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>;
-<a name="l00036"></a>00036 
-<a name="l00055"></a>00055 [scriptable, uuid(47dac650-521e-11dd-ae16-0800200c9a16)]
-<a name="l00056"></a><a class="code" href="interfacesb_i_file_metadata_service.html">00056</a> interface <a class="code" href="interfacesb_i_file_metadata_service.html">sbIFileMetadataService</a> : nsISupports
-<a name="l00057"></a>00057 {
-<a name="l00058"></a>00058 
-<a name="l00076"></a>00076   <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> read(in nsIArray aMediaItemArray);
-<a name="l00077"></a>00077   
-<a name="l00099"></a>00099   <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> write(in nsIArray aMediaItemArray);
-<a name="l00100"></a>00100 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00035"></a>00035 interface nsIStringEnumerator;
+<a name="l00036"></a>00036 interface <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>;
+<a name="l00037"></a>00037 
+<a name="l00056"></a>00056 [scriptable, uuid(dc652317-ead6-4e37-953a-290ee4f3979c)]
+<a name="l00057"></a><a class="code" href="interfacesb_i_file_metadata_service.html">00057</a> interface <a class="code" href="interfacesb_i_file_metadata_service.html">sbIFileMetadataService</a> : nsISupports
+<a name="l00058"></a>00058 {
+<a name="l00059"></a>00059 
+<a name="l00077"></a>00077   <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> read(in nsIArray aMediaItemArray);
+<a name="l00078"></a>00078   
+<a name="l00106"></a>00106   <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> write(in nsIArray aMediaItemArray,
+<a name="l00107"></a>00107                        in nsIStringEnumerator aRequiredProperties);
+<a name="l00108"></a>00108 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

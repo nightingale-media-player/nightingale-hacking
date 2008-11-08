@@ -63,6 +63,7 @@
     <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
+    <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
 <div class="tabs">
@@ -72,7 +73,7 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIApplicationController Interface Reference</h1><!-- doxytag: class="sbIApplicationController" -->[UNIMPLEMENTED UNTIL AFTER 0.3]  
+<h1>sbIApplicationController Interface Reference</h1><!-- doxytag: class="sbIApplicationController" -->Global root controller for the Songbird application.  
 <a href="#_details">More...</a>
 <p>
 <code>import &quot;<a class="el" href="sb_i_application_controller_8idl-source.html">sbIApplicationController.idl</a>&quot;;</code>
@@ -80,52 +81,40 @@
 <a href="interfacesb_i_application_controller-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#9612dd271fdfe084fb2b3feff23c1176">getActiveWindowOfType</a> (in AString aWindowType)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#f0bf267bd45094dd2284d8105392ed97">playDefault</a> ()</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the current active window of specified type. Get the current active window of specified type, such as "main", "mini" or "browser".  <a href="#9612dd271fdfe084fb2b3feff23c1176"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#dcb1715123d2dd63195699d26c2e8475">getActiveMediaListInWindow</a> (in nsIDOMWindow aWindow)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the current active media list object in the specified window.  <a href="#dcb1715123d2dd63195699d26c2e8475"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin playback using whatever UI context is available.  <a href="#f0bf267bd45094dd2284d8105392ed97"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="d205fc0eae80f54524792349aec4f83b"></a><!-- doxytag: member="sbIApplicationController::activeMediaList" ref="d205fc0eae80f54524792349aec4f83b" args="" -->
-attribute <a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#d205fc0eae80f54524792349aec4f83b">activeMediaList</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current active media list object. The current active media list object. May be null if no media list is active or present. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fe8e352ee959d7199c6565059852e300"></a><!-- doxytag: member="sbIApplicationController::activeBrowser" ref="fe8e352ee959d7199c6565059852e300" args="" -->
-attribute nsIDOMNode&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#fe8e352ee959d7199c6565059852e300">activeBrowser</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current active browser. The current active browser. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="25d96aa08e98a35b6e863855e85723cb"></a><!-- doxytag: member="sbIApplicationController::activeMainWindow" ref="25d96aa08e98a35b6e863855e85723cb" args="" -->
-attribute nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#25d96aa08e98a35b6e863855e85723cb">activeMainWindow</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current active "main" window. The current active window of category "main". <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f4d6c5203e16e0fbba68c3d956b0069b"></a><!-- doxytag: member="sbIApplicationController::activeMiniWindow" ref="f4d6c5203e16e0fbba68c3d956b0069b" args="" -->
-attribute nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#f4d6c5203e16e0fbba68c3d956b0069b">activeMiniWindow</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current active "mini" window. The current active window of category "mini". <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="30214feb0024ffbc90a84a98ea2269b7"></a><!-- doxytag: member="sbIApplicationController::activeWindow" ref="30214feb0024ffbc90a84a98ea2269b7" args="" -->
-attribute nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#30214feb0024ffbc90a84a98ea2269b7">activeWindow</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="77c6d55500371bc29e36acbddc7bf19b"></a><!-- doxytag: member="sbIApplicationController::activeWindow" ref="77c6d55500371bc29e36acbddc7bf19b" args="" -->
+readonly attribute nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#77c6d55500371bc29e36acbddc7bf19b">activeWindow</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current active window. The current active window, regardless of category. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="38d4418a2635bb4af53878fc12f91229"></a><!-- doxytag: member="sbIApplicationController::activeMainWindow" ref="38d4418a2635bb4af53878fc12f91229" args="" -->
+readonly attribute nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_application_controller.html#38d4418a2635bb4af53878fc12f91229">activeMainWindow</a></td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current active Songbird window The current active window of type Songbird:Main. Usually the primary Songbird window, with playback controls, playlist display panes, etc. <br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-[UNIMPLEMENTED UNTIL AFTER 0.3] 
+Global root controller for the Songbird application. 
 <p>
-<dl class="see" compact><dt><b>See also:</b></dt><dd></dd></dl>
+This service represents the global instance of the Songbird application.<p>
+One day the implementation of this interface will be responsible for bringing up the main window and generally managing application lifecycle.<p>
+The interface may also be exposed as a replacement for / addition to FUEL's Application object, and offer accessors for other global Songbird objects. For example, we may eventually have accessors like Application.songbird.mediacoreManager.playbackControl.<p>
+Other future functionality may include:<ul>
+<li>quit();</li><li>openMainWindow();</li></ul>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_application_controller_8idl-source.html#l00045">45</a> of file <a class="el" href="sb_i_application_controller_8idl-source.html">sbIApplicationController.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="9612dd271fdfe084fb2b3feff23c1176"></a><!-- doxytag: member="sbIApplicationController::getActiveWindowOfType" ref="9612dd271fdfe084fb2b3feff23c1176" args="(in AString aWindowType)" -->
+Definition at line <a class="el" href="sb_i_application_controller_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_application_controller_8idl-source.html">sbIApplicationController.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="f0bf267bd45094dd2284d8105392ed97"></a><!-- doxytag: member="sbIApplicationController::playDefault" ref="f0bf267bd45094dd2284d8105392ed97" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">nsIDOMWindow sbIApplicationController::getActiveWindowOfType           </td>
+          <td class="memname">void sbIApplicationController::playDefault           </td>
           <td>(</td>
-          <td class="paramtype">in AString&nbsp;</td>
-          <td class="paramname"> <em>aWindowType</em>          </td>
+          <td class="paramname">          </td>
           <td>&nbsp;)&nbsp;</td>
           <td width="100%"></td>
         </tr>
@@ -134,52 +123,16 @@ Definition at line <a class="el" href="sb_i_application_controller_8idl-source.h
 <div class="memdoc">
 
 <p>
-Get the current active window of specified type. Get the current active window of specified type, such as "main", "mini" or "browser". 
+Begin playback using whatever UI context is available. 
 <p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aWindowType</em>&nbsp;</td><td>The type of window, such as "main", "mini" or "browser". </td></tr>
-  </table>
-</dl>
-
-</div>
-</div><p>
-<a class="anchor" name="dcb1715123d2dd63195699d26c2e8475"></a><!-- doxytag: member="sbIApplicationController::getActiveMediaListInWindow" ref="dcb1715123d2dd63195699d26c2e8475" args="(in nsIDOMWindow aWindow)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="interfacesb_i_media_list.html">sbIMediaList</a> sbIApplicationController::getActiveMediaListInWindow           </td>
-          <td>(</td>
-          <td class="paramtype">in nsIDOMWindow&nbsp;</td>
-          <td class="paramname"> <em>aWindow</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Get the current active media list object in the specified window. 
-<p>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>aWindow</em>&nbsp;</td><td>The window possibly containing a media list object. </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>The active media list object, if present. </dd></dl>
-<dl compact><dt><b>Return values:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>null</em>&nbsp;</td><td>No active media list object in specified window. </td></tr>
-  </table>
-</dl>
-
+Used to initiate playback when what to play is not clear. Will try to delegate playback to the UI, and match user expectations. If the open windows are unable to determine what should be played, the first track in the main library will be selected.<p>
+This method should be used as a fallback when no context is available to callers.<p>
+This method may be removed once we have a standard way to broadcast application wide events. 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/controller/public/<a class="el" href="sb_i_application_controller_8idl-source.html">sbIApplicationController.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu Dec 20 16:42:05 2007 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:26 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

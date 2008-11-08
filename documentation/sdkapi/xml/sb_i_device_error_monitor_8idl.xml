@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceErrorMonitor.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="106">
+      <node id="126">
         <label>components/devices/device/public/sbIDeviceErrorMonitor.idl</label>
         <link refid="sbIDeviceErrorMonitor.idl"/>
-        <childnode refid="107" relation="include">
+        <childnode refid="127" relation="include">
         </childnode>
       </node>
-      <node id="107">
+      <node id="127">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

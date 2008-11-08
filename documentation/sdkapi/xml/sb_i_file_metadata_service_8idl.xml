@@ -4,13 +4,13 @@
     <compoundname>sbIFileMetadataService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="394">
+      <node id="479">
         <label>components/mediacore/metadata/manager/public/sbIFileMetadataService.idl</label>
         <link refid="sbIFileMetadataService.idl"/>
-        <childnode refid="395" relation="include">
+        <childnode refid="480" relation="include">
         </childnode>
       </node>
-      <node id="395">
+      <node id="480">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -50,16 +50,18 @@
 <codeline lineno="32"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref>;</highlight></codeline>
-<codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="55"><highlight class="normal">[scriptable,<sp/>uuid(47dac650-521e-11dd-ae16-0800200c9a16)]</highlight></codeline>
-<codeline lineno="56" refid="interfacesb_i_file_metadata_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_metadata_service" kindref="compound">sbIFileMetadataService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="57"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="58"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/>read(in<sp/>nsIArray<sp/>aMediaItemArray);</highlight></codeline>
-<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="99"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/>write(in<sp/>nsIArray<sp/>aMediaItemArray);</highlight></codeline>
-<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsIStringEnumerator;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref>;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal"></highlight></codeline>
+<codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(dc652317-ead6-4e37-953a-290ee4f3979c)]</highlight></codeline>
+<codeline lineno="57" refid="interfacesb_i_file_metadata_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_metadata_service" kindref="compound">sbIFileMetadataService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="58"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/>read(in<sp/>nsIArray<sp/>aMediaItemArray);</highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="106"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref><sp/>write(in<sp/>nsIArray<sp/>aMediaItemArray,</highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIStringEnumerator<sp/>aRequiredProperties);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIFileMetadataService.idl"/>
   </compounddef>

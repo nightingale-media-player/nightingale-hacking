@@ -5,26 +5,26 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_security_mixin_8idl" local="yes">components/remoteapi/public/sbISecurityMixin.idl</includedby>
     <incdepgraph>
-      <node id="579">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="578">
+      <node id="653">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="579" relation="include">
+        <childnode refid="654" relation="include">
         </childnode>
+      </node>
+      <node id="654">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="581">
-        <label>components/remoteapi/public/sbISecurityMixin.idl</label>
-        <link refid="sb_i_security_mixin_8idl"/>
-      </node>
-      <node id="580">
+      <node id="655">
         <label>components/remoteapi/public/sbISecurityAggregator.idl</label>
         <link refid="sbISecurityAggregator.idl"/>
-        <childnode refid="581" relation="include">
+        <childnode refid="656" relation="include">
         </childnode>
+      </node>
+      <node id="656">
+        <label>components/remoteapi/public/sbISecurityMixin.idl</label>
+        <link refid="sb_i_security_mixin_8idl"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_security_aggregator" prot="public">sbISecurityAggregator</innerclass>

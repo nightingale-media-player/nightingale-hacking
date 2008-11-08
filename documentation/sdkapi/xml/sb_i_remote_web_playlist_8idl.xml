@@ -4,13 +4,13 @@
     <compoundname>sbIRemoteWebPlaylist.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="571">
+      <node id="646">
         <label>components/remoteapi/public/sbIRemoteWebPlaylist.idl</label>
         <link refid="sbIRemoteWebPlaylist.idl"/>
-        <childnode refid="572" relation="include">
+        <childnode refid="647" relation="include">
         </childnode>
       </node>
-      <node id="572">
+      <node id="647">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -160,8 +160,33 @@
 <codeline lineno="150"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="151"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setSelectionByIndex(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aIndex,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aSelected);</highlight></codeline>
 <codeline lineno="152"><highlight class="normal"></highlight></codeline>
-<codeline lineno="153"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="154"><highlight class="normal"></highlight></codeline>
+<codeline lineno="153"><highlight class="normal"></highlight></codeline>
+<codeline lineno="154"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*</highlight></codeline>
+<codeline lineno="155"><highlight class="comment"><sp/><sp/>Prop:<sp/>hidden</highlight></codeline>
+<codeline lineno="156"><highlight class="comment"></highlight></codeline>
+<codeline lineno="157"><highlight class="comment"><sp/><sp/>Is<sp/>the<sp/>&lt;WebPlaylist&gt;<sp/>hidden?</highlight></codeline>
+<codeline lineno="158"><highlight class="comment"></highlight></codeline>
+<codeline lineno="159"><highlight class="comment"><sp/><sp/>Setting<sp/>&lt;mediaList&gt;<sp/>on<sp/>the<sp/>&lt;WebPlaylist&gt;<sp/>will<sp/>automatically<sp/>make<sp/>the<sp/></highlight></codeline>
+<codeline lineno="160"><highlight class="comment"><sp/><sp/>&lt;WebPlaylist&gt;<sp/>visible.<sp/>&lt;hidden&gt;<sp/>is<sp/>intended<sp/>for<sp/>more<sp/>advanced<sp/>uses<sp/>where<sp/>a</highlight></codeline>
+<codeline lineno="161"><highlight class="comment"><sp/><sp/>web<sp/>page<sp/>might<sp/>want<sp/>to<sp/>manipulate<sp/>the<sp/>visiblity<sp/>of<sp/>the<sp/>&lt;WebPlaylist&gt;<sp/></highlight></codeline>
+<codeline lineno="162"><highlight class="comment"><sp/><sp/>directly.</highlight></codeline>
+<codeline lineno="163"><highlight class="comment"></highlight></codeline>
+<codeline lineno="164"><highlight class="comment"><sp/><sp/>Type:</highlight></codeline>
+<codeline lineno="165"><highlight class="comment"><sp/><sp/><sp/><sp/>boolean</highlight></codeline>
+<codeline lineno="166"><highlight class="comment"></highlight></codeline>
+<codeline lineno="167"><highlight class="comment"><sp/><sp/>Example:</highlight></codeline>
+<codeline lineno="168"><highlight class="comment"><sp/><sp/><sp/><sp/>(start<sp/>code)</highlight></codeline>
+<codeline lineno="169"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>show<sp/>the<sp/>webplaylist</highlight></codeline>
+<codeline lineno="170"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.webPlaylist.hidden<sp/>=<sp/>false;</highlight></codeline>
+<codeline lineno="171"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>hide<sp/>the<sp/>webplaylist</highlight></codeline>
+<codeline lineno="172"><highlight class="comment"><sp/><sp/><sp/><sp/>songbird.webPlaylist.hidden<sp/>=<sp/>true;</highlight></codeline>
+<codeline lineno="173"><highlight class="comment"><sp/><sp/><sp/><sp/>//<sp/>is<sp/>the<sp/>webplaylist<sp/>hidden?</highlight></codeline>
+<codeline lineno="174"><highlight class="comment"><sp/><sp/><sp/><sp/>alert(songbird.webPlaylist.hidden?&quot;It&apos;s<sp/>hidden&quot;:&quot;It&apos;s<sp/>shown&quot;);</highlight></codeline>
+<codeline lineno="175"><highlight class="comment"><sp/><sp/><sp/><sp/>(end)</highlight></codeline>
+<codeline lineno="176"><highlight class="comment"><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="177" refid="interfacesb_i_remote_web_playlist_1537d85d2b83d8df0ac6be4499ef1894e" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>hidden;</highlight></codeline>
+<codeline lineno="178"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="179"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteWebPlaylist.idl"/>
   </compounddef>

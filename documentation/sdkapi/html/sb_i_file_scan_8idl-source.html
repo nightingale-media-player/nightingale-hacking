@@ -106,7 +106,7 @@
 <a name="l00081"></a>00081   <span class="keywordtype">void</span> onFileScanEnd(); 
 <a name="l00082"></a>00082 };
 <a name="l00083"></a>00083 
-<a name="l00116"></a>00116 [scriptable, uuid(7BB22470-E03D-4220-AC93-AC70700AF6AB)]
+<a name="l00116"></a>00116 [scriptable, uuid(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]
 <a name="l00117"></a><a class="code" href="interfacesb_i_file_scan_query.html">00117</a> interface <a class="code" href="interfacesb_i_file_scan_query.html" title="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</a> : nsISupports
 <a name="l00118"></a>00118 {
 <a name="l00119"></a><a class="code" href="interfacesb_i_file_scan_query.html#fcc736deb7bea39e3229b84f4c68feed">00119</a>   attribute <span class="keywordtype">boolean</span> searchHidden;
@@ -143,8 +143,8 @@
 <a name="l00233"></a>00233 
 <a name="l00237"></a>00237   <span class="keywordtype">void</span> cancel();
 <a name="l00238"></a>00238 
-<a name="l00242"></a>00242   nsIArray getResultRangeAsURIs(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aStartIndex,
-<a name="l00243"></a>00243                                 in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aEndIndex);
+<a name="l00242"></a>00242   nsIArray getResultRangeAsURIStrings(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aStartIndex,
+<a name="l00243"></a>00243                                       in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aEndIndex);
 <a name="l00244"></a>00244 
 <a name="l00248"></a>00248   PRBool isCancelled();
 <a name="l00249"></a>00249 };
@@ -158,7 +158,7 @@
 <a name="l00284"></a>00284     in PRBool bRecurse, 
 <a name="l00285"></a>00285     in <a class="code" href="interfacesb_i_file_scan_callback.html" title="The callback to the sbIFileScanQuery interface.">sbIFileScanCallback</a> pCallback);
 <a name="l00286"></a>00286 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:23 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

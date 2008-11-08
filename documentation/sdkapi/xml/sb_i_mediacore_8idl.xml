@@ -4,13 +4,13 @@
     <compoundname>sbIMediacore.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="362">
+      <node id="390">
         <label>components/mediacore/base/public/sbIMediacore.idl</label>
         <link refid="sbIMediacore.idl"/>
-        <childnode refid="363" relation="include">
+        <childnode refid="391" relation="include">
         </childnode>
       </node>
-      <node id="363">
+      <node id="391">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -44,19 +44,26 @@
 <codeline lineno="22"><highlight class="comment">//<sp/></highlight></codeline>
 <codeline lineno="23"><highlight class="comment">//<sp/>END<sp/>SONGBIRD<sp/>GPL</highlight></codeline>
 <codeline lineno="24"><highlight class="comment">//</highlight></codeline>
-<codeline lineno="25"><highlight class="comment"><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="25"><highlight class="comment">*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/>sbIMediacoreCapabilities;</highlight></codeline>
-<codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">[scriptable,<sp/>uuid(927cc189-0dc6-4b3d-8881-1d0e80fcc854)]</highlight></codeline>
-<codeline lineno="32" refid="interfacesb_i_mediacore" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>nsISupports</highlight></codeline>
-<codeline lineno="33"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="34" refid="interfacesb_i_mediacore_1460c0a4b2c903b57fa3418ffd54a1a26" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>AString<sp/>instanceName;</highlight></codeline>
-<codeline lineno="35" refid="interfacesb_i_mediacore_1621b7311e25d32c6706cad18b4ca4b29" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreCapabilities<sp/>capabilities;</highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_mediacore_1cc13508b26ba6a9dfde737a605017ec3" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>nsIPropertyBag2<sp/>properties;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_capabilities" kindref="compound">sbIMediacoreCapabilities</ref>;</highlight></codeline>
+<codeline lineno="30"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref>;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal"></highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(b22e7f79-c036-4d8e-bfe1-6bcc13d02d5b)]</highlight></codeline>
+<codeline lineno="34" refid="interfacesb_i_mediacore" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="36" refid="interfacesb_i_mediacore_146c2dcdf9bc4fa6e259ff9b68533f247" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>instanceName;</highlight></codeline>
+<codeline lineno="37" refid="interfacesb_i_mediacore_13eca4625a4dcfde56cb80daa2c346150" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_capabilities" kindref="compound">sbIMediacoreCapabilities</ref><sp/>capabilities;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39" refid="interfacesb_i_mediacore_1c708754dcb043792c7f4d357adb1f44c" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref><sp/>status;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="41" refid="interfacesb_i_mediacore_136d61f19eb1c80305373295f99377a7e" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref><sp/>sequencer;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>shutdown();</highlight></codeline>
+<codeline lineno="44"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacore.idl"/>
   </compounddef>

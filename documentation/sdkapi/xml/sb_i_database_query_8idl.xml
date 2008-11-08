@@ -4,14 +4,14 @@
     <compoundname>sbIDatabaseQuery.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="40">
+      <node id="61">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="60">
         <label>components/dbengine/public/sbIDatabaseQuery.idl</label>
         <link refid="sbIDatabaseQuery.idl"/>
-        <childnode refid="41" relation="include">
+        <childnode refid="61" relation="include">
         </childnode>
-      </node>
-      <node id="41">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_database_simple_query_callback" prot="public">sbIDatabaseSimpleQueryCallback</innerclass>
@@ -53,108 +53,95 @@
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
 <codeline lineno="35"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref>;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="56"><highlight class="normal">[scriptable,<sp/>uuid(918745AE-0F40-4d08-BA4E-27A739459952)]</highlight></codeline>
-<codeline lineno="57" refid="interfacesb_i_database_simple_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="58"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
-<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight></codeline>
-<codeline lineno="90"><highlight class="normal">[scriptable,<sp/>uuid(A901158A-3735-44fd-9AD2-1753F1407284)]</highlight></codeline>
-<codeline lineno="91" refid="interfacesb_i_database_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="92"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="103"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryError(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbError,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
-<codeline lineno="104"><highlight class="normal"></highlight></codeline>
-<codeline lineno="114"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryStart(in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
-<codeline lineno="115"><highlight class="normal"></highlight></codeline>
-<codeline lineno="126"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryRow(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowResult,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowTotal);</highlight></codeline>
-<codeline lineno="127"><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);<sp/></highlight></codeline>
-<codeline lineno="139"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="140"><highlight class="normal"></highlight></codeline>
-<codeline lineno="173"><highlight class="normal">[scriptable,<sp/>uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]</highlight></codeline>
-<codeline lineno="174" refid="interfacesb_i_database_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query" kindref="compound" tooltip="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="175"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="186" refid="interfacesb_i_database_query_186068054c1ebacd1a3e532224e0e0ee7" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>databaseLocation;</highlight></codeline>
-<codeline lineno="187"><highlight class="normal"></highlight></codeline>
-<codeline lineno="198" refid="interfacesb_i_database_query_12ea3b53b842081a9e84d495d532cb54b" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>persistExecSelectiveMode;</highlight></codeline>
-<codeline lineno="199"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="208" refid="interfacesb_i_database_query_13291481d514718d64ec158206328e609" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>persistExecOnInsert;</highlight></codeline>
-<codeline lineno="209"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="218" refid="interfacesb_i_database_query_1d874df9d902cb41fadb5d5bb4e1dc1d1" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>persistExecOnUpdate;</highlight></codeline>
-<codeline lineno="219"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="228" refid="interfacesb_i_database_query_1e37d515cd20494347bc897bdcb936d68" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>persistExecOnDelete;</highlight></codeline>
-<codeline lineno="229"><highlight class="normal"></highlight></codeline>
-<codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setAsyncQuery(in<sp/>PRBool<sp/>bAsyncQuery);</highlight></codeline>
-<codeline lineno="238"><highlight class="normal"></highlight></codeline>
-<codeline lineno="245"><highlight class="normal"><sp/><sp/>PRBool<sp/>isAyncQuery();</highlight></codeline>
-<codeline lineno="246"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="258"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setPersistentQuery(in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>bPersistentQuery);</highlight></codeline>
-<codeline lineno="259"><highlight class="normal"></highlight></codeline>
-<codeline lineno="266"><highlight class="normal"><sp/><sp/>PRBool<sp/>isPersistentQuery();</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_prepared_statement" kindref="compound" tooltip="A prepared database statement.">sbIDatabasePreparedStatement</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal"></highlight></codeline>
+<codeline lineno="53"><highlight class="normal">[scriptable,<sp/>uuid(918745AE-0F40-4d08-BA4E-27A739459952)]</highlight></codeline>
+<codeline lineno="54" refid="interfacesb_i_database_simple_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="55"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal">[scriptable,<sp/>uuid(A901158A-3735-44fd-9AD2-1753F1407284)]</highlight></codeline>
+<codeline lineno="84" refid="interfacesb_i_database_query_callback" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="85"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="96"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryError(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbError,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="97"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryStart(in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="108"><highlight class="normal"></highlight></codeline>
+<codeline lineno="119"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryRow(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowResult,<sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbRowTotal);</highlight></codeline>
+<codeline lineno="120"><highlight class="normal"></highlight></codeline>
+<codeline lineno="131"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onQueryEnd(in<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>dbResultObject,<sp/>in<sp/>AString<sp/>dbGUID,<sp/>in<sp/>AString<sp/>strQuery);<sp/></highlight></codeline>
+<codeline lineno="132"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="133"><highlight class="normal"></highlight></codeline>
+<codeline lineno="166"><highlight class="normal">[scriptable,<sp/>uuid(192FE564-1D86-49c8-A31A-5798D62B2525)]</highlight></codeline>
+<codeline lineno="167" refid="interfacesb_i_database_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_query" kindref="compound" tooltip="An object responsible for executing SQL queries on the database.">sbIDatabaseQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="168"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="179" refid="interfacesb_i_database_query_186068054c1ebacd1a3e532224e0e0ee7" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/>nsIURI<sp/>databaseLocation;</highlight></codeline>
+<codeline lineno="180"><highlight class="normal"></highlight></codeline>
+<codeline lineno="188"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setAsyncQuery(in<sp/>PRBool<sp/>bAsyncQuery);</highlight></codeline>
+<codeline lineno="189"><highlight class="normal"></highlight></codeline>
+<codeline lineno="196"><highlight class="normal"><sp/><sp/>PRBool<sp/>isAyncQuery();</highlight></codeline>
+<codeline lineno="197"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="203"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="204"><highlight class="normal"></highlight></codeline>
+<codeline lineno="210"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="211"><highlight class="normal"></highlight></codeline>
+<codeline lineno="225"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setDatabaseGUID(in<sp/>AString<sp/>dbGUID);</highlight></codeline>
+<codeline lineno="226"><highlight class="normal"></highlight></codeline>
+<codeline lineno="232"><highlight class="normal"><sp/><sp/>AString<sp/>getDatabaseGUID();</highlight></codeline>
+<codeline lineno="233"><highlight class="normal"></highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addQuery(in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="244"><highlight class="normal"></highlight></codeline>
+<codeline lineno="257"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_prepared_statement" kindref="compound" tooltip="A prepared database statement.">sbIDatabasePreparedStatement</ref><sp/>prepareQuery(in<sp/>AString<sp/>strQuery);</highlight></codeline>
+<codeline lineno="258"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="266"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addPreparedStatement(in<sp/><ref refid="interfacesb_i_database_prepared_statement" kindref="compound" tooltip="A prepared database statement.">sbIDatabasePreparedStatement</ref><sp/>PreparedStatement);</highlight></codeline>
 <codeline lineno="267"><highlight class="normal"></highlight></codeline>
-<codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
+<codeline lineno="273"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getQueryCount();</highlight></codeline>
 <codeline lineno="274"><highlight class="normal"></highlight></codeline>
-<codeline lineno="280"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeSimpleQueryCallback(in<sp/><ref refid="interfacesb_i_database_simple_query_callback" kindref="compound" tooltip="A callback object used to inform client code that a query has completed.">sbIDatabaseSimpleQueryCallback</ref><sp/>dbPersistCB);</highlight></codeline>
-<codeline lineno="281"><highlight class="normal"></highlight></codeline>
-<codeline lineno="295"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setDatabaseGUID(in<sp/>AString<sp/>dbGUID);</highlight></codeline>
-<codeline lineno="296"><highlight class="normal"></highlight></codeline>
-<codeline lineno="302"><highlight class="normal"><sp/><sp/>AString<sp/>getDatabaseGUID();</highlight></codeline>
-<codeline lineno="303"><highlight class="normal"></highlight></codeline>
-<codeline lineno="313"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addQuery(in<sp/>AString<sp/>strQuery);</highlight></codeline>
-<codeline lineno="314"><highlight class="normal"></highlight></codeline>
-<codeline lineno="320"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getQueryCount();</highlight></codeline>
-<codeline lineno="321"><highlight class="normal"></highlight></codeline>
-<codeline lineno="327"><highlight class="normal"><sp/><sp/>AString<sp/>getQuery(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nIndex);</highlight></codeline>
-<codeline lineno="328"><highlight class="normal"></highlight></codeline>
-<codeline lineno="338"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetQuery();</highlight></codeline>
-<codeline lineno="339"><highlight class="normal"><sp/><sp/></highlight></codeline>
-<codeline lineno="347"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>getResultObject();</highlight></codeline>
-<codeline lineno="348"><highlight class="normal"></highlight></codeline>
-<codeline lineno="352"><highlight class="normal"><sp/><sp/>[noscript]<sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>getResultObjectOrphan();</highlight></codeline>
-<codeline lineno="353"><highlight class="normal"></highlight></codeline>
-<codeline lineno="361"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getLastError();</highlight></codeline>
-<codeline lineno="362"><highlight class="normal"></highlight></codeline>
-<codeline lineno="370"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setLastError(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbError);</highlight></codeline>
-<codeline lineno="371"><highlight class="normal"></highlight></codeline>
-<codeline lineno="377"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>execute();</highlight></codeline>
-<codeline lineno="378"><highlight class="normal"></highlight></codeline>
-<codeline lineno="386"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>waitForCompletion();</highlight></codeline>
-<codeline lineno="387"><highlight class="normal"></highlight></codeline>
-<codeline lineno="393"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>addCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
-<codeline lineno="394"><highlight class="normal"></highlight></codeline>
-<codeline lineno="400"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>removeCallback(in<sp/><ref refid="interfacesb_i_database_query_callback" kindref="compound" tooltip="A more complex callback object that can be used to read each row of the results in...">sbIDatabaseQueryCallback</ref><sp/>dbCallback);</highlight></codeline>
-<codeline lineno="401"><highlight class="normal"></highlight></codeline>
-<codeline lineno="407"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isExecuting();</highlight></codeline>
-<codeline lineno="408"><highlight class="normal"></highlight></codeline>
-<codeline lineno="414"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>currentQuery();</highlight></codeline>
+<codeline lineno="281"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_prepared_statement" kindref="compound" tooltip="A prepared database statement.">sbIDatabasePreparedStatement</ref><sp/>getQuery(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>nIndex);</highlight></codeline>
+<codeline lineno="282"><highlight class="normal"></highlight></codeline>
+<codeline lineno="292"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>resetQuery();</highlight></codeline>
+<codeline lineno="293"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="301"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_database_result" kindref="compound" tooltip="An object containing the results of a database SELECT query.">sbIDatabaseResult</ref><sp/>getResultObject();</highlight></codeline>
+<codeline lineno="302"><highlight class="normal"></highlight></codeline>
+<codeline lineno="310"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>getLastError();</highlight></codeline>
+<codeline lineno="311"><highlight class="normal"></highlight></codeline>
+<codeline lineno="319"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setLastError(in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>dbError);</highlight></codeline>
+<codeline lineno="320"><highlight class="normal"></highlight></codeline>
+<codeline lineno="326"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>execute();</highlight></codeline>
+<codeline lineno="327"><highlight class="normal"></highlight></codeline>
+<codeline lineno="335"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>waitForCompletion();</highlight></codeline>
+<codeline lineno="336"><highlight class="normal"></highlight></codeline>
+<codeline lineno="342"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>isExecuting();</highlight></codeline>
+<codeline lineno="343"><highlight class="normal"></highlight></codeline>
+<codeline lineno="349"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>currentQuery();</highlight></codeline>
+<codeline lineno="350"><highlight class="normal"></highlight></codeline>
+<codeline lineno="358"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>abort();</highlight></codeline>
+<codeline lineno="359"><highlight class="normal"></highlight></codeline>
+<codeline lineno="371" refid="interfacesb_i_database_query_173c479ffe53dd7fb140c6cfcd5351237" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rollingLimit;</highlight></codeline>
+<codeline lineno="372"><highlight class="normal"></highlight></codeline>
+<codeline lineno="376" refid="interfacesb_i_database_query_1237b7d8b7caaaa64457419fb9a44e566" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rollingLimitColumnIndex;</highlight></codeline>
+<codeline lineno="377"><highlight class="normal"></highlight></codeline>
+<codeline lineno="382" refid="interfacesb_i_database_query_1b55d514783349b725d3a4e2d21b4eaab" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rollingLimitResult;</highlight></codeline>
+<codeline lineno="383"><highlight class="normal"></highlight></codeline>
+<codeline lineno="389"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindUTF8StringParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
+<codeline lineno="390"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AUTF8String<sp/>aValue);</highlight></codeline>
+<codeline lineno="391"><highlight class="normal"></highlight></codeline>
+<codeline lineno="397"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindStringParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
+<codeline lineno="398"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="399"><highlight class="normal"></highlight></codeline>
+<codeline lineno="405"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindDoubleParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
+<codeline lineno="406"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
+<codeline lineno="407"><highlight class="normal"></highlight></codeline>
+<codeline lineno="413"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindInt32Parameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
+<codeline lineno="414"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
 <codeline lineno="415"><highlight class="normal"></highlight></codeline>
-<codeline lineno="423"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>abort();</highlight></codeline>
-<codeline lineno="424"><highlight class="normal"></highlight></codeline>
-<codeline lineno="436" refid="interfacesb_i_database_query_173c479ffe53dd7fb140c6cfcd5351237" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rollingLimit;</highlight></codeline>
-<codeline lineno="437"><highlight class="normal"></highlight></codeline>
-<codeline lineno="441" refid="interfacesb_i_database_query_1237b7d8b7caaaa64457419fb9a44e566" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rollingLimitColumnIndex;</highlight></codeline>
-<codeline lineno="442"><highlight class="normal"></highlight></codeline>
-<codeline lineno="447" refid="interfacesb_i_database_query_1b55d514783349b725d3a4e2d21b4eaab" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>rollingLimitResult;</highlight></codeline>
-<codeline lineno="448"><highlight class="normal"></highlight></codeline>
-<codeline lineno="454"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindUTF8StringParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
-<codeline lineno="455"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AUTF8String<sp/>aValue);</highlight></codeline>
-<codeline lineno="456"><highlight class="normal"></highlight></codeline>
-<codeline lineno="462"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindStringParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
-<codeline lineno="463"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
-<codeline lineno="464"><highlight class="normal"></highlight></codeline>
-<codeline lineno="470"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindDoubleParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
-<codeline lineno="471"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
-<codeline lineno="472"><highlight class="normal"></highlight></codeline>
-<codeline lineno="478"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindInt32Parameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
-<codeline lineno="479"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
-<codeline lineno="480"><highlight class="normal"></highlight></codeline>
-<codeline lineno="486"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindInt64Parameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
-<codeline lineno="487"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
-<codeline lineno="488"><highlight class="normal"></highlight></codeline>
-<codeline lineno="493"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindNullParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex);</highlight></codeline>
-<codeline lineno="494"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="421"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindInt64Parameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex,</highlight></codeline>
+<codeline lineno="422"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aValue);</highlight></codeline>
+<codeline lineno="423"><highlight class="normal"></highlight></codeline>
+<codeline lineno="428"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>bindNullParameter(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aParamIndex);</highlight></codeline>
+<codeline lineno="429"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseQuery.idl"/>
   </compounddef>

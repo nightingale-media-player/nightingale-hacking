@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIDOMMouseEvent.idl</includes>
     <incdepgraph>
-      <node id="202">
-        <label>nsIDOMMouseEvent.idl</label>
-      </node>
-      <node id="200">
+      <node id="213">
         <label>components/integration/public/sbINativeWindowManager.idl</label>
         <link refid="sbINativeWindowManager.idl"/>
-        <childnode refid="201" relation="include">
+        <childnode refid="214" relation="include">
         </childnode>
-        <childnode refid="202" relation="include">
+        <childnode refid="215" relation="include">
         </childnode>
       </node>
-      <node id="201">
+      <node id="215">
+        <label>nsIDOMMouseEvent.idl</label>
+      </node>
+      <node id="214">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,7 +54,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsIDOMMouseEvent.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(77746f92-dfe5-4915-a3ae-ff2619c4b167)]</highlight></codeline>
+<codeline lineno="43"><highlight class="normal">[scriptable,<sp/>uuid(9646A45E-8E0C-49F9-901B-5FC6E4E522DB)]</highlight></codeline>
 <codeline lineno="44" refid="interfacesb_i_native_window_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_native_window_manager" kindref="compound" tooltip="interface to the operating system's window manager This Interfaces to allows JavaScript...">sbINativeWindowManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="45"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="46"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>constants<sp/>representing<sp/>resize<sp/>directions<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
@@ -80,16 +80,24 @@
 <codeline lineno="66"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>@aMinimumWidth<sp/>x<sp/>@aMinimumHeight<sp/></highlight></codeline>
 <codeline lineno="67"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="68"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setMinimumWindowSize(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/>PRInt32<sp/>aMinimumWidth,<sp/>in<sp/>PRInt32<sp/>aMinimumHeight);</highlight></codeline>
-<codeline lineno="69"><highlight class="normal"></highlight></codeline>
-<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setMinimumWindowSize()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="71" refid="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsMinimumWindowSize;</highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>asks<sp/>the<sp/>window<sp/>manager<sp/>to<sp/>keep<sp/>@aWindow<sp/>above<sp/>all<sp/>other<sp/>windows<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="74"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOnTop(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aOnTop);</highlight></codeline>
-<codeline lineno="75"><highlight class="normal"></highlight></codeline>
-<codeline lineno="76"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setOnTop()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="77" refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsOnTop;</highlight></codeline>
-<codeline lineno="78"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="70"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>set&apos;s<sp/>the<sp/>maximum<sp/>size<sp/>of<sp/>@aWindow<sp/>in<sp/>the<sp/>window<sp/>manager<sp/>to<sp/></highlight></codeline>
+<codeline lineno="71"><highlight class="comment"><sp/><sp/><sp/>*<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>@aMaximumWidth<sp/>x<sp/>@aMaximumHeight<sp/></highlight></codeline>
+<codeline lineno="72"><highlight class="comment"><sp/><sp/><sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setMaximumWindowSize(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/>PRInt32<sp/>aMaximumWidth,<sp/>in<sp/>PRInt32<sp/>aMaximumHeight);</highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
+<codeline lineno="75"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setMinimumWindowSize()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsMinimumWindowSize;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setMaximumWindowSize()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="79" refid="interfacesb_i_native_window_manager_181d7fdd63e8802f99838a89b7812dee8" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsMaximumWindowSize;</highlight></codeline>
+<codeline lineno="80"><highlight class="normal"></highlight></codeline>
+<codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>asks<sp/>the<sp/>window<sp/>manager<sp/>to<sp/>keep<sp/>@aWindow<sp/>above<sp/>all<sp/>other<sp/>windows<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOnTop(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aOnTop);</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setOnTop()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85" refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsOnTop;</highlight></codeline>
+<codeline lineno="86"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl"/>
   </compounddef>

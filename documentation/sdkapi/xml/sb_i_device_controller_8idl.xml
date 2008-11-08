@@ -10,44 +10,44 @@
     <includes local="yes">nsStringGlue.h</includes>
     <includes local="yes">nsXPCOMCID.h</includes>
     <incdepgraph>
-      <node id="97">
-        <label>components/devices/controller/public/sbIDeviceController.idl</label>
-        <link refid="sbIDeviceController.idl"/>
-        <childnode refid="98" relation="include">
-        </childnode>
-        <childnode refid="99" relation="include">
-        </childnode>
-        <childnode refid="100" relation="include">
-        </childnode>
-        <childnode refid="101" relation="include">
-        </childnode>
-        <childnode refid="102" relation="include">
-        </childnode>
-        <childnode refid="103" relation="include">
-        </childnode>
-        <childnode refid="104" relation="include">
-        </childnode>
-      </node>
-      <node id="103">
+      <node id="123">
         <label>nsStringGlue.h</label>
       </node>
-      <node id="101">
+      <node id="121">
         <label>nsICategoryManager.h</label>
       </node>
-      <node id="102">
+      <node id="122">
         <label>nsIServiceManager.h</label>
       </node>
-      <node id="99">
+      <node id="119">
         <label>nsCOMPtr.h</label>
       </node>
-      <node id="100">
+      <node id="120">
         <label>nsIComponentManager.h</label>
       </node>
-      <node id="98">
+      <node id="118">
         <label>nsISupports.idl</label>
       </node>
-      <node id="104">
+      <node id="124">
         <label>nsXPCOMCID.h</label>
+      </node>
+      <node id="117">
+        <label>components/devices/controller/public/sbIDeviceController.idl</label>
+        <link refid="sbIDeviceController.idl"/>
+        <childnode refid="118" relation="include">
+        </childnode>
+        <childnode refid="119" relation="include">
+        </childnode>
+        <childnode refid="120" relation="include">
+        </childnode>
+        <childnode refid="121" relation="include">
+        </childnode>
+        <childnode refid="122" relation="include">
+        </childnode>
+        <childnode refid="123" relation="include">
+        </childnode>
+        <childnode refid="124" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_controller" prot="public">sbIDeviceController</innerclass>

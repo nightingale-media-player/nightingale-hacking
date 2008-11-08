@@ -4,17 +4,69 @@
     <compoundname>sbIMediacoreManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="385">
-        <label>components/mediacore/manager/public/sbIMediacoreManager.idl</label>
+      <node id="425">
+        <label>components/mediacore/base/public/sbIMediacoreManager.idl</label>
         <link refid="sbIMediacoreManager.idl"/>
-        <childnode refid="386" relation="include">
+        <childnode refid="426" relation="include">
         </childnode>
       </node>
-      <node id="386">
+      <node id="426">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_mediacore_manager" prot="public">sbIMediacoreManager</innerclass>
+    <innerclass refid="interfacesb_p_i_mediacore_manager" prot="public">sbPIMediacoreManager</innerclass>
+      <sectiondef kind="define">
+      <memberdef kind="define" id="sb_i_mediacore_manager_8idl_1c1ef9ee4752a4cc58a7a0645b73bfecc" prot="public" static="no">
+        <name>SB_MEDIACOREMANAGER_DESCRIPTION</name>
+        <initializer>&quot;Songbird Mediacore Manager&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="116"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_mediacore_manager_8idl_12f65c0bc5fd036b39f4ac6f049ad8ad7" prot="public" static="no">
+        <name>SB_MEDIACOREMANAGER_CONTRACTID</name>
+        <initializer>&quot;@songbirdnest.com/Songbird/Mediacore/Manager;1&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="118"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_mediacore_manager_8idl_1618d36250a1c8257df70cc0719f550a8" prot="public" static="no">
+        <name>SB_MEDIACOREMANAGER_CLASSNAME</name>
+        <initializer>&quot;sbMediacoreManager&quot;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="120"/>
+      </memberdef>
+      <memberdef kind="define" id="sb_i_mediacore_manager_8idl_1aee3e4769374266e29375df82867d751" prot="public" static="no">
+        <name>SB_MEDIACOREMANAGER_CID</name>
+        <initializer>{ /*{47bb93c8-dba7-464b-8f93-8d71659ab127}*/  \
+  0x47bb93c8,                                 \
+  0xdba7,                                     \
+  0x464b,                                     \
+  { 0x8f, 0x93, 0x8d, 0x71, 0x65, 0x9a, 0xb1, 0x27 } \
+}</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="127"/>
+      </memberdef>
+      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
@@ -48,29 +100,72 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="27"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="28"><highlight class="normal"></highlight></codeline>
-<codeline lineno="29"><highlight class="normal">interface<sp/>nsIPropertyBag2;<sp/></highlight></codeline>
+<codeline lineno="29"><highlight class="normal">interface<sp/>nsIVariant;</highlight></codeline>
 <codeline lineno="30"><highlight class="normal"></highlight></codeline>
-<codeline lineno="31"><highlight class="normal">interface<sp/>sbIMediacoreAudioEQ;</highlight></codeline>
-<codeline lineno="32"><highlight class="normal">interface<sp/>sbIMediacoreBalanceControl;</highlight></codeline>
-<codeline lineno="33"><highlight class="normal"></highlight></codeline>
-<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref>;</highlight></codeline>
-<codeline lineno="35"><highlight class="normal">interface<sp/>sbIMediacoreVolumeControl;</highlight></codeline>
+<codeline lineno="31"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref>;</highlight></codeline>
+<codeline lineno="32"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_error" kindref="compound">sbIMediacoreError</ref>;</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref>;</highlight></codeline>
+<codeline lineno="34"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_simple_equalizer" kindref="compound">sbIMediacoreSimpleEqualizer</ref>;</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_balance_control" kindref="compound">sbIMediacoreBalanceControl</ref>;</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
-<codeline lineno="37"><highlight class="normal">interface<sp/>sbIMediacoreCapabilities;</highlight></codeline>
-<codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal">[scriptable,<sp/>uuid(c9eb7de1-87fc-4eea-886e-6202cae826bc)]</highlight></codeline>
-<codeline lineno="40" refid="interfacesb_i_mediacore_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_manager" kindref="compound">sbIMediacoreManager</ref><sp/>:<sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal"><sp/>nsISupports</highlight></codeline>
-<codeline lineno="41"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="42" refid="interfacesb_i_mediacore_manager_163fa5da7ffdfa66f9f0e3ea5610bffab" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreBalanceControl<sp/><sp/>balanceControl;</highlight></codeline>
-<codeline lineno="43" refid="interfacesb_i_mediacore_manager_18eb6531d7c58868a53babf847aae19af" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreVolumeControl<sp/><sp/><sp/>volumeControl;</highlight></codeline>
+<codeline lineno="37"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref>;</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_volume_control" kindref="compound">sbIMediacoreVolumeControl</ref>;</highlight></codeline>
+<codeline lineno="39"><highlight class="normal"></highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_capabilities" kindref="compound">sbIMediacoreCapabilities</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal"></highlight></codeline>
+<codeline lineno="43"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref>;</highlight></codeline>
 <codeline lineno="44"><highlight class="normal"></highlight></codeline>
-<codeline lineno="45" refid="interfacesb_i_mediacore_manager_19babe21fe1368459aeeda10d50428300" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreAudioEQ<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>equalizer;</highlight></codeline>
-<codeline lineno="46" refid="interfacesb_i_mediacore_manager_1da20e938700de3dc191863822211eac7" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref><sp/>playbackControl;</highlight></codeline>
-<codeline lineno="47"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48" refid="interfacesb_i_mediacore_manager_152bf143ca8e0ae07ff4645c0ff813d9b" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>sbIMediacoreCapabilities<sp/><sp/><sp/><sp/>capabilities;</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_i_mediacore_manager_1ec4a59693da51ee2fb393581e9262749" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>nsIPropertyBag2<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>properties;</highlight></codeline>
-<codeline lineno="50"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="45"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_video_window" kindref="compound">sbIMediacoreVideoWindow</ref>;</highlight></codeline>
+<codeline lineno="46"><highlight class="normal"></highlight></codeline>
+<codeline lineno="47"><highlight class="normal">[scriptable,<sp/>uuid(83373eeb-72c7-4612-93eb-3ea6a0a84eb6)]</highlight></codeline>
+<codeline lineno="48" refid="interfacesb_i_mediacore_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_mediacore_manager" kindref="compound">sbIMediacoreManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="56" refid="interfacesb_i_mediacore_manager_16c6ac5478e54513f76a1d12cdba83d3f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>primaryCore;</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"></highlight></codeline>
+<codeline lineno="58" refid="interfacesb_i_mediacore_manager_14b31b46aa055273e00f0f4877c6af93f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_balance_control" kindref="compound">sbIMediacoreBalanceControl</ref><sp/><sp/>balanceControl;</highlight></codeline>
+<codeline lineno="59" refid="interfacesb_i_mediacore_manager_1e6059c54ad6eea4849a03942f2f2f156" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_volume_control" kindref="compound">sbIMediacoreVolumeControl</ref><sp/><sp/><sp/>volumeControl;</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"></highlight></codeline>
+<codeline lineno="61" refid="interfacesb_i_mediacore_manager_14101ecec65c0b809d0178c3c4ded7c01" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_simple_equalizer" kindref="compound">sbIMediacoreSimpleEqualizer</ref><sp/>equalizer;</highlight></codeline>
+<codeline lineno="62" refid="interfacesb_i_mediacore_manager_14d710e46b0d1218f791d05989f29d8f5" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_playback_control" kindref="compound">sbIMediacorePlaybackControl</ref><sp/>playbackControl;</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"></highlight></codeline>
+<codeline lineno="64" refid="interfacesb_i_mediacore_manager_15316f957dcb5c1821740f41aa3ca2871" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_capabilities" kindref="compound">sbIMediacoreCapabilities</ref><sp/><sp/><sp/><sp/>capabilities;</highlight></codeline>
+<codeline lineno="65" refid="interfacesb_i_mediacore_manager_15aa4d0a2e956e27f66d1e6d710742581" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_status" kindref="compound">sbIMediacoreStatus</ref><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>status;</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="interfacesb_i_mediacore_manager_1689507ad9e06653da8c4ba66bf06063d" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_sequencer" kindref="compound">sbIMediacoreSequencer</ref><sp/>sequencer;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82" refid="interfacesb_i_mediacore_manager_16d833e34bd175091a3364856761376b2" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_mediacore_video_window" kindref="compound">sbIMediacoreVideoWindow</ref><sp/>video;</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"></highlight></codeline>
+<codeline lineno="101"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_mediacore_event" kindref="compound" tooltip="Definition of the sbIMediacoreEvent interface.">sbIMediacoreEvent</ref><sp/>createEvent(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aType,</highlight></codeline>
+<codeline lineno="102"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>aOrigin,</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>nsIVariant<sp/>aData,</highlight></codeline>
+<codeline lineno="104"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_mediacore_error" kindref="compound">sbIMediacoreError</ref><sp/>aError);</highlight></codeline>
+<codeline lineno="105"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="106"><highlight class="normal"></highlight></codeline>
+<codeline lineno="107"><highlight class="normal">[uuid(f1a8315a-d745-49e4-bea7-01d66e914f43)]</highlight></codeline>
+<codeline lineno="108" refid="interfacesb_p_i_mediacore_manager" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_p_i_mediacore_manager" kindref="compound">sbPIMediacoreManager</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="109"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="110"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setPrimaryCore(in<sp/><ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref><sp/>aMediacore);</highlight></codeline>
+<codeline lineno="111"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="112"><highlight class="normal"></highlight></codeline>
+<codeline lineno="113"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="114"><highlight class="normal"></highlight></codeline>
+<codeline lineno="115"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SB_MEDIACOREMANAGER_DESCRIPTION<sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="116"><highlight class="preprocessor"><sp/><sp/>&quot;Songbird<sp/>Mediacore<sp/>Manager&quot;</highlight></codeline>
+<codeline lineno="117"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_MEDIACOREMANAGER_CONTRACTID<sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="118"><highlight class="preprocessor"><sp/><sp/>&quot;@songbirdnest.com/Songbird/Mediacore/Manager;1&quot;</highlight></codeline>
+<codeline lineno="119"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_MEDIACOREMANAGER_CLASSNAME<sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="120"><highlight class="preprocessor"><sp/><sp/>&quot;sbMediacoreManager&quot;</highlight></codeline>
+<codeline lineno="121"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SB_MEDIACOREMANAGER_CID<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="122"><highlight class="preprocessor">{<sp/></highlight><highlight class="comment">/*{47bb93c8-dba7-464b-8f93-8d71659ab127}*/</highlight><highlight class="normal"><sp/><sp/>\</highlight></codeline>
+<codeline lineno="123"><highlight class="normal"><sp/><sp/>0x47bb93c8,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="124"><highlight class="normal"><sp/><sp/>0xdba7,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="125"><highlight class="normal"><sp/><sp/>0x464b,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="126"><highlight class="normal"><sp/><sp/>{<sp/>0x8f,<sp/>0x93,<sp/>0x8d,<sp/>0x71,<sp/>0x65,<sp/>0x9a,<sp/>0xb1,<sp/>0x27<sp/>}<sp/>\</highlight></codeline>
+<codeline lineno="127"><highlight class="normal">}</highlight></codeline>
+<codeline lineno="128"><highlight class="normal"></highlight></codeline>
+<codeline lineno="129"><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="c:/builds/songbird/trunk/components/mediacore/manager/public/sbIMediacoreManager.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl"/>
   </compounddef>
 </doxygen>

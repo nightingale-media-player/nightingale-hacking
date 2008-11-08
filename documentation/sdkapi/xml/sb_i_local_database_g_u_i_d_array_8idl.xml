@@ -5,25 +5,25 @@
     <includes local="yes">nsISupports.idl</includes>
     <includedby refid="sb_i_local_database_async_g_u_i_d_array_8idl" local="yes">components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</includedby>
     <incdepgraph>
-      <node id="322">
+      <node id="348">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="347">
         <label>components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl</label>
         <link refid="sbILocalDatabaseGUIDArray.idl"/>
-        <childnode refid="323" relation="include">
+        <childnode refid="348" relation="include">
         </childnode>
-      </node>
-      <node id="323">
-        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="325">
+      <node id="350">
         <label>components/library/localdatabase/public/sbILocalDatabaseAsyncGUIDArray.idl</label>
         <link refid="sb_i_local_database_async_g_u_i_d_array_8idl"/>
       </node>
-      <node id="324">
+      <node id="349">
         <label>components/library/localdatabase/public/sbILocalDatabaseGUIDArray.idl</label>
         <link refid="sbILocalDatabaseGUIDArray.idl"/>
-        <childnode refid="325" relation="include">
+        <childnode refid="350" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

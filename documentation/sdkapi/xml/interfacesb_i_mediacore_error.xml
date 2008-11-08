@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mediacore_error" kind="interface" prot="public">
+    <compoundname>sbIMediacoreError</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mediacore_error_18a6caf1c93a747c2a6228b2d137d9d44" prot="public" static="no" mutable="no">
+        <type>const unsigned long</type>
+        <definition>const unsigned long sbIMediacoreError::UNINITIALIZED</definition>
+        <argsstring></argsstring>
+        <name>UNINITIALIZED</name>
+        <initializer> 0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" line="32" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_error_1cb57f1ce56498819e42001d447810eda" prot="public" static="no" mutable="no">
+        <type>readonly attribute unsigned long</type>
+        <definition>readonly attribute unsigned long sbIMediacoreError::code</definition>
+        <argsstring></argsstring>
+        <name>code</name>
+        <briefdescription>
+<para>Error code. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" line="37" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_error_1c6a67e7deeec981be0203a5d2f4bb5e4" prot="public" static="no" mutable="no">
+        <type>readonly attribute AString</type>
+        <definition>readonly attribute AString sbIMediacoreError::message</definition>
+        <argsstring></argsstring>
+        <name>message</name>
+        <briefdescription>
+<para>Error message (human readable string, localized, preferably). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" bodystart="42" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" line="31" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreError.idl" bodystart="30" bodyend="43"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mediacore_error_1cb57f1ce56498819e42001d447810eda" prot="public" virt="non-virtual"><scope>sbIMediacoreError</scope><name>code</name></member>
+      <member refid="interfacesb_i_mediacore_error_1c6a67e7deeec981be0203a5d2f4bb5e4" prot="public" virt="non-virtual"><scope>sbIMediacoreError</scope><name>message</name></member>
+      <member refid="interfacesb_i_mediacore_error_18a6caf1c93a747c2a6228b2d137d9d44" prot="public" virt="non-virtual"><scope>sbIMediacoreError</scope><name>UNINITIALIZED</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

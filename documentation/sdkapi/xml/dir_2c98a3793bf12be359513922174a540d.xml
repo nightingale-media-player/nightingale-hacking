@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_2c98a3793bf12be359513922174a540d" kind="dir">
+    <compoundname>components/mediacore/base/test/</compoundname>
+    <innerfile refid="sb_i_test_mediacore_event_creator_8idl">sbITestMediacoreEventCreator.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/test/"/>
+  </compounddef>
+</doxygen>

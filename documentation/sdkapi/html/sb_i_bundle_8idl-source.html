@@ -107,42 +107,46 @@
 <a name="l00067"></a>00067 
 <a name="l00075"></a>00075   <span class="keywordtype">void</span> retrieveBundleData(in <span class="keywordtype">long</span> aTimeout);
 <a name="l00076"></a>00076 
-<a name="l00084"></a>00084   <span class="keywordtype">void</span> addBundleDataListener(in <a class="code" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> aListener);
-<a name="l00085"></a>00085 
-<a name="l00092"></a>00092   <span class="keywordtype">void</span> removeBundleDataListener(in <a class="code" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> aListener);
-<a name="l00093"></a>00093 
-<a name="l00101"></a><a class="code" href="interfacesb_i_bundle.html#b6b996c7a5349eaf31ca91b59839bf94">00101</a>   readonly attribute <span class="keywordtype">long</span> bundleDataStatus;
-<a name="l00102"></a><a class="code" href="interfacesb_i_bundle.html#de9a6b29fe8dbb1cd33c3a23a94a28a9">00102</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_DATA_STATUS_ERROR       = -1;
-<a name="l00103"></a><a class="code" href="interfacesb_i_bundle.html#27021decdb394e85da728f8a1731d2f9">00103</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_DATA_STATUS_DOWNLOADING = 0;
-<a name="l00104"></a><a class="code" href="interfacesb_i_bundle.html#3cdfdc33967a7055cc28e6cae651cbfc">00104</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_DATA_STATUS_SUCCESS     = 1;
-<a name="l00105"></a>00105 
-<a name="l00110"></a><a class="code" href="interfacesb_i_bundle.html#64e64e33811347aa26ce4db73a475966">00110</a>   readonly attribute nsIDOMDocument bundleDataDocument;
-<a name="l00111"></a>00111 
-<a name="l00116"></a><a class="code" href="interfacesb_i_bundle.html#872dfb6bfbaf33819d607488ce02bde2">00116</a>   readonly attribute AString bundleDataText;
-<a name="l00117"></a>00117 
-<a name="l00122"></a><a class="code" href="interfacesb_i_bundle.html#6f6788aa816aade7879cf249ba2dacd8">00122</a>   readonly attribute AString bundleDataVersion;
-<a name="l00123"></a>00123   
-<a name="l00128"></a><a class="code" href="interfacesb_i_bundle.html#8c78474d2172a000df84fc2436df7ed7">00128</a>   readonly attribute <span class="keywordtype">long</span> bundleExtensionCount; 
-<a name="l00129"></a>00129 
-<a name="l00138"></a>00138   AString getExtensionAttribute(in <span class="keywordtype">long</span> aIndex, in AString aAttributeName);
-<a name="l00139"></a>00139 
-<a name="l00149"></a>00149   <span class="keywordtype">boolean</span> getExtensionInstallFlag(in <span class="keywordtype">long</span> aIndex);
-<a name="l00150"></a>00150   
-<a name="l00157"></a>00157   <span class="keywordtype">void</span> setExtensionInstallFlag(in <span class="keywordtype">long</span> aIndex, in <span class="keywordtype">boolean</span> aInstallFlag);
-<a name="l00158"></a>00158   
-<a name="l00165"></a>00165   <span class="keywordtype">void</span> addBundleInstallListener(in <a class="code" href="interfacesb_i_bundle_install_listener.html" title="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</a> aListener);
-<a name="l00166"></a>00166 
-<a name="l00173"></a>00173   <span class="keywordtype">void</span> removeBundleInstallListener(in <a class="code" href="interfacesb_i_bundle_install_listener.html" title="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</a> aListener);
-<a name="l00174"></a>00174 
-<a name="l00187"></a>00187   <span class="keywordtype">long</span> installFlaggedExtensions(in nsIDOMWindow aWindow);
-<a name="l00188"></a><a class="code" href="interfacesb_i_bundle.html#afca9abb7d06f78cd3c82785a3fee84d">00188</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_INSTALL_ERROR = 0;
-<a name="l00189"></a><a class="code" href="interfacesb_i_bundle.html#937bb7e919cc05a6b151af54d1911b56">00189</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_INSTALL_SUCCESS = 1;
-<a name="l00190"></a>00190 
-<a name="l00197"></a><a class="code" href="interfacesb_i_bundle.html#41fc07c93014d9c2baf82f95f9763d6a">00197</a>   readonly attribute <span class="keywordtype">boolean</span> restartRequired;
-<a name="l00198"></a>00198 };
-<a name="l00199"></a>00199 
-<a name="l00200"></a>00200 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00080"></a>00080   <span class="keywordtype">void</span> retrieveLocalBundleData();
+<a name="l00081"></a>00081 
+<a name="l00089"></a>00089   <span class="keywordtype">void</span> addBundleDataListener(in <a class="code" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> aListener);
+<a name="l00090"></a>00090 
+<a name="l00097"></a>00097   <span class="keywordtype">void</span> removeBundleDataListener(in <a class="code" href="interfacesb_i_bundle_data_listener.html" title="Songbird Bundle Data Listener Interface.">sbIBundleDataListener</a> aListener);
+<a name="l00098"></a>00098 
+<a name="l00106"></a><a class="code" href="interfacesb_i_bundle.html#b6b996c7a5349eaf31ca91b59839bf94">00106</a>   readonly attribute <span class="keywordtype">long</span> bundleDataStatus;
+<a name="l00107"></a><a class="code" href="interfacesb_i_bundle.html#de9a6b29fe8dbb1cd33c3a23a94a28a9">00107</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_DATA_STATUS_ERROR       = -1;
+<a name="l00108"></a><a class="code" href="interfacesb_i_bundle.html#27021decdb394e85da728f8a1731d2f9">00108</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_DATA_STATUS_DOWNLOADING = 0;
+<a name="l00109"></a><a class="code" href="interfacesb_i_bundle.html#3cdfdc33967a7055cc28e6cae651cbfc">00109</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_DATA_STATUS_SUCCESS     = 1;
+<a name="l00110"></a>00110 
+<a name="l00115"></a><a class="code" href="interfacesb_i_bundle.html#64e64e33811347aa26ce4db73a475966">00115</a>   readonly attribute nsIDOMDocument bundleDataDocument;
+<a name="l00116"></a>00116 
+<a name="l00121"></a><a class="code" href="interfacesb_i_bundle.html#872dfb6bfbaf33819d607488ce02bde2">00121</a>   readonly attribute AString bundleDataText;
+<a name="l00122"></a>00122 
+<a name="l00127"></a><a class="code" href="interfacesb_i_bundle.html#6f6788aa816aade7879cf249ba2dacd8">00127</a>   readonly attribute AString bundleDataVersion;
+<a name="l00128"></a>00128   
+<a name="l00133"></a><a class="code" href="interfacesb_i_bundle.html#8c78474d2172a000df84fc2436df7ed7">00133</a>   readonly attribute <span class="keywordtype">long</span> bundleExtensionCount; 
+<a name="l00134"></a>00134 
+<a name="l00139"></a>00139   <span class="keywordtype">void</span> removeExtension(in <span class="keywordtype">long</span> aIndex);
+<a name="l00140"></a>00140 
+<a name="l00149"></a>00149   AString getExtensionAttribute(in <span class="keywordtype">long</span> aIndex, in AString aAttributeName);
+<a name="l00150"></a>00150 
+<a name="l00160"></a>00160   <span class="keywordtype">boolean</span> getExtensionInstallFlag(in <span class="keywordtype">long</span> aIndex);
+<a name="l00161"></a>00161   
+<a name="l00168"></a>00168   <span class="keywordtype">void</span> setExtensionInstallFlag(in <span class="keywordtype">long</span> aIndex, in <span class="keywordtype">boolean</span> aInstallFlag);
+<a name="l00169"></a>00169   
+<a name="l00176"></a>00176   <span class="keywordtype">void</span> addBundleInstallListener(in <a class="code" href="interfacesb_i_bundle_install_listener.html" title="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</a> aListener);
+<a name="l00177"></a>00177 
+<a name="l00184"></a>00184   <span class="keywordtype">void</span> removeBundleInstallListener(in <a class="code" href="interfacesb_i_bundle_install_listener.html" title="Songbird Bundle Installation Listener Interface.">sbIBundleInstallListener</a> aListener);
+<a name="l00185"></a>00185 
+<a name="l00198"></a>00198   <span class="keywordtype">long</span> installFlaggedExtensions(in nsIDOMWindow aWindow);
+<a name="l00199"></a><a class="code" href="interfacesb_i_bundle.html#afca9abb7d06f78cd3c82785a3fee84d">00199</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_INSTALL_ERROR = 0;
+<a name="l00200"></a><a class="code" href="interfacesb_i_bundle.html#937bb7e919cc05a6b151af54d1911b56">00200</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> BUNDLE_INSTALL_SUCCESS = 1;
+<a name="l00201"></a>00201 
+<a name="l00208"></a><a class="code" href="interfacesb_i_bundle.html#41fc07c93014d9c2baf82f95f9763d6a">00208</a>   readonly attribute <span class="keywordtype">boolean</span> restartRequired;
+<a name="l00209"></a>00209 };
+<a name="l00210"></a>00210 
+<a name="l00211"></a>00211 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:20 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

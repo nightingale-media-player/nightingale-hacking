@@ -96,20 +96,20 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_change" kindref="compound">sbIPropertyChange</ref> <ref refid="interfacesb_i_library_change" kindref="compound">sbILibraryChange</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="38">
+      <node id="49">
         <label>sbIPropertyChange</label>
         <link refid="interfacesb_i_property_change"/>
-        <childnode refid="36" relation="public-inheritance">
+        <childnode refid="47" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="36">
+      <node id="47">
         <label>sbIChangeOperation</label>
         <link refid="interfacesb_i_change_operation"/>
       </node>
-      <node id="37">
+      <node id="48">
         <label>sbILibraryChange</label>
         <link refid="interfacesb_i_library_change"/>
-        <childnode refid="36" relation="public-inheritance">
+        <childnode refid="47" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

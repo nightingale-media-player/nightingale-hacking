@@ -4,13 +4,13 @@
     <compoundname>sbPIBundle.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="21">
+      <node id="35">
         <label>components/bundle/public/sbPIBundle.idl</label>
         <link refid="sbPIBundle.idl"/>
-        <childnode refid="22" relation="include">
+        <childnode refid="36" relation="include">
         </childnode>
       </node>
-      <node id="22">
+      <node id="36">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -91,6 +91,10 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_instantiator.html#cee3b9b55640e8139f8f883442092081">contentIcon</a></td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIDOMWindow&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_instantiator.html#1969f3d7fc2febc5a0b9564f5020c75a">contentWindow</a></td></tr>
+
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsIDOMXULElement&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_instantiator.html#c2cf8e9d7601d91491566e2b61dd1e1a">displayPane</a></td></tr>
+
 <tr><td class="memItemLeft" nowrap align="right" valign="top">attribute PRBool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_instantiator.html#83507dfdfbdd7719fb886a3031031002">collapsed</a></td></tr>
 
 </table>
@@ -99,7 +103,7 @@ A display pane instantiator is a component that can render a display pane to the
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00085">85</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00087">87</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="578edd03f4fa56a6abece73d0a9b958c"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::loadContent" ref="578edd03f4fa56a6abece73d0a9b958c" args="(in sbIDisplayPaneContentInfo aPane)" -->
 <div class="memitem">
 <div class="memproto">
@@ -154,7 +158,7 @@ hide the pane (the user must load new content to show the pane again)
 <p>
 the content group this display pane instantiator supports 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00090">90</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00092">92</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="740116423b156990727d7f16a6449089"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::contentUrl" ref="740116423b156990727d7f16a6449089" args="" -->
@@ -171,7 +175,7 @@ Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l0009
 <p>
 the url of the currently displayed content 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00094">94</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00096">96</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="f626deaa807cd4e844f7301606a9eeac"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::contentTitle" ref="f626deaa807cd4e844f7301606a9eeac" args="" -->
@@ -188,7 +192,7 @@ Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l0009
 <p>
 the title of the currently displayed content 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00098">98</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00100">100</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="cee3b9b55640e8139f8f883442092081"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::contentIcon" ref="cee3b9b55640e8139f8f883442092081" args="" -->
@@ -205,7 +209,41 @@ Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l0009
 <p>
 the icon of the currently displayed content 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00102">102</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00104">104</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="1969f3d7fc2febc5a0b9564f5020c75a"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::contentWindow" ref="1969f3d7fc2febc5a0b9564f5020c75a" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute nsIDOMWindow <a class="el" href="interfacesb_i_display_pane_instantiator.html#1969f3d7fc2febc5a0b9564f5020c75a">sbIDisplayPaneInstantiator::contentWindow</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+the currently displayed contents; may be null 
+<p>
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00108">108</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="c2cf8e9d7601d91491566e2b61dd1e1a"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::displayPane" ref="c2cf8e9d7601d91491566e2b61dd1e1a" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute nsIDOMXULElement <a class="el" href="interfacesb_i_display_pane_instantiator.html#c2cf8e9d7601d91491566e2b61dd1e1a">sbIDisplayPaneInstantiator::displayPane</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+the display pane this content is loaded into 
+<p>
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00113">113</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="83507dfdfbdd7719fb886a3031031002"></a><!-- doxytag: member="sbIDisplayPaneInstantiator::collapsed" ref="83507dfdfbdd7719fb886a3031031002" args="" -->
@@ -222,12 +260,12 @@ Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l0010
 <p>
 collapse the pane (the user can uncollapse without loading new content) 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00115">115</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00126">126</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/displaypanes/public/<a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:37 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:30 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

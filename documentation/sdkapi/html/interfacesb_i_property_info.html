@@ -83,11 +83,12 @@
 <map name="sbIPropertyInfo_map">
 <area href="interfacesb_i_boolean_property_info.html" alt="sbIBooleanPropertyInfo" shape="rect" coords="0,56,149,80">
 <area href="interfacesb_i_datetime_property_info.html" alt="sbIDatetimePropertyInfo" shape="rect" coords="159,56,308,80">
-<area href="interfacesb_i_duration_property_info.html" alt="sbIDurationPropertyInfo" shape="rect" coords="318,56,467,80">
-<area href="interfacesb_i_number_property_info.html" alt="sbINumberPropertyInfo" shape="rect" coords="477,56,626,80">
-<area href="interfacesb_i_text_property_info.html" alt="sbITextPropertyInfo" shape="rect" coords="636,56,785,80">
-<area href="interfacesb_i_u_r_i_property_info.html" alt="sbIURIPropertyInfo" shape="rect" coords="795,56,944,80">
-<area href="interfacesb_i_progress_property_info.html" alt="sbIProgressPropertyInfo" shape="rect" coords="636,112,785,136">
+<area href="interfacesb_i_dummy_property_info.html" alt="sbIDummyPropertyInfo" shape="rect" coords="318,56,467,80">
+<area href="interfacesb_i_duration_property_info.html" alt="sbIDurationPropertyInfo" shape="rect" coords="477,56,626,80">
+<area href="interfacesb_i_number_property_info.html" alt="sbINumberPropertyInfo" shape="rect" coords="636,56,785,80">
+<area href="interfacesb_i_text_property_info.html" alt="sbITextPropertyInfo" shape="rect" coords="795,56,944,80">
+<area href="interfacesb_i_u_r_i_property_info.html" alt="sbIURIPropertyInfo" shape="rect" coords="954,56,1103,80">
+<area href="interfacesb_i_progress_property_info.html" alt="sbIProgressPropertyInfo" shape="rect" coords="795,112,944,136">
 </map>
 <a href="interfacesb_i_property_info-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
@@ -173,9 +174,9 @@ const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class=
 attribute unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#ef29192fd04343a208b31f975f6224f8">nullSort</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Set where NULL values get sorted to. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#5928b8ba0b6b86690f8805159f42321b">sortProfile</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#9912ef5315f7712b867c80de2a472266">secondarySort</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Sort profile to be used.  <a href="#5928b8ba0b6b86690f8805159f42321b"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">When sorting by this property, additionally sort by the following properties.  <a href="#9912ef5315f7712b867c80de2a472266"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="61817d7ea202ecab4269758576035d40"></a><!-- doxytag: member="sbIPropertyInfo::id" ref="61817d7ea202ecab4269758576035d40" args="" -->
 attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#61817d7ea202ecab4269758576035d40">id</a></td></tr>
 
@@ -358,28 +359,30 @@ Formats the value to enable proper sorting.
 </div>
 </div><p>
 <hr><h2>Member Data Documentation</h2>
-<a class="anchor" name="5928b8ba0b6b86690f8805159f42321b"></a><!-- doxytag: member="sbIPropertyInfo::sortProfile" ref="5928b8ba0b6b86690f8805159f42321b" args="" -->
+<a class="anchor" name="9912ef5315f7712b867c80de2a472266"></a><!-- doxytag: member="sbIPropertyInfo::secondarySort" ref="9912ef5315f7712b867c80de2a472266" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">attribute <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> <a class="el" href="interfacesb_i_property_info.html#5928b8ba0b6b86690f8805159f42321b">sbIPropertyInfo::sortProfile</a>          </td>
+          <td class="memname">attribute <a class="el" href="interfacesb_i_property_array.html">sbIPropertyArray</a> <a class="el" href="interfacesb_i_property_info.html#9912ef5315f7712b867c80de2a472266">sbIPropertyInfo::secondarySort</a>          </td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
 <p>
-Sort profile to be used. 
+When sorting by this property, additionally sort by the following properties. 
 <p>
-This is a list of columns to sort by for a peculiar property. For example, when sorting by artist, you typically want to sort by Artist, Album and Track No. 
+A secondary list of columns to sort by for a particular property. For example, when sorting by artist, you typically want to sort by Artist, Album and Track No.<p>
+This attribute is provided as a hint and optimization only. If you want control over how a table of properties is sorted, specify it on the view.<p>
+NOTE: Setting this attribute after a property has already been registered with the manager may not work as expected. This is a shortcoming of the architecture and will be fixed with Bug 12677 – "[sorting] cached sortable values should invalidate when property implementations change" If you need to change the secondary sort for a property that may already be cached in the db, check out sbILocalDatabasePropertyCache.InvalidateSortData() 
 <p>
-Definition at line <a class="el" href="sb_i_property_manager_8idl-source.html#l00185">185</a> of file <a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a>.
+Definition at line <a class="el" href="sb_i_property_manager_8idl-source.html#l00199">199</a> of file <a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:41 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:38 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

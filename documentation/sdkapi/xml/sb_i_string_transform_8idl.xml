@@ -4,14 +4,14 @@
     <compoundname>sbIStringTransform.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="205">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="204">
+      <node id="217">
         <label>components/intl/public/sbIStringTransform.idl</label>
         <link refid="sbIStringTransform.idl"/>
-        <childnode refid="205" relation="include">
+        <childnode refid="218" relation="include">
         </childnode>
+      </node>
+      <node id="218">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_string_transform" prot="public">sbIStringTransform</innerclass>

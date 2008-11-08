@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_mediacore_video_window" kind="interface" prot="public">
+    <compoundname>sbIMediacoreVideoWindow</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_mediacore_video_window_1f67b9613991a9479fb91cd53c011198b" prot="public" static="no" mutable="no">
+        <type>attribute boolean</type>
+        <definition>attribute boolean sbIMediacoreVideoWindow::fullscreen</definition>
+        <argsstring></argsstring>
+        <name>fullscreen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="35" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="35" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_mediacore_video_window_191996a3181689378e0437aca910d0b66" prot="public" static="no" mutable="no">
+        <type>attribute nsIDOMXULElement</type>
+        <definition>attribute nsIDOMXULElement sbIMediacoreVideoWindow::videoWindow</definition>
+        <argsstring></argsstring>
+        <name>videoWindow</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="36" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="36" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" line="34" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVideoWindow.idl" bodystart="33" bodyend="37"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_mediacore_video_window_1f67b9613991a9479fb91cd53c011198b" prot="public" virt="non-virtual"><scope>sbIMediacoreVideoWindow</scope><name>fullscreen</name></member>
+      <member refid="interfacesb_i_mediacore_video_window_191996a3181689378e0437aca910d0b66" prot="public" virt="non-virtual"><scope>sbIMediacoreVideoWindow</scope><name>videoWindow</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

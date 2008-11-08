@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_p_i_mediacore_manager" kind="interface" prot="public">
+    <compoundname>sbPIMediacoreManager</compoundname>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="interfacesb_p_i_mediacore_manager_19ce0dd1bb47b2eb05c259bcf21c68bf7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbPIMediacoreManager::setPrimaryCore</definition>
+        <argsstring>(in sbIMediacore aMediacore)</argsstring>
+        <name>setPrimaryCore</name>
+        <param>
+          <type>in <ref refid="interfacesb_i_mediacore" kindref="compound">sbIMediacore</ref></type>
+          <declname>aMediacore</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="110"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" line="109" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreManager.idl" bodystart="108" bodyend="111"/>
+    <listofallmembers>
+      <member refid="interfacesb_p_i_mediacore_manager_19ce0dd1bb47b2eb05c259bcf21c68bf7" prot="public" virt="non-virtual"><scope>sbPIMediacoreManager</scope><name>setPrimaryCore</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

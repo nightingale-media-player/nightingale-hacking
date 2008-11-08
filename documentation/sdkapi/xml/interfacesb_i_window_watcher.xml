@@ -59,7 +59,7 @@
 <parametername>aWait</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>If true, wait until calback is called. </para></parameterdescription>
+<para>If true, wait until callback is called. </para></parameterdescription>
 </parameteritem>
 </parameterlist>
 </para>        </detaileddescription>

@@ -5,44 +5,44 @@
     <includes refid="sb_i_media_list_8idl" local="yes">sbIMediaList.idl</includes>
     <includedby refid="sb_i_device_library_8idl" local="yes">components/devices/base/public/sbIDeviceLibrary.idl</includedby>
     <incdepgraph>
-      <node id="222">
-        <label>sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="223" relation="include">
-        </childnode>
-      </node>
-      <node id="223">
-        <label>sbIMediaItem.idl</label>
-        <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="224" relation="include">
-        </childnode>
-      </node>
-      <node id="221">
-        <label>components/library/base/public/sbILibrary.idl</label>
-        <link refid="sbILibrary.idl"/>
-        <childnode refid="222" relation="include">
-        </childnode>
-      </node>
-      <node id="225">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="224">
+      <node id="240">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="225" relation="include">
+        <childnode refid="241" relation="include">
+        </childnode>
+      </node>
+      <node id="237">
+        <label>components/library/base/public/sbILibrary.idl</label>
+        <link refid="sbILibrary.idl"/>
+        <childnode refid="238" relation="include">
+        </childnode>
+      </node>
+      <node id="239">
+        <label>sbIMediaItem.idl</label>
+        <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="240" relation="include">
+        </childnode>
+      </node>
+      <node id="241">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="238">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="239" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="227">
-        <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
-        <link refid="sb_i_device_library_8idl-source"/>
-      </node>
-      <node id="226">
+      <node id="242">
         <label>components/library/base/public/sbILibrary.idl</label>
         <link refid="sbILibrary.idl"/>
-        <childnode refid="227" relation="include">
+        <childnode refid="243" relation="include">
         </childnode>
+      </node>
+      <node id="243">
+        <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
+        <link refid="sb_i_device_library_8idl-source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_batch_create_media_items_listener" prot="public">sbIBatchCreateMediaItemsListener</innerclass>

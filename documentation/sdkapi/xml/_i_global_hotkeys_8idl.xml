@@ -4,13 +4,13 @@
     <compoundname>IGlobalHotkeys.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="174">
+      <node id="189">
         <label>components/integration/public/IGlobalHotkeys.idl</label>
         <link refid="IGlobalHotkeys.idl"/>
-        <childnode refid="175" relation="include">
+        <childnode refid="190" relation="include">
         </childnode>
       </node>
-      <node id="175">
+      <node id="190">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

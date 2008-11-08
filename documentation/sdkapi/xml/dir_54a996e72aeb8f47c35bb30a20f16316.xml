@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_54a996e72aeb8f47c35bb30a20f16316" kind="dir">
+    <compoundname>components/mediaimport/filescan/public/</compoundname>
+    <innerfile refid="sb_i_file_scan_8idl">sbIFileScan.idl</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/mediaimport/filescan/public/"/>
+  </compounddef>
+</doxygen>

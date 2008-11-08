@@ -5,39 +5,39 @@
     <includes refid="sb_i_library_8idl" local="yes">sbILibrary.idl</includes>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="75">
-        <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
-        <link refid="sbIDeviceLibrary.idl"/>
-        <childnode refid="76" relation="include">
-        </childnode>
-        <childnode refid="80" relation="include">
-        </childnode>
-      </node>
-      <node id="77">
-        <label>sbIMediaList.idl</label>
-        <link refid="sb_i_media_list_8idl"/>
-        <childnode refid="78" relation="include">
-        </childnode>
-      </node>
-      <node id="78">
-        <label>sbIMediaItem.idl</label>
-        <link refid="sb_i_media_item_8idl"/>
-        <childnode refid="79" relation="include">
-        </childnode>
-      </node>
-      <node id="76">
-        <label>sbILibrary.idl</label>
-        <link refid="sb_i_library_8idl"/>
-        <childnode refid="77" relation="include">
-        </childnode>
-      </node>
-      <node id="80">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="79">
+      <node id="99">
         <label>sbILibraryResource.idl</label>
         <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="80" relation="include">
+        <childnode refid="100" relation="include">
+        </childnode>
+      </node>
+      <node id="96">
+        <label>sbILibrary.idl</label>
+        <link refid="sb_i_library_8idl"/>
+        <childnode refid="97" relation="include">
+        </childnode>
+      </node>
+      <node id="95">
+        <label>components/devices/base/public/sbIDeviceLibrary.idl</label>
+        <link refid="sbIDeviceLibrary.idl"/>
+        <childnode refid="96" relation="include">
+        </childnode>
+        <childnode refid="100" relation="include">
+        </childnode>
+      </node>
+      <node id="98">
+        <label>sbIMediaItem.idl</label>
+        <link refid="sb_i_media_item_8idl"/>
+        <childnode refid="99" relation="include">
+        </childnode>
+      </node>
+      <node id="100">
+        <label>nsISupports.idl</label>
+      </node>
+      <node id="97">
+        <label>sbIMediaList.idl</label>
+        <link refid="sb_i_media_list_8idl"/>
+        <childnode refid="98" relation="include">
         </childnode>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>sbIWindowWatcher.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="500">
+      <node id="572">
         <label>components/moz/windowwatcher/public/sbIWindowWatcher.idl</label>
         <link refid="sbIWindowWatcher.idl"/>
-        <childnode refid="501" relation="include">
+        <childnode refid="573" relation="include">
         </childnode>
       </node>
-      <node id="501">
+      <node id="573">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>sbIDatabaseEngine.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="37">
+      <node id="54">
         <label>components/dbengine/public/sbIDatabaseEngine.idl</label>
         <link refid="sbIDatabaseEngine.idl"/>
-        <childnode refid="38" relation="include">
+        <childnode refid="55" relation="include">
         </childnode>
       </node>
-      <node id="38">
+      <node id="55">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="35"/>
+        <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="38"/>
       </memberdef>
       <memberdef kind="function" id="sb_i_database_engine_8idl_15f70f38416be16bf454016cc431af791" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>native</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="36"/>
+        <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl" line="39"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -83,18 +83,25 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="33"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal">[ptr]<sp/>native<sp/>CDatabaseQueryPtr(CDatabaseQuery);</highlight></codeline>
-<codeline lineno="36"><highlight class="normal">[ref]<sp/>native<sp/>stlCStringRef(std::string);</highlight></codeline>
+<codeline lineno="35"><highlight class="normal">interface<sp/>nsIFile;</highlight></codeline>
+<codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight></codeline>
-<codeline lineno="46"><highlight class="normal">[uuid(3E3D92D6-EF65-4b76-8670-93A025C3D76B)]</highlight></codeline>
-<codeline lineno="47" refid="interfacesb_i_database_engine" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_engine" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="48"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>AddPersistentQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery,<sp/>in<sp/>ACString<sp/>aTableName);</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"></highlight></codeline>
-<codeline lineno="63"><highlight class="normal"><sp/><sp/>[noscript]<sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>RemovePersistentQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="71"><highlight class="normal"><sp/><sp/>[noscript]<sp/>PRInt32<sp/>SubmitQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
-<codeline lineno="72"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="38"><highlight class="normal">[ptr]<sp/>native<sp/>CDatabaseQueryPtr(CDatabaseQuery);</highlight></codeline>
+<codeline lineno="39"><highlight class="normal">[ref]<sp/>native<sp/>stlCStringRef(std::string);</highlight></codeline>
+<codeline lineno="40"><highlight class="normal"></highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(35e0ae00-ac6e-11dd-ad8b-0800200c9a66)]</highlight></codeline>
+<codeline lineno="50" refid="interfacesb_i_database_engine" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_engine" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="51"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"><sp/><sp/>[noscript]<sp/>PRInt32<sp/>SubmitQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
+<codeline lineno="59"><highlight class="normal"></highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>closeDatabase(in<sp/>AString<sp/>aDatabaseGUID);</highlight></codeline>
+<codeline lineno="68"><highlight class="normal"></highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>dumpDatabase(in<sp/>AString<sp/>aDatabaseGUID,<sp/>in<sp/>nsIFile<sp/>aOutFile);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>dumpMemoryStatistics();</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>releaseMemory();</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl"/>
   </compounddef>

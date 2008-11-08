@@ -91,6 +91,8 @@
 
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_display_pane_content_info.html">sbIDisplayPaneContentInfo</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_manager.html#96c51337b067b102d7bbdb7e098d8aee">getPaneInfo</a> (in AString aContentUrl)</td></tr>
 
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_display_pane_instantiator.html">sbIDisplayPaneInstantiator</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_manager.html#c51eacd573e1867e78dcd10e6058e150">getInstantiatorForWindow</a> (in nsIDOMWindow aWindow)</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute nsISimpleEnumerator&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_display_pane_manager.html#e296e5a8eb75a06b0b7451c49255b88b">contentList</a></td></tr>
 
@@ -108,7 +110,7 @@ app/content/bindings/displayPane.xml </dd></dl>
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00146">146</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00157">157</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="7acb4de11281b8293f48687fd8c1c6ab"></a><!-- doxytag: member="sbIDisplayPaneManager::registerInstantiator" ref="7acb4de11281b8293f48687fd8c1c6ab" args="(in sbIDisplayPaneInstantiator aInstantiator)" -->
 <div class="memitem">
 <div class="memproto">
@@ -284,6 +286,26 @@ show previously registered content with the given url using the first instantiat
 get the previously registed content information given its url 
 </div>
 </div><p>
+<a class="anchor" name="c51eacd573e1867e78dcd10e6058e150"></a><!-- doxytag: member="sbIDisplayPaneManager::getInstantiatorForWindow" ref="c51eacd573e1867e78dcd10e6058e150" args="(in nsIDOMWindow aWindow)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="interfacesb_i_display_pane_instantiator.html">sbIDisplayPaneInstantiator</a> sbIDisplayPaneManager::getInstantiatorForWindow           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIDOMWindow&nbsp;</td>
+          <td class="paramname"> <em>aWindow</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+get the instantiator the given window belongs to 
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
 <a class="anchor" name="e296e5a8eb75a06b0b7451c49255b88b"></a><!-- doxytag: member="sbIDisplayPaneManager::contentList" ref="e296e5a8eb75a06b0b7451c49255b88b" args="" -->
 <div class="memitem">
@@ -299,7 +321,7 @@ get the previously registed content information given its url
 <p>
 enumerate through the registered content; each element is a <a class="el" href="interfacesb_i_display_pane_content_info.html" title="Information needed for a display pane to be instantiated.">sbIDisplayPaneContentInfo</a> 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00192">192</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00203">203</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="8f11d1e5a2f06bf5bc8c37fbb4756e8d"></a><!-- doxytag: member="sbIDisplayPaneManager::instantiatorsList" ref="8f11d1e5a2f06bf5bc8c37fbb4756e8d" args="" -->
@@ -316,7 +338,7 @@ Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l0019
 <p>
 enumerate through the registered instantiatorsl each element is a <a class="el" href="interfacesb_i_display_pane_instantiator.html">sbIDisplayPaneInstantiator</a> 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00197">197</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00208">208</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="c87db1fbfe5a04f3bc2a49222cbcfda6"></a><!-- doxytag: member="sbIDisplayPaneManager::defaultPaneInfo" ref="c87db1fbfe5a04f3bc2a49222cbcfda6" args="" -->
@@ -333,12 +355,12 @@ Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l0019
 <p>
 Pane info for the default panes that appear when the display panes are shown before choosing a pane to view. 
 <p>
-Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00211">211</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
+Definition at line <a class="el" href="sb_i_display_panes_8idl-source.html#l00227">227</a> of file <a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/displaypanes/public/<a class="el" href="sb_i_display_panes_8idl-source.html">sbIDisplayPanes.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:37 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:30 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

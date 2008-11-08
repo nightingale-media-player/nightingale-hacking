@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="dir_3cf5d84ffd9f8177a7cd6a3d3318edd0" kind="dir">
+    <compoundname>components/moz/temporaryfileservice/</compoundname>
+    <innerdir refid="dir_bc854a2449471984349f1fb2c1ae3f85">components/moz/temporaryfileservice/public/</innerdir>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/moz/temporaryfileservice/"/>
+  </compounddef>
+</doxygen>

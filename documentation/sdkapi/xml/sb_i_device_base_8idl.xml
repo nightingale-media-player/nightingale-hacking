@@ -3,42 +3,35 @@
   <compounddef id="sb_i_device_base_8idl" kind="file">
     <compoundname>sbIDeviceBase.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
-    <includedby refid="sb_i_c_d_device_8idl" local="yes">components/devicesobsolete/cd/public/sbICDDevice.idl</includedby>
     <includedby refid="sb_i_download_device_8idl" local="yes">components/devicesobsolete/download/public/sbIDownloadDevice.idl</includedby>
     <includedby refid="sb_i_w_m_device_8idl" local="yes">components/devicesobsolete/wm/public/sbIWMDevice.idl</includedby>
     <incdepgraph>
-      <node id="129">
+      <node id="149">
         <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
         <link refid="sbIDeviceBase.idl"/>
-        <childnode refid="130" relation="include">
+        <childnode refid="150" relation="include">
         </childnode>
       </node>
-      <node id="130">
+      <node id="150">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="131">
-        <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
-        <link refid="sbIDeviceBase.idl"/>
-        <childnode refid="132" relation="include">
-        </childnode>
-        <childnode refid="133" relation="include">
-        </childnode>
-        <childnode refid="134" relation="include">
-        </childnode>
+      <node id="153">
+        <label>components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
+        <link refid="sb_i_w_m_device_8idl"/>
       </node>
-      <node id="133">
+      <node id="152">
         <label>components/devicesobsolete/download/public/sbIDownloadDevice.idl</label>
         <link refid="sb_i_download_device_8idl"/>
       </node>
-      <node id="132">
-        <label>components/devicesobsolete/cd/public/sbICDDevice.idl</label>
-        <link refid="sb_i_c_d_device_8idl"/>
-      </node>
-      <node id="134">
-        <label>components/devicesobsolete/wm/public/sbIWMDevice.idl</label>
-        <link refid="sb_i_w_m_device_8idl"/>
+      <node id="151">
+        <label>components/devicesobsolete/base/public/sbIDeviceBase.idl</label>
+        <link refid="sbIDeviceBase.idl"/>
+        <childnode refid="152" relation="include">
+        </childnode>
+        <childnode refid="153" relation="include">
+        </childnode>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_device_base_callback" prot="public">sbIDeviceBaseCallback</innerclass>

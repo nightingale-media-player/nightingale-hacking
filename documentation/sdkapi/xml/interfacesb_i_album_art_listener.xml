@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_album_art_listener" kind="interface" prot="public">
+    <compoundname>sbIAlbumArtListener</compoundname>
+    <includes refid="sb_i_album_art_listener_8idl" local="no">sbIAlbumArtListener.idl</includes>
+    <briefdescription>
+<para>A component which is interested in the result of an album art fetch request. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="see"><para><ref refid="interfacesb_i_album_art_fetcher" kindref="compound">sbIAlbumArtFetcher</ref> XXXeps stub for now </para></simplesect>
+</para>    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" line="50" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl" bodystart="49" bodyend="51"/>
+    <listofallmembers>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

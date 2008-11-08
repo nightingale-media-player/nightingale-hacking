@@ -80,6 +80,9 @@
 <p>
 <a href="interfacesb_i_local_database_property_cache-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_property_cache.html#4138dccf04bc49deb3b951f830a154af">invalidateSortData</a> ()</td></tr>
+
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="5a6b9b8aa317b65ff06098b795fbcd81"></a><!-- doxytag: member="sbILocalDatabasePropertyCache::writePending" ref="5a6b9b8aa317b65ff06098b795fbcd81" args="" -->
 readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_local_database_property_cache.html#5a6b9b8aa317b65ff06098b795fbcd81">writePending</a></td></tr>
@@ -90,9 +93,31 @@ readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_local_database_property_cache_8idl-source.html#l00043">43</a> of file <a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_local_database_property_cache_8idl-source.html#l00042">42</a> of file <a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="4138dccf04bc49deb3b951f830a154af"></a><!-- doxytag: member="sbILocalDatabasePropertyCache::invalidateSortData" ref="4138dccf04bc49deb3b951f830a154af" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a> sbILocalDatabasePropertyCache::invalidateSortData           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Used to rebuild all sortable and secondary sortable data in the library. Should be called any time the GetSecondarySort or MakeSortable functions of an <a class="el" href="interfacesb_i_property_info.html" title="An interface used to describe a metadata property for use by the UI and other sbILibrary...">sbIPropertyInfo</a> implementation are changed.<p>
+See Bug 12677 – "[sorting] cached sortable values should auto-invalidate when property implementations change"<p>
+Example: var mainLibrary = Cc["@songbirdnest.com/Songbird/library/Manager;1"] .getService(Ci.sbILibraryManager).mainLibrary; var cache = mainLibrary.QueryInterface(Ci.sbILocalDatabaseLibrary) .propertyCache; Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm"); SBJobUtils.showProgressDialog(cache.invalidateSortData(), null, 0); 
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/library/localdatabase/public/<a class="el" href="sb_i_local_database_property_cache_8idl-source.html">sbILocalDatabasePropertyCache.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:39 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:33 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -66,7 +66,7 @@
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
-<h1>components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl</h1><a href="sb_i_g_streamer_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
+<h1>components/mediacore/gstreamer/public/sbIGStreamerService.idl</h1><a href="sb_i_g_streamer_service_8idl.html">Go to the documentation of this file.</a><div class="fragment"><pre class="fragment"><a name="l00001"></a>00001 <span class="comment">/*</span>
 <a name="l00002"></a>00002 <span class="comment">//</span>
 <a name="l00003"></a>00003 <span class="comment">// BEGIN SONGBIRD GPL</span>
 <a name="l00004"></a>00004 <span class="comment">//</span>
@@ -94,7 +94,7 @@
 <a name="l00026"></a>00026 
 <a name="l00031"></a>00031 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00032"></a>00032 
-<a name="l00033"></a>00033 [scriptable, uuid(d7bae616-9e4a-4be1-a294-09c850eb9ab1)]
+<a name="l00033"></a>00033 [scriptable, uuid(880347ab-710f-426f-a57c-56e81fff3ee6)]
 <a name="l00034"></a><a class="code" href="interfacesb_i_g_streamer_inspect_handler.html">00034</a> interface <a class="code" href="interfacesb_i_g_streamer_inspect_handler.html">sbIGStreamerInspectHandler</a> : nsISupports
 <a name="l00035"></a>00035 {
 <a name="l00036"></a>00036   <span class="keywordtype">void</span> beginInspect();
@@ -111,45 +111,46 @@
 <a name="l00047"></a>00047 
 <a name="l00048"></a>00048   <span class="keywordtype">void</span> endPluginInfo();
 <a name="l00049"></a>00049 
-<a name="l00050"></a>00050   <span class="keywordtype">void</span> beginFactoryInfo(in ACString aLongName,
-<a name="l00051"></a>00051                         in ACString aClass,
-<a name="l00052"></a>00052                         in ACString aDescription,
-<a name="l00053"></a>00053                         in ACString aAuthor,
-<a name="l00054"></a>00054                         in ACString aRankName,
-<a name="l00055"></a>00055                         in <span class="keywordtype">long</span> aRank);
-<a name="l00056"></a>00056   <span class="keywordtype">void</span> endFactoryInfo();
-<a name="l00057"></a>00057 
-<a name="l00058"></a>00058   <span class="keywordtype">void</span> beginPadTemplateInfo(in ACString aName,
-<a name="l00059"></a>00059                             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDirection,
-<a name="l00060"></a>00060                             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPresence,
-<a name="l00061"></a>00061                             in ACString aCodecDescription);
-<a name="l00062"></a>00062   <span class="keywordtype">void</span> endPadTemplateInfo();
-<a name="l00063"></a>00063 };
-<a name="l00064"></a>00064 
-<a name="l00068"></a>00068 [scriptable, uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]
-<a name="l00069"></a><a class="code" href="interfacesb_i_g_streamer_service.html">00069</a> interface <a class="code" href="interfacesb_i_g_streamer_service.html">sbIGStreamerService</a> : nsISupports
-<a name="l00070"></a>00070 {
-<a name="l00071"></a><a class="code" href="interfacesb_i_g_streamer_service.html#4aade25de74c1ff6bb3e486e369446a1">00071</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_UNKNOWN = 0;
-<a name="l00072"></a><a class="code" href="interfacesb_i_g_streamer_service.html#beb715363cf06a28e74775c4de15be08">00072</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_SRC     = 1;
-<a name="l00073"></a><a class="code" href="interfacesb_i_g_streamer_service.html#3baee414464ebd6aa06b1a2673bbb348">00073</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_SINK    = 2;
-<a name="l00074"></a>00074 
-<a name="l00075"></a><a class="code" href="interfacesb_i_g_streamer_service.html#c72c851a256bf9ebb033290c5f0a1946">00075</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_PRESENCE_ALWAYS    = 0;
-<a name="l00076"></a><a class="code" href="interfacesb_i_g_streamer_service.html#a6bba6bc63d10570066b873e7d35b915">00076</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_PRESENCE_SOMETIMES = 1;
-<a name="l00077"></a><a class="code" href="interfacesb_i_g_streamer_service.html#19072192e938629e52b31a30d8f2c2f3">00077</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_PRESENCE_REQUEST   = 2;
-<a name="l00078"></a>00078 
-<a name="l00079"></a>00079   <span class="keywordtype">void</span> inspect(in <a class="code" href="interfacesb_i_g_streamer_inspect_handler.html">sbIGStreamerInspectHandler</a> aHandler);
-<a name="l00080"></a>00080 };
-<a name="l00081"></a>00081 
-<a name="l00082"></a>00082 %{C++
-<a name="l00083"></a>00083 <span class="comment">// {c27f50c0-6dae-45ee-883e-24fd3b30254b}</span>
-<a name="l00084"></a>00084 <span class="preprocessor">#define SBGSTREAMERSERVICE_CID \</span>
-<a name="l00085"></a>00085 <span class="preprocessor">  { 0xc27f50c0, 0x6dae, 0x45ee,                               \</span>
-<a name="l00086"></a>00086 <span class="preprocessor">  { 0x88, 0x3e, 0x24, 0xfd, 0x3b, 0x30, 0x25, 0x4b } }</span>
-<a name="l00087"></a>00087 <span class="preprocessor"></span>
-<a name="l00088"></a>00088 <span class="preprocessor">#define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Playback/GStreamer/Service;1"</span>
-<a name="l00089"></a>00089 <span class="preprocessor"></span><span class="preprocessor">#define SBGSTREAMERSERVICE_CLASSNAME  "GStreamerService"</span>
-<a name="l00090"></a>00090 <span class="preprocessor"></span>%}
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00050"></a>00050   <span class="keywordtype">void</span> beginFactoryInfo(in ACString aShortName,
+<a name="l00051"></a>00051                         in ACString aLongName,
+<a name="l00052"></a>00052                         in ACString aClass,
+<a name="l00053"></a>00053                         in ACString aDescription,
+<a name="l00054"></a>00054                         in ACString aAuthor,
+<a name="l00055"></a>00055                         in ACString aRankName,
+<a name="l00056"></a>00056                         in <span class="keywordtype">long</span> aRank);
+<a name="l00057"></a>00057   <span class="keywordtype">void</span> endFactoryInfo();
+<a name="l00058"></a>00058 
+<a name="l00059"></a>00059   <span class="keywordtype">void</span> beginPadTemplateInfo(in ACString aName,
+<a name="l00060"></a>00060                             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aDirection,
+<a name="l00061"></a>00061                             in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aPresence,
+<a name="l00062"></a>00062                             in ACString aCodecDescription);
+<a name="l00063"></a>00063   <span class="keywordtype">void</span> endPadTemplateInfo();
+<a name="l00064"></a>00064 };
+<a name="l00065"></a>00065 
+<a name="l00069"></a>00069 [scriptable, uuid(5be9dcac-c60a-46c9-90f5-cc9533d84179)]
+<a name="l00070"></a><a class="code" href="interfacesb_i_g_streamer_service.html">00070</a> interface <a class="code" href="interfacesb_i_g_streamer_service.html">sbIGStreamerService</a> : nsISupports
+<a name="l00071"></a>00071 {
+<a name="l00072"></a><a class="code" href="interfacesb_i_g_streamer_service.html#4aade25de74c1ff6bb3e486e369446a1">00072</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_UNKNOWN = 0;
+<a name="l00073"></a><a class="code" href="interfacesb_i_g_streamer_service.html#beb715363cf06a28e74775c4de15be08">00073</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_SRC     = 1;
+<a name="l00074"></a><a class="code" href="interfacesb_i_g_streamer_service.html#3baee414464ebd6aa06b1a2673bbb348">00074</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_DIRECTION_SINK    = 2;
+<a name="l00075"></a>00075 
+<a name="l00076"></a><a class="code" href="interfacesb_i_g_streamer_service.html#c72c851a256bf9ebb033290c5f0a1946">00076</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_PRESENCE_ALWAYS    = 0;
+<a name="l00077"></a><a class="code" href="interfacesb_i_g_streamer_service.html#a6bba6bc63d10570066b873e7d35b915">00077</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_PRESENCE_SOMETIMES = 1;
+<a name="l00078"></a><a class="code" href="interfacesb_i_g_streamer_service.html#19072192e938629e52b31a30d8f2c2f3">00078</a>   <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> PAD_PRESENCE_REQUEST   = 2;
+<a name="l00079"></a>00079 
+<a name="l00080"></a>00080   <span class="keywordtype">void</span> inspect(in <a class="code" href="interfacesb_i_g_streamer_inspect_handler.html">sbIGStreamerInspectHandler</a> aHandler);
+<a name="l00081"></a>00081 };
+<a name="l00082"></a>00082 
+<a name="l00083"></a>00083 %{C++
+<a name="l00084"></a>00084 <span class="comment">// {8cfebfa9-7cd3-4dd8-bf13-6ddc666d3629}</span>
+<a name="l00085"></a>00085 <span class="preprocessor">#define SBGSTREAMERSERVICE_CID \</span>
+<a name="l00086"></a>00086 <span class="preprocessor">  { 0x8cfebfa9, 0x7cd3, 0x4dd8,                               \</span>
+<a name="l00087"></a>00087 <span class="preprocessor">  { 0xbf, 0x13, 0x6d, 0xdc, 0x66, 0x6d, 0x36, 0x29 } }</span>
+<a name="l00088"></a>00088 <span class="preprocessor"></span>
+<a name="l00089"></a>00089 <span class="preprocessor">#define SBGSTREAMERSERVICE_CONTRACTID "@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1"</span>
+<a name="l00090"></a>00090 <span class="preprocessor"></span><span class="preprocessor">#define SBGSTREAMERSERVICE_CLASSNAME  "GStreamerService"</span>
+<a name="l00091"></a>00091 <span class="preprocessor"></span>%}
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

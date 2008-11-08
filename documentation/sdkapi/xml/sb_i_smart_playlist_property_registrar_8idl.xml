@@ -4,13 +4,13 @@
     <compoundname>sbISmartPlaylistPropertyRegistrar.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="541">
+      <node id="616">
         <label>components/property/public/sbISmartPlaylistPropertyRegistrar.idl</label>
         <link refid="sbISmartPlaylistPropertyRegistrar.idl"/>
-        <childnode refid="542" relation="include">
+        <childnode refid="617" relation="include">
         </childnode>
       </node>
-      <node id="542">
+      <node id="617">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

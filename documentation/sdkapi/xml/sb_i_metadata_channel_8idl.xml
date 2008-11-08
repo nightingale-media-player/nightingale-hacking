@@ -6,47 +6,47 @@
     <includes local="yes">nsIStreamListener.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="397">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
-        <link refid="sbIMetadataChannel.idl"/>
-        <childnode refid="398" relation="include">
-        </childnode>
-        <childnode refid="399" relation="include">
-        </childnode>
-        <childnode refid="400" relation="include">
-        </childnode>
-      </node>
-      <node id="403">
-        <label>nsIArray.idl</label>
-      </node>
-      <node id="404">
-        <label>nsIMutableArray.idl</label>
-      </node>
-      <node id="399">
-        <label>nsIStreamListener.idl</label>
-      </node>
-      <node id="402">
-        <label>sbIPropertyArray.idl</label>
-        <link refid="sb_i_property_array_8idl"/>
-        <childnode refid="403" relation="include">
-        </childnode>
-        <childnode refid="404" relation="include">
-        </childnode>
-      </node>
-      <node id="400">
+      <node id="485">
         <label>sbIMetadataHandler.idl</label>
         <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="398" relation="include">
+        <childnode refid="483" relation="include">
         </childnode>
-        <childnode refid="401" relation="include">
+        <childnode refid="486" relation="include">
         </childnode>
-        <childnode refid="402" relation="include">
+        <childnode refid="487" relation="include">
         </childnode>
       </node>
-      <node id="398">
+      <node id="488">
+        <label>nsIArray.idl</label>
+      </node>
+      <node id="489">
+        <label>nsIMutableArray.idl</label>
+      </node>
+      <node id="484">
+        <label>nsIStreamListener.idl</label>
+      </node>
+      <node id="482">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
+        <link refid="sbIMetadataChannel.idl"/>
+        <childnode refid="483" relation="include">
+        </childnode>
+        <childnode refid="484" relation="include">
+        </childnode>
+        <childnode refid="485" relation="include">
+        </childnode>
+      </node>
+      <node id="487">
+        <label>sbIPropertyArray.idl</label>
+        <link refid="sb_i_property_array_8idl"/>
+        <childnode refid="488" relation="include">
+        </childnode>
+        <childnode refid="489" relation="include">
+        </childnode>
+      </node>
+      <node id="483">
         <label>nsISupports.idl</label>
       </node>
-      <node id="401">
+      <node id="486">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>

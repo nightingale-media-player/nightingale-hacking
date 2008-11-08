@@ -4,13 +4,13 @@
     <compoundname>sbIFileScan.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="450">
+      <node id="522">
         <label>components/mediaimport/filescan/public/sbIFileScan.idl</label>
         <link refid="sbIFileScan.idl"/>
-        <childnode refid="451" relation="include">
+        <childnode refid="523" relation="include">
         </childnode>
       </node>
-      <node id="451">
+      <node id="523">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -62,7 +62,7 @@
 <codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onFileScanEnd();<sp/></highlight></codeline>
 <codeline lineno="82"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="116"><highlight class="normal">[scriptable,<sp/>uuid(7BB22470-E03D-4220-AC93-AC70700AF6AB)]</highlight></codeline>
+<codeline lineno="116"><highlight class="normal">[scriptable,<sp/>uuid(db7d7cda-a6fd-4f32-98d1-32ed746eb13d)]</highlight></codeline>
 <codeline lineno="117" refid="interfacesb_i_file_scan_query" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_file_scan_query" kindref="compound" tooltip="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="118"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="119" refid="interfacesb_i_file_scan_query_1fcc736deb7bea39e3229b84f4c68feed" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>searchHidden;</highlight></codeline>
@@ -99,8 +99,8 @@
 <codeline lineno="233"><highlight class="normal"></highlight></codeline>
 <codeline lineno="237"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>cancel();</highlight></codeline>
 <codeline lineno="238"><highlight class="normal"></highlight></codeline>
-<codeline lineno="242"><highlight class="normal"><sp/><sp/>nsIArray<sp/>getResultRangeAsURIs(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartIndex,</highlight></codeline>
-<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEndIndex);</highlight></codeline>
+<codeline lineno="242"><highlight class="normal"><sp/><sp/>nsIArray<sp/>getResultRangeAsURIStrings(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aStartIndex,</highlight></codeline>
+<codeline lineno="243"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aEndIndex);</highlight></codeline>
 <codeline lineno="244"><highlight class="normal"></highlight></codeline>
 <codeline lineno="248"><highlight class="normal"><sp/><sp/>PRBool<sp/>isCancelled();</highlight></codeline>
 <codeline lineno="249"><highlight class="normal">};</highlight></codeline>

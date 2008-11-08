@@ -4,14 +4,14 @@
     <compoundname>sbIPlaylistClickEvent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="4">
-        <label>nsISupports.idl</label>
-      </node>
       <node id="3">
         <label>bindings/public/sbIPlaylistClickEvent.idl</label>
         <link refid="sbIPlaylistClickEvent.idl"/>
         <childnode refid="4" relation="include">
         </childnode>
+      </node>
+      <node id="4">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_playlist_click_event" prot="public">sbIPlaylistClickEvent</innerclass>

@@ -2,7 +2,6 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
   <compounddef id="interfacesb_i_device_base" kind="interface" prot="public">
     <compoundname>sbIDeviceBase</compoundname>
-    <derivedcompoundref refid="interfacesb_i_c_d_device" prot="public" virt="non-virtual">sbICDDevice</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_download_device" prot="public" virt="non-virtual">sbIDownloadDevice</derivedcompoundref>
     <derivedcompoundref refid="interfacesb_i_w_m_device" prot="public" virt="non-virtual">sbIWMDevice</derivedcompoundref>
     <includes refid="sb_i_device_base_8idl" local="no">sbIDeviceBase.idl</includes>
@@ -1076,25 +1075,19 @@
     <detaileddescription>
 <para>Base interface for all supported devices. The supported devices can be CD, Windows Media Device, iPod, etc., and even a download device for downloading and uploading files.</para><para>All devices implement this base interface to perform the basic operations such as enumerating tracks (media files) and perform supported I/O operations.</para><para>In addition, a device class instance, not to be confused with a device instance, can provide extended information about a device, for example recording speed for a CD drive.</para><para>&quot;Device Category&quot; is used in identifying device class instances (using <ref refid="interfacesb_i_device_manager" kindref="compound">sbIDeviceManager</ref>) and &quot;Device String&quot; is for identifying a device. For instance &quot;Songbird CD Device&quot; is the Device Category and &quot;D:\&quot; is the Device String. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="90">
+      <node id="102">
         <label>sbIWMDevice</label>
         <link refid="interfacesb_i_w_m_device"/>
-        <childnode refid="87" relation="public-inheritance">
+        <childnode refid="100" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="89">
+      <node id="101">
         <label>sbIDownloadDevice</label>
         <link refid="interfacesb_i_download_device"/>
-        <childnode refid="87" relation="public-inheritance">
+        <childnode refid="100" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="88">
-        <label>sbICDDevice</label>
-        <link refid="interfacesb_i_c_d_device"/>
-        <childnode refid="87" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="87">
+      <node id="100">
         <label>sbIDeviceBase</label>
         <link refid="interfacesb_i_device_base"/>
       </node>

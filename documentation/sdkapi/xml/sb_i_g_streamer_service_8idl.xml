@@ -4,13 +4,13 @@
     <compoundname>sbIGStreamerService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="432">
-        <label>components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl</label>
+      <node id="470">
+        <label>components/mediacore/gstreamer/public/sbIGStreamerService.idl</label>
         <link refid="sbIGStreamerService.idl"/>
-        <childnode refid="433" relation="include">
+        <childnode refid="471" relation="include">
         </childnode>
       </node>
-      <node id="433">
+      <node id="471">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -19,26 +19,26 @@
       <sectiondef kind="define">
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_118bbde7b8c871ab291be3462307d1733" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CID</name>
-        <initializer>{ 0xc27f50c0, 0x6dae, 0x45ee,                               \
-  { 0x88, 0x3e, 0x24, 0xfd, 0x3b, 0x30, 0x25, 0x4b } }</initializer>
+        <initializer>{ 0x8cfebfa9, 0x7cd3, 0x4dd8,                               \
+  { 0xbf, 0x13, 0x6d, 0xdc, 0x66, 0x6d, 0x36, 0x29 } }</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="86"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="87"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_13bb23ef4af1ef9ea6c4452beb0abd40e" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CONTRACTID</name>
-        <initializer>&quot;@songbirdnest.com/Songbird/Playback/GStreamer/Service;1&quot;</initializer>
+        <initializer>&quot;@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1&quot;</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="88"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="89"/>
       </memberdef>
       <memberdef kind="define" id="sb_i_g_streamer_service_8idl_1fddc0abf67ebf94b0b5a89df319cf818" prot="public" static="no">
         <name>SBGSTREAMERSERVICE_CLASSNAME</name>
@@ -49,7 +49,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl" line="89"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl" line="90"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -85,7 +85,7 @@
 <codeline lineno="26"><highlight class="normal"></highlight></codeline>
 <codeline lineno="31"><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="32"><highlight class="normal"></highlight></codeline>
-<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(d7bae616-9e4a-4be1-a294-09c850eb9ab1)]</highlight></codeline>
+<codeline lineno="33"><highlight class="normal">[scriptable,<sp/>uuid(880347ab-710f-426f-a57c-56e81fff3ee6)]</highlight></codeline>
 <codeline lineno="34" refid="interfacesb_i_g_streamer_inspect_handler" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_inspect_handler" kindref="compound">sbIGStreamerInspectHandler</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="35"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="36"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginInspect();</highlight></codeline>
@@ -102,45 +102,46 @@
 <codeline lineno="47"><highlight class="normal"></highlight></codeline>
 <codeline lineno="48"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endPluginInfo();</highlight></codeline>
 <codeline lineno="49"><highlight class="normal"></highlight></codeline>
-<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginFactoryInfo(in<sp/>ACString<sp/>aLongName,</highlight></codeline>
-<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aClass,</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aDescription,</highlight></codeline>
-<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aAuthor,</highlight></codeline>
-<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aRankName,</highlight></codeline>
-<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRank);</highlight></codeline>
-<codeline lineno="56"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endFactoryInfo();</highlight></codeline>
-<codeline lineno="57"><highlight class="normal"></highlight></codeline>
-<codeline lineno="58"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginPadTemplateInfo(in<sp/>ACString<sp/>aName,</highlight></codeline>
-<codeline lineno="59"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDirection,</highlight></codeline>
-<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aPresence,</highlight></codeline>
-<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aCodecDescription);</highlight></codeline>
-<codeline lineno="62"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endPadTemplateInfo();</highlight></codeline>
-<codeline lineno="63"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="64"><highlight class="normal"></highlight></codeline>
-<codeline lineno="68"><highlight class="normal">[scriptable,<sp/>uuid(ae9887e3-ef5a-4466-a6fa-b3b695395cdd)]</highlight></codeline>
-<codeline lineno="69" refid="interfacesb_i_g_streamer_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_service" kindref="compound">sbIGStreamerService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="70"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="71" refid="interfacesb_i_g_streamer_service_14aade25de74c1ff6bb3e486e369446a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_UNKNOWN<sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="72" refid="interfacesb_i_g_streamer_service_1beb715363cf06a28e74775c4de15be08" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_SRC<sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="73" refid="interfacesb_i_g_streamer_service_13baee414464ebd6aa06b1a2673bbb348" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_SINK<sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="74"><highlight class="normal"></highlight></codeline>
-<codeline lineno="75" refid="interfacesb_i_g_streamer_service_1c72c851a256bf9ebb033290c5f0a1946" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_PRESENCE_ALWAYS<sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
-<codeline lineno="76" refid="interfacesb_i_g_streamer_service_1a6bba6bc63d10570066b873e7d35b915" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_PRESENCE_SOMETIMES<sp/>=<sp/>1;</highlight></codeline>
-<codeline lineno="77" refid="interfacesb_i_g_streamer_service_119072192e938629e52b31a30d8f2c2f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_PRESENCE_REQUEST<sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
-<codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="79"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>inspect(in<sp/><ref refid="interfacesb_i_g_streamer_inspect_handler" kindref="compound">sbIGStreamerInspectHandler</ref><sp/>aHandler);</highlight></codeline>
-<codeline lineno="80"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="81"><highlight class="normal"></highlight></codeline>
-<codeline lineno="82"><highlight class="normal">%{C++</highlight></codeline>
-<codeline lineno="83"><highlight class="normal"></highlight><highlight class="comment">//<sp/>{c27f50c0-6dae-45ee-883e-24fd3b30254b}</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSERVICE_CID<sp/>\</highlight></codeline>
-<codeline lineno="85"><highlight class="preprocessor"><sp/><sp/>{<sp/>0xc27f50c0,<sp/>0x6dae,<sp/>0x45ee,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
-<codeline lineno="86"><highlight class="preprocessor"><sp/><sp/>{<sp/>0x88,<sp/>0x3e,<sp/>0x24,<sp/>0xfd,<sp/>0x3b,<sp/>0x30,<sp/>0x25,<sp/>0x4b<sp/>}<sp/>}</highlight></codeline>
-<codeline lineno="87"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSERVICE_CONTRACTID<sp/>&quot;@songbirdnest.com/Songbird/Playback/GStreamer/Service;1&quot;</highlight></codeline>
-<codeline lineno="89"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSERVICE_CLASSNAME<sp/><sp/>&quot;GStreamerService&quot;</highlight></codeline>
-<codeline lineno="90"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
+<codeline lineno="50"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginFactoryInfo(in<sp/>ACString<sp/>aShortName,</highlight></codeline>
+<codeline lineno="51"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aLongName,</highlight></codeline>
+<codeline lineno="52"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aClass,</highlight></codeline>
+<codeline lineno="53"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aDescription,</highlight></codeline>
+<codeline lineno="54"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aAuthor,</highlight></codeline>
+<codeline lineno="55"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aRankName,</highlight></codeline>
+<codeline lineno="56"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aRank);</highlight></codeline>
+<codeline lineno="57"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endFactoryInfo();</highlight></codeline>
+<codeline lineno="58"><highlight class="normal"></highlight></codeline>
+<codeline lineno="59"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>beginPadTemplateInfo(in<sp/>ACString<sp/>aName,</highlight></codeline>
+<codeline lineno="60"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aDirection,</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aPresence,</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>ACString<sp/>aCodecDescription);</highlight></codeline>
+<codeline lineno="63"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>endPadTemplateInfo();</highlight></codeline>
+<codeline lineno="64"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="65"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal">[scriptable,<sp/>uuid(5be9dcac-c60a-46c9-90f5-cc9533d84179)]</highlight></codeline>
+<codeline lineno="70" refid="interfacesb_i_g_streamer_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_g_streamer_service" kindref="compound">sbIGStreamerService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="71"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="72" refid="interfacesb_i_g_streamer_service_14aade25de74c1ff6bb3e486e369446a1" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_UNKNOWN<sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="73" refid="interfacesb_i_g_streamer_service_1beb715363cf06a28e74775c4de15be08" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_SRC<sp/><sp/><sp/><sp/><sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="74" refid="interfacesb_i_g_streamer_service_13baee414464ebd6aa06b1a2673bbb348" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_DIRECTION_SINK<sp/><sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="75"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="interfacesb_i_g_streamer_service_1c72c851a256bf9ebb033290c5f0a1946" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_PRESENCE_ALWAYS<sp/><sp/><sp/><sp/>=<sp/>0;</highlight></codeline>
+<codeline lineno="77" refid="interfacesb_i_g_streamer_service_1a6bba6bc63d10570066b873e7d35b915" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_PRESENCE_SOMETIMES<sp/>=<sp/>1;</highlight></codeline>
+<codeline lineno="78" refid="interfacesb_i_g_streamer_service_119072192e938629e52b31a30d8f2c2f3" refkind="member"><highlight class="normal"><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>PAD_PRESENCE_REQUEST<sp/><sp/><sp/>=<sp/>2;</highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="80"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>inspect(in<sp/><ref refid="interfacesb_i_g_streamer_inspect_handler" kindref="compound">sbIGStreamerInspectHandler</ref><sp/>aHandler);</highlight></codeline>
+<codeline lineno="81"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="82"><highlight class="normal"></highlight></codeline>
+<codeline lineno="83"><highlight class="normal">%{C++</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"></highlight><highlight class="comment">//<sp/>{8cfebfa9-7cd3-4dd8-bf13-6ddc666d3629}</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSERVICE_CID<sp/>\</highlight></codeline>
+<codeline lineno="86"><highlight class="preprocessor"><sp/><sp/>{<sp/>0x8cfebfa9,<sp/>0x7cd3,<sp/>0x4dd8,<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>\</highlight></codeline>
+<codeline lineno="87"><highlight class="preprocessor"><sp/><sp/>{<sp/>0xbf,<sp/>0x13,<sp/>0x6d,<sp/>0xdc,<sp/>0x66,<sp/>0x6d,<sp/>0x36,<sp/>0x29<sp/>}<sp/>}</highlight></codeline>
+<codeline lineno="88"><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSERVICE_CONTRACTID<sp/>&quot;@songbirdnest.com/Songbird/Mediacore/GStreamer/Service;1&quot;</highlight></codeline>
+<codeline lineno="90"><highlight class="preprocessor"></highlight><highlight class="preprocessor">#define<sp/>SBGSTREAMERSERVICE_CLASSNAME<sp/><sp/>&quot;GStreamerService&quot;</highlight></codeline>
+<codeline lineno="91"><highlight class="preprocessor"></highlight><highlight class="normal">%}</highlight></codeline>
     </programlisting>
-    <location file="c:/builds/songbird/trunk/components/mediacore/playback/gstreamer/public/sbIGStreamerService.idl"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/gstreamer/public/sbIGStreamerService.idl"/>
   </compounddef>
 </doxygen>

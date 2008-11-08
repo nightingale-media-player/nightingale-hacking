@@ -79,16 +79,16 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_file_metadata_service.html#233d09ea939b1d88be9b9955e20df728">read</a> (in nsIArray aMediaItemArray)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Start a processing job to read metadata from the files associated with the given media items.  <a href="#233d09ea939b1d88be9b9955e20df728"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_file_metadata_service.html#e098ef2b0c00c7f8775fdbd82cacce83">write</a> (in nsIArray aMediaItemArray)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_file_metadata_service.html#c2860e5f203f727476b4ac83305d0f67">write</a> (in nsIArray aMediaItemArray, in nsIStringEnumerator aRequiredProperties)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Start a processing job to write metadata from the given media items back to their associated files.  <a href="#e098ef2b0c00c7f8775fdbd82cacce83"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Start a processing job to write metadata from the given media items back to their associated files.  <a href="#c2860e5f203f727476b4ac83305d0f67"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_file_metadata_service_8idl-source.html#l00056">56</a> of file <a class="el" href="sb_i_file_metadata_service_8idl-source.html">sbIFileMetadataService.idl</a>.<hr><h2>Member Function Documentation</h2>
+Definition at line <a class="el" href="sb_i_file_metadata_service_8idl-source.html#l00057">57</a> of file <a class="el" href="sb_i_file_metadata_service_8idl-source.html">sbIFileMetadataService.idl</a>.<hr><h2>Member Function Documentation</h2>
 <a class="anchor" name="233d09ea939b1d88be9b9955e20df728"></a><!-- doxytag: member="sbIFileMetadataService::read" ref="233d09ea939b1d88be9b9955e20df728" args="(in nsIArray aMediaItemArray)" -->
 <div class="memitem">
 <div class="memproto">
@@ -119,7 +119,7 @@ If called off of the main thread, will proxy to complete job startup. Be aware t
 
 </div>
 </div><p>
-<a class="anchor" name="e098ef2b0c00c7f8775fdbd82cacce83"></a><!-- doxytag: member="sbIFileMetadataService::write" ref="e098ef2b0c00c7f8775fdbd82cacce83" args="(in nsIArray aMediaItemArray)" -->
+<a class="anchor" name="c2860e5f203f727476b4ac83305d0f67"></a><!-- doxytag: member="sbIFileMetadataService::write" ref="c2860e5f203f727476b4ac83305d0f67" args="(in nsIArray aMediaItemArray, in nsIStringEnumerator aRequiredProperties)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -127,9 +127,18 @@ If called off of the main thread, will proxy to complete job startup. Be aware t
           <td class="memname"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a> sbIFileMetadataService::write           </td>
           <td>(</td>
           <td class="paramtype">in nsIArray&nbsp;</td>
-          <td class="paramname"> <em>aMediaItemArray</em>          </td>
-          <td>&nbsp;)&nbsp;</td>
-          <td width="100%"></td>
+          <td class="paramname"> <em>aMediaItemArray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in nsIStringEnumerator&nbsp;</td>
+          <td class="paramname"> <em>aRequiredProperties</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
         </tr>
       </table>
 </div>
@@ -140,10 +149,12 @@ Start a processing job to write metadata from the given media items back to thei
 <p>
 Note that all the media items must be from the same library. This restriction is due to the fact that library batching can only be done on a per library basis.<p>
 Also note that if a property is found in a file but does not exist in the associated <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a>, it will be removed from the file on write.<p>
+Also note that for each item all the properties in the list of aRequiredProperties will be written even if they have not changed.<p>
 If called off of the main thread, will proxy to complete job startup. Be aware that proxy events may be processed on the calling thread while waiting. Also note that the <a class="el" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> token returned should NOT be accessed off of the main thread.<p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aMediaItemsArray</em>&nbsp;</td><td>An array filled with media items to be scanned. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aRequiredProperties</em>&nbsp;</td><td>A String Enumertor filled with property ids that we wish to write. </td></tr>
   </table>
 </dl>
 <dl class="return" compact><dt><b>Returns:</b></dt><dd>An interface for monitoring the status of the request </dd></dl>
@@ -152,7 +163,7 @@ If called off of the main thread, will proxy to complete job startup. Be aware t
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/metadata/manager/public/<a class="el" href="sb_i_file_metadata_service_8idl-source.html">sbIFileMetadataService.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:38 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:31 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

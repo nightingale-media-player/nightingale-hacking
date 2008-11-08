@@ -94,12 +94,22 @@
 <a name="l00026"></a>00026 
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00029"></a>00029 [scriptable, uuid()]
-<a name="l00030"></a><a class="code" href="interfacesb_i_mediacore_playback_control.html">00030</a> interface <a class="code" href="interfacesb_i_mediacore_playback_control.html">sbIMediacorePlaybackControl</a> : <span class="keyword">public</span> nsISupports
-<a name="l00031"></a>00031 {
-<a name="l00032"></a>00032 
-<a name="l00033"></a>00033 }
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00029"></a>00029 interface nsIURI;
+<a name="l00030"></a>00030 interface <a class="code" href="interfacesb_i_mediacore_status.html">sbIMediacoreStatus</a>;
+<a name="l00031"></a>00031 
+<a name="l00032"></a>00032 [scriptable, uuid(5ac88a1d-83a1-4b62-b440-ac656c61c010)]
+<a name="l00033"></a><a class="code" href="interfacesb_i_mediacore_playback_control.html">00033</a> interface <a class="code" href="interfacesb_i_mediacore_playback_control.html">sbIMediacorePlaybackControl</a> : nsISupports
+<a name="l00034"></a>00034 {
+<a name="l00035"></a><a class="code" href="interfacesb_i_mediacore_playback_control.html#18a3fb6a3e9e637fc9176de5f0e73103">00035</a>   attribute nsIURI uri;
+<a name="l00036"></a><a class="code" href="interfacesb_i_mediacore_playback_control.html#96642cdb6d2b5ac1a668a866b74679e7">00036</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> position;
+<a name="l00037"></a>00037   
+<a name="l00038"></a><a class="code" href="interfacesb_i_mediacore_playback_control.html#92bbf2fcdd337683650ca51e8d86a215">00038</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> duration;
+<a name="l00039"></a>00039   
+<a name="l00040"></a>00040   <span class="keywordtype">void</span> play();
+<a name="l00041"></a>00041   <span class="keywordtype">void</span> pause();
+<a name="l00042"></a>00042   <span class="keywordtype">void</span> stop();
+<a name="l00043"></a>00043 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

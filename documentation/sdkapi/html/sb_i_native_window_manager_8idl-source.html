@@ -94,7 +94,7 @@
 <a name="l00026"></a>00026 <span class="preprocessor">#include "nsISupports.idl"</span>
 <a name="l00027"></a>00027 <span class="preprocessor">#include "nsIDOMMouseEvent.idl"</span>
 <a name="l00028"></a>00028 
-<a name="l00043"></a>00043 [scriptable, uuid(77746f92-dfe5-4915-a3ae-ff2619c4b167)]
+<a name="l00043"></a>00043 [scriptable, uuid(9646A45E-8E0C-49F9-901B-5FC6E4E522DB)]
 <a name="l00044"></a><a class="code" href="interfacesb_i_native_window_manager.html">00044</a> interface <a class="code" href="interfacesb_i_native_window_manager.html" title="interface to the operating system's window manager This Interfaces to allows JavaScript...">sbINativeWindowManager</a> : nsISupports
 <a name="l00045"></a>00045 {
 <a name="l00046"></a>00046   <span class="comment">/* constants representing resize directions */</span>
@@ -120,17 +120,25 @@
 <a name="l00066"></a>00066 <span class="comment">   *        @aMinimumWidth x @aMinimumHeight </span>
 <a name="l00067"></a>00067 <span class="comment">   */</span>
 <a name="l00068"></a>00068   <span class="keywordtype">void</span> setMinimumWindowSize(in nsISupports aWindow, in PRInt32 aMinimumWidth, in PRInt32 aMinimumHeight);
-<a name="l00069"></a>00069 
-<a name="l00070"></a>00070   <span class="comment">/* \brief is setMinimumWindowSize() supported by this implementation? */</span>
-<a name="l00071"></a><a class="code" href="interfacesb_i_native_window_manager.html#0ee6ef396878a367f9e6dc68dc218c18">00071</a>   readonly attribute <span class="keywordtype">boolean</span> supportsMinimumWindowSize;
-<a name="l00072"></a>00072 
-<a name="l00073"></a>00073   <span class="comment">/* \brief asks the window manager to keep @aWindow above all other windows */</span>
-<a name="l00074"></a>00074   <span class="keywordtype">void</span> setOnTop(in nsISupports aWindow, in <span class="keywordtype">boolean</span> aOnTop);
-<a name="l00075"></a>00075 
-<a name="l00076"></a>00076   <span class="comment">/* \brief is setOnTop() supported by this implementation? */</span>
-<a name="l00077"></a><a class="code" href="interfacesb_i_native_window_manager.html#892988330b4849e9b8ecfb51f2680818">00077</a>   readonly attribute <span class="keywordtype">boolean</span> supportsOnTop;
-<a name="l00078"></a>00078 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Aug 15 13:24:34 2008 for Songbird by&nbsp;
+<a name="l00069"></a>00069   
+<a name="l00070"></a>00070   <span class="comment">/* \brief set's the maximum size of @aWindow in the window manager to </span>
+<a name="l00071"></a>00071 <span class="comment">   *        @aMaximumWidth x @aMaximumHeight </span>
+<a name="l00072"></a>00072 <span class="comment">   */</span>
+<a name="l00073"></a>00073   <span class="keywordtype">void</span> setMaximumWindowSize(in nsISupports aWindow, in PRInt32 aMaximumWidth, in PRInt32 aMaximumHeight);
+<a name="l00074"></a>00074 
+<a name="l00075"></a>00075   <span class="comment">/* \brief is setMinimumWindowSize() supported by this implementation? */</span>
+<a name="l00076"></a><a class="code" href="interfacesb_i_native_window_manager.html#0ee6ef396878a367f9e6dc68dc218c18">00076</a>   readonly attribute <span class="keywordtype">boolean</span> supportsMinimumWindowSize;
+<a name="l00077"></a>00077   
+<a name="l00078"></a>00078   <span class="comment">/* \brief is setMaximumWindowSize() supported by this implementation? */</span>
+<a name="l00079"></a><a class="code" href="interfacesb_i_native_window_manager.html#81d7fdd63e8802f99838a89b7812dee8">00079</a>   readonly attribute <span class="keywordtype">boolean</span> supportsMaximumWindowSize;
+<a name="l00080"></a>00080 
+<a name="l00081"></a>00081   <span class="comment">/* \brief asks the window manager to keep @aWindow above all other windows */</span>
+<a name="l00082"></a>00082   <span class="keywordtype">void</span> setOnTop(in nsISupports aWindow, in <span class="keywordtype">boolean</span> aOnTop);
+<a name="l00083"></a>00083 
+<a name="l00084"></a>00084   <span class="comment">/* \brief is setOnTop() supported by this implementation? */</span>
+<a name="l00085"></a><a class="code" href="interfacesb_i_native_window_manager.html#892988330b4849e9b8ecfb51f2680818">00085</a>   readonly attribute <span class="keywordtype">boolean</span> supportsOnTop;
+<a name="l00086"></a>00086 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:21 2008 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

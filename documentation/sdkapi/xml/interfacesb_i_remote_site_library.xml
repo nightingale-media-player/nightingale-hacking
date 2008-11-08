@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="416" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="416" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="445" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="445" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -54,7 +54,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="444"/>
+        <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="473"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -62,30 +62,30 @@
     <detaileddescription>
 <para>This interface is used by the player to connect a library to a specific library for a website. The library serves as an area a website can use to create the media items and lists needed to populate web playlists and to transfer into the user&apos;s main library. The restrictions on the site library are lighter allowing a website to do more with the limited scope of the site library. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="871">
+      <node id="1004">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="872" relation="public-inheritance">
+        <childnode refid="1005" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="872">
+      <node id="1005">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="873">
+      <node id="1006">
         <label>sbIRemoteSiteLibrary</label>
         <link refid="interfacesb_i_remote_site_library"/>
-        <childnode refid="874" relation="public-inheritance">
+        <childnode refid="1007" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="874">
+      <node id="1007">
         <label>sbIRemoteLibrary</label>
         <link refid="interfacesb_i_remote_library"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="411" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="410" bodyend="445"/>
+    <location file="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" line="440" bodyfile="c:/builds/songbird/trunk/components/remoteapi/public/sbIRemoteLibrary.idl" bodystart="439" bodyend="474"/>
     <listofallmembers>
       <member refid="interfacesb_i_remote_library_1164f45e178034664ede744941d84b52d" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>connectToDefaultLibrary</name></member>
       <member refid="interfacesb_i_remote_site_library_101c31dbb438cc8eda58b14e787c65c7c" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>connectToSiteLibrary</name></member>
@@ -94,6 +94,7 @@
       <member refid="interfacesb_i_remote_library_1689e240436391a9555834a107d0a9dce" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>createSimpleMediaList</name></member>
       <member refid="interfacesb_i_remote_site_library_18418b4b73c9f73bf2ff32d192fb8ba04" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>filename</name></member>
       <member refid="interfacesb_i_remote_library_1f9de9839ed202a11c8d0ae63147a10a1" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>getMediaListBySiteID</name></member>
+      <member refid="interfacesb_i_remote_library_1362cc3f43053ac2c95b159fe172fe527" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>mostPlayedArtists</name></member>
       <member refid="interfacesb_i_remote_library_1fa0fe74a647b9ad2d05f33c23a1f1494" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>playlists</name></member>
       <member refid="interfacesb_i_remote_library_18783b89122efb3690cf58336b78598af" prot="public" virt="non-virtual"><scope>sbIRemoteSiteLibrary</scope><name>scanMediaOnCreation</name></member>
     </listofallmembers>

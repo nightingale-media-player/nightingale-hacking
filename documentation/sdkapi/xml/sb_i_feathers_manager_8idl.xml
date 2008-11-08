@@ -4,13 +4,13 @@
     <compoundname>sbIFeathersManager.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="162">
+      <node id="177">
         <label>components/feathers/public/sbIFeathersManager.idl</label>
         <link refid="sbIFeathersManager.idl"/>
-        <childnode refid="163" relation="include">
+        <childnode refid="178" relation="include">
         </childnode>
       </node>
-      <node id="163">
+      <node id="178">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -1,8 +1,0 @@
-<?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
-  <compounddef id="c_1_2builds_2songbird_2trunk_2components_2mediacore_2metadata_2manager_2public_2sb_i_file_metadata_service_8idl-example" kind="example">
-    <compoundname>c:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIFileMetadataService.idl</compoundname>
-    <detaileddescription>
-<para>Manages reading and writing metadata to and from <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref> objects and media files Supports the creation of threaded read/write jobs for local media (URIs beginning with <ulink url="file://">file://</ulink>), and timer driven read jobs for remote media.</para><para>var mediaItemArray = Cc[&quot;@songbirdnest.com/moz/xpcom/threadsafe-array;1&quot;] .createInstance(Ci.nsIMutableArray); mediaItemArray.appendElement(aItem, false); var metadataService = Cc[&quot;@songbirdnest.com/Songbird/FileMetadataService;1&quot;] .getService(Ci.sbIFileMetadataService); var job = metadataService.read(mediaItemArray);</para><para><programlisting></programlisting> </para>    </detaileddescription>
-  </compounddef>
-</doxygen>
