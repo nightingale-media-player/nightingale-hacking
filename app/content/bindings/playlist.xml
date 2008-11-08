@@ -1907,7 +1907,9 @@
             this.edit_row = row;
             this.edit_col = col;
 
-            if ( this.tree.currentIndex == this._lastClickIndex  ) {
+            if ( this.tree.currentIndex == this._lastClickIndex && 
+                 this.tree.view.selection.count == 1) 
+            {
               // Don't start editing immediately since a) we can't do it in 
               // the middle of the event chain anyway without crashing, and 
               // b) since this click may be part of a doubleclick, in which 
