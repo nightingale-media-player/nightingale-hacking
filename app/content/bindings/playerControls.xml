@@ -56,45 +56,44 @@
         /* outside CDATA to get localized entity */
         this.setAttribute("tooltiptext", "&tooltip.control.volume;");
       <![CDATA[
-        if (typeof(SBProperties) == "undefined") {
-          Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-          if (!SBProperties)
-            throw new Error("Import of sbProperties module failed");
-        }
-
-        if (typeof(LibraryUtils) == "undefined") {
-          Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-          if (!SBProperties)
-            throw new Error("Import of LibraryUtils module failed");
-        }
-
-        // OVERLAY TARGET ID MATCHES ELEMENT NAME
-        this.box.setAttribute("id", "sb-player-volume-slider" );
-        
         // ADD EXTRA CSS CLASS FOR ANONYMOUS OBJECTS
-        this.setAttribute("class", this.getAttribute("class") + " sb-player-volume-slider");
+        this.className += " sb-player-volume-slider";
       
         // Then do the rest of your crap
         this.mm = 
           Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                     .getService(Components.interfaces.sbIMediacoreManager);
 
-        // observer for DataRemote 
+        // data remotes
         const on_remote_volume_change = { 
-          _that: null, 
-          observe: function( aSubject, aTopic, aData ) { this._that.onRemoteVolumeChange(); } 
+          _that: this, 
+          observe: function volumeSlider_onChange( aSubject, aTopic, aData ) {
+            this._that.onRemoteVolumeChange();
+          } 
         };
-        on_remote_volume_change._that = this;
-
-        // Create and bind data remotes
         this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
-        this.remote_lastVolume = SB_NewDataRemote("faceplate.volume.last", null );
         this.remote_volume.bindObserver(on_remote_volume_change, true);
 
-        this.sliderScale = 10000.0;
+        this.remote_lastVolume = SB_NewDataRemote("faceplate.volume.last", null );
+        
+        const on_remote_mute = { 
+          _that: this, 
+          observe: function volumeSlider_onChange( aSubject, aTopic, aData ) {
+            this._that.onRemoteMute(aData);
+          } 
+        };
+        this.remote_mute = SB_NewDataRemote( "faceplate.mute", null );
+        this.remote_mute.bindObserver(on_remote_mute, true);
+
+        this.sliderScale = 10000;
         this.maxpos = this.sliderScale;
         this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
         this.trackingVolume = false;
+        
+        // initialize lastValue if it wasn't set
+        if (this.remote_lastVolume.stringValue == "") {
+          this.lastValue = this.value;
+        }
       ]]>
     </constructor>
     <destructor>
@@ -106,6 +105,10 @@
         if (this.remote_lastVolume) {
           this.remote_lastVolume = null;
         }
+        if (this.remote_mute) {
+          this.remote_mute.unbind();
+          this.remote_mute = null;
+        }
         
         this.mm = null;
       ]]>
@@ -115,20 +118,14 @@
       <body>
         <![CDATA[
           // prevent this volume control from being updated while it is being
-          //   moved (but other volume controls are updated with our motion)
+          // moved (but other volume controls are updated with our motion)
           this.trackingVolume = true; 
-          var scaledValue = parseFloat(this.value / this.sliderScale);
+          var scaledValue = this.value / this.sliderScale;
           this.mm.volumeControl.volume = scaledValue;
 
           this.remote_volume.stringValue = scaledValue;
-          if (this.value == 0) {
-            // set mute when we bring the volume to 0
-            this.mm.volumeControl.mute = true;
-          }
-          else {
-            // otherwise reset it, and record the last volume
-            this.mm.volumeControl.mute = false;
-          }
+          // set to mute when we're at zero
+          this.mm.volumeControl.mute = (this.value == 0);
         ]]>
       </body>
     </method>
@@ -146,9 +143,27 @@
       <body>
         <![CDATA[
           try {
-            this.value = parseFloat(this.remote_volume.stringValue) * parseFloat(this.sliderScale);
+            this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
           } catch (err) {
             dump("playerControls.xml - onRemoteVolumeChange - " + err + "\n");
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="onRemoteMute">
+      <body>
+        <![CDATA[
+          // the mute state changed
+          if (this.remote_mute.boolValue) {
+            if (this.value != 0) {
+              this.lastValue = this.value;
+            }
+            this.remote_volume.intValue = 0;
+            this.value = 0;
+          } else {
+            var lastValue = this.lastValue / this.sliderScale;
+            this.mm.volumeControl.volume = this.lastValue / this.sliderScale;
           }
         ]]>
       </body>
@@ -232,15 +247,25 @@
                     .getService(Components.interfaces.sbIMediacoreManager);
 
         // Create and bind the data remotes
-        this.remote_volume = SB_NewDataRemote( "faceplate.volume", null );
-        this.remote_lastVolume = SB_NewDataRemote( "faceplate.volume.last", null );
+        this.remote_mute = SB_NewDataRemote( "faceplate.mute", null );
+
+        // observer for DataRemote 
+        const on_remote_mute = { 
+          _that: this, 
+          observe: function dr_onMuteToggle( aSubject, aTopic, aData ) {
+            this._that.onRemoteMute();
+          } 
+        };
+        this.remote_mute.bindObserver(on_remote_mute, true);
       ]]>
     </constructor>
     <destructor>
       <![CDATA[
-        //SB_LOG("playerControls.js", "mute binding destructor");
         // Release the data remotes
-        this.remote_volume = this.remote_lastVolume = null;
+        if (this.remote_mute) {
+          this.remote_mute.unbind();
+          this.remote_mute = null;
+        }
         this.mm = null;
       ]]>
     </destructor>
@@ -263,15 +288,25 @@
     <method name="doMute">
       <body>
         <![CDATA[
-          var newmute = !this.mm.volumeControl.mute; 
-          this.mm.volumeControl.mute = newmute;
+          this.mm.volumeControl.mute = !this.mm.volumeControl.mute;
+          // this will trigger onRemoteMute due to the data remote
+        ]]>
+      </body>
+    </method>
+
+    <method name="onRemoteMute">
+      <body>
+        <![CDATA[
+          var newmute = this.mm.volumeControl.mute;
           if (!newmute) {
             // restore last volume when coming back from mute state
             this.mm.volumeControl.volume = 
               parseFloat(this.remote_lastVolume.stringValue);
           } 
           else {
-            this.remote_lastVolume.stringValue = this.remote_volume.stringValue;
+            if (parseFloat(this.remote_volume.stringValue) != 0) {
+              this.remote_lastVolume.stringValue = this.remote_volume.stringValue;
+            }
             this.mm.volumeControl.volume = 0;
           }
         ]]>
@@ -915,11 +950,6 @@
 
       <constructor>
         <![CDATA[
-        if (typeof(SBProperties) == "undefined") {
-          Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-          if (!SBProperties)
-            throw new Error("Import of sbProperties module failed");
-        }
         if (typeof(ColumnSpecParser) == "undefined") {
           Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
           if (!ColumnSpecParser)
