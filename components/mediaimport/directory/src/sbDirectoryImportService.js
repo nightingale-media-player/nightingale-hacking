@@ -463,7 +463,14 @@ DirectoryImportJob.prototype = {
             // Otherwise, just add
             this.targetMediaList.addSome(this.enumerateAllItems());
           }
-          this.totalAddedToMediaList = this._allMediaItems.length;
+          // the short-circuit logic in enumerateAllItems can 
+          // cause _allMediaItems to go uncreated.
+          if (this._allMediaItems) {
+            this.totalAddedToMediaList = this._allMediaItems.length;
+          }
+          else { 
+            this.totalAddedToMediaList = this._newMediaItems.length;
+          }
         }
       } catch (e) {
         Cu.reportError(e); 
