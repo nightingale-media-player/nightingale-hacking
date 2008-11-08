@@ -374,8 +374,10 @@ mashTape.init = function(e) {
 		iframe.id = "mashTape-flash-detail";
 		iframe.setAttribute("flex", 1);
 		iframe.setAttribute("tooltip", "aHTMLTooltip");
+
 		iframe.setAttribute("src",
-				"chrome://mashtape/content/iframeFlash.html");
+				"http://whacked.net/iframeFlash.html");
+				//"chrome://mashtape/content/iframeFlash.html");
 		
 		// add a load listener to the iframe so we know when this iframe has
 		// completed loading so we can fire the first update
@@ -1607,7 +1609,89 @@ mashTape.loadFlashDetail = function(el) {
 	if (el.hasAttribute("mashTape-flashvars"))
 		flashVars = el.getAttribute("mashTape-flashvars");
 
+	/* Add privileged JS to the remote window DOM */
+	var flashWindow = mashTape.flashDetailFrame.contentWindow;
 	var doc = mashTape.flashDetailFrame.contentWindow.document;
+	flashWindow.mashTapeVideo = {
+		// Only resume playback if mT triggered the pause in the first place
+		paused: false,
+		pauseSongbird: function() {
+			if (gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING)
+			{
+				flashWindow.mashTapeVideo.paused = true;
+				gMM.playbackControl.pause();
+			}
+		},
+
+		resumeSongbird: function() {
+			if ((gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING ||
+					gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED) &&
+					flashWindow.mashTapeVideo.paused)
+			{
+				flashWindow.mashTapeVideo.paused = false;
+				gMM.playbackControl.play();
+			}
+		},
+		
+		pauseVideo: function() {
+			var obj = doc.getElementById("mTFlashObject");
+			if (typeof(obj) == "undefined")
+				return;
+			switch(obj.getAttribute("mashTape-provider")) {
+				case "YouTube":
+					obj.pauseVideo();
+					break;
+				case "Yahoo Music":
+					obj.vidPause();
+					break;
+				default:
+					return;
+			}
+		},
+
+		// boooo... hardcoding a YouTube listener
+		youTubeListener: function(state) {
+			if (state != 0)
+				return;
+			flashWindow.mashTapeVideo.resumeSongbird();
+		},
+
+		// boooo^2, another provider-specific handler... this one for Yahoo
+		yahooListener: function(eventType, eventInfo) {
+			if (eventType != "done")
+				return;
+			flashWindow.mashTapeVideo.resumeSongbird();
+		},
+
+		openLink: function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			var target = e.target;
+			while (target != null && !target.href)
+				target = target.parentNode;
+			if (target == null)
+				return;
+			if (target.href) {
+				Components.classes['@mozilla.org/appshell/window-mediator;1']
+				.getService(Components.interfaces.nsIWindowMediator)
+				.getMostRecentWindow('Songbird:Main').gBrowser
+				.loadOneTab(target.href);
+			}
+		}
+	}
+	flashWindow.onYouTubePlayerReady = function(id) {
+		var p = doc.getElementById("mTFlashObject");
+		p.addEventListener("onStateChange",
+				flashWindow.mashTapeVideo.youTubeListener);
+	}
+
+	if (typeof(mashTape.flashListenerAdded) == "undefined") {
+		dump("adding an event listener\n");
+		flashWindow.addEventListener('click',
+				flashWindow.mashTapeVideo.openLink, false);
+		mashTape.flashListenerAdded = true;
+	}
+
 	var detailVideo = doc.getElementById("video");
 	var detailFavicon = doc.getElementById("favicon");
 	var detailFaviconLink = doc.getElementById("link");

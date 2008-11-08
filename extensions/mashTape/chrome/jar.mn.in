@@ -1,5 +1,5 @@
 mashTape.jar:
-% content mashtape %content/
+% content mashtape %content/ contentaccessible=yes
 % resource mashtape modules/
 % locale mashtape en-US %locale/en-US/
 % locale mashtape en-GB %locale/en-GB/
@@ -19,4 +19,6 @@ mashTape.jar:
 % skin mashtape classic/1.0 %skin/
 % overlay chrome://browser/content/preferences/preferences.xul chrome://mashtape/content/prefsOverlay.xul
 % style chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://mashtape/skin/mainwin.css
+% override chrome://songbird-web/content/html.css chrome://songbird/skin/html.css
+% content songbird-web foo/ contentaccessible=yes
 @include_all_to
