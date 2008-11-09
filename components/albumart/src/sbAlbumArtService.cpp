@@ -524,6 +524,7 @@ sbAlbumArtService::Finalize()
   if (mObserverService) {
     mObserverService->RemoveObserver(this, "profile-after-change");
     mObserverService->RemoveObserver(this, "quit-application");
+    mObserverService = nsnull;
   }
 
   if (mCacheFlushTimer) {
