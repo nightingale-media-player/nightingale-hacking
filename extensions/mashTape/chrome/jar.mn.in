@@ -13,9 +13,9 @@ mashTape.jar:
 % locale mashtape pl-PL %locale/pl-PL/
 % locale mashtape pt-BR %locale/pt-BR/
 % locale mashtape es-ES %locale/es-ES/
-% locale mashtape sv-SE %locale/bn-IN/
-% locale mashtape da-DK %locale/bn-IN/
-% locale mashtape de-DE %locale/bn-IN/
+% locale mashtape sv-SE %locale/sv-SE/
+% locale mashtape da-DK %locale/da-DK/
+% locale mashtape de-DE %locale/de-DE/
 % skin mashtape classic/1.0 %skin/
 % overlay chrome://browser/content/preferences/preferences.xul chrome://mashtape/content/prefsOverlay.xul
 % style chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://mashtape/skin/mainwin.css
