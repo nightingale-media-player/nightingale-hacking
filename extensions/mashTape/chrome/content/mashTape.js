@@ -737,6 +737,7 @@ mashTape.update = function(artist, album, track) {
 
 	mashTape.resetFlashFrame();
 	mashTape.updateEnabledProviders("flash");
+	setTimeout(mashTape.loadFirstFlashFeed, 10000);
 	for (var i=0; i<mashTape.enabledProviders["flash"].length; i++) {
 		var clsid = mashTape.enabledProviders["flash"][i];
 		var prov = CcID[clsid].createInstance(Ci.sbIMashTapeFlashProvider);
@@ -824,7 +825,7 @@ mashTape.displayCallback.prototype =  {
 				var splitter =
 						document.getElementById("mashTape-flash-splitter");
 				mashTape.updateFlash(provider, results);
-				if (results != null && !mashTape.expanded
+				if (results != null && results.length > 0 && !mashTape.expanded
 					&& splitter.getAttribute("state") == "collapsed")
 				{
 					splitter.setAttribute("state", "open");
@@ -1583,6 +1584,11 @@ mashTape.loadFirstFlashFeed = function() {
 	{
 		var doc = mashTape.flashIndexFrame.contentWindow.document;
 		var body = doc.getElementsByTagName("body")[0];
+		// Only load something if we have something
+		if (body.getElementsByTagName("div").length <= 0) {
+			mashTape.noDataTab("flash");
+			return;
+		}
 		var first = body.getElementsByTagName("div")[0];
 		mashTape.loadFlashDetail(first);
 	}
@@ -1769,6 +1775,8 @@ mashTape.loadFlashDetail = function(el) {
 	// Set the video
 	var swf = doc.createElement("object");
 	swf.setAttribute("data", swfUrl);
+	mashTape.log("Loading movie from: " + swfUrl);
+
 	swf.setAttribute("type", "application/x-shockwave-flash");
 	swf.setAttribute("onclick", "mashTapeVideo.pauseSongbird();");
 	swf.setAttribute("id", "mTFlashObject");
