@@ -1509,10 +1509,12 @@ sbMediacoreSequencer::StopWatchingView()
     rv = HandleDelayedCheckTimer(mDelayedCheckTimer);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mDelayedCheckTimer->Cancel();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if(mDelayedCheckTimer) {
+      rv = mDelayedCheckTimer->Cancel();
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    mDelayedCheckTimer = nsnull;
+      mDelayedCheckTimer = nsnull;
+    }
   }
 
   rv = mViewList->RemoveListener(this);
