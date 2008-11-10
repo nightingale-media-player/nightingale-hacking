@@ -476,6 +476,10 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   rv = DestroyPipeline();
   NS_ENSURE_SUCCESS (rv, rv);
 
+  // Reset the metadata
+  mTags = nsnull;
+  mProperties = nsnull;
+
   mPipeline = gst_element_factory_make ("playbin2", "player");
 
   if (!mPipeline)
