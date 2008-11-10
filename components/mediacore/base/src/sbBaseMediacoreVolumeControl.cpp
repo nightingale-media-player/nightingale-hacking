@@ -47,7 +47,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreVolumeControl,
                               sbIMediacoreVolumeControl)
 
 sbBaseMediacoreVolumeControl::sbBaseMediacoreVolumeControl()
-: mLock(nsnull)
+: mMonitor(nsnull)
 , mMute(PR_FALSE)
 , mVolume(0)
 {
@@ -67,8 +67,8 @@ sbBaseMediacoreVolumeControl::~sbBaseMediacoreVolumeControl()
 
   MOZ_COUNT_DTOR(sbBaseMediacoreVolumeControl);
 
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
+  if(mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
   }
 }
 
@@ -77,8 +77,8 @@ sbBaseMediacoreVolumeControl::InitBaseMediacoreVolumeControl()
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - InitBaseMediacoreVolumeControl", this));
 
-  mLock = nsAutoLock::NewLock("sbBaseMediacoreVolumeControl::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacoreVolumeControl::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return OnInitBaseMediacoreVolumeControl();
 }
@@ -87,10 +87,10 @@ NS_IMETHODIMP
 sbBaseMediacoreVolumeControl::GetMute(PRBool *aMute)
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - GetMute", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMute);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   *aMute = mMute;
 
   return NS_OK;
@@ -100,12 +100,12 @@ NS_IMETHODIMP
 sbBaseMediacoreVolumeControl::SetMute(PRBool aMute)
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - SetMute", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnSetMute(aMute);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mMute = aMute;
 
   return NS_OK;
@@ -115,10 +115,10 @@ NS_IMETHODIMP
 sbBaseMediacoreVolumeControl::GetVolume(double *aVolume)
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - GetVolume", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aVolume);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   *aVolume = mVolume;
 
   return NS_OK;
@@ -128,12 +128,12 @@ NS_IMETHODIMP
 sbBaseMediacoreVolumeControl::SetVolume(double aVolume)
 {
   TRACE(("sbBaseMediacoreVolumeControl[0x%x] - SetVolume", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnSetVolume(aVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mVolume = aVolume;
 
   return NS_OK;

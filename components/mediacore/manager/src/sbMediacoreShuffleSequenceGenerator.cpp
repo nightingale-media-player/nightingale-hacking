@@ -40,6 +40,7 @@
 
 #include <sbTArrayStringEnumerator.h>
 
+#include <ctime>
 #include <vector>
 #include <algorithm>
 
@@ -80,6 +81,9 @@ sbMediacoreShuffleSequenceGenerator::OnGenerateSequence(sbIMediaListView *aView,
   for(PRUint32 current = 0; current < length; ++current) {
     pool.push_back(current);
   }
+
+  // Seed.
+  std::srand(std::clock());
 
   // Randomly sample the pool to populate the sequence.
   random_shuffle(pool.begin(), pool.end());

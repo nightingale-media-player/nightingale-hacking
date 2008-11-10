@@ -70,7 +70,7 @@ public:
 protected:
   virtual ~sbBaseMediacorePlaybackControl();
 
-  PRLock*  mLock;
+  PRMonitor*  mMonitor;
 
   nsCOMPtr<nsIURI> mUri;
 

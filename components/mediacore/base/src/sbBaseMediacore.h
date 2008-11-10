@@ -76,7 +76,7 @@ public:
 protected:
   virtual ~sbBaseMediacore();
 
-  PRLock  *mLock;
+  PRMonitor  *mMonitor;
   
   nsString mInstanceName;
 

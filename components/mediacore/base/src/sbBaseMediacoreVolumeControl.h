@@ -59,7 +59,7 @@ public:
 protected:
   virtual ~sbBaseMediacoreVolumeControl();
 
-  PRLock *mLock;
+  PRMonitor *mMonitor;
 
   PRBool  mMute;
   double  mVolume;

@@ -838,7 +838,7 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(sbBaseMediacoreVolumeControl::mLock);
+  nsAutoMonitor lock(sbBaseMediacoreVolumeControl::mMonitor);
 
   rv = volumeControl->SetVolume(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);

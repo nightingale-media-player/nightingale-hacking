@@ -572,9 +572,9 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
 {
   LOG(("Handling about-to-finish signal"));
 
-  nsAutoLock lock(sbBaseMediacore::mLock);
+  nsAutoMonitor mon(sbBaseMediacore::mMonitor);
   nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
-  lock.unlock();
+  mon.Exit();
 
   if(!sequencer) {
     return;
@@ -1289,7 +1289,7 @@ sbGStreamerMediacore::OnSetMute(PRBool aMute)
   NS_ENSURE_STATE(mPipeline);
 
   if(!aMute && mMute) {
-    nsAutoLock lock(sbBaseMediacoreVolumeControl::mLock);
+    nsAutoMonitor mon(sbBaseMediacoreVolumeControl::mMonitor);
 
     /* Well, this is nice and easy! */
     g_object_set(mPipeline, "volume", mVolume, NULL);

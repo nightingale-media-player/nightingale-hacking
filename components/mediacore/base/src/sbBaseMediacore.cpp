@@ -60,7 +60,7 @@ NS_DECL_CLASSINFO(sbBaseMediacore)
 NS_IMPL_THREADSAFE_CI(sbBaseMediacore)
 
 sbBaseMediacore::sbBaseMediacore()
-: mLock(nsnull)
+: mMonitor(nsnull)
 {
   MOZ_COUNT_CTOR(sbBaseMediacore);
 
@@ -77,8 +77,8 @@ sbBaseMediacore::~sbBaseMediacore()
   TRACE(("sbBaseMediacore[0x%x] - Destroyed", this));
   MOZ_COUNT_DTOR(sbBaseMediacore);
 
-  if (mLock) {
-    nsAutoLock::DestroyLock(mLock);
+  if (mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
   }
 }
 
@@ -87,8 +87,8 @@ sbBaseMediacore::InitBaseMediacore()
 {
   TRACE(("sbBaseMediacore[0x%x] - InitBaseMediacore", this));
 
-  mLock = nsAutoLock::NewLock("sbBaseMediacore::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacore::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return OnInitBaseMediacore();
 }
@@ -97,9 +97,9 @@ nsresult
 sbBaseMediacore::SetInstanceName(const nsAString &aInstanceName)
 {
   TRACE(("sbBaseMediacore[0x%x] - SetInstanceName", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mInstanceName = aInstanceName;
 
   return NS_OK;
@@ -109,10 +109,10 @@ nsresult
 sbBaseMediacore::SetCapabilities(sbIMediacoreCapabilities *aCapabilities)
 {
   TRACE(("sbBaseMediacore[0x%x] - SetCapabilities", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mCapabilities = aCapabilities;
 
   return NS_OK;
@@ -122,10 +122,10 @@ nsresult
 sbBaseMediacore::SetStatus(sbIMediacoreStatus *aStatus)
 {
   TRACE(("sbBaseMediacore[0x%x] - SetStatus", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aStatus);
   
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mStatus = aStatus;
   
   return NS_OK;
@@ -135,9 +135,9 @@ NS_IMETHODIMP
 sbBaseMediacore::GetInstanceName(nsAString & aInstanceName)
 {
   TRACE(("sbBaseMediacore[0x%x] - GetInstanceName", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   aInstanceName = mInstanceName;
   
   return NS_OK;
@@ -147,13 +147,13 @@ NS_IMETHODIMP
 sbBaseMediacore::GetCapabilities(sbIMediacoreCapabilities * *aCapabilities)
 {
   TRACE(("sbBaseMediacore[0x%x] - GetCapabilities", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
   nsresult rv = OnGetCapabilities();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   NS_IF_ADDREF(*aCapabilities = mCapabilities);
 
   return NS_OK;
@@ -163,10 +163,10 @@ NS_IMETHODIMP
 sbBaseMediacore::GetStatus(sbIMediacoreStatus* *aStatus)
 {
   TRACE(("sbBaseMediacore[0x%x] - GetLastStatusEvent", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aStatus);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   NS_IF_ADDREF(*aStatus = mStatus);
 
   return NS_OK;
@@ -176,10 +176,10 @@ NS_IMETHODIMP
 sbBaseMediacore::GetSequencer(sbIMediacoreSequencer* *aSequencer)
 {
   TRACE(("sbBaseMediacore[0x%x] - GetSequencer", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aSequencer);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   NS_IF_ADDREF(*aSequencer = mSequencer);
 
   return NS_OK;
@@ -189,13 +189,13 @@ NS_IMETHODIMP
 sbBaseMediacore::SetSequencer(sbIMediacoreSequencer *aSequencer)
 {
   TRACE(("sbBaseMediacore[0x%x] - GetSequencer", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aSequencer);
 
   nsresult rv = OnSetSequencer(aSequencer);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mSequencer = aSequencer;
 
   return NS_OK;
@@ -205,7 +205,7 @@ NS_IMETHODIMP
 sbBaseMediacore::Shutdown()
 {
   TRACE(("sbBaseMediacore[0x%x] - Shutdown", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   return OnShutdown();
 }

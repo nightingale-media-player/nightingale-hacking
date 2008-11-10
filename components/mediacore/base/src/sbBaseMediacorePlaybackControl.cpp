@@ -47,7 +47,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacorePlaybackControl,
                               sbIMediacorePlaybackControl)
 
 sbBaseMediacorePlaybackControl::sbBaseMediacorePlaybackControl()
-: mLock(nsnull)
+: mMonitor(nsnull)
 , mPosition(0)
 , mDuration(0)
 {
@@ -67,8 +67,8 @@ sbBaseMediacorePlaybackControl::~sbBaseMediacorePlaybackControl()
 
   MOZ_COUNT_DTOR(sbBaseMediacorePlaybackControl);
 
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
+  if(mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
   }
 }
 
@@ -77,8 +77,8 @@ sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl()
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - InitBaseMediacorePlaybackControl", this));
 
-  mLock = nsAutoLock::NewLock("sbBaseMediacorePlaybackControl::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacorePlaybackControl::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return OnInitBaseMediacorePlaybackControl();
 }
@@ -87,10 +87,10 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetUri(nsIURI * *aUri)
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - GetUri", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   NS_IF_ADDREF(*aUri = mUri);  
 
   return NS_OK;
@@ -100,13 +100,13 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::SetUri(nsIURI * aUri)
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - SetUri", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aUri);
 
   nsresult rv = OnSetUri(aUri);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mUri = aUri;  
 
   return NS_OK;
@@ -116,11 +116,10 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetPosition(PRUint64 *aPosition)
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - GetPosition", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aPosition);
 
-  nsAutoLock lock(mLock);
-
+  nsAutoMonitor mon(mMonitor);
   nsresult rv = OnGetPosition(aPosition);
   
   if(NS_FAILED(rv)) {
@@ -134,12 +133,12 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::SetPosition(PRUint64 aPosition)
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - SetPosition", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnSetPosition(aPosition);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mPosition = aPosition;
 
   return NS_OK;
@@ -149,11 +148,10 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::GetDuration(PRUint64 *aDuration)
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - GetDuration", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDuration);
 
-  nsAutoLock lock(mLock);
-  
+  nsAutoMonitor mon(mMonitor);  
   nsresult rv = OnGetDuration(aDuration);
 
   if(NS_FAILED(rv)) {
@@ -167,9 +165,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Play()
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Play", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   return OnPlay();
 }
 
@@ -177,9 +175,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Pause()
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Pause", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   return OnPause();
 }
 
@@ -187,9 +185,9 @@ NS_IMETHODIMP
 sbBaseMediacorePlaybackControl::Stop()
 {
   TRACE(("sbBaseMediacorePlaybackControl[0x%x] - Stop", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   return OnStop();
 }
 

@@ -49,7 +49,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreFactory,
                               sbIMediacoreFactory)
 
 sbBaseMediacoreFactory::sbBaseMediacoreFactory()
-: mLock(nsnull)
+: mMonitor(nsnull)
 {
   MOZ_COUNT_CTOR(sbBaseMediacoreFactory);
 
@@ -66,8 +66,8 @@ sbBaseMediacoreFactory::~sbBaseMediacoreFactory()
   TRACE(("sbBaseMediacoreFactory[0x%x] - Destroyed", this));
   MOZ_COUNT_DTOR(sbBaseMediacoreFactory);
 
-  if(mLock) {
-    nsAutoLock::DestroyLock(mLock);
+  if(mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
   }
 }
 
@@ -76,8 +76,8 @@ sbBaseMediacoreFactory::InitBaseMediacoreFactory()
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - InitBaseMediacoreFactory", this));
 
-  mLock = nsAutoLock::NewLock("sbBaseMediacoreFactory::mLock");
-  NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
+  mMonitor = nsAutoMonitor::NewMonitor("sbBaseMediacoreFactory::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   return OnInitBaseMediacoreFactory();
 }
@@ -86,9 +86,9 @@ nsresult
 sbBaseMediacoreFactory::SetContractID(const nsAString &aContractID)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mContractID = aContractID;
 
   return NS_OK;
@@ -98,9 +98,9 @@ nsresult
 sbBaseMediacoreFactory::SetName(const nsAString &aName)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   mName = aName;
 
   return NS_OK;
@@ -110,9 +110,9 @@ NS_IMETHODIMP
 sbBaseMediacoreFactory::GetContractID(nsAString & aContractID)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   aContractID = mContractID;
 
   return NS_OK;
@@ -122,9 +122,9 @@ NS_IMETHODIMP
 sbBaseMediacoreFactory::GetName(nsAString & aName)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Init", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   aName = mName;
 
   return NS_OK;
@@ -135,10 +135,10 @@ sbBaseMediacoreFactory::GetCapabilities(
                           sbIMediacoreCapabilities * *aCapabilities)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - GetCapabilities", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
   return OnGetCapabilities(aCapabilities);
 }
 
@@ -147,10 +147,10 @@ sbBaseMediacoreFactory::Create(const nsAString & aInstanceName,
                                sbIMediacore **_retval)
 {
   TRACE(("sbBaseMediacoreFactory[0x%x] - Create", this));
-  NS_ENSURE_TRUE(mLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsAutoLock lock(mLock);
+  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = OnCreate(aInstanceName, _retval);
   NS_ENSURE_SUCCESS(rv, rv);

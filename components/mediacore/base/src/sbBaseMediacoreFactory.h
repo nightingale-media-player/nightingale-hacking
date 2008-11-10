@@ -63,7 +63,7 @@ public:
 protected:
   virtual ~sbBaseMediacoreFactory();
 
-  PRLock *mLock;
+  PRMonitor *mMonitor;
   
   nsString mContractID;
   nsString mName;
