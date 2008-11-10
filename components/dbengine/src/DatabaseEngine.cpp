@@ -1377,15 +1377,7 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
     pEngine->DoSimpleCallback(pQuery);
     LOG(("DBE: Simple query listeners have been processed."));
 
-    // Release the query on the same thread that the location URI class was
-    // created on.  This prevents an assertion.
-    nsresult rv = 
-      NS_ProxyRelease(pQuery->mLocationURIOwningThread, 
-                      NS_ISUPPORTS_CAST(sbIDatabaseQuery *, pQuery));
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not proxy release pQuery");
-      NS_RELEASE(pQuery);
-    }
+    NS_RELEASE(pQuery);
 
     LOG(("DBE: Process End"));
 
@@ -1506,19 +1498,14 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery
 {
   nsresult rv = NS_ERROR_FAILURE;
   nsCOMPtr<nsILocalFile> f;
-  nsCOMPtr<nsIURI> uri;
+  nsCString spec;
   nsAutoString strDBFile(dbGUID);
 
-  rv = pQuery->GetDatabaseLocation(getter_AddRefs(uri));
+  rv = pQuery->GetDatabaseLocation(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(uri)
+  if(!spec.IsEmpty())
   {
-    nsCAutoString spec;
-
-    rv = uri->GetSpec(spec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     nsCOMPtr<nsIFile> file;
     rv = NS_GetFileFromURLSpec(spec, getter_AddRefs(file));
     NS_ENSURE_SUCCESS(rv, rv);

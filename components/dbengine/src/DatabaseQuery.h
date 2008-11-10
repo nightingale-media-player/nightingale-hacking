@@ -118,6 +118,13 @@ public:
 
   nsresult Init();
 
+  /**
+   * Additional accessor to get the database location as a 
+   * string spec.  This is used when an nsIURI isn't needed
+   * and/or the caller is off of the main thread.
+   */
+  nsresult GetDatabaseLocation(nsACString& aURISpec);
+
 protected:
   CDatabaseResult* GetResultObject();
   NS_IMETHOD PopQuery(sbIDatabasePreparedStatement **_retval);
@@ -125,7 +132,7 @@ protected:
   bindParameterArray_t* PopQueryParameters();
 
   PRLock *m_pLocationURILock;
-  nsCOMPtr<nsIURI> m_LocationURI;
+  nsCString m_LocationURIString;
 
   PRLock* m_StateLock;
   PRBool m_IsAborting;

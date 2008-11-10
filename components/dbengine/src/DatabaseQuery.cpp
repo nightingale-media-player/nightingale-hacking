@@ -197,14 +197,19 @@ nsresult CDatabaseQuery::Init()
 NS_IMETHODIMP CDatabaseQuery::GetDatabaseLocation(nsIURI * *aDatabaseLocation)
 {
   NS_ENSURE_ARG_POINTER(aDatabaseLocation);
+  if (!NS_IsMainThread()) {
+    NS_WARNING("CDatabaseQuery::GetDatabaseLocation is main thread only, "
+               "since it constructs an nsStandardURL object");
+    return NS_ERROR_FAILURE;
+  }
 
   nsresult rv = NS_OK;
   *aDatabaseLocation = nsnull;
 
   sbSimpleAutoLock lock(m_pLocationURILock);
-  if(m_LocationURI)
+  if(!m_LocationURIString.IsEmpty())
   {
-    rv = m_LocationURI->Clone(aDatabaseLocation);
+    rv = NS_NewURI(aDatabaseLocation, m_LocationURIString);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -215,48 +220,18 @@ NS_IMETHODIMP CDatabaseQuery::GetDatabaseLocation(nsIURI * *aDatabaseLocation)
 NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
 {
   NS_ENSURE_ARG_POINTER(aDatabaseLocation);
-
-  PRBool isFile = PR_FALSE;
   nsresult rv = NS_ERROR_UNEXPECTED;
-
+  
+  PRBool isFile = PR_FALSE;
   if(NS_SUCCEEDED(aDatabaseLocation->SchemeIs("file", &isFile)) &&
      isFile)
   {
-    nsCAutoString spec;
+    nsCString spec;
     rv = aDatabaseLocation->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIFile> location;
-    rv = NS_GetFileFromURLSpec(spec, getter_AddRefs(location));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool isReadable, isWritable, isDirectory;
-    rv = location->IsDirectory(&isDirectory);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if(!isDirectory)
-      return NS_ERROR_INVALID_ARG;
-
-    rv = location->IsReadable(&isReadable);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = location->IsWritable(&isWritable);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if(isReadable && isWritable)
-    {
-      sbSimpleAutoLock lock(m_pLocationURILock);
-      rv = aDatabaseLocation->Clone(getter_AddRefs(m_LocationURI));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Remember the thread that this nsStandardURL was created on so we can
-      // later release it on the same thread to prevent an assertion
-      nsCOMPtr<nsIThread> thread;
-      rv = NS_GetCurrentThread(getter_AddRefs(thread));
-      NS_ENSURE_SUCCESS(rv, rv);
-      mLocationURIOwningThread = do_QueryInterface(thread, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    sbSimpleAutoLock lock(m_pLocationURILock);
+    m_LocationURIString = spec;
   }
   else
   {
@@ -266,6 +241,14 @@ NS_IMETHODIMP CDatabaseQuery::SetDatabaseLocation(nsIURI * aDatabaseLocation)
 
   return rv;
 } //SetDatabaseLocation
+
+//-----------------------------------------------------------------------------
+nsresult CDatabaseQuery::GetDatabaseLocation(nsACString& aURISpec)
+{
+  sbSimpleAutoLock lock(m_pLocationURILock);
+  aURISpec.Assign(m_LocationURIString);
+  return NS_OK;
+} //GetDatabaseLocation
 
 //-----------------------------------------------------------------------------
 /* void SetAsyncQuery (in PRBool bAsyncQuery); */
