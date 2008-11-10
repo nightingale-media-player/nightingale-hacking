@@ -646,8 +646,12 @@ function SBDeleteMediaList(aMediaList)
   if (outerListGuid)
     mediaList = mediaList.library.getMediaItem(outerListGuid);
   // smart playlists are never user editable, determine whether we can delete
-  // them based on their parent library user-editable flag
-  if (mediaList.userEditable) {
+  // them based on their parent library user-editable flag. Also don't delete
+  // libraries or the download node.
+  var listType = mediaList.getProperty(SBProperties.customType);
+  if (mediaList.userEditable && 
+      listType != "download" &&
+      !(mediaList instanceof Ci.sbILibrary)) {
     const BYPASSKEY = "playlist.deletewarning.bypass";
     const STRINGROOT = "playlist.deletewarning.";
     if (!SBDataGetBoolValue(BYPASSKEY)) {
