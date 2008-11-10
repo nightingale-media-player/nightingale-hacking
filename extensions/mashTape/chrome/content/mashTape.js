@@ -376,7 +376,7 @@ mashTape.init = function(e) {
 		iframe.setAttribute("tooltip", "aHTMLTooltip");
 
 		iframe.setAttribute("src",
-				"http://whacked.net/iframeFlash.html");
+				"http://mashtape.songbirdnest.com/iframeFlash.html");
 				//"chrome://mashtape/content/iframeFlash.html");
 		
 		// add a load listener to the iframe so we know when this iframe has
