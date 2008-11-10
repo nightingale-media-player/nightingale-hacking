@@ -43,12 +43,12 @@ NOARCH_EXTENSIONS = shoutcast \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
-# of this, we only want to build them on one platform if we're an official build
-# QA has traditionally picked Win32 for this, so we'll do that, too.
+# of this, we only want to build them on one platform if we're an official
+# build; we're using Linux now (see bug 13477#6)
 ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
   SUBDIRS += $(NOARCH_EXTENSIONS)
 else
-  ifeq (windows,$(SB_PLATFORM))
+  ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
     SUBDIRS += $(NOARCH_EXTENSIONS)
   endif
 endif
