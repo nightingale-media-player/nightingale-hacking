@@ -602,6 +602,13 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     rv = uri->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, /*void*/);
 
+    // Clear old tags so we don't merge them with the new ones
+    if (mTags) {
+      gst_tag_list_free (mTags);
+      mTags = nsnull;
+    }
+    mProperties = nsnull;
+
     LOG(("Setting URI to \"%s\"", spec.get()));
 
     /* Set the URI to play */
