@@ -1,7 +1,7 @@
 [Build]
 AppName=Songbird
 BuildID=00000000000000
-BuildNumber=832
+BuildNumber=833
 Milestone=1.1.0pre
 MilestoneWindows=1.1.0.0
 Branch=trunk
@@ -16,5 +16,5 @@ ProfileVersion=2
 # and if you want to be 100% sure/correct, so should you..
 #
 # RepoRevisionClient=$Rev$
-RepoRevisionVendor=10238
-RepoRevisionVendorBinaries=10210
+RepoRevisionVendor=10240
+RepoRevisionVendorBinaries=10214
