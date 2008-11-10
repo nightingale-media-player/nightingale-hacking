@@ -223,10 +223,10 @@ sbGStreamerMediacore::ReadPreferences()
   NS_ENSURE_STATE (mPrefs);
   nsresult rv;
 
-  rv = mPrefs->GetBoolPref("songbird.mediacore.gstreamer.disableVideoDecoder", 
+  rv = mPrefs->GetBoolPref("songbird.mediacore.gstreamer.disablevideo", 
 	&mVideoDisabled);
   if (rv == NS_ERROR_UNEXPECTED)
-    mVideoDisabled = PR_FALSE;
+    mVideoDisabled = PR_TRUE;
   else
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -476,6 +476,7 @@ nsresult
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
   nsresult rv;
+  gint flags;
 
   nsAutoMonitor lock(mMonitor);
 
@@ -488,11 +489,24 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
     return NS_ERROR_FAILURE;
 
   if (mPlatformInterface) {
-    GstElement *videosink = CreateVideoSink();
     GstElement *audiosink = CreateAudioSink();
-    g_object_set(mPipeline, "video-sink", videosink, NULL);
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
+
+    if (!mVideoDisabled) {
+      GstElement *videosink = CreateVideoSink();
+      g_object_set(mPipeline, "video-sink", videosink, NULL);
+    }
   }
+
+  // Configure what to output - we want audio only, unless video
+  // is turned on
+  flags = 0x2 | 0x10; // audio | soft-volume
+  if (mHaveVideoWindow && !mVideoDisabled) {
+    // Enable video only if we're set up for it is turned off. Also enable
+    // text (subtitles), which require a video window to display.
+    flags |= 0x1 | 0x4; // video | text
+  }
+  g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
 
   GstBus *bus = gst_element_get_bus (mPipeline);
 
@@ -1162,20 +1176,9 @@ sbGStreamerMediacore::OnPlay()
 {
   GstStateChangeReturn ret;
   GstState curstate;
-  gint flags;
-
-  flags = 0x2 | 0x10; // audio | soft-volume
-
-  if (mHaveVideoWindow && !mVideoDisabled) {
-    // Enable video only if we're set up for it is turned off. Also enable
-    // text (subtitles), which require a video window to display.
-    flags |= 0x1 | 0x4; // video | text
-  }
 
   nsAutoMonitor lock(mMonitor);
   NS_ENSURE_STATE(mPipeline);
-
-  g_object_set (G_OBJECT(mPipeline), "flags", flags, NULL);
 
   gst_element_get_state (mPipeline, &curstate, NULL, 0);
 
