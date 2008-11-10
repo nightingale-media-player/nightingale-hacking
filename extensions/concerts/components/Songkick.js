@@ -588,8 +588,8 @@ Songkick.prototype = {
 
 		this._cache = {}; // Flush any cached data, since it will be invalid
 
-		dbq.addQuery("DROP TABLE concerts");
-		dbq.addQuery("DROP TABLE playing_at");
+		dbq.addQuery("DROP TABLE IF EXISTS concerts");
+		dbq.addQuery("DROP TABLE IF EXISTS playing_at");
 		dbq.addQuery("CREATE TABLE concerts (id INTEGER, " +
 				"timestamp INTEGER, venue TEXT, city TEXT, title TEXT, " +
 				"concertURL TEXT, venueURL TEXT, tickets INTEGER)");
@@ -952,13 +952,18 @@ Songkick.prototype = {
 	 * of concerts that have artists in the user's main library.
 	 *********************************************************************/
 	getConcertCount : function(filterLibraryArtists) {
+		var firstrun = this.prefs.getBoolPref("firstrun");
+		if (firstrun)
+			return (0);
+
 		this._db.resetQuery();
-		if (filterLibraryArtists)
-			this._db.addQuery("select count(distinct concertid) " +
-					"from playing_at where anyLibraryArtist=1");
-		else
-			this._db.addQuery("select count(*) from concerts");
 		try {
+			if (filterLibraryArtists)
+				this._db.addQuery("select count(distinct concertid) " +
+						"from playing_at where anyLibraryArtist=1");
+			else
+				this._db.addQuery("select count(*) from concerts");
+			
 			var ret = this._db.execute();
 		} catch (e) {
 			return (0);
@@ -1105,9 +1110,9 @@ Songkick.prototype = {
 
 		// Translate location XML data to store it in our DB
 		this._db.resetQuery();
-		this._db.addQuery("drop table cities");
-		this._db.addQuery("drop table states");
-		this._db.addQuery("drop table countries");
+		this._db.addQuery("DROP TABLE IF EXISTS cities");
+		this._db.addQuery("DROP TABLE IF EXISTS states");
+		this._db.addQuery("DROP TABLE IF EXISTS countries");
 		this._db.addQuery("create table cities (id integer, state integer, " +
 				"country integer, lat real, lng real, name text)");
 		this._db.addQuery("create table states (id integer, " +
