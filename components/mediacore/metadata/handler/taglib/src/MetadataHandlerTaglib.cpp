@@ -292,6 +292,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     rv = ReadInternal(pReadCount); 
   } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::Read caught an exception!");
+    rv = NS_ERROR_FAILURE;
   }
   ReleaseTaglibLock(); 
   
@@ -812,7 +813,12 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
   // and read the data out manually.
 
   AcquireTaglibLock();
-  rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
+  try { 
+    rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
+  } catch(...) { 
+    NS_ERROR("sbMetadataHandlerTaglib::GetImageData caught an exception!");
+    rv = NS_ERROR_FAILURE;
+  }
   ReleaseTaglibLock(); 
   return rv;
 }
@@ -889,7 +895,12 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetImageData(
   LOG(("sbMetadataHandlerTaglib::SetImageData\n"));
 
   AcquireTaglibLock();
-  rv = SetImageDataInternal(aType, aURL);
+  try { 
+    rv = SetImageDataInternal(aType, aURL);
+  } catch(...) { 
+    NS_ERROR("sbMetadataHandlerTaglib::SetImageData caught an exception!");
+    rv = NS_ERROR_FAILURE;
+  }
   ReleaseTaglibLock(); 
   return rv;
 }
