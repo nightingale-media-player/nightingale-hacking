@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <!--
 /*
  //
@@ -41,6 +41,8 @@
 
 <dialog
  xmlns:html="http://www.w3.org/1999/xhtml"
+ xmlns:svg="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="track_editor"
  windowtype="Songbird:TrackEditor"
@@ -311,9 +313,9 @@
             <!-- Wrap the image in a container to that we can align the
                  enable/disable checkbox that may appear next to it. -->
             <vbox class="multiline-container" flex="1">
-              <image
-                class="art"
-                property="http://songbirdnest.com/data/1.0#primaryImageURL"/>
+              <svg:svg property="http://songbirdnest.com/data/1.0#primaryImageURL" width="80" height="80">
+                <svg:image class="art" width="80" height="80"/>
+              </svg:svg>
             </vbox>
           </row>
 
