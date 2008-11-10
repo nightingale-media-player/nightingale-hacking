@@ -68,6 +68,7 @@
 
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
+#include <sbStandardProperties.h>
 
 #include "sbGStreamerMediacoreUtils.h"
 
@@ -599,22 +600,14 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   NS_ENSURE_SUCCESS(rv, /*void*/ );
   NS_ENSURE_TRUE(item, /*void*/);
 
-  nsCOMPtr<nsIURI> uri;
-  rv = item->GetContentSrc(getter_AddRefs(uri));
+  nsString contentURL;
+  rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+          contentURL);
   NS_ENSURE_SUCCESS(rv, /*void*/ );
 
-  PRBool schemeIsFile = PR_FALSE;
-  
-  rv = uri->SchemeIs("file", &schemeIsFile);
-  NS_ENSURE_SUCCESS(rv, /*void*/);
-
-  if(schemeIsFile) {
+  if(StringBeginsWith(contentURL, NS_LITERAL_STRING("file:"))) {
     rv = sequencer->RequestHandleNextItem(this);
     NS_ENSURE_SUCCESS(rv, /*void*/ );
-
-    nsCString spec;
-    rv = uri->GetSpec(spec);
-    NS_ENSURE_SUCCESS(rv, /*void*/);
 
     // Clear old tags so we don't merge them with the new ones
     if (mTags) {
@@ -623,12 +616,13 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     }
     mProperties = nsnull;
 
-    LOG(("Setting URI to \"%s\"", spec.get()));
+    nsCString uri = NS_ConvertUTF16toUTF8(contentURL);
+    LOG(("Setting URI to \"%s\"", uri.BeginReading()));
 
     /* Set the URI to play */
     nsAutoMonitor mon(mMonitor);
     NS_ENSURE_TRUE(mPipeline, /*void*/);
-    g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
+    g_object_set (G_OBJECT (mPipeline), "uri", uri.BeginReading(), NULL);
   }
 
   return;
