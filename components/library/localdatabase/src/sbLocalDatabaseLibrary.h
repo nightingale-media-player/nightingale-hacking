@@ -156,12 +156,12 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<sbIMediaListFactory> factory;
   };
 
-  struct sbMediaItemInfo {
-    sbMediaItemInfo()
+  struct sbMediaItemInfo { 
+    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE) 
     : itemID(0),
-      hasItemID(PR_FALSE),
-      hasListType(PR_FALSE)
-    { }
+      hasItemID(PR_FALSE) {
+      hasListType = aHasListType;
+    }
 
     PRUint32 itemID;
     nsString listType;
