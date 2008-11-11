@@ -655,6 +655,10 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
+  if(!mPlaybackControl) {
+    return NS_OK;
+  }
+
   PRUint64 duration = aDuration;
   nsresult rv = mDataRemoteMetadataDuration->SetIntValue(duration);
   NS_ENSURE_SUCCESS(rv, rv);
