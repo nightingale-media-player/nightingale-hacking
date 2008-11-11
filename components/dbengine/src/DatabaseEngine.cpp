@@ -1377,13 +1377,12 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
     pEngine->DoSimpleCallback(pQuery);
     LOG(("DBE: Simple query listeners have been processed."));
 
-    NS_RELEASE(pQuery);
-
     LOG(("DBE: Process End"));
 
     mon.NotifyAll();
     mon.Exit();
 
+    NS_RELEASE(pQuery);
   } // while
 
   return;
