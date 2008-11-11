@@ -381,8 +381,6 @@ pref("songbird.playercontrol.location", "bottom");
 
 // Default the service pane location for hovering.
 pref("songbird.splitter.servicepane_splitter.before.width", "178");
-pref("songbird.splitter.sb-playlist-splitter.before.height", "159");
-pref("songbird.splitter.sb-playlist-splitter.after.height", "411");
 
 //
 // Library importer prefs

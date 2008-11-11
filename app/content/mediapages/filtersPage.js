@@ -115,6 +115,35 @@ window.mediaPage = {
 
     // Set up the playlist widget
     this._playlist.bind(this._mediaListView, cmds);
+
+    // Adjust the height of the filter pane to be proportional to the height
+    // of the display pane. Only do this if the |sb-playlist-splitter| sizing
+    // prefs do not exist. (i.e. first run).
+    var prefs = Application.prefs;
+    if (!prefs.has("songbird.splitter.sb-playlist-splitter.before.height") &&
+        !prefs.has("songbird.splitter.sb-playlist-splitter.after.height"))
+    {
+      var splitter = document.getElementById("sb-playlist-splitter");
+      if (splitter) {
+        var page = document.getElementById("sb-playlist-media-page");
+        var pageHeight = page.boxObject.height;
+
+        // Make the filter pane cover 30% of the area
+        const FILTER_COVER_AREA = 0.30;
+        var splitFactor = parseInt(pageHeight * FILTER_COVER_AREA);
+
+        // Make sure the splitter covers lines completely
+        var filterTree = document.getElementById("sb-filterlist-tree");
+        var rowLineHeight = parseInt(getComputedStyle(filterTree, "").lineHeight);
+        if (splitFactor % rowLineHeight != 0) {
+          splitFactor = rowLineHeight * (Math.round(splitFactor / rowLineHeight));
+        }
+
+        // Finally, adjust the splitter spacing
+        splitter.setBeforeHeight(splitFactor);
+        splitter.setAfterHeight(pageHeight - splitFactor);
+      }
+    }
   },
     
     

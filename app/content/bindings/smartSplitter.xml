@@ -162,29 +162,89 @@
     
     <method name="savePosition">
       <body>
-        var id = this.getAttribute("stateid");
-        if (!id || id == "") id = this.id;
-        
-        var root = "splitter." + id + ".";
-        var resizebefore = this.getResizeBefore();
-        if (resizebefore) {
-          if (this.isVertical()) {
-            if (resizebefore.height != "") SBDataSetIntValue( root + "before.height", resizebefore.height );
-          } else {
-            if (resizebefore.width != "") SBDataSetIntValue( root + "before.width", resizebefore.width );
+        <![CDATA[
+          var id = this.getAttribute("stateid");
+          if (!id || id == "") id = this.id;
+          
+          var root = "splitter." + id + ".";
+          var resizebefore = this.getResizeBefore();
+          if (resizebefore) {
+            if (this.isVertical()) {
+              if (resizebefore.height != "") {
+                SBDataSetIntValue(root + "before.height", resizebefore.height);
+              }
+            } 
+            else {
+              if (resizebefore.width != "") {
+                SBDataSetIntValue(root + "before.width", resizebefore.width);
+              }
+            }
           }
-        }
-        var resizeafter = this.getResizeAfter();
-        if (resizeafter) {
-          if (this.isVertical()) {
-            if (resizeafter.height != "") SBDataSetIntValue( root + "after.height", resizeafter.height );
-          } else {
-            if (resizeafter.width != "") SBDataSetIntValue( root + "after.width", resizeafter.width );
+          var resizeafter = this.getResizeAfter();
+          if (resizeafter) {
+            if (this.isVertical()) {
+              if (resizeafter.height != "") {
+                SBDataSetIntValue(root + "after.height", resizeafter.height);
+              }
+            } 
+            else {
+              if (resizeafter.width != "") {
+                SBDataSetIntValue(root + "after.width", resizeafter.width);
+              }
+            }
           }
-        }
+        ]]>
       </body>
     </method>
-    
+
+    <method name="setBeforeHeight">
+      <parameter name="aHeight"/>
+      <body>
+        <![CDATA[
+          var resizeBefore = this.getResizeBefore();
+          if (resizeBefore) {
+            resizeBefore.height = aHeight;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="setAfterHeight">
+      <parameter name="aHeight"/>
+      <body>
+        <![CDATA[
+          var resizeAfter = this.getResizeAfter();
+          if (resizeAfter) {
+            resizeAfter.height = aHeight;
+          }
+        ]]>
+      </body>
+    </method>
+   
+    <method name="setBeforeWidth">
+      <parameter name="aWidth"/>
+      <body>
+        <![CDATA[
+          var resizeBefore = this.getResizeBefore();
+          if (resizeBefore) {
+            resizeBefore.width = aWidth;
+          }
+        ]]>
+      </body>
+    </method>
+
+    <method name="setAfterWidth">
+      <parameter name="aWidth"/>
+      <body>
+        <![CDATA[
+          var resizeAfter = this.getResizeAfter();
+          if (resizeAfter) {
+            resizeAfter.width = aWidth;
+          }
+        ]]>
+      </body>
+    </method>
+
     <method name="saveState">
       <!-- parameter name="override"/ -->
       <body>
