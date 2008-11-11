@@ -1,5 +1,5 @@
 <!ENTITY concerts.groupby "组：">
-<!ENTITY concerts.libraryartists "仅仅显示指定作者的演奏在我的库中">
+<!ENTITY concerts.libraryartists "仅仅显示指定作者的音乐会在我的库中">
 <!ENTITY concerts.sort.artist "作者名：">
 <!ENTITY concerts.sort.event "音乐会的日期">
 <!ENTITY concerts.sort.venue "地点：">
