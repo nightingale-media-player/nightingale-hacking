@@ -105,6 +105,12 @@ var gSongbirdWindowController =
         return;
       }
 
+      // steal the focus before going to the track, because of a bug in XR that
+      // will crash the app if the tree is currently in edit mode and we try to
+      // execute the command (crash in nsFrame::HasView during repaint when the
+      // selection moves). Fixes bug 13493.
+      document.documentElement.focus();
+
       // Before showing the current track we trigger
       // a custom event, so that if this object is used wihout
       // a gBrowser object, the current window may still perform
