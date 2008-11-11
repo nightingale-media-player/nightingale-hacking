@@ -1,0 +1,15 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "ストリームフィルタ">
+<!ENTITY prefwindow.title "SHOUTcast ラジオ設定">
+<!ENTITY bit-rate.limit.label "ビットレートが次の値以上の SHOUTcast ストリームのみを表示する">
+<!ENTITY listeners.limit.label "視聴者数が次の人数以上の SHOUTcast ストリームのみを表示する">
+<!ENTITY listeners.limit.label.2 "人">
+<!ENTITY bit-rate.label "ビットレート(kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "視聴者数">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.customGenres "カスタムジャンル">
+<!ENTITY custom-genres.help.label "SHOUTcast ディレクトリに表示するジャンルを限定したいときは、ここにジャンル名をカンマで区切って入力してください。">
+<!ENTITY prefs.tosCaption "利用規約">
+<!ENTITY prefs.tosBegin "SHOUTcast ディレクトリの利用は Nullsoft 社の利用規約に従います。">
+<!ENTITY prefs.tosLinkText "利用規約を表示">

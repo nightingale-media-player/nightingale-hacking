@@ -9,5 +9,7 @@
 <!ENTITY listeners.label "Liczba słuchaczy">
 <!ENTITY listeners.accesskey "L">
 <!ENTITY prefs.customGenres "Własne gatunki">
+<!ENTITY custom-genres.help.label "">
 <!ENTITY prefs.tosCaption "Zasady używania">
+<!ENTITY prefs.tosBegin "">
 <!ENTITY prefs.tosLinkText "Zobacz zasady używania">
