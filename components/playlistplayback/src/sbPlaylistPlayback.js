@@ -536,7 +536,9 @@ PlaylistPlayback.prototype = {
     this._playingVideo.boolValue = false;
     this._metadataPosText.stringValue = "0:00";
     this._metadataLenText.stringValue = "0:00";
-    this._showRemaining.boolValue = false;
+    // Bug 13570 - Do not reset the showremainingtime
+    // remote on startup
+    // this._showRemaining.boolValue = false;
     //this._muteData.boolValue = false;
     this._playlistRef.stringValue = "";
     this._playlistIndex.intValue = -1;
