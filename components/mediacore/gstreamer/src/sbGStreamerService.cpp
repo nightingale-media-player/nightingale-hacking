@@ -166,7 +166,7 @@ sbGStreamerService::Init()
     //
     // Plus the system plugin path on linux:
     //   4. $HOME/.gstreamer-0.10/plugins
-    //   5. /usr/lib/gstreamer-0.10
+    //   5. /usr/lib/gstreamer-0.10 or /usr/lib64/gstreamer-0.10
 
     // 1. Read the existing GST_PLUGIN_PATH (if any)
     rv = envSvc->Exists(kGstPluginPath, &pluginPathExists);
@@ -206,7 +206,7 @@ sbGStreamerService::Init()
         NS_ENSURE_SUCCESS(rv, rv);
 
         if (!first)
-          pluginPaths.Append(NS_LITERAL_STRING(G_SEARCHPATH_SEPARATOR_S));
+          pluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
         pluginPaths.Append(dirPath);
         first = PR_FALSE;
       }
@@ -227,7 +227,7 @@ sbGStreamerService::Init()
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (!first)
-      pluginPaths.Append(NS_LITERAL_STRING(G_SEARCHPATH_SEPARATOR_S));
+      pluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
     pluginPaths.Append(pluginDirStr);
 
     // Remaining steps on unix only
@@ -251,8 +251,17 @@ sbGStreamerService::Init()
             "@mozilla.org/file/local;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = badFile->InitWithPath(
-            NS_LITERAL_STRING("/usr/lib/gstreamer-0.10/libgsturidecodebin.so"));
+    nsString sysLibDir;
+#ifdef HAVE_64BIT_OS
+    sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-0.10");
+#else
+    sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-0.10");
+#endif
+
+    nsString badFilePath = sysLibDir;
+    badFilePath.AppendLiteral("/libgsturidecodebin.so");
+
+    rv = badFile->InitWithPath(badFilePath);
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRBool badFileExists;
@@ -260,8 +269,8 @@ sbGStreamerService::Init()
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (!badFileExists) {
-      systemPluginPaths.Append(NS_LITERAL_STRING(G_SEARCHPATH_SEPARATOR_S));
-      systemPluginPaths.Append(NS_LITERAL_STRING("/usr/lib/gstreamer-0.10"));
+      systemPluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
+      systemPluginPaths.Append(sysLibDir);
     }
 #else
     systemPluginPaths = NS_LITERAL_STRING("");
