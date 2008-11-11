@@ -26,6 +26,7 @@
 ./lib/sbGStreamer.so
 ./searchplugins/google-lyrics.xml
 ./searchplugins/yahoo-lyrics.xml
+./songbird.desktop
 ./xulrunner/libtag.so
 ./xulrunner/libtag.so.1sb
 ./xulrunner/libtag.so.1sb.5.0
