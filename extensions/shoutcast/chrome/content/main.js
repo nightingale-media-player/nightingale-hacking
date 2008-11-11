@@ -58,7 +58,6 @@ var metricsObserver = {
 				if (metricsObserver.time) {
 					var now = Date.now()/1000;
 					var diff = now - metricsObserver.time;
-					dump("!!!!!!!!!! time spent streaming: " + diff + "\n");
 					gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
 				}
 				
@@ -82,7 +81,6 @@ var metricsObserver = {
 				}
 				var now = Date.now()/1000;
 				var diff = now - metricsObserver.time;
-				dump("!!!!!!!!!! time spent streaming: " + diff + "\n");
 				gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
 				metricsObserver.time = null;
 				break;

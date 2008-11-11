@@ -599,6 +599,9 @@ function onPlay(e) {
 					listItem.setProperty(SC_streamName, name);
 					listItem.setProperty(SC_id, id);
 				}
+			} else {
+				dump("Failed to load " + item.getProperty(SC_streamName) +
+						"\n");
 			}
 		}
 	}
