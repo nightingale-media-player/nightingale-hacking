@@ -305,9 +305,8 @@
     playbackControl->Pause();
   }
   else {
-    nsresult rv;
     nsCOMPtr<sbIApplicationController> app =
-        do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
+      do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
     NS_ENSURE_SUCCESS(rv,);
     rv = app->PlayDefault();
     NS_ENSURE_SUCCESS(rv,);
