@@ -1,13 +1,14 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowN.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowS.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#colResize.tiff.1.1
+./Contents/Frameworks/XUL.framework/res/cursors/CVS/Root.bak
 ./Contents/Frameworks/XUL.framework/res/cursors/.#help.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#rowResize.tiff.1.1
-./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNE.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNESW.tiff.1.1
+./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNE.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNS.tiff.1.1
-./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNW.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNWSE.tiff.1.1
+./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNW.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#sizeSE.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#sizeSW.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#spin1.tiff.1.1
@@ -17,13 +18,12 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#vtIBeam.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#zoomIn.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#zoomOut.tiff.1.1
-./Contents/Frameworks/XUL.framework/res/cursors/CVS/Root.bak
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontCMEX10.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontCMSY10.properties
-./Contents/Frameworks/XUL.framework/res/fonts/mathfontMTExtra.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontMath1.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontMath2.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontMath4.properties
+./Contents/Frameworks/XUL.framework/res/fonts/mathfontMTExtra.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontPUA.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontSymbol.properties
 ./Contents/MacOS/libid3-3.8.3.0.0.dylib
@@ -32,10 +32,10 @@
 ./Contents/MacOS/libogg.0.5.3.dylib
 ./Contents/MacOS/libtag.1sb.5.0.dylib
 ./Contents/MacOS/libtag.1sb.dylib
-./Contents/MacOS/libtag.dylib
 ./Contents/MacOS/libtag_c.0.0.0.dylib
 ./Contents/MacOS/libtag_c.0.dylib
 ./Contents/MacOS/libtag_c.dylib
+./Contents/MacOS/libtag.dylib
 ./Contents/Resources/chrome/rubberducky.jar
 ./Contents/Resources/chrome/rubberducky.manifest
 ./Contents/Resources/components/ArrayConverter.jsm
@@ -43,16 +43,16 @@
 ./Contents/Resources/components/DropHelper.jsm
 ./Contents/Resources/components/RDFHelper.jsm
 ./Contents/Resources/components/SBDataRemoteUtils.jsm
-./Contents/Resources/components/SBTimer.jsm
-./Contents/Resources/components/StringUtils.jsm
-./Contents/Resources/components/URLUtils.jsm
-./Contents/Resources/components/WindowUtils.jsm
-./Contents/Resources/components/XPCOMUtils.jsm
 ./Contents/Resources/components/sbGStreamer.xpt
 ./Contents/Resources/components/sbMetadataImageScanner.js
 ./Contents/Resources/components/sbMetadataManager.dylib
 ./Contents/Resources/components/sbMetadataManager.xpt
 ./Contents/Resources/components/sbProperties.jsm
+./Contents/Resources/components/SBTimer.jsm
+./Contents/Resources/components/StringUtils.jsm
+./Contents/Resources/components/URLUtils.jsm
+./Contents/Resources/components/WindowUtils.jsm
+./Contents/Resources/components/XPCOMUtils.jsm
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/install.rdf
 ./Contents/Resources/extensions/quicktime@songbirdnest.com
@@ -76,11 +76,7 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents
 ./Contents/Resources/plugins/VLC.plugin/Contents/Info.plist
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/VLC Plugin
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libFLAC.dylib
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libSDL.dylib
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libSDL_image.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdirac_decoder.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdirac_encoder.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdvbpsi.dylib
@@ -88,6 +84,7 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdvdnav.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdvdread.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libfaad.dylib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libFLAC.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libfreetype.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libfribidi.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libgcrypt.dylib
@@ -98,6 +95,8 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libmpcdec.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libogg.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libopendaap.dylib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libSDL.dylib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libSDL_image.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libshout.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libspeex.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libtheora.dylib
@@ -129,8 +128,8 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libaout_file_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libaraw_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libasf_plugin.dylib
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libau_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libaudio_format_plugin.dylib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libau_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libavi_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libbandlimited_resampler_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libblend_plugin.dylib
@@ -158,8 +157,8 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libfake_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libfixed32tofloat32_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libfixed32tos16_plugin.dylib
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libflac_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libflacdec_plugin.dylib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libflac_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libfloat32_mixer_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libfloat32tos16_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libfloat32tos8_plugin.dylib
@@ -292,6 +291,7 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxa_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxml_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxtag_plugin.dylib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/VLC Plugin
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj/InfoPlist.strings
