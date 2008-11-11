@@ -168,7 +168,6 @@ protected:
   PRUint32 m_RollingLimitColumnIndex;
   PRUint32 m_RollingLimitResult;
 
-  nsCOMPtr<nsIEventTarget> mLocationURIOwningThread;
   nsCOMPtr<sbIDatabaseEngine> mDatabaseEngine;
 
 private:
