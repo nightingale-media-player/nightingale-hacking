@@ -42,9 +42,7 @@
         xmlns:svg="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         onload="onLoad();"
-        type="songbird"
         buttons="accept"
-        hidechrome="true"
         width="500"
         height="500"
         persist="width height">
