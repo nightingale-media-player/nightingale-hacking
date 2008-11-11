@@ -239,8 +239,8 @@ Win32PlatformInterface::SetAudioSink(GstElement *aAudioSink)
    
     if (mAudioSink) {
       // Set properties for directsoundsink to increase 
-      // default buffer size to 2000ms.
-      g_object_set (mAudioSink, "buffer-time", (gint64)2000000, NULL);
+      // default buffer size to 1000ms.
+      g_object_set (mAudioSink, "buffer-time", (gint64)1000000, NULL);
     }
   }
 
