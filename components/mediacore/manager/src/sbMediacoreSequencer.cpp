@@ -1778,7 +1778,10 @@ sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
     return NS_OK;
   }
 
-  nsresult rv = mView->GetItemByIndex(mViewPosition, aItem);
+  PRUint32 index = 0;
+  nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mView->GetItemByIndex(index, aItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
