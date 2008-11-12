@@ -409,3 +409,6 @@ pref("songbird.columnpicker.allowUnlocalizedSecondaryProperties", false);
 // disable video display
 pref("songbird.mediacore.gstreamer.disablevideo", true);
 
+// playlist double click speed
+pref("songbird.playlist.doubleclickspeed", 500);
+

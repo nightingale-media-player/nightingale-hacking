@@ -352,7 +352,9 @@
       
       <!-- Maximum time in milliseconds between two clicks to consider them a
            double-click -->
-      <field name="_maxDoubleClickTime">300</field>
+      <field name="_maxDoubleClickTime">
+        parseInt(Application.prefs.getValue("songbird.playlist.doubleclickspeed", 500));
+      </field>
 
       <!-- Time of last click, used to determine whether double-clicks should be
            ignored -->
