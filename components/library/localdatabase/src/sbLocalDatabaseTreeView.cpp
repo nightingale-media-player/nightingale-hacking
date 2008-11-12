@@ -2473,6 +2473,8 @@ sbLocalDatabaseTreeView::OnSelectionChanged()
 {
   LOG(("sbLocalDatabaseTreeView[0x%.8x] - OnSelectionChanged", this));
   if (mListType != eDistinct && mTreeBoxObject && mRealSelection) {
+    // Current index may have changed as well
+    OnCurrentIndexChanged();
     nsresult rv = mTreeBoxObject->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -2490,8 +2492,20 @@ sbLocalDatabaseTreeView::OnCurrentIndexChanged()
     rv = mViewSelection->GetCurrentIndex(&currentIndex);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mRealSelection->SetCurrentIndex(currentIndex);
+    PRBool treeIsSelected;
+    rv = mRealSelection->IsSelected(currentIndex, &treeIsSelected);
     NS_ENSURE_SUCCESS(rv, rv);
+   
+    // If this row is not selected, do a toggle, which 
+    // will fire a select event and set the current index
+    if (!treeIsSelected) {
+      rv = mRealSelection->ToggleSelect(currentIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // Otherwise, already part of the selection, so just change current index
+      rv = mRealSelection->SetCurrentIndex(currentIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
