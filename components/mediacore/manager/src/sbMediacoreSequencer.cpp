@@ -2838,8 +2838,10 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
   nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
   if(NS_FAILED(rv)) {
     // if the item is our list, stop playback now and shutdown watcher
-    rv = mPlaybackControl->Stop();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (mPlaybackControl) {
+      rv = mPlaybackControl->Stop();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
