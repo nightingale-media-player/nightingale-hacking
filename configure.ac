@@ -200,6 +200,16 @@ AC_ARG_WITH(extensions,
 AC_SUBST(SB_EXTENSIONS)
 
 #
+# Check for --with-macosx-sdk
+#
+
+SB_MACOSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+
+AC_ARG_WITH(macosx-sdk,
+            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=/Developer/SDKs/MacOSX10.4u.sdk)],
+            [ SB_MACOSX_SDK=$withval ])
+
+#
 # Check for enabled library performance tests
 #
 
@@ -245,6 +255,10 @@ case "$target" in
         AC_MSG_ERROR(Unsupported architecture)
       ;;
     esac
+    
+    if ! test -e $SB_MACOSX_SDK/SDKSettings.plist; then
+      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK)
+    fi
   ;;
   *linux*)
     SB_PLATFORM="linux"
@@ -649,12 +663,15 @@ case "$SB_PLATFORM" in
 
     GCC_LINKER_FLAGS="-lpthread -lobjc -shared-libgcc -lstdc++ -Wl,-executable_path,\$(topsrcdir)/$OBJDIRNAME/$DISTDIRNAME$MACOSX_FRAMEWORKS$XULRUNNERDIR"
 
-    CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS"
-    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS"
-    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS -isysroot /Developer/SDKs/MacOSX10.4u.sdk -fobjc-exceptions -DUSE_COCOA"
+    MACOSX_SDK_CFLAGS="-isysroot $SB_MACOSX_SDK"
+    MACOSX_SDK_LDFLAGS="$MACOSX_SDK_CFLAGS -Wl,-syslibroot,$SB_MACOSX_SDK"
+
+    CFLAGS="$CFLAGS $GCC_COMPILER_FLAGS $MACOSX_SDK_CFLAGS"
+    CXXFLAGS="$CXXFLAGS $GCC_COMPILER_FLAGS $MACOSX_SDK_CFLAGS"
+    CMMFLAGS="$CMMFLAGS $GCC_COMPILER_FLAGS $MACOSX_SDK_CFLAGS -fobjc-exceptions -DUSE_COCOA"
     CFLAGS_INCLUDE_PREFIX="-I"
     CFLAGS_INCLUDE_SUFFIX=""
-    LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS"
+    LDFLAGS="$LDFLAGS $GCC_LINKER_FLAGS $MACOSX_SDK_LDFLAGS"
     LDFLAGS_DLL="-dynamiclib"
     LDFLAGS_LIB="-static"
     LDFLAGS_OUT_PREFIX="-o "
