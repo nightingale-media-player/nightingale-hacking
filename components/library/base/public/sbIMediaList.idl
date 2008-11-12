@@ -727,7 +727,8 @@ interface sbIMediaList : sbIMediaItem
       of the <MediaItem>(s) to add.
     shouldDownload - a boolean indicating whether to download or not. It is
       optional and if absent defaults to FALSE. (only exposed on WebpageAPI
-      calls currently).
+      calls currently).  This only applies if this media list is in the main
+      library.
 
     In the additional forms urls to the <MediaItem>s can be passed directly
     to the <MediaList> for addition. The <MediaItems> will be created and

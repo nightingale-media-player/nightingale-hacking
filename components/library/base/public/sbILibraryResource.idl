@@ -151,14 +151,22 @@ interface sbILibraryResource : nsISupports
     (end)
 
   Standard Properties:
+    http://songbirdnest.com/data/1.0#albumDetailUrl - A URL with information on the album
     http://songbirdnest.com/data/1.0#albumName - The name of the album
+    http://songbirdnest.com/data/1.0#artistDetailUrl - A URL with information on the artist
     http://songbirdnest.com/data/1.0#artistName - The name of the artist
+    http://songbirdnest.com/data/1.0#bitRate - The bit rate of the media, in bits per second
+    http://songbirdnest.com/data/1.0#bpm - The number of beats per minute
     http://songbirdnest.com/data/1.0#columnSpec - Column display data
     http://songbirdnest.com/data/1.0#composerName - The name of the composer
+    http://songbirdnest.com/data/1.0#copyrightURL - A URL with information on the copyright
     http://songbirdnest.com/data/1.0#defaultColumnSpec - Default column display data
+    http://songbirdnest.com/data/1.0#disableDownload - Prevent this item from being downloaded
     http://songbirdnest.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
     http://songbirdnest.com/data/1.0#downloadDetails - Download state and progress
     http://songbirdnest.com/data/1.0#duration - The duration of this media, in microseconds
+    http://songbirdnest.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
+    http://songbirdnest.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
     http://songbirdnest.com/data/1.0#genre - The genre of this media
     http://songbirdnest.com/data/1.0#hidden - Whether this item should be hidden from the user
     http://songbirdnest.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
@@ -171,7 +179,9 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#playCount - The number of times this media has been played
     http://songbirdnest.com/data/1.0#primaryImageURL - The URL of the primary image
     http://songbirdnest.com/data/1.0#producerName - The name of the producer
+    http://songbirdnest.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
     http://songbirdnest.com/data/1.0#recordLabelName - The name of the record label
+    http://songbirdnest.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
     http://songbirdnest.com/data/1.0#skipCount - The number of times this item was skipped
     http://songbirdnest.com/data/1.0#totalDiscs - The total number of discs in a compilation
     http://songbirdnest.com/data/1.0#totalTracks - The total number of tracks in a compilation
@@ -213,14 +223,21 @@ interface sbILibraryResource : nsISupports
     (end)
 
   Standard Properties:
+    http://songbirdnest.com/data/1.0#albumDetailUrl - A URL with information on the album
     http://songbirdnest.com/data/1.0#albumName - The name of the album
+    http://songbirdnest.com/data/1.0#artistDetailUrl - A URL with information on the artist
     http://songbirdnest.com/data/1.0#artistName - The name of the artist
+    http://songbirdnest.com/data/1.0#bitRate - The bit rate of the media, in bits per second
+    http://songbirdnest.com/data/1.0#bpm - The number of beats per minute
     http://songbirdnest.com/data/1.0#columnSpec - Column display data
     http://songbirdnest.com/data/1.0#composerName - The name of the composer
     http://songbirdnest.com/data/1.0#defaultColumnSpec - Default column display data
+    http://songbirdnest.com/data/1.0#disableDownload - Prevent this item from being downloaded
     http://songbirdnest.com/data/1.0#discNumber - The number of disc this media appears on in a compilation
     http://songbirdnest.com/data/1.0#downloadDetails - Download state and progress
     http://songbirdnest.com/data/1.0#duration - The duration of this media, in microseconds
+    http://songbirdnest.com/data/1.0#enableAutoDownload - whether this item should be automatically downloaded when added to the main library
+    http://songbirdnest.com/data/1.0#excludeFromHistory - This track should not be logged in playback history when played
     http://songbirdnest.com/data/1.0#genre - The genre of this media
     http://songbirdnest.com/data/1.0#hidden - Whether this item should be hidden from the user
     http://songbirdnest.com/data/1.0#isPartOfCompilation - Whether this media is part of a compilation
@@ -228,7 +245,9 @@ interface sbILibraryResource : nsISupports
     http://songbirdnest.com/data/1.0#lyrics - The lyrics of the media
     http://songbirdnest.com/data/1.0#primaryImageURL - The URL of the primary image
     http://songbirdnest.com/data/1.0#producerName - The name of the producer
+    http://songbirdnest.com/data/1.0#rating - The user-set rating of the item, either 0 (unset) or in the range 1-5
     http://songbirdnest.com/data/1.0#recordLabelName - The name of the record label
+    http://songbirdnest.com/data/1.0#sampleRate - The sample rate of the media, in samples per second
     http://songbirdnest.com/data/1.0#totalDiscs - The total number of discs in a compilation
     http://songbirdnest.com/data/1.0#totalTracks - The total number of tracks in a compilation
     http://songbirdnest.com/data/1.0#trackName - The name of the track
