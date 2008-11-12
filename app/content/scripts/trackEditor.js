@@ -1410,7 +1410,7 @@ TrackEditorInputWidget.prototype = {
   onCheckboxCommand: function() {
     TrackEditor.state.setPropertyEnabled(this.property, this._checkbox.checked);
     if (this._checkbox.checked) {
-      this._element.focus();
+      this._element.parentNode.focus();
     }
   },
   
@@ -1841,7 +1841,7 @@ TrackEditorArtwork.prototype = {
    */
   onContextMenu: function TrackEditorArtwork_onContextMenu(aEvent) {
     // Make sure we are focused (could be a right-click that fired this)
-    this._element.focus();
+    this._element.parentNode.focus();
     
     // Default to assuming we are invoked by alternative methods to right-click
     var xPos = 0;                       // No position needed
@@ -1871,7 +1871,7 @@ TrackEditorArtwork.prototype = {
    */
   onClick: function TrackEditorArtwork_onClick(aEvent) {
     // Focus the element so we can respond to context menus and commands
-    this._element.focus();
+    this._element.parentNode.focus();
   },
 
   /**
@@ -2034,7 +2034,7 @@ TrackEditorArtwork.prototype = {
    *        picker for them to choose an image file.
    */
   onButtonCommand: function TrackEditorArtwork_onButtonCommand() {
-    this._element.focus();
+    this._element.parentNode.focus();
     
     // Open the file picker
     var filePicker = Cc["@mozilla.org/filepicker;1"]
