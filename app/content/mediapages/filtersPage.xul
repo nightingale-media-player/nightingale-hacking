@@ -75,7 +75,6 @@
     
     <hbox id="sb-playlist-filters"
           class="sb-playlist-filters"
-          flex="1"
           hidden="false"/>
 
     <sb-smart-splitter id="sb-playlist-splitter"
