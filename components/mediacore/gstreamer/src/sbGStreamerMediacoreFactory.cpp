@@ -126,36 +126,62 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
   // Build a big list of extensions based on everything gstreamer knows about,
   // plus some known ones, minus a few known non-media-file extensions that
   // gstreamer has typefinders for.
+
+  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsTArray<nsString> audioExtensions;
   nsTArray<nsString> videoExtensions;
-  const char *blacklist[] = {
-      "txt", "htm", "html", "xml", "pdf", "cpl", "msstyles", "scr", "sys",
-      "ocx", "bz2", "gz", "zip", "Z", "rar", "tar", "dll", "exe", "a",
-      "bmp", "png", "gif", "jpeg", "jpg", "jpe", "tif", "tiff", "xpm",
-      "dat", "swf", "swfl", "stm", "cgi", "sf", "xcf", "far", "wvc"};
+  
+  // XXX Mook: we have a silly list of blacklisted extensions because we don't
+  // support them and we're being stupid and guessing things based on them.
+  // This crap should really look for a plugin that may possibly actually decode
+  // these things, or something better.  Whatever the real solution is, this
+  // isn't it :(
+  nsCString blacklistExtensions;
+  { // for scope
+    const char defaultBlacklistExtensions[] =
+      "txt,htm,html,xml,pdf,cpl,msstyles,scr,sys,ocx,bz2,gz,zip,Z,rar,tar,dll,"
+      "exe,a,bmp,png,gif,jpeg,jpg,jpe,tif,tiff,xpm,dat,swf,swfl,stm,cgi,sf,xcf,"
+      "far,wvc,mpc,mpp,mp+";
+    char* blacklistExtensionsPtr = nsnull;
+    rv = rootPrefBranch->GetCharPref("songbird.mediacore.gstreamer.blacklistExtensions",
+                                     &blacklistExtensionsPtr);
+    if (NS_SUCCEEDED(rv)) {
+      blacklistExtensions.Adopt(blacklistExtensionsPtr);
+    } else {
+      blacklistExtensions.Assign(defaultBlacklistExtensions);
+    }
+    blacklistExtensions.Insert(',', 0);
+    blacklistExtensions.Append(',');
+    LOG(("sbGStreamerMediacoreFactory: blacklisted extensions: %s\n",
+         blacklistExtensions.BeginReading()));
+  }
 
   const char *extraAudioExtensions[] = {"m4r", "m4p", "mp4"};
   const char *extraVideoExtensions[] = {"vob"};
   
   // XXX Mook: we currently assume anything not known to be video is audio :|
-  const char defaultKnownVideoExtensions[] =
-    "264,avi,dif,dv,flc,fli,flv,h264,jng,m4v,mkv,mng,mov,mpe,mpeg,mpg,mpv,mve,"
-    "nuv,ogm,qif,qti,qtif,ras,rm,rmvb,smil,ts,viv,wmv,x264";
-  
-  char* knownVideoExtensionsPtr = nsnull;
   nsCString knownVideoExtensions;
-  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
-    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = rootPrefBranch->GetCharPref("songbird.mediacore.gstreamer.videoExtensions",
-                                   &knownVideoExtensionsPtr);
-  if (NS_SUCCEEDED(rv)) {
-    knownVideoExtensions.Adopt(knownVideoExtensionsPtr);
-  } else {
-    knownVideoExtensions.Assign(defaultKnownVideoExtensions);
+  
+  { // for scope
+    const char defaultKnownVideoExtensions[] =
+      "264,avi,dif,dv,flc,fli,flv,h264,jng,m4v,mkv,mng,mov,mpe,mpeg,mpg,mpv,mve,"
+      "nuv,ogm,qif,qti,qtif,ras,rm,rmvb,smil,ts,viv,wmv,x264";
+    char* knownVideoExtensionsPtr = nsnull;
+    rv = rootPrefBranch->GetCharPref("songbird.mediacore.gstreamer.videoExtensions",
+                                     &knownVideoExtensionsPtr);
+    if (NS_SUCCEEDED(rv)) {
+      knownVideoExtensions.Adopt(knownVideoExtensionsPtr);
+    } else {
+      knownVideoExtensions.Assign(defaultKnownVideoExtensions);
+    }
+    knownVideoExtensions.Insert(',', 0);
+    knownVideoExtensions.Append(',');
+    LOG(("sbGStreamerMediacoreFactory: known video extensions: %s\n",
+         knownVideoExtensions.BeginReading()));
   }
-  knownVideoExtensions.Insert(',', 0);
-  knownVideoExtensions.Append(',');
 
   GList *walker, *list;
 
@@ -171,32 +197,37 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     if (factoryexts) {
       while (*factoryexts) {
         gboolean isAudioExtension = isAudioFactory;
-        unsigned int i;
-        for (i = 0; i < NS_ARRAY_LENGTH(blacklist); i++) {
-          if (!g_ascii_strcasecmp(*factoryexts, blacklist[i])) {
-            blacklisted = TRUE;
-            LOG(("Ignoring extension '%s'", *factoryexts));
-            break;
+        nsCString delimitedExtension(*factoryexts);
+        delimitedExtension.Insert(',', 0);
+        delimitedExtension.Append(',');
+        
+        blacklisted = (blacklistExtensions.Find(delimitedExtension) != -1);
+        #if PR_LOGGING
+          if (blacklisted) {
+              LOG(("sbGStreamerMediacoreFactory: Ignoring extension '%s'", *factoryexts));
           }
-        }
+        #endif /* PR_LOGGING */
 
         if (!blacklisted) {
           if (!isAudioExtension) {
-            nsCString extension(*factoryexts);
-            extension.Insert(',', 0);
-            extension.Append(',');
-            if (knownVideoExtensions.Find(extension) == -1) {
+            if (knownVideoExtensions.Find(delimitedExtension) == -1) {
               isAudioExtension = TRUE;
             }
           }
           
           nsString ext = NS_ConvertUTF8toUTF16(*factoryexts);
           if (isAudioExtension) {
-            if (!audioExtensions.Contains(ext))
+            if (!audioExtensions.Contains(ext)) {
               audioExtensions.AppendElement(ext);
+              LOG(("sbGStreamerMediacoreFactory: registering audio extension %s\n",
+                   *factoryexts));
+            }
           } else {
-            if (!videoExtensions.Contains(ext))
+            if (!videoExtensions.Contains(ext)) {
               videoExtensions.AppendElement(ext);
+              LOG(("sbGStreamerMediacoreFactory: registering video extension %s\n",
+                   *factoryexts));
+            }
           }
         }
         factoryexts++;
