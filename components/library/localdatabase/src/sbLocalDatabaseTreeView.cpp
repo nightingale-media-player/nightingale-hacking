@@ -555,6 +555,12 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
 
   nsresult rv;
 
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+
   nsString bind;
   rv = GetPropertyForTreeColumn(aTreeColumn, bind);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1303,6 +1309,12 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
   NS_ASSERTION(properties, "properties is null");
 
   nsresult rv;
+  
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
 
   if (!mPlayingItemUID.IsEmpty()) {
     nsString uid;
@@ -1368,6 +1380,12 @@ sbLocalDatabaseTreeView::GetRowCount(PRInt32 *aRowCount)
 {
   NS_ENSURE_ARG_POINTER(aRowCount);
 
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+
   *aRowCount = mArrayLength + (mFakeAllRow ? 1 : 0);
   return NS_OK;
 }
@@ -1380,6 +1398,12 @@ sbLocalDatabaseTreeView::GetCellText(PRInt32 row,
   NS_ENSURE_ARG_POINTER(col);
 
   nsresult rv;
+
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
 
   if (IsAllRow(row)) {
     _retval.Assign(mLocalizedAll);
@@ -1503,23 +1527,11 @@ sbLocalDatabaseTreeView::GetRowProperties(PRInt32 row,
 
   PRUint32 index = TreeToArray(row);
 
-  // If we are not managing our selection, sync up the selected state of this
-  // row with the view's selection
-  if (!mManageSelection && !IsAllRow(row) && mViewSelection && mRealSelection) {
-    PRBool viewIsSelected;
-    rv = mViewSelection->IsIndexSelected(row, &viewIsSelected);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool treeIsSelected;
-    rv = mRealSelection->IsSelected(row, &treeIsSelected);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (viewIsSelected != treeIsSelected) {
-      rv = mRealSelection->ToggleSelect(row);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
 
   PRUint32 count;
   properties->Count(&count);
@@ -1588,6 +1600,12 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
   NS_ENSURE_ARG_POINTER(col);
   NS_ENSURE_ARG_POINTER(properties);
 
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+  
 #ifdef PR_LOGGING
   PRInt32 colIndex = -1;
   col->GetIndex(&colIndex);
@@ -1898,6 +1916,12 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetCellValue(%d, %d)", this,
          row, colIndex));
 #endif
+
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
 
   if (IsAllRow(row)) {
     _retval.Truncate();
