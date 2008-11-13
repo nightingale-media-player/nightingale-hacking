@@ -33,8 +33,11 @@ APPINI = application.ini.in
 
 SONGBIRD_XULRUNNER = $(srcdir)/updater.ini
 
+SONGBIRD_DIST += $(srcdir)/blocklist.xml \
+                 $(NULL)
+
 ifeq (macosx,$(SB_PLATFORM))
-SONGBIRD_CONTENTS = $(srcdir)/Info.plist
+SONGBIRD_CONTENTS += $(srcdir)/Info.plist
 endif
 
 SUBDIRS = branding \
