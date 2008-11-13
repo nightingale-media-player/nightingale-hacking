@@ -261,6 +261,7 @@ Section "-Application" Section1
   File LICENSE.html
   File TRADEMARK.txt
   File README.txt
+  File blocklist.xml
   
   ; List of directories to install
   File /r chrome
@@ -493,6 +494,7 @@ Section "Uninstall"
   Delete $INSTDIR\LICENSE.html
   Delete $INSTDIR\TRADEMARK.txt
   Delete $INSTDIR\README.txt
+  Delete $INSTDIR\blocklist.xml
   
   ; These files are created by the application
   Delete $INSTDIR\*.chk
