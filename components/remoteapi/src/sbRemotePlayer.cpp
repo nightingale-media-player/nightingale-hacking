@@ -1243,8 +1243,10 @@ sbRemotePlayer::Play()
     rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = playbackControl->Play();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if ( playbackControl ) {
+      rv = playbackControl->Play();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     return NS_OK;
   }
@@ -1393,8 +1395,10 @@ sbRemotePlayer::Stop()
   rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = playbackControl->Stop();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( playbackControl ) {
+    rv = playbackControl->Stop();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
@@ -1419,8 +1423,10 @@ sbRemotePlayer::Pause()
   rv = manager->GetPlaybackControl(getter_AddRefs(playbackControl));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = playbackControl->Pause();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if ( playbackControl ) {
+    rv = playbackControl->Pause();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = TakePlaybackControl( nsnull );
   NS_ENSURE_SUCCESS( rv, rv );
