@@ -549,6 +549,9 @@
           var view = this._viewForPage;
           this._isNewViewForPage = false;            
 
+          // whether we had an explicitly specified view
+          var hasExplicitView = !!(view);
+
           // Try getting a view from the history.
           if (!view) {
             // Now all I have to do is find something resembling a usefully
@@ -562,6 +565,11 @@
               .classes["@songbirdnest.com/Songbird/library/MediaListViewMap;1"]
               .getService(Components.interfaces.sbIMediaListViewMap);
             view = viewMap.getView(browser, entry);
+          }
+
+          if ((!view) && (aDocument != this.linkedBrowser.contentDocument)) {
+            // this isn't the top level document; grab the existing view
+            view = this.mediaListView;
           }
 
           if (!view) {
@@ -599,6 +607,11 @@
 
           // create a new scraper.
           if(!this._scraper) {
+            if (!hasExplicitView) {
+              // only clear the view if it wasn't explicitly specified (because
+              // if it was, we wanted to use it - e.g. currently playing it)
+              view.mediaList.clear();
+            }
             this._scraper = new WebScraper(view.mediaList);
             
             var self = this;

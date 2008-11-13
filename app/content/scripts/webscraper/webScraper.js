@@ -37,7 +37,6 @@
 
 function WebScraper(medialist) {
   this.medialist = medialist;
-  this.medialist.clear();
 
   // Add a .job to implement sbIJobProgress
   this.job = new SBJobUtils.JobBase();

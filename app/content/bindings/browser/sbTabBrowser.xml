@@ -624,18 +624,15 @@
               // Otherwise, load the media list.
               var mediaList = aMediaListView.mediaList;
               if (mediaList.library.equals(LibraryUtils.webLibrary) &&
-                  (mediaList.getProperty(SBProperties.isList) == "1")) {
+                  (mediaList.getProperty(SBProperties.isList) == "1"))
+              {
                 aMediaListView.selection.selectOnly(aHighlightIndex);
                 var originPage = mediaList.getProperty(SBProperties.originPage);
-                this.loadURI(originPage,
-                             null,
-                             null,
-                             null,
-                             null,
-                             aMediaListView);
+                tab = this.loadURI(originPage, null, null, null, null,
+                                   aMediaListView);
               } else {
-                var tab = this.loadMediaList(aMediaListView.mediaList, null, 
-                                             null, aMediaListView);
+                tab = this.loadMediaList(aMediaListView.mediaList, null, 
+                                         null, aMediaListView);
                 tab._highlightViewIndexOnLoad = aHighlightIndex;
               }
             }
@@ -831,6 +828,7 @@
         <parameter name="referrer" />
         <body><![CDATA[
           var retval = false;
+          var tab = this.selectedTab;
           try
           {
             var ioService =
@@ -890,10 +888,10 @@
               }
               else {
                 if ( scheme == "http" ){
-                  mediaList = this.mCurrentTab.outerPlaylist.mediaList;
+                  mediaList = tab.outerPlaylist.mediaList;
                   if (mediaList) {
                     mediaList.clear();
-                    this.selectedTab.outerPlaylistShowing = true;
+                    tab.outerPlaylistShowing = true;
                     var locationBar = document.getElementById("location_bar");
                     locationBar.uri = aURL;
                   }
@@ -944,7 +942,10 @@
                     metadataService.read(array);
 
                     // Start playback
-                    var view = mediaList.createView();
+                    var view = tab.mediaListView;
+                    if ((!view) || (view.mediaList != mediaList)) {
+                      mediaList.createView();
+                    }
                     this.mm.sequencer.playView(view, 0);
                   }
                 }
