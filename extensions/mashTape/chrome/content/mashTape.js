@@ -496,6 +496,13 @@ mashTape.iframeLoadListener = function(e) {
 			var artist = i.getProperty(SBProperties.artistName);
 			var album = i.getProperty(SBProperties.albumName);
 			var track = i.getProperty(SBProperties.trackName);
+
+			if (artist == null || artist == "") {
+				mashTape.noDataTab("info");
+				mashTape.noDataTab("rss");
+				mashTape.noDataTab("photo");
+				mashTape.noDataTab("flash");
+			}
 			
 			mashTape.update(artist, album, track);
 		}
@@ -586,7 +593,7 @@ mashTape.onTrackChange = function(item, view, index) {
 	var album = item.getProperty(SBProperties.albumName);
 	var track = item.getProperty(SBProperties.trackName);
 
-	if (artist == null) {
+	if (artist == null || artist == "") {
 		mashTape.noDataTab("info");
 		mashTape.noDataTab("rss");
 		mashTape.noDataTab("photo");
