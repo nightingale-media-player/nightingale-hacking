@@ -28,10 +28,14 @@ function _mashTape_setupPhotoStream(imageItems, paneWidth, paneHeight) {
 		imageItems[idx].imgEl = img;
 	});
 	
+	var speed =
+		Application.prefs.getValue("extensions.mashTape.photo.speed", 50);
+	speed = speed * 40;
+
 	nS5 = new noobSlide({
 		box: $('box'),
 		size: paneWidth,
-		interval: 2000,
+		interval: speed,
 		items: imageItems,
 		autoPlay: true,
 		addButtons: {

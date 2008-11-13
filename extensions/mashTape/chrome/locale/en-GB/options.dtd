@@ -29,3 +29,8 @@
 
 <!ENTITY mtprefs.single "This pane supports displaying content from one service at a time.  Please select a service from the list below.">
 <!ENTITY mtprefs.multiple "This pane supports displaying content from multiple services at a time.  Please select your choice of services from the list below.">
+
+<!-- Photo prefs -->
+<!ENTITY mtprefs.tab.photo.speed "Photo scrolling speed:">
+<!ENTITY mtprefs.tab.photo.faster "Faster">
+<!ENTITY mtprefs.tab.photo.slower "Slower">

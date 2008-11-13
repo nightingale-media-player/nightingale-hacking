@@ -23,6 +23,8 @@
 		name="extensions.mashTape.photo.enabled" />
 	<preference id="tab-flash-enabled" type="bool"
 		name="extensions.mashTape.flash.enabled" />
+	<preference id="photo-speed" type="int"
+		name="extensions.mashTape.photo.speed" />
 </preferences>
 
 <command id="cmd-info" oncommand="mashTapePreferences.savePrefs('info')" />
@@ -135,6 +137,15 @@
 						<checkbox preference="tab-photo-enabled"
 							id="checkbox-photo" command="cmd-toggle-photo" />
 						<label value="&mtprefs.tab.help;" />
+					</hbox>
+
+					<hbox id="hbox-photo-speed">
+						<label value="&mtprefs.tab.photo.speed;"
+							style="padding-right: 2em;" />
+						<label value="&mtprefs.tab.photo.faster;" />
+						<scale id="scale-photo-speed" min="10" max="200"
+							style="width: 10em;" preference="photo-speed" />
+						<label value="&mtprefs.tab.photo.slower;" />
 					</hbox>
 					
 					<description id="help-photo">&mtprefs.single;</description>

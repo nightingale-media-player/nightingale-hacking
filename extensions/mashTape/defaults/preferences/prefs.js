@@ -25,6 +25,7 @@ pref("extensions.mashTape.rss.providers", "{f6256890-79d3-11dd-ad8b-0800200c9a66
 
 // Flickr
 pref("extensions.mashTape.photo.enabled", true);
+pref("extensions.mashTape.photo.speed", 50);
 pref("extensions.mashTape.photo.providers", "{a86cc290-6990-11dd-ad8b-0800200c9a66}");
 
 // YouTube & Yahoo Music Video

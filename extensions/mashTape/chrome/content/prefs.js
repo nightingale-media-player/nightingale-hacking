@@ -147,6 +147,11 @@ var mashTapePreferences = {
 
 		// Now see if we should disable the richlistbox
 		this.toggleServices(box, providerType, !enabled);
+		if (providerType == "photo") {
+			var hbox = document.getElementById("hbox-photo-speed");
+			for each (var node in hbox.childNodes)
+				node.disabled = !enabled;
+		}
 	},
 	
 	toggleServices: function(box, providerType, disabled) {
@@ -214,6 +219,14 @@ var mashTapePreferences = {
 
 		for each (var tab in ["info", "rss", "photo", "flash"])
 			this.checkDefaultTab(tab);
+
+		if (!this._prefBranch.getBoolPref("photo.enabled")) {
+			var hbox = document.getElementById("hbox-photo-speed");
+			for each (var node in hbox.childNodes)
+				node.disabled = true;
+		}
+		document.getElementById("scale-photo-speed").value =
+			this._prefBranch.getIntPref("photo.speed");
 
 		this.enumerateServices();
 		this.populateServices("info");
