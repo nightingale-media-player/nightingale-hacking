@@ -88,9 +88,21 @@
 
 <li><strong>Contact Information.</strong> If you have any questions regarding this Agreement, you may contact POTI at support@songbirdnest.com.</li>
 
-<li><strong>Third Party Software.</strong> Third party software used in Songbird: GStreamer is distributed under the GNU Lesser General Public License. id3lib is distributed under the GNU Lesser General Public License. libmp4 is distributed under the GNU Lesser General Public License. libogg is distributed under the BSD license. SQLite is in the public domain. taglib is distributed under the GNU Lesser General Public License. XULRunner is copyright &copy; 2007 Mozilla Foundation and is distributed under the GNU Lesser General Public License.</li>
-
+<li><strong>Third Party Software.</strong> Third party software used in Songbird:
+<ol>
+  <li>GStreamer is distributed under the GNU Lesser General Public License.</li>
+  <li>id3lib is distributed under the GNU Lesser General Public License.</li>
+  <li>libmp4 is distributed under the GNU Lesser General Public License.</li>
+  <li>libogg is distributed under the BSD license.</li>
+  <li>SQLite is in the public domain. taglib is distributed under the GNU Lesser General Public License.</li>
+  <li>XULRunner is copyright &copy; 2007 Mozilla Foundation and is distributed under the GNU Lesser General Public License.</li>
+#if SB_PLATFORM==linux
+  <li>Fluendo is distributed under the Fluendo Gstreamer Plugin License Agreement, a copy of which is included below. By using Songbird, you are agreeing to be bound by the terms of the Fluendo Gstreamer Plugin License Agreement.
+#include fluendo-eula.html
+</li>
+#endif
 </ol>
 
+</ol>
 </body>
 </html>
