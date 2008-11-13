@@ -10,7 +10,7 @@ pref("extensions.getMoreExtensionsURL", "http://addons.songbirdnest.com/");
 pref("extensions.getMoreThemesURL", "http://addons.songbirdnest.com/tag/feathers");
 
 pref("extensions.blocklist.url", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/blocklist.xml");
-pref("extensions.blocklist.detailsURL", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/@SB_BUILD_ID@/%BUILD_TARGET%/%LOCALE%/%CHANNEL%/%OS_VERSION%/%DISTRIBUTION%/%DISTRIBUTION_VERSION%/details");
+pref("extensions.blocklist.detailsURL", "https://addon-files.songbirdnest.com/blocklist/3/@SB_APPNAME@/%VERSION%/");
 
 pref("xpinstall.whitelist.add", "addons.songbirdnest.com");
 pref("xpinstall.whitelist.add.0", "translate.songbirdnest.com");
