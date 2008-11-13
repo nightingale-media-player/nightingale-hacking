@@ -1237,9 +1237,6 @@
         <parameter name="secondary"/>
         <body>
 <![CDATA[
-  // If the last child of the columns element is a treecol, add a splitter
-  this._ensureEndSplitter(ordinal - 1);
-
   var treecol = document.createElementNS(this._XUL_NS, "treecol");
   treecol.setAttribute("bind", propertyInfo.id);
   treecol.setAttribute("label", propertyInfo.displayName);  
@@ -1281,6 +1278,8 @@
   }
 
   this._treecols.appendChild(treecol);
+  // If the last child of the columns element is a treecol, add a splitter
+  this._ensureEndSplitter(ordinal - 1);
 
   if (this.tree.columns) {
     this.tree.columns.invalidateColumns();
