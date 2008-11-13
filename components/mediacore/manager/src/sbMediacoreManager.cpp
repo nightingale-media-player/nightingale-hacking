@@ -549,19 +549,23 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
 sbMediacoreManager::OnSetMute(PRBool aMute)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_STATE(mPrimaryCore);
-
-  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
-    do_QueryInterface(mPrimaryCore, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoMonitor mon(mMonitor);
 
-  rv = volumeControl->SetMute(aMute);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(mPrimaryCore) {
+    nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
+      do_QueryInterface(mPrimaryCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mon.Exit();
 
-  mon.Exit();
+    rv = volumeControl->SetMute(aMute);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mon.Exit();
+  }
 
   rv = mDataRemoteFaceplateMute->SetBoolValue(aMute);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -573,19 +577,25 @@ sbMediacoreManager::OnSetMute(PRBool aMute)
 sbMediacoreManager::OnSetVolume(double aVolume)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_STATE(mPrimaryCore);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
-    do_QueryInterface(mPrimaryCore, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(mPrimaryCore) {
 
-  rv = volumeControl->SetVolume(mVolume);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
+      do_QueryInterface(mPrimaryCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mon.Exit();
 
-  mon.Exit();
+    rv = volumeControl->SetVolume(mVolume);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mon.Exit();
+  }
 
   rv = SetVolumeDataRemote(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
