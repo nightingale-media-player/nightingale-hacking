@@ -538,4 +538,7 @@
 
 <!-- Mediacore entities. -->
 <!ENTITY mediacore.error.title    "Mediacore Error">
-<!ENTITY mediacore.error.preface  "&brandShortName; encountered a playback error.">
+<!ENTITY mediacore.error.preface  "&brandShortName; has encountered the following media core error:">
+<!ENTITY mediacore.error.continue "Continue">
+<!ENTITY mediacore.error.stop     "Stop Playback">
+<!ENTITY mediacore.error.dontshowme "Do not display further media core errors">

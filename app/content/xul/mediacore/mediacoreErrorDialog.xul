@@ -45,19 +45,29 @@
  id="mediacore_error"
  title="&mediacore.error.title;"
  buttons="cancel,accept"
+ buttonlabelaccept="&mediacore.error.stop;" 
+ buttonlabelcancel="&mediacore.error.continue;" 
+ defaultButton="cancel" 
  type="songbird"
  onload="doOnLoad();"
- ondialogaccept="return doNext();"
- ondialogcancel="return doStop();"
+ ondialogaccept="return doStop();"
+ ondialogcancel="return doNext();"
  width="440"
- height="160"
+ height="180"
 >
-  <vbox>
-    <!-- Preface the error with a quick message -->
-    <label value="&mediacore.error.preface;" />
 
-    <!-- Detailed description of the error -->
-    <description flex="1" id="mediacore_error_desc" />
+  <vbox>
+    <vbox>
+      <!-- Preface the error with a quick message -->
+      <label class="header" style="font-size: 105%"  value="&mediacore.error.preface;" />
+
+      <!-- Detailed description of the error -->
+      <description class="indent" flex="1" id="mediacore_error_desc" />
+    </vbox>
+
+    <spacer height="5" />
+    <checkbox id="mediacore_error_dontshowme" label="&mediacore.error.dontshowme;" checked="false" />
+    <spacer height="5" />
   </vbox>
 
   <!-- Import the Songbird services code. -->
@@ -82,6 +92,15 @@
       }
     }
     
+    function checkForDontShowMe() {
+      if(document.getElementById("mediacore_error_dontshowme").checked) {
+        const prefs = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication)
+                        .prefs;
+        prefs.setValue("songbird.mediacore.error.dontshowme", true);
+      }
+    }
+    
     function doNext() {
       try {
         gMM.sequencer.next();
@@ -89,6 +108,8 @@
       catch(e) {
         Cu.reportError(e);
       }
+      
+      checkForDontShowMe();
       
       onExit();
     }
@@ -100,6 +121,8 @@
       catch(err) {
         Cu.reportError(err);
       }
+      
+      checkForDontShowMe();
       
       onExit();
     }

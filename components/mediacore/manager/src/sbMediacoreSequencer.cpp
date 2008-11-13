@@ -30,6 +30,8 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIDOMWindow.h>
 #include <nsIDOMXULElement.h>
+#include <nsIPrefBranch.h>
+#include <nsIPrefService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIURL.h>
@@ -73,6 +75,9 @@
 
 #include "sbMediacoreDataRemotes.h"
 #include "sbMediacoreShuffleSequenceGenerator.h"
+
+#define MEDIACORE_ERROR_DONT_SHOW_ME_PREF \
+  "songbird.mediacore.error.dontshowme"
 
 #define MEDIACORE_ERROR_DIALOG_URI \
   "chrome://songbird/content/xul/mediacore/mediacoreErrorDialog.xul"
@@ -910,24 +915,43 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 
   // If there's an error object, we'll show the contents of it to the user 
   if(error) {
-    nsCOMPtr<nsIDOMWindow> parentWindow;
-    
-    // Get the window watcher service.
-    nsCOMPtr<nsIWindowWatcher> windowWatcher = 
-      do_GetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
-    NS_ENSURE_SUCCESS(rv, rv);
-        
-    nsCOMPtr<nsIDOMWindow> domWindow;
-    rv = windowWatcher->OpenWindow(parentWindow, 
-                                   MEDIACORE_ERROR_DIALOG_URI, 
-                                   nsnull,
-                                   "centerscreen,chrome,modal,titlebar",
-                                   error,
-                                   getter_AddRefs(domWindow));
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIPrefBranch> prefBranch =
+      do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+
+    PRInt32 prefType = 0;
+    rv = prefBranch->GetPrefType(MEDIACORE_ERROR_DONT_SHOW_ME_PREF, &prefType);
+
+    PRBool dontAskMe = PR_FALSE;
+
+    if(prefType == nsIPrefBranch::PREF_BOOL) {
+      rv = prefBranch->GetBoolPref(MEDIACORE_ERROR_DONT_SHOW_ME_PREF, &dontAskMe);
+    }
+
+    if(NS_SUCCEEDED(rv) && !dontAskMe) {
+
+      nsCOMPtr<nsIDOMWindow> parentWindow;
+
+      // Get the window watcher service.
+      nsCOMPtr<nsIWindowWatcher> windowWatcher = 
+        do_GetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIDOMWindow> domWindow;
+      rv = windowWatcher->OpenWindow(parentWindow, 
+        MEDIACORE_ERROR_DIALOG_URI, 
+        nsnull,
+        "centerscreen,chrome,modal,titlebar",
+        error,
+        getter_AddRefs(domWindow));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = Next();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
