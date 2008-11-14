@@ -54,7 +54,6 @@ SUBDIRS = aboutprotocol \
           metrics \
           moz \
           parsererror \
-          playlistplayback \
           playlistcommands \
           property \
           remoteapi \

@@ -1,6 +1,0 @@
-songbird.jar:
-% content  songbird  %content/songbird/
-#ifdef MEDIA_CORE_VLC
-  content/songbird/scripts/coreVLC.js             (coreVLC.js)
-#endif
-  content/songbird/scripts/coreBase.js            (coreBase.js)
