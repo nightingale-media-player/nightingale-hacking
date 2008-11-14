@@ -47,7 +47,6 @@ class sbLocalDatabaseLibrary;
 class sbLocalDatabaseMediaItem : public nsSupportsWeakReference,
                                  public nsIClassInfo,
                                  public nsIRequestObserver,
-                                 public sbILocalDatabaseResourceProperty,
                                  public sbILocalDatabaseMediaItem,
                                  public sbIMediaItem
 {
@@ -56,7 +55,6 @@ public:
   NS_DECL_NSIREQUESTOBSERVER
   NS_DECL_NSICLASSINFO
   NS_DECL_SBILIBRARYRESOURCE
-  NS_DECL_SBILOCALDATABASERESOURCEPROPERTY
   NS_DECL_SBILOCALDATABASEMEDIAITEM
   NS_DECL_SBIMEDIAITEM
 
@@ -92,9 +90,6 @@ protected:
   PRBool mSuppressNotifications;
 
 private:
-  PRLock* mPropertyCacheLock;
-  nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
-
   PRLock* mPropertyBagLock;
   nsCOMPtr<sbILocalDatabaseResourcePropertyBag> mPropertyBag;
 };

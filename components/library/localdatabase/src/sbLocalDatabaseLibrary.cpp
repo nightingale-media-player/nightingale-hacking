@@ -572,9 +572,6 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   rv = sbLocalDatabaseMediaListBase::Init(this, guid, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = InitResourceProperty(mPropertyCache, guid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Initialize the media list factory table.
   success = mMediaListFactoryTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
@@ -800,6 +797,9 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
 {
   NS_ASSERTION(aItem, "aItem is null");
 
+  if (!aProperties)
+    return NS_OK;
+  
   nsresult rv;
 
   nsString url;
@@ -809,39 +809,13 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
 
   nsCOMPtr<sbIPropertyArray> filteredProperties;
 
-  if (aProperties) {
-    rv = GetFilteredPropertiesForNewItem(aProperties,
-                                         getter_AddRefs(filteredProperties));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString originURL;
-    rv = filteredProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                              originURL);
-    if (rv == NS_ERROR_NOT_AVAILABLE) {
-      nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
-        do_QueryInterface(filteredProperties);
-      rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                             url);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-  }
-  else {
-    nsCOMPtr<sbIMutablePropertyArray> mutableProperties = 
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                           url);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    filteredProperties = do_QueryInterface(mutableProperties);
-  }
+  rv = GetFilteredPropertiesForNewItem(aProperties,
+                                       getter_AddRefs(filteredProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the new properties, but do not send notifications,
   // since we assume aItem was only just created, and at 
   // this point nobody cares.
-  
   nsCOMPtr<sbILocalDatabaseMediaItem> item =
     do_QueryInterface(aItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -849,7 +823,6 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
   rv = aItem->SetProperties(filteredProperties);
   NS_ENSURE_SUCCESS(rv, rv);
   item->SetSuppressNotifications(PR_FALSE);
-
   return NS_OK;
 }
 
@@ -4043,9 +4016,9 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       if (mPropertiesArray) {
         properties = do_QueryElementAt(mPropertiesArray, i, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
+        rv = mLibrary->SetDefaultItemProperties(mediaItem, properties);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
-      rv = mLibrary->SetDefaultItemProperties(mediaItem, properties);
-      NS_ENSURE_SUCCESS(rv, rv);
 
       rv = array->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);

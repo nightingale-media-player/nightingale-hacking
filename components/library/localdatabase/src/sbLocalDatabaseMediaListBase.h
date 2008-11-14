@@ -89,7 +89,6 @@ class sbLocalDatabaseMediaListBase : public sbLocalDatabaseMediaItem,
 public:
   NS_DECL_ISUPPORTS_INHERITED
 
-  NS_FORWARD_SBILOCALDATABASERESOURCEPROPERTY(sbLocalDatabaseMediaItem::)
   NS_FORWARD_SBILOCALDATABASEMEDIAITEM(sbLocalDatabaseMediaItem::)
   NS_FORWARD_SBILIBRARYRESOURCE(sbLocalDatabaseMediaItem::)
   NS_FORWARD_SBIMEDIAITEM(sbLocalDatabaseMediaItem::)

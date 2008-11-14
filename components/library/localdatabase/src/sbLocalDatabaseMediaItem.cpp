@@ -62,7 +62,6 @@ NS_INTERFACE_MAP_BEGIN(sbLocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(nsIClassInfo)
   NS_INTERFACE_MAP_ENTRY(nsISupportsWeakReference)
   NS_INTERFACE_MAP_ENTRY(nsIRequestObserver)
-  NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseResourceProperty)
   NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseMediaItem)
   NS_INTERFACE_MAP_ENTRY(sbIMediaItem)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbILibraryResource, sbIMediaItem)
@@ -80,20 +79,12 @@ sbLocalDatabaseMediaItem::sbLocalDatabaseMediaItem()
   mOwnsLibrary(PR_FALSE),
   mLibrary(nsnull),
   mSuppressNotifications(PR_TRUE),
-  mPropertyCacheLock(nsnull),
   mPropertyBagLock(nsnull)
 {
 }
 
 sbLocalDatabaseMediaItem::~sbLocalDatabaseMediaItem()
 {
-  // Free this here in case we hold the last reference to the library below.
-  mPropertyCache = nsnull;
-
-  if(mPropertyCacheLock) {
-    nsAutoLock::DestroyLock(mPropertyCacheLock);
-  }
-
   if(mPropertyBagLock) {
     nsAutoLock::DestroyLock(mPropertyBagLock);
   }
@@ -130,16 +121,9 @@ sbLocalDatabaseMediaItem::Init(sbLocalDatabaseLibrary* aLibrary,
     NS_ADDREF(mLibrary);
   }
 
-  mPropertyCacheLock =
-    nsAutoLock::NewLock("sbLocalDatabaseMediaItem::mPropertyCacheLock");
-  NS_ENSURE_TRUE(mPropertyCacheLock, NS_ERROR_OUT_OF_MEMORY);
-
   mPropertyBagLock =
     nsAutoLock::NewLock("sbLocalDatabaseMediaItem::mPropertyBagLock");
   NS_ENSURE_TRUE(mPropertyBagLock, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = mLibrary->GetPropertyCache(getter_AddRefs(mPropertyCache));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -168,11 +152,13 @@ sbLocalDatabaseMediaItem::EnsurePropertyBag()
   PRUint32 count;
   sbILocalDatabaseResourcePropertyBag** bags;
   {
-    nsAutoLock cacheLock(mPropertyCacheLock);
-    rv = mPropertyCache->GetProperties(&guid,
-                                       1,
-                                       &count,
-                                       &bags);
+    nsCOMPtr<sbILocalDatabasePropertyCache> propertyCache;
+    rv = mLibrary->GetPropertyCache(getter_AddRefs(propertyCache));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = propertyCache->GetProperties(&guid,
+                                      1,
+                                      &count,
+                                      &bags);
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -283,7 +269,6 @@ sbLocalDatabaseMediaItem::GetGuid(nsAString& aGuid)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 {
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   NS_ENSURE_ARG_POINTER(aCreated);
@@ -305,7 +290,6 @@ sbLocalDatabaseMediaItem::GetCreated(PRInt64* aCreated)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 {
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   NS_ENSURE_ARG_POINTER(aUpdated);
@@ -327,7 +311,6 @@ sbLocalDatabaseMediaItem::GetUpdated(PRInt64* aUpdated)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
 {
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   NS_ENSURE_ARG_POINTER(aUserEditable);
@@ -413,7 +396,6 @@ sbLocalDatabaseMediaItem::GetPropertyIDs(nsIStringEnumerator** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = EnsurePropertyBag();
@@ -434,7 +416,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetProperty(const nsAString& aID,
                                       nsAString& _retval)
 {
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = EnsurePropertyBag();
@@ -455,7 +436,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetProperty(const nsAString& aID,
                                       const nsAString& aValue)
 {
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   // XXXsk Don't let the GUID property to be set.  We shouldn't need this
@@ -503,7 +483,6 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetProperties(sbIPropertyArray* aProperties)
 {
   NS_ENSURE_ARG_POINTER(aProperties);
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = EnsurePropertyBag();
@@ -578,7 +557,6 @@ sbLocalDatabaseMediaItem::GetProperties(sbIPropertyArray* aProperties,
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
   NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
 
   nsresult rv = EnsurePropertyBag();
@@ -654,27 +632,6 @@ sbLocalDatabaseMediaItem::Equals(sbILibraryResource* aOtherLibraryResource,
   NS_ENSURE_SUCCESS(rv, rv);
 
   *_retval = mGuid.Equals(otherGUID);
-  return NS_OK;
-}
-
-/**
- * See sbILocalDatabaseResourceProperty
- */
-//XXXAus: This method is junk if we don't have a LDBRP base class anymore.
-NS_IMETHODIMP
-sbLocalDatabaseMediaItem::InitResourceProperty(sbILocalDatabasePropertyCache* aPropertyCache,
-                                               const nsAString& aGuid)
-{
-  NS_ASSERTION(mPropertyCacheLock, "mPropertyCacheLock is null");
-  NS_ASSERTION(mPropertyBagLock, "mPropertyBagLock is null");
-
-  NS_ENSURE_ARG_POINTER(aPropertyCache);
-
-  nsAutoLock lock(mPropertyCacheLock);
-
-  mPropertyCache = aPropertyCache;
-  mGuid = aGuid;
-
   return NS_OK;
 }
 
