@@ -138,7 +138,7 @@ sbPrompter::OpenDialog(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Set up dialog options.  Add the same options that nsIPromptService uses.
@@ -261,7 +261,7 @@ sbPrompter::Alert(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -325,7 +325,7 @@ sbPrompter::AlertCheck(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -388,7 +388,7 @@ sbPrompter::Confirm(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -454,7 +454,7 @@ sbPrompter::ConfirmCheck(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -533,7 +533,7 @@ sbPrompter::ConfirmEx(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -610,7 +610,7 @@ sbPrompter::Prompt(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -686,7 +686,7 @@ sbPrompter::PromptUsernameAndPassword(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -761,7 +761,7 @@ sbPrompter::PromptPassword(nsIDOMWindow*    aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
@@ -835,7 +835,7 @@ sbPrompter::Select(nsIDOMWindow*     aParent,
 
   // If configured to wait for the desired window and the window is not
   // available, return a not available error indication.
-  if (mWaitForWindow && !parent)
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
     return NS_ERROR_NOT_AVAILABLE;
 
   // Forward method call.
