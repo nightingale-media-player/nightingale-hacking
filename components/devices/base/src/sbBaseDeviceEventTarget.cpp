@@ -99,6 +99,10 @@ sbBaseDeviceEventTarget::sbBaseDeviceEventTarget()
 sbBaseDeviceEventTarget::~sbBaseDeviceEventTarget()
 {
   /* destructor code */
+  if (mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+    mMonitor = nsnull;
+  }
 }
 
 /* boolean dispatchEvent (in sbIDeviceEvent aEvent, [optional] PRBool aAsync); */
