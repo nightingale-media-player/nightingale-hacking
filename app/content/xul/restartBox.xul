@@ -35,13 +35,11 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="restartbox"
  title=""
- buttons="accept,cancel,extra1"
+ buttons="accept,cancel"
  type="songbird"
  buttonlabelaccept="&restartbox.restartnow;"
- buttonlabelextra1="&restartbox.restartonplaybackend;"
  buttonlabelcancel="&restartbox.restartlater;"
  ondialogaccept="doExit(1);"
- ondialogextra1="doExit(2);"
  ondialogcancel="doExit(0);"
  hidechrome="true" 
  pack="center" >
@@ -65,7 +63,6 @@
       {
         document.getElementById("restartbox").setAttribute("title", window.arguments[0].title);
         document.getElementById("songbird_restartbox_label").setAttribute("value", window.arguments[0].message);
-        if (!window.arguments[0].playing) document.documentElement.setAttribute("buttons", "accept,cancel");
       }
     }
     catch( err )
