@@ -527,6 +527,7 @@ ConcertTicketing.browseDates = function() {
 	var today = new Date();
 	var todayMon = today.getMonth();
 	var todayDate = today.getDate();
+	var todayYear = today.getFullYear();
 
 	gMetrics.metricsInc("concerts", "browse.view.date", "");
 	while (concerts.hasMoreElements()) {
@@ -535,14 +536,14 @@ ConcertTicketing.browseDates = function() {
 		var concert = concerts.getNext().wrappedJSObject;
 
 		var thisDateObj = new Date(concert.ts * 1000);
-		var thisIndex = thisDateObj.getMonth() + "" + thisDateObj.getFullYear();
-		var thisDate = thisDateObj.getFullYear() + '-' + thisDateObj.getMonth()
-				+ '-' + thisDateObj.getDate();
+		var thisMon = thisDateObj.getMonth();
+		var thisYear = thisDateObj.getFullYear();
+		var thisIndex = thisMon + "" + thisYear;
+		var thisDate = thisYear + '-' + thisMon + '-' + thisDateObj.getDate();
 
 		// Don't show past concerts
-		if ((thisDateObj.getMonth() < todayMon) ||
-				(thisDateObj.getMonth() == todayMon &&
-				 thisDateObj.getDate() < todayDate)) {
+		if (((thisMon < todayMon) && (thisYear <= todayYear)) ||
+			(thisMon == todayMon && thisDateObj.getDate() < todayDate)) {
 			continue;
 		}
 
