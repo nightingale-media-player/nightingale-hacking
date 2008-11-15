@@ -38,7 +38,7 @@ Flickr.prototype = {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
 		var query = "&per_page=" + this.limit + this.sort + this.searchType +
-			searchTerms;
+			'"' + searchTerms + '"';
 		/*
 		if (this.searchType.substr(1,3) == "tex")
 			query += "%20concert";
