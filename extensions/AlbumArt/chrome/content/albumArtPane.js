@@ -177,10 +177,11 @@ var AlbumArt = {
     // Update the display-pane title button tooltip
     var tooltip = "";
     if (AlbumArt._currentState == STATE_SELECTED) {
-      tooltip = SBString("albumart.displaypane.tooltip.selected");
-    }
-    else {
+      // tooltip should show going to now playing
       tooltip = SBString("albumart.displaypane.tooltip.playing");
+    } else {
+      // tooltip should show going to selected track
+      tooltip = SBString("albumart.displaypane.tooltip.selected");
     }
     AlbumArt._displayPane.titlebarTooltipText = tooltip;
   },
