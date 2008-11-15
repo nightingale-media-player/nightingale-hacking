@@ -143,15 +143,15 @@ var RadioDirectory = {
 		// normal columns and use the stream ones
 		if (!Application.prefs.getValue(shoutcastPlaylistInit, false)) {
 			Application.prefs.setValue(shoutcastPlaylistInit, true);
-			var colSpec = SC_streamName + " 268 " + SC_bitRate + " 55 " +
-					SC_comment + " 175 " + SC_listenerCount + " 55 " +
+			var colSpec = SC_streamName + " 358 " + SC_bitRate + " 71 " +
+					SC_comment + " 240 " + SC_listenerCount + " 74 " +
 					SC_bookmark + " 55";
 			this.radioLib.setProperty(SBProperties.defaultColumnSpec, colSpec);
 			this.playlist.clearColumns();
-			this.playlist.appendColumn(SC_streamName, "268");
-			this.playlist.appendColumn(SC_bitRate, "55");
-			this.playlist.appendColumn(SC_comment, "175");
-			this.playlist.appendColumn(SC_listenerCount, "55");
+			this.playlist.appendColumn(SC_streamName, "358");
+			this.playlist.appendColumn(SC_bitRate, "71");
+			this.playlist.appendColumn(SC_comment, "240");
+			this.playlist.appendColumn(SC_listenerCount, "74");
 			this.playlist.appendColumn(SC_bookmark, "55");
 		}
 
@@ -246,8 +246,8 @@ var RadioDirectory = {
 			}
 			
 			this.favesList.name = this._strings.getString("favourites");
-			var colSpec = SC_streamName + " 260 " + SC_bitRate + " 55 " +
-					SC_comment + " 175 " + SBProperties.genre + " 55 " +
+			var colSpec = SC_streamName + " 358 " + SC_bitRate + " 71 " +
+					SC_comment + " 240 " + SC_listenerCount + " 74 " +
 					SC_bookmark + " 55";
 			this.favesList.setProperty(SBProperties.columnSpec, colSpec);
 			this.favesList.setProperty(SBProperties.defaultColumnSpec,colSpec);
