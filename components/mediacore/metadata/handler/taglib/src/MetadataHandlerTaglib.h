@@ -190,9 +190,7 @@ private:
 
 
     // Statics to help manage the single threading of taglib
-    static PRLock* sBusyLock;
-    static PRLock* sBackgroundLock;
-    static PRBool sBusyFlag;
+    static PRLock* sTaglibLock;
 
     nsCOMPtr<sbIProxiedServices> mProxiedServices;
 

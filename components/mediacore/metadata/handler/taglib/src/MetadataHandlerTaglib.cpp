@@ -144,9 +144,7 @@ static PRLogModuleInfo* gLog = nsnull;
 // the minimum number of chracters to feed into the charset detector
 #define GUESS_CHARSET_MIN_CHAR_COUNT 256
 
-PRLock* sbMetadataHandlerTaglib::sBusyLock = nsnull;
-PRLock* sbMetadataHandlerTaglib::sBackgroundLock = nsnull;
-PRBool sbMetadataHandlerTaglib::sBusyFlag = PR_FALSE;
+PRLock* sbMetadataHandlerTaglib::sTaglibLock = nsnull;
 
 /*
  *
@@ -285,8 +283,8 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     PRInt32                     *pReadCount)
 {
   nsresult rv = NS_ERROR_FAILURE;
+  nsAutoLock lock(sTaglibLock);
 
-  AcquireTaglibLock();
   // Attempt to avoid crashes.  This may only work on windows.
   try { 
     rv = ReadInternal(pReadCount); 
@@ -294,65 +292,8 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Read(
     NS_ERROR("sbMetadataHandlerTaglib::Read caught an exception!");
     rv = NS_ERROR_FAILURE;
   }
-  ReleaseTaglibLock(); 
-  
-  // note that although ReleaseTaglibLock() has a return value, it always succeeds
-  // so we're most interested in the return value from ReadInternal();
   
   return rv;
-}
-
-nsresult sbMetadataHandlerTaglib::AcquireTaglibLock() 
-{
-  // TagLib is not thread safe so we must do this elaborate dance
-  // to ensure that only one thread toches taglib at a time as well
-  // as make sure the main thread can process events while waiting
-  // its turn.  This is done by busy-waiting around sBusyFlag.  If
-  // you are the main thread, process events while busy waiting.
-
-  nsCOMPtr<nsIThread> mainThread;
-  if (NS_IsMainThread()) {
-    mainThread = do_GetMainThread();
-  }
-  else {
-    // To prevent an army of busy waiting background threads,
-    // use a lock here so only one background thread can enter
-    // this section at a time.
-    PR_Lock(sBackgroundLock);
-  }
-  
-  PRBool gotLock = PR_FALSE;
-  while (!gotLock) {
-    // Scope the lock
-    {
-      nsAutoLock lock(sBusyLock);
-      if (!sBusyFlag) {
-        sBusyFlag = PR_TRUE;
-        gotLock = PR_TRUE;
-      }
-    }
-    
-    if (mainThread && !gotLock) {
-      NS_ProcessPendingEvents(mainThread, 100);
-    }
-    
-  }
-  return NS_OK;
-}
-
-nsresult sbMetadataHandlerTaglib::ReleaseTaglibLock() {
-  // let another background thread into the busywait.
-  if (!NS_IsMainThread()) {
-    PR_Unlock(sBackgroundLock);
-  }
-
-  // Scope the lock
-  {
-    nsAutoLock lock(sBusyLock);
-    sBusyFlag = PR_FALSE;
-  }
-
-  return NS_OK;
 }
 
 nsresult sbMetadataHandlerTaglib::ReadInternal(
@@ -555,14 +496,13 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Write(
     PRInt32                     *pWriteCount)
 {
   nsresult rv = NS_ERROR_FAILURE;
-  AcquireTaglibLock();
+  nsAutoLock lock(sTaglibLock);
   // Attempt to avoid crashes.  This may only work on windows.
   try { 
     rv = WriteInternal(pWriteCount);
   } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::Write caught an exception!");
   }
-  ReleaseTaglibLock();
 
   return rv;
 }
@@ -812,14 +752,13 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::GetImageData(
   // Nothing was found in the cache, so open the target file
   // and read the data out manually.
 
-  AcquireTaglibLock();
+  nsAutoLock lock(sTaglibLock);
   try { 
     rv = GetImageDataInternal(aType, aMimeType, aDataLen, aData);
   } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::GetImageData caught an exception!");
     rv = NS_ERROR_FAILURE;
   }
-  ReleaseTaglibLock(); 
   return rv;
 }
 
@@ -893,15 +832,14 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::SetImageData(
 {
   nsresult rv;
   LOG(("sbMetadataHandlerTaglib::SetImageData\n"));
+  nsAutoLock lock(sTaglibLock);
 
-  AcquireTaglibLock();
   try { 
     rv = SetImageDataInternal(aType, aURL);
   } catch(...) { 
     NS_ERROR("sbMetadataHandlerTaglib::SetImageData caught an exception!");
     rv = NS_ERROR_FAILURE;
   }
-  ReleaseTaglibLock(); 
   return rv;
 }
 
@@ -1289,7 +1227,10 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::OnChannelDataAvailable(
         mMetadataChannelRestart = PR_FALSE;
 
         /* Read the metadata. */
-        ReadMetadata();
+        {
+          nsAutoLock lock(sTaglibLock);
+          ReadMetadata();
+        }
 
         /* Check for metadata channel completion. */
         if (!mCompleted)
@@ -1380,13 +1321,9 @@ nsresult sbMetadataHandlerTaglib::Init()
 /* static */
 nsresult sbMetadataHandlerTaglib::ModuleConstructor(nsIModule* aSelf)
 {
-  sbMetadataHandlerTaglib::sBusyLock =
-    nsAutoLock::NewLock("sbMetadataHandlerTaglib::sBusyLock");
-  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::sBusyLock, NS_ERROR_OUT_OF_MEMORY);
-
-  sbMetadataHandlerTaglib::sBackgroundLock =
-    nsAutoLock::NewLock("sbMetadataHandlerTaglib::sBackgroundLock");
-  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::sBackgroundLock, NS_ERROR_OUT_OF_MEMORY);
+  sbMetadataHandlerTaglib::sTaglibLock =
+    nsAutoLock::NewLock("sbMetadataHandlerTaglib::sTaglibLock");
+  NS_ENSURE_TRUE(sbMetadataHandlerTaglib::sTaglibLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -1394,12 +1331,8 @@ nsresult sbMetadataHandlerTaglib::ModuleConstructor(nsIModule* aSelf)
 /* static */
 void sbMetadataHandlerTaglib::ModuleDestructor(nsIModule* aSelf)
 {
-  if (sbMetadataHandlerTaglib::sBusyLock) {
-    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::sBusyLock);
-  }
-
-  if (sbMetadataHandlerTaglib::sBackgroundLock) {
-    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::sBackgroundLock);
+  if (sbMetadataHandlerTaglib::sTaglibLock) {
+    nsAutoLock::DestroyLock(sbMetadataHandlerTaglib::sTaglibLock);
   }
 }
 
@@ -1930,13 +1863,17 @@ void sbMetadataHandlerTaglib::GuessCharset(
     //        exited for UTF16 and ASCII.
 
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    std::string raw = tagString.toCString();
-    if (IsLikelyUTF8(nsDependentCString(raw.c_str(), raw.length()))) {
+    nsCString raw(tagString.toCString());
+    if (IsLikelyUTF8(raw)) {
+        // Drop taglib lock around proxied service usage; otherwise we can
+        // deadlock with the main thread trying to grab the taglib lock for
+        // another file
+        nsAutoUnlock lock(sTaglibLock);
         nsCOMPtr<nsIUTF8ConverterService> utf8Service;
         mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
         if (utf8Service) {
             nsCString dataUTF8;
-            rv = utf8Service->ConvertStringToUTF8(nsDependentCString(raw.c_str(), raw.length()),
+            rv = utf8Service->ConvertStringToUTF8(raw,
                                                   "utf-8",
                                                   PR_FALSE,
                                                   dataUTF8);
@@ -2109,15 +2046,22 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 
     // convert via Mozilla
     // TODO XXX This call takes 1/3 of our scan time right now!
-    nsCOMPtr<nsIUTF8ConverterService> utf8Service;
-    mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
-    if (utf8Service) {
-        nsDependentCString raw(data.c_str(), data.length());
-        nsCString converted;
-        nsresult rv = utf8Service->ConvertStringToUTF8(
-            raw, aCharset, PR_FALSE, converted);
-        if (NS_SUCCEEDED(rv))
-            return TagLib::String(converted.BeginReading(), TagLib::String::UTF8);
+    nsCString raw(data.c_str(), data.length());
+
+    {
+      // Release the lock while we're using proxied services to avoid
+      // deadlocking with the main thread trying to grab the taglib lock
+      nsAutoUnlock lock(sTaglibLock);
+
+      nsCOMPtr<nsIUTF8ConverterService> utf8Service;
+      mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
+      if (utf8Service) {
+          nsCString converted;
+          nsresult rv = utf8Service->ConvertStringToUTF8(
+              raw, aCharset, PR_FALSE, converted);
+          if (NS_SUCCEEDED(rv))
+              return TagLib::String(converted.BeginReading(), TagLib::String::UTF8);
+      }
     }
 
     // failed to convert :(
