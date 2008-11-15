@@ -256,7 +256,7 @@ function doFirstRun()
       // This cannot be modal as it will block the download of extensions
       SBOpenWindow("chrome://songbird/content/xul/firstRunWizard.xul",
                    "firstrun",
-                   "chrome,centerscreen,resizable=no",
+                   "chrome,titlebar,centerscreen,resizable=no",
                    data,
                    window);
 

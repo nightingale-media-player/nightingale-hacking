@@ -50,7 +50,6 @@
   id="first_run_wizard"
   type="songbird"
   title="&first_run.title;"
-  hidechrome="true"
   onload="firstRunWizard.doLoad();"
   onunload="firstRunWizard.doUnload();"
   onwizardfinish="return firstRunWizard.doFinish();"
