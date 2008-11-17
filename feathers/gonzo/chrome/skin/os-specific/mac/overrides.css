@@ -32,6 +32,14 @@
 ******************************************************************************/
 
 
+#sb-sys-title-title {
+  font-family: Lucida Grande !important;
+  font-size: 13px;
+  margin:0;
+  padding:3px 0px 0px 0px !important;
+  font-weight:normal;
+}
+
 
 /******************************************************************************
 > WINDOW UNFOCUSED
@@ -67,7 +75,7 @@ window:not([active="true"]) .inactive-box {
 ******************************************************************************/
 
 /* title bar */
-#titlebar_box {
+window:not([hidechrome="true"]) #titlebar_box {
   visibility:collapse;
   border:none !important;
   min-height:0px !important;
