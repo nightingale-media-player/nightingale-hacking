@@ -38,6 +38,32 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 try
 {
+  function _SBShowMainLibrary()
+  {
+    // Make sure the main library is viewed
+    var browser = SBGetBrowser();
+    if (!browser) {
+      Components.utils.reportError("_SBShowMainLibrary - Cannot view the main library without a browser object");
+    }
+    browser.loadMediaList(LibraryUtils.mainLibrary);
+  }
+    
+  function _SBGetCurrentView()
+  {
+    var browser = SBGetBrowser();
+    var mediaPage = browser.currentMediaPage;
+    if (!mediaPage) {
+      Components.utils.reportError("_SBGetCurrentView - Cannot return a view without a mediaPage");
+      return;
+    }
+    var view = mediaPage.mediaListView;
+    if (!view) {
+      Components.utils.reportError("_SBGetCurrentView - Cannot return a view");
+      return;
+    }
+    return view;
+  }
+
   function SBFileOpen( )
   {
     // Make a filepicker thingie.
@@ -113,25 +139,40 @@ try
         SBDataSetStringValue("metadata.artist", "");
         SBDataSetStringValue("metadata.album", "");
 
+        // Display the main library
+        _SBShowMainLibrary();
+                
         // Import the item.
+        var view = _SBGetCurrentView();
+        
         var item = SBImportURLIntoMainLibrary(uri);
-
-        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                  .getService(Components.interfaces.sbILibraryManager);
-
-        // show the view and play
-
-        var view = LibraryUtils.createStandardMediaListView(libraryManager.mainLibrary);
-
-        var index = view.getIndexForItem(item);
-        
-        // If we have a browser, try to show the view
-        if (window.gBrowser) {
-          gBrowser.showIndexInView(view, index);
-        }
-        
-        // Play the item
-        gMM.sequencer.playView(view, index);
+        // Wait for the item to show up in the view before trying to play it
+        // and give it time to sort (given 10 tracks per millisecond)
+        var interval = setInterval(function() {
+          // If the view has been updated then we're good to go
+          var index;
+          try {
+            index = view.getIndexForItem(item);
+          }
+          catch (e) {
+            // If we get anything but not available then that's bad and we need to bail
+            if (Components.lastResult == Components.results.NS_ERROR_NOT_AVAILABLE) {
+              // It's not there so wait for the next interval
+              return;
+            }
+            // Unexpected error, cancel the interval and rethrow
+            clearInterval(interval);
+            throw e;
+          }
+          clearInterval(interval);
+          // If we have a browser, try to show the view
+          if (window.gBrowser) {
+            gBrowser.showIndexInView(view, index);
+          }
+          index = view.getIndexForItem(item);
+          // Play the item
+          gMM.sequencer.playView(view, index);
+        }, 500);
       }
       else
       {
@@ -180,25 +221,33 @@ try
         SBDataSetStringValue("metadata.artist", "");
         SBDataSetStringValue("metadata.album", "");
 
+        // Display the main library
+        _SBShowMainLibrary();
+        
+        var view = _SBGetCurrentView();
+        var targetLength = view.length + 1;
         // Import the item.
         var item = SBImportURLIntoMainLibrary(uri);
 
-        var libraryManager = Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
-                                  .getService(Components.interfaces.sbILibraryManager);
-
-        // show the view and play
-
-        var view = LibraryUtils.createStandardMediaListView(libraryManager.mainLibrary);
-
-        var index = view.getIndexForItem(item);
+        // Wait for the item to show up in the view before trying to play it
+        // and give it time to sort (given 10 tracks per millisecond)
+        var interval = setInterval(function() {
+          // If the view has been updated then we're good to go
+          if (view.length == targetLength) {
+            clearInterval(interval);
+            
+            // show the view and play
+            var index = view.getIndexForItem(item);
         
-        // If we have a browser, try to show the view
-        if (window.gBrowser) {
-          gBrowser.showIndexInView(view, index);
-        }
+            // If we have a browser, try to show the view
+            if (window.gBrowser) {
+              gBrowser.showIndexInView(view, index);
+            }
         
-        // Play the item
-        gMM.sequencer.playView(view, index);
+            // Play the item
+            gMM.sequencer.playView(view, index);
+          }
+        }, 500);
       }
       else
       {
@@ -620,24 +669,7 @@ function SBDeleteMediaList(aMediaList)
 {
   var mediaList = aMediaList;
   if (!mediaList) {
-    var browser;
-    if (typeof SBGetBrowser == 'function') 
-      browser = SBGetBrowser();
-    if (!browser) {
-      Components.utils.reportError("SBDeleteMediaList - Cannot delete active medialist without a browser");
-      return;
-    }
-    var mediaPage = browser.currentMediaPage;
-    if (!mediaPage) {
-      Components.utils.reportError("SBDeleteMediaList - Cannot delete active medialist without a mediaPage");
-      return;
-    }
-    var view = mediaPage.mediaListView;
-    if (!view) {
-      Components.utils.reportError("SBDeleteMediaList - Cannot delete active medialist without a mediaListView");
-      return;
-    }
-    mediaList = view.mediaList;
+    mediaList = _SBGetCurrentView().mediaList;
   }
   // if this list is the storage for an outer list, the outer list is the one
   // that should be deleted
@@ -775,10 +807,7 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
 function SBRevealFile( initialTab, parentWindow ) {
   if (!parentWindow) parentWindow = window;
   var browser;
-  if (typeof SBGetBrowser == 'function') 
-    browser = SBGetBrowser();
-  if (!browser || !browser.currentMediaPage) { return; }
-  var view = browser.currentMediaPage.mediaListView;
+  var view = _SBGetCurrentView();
   if (!view) { return; }
   
   var numSelected = view.selection.count;
