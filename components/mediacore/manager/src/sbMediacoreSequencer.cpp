@@ -530,6 +530,16 @@ sbMediacoreSequencer::BindDataRemotes()
     nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsString shuffle;
+  rv = mDataRemotePlaylistShuffle->GetStringValue(shuffle);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(shuffle.IsEmpty()) {
+    rv = mDataRemotePlaylistShuffle->SetBoolValue(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+
   // Playlist Repeat
   mDataRemotePlaylistRepeat = 
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
@@ -539,6 +549,16 @@ sbMediacoreSequencer::BindDataRemotes()
     NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_REPEAT),
     nullString);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsString repeat;
+  rv = mDataRemotePlaylistRepeat->GetStringValue(repeat);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(shuffle.IsEmpty()) {
+    rv = mDataRemotePlaylistRepeat->SetIntValue(
+            sbIMediacoreSequencer::MODE_REPEAT_NONE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

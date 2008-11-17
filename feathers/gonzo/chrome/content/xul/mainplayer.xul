@@ -338,9 +338,6 @@
               <sb-player-shuffle-button class="sb-player-button" />
               <sb-player-repeat-button class="sb-player-button" />
             </hbox>
-
-            <hbox id="shuffle_repeat_box" pack="center" align="center">        
-            </hbox>
           </hbox>
         </stack>
       </vbox>
