@@ -28,6 +28,12 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_DIR = $(CURDIR)/..
+SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
+                        $(NULL)
+
+PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
+
 SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
 ifdef SONGBIRD_OFFICIAL

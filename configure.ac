@@ -852,7 +852,7 @@ AC_ARG_WITH(license-file,
             [  --with-license-file=PATH             the location of the license file to use.],
             SB_LICENSE_FILE=$withval)
 if test -z "$SB_LICENSE_FILE"; then
-  SB_LICENSE_FILE=${srcdir}/installer/common/LICENSE.html
+  SB_LICENSE_FILE="\$(topsrcdir)/$OBJDIRNAME/installer/LICENSE.html"
 fi
 AC_SUBST(SB_LICENSE_FILE)
 
