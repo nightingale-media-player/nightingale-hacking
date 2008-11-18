@@ -27,7 +27,7 @@ MTV.prototype = {
 	providerName: "MTV Music News",
 	providerUrl: "http://www.mtv.com",
 	providerType: "rss",
-	providerIcon: "chrome://mashtape/content/tabs/mtv.gif",
+	providerIcon: "chrome://mashtape/content/tabs/mtv.png",
 
 	query: function(searchTerms, updateFn) {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
