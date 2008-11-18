@@ -119,11 +119,13 @@ BUILD_DIR          = $(topsrcdir)/build
 DEPS_DIR           = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
 XULRUNNER_DIR      = $(DEPS_DIR)/xulrunner/@SB_CONFIGURATION@
 COMPONENTS_DIR     = $(topsrcdir)/components
-ID3LIB_DIR         = $(DEPS_DIR)/id3lib/@SB_CONFIGURATION@
-MP4LIB_DIR         = $(DEPS_DIR)/mp4/@SB_CONFIGURATION@
-WMALIB_DIR         = $(DEPS_DIR)/wma/@SB_CONFIGURATION@
-SQLITE_DIR         = $(DEPS_DIR)/sqlite/@SB_CONFIGURATION@
 SCRIPTS_DIR        = $(topsrcdir)/tools/scripts
+
+#
+# Where o' where have my lil' SDKs gone...
+#
+
+SB_MACOSX_SDK      = @SB_MACOSX_SDK@
 
 MOZSDK_DIR         = $(DEPS_DIR)/mozilla/@SB_CONFIGURATION@
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include

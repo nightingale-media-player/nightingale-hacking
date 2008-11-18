@@ -40,7 +40,6 @@ CPP_SRCS = MetadataHandlerWMA.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
-               $(WMALIB_DIR)/include \
                $(DEPS_DIR)/wmpsdk/include \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/property/src \
@@ -64,8 +63,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(WMALIB_DIR)/lib \
-                           $(MOZSDK_LIB_DIR) \
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)

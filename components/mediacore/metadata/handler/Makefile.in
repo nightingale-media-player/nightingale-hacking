@@ -33,9 +33,7 @@ SUBDIRS = taglib \
           $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-ifneq (,$(wildcard $(WMALIB_DIR)/include/wmsdk.h))
-SUBDIRS += wma
-endif
+  SUBDIRS += wma
 endif
 
 include $(topsrcdir)/build/rules.mk

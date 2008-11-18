@@ -200,16 +200,6 @@ AC_ARG_WITH(extensions,
 AC_SUBST(SB_EXTENSIONS)
 
 #
-# Check for --with-macosx-sdk
-#
-
-SB_MACOSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk
-
-AC_ARG_WITH(macosx-sdk,
-            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=/Developer/SDKs/MacOSX10.4u.sdk)],
-            [ SB_MACOSX_SDK=$withval ])
-
-#
 # Check for enabled library performance tests
 #
 
@@ -255,10 +245,6 @@ case "$target" in
         AC_MSG_ERROR(Unsupported architecture)
       ;;
     esac
-    
-    if ! test -e $SB_MACOSX_SDK/SDKSettings.plist; then
-      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK)
-    fi
   ;;
   *linux*)
     SB_PLATFORM="linux"
@@ -301,6 +287,33 @@ esac
 AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
 AC_SUBST(_REQUIRES_CYGWIN_WRAPPER)
+
+#
+# Handle SDK detection
+#
+#
+# Initialize SDK paths to nothing for all platforms, and try to guess the
+# location of SDKs for certain platforms; we protect this in a case statement
+# so we're not running e.g. win32-detection commands on mac.
+#
+
+SB_MACOSX_SDK=
+
+case $SB_PLATFORM in
+  macosx)
+    SB_MACOSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+  ;;
+esac
+
+#
+# Check for --with-macosx-sdk
+#
+
+AC_ARG_WITH(macosx-sdk,
+            [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=/Developer/SDKs/MacOSX10.4u.sdk) ],
+            [ SB_MACOSX_SDK=$withval ])
+
+AC_SUBST(SB_MACOSX_SDK)
 
 #
 # Breakpad support
@@ -428,6 +441,7 @@ AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 case "$SB_PLATFORM" in
   windows)
+    AC_CHECK_HEADERS(wmsdk.h, [], AC_MSG_ERROR(Missing wmsdk.h; install the Windows SDK))
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AR, lib, lib)
@@ -644,6 +658,10 @@ case "$SB_PLATFORM" in
     XULRUNNERDIR="/xulrunner"
   ;;
   macosx)
+    if ! test -e $SB_MACOSX_SDK/SDKSettings.plist; then
+      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK)
+    fi
+
     MACOSX_APPBUNDLE="Songbird.app"
     MACOSX_CONTENTS="/$MACOSX_APPBUNDLE/Contents"
     MACOSX_RESOURCES="$MACOSX_CONTENTS/Resources"
