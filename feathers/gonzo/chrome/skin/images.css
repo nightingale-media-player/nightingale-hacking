@@ -473,7 +473,7 @@ sb-rating,
 
 .closable-box-image,
 treechildren::-moz-tree-twisty( closed ) {
-  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty.png") !important;
+  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty.png");
 }
 .closable-box-image,
 treechildren::-moz-tree-twisty(closed) {
@@ -481,8 +481,8 @@ treechildren::-moz-tree-twisty(closed) {
 }
 .closable-box-image[open="true"],
 treechildren::-moz-tree-twisty(open) {
-  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty.png") !important;
-  -moz-image-region: rect(9px, 9px, 18px, 0px) !important;
+  list-style-image: url("chrome://songbird/skin/base-elements/button-twisty.png");
+  -moz-image-region: rect(9px, 9px, 18px, 0px);
 }
 
 .servicepane-tree > treechildren::-moz-tree-twisty {
