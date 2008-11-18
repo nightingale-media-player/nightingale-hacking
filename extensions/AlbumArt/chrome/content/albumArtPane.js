@@ -38,6 +38,7 @@ Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // Display pane constants
@@ -256,6 +257,18 @@ var AlbumArt = {
   },
 
   /**
+   * \brief resizeImages - This function will resize all images in our pane so that they
+   *                       all maintain proper aspect ratios.
+   */
+  resizeImages: function AlbumArt_resizeImages() {
+    // Resize each image in our deck even if not shown so that we don't have
+    // to resize every time the user switches the display.
+    for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {
+      AlbumArt.resizeImage(cIndex);
+    }
+  },
+
+  /**
    * \brief isPaneSquare - This function ensures that the height of the
    *        display pane is equal to the width. This will resize the pane if
    *        it is not square.
@@ -290,10 +303,81 @@ var AlbumArt = {
       return;
     }
 
-    // Resize each image in our deck even if not shown so that we don't have
-    // to resize every time the user switches the display.
-    for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {
-      AlbumArt.resizeImage(cIndex);
+    // Now that we know the pane is square resize all the images.
+    this.resizeImages();
+  },
+
+  /**
+   * \brief canEditItems - This checks that all items in aItemArray can have
+   *        their metadata edited. It will return true only if all items are
+   *        editable.
+   * \param aItemArray - Array of sbIMediaItem.
+   * \returns true if all items in the array are editable, false otherwise.
+   */
+  canEditItems: function AlbumArt_canEditItems(aItemArray) {
+    for each (var item in aItemArray) {
+      if (!LibraryUtils.canEditMetadata(item)) {
+        return false;
+      }
+    }
+    return true;
+  },
+
+  /**
+   * \brief - changeImage updates the image information, menus, and such for the required display.
+   *          The display is either the selected or now playing decks.
+   * \param aNewURL - URL to set image to
+   * \param aImageElement - Image element we are changing.
+   * \param aNotBox - the not box related to this image.
+   * \param aDragBox - the drag box related to this image.
+   * \param aItemList - list of items we use to detemine how to display.
+   */
+  changeImage: function AlbumArt_changeImage(aNewURL, aImageElement, aNotBox, aDragBox, aItemList) {
+    // Determine what to display
+    if (aItemList.length == 0) {
+      // No currently playing or selected items
+
+      // Show the not selected/playing message.
+      aNotBox.hidden = false;
+
+      // Hide the Drag Here box
+      aDragBox.hidden = true;
+
+      // Set the image to the default cover
+      aNewURL = DROP_TARGET_IMAGE;
+    } else if (!aNewURL) {
+      // We are playing or have selected items, but the image is not available
+
+      // Show the drag here box, if we can edit these items
+      if (this.canEditItems(aItemList)) {
+        // Show the Drag Here box
+        aDragBox.hidden = false;
+      } else {
+        // Not able to edit so hide the Drag Here box
+        aDragBox.hidden = true;
+      }
+
+      // Hide the not selected message.
+      aNotBox.hidden = true;
+
+      // Set the image to the default cover
+      aNewURL = DROP_TARGET_IMAGE;
+    } else {
+      // We are playing or have selected items, and we have a valid image
+
+      // Hide the not selected/playing message.
+      aNotBox.hidden = true;
+
+      // Hide the Drag Here box
+      aDragBox.hidden = true;
+    }
+
+    // Set the source of the image
+    aImageElement.src = aNewURL;
+    
+    if (aNewURL) {
+      // Call the resizeImages so we display the image correctly.
+      AlbumArt.resizeImages();
     }
   },
 
@@ -306,38 +390,15 @@ var AlbumArt = {
     var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
     var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
     var albumArtSelectedDragBox = document.getElementById('sb-albumart-select-drag');
-
-    // Configure the display pane
-    var itemImage = aNewURL;
-    if (!AlbumArt._nowSelectedMediaItem) {
-      // Show the not playing message.
-      albumArtNotSelectedBox.removeAttribute("hidden");
-      // Hide the Drag Here box
-      albumArtSelectedDragBox.setAttribute("hidden", true);
-      // Set the image to the default cover and clear the item image
-      aNewURL = DROP_TARGET_IMAGE;
-      itemImage = null;
-    } else if (!aNewURL) {
-     // Show the Drag Here box
-      albumArtSelectedDragBox.removeAttribute("hidden");
-      // Hide the not selected message.
-      albumArtNotSelectedBox.setAttribute("hidden", true);
-      // Set the image to the default cover and clear the item image
-      aNewURL = DROP_TARGET_IMAGE;
-      itemImage = null;
-    } else {
-      // Hide the not selected message.
-      albumArtNotSelectedBox.setAttribute("hidden", true);
-      // Hide the Drag Here box
-      albumArtSelectedDragBox.setAttribute("hidden", true);
-    }
-    albumArtSelectedImage.src = aNewURL;
-    if (itemImage)
-      albumArtSelectedImage.setAttribute("itemimage", itemImage);
-    else
-      albumArtSelectedImage.removeAttribute("itemimage");
-    // Call the onResize so we display the image correctly.
-    AlbumArt.onResize();
+    
+    var selection = AlbumArt._mediaListView.selection;
+    var selectedItems = ArrayConverter.JSArray(selection.selectedMediaItems);
+    
+    this.changeImage(aNewURL,
+                     albumArtSelectedImage,
+                     albumArtNotSelectedBox,
+                     albumArtSelectedDragBox,
+                     selectedItems);
   },
   
   /**
@@ -349,35 +410,18 @@ var AlbumArt = {
     var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
     var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
     var albumArtPlayingDragBox = document.getElementById('sb-albumart-playing-drag');
-
-    // Configure the display pane
-    var itemImage = aNewURL;
-    if (!AlbumArt.getNowPlayingItem()) {
-      // Show the not playing message.
-      albumArtNotPlayingBox.removeAttribute("hidden");
-      // Set the image to the default cover and clear the item image
-      aNewURL = DROP_TARGET_IMAGE;
-      itemImage = null;
-    } else if (!aNewURL) {
-      // Show the Drag Here box
-      albumArtPlayingDragBox.removeAttribute("hidden");
-      // Hide the not playing message.
-      albumArtNotPlayingBox.setAttribute("hidden", true);
-      // Set the image to the default cover and clear the item image
-      aNewURL = DROP_TARGET_IMAGE;
-      itemImage = null;
-    } else {
-      // Hide the not playing message.
-      albumArtNotPlayingBox.setAttribute("hidden", true);
-      // Hide the Drag Here box
-      albumArtPlayingDragBox.setAttribute("hidden", true);
+    
+    var playingItem = this.getNowPlayingItem();
+    var playingItems = [];
+    if (playingItem) {
+      playingItems.push(playingItem);
     }
-    albumArtPlayingImage.src = aNewURL;
-    if (itemImage)
-      albumArtPlayingImage.setAttribute("itemimage", itemImage);
-    else
-      albumArtPlayingImage.removeAttribute("itemimage");
-    AlbumArt.onResize();
+
+    this.changeImage(aNewURL,
+                     albumArtPlayingImage,
+                     albumArtNotPlayingBox,
+                     albumArtPlayingDragBox,
+                     playingItems);
   },
 
   /**
@@ -458,7 +502,7 @@ var AlbumArt = {
       // Listen to when an image loads so we can keep the aspect ratio.
       var mImage = document.getElementById(imageCache.imageID);
       if (mImage) {
-        mImage.addEventListener("load", AlbumArt.onResize, false);
+        mImage.addEventListener("load", AlbumArt.resizeImages, false);
         mImage.style.width = windowWidth + "px";
         mImage.style.height = windowHeight + "px";
       }
@@ -520,7 +564,7 @@ var AlbumArt = {
     for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {
       var imageCache = AlbumArt._stateInfo[cIndex];
       var mImage = document.getElementById(imageCache.imageID);
-      mImage.removeEventListener("load", AlbumArt.onResize, false);
+      mImage.removeEventListener("load", AlbumArt.resizeImages, false);
     }
     
     window.removeEventListener("resize",
@@ -618,7 +662,12 @@ var AlbumArt = {
     var aMediaItem = AlbumArt.getNowPlayingItem();
     if (!aMediaItem)
       return;
-    
+     
+    // Only change if we can edit the playing item
+    if (!this.canEditItems([aMediaItem])) {
+      return;
+    }
+
     aMediaItem.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
     AlbumArt.changeNowPlaying(aNewImageUrl);
     
@@ -646,14 +695,19 @@ var AlbumArt = {
     var selection = AlbumArt._mediaListView.selection;
     var multipleItems = false;
     
+    // Only change if we can edit all the selected items.
+    if (!this.canEditItems(ArrayConverter.JSArray(selection.selectedMediaItems))) {
+      return;
+    }
+
     // First check through all the items to see if they are the same or not
     // We determine that items are the same if they belong to the same album
     // and have the same AlbumArtist or ArtistName.
-    var itemEnum = selection.selectedIndexedMediaItems;
+    var itemEnum = selection.selectedMediaItems;
     var oldAlbumName = null;
     var oldAlbumArtist = null;
     while (itemEnum.hasMoreElements()) {
-      var item = itemEnum.getNext().mediaItem;
+      var item = itemEnum.getNext();
       var albumName = item.getProperty(SBProperties.albumName);
       var albumArtist = item.getProperty(SBProperties.albumArtistName);
       if (!albumArtist || albumArtist == "") {
@@ -704,9 +758,9 @@ var AlbumArt = {
     // will update the currently selected display.
     var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                         .createInstance(Ci.nsIMutableArray);
-    itemEnum = selection.selectedIndexedMediaItems;
+    itemEnum = selection.selectedMediaItems;
     while (itemEnum.hasMoreElements()) {
-      var item = itemEnum.getNext().mediaItem;
+      var item = itemEnum.getNext();
       var oldImage = item.getProperty(SBProperties.primaryImageURL);
       if (oldImage != aNewImageUrl) {
         item.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
@@ -752,10 +806,10 @@ var AlbumArt = {
   getCurrentStateItemImage: function AlbumArt_getCurrentStateItemImage() {
     if (AlbumArt._currentState == STATE_SELECTED) {
       var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
-      return albumArtSelectedImage.getAttribute("itemimage");
+      return albumArtSelectedImage.getAttribute("src");
     } else {
       var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
-      return albumArtPlayingImage.getAttribute("itemimage");
+      return albumArtPlayingImage.getAttribute("src");
     }
   },
 
@@ -841,27 +895,44 @@ var AlbumArt = {
     var cutElem = document.getElementById("cutMenuItem");
     var copyElem = document.getElementById("copyMenuItem");
     var clearElem = document.getElementById("clearMenuItem");
-    if (curImageUrl) {
-      cutElem.removeAttribute("disabled");
-      copyElem.removeAttribute("disabled");
-      clearElem.removeAttribute("disabled");
-    } else {
-      cutElem.setAttribute("disabled", true);
-      copyElem.setAttribute("disabled", true);
-      clearElem.setAttribute("disabled", true);
-    }
+    var pasteElem = document.getElementById("pasteMenuItem");
 
+    // Update the menu based on if the items are editable.
+    var itemArray;
+    if (AlbumArt._currentState == STATE_SELECTED) {
+      var selection = AlbumArt._mediaListView.selection;
+      itemArray = ArrayConverter.JSArray(selection.selectedMediaItems);
+    } else {
+      itemArray = [AlbumArt.getNowPlayingItem()];
+    }
+    
+    if (!this.canEditItems(itemArray)) {
+      cutElem.disabled = true;
+      copyElem.disabled = true
+      pasteElem.disabled = true;
+      clearElem.disabled = true;
+      return;
+    }
+    
     // Check if the clipboard contains valid album art.
     var validAlbumArt = {};
     AlbumArt.getClipboardAlbumArt({}, {}, validAlbumArt);
     validAlbumArt = validAlbumArt.value;
 
-    // Update the popup menu for the clipboard contents.
-    var pasteElem = document.getElementById("pasteMenuItem");
-    if (validAlbumArt)
-      pasteElem.removeAttribute("disabled");
-    else
-      pasteElem.setAttribute("disabled", true);
+    // Do not allow copying the drop target image
+    if (curImageUrl == DROP_TARGET_IMAGE) {
+      cutElem.disabled = true;
+      copyElem.disabled = true
+      clearElem.disabled = true;
+    } else {
+      // Only allow valid images to be modified.
+      cutElem.disabled = !curImageUrl;
+      copyElem.disabeld = !curImageUrl;
+      clearElem.disabled = !curImageUrl;
+    }
+
+    // Enable the paste if a valid image is on the clipboard
+    pasteElem.disabled = !validAlbumArt;
   },
 
   /*********************************
@@ -1004,9 +1075,9 @@ var AlbumArt = {
     var selection = AlbumArt._mediaListView.selection;
     var curImageUrl = null;
     var item = null;
-    var itemEnum = selection.selectedIndexedMediaItems;
+    var itemEnum = selection.selectedMediaItems;
     if (itemEnum.hasMoreElements())
-      item = itemEnum.getNext().mediaItem;
+      item = itemEnum.getNext();
 
     // Clear the old now selected media item
     AlbumArt.clearNowSelectedMediaItem();

@@ -1410,7 +1410,7 @@ TrackEditorInputWidget.prototype = {
   onCheckboxCommand: function() {
     TrackEditor.state.setPropertyEnabled(this.property, this._checkbox.checked);
     if (this._checkbox.checked) {
-      this._element.parentNode.focus();
+      this._elementStack.focus();
     }
   },
   
@@ -1719,11 +1719,16 @@ function TrackEditorArtwork(element) {
 TrackEditorArtwork.prototype = {
   __proto__: TrackEditorInputWidget.prototype,
   _button: null,
-  _menuPopup: null,
   _replaceLabel: null,
   _addLabel: null,
   _dragoverlay: null,
   _elementStack: null,
+  // Menu popup and items 
+  _menuPopup: null,
+  _menuCut: null,
+  _menuCopy: null,
+  _menuPaste: null,
+  _menuClear: null,
   
   /**
    * \brief Changes the value of the image property only if it different.
@@ -1775,6 +1780,12 @@ TrackEditorArtwork.prototype = {
   _createDragOverlay: function TrackEditorArtwork__createDragOverlay() {
     // Outter stack for overlaying the label on the image
     this._elementStack = document.createElement("stack");
+    this._elementStack.setAttribute("class", "art");
+    if (this._element.hasAttribute("tabindex")) {
+      this._elementStack.setAttribute("tabindex",
+                                      this._element.getAttribute("tabindex"));
+      this._element.removeAttribute("tabindex");
+    }
     this._element.parentNode.replaceChild(this._elementStack, this._element);
 
     // Label for Drag here text
@@ -1807,31 +1818,36 @@ TrackEditorArtwork.prototype = {
    */
   _createContextMenu: function TrackEditorArtwork__createContextMenu() {
     this._menuPopup = document.createElement("menupopup");
-    var menuItemCut = document.createElement("menuitem");
-    var menuItemCopy = document.createElement("menuitem");
-    var menuItemPaste = document.createElement("menuitem");
-    var menuItemClear = document.createElement("menuitem");
+    this._menuCut = document.createElement("menuitem");
+    this._menuCopy = document.createElement("menuitem");
+    this._menuPaste = document.createElement("menuitem");
+    this._menuClear = document.createElement("menuitem");
+    var menuSeparator = document.createElement("menuseparator");
     
     var self = this;
-    menuItemCut.setAttribute("label", SBString("trackeditor.artwork.menu.cut"));
-    menuItemCut.addEventListener("command",
+    this._menuCut.setAttribute("label", SBString("trackeditor.artwork.menu.cut"));
+    this._menuCut.addEventListener("command",
                                  function() { self.onCut();}, false);
 
-    menuItemCopy.setAttribute("label", SBString("trackeditor.artwork.menu.copy"));
-    menuItemCopy.addEventListener("command",
+    this._menuCopy.setAttribute("label", SBString("trackeditor.artwork.menu.copy"));
+    this._menuCopy.addEventListener("command",
                                   function() { self.onCopy();}, false);
 
-    menuItemPaste.setAttribute("label", SBString("trackeditor.artwork.menu.paste"));
-    menuItemPaste.addEventListener("command",
+    this._menuPaste.setAttribute("label", SBString("trackeditor.artwork.menu.paste"));
+    this._menuPaste.addEventListener("command",
                                    function() { self.onPaste();}, false);
 
-    menuItemClear.setAttribute("label", SBString("trackeditor.artwork.menu.clear"));
-    menuItemClear.addEventListener("command",
+    this._menuClear.setAttribute("label", SBString("trackeditor.artwork.menu.clear"));
+    this._menuClear.addEventListener("command",
                                    function() { self.onClear();}, false);
-    this._menuPopup.appendChild(menuItemCut);
-    this._menuPopup.appendChild(menuItemCopy);
-    this._menuPopup.appendChild(menuItemPaste);
-    this._menuPopup.appendChild(menuItemClear);
+    this._menuPopup.appendChild(this._menuCut);
+    this._menuPopup.appendChild(this._menuCopy);
+    this._menuPopup.appendChild(this._menuPaste);
+    this._menuPopup.appendChild(menuSeparator);
+    this._menuPopup.appendChild(this._menuClear);
+
+    this._menuPopup.addEventListener("popupshowing",
+          function(evt) { self.onPopupShowing(evt); }, false);
 
     this._element.parentNode.appendChild(this._menuPopup);
   },
@@ -1841,7 +1857,7 @@ TrackEditorArtwork.prototype = {
    */
   onContextMenu: function TrackEditorArtwork_onContextMenu(aEvent) {
     // Make sure we are focused (could be a right-click that fired this)
-    this._element.parentNode.focus();
+    this._elementStack.focus();
     
     // Default to assuming we are invoked by alternative methods to right-click
     var xPos = 0;                       // No position needed
@@ -1865,13 +1881,68 @@ TrackEditorArtwork.prototype = {
                               true,           // context menu
                               false);         // no attributes override
   },
-  
+
+  /**
+   * \brief onPopupShowing - Adjusts the menu before displaying based on if the
+   *                         items are editable or not.
+   * \param aEvent - event for this action
+   */
+  onPopupShowing: function TrackEditorArtwork_onPopupShowing(aEvent) {
+    var curImageUrl = TrackEditor.state.getPropertyValue(this.property);
+
+    // Check if we can edit all the items in the list
+    var canEdit = (TrackEditor.state.writableItemCount ==
+                   TrackEditor.state.selectedItems.length);
+    // Update the menu items depending on the state of things. 
+    if (!canEdit) {
+      this._menuCut.setAttribute("disabled", true);
+      this._menuCopy.setAttribute("disabled", true);
+      this._menuClear.setAttribute("disabled", true);
+      this._menuPaste.setAttribute("disabled", true);
+      return;
+    }
+    
+    // Get the clipboard image.
+    var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
+                        .createInstance(Ci.sbIClipboardHelper);
+    var mimeType = {};
+    var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
+    mimeType = mimeType.value;
+
+    // Validate image as valid album art.
+    var isValidAlbumArt = false;
+    if (imageData && (imageData.length > 0)) {
+      var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
+                         .getService(Ci.sbIAlbumArtService);
+      isValidAlbumArt = artService.imageIsValidAlbumArt(mimeType,
+                                                        imageData,
+                                                        imageData.length);
+    }
+    
+    if (!curImageUrl) {
+      this._menuCut.setAttribute("disabled", true);
+      this._menuCopy.setAttribute("disabled", true);
+      this._menuClear.setAttribute("disabled", true);
+    } else {
+      this._menuCut.removeAttribute("disabled");
+      this._menuCopy.removeAttribute("disabled");
+      this._menuClear.removeAttribute("disabled");
+    }
+    
+    if (!isValidAlbumArt) {
+      this._menuPaste.setAttribute("disabled", true);
+    } else {
+      this._menuPaste.removeAttribute("disabled");
+    }
+
+  },
+ 
   /**
    * \brief Handles clicks from user on the album artwork widget
    */
   onClick: function TrackEditorArtwork_onClick(aEvent) {
     // Focus the element so we can respond to context menus and commands
-    this._element.parentNode.focus();
+    this._elementStack.focus();
   },
 
   /**
@@ -2034,7 +2105,7 @@ TrackEditorArtwork.prototype = {
    *        picker for them to choose an image file.
    */
   onButtonCommand: function TrackEditorArtwork_onButtonCommand() {
-    this._element.parentNode.focus();
+    this._elementStack.focus();
     
     // Open the file picker
     var filePicker = Cc["@mozilla.org/filepicker;1"]
@@ -2062,7 +2133,6 @@ TrackEditorArtwork.prototype = {
     // Thus, we put the property on the wrapper, and reach in to grab the image and set its
     // href from the outside.
     var imageElement = this._element.getElementsByTagNameNS(SVG_NS, "image")[0];
-    
     if (value && value == imageElement.getAttributeNS(XLINK_NS, "href")) {
       // Nothing has changed so leave it as is.
       return;
@@ -2073,13 +2143,20 @@ TrackEditorArtwork.prototype = {
     if (TrackEditor.state.selectedItems.length > 1) {
       allMatch = !TrackEditor.state.hasMultipleValuesForProperty(this.property);
     }
-    
+     
+    // Check if we can edit all the items in the list
+    var canEdit = (TrackEditor.state.writableItemCount ==
+                   TrackEditor.state.selectedItems.length);
+
     // check if we should hide the drag here label
     if (value && value != "") {
       // There is an image so hide the label
-      this._dragoverlay.setAttribute("hidden", true);
+      this._dragoverlay.hidden = true;
     } else {
-      this._dragoverlay.removeAttribute("hidden");
+      this._dragoverlay.hidden = false;
+      // If we can not edit these items then we need to remove the drag here text
+      var dragLabel = this._dragoverlay.getElementsByTagName("label")[0];
+      dragLabel.hidden = !canEdit;
     }
     
     // Lets check if this item is missing a cover
@@ -2088,31 +2165,21 @@ TrackEditorArtwork.prototype = {
     }
 
     // Update the button to the correct text
-    if (value == ARTWORK_NO_COVER) {
-      this._button.setAttribute("label", this._addLabel);
-    } else {
-      this._button.setAttribute("label", this._replaceLabel);
-    }
-
+    this._button.hidden = !canEdit;
+    this._button.label = (value == ARTWORK_NO_COVER ? this._addLabel : this._replaceLabel);
+    
     // Update the image depending on if we have multiple items or not.
-    if (allMatch) {
-      // All the items match on this property (or if there is only one)
-      imageElement.setAttributeNS(XLINK_NS, "href", value);
-    } else {
-      // Multiple items that do not match show nothing
-      imageElement.setAttribute(XLINK_NS, "href", "");
-    }
+    imageElement.setAttributeNS(XLINK_NS, "href", (allMatch ? value : ""));
     
     // Indicate if this property has been edited
     if (TrackEditor.state.isPropertyEdited(this.property)) {
-      if (!this._element.hasAttribute("edited")) {
-        this._element.setAttribute("edited", "true");
-      }
-    } else if (this._element.hasAttribute("edited")) {
-      this._element.removeAttribute("edited"); 
+      this._elementStack.setAttribute("edited", true);
+    } else {
+      this._elementStack.removeAttribute("edited");
     }
-
-    this._checkbox.checked = TrackEditor.state.isPropertyEnabled(this.property);
+    
+    // update the check box to indicate we haved edited the property
+    this._checkbox.checked = TrackEditor.state.isPropertyEdited(this.property);
   }
 }
 
