@@ -270,7 +270,12 @@
         // add a listener to set up the selected node when the tree rebuilds
         // (see mozilla bug 331505)
         this.mTree.builder.addListener(this);
-        this.mTree.builder.datasource.AddObserver(this);
+        
+        var rdfsource = 
+          this.mTree.builder.datasource
+              .QueryInterface(Components.interfaces.nsIRDFDataSource);
+        
+        rdfsource.AddObserver(this);
 
         var sp = this;
         // this is evil. really. i feel guilty.
@@ -349,7 +354,12 @@
         
         // remove the rebuild selection listener
         this.mTree.builder.removeListener(this);
-        this.mTree.builder.datasource.RemoveObserver(this);
+        
+        var rdfsource = 
+          this.mTree.builder.datasource
+              .QueryInterface(Components.interfaces.nsIRDFDataSource);
+        
+        rdfsource.RemoveObserver(this);
 
         this.mTree.stopEditing = this.mTree._stopEditing;
         this.mTree._stopEditing = null;
