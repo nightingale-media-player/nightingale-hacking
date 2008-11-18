@@ -57,7 +57,7 @@ extern PRLogModuleInfo *gLocalDatabasePropertyCacheLog;
 #define TRACE(args) PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gLocalDatabasePropertyCacheLog, PR_LOG_WARN, args)
 
-PRUint32 const BAG_HASHTABLE_SIZE = 50;
+PRUint32 const BAG_HASHTABLE_SIZE = 20;
 
 // sbILocalDatabaseResourcePropertyBag
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseResourcePropertyBag,
