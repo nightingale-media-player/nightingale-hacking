@@ -1311,6 +1311,7 @@ mashTape.loadReviewDetail = function(entry) {
 	var url = entry.getAttribute("mashTape-url");
 	var favicon = entry.getAttribute("mashTape-favicon");
 	var content = entry.getAttribute("mashTape-content");
+	var rating = entry.getAttribute("mashTape-rating");
 
 	var doc = mashTape.reviewDetailFrame.contentWindow.document;
 	mashTape.reviewDetailFrame.contentWindow.scrollTo(0,0);
@@ -1354,6 +1355,11 @@ mashTape.loadReviewDetail = function(entry) {
 	provider.innerHTML = src;
 	detailSubtitle.appendChild(provider);
 	*/
+	if (rating > -1) {
+		var ratings = doc.createElement("div");
+		ratings.className = "ratings rate" + rating.toString();
+		detailSubtitle.appendChild(ratings);
+	}
 
 	if (time > 0) {
 		var dateObj = new Date(parseInt(time));
