@@ -175,14 +175,26 @@ var DPW = {
 
     var deviceStatus = this._device.currentStatus;
     var aMediaItem = deviceStatus.mediaItem;
+    var aMediaItemML = null;
+    if (aMediaItem) {
+      try { aMediaItemML = aMediaItem.QueryInterface(Ci.sbIMediaList); }
+      catch (ex) {}
+    }
     var itemName;
     var itemArtist;
     var itemAlbum;
-    if (aMediaItem) {
+    if (aMediaItemML) {
+      itemName = aMediaItemML.name;
+    } else if (aMediaItem) {
       itemName = aMediaItem.getProperty(SBProperties.trackName);
       itemArtist = aMediaItem.getProperty(SBProperties.artistName);
       itemAlbum = aMediaItem.getProperty(SBProperties.albumName);
     }
+
+    // Ensure item metadata strings are not null or undefined
+    itemName = itemName ? itemName : "";
+    itemArtist = itemArtist ? itemArtist : "";
+    itemAlbum = itemAlbum ? itemAlbum : "";
 
     var curProgress = Math.round((this._curItemIndex.intValue /
                                   this._totalItems.intValue) * 100);
@@ -293,7 +305,8 @@ var DPW = {
           break;
         }
         aOperationHead = "syncing";
-        aOperationFoot = "syncing_" + syncSubKey;
+        if (aMediaItem)
+          aOperationFoot = "syncing_" + syncSubKey;
         this._dProgressRemote.intValue = 0;
         progressMeter.setAttribute("mode", "undetermined");
         this._progressInfoBox.hidden = false;
@@ -301,21 +314,24 @@ var DPW = {
 
       case Ci.sbIDevice.STATE_COPYING:
         aOperationHead = "copying";
-        aOperationFoot = "copying";
+        if (aMediaItem)
+          aOperationFoot = "copying";
         this._dProgressRemote.intValue = curProgress;
         this._progressInfoBox.hidden = false;
       break;
 
       case Ci.sbIDevice.STATE_UPDATING:
         aOperationHead = "updating";
-        aOperationFoot = "updating";
+        if (aMediaItem)
+          aOperationFoot = "updating";
         this._dProgressRemote.intValue = curProgress;
         this._progressInfoBox.hidden = false;
       break;
 
       case Ci.sbIDevice.STATE_DELETING:
         aOperationHead = "deleting";
-        aOperationFoot = "deleting";
+        if (aMediaItem)
+          aOperationFoot = "deleting";
         this._dProgressRemote.intValue = curProgress;
         this._progressInfoBox.hidden = false;
       break;
@@ -329,18 +345,20 @@ var DPW = {
       break;
     }
 
-    if (this._curItemIndex.intValue != 0) {
-	    this._dText1Remote.stringValue =
-	            SBFormattedString("device.status.progress_header_" + aOperationHead,
-	                              [this._curItemIndex.intValue,
-	                               this._totalItems.intValue]);
-	    this._dText2Remote.stringValue =
-	            SBFormattedString("device.status.progress_footer_" + aOperationFoot,
-	                              [itemName, itemArtist, itemAlbum]);
+    if (aOperationHead) {
+      this._dText1Remote.stringValue =
+        SBFormattedString("device.status.progress_header_" + aOperationHead,
+                          [this._curItemIndex.intValue,
+                           this._totalItems.intValue]);
+    } else {
+      this._dText1Remote.stringValue = "";
     }
-    else {
-    	this._dText1Remote.stringValue = "";
-    	this._dText2Remote.stringValue = "";
+    if (aOperationFoot) {
+      this._dText2Remote.stringValue =
+        SBFormattedString("device.status.progress_footer_" + aOperationFoot,
+                          [itemName, itemArtist, itemAlbum]);
+    } else {
+      this._dText2Remote.stringValue = "";
     }
     this._currentState = actualState;
   },
