@@ -827,6 +827,28 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   }
 #endif
 
+  // For local files,  we want to keep the existing property rather than 
+  // overriding it here if we successfully imported metadata in the first
+  // place. As a proxy for "successfully imported metadata", we check if
+  // the artist is non-empty.
+  // We allow overriding for non-file URIs so that streams that update
+  // their metadata periodically can continue to do so.
+  nsString artistName;
+  nsresult rv = mCurrentItem->GetProperty(
+          NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), artistName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> uri;
+  rv = mCurrentItem->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString scheme;
+  rv = uri->GetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (scheme.EqualsLiteral("file") && !artistName.IsEmpty())
+    return NS_OK;
+
   nsCOMPtr<sbIDataRemote> remote;
   if(aId.EqualsLiteral(SB_PROPERTY_ALBUMNAME)) {
     remote = mDataRemoteMetadataAlbum;
