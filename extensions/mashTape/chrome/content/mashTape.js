@@ -900,7 +900,7 @@ mashTape.displayCallback.prototype =  {
 						+ i.getProperty(SBProperties.albumName)
 						+ i.getProperty(SBProperties.trackName));
 		if (this.uid != thisUID) {
-			dump("> callback triggered with a different UID, aborting.\n");
+			//dump("> callback triggered with a different UID, aborting.\n");
 			return;
 		}
 		var clsid = mashTape.compMgr.contractIDToCID(contractId);
@@ -1992,19 +1992,20 @@ mashTape.loadFlashDetail = function(el) {
 				case "Yahoo Music":
 					obj.vidPause();
 					break;
+				case "MTV Music Video":
+					obj.pause();
+					break;
 				default:
 					return;
 			}
 		},
 
-		// boooo... hardcoding a YouTube listener
+		// Provider specific listeners
 		youTubeListener: function(state) {
 			if (state != 0)
 				return;
 			flashWindow.mashTapeVideo.resumeSongbird();
 		},
-
-		// boooo^2, another provider-specific handler... this one for Yahoo
 		yahooListener: function(eventType, eventInfo) {
 			if (eventType != "done")
 				return;
@@ -2027,14 +2028,31 @@ mashTape.loadFlashDetail = function(el) {
 			}
 		}
 	}
+
+	// YouTube is hard-coded to look for a window-level function named
+	// 'onYouTubePlayerReady' which is invoked with the id of the object
 	flashWindow.onYouTubePlayerReady = function(id) {
 		var p = doc.getElementById("mTFlashObject");
 		p.addEventListener("onStateChange",
 				flashWindow.mashTapeVideo.youTubeListener);
 	}
+	
+	// MTV is hard-coded to look for a window-level function named
+	// 'mtvnPlayerLoaded' which is invoked with the id of the object
+	flashWindow.mtvListener = function(state) {
+		// if no state parameter passed, then this is the MEDIA_ENDED
+		// event, and we're done with the video, so resume.
+		if (state == null || state == "stopped") {
+			flashWindow.mashTapeVideo.resumeSongbird();
+		}
+	}
+	flashWindow.mtvnPlayerLoaded = function(id) {
+		var p = doc.getElementById("mTFlashObject");
+		p.addEventListener("STATE_CHANGE", 'mtvListener');
+		p.addEventListener("MEDIA_ENDED", 'mtvListener');
+	}
 
 	if (typeof(mashTape.flashListenerAdded) == "undefined") {
-		dump("adding an event listener\n");
 		flashWindow.addEventListener('click',
 				flashWindow.mashTapeVideo.openLink, false);
 		mashTape.flashListenerAdded = true;
@@ -2117,11 +2135,13 @@ mashTape.loadFlashDetail = function(el) {
 	// Set the video
 	var swf = doc.createElement("object");
 	swf.setAttribute("data", swfUrl);
-	mashTape.log("Loading movie from: " + swfUrl);
+
+	mashTape.log("Loading movie from: " + swfUrl, true);
 
 	swf.setAttribute("type", "application/x-shockwave-flash");
 	swf.setAttribute("onclick", "mashTapeVideo.pauseSongbird();");
 	swf.setAttribute("id", "mTFlashObject");
+	swf.setAttribute("name", "mTFlashObject");
 	swf.setAttribute("width", parseInt(width));
 	swf.setAttribute("height",  parseInt(height));
 	if (el.hasAttribute("mashTape-flashvars"))
@@ -2149,7 +2169,7 @@ mashTape.loadFlashDetail = function(el) {
 	swf.appendChild(param);
 
 	detailVideo.appendChild(swf);
-
+	
 	// Set the title
 	var detailLink = doc.createElement("a");
 	detailLink.href = url;
