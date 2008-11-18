@@ -2335,7 +2335,8 @@ sbLocalDatabaseTreeView::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
   switch(eventType) {
     case sbIMediacoreEvent::STREAM_START:
-    case sbIMediacoreEvent::TRACK_CHANGE: {
+    case sbIMediacoreEvent::TRACK_CHANGE:
+    case sbIMediacoreEvent::TRACK_INDEX_CHANGE: {
       rv = OnTrackChange(aEvent);
       NS_ENSURE_SUCCESS(rv, rv);
     }

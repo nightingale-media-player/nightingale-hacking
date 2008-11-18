@@ -2880,6 +2880,7 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
 
   PRUint32 index = 0;
   nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
+
   if(NS_FAILED(rv)) {
     // if the item is our list, stop playback now and shutdown watcher
     if (mPlaybackControl) {
@@ -2896,6 +2897,10 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = StopWatchingView();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = UpdateItemUIDIndex();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
