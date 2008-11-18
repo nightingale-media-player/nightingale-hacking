@@ -102,10 +102,13 @@ var mtUtils = {
 	_errorConsole : Cc["@mozilla.org/consoleservice;1"]
 						.getService(Ci.nsIConsoleService),
 
-	log: function(providerName, msg) {
+	log: function(providerName, msg, onconsole) {
 		if (!this._prefBranch.getBoolPref("debug"))
 			return;
 
-		this._errorConsole.logStringMessage("[" + providerName + "] " + msg);
+		if (onconsole == true)
+			dump("[" + providerName + "] " + msg + "\n");
+		else
+			this._errorConsole.logStringMessage("[" + providerName + "] "+msg);
 	}
 }

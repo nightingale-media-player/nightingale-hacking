@@ -51,6 +51,7 @@ mashTape.firstRun = function() {
 	gMetrics.metricsInc("mashtape", "defaultpane", "info");
 	gMetrics.metricsInc("mashtape", "autohide", "enabled");
 	gMetrics.metricsInc("mashtape", "info", "tab.disabled");
+	gMetrics.metricsInc("mashtape", "review", "tab.disabled");
 	gMetrics.metricsInc("mashtape", "rss", "tab.disabled");
 	gMetrics.metricsInc("mashtape", "photo", "tab.disabled");
 	gMetrics.metricsInc("mashtape", "flash", "tab.disabled");
@@ -103,6 +104,7 @@ mashTape.init = function(e) {
 	// Array to hold our mashTape providers
 	mashTape.providers = new Array();
 	mashTape.providers["info"] = new Array();
+	mashTape.providers["review"] = new Array();
 	mashTape.providers["rss"] = new Array();
 	mashTape.providers["photo"] = new Array();
 	mashTape.providers["flash"] = new Array();
@@ -146,7 +148,7 @@ mashTape.init = function(e) {
 	var tabpanels = document.getElementById("mashTape-tabpanels");
 	mashTape.displayPane.enableTabs(tabpanels);
 
-	mashTape.iframeLoadCount = 6;
+	mashTape.iframeLoadCount = 8;
 
 	// Setup the display pane maximise button
 	var dpHeader = mashTape.displayPane.tabBar.parentNode;
@@ -220,6 +222,73 @@ mashTape.init = function(e) {
 
 		// Save it for later
 		mashTape.tabPanels["info"] = thispanel;
+	}
+
+	if (mashTape.providers["review"].length > 0) {
+		// We have at least one review provider, so create the Reviews tab
+		// XXX preference should allow user to place individual providers
+		// into separate tabs, or aggregate into one Reviews uber-tab
+		// assuming uber-tab for now
+		mashTape.reviewTabTop = null;
+		for each (var tab in tabs) {
+			if (tab == null)
+				continue;
+			if (tab.id == "mashTape-tab-review")
+				mashTape.reviewTabTop = tab;
+		}
+		if (mashTape.reviewTabTop == null) {
+			var tabLabel = mashTape.strings.GetStringFromName(
+					"extensions.mashTape.review");
+			mashTape.reviewTabTop = mashTape.displayPane.addTab(tabLabel);
+			mashTape.reviewTabTop.id = "mashTape-tab-review";
+		}
+
+		var thispanel = mashTape.createTabPanel();
+
+		var iframe = document.createElement("iframe");
+		iframe.id = "mashTape-review-index";
+		iframe.setAttribute("flex", 0);
+		iframe.setAttribute("tooltip", "aHTMLTooltip");
+		iframe.setAttribute("src",
+				"chrome://mashtape/content/iframeIndex.html");
+		
+		// add a load listener to the iframe so we know when this iframe has
+		// completed loading so we can fire the first update
+		iframe.addEventListener("DOMContentLoaded",
+				mashTape.iframeLoadListener, false);
+
+		thispanel.actualContent.appendChild(iframe);
+		mashTape.reviewIndexFrame = iframe;
+
+		var splitter = document.createElement("splitter");
+		splitter.setAttribute("collapse", "before");
+		splitter.id = "mashTape-review-splitter";
+		splitter.className = "mashTape-splitter";
+		var grippy = document.createElement("grippy");
+		splitter.appendChild(grippy);
+		thispanel.actualContent.appendChild(splitter);
+		
+		iframe = document.createElement("iframe");
+		iframe.id = "mashTape-review-detail";
+		iframe.setAttribute("flex", 1);
+		iframe.setAttribute("tooltip", "aHTMLTooltip");
+		iframe.setAttribute("src",
+				"chrome://mashtape/content/iframeReview.html");
+		thispanel.actualContent.appendChild(iframe);
+
+		// add a load listener to the iframe so we know when this iframe has
+		// completed loading so we can fire the first update
+		iframe.addEventListener("DOMContentLoaded",
+				mashTape.iframeLoadListener, false);
+
+		// Set a reference to our Review iframe so we can update it later
+		// XXX will need to keep track of frames per provider if the user sets
+		// that preference. oh well, worry about that later
+		mashTape.reviewDetailFrame = iframe;
+		tabpanels.appendChild(thispanel);
+		
+		// Save it for later
+		mashTape.tabPanels["review"] = thispanel;
 	}
 
 	if (mashTape.providers["rss"].length > 0) {
@@ -399,6 +468,8 @@ mashTape.init = function(e) {
 	// Hide the tabs the user doesn't want to see
 	if (!Application.prefs.getValue("extensions.mashTape.info.enabled", true))
 		mashTape.infoTabTop.style.visibility = "collapse";
+	if (!Application.prefs.getValue("extensions.mashTape.review.enabled", true))
+		mashTape.reviewTabTop.style.visibility = "collapse";
 	if (!Application.prefs.getValue("extensions.mashTape.rss.enabled", true))
 		mashTape.rssTabTop.style.visibility = "collapse";
 	if (!Application.prefs.getValue("extensions.mashTape.photo.enabled", true))
@@ -432,6 +503,12 @@ mashTape.selectDefaultTab = function() {
 		case "rss":
 			if (mashTape.rssTabTop.style.visibility != "collapse") {
 				mashTape.displayPane.tabBar.selectedItem = mashTape.rssTabTop;
+				break;
+			}
+		case "review":
+			if (mashTape.reviewTabTop.style.visibility != "collapse") {
+				mashTape.displayPane.tabBar.selectedItem =
+					mashTape.reviewTabTop;
 				break;
 			}
 		case "info":
@@ -499,6 +576,7 @@ mashTape.iframeLoadListener = function(e) {
 
 			if (artist == null || artist == "") {
 				mashTape.noDataTab("info");
+				mashTape.noDataTab("review");
 				mashTape.noDataTab("rss");
 				mashTape.noDataTab("photo");
 				mashTape.noDataTab("flash");
@@ -523,8 +601,8 @@ mashTape.createTabPanel = function() {
 	label.id = "info-message";
 	label.className = "empty-message";
 	// Default it to "Nothing playing"
-	label.setAttribute("value",
-			mashTape.strings.GetStringFromName("extensions.mashTape.msg.not_playing"));
+	label.setAttribute("value", mashTape.strings.GetStringFromName(
+			"extensions.mashTape.msg.not_playing"));
 	vbox.appendChild(label);
 	deck.appendChild(vbox);
 	
@@ -595,6 +673,7 @@ mashTape.onTrackChange = function(item, view, index) {
 
 	if (artist == null || artist == "") {
 		mashTape.noDataTab("info");
+		mashTape.noDataTab("review");
 		mashTape.noDataTab("rss");
 		mashTape.noDataTab("photo");
 		mashTape.noDataTab("flash");
@@ -663,6 +742,7 @@ mashTape.enableProvider = function(clsid, providerType) {
 	switch (providerType) {
 		// multiple providers allowed
 		case "rss":
+		case "review":
 		case "flash":
 			mashTape.enabledProviders[providerType].push(clsid);
 			Application.prefs.setValue(prefKey,
@@ -684,21 +764,25 @@ mashTape.enableProvider = function(clsid, providerType) {
 mashTape.update = function(artist, album, track) {
 	mashTape.pendingCallbacks = new Array();
 	mashTape.pendingCallbacks["info"] = new Object;
+	mashTape.pendingCallbacks["review"] = new Object;
 	mashTape.pendingCallbacks["rss"] = new Object;
 	mashTape.pendingCallbacks["photo"] = new Object;
 	mashTape.pendingCallbacks["flash"] = new Object;
 	mashTape.pendingCallbacks["info"].pending = 0;
+	mashTape.pendingCallbacks["review"].pending = 0;
 	mashTape.pendingCallbacks["rss"].pending = 0;
 	mashTape.pendingCallbacks["photo"].pending = 0;
 	mashTape.pendingCallbacks["flash"].pending = 0;
 	mashTape.pendingCallbacks["info"].valid = 0;
+	mashTape.pendingCallbacks["review"].valid = 0;
 	mashTape.pendingCallbacks["rss"].valid = 0;
 	mashTape.pendingCallbacks["photo"].valid = 0;
 	mashTape.pendingCallbacks["flash"].valid = 0;
 
 	// i'm using the artist name as the UID for now, if/when we evolve to
 	// having track-specific providers, we'll do something trickier
-	var uid = artist;
+	// XXX is it time to evolve?
+	var uid = encodeURIComponent(artist + album + track);
 
 	if (mashTape.prevArtist != artist) {
 		mashTape.resetInfo();
@@ -715,6 +799,16 @@ mashTape.update = function(artist, album, track) {
 				infoProvider.numSections;
 			infoProvider.query(artist, callback);
 		}
+	}
+
+	mashTape.resetReviewFrame();
+	mashTape.updateEnabledProviders("review");
+	for (var i=0; i<mashTape.enabledProviders["review"].length; i++) {
+		var clsid = mashTape.enabledProviders["review"][i];
+		var prov = CcID[clsid].createInstance(Ci.sbIMashTapeReviewProvider);
+		var callback = new mashTape.displayCallback(uid);
+		prov.queryFull(artist, album, track, callback);
+		mashTape.pendingCallbacks["review"].pending++;
 	}
 
 	mashTape.resetRssFrame();
@@ -757,10 +851,11 @@ mashTape.update = function(artist, album, track) {
 
 	/*
 	dump("Outgoing callbacks:\n");
-	dump("	info : " + mashTape.pendingCallbacks["info"].pending + "\n");
-	dump("	rss  : " + mashTape.pendingCallbacks["rss"].pending + "\n");
-	dump("	photo: " + mashTape.pendingCallbacks["photo"].pending + "\n");
-	dump("	flash: " + mashTape.pendingCallbacks["flash"].pending + "\n");
+	dump("	info  : " + mashTape.pendingCallbacks["info"].pending + "\n");
+	dump("	review: " + mashTape.pendingCallbacks["review"].pending + "\n");
+	dump("	rss   : " + mashTape.pendingCallbacks["rss"].pending + "\n");
+	dump("	photo : " + mashTape.pendingCallbacks["photo"].pending + "\n");
+	dump("	flash : " + mashTape.pendingCallbacks["flash"].pending + "\n");
 	*/
 }
 
@@ -776,8 +871,11 @@ mashTape.displayCallback.prototype =  {
 			return;
 		var i = gMM.sequencer.view.getItemByIndex(
 					gMM.sequencer.viewPosition);
-		if (this.uid != i.getProperty(SBProperties.artistName)) {
-			// dump("> callback triggered with a different UID, aborting.\n");
+		var thisUID = encodeURIComponent(i.getProperty(SBProperties.artistName)
+						+ i.getProperty(SBProperties.albumName)
+						+ i.getProperty(SBProperties.trackName));
+		if (this.uid != thisUID) {
+			dump("> callback triggered with a different UID, aborting.\n");
 			return;
 		}
 		var clsid = mashTape.compMgr.contractIDToCID(contractId);
@@ -813,6 +911,18 @@ mashTape.displayCallback.prototype =  {
 		switch(provider.providerType) {
 			case "info":
 				mashTape.updateInfo(provider, results, section);
+				break;
+			case "review":
+				var splitter =
+						document.getElementById("mashTape-review-splitter");
+				mashTape.updateReviewFeeds(provider, results);
+				if (results != null &&
+							splitter.getAttribute("state") == "collapsed")
+				{
+					splitter.setAttribute("state", "open");
+				}
+				if (classPending.pending == 0)
+					mashTape.loadFirstReviewFeed()
 				break;
 			case "rss":
 				var splitter = document.getElementById("mashTape-rss-splitter");
@@ -1121,6 +1231,206 @@ mashTape.updateInfo = function(provider, results, section) {
 		link.href = faviconUrl;
 	}
 	return;
+}
+
+/****************************************************************************
+ * REVIEW PROVIDER FUNCTIONS
+ ****************************************************************************/
+mashTape.resetReviewFrame = function() {
+	// Clear existing data
+	var doc = mashTape.reviewIndexFrame.contentWindow.document;
+	var body = doc.getElementsByTagName("body")[0];
+	while (body.firstChild)
+		body.removeChild(body.firstChild);
+
+	doc = mashTape.reviewDetailFrame.contentWindow.document;
+
+	// Hide any existing content
+	var content = doc.getElementById("actual-content");
+	content.style.display = "none";
+
+	// Collapse the splitter
+	var splitter = document.getElementById("mashTape-review-splitter");
+	splitter.setAttribute("state", "collapsed");
+
+	// Put in the loading image for the detail frame
+	var loading = doc.getElementById("loading");
+	loading.style.display = "block";
+	var paneHeight = doc.getElementsByTagName("html")[0].clientHeight;
+	// 64 is the height of the load.gif
+	loading.style.marginTop = (paneHeight-64)/2 + "px";
+}
+
+mashTape.loadFirstReviewFeed = function() {
+	// only load if the loading is still showing (meaning the user hasn't
+	// clicked on something else to load in the meantime)
+	if (mashTape.reviewDetailFrame.contentWindow.document
+			.getElementById("loading").style.display == "block")
+	{
+		var doc = mashTape.reviewIndexFrame.contentWindow.document;
+		var body = doc.getElementsByTagName("body")[0];
+		var first = body.getElementsByTagName("div")[0];
+		mashTape.loadReviewDetail(first);
+	}
+}
+
+mashTape.loadReviewDetail = function(entry) {
+	if (typeof(entry) == "undefined")
+		return;
+	while (!entry.hasAttribute("mashTape-title"))
+		entry = entry.parentNode;
+	var title = entry.getAttribute("mashTape-title");
+	var src = entry.getAttribute("mashTape-src");
+	var srcUrl = entry.getAttribute("mashTape-srcUrl");
+	var time = entry.getAttribute("mashTape-time");
+	var url = entry.getAttribute("mashTape-url");
+	var favicon = entry.getAttribute("mashTape-favicon");
+	var content = entry.getAttribute("mashTape-content");
+
+	var doc = mashTape.reviewDetailFrame.contentWindow.document;
+	mashTape.reviewDetailFrame.contentWindow.scrollTo(0,0);
+	var detailTitle = doc.getElementById("title");
+	var detailFavicon = doc.getElementById("favicon");
+	var detailFaviconLink = doc.getElementById("link");
+	var detailSubtitle = doc.getElementById("subtitle");
+	var detailContent = doc.getElementById("content");
+	var detailMore = doc.getElementById("read-more");
+
+	// hide the loading div
+	var loading = doc.getElementById("loading");
+	loading.style.display = "none";
+
+	// display the content divs
+	var actualContent = doc.getElementById("actual-content");
+	actualContent.style.display = "block";
+
+	var containingDiv = entry;
+	if (mashTape.selectedReview)
+		mashTape.selectedReview.className =
+			mashTape.selectedReview.className.replace("row-selected", "");
+	while (containingDiv.className.indexOf("row-") != 0)
+		containingDiv = containingDiv.parentNode;
+	containingDiv.className += " row-selected";
+	mashTape.selectedReview = containingDiv;
+
+	detailTitle.innerHTML = title;
+	detailFavicon.src = favicon;
+	detailFavicon.setAttribute("title", mashTape.strings.formatStringFromName(
+			"extensions.mashTape.msg.review_tooltip", [src], 1));
+	detailFaviconLink.href = url;
+
+	while (detailSubtitle.firstChild)
+		detailSubtitle.removeChild(detailSubtitle.firstChild);
+	/*
+	detailSubtitle.appendChild(doc.createTextNode(
+		mashTape.strings.GetStringFromName("extensions.mashTape.msg.by") +" "));
+	var provider = doc.createElement("a");
+	provider.href = srcUrl;
+	provider.innerHTML = src;
+	detailSubtitle.appendChild(provider);
+	*/
+
+	if (time > 0) {
+		var dateObj = new Date(parseInt(time));
+		var timestamp = doc.createElement("span");
+		timestamp.className = "time";
+		timestamp.innerHTML = dateObj.ago();
+		detailSubtitle.appendChild(timestamp);
+	}
+
+	detailContent.innerHTML = content;
+	/*
+	detailMore.innerHTML = "<a href='" + url + "'>" + 
+		mashTape.strings.GetStringFromName("extensions.mashTape.msg.readorig") +
+		"</a>";
+		*/
+
+}
+
+mashTape.updateReviewFeeds = function(provider, results) {
+	if (results == null)
+		return;
+	var doc = mashTape.reviewIndexFrame.contentWindow.document;
+	var body = doc.getElementsByTagName("body")[0];
+
+	var favicon = provider.QueryInterface(Ci.sbIMashTapeReviewProvider)
+		.providerIcon;
+	for (var i=0; i<results.length; i++) {
+		var entryDiv = doc.createElement("div");
+		var img = doc.createElement("img");
+		img.className = "favicon";
+		img.src = favicon;
+		img.setAttribute("title", provider.providerName);
+		entryDiv.appendChild(img);
+		
+		var metadata = doc.createElement("div");
+		metadata.className = "metadata-review";
+		var link = doc.createElement("a");
+		link.href = "#";
+		entryDiv.setAttribute("mashTape-title", results[i].title);
+		entryDiv.setAttribute("mashTape-favicon", favicon);
+		entryDiv.setAttribute("mashTape-src", results[i].provider);
+		entryDiv.setAttribute("mashTape-srcUrl", results[i].providerUrl);
+		entryDiv.setAttribute("mashTape-time", results[i].time);
+		entryDiv.setAttribute("mashTape-rating", results[i].rating);
+		entryDiv.setAttribute("mashTape-content", results[i].content);
+		entryDiv.addEventListener("click", function(e) {
+			mashTape.loadReviewDetail(e.target);
+			e.stopPropagation();
+			e.preventDefault();
+		}, false);
+		link.innerHTML = results[i].title;
+		metadata.appendChild(link);
+
+		if (results[i].time > 0) {
+			var dateObj = new Date(results[i].time);
+			var dateSpan = doc.createElement("span");
+			dateSpan.className = "time";
+			dateSpan.innerHTML = dateObj.ago();
+			metadata.appendChild(dateSpan);
+		}
+		
+		if (results[i].rating > -1) {
+			var ratings = doc.createElement("div");
+			ratings.className = "ratings rate" + results[i].rating.toString();
+			metadata.appendChild(ratings);
+		}
+
+		entryDiv.appendChild(metadata);
+
+		// Figure out where in the DOM we want to insert this node
+		entryDiv.setAttribute("mashTape-timestamp", results[i].time);
+		entryDiv.setAttribute("mashTape-title", results[i].title);
+		var divs = body.getElementsByTagName("div");
+		var inserted = false;
+		var nextClass = 0;
+		for (var j=0; j<divs.length; j++) {
+			if (divs[j].className.indexOf("row-") == -1)
+				continue;
+			divs[j].className = mashTape.classes[nextClass];
+			nextClass = Math.abs(nextClass-1);
+
+			var otherTimestamp = divs[j].getAttribute("mashTape-timestamp");
+			if ((otherTimestamp < results[i].time && !inserted &&
+						otherTimestamp > 0)
+				|| (results[i].time == 0 && !inserted))
+			{
+				if (divs[j].className == "row-even") {
+					entryDiv.className = "row-even";
+					divs[j].className = "row-odd";
+				} else {
+					entryDiv.className = "row-odd";
+					divs[j].className = "row-even";
+				}
+				body.insertBefore(entryDiv, divs[j]);
+				inserted = true;
+			}
+		}
+		if (!inserted) {
+			entryDiv.className = mashTape.classes[nextClass];
+			body.appendChild(entryDiv);
+		}
+	}
 }
 
 /****************************************************************************
@@ -1894,6 +2204,10 @@ mashTape.updateFlash = function(provider, results) {
 		thumbLink.appendChild(thumbImg);
 		entryDiv.appendChild(thumbLink);
 		thumbImg.addEventListener("load", function() {
+			// in the event we've changed tracks and this img is no longer
+			// attached to the DOM then just bail out
+			if (this.parentNode == null)
+				return;
 			var theDiv = this.parentNode.parentNode;
 			var theImg = this;
 			if (theDiv.clientHeight-10 < theImg.clientHeight)
@@ -2069,6 +2383,9 @@ mashTape.prefObserver = {
 					case "info":
 						tab = mashTape.infoTabTop;
 						break;
+					case "review":
+						tab = mashTape.reviewTabTop;
+						break;
 					case "rss":
 						tab = mashTape.rssTabTop;
 						break;
@@ -2107,7 +2424,8 @@ window.addEventListener("unload", mashTape.unload, false);
 mashTape.tooltip = function(tipElement)
 {
   var retVal = false;
-  if (tipElement.namespaceURI == "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul")
+  if (tipElement.namespaceURI ==
+		  "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul")
     return retVal;
 
   const XLinkNS = "http://www.w3.org/1999/xlink";

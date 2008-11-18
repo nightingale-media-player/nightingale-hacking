@@ -17,6 +17,8 @@
 		name="extensions.mashTape.autohide" />
 	<preference id="tab-info-enabled" type="bool"
 		name="extensions.mashTape.info.enabled" />
+	<preference id="tab-review-enabled" type="bool"
+		name="extensions.mashTape.review.enabled" />
 	<preference id="tab-rss-enabled" type="bool"
 		name="extensions.mashTape.rss.enabled" />
 	<preference id="tab-photo-enabled" type="bool"
@@ -28,11 +30,14 @@
 </preferences>
 
 <command id="cmd-info" oncommand="mashTapePreferences.savePrefs('info')" />
+<command id="cmd-review" oncommand="mashTapePreferences.savePrefs('review')" />
 <command id="cmd-rss" oncommand="mashTapePreferences.savePrefs('rss')" />
 <command id="cmd-photo" oncommand="mashTapePreferences.savePrefs('photo')" />
 <command id="cmd-flash" oncommand="mashTapePreferences.savePrefs('flash')" />
 
 <command id="cmd-toggle-info" oncommand="mashTapePreferences.toggle('info')" />
+<command id="cmd-toggle-review"
+	oncommand="mashTapePreferences.toggle('review')" />
 <command id="cmd-toggle-rss" oncommand="mashTapePreferences.toggle('rss')" />
 <command id="cmd-toggle-photo" oncommand="mashTapePreferences.toggle('photo')"/>
 <command id="cmd-toggle-flash" oncommand="mashTapePreferences.toggle('flash')"/>
@@ -44,6 +49,7 @@
 	<tabs flex="0">
 		<tab label="&mtprefs.general;"/>
 		<tab label="&mtprefs.info;"/>
+		<tab label="&mtprefs.review;"/>
 		<tab label="&mtprefs.rss;"/>
 		<tab label="&mtprefs.photo;"/>
 		<tab label="&mtprefs.flash;"/>
@@ -62,6 +68,8 @@
 							<menupopup flex="1">
 								<menuitem label="&mtprefs.show.info;"
 									value="info" />
+								<menuitem label="&mtprefs.show.review;"
+									value="review" />
 								<menuitem label="&mtprefs.show.rss;"
 									value="rss" />
 								<menuitem label="&mtprefs.show.photo;"
@@ -102,6 +110,27 @@
 					<description id="help-info">&mtprefs.single;</description>
 					<radiogroup>
 						<richlistbox class="box-services" id="services-info">
+						</richlistbox>
+					</radiogroup>
+				</groupbox>
+			</vbox>
+		</tabpanel>
+
+		<!-- Review preferences -->
+		<tabpanel id="tabpanel-review" orient="vertical">
+			<vbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.review;" />
+					<hbox>
+						<checkbox preference="tab-review-enabled"
+							id="checkbox-review" command="cmd-toggle-review" />
+						<label value="&mtprefs.tab.help;" />
+					</hbox>
+					
+					<description
+						id="help-review">&mtprefs.multiple;</description>
+					<radiogroup>
+						<richlistbox class="box-services" id="services-review">
 						</richlistbox>
 					</radiogroup>
 				</groupbox>

@@ -23,7 +23,8 @@ div.row-odd {
 }
 
 div.metadata-flash img,
-div.metadata-rss img {
+div.metadata-rss img,
+div.metadata-review img {
 	width: 10px;
 	height: 10px;
 	vertical-align:middle;
@@ -31,9 +32,27 @@ div.metadata-rss img {
 div.metadata-flash{
 	margin-left: 106px;
 }
-div.metadata-rss{
+div.metadata-rss, 
+div.metadata-review {
 	margin-left: 21px;
 }
+
+div.ratings {
+	width: 70px;
+	min-width: 70px;
+	width: 70px;
+	height: 18px;
+	min-height: 18px;
+	background-repeat: no-repeat;
+	background-image: url(chrome://songbird/skin/ratings/ratings.png);
+}
+div.rate0 { background-position:0px -18px; }
+div.rate1 { background-position:0px -54px; }
+div.rate2 { background-position:0px -90px; }
+div.rate3 { background-position:0px -126px; }
+div.rate4 { background-position:0px -162px; }
+div.rate5 { background-position:0px -198px; }
+	
 img.favicon-flash {
 	padding-left: 5px;
 }

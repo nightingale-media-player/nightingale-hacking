@@ -16,6 +16,9 @@ var mashTapePreferences = {
 					element = "radio";
 					attribute = "selected";
 					break;
+				case "review":
+					prov = prov.QueryInterface(Ci.sbIMashTapeReviewProvider);
+					break;
 				case "rss":
 					prov = prov.QueryInterface(Ci.sbIMashTapeRSSProvider);
 					break;
@@ -99,6 +102,7 @@ var mashTapePreferences = {
 
 		this.providers = new Array();
 		this.providers["info"] = new Array();
+		this.providers["review"] = new Array();
 		this.providers["rss"] = new Array();
 		this.providers["photo"] = new Array();
 		this.providers["flash"] = new Array();
@@ -112,6 +116,7 @@ var mashTapePreferences = {
 			}
 		}
 		this.providers["info"].sort();
+		this.providers["review"].sort();
 		this.providers["rss"].sort();
 		this.providers["photo"].sort();
 		this.providers["flash"].sort();
@@ -122,10 +127,16 @@ var mashTapePreferences = {
 		var prefKey = "extensions.mashTape." + providerType + ".providers";
 		var prefServices = new Array();
 		var attr;
-		if (providerType == "rss" || providerType == "flash")
-			attr = "checked";
-		else
-			attr = "selected";
+		switch (providerType) {
+			case "rss":
+			case "review":
+			case "flash":
+				attr = "checked";
+				break;
+			default:
+				attr = "selected";
+				break;
+		}
 		for each (var rli in box.childNodes) {
 			if (rli.tagName != "richlistitem")
 				continue;
@@ -194,7 +205,7 @@ var mashTapePreferences = {
 			item.disabled = true;
 			if (item.selected) {
 				// select an enabled tab instead
-				for each (var tab in ["info", "rss", "photo", "flash"])
+				for each (var tab in ["info", "review","rss", "photo", "flash"])
 				{
 					if (this._prefBranch.getBoolPref(tab + ".enabled")) {
 						var sItem = this.getDefaultTabItem(tab);
@@ -217,7 +228,7 @@ var mashTapePreferences = {
 			.QueryInterface(Ci.nsIPrefBranch2);
 		this._prefBranch.addObserver("", this, false);
 
-		for each (var tab in ["info", "rss", "photo", "flash"])
+		for each (var tab in ["info", "review", "rss", "photo", "flash"])
 			this.checkDefaultTab(tab);
 
 		if (!this._prefBranch.getBoolPref("photo.enabled")) {
@@ -230,6 +241,7 @@ var mashTapePreferences = {
 
 		this.enumerateServices();
 		this.populateServices("info");
+		this.populateServices("review");
 		this.populateServices("rss");
 		this.populateServices("photo");
 		this.populateServices("flash");

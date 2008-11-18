@@ -35,10 +35,24 @@ interface sbIMashTapeFlashProvider : sbIMashTapeProvider
 	readonly attribute string providerIcon;
 };
 
-[scriptable, function, uuid(ec4fea10-64a3-11dd-ad8b-0800200c9a66)]
+[scriptable, function, uuid(c8925af0-b4e8-11dd-ad8b-0800200c9a66)]
 interface sbIMashTapeRSSProvider : sbIMashTapeProvider
 {
 	readonly attribute string providerIcon;
+};
+
+[scriptable, function, uuid(097ef180-b12a-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeReviewProvider : sbIMashTapeProvider
+{
+	readonly attribute string providerIcon;
+	void queryFull(in AUTF8String artist, in AUTF8String album,
+			in AUTF8String track, in sbIMashTapeCallback updateFn);
+};
+
+[scriptable, function, uuid(8cb80ab0-b129-11dd-ad8b-0800200c9a66)]
+interface sbIMashTapeTabProvider : sbIMashTapeProvider
+{
+	readonly attribute string tabName;
 };
 
 /*******************************/
@@ -48,11 +62,3 @@ interface sbIMashTapeCallback : nsISupports
 {
 };
 
-/*******************************/
-/*
-[scriptable, uuid(0fd6a050-996a-11dd-ad8b-0800200c9a66)]
-interface sbIMashTapeUtils : nsISupports
-{
-	void log(in string provider, in string msg);
-};
-*/

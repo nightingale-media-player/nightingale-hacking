@@ -1,6 +1,7 @@
 <!-- Used for the tab headers -->
 <!ENTITY mtprefs.general "General">
 <!ENTITY mtprefs.info "Artist Info">
+<!ENTITY mtprefs.review "Reviews">
 <!ENTITY mtprefs.rss "News">
 <!ENTITY mtprefs.photo "Photos">
 <!ENTITY mtprefs.flash "Videos">
@@ -9,6 +10,7 @@
 <!ENTITY mtprefs.defaulttab "Default Tab">
 <!ENTITY mtprefs.defaulttab.help "When mashTape starts:">
 <!ENTITY mtprefs.show.info "Show Artist Info">
+<!ENTITY mtprefs.show.review "Show Reviews">
 <!ENTITY mtprefs.show.rss "Show News">
 <!ENTITY mtprefs.show.photo "Show Photos">
 <!ENTITY mtprefs.show.flash "Show Videos">
@@ -21,6 +23,7 @@
 
 <!-- Common entities for the remaining tabs -->
 <!ENTITY mtprefs.tab.info "Artist Info Tab Settings">
+<!ENTITY mtprefs.tab.review "Reviews Tab Settings">
 <!ENTITY mtprefs.tab.rss "News Tab Settings">
 <!ENTITY mtprefs.tab.photo "Photos Tab Settings">
 <!ENTITY mtprefs.tab.flash "Videos Tab Settings">

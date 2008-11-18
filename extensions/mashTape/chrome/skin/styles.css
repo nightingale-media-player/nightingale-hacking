@@ -1,8 +1,5 @@
-iframe#mashTape-flash-index {
-	width: 300px;
-	min-width: 100px;
-}
-
+iframe#mashTape-flash-index,
+iframe#mashTape-review-index,
 iframe#mashTape-rss-index {
 	width: 300px;
 	min-width: 100px;
