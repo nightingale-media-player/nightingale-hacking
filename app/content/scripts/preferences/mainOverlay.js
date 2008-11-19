@@ -47,3 +47,38 @@ addEventListener("load", function() {
   document.getAnonymousElementByAttribute(browserPreferences, 'anonid', 'selector').removeAttribute("orient");
   
 }, false);
+
+
+
+/*********************************************************
+ HACK for Bug 13456 - document.loadOverlay is very buggy,
+ and crashes when pref panes are loaded too quickly.  
+ This is a workaround to prevent multiple simultaneous 
+ loadOverlay operations.
+ 
+ This code can be removed when we update to trunk Mozilla.
+ ********************************************************/ 
+ 
+// Replace document.loadOverlay with a version that
+// prevents multiple loads
+document._loadOverlay = document.loadOverlay;
+document._overlayLoading = false;
+document.loadOverlay = function(overlay, observer) {   
+  if (document._overlayLoading) {
+    throw new Error("HACK for Bug 13456 - Only one loadOverlay at a time!");
+  }
+  document._realLoadObserver = observer;
+  document._overlayLoading = true;
+  document._loadOverlay(overlay, 
+                        document._loadOverlayObserver);
+}
+document._loadOverlayObserver = {
+  observe: function() {
+    // We just finished a load, notify the original observer
+    if (document._realLoadObserver) {
+      document._realLoadObserver.observe();
+      document._realLoadObserver = null;
+    }
+    document._overlayLoading = false;
+  }
+}
