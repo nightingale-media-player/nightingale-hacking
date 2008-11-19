@@ -829,7 +829,7 @@ function sbLastFm_onMediacoreEvent(aEvent) {
   }
 }
 
-// sbIPlaylistPlaybackListener
+// invoked from onMediacoreEvent above
 sbLastFm.prototype.onTrackChange =
 function sbLastFm_onTrackChange(aItem) {
   // NOTE: This depends on the current assumption that onTrackChange will
