@@ -221,13 +221,62 @@ ShoutcastRadio.Controller = {
 		// Register our observer for application shutdown
 		shoutcastUninstallObserver.register();
 
+		// Bind our dataremote for track title change
+		/*
+		var SB_NewDataRemote = Components.Constructor(
+			"@songbirdnest.com/Songbird/DataRemote;1", Ci.sbIDataRemote,
+			"init");
+		ShoutcastRadio.Controller.titleDr =
+					SB_NewDataRemote("metadata.title", null);
+		ShoutcastRadio.Controller.titleDr.bindObserver(
+				ShoutcastRadio.Controller, true);
+		*/
+		dump("!!!!!!! binding observer\n");
+		ShoutcastRadio.Controller._prefBranch =
+				Cc["@mozilla.org/preferences-service;1"]
+				.getService(Ci.nsIPrefService).getBranch("songbird.metadata.")
+				.QueryInterface(Ci.nsIPrefBranch2);
+		ShoutcastRadio.Controller._prefBranch.addObserver("title",
+				ShoutcastRadio.Controller.metadataObserver, false);
+
+		// Reset the filter at startup
 		Application.prefs.setValue("extensions.shoutcast-radio.filter", "");
 	},
 
 	onUnLoad: function() {
 		this._initialized = false;
 		gMM.removeListener(metricsObserver);
-	},
+		//ShoutcastRadio.Controller.titleDr.unbind();
+	}
+}
+
+ShoutcastRadio.Controller.metadataObserver = {
+	observe: function(subject, topic, data) {
+		var item;
+		try {
+			item = gMM.sequencer.currentItem;
+		} catch (e) {
+			return;
+		}
+
+		if (subject instanceof Ci.nsIPrefBranch) {
+			if (data == "title" && item.getProperty(SC_streamName)) {
+				var title = subject.getCharPref(data);
+				dump("**** Full Title: " + title + "\n");
+				if (title.indexOf(item.getProperty(SC_streamName)) >= 0) {
+					return;
+				}
+				var m = title.match(/^(.+) - ([^-]+)$/);
+				if (m) {
+					dump("\tArtist: " + m[1] + "\n");
+					dump("\tTrack: " + m[2] + "\n");
+					ShoutcastRadio.Controller.ts = Date.now();
+					item.setProperty(SBProperties.artistName, m[1]);
+					item.setProperty(SBProperties.trackName, m[2]);
+				}
+			}
+		}
+	}
 };
 
 var curTrackListener = function(e) {
