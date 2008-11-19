@@ -16,11 +16,14 @@
 ./components/URLUtils.jsm
 ./components/WindowUtils.jsm
 ./components/XPCOMUtils.jsm
+./extensions/basic-layouts@songbirdnest.com/
 ./extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./extensions/basic-layouts@songbirdnest.com/install.rdf
 ./extensions/rubberducky@songbirdnest.com/chrome.manifest
 ./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
+./extensions/rubberducky@songbirdnest.com/chrome/
 ./extensions/rubberducky@songbirdnest.com/install.rdf
+./extensions/rubberducky@songbirdnest.com/
 ./gst-plugins/libgstdebug.so
 ./gst-plugins/libgstnavigationtest.so
 ./lib/sbGStreamer.so

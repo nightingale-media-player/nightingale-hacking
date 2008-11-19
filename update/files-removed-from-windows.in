@@ -17,8 +17,11 @@
 ./components/XPCOMUtils.jsm
 ./extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./extensions/basic-layouts@songbirdnest.com/install.rdf
+./extensions/basic-layouts@songbirdnest.com/
 ./extensions/rubberducky@songbirdnest.com/chrome.manifest
 ./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
+./extensions/rubberducky@songbirdnest.com/chrome/
+./extensions/rubberducky@songbirdnest.com/
 ./extensions/rubberducky@songbirdnest.com/install.rdf
 ./gst-plugins/dshowdecwrapper.dll
 ./gst-plugins/gstdebug.dll
@@ -228,6 +231,7 @@
 ./plugins/vlcmodules/libxa_plugin.dll
 ./plugins/vlcmodules/libxml_plugin.dll
 ./plugins/vlcmodules/libxtag_plugin.dll
+./plugins/vlcmodules/
 ./searchplugins/google-lyrics.xml
 ./searchplugins/yahoo-lyrics.xml
 ./tag_c.dll

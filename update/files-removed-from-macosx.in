@@ -2,6 +2,7 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#arrowS.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#colResize.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/CVS/Root.bak
+./Contents/Frameworks/XUL.framework/res/cursors/CVS/
 ./Contents/Frameworks/XUL.framework/res/cursors/.#help.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#rowResize.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#sizeNESW.tiff.1.1
@@ -18,6 +19,9 @@
 ./Contents/Frameworks/XUL.framework/res/cursors/.#vtIBeam.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#zoomIn.tiff.1.1
 ./Contents/Frameworks/XUL.framework/res/cursors/.#zoomOut.tiff.1.1
+./Contents/Frameworks/XUL.framework/res/cursors/.svn/props
+./Contents/Frameworks/XUL.framework/res/cursors/.svn/tmp
+./Contents/Frameworks/XUL.framework/res/cursors/.svn/
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontCMEX10.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontCMSY10.properties
 ./Contents/Frameworks/XUL.framework/res/fonts/mathfontMath1.properties
@@ -55,14 +59,15 @@
 ./Contents/Resources/components/XPCOMUtils.jsm
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./Contents/Resources/extensions/basic-layouts@songbirdnest.com/install.rdf
-./Contents/Resources/extensions/quicktime@songbirdnest.com
-./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome
+./Contents/Resources/extensions/basic-layouts@songbirdnest.com/
+./Contents/Resources/extensions/quicktime@songbirdnest.com/
+./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome/
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome.manifest
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/chrome/quicktime.jar
-./Contents/Resources/extensions/quicktime@songbirdnest.com/components
+./Contents/Resources/extensions/quicktime@songbirdnest.com/components/
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/components/sbQuickTime.xpt
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/install.rdf
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform
+./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components/sbQuickTime.dylib
@@ -72,11 +77,11 @@
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
 ./Contents/Resources/lib/sbGStreamer.dylib
-./Contents/Resources/plugins/VLC.plugin
-./Contents/Resources/plugins/VLC.plugin/Contents
+./Contents/Resources/plugins/VLC.plugin/
+./Contents/Resources/plugins/VLC.plugin/Contents/
 ./Contents/Resources/plugins/VLC.plugin/Contents/Info.plist
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdirac_decoder.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdirac_encoder.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libdvbpsi.dylib
@@ -102,7 +107,7 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libtheora.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libtiff.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/lib/vlc_libtwolame.dylib
-./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules
+./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/liba52_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/liba52sys_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/liba52tofloat32_plugin.dylib
@@ -292,7 +297,7 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxml_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxtag_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/VLC Plugin
-./Contents/Resources/plugins/VLC.plugin/Contents/Resources
+./Contents/Resources/plugins/VLC.plugin/Contents/Resources/
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj/InfoPlist.strings
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/VLC Plugin.rsrc
