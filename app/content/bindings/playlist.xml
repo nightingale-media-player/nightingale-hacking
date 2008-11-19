@@ -99,7 +99,7 @@
         </content>
 
     <implementation
-      implements="nsISupportsWeakReference,sbIPlaylistWidget,sbIMediaListViewTreeViewObserver"
+      implements="nsISupportsWeakReference,sbIPlaylistWidget,sbIMediaListViewTreeViewObserver,sbIMediaListViewListener"
       type="application/x-javascript"
     >
 
@@ -582,6 +582,10 @@
     this.setAttribute("library-customtype", libCustomType);
     this.setAttribute("list-customtype", customType);
   }
+  
+  // listen for media list view changes to stop editing; see bug 13272
+  // use a weak listener to avoid creating a reference cycle
+  mediaListView.addListener(this, true);
 ]]>
         </body>
       </method>
@@ -2998,6 +3002,28 @@
           this.mediaListView.selection.select(aIndex);
           this.treeView.selection.tree.ensureRowIsVisible(aIndex);
           ]]></body>
+      </method>
+      
+      <!-- sbIMediaListViewListener -->
+      <method name="onFilterChanged">
+        <parameter name="aChangedView"/>
+        <body><![CDATA[
+          this.tree.stopEditing(false);
+        ]]></body>
+      </method>
+      <!-- sbIMediaListViewListener -->
+      <method name="onSearchChanged">
+        <parameter name="aChangedView"/>
+        <body><![CDATA[
+          this.tree.stopEditing(false);
+        ]]></body>
+      </method>
+      <!-- sbIMediaListViewListener -->
+      <method name="onSortChanged">
+        <parameter name="aChangedView"/>
+        <body><![CDATA[
+          this.tree.stopEditing(false);
+        ]]></body>
       </method>
 
     </implementation>
