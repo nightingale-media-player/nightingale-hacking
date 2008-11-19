@@ -326,7 +326,7 @@ sbLastFm.prototype.classID =
     Components.ID('13bc0c9e-5c37-4528-bcf0-5fe37fcdc37a');
 sbLastFm.prototype.QueryInterface =
     XPCOMUtils.generateQI([Ci.sbIPlaybackHistoryListener, Ci.nsIObserver,
-        Ci.sbIPlaylistPlaybackListener, Ci.sbILastFmWebServices]);
+        Ci.sbILastFmWebServices]);
 
 // Error reporting
 sbLastFm.prototype.log = function sbLastFm_log(message) {
