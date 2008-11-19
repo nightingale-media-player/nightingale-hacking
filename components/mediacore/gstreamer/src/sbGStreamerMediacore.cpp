@@ -258,7 +258,7 @@ sbGStreamerMediacore::ReadPreferences()
 
   /* Defaults if the prefs aren't present */
   PRInt32 bufferSizeBytes = 10 * 1024 * 1024; /* 10 MB */
-  PRInt64 bufferDuration = 10 * GST_SECOND;   /* 10 seconds */
+  PRInt64 bufferDuration = 5 * GST_SECOND;   /* 5 seconds */
 
   rv = mPrefs->GetPrefType(SIZE_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
