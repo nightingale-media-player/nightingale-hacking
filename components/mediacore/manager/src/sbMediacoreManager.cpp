@@ -590,14 +590,14 @@ sbMediacoreManager::OnSetVolume(double aVolume)
     
     mon.Exit();
 
-    rv = volumeControl->SetVolume(mVolume);
+    rv = volumeControl->SetVolume(aVolume);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     mon.Exit();
   }
 
-  rv = SetVolumeDataRemote(mVolume);
+  rv = SetVolumeDataRemote(aVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
