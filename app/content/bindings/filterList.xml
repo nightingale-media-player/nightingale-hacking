@@ -59,6 +59,8 @@
           onselect="_onFilterListSelect(event);"
           ondblclick="_onFilterListDblClick(event);"
           ondraggesture="_onFilterListDragGesture(event);"
+          ondragover="_onFilterListDragOver(event)"
+          ondrop="_onFilterListDrop(event);"
           enableColumnDrag="false"
           xbl:inherits="class,enableColumnDrag,hidecolumnpicker"
         >
@@ -455,6 +457,28 @@
                                               icon, 0, 0, event);
 
     event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListDragOver">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // prevent dropping anything into the filter lists to work around crash
+  // (bug 13808)
+  event.stopPropagation();
+]]>
+        </body>
+      </method>
+
+      <method name="_onFilterListDrop">
+        <parameter name="event"/>
+        <body>
+<![CDATA[
+  // prevent dropping anything into the filter lists to work around crash
+  // (bug 13808)
+  event.stopPropagation();
 ]]>
         </body>
       </method>
