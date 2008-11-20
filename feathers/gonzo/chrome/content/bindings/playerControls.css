@@ -148,10 +148,10 @@ Imported by bindings.css or directly into feathers.
 
 
 sb-player-back-button {
-  list-style-image: url(chrome://songbird/skin/media-control-pane/button-previous.png); 
+  list-style-image: url('chrome://songbird/skin/media-control-pane/button-previous.png');
 }
 sb-player-forward-button {
-  list-style-image: url(chrome://songbird/skin/media-control-pane/button-next.png); 
+  list-style-image: url('chrome://songbird/skin/media-control-pane/button-next.png'); 
 }
   sb-player-back-button,
   sb-player-forward-button {
@@ -168,6 +168,7 @@ sb-player-forward-button {
   sb-player-back-button[disabled="true"],
   sb-player-forward-button[disabled="true"] { 
     -moz-image-region: rect(90px 30px 120px 0px);
+    opacity:1.0 !important;
   }
 
 
@@ -339,7 +340,7 @@ stack.sb-player-volume-slider {
 .sb-player-shuffle-button-off:active > button {
   -moz-image-region: rect(48px 24px 72px 0px);
 }
-.sb-player-shuffle-button-off[disabled="true"] > button {
+sb-player-shuffle-button[disabled="true"] > .sb-player-button > .sb-player-shuffle-button-off > button {
   -moz-image-region: rect(72px 24px 96px 0px);
 }
 
@@ -352,9 +353,14 @@ stack.sb-player-volume-slider {
 .sb-player-shuffle-button-on:active > button {
   -moz-image-region: rect(48px 48px 72px 24px);
 }
-.sb-player-shuffle-button-on[disabled="true"] > button {
+sb-player-shuffle-button[disabled="true"] > .sb-player-button > .sb-player-shuffle-button-on > button {
   -moz-image-region: rect(72px 48px 96px 24px);
 }
+
+sb-player-shuffle-button[disabled="true"] {
+  opacity:1.0 !important;
+}
+
 
 .sb-player-repeat-button-repnone > button,
 .sb-player-repeat-button-repall > button,
@@ -372,7 +378,7 @@ stack.sb-player-volume-slider {
 .sb-player-repeat-button-repnone:active > button {
   -moz-image-region: rect(48px 24px 72px 0px);
 }
-.sb-player-repeat-button-repnone[disabled="true"] > button {
+sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-repnone > button {
   -moz-image-region: rect(72px 24px 96px 0px);
 }
 
@@ -385,7 +391,7 @@ stack.sb-player-volume-slider {
 .sb-player-repeat-button-repall:active > button {
   -moz-image-region: rect(48px 48px 72px 24px);
 }
-.sb-player-repeat-button-repall[disabled="true"] > button {
+sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-repall > button {
   -moz-image-region: rect(72px 48px 96px 24px);
 }
 
@@ -398,10 +404,13 @@ stack.sb-player-volume-slider {
 .sb-player-repeat-button-rep1:active > button {
   -moz-image-region: rect(48px 72px 72px 48px);
 }
-.sb-player-repeat-button-rep1[disabled="true"] > button {
+sb-player-repeat-button[disabled="true"] > .sb-player-button > .sb-player-repeat-button-rep1 > button {
   -moz-image-region: rect(72px 72px 96px 48px);
 }
 
+sb-player-repeat-button[disabled="true"] {
+  opacity:1.0 !important;
+}
 
 
 
