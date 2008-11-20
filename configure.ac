@@ -441,13 +441,23 @@ AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 case "$SB_PLATFORM" in
   windows)
-    AC_CHECK_HEADERS(wmsdk.h, [], AC_MSG_ERROR(Missing wmsdk.h; install the Windows SDK))
     AC_CHECK_PROG(LD, link, link)
     if test -z "$LD"; then AC_MSG_ERROR(Linker not found); fi
     AC_CHECK_PROG(AR, lib, lib)
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
     AC_CHECK_PROG(RC, rc, rc)
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
+
+    # Tests for bits of the Windows SDK
+    AC_CHECK_HEADERS(wmsdk.h, [], AC_MSG_ERROR(Missing wmsdk.h; install the Windows SDK))
+    _SAVE_LIBS=$LIBS
+    LIBS="$LIBS wmvcore.lib"
+    AC_MSG_CHECKING([wmvcore.lib])
+    AC_LINK_IFELSE([#include <wmsdk.h>
+                    int main() { return WMCreateSyncReader(NULL, 0, NULL); }],
+                    AC_MSG_RESULT([yes]),
+                    AC_MSG_ERROR([Missing wmvcore.lib; install the Windows SDK]))
+    LIBS=$_SAVE_LIBS
   ;;
   *)
     AC_CHECK_PROG(LD, ${CXX}, ${CXX})
