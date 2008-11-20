@@ -937,6 +937,12 @@ sbMediacoreSequencer::ResetMetadataDataRemotes() {
   rv = mDataRemoteMetadataImageURL->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = UpdatePositionDataRemotes(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateDurationDataRemotes(0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
