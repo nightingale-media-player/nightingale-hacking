@@ -231,7 +231,6 @@ ShoutcastRadio.Controller = {
 		ShoutcastRadio.Controller.titleDr.bindObserver(
 				ShoutcastRadio.Controller, true);
 		*/
-		dump("!!!!!!! binding observer\n");
 		ShoutcastRadio.Controller._prefBranch =
 				Cc["@mozilla.org/preferences-service;1"]
 				.getService(Ci.nsIPrefService).getBranch("songbird.metadata.")
@@ -262,17 +261,19 @@ ShoutcastRadio.Controller.metadataObserver = {
 		if (subject instanceof Ci.nsIPrefBranch) {
 			if (data == "title" && item.getProperty(SC_streamName)) {
 				var title = subject.getCharPref(data);
-				dump("**** Full Title: " + title + "\n");
 				if (title.indexOf(item.getProperty(SC_streamName)) >= 0) {
 					return;
 				}
 				var m = title.match(/^(.+) - ([^-]+)$/);
 				if (m) {
-					dump("\tArtist: " + m[1] + "\n");
-					dump("\tTrack: " + m[2] + "\n");
 					ShoutcastRadio.Controller.ts = Date.now();
 					item.setProperty(SBProperties.artistName, m[1]);
 					item.setProperty(SBProperties.trackName, m[2]);
+					
+					var ev = gMM.createEvent(Ci.sbIMediacoreEvent.TRACK_CHANGE,
+							gMM.primaryCore, item);
+					gMM.QueryInterface(Ci.sbIMediacoreEventTarget)
+							.dispatchEvent(ev);
 				}
 			}
 		}
