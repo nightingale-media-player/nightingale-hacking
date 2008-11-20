@@ -157,6 +157,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mIsWaitingForPlayback(PR_FALSE)
 , mSeenPlaying(PR_FALSE)
 , mNextTriggeredByStreamEnd(PR_FALSE)
+, mStopTriggeredBySequencer(PR_FALSE)
 , mCoreWillHandleNext(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
@@ -1231,15 +1232,29 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 
   // Remove listener from old core.
   if(mCore) {
-    nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
-      do_QueryInterface(mCore, &rv);
-
-    rv = eventTarget->RemoveListener(this);
+    // But only remove it if we're not going to use the same core
+    // to play again.
+    nsCOMPtr<sbIMediacore> nextCore = 
+      do_QueryElementAt(chain, mChainIndex, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mCore != nextCore) {
+      nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
+        do_QueryInterface(mCore, &rv);
+
+      rv = eventTarget->RemoveListener(this);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING ||
        mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
+
+      if(mCore == nextCore) {
+        // Remember the fact that we called stop so we ignore the stop 
+        // event coming from the core.
+        mStopTriggeredBySequencer = PR_TRUE;
+      }
 
       // Also stop the current core.
       rv = mPlaybackControl->Stop();
@@ -2410,35 +2425,42 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_STOP: {
+      mon.Enter();
+     
+      if(!mStopTriggeredBySequencer) {
 #if defined(DEBUG)
-      printf("[sbMediacoreSequencer] - Hard stop requested.\n");
+        printf("[sbMediacoreSequencer] - Hard stop requested.\n");
 #endif
-      
-      mon.Enter();
-      /* If we're explicitly stopped, don't continue to the next track,
-       * just clean up... */
-      mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-      mon.Exit();
-
-      rv = StopSequenceProcessor();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = UpdatePlayStateDataRemotes();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = ResetMetadataDataRemotes();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mon.Enter();
-      if(mSeenPlaying) {
-        mSeenPlaying = PR_FALSE;
+        /* If we're explicitly stopped, don't continue to the next track,
+        * just clean up... */
+        mStatus = sbIMediacoreStatus::STATUS_STOPPED;
         mon.Exit();
 
-        rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+        rv = StopSequenceProcessor();
         NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = UpdatePlayStateDataRemotes();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = ResetMetadataDataRemotes();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mon.Enter();
+        if(mSeenPlaying) {
+          mSeenPlaying = PR_FALSE;
+          mon.Exit();
+
+          rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+        }
+      }
+      else {
+        mStopTriggeredBySequencer = PR_FALSE;
+        mon.Exit();
       }
     }
     break;

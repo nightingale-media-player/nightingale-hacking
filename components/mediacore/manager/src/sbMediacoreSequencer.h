@@ -142,6 +142,7 @@ protected:
   PRPackedBool                   mIsWaitingForPlayback;
   PRPackedBool                   mSeenPlaying;
   PRPackedBool                   mNextTriggeredByStreamEnd;
+  PRPackedBool                   mStopTriggeredBySequencer;
   PRPackedBool                   mCoreWillHandleNext;
   
   PRUint32                       mChainIndex;
