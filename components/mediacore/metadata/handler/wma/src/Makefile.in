@@ -42,6 +42,7 @@ CPP_SRCS = MetadataHandlerWMA.cpp \
 CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPS_DIR)/wmpsdk/include \
                $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/include \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \

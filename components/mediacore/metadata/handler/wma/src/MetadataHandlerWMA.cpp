@@ -36,6 +36,7 @@
 #include "sbStandardProperties.h"
 #include "sbIPropertyArray.h"
 #include "sbPropertiesCID.h"
+#include "sbMemoryUtils.h"
 
 #include <nsIChannel.h>
 #include <nsIFileStreams.h>
@@ -131,6 +132,13 @@ static const char* kMetadataKeys[] = {
 
 static PRBool sCOMInitialized = PR_FALSE;
 // FUNCTIONS ==================================================================
+
+// HELPER CLASSES =============================================================
+SB_AUTO_CLASS(sbCoInitializeWrapper,
+              HRESULT,
+              SUCCEEDED(mValue),
+              Invalidate(),
+              if (SUCCEEDED(mValue)) {::CoUninitialize();} mValue = E_FAIL);
 
 // CLASSES ====================================================================
 
@@ -244,6 +252,7 @@ NS_IMETHODIMP
 sbMetadataHandlerWMA::Read(PRInt32* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  sbCoInitializeWrapper coinit(::CoInitialize(0));
 
   // We're never asynchronous.
   m_Completed = PR_TRUE;
@@ -418,9 +427,10 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
 
       case WMT_TYPE_QWORD: {
         PRInt64 intVal = *((QWORD*)data);
-        // "Duration" comes in 100-nanosecond chunks. Wow.
-        if (wmpKey.EqualsLiteral("Duration")) {
-          intVal /= 10000;
+        if (wmpKey.EqualsLiteral(WMP_LENGTH)) {
+          // "Duration" comes in 100-nanosecond chunks. Wow.
+          // Songbird wants it in microseconds.
+          intVal /= 10;
         }
 
         // Convert the long to a string.
@@ -431,10 +441,15 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
         datatype = 1;
       } break;
 
-      case WMT_TYPE_DWORD:
-        value.AppendInt( (PRUint32)*(DWORD*)data ); // Whee!
+      case WMT_TYPE_DWORD: {
+        PRUint32 intVal = *((DWORD*)data);
+        if (wmpKey.EqualsLiteral(WMP_BITRATE)) {
+          // Songbird wants bit rate in kbps
+          intVal /= 1000;
+        }
+        value.AppendInt( intVal );
         datatype = 1;
-        break;
+      } break;
 
       case WMT_TYPE_WORD:
         value.AppendInt( (PRInt32)*(WORD*)data );
