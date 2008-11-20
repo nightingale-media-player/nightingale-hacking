@@ -15,6 +15,15 @@ const CONTRACTID  = "@songbirdnest.com/mashTape/provider/info/UberMash;1";
 function ArtistInfo() {
 	this.wrappedJSObject = this;
 	Components.utils.import("resource://mashtape/mtUtils.jsm");
+
+	if (typeof(language) == "undefined") {
+		// Get the user's locale
+		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+				.getService(Ci.nsIPrefService).getBranch("general.");
+		var locale = prefBranch.getCharPref("useragent.locale");
+		language = locale.split(/-/)[0];
+		mtUtils.log("Info", "language set to " + language);
+	}
 }
 
 var linkMap = {
@@ -27,6 +36,8 @@ var linkMap = {
 	"Myspace":"MySpace",
 	"Purevolume":"PureVolume"
 };
+
+var language;
 
 var strings = Components.classes["@mozilla.org/intl/stringbundle;1"]
 	.getService(Components.interfaces.nsIStringBundleService)
@@ -54,8 +65,11 @@ ArtistInfo.prototype = {
 		/* Go retrieve the artist bio */
 		var bioReq = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
-		var url = "http://ws.audioscrobbler.com/2.0/artist/info.xml?artist=" +
-			encodeURIComponent(artist);
+		var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo" +
+			"&api_key=b25b959554ed76058ac220b7b2e0a026" +
+			"&artist=" + encodeURIComponent(artist);
+		if (language)
+			url += "&lang=" + language;
 		mtUtils.log("Info", "Last.FM Bio URL: " + url);
 		bioReq.open("GET", url, true);
 		bioReq.onreadystatechange = function(ev) {
@@ -70,7 +84,7 @@ ArtistInfo.prototype = {
 
 					var imgUrl;
 					var bio = new Object;
-					for each (var img in x.image) {
+					for each (var img in x.artist.image) {
 						if (img.@size.toString() === "small") {
 							imgUrl = img;
 						} else if (img.@size.toString() === "large") {
@@ -84,9 +98,9 @@ ArtistInfo.prototype = {
 					bio.bioUrl = "http://www.last.fm/music/" + artistName;
 					bio.bioEditUrl = "http://www.last.fm/music/" +
 							artistName + "/+wiki/edit";
-					var bioContent = x.bio.content.toString().split("\n");
+					var bioContent =x.artist.bio.content.toString().split("\n");
 					if (bioContent.length == 0 ||
-							(x.bio.content.toString() == ""))
+							(x.artist.bio.content.toString() == ""))
 					{
 						bio.bioText = null;
 						updateFn.wrappedJSObject.update(CONTRACTID, bio, "bio");
