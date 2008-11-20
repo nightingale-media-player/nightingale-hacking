@@ -713,10 +713,17 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
    * Then, return to PLAYING once we have 100% buffering (which will be
    * before we actually hit PAUSED)
    */
-  if (percent >= 100 && mTargetState == GST_STATE_PLAYING) {
-    TRACE(("Buffering complete, setting state to playing"));
+  if (percent >= 100) {
     mBuffering = PR_FALSE;
-    gst_element_set_state (mPipeline, GST_STATE_PLAYING);
+
+    if (mTargetState == GST_STATE_PLAYING) {
+      TRACE(("Buffering complete, setting state to playing"));
+      gst_element_set_state (mPipeline, GST_STATE_PLAYING);
+    }
+    else if (mTargetState == GST_STATE_PAUSED) {
+      TRACE(("Buffering complete, setting state to paused"));
+      DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_PAUSE);
+    }
   }
   else if (percent < 100) {
     GstState cur_state;

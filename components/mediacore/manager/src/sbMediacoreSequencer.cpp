@@ -2388,11 +2388,15 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_PAUSE: {
+
       mon.Enter();
       mStatus = sbIMediacoreStatus::STATUS_PAUSED;
       mon.Exit();
 
       rv = UpdatePlayStateDataRemotes();
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mDataRemoteFaceplateBuffering->SetBoolValue(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
