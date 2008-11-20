@@ -301,6 +301,9 @@ private:
 
   nsresult ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aStringArray);
   
+  nsresult ContainsCopy(sbIMediaItem* aMediaItem,
+                        PRBool*       aContainsCopy);
+
   nsresult FilterExistingItems(nsStringArray* aURIs,
                                nsIArray* aPropertyArrayArray,
                                nsStringArray** aFilteredURIs,

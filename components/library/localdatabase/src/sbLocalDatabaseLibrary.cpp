@@ -177,18 +177,10 @@ sbLibraryInsertingEnumerationListener::OnEnumeratedItem(sbIMediaList* aMediaList
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
-  nsCOMPtr<sbILibrary> fromLibrary;
-  rv = aMediaItem->GetLibrary(getter_AddRefs(fromLibrary));
+  PRBool containsCopy;
+  nsresult rv = mFriendLibrary->ContainsCopy(aMediaItem, &containsCopy);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // If the media item is not in the library, add it
-  PRBool equals;
-  rv = fromLibrary->Equals(SB_ILIBRESOURCE_CAST(mFriendLibrary),
-                           &equals);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!equals) {
+  if (!containsCopy) {
     nsCOMPtr<sbIMediaItem> newMediaItem;
     rv = mFriendLibrary->AddItemToLocalDatabase(aMediaItem,
                                                 getter_AddRefs(newMediaItem));
@@ -1421,6 +1413,99 @@ sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aS
   return NS_OK;
 }
   
+/**
+ * \brief Determine whether library contains a copy of the media item specified
+ *        by aMediaItem.  Return true in aContainsCopy if the library does
+ *        contain a copy.
+ *
+ * \param aMediaItem            Media item to check.
+ * \param aContainsCopy         Returned true if library contains copy of media
+ *                              item.
+ */
+nsresult
+sbLocalDatabaseLibrary::ContainsCopy(sbIMediaItem* aMediaItem,
+                                     PRBool*       aContainsCopy)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aContainsCopy);
+
+  // If the media item's library and this list's library are the same, this
+  // item must already be in this database.
+  nsCOMPtr<sbILibrary> itemLibrary;
+  nsresult rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool equals;
+  rv = itemLibrary->Equals(SB_ILIBRESOURCE_CAST(this), &equals);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (equals) {
+    *aContainsCopy = PR_TRUE;
+    return NS_OK;
+  }
+
+  // check if this has already been copied over before
+  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+
+  nsString originLibGuid, originItemGuid;
+
+  rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (originLibGuid.IsEmpty()) {
+    rv = itemLibrary->GetGuid(originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (originItemGuid.IsEmpty()) {
+    rv = aMediaItem->GetGuid(originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIMediaItem> existingItem;
+  if (originLibGuid.Equals(mGuid)) {
+    // the item originally came from this library, look for it
+    rv = this->GetMediaItem(originItemGuid, getter_AddRefs(existingItem));
+    if (NS_SUCCEEDED(rv)) {
+      // found it
+      *aContainsCopy = PR_TRUE;
+      return NS_OK;
+    }
+  } else {
+    // the item is foreign, look for another item that was also copied from the
+    // same place
+    nsCOMPtr<sbIMutablePropertyArray> originGuidArray =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = originGuidArray->AppendProperty(PROP_LIBRARY, originLibGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = originGuidArray->AppendProperty(PROP_ITEM, originItemGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbMediaListEnumSingleItemHelper> guidCheckHelper =
+      sbMediaListEnumSingleItemHelper::New();
+    NS_ENSURE_TRUE(guidCheckHelper, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = this->EnumerateItemsByProperties(originGuidArray,
+                                          guidCheckHelper,
+                                          ENUMERATIONTYPE_SNAPSHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    existingItem = guidCheckHelper->GetItem();
+    if (existingItem) {
+      *aContainsCopy = PR_TRUE;
+      return NS_OK;
+    }
+  }
+
+  *aContainsCopy = PR_FALSE;
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
                                             nsIArray* aPropertyArrayArray,
@@ -3288,78 +3373,11 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
 
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
 
-  // If the media item's library and this list's library are the same, this
-  // item must already be in this database.
-  nsCOMPtr<sbILibrary> itemLibrary;
-  nsresult rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
+  PRBool containsCopy;
+  nsresult rv = ContainsCopy(aMediaItem, &containsCopy);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool equals;
-  rv = itemLibrary->Equals(SB_ILIBRESOURCE_CAST(this), &equals);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (equals) {
+  if (containsCopy)
     return NS_OK;
-  }
-  
-  // check if this has already been copied over before
-  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-
-  nsString originLibGuid, originItemGuid;
-
-  rv = aMediaItem->GetProperty(PROP_LIBRARY, originLibGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (originLibGuid.IsEmpty()) {
-    rv = itemLibrary->GetGuid(originLibGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  
-  rv = aMediaItem->GetProperty(PROP_ITEM, originItemGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (originItemGuid.IsEmpty()) {
-    rv = aMediaItem->GetGuid(originItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  
-  nsCOMPtr<sbIMediaItem> existingItem;
-  if (originLibGuid.Equals(mGuid)) {
-    // the item originally came from this library, look for it
-    rv = this->GetMediaItem(originItemGuid, getter_AddRefs(existingItem));
-    if (NS_FAILED(rv)) {
-      // didn't find it
-      existingItem = nsnull;
-    }
-  } else {
-    // the item is foreign, look for another item that was also copied from the
-    // same place
-    nsCOMPtr<sbIMutablePropertyArray> originGuidArray =
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = originGuidArray->AppendProperty(PROP_LIBRARY, originLibGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = originGuidArray->AppendProperty(PROP_ITEM, originItemGuid);
-    NS_ENSURE_SUCCESS(rv, rv);
-  
-    nsRefPtr<sbMediaListEnumSingleItemHelper> guidCheckHelper =
-      sbMediaListEnumSingleItemHelper::New();
-    NS_ENSURE_TRUE(guidCheckHelper, NS_ERROR_OUT_OF_MEMORY);
-    
-    rv = this->EnumerateItemsByProperties(originGuidArray,
-                                          guidCheckHelper,
-                                          ENUMERATIONTYPE_SNAPSHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    existingItem = guidCheckHelper->GetItem();
-  }
-  
-  if (existingItem) {
-    // we have an existing item in this library that claims to have been copied
-    // from the given media item; don't re-do the copy.
-    return NS_OK;
-  }
 
   // Remember length for notification
   PRUint32 length;
@@ -3381,6 +3399,9 @@ sbLocalDatabaseLibrary::Add(sbIMediaItem* aMediaItem)
 
   // Also let the owning library of the original item know that
   // an item was copied from it into another library.
+  nsCOMPtr<sbILibrary> itemLibrary;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(itemLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<sbILocalDatabaseLibrary> originalLocalDatabaseLibrary;
   originalLocalDatabaseLibrary = do_QueryInterface(itemLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
