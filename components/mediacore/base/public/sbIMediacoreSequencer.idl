@@ -60,6 +60,7 @@ interface sbIMediacoreSequencer : nsISupports
   /**
    * \brief The current position in the view. This position
    *        is tied to the sequencePosition.
+   * \throw NS_ERROR_NOT_AVAILABLE when the sequence position is invalid.
    */
   readonly attribute unsigned long viewPosition;
 
@@ -86,7 +87,8 @@ interface sbIMediacoreSequencer : nsISupports
 
   /**
    * \brief The current position in the sequence. This position is tied
-   *        to the viewPosition. 
+   *        to the viewPosition.
+   * \throw NS_ERROR_NOT_AVAILABLE when the sequence position is invalid.
    */
   attribute unsigned long sequencePosition;
 

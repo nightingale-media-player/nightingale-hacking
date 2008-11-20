@@ -144,6 +144,7 @@ protected:
   PRPackedBool                   mNextTriggeredByStreamEnd;
   PRPackedBool                   mStopTriggeredBySequencer;
   PRPackedBool                   mCoreWillHandleNext;
+  PRPackedBool                   mPositionInvalidated;
   
   PRUint32                       mChainIndex;
   nsCOMPtr<nsIArray>             mChain;

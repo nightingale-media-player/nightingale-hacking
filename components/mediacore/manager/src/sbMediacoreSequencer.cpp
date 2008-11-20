@@ -159,6 +159,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNextTriggeredByStreamEnd(PR_FALSE)
 , mStopTriggeredBySequencer(PR_FALSE)
 , mCoreWillHandleNext(PR_FALSE)
+, mPositionInvalidated(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
 , mPosition(0)
@@ -1458,6 +1459,10 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
 
   nsAutoMonitor mon(mMonitor);
 
+  // Regardless of what happens here, we'll have a valid position and view
+  // position after the method returns, so reset the invalidated position flag.
+  mPositionInvalidated = PR_FALSE;
+
   PRUint32 viewLength = 0;
   nsresult rv = aView->GetLength(&viewLength);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1678,15 +1683,33 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   nsString previousItemUID = mCurrentItemUID;
   PRUint32 previousItemIndex = mCurrentItemIndex;
 
-  nsresult rv = mView->GetIndexForItem(mCurrentItem, &mCurrentItemIndex);
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
-  if(NS_FAILED(rv)) {
-    mCurrentItemIndex = 0;
-    mCurrentItemUID = EmptyString();
+  if(!mNeedSearchPlayingItem) {
+    rv = mView->GetIndexForViewItemUID(mCurrentItemUID, 
+                                       &mCurrentItemIndex);
   }
   else {
-    rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Item not there anymore (by UID), just try and get 
+    // the item index by current item. We have to do this 
+    // for smart playlists.
+    rv = mView->GetIndexForItem(mCurrentItem, &mCurrentItemIndex);
+
+    if(NS_SUCCEEDED(rv)) {
+      // Grab the new item uid.
+      rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Ok, looks like we'll have to regenerate the sequence and start playing
+  // from the new sequence only after the current item is done playing.
+  if(NS_FAILED(rv)) {
+    mCurrentItemIndex = 0;
+    mPositionInvalidated = PR_TRUE;
+  }
+  else {
+    mPositionInvalidated = PR_FALSE;
   }
 
   if(mCurrentItemIndex != previousItemIndex || 
@@ -1699,19 +1722,21 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
     rv = RecalculateSequence(&currentItemIndex);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsIVariant> variant = sbNewVariant(mCurrentItem).get();
-    NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+    if(!mPositionInvalidated) {
+      nsCOMPtr<nsIVariant> variant = sbNewVariant(mCurrentItem).get();
+      NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
-    nsCOMPtr<sbIMediacoreEvent> event;
-    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_INDEX_CHANGE, 
-                                       nsnull, 
-                                       variant, 
-                                       mCore, 
-                                       getter_AddRefs(event));
-    NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<sbIMediacoreEvent> event;
+      rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_INDEX_CHANGE, 
+        nsnull, 
+        variant, 
+        mCore, 
+        getter_AddRefs(event));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = DispatchMediacoreEvent(event);
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = DispatchMediacoreEvent(event);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -1850,6 +1875,12 @@ sbMediacoreSequencer::GetViewPosition(PRUint32 *aViewPosition)
   NS_ENSURE_ARG_POINTER(aViewPosition);
 
   nsAutoMonitor mon(mMonitor);
+
+  // Position currently not valid, return with error.
+  if(mPositionInvalidated) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
   *aViewPosition = mViewPosition;
 
   return NS_OK;
@@ -1940,6 +1971,12 @@ sbMediacoreSequencer::GetSequencePosition(PRUint32 *aSequencePosition)
   NS_ENSURE_ARG_POINTER(aSequencePosition);
 
   nsAutoMonitor mon(mMonitor);
+
+  // Position currently not valid, return with error.
+  if(mPositionInvalidated) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
   *aSequencePosition = mPosition;
 
   return NS_OK;
@@ -2123,8 +2160,19 @@ sbMediacoreSequencer::Next()
       mViewPosition = mSequence[mPosition];
     }
   }
-  else if(mPosition + 1 < length) {
-    ++mPosition;
+  else if(mPosition + 1 < length || mPositionInvalidated) {
+    // Our current position may be invalid because we had to regenerate a 
+    // sequence that didn't include the item that is currently playing.
+    if(!mPositionInvalidated) {
+      // This is not the case, increment the position.
+      ++mPosition;      
+    }
+    else {
+      // Looks like it was invalid, skip incrementing this time since we're now
+      // really playing index '0'.
+      mPositionInvalidated = PR_FALSE;
+    }
+
     mViewPosition = mSequence[mPosition];
     hasNext = PR_TRUE;
   }
@@ -2407,6 +2455,8 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
          !mIsWaitingForPlayback) {
         
+        mCoreWillHandleNext = PR_FALSE;
+
         sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
         rv = Next();
 
@@ -2693,11 +2743,6 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
 
   if(aMediaItem == item) {
     rv = SetMetadataDataRemotesFromItem(item);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mNeedsRecalculate = PR_TRUE;
-    
-    rv = UpdateItemUIDIndex();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
