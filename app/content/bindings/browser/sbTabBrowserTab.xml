@@ -441,6 +441,7 @@
           }
           this.outerPlaylistShowing = false;
           this.scanProgress = -1;
+          this.outerPlaylist.mediaListView = null;
         ]]></body>
       </method>
       
