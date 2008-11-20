@@ -257,8 +257,8 @@ sbGStreamerMediacore::ReadPreferences()
   const char *SIZE_PREF = "songbird.mediacore.gstreamer.buffer.size";
 
   /* Defaults if the prefs aren't present */
-  PRInt32 bufferSizeBytes = 10 * 1024 * 1024; /* 10 MB */
-  PRInt64 bufferDuration = 5 * GST_SECOND;   /* 5 seconds */
+  PRInt32 bufferSizeBytes = 128 * 1024; /* 128 kB */
+  PRInt64 bufferDuration = 30 * GST_SECOND;   /* 30 seconds */
 
   rv = mPrefs->GetPrefType(SIZE_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
