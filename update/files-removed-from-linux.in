@@ -24,6 +24,8 @@
 ./extensions/basic-layouts@songbirdnest.com/chrome.manifest
 ./extensions/basic-layouts@songbirdnest.com/
 ./components/sbProperties.jsm
+./components/sbPlaylistPlayback.xpt
+./components/sbPlaylistPlayback.js
 ./components/sbMetadataManager.xpt
 ./components/sbMetadataManager.so
 ./components/sbMetadataImageScanner.js
