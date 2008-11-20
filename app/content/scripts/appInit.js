@@ -312,6 +312,7 @@ const sb_restart_app = {
 function SBRestarterInitialize() 
 {
   songbird_restartNow = SB_NewDataRemote( "restart.restartnow", null );
+  songbird_restartNow.boolValue = false;
   songbird_restartNow.bindObserver( sb_restart_app, true );
 }
 function SBRestarterDeinitialize() 
