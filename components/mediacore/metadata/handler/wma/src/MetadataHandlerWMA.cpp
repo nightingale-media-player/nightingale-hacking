@@ -562,6 +562,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
 
     // Special case for length... and others?
     if (key == WMP_LENGTH) {
+      // Songbird needs length in microseconds
       double duration;
       hr = newMedia->get_duration(&duration);
       if (FAILED(hr)) {
@@ -569,7 +570,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
         continue;
       }
       PRUint64 result;
-      LL_MUL(result, duration, 1000);
+      LL_MUL(result, duration, PR_USEC_PER_SEC);
 
       metadataValue.AppendInt((PRInt64)result);
       metadataValueType = 1;
@@ -581,7 +582,12 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
         NS_WARNING("getItemInfo failed!");
         continue;
       }
-      metadataValue.Assign(value.m_str);
+      if (key == WMP_BITRATE) {
+        // WMP returns bitrate in bits/sec, Songbird wants kbps/sec
+        metadataValue.Assign(value.m_str, value.Length() - 3);
+      } else {
+        metadataValue.Assign(value.m_str);
+      }
     }
 
     if (!metadataValue.IsEmpty()) {
