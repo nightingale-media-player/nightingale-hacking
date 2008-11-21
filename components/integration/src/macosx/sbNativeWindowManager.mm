@@ -148,7 +148,7 @@ sbNativeWindowManager::GetSupportsShadowing(PRBool *aSupportsShadowing)
 {
   NS_ENSURE_ARG_POINTER(aSupportsShadowing);
 
-// Not required on Mac, this is automatic thanks to a XULRunner patch.
+  // Not required on Mac, this is automatic thanks to a XULRunner patch.
   *aSupportsShadowing = PR_FALSE;
 
   return NS_OK;
