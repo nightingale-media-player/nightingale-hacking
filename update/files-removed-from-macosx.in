@@ -225,6 +225,8 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/
 ./Contents/Resources/plugins/VLC.plugin/
 ./Contents/Resources/lib/sbGStreamer.dylib
+./Contents/Resources/lib/libiconv.dylib
+./Contents/Resources/lib/libcharset.dylib
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf
