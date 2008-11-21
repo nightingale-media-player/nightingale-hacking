@@ -231,8 +231,8 @@
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome.manifest
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components/sbQuickTime.dylib
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components
-./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3
+./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/components/
+./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/Darwin_x86-gcc3/
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/platform/
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/install.rdf
 ./Contents/Resources/extensions/quicktime@songbirdnest.com/components/sbQuickTime.xpt
