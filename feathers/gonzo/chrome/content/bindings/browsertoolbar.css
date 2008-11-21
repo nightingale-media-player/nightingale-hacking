@@ -119,8 +119,7 @@ LOCATION TEXTBOX
   padding: 0px;
 }
 
-.locationbar-image
-{
+.locationbar-image {
   list-style-image: url("chrome://songbird/skin/base-elements/icon-default-favicon.png");
   background-color: transparent;
   height: 16px;
@@ -137,11 +136,7 @@ LOCATION TEXTBOX
 /** Convert the favicon into a spinner animation when
     the browser is loading **/ 
 .locationbar-textbox[loading="true"] > .locationbar-image {
-  background-image: url('chrome://songbird/skin/base-elements/icon-loading.png') !important;
-  width:16px;
-  height:16px;
-  padding-top:1000px;
-  overflow:hidden;
+  list-style-image: url('chrome://songbird/skin/base-elements/icon-loading.png') !important;
 }
 
 /** NOTE: If the URL is from the servicepane it may have a hardcoded 
