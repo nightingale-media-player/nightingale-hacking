@@ -263,6 +263,10 @@ NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTo
   return NS_OK;
 }
 
+NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool aShadowing)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
 
 NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
 {
@@ -273,4 +277,11 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
   return NS_OK;
 }
 
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsShadowing(PRBool *aSupportsShadowing)
+{
+  NS_ENSURE_ARG_POINTER(aSupportsShadowing);
 
+  *aSupportsShadowing = PR_FALSE;
+
+  return NS_OK;
+}

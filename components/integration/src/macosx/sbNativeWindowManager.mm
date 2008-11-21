@@ -128,6 +128,12 @@ sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTop)
   return rv;
 }
 
+NS_IMETHODIMP 
+sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool aShadowing)
+{
+  // Not required on Mac, this is automatic thanks to a XULRunner patch.
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
 
 NS_IMETHODIMP 
 sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
@@ -137,3 +143,13 @@ sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
   return NS_OK;
 }
 
+NS_IMETHODIMP 
+sbNativeWindowManager::GetSupportsShadowing(PRBool *aSupportsShadowing)
+{
+  NS_ENSURE_ARG_POINTER(aSupportsShadowing);
+
+// Not required on Mac, this is automatic thanks to a XULRunner patch.
+  *aSupportsShadowing = PR_FALSE;
+
+  return NS_OK;
+}

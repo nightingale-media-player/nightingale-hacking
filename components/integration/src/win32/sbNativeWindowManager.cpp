@@ -34,10 +34,17 @@
 #include "../NativeWindowFromNode.h"
 
 #include <windows.h>
+#include <dwmapi.h>
 
 NS_IMPL_ISUPPORTS1(sbNativeWindowManager, sbINativeWindowManager)
 
+typedef HRESULT (STDAPICALLTYPE* DwmSetWindowAttributeProc_t)(HWND,
+                                                              DWORD,
+                                                              LPCVOID,
+                                                              DWORD);
 
+typedef HRESULT (STDAPICALLTYPE* DwmExtendFrameIntoClientArea_t)(HWND,
+                                                                 const MARGINS *);
 
 NS_IMETHODIMP sbNativeWindowManager::BeginResizeDrag(nsISupports *aWindow, nsIDOMMouseEvent* aEvent, PRInt32 aDirection)
 {
@@ -83,8 +90,6 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsMaximumWindowSize(PRBool *aSuppo
 
 NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTop)
 {
-  nsresult rv;
-
   NS_ENSURE_ARG_POINTER(aWindow);
 
   HWND window = NativeWindowFromNode::get(aWindow);
@@ -94,6 +99,54 @@ NS_IMETHODIMP sbNativeWindowManager::SetOnTop(nsISupports *aWindow, PRBool aOnTo
   return NS_OK;
 }
 
+NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool aShadowing)
+{
+  NS_ENSURE_ARG_POINTER(aWindow);
+
+  HWND window = NativeWindowFromNode::get(aWindow);
+
+  HMODULE hDll = GetModuleHandleW(L"dwmapi");
+    
+  if(!hDll) {
+    LONG dwStyle = GetClassLongW(window, GCL_STYLE);
+
+    if(aShadowing) {
+      dwStyle |= CS_DROPSHADOW;
+    }
+    else {
+      dwStyle &= ~CS_DROPSHADOW;
+    }
+
+    SetClassLongW(window, GCL_STYLE, dwStyle);
+
+    return NS_OK;
+  }
+
+  DwmSetWindowAttributeProc_t setWindowAttribute = 
+    (DwmSetWindowAttributeProc_t) GetProcAddress(hDll, "DwmSetWindowAttribute");
+
+  DwmExtendFrameIntoClientArea_t extendFrameIntoClientArea = 
+    (DwmExtendFrameIntoClientArea_t) GetProcAddress(hDll, "DwmExtendFrameIntoClientArea");
+
+  if(!setWindowAttribute || !extendFrameIntoClientArea) {
+    return NS_ERROR_UNEXPECTED;
+  }
+
+  DWMNCRENDERINGPOLICY ncrp = aShadowing ? DWMNCRP_ENABLED : DWMNCRP_DISABLED;
+
+  // enable non-client area rendering on window
+  HRESULT hr = setWindowAttribute(window, DWMWA_NCRENDERING_POLICY, &ncrp, sizeof(ncrp));
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_UNEXPECTED);
+
+  //set margins
+  MARGINS margins = {1, 0, 0, 0};
+
+  //extend frame 
+  hr = extendFrameIntoClientArea(window, &margins);
+  NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_UNEXPECTED);
+
+  return NS_OK;
+}
 
 NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
 {
@@ -104,4 +157,11 @@ NS_IMETHODIMP sbNativeWindowManager::GetSupportsOnTop(PRBool *aSupportsOnTop)
   return NS_OK;
 }
 
+NS_IMETHODIMP sbNativeWindowManager::GetSupportsShadowing(PRBool *aSupportsShadowing)
+{
+  NS_ENSURE_ARG_POINTER(aSupportsShadowing);
 
+  *aSupportsShadowing = PR_TRUE;
+
+  return NS_OK;
+}

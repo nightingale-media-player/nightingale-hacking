@@ -905,6 +905,12 @@ function onLayoutLoad(event) {
       nativeWinMgr.setOnTop(window, isOnTop);
     }
     
+    // Check to see if shadowing is supported and enable it.
+    if (nativeWinMgr && nativeWinMgr.supportsShadowing) 
+    {
+      nativeWinMgr.setShadowing(window, true);
+    }
+    
     // Set the min-window size if the window supports it
     if (nativeWinMgr.supportsMinimumWindowSize) {
       var cstyle = window.getComputedStyle(document.documentElement, '');

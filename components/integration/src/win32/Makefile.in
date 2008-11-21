@@ -73,7 +73,8 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_EXTRA_IMPORTS += ole32
+DYNAMIC_LIB_EXTRA_IMPORTS += ole32 \
+                             $(NULL)
 
 CPP_SRCS = MultiMonitor.cpp \
            ../NativeWindowFromNode.cpp \

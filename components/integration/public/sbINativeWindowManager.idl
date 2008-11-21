@@ -81,6 +81,12 @@ interface sbINativeWindowManager : nsISupports
   /* \brief asks the window manager to keep @aWindow above all other windows */
   void setOnTop(in nsISupports aWindow, in boolean aOnTop);
 
+  /* \brief asks the window manager to enable shadowing on the window */
+  void setShadowing(in nsISupports aWindow, in boolean aShadowing);
+
   /* \brief is setOnTop() supported by this implementation? */
   readonly attribute boolean supportsOnTop;
+
+  /* \brief is setShadowing() supported by this implementation? */
+  readonly attribute boolean supportsShadowing;
 };
