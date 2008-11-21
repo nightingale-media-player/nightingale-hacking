@@ -1299,7 +1299,7 @@ sbRemoteLibraryBase::FindMediaItemWithMatchingScope( const nsCOMArray<sbIMediaIt
   itemCount = scopeURLSet.Length();
   NS_ENSURE_TRUE(itemCount, nsnull);
 
-  for (PRUint32 setIndex = itemCount - 1; setIndex >= 0; setIndex--) {
+  for (PRInt64 setIndex = itemCount - 1; setIndex >= 0; setIndex--) {
     const sbRemoteLibraryScopeURLSet& set = scopeURLSet.ElementAt(setIndex);
 
     nsCString path(set.scopePath);
