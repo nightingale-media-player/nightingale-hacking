@@ -260,6 +260,10 @@ ShoutcastRadio.Controller.metadataObserver = {
 
 		if (subject instanceof Ci.nsIPrefBranch) {
 			if (data == "title" && item.getProperty(SC_streamName)) {
+				if (!Application.prefs.getValue(
+							"extensions.shoutcast-radio.title-parsing", true))
+					return;
+
 				var title = subject.getCharPref(data);
 				if (title.indexOf(item.getProperty(SC_streamName)) >= 0) {
 					return;

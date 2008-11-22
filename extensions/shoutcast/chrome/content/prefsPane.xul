@@ -26,6 +26,9 @@
 			<preference id="prefCustomGenres"
 				type="string"
 				name="extensions.shoutcast-radio.custom-genres" />
+			<preference id="prefTitleParsing"
+				type="bool"
+				name="extensions.shoutcast-radio.title-parsing" />
 		</preferences>
 
 		<script type="application/x-javascript" 
@@ -75,6 +78,18 @@
 					<textbox id="custom-genres-textbox"
 						emptytext="Enter comma-separated list of genres here"
 						preference="prefCustomGenres" />
+				</vbox>
+			</groupbox>
+
+			<groupbox id="radioTitleParsingGroup" flex="1">
+				<caption label="&prefs.track.guessing.title;" />
+				<vbox flex="1">
+					<description>&prefs.track.guessing.help;</description>
+					<hbox align="center">
+						<checkbox id="checkParsingPref"
+							preference="prefTitleParsing" />
+						<label value="&prefs.track.guessing.label;" />
+					</hbox>
 				</vbox>
 			</groupbox>
 

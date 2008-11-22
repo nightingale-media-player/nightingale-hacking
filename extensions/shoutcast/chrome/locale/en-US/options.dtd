@@ -9,6 +9,10 @@
 <!ENTITY listeners.label "Number of Listeners">
 <!ENTITY listeners.accesskey "L">
 
+<!ENTITY prefs.track.guessing.title "Artist/Title Parsing">
+<!ENTITY prefs.track.guessing.label "Enable track title and artist parsing">
+<!ENTITY prefs.track.guessing.help "Some SHOUTcast streams broadcast stream text in the form of 'Artist - Track Title'.  If you enable this option, the SHOUTcast add-on will attempt to parse this and send track change notification events so other add-ons can be notified of track changes within a stream.">
+
 <!ENTITY prefs.customGenres "Custom Genres">
 <!ENTITY custom-genres.help.label "If you have custom genres you want displayed within the SHOUTcast directory, enter a comma-separated list of genre strings here">
 

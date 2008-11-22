@@ -5,6 +5,7 @@ pref("extensions.shoutcast-radio.limit-bit-rate", true);
 
 pref("extensions.shoutcast-radio.filter", "");
 pref("extensions.shoutcast-radio.custom-genres", "");
+pref("extensions.shoutcast-radio.title-parsing", true);
 pref("extensions.shoutcast-radio.favourites.guid", "");
 pref("extensions.shoutcast-radio.favourites.id", "");
 pref("extensions.shoutcast-radio.genre", "sbITop");
