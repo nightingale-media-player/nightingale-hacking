@@ -12,7 +12,8 @@
 
 <page id="shoutcast-window"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="RadioDirectory.init()">
+	onload="RadioDirectory.init()"
+	onunload="RadioDirectory.unload()">
 
 	<stringbundleset id="stringbundleset"> 
 		<stringbundle id="shoutcast-radio-strings"

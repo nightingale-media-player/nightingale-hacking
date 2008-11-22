@@ -175,6 +175,11 @@ var RadioDirectory = {
 		}
 	},
 
+	unload: function() {
+		this.playlist.removeEventListener("PlaylistCellClick",
+				onPlaylistCellClick, false);
+		this.playlist.removeEventListener("Play", onPlay, false);
+	},
 	getLibraries : function() {
 		var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
 			.getService(Ci.sbILibraryManager);
@@ -600,7 +605,7 @@ function onPlay(e) {
 					listItem.setProperty(SC_id, id);
 				}
 			} else {
-				dump("Failed to load " + item.getProperty(SC_streamName) +
+				alert("Failed to load " + item.getProperty(SC_streamName) +
 						"\n");
 			}
 		}
