@@ -2383,13 +2383,16 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     return NS_OK;
   }
 
-  nsCOMPtr<sbIMediacoreEventTarget> target = 
-    do_QueryReferent(mMediacoreManager, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if(!(eventType == sbIMediacoreEvent::STREAM_STOP &&
+       mStopTriggeredBySequencer)) {
+    nsCOMPtr<sbIMediacoreEventTarget> target = 
+      do_QueryReferent(mMediacoreManager, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool dispatched;
-  rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
-  NS_ENSURE_SUCCESS(rv, rv);
+    PRBool dispatched;
+    rv = target->DispatchEvent(aEvent, PR_TRUE, &dispatched);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   mon.Exit();
 
   switch(eventType) {

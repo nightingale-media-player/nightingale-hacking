@@ -1140,7 +1140,7 @@ var AlbumArt = {
         AlbumArt.onStop();
       break;
       
-      case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
+      case Ci.sbIMediacoreEvent.TRACK_CHANGE:
         AlbumArt.onBeforeTrackChange(aEvent.data);
       break;
     }
