@@ -23,8 +23,8 @@ if (typeof(FAVICON_PATH) == "undefined")
 	const FAVICON_PATH = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
 
 function findRadioNode(node) {
-	if (node.isContainer && node.name != null && node.name ==
-			ShoutcastRadio.Controller._strings.getString("radioFolderLabel"))
+	if (node.isContainer && node.name != null &&
+			node.getAttributeNS(SC_NS, "radioFolder") == 1)
 		return node;
 
 	if (node.isContainer) {
@@ -112,6 +112,9 @@ ShoutcastRadio.Controller = {
 			radioFolder = BMS.addFolder(
 					this._strings.getString("radioFolderLabel"));
 			radioFolder.editable = false;
+			radioFolder.setAttributeNS(SC_NS, "radioFolder", 1);
+		} else {
+			radioFolder.name = this._strings.getString("radioFolderLabel");
 		}
 	
 		// Sort the radio folder node in the service pane
