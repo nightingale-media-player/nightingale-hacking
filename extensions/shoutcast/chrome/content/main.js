@@ -116,6 +116,7 @@ ShoutcastRadio.Controller = {
 		} else {
 			radioFolder.name = this._strings.getString("radioFolderLabel");
 		}
+		radioFolder.hidden = false;
 	
 		// Sort the radio folder node in the service pane
 		radioFolder.setAttributeNS(SP, "Weight", 1);
@@ -341,17 +342,29 @@ var curTrackListener = function(e) {
 
 var shoutcastUninstallObserver = {
 	_uninstall : false,
+	_disable : false,
 	_tabs : null,
 
 	observe : function(subject, topic, data) {
 		if (topic == "em-action-requested") {
 			// Extension has been flagged to be uninstalled
 			subject.QueryInterface(Ci.nsIUpdateItem);
+			
+			var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
+					getService(Ci.sbIServicePaneService);
+			var radioNode = findRadioNode(SPS.root);
+
 			if (subject.id == "shoutcast-radio@songbirdnest.com") {
 				if (data == "item-uninstalled") {
 					this._uninstall = true;
+				} else if (data == "item-disabled") {
+					this._disable = true;
+					radioNode.hidden = true;
 				} else if (data == "item-cancel-action") {
-					this._uninstall = false;
+					if (this._uninstall)
+						this._uninstall = false;
+					if (this._disable)
+						radioNode.hidden = false;
 				}
 			}
 		} else if (topic == "quit-application-granted") {
