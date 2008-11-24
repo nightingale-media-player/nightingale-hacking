@@ -21,5 +21,6 @@ mashTape.jar:
 % overlay chrome://browser/content/preferences/preferences.xul chrome://mashtape/content/prefsOverlay.xul
 % style chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://mashtape/skin/mainwin.css
 % override chrome://songbird-web/content/html.css chrome://songbird/skin/html.css
+% override chrome://songbird-web/skin/base-elements/icon-loading-large.png chrome://songbird/skin/base-elements/icon-loading-large.png
 % content songbird-web foo/ contentaccessible=yes
 @include_all_to

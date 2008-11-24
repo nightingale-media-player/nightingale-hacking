@@ -469,7 +469,7 @@ mashTape.init = function(e) {
 
 		iframe.setAttribute("src",
 				"http://mashtape.songbirdnest.com/iframeFlash.html");
-				//"chrome://mashtape/content/iframeFlash.html");
+				//"http://whacked.net/iframeFlash.html");
 		
 		// add a load listener to the iframe so we know when this iframe has
 		// completed loading so we can fire the first update
