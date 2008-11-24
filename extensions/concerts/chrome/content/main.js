@@ -164,7 +164,6 @@ Concerts = {
 			concertsNode.name = this._strings.getString("servicePaneName");
 			concertsNode.tooltip =
 				this._strings.getString("servicePaneInitialTooltip");
-			concertsNode.hidden = false;
 
 			concertsNode.properties = "concerts";
 			// Sort the radio folder node in the service pane
@@ -174,7 +173,13 @@ Concerts = {
 	
 			// Save
 			SPS.save();
+		} else {
+			// may need to reset the name post-localisation
+			this.updateConcertCount();
 		}
+
+		// outside the loop in case we're going from disabled->enabled
+		concertsNode.hidden = false;
 	},
 	
 	updateConcertCount : function(num) {
