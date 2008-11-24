@@ -1,11 +1,13 @@
 <!ENTITY mtprefs.general "全般">
 <!ENTITY mtprefs.info "アーティスト情報">
+<!ENTITY mtprefs.review "レビュー">
 <!ENTITY mtprefs.rss "ニュース">
 <!ENTITY mtprefs.photo "写真">
 <!ENTITY mtprefs.flash "動画">
 <!ENTITY mtprefs.defaulttab "既定タブ">
 <!ENTITY mtprefs.defaulttab.help "mashTape 開始時:">
 <!ENTITY mtprefs.show.info "アーティスト情報を表示">
+<!ENTITY mtprefs.show.review "レビューを表示">
 <!ENTITY mtprefs.show.rss "ニュースを表示">
 <!ENTITY mtprefs.show.photo "写真を表示">
 <!ENTITY mtprefs.show.flash "動画を表示">
@@ -14,9 +16,13 @@
 <!ENTITY mtprefs.services "サービス">
 <!ENTITY mtprefs.getmore "mashTape に関する追加のサービスを取得">
 <!ENTITY mtprefs.tab.info "アーティスト情報タブ設定">
+<!ENTITY mtprefs.tab.review "レビュータブ設定">
 <!ENTITY mtprefs.tab.rss "ニュースタブ設定">
 <!ENTITY mtprefs.tab.photo "写真タブ設定">
 <!ENTITY mtprefs.tab.flash "動画タブ設定">
 <!ENTITY mtprefs.tab.help "このタブを mashTape の中に表示します。">
 <!ENTITY mtprefs.single "この枠は一回につきひとつのサービスからコンテンツの表示に対応します。一覧からサービスを選択してください。">
 <!ENTITY mtprefs.multiple "この枠は一回につき複数のサービスからコンテンツの表示に対応します。一覧から好みのサービスを選択してください。">
+<!ENTITY mtprefs.tab.photo.speed "写真スクロール速度:">
+<!ENTITY mtprefs.tab.photo.faster "速く">
+<!ENTITY mtprefs.tab.photo.slower "遅く">

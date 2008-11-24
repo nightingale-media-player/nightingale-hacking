@@ -1,11 +1,13 @@
 <!ENTITY mtprefs.general "Algemeen">
 <!ENTITY mtprefs.info "Artiestinformatie">
+<!ENTITY mtprefs.review "Beoordelingen">
 <!ENTITY mtprefs.rss "Nieuws">
 <!ENTITY mtprefs.photo "Foto’s">
 <!ENTITY mtprefs.flash "Video’s">
 <!ENTITY mtprefs.defaulttab "Standaardtabblad">
 <!ENTITY mtprefs.defaulttab.help "Wanneer mashTape start:">
 <!ENTITY mtprefs.show.info "Artiestinformatie weergeven">
+<!ENTITY mtprefs.show.review "Beoordelingen weergeven">
 <!ENTITY mtprefs.show.rss "Nieuws weergeven">
 <!ENTITY mtprefs.show.photo "Foto’s weergeven">
 <!ENTITY mtprefs.show.flash "Video’s weergeven">
@@ -14,9 +16,13 @@
 <!ENTITY mtprefs.services "Diensten">
 <!ENTITY mtprefs.getmore "Meer diensten voor mashTape">
 <!ENTITY mtprefs.tab.info "Instellingen artiestinformatietabblad">
-<!ENTITY mtprefs.tab.rss "Instellingen nieuw tabblad">
+<!ENTITY mtprefs.tab.review "Instellingen beoordelingentabblad">
+<!ENTITY mtprefs.tab.rss "Instellingen nieuwstabblad">
 <!ENTITY mtprefs.tab.photo "Instellingen fototabblad">
 <!ENTITY mtprefs.tab.flash "Instellingen videotabblad">
 <!ENTITY mtprefs.tab.help "Dit tabblad in mashTape weergeven">
 <!ENTITY mtprefs.single "Dit venster ondersteunt weergave van inhoud van één dienst tegelijk. Selecteer a.u.b. een dienst in onderstaande lijst.">
 <!ENTITY mtprefs.multiple "Dit venster ondersteunt weergave van inhoud van meerdere diensten tegelijk. Selecteer a.u.b. de door u gewenste diensten in onderstaande lijst.">
+<!ENTITY mtprefs.tab.photo.speed "Snelheid fotoscrollen:">
+<!ENTITY mtprefs.tab.photo.faster "Sneller">
+<!ENTITY mtprefs.tab.photo.slower "Langzamer">

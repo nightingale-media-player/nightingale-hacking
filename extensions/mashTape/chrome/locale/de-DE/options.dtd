@@ -1,11 +1,13 @@
 <!ENTITY mtprefs.general "Allgemein">
 <!ENTITY mtprefs.info "Künstlerinformation">
+<!ENTITY mtprefs.review "Bewertungen">
 <!ENTITY mtprefs.rss "News">
 <!ENTITY mtprefs.photo "Fotos">
 <!ENTITY mtprefs.flash "Videos">
 <!ENTITY mtprefs.defaulttab "Voreinstellungs-Registerkarte">
 <!ENTITY mtprefs.defaulttab.help "Wenn MashTape startet:">
 <!ENTITY mtprefs.show.info "Künstlerinformation anzeigen">
+<!ENTITY mtprefs.show.review "Bewertungen anzeigen">
 <!ENTITY mtprefs.show.rss "News anzeigen">
 <!ENTITY mtprefs.show.photo "Fotos anzeigen">
 <!ENTITY mtprefs.show.flash "Videos anzeigen">
@@ -14,9 +16,13 @@
 <!ENTITY mtprefs.services "Dienste">
 <!ENTITY mtprefs.getmore "Mehr Dienste von MashTape erhalten">
 <!ENTITY mtprefs.tab.info "Einstellungen für die Künstlerinformations-Registerkarte">
+<!ENTITY mtprefs.tab.review "Einstellungen für die Bewertungen-Registerkarte">
 <!ENTITY mtprefs.tab.rss "Einstellungen für die News-Registerkarte">
 <!ENTITY mtprefs.tab.photo "Einstellungen für die Foto-Registerkarte">
 <!ENTITY mtprefs.tab.flash "Einstellungen für die Video-Registerkarte">
 <!ENTITY mtprefs.tab.help "Diese Registerkarte in MashTape anzeigen.">
 <!ENTITY mtprefs.single "Dieser Ausschnitt zeigt Inhalte eines Dienstes an. Bitte wählen Sie einen untensthehenden Dienst aus.">
 <!ENTITY mtprefs.multiple "Dieser Ausschnitt zeigt Inhlate von mehreren Diensten aus. Bitte wählen Sie sie aus der untenstehenden Liste.">
+<!ENTITY mtprefs.tab.photo.speed "Foto-Scrollgeschwindigkeit">
+<!ENTITY mtprefs.tab.photo.faster "Schneller">
+<!ENTITY mtprefs.tab.photo.slower "Langsamer">

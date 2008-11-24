@@ -1,22 +1,28 @@
 <!ENTITY mtprefs.general "Geral">
 <!ENTITY mtprefs.info "Informação do Artista">
+<!ENTITY mtprefs.review "Resenhas">
 <!ENTITY mtprefs.rss "Notícias">
 <!ENTITY mtprefs.photo "Fotos">
 <!ENTITY mtprefs.flash "Vídeos">
 <!ENTITY mtprefs.defaulttab "Aba padrão">
 <!ENTITY mtprefs.defaulttab.help "Quanto mashTape iniciar:">
 <!ENTITY mtprefs.show.info "Mostrar informação do artista">
-<!ENTITY mtprefs.show.rss "Mostrar notícias">
-<!ENTITY mtprefs.show.photo "Mostrar fotos">
-<!ENTITY mtprefs.show.flash "Mostrar vídeos">
+<!ENTITY mtprefs.show.review "Visualizar Resenhas">
+<!ENTITY mtprefs.show.rss "Visualizar notícias">
+<!ENTITY mtprefs.show.photo "Visualizar fotos">
+<!ENTITY mtprefs.show.flash "Visualizar vídeos">
 <!ENTITY mtprefs.autohide "Auto Esconder">
 <!ENTITY mtprefs.autohide.help "Habilitar a visualização automática do painel mashTape quando você estiver visualizando uma página web.">
 <!ENTITY mtprefs.services "Serviços">
 <!ENTITY mtprefs.getmore "Obter mais serviços para mashTape">
 <!ENTITY mtprefs.tab.info "Configurações da aba Informação do Artista">
+<!ENTITY mtprefs.tab.review "Configurações da aba de resenhas">
 <!ENTITY mtprefs.tab.rss "Configurações da aba Notícias">
 <!ENTITY mtprefs.tab.photo "Configurações da aba Fotos">
 <!ENTITY mtprefs.tab.flash "Configurações da aba Vídeos">
 <!ENTITY mtprefs.tab.help "Mostrar essa aba no mashTape.">
 <!ENTITY mtprefs.single "Esse painel suporta mostrar conteúdo de um único serviço. Por favor, selecione um serviço da lista abaixo.">
 <!ENTITY mtprefs.multiple "Esse painel suporta mostrar mais de um conteúdo ao mesmo tempo. Por favor, selecione os serviços da lista abaixo.">
+<!ENTITY mtprefs.tab.photo.speed "Velocidade da rolagem de foto:">
+<!ENTITY mtprefs.tab.photo.faster "Mais rápida">
+<!ENTITY mtprefs.tab.photo.slower "Mais lenta">
