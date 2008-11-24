@@ -469,6 +469,7 @@ Concerts = {
 
 Concerts.uninstallObserver = {
 	_uninstall : false,
+	_disable : false,
 	list : null,
 	
 	observe : function(subject, topic, data) {
@@ -476,11 +477,23 @@ Concerts.uninstallObserver = {
 			case "em-action-requested":
 				// Extension has been flagged to be uninstalled
 				subject.QueryInterface(Ci.nsIUpdateItem);
+
+				var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
+					getService(Ci.sbIServicePaneService);
+				var concertsNode = SPS.getNode("urn:concerts");
+
 				if (subject.id == "concerts@songbirdnest.com") {
 					if (data == "item-uninstalled") {
 						this._uninstall = true;
-					} else if (data == "item-cancel-action")
-						this._uninstall = false;
+					} else if (data == "item-disabled") {
+						this._disable = true;
+						concertsNode.hidden = true;
+					} else if (data == "item-cancel-action") {
+						if (this._uninstall)
+							this._uninstall = false;
+						if (this._disable)
+							concertsNode.hidden = false;
+					}
 				}
 				break;
 			case "songbird-library-manager-before-shutdown":
