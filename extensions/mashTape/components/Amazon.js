@@ -102,10 +102,15 @@ Amazon.prototype = {
 						var review = {
 							sortRank: r.ns::HelpfulVotes,
 							rating: r.ns::Rating,
-							author: r.ns::CustomerId,
+							//author: r.ns::CustomerId.toString(),
+							author: "Customer Review",
+							authorUrl: "http://www.amazon.com/gp/pdp/profile/" +
+								r.ns::CustomerId.toString(),
 							time: dateObj.getTime(),
 							title: r.ns::Summary,
-							content: r.ns::Content.toString()
+							content: r.ns::Content.toString(),
+							provider: "Amazon.com",
+							url: "http://www.amazon.com/dp/" + asin
 						}
 
 						mtUtils.log("Amazon", "Found review: " + review.title);
@@ -120,9 +125,13 @@ Amazon.prototype = {
 							sortRank: 9999999,
 							rating: -1,
 							author: r.ns::Source.toString(),
+							authorUrl: "http://www.amazon.com/dp/" + asin + 
+								"#productDescription",
 							time: 0,
 							title: r.ns::Source.toString() + " Editorial",
-							content: r.ns::Content.toString()
+							content: r.ns::Content.toString(),
+							provider: "Amazon.com",
+							url: "http://www.amazon.com/dp/" + asin
 						}
 
 						mtUtils.log("Amazon", "Found editorial review.");

@@ -18,7 +18,8 @@ h4 {
 }
 
 div#content,
-div#read-more {
+div#read-more,
+div#write-review {
 	padding-top: 1em;
 	padding-left: 20px;
 }

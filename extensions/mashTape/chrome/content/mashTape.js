@@ -1305,8 +1305,9 @@ mashTape.loadReviewDetail = function(entry) {
 	while (!entry.hasAttribute("mashTape-title"))
 		entry = entry.parentNode;
 	var title = entry.getAttribute("mashTape-title");
+	var author = entry.getAttribute("mashTape-author");
+	var authorUrl = entry.getAttribute("mashTape-authorUrl");
 	var src = entry.getAttribute("mashTape-src");
-	var srcUrl = entry.getAttribute("mashTape-srcUrl");
 	var time = entry.getAttribute("mashTape-time");
 	var url = entry.getAttribute("mashTape-url");
 	var favicon = entry.getAttribute("mashTape-favicon");
@@ -1320,7 +1321,7 @@ mashTape.loadReviewDetail = function(entry) {
 	var detailFaviconLink = doc.getElementById("link");
 	var detailSubtitle = doc.getElementById("subtitle");
 	var detailContent = doc.getElementById("content");
-	var detailMore = doc.getElementById("read-more");
+	var detailMore = doc.getElementById("write-review");
 
 	// hide the loading div
 	var loading = doc.getElementById("loading");
@@ -1347,20 +1348,13 @@ mashTape.loadReviewDetail = function(entry) {
 
 	while (detailSubtitle.firstChild)
 		detailSubtitle.removeChild(detailSubtitle.firstChild);
-	/*
 	detailSubtitle.appendChild(doc.createTextNode(
 		mashTape.strings.GetStringFromName("extensions.mashTape.msg.by") +" "));
 	var provider = doc.createElement("a");
-	provider.href = srcUrl;
-	provider.innerHTML = src;
+	provider.href = authorUrl;
+	provider.innerHTML = author;
 	detailSubtitle.appendChild(provider);
-	*/
-	if (rating > -1) {
-		var ratings = doc.createElement("div");
-		ratings.className = "ratings rate" + rating.toString();
-		detailSubtitle.appendChild(ratings);
-	}
-
+	
 	if (time > 0) {
 		var dateObj = new Date(parseInt(time));
 		var timestamp = doc.createElement("span");
@@ -1368,14 +1362,20 @@ mashTape.loadReviewDetail = function(entry) {
 		timestamp.innerHTML = dateObj.ago();
 		detailSubtitle.appendChild(timestamp);
 	}
+	
+	detailSubtitle.appendChild(doc.createElement("br"));
+
+	if (rating > -1) {
+		var ratings = doc.createElement("div");
+		ratings.className = "ratings rate" + rating.toString();
+		detailSubtitle.appendChild(ratings);
+	}
+
 
 	detailContent.innerHTML = content;
-	/*
 	detailMore.innerHTML = "<a href='" + url + "'>" + 
-		mashTape.strings.GetStringFromName("extensions.mashTape.msg.readorig") +
+		mashTape.strings.GetStringFromName("extensions.mashTape.msg.review") +
 		"</a>";
-		*/
-
 }
 
 mashTape.updateReviewFeeds = function(provider, results) {
@@ -1400,8 +1400,10 @@ mashTape.updateReviewFeeds = function(provider, results) {
 		link.href = "#";
 		entryDiv.setAttribute("mashTape-title", results[i].title);
 		entryDiv.setAttribute("mashTape-favicon", favicon);
+		entryDiv.setAttribute("mashTape-author", results[i].author);
+		entryDiv.setAttribute("mashTape-authorUrl", results[i].authorUrl);
 		entryDiv.setAttribute("mashTape-src", results[i].provider);
-		entryDiv.setAttribute("mashTape-srcUrl", results[i].providerUrl);
+		entryDiv.setAttribute("mashTape-url", results[i].url);
 		entryDiv.setAttribute("mashTape-time", results[i].time);
 		entryDiv.setAttribute("mashTape-rating", results[i].rating);
 		entryDiv.setAttribute("mashTape-content", results[i].content);
