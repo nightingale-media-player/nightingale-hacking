@@ -1080,9 +1080,14 @@ mashTape.updateInfo = function(provider, results, section) {
 			}, false);
 			if (results != null)
 				artistImage.src = results;
-			else
+			else {
+				artistImage.onerror = function() {
+					this.src =
+						"chrome://mashtape/skin/generic-artist-photo.jpg";
+				}
 				artistImage.src =
-					"chrome://mashtape/skin/generic-artist-photo.jpg";
+					"chrome://songbird/skin/artist-info/default-photo.png";
+			}
 			artistImage.className = "artistImage";
 			photoDiv.appendChild(artistImage);
 			break;
