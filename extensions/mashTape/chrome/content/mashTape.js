@@ -2401,8 +2401,9 @@ mashTape.locationListener = {
 			.getMostRecentWindow('Songbird:Main').window.document;
 		var splitterId = mashTape.displayPane.getAttribute("splitter");
 		var dpSplitter = mainDoc.getElementById(splitterId);
-		if (url.spec.indexOf("chrome://songbird/") == 0 ||
-				url.spec.indexOf("chrome://shoutcast-radio/") == 0) {
+		if (gBrowser.currentMediaListView ||
+	  			url.spec.indexOf("chrome://shoutcast-radio/") == 0)
+		{
 			// expose the mashTape display pane
 			mashTape.displayPane.collapsed = false;
 			if (mashTape.expanded) {
