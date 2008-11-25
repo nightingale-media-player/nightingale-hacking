@@ -28,7 +28,9 @@
 
 #include <prprf.h>
 #include <nsDataHashtable.h>
+#include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
+#include <nsServiceManagerUtils.h>
 
 PRInt32
 nsString_FindCharInSet(const nsAString& aString,
@@ -250,5 +252,85 @@ nsString_Split(const nsAString&    aString,
     // Advance to the next sub-string.
     currentOffset = delimiterIndex + delimiterLength;
   } while (delimiterIndex < stringLength);
+}
+
+
+/**
+ * Get and return in aString the localized string with the key specified by aKey
+ * using the string bundle specified by aStringBundle.  If the string cannot be
+ * found, return the default string specified by aDefault; if aDefault is not
+ * specified, return aKey.
+ *
+ * If aStringBundle is not specified, use the main Songbird string bundle.
+ *
+ * \param aString               Returned localized string.
+ * \param aKey                  Localized string key.
+ * \param aDefault              Optional default string.
+ * \param aStringBundle         Optional string bundle.
+ */
+
+nsresult
+SBGetLocalizedString(nsAString&             aString,
+                     const nsAString&       aKey,
+                     const nsAString&       aDefault,
+                     class nsIStringBundle* aStringBundle)
+{
+  nsresult rv;
+
+  // Set default result.
+  if (!aDefault.IsVoid())
+    aString = aDefault;
+  else
+    aString = aKey;
+
+  // Get the string bundle.
+  nsCOMPtr<nsIStringBundle> stringBundle = aStringBundle;
+
+  // If no string bundle was provided, get the default string bundle.
+  if (!stringBundle) {
+    nsCOMPtr<nsIStringBundleService> stringBundleService =
+      do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = stringBundleService->CreateBundle(SB_STRING_BUNDLE_URL,
+                                           getter_AddRefs(stringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Get the string from the bundle.
+  nsAutoString stringValue;
+  rv = stringBundle->GetStringFromName(aKey.BeginReading(),
+                                       getter_Copies(stringValue));
+  NS_ENSURE_SUCCESS(rv, rv);
+  aString = stringValue;
+
+  return NS_OK;
+}
+
+nsresult
+SBGetLocalizedString(nsAString&       aString,
+                     const nsAString& aKey)
+{
+  return SBGetLocalizedString(aString, aKey, SBVoidString());
+}
+
+nsresult
+SBGetLocalizedString(nsAString&             aString,
+                     const char*            aKey,
+                     const char*            aDefault,
+                     class nsIStringBundle* aStringBundle)
+{
+  nsAutoString key;
+  if (aKey)
+    key = NS_ConvertUTF8toUTF16(aKey);
+  else
+    key = SBVoidString();
+
+  nsAutoString defaultString;
+  if (aDefault)
+    defaultString = NS_ConvertUTF8toUTF16(aDefault);
+  else
+    defaultString = SBVoidString();
+
+  return SBGetLocalizedString(aString, key, defaultString, aStringBundle);
 }
 

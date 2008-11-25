@@ -64,6 +64,20 @@ public:
   }
 };
 
+/**
+ * Class used to pass void strings to functions.
+ *
+ * E.g., SomeFunction(SBVoidString());
+ */
+class SBVoidString : public nsString
+{
+public:
+  SBVoidString()
+  {
+    SetIsVoid(PR_TRUE);
+  }
+};
+
 /// @see nsString::FindCharInSet
 PRInt32 nsString_FindCharInSet(const nsAString& aString,
                                const char *aPattern,
@@ -105,10 +119,74 @@ PRBool IsLikelyUTF8(const nsACString& aString);
  * \param aDelimiter            Sub-string delimiter.
  * \param aSubStringArray       Array of sub-strings.
  */
-
 void nsString_Split(const nsAString&    aString,
                     const nsAString&    aDelimiter,
                     nsTArray<nsString>& aSubStringArray);
+
+/*
+ * Songbird string bundle URL.
+ */
+#define SB_STRING_BUNDLE_URL "chrome://songbird/locale/songbird.properties"
+
+/**
+ * Get and return in aString the localized string with the key specified by aKey
+ * using the string bundle specified by aStringBundle.  If the string cannot be
+ * found, return the default string specified by aDefault; if aDefault is not
+ * specified, return aKey.
+ *
+ * If aStringBundle is not specified, use the main Songbird string bundle.
+ *
+ * \param aString               Returned localized string.
+ * \param aKey                  Localized string key.
+ * \param aDefault              Optional default string.
+ * \param aStringBundle         Optional string bundle.
+ */
+nsresult SBGetLocalizedString(nsAString&             aString,
+                              const nsAString&       aKey,
+                              const nsAString&       aDefault,
+                              class nsIStringBundle* aStringBundle = nsnull);
+
+nsresult SBGetLocalizedString(nsAString&       aString,
+                              const nsAString& aKey);
+
+nsresult SBGetLocalizedString(nsAString&             aString,
+                              const char*            aKey,
+                              const char*            aDefault = nsnull,
+                              class nsIStringBundle* aStringBundle = nsnull);
+
+/**
+ * Class used to create localized strings.
+ *
+ * E.g., SomeFunction(SBLocalizedString("string_key"));
+ */
+class SBLocalizedString : public nsString
+{
+public:
+  SBLocalizedString(const nsAString&       aKey,
+                    const nsAString&       aDefault,
+                    class nsIStringBundle* aStringBundle = nsnull)
+  {
+    nsString stringValue;
+    SBGetLocalizedString(stringValue, aKey, aDefault, aStringBundle);
+    Assign(stringValue);
+  }
+
+  SBLocalizedString(const nsAString& aKey)
+  {
+    nsString stringValue;
+    SBGetLocalizedString(stringValue, aKey);
+    Assign(stringValue);
+  }
+
+  SBLocalizedString(const char*            aKey,
+                    const char*            aDefault = nsnull,
+                    class nsIStringBundle* aStringBundle = nsnull)
+  {
+    nsString stringValue;
+    SBGetLocalizedString(stringValue, aKey, aDefault, aStringBundle);
+    Assign(stringValue);
+  }
+};
 
 template <class T>
 inline

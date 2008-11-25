@@ -41,6 +41,7 @@ CPP_SRCS = sbTArrayStringEnumerator.cpp \
 
 CPP_INCLUDES = \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
