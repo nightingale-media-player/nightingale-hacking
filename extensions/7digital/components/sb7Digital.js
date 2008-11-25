@@ -86,6 +86,9 @@ sb7Digital.prototype = {
   _searchService: null,
   _servicePaneService: null,
   _ioService: null,
+
+  // a repeating timer that we use for setting our search engine to default
+  _firstRunTimer: null,
   
   // What whitelists do we do?
   _permissions: ['rapi.playback_control', 'rapi.playback_read', 
@@ -143,6 +146,17 @@ function sb7Digital_observe(subject, topic, data) {
     } else if (data == 'item-cancel-action') {
       this._uninstall = false;
     }
+  } else if (topic == 'timer-callback' && subject == this._firstRunTimer) {
+    var searchEngine = this._searchService.getEngineByName(SEARCHENGINE_NAME);
+    if (!searchEngine) {
+      return;
+    }
+    searchEngine.hidden = false;
+    this._searchService.moveEngine(searchEngine, 1);
+    //gSearchHandler._previousSearchEngine = searchEngine;
+
+    this._firstRunTimer.cancel();
+    this._firstRunTimer = null;
   }
 }
 
@@ -195,9 +209,14 @@ function sb7Digital_install() {
 
     // if we don't already have the search engine...
     if (!this._searchService.getEngineByName(SEARCHENGINE_NAME)) {
+      // install the engine
       this._searchService.addEngine(SEARCHENGINE_URL,
           Ci.nsISearchEngine.DATA_XML, 
           'chrome://7digital/skin/servicepane-icon.png', false);
+      // start a timer to try to set the engine as the default
+      this._firstRunTimer = Cc['@mozilla.org/timer;1']
+        .createInstance(Ci.nsITimer);
+      this._firstRunTimer.init(this, 250, Ci.nsITimer.TYPE_REPEATING_SLACK);
     }
   } catch (e) {
     Cu.reportError(e);
