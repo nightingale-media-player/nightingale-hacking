@@ -1947,6 +1947,7 @@ sbMediacoreSequencer::GetCurrentSequence(nsIArray * *aCurrentSequence)
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> array = 
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   sequence_t::const_iterator it = mSequence.begin();
   for(; it != mSequence.end(); ++it) {
@@ -1960,6 +1961,8 @@ sbMediacoreSequencer::GetCurrentSequence(nsIArray * *aCurrentSequence)
     rv = array->AppendElement(index, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  NS_ADDREF(*aCurrentSequence = array);
 
   return NS_OK;
 }
