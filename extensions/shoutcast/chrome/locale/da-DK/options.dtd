@@ -1,0 +1,15 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "Stream-filtrer">
+<!ENTITY prefwindow.title "SHOUTcast Radio indstillinger">
+<!ENTITY bit-rate.limit.label "Vis kun SHOUTcast streams med en bitrate på mindst">
+<!ENTITY listeners.limit.label "Vis kun SHOUTcast streams med mindst">
+<!ENTITY listeners.limit.label.2 "pesoner der lytter">
+<!ENTITY bit-rate.label "Bitrate (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Antal lyttere">
+<!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.customGenres "Tilpas genrer">
+<!ENTITY custom-genres.help.label "Hvis du har tilpassede genrer, du vil have vist i SHOUTcast kataloget, indtast en kommasepareret liste af genrer her.">
+<!ENTITY prefs.tosCaption "Anvendelsesbetingelser">
+<!ENTITY prefs.tosBegin "Brug af SHOURcast kataloget er begrænset af  deres anvendelsesbetingelser.">
+<!ENTITY prefs.tosLinkText "Se anvendelsesbetingelser">
