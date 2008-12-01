@@ -654,13 +654,17 @@
       
       <xbl:method name="_buildItems">
         <xbl:body><![CDATA[
+          const Cc = Components.classes;
+          const Ci = Components.interfaces;
+
           // add all the items to the parent menu
           try {
             // first remove all previously added items
             this._deleteItems();
             
             var paneid = this.getAttribute("paneid");
-            if (!this.contentGroup) return;
+            if (!this.contentGroup) 
+              return;
             
             // do we want a top and/or bottom separator ?
             var wantSeps = this.getAttribute("separator").split(",");
@@ -690,87 +694,64 @@
 
             this.parentNode.insertBefore(elem, this);
             this._items.push(elem);
-            
+
             // add a separator
             var sep = document.createElement("menuseparator");
             this.parentNode.insertBefore(sep, this);
             this._items.push(sep);
 
             // add an item for each available display pane content
-            var paneMgr = 
-              Components
-                .classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                .getService(Components.interfaces.sbIDisplayPaneManager);
+            var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                            .getService(Ci.sbIDisplayPaneManager);
             var contentGroup = this.contentGroup.toUpperCase();
-          
-            // Container structure for wrapping recommended flags with the
-            // current content group of this display pane.
-            function DisplayPaneItem(aContentInfo, aIsRecommended) {
-              this.contentInfo = aContentInfo;
-              this.isRecommended = aIsRecommended;
-            }
-            DisplayPaneItem.prototype = {
-              contentInfo: null,
-              isRecommended: false,
-            };
-          
-            // Iterate through the registered display pane items to bind them to
-            // the |DisplayPaneItem| structure.
-            var all = [];
+            
+            // Iterate over the registered display panes and only add items that
+            // are registered for the current display pane.
+            var displayPanes = [];
             var contentInfoEnum = paneMgr.contentList;
             while (contentInfoEnum.hasMoreElements()) {
               var curContentInfo = contentInfoEnum.getNext();
-              curContentInfo
-                .QueryInterface(Components.interfaces
-                                          .sbIDisplayPaneContentInfo);
-            
-              var isCurItemRecommended = false;
+              curContentInfo.QueryInterface(Ci.sbIDisplayPaneContentInfo);
+
               var itemGroups = curContentInfo.suggestedContentGroups
                                              .toUpperCase();
-              if (itemGroups.split(";").indexOf(contentGroup) != -1)
-                isCurItemRecommended = true;
-                          
-              all.push(new DisplayPaneItem(curContentInfo, 
-                                           isCurItemRecommended));
+              if (itemGroups.split(";").indexOf(contentGroup) != -1) {
+                displayPanes.push(curContentInfo);
+              }
             }
-          
+
             // sort by title
             function addonPaneSorter(x, y) {
-              if (x.contentInfo.contentTitle < y.contentInfo.contentTitle) 
+              if (x.contentTitle < y.contentTitle) 
                 return -1;
-              if (y.contentInfo.contentTitle < x.contentInfo.contentTitle)
+              if (y.contentTitle < x.contentTitle)
                 return 1;
               return 0;
             }
-            all.sort(addonPaneSorter);
-                          
+            displayPanes.sort(addonPaneSorter);
+
             // actually generate menuitems for each |DisplayPaneItem|.
             var shouldInsertSeparator = false;
-            for each (var item in all) {
+            for each (var item in displayPanes) {
               var elem = document.createElement("menuitem");
-              elem.setAttribute("label", item.contentInfo.contentTitle);
-              elem.setAttribute("url", item.contentInfo.contentUrl);
-              elem.setAttribute("image", item.contentInfo.contentIcon);
+              elem.setAttribute("label", item.contentTitle);
+              elem.setAttribute("url", item.contentUrl);
+              elem.setAttribute("image", item.contentIcon);
               elem.setAttribute("type", "radio");
               elem.setAttribute("class", "displaypane-menuitem");
     
-              if (item.contentInfo.contentUrl == this.contentUrl) {
+              if (item.contentUrl == this.contentUrl) {
                 elem.setAttribute("selected", "true");
               }
-            
-              if (item.isRecommended) {
-                elem.setAttribute("recommended", "true");
-              }
-              
+
               // we embed an oncommand that carries enough information to call
               // this binding again with the menu item being used.  This is
               // unfortunately quite ugly.
               var oncommand = function(aEvent, aId) {
                 var binding = document.getElementById(aId);
                 var menuitem = aEvent.target;
-                var paneMgr = 
-                  Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
-                            .getService(Components.interfaces.sbIDisplayPaneManager);
+                var paneMgr = Cc["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
+                                .getService(Ci.sbIDisplayPaneManager);
                 var paneinfo = 
                   paneMgr.getPaneInfo(menuitem.getAttribute("url"));
                 binding.loadContent(paneinfo);
