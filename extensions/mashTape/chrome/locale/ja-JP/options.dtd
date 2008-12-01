@@ -26,3 +26,4 @@
 <!ENTITY mtprefs.tab.photo.speed "写真スクロール速度:">
 <!ENTITY mtprefs.tab.photo.faster "速く">
 <!ENTITY mtprefs.tab.photo.slower "遅く">
+<!ENTITY mtprefs.tab.video.autoplay "動画を自動再生する">

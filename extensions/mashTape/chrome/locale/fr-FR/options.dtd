@@ -26,3 +26,5 @@
 <!ENTITY mtprefs.tab.photo.speed "Vitesse de défilement des photos :">
 <!ENTITY mtprefs.tab.photo.faster "Plus rapide">
 <!ENTITY mtprefs.tab.photo.slower "Plus lente">
+<!ENTITY mtprefs.tab.video.autoplay "Lire automatiquement les vidéos">
+<!ENTITY mtprefs.tab.video.autoplay.help "Activer cette option provoque la lecture automatique des résultats de tous les fournisseurs de sources vidéos. C&apos;est très utile pour la lecture automatique de toutes les vidéos MTV par exemple. Les fournisseurs de vidéos qui ne sont pas inclus dans l&apos;extension ne fonctionnneront pas avec cette option.">

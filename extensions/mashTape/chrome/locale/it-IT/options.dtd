@@ -26,3 +26,5 @@
 <!ENTITY mtprefs.tab.photo.speed "Velocità scorrimento foto">
 <!ENTITY mtprefs.tab.photo.faster "Più veloce">
 <!ENTITY mtprefs.tab.photo.slower "Più lento">
+<!ENTITY mtprefs.tab.video.autoplay "Riproduci video automaticamente">
+<!ENTITY mtprefs.tab.video.autoplay.help "Abilitare questa opzione farà riprodurre automaticamente uno dopo l&apos;altro i risultati collegati di uno stesso provider video. Ciò può servire, ad esempio, per riprodurre automaticamente tutti i video di MTV Music. I provider video non collegati non funzioneranno con questa opzione.">

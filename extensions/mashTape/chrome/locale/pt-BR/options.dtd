@@ -26,3 +26,5 @@
 <!ENTITY mtprefs.tab.photo.speed "Velocidade da rolagem de foto:">
 <!ENTITY mtprefs.tab.photo.faster "Mais rápida">
 <!ENTITY mtprefs.tab.photo.slower "Mais lenta">
+<!ENTITY mtprefs.tab.video.autoplay "Executar automaticamente os vídeos">
+<!ENTITY mtprefs.tab.video.autoplay.help "Ativando esta opção fará com que os vídeos embutidos sejam executados um após o outro. Isso é útil para auto-reproduz todos os MTV Video Music, por exemplo. Vídeos embutidos não funcionarão com esta opção.">

@@ -26,3 +26,4 @@
 <!ENTITY mtprefs.tab.photo.speed "Rychlost rolování fotografií">
 <!ENTITY mtprefs.tab.photo.faster "Rychleji">
 <!ENTITY mtprefs.tab.photo.slower "Pomaleji">
+<!ENTITY mtprefs.tab.video.autoplay "Automaticky přehrát videa">
