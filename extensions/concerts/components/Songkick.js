@@ -1007,6 +1007,21 @@ Songkick.prototype = {
 		}
 	}),
 	
+	getArtistOnTourUrl : function(artist) {
+		this._db.resetQuery();
+		this._db.addQuery("SELECT artistURL FROM artists " +
+				"where name = '" + artist.replace(/'/g, "''") + "'");
+		var ret = this._db.execute();
+		var result = this._db.getResultObject();
+		if (result.getRowCount() > 0) {
+			debugLog("getArtistUrl", "Artist URL found");
+			var url = result.getRowCellByColumn(0, "artistURL");
+			return (url);
+		} else {
+			return null;
+		}
+	},
+	
 	/*********************************************************************
 	 * For a given artist name, return the tour URL if they are on tour
 	 *********************************************************************/

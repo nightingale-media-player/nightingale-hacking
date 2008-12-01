@@ -319,8 +319,15 @@ Concerts = {
 			item = gMediaCore.playingView.mediaList.getItemByGuid(
 				gMediaCore.currentGUID);
 		var city = Application.prefs.getValue("extensions.concerts.city", 0);
-		var url = item.getProperty(this.onTourUrlProperty) +
-			"?user_location=" + city;
+
+		var url = item.getProperty(this.onTourUrlProperty);
+		if (!url) {
+			// if the track lacks an on tour property, then it's possible
+			// it's from the web playlist.  we can make a best guess
+			url = Concerts.skSvc
+				.getArtistOnTourUrl(item.getProperty(SBProperties.artistName));
+		}
+		url += "?user_location=" + city;
 		if (typeof(gBrowser) != "undefined") {
 			// If we're in the main player, then open a tab
 			gBrowser.loadOneTab(url);

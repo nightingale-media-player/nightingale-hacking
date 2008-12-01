@@ -4,7 +4,7 @@ interface sbISongkickDisplayCallback;
 interface nsIArray;
 interface nsISimpleEnumerator;
 
-[scriptable, uuid(33268520-4d39-11dd-ae16-0800200c9a66)]
+[scriptable, uuid(f4474910-bff8-11dd-ad8b-0800200c9a66)]
 interface sbISongkick : nsISupports
 {
 	attribute boolean concertRefreshRunning;
@@ -22,6 +22,8 @@ interface sbISongkick : nsISupports
 	void refreshLocations();
 	void processLocations(in string xmlData);
 	boolean gotLocationInfo();
+
+	string getArtistOnTourUrl(in string artistName);
 
 	// Callback registration and unregistration
 	boolean hasDisplayCallback();
