@@ -22,6 +22,8 @@ if (typeof(gMetrics) == "undefined")
 if (typeof(FAVICON_PATH) == "undefined")
 	const FAVICON_PATH = "chrome://shoutcast-radio/skin/shoutcast_favicon.png";
 
+const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
+
 function findRadioNode(node) {
 	if (node.isContainer && node.name != null &&
 			node.getAttributeNS(SC_NS, "radioFolder") == 1)
@@ -83,6 +85,43 @@ var metricsObserver = {
 				var diff = now - metricsObserver.time;
 				gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
 				metricsObserver.time = null;
+				break;
+			case Ci.sbIMediacoreEvent.METADATA_CHANGE:
+				dump("in METADATA_CHANGE\n");
+				dump("length: " + gMM.sequencer.view.length + "\n");
+				dump("idx: " + gMM.sequencer.viewPosition + "\n");
+				var currentItem = gMM.sequencer.currentItem;
+				dump("\tid: " + currentItem.getProperty(SC_id) + "\n");
+				dump("\tbitrate: " + currentItem.getProperty(SBProperties.bitRate) + "\n");
+				if (currentItem.getProperty(SC_id) == -1 &&
+						currentItem.getProperty(SBProperties.bitRate) == null)
+				{
+					dump("Manually added stream!\n");
+					var props = ev.data;
+					for (var i=0; i<props.length; i++) {
+						var prop = props.getPropertyAt(i);
+						dump(prop.id + " == " + prop.value + "\n");
+						if (prop.id == SBProperties.bitRate) {
+							dump("bitrate!!!!!!!\n");
+							var libraryManager =
+								Cc['@songbirdnest.com/Songbird/library/Manager;1'].getService(Ci.sbILibraryManager);
+							var libGuid = Application.prefs.get(shoutcastTempLibGuid);
+							var l = libraryManager.getLibrary(libGuid.value);
+							var a = l.getItemsByProperty(
+									SBProperties.customType,
+									"radio_favouritesList");
+							var faves = a.queryElementAt(0, Ci.sbIMediaList);
+
+							var item = faves.getItemByGuid(
+									currentItem.getProperty(
+										SBProperties.outerGUID));
+							dump("item: " + item.guid + "\n");
+							dump("outer; " + currentItem.getProperty(SBProperties.outerGUID));
+							item.setProperty(SBProperties.bitRate,
+									prop.value);
+						}
+					}
+				}
 				break;
 			default:
 				break;

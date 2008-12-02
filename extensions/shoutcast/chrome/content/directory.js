@@ -76,39 +76,12 @@ var RadioDirectory = {
 			Application.prefs.setValue(shoutcastGenre, genre);
 		}
 
-		// Read in our list of genre strings
 		var menulist = document.getElementById("shoutcast-genre-menulist");
 		var strings = Cc["@mozilla.org/intl/stringbundle;1"]
 			.getService(Ci.nsIStringBundleService)
 			.createBundle("chrome://shoutcast-radio/locale/genres.properties");
-		var iter = strings.getSimpleEnumeration();
-		var genres = new Array();
-		while (iter.hasMoreElements()) {
-			var genreProp = iter.getNext()
-				.QueryInterface(Ci.nsIPropertyElement);
-			var genreValue = genreProp.key.substr(5);
-			var genreLabel = genreProp.value;
-			if (genreValue == "TOP")
-				continue;
-			genres.push({value:genreValue, label:genreLabel});
-		}
-
-		// Add our custom genres
-		var customGenres = Application.prefs.getValue(
-				"extensions.shoutcast-radio.custom-genres", "").split(",");
-		for (i in customGenres) {
-			if (customGenres[i].length > 0) {
-				var custom = customGenres[i];
-				custom = custom.replace(/^\s*/,'').replace(/\s*$/,'');
-				genres.push({value:custom, label:custom});
-			}
-		}
-
-		// Sort our genres
-		genres.sort(function(a,b) {
-			return (a.label.toUpperCase() > b.label.toUpperCase());
-		});
-
+		var genres = this.getGenres(strings);
+	
 		// Add the "Top Stations" item first
 		menulist.appendItem(strings.GetStringFromName("genreTOP"), "sbITop");
 		menulist.menupopup.appendChild(document.createElementNS(
@@ -175,10 +148,48 @@ var RadioDirectory = {
 		}
 	},
 
+	getGenres : function(strings) {
+		if (!strings) {
+			// Read in our list of genre strings
+			var strings = Cc["@mozilla.org/intl/stringbundle;1"]
+				.getService(Ci.nsIStringBundleService).createBundle(
+						"chrome://shoutcast-radio/locale/genres.properties");
+		}
+		var iter = strings.getSimpleEnumeration();
+		var genres = new Array();
+		while (iter.hasMoreElements()) {
+			var genreProp = iter.getNext()
+				.QueryInterface(Ci.nsIPropertyElement);
+			var genreValue = genreProp.key.substr(5);
+			var genreLabel = genreProp.value;
+			if (genreValue == "TOP")
+				continue;
+			genres.push({value:genreValue, label:genreLabel});
+		}
+
+		// Add our custom genres
+		var customGenres = Application.prefs.getValue(
+				"extensions.shoutcast-radio.custom-genres", "").split(",");
+		for (i in customGenres) {
+			if (customGenres[i].length > 0) {
+				var custom = customGenres[i];
+				custom = custom.replace(/^\s*/,'').replace(/\s*$/,'');
+				genres.push({value:custom, label:custom});
+			}
+		}
+
+		// Sort our genres
+		genres.sort(function(a,b) {
+			return (a.label.toUpperCase() > b.label.toUpperCase());
+		});
+
+		return genres;
+	},
+
 	unload: function() {
-		this.playlist.removeEventListener("PlaylistCellClick",
+		RadioDirectory.playlist.removeEventListener("PlaylistCellClick",
 				onPlaylistCellClick, false);
-		this.playlist.removeEventListener("Play", onPlay, false);
+		RadioDirectory.playlist.removeEventListener("Play", onPlay, false);
 	},
 	getLibraries : function() {
 		var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -382,7 +393,6 @@ var RadioDirectory = {
 				} else {
 					heartSrc = "chrome://shoutcast-radio/skin/invis-16x16.png";
 				}
-				var searchStr = name + " " + currentTrack;
 				props.appendProperty(SC_streamName, name);
 				props.appendProperty(SBProperties.bitRate, bitrate);
 				props.appendProperty(SBProperties.genre, thisgenre);
@@ -397,6 +407,39 @@ var RadioDirectory = {
 						ioService.newURI(shoutcastTuneURL + id, null, null),
 						false);
 			}
+
+			// Go through favourite stations and add any custom stations
+			var customProps = Cc[
+			"@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+				.createInstance(Ci.sbIMutablePropertyArray);
+			customProps.appendProperty(SC_id, -1);
+			dump("Looking for custom stations in genre: " + genre + "\n");
+			customProps.appendProperty(SBProperties.genre, genre);
+
+			try {
+				var customStations =
+					RadioDirectory.favesList.getItemsByProperties(customProps);
+				dump("Custom stations found: " + customStations.length + "\n");
+				for (var i=0; i<customStations.length; i++) {
+					var station = customStations.queryElementAt(i,
+							Ci.sbIMediaItem);
+					station.setProperty(SC_bookmark, 
+						"chrome://shoutcast-radio/skin/heart-active.png");
+
+					station.setProperty(SBProperties.storageGUID,
+							station.guid);
+					var url = station.getProperty(SBProperties.contentURL);
+					var props = station.getProperties();
+					propertiesArray.appendElement(props, false);
+					trackArray.appendElement(
+						ioService.newURI(url, null, null), false);
+				}
+			} catch (e) {
+				// need to catch in case there are no custom stations
+				if (e.result != Components.results.NS_ERROR_NOT_AVAILABLE)
+					dump("exception: " + e + "\n");
+			}
+
 			this.radioLib.batchCreateMediaItemsAsync(libListener,
 				trackArray, propertiesArray, false);
 		}
@@ -426,6 +469,41 @@ var RadioDirectory = {
 		this.playlist.getListView().searchConstraint = null;
 		Application.prefs.setValue("extensions.shoutcast-radio.filter", "");
 	},
+
+	addStation : function() {
+		var retVals = {
+			name : null,
+			url : null,
+			genre : null
+		};
+
+		var dialog = openDialog(
+				"chrome://shoutcast-radio/content/addFavourite.xul",
+				"add-station", "chrome,modal", retVals);
+
+		dump("name: " + retVals.name + "\n");
+		dump("url: " + retVals.url + "\n");
+		dump("genre: " + retVals.genre + "\n");
+		if (retVals.name && retVals.url && retVals.genre) {
+			// Add to favourites
+			var props = Cc[
+			"@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+				.createInstance(Ci.sbIMutablePropertyArray);
+			props.appendProperty(SC_streamName, retVals.name);
+			props.appendProperty(SBProperties.bitRate, 0);
+			props.appendProperty(SBProperties.genre, retVals.genre);
+			props.appendProperty(SBProperties.contentMimeType, "audio/mpeg");
+			//props.appendProperty(SBProperties.comment, "Not available");
+			//props.appendProperty(SC_listenerCount, 0);
+			props.appendProperty(SC_id, -1);
+			props.appendProperty(SC_bookmark,
+					"chrome://shoutcast-radio/skin/heart-active.png");
+			var uri = ioService.newURI(retVals.url, null, null);
+			var item = this.radioLib.createMediaItem(uri, props);
+			RadioDirectory.favesList.add(item);
+			gMetrics.metricsInc("shoutcast", "custom", "added");
+		}
+	}
 }
 
 function createLibrary(databaseGuid, databaseLocation, init) {
@@ -543,6 +621,20 @@ function onPlaylistCellClick(e) {
 		
 		var id = item.getProperty(SC_id);
 		var idx = RadioDirectory.favouriteIDs.indexOf(id);
+
+		if (id == -1) {
+			// the "item" in the favourite list is different from the item
+			// in the radiolib
+			var faveGuid = item.getProperty(SBProperties.storageGUID);
+			
+			// it's a custom entered favourite list
+			gMetrics.metricsInc("shoutcast", "custom", "removed");
+			RadioDirectory.radioLib.remove(item);
+
+			var faveItem = RadioDirectory.favesList.getItemByGuid(faveGuid);
+			RadioDirectory.favesList.remove(faveItem);
+			return;
+		}
 		if (idx != -1) {
 			// # of times a station is unfavourited
 			gMetrics.metricsInc("shoutcast", "favourites", "removed");
@@ -603,6 +695,7 @@ function onPlay(e) {
 					var listItem = list.getItemByIndex(i);
 					listItem.setProperty(SC_streamName, name);
 					listItem.setProperty(SC_id, id);
+					listItem.setProperty(SBProperties.outerGUID, item.guid);
 				}
 			} else {
 				alert("Failed to load " + item.getProperty(SC_streamName) +
@@ -621,6 +714,9 @@ function onPlay(e) {
 	var genre = item.getProperty(SBProperties.genre);
 	gMetrics.metricsInc("shoutcast", "genre", "played." + genre);
 
+	if (id == -1) {
+		plsURL = item.getProperty(SBProperties.contentURL);
+	}
     var uri = ioService.newURI(plsURL, null, null);
     plsMgr.loadPlaylist(uri, RadioDirectory.streamList, null, false, listener);
 

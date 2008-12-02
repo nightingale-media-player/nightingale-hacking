@@ -9,6 +9,11 @@ if (typeof(gMetrics) == "undefined")
 
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 
+if (typeof(songbirdMainWindow) == "undefined")
+	var songbirdMainWindow = Cc["@mozilla.org/appshell/window-mediator;1"]
+			.getService(Ci.nsIWindowMediator)
+			.getMostRecentWindow("Songbird:Main").window;
+
 var FavouriteStreams = {
 	list : null,
 	genres : null,
@@ -64,6 +69,16 @@ var FavouriteStreams = {
 		if (list.getProperty(SBProperties.customType) == "radio_favouritesList")
 		{
 			pls.addEventListener("PlaylistCellClick", this.myCellClick, false);
+
+			// OMG. I'm sorry. Forgive me.
+			FavouriteStreams.oldOnPlay = songbirdMainWindow
+				.gSongbirdPlayerWindow.onPlay;
+			window.addEventListener("unload", function() {
+				songbirdMainWindow.gSongbirdPlayerWindow.onPlay =
+					FavouriteStreams.oldOnPlay;
+			}, false);
+			songbirdMainWindow.gSongbirdPlayerWindow.onPlay = function() {};
+
 			pls.addEventListener("Play", this.onPlay, false);
 			this.updateComments();
 		}
@@ -110,13 +125,18 @@ var FavouriteStreams = {
 		listener.observer = {
 			observe: function(aSubject, aTopic, aData) {
 				if (aTopic == "success") {
+					dump("Success\n");
 					var list = aSubject;
 					var name = item.getProperty(SC_streamName);
 					for (var i=0; i<list.length; i++) {
 						listItem = list.getItemByIndex(i);
 						listItem.setProperty(SC_streamName, name);
 						listItem.setProperty(SC_id, id);
+						listItem.setProperty(SBProperties.outerGUID, item.guid);
 					}
+				} else {
+					alert("Failed to load " + item.getProperty(SC_streamName) +
+							"\n");
 				}
 			}
 		}
@@ -131,8 +151,14 @@ var FavouriteStreams = {
 		var genre = item.getProperty(SBProperties.genre);
 		gMetrics.metricsInc("shoutcast", "genre", "played." + genre);
 
+		if (id == -1) {
+			plsURL = item.getProperty(SBProperties.contentURL);
+		}
 		var uri = ioService.newURI(plsURL, null, null);
 		plsMgr.loadPlaylist(uri, this.streamList, null, false, listener);
+		
+		e.stopPropagation();
+		e.preventDefault();
 	}
 }
 
