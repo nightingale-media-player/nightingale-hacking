@@ -212,6 +212,18 @@ ConvertSingleTag(const GstTagList *taglist,
     }                                                         \
   }
 
+#define PROPERTY_CONVERT_UINT(propname, tagname, scale)       \
+  if (!strcmp(tag, tagname)) {                                \
+    guint tagvalue;                                           \
+    if (gst_tag_list_get_uint (taglist, tag, &tagvalue)) {    \
+      nsString stringVal;                                     \
+      stringVal.AppendInt(tagvalue / scale);                  \
+      propArray->AppendProperty(NS_LITERAL_STRING (propname), \
+              stringVal);                                     \
+      return;                                                 \
+    }                                                         \
+  }
+
   PROPERTY_CONVERT_STRING (SB_PROPERTY_ALBUMNAME, GST_TAG_ALBUM);
   PROPERTY_CONVERT_STRING (SB_PROPERTY_ARTISTNAME, GST_TAG_ARTIST);
   PROPERTY_CONVERT_STRING (SB_PROPERTY_TRACKNAME, GST_TAG_TITLE);
@@ -221,6 +233,8 @@ ConvertSingleTag(const GstTagList *taglist,
   PROPERTY_CONVERT_STRING (SB_PROPERTY_ORIGINURL, GST_TAG_LOCATION);
   PROPERTY_CONVERT_STRING (SB_PROPERTY_COPYRIGHT, GST_TAG_COPYRIGHT);
   PROPERTY_CONVERT_STRING (SB_PROPERTY_COPYRIGHTURL, GST_TAG_COPYRIGHT_URI);
+
+  PROPERTY_CONVERT_UINT (SB_PROPERTY_BITRATE, GST_TAG_BITRATE, 1000);
 }
 
 nsresult
