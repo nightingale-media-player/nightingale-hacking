@@ -14,7 +14,14 @@ pref("toolkit.singletonWindowType", "Songbird:Main");
 pref("general.useragent.extra.songbird", "Songbird/@SB_MILESTONE@ (@SB_BUILD_ID@)");
 pref("songbird.buildNumber", "@SB_BUILD_NUMBER@");
 
+// Default feather settings:
+// @see sbFeathersManager.js for more information about each pref
 pref("general.skins.selectedSkin", "gonzo");
+pref("songbird.feathers.default_skin_internalname", "gonzo");
+pref("songbird.feathers.default_feather_id", "gonzo@songbirdnest.com");
+pref("songbird.feathers.default_main_layout", "chrome://gonzo/content/xul/mainplayer.xul");
+pref("songbird.feathers.default_secondary_layout", "chrome://gonzo/content/xul/miniplayer.xul");
+
 pref("accessibility.typeaheadfind", false);
 pref("accessibility.typeaheadfind.timeout", 5000);
 pref("accessibility.typeaheadfind.flashBar", 1);

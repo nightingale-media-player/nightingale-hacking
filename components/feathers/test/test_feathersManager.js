@@ -27,17 +27,24 @@
 /**
  * \brief FeathersManager test file
  */
- 
 
 
-// Fallback layouts/skin, used by previousSkinName and previousLayoutURL
-// Changes to the shipped feathers must be reflected here
-// and in sbFeathersManager.js
-const DEFAULT_MAIN_LAYOUT_URL       = "chrome://gonzo/content/xul/mainplayer.xul";
-const DEFAULT_SECONDARY_LAYOUT_URL  = "chrome://gonzo/content/xul/miniplayer.xul";
-const DEFAULT_SKIN_NAME             = "gonzo";
+// Default layouts/skin, read in from the preferences.
+// Used in |previousSkinName()| and |previousLayoutURL()|.
+var gDefaultMainLayoutURL = "";
+var gDefaultSecondaryLayoutURL = "";
+var gDefaultSkinName = "";
+
+// Rubber-ducky dependency layout URLs. As long as we are still shipping this extension,
+// we need to keep these layouts here (in order to pass feather manager unit test).
 const ALTERNATE_MAIN_LAYOUT_URL     = "chrome://songbird/content/feathers/basic-layouts/xul/mainplayer.xul";
 const ALTERNATE_MINI_LAYOUT_URL     = "chrome://songbird/content/feathers/basic-layouts/xul/miniplayer.xul";
+
+// Preference constants for default layout/skin/feather
+// @see sbFeathersManager.js for information about each pref.
+const PREF_DEFAULT_MAIN_LAYOUT       = "songbird.feathers.default_main_layout";
+const PREF_DEFAULT_SECONDARY_LAYOUT  = "songbird.feathers.default_secondary_layout";
+const PREF_DEFAULT_SKIN_INTERNALNAME = "songbird.feathers.default_skin_internalname";
 
 var feathersManager =  Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
                                  .getService(Components.interfaces.sbIFeathersManager);
@@ -194,14 +201,14 @@ function assertEnumeratorMatchesFieldArray(enumerator, field, list) {
 function testAddonMetadataReader()
 {
   // Verify all skins added properly
-  var skinNames = [DEFAULT_SKIN_NAME];
+  var skinNames = [gDefaultSkinName];
   assertEqual(feathersManager.skinCount, skinNames.length);
   var enumerator = wrapEnumerator(feathersManager.getSkinDescriptions(),
                      Components.interfaces.sbISkinDescription);
   assertEnumeratorMatchesFieldArray(enumerator, "internalName", skinNames);
   
   // Verify all layouts added properly
-  var layoutURLs = [ DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SECONDARY_LAYOUT_URL,
+  var layoutURLs = [ gDefaultMainLayoutURL, gDefaultSecondaryLayoutURL,
                      ALTERNATE_MAIN_LAYOUT_URL, ALTERNATE_MINI_LAYOUT_URL ];
   assertEqual(feathersManager.layoutCount, layoutURLs.length);
   enumerator = wrapEnumerator(feathersManager.getLayoutDescriptions(), 
@@ -211,10 +218,10 @@ function testAddonMetadataReader()
   // Verify mappings
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[0]), 
                  Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [DEFAULT_SKIN_NAME]);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [gDefaultSkinName]);
   enumerator = wrapEnumerator(feathersManager.getSkinsForLayout(layoutURLs[1]), 
                               Components.interfaces.sbISkinDescription);
-  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [DEFAULT_SKIN_NAME]);
+  assertEnumeratorMatchesFieldArray(enumerator, "internalName", [gDefaultSkinName]);
   
   // Verify showChrome
   // Chrome is only enabled on Mac OS X
@@ -245,8 +252,8 @@ function testDefaultRevert() {
 
   testPending();
 
-  assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
-  assertEqual(layoutDataRemote.stringValue, DEFAULT_MAIN_LAYOUT_URL);
+  assertEqual(skinDataRemote.stringValue, gDefaultSkinName);
+  assertEqual(layoutDataRemote.stringValue, gDefaultMainLayoutURL);
   
   // Now revert again, taking us to the secondary fallback
   feathersManager.switchFeathers(feathersManager.previousLayoutURL,
@@ -254,8 +261,8 @@ function testDefaultRevert() {
 
   testPending();
 
-  assertEqual(skinDataRemote.stringValue, DEFAULT_SKIN_NAME);
-  assertEqual(layoutDataRemote.stringValue, DEFAULT_SECONDARY_LAYOUT_URL);
+  assertEqual(skinDataRemote.stringValue, gDefaultSkinName);
+  assertEqual(layoutDataRemote.stringValue, gDefaultSecondaryLayoutURL);
 }
 
 
@@ -338,7 +345,15 @@ function teardown() {
 function runTest () {
   
   saveDataRemotes();
-  
+
+  // Read in the default layout and skin from prefs.
+  var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
+                     .getService(Ci.fuelIApplication).prefs;
+  gDefaultMainLayoutURL = AppPrefs.getValue(PREF_DEFAULT_MAIN_LAYOUT, "");
+  gDefaultSecondaryLayoutURL = 
+    AppPrefs.getValue(PREF_DEFAULT_SECONDARY_LAYOUT, "");
+  gDefaultSkinName = AppPrefs.getValue(PREF_DEFAULT_SKIN_INTERNALNAME, "");
+
   layoutDataRemote.stringValue = "";
   skinDataRemote.stringValue = "";
   previousLayoutDataRemote.stringValue = "";

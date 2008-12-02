@@ -50,12 +50,40 @@ const IID = Ci.sbIFeathersManager;
 const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
 
-// Fallback layouts/skin, used by previousSkinName and previousLayoutURL
-// Changes to the shipped feathers must be reflected here
-// and in test_feathersManager.js
-const DEFAULT_MAIN_LAYOUT_URL         = "chrome://gonzo/content/xul/mainplayer.xul";
-const DEFAULT_SECONDARY_LAYOUT_URL    = "chrome://gonzo/content/xul/miniplayer.xul";
-const DEFAULT_SKIN_NAME               = "gonzo";
+//
+// Default feather/layout/skin preference prefs.
+//
+// * PREF_DEFAULT_MAIN_LAYOUT
+//     - Default main layout to start with. This is typically the "main player"
+//       layout. This layout will be used when the player window is opened for
+//       the first time.
+//
+// * PREF_DEFAULT_SECONDARY_LAYOUT
+//     - The default secondary layout. This layout is typically an alternative 
+//       view to the main layout defined in |PREF_DEFAULT_MAIN_LAYOUT| - such
+//       as a "mini-player" view.
+//     - NOTE: This is an optional pref.
+//
+// * PREF_DEFAULT_SKIN_LOCALNAME
+//     - The local name of the default feather. This is defined in the install.rdf
+//       of the shipped feather, in the |<songbird:internalName/>| tag.
+//
+// * PREF_DEFAULT_FEATHER_ID
+//     - The ID of the default feathers extension. This is defined in the
+//       install.rdf of the shipped feather, in the <em:id/> tag.
+//
+//
+// NOTE: Changes to the default layout/skin/feather will be automatically picked up
+//       in the feathers unit test.
+//
+const PREF_DEFAULT_MAIN_LAYOUT       = "songbird.feathers.default_main_layout";
+const PREF_DEFAULT_SECONDARY_LAYOUT  = "songbird.feathers.default_secondary_layout";
+const PREF_DEFAULT_SKIN_INTERNALNAME = "songbird.feathers.default_skin_internalname";
+const PREF_DEFAULT_FEATHER_ID        = "songbird.feathers.default_feather_id";
+
+// Pref to ensure sanity tests are run the first time the feathers manager
+// has started on a profile.
+const PREF_FEATHERS_MANAGER_HAS_STARTED  = "songbird.feathersmanager.hasStarted";
 
 const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
 const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
@@ -473,6 +501,13 @@ FeathersManager.prototype = {
 
   _switching: false,
 
+  // Ignore autoswitching when the feathers manager is run for the first time.
+  _ignoreAutoswitch: false,
+
+  // feather, layout, and skin name defaults
+  _defaultLayoutURL: "",
+  _defaultSecondaryLayoutURL: "",
+  _defaultSkinName: "",
   
   // Hash of skin descriptions keyed by internalName (e.g. classic/1.0)
   _skins: null,
@@ -518,11 +553,32 @@ FeathersManager.prototype = {
    * 
    */
   _init: function init() {
+    var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
+                     .getService(Ci.fuelIApplication).prefs;
+
     // If the safe-mode dialog was requested to disable all addons, our
     // basic layouts and default skin have been disabled too. We need to 
     // check if that's the case, and reenable them if needed
-    this._ensureAddOnEnabled("gonzo@songbirdnest.com");
+    var defaultFeather = AppPrefs.getValue(PREF_DEFAULT_FEATHER_ID, "");
+    this._ensureAddOnEnabled(defaultFeather);
+
+    // Read in defaults
+    this._defaultLayoutURL = AppPrefs.getValue(PREF_DEFAULT_MAIN_LAYOUT, "");
+    this._defaultSecondaryLayoutURL = 
+      AppPrefs.getValue(PREF_DEFAULT_SECONDARY_LAYOUT, "");
+    this._defaultSkinName = AppPrefs.getValue(PREF_DEFAULT_SKIN_INTERNALNAME, "");
     
+    if (!AppPrefs.has(PREF_FEATHERS_MANAGER_HAS_STARTED)) {
+      // Ignore the autoswitch detecting for the first run, this prevents
+      // jumping between two shipped feathers.
+      this._ignoreAutoswitch = true;
+
+      // Now the feather manager has started at least once.
+      AppPrefs.setValue(PREF_FEATHERS_MANAGER_HAS_STARTED, true);
+    }
+
+
+
     // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(
                   "@songbirdnest.com/Songbird/DataRemote;1",
@@ -543,7 +599,7 @@ FeathersManager.prototype = {
     
     // If no layout url has been specified, set to default
     if (this._layoutDataRemote.stringValue == "") {
-      this._layoutDataRemote.stringValue = DEFAULT_MAIN_LAYOUT_URL;
+      this._layoutDataRemote.stringValue = this._defaultLayoutURL;
     }
 
     // Ensure chrome enabled is set appropriately
@@ -598,7 +654,7 @@ FeathersManager.prototype = {
     }
     
     // Otherwise, return the default skin
-    return DEFAULT_SKIN_NAME;
+    return this._defaultSkinName;
   },
   
   
@@ -619,9 +675,9 @@ FeathersManager.prototype = {
     // Use the main default unless it is currently
     // active. This way if the user reverts for the
     // first time they will end up in the miniplayer.
-    var layoutURL = DEFAULT_MAIN_LAYOUT_URL;
+    var layoutURL = this._defaultLayoutURL;
     if (this.currentLayoutURL == layoutURL) {
-      layoutURL = DEFAULT_SECONDARY_LAYOUT_URL;
+      layoutURL = this._defaultSecondaryLayoutURL;
     }
     
     return layoutURL;    
@@ -756,7 +812,7 @@ FeathersManager.prototype = {
     } catch (e) { }
     if (!seen) {
       branch.setBoolPref("seen", true);
-      if (!this._autoswitch) {
+      if (!this._autoswitch && !this._ignoreAutoswitch) {
         this._autoswitch = {};
         this._autoswitch.skin = internalName;
         this._autoswitch.layoutURL = layoutURL;
@@ -1018,7 +1074,7 @@ FeathersManager.prototype = {
     var skinDescription = this.getSkinDescription(this.currentSkinName);
     if (layoutDescription == null || skinDescription == null) {
       // The current feathers are invalid. Switch to the defaults.
-      this.switchFeathers(DEFAULT_MAIN_LAYOUT_URL, DEFAULT_SKIN_NAME);
+      this.switchFeathers(this._defaultLayoutURL, this._defaultSkinName);
       return;
     }
     
