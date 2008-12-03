@@ -1,11 +1,13 @@
 <!ENTITY mtprefs.general "Ogólne">
 <!ENTITY mtprefs.info "Informacje o wykonawcy">
+<!ENTITY mtprefs.review "Recenzje">
 <!ENTITY mtprefs.rss "Nowości">
 <!ENTITY mtprefs.photo "Zdjęcia">
 <!ENTITY mtprefs.flash "Filmy">
 <!ENTITY mtprefs.defaulttab "Domyślna karta">
 <!ENTITY mtprefs.defaulttab.help "Po uruchomieniu mashTape&apos;a:">
 <!ENTITY mtprefs.show.info "wyświetl informacje o wykonawcy">
+<!ENTITY mtprefs.show.review "wyświetl recenzje">
 <!ENTITY mtprefs.show.rss "wyświetl nowości">
 <!ENTITY mtprefs.show.photo "wyświetl zdjęcia">
 <!ENTITY mtprefs.show.flash "wyświetl filmy">
@@ -14,9 +16,14 @@
 <!ENTITY mtprefs.services "Usługi">
 <!ENTITY mtprefs.getmore "Pobierz więcej usług dla mashTape&apos;a">
 <!ENTITY mtprefs.tab.info "Ustawienia karty z informacjami o wykonawcy">
+<!ENTITY mtprefs.tab.review "Ustawienia karty z recenzjami">
 <!ENTITY mtprefs.tab.rss "Ustawienia karty z nowościami">
 <!ENTITY mtprefs.tab.photo "Ustawienia karty ze zdjęciami">
 <!ENTITY mtprefs.tab.flash "Ustawienia karty z filmami">
 <!ENTITY mtprefs.tab.help "Wyświetlaj tę kartę w mashTapie.">
 <!ENTITY mtprefs.single "Ten panel może jednocześnie wyświetlać dane z jednego serwisu. Proszę wybrać serwis z poniższej listy.">
 <!ENTITY mtprefs.multiple "Ten panel może jednocześnie wyświetlać dane z wielu serwisów. Proszę wybrać serwisy z poniższej listy.">
+<!ENTITY mtprefs.tab.photo.speed "Szybkość przewijania zdjęć:">
+<!ENTITY mtprefs.tab.photo.faster "Szybciej">
+<!ENTITY mtprefs.tab.photo.slower "Wolniej">
+<!ENTITY mtprefs.tab.video.autoplay "Automatycznie odtwarzaj filmy">

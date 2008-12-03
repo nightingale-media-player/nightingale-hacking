@@ -1,22 +1,30 @@
-<!ENTITY mtprefs.general "General">
-<!ENTITY mtprefs.info "Artist Info">
-<!ENTITY mtprefs.rss "News">
-<!ENTITY mtprefs.photo "Photos">
-<!ENTITY mtprefs.flash "Videos">
-<!ENTITY mtprefs.defaulttab "Default Tab">
-<!ENTITY mtprefs.defaulttab.help "When mashTape starts:">
-<!ENTITY mtprefs.show.info "Show Artist Info">
-<!ENTITY mtprefs.show.rss "Show News">
-<!ENTITY mtprefs.show.photo "Show Photos">
-<!ENTITY mtprefs.show.flash "Show Videos">
-<!ENTITY mtprefs.autohide "Auto-hide">
-<!ENTITY mtprefs.autohide.help "Automatically hide the mashTape display pane when you switch to viewing a webpage.">
-<!ENTITY mtprefs.services "Services">
-<!ENTITY mtprefs.getmore "Get more services for mashTape">
-<!ENTITY mtprefs.tab.info "Artist Info Tab Settings">
-<!ENTITY mtprefs.tab.rss "News Tab Settings">
-<!ENTITY mtprefs.tab.photo "Photos Tab Settings">
-<!ENTITY mtprefs.tab.flash "Videos Tab Settings">
-<!ENTITY mtprefs.tab.help "Show this tab in mashTape.">
-<!ENTITY mtprefs.single "This pane supports displaying content from one service at a time.  Please select a service from the list below.">
-<!ENTITY mtprefs.multiple "This pane supports displaying content from multiple services at a time.  Please select your choice of services from the list below.">
+<!ENTITY mtprefs.general "Allmänt">
+<!ENTITY mtprefs.info "Artist Information">
+<!ENTITY mtprefs.review "Recensioner">
+<!ENTITY mtprefs.rss "Nyheter">
+<!ENTITY mtprefs.photo "Foto">
+<!ENTITY mtprefs.flash "Video">
+<!ENTITY mtprefs.defaulttab "Standard tab">
+<!ENTITY mtprefs.defaulttab.help "När mashTape startar;">
+<!ENTITY mtprefs.show.info "Visa Artist Information">
+<!ENTITY mtprefs.show.review "Visa Recensioner">
+<!ENTITY mtprefs.show.rss "Visa Nyheter">
+<!ENTITY mtprefs.show.photo "Visa Foto">
+<!ENTITY mtprefs.show.flash "Visa Video">
+<!ENTITY mtprefs.autohide "Dölj Automatiskt">
+<!ENTITY mtprefs.autohide.help "Dölj mashTape automatiskt när du visar en websida.">
+<!ENTITY mtprefs.services "Tjänster">
+<!ENTITY mtprefs.getmore "Skaffa fler tjänster till mashTape">
+<!ENTITY mtprefs.tab.info "Tabb inställningar för Artist information">
+<!ENTITY mtprefs.tab.review "Tabb inställningar för Recension">
+<!ENTITY mtprefs.tab.rss "Tabb inställningar för Nyheter">
+<!ENTITY mtprefs.tab.photo "Tabb inställningar för Foto">
+<!ENTITY mtprefs.tab.flash "Tabb inställningar för Video">
+<!ENTITY mtprefs.tab.help "Visa denna Tabb i mashTape">
+<!ENTITY mtprefs.single "Denna del kan endast visa innehåll från en tjänst i taget. Var vänlig markera ett av alternativen i listan nedan.">
+<!ENTITY mtprefs.multiple "Denna del kan visa innehåll från mer än en tjänst i taget. Var vänlig markera ett eller flera av alternativen i listan nedan.">
+<!ENTITY mtprefs.tab.photo.speed "Visningshastighet, Foto:">
+<!ENTITY mtprefs.tab.photo.faster "Snabbare">
+<!ENTITY mtprefs.tab.photo.slower "Långsammare">
+<!ENTITY mtprefs.tab.video.autoplay "Spela upp video automatiskt">
+<!ENTITY mtprefs.tab.video.autoplay.help "Detta alternativet låter dig spela upp videos eftervarandra i en följd.">
