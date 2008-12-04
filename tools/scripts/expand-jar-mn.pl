@@ -87,7 +87,9 @@ END
       }
       
       # Get the relative path of the file 
-      $file =~ s/$source_path\///;
+	  # Need to escape $source_path so chars like '+' don't get interpreted
+	  # as regular expression symbols
+      $file =~ s/\Q$source_path\E\///;
  
       print "  $jar_destination$file       ($file)\n";
     }
