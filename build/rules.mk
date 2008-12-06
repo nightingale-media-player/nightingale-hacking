@@ -353,6 +353,10 @@ compile_flags += $(CPP_EXTRA_FLAGS)
 endif
 endif
 
+ifeq (macosx,$(SB_PLATFORM))
+  compile_flags += -isysroot $(SB_MACOSX_SDK)
+endif
+
 ifdef CPP_DEFS
 compile_defs = $(CPP_DEFS)
 else
@@ -411,6 +415,10 @@ mm_compile_flags = $(CMMFLAGS)
 ifdef CMM_EXTRA_FLAGS
 mm_compile_flags += $(CMM_EXTRA_FLAGS)
 endif
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+  mm_compile_flags += -isysroot $(SB_MACOSX_SDK)
 endif
 
 ifdef CMM_DEFS
@@ -476,6 +484,10 @@ endif
 endif
 
 linker_flags = $(LDFLAGS) $(LDFLAGS_DLL)
+
+ifeq (macosx,$(SB_PLATFORM))
+  linker_flags += -isysroot $(SB_MACOSX_SDK) -Wl,-syslibroot,$(SB_MACOSX_SDK)
+endif
 
 ifdef DYNAMIC_LIB_EXTRA_FLAGS
 linker_flags += $(DYNAMIC_LIB_EXTRA_FLAGS)
@@ -645,6 +657,10 @@ c_compile_flags = $(CFLAGS)
 ifdef C_EXTRA_FLAGS
 c_compile_flags += $(C_EXTRA_FLAGS)
 endif
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+  c_compile_flags += -isysroot $(SB_MACOSX_SDK)
 endif
 
 ifdef C_DEFS
