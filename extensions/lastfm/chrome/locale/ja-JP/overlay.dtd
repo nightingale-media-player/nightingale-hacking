@@ -1,7 +1,7 @@
 <!ENTITY lastfm.menu.login "Last.fm にログイン...">
 <!ENTITY lastfm.menu.logout "Last.fm からログアウト">
 <!ENTITY lastfm.menu.enable "Scrobbling を有効化">
-<!ENTITY lastfm.signup.label "Last.fm に入会する">
+<!ENTITY lastfm.signup.label "Last.fm に登録する">
 <!ENTITY lastfm.login.button "ログイン">
 <!ENTITY lastfm.loggingin.label "ログイン中...">
 <!ENTITY lastfm.cancel.button "取り消す">

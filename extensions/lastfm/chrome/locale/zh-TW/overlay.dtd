@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "登入到 Last.fm...">
+<!ENTITY lastfm.menu.logout "登出 Last.fm">
+<!ENTITY lastfm.menu.enable "啟用「歌曲記錄」">
+<!ENTITY lastfm.signup.label "註冊 Last.fm">
+<!ENTITY lastfm.login.button "登入">
+<!ENTITY lastfm.loggingin.label "登入中...">
+<!ENTITY lastfm.cancel.button "取消">
+<!ENTITY lastfm.profile.caption "個人檔案">
+<!ENTITY lastfm.profile.scrobble "記錄我的歌曲">
+<!ENTITY lastfm.profile.logout "登出">

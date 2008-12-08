@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Войти на Last.fm...">
+<!ENTITY lastfm.menu.logout "Выйти с Last.fm">
+<!ENTITY lastfm.menu.enable "Включить скробблинг">
+<!ENTITY lastfm.signup.label "Регистрация на Last.fm">
+<!ENTITY lastfm.login.button "Вход">
+<!ENTITY lastfm.loggingin.label "Вход...">
+<!ENTITY lastfm.cancel.button "Отмена">
+<!ENTITY lastfm.profile.caption "Профиль">
+<!ENTITY lastfm.profile.scrobble "Скробблить мои треки">
+<!ENTITY lastfm.profile.logout "Выход">

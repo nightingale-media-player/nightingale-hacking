@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Přihlásit k Last.fm...">
+<!ENTITY lastfm.menu.logout "Odhlásit">
+<!ENTITY lastfm.menu.enable "Povolit odesílání informací o přehrávané hudbě">
+<!ENTITY lastfm.signup.label "Zaregistrovat se do Last.fm">
+<!ENTITY lastfm.login.button "Přihlásit se">
+<!ENTITY lastfm.loggingin.label "Přihlašování...">
+<!ENTITY lastfm.cancel.button "Zrušit">
+<!ENTITY lastfm.profile.caption "Profil">
+<!ENTITY lastfm.profile.scrobble "Odesílat informace o přehrávané hudbě">
+<!ENTITY lastfm.profile.logout "Odhlásit">

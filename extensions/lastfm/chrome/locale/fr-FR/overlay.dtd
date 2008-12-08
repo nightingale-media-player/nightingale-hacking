@@ -1,7 +1,7 @@
-<!ENTITY lastfm.menu.login  "Se connecter à Last.fm...">
+<!ENTITY lastfm.menu.login "Se connecter à Last.fm...">
 <!ENTITY lastfm.menu.logout "Se déconnecter de Last.fm">
 <!ENTITY lastfm.menu.enable "Activer le scrobbling">
-<!ENTITY lastfm.signup.label "S'inscrire sur Last.fm">
+<!ENTITY lastfm.signup.label "S&apos;inscrire sur Last.fm">
 <!ENTITY lastfm.login.button "Connexion">
 <!ENTITY lastfm.loggingin.label "Connexion en cours...">
 <!ENTITY lastfm.cancel.button "Annuler">
