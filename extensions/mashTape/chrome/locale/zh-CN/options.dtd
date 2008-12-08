@@ -7,7 +7,7 @@
 <!ENTITY mtprefs.defaulttab "默认标签">
 <!ENTITY mtprefs.defaulttab.help "当mashTape启动">
 <!ENTITY mtprefs.show.info "显示艺术家信息">
-<!ENTITY mtprefs.show.review "">
+<!ENTITY mtprefs.show.review "显示评论">
 <!ENTITY mtprefs.show.rss "显示消息">
 <!ENTITY mtprefs.show.photo "显示照片">
 <!ENTITY mtprefs.show.flash "显示视频">
