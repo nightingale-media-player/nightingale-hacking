@@ -24,6 +24,7 @@
 <!ENTITY mtprefs.single "Ten panel może jednocześnie wyświetlać dane z jednego serwisu. Proszę wybrać serwis z poniższej listy.">
 <!ENTITY mtprefs.multiple "Ten panel może jednocześnie wyświetlać dane z wielu serwisów. Proszę wybrać serwisy z poniższej listy.">
 <!ENTITY mtprefs.tab.photo.speed "Szybkość przewijania zdjęć:">
-<!ENTITY mtprefs.tab.photo.faster "Szybciej">
-<!ENTITY mtprefs.tab.photo.slower "Wolniej">
+<!ENTITY mtprefs.tab.photo.faster "szybciej">
+<!ENTITY mtprefs.tab.photo.slower "wolniej">
 <!ENTITY mtprefs.tab.video.autoplay "Automatycznie odtwarzaj filmy">
+<!ENTITY mtprefs.tab.video.autoplay.help "Włączenie tej opcji spowoduje automatycznie odtwarzanie kolejnych filmów z grup zgodnych z wynikami wyszukiwania.  Funkcja ta jest użyteczna np. dla automatycznego odtwarzania wszystkich teledysków z MTV.  Funkcja ta nie działa z filmami, które nie są dostarczane przez serwisy w grupach.">
