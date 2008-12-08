@@ -812,7 +812,10 @@ mashTape.update = function(artist, album, track) {
 	if (mashTape.prevArtist != artist) {
 		mashTape.resetInfo();
 		mashTape.updateEnabledProviders("info");
-		if (mashTape.enabledProviders["info"].length > 0) {
+		if (mashTape.enabledProviders["info"].length > 0 &&
+				Application.prefs.getValue("extensions.mashTape.info.enabled",
+				true))
+		{
 			// Since only one info provider is allowed at a time, we'll just
 			// grab the first one (since the prefs UI will do the restriction of
 			// 'only one' for us
@@ -828,48 +831,61 @@ mashTape.update = function(artist, album, track) {
 
 	mashTape.resetReviewFrame();
 	mashTape.updateEnabledProviders("review");
-	for (var i=0; i<mashTape.enabledProviders["review"].length; i++) {
-		var clsid = mashTape.enabledProviders["review"][i];
-		var prov = CcID[clsid].createInstance(Ci.sbIMashTapeReviewProvider);
-		var callback = new mashTape.displayCallback(uid);
-		prov.queryFull(artist, album, track, callback);
-		mashTape.pendingCallbacks["review"].pending++;
+	if (Application.prefs.getValue("extensions.mashTape.review.enabled", true))
+	{
+		for (var i=0; i<mashTape.enabledProviders["review"].length; i++) {
+			var clsid = mashTape.enabledProviders["review"][i];
+			var prov = CcID[clsid].createInstance(Ci.sbIMashTapeReviewProvider);
+			var callback = new mashTape.displayCallback(uid);
+			prov.queryFull(artist, album, track, callback);
+			mashTape.pendingCallbacks["review"].pending++;
+		}
 	}
 
 	mashTape.resetRssFrame();
 	mashTape.updateEnabledProviders("rss");
-	for (var i=0; i<mashTape.enabledProviders["rss"].length; i++) {
-		var clsid = mashTape.enabledProviders["rss"][i];
-		var prov = CcID[clsid].createInstance(Ci.sbIMashTapeRSSProvider);
-		var callback = new mashTape.displayCallback(uid);
-		prov.query(artist, callback);
-		mashTape.pendingCallbacks["rss"].pending++;
+	if (Application.prefs.getValue("extensions.mashTape.rss.enabled", true))
+	{
+		for (var i=0; i<mashTape.enabledProviders["rss"].length; i++) {
+			var clsid = mashTape.enabledProviders["rss"][i];
+			var prov = CcID[clsid].createInstance(Ci.sbIMashTapeRSSProvider);
+			var callback = new mashTape.displayCallback(uid);
+			prov.query(artist, callback);
+			mashTape.pendingCallbacks["rss"].pending++;
+		}
 	}
 
-	if (mashTape.prevArtist != artist) {
+	if (mashTape.prevArtist != artist && !mashTape.photoFrameLoaded) {
 		mashTape.photoFrameLoaded = false;
 		mashTape.photosReady = null;
 		mashTape.resetPhotoFrame();
 		mashTape.updateEnabledProviders("photo");
-		for (var i=0; i<mashTape.enabledProviders["photo"].length; i++) {
-			var clsid = mashTape.enabledProviders["photo"][i];
-			var provider = CcID[clsid].createInstance(
-				Ci.sbIMashTapePhotoProvider);
-			var callback = new mashTape.displayCallback(uid);
-			provider.query(artist, callback);
-			mashTape.pendingCallbacks["photo"].pending++;
+		if (Application.prefs.getValue("extensions.mashTape.photo.enabled",
+					true))
+		{
+			for (var i=0; i<mashTape.enabledProviders["photo"].length; i++) {
+				var clsid = mashTape.enabledProviders["photo"][i];
+				var provider = CcID[clsid].createInstance(
+					Ci.sbIMashTapePhotoProvider);
+				var callback = new mashTape.displayCallback(uid);
+				provider.query(artist, callback);
+				mashTape.pendingCallbacks["photo"].pending++;
+			}
 		}
 	}
 
 	mashTape.resetFlashFrame();
 	mashTape.updateEnabledProviders("flash");
-	setTimeout(mashTape.loadFirstFlashFeed, 10000);
-	for (var i=0; i<mashTape.enabledProviders["flash"].length; i++) {
-		var clsid = mashTape.enabledProviders["flash"][i];
-		var prov = CcID[clsid].createInstance(Ci.sbIMashTapeFlashProvider);
-		var callback = new mashTape.displayCallback(uid);
-		prov.query(artist, callback);
-		mashTape.pendingCallbacks["flash"].pending++;
+	if (Application.prefs.getValue("extensions.mashTape.flash.enabled", true))
+	{
+		setTimeout(mashTape.loadFirstFlashFeed, 10000);
+		for (var i=0; i<mashTape.enabledProviders["flash"].length; i++) {
+			var clsid = mashTape.enabledProviders["flash"][i];
+			var prov = CcID[clsid].createInstance(Ci.sbIMashTapeFlashProvider);
+			var callback = new mashTape.displayCallback(uid);
+			prov.query(artist, callback);
+			mashTape.pendingCallbacks["flash"].pending++;
+		}
 	}
 
 	mashTape.prevArtist = artist;
@@ -2461,6 +2477,7 @@ mashTape.prefObserver = {
 				if (enabled) {
 					tab.style.visibility = "visible";
 					gMetrics.metricsInc("mashtape", pref[0], "tab.enabled");
+					mashTape.noDataTab(pref[0]);
 				} else {
 					tab.style.visibility = "collapse";
 					gMetrics.metricsInc("mashtape", pref[0], "tab.disabled");
