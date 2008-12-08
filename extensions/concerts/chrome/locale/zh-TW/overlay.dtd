@@ -1,0 +1,12 @@
+<!ENTITY concerts.groupby "分組依照:">
+<!ENTITY concerts.libraryartists "只顯示媒體庫中的演出者舉辦的演唱會">
+<!ENTITY concerts.sort.artist "演出者姓名">
+<!ENTITY concerts.sort.event "演唱會日期">
+<!ENTITY concerts.sort.venue "場地">
+<!ENTITY concerts.editlocation "變更">
+<!ENTITY concerts.loading "我們正在檢查哪些演唱會最靠近你...">
+<!ENTITY concerts.changelocation "變更位置">
+<!ENTITY concerts.easteregg.fail "失敗">
+<!ENTITY concerts.easteregg.fail.2 "找不到演唱會:">
+<!ENTITY concerts.timeout.error "你尚未連線到網路或我們的演唱會資料庫未正常工作，請等幾分鐘後重試一次。">
+<!ENTITY concerts.timeoutreport.error "回報問題">

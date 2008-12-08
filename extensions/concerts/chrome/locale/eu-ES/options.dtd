@@ -1,0 +1,7 @@
+<!ENTITY prefs.library "Liburutegia">
+<!ENTITY prefs.location "Kokapena">
+<!ENTITY prefs.country "Herrialdea">
+<!ENTITY prefs.country.us "Amerikako Estatu Batuak">
+<!ENTITY prefs.country.uk "Erresuma Batua">
+<!ENTITY prefs.state "Estatua">
+<!ENTITY prefs.city "Hiria">
