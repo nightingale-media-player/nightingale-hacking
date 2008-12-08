@@ -8,6 +8,11 @@
 <!ENTITY bit-rate.accesskey "B">
 <!ENTITY listeners.label "Liczba słuchaczy">
 <!ENTITY listeners.accesskey "L">
+<!ENTITY prefs.track.guessing.title "Przetwarzanie nazw wykonawców/tytułów">
+<!ENTITY prefs.track.guessing.label "Włącz przetwarzanie tytułów i nazw wykonawców">
+<!ENTITY prefs.track.guessing.help "Niektóre strumienie SHOUTcasta dostarczają informacji o odtwarzanym utworze w formie &quot;Wykonawca - Tytuł utworu&quot;.  Jeżeli włączysz tę opcję, rozszerzenie SHOUTcast spróbuje przetworzyć te dane i wysłać informację o zmianie odtwarzanego w strumieniu utworu, aby inne rozszerzenia wiedziały o tym fakcie.">
 <!ENTITY prefs.customGenres "Własne gatunki">
-<!ENTITY prefs.tosCaption "Zasady używania">
-<!ENTITY prefs.tosLinkText "Zobacz zasady używania">
+<!ENTITY custom-genres.help.label "Jeżeli masz zdefiniowane własne gatunki, które chcesz, by były wyświetlane w katalogu SHOUTcasta, wprowadź tutaj listę ich nazw oddzielonych przecinkami.">
+<!ENTITY prefs.tosCaption "Zasady użytkowania">
+<!ENTITY prefs.tosBegin "Użytkowanie katalogu SHOUTcasta wiąże się z akceptacją zasad jego użytkowania">
+<!ENTITY prefs.tosLinkText "Zobacz zasady użytkowania">

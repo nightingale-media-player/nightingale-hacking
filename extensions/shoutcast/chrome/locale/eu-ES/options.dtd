@@ -1,0 +1,6 @@
+<!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefwindow.title "SHOUTcast irratiaren hobespenak">
+<!ENTITY bit-rate.label "Bit rate (kbps)">
+<!ENTITY bit-rate.accesskey "B">
+<!ENTITY listeners.label "Entzule kopurua">
+<!ENTITY listeners.accesskey "E">

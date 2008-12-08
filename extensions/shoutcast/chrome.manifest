@@ -1,6 +1,9 @@
 content shoutcast-radio chrome/content/
 locale shoutcast-radio en-US chrome/locale/en-US/
 locale shoutcast-radio en-GB chrome/locale/en-GB/
+#locale shoutcast-radio eu-ES chrome/locale/eu-ES/
+locale shoutcast-radio zh-TW chrome/locale/zh-TW/
+locale shoutcast-radio kw-GB chrome/locale/kw-GB/
 locale shoutcast-radio da-DK chrome/locale/da-DK/
 locale shoutcast-radio fr-FR chrome/locale/fr-FR/
 locale shoutcast-radio de-DE chrome/locale/de-DE/
