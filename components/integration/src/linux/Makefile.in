@@ -65,7 +65,6 @@ DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
                           $(NULL)
 
 CPP_SRCS = ../WindowCloak.cpp \
-           ../WindowDragger.cpp \
            ../IntegrationComponent.cpp \
            ../NativeWindowFromNode.cpp \
            sbNativeWindowManager.cpp \

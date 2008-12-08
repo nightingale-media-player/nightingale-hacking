@@ -31,7 +31,6 @@
 
 #include "nsIGenericFactory.h"
 
-#include "WindowDragger.h"
 #include "WindowCloak.h"
 
 #include "sbNativeWindowManagerCID.h"
@@ -62,7 +61,6 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbNativeWindowManager)
 
 #ifdef XP_WIN
-NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowDragger)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowMinMax)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
@@ -89,14 +87,8 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_NATIVEWINDOWMANAGER_CONTRACTID,
     sbNativeWindowManagerConstructor
   },
-#ifdef XP_WIN
-  {
-    SONGBIRD_WINDOWDRAGGER_CLASSNAME,
-    SONGBIRD_WINDOWDRAGGER_CID,
-    SONGBIRD_WINDOWDRAGGER_CONTRACTID,
-    CWindowDraggerConstructor
-  },
 
+#ifdef XP_WIN
   {
     SONGBIRD_WINDOWMINMAX_CLASSNAME,
     SONGBIRD_WINDOWMINMAX_CID,

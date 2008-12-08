@@ -79,7 +79,6 @@ DYNAMIC_LIB_EXTRA_IMPORTS += ole32 \
 CPP_SRCS = MultiMonitor.cpp \
            ../NativeWindowFromNode.cpp \
            ../WindowCloak.cpp \
-           ../WindowDragger.cpp \
            ../WindowLayer.cpp \
            WindowMinMax.cpp \
            WindowMinMaxSubclass.cpp \
