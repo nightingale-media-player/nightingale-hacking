@@ -58,6 +58,13 @@ BUILDINFO_FILE := $(DEPTH)/build/sbBuildInfo.ini
 
 ifneq (,$(wildcard $(BUILDINFO_FILE)))
 
+####
+# check for missing vendor-binaries (a common error)
+ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
+$(error Please check out or build vendor-binaries - \
+  see https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
+endif
+
 CMD := $(PYTHON) $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py $(BUILDINFO_FILE) Build
 
 SB_APPNAME := $(shell $(CMD) AppName)
