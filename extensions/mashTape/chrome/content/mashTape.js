@@ -855,7 +855,7 @@ mashTape.update = function(artist, album, track) {
 		}
 	}
 
-	if (mashTape.prevArtist != artist && !mashTape.photoFrameLoaded) {
+	if (mashTape.prevArtist != artist || !mashTape.photoFrameLoaded) {
 		mashTape.photoFrameLoaded = false;
 		mashTape.photosReady = null;
 		mashTape.resetPhotoFrame();
