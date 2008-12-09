@@ -181,6 +181,7 @@ var HasBeenBackedUp
 var BackupLocation
 var HasValidInstallDirectory
 var SilentModeRunRegistration
+var DistributionIni
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
@@ -394,7 +395,11 @@ EndRegistryMunging:
  
   ; Refresh desktop icons
   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
-  
+
+  ${If} $DistributionIni != ""
+     ; Execute disthelper, pointing it at the dist file.
+     ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni install'
+  ${EndIf}
 SectionEnd
 
 Section "Desktop Icon"
@@ -776,6 +781,8 @@ FunctionEnd
 
 Function .onInit
   StrCpy $SilentModeRunRegistration "1"
+  StrCpy $DistributionIni ""
+
   ${GetParameters} $R0
   ClearErrors
 
@@ -783,8 +790,13 @@ Function .onInit
   IfErrors +2 0
     StrCpy $SilentModeRunRegistration "0"
 
+  ${GetOptions} $R0 "/DISTINI=" "$0"
+  IfErrors +2 0
+    StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
+
   ;MessageBox MB_OK "INSTALL DIR IS $INSTDIR"
   ;MessageBox MB_OK "Register is $SilentModeRunRegistration"
+  ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
 
   StrCpy $HasBeenBackedUp "False"
 FunctionEnd

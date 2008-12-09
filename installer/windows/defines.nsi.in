@@ -20,6 +20,8 @@
 !define DDEApplication        "Songbird"
 !define AppRegName            "Songbird"
 
+!define DistHelperEXE         "disthelper.exe"
+
 !define ApplicationIni        "application.ini"
 
 !define XULRunnerEXE          "xulrunner.exe"
