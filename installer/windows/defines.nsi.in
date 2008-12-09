@@ -23,6 +23,7 @@
 !define DistHelperEXE         "disthelper.exe"
 
 !define ApplicationIni        "application.ini"
+!define AddedFilesList        "added-files"
 
 !define XULRunnerEXE          "xulrunner.exe"
 !define XULRunnerDir          "xulrunner"

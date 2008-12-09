@@ -68,6 +68,7 @@ Var StartMenuDir
 
 !insertmacro GetParameters
 !insertmacro GetOptions
+!insertmacro un.LineRead
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Product version information. 
@@ -532,7 +533,9 @@ Section "Uninstall"
   ;RMDir /r "$APPDATA\Songbird"
   ;RMDir /r "$LOCALAPPDATA\Songbird"
   ;SetShellVarContext all
-  
+
+  Call un.DeleteUpdateAddedFiles
+ 
   ; Do not attempt to remove this directory recursively.
   RMDir $INSTDIR
   
@@ -773,6 +776,76 @@ Function un.PromptSurvey
 
   exit:
   
+FunctionEnd
+
+Function un.DeleteUpdateAddedFiles
+  ${If} ${FileExists} "$INSTDIR\${AddedFilesList}"
+     StrCpy $1 0
+
+  deleteLoop:
+     ; Put the increment up here, so we can "goto deleteLoop" in all cases, and
+     ; get the line incremented
+     IntOp $1 $1 + 1
+     ${un.LineRead} "$INSTDIR\${AddedFilesList}" "$1" $0
+     IfErrors deleteAddedFilesDone
+
+     Push $0
+     Call un.Trim
+     Pop $0
+     StrCpy $2 $0 1 0 ; See if we're a comment
+     ${If} $2 == "#"
+        goto deleteLoop
+     ${EndIf}
+
+     # Get the last character of the file name; checking to see if we're a 
+     # directory
+     StrCpy $2 $0 1 -1
+
+     ${If} $2 == "\"
+        RMDir /r $INSTDIR\$0
+     ${Else}
+        Delete $INSTDIR\$0
+     ${EndIf}
+     
+     goto deleteLoop
+
+     deleteAddedFilesDone:
+        Delete "$INSTDIR\${AddedFilesList}"
+
+  ${EndIf}
+FunctionEnd
+
+; Taken from
+; http://nsis.sourceforge.net/Remove_leading_and_trailing_whitespaces_from_a_string
+Function un.Trim
+	Exch $R1 ; Original string
+	Push $R2
+ 
+Loop:
+	StrCpy $R2 "$R1" 1
+	StrCmp "$R2" " " TrimLeft
+	StrCmp "$R2" "$\r" TrimLeft
+	StrCmp "$R2" "$\n" TrimLeft
+	StrCmp "$R2" "$\t" TrimLeft
+	GoTo Loop2
+TrimLeft:	
+	StrCpy $R1 "$R1" "" 1
+	Goto Loop
+ 
+Loop2:
+	StrCpy $R2 "$R1" 1 -1
+	StrCmp "$R2" " " TrimRight
+	StrCmp "$R2" "$\r" TrimRight
+	StrCmp "$R2" "$\n" TrimRight
+	StrCmp "$R2" "$\t" TrimRight
+	GoTo Done
+TrimRight:	
+	StrCpy $R1 "$R1" -1
+	Goto Loop2
+ 
+Done:
+	Pop $R2
+	Exch $R1
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
