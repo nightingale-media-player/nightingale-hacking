@@ -327,7 +327,7 @@ Section "-Application" Section1
     
   ${EndIf}
 
-  ${If} SilentModeRunRegistration == "1"
+  ${If} $SilentModeRunRegistration == "0"
     Goto EndRegistryMunging
   ${EndIf}
 
@@ -404,7 +404,7 @@ EndRegistryMunging:
 SectionEnd
 
 Section "Desktop Icon"
-  ${If} SilentModeRunRegistration == "1"
+  ${If} $SilentModeRunRegistration == "0"
     Goto End
   ${EndIf}
 
@@ -420,7 +420,7 @@ Section "Desktop Icon"
 SectionEnd
 
 Section "QuickLaunch Icon"
-  ${If} SilentModeRunRegistration == "1"
+  ${If} $SilentModeRunRegistration == "0"
     Goto End
   ${EndIf}
   
