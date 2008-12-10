@@ -357,10 +357,6 @@ Section "-Application" Section1
   ${EndUnless}
   ClearErrors
 
-  ; Pre-generate songbirdvlcrc file with correct plugin-path
-  CreateDirectory $APPDATA\SongbirdVLC
-  WriteINIStr $APPDATA\SongbirdVLC\songbirdvlcrc main plugin-path $INSTDIR\plugins\vlcmodules
-
   ; These need special handling on uninstall since they may be overwritten by
   ; an install into a different location.
   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
@@ -380,7 +376,6 @@ Section "-Application" Section1
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoRepair" 1
-  WriteUninstaller ${FileUninstallEXE}
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
@@ -392,10 +387,11 @@ Section "-Application" Section1
 
   !insertmacro MUI_STARTMENU_WRITE_END
 
-EndRegistryMunging:
- 
   ; Refresh desktop icons
   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+
+EndRegistryMunging:
+  WriteUninstaller ${FileUninstallEXE}
 
   ${If} $DistributionIni != ""
      ; Execute disthelper, pointing it at the dist file.
