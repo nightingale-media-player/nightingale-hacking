@@ -148,9 +148,9 @@ Amazon.prototype = {
 						var results = new Array;
 						for (var i=0; i<data.reviews.length; i++) {
 							var r = data.reviews[i];
-							if (typeof(hashes[r.content]) != "undefined")
+							if (typeof(hashes[r.title]) != "undefined")
 								continue;
-							hashes[r.content] = 1;
+							hashes[r.title] = 1;
 							results.push(r);
 						}
 						// re-sort the reviews
