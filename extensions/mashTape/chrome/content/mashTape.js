@@ -115,6 +115,10 @@ mashTape.init = function(e) {
 	gBrowser.addProgressListener(mashTape.locationListener,
 			Ci.nsIWebProgress.NOTIFY_STATE_DOCUMENT);
 
+	// Save a reference to the mashTapeManager
+	mashTape.mgr = Cc["@songbirdnest.com/mashTape/manager;1"]
+		.getService(Ci.sbIMashTapeManager);
+
 	// Setup our preferences observer
 	mashTape._prefBranch = Cc["@mozilla.org/preferences-service;1"]
 		.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.")
@@ -1080,6 +1084,9 @@ mashTape.updateInfo = function(provider, results, section) {
 				bioDiv.style.height = "93px";
 			} else
 				doc.getElementById("bio-toggle-text").style.display = "none";
+	
+			// notify listeners
+			mashTape.mgr.updateInfo("bio", results.bioText.toString());
 			break;
 
 		case "photo":
@@ -1093,6 +1100,9 @@ mashTape.updateInfo = function(provider, results, section) {
 					width = "150px";
 				doc.getElementById("artist-photo").style.width = width;
 				doc.getElementById("content").style.marginLeft = width;
+				
+				// notify listeners
+				mashTape.mgr.updateInfo("photo", this.src);
 			}, false);
 			if (results != null)
 				artistImage.src = results;
@@ -1728,6 +1738,21 @@ mashTape.updatePhoto = function(provider, results) {
 		}
 	} else
 		mashTape.drawPhotoStream(provider, results);
+
+	// trigger mashTapeListener updates
+	var photos = new Array();
+	for (var i=0; i<results.length; i++) {
+		var result = results[i];
+		photos.push({
+			imageUrl : result.medium,
+			imageTitle : result.title,
+			authorName : result.owner,
+			authorUrl : result.ownerUrl,
+			timestamp: result.time
+		});
+	}
+
+	mashTape.mgr.updatePhotos(photos, photos.length);
 }
 
 mashTape.drawPhotoStream = function(provider, results) {
