@@ -68,6 +68,9 @@ Var StartMenuDir
 
 !insertmacro GetParameters
 !insertmacro GetOptions
+
+!insertmacro un.GetParameters
+!insertmacro un.GetOptions
 !insertmacro un.LineRead
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -437,6 +440,11 @@ Section "Uninstall"
   ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
     Call un.CloseApp
   ${EndIf}
+
+  ${If} $DistributionIni != ""
+     ; Execute disthelper, pointing it at the dist file.
+     ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni uninstall'
+  ${EndIf}
   
   SetShellVarContext all
   
@@ -512,6 +520,7 @@ Section "Uninstall"
   RMDir /r $INSTDIR\chrome
   RMDir /r $INSTDIR\components
   RMDir /r $INSTDIR\defaults
+  RMDir /r $INSTDIR\distribution
   RMDir /r $INSTDIR\extensions
   RMDir /r $INSTDIR\jsmodules
   RMDir /r $INSTDIR\plugins
@@ -875,4 +884,14 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.onInit
+  StrCpy $DistributionIni ""
+
+  ${un.GetParameters} $R0
+  ClearErrors
+
+  ${un.GetOptions} $R0 "/DISTINI=" "$0"
+  IfErrors +2 0
+    StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
+
+  ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
 FunctionEnd
