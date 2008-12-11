@@ -191,362 +191,360 @@ var DistributionIni
 ; Install Sections
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Section "-Application" Section1
-  SectionIn 1 RO
+   SectionIn 1 RO
 
-  ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
-    Call CloseApp
-  ${EndIf}
+   ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
+      Call CloseApp
+   ${EndIf}
 
-  ; Check for old version
-  Call CheckForOldVersion
+   ; Check for old version
+   Call CheckForOldVersion
   
-  ; If old version present, ask user if they want to back it up.
-  ${If} $0 == "1"
-    MessageBox MB_YESNO|MB_USERICON "${BackupMessage}" /SD IDNO IDYES 0 IDNO +2
-    Call BackupOldVersion
-  ${EndIf}
+   ; If old version present, ask user if they want to back it up.
+   ${If} $0 == "1"
+      MessageBox MB_YESNO|MB_USERICON "${BackupMessage}" /SD IDNO IDYES 0 IDNO +2
+      Call BackupOldVersion
+   ${EndIf}
 
-  ; Reset output path
-  SetOutPath $INSTDIR
+   ; Reset output path
+   SetOutPath $INSTDIR
 
-  ; Finally try and uninstall the old version if it's present.
-  SetShellVarContext all
+   ; Finally try and uninstall the old version if it's present.
+   SetShellVarContext all
 
-  ; Read location of old version
-  ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString"
+   ; Read location of old version
+   ReadRegStr $R1 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString"
 
-  ; Uninstall old version
-  ${If} $HasBeenBackedUp == "False"
-    ${If} $R1 != ""
-      ClearErrors
-      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessage}" /SD IDYES IDYES +1 IDNO +3
-      ExecWait '$R1 /S _?=$INSTDIR'
-      Delete '$R1'
-    ${EndIf}
-  ${EndIf}
+   ; Uninstall old version
+   ${If} $HasBeenBackedUp == "False"
+      ${If} $R1 != ""
+         ClearErrors
+         MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessage}" /SD IDYES IDYES +1 IDNO +3
+         ExecWait '$R1 /S _?=$INSTDIR'
+         Delete '$R1'
+      ${EndIf}
+   ${EndIf}
 
-!ifdef InstallFlashRedistributable
-  ; Include Flash Redistributable
-  File /oname=$INSTDIR\${FlashRedistributableInstallerEXE} ${FlashRedistributableInstaller}
+   !ifdef InstallFlashRedistributable
+      ; Include Flash Redistributable
+      File /oname=$INSTDIR\${FlashRedistributableInstallerEXE} ${FlashRedistributableInstaller}
   
-  ; Print extra info for user
-  DetailPrint "${FlashRedistributableInstallMessage}"
+      ; Print extra info for user
+      DetailPrint "${FlashRedistributableInstallMessage}"
   
-  ; Disable details for this section
-  SetDetailsPrint none
+      ; Disable details for this section
+      SetDetailsPrint none
   
-  ; Execute Flash Redistributable Installer
-  ExecWait '$INSTDIR\${FlashRedistributableInstallerEXE} /S'
-  Delete '$INSTDIR\${FlashRedistributableInstallerEXE}'
+      ; Execute Flash Redistributable Installer
+      ExecWait '$INSTDIR\${FlashRedistributableInstallerEXE} /S'
+      Delete '$INSTDIR\${FlashRedistributableInstallerEXE}'
 
-  ; Add Application as Trusted user of Flash
-  CreateDirectory $SYSDIR\Macromed\Flash\FlashPlayerTrust
-  FileOpen $0 $SYSDIR\Macromed\Flash\FlashPlayerTrust\${BrandShortName}_${AppVersion} w
-  FileWrite $0 "$INSTDIR"
-  FileClose $0
+      ; Add Application as Trusted user of Flash
+      CreateDirectory $SYSDIR\Macromed\Flash\FlashPlayerTrust
+      FileOpen $0 $SYSDIR\Macromed\Flash\FlashPlayerTrust\${BrandShortName}_${AppVersion} w
+      FileWrite $0 "$INSTDIR"
+      FileClose $0
   
-  ; Done with scary stuff, enable details.
-  SetDetailsPrint both
-!endif
+      ; Done with scary stuff, enable details.
+      SetDetailsPrint both
+   !endif
 
-  ; List of files to install
-  File ${ApplicationIni}
-  File ${FileMainEXE}
-!ifndef UsingJemalloc
-    File ${CRuntime}
-    File ${CPPRuntime}
-!endif
-  File ${MozCRuntime}
-  File ${PreferredIcon}
-  File ${PreferredInstallerIcon}
-  File ${PreferredUninstallerIcon}
-  File ${VistaIcon}
+   ; List of files to install
+   File ${ApplicationIni}
+   File ${FileMainEXE}
+   !ifndef UsingJemalloc
+      File ${CRuntime}
+      File ${CPPRuntime}
+   !endif
+   File ${MozCRuntime}
+   File ${PreferredIcon}
+   File ${PreferredInstallerIcon}
+   File ${PreferredUninstallerIcon}
+   File ${VistaIcon}
   
-  ; List of text files to install
-  File LICENSE.html
-  File TRADEMARK.txt
-  File README.txt
-  File blocklist.xml
+   ; List of text files to install
+   File LICENSE.html
+   File TRADEMARK.txt
+   File README.txt
+   File blocklist.xml
   
-  ; List of directories to install
-  File /r chrome
-  File /r components
-  File /r defaults
-  File /r extensions
-  File /r jsmodules
-  File /r plugins
-  File /r searchplugins
-  File /r scripts
-  File /r ${XULRunnerDir}
+   ; List of directories to install
+   File /r chrome
+   File /r components
+   File /r defaults
+   File /r extensions
+   File /r jsmodules
+   File /r plugins
+   File /r searchplugins
+   File /r scripts
+   File /r ${XULRunnerDir}
 
-!ifdef IncludeLib
-    File /r lib
-!endif
+   !ifdef IncludeLib
+      File /r lib
+   !endif
 
-!ifdef IncludeGStreamerPlugins
-    File /r gst-plugins
-!endif
+   !ifdef IncludeGStreamerPlugins
+      File /r gst-plugins
+   !endif
 
-# We only need to do this if we're not using jemalloc...
-!ifndef UsingJemalloc
-  ; With VC8, we need the CRT and the manifests all over the place due to SxS
-  ; until BMO 350616 gets fixed
-  !ifdef CRuntimeManifest
-    SetOutPath $INSTDIR
-    File ${CRuntime}
-    File ${CPPRuntime}
-    File ${CRuntimeManifest}
-    SetOutPath $INSTDIR\${XULRunnerDir}
-    File ${CRuntime}
-    File ${CPPRuntime}
-    File ${CRuntimeManifest}
-  !endif
-!endif
+   # We only need to do this if we're not using jemalloc...
+   !ifndef UsingJemalloc
+      ; With VC8, we need the CRT and the manifests all over the place due to 
+      ; SxS until BMO 350616 gets fixed
+      !ifdef CRuntimeManifest
+         SetOutPath $INSTDIR
+         File ${CRuntime}
+         File ${CPPRuntime}
+         File ${CRuntimeManifest}
+         SetOutPath $INSTDIR\${XULRunnerDir}
+         File ${CRuntime}
+         File ${CPPRuntime}
+         File ${CRuntimeManifest}
+      !endif
+   !endif
 
-  ${If} ${AtLeastWinVista}
-    StrCpy $LinkIconFile ${VistaIcon}
-  ${Else}
-    StrCpy $LinkIconFile ${PreferredIcon}
-  ${EndIf}
+   ${If} ${AtLeastWinVista}
+      StrCpy $LinkIconFile ${VistaIcon}
+   ${Else}
+      StrCpy $LinkIconFile ${PreferredIcon}
+   ${EndIf}
  
-  ; With VC8, we need the CRT and the manifests all over the place due to SxS
+   ; With VC8, we need the CRT and the manifests all over the place due to SxS
 
-  ; Now that we're done installing files, we have to move the backed up version into the new directory tree.
-  ${If} $HasBeenBackedUp == "True"
-    StrCpy $3 "$INSTDIR\legacy\${AppOldVersion}\Songbird"
+   ; Now that we're done installing files, we have to move the backed up version into the new directory tree.
+   ${If} $HasBeenBackedUp == "True"
+      StrCpy $3 "$INSTDIR\legacy\${AppOldVersion}\Songbird"
     
-    ; Print extra info for user
-    DetailPrint "${ShortBackupMessage}"
+      ; Print extra info for user
+      DetailPrint "${ShortBackupMessage}"
     
-    ; Disable details for this section
-    SetDetailsPrint none
+      ; Disable details for this section
+      SetDetailsPrint none
     
-    CreateDirectory $3
-    CopyFiles /silent "$BackupLocation\*.*" $3
-    RMDir /r $BackupLocation
+      CreateDirectory $3
+      CopyFiles /silent "$BackupLocation\*.*" $3
+      RMDir /r $BackupLocation
     
-    ; Done with scary stuff, enable details.
-    SetDetailsPrint both
-    
+      ; Done with scary stuff, enable details.
+      SetDetailsPrint both
   ${EndIf}
 
-  ${If} $SilentModeRunRegistration == "0"
-    Goto EndRegistryMunging
-  ${EndIf}
+   ${If} $SilentModeRunRegistration == "0"
+      Goto EndRegistryMunging
+   ${EndIf}
 
-  ; Register DLLs
-  ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
-  ; is only registered for the last application installed. When the last
-  ; application installed is uninstalled AccessibleMarshal.dll will no longer be
-  ; registered. bug 338878
-  ; XXXaus - It's unclear to me if we need to do the same thing, need to investigate.
-  ClearErrors
-  RegDLL "$INSTDIR\${XULRunnerDir}\AccessibleMarshal.dll"
+   ; Register DLLs
+   ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
+   ; is only registered for the last application installed. When the last
+   ; application installed is uninstalled AccessibleMarshal.dll will no longer 
+   ; be registered. bug 338878
+   ; XXXaus - It's unclear to me if we need to do the same thing, need to
+   ; investigate.
+   ClearErrors
+   RegDLL "$INSTDIR\${XULRunnerDir}\AccessibleMarshal.dll"
 
-  ; Check if QuickTime is installed and copy the nsIQTScriptablePlugin.xpt from
-  ; its plugins directory into the app's components directory.
-  ClearErrors
-  ReadRegStr $R0 HKLM "Software\Apple Computer, Inc.\QuickTime" "InstallDir"
-  ${Unless} ${Errors}
-    Push $R0
-    ${GetPathFromRegStr}
-    Pop $R0
-    ${Unless} ${Errors}
-      GetFullPathName $R0 "$R0\Plugins\nsIQTScriptablePlugin.xpt"
+   ; Check if QuickTime is installed and copy the nsIQTScriptablePlugin.xpt from
+   ; its plugins directory into the app's components directory.
+   ClearErrors
+   ReadRegStr $R0 HKLM "Software\Apple Computer, Inc.\QuickTime" "InstallDir"
+   ${Unless} ${Errors}
+      Push $R0
+      ${GetPathFromRegStr}
+      Pop $R0
       ${Unless} ${Errors}
-        CopyFiles /SILENT "$R0" "$INSTDIR\components"
+         GetFullPathName $R0 "$R0\Plugins\nsIQTScriptablePlugin.xpt"
+         ${Unless} ${Errors}
+            CopyFiles /SILENT "$R0" "$INSTDIR\components"
+         ${EndUnless}
       ${EndUnless}
-    ${EndUnless}
-  ${EndUnless}
-  ClearErrors
+   ${EndUnless}
+   ClearErrors
 
-  ; These need special handling on uninstall since they may be overwritten by
-  ; an install into a different location.
-  StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
-  WriteRegStr HKLM "$0" "Path" "$INSTDIR"
-  WriteRegStr HKLM "$0" "" "$INSTDIR\${FileMainEXE}"
+   ; These need special handling on uninstall since they may be overwritten by
+   ; an install into a different location.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
+   WriteRegStr HKLM "$0" "Path" "$INSTDIR"
+   WriteRegStr HKLM "$0" "" "$INSTDIR\${FileMainEXE}"
 
-  ; Add XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
-  WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}" "" ""
-  WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
+   ; Add XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}" "" ""
+   WriteRegStr HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}" "" ""
 
-  ; Write the installation path into the registry
-  WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} - (${BUILD_ID})" "InstallDir" "$INSTDIR"
+   ; Write the installation path into the registry
+   WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} - (${BUILD_ID})" "InstallDir" "$INSTDIR"
   
-  ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "DisplayName" "${BrandFullName} ${AppVersion} (${BUILD_ID})"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "InstallLocation" "$INSTDIR"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoRepair" 1
+   ; Write the uninstall keys for Windows
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "DisplayName" "${BrandFullName} ${AppVersion} (${BUILD_ID})"
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "InstallLocation" "$INSTDIR"
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
+   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoModify" 1
+   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "NoRepair" 1
 
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
-  CreateDirectory "$SMPROGRAMS\$StartMenuDir"
-  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
-  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Profile Manager).lnk" "$INSTDIR\${FileMainEXE}" "-p" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
-  CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Safe-Mode).lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
-  CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\${PreferredUninstallerIcon}" 0
+   CreateDirectory "$SMPROGRAMS\$StartMenuDir"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Profile Manager).lnk" "$INSTDIR\${FileMainEXE}" "-p" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} w/ Profile Manager"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Safe-Mode).lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
+   CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\${PreferredUninstallerIcon}" 0
 
-  !insertmacro MUI_STARTMENU_WRITE_END
+   !insertmacro MUI_STARTMENU_WRITE_END
 
-  ; Refresh desktop icons
-  System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+   ; Refresh desktop icons
+   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
 
 EndRegistryMunging:
-  WriteUninstaller ${FileUninstallEXE}
+   WriteUninstaller ${FileUninstallEXE}
 
-  ${If} $DistributionIni != ""
-     ; Execute disthelper, pointing it at the dist file.
-     ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni install'
-  ${EndIf}
+   ${If} $DistributionIni != ""
+      ; Execute disthelper, pointing it at the dist file.
+      ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni install'
+   ${EndIf}
 SectionEnd
 
 Section "Desktop Icon"
-  ${If} $SilentModeRunRegistration == "0"
-    Goto End
-  ${EndIf}
+   ${If} $SilentModeRunRegistration == "0"
+      Goto End
+   ${EndIf}
 
+   ; Put the desktop icon in All Users\Desktop
+   SetShellVarContext all
+   CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
-  ; Put the desktop icon in All Users\Desktop
-  SetShellVarContext all
-  CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
-
-  ; Remember that we installed a desktop shortcut.
-  WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location" "$DESKTOP\${BrandFullNameInternal}.lnk"
+   ; Remember that we installed a desktop shortcut.
+   WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location" "$DESKTOP\${BrandFullNameInternal}.lnk"
  
-  End: 
+End: 
 SectionEnd
 
 Section "QuickLaunch Icon"
-  ${If} $SilentModeRunRegistration == "0"
-    Goto End
-  ${EndIf}
+   ${If} $SilentModeRunRegistration == "0"
+      Goto End
+   ${EndIf}
   
-  ; Put the quicklaunch icon in the current users quicklaunch.
-  SetShellVarContext current
-  CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
+   ; Put the quicklaunch icon in the current users quicklaunch.
+   SetShellVarContext current
+   CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
-  ; Remember that we installed a quicklaunch shortcut.
-  WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location" "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
-  End:
+   ; Remember that we installed a quicklaunch shortcut.
+   WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location" "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
+End:
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstall Section
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Section "Uninstall"
+   ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
+      Call un.CloseApp
+   ${EndIf}
 
-  ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
-    Call un.CloseApp
-  ${EndIf}
-
-  ${If} $DistributionIni != ""
-     ; Execute disthelper, pointing it at the dist file.
-     ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni uninstall'
-  ${EndIf}
+   ${If} $DistributionIni != ""
+      ; Before doing any uninstallation activities, execute disthelper to allow
+      ; it to do any cleanup it likes; pointing it at the dist file.
+      ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni uninstall'
+   ${EndIf}
   
-  SetShellVarContext all
+   SetShellVarContext all
   
-  ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}"
+   ; Remove registry keys
+   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}"
 
-  ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
-  DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}"
-  DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}"
+   ; Remove XULRunner and Songbird to the Windows Media Player Shim Inclusion List.
+   DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${XULRunnerEXE}"
+   DeleteRegKey HKLM "Software\Microsoft\MediaPlayer\ShimInclusionList\${FileMainEXE}"
 
-  StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
-  DeleteRegKey HKLM "$0"
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\App Paths\${FileMainEXE}"
+   DeleteRegKey HKLM "$0"
 
-  ; Remove uninstaller
-  Delete $INSTDIR\${FileUninstallEXE}
+   ; Remove uninstaller
+   Delete $INSTDIR\${FileUninstallEXE}
 
-  ; Read where start menu shortcuts are installed
-  ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
+   ; Read where start menu shortcuts are installed
+   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
 
-  ; Remove start menu shortcuts and start menu folder.
-  ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
-    RMDir /r "$SMPROGRAMS\$0\*.*"
-  ${EndIf}
+   ; Remove start menu shortcuts and start menu folder.
+   ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
+      RMDir /r "$SMPROGRAMS\$0\*.*"
+   ${EndIf}
 
-  ; Read location of desktop shortcut and remove if present.
-  ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location"
-  ${If} ${FileExists} $0
-    Delete $0
-  ${EndIf}
+   ; Read location of desktop shortcut and remove if present.
+   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location"
+   ${If} ${FileExists} $0
+      Delete $0
+   ${EndIf}
 
-  ; Read location of quicklaunch shortcut and remove if present.
-  ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location"
-  ${If} ${FileExists} $0
-    Delete $0
-  ${EndIf}
+   ; Read location of quicklaunch shortcut and remove if present.
+   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location"
+   ${If} ${FileExists} $0
+      Delete $0
+   ${EndIf}
   
-  ; Remove the last of the registry keys
-  DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
+   ; Remove the last of the registry keys
+   DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
 
-  ; List of files to uninstall
-  Delete $INSTDIR\${ApplicationIni}
-  Delete $INSTDIR\${FileMainEXE}
-!ifndef UsingJemalloc
-  Delete $INSTDIR\${CRuntime}
-  Delete $INSTDIR\${CPPRuntime}
-  Delete $INSTDIR\${CRuntimeManifest}
-!endif
-  Delete $INSTDIR\${MozCRuntime}
+   ; List of files to uninstall
+   Delete $INSTDIR\${ApplicationIni}
+   Delete $INSTDIR\${FileMainEXE}
+   !ifndef UsingJemalloc
+      Delete $INSTDIR\${CRuntime}
+      Delete $INSTDIR\${CPPRuntime}
+      Delete $INSTDIR\${CRuntimeManifest}
+   !endif
+   Delete $INSTDIR\${MozCRuntime}
 
-  Delete $INSTDIR\${PreferredIcon}
-  Delete $INSTDIR\${PreferredInstallerIcon}
-  Delete $INSTDIR\${PreferredUninstallerIcon}
+   Delete $INSTDIR\${PreferredIcon}
+   Delete $INSTDIR\${PreferredInstallerIcon}
+   Delete $INSTDIR\${PreferredUninstallerIcon}
 
-  Delete $INSTDIR\${VistaIcon}
+   Delete $INSTDIR\${VistaIcon}
   
-  ; Text files to uninstall
-  Delete $INSTDIR\LICENSE.html
-  Delete $INSTDIR\TRADEMARK.txt
-  Delete $INSTDIR\README.txt
-  Delete $INSTDIR\blocklist.xml
+   ; Text files to uninstall
+   Delete $INSTDIR\LICENSE.html
+   Delete $INSTDIR\TRADEMARK.txt
+   Delete $INSTDIR\README.txt
+   Delete $INSTDIR\blocklist.xml
   
-  ; These files are created by the application
-  Delete $INSTDIR\*.chk
-
-  ; Mozilla updates can leave this folder behind when updates fail.
-  RMDir /r $INSTDIR\updates
-  ; Mozilla updates can leave some of these files over when updates fail.
-  Delete $INSTDIR\removed-files
-  Delete $INSTDIR\active-update.xml
-  Delete $INSTDIR\updates.xml
-  
-  ; List of directories to remove recursively.
-  RMDir /r $INSTDIR\chrome
-  RMDir /r $INSTDIR\components
-  RMDir /r $INSTDIR\defaults
-  RMDir /r $INSTDIR\distribution
-  RMDir /r $INSTDIR\extensions
-  RMDir /r $INSTDIR\jsmodules
-  RMDir /r $INSTDIR\plugins
-  RMDir /r $INSTDIR\searchplugins
-  RMDir /r $INSTDIR\scripts
-  RMDir /r $INSTDIR\lib
-  RMDir /r $INSTDIR\gst-plugins
-  RMDir /r $INSTDIR\${XULRunnerDir}
-
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; I commented this out, because I don't think we *truly* want to do this. 
-  ;; But we might have to later.
-  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;SetShellVarContext current
-  ;RMDir /r "$APPDATA\Songbird"
-  ;RMDir /r "$LOCALAPPDATA\Songbird"
-  ;SetShellVarContext all
-
-  Call un.DeleteUpdateAddedFiles
+   ; These files are created by the application
+   Delete $INSTDIR\*.chk
  
-  ; Do not attempt to remove this directory recursively.
-  RMDir $INSTDIR
+   ; Mozilla updates can leave this folder behind when updates fail.
+   RMDir /r $INSTDIR\updates
+   ; Mozilla updates can leave some of these files over when updates fail.
+   Delete $INSTDIR\removed-files
+   Delete $INSTDIR\active-update.xml
+   Delete $INSTDIR\updates.xml
+   
+   ; List of directories to remove recursively.
+   RMDir /r $INSTDIR\chrome
+   RMDir /r $INSTDIR\components
+   RMDir /r $INSTDIR\defaults
+   RMDir /r $INSTDIR\distribution
+   RMDir /r $INSTDIR\extensions
+   RMDir /r $INSTDIR\jsmodules
+   RMDir /r $INSTDIR\plugins
+   RMDir /r $INSTDIR\searchplugins
+   RMDir /r $INSTDIR\scripts
+   RMDir /r $INSTDIR\lib
+   RMDir /r $INSTDIR\gst-plugins
+   RMDir /r $INSTDIR\${XULRunnerDir}
+ 
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;; I commented this out, because I don't think we *truly* want to do this. 
+   ;; But we might have to later.
+   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+   ;SetShellVarContext current
+   ;RMDir /r "$APPDATA\Songbird"
+   ;RMDir /r "$LOCALAPPDATA\Songbird"
+   ;SetShellVarContext all
+ 
+   Call un.DeleteUpdateAddedFiles
   
-  ; Refresh desktop.
-  System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
-  
+   ; Do not attempt to remove this directory recursively; see bug 6367
+   RMDir $INSTDIR
+   
+   ; Refresh desktop.
+   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -554,175 +552,171 @@ SectionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function LaunchApp
-  Call CloseApp
-  Exec "$INSTDIR\${FileMainEXE}"
+   Call CloseApp
+   Exec "$INSTDIR\${FileMainEXE}"
 FunctionEnd
 
 Function CloseApp
-  loop:
+loop:
+   ${nsProcess::FindProcess} "${FileMainEXE}" $0
 
-  ${nsProcess::FindProcess} "${FileMainEXE}" $0
+   ${If} $0 == 0
+      MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
 
-  ${If} $0 == 0
-    MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
-
-    FindWindow $1 "${WindowClass}"
-    IntCmp $1 0 +4
-    System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
+      FindWindow $1 "${WindowClass}"
+      IntCmp $1 0 +4
+      System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
     
-    ; The amount of time to wait for the app to shutdown before prompting again
-    Sleep 5000
+      ; The amount of time to wait for the app to shutdown before prompting
+      ; again
+      Sleep 5000
 
-    ${nsProcess::FindProcess} "${FileMainEXE}" $0
-    ${If} $0 == 0
-      ${nsProcess::KillProcess} "${FileMainEXE}" $1
-      ${If} $1 == 0
-        goto end
+      ${nsProcess::FindProcess} "${FileMainEXE}" $0
+
+      ${If} $0 == 0
+         ${nsProcess::KillProcess} "${FileMainEXE}" $1
+         ${If} $1 == 0
+            goto end
+         ${Else}
+            goto exit
+         ${EndIf}
       ${Else}
-        goto exit
+         goto end
       ${EndIf}
-    ${Else}
-      goto end
-    ${EndIf}
     
-    Sleep 2000
-    Goto loop
+      Sleep 2000
+      Goto loop
     
   ${Else}
-    goto end
+      goto end
   ${EndIf}
   
-  exit:
-  ${nsProcess::Unload}
-  Quit
+exit:
+   ${nsProcess::Unload}
+   Quit
 
-  end:
-  ${nsProcess::Unload}
-
+end:
+   ${nsProcess::Unload}
 FunctionEnd
 
 Function GetOldVersionLocation
-  ReadRegStr $0 HKLM "Software\Songbird" "Install_Dir"
-  ClearErrors
+   ReadRegStr $0 HKLM "Software\Songbird" "Install_Dir"
+   ClearErrors
 FunctionEnd
 
 Function CheckForOldVersion
-  Call GetOldVersionLocation
-  ${If} $0 == ""
-    StrCpy $0 "0"
-  ${Else}
-    StrCpy $0 "1"
-  ${EndIf}
+   Call GetOldVersionLocation
+   ${If} $0 == ""
+      StrCpy $0 "0"
+   ${Else}
+      StrCpy $0 "1"
+   ${EndIf}
 FunctionEnd
 
 Function BackupOldVersion
-  SetShellVarContext all
+   SetShellVarContext all
   
-  ;Find old installation path using registry key / standard install path
-  Call GetOldVersionLocation
+   ;Find old installation path using registry key / standard install path
+   Call GetOldVersionLocation
 
-  ;Found old version, move to <AppName>_<Version>  
-  ${If} $0 != ""
-    StrCpy $1 "$TEMP\${BrandShortName}_${AppOldVersion}"
-    Rename $0 $1
-    ClearErrors
-  ${Else}
-    Return
-  ${EndIf}
+   ;Found old version, move to <AppName>_<Version>  
+   ${If} $0 != ""
+      StrCpy $1 "$TEMP\${BrandShortName}_${AppOldVersion}"
+      Rename $0 $1
+      ClearErrors
+   ${Else}
+      Return
+   ${EndIf}
 
-  ;Figure out what link icon file we'll use for the shortcuts
-  ${If} ${AtLeastWinVista}
-    StrCpy $2 "songbird.ico"
-  ${Else}
-    StrCpy $2 "songbird32x32x8.ico"
-  ${EndIf}
+   ;Figure out what link icon file we'll use for the shortcuts
+   ${If} ${AtLeastWinVista}
+      StrCpy $2 "songbird.ico"
+   ${Else}
+      StrCpy $2 "songbird32x32x8.ico"
+   ${EndIf}
   
-  ;Update shortcuts (if found)
-  ;Desktop shortcut
-  ${If} ${FileExists} "$DESKTOP\Songbird.lnk"
-    Delete "$DESKTOP\Songbird.lnk"
-  ${EndIf}
+   ;Update shortcuts (if found)
+   ;Desktop shortcut
+   ${If} ${FileExists} "$DESKTOP\Songbird.lnk"
+      Delete "$DESKTOP\Songbird.lnk"
+   ${EndIf}
   
-  ;QuickLaunch shortcut
-  ${If} ${FileExists} "$QUICKLAUNCH\Songbird.lnk"
-    Delete "$QUICKLAUNCH\Songbird.lnk"
-  ${EndIf}
+   ;QuickLaunch shortcut
+   ${If} ${FileExists} "$QUICKLAUNCH\Songbird.lnk"
+      Delete "$QUICKLAUNCH\Songbird.lnk"
+   ${EndIf}
   
-  ;Start menu shortcuts and start menu folder.
-  ${If} ${FileExists} "$SMPROGRAMS\Songbird\Songbird.lnk"
-    Delete "$SMPROGRAMS\Songbird\Songbird.lnk"
-  ${EndIf}
+   ;Start menu shortcuts and start menu folder.
+   ${If} ${FileExists} "$SMPROGRAMS\Songbird\Songbird.lnk"
+      Delete "$SMPROGRAMS\Songbird\Songbird.lnk"
+   ${EndIf}
   
-  ${If} ${FileExists} "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk"
-    Delete "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk"
-  ${EndIf}
+   ${If} ${FileExists} "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk"
+      Delete "$SMPROGRAMS\Songbird\Uninstall Songbird.lnk"
+   ${EndIf}
   
-  ${If} ${FileExists} "$SMPROGRAMS\Songbird"
-    RMDir "$SMPROGRAMS\Songbird"
-  ${EndIf}
+   ${If} ${FileExists} "$SMPROGRAMS\Songbird"
+      RMDir "$SMPROGRAMS\Songbird"
+   ${EndIf}
   
-  ;Delete uninstall information
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird"
+   ;Delete uninstall information
+   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Songbird"
   
-  ;Delete install location
-  DeleteRegKey HKLM "Software\Songbird"
+   ;Delete install location
+   DeleteRegKey HKLM "Software\Songbird"
   
-  StrCpy $HasBeenBackedUp "True"
-  StrCpy $BackupLocation $1
+   StrCpy $HasBeenBackedUp "True"
+   StrCpy $BackupLocation $1
 
-  ; Refresh desktop.
-  System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+   ; Refresh desktop.
+   System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
 
 FunctionEnd
 
 Function shouldPickNewDirectory
-  ${DirState} "$INSTDIR" $0
+   ${DirState} "$INSTDIR" $0
 
-  ${If} $0 == 1
-    StrCpy $HasValidInstallDirectory 0
-  ${Else}
-    StrCpy $HasValidInstallDirectory 1
-  ${EndIf}
+   ${If} $0 == 1
+      StrCpy $HasValidInstallDirectory 0
+   ${Else}
+      StrCpy $HasValidInstallDirectory 1
+   ${EndIf}
 
-  ; Seems the directory that was picked isn't empty
-  ${If} $HasValidInstallDirectory == "0"
+   ; Seems the directory that was picked isn't empty
+   ${If} $HasValidInstallDirectory == "0"
     
-    ; Check for previous version of Songbird in picked folder.
-    ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
-      
-      ; Looks like it is Songbird that is installed in this folder
-      ; Ask the user if they want to uninstall. If they choose not to, they
-      ; will not be able to continue installing in the chosen folder.
-      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" IDYES 0 IDNO NotValid
-      ExecWait '$INSTDIR\${FileUninstallEXE} /S _?=$INSTDIR'
-      Delete '$INSTDIR\${FileUninstallEXE}'
+      ; Check for previous version of Songbird in picked folder.
+      ${If} ${FileExists} "$INSTDIR\${FileMainEXE}"
+         ; Looks like it is Songbird that is installed in this folder
+         ; Ask the user if they want to uninstall. If they choose not to, they
+         ; will not be able to continue installing in the chosen folder.
+         MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" IDYES 0 IDNO NotValid
+         ExecWait '$INSTDIR\${FileUninstallEXE} /S _?=$INSTDIR'
+         Delete '$INSTDIR\${FileUninstallEXE}'
 
-      ; Check the state of the directory again. It may still not be empty!
-      ${DirState} "$INSTDIR" $0
+         ; Check the state of the directory again. It may still not be empty!
+         ${DirState} "$INSTDIR" $0
 
-      ${If} $0 == 1
-        StrCpy $HasValidInstallDirectory 0
-        Goto Valid
-      ${Else}
-        StrCpy $HasValidInstallDirectory 1
-        Goto Valid
+         ${If} $0 == 1
+            StrCpy $HasValidInstallDirectory 0
+            Goto Valid
+         ${Else}
+            StrCpy $HasValidInstallDirectory 1
+            Goto Valid
+         ${EndIf}
+
+NotValid: 
+         Abort
+Valid:
       ${EndIf}
 
-      NotValid: 
-        Abort
-        
-      Valid:
-      
-    ${EndIf}
-
-    ; If we still don't have a valid empty directory to install
-    ; to, throw up the error message.
-    ${If} $HasValidInstallDirectory == "0"
-     MessageBox MB_OK|MB_ICONSTOP "${DirectoryNotEmptyMessage}"
-     Abort
-    ${EndIf}
-    
-  ${EndIf}
+      ; If we still don't have a valid empty directory to install
+      ; to, throw up the error message.
+      ${If} $HasValidInstallDirectory == "0"
+         MessageBox MB_OK|MB_ICONSTOP "${DirectoryNotEmptyMessage}"
+         Abort
+      ${EndIf}
+   ${EndIf}
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -730,127 +724,121 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.CloseApp
-  loop:
+loop:
+   ${nsProcess::FindProcess} "${FileMainEXE}" $0
 
-  ${nsProcess::FindProcess} "${FileMainEXE}" $0
+   ${If} $0 == 0
+      MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
 
-  ${If} $0 == 0
-    MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
-
-    FindWindow $1 "${WindowClass}"
-    IntCmp $1 0 +4
-    System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
+      FindWindow $1 "${WindowClass}"
+      IntCmp $1 0 +4
+      System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
     
-    ; The amount of time to wait for the app to shutdown before prompting again
-    Sleep 5000
+      ; The amount of time to wait for the app to shutdown before prompting again
+      Sleep 5000
 
-    ${nsProcess::FindProcess} "${FileMainEXE}" $0
-    ${If} $0 == 0
-      ${nsProcess::KillProcess} "${FileMainEXE}" $1
-      ${If} $1 == 0
-        goto end
+      ${nsProcess::FindProcess} "${FileMainEXE}" $0
+      ${If} $0 == 0
+         ${nsProcess::KillProcess} "${FileMainEXE}" $1
+         ${If} $1 == 0
+            goto end
+         ${Else}
+            goto exit
+         ${EndIf}
       ${Else}
-        goto exit
+         goto end
       ${EndIf}
-    ${Else}
+    
+      Sleep 2000
+      Goto loop
+    
+   ${Else}
       goto end
-    ${EndIf}
-    
-    Sleep 2000
-    Goto loop
-    
-  ${Else}
-    goto end
-  ${EndIf}
-  
-  exit:
-  ${nsProcess::Unload}
-  Quit
+   ${EndIf}
+exit:
+   ${nsProcess::Unload}
+   Quit
 
-  end:
-  ${nsProcess::Unload}
+end:
+   ${nsProcess::Unload}
 FunctionEnd
 
 ;
 ; Show a prompt to allow the user to take a survey.
 ;
 Function un.PromptSurvey
-
-  MessageBox MB_YESNO|MB_ICONQUESTION "${TakeSurveyMessage}" IDNO exit
-  ExecShell "open" "http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d"
-
-  exit:
-  
+   MessageBox MB_YESNO|MB_ICONQUESTION "${TakeSurveyMessage}" IDNO exit
+   ExecShell "open" "http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d"
+exit:
 FunctionEnd
 
 Function un.DeleteUpdateAddedFiles
-  ${If} ${FileExists} "$INSTDIR\${AddedFilesList}"
-     StrCpy $1 0
+   ${If} ${FileExists} "$INSTDIR\${AddedFilesList}"
+      StrCpy $1 0
 
-  deleteLoop:
-     ; Put the increment up here, so we can "goto deleteLoop" in all cases, and
-     ; get the line incremented
-     IntOp $1 $1 + 1
-     ${un.LineRead} "$INSTDIR\${AddedFilesList}" "$1" $0
-     IfErrors deleteAddedFilesDone
+deleteLoop:
+      ; Put the increment up here, so we can "goto deleteLoop" in all cases, and
+      ; get the line incremented
+      IntOp $1 $1 + 1
+      ${un.LineRead} "$INSTDIR\${AddedFilesList}" "$1" $0
+      IfErrors deleteAddedFilesDone
 
-     Push $0
-     Call un.Trim
-     Pop $0
-     StrCpy $2 $0 1 0 ; See if we're a comment
-     ${If} $2 == "#"
-        goto deleteLoop
-     ${EndIf}
+      Push $0
+      Call un.Trim
+      Pop $0
+      StrCpy $2 $0 1 0 ; See if we're a comment
+      ${If} $2 == "#"
+         goto deleteLoop
+      ${EndIf}
 
-     # Get the last character of the file name; checking to see if we're a 
-     # directory
-     StrCpy $2 $0 1 -1
+      # Get the last character of the file name; checking to see if we're a 
+      # directory
+      StrCpy $2 $0 1 -1
 
-     ${If} $2 == "\"
-        RMDir /r $INSTDIR\$0
-     ${Else}
-        Delete $INSTDIR\$0
-     ${EndIf}
+      ${If} $2 == "\"
+         RMDir /r $INSTDIR\$0
+      ${Else}
+         Delete $INSTDIR\$0
+      ${EndIf}
      
-     goto deleteLoop
+      goto deleteLoop
 
-     deleteAddedFilesDone:
-        Delete "$INSTDIR\${AddedFilesList}"
-
-  ${EndIf}
+deleteAddedFilesDone:
+      Delete "$INSTDIR\${AddedFilesList}"
+   ${EndIf}
 FunctionEnd
 
 ; Taken from
 ; http://nsis.sourceforge.net/Remove_leading_and_trailing_whitespaces_from_a_string
 Function un.Trim
-	Exch $R1 ; Original string
-	Push $R2
+   Exch $R1 ; Original string
+   Push $R2
  
 Loop:
-	StrCpy $R2 "$R1" 1
-	StrCmp "$R2" " " TrimLeft
-	StrCmp "$R2" "$\r" TrimLeft
-	StrCmp "$R2" "$\n" TrimLeft
-	StrCmp "$R2" "$\t" TrimLeft
-	GoTo Loop2
-TrimLeft:	
-	StrCpy $R1 "$R1" "" 1
-	Goto Loop
+   StrCpy $R2 "$R1" 1
+   StrCmp "$R2" " " TrimLeft
+   StrCmp "$R2" "$\r" TrimLeft
+   StrCmp "$R2" "$\n" TrimLeft
+   StrCmp "$R2" "$\t" TrimLeft
+   GoTo Loop2
+TrimLeft:   
+   StrCpy $R1 "$R1" "" 1
+   Goto Loop
  
 Loop2:
-	StrCpy $R2 "$R1" 1 -1
-	StrCmp "$R2" " " TrimRight
-	StrCmp "$R2" "$\r" TrimRight
-	StrCmp "$R2" "$\n" TrimRight
-	StrCmp "$R2" "$\t" TrimRight
-	GoTo Done
-TrimRight:	
-	StrCpy $R1 "$R1" -1
-	Goto Loop2
+   StrCpy $R2 "$R1" 1 -1
+   StrCmp "$R2" " " TrimRight
+   StrCmp "$R2" "$\r" TrimRight
+   StrCmp "$R2" "$\n" TrimRight
+   StrCmp "$R2" "$\t" TrimRight
+   GoTo Done
+TrimRight:
+   StrCpy $R1 "$R1" -1
+   Goto Loop2
  
 Done:
-	Pop $R2
-	Exch $R1
+   Pop $R2
+   Exch $R1
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -858,25 +846,25 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
-  StrCpy $SilentModeRunRegistration "1"
-  StrCpy $DistributionIni ""
+   StrCpy $SilentModeRunRegistration "1"
+   StrCpy $DistributionIni ""
 
-  ${GetParameters} $R0
-  ClearErrors
+   ${GetParameters} $R0
+   ClearErrors
 
-  ${GetOptions} $R0 "/NOREG" "$0"
-  IfErrors +2 0
-    StrCpy $SilentModeRunRegistration "0"
+   ${GetOptions} $R0 "/NOREG" "$0"
+   IfErrors +2 0
+      StrCpy $SilentModeRunRegistration "0"
 
-  ${GetOptions} $R0 "/DISTINI=" "$0"
-  IfErrors +2 0
-    StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
+   ${GetOptions} $R0 "/DISTINI=" "$0"
+   IfErrors +2 0
+   StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
 
-  ;MessageBox MB_OK "INSTALL DIR IS $INSTDIR"
-  ;MessageBox MB_OK "Register is $SilentModeRunRegistration"
-  ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
+   ;MessageBox MB_OK "INSTALL DIR IS $INSTDIR"
+   ;MessageBox MB_OK "Register is $SilentModeRunRegistration"
+   ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
 
-  StrCpy $HasBeenBackedUp "False"
+   StrCpy $HasBeenBackedUp "False"
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -884,14 +872,14 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.onInit
-  StrCpy $DistributionIni ""
+   StrCpy $DistributionIni ""
 
-  ${un.GetParameters} $R0
-  ClearErrors
+   ${un.GetParameters} $R0
+   ClearErrors
 
-  ${un.GetOptions} $R0 "/DISTINI=" "$0"
-  IfErrors +2 0
-    StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
+   ${un.GetOptions} $R0 "/DISTINI=" "$0"
+   IfErrors +2 0
+   StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
 
-  ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
+   ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
 FunctionEnd
