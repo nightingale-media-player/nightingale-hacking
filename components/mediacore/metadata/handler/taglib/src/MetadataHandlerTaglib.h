@@ -345,7 +345,7 @@ private:
 
     nsresult AddMetadataValue(
         const char                  *name,
-        TagLib::uint                value);
+        PRUint64                    value);
 
     void FixTrackDiscNumber(
         nsString                    numberKey,

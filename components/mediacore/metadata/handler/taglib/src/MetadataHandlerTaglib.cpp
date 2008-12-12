@@ -1771,7 +1771,8 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
   {
       AddMetadataValue(SB_PROPERTY_BITRATE, pAudioProperties->bitrate());
       AddMetadataValue(SB_PROPERTY_SAMPLERATE, pAudioProperties->sampleRate());
-      AddMetadataValue(SB_PROPERTY_DURATION, pAudioProperties->length() * 1000000);
+      AddMetadataValue(SB_PROPERTY_DURATION, 
+              (PRUint64)pAudioProperties->length() * 1000000);
   }
   
   return true; // file was valid
@@ -2319,9 +2320,8 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
 
 nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     const char                  *name,
-    TagLib::uint                value)
+    PRUint64                    value)
 {
-    nsAutoString                valueString;
     nsresult                    result = NS_OK;
 
     //  Zero indicates no value
@@ -2330,7 +2330,7 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     }
 
     /* Convert the integer value into a string. */    
-    valueString.AppendInt(value);
+    sbAutoString valueString(value);
 
     /* Add the metadata value. */
     result = mpMetadataPropertyArray->AppendProperty
