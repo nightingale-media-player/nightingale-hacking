@@ -57,28 +57,20 @@ try
 
   var commandLineItemHandler = {
     cmdline_mgr: null,
-    mm: null,
-    typeSniffer: null,
-    
+
     init: function() {
       var cmdline = Components.classes["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"];
       if (cmdline) {
         var cmdline_service = cmdline.getService(Components.interfaces.nsICommandLineHandler);
         if (cmdline_service) {
-          cmdline_mgr = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineManager);
-          if (cmdline_mgr)
-            cmdline_mgr.addItemHandler(this);
+          this.cmdline_mgr = cmdline_service.QueryInterface(Components.interfaces.sbICommandLineManager);
+          this.cmdline_mgr.addItemHandler(this);
         }
       }
-      
-      this.mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                          .getService(Components.interfaces.sbIMediacoreManager);
-      this.typeSniffer = Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
-                                   .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
     },
     
     shutdown: function() {
-      if (cmdline_mgr) cmdline_mgr.removeItemHandler(this);
+      if (this.cmdline_mgr) this.cmdline_mgr.removeItemHandler(this);
     },
     
     handleItem: function(aUriSpec, aCount, aTotal) {
@@ -86,11 +78,18 @@ try
           aUriSpec.toLowerCase().indexOf("https:") == 0) {
         gBrowser.loadURI(aUriSpec);
       } else {
-        if (this.typeSniffer.isValidPlaylistURL(aUriSpec)) {
+        var typeSniffer = Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
+                                    .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                                  .getService(Components.interfaces.nsIIOService);
+        var aUri = ioService.newURI(aUriSpec, null, null);
+        if (typeSniffer.isValidPlaylistURL(aUri)) {
           var list = SBOpenPlaylistURI(aUriSpec);
           if (list) {
             var view = LibraryUtils.createStandardMediaListView(list);
-            this.mm.sequencer.playView(view, 0);
+            var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                               .getService(Components.interfaces.sbIMediacoreManager);
+            mm.sequencer.playView(view, 0);
           }
         } else {
           var dropHandlerListener = {
@@ -113,7 +112,9 @@ try
               }
               
               // Play the item
-              this.mm.sequencer.playView(view, index);
+              var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+                                 .getService(Components.interfaces.sbIMediacoreManager);
+              mm.sequencer.playView(view, index);
             },
           };
           ExternalDropHandler.dropUrls(window, [aUriSpec], dropHandlerListener);
