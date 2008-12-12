@@ -569,6 +569,14 @@ function deferredWindowPlacementSanityChecks() {
     y = Math.max(y, 0); // don't move window above zero.
   }
 
+  // Make sure our (x, y) coordinate is at least on screen.
+  if (x < screenRect.x) {
+    x = screenRect.x;
+  }
+  if (y < screenRect.y) {
+    y = screenRect.y;
+  }
+
   if (!document.documentElement.hasAttribute("screenX")) {
     // no persisted x, move the window back into the screen
     // (we allow the user to persist having the window be partially off screen)
@@ -584,7 +592,18 @@ function deferredWindowPlacementSanityChecks() {
 
   // Move the window if necessary
   if (x != oldx || y != oldy) {
+    // Moving a maximized window will break the maximized state, so save
+    // the current state so that the window can be re-maximized.
+    var isCurMaximized = 
+      document.documentElement.getAttribute("sizemode") == "maximized";
+    
+    // Move
     window.moveTo(x, y);
+
+    // Re-maximize
+    if (isCurMaximized) {
+      onMaximize(true);
+    }
   }
 
 /*
