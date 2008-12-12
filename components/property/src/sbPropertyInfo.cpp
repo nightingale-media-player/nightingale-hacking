@@ -37,57 +37,40 @@
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
 
 sbPropertyOperator::sbPropertyOperator()
-: mLock(nsnull)
-, mInitialized(PR_FALSE)
+: mInitialized(PR_FALSE)
 {
-  mLock = PR_NewLock();
-  NS_ASSERTION(mLock, "sbPropertyOperator::mLock failed to create lock!");
 }
 
 sbPropertyOperator::sbPropertyOperator(const nsAString& aOperator,
                                        const nsAString& aOperatorReadable)
-: mLock(nsnull)
-, mInitialized(PR_TRUE)
+: mInitialized(PR_TRUE)
 , mOperator(aOperator)
 , mOperatorReadable(aOperatorReadable)
 {
-  mLock = PR_NewLock();
-  NS_ASSERTION(mLock, "sbPropertyOperator::mLock failed to create lock!");
 }
 
 sbPropertyOperator::~sbPropertyOperator()
 {
-  if(mLock) {
-    PR_DestroyLock(mLock);
-  }
 }
 
 NS_IMETHODIMP sbPropertyOperator::GetOperator(nsAString & aOperator)
 {
-  sbSimpleAutoLock lock(mLock);
   aOperator = mOperator;
-
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyOperator::GetOperatorReadable(nsAString & aOperatorReadable)
 {
-  sbSimpleAutoLock lock(mLock);
   aOperatorReadable = mOperatorReadable;
-
   return NS_OK;
 }
 
 NS_IMETHODIMP sbPropertyOperator::Init(const nsAString & aOperator, const nsAString & aOperatorReadable)
 {
-  sbSimpleAutoLock lock(mLock);
   NS_ENSURE_TRUE(mInitialized == PR_FALSE, NS_ERROR_ALREADY_INITIALIZED);
-
   mOperator = aOperator;
   mOperatorReadable = aOperatorReadable;
-
   mInitialized = PR_TRUE;
-
   return NS_OK;
 }
 

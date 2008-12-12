@@ -41,8 +41,7 @@ public:
   ~sbPropertyOperator();
 
 protected:
-  PRLock*  mLock;
-  PRBool   mInitialized;
+  PRPackedBool   mInitialized;
  
   nsString mOperator;
   nsString mOperatorReadable;
