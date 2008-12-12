@@ -137,13 +137,22 @@ var mashTapePreferences = {
 				attr = "selected";
 				break;
 		}
+
+		var providerSelected = false;
 		for each (var rli in box.childNodes) {
 			if (rli.tagName != "richlistitem")
 				continue;
 			var el = rli.firstChild;
-			if (el.hasAttribute(attr))
+			if (el.hasAttribute(attr)) {
 				prefServices.push(el.getAttribute("value"));
+				providerSelected = true;
+			}
 		};
+		if (!providerSelected) {
+			document.getElementById("checkbox-" + providerType).checked = false;
+			mashTapePreferences.toggle(providerType);
+		}
+
 		Application.prefs.setValue(prefKey, prefServices.join(","));
 	},
 
@@ -162,6 +171,38 @@ var mashTapePreferences = {
 			var hbox = document.getElementById("hbox-photo-speed");
 			for each (var node in hbox.childNodes)
 				node.disabled = !enabled;
+		}
+
+		// ensure if we're turning it on that at least one provider is 
+		// enabled
+		if (enabled) {
+			var box = document.getElementById("services-" + providerType);
+			var attr;
+			switch (providerType) {
+				case "rss":
+				case "review":
+				case "flash":
+					attr = "checked";
+					break;
+				default:
+					attr = "selected";
+					break;
+			}
+
+			var providerSelected = false;
+			var firstProvider = null;
+			for each (var rli in box.childNodes) {
+				if (rli.tagName != "richlistitem")
+					continue;
+				var el = rli.firstChild;
+				if (!firstProvider)
+					firstProvider = el;
+			};
+			if (!providerSelected) {
+				// no provider is selected, enable the first one
+				firstProvider.setAttribute(attr, true);
+				mashTapePreferences.savePrefs(providerType);
+			}
 		}
 	},
 	
