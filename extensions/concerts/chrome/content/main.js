@@ -201,7 +201,7 @@ Concerts = {
 
 		var name;
 		var tooltip;
-		if (typeof(this.servicePaneStrings) == "undefined") {
+		if (typeof(this.servicePaneStr) == "undefined") {
 			this.servicePaneStr = Cc["@mozilla.org/intl/stringbundle;1"]
 				.getService(Ci.nsIStringBundleService)
 				.createBundle("chrome://concerts/locale/overlay.properties");
@@ -213,11 +213,11 @@ Concerts = {
 		var concertsNode = SPS.getNode("urn:concerts");
 		if (concertsNode != null) {
 			if (concertCount > 0) {
-				concertsNode.name =
+				concertsNode.name = 
 					this.servicePaneStr.GetStringFromName("servicePaneName")
 					+ " (" + concertCount + ")";
 			} else {
-				concertsNode.name =
+				concertsNode.name = 
 					this.servicePaneStr.GetStringFromName("servicePaneName")
 			}
 			concertsNode.tooltip = concertCount +
