@@ -184,8 +184,8 @@ var LinkIconFile
 var HasBeenBackedUp
 var BackupLocation
 var HasValidInstallDirectory
-var SilentModeRunRegistration
-var DistributionIni
+var UnpackMode
+var DistributionMode 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
@@ -308,10 +308,13 @@ Section "-Application" Section1
    ${Else}
       StrCpy $LinkIconFile ${PreferredIcon}
    ${EndIf}
- 
-   ; With VC8, we need the CRT and the manifests all over the place due to SxS
 
-   ; Now that we're done installing files, we have to move the backed up version into the new directory tree.
+   ${If} $UnpackMode == "1"
+      Goto EndRegistryMunging
+   ${EndIf}
+ 
+   ; Now that we're done installing files, we have to move the backed up
+   ; version into the new directory tree.
    ${If} $HasBeenBackedUp == "True"
       StrCpy $3 "$INSTDIR\legacy\${AppOldVersion}\Songbird"
     
@@ -328,10 +331,6 @@ Section "-Application" Section1
       ; Done with scary stuff, enable details.
       SetDetailsPrint both
   ${EndIf}
-
-   ${If} $SilentModeRunRegistration == "0"
-      Goto EndRegistryMunging
-   ${EndIf}
 
    ; Register DLLs
    ; XXXrstrong - AccessibleMarshal.dll can be used by multiple applications but
@@ -372,6 +371,14 @@ Section "-Application" Section1
 
    ; Write the installation path into the registry
    WriteRegStr HKLM "Software\${BrandFullNameInternal}\${AppVersion} - (${BUILD_ID})" "InstallDir" "$INSTDIR"
+
+   ; We expect partner distributions to install desktop/quicklaunch icons,
+   ; entries into the start menu, and their uninstaller into the add/remove
+   ; program control panel, so if we're a distribution installation, "our job
+   ; here is done."
+   ${If} $DistributionMode == "1"
+      Goto EndRegistryMunging
+   ${EndIf}
   
    ; Write the uninstall keys for Windows
    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal} ${BUILD_ID}" "DisplayName" "${BrandFullName} ${AppVersion} (${BUILD_ID})"
@@ -396,14 +403,16 @@ Section "-Application" Section1
 EndRegistryMunging:
    WriteUninstaller ${FileUninstallEXE}
 
-   ${If} $DistributionIni != ""
-      ; Execute disthelper, pointing it at the dist file.
-      ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni install'
+   ${If} $DistributionMode == "1"
+      ; Execute disthelper.exe in install mode; disthelper.exe needs a 
+      ; distribution.ini, but gets it from the environment; we expect the 
+      ; partner installer *calling us* to set this.
+      ExecWait '$INSTDIR\${DistHelperEXE} install'
    ${EndIf}
 SectionEnd
 
 Section "Desktop Icon"
-   ${If} $SilentModeRunRegistration == "0"
+   ${If} $DistributionMode == "1"
       Goto End
    ${EndIf}
 
@@ -418,7 +427,7 @@ End:
 SectionEnd
 
 Section "QuickLaunch Icon"
-   ${If} $SilentModeRunRegistration == "0"
+   ${If} $DistributionMode == "1"
       Goto End
    ${EndIf}
   
@@ -439,11 +448,20 @@ Section "Uninstall"
       Call un.CloseApp
    ${EndIf}
 
-   ${If} $DistributionIni != ""
-      ; Before doing any uninstallation activities, execute disthelper to allow
-      ; it to do any cleanup it likes; pointing it at the dist file.
-      ExecWait '$INSTDIR\${DistHelperEXE} $DistributionIni uninstall'
+   ${If} $DistributionMode == "1"
+      System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI", "$INSTDIR\distribution\distribution.ini").r0'
+
+      ; We don't really bother checking if we failed here because there's a) not
+      ; much we can do about it if so, and b) disthelper.exe will just return
+      ; failure if it can't find a distribution.ini set anywhere
+      ;StrCmp $0 0 error
+      ;
+      ; Before doing any uninstallation activities, execute disthelper.exe to 
+      ; allow it to do any pre-uninstallation cleanup; it needs a
+      ; distribution.ini; hrm... wonder how it's going to get that...
+      ExecWait '$INSTDIR\${DistHelperEXE} uninstall'
    ${EndIf}
+
   
    SetShellVarContext all
   
@@ -460,26 +478,27 @@ Section "Uninstall"
    ; Remove uninstaller
    Delete $INSTDIR\${FileUninstallEXE}
 
-   ; Read where start menu shortcuts are installed
-   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
+   ${If} $DistributionMode != "1"
+      ; Read where start menu shortcuts are installed
+      ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Start Menu Folder"
 
-   ; Remove start menu shortcuts and start menu folder.
-   ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
-      RMDir /r "$SMPROGRAMS\$0\*.*"
-   ${EndIf}
+      ; Remove start menu shortcuts and start menu folder.
+      ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
+         RMDir /r "$SMPROGRAMS\$0\*.*"
+      ${EndIf}
 
-   ; Read location of desktop shortcut and remove if present.
-   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location"
-   ${If} ${FileExists} $0
-      Delete $0
-   ${EndIf}
+      ; Read location of desktop shortcut and remove if present.
+      ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Desktop Shortcut Location"
+      ${If} ${FileExists} $0
+         Delete $0
+      ${EndIf}
 
-   ; Read location of quicklaunch shortcut and remove if present.
-   ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location"
-   ${If} ${FileExists} $0
-      Delete $0
-   ${EndIf}
-  
+      ; Read location of quicklaunch shortcut and remove if present.
+      ReadRegStr $0 HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})" "Quicklaunch Shortcut Location"
+      ${If} ${FileExists} $0
+         Delete $0
+      ${EndIf}
+
    ; Remove the last of the registry keys
    DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
 
@@ -846,23 +865,22 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
-   StrCpy $SilentModeRunRegistration "1"
-   StrCpy $DistributionIni ""
+   StrCpy $UnpackMode "0"
+   StrCpy $DistributionMode "0"
 
    ${GetParameters} $R0
    ClearErrors
 
-   ${GetOptions} $R0 "/NOREG" "$0"
+   ${GetOptions} $R0 "/UNPACK" "$0"
    IfErrors +2 0
-      StrCpy $SilentModeRunRegistration "0"
+   StrCpy $UnpackMode "1"
 
-   ${GetOptions} $R0 "/DISTINI=" "$0"
+   ${GetOptions} $R0 "/DIST" "$0"
    IfErrors +2 0
-   StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
+   StrCpy $DistributionMode "1"
 
-   ;MessageBox MB_OK "INSTALL DIR IS $INSTDIR"
-   ;MessageBox MB_OK "Register is $SilentModeRunRegistration"
-   ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
+   ;MessageBox MB_OK "DistributionMode is $DistributionMode"
+   ;MessageBox MB_OK "UnpackMode is is $UnpackMode"
 
    StrCpy $HasBeenBackedUp "False"
 FunctionEnd
@@ -872,14 +890,14 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.onInit
-   StrCpy $DistributionIni ""
+   StrCpy $DistributionMode "0"
 
    ${un.GetParameters} $R0
    ClearErrors
 
-   ${un.GetOptions} $R0 "/DISTINI=" "$0"
+   ${un.GetOptions} $R0 "/DIST" "$0"
    IfErrors +2 0
-   StrCpy $DistributionIni "$R0" "" 9 ; "Magic number" 9 is strlen("/DISTINI=")
+   StrCpy $DistributionMode "1"
 
-   ;MessageBox MB_OK "Distribution.ini is $DistributionIni"
+   ;MessageBox MB_OK "DistributionMode is $DistributionMode"
 FunctionEnd
