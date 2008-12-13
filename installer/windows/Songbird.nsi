@@ -498,6 +498,7 @@ Section "Uninstall"
       ${If} ${FileExists} $0
          Delete $0
       ${EndIf}
+   ${EndIf}
 
    ; Remove the last of the registry keys
    DeleteRegKey HKLM "Software\${BrandFullNameInternal}\${AppVersion} (${BUILD_ID})"
