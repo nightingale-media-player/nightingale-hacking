@@ -787,9 +787,11 @@ FunctionEnd
 ; Show a prompt to allow the user to take a survey.
 ;
 Function un.PromptSurvey
-   MessageBox MB_YESNO|MB_ICONQUESTION "${TakeSurveyMessage}" IDNO exit
-   ExecShell "open" "http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d"
-exit:
+   ${If} $DistributionMode != "1"
+      MessageBox MB_YESNO|MB_ICONQUESTION "${TakeSurveyMessage}" IDNO noSurvey
+      ExecShell "open" "${UnintallSurveyURL}"
+   ${EndIf}
+noSurvey:
 FunctionEnd
 
 Function un.DeleteUpdateAddedFiles
