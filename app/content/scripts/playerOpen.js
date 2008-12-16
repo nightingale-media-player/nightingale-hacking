@@ -804,6 +804,12 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
   }
 }
 
+function SBGetArtworkOpen() {
+  SBOpenModalDialog("chrome://songbird/content/xul/albumArtFetchDialog.xul",
+                    "Songbird:GetArtwork", "chrome,centerscreen",
+                    null, null);
+}
+
 function SBRevealFile( initialTab, parentWindow ) {
   if (!parentWindow) parentWindow = window;
   var browser;

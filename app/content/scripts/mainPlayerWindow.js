@@ -97,6 +97,8 @@ var gSongbirdWindowController =
       SBTrackEditorOpen("edit"); // open to the 'edit' tab
     } else if (aCommand == "cmd_viewmetadata") {
       SBTrackEditorOpen("summary"); // open to the 'summary' tab
+    } else if (aCommand == "cmd_getartwork") {
+      SBGetArtworkOpen(); // Show the get artwork dialog
     } else if (aCommand == "cmd_reveal") {
       SBRevealFile(); // reveal the selected file
     } else if (aCommand == "cmd_find_current_track") {
@@ -164,6 +166,7 @@ var gSongbirdWindowController =
       case "cmd_metadata":
       case "cmd_editmetadata":
       case "cmd_viewmetadata":
+      case "cmd_getartwork":
       case "cmd_reveal":
       case "cmd_find_current_track":
         return true;
@@ -217,6 +220,8 @@ var gSongbirdWindowController =
         }
         return false;
       }
+      case "cmd_getartwork":
+        return true;
       case "cmd_reveal": {
         if (view && view.selection.count == 1) {
           var selection = view.selection.selectedIndexedMediaItems;

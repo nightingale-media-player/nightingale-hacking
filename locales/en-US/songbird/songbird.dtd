@@ -72,8 +72,9 @@
 <!ENTITY displaypane.name.sidebar       "Right Sidebar">
 <!ENTITY servicepane.title.label        "Service Pane">
 
-<!ENTITY menu.tools           "Tools" >
-<!ENTITY menu.tools.metadata  "Metadata Editor...">
+<!ENTITY menu.tools            "Tools" >
+<!ENTITY menu.tools.metadata   "Metadata Editor...">
+<!ENTITY menu.tools.getartwork "Get Album Artwork...">
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >
@@ -223,8 +224,9 @@
 <!ENTITY menu.control.jumpto.accesskey "J" >
 
 
-<!ENTITY menu.tools.accesskey          "T" >
-<!ENTITY menu.tools.metadata.accesskey "E" >
+<!ENTITY menu.tools.accesskey            "T" >
+<!ENTITY menu.tools.metadata.accesskey   "E" >
+<!ENTITY menu.tools.getartwork.accesskey "G" >
 
 <!ENTITY menu.tools.reveal             "Show File" >
 <!ENTITY menu.tools.reveal.accesskey   "F" >
@@ -339,6 +341,7 @@
 <!ENTITY currentTrackCmd.commandKey    "L" >
 <!ENTITY mediapage.next.key            "S" >
 <!ENTITY trackeditor.key2              "I" >
+<!ENTITY getartwork.key                "G" >
 <!ENTITY sanitize.keycode              "VK_DELETE" >
 <!ENTITY sanitize.key                  "Del" >
 <!ENTITY menu.viewpagesource.key       "U" >
@@ -542,3 +545,6 @@
 <!ENTITY mediacore.error.continue "Continue">
 <!ENTITY mediacore.error.stop     "Stop Playback">
 <!ENTITY mediacore.error.dontshowme "Do not display further media core errors">
+
+<!ENTITY fetch_album_art.dialog.title "Get Album Artwork">
+<!ENTITY fetch_album_art.dialog.message "Not currently implemented. (See Bug 14281)">
