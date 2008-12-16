@@ -118,6 +118,7 @@ img.clickable {
 td.tickets, td.gcal {
 	width:7em;
 	text-align:center;
+	white-space: nowrap;
 }
 .get-tickets{
 	font-size:.85em;
