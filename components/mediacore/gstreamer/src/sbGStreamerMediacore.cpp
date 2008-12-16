@@ -1086,9 +1086,17 @@ sbGStreamerMediacore::OnGetDuration(PRUint64 *aDuration)
     gint64 duration;
     gst_query_parse_duration(query, NULL, &duration);
 
-    /* Convert to milliseconds */
-    *aDuration = duration / GST_MSECOND;
-    rv = NS_OK;
+    if (duration == GST_CLOCK_TIME_NONE) {
+      /* Something erroneously returned TRUE for this query
+       * despite not giving us a duration. Treat the same as
+       * a failed query */
+      rv = NS_ERROR_NOT_AVAILABLE;
+    }
+    else {
+      /* Convert to milliseconds */
+      *aDuration = duration / GST_MSECOND;
+      rv = NS_OK;
+    }
   }
   else
     rv = NS_ERROR_NOT_AVAILABLE;
@@ -1116,10 +1124,12 @@ sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
     gint64 position;
     gst_query_parse_position(query, NULL, &position);
 
-    if (position == 0) {
+    if (position == 0 || position == GST_CLOCK_TIME_NONE) {
       // GStreamer bugs can cause us to get a position of zero when we in fact
       // don't know the current position. A real position of zero is unlikely
       // and transient, so we just treat this as unknown.
+      // A value of -1 (GST_CLOCK_TIME_NONE) is also 'not available', though 
+      // really that should be reported as a a false return from the query.
       rv = NS_ERROR_NOT_AVAILABLE;
     }
     else {
