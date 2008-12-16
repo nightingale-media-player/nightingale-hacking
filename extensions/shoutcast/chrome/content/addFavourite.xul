@@ -6,7 +6,7 @@
 
 <!DOCTYPE dialog SYSTEM "chrome://shoutcast-radio/locale/overlay.dtd">
 
-<dialog id="addFavourite" title="Add Station"
+<dialog id="addFavourite" title="&shoutcast-radio.add-station;"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 	buttons="accept,cancel"
 	onload="loadGenres()"
@@ -41,15 +41,16 @@
 </script>
 
 <groupbox flex="1" orient="vertical">
-	<caption label="Enter the name you wish to give the station" />
-	<textbox id="station-name" size="60" emptytext="Station Name"/>
+	<caption label="&shoutcast-radio.enter-name;" />
+	<textbox id="station-name" size="60"
+		emptytext="&shoutcast-radio.station-name;"/>
 </groupbox>
 <groupbox flex="1" orient="vertical">
-	<caption label="Enter the URL to the SHOUTcast station" />
+	<caption label="&shoutcast-radio.enter-url;" />
 	<textbox id="station-url" size="60" emptytext="http://locahost/listen.pls" />
 </groupbox>
 <groupbox flex="1" orient="vertical">
-	<caption label="Select a genre for the station" />
+	<caption label="&shoutcast-radio.enter-genre;" />
 	<menulist id="station-genre">
 	</menulist>
 </groupbox>
