@@ -261,6 +261,7 @@ var RadioDirectory = {
 				this.favesList.setProperty(SBProperties.isReadOnly, "1");
 			}
 			
+			// Set the "Favourite Stations" name
 			this.favesList.name = this._strings.getString("favourites");
 			var colSpec = SC_streamName + " 358 " + SC_bitRate + " 71 " +
 					SC_comment + " 240 " + SC_listenerCount + " 74 " +

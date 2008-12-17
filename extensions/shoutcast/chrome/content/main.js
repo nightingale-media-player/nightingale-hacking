@@ -153,6 +153,7 @@ ShoutcastRadio.Controller = {
 			radioFolder.editable = false;
 			radioFolder.setAttributeNS(SC_NS, "radioFolder", 1);
 		} else {
+			// Relocalise the name on startup
 			radioFolder.name = this._strings.getString("radioFolderLabel");
 		}
 		radioFolder.hidden = false;
@@ -177,6 +178,32 @@ ShoutcastRadio.Controller = {
 			}
 		}
 
+		// Check the Favourite Stations list to see if it's been created
+		// If it has, then we'll need to relocalise its name on startup
+		var libGuid = Application.prefs.getValue(shoutcastTempLibGuid, "");
+		if (libGuid != "") {
+			var libraryManager =
+					Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+					.getService(Ci.sbILibraryManager);
+			var tempLib = libraryManager.getLibrary(libGuid);
+
+			// Get our favourites & stream lists
+			var a = tempLib.getItemsByProperty(
+						SBProperties.customType, "radio_favouritesList");
+			var favesList = a.queryElementAt(0, Ci.sbIMediaList);
+			
+			if (favesList.getProperty(SC_nodeCreated) == "1") {
+				// We've created a node in the past, go grab it
+				var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+						.getService(Ci.sbILibraryServicePaneService);
+				var favouritesNode =
+						librarySPS.getNodeForLibraryResource(favesList);
+
+				// Re-localise its name
+				favouritesNode.name = this._strings.getString("favourites");
+			}
+		}
+	
 		SPS.save();
 
 		// Attach our listener for media core events
