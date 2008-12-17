@@ -19,6 +19,8 @@ lastfm.jar:
 % locale  lastfm  sv-SE  %locale/sv-SE/
 % locale  lastfm  zh-CN  %locale/zh-CN/
 % locale  lastfm  zh-TW  %locale/zh-TW/
+% locale  lastfm  tr-TR  %locale/tr-TR/
+% locale  lastfm  uk-UA  %locale/uk-UA/
 % skin    lastfm  classic/1.0 %skin/
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://lastfm/content/browser-overlay.xul
 % overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://lastfm/content/mini-overlay.xul
@@ -65,6 +67,10 @@ lastfm.jar:
   locale/zh-CN/overlay.properties (chrome/locale/zh-CN/overlay.properties)
   locale/zh-TW/overlay.dtd        (chrome/locale/zh-TW/overlay.dtd)
   locale/zh-TW/overlay.properties (chrome/locale/zh-TW/overlay.properties)
+  locale/tr-TR/overlay.dtd        (chrome/locale/tr-TR/overlay.dtd)
+  locale/tr-TR/overlay.properties (chrome/locale/tr-TR/overlay.properties)
+  locale/uk-UA/overlay.dtd        (chrome/locale/uk-UA/overlay.dtd)
+  locale/uk-UA/overlay.properties (chrome/locale/uk-UA/overlay.properties)
   skin/as.png                     (chrome/skin/as.png)
   skin/busy.png                   (chrome/skin/busy.png)
   skin/disabled.png               (chrome/skin/disabled.png)
