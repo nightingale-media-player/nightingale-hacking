@@ -488,6 +488,52 @@ mashTape.init = function(e) {
 		mashTape.flashDetailFrame = iframe;
 		tabpanels.appendChild(thispanel);
 		
+		// Add resize handler
+		mashTape.flashDetailFrame.contentWindow.addEventListener("resize",
+		function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+
+			var doc = mashTape.flashDetailFrame.contentWindow.document;
+			var frameWidth = doc.getElementsByTagName("html")[0].clientWidth;
+			var frameHeight = doc.getElementsByTagName("html")[0].clientHeight;
+			//dump("New frame size: " + frameWidth + "x" + frameHeight + "\n");
+
+			var swf = doc.getElementById("mTFlashObject");
+			if (!swf)
+				return;
+
+			var newHeight = frameHeight - 25; // 25px is more|less our padding
+			var ratio = doc.mashTapeRatio;
+			if (!ratio)
+				return;
+			var newWidth = newHeight * ratio;
+			if (newWidth > frameWidth - 25) {
+				newWidth = frameWidth - 25;
+				newHeight = newWidth / ratio;
+			}
+
+			if (frameWidth - newWidth > 120) {
+				doc.getElementById("content").style.clear = "none";
+				doc.getElementById("author").style.display = "block";
+			} else {
+				doc.getElementById("content").style.clear = "both";
+				doc.getElementById("author").style.display = "inline";
+				var capHeight = doc.getElementById("content").clientHeight;
+				if (frameHeight - newHeight < capHeight) {
+					newHeight = newHeight - capHeight;
+					newWidth = newHeight * ratio;
+					//dump("Adjustment: " + newWidth + "x" + newHeight + "\n");
+				}
+			}
+
+			if (newWidth != swf.width && newWidth > 150 && newHeight > 50) {
+				//dump("Setting SWF size: "+newWidth + "x" + newHeight + "\n");
+				swf.width = newWidth;
+				swf.height = newHeight;
+			}
+		}, false);
+
 		// Save it for later
 		mashTape.tabPanels["flash"] = thispanel;
 	}
@@ -1928,7 +1974,7 @@ mashTape.imageLoadListener = function(e) {
  * FLASH PROVIDER FUNCTIONS
  ****************************************************************************/
 mashTape.resetFlashFrame = function() {
-	// Clear existing data
+	// Reset the index frame contents
 	var doc = mashTape.flashIndexFrame.contentWindow.document;
 	var body = doc.getElementsByTagName("body")[0];
 	while (body.firstChild)
@@ -2014,6 +2060,9 @@ mashTape.loadFlashDetail = function(el) {
 	/* Add privileged JS to the remote window DOM */
 	var flashWindow = mashTape.flashDetailFrame.contentWindow;
 	var doc = mashTape.flashDetailFrame.contentWindow.document;
+
+	doc.mashTapeRatio = ratio;
+
 	flashWindow.mashTapeVideo = {
 		// Only resume playback if mT triggered the pause in the first place
 		paused: false,
@@ -2136,47 +2185,6 @@ mashTape.loadFlashDetail = function(el) {
 		containingDiv = containingDiv.parentNode;
 	containingDiv.className += " row-selected";
 	mashTape.selectedFlash = containingDiv;
-
-	// Add resize handler
-	mashTape.flashDetailFrame.contentWindow.addEventListener("resize",
-	function (e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		var frameWidth = doc.getElementsByTagName("html")[0].clientWidth;
-		var frameHeight = doc.getElementsByTagName("html")[0].clientHeight;
-		//dump("New frame size: " + frameWidth + "x" + frameHeight + "\n");
-
-		var swf = doc.getElementById("mTFlashObject");
-
-		var newHeight = frameHeight - 25; // 25px is more or less our padding
-		var newWidth = newHeight * ratio;
-		if (newWidth > frameWidth - 25) {
-			//dump("Capping because "+newWidth + " > " +(frameWidth-25) + "\n");
-			newWidth = frameWidth - 25;
-			newHeight = newWidth / ratio;
-		}
-
-		if (frameWidth - newWidth > 120) {
-			doc.getElementById("content").style.clear = "none";
-			doc.getElementById("author").style.display = "block";
-		} else {
-			doc.getElementById("content").style.clear = "both";
-			doc.getElementById("author").style.display = "inline";
-			var capHeight = doc.getElementById("content").clientHeight;
-			if (frameHeight - newHeight < capHeight) {
-				newHeight = newHeight - capHeight;
-				newWidth = newHeight * ratio;
-				//dump("Adjustment: " + newWidth + "x" + newHeight + "\n");
-			}
-		}
-
-		if (newWidth != swf.width && newWidth > 150 && newHeight > 50) {
-			//dump("Setting new SWF size: "+newWidth + "x" + newHeight + "\n");
-			swf.width = newWidth;
-			swf.height = newHeight;
-		}
-	}, false);
 
 	// Reset some divs
 	while (detailTitle.firstChild)
