@@ -213,8 +213,14 @@ var SBSessionStore = {
             location = "_blank";
           }
           
-          var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
-                                                     tab.listGUID);
+          try {
+            var list = LibraryUtils.getMediaListByGUID(tab.libraryGUID,
+                                                       tab.listGUID);
+          }
+          catch (e if e.result == Components.results.NS_ERROR_NOT_AVAILABLE) {
+            // not available, just go to the library.
+            var list = LibraryUtils.mainLibrary;
+          }
           newTab = aTabBrowser.loadMediaList(list, null, location, null, url);
           
         // Otherwise just reload the URL
