@@ -41,13 +41,16 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="about"
  title="&menu.help.about;"
- buttons="accept"
+ buttons="extra1,accept"
+ defaultButton="accept"
  width="480"
  height="360"
  hidechrome="true"
  type="songbird"
  onload="return doInit();"
  ondialogaccept="return doOK();"
+ buttonlabelextra1="&about.buttons.credits;"
+ ondialogextra1="return doCredits();"
 >
 
   <vbox flex="1">
@@ -76,10 +79,27 @@
       var version = document.getElementById( "version_number" );
       version.value += ": " + appInfo.name + " " + appInfo.version + 
        ", Build " + build_number + " (" + appInfo.appBuildID + ")";
+ 
+      // Disable the "Credits" button if we're not in a browser layout
+      var mainWin =
+           Components.classes["@mozilla.org/appshell/window-mediator;1"]
+           .getService(Components.interfaces.nsIWindowMediator)
+		   .getMostRecentWindow("Songbird:Main");
+      if (!mainWin || !mainWin.gBrowser)
+        document.documentElement.getButton("extra1").disabled = true;
     }
     function doOK() {
       if ( typeof( window.arguments[0] ) != 'undefined' )
         window.arguments[0].retval = "ok";
+      return true;
+    }
+    function doCredits() {
+      var browser =
+        Components.classes["@mozilla.org/appshell/window-mediator;1"]
+        .getService(Components.interfaces.nsIWindowMediator)
+        .getMostRecentWindow("Songbird:Main").gBrowser;
+      browser.loadOneTab("about:credits");
+      window.close();
       return true;
     }
   ]]>

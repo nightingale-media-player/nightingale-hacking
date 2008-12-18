@@ -177,6 +177,7 @@
 <!ENTITY locale.language          "Language" >
 <!ENTITY menu.view                "View" >
 <!ENTITY about.version            "Version" >
+<!ENTITY about.buttons.credits    "Credits" >
 
 <!ENTITY setupprogress.pleasewait "Please wait..." >
 <!ENTITY setupprogress.cancel     "Cancel">
