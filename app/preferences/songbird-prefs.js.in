@@ -268,12 +268,21 @@ pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer
 //
 // Media Core prefs
 //
-#ifdef MEDIA_CORE_VLC
+
+// Value is in milliseconds
 #ifdef XP_WIN
-pref("songbird.mediacore.audioOut", "directsound");
+pref("songbird.mediacore.output.buffertime", 2000);
+#else
+pref("songbird.mediacore.output.buffertime", 1000);
 #endif
-pref("songbird.mediacore.normalize", false);
-#endif
+
+// Value is in kilobytes
+pref("songbird.mediacore.streaming.buffersize", 128);
+
+pref("songbird.mediacore.normalization.enabled", false);
+
+// Prefer album gain over track gain. Valid values are 'album' and 'track'.
+pref("songbird.mediacore.normalization.preferredGain", "album");
 
 // Playback History
 pref("songbird.mediacore.playback.history.enabled", true);

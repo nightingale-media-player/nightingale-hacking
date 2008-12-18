@@ -189,8 +189,8 @@ protected:
   nsCString mVideoSinkDescription;
   nsCString mAudioSinkDescription;
 
-  PRInt32 mBufferSizeBytes; // Streaming buffer max size in bytes
-  PRInt64 mBufferDuration;  // Streaming buffer duration in nanoseconds
+  PRInt64 mAudioSinkBufferTime; // Audio sink buffer time in usecs
+  PRInt32 mStreamingBufferSize; // Streaming buffer max size in bytes
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

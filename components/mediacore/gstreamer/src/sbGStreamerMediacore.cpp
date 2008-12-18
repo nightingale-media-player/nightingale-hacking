@@ -158,8 +158,8 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mVideoDisabled(PR_FALSE),
     mVideoSinkDescription(),
     mAudioSinkDescription(),
-    mBufferSizeBytes(0),
-    mBufferDuration(0)
+    mAudioSinkBufferTime(0),
+    mStreamingBufferSize(0)
 {
   MOZ_COUNT_CTOR(sbGStreamerMediacore);
 
@@ -209,7 +209,7 @@ sbGStreamerMediacore::InitPreferences()
   mPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  rv = mPrefs->AddObserver("songbird.mediacore.gstreamer", this, PR_FALSE);
+  rv = mPrefs->AddObserver("songbird.mediacore", this, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = ReadPreferences();
@@ -252,33 +252,37 @@ sbGStreamerMediacore::ReadPreferences()
   }
 
   /* In milliseconds */
-  const char *DURATION_PREF = "songbird.mediacore.gstreamer.buffer.duration";
-  /* In bytes */
-  const char *SIZE_PREF = "songbird.mediacore.gstreamer.buffer.size";
+  const char *AUDIO_SINK_BUFFERTIME_PREF = "songbird.mediacore.output.buffertime";
+  /* In kilobytes */
+  const char *STREAMING_BUFFERSIZE_PREF = "songbird.mediacore.streaming.buffersize";
 
   /* Defaults if the prefs aren't present */
-  PRInt32 bufferSizeBytes = 128 * 1024; /* 128 kB */
-  PRInt64 bufferDuration = 30 * GST_SECOND;   /* 30 seconds */
+  PRInt64 audioSinkBufferTime = 1000 * 1000; /* 1000 ms */
+  PRInt32 streamingBufferSize = 128 * 1024; /* 128 kB */
 
-  rv = mPrefs->GetPrefType(SIZE_PREF, &prefType);
+  rv = mPrefs->GetPrefType(AUDIO_SINK_BUFFERTIME_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
   if (prefType == nsIPrefBranch::PREF_INT) {
-    rv = mPrefs->GetIntPref(SIZE_PREF, &bufferSizeBytes);
+    PRInt32 time = 0;
+    rv = mPrefs->GetIntPref(AUDIO_SINK_BUFFERTIME_PREF, &time);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Only use the pref if it's a valid value.
+    if(time >= 100 || time <= 10000) {
+      // Convert to usecs
+      audioSinkBufferTime = time * 1000;
+    }
+  }
+
+  rv = mPrefs->GetPrefType(STREAMING_BUFFERSIZE_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (prefType == nsIPrefBranch::PREF_INT) {
+    rv = mPrefs->GetIntPref(STREAMING_BUFFERSIZE_PREF, &streamingBufferSize);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mPrefs->GetPrefType(DURATION_PREF, &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (prefType == nsIPrefBranch::PREF_INT) {
-    PRInt32 durationMS;
-    rv = mPrefs->GetIntPref(DURATION_PREF, &durationMS);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    bufferDuration = durationMS * GST_MSECOND;
-  }
-
-  mBufferSizeBytes = bufferSizeBytes;
-  mBufferDuration = bufferDuration;
+  mAudioSinkBufferTime = audioSinkBufferTime;
+  mStreamingBufferSize = streamingBufferSize;
 
   return NS_OK;
 }
@@ -465,10 +469,7 @@ sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
 
   if (g_object_class_find_property(
               G_OBJECT_GET_CLASS (aPipeline), "buffer-size")) 
-    g_object_set (aPipeline, "buffer-size", mBufferSizeBytes, NULL);
-  if (g_object_class_find_property(
-              G_OBJECT_GET_CLASS (aPipeline), "buffer-duration")) 
-    g_object_set (aPipeline, "buffer-duration", mBufferDuration, NULL);
+    g_object_set (aPipeline, "buffer-size", mStreamingBufferSize, NULL);
 
   return NS_OK;
 }
@@ -491,7 +492,14 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
 
   if (mPlatformInterface) {
     GstElement *audiosink = CreateAudioSink();
+
+    // Set audio sink
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
+
+    // Set audio sink buffer time based on pref
+    if (g_object_class_find_property(
+        G_OBJECT_GET_CLASS (audiosink), "buffer-time"))
+      g_object_set (audiosink, "buffer-time", (gint64)mAudioSinkBufferTime, NULL);
 
     if (!mVideoDisabled) {
       GstElement *videosink = CreateVideoSink();
