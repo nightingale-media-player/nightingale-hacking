@@ -27,64 +27,17 @@
 /** 
 *******************************************************************************
 
-BROWSER ABOUT PAGE 
+BROWSER CREDITS PAGE 
 
-Shown when you load "about:" in the browser.
+Shown when you load "about:credits" in the browser.
 
 *******************************************************************************
 */ 
 
-html {
-  background-image:url('about-background.gif');
-  padding:0;
-  margin:0;
-  font-family: tahoma, arial, sans-serif;
-  font-size:62.5%;
-}
-#aboutPageContainer,
-#thirdPartySoftwareContainer {
-  max-width:540px;
-  padding: 2em;
-  text-align:center;
-}
-#aboutPageContainer {
-  margin: 3em auto 0;
+.container {
   -moz-border-radius-topleft: 8px;
   -moz-border-radius-topright: 8px;
-  background-color:rgb(255,255,255);
-}
-#thirdPartySoftwareContainer {
-  margin: 0 auto;
   -moz-border-radius-bottomleft: 8px;
   -moz-border-radius-bottomright: 8px;
   background-color:rgb(235,235,235);
-}
-#thirdPartySoftwareContainer > p.details > a+a {
-  margin-left:0.5em;
-}
-
-p {
-  margin:0;
-  padding:1em 0 0 0;
-  font-size:1.1em;
-}
-a img {
-  border:none;
-}
-
-#thirdPartySoftwareContainer p {
-  font-size:0.95em;
-  padding:0;
-  color:rgb(115,115,115);
-}
-#thirdPartySoftwareContainer p+p {
-  padding:1em 0 0 0;
-}
-#thirdPartySoftwareContainer a {
-  color:rgb(85,85,85);
-}
-
-.productURL {
-	display:block;
-	margin-bottom:1em;
 }

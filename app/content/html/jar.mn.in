@@ -18,6 +18,11 @@ songbird.jar:
 #else
   content/songbird/html/aboutColon.xhtml  (aboutColon.xhtml)
 #endif
+#ifdef SB_USER_ABOUTCREDITS_FILE
+  content/songbird/html/aboutCredits.xhtml  (@SB_USER_ABOUTCREDITS_FILE@)
+#else
+  content/songbird/html/aboutCredits.xhtml  (aboutCredits.xhtml)
+#endif
 # Keyboard help
   content/songbird/html/keyboardHelp.xhtml (keyboardHelp.xhtml)
   content/songbird/html/keyboardHelp.css   (keyboardHelp.css)
