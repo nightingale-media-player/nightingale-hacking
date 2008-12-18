@@ -123,6 +123,19 @@ void nsString_Split(const nsAString&    aString,
                     const nsAString&    aDelimiter,
                     nsTArray<nsString>& aSubStringArray);
 
+/**
+ * Split the string specified by aString into sub-strings using the delimiter
+ * specified by aDelimiter and place the sub-strings in the array specified by
+ * aStringArray.
+ *
+ * \param aString               String to split.
+ * \param aDelimiter            Sub-string delimiter.
+ * \param aSubStringArray       Array of sub-strings.
+ */
+void nsCString_Split(const nsACString&    aString,
+                     const nsACString&    aDelimiter,
+                     nsTArray<nsCString>& aSubStringArray);
+
 /*
  * Songbird string bundle URL.
  */
