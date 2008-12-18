@@ -51,6 +51,9 @@
 <!-- Include the overlay common to all layouts -->
 <?xul-overlay href="chrome://songbird/content/xul/layoutBaseOverlay.xul"?>
 
+<!-- Include the firefox compatibility overlay -->
+<?xul-overlay href="chrome://browser/content/browser.xul"?>
+
 <!-- These are only here for backward compatibility, do not target them -->
 <?xul-overlay href="chrome://songbird/content/xul/browserToolbarOverlay.xul"?>
 <?xul-overlay href="chrome://songbird/content/xul/mainScriptsOverlay.xul"?>
