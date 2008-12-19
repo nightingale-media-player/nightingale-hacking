@@ -75,8 +75,9 @@ try
     
     handleItem: function(aUriSpec, aCount, aTotal) {
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
-          aUriSpec.toLowerCase().indexOf("https:") == 0) {
-        gBrowser.loadURI(aUriSpec);
+          aUriSpec.toLowerCase().indexOf("https:") == 0 ||
+          aUriSpec.toLowerCase().indexOf("songbird:") == 0) {
+        gBrowser.loadOneTab(aUriSpec, null, null, null, false, false);
       } else {
         var typeSniffer = Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                                     .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);

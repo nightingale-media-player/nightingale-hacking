@@ -722,6 +722,14 @@
         <string>file</string>
       </array>
     </dict>
+    <dict>
+      <key>CFBundleURLSchemes</key>
+      <string>songbird URL</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>songbird</string>
+      </array>
+    </dict>
   </array>
   <key>CFBundleVersion</key>
   <string>1.1.0pre</string>

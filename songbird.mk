@@ -200,7 +200,7 @@ SB_MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
 ifeq (,$(wildcard $(SB_MOZBROWSER_DIR)))
   # Seems weird, but we do this so people can get this directory in other ways
   # (tarballs/git/whatever)
-  SVNBASE := $(shell svn info $(TOPSRCDIR) | grep '^URL:' | cut -d ' ' -f 2-)
+#  SVNBASE := $(shell svn info $(TOPSRCDIR) | grep '^URL:' | cut -d ' ' -f 2-)
 ifneq (,$(SVNBASE))
   SVN_MOZBROWSER_URL := $(shell echo $(SVNBASE) | perl -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
   SB_NEW_MOZBROWSER_DEP = getmozbrowser
@@ -213,7 +213,7 @@ endif # need to pull mozbrowser
 # (Looking in Mook's general direction... ;-)
 updatemozbrowser:
 ifneq (,$(wildcard $(SB_MOZBROWSER_DIR)/.svn))
-	svn up $(SB_MOZBROWSER_DIR)
+	#svn up $(SB_MOZBROWSER_DIR)
 endif
 
 getmozbrowser:
