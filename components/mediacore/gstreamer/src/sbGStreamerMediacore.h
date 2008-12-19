@@ -54,6 +54,9 @@
 
 #include <gst/gst.h>
 #include "sbIGstPlatformInterface.h"
+#include "sbIGstAudioFilter.h"
+
+#include <vector>
 
 class nsIURI;
 
@@ -65,7 +68,8 @@ class sbGStreamerMediacore : public sbBaseMediacore,
                              public sbIMediacoreEventTarget,
                              public sbIMediacoreVideoWindow,
                              public nsIDOMEventListener,
-                             public nsIObserver
+                             public nsIObserver,
+                             public sbIGstAudioFilter
 {
 public:
   NS_DECL_ISUPPORTS
@@ -105,6 +109,10 @@ public:
   virtual void HandleMessage(GstMessage *message);
   virtual PRBool HandleSynchronousMessage(GstMessage *message);
 
+  // sbIGstAudioFilter interface
+  virtual nsresult AddAudioFilter(GstElement *aElement);
+  virtual nsresult RemoveAudioFilter(GstElement *aElement);
+
 protected:
   virtual ~sbGStreamerMediacore();
 
@@ -139,7 +147,8 @@ protected:
 
 private:
   // Static helper for C callback
-  static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
+  static GstBusSyncReply syncHandler(GstBus *bus, GstMessage *message, 
+          gpointer data);
   static void aboutToFinishHandler(GstElement *playbin, gpointer data);
   static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
@@ -160,6 +169,10 @@ protected:
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
 
   nsCOMPtr<nsIPrefBranch2> mPrefs;
+
+  std::vector<GstElement*> mAudioFilters;
+
+  GstElement *mReplaygainElement;
 
   // Metadata, both in original GstTagList form, and transformed into an
   // sbIPropertyArray. Both may be NULL.

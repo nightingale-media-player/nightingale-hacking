@@ -72,6 +72,8 @@
 
 #include "sbGStreamerMediacoreUtils.h"
 
+#include <algorithm>
+
 #ifdef MOZ_WIDGET_GTK2
 #include "sbGStreamerPlatformGDK.h"
 #endif
@@ -150,6 +152,7 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mPlatformInterface(nsnull),
     mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
     mPrefs(nsnull),
+    mReplaygainElement(nsnull),
     mTags(NULL),
     mProperties(nsnull),
     mStopped(PR_FALSE),
@@ -178,6 +181,13 @@ sbGStreamerMediacore::~sbGStreamerMediacore()
 
   if (mTags)
     gst_tag_list_free(mTags);
+
+  if (mReplaygainElement)
+    gst_object_unref (mReplaygainElement);
+
+  std::vector<GstElement *>::const_iterator it = mAudioFilters.begin();
+  for ( ; it < mAudioFilters.end(); ++it)
+    gst_object_unref (*it);
 
   if (mMonitor)
     nsAutoMonitor::DestroyMonitor(mMonitor);
@@ -256,9 +266,11 @@ sbGStreamerMediacore::ReadPreferences()
   }
 
   /* In milliseconds */
-  const char *AUDIO_SINK_BUFFERTIME_PREF = "songbird.mediacore.output.buffertime";
+  const char *AUDIO_SINK_BUFFERTIME_PREF = 
+      "songbird.mediacore.output.buffertime";
   /* In kilobytes */
-  const char *STREAMING_BUFFERSIZE_PREF = "songbird.mediacore.streaming.buffersize";
+  const char *STREAMING_BUFFERSIZE_PREF = 
+      "songbird.mediacore.streaming.buffersize";
 
   /* Defaults if the prefs aren't present */
   PRInt64 audioSinkBufferTime = 1000 * 1000; /* 1000 ms */
@@ -287,6 +299,58 @@ sbGStreamerMediacore::ReadPreferences()
 
   mAudioSinkBufferTime = audioSinkBufferTime;
   mStreamingBufferSize = streamingBufferSize;
+
+  const char *NORMALIZATION_ENABLED_PREF = 
+      "songbird.mediacore.normalization.enabled";
+  const char *NORMALIZATION_MODE_PREF = 
+      "songbird.mediacore.normalization.preferredGain";
+  PRBool normalizationEnabled = PR_TRUE;
+  rv = mPrefs->GetPrefType(NORMALIZATION_ENABLED_PREF, &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (prefType == nsIPrefBranch::PREF_BOOL) {
+    rv = mPrefs->GetBoolPref(NORMALIZATION_ENABLED_PREF, &normalizationEnabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (normalizationEnabled) {
+    if (!mReplaygainElement) {
+      mReplaygainElement = gst_element_factory_make ("rgvolume", NULL);
+
+      // Ref and sink the object to take ownership; we'll keep track of it 
+      // from here on.
+      gst_object_ref (mReplaygainElement);
+      gst_object_sink (mReplaygainElement);
+
+      rv = AddAudioFilter(mReplaygainElement);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    /* Now check the mode; set the appropriate property on the element */
+    nsCString normalizationMode;
+    rv = mPrefs->GetPrefType(NORMALIZATION_MODE_PREF, &prefType);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (prefType == nsIPrefBranch::PREF_STRING) {
+      rv = mPrefs->GetCharPref(NORMALIZATION_MODE_PREF, 
+              getter_Copies(normalizationMode));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (normalizationMode.EqualsLiteral("track")) {
+      g_object_set (mReplaygainElement, "album-mode", FALSE, NULL);
+    }
+    else {
+      g_object_set (mReplaygainElement, "album-mode", TRUE, NULL);
+    }
+  }
+  else {
+    if (mReplaygainElement) {
+      rv = RemoveAudioFilter(mReplaygainElement);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      gst_object_unref (mReplaygainElement);
+      mReplaygainElement = NULL;
+    }
+  }
 
   return NS_OK;
 }
@@ -324,7 +388,7 @@ private:
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbGstMessageEvent,
                               nsIRunnable)
 
-/* static */ void
+/* static */ GstBusSyncReply
 sbGStreamerMediacore::syncHandler(GstBus* bus, GstMessage* message, 
         gpointer data)
 {
@@ -338,6 +402,10 @@ sbGStreamerMediacore::syncHandler(GstBus* bus, GstMessage* message,
     nsCOMPtr<nsIRunnable> event = new sbGstMessageEvent(message, core);
     NS_DispatchToMainThread(event);
   }
+
+  gst_message_unref (message);
+
+  return GST_BUS_DROP;
 }
 
 /* static */ void
@@ -405,12 +473,66 @@ sbGStreamerMediacore::CreateAudioSink()
 {
   nsAutoMonitor lock(mMonitor);
 
+  GstElement *sinkbin = gst_bin_new ("audiosink-bin");
   GstElement *audiosink = CreateSinkFromPrefs(mAudioSinkDescription.get());
+  GstPad *targetpad, *ghostpad;
 
   if (mPlatformInterface)
     audiosink = mPlatformInterface->SetAudioSink(audiosink);
 
-  return audiosink;
+  /* audiosink is our actual sink, or something else close enough to it.
+   * Now, we build a bin looking like this, with each of the added audio
+   * filters in it:
+   *
+   * |-------------------------------------------------------------------|
+   * |audiosink-bin                                                      |
+   * |                                                                   |
+   * | [-------]  [------------]  [-------]  [------------]  [---------] |
+   * |-[Filter1]--[audioconvert]--[Filter2]--[audioconvert]--[audiosink] |
+   * | [-------]  [------------]  [-------]  [------------]  [---------] |
+   * |                                                                   |
+   * |-------------------------------------------------------------------|
+   *
+   */
+
+  gst_bin_add ((GstBin *)sinkbin, audiosink);
+
+  targetpad = gst_element_get_pad (audiosink, "sink");
+
+  /* Add each filter, followed by an audioconvert. The first-added filter ends
+   * last in the pipeline, so we iterate in reverse.
+   */
+  std::vector<GstElement *>::const_reverse_iterator it = mAudioFilters.rbegin();
+  for ( ; it < mAudioFilters.rend(); ++it)
+  {
+    GstElement *audioconvert = gst_element_factory_make ("audioconvert", NULL);
+    GstElement *filter = *it;
+    GstPad *srcpad, *sinkpad;
+
+    gst_bin_add_many ((GstBin *)sinkbin, filter, audioconvert, NULL);
+
+    srcpad = gst_element_get_pad (filter, "src");
+    sinkpad = gst_element_get_pad (audioconvert, "sink");
+    gst_pad_link (srcpad, sinkpad);
+    gst_object_unref (srcpad);
+    gst_object_unref (sinkpad);
+
+    srcpad = gst_element_get_pad (audioconvert, "src");
+    gst_pad_link (srcpad, targetpad);
+    gst_object_unref (targetpad);
+    gst_object_unref (srcpad);
+
+    targetpad = gst_element_get_pad (filter, "sink");
+  }
+
+  // Now, targetpad is the left-most real pad in our bin. Ghost it to provide
+  // a sinkpad on our bin.
+  ghostpad = gst_ghost_pad_new ("sink", targetpad);
+  gst_element_add_pad (sinkbin, ghostpad);
+
+  gst_object_unref (targetpad);
+
+  return sinkbin;
 }
 
 /* static */ void
@@ -472,6 +594,22 @@ sbGStreamerMediacore::DestroyPipeline()
 
   lock.Enter();
   if (mPipeline) {
+    /* If we put any filters in the pipeline, remove them now, so that we can
+     * re-add them later to a different pipeline
+     */
+    std::vector<GstElement *>::const_iterator it = mAudioFilters.begin();
+    for ( ; it < mAudioFilters.end(); ++it)
+    {
+      GstElement *parent;
+      GstElement *filter = *it;
+
+      parent = (GstElement *)gst_element_get_parent (filter);
+      if (parent) {
+        gst_bin_remove ((GstBin *)parent, filter);
+        gst_object_unref (parent);
+      }
+    }
+
     gst_object_unref (mPipeline);
     mPipeline = nsnull;
   }
@@ -554,12 +692,9 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   rv = SetBufferingProperties(mPipeline);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  gst_bus_enable_sync_message_emission (bus);
-
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
-  g_signal_connect (bus, "sync-message",
-          G_CALLBACK (syncHandler), this);
+  gst_bus_set_sync_handler (bus, syncHandler, this);
 
   g_object_unref ((GObject *)bus);
 
@@ -1629,4 +1764,32 @@ sbGStreamerMediacore::Observe(nsISupports *aSubject,
 
   return NS_OK;
 }
+
+//-----------------------------------------------------------------------------
+// sbIGstAudioFilter
+//-----------------------------------------------------------------------------
+nsresult
+sbGStreamerMediacore::AddAudioFilter(GstElement *aElement)
+{
+  // Hold a reference to the element
+  gst_object_ref (aElement);
+
+  mAudioFilters.push_back(aElement);
+
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerMediacore::RemoveAudioFilter(GstElement *aElement)
+{
+  mAudioFilters.erase(
+          std::remove(mAudioFilters.begin(), mAudioFilters.end(), aElement));
+
+  gst_object_unref (aElement);
+
+  return NS_OK;
+}
+
+
+
 
