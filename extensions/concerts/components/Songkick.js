@@ -977,6 +977,9 @@ Songkick.prototype = {
 	 * For a given artist name, return whether the artist is on tour or not
 	 *********************************************************************/
 	getTourStatus : memoize(function getTourStatus(artist) {
+		var firstrun = this.prefs.getBoolPref("firstrun");
+		if (firstrun)
+			return false;
 		this._db.resetQuery();
 		this._db.addQuery('SELECT count(*) FROM playing_at ' +
 				'JOIN artists on artistid=artists.ROWID ' +
@@ -993,6 +996,9 @@ Songkick.prototype = {
 	 * For a given artist name, return their Songkick tour URL
 	 *********************************************************************/
 	getArtistUrl : memoize(function getArtistUrl(artist) {
+		var firstrun = this.prefs.getBoolPref("firstrun");
+		if (firstrun)
+			return null;
 		this._db.resetQuery();
 		this._db.addQuery("SELECT artistURL FROM artists " +
 				"where name = '" + artist.replace(/'/g, "''") + "'");
@@ -1008,6 +1014,9 @@ Songkick.prototype = {
 	}),
 	
 	getArtistOnTourUrl : function(artist) {
+		var firstrun = this.prefs.getBoolPref("firstrun");
+		if (firstrun)
+			return null;
 		this._db.resetQuery();
 		this._db.addQuery("SELECT artistURL FROM artists " +
 				"where name = '" + artist.replace(/'/g, "''") + "'");
@@ -1026,6 +1035,9 @@ Songkick.prototype = {
 	 * For a given artist name, return the tour URL if they are on tour
 	 *********************************************************************/
 	getArtistUrlIfOnTour : memoize(function getArtistUrlIfOnTour(artist) {
+		var firstrun = this.prefs.getBoolPref("firstrun");
+		if (firstrun)
+			return null;
 		//debugLog("getArtistUrlIfOnTour", "New media item, artist: " + artist);
 		this._db.resetQuery();
 		this._db.addQuery("SELECT artistURL FROM artists " +
