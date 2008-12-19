@@ -1036,9 +1036,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
         aText.Replace(20, aText.Length() - 40, NS_LITERAL_STRING("..."));
       }
     } else {
-      rv = LocalizeString(
-            NS_LITERAL_STRING("media_scan.complete"),
-            aText);
+      aText = mStatusText;
     }
     
   } else if (mStatus == sbIJobProgress::STATUS_FAILED) {
@@ -1079,6 +1077,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
           aText);
   } 
   
+  mStatusText = aText;
   return rv;
 }
 

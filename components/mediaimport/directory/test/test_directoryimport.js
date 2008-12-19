@@ -84,9 +84,7 @@ function onFirstImportProgress(job) {
     assertTrue(gLibrary.length > 0);
     assertEqual(gLibrary.length, job.totalAddedToLibrary);
     assertEqual(job.totalAddedToMediaList, 0);
-    assertTrue(job.enumerateNewItemsOnly().hasMoreElements());
     assertTrue(job.enumerateAllItems().hasMoreElements());
-    assertTrue(job.enumerateNewItemsOnly().getNext() instanceof Ci.sbIMediaItem);
     assertTrue(job.enumerateAllItems().getNext() instanceof Ci.sbIMediaItem);
     
     // Confirm that at least some metadata was scanned (the scanner is tested elsewhere).
@@ -161,9 +159,6 @@ function onSecondImportProgress(job) {
    assertEqual(gLibrary.length - 1, gMediaList.length - 2);
    assertEqual(gMediaList, job.targetMediaList);
    assertEqual(job.targetIndex, MEDIALIST_TARGET_INDEX);
-   
-   // Should be no new items
-   assertEqual(job.enumerateNewItemsOnly().hasMoreElements(), false);
    
    // All found items should appear in order between the first and 
    // last items in the new list.

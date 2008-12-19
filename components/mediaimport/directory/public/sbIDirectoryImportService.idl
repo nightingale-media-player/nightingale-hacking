@@ -39,7 +39,7 @@ interface sbIJobProgress;
  * Use sbIJobProgress to track job status and wait for completion.
  * \sa sbIDirectoryImportService, sbIJobProgress
  */
-[scriptable, uuid(ca3d4300-4c75-11dd-ae16-0800200c9a66)]
+[scriptable, uuid(6b029f20-cadd-11dd-ad8b-0800200c9a66)]
 interface sbIDirectoryImportJob : nsISupports
 {
   /**
@@ -58,12 +58,6 @@ interface sbIDirectoryImportJob : nsISupports
    * \brief Number of items that already existed in the target library
    */
   readonly attribute unsigned long totalDuplicates;
-
-  /**
-   * \brief Enumerator for previously unknown sbIMediaItems that were added
-   *        during this job
-   */     
-  nsISimpleEnumerator enumerateNewItemsOnly();
 
   /**
    * \brief Enumerator for sbIMediaItems that were found

@@ -62,12 +62,7 @@ function DirectoryImportJob(aDirectoryArray,
   this.targetIndex = aTargetIndex;
 
   this._importService = aImportService;
-  
-  if (this._setItemProperties) {
-    this._itemInitialProperties = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                                    .createInstance(Components.interfaces.nsIMutableArray);
-  }
-  
+    
   // TODO these strings probably need updating
   this._titleText = SBString("media_scan.scanning");
   this._statusText =  SBString("media_scan.adding");
@@ -120,23 +115,21 @@ DirectoryImportJob.prototype = {
   // nsIMutableArray of URI strings for all found media items
   _itemURIStrings           : null,
   
-  // true if you want to associate properties to the media items
-  _setItemProperties         : false,
+  // Rather than create all the items in one pass, then scan them all,
+  // we want to create, read, repeat with small batches.  This avoids
+  // wasting/fragmenting memory when importing 10,000+ tracks.
+  // TODO tweak
+  BATCHCREATE_SIZE          : 300,
   
-  // nsIMutableArray of sbIMutablePropertyArrays containing default
-  // properties (e.g. track name), with one for every URI string 
-  // in _itemURIStrings
-  _itemInitialProperties    : null,
+  // Index into _itemURIStrings for the beginning of the
+  // next create/read/add batch
+  _nextURIIndex             : 0,
   
-  // nsIArray of previously unknown sbIMediaItems that were created during 
-  // this job. Set in _onItemCreationProgress.
-  _newMediaItems            : null,
-  
-  // JS array of all sbIMediaItems that were found during 
-  // this job. This is a cache created by enumerateAllItems(),
-  // and should not be used directly.
-  _allMediaItems            : null,
-  
+  // Temporary nsIArray of previously unknown sbIMediaItems, 
+  // used to pass newly created items to a metadata scan job. 
+  // Set in _onItemCreation.
+  _currentMediaItems        : null,
+    
   // True if we've forced the library into a batch state for
   // performance reasons
   _inLibraryBatch           : false,
@@ -144,20 +137,6 @@ DirectoryImportJob.prototype = {
   // Used to track performance
   _timingService            : null,
   _timingIdentifier         : null,
-  
-  /**
-   * Get an enumerator over the previously unknown media items that were
-   * discovered during this job.  Will return an empty enumerator
-   * until the batch creation phase is complete.  Best called when
-   * the entire job is done.
-   */
-  enumerateNewItemsOnly: function DirectoryImportJob_enumerateNewItemsOnly() {
-    if (!this._newMediaItems) {
-      this._newMediaItems = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                              .createInstance(Ci.nsIArray);      
-    }
-    return this._newMediaItems.enumerate();
-  },
   
   /**
    * Get an enumerator over all media items found in this job.  
@@ -174,46 +153,62 @@ DirectoryImportJob.prototype = {
       return this._itemURIStrings.enumerate();
     }
     
-    // If all the URIs resulted in new items, we can 
-    // cheat and just return that list
-    if (this._newMediaItems && 
-        this._itemURIStrings.length == this._newMediaItems.length) {
-      return this.enumerateNewItemsOnly();
+    // If all the URIs resulted in new items, and 
+    // were processed in a single batch, then we can
+    // just return the current items.
+    if (this._currentMediaItems && 
+        this._itemURIStrings.length == this._currentMediaItems.length) {
+      return this._currentMediaItems.enumerate();
     }
     
-    // Computing the list of media items can be expensive, so keep
-    // the results cached just in case the function is called 
-    // multiple times
-    if (!this._allMediaItems || 
-        this._allMediaItems.length != this._itemURIStrings.length) {
+    
+    // Otherwise, we'll need to get media items for all the
+    // URIs that have been added.  We want to avoid instantiating 
+    // all the items at once (since there may be hundreds of thousands),
+    // so instead get a few at a time. 
+
+    var uriEnumerator = this._itemURIStrings.enumerate();
+    var library = this.targetMediaList.library;
+    const BATCHSIZE = this.BATCHCREATE_SIZE;
+
+    // This enumerator instantiates the new media items on demand.
+    var enumerator = {
+      mediaItems: [],
       
-      // Make an array of contentURL properties, so we can search 
-      // for all tracks in one go
-      var propertyArray = SBProperties.createArray();
-      var enumerator = this._itemURIStrings.enumerate();
-      while (enumerator.hasMoreElements()) {
-        var itemURIStr = enumerator.getNext().QueryInterface(Ci.nsISupportsString);
-        propertyArray.appendProperty(SBProperties.contentURL, itemURIStr.data);
-      } 
-
-      // Get media items for the URI list
-      this._allMediaItems = [];
-      var listener = {
-        mediaItems: this._allMediaItems,
-        onEnumerationBegin: function() {},
-        onEnumeratedItem: function(list, item) {
-          this.mediaItems.push(item);
-        },
-        onEnumerationEnd: function() {},
-        QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListEnumerationListener]),
-      };
-
-      this.targetMediaList.library.
-        enumerateItemsByProperties(propertyArray,
-                                   listener);
-    }
+      // sbIMediaListEnumerationListener, used to fetch items
+      onEnumerationBegin: function() {},
+      onEnumeratedItem: function(list, item) {
+        this.mediaItems.push(item);
+      },
+      onEnumerationEnd: function() {},
+      
+      // nsISimpleEnumerator, used to dispense items
+      hasMoreElements: function() { 
+        return (this.mediaItems.length || 
+                uriEnumerator.hasMoreElements());
+      },
+      getNext: function() {
+        // When the buffer runs out, fetch more items from the library
+        if (this.mediaItems.length == 0) {
+          // Get the next set of URIs
+          var propertyArray = SBProperties.createArray();
+          var counter = 0;
+          while (uriEnumerator.hasMoreElements() && counter < BATCHSIZE) {
+            var itemURIStr = uriEnumerator.getNext().QueryInterface(Ci.nsISupportsString);
+            propertyArray.appendProperty(SBProperties.contentURL, itemURIStr.data);
+            counter++;
+          } 
+          library.enumerateItemsByProperties(propertyArray, this);
+        }
+        
+        return this.mediaItems.shift();
+      },
+      
+      QueryInterface: XPCOMUtils.generateQI([
+          Ci.nsISimpleEnumerator, Ci.sbIMediaListEnumerationListener]),
+    };
     
-    return ArrayConverter.enumerator(this._allMediaItems);
+    return enumerator;
   },
     
   
@@ -322,18 +317,6 @@ DirectoryImportJob.prototype = {
         var fileCount = this._fileScanQuery.getFileCount();
         if (fileCount > 0 ) {
           this._itemURIStrings = this._fileScanQuery.getResultRangeAsURIStrings(0, fileCount - 1);
-          if (this._setItemProperties) {
-            var fileURIStr;
-            for (var i = 0; i < this._itemURIStrings.length; i++) {
-              fileURIStr = files.queryElementAt(i, Components.interfaces.nsISupportsString);
-              // Create a temporary track name for each of the found items
-              var props =
-                Components.classes["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                  .createInstance(Components.interfaces.sbIMutablePropertyArray);
-                props.appendProperty(SBProperties.trackName, this._createDefaultTitle(fileURIStr.data));
-                this._itemInitialProperties.appendElement(props, false);
-              }
-          }
         }
         this._finishFileScan();
         this._startMediaItemCreation();
@@ -341,8 +324,9 @@ DirectoryImportJob.prototype = {
       // If the file scan query is still running just update the UI
     } else {
       var text = this._fileScanQuery.getLastFileFound();
+      text = text.split("/").pop();
       if (text.length > 60) {
-        text = text.substring(0, 20) + "..." + text.substring(text.length - 20);
+        text = text.substring(0, 10) + "..." + text.substring(text.length - 40);
       }
       this._statusText = text;
       this.notifyJobProgressListeners();
@@ -357,35 +341,31 @@ DirectoryImportJob.prototype = {
     if (this._fileScanner) {
       this._fileScanner = null;
     }
-    if (this._fileScanQuery) {
-      this._fileScanQuery.cancel();
-      this._fileScanQuery = null;   
-    }
     if (this._pollingTimer) {
       this._pollingTimer.cancel();
       this._pollingTimer = null;
     }
+    // Set total number of items to process
+    this._total = this._itemURIStrings.length;
   },
   
   /** 
-   * Begin creating sbIMediaItems for all found media URIs
+   * Begin creating sbIMediaItems for a batch of found media URIs.
+   * Does BATCHCREATE_SIZE at a time, looping back after 
+   * onJobDelegateCompleted.
    */
   _startMediaItemCreation: 
   function DirectoryImportJob__startMediaItemCreation() {
-    if (!this._itemURIStrings || 
-        (this._setItemPropeties &&
-         (!this._itemInitialProperties || 
-          this._itemURIStrings.length != this._itemInitialProperties.length))) {
+    if (!this._itemURIStrings || !this._fileScanQuery) {
       Cu.reportError(
         "DirectoryImportJob__startMediaItemCreation called with invalid state");
-      this.complete();      
-    }
-    if (this._itemURIStrings.length == 0) {
       this.complete();
+      return;
     }
-    
-    // At the moment batchmediaitemcreate is not cancelable
-    this._canCancel = false;
+    if (this._nextURIIndex >= this._itemURIStrings.length) {
+      this.complete();
+      return;
+    }
     
     // Update status
     this._statusText = SBString("media_scan.adding");    
@@ -396,20 +376,20 @@ DirectoryImportJob.prototype = {
     var batchCreateListener = {
       onProgress: function(aIndex) {},
       onComplete: function(aMediaItems, aResult) {
-        thisJob._onItemCreationProgress(aMediaItems, aResult);
+        thisJob._onItemCreation(aMediaItems, aResult);
       }
     }
-    
-    if (this._timingService) {
-      this._timingService.startPerfTimer(this._timingIdentifier + "-ItemCreation");
-    }
-    
-    // Bug 10228 -  batch item creation is not cancelable!
-    this._canCancel = false;
+
+    // Process the URIs a slice at a time, since creating all 
+    // of them at once may require a very large amount of memory.
+    var endIndex = Math.min(this._nextURIIndex + this.BATCHCREATE_SIZE,
+                            this._itemURIStrings.length);
+    var uris = this._fileScanQuery.getResultRangeAsURIStrings(this._nextURIIndex, endIndex - 1);
+    this._nextURIIndex = endIndex;
     
     // BatchCreateMediaItems needs to return an sbIJobProgress
     this.targetMediaList.library.batchCreateMediaItemsAsync(
-        batchCreateListener, this._itemURIStrings, this._itemInitialProperties);
+        batchCreateListener, uris, null);
   },
   
   /** 
@@ -417,43 +397,56 @@ DirectoryImportJob.prototype = {
    * BatchCreateMediaItemsAsync needs to be updated to actually send progress.
    * At the moment it only notifies when the process is over.
    */
-  _onItemCreationProgress: function DirectoryImportJob__onItemCreationProgress(aMediaItems, aResult) {
+  _onItemCreation: function DirectoryImportJob__onItemCreation(aMediaItems, aResult) {
     // Get the completed item array.  Don't use the given item array on error.
     // Use an empty one instead.
     if (Components.isSuccessCode(aResult)) {
-      this._newMediaItems = aMediaItems;
+      this._currentMediaItems = aMediaItems;
     } else {
-      Cu.reportError("DirectoryImportJob__onItemCreationProgress: aResult == " + aResult);
-      this._newMediaItems = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+      Cu.reportError("DirectoryImportJob__onItemCreation: aResult == " + aResult);
+      this._currentMediaItems = Components.classes["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                                       .createInstance(Components.interfaces.nsIArray);
     }
     
-    this.totalAddedToLibrary = this._newMediaItems.length;
-    this.totalDuplicates = this._itemURIStrings.length - this._newMediaItems.length;
-    
-    // TODO update UI?
-    
-    // Handle inserting into a media list at a specific index
-    this._insertFoundItemsIntoTarget();
-    
-    if (this._timingService) {
-      this._timingService.stopPerfTimer(this._timingIdentifier + "-ItemCreation");
-    }
+    this.totalAddedToLibrary += this._currentMediaItems.length;
+    this.totalDuplicates += this._itemURIStrings.length - this._currentMediaItems.length;
     
     // Make sure we have metadata for all the added items
     this._startMetadataScan();
   },
   
   /** 
+   * Begin finding the metadata for the current set of media items.
+   * Forward sbIJobProgress through to the metadata job
+   */
+  _startMetadataScan: 
+  function DirectoryImportJob__startMetadataScan() {
+    if (this._currentMediaItems && this._currentMediaItems.length > 0) {
+      
+      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
+                              .getService(Ci.sbIFileMetadataService);
+      var metadataJob = metadataService.read(this._currentMediaItems);
+        
+      // Pump metadata job progress to the UI
+      this.delegateJobProgress(metadataJob);
+    } else {
+      // Nothing to do. 
+      this.complete();
+    }
+  },
+
+  /** 
    * Insert found media items into the specified target location
    */
-  _insertFoundItemsIntoTarget: function DirectoryImportJob__insertFoundItemsIntoTarget() {
+  _insertFoundItemsIntoTarget: 
+  function DirectoryImportJob__insertFoundItemsIntoTarget() {
     // If we are inserting into a list, there is more to do than just importing 
     // the tracks into its library, we also need to insert all the items (even
     // the ones that previously existed) into the list at the requested position
     if (!(this.targetMediaList instanceof Ci.sbILibrary)) {
       try {
         if (this._itemURIStrings.length > 0) {
+          var originalLength = this.targetMediaList.length;
           // If we need to insert, then do so
           if ((this.targetMediaList  instanceof Ci.sbIOrderableMediaList) && 
               (this.targetIndex >= 0) && 
@@ -463,45 +456,11 @@ DirectoryImportJob.prototype = {
             // Otherwise, just add
             this.targetMediaList.addSome(this.enumerateAllItems());
           }
-          // the short-circuit logic in enumerateAllItems can 
-          // cause _allMediaItems to go uncreated.
-          if (this._allMediaItems) {
-            this.totalAddedToMediaList = this._allMediaItems.length;
-          }
-          else { 
-            this.totalAddedToMediaList = this._newMediaItems.length;
-          }
+          this.totalAddedToMediaList = this.targetMediaList.length - originalLength;
         }
       } catch (e) {
         Cu.reportError(e); 
       }
-    }
-  },
-  
-  /** 
-   * Begin finding the metadata for all imported items. 
-   * Forward sbIJobProgress through to the metadata job
-   */
-  _startMetadataScan: function DirectoryImportJob__startMetadataScan() {
-    if (this._newMediaItems && this._newMediaItems.length > 0) {
-      this._canCancel = true;
-      
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                              .getService(Ci.sbIFileMetadataService);
-      var metadataJob = metadataService.read(this._newMediaItems);
-    
-      // Metadata job is cancelable
-      this._canCancel = true;
-    
-      if (this._timingService) {
-        this._timingService.startPerfTimer(this._timingIdentifier + "-Metadata");
-      }
-      
-      // Pump metadata job progress to the UI
-      this.delegateJobProgress(metadataJob);
-    } else {
-      // Nothing to do. 
-      this.complete();
     }
   },
 
@@ -509,16 +468,39 @@ DirectoryImportJob.prototype = {
    * Called when a sub-job (set via Job.delegateJobProgress) completes.
    */
   onJobDelegateCompleted: function DirectoryImportJob_onJobDelegateCompleted() {
+
+    // Track overall progress, so that the progress bar reflects
+    // the total number of items to process, not the individual 
+    // batches.
+    this._progress += this._jobProgressDelegate.progress;
+    
     // Stop delegating
     this.delegateJobProgress(null);
     
-    if (this._timingService) {
-      this._timingService.stopPerfTimer(this._timingIdentifier + "-Metadata");
-    }
-    
     // For now the only job we delegate to is metadata... so when 
-    // it completes, we're done
-    this.complete();
+    // it completes we go back to create the next set of media items.
+    this._startMediaItemCreation();
+  },
+
+  /**
+   * Override JOBBase.progress, to make sure the metadata scan progress
+   * bar reflects the total item count, not the current batch
+   */
+  get progress() {
+    return (this._jobProgressDelegate) ? 
+      this._jobProgressDelegate.progress + this._progress : this._progress;
+  },
+  
+  get total() {
+    return this._total;
+  },
+  
+  /**
+   * Override JOBBase.titleText, since we want to maintain
+   * the same title throughout the import process
+   */
+  get titleText() {
+    return this._titleText;
   },
 
   /** sbIJobCancelable **/
@@ -535,9 +517,14 @@ DirectoryImportJob.prototype = {
       this._jobProgressDelegate.cancel();
     }
     
-    // Remove anything that we've added.
-    if (this._newMediaItems && this._newMediaItems.length > 0) {
-      this.targetMediaList.library.removeSome(this._newMediaItems.enumerate());
+    if (this._fileScanQuery) {
+      this._fileScanQuery.cancel();
+      this._fileScanQuery = null;   
+    }
+    
+    // Remove anything that we've only partially processed
+    if (this._currentMediaItems && this._currentMediaItems.length > 0) {
+      this.targetMediaList.library.removeSome(this._currentMediaItems.enumerate());
       this.totalAddedToMediaList = 0;
       this.totalAddedToLibrary = 0;
       this.totalDuplicates = 0;
@@ -548,6 +535,9 @@ DirectoryImportJob.prototype = {
    * Stop everything, complete the job.
    */
   complete: function DirectoryImportJob_complete() {
+    
+    // Handle inserting into a media list at a specific index
+    this._insertFoundItemsIntoTarget();
     
     this._status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._statusText = SBString("media_scan.complete");
@@ -571,11 +561,16 @@ DirectoryImportJob.prototype = {
       // library database is probably in memory.  
       // This isn't useful, and makes a bad first impression,
       // so lets just dump the entire DB cache.
-      if (this._newMediaItems.length > 500) {
+      if (this.totalAddedToLibrary > this.BATCHCREATE_SIZE) {
         var dbEngine = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
                                      .getService(Ci.sbIDatabaseEngine);
         dbEngine.releaseMemory();
       }
+    }
+    
+    if (this._fileScanQuery) {
+      this._fileScanQuery.cancel();
+      this._fileScanQuery = null;   
     }
     
     if (this._timingService) {
@@ -589,15 +584,6 @@ DirectoryImportJob.prototype = {
    */
   observe: function DirectoryImportJob_observe(aSubject, aTopic, aData) {
     this._onPollFileScan();
-  },
-  
-  /**
-   * Retrieve the file name from the URI spec string (in UTF16 encoding).
-   */
-  _createDefaultTitle: function DirectoryImportJob__createDefaultTitle(aURIStr) {
-    if (aURIStr)
-      return aURIStr.split("/").pop;
-    return null;
   }
 }
 

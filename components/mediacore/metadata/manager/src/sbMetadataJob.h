@@ -270,6 +270,7 @@ private:
   PRInt32                                  mTotalItemCount;
   nsTArray<nsString>                       mErrorMessages;
   nsString                                 mTitleText;
+  nsString                                 mStatusText;
   nsCOMArray<sbIJobProgressListener>       mListeners;
   
   // TYPE_READ or TYPE_WRITE
