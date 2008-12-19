@@ -1434,7 +1434,7 @@ sbLocalDatabaseSmartMediaList::CreateSQLForCondition(sbRefPtrCondition& aConditi
   NS_NAMED_LITERAL_STRING(kMediaLists,         "simple_media_lists");
   NS_NAMED_LITERAL_STRING(kMediaItemsAlias,    "_mi");
   NS_NAMED_LITERAL_STRING(kMediaListTypeId,    "media_list_type_id");
-  NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
+  NS_NAMED_LITERAL_STRING(kObjSearchable,      "obj_searchable");
   NS_NAMED_LITERAL_STRING(kPropertyId,         "property_id");
   NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
 
@@ -1710,7 +1710,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   NS_ENSURE_ARG_POINTER(aInfo);
 
   NS_NAMED_LITERAL_STRING(kConditionAlias, "_c");
-  NS_NAMED_LITERAL_STRING(kObjSortable,    "obj_sortable");
+  NS_NAMED_LITERAL_STRING(kObjSearchable,  "obj_searchable");
   NS_NAMED_LITERAL_STRING(kMediaItem,      "media_item_id");
 
   nsresult rv;
@@ -1728,7 +1728,7 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    columnName.Assign(kObjSortable);
+    columnName.Assign(kObjSearchable);
   }
 
   nsCOMPtr<sbIPropertyOperator> opObj;
@@ -2276,7 +2276,7 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
 {
   NS_ENSURE_ARG_POINTER(aBuilder);
 
-  NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
+  NS_NAMED_LITERAL_STRING(kObjSearchable,      "obj_searchable");
   NS_NAMED_LITERAL_STRING(kPropertyId,         "property_id");
   NS_NAMED_LITERAL_STRING(kMediaItemId,        "media_item_id");
   NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
@@ -2301,7 +2301,7 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
   }
   else {
     // Otherwise, join the property to the base table
-    rv = aBuilder->AddColumn(kSelectAlias, kObjSortable);
+    rv = aBuilder->AddColumn(kSelectAlias, kObjSearchable);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // get property db id for rule property 
@@ -2345,7 +2345,7 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (aAddOrderBy) {
-      rv = aBuilder->AddOrder(kSelectAlias, kObjSortable, mSelectDirection);
+      rv = aBuilder->AddOrder(kSelectAlias, kObjSearchable, mSelectDirection);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -2361,7 +2361,7 @@ sbLocalDatabaseSmartMediaList::AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuild
 
   NS_NAMED_LITERAL_STRING(kContentLength,      "content_length");
   NS_NAMED_LITERAL_STRING(kLimitAlias,         "_limit");
-  NS_NAMED_LITERAL_STRING(kObjSortable,        "obj_sortable");
+  NS_NAMED_LITERAL_STRING(kObjSearchable,      "obj_searchable");
   NS_NAMED_LITERAL_STRING(kPropertyId,         "property_id");
   NS_NAMED_LITERAL_STRING(kMediaItemId,        "media_item_id");
   NS_NAMED_LITERAL_STRING(kResourceProperties, "resource_properties");
@@ -2378,7 +2378,7 @@ sbLocalDatabaseSmartMediaList::AddLimitColumnAndJoin(sbISQLSelectBuilder* aBuild
     case sbILocalDatabaseSmartMediaList::LIMIT_TYPE_USECS:
       {
         // For microseconds limits, we need to join the duration property
-        rv = aBuilder->AddColumn(kLimitAlias, kObjSortable);
+        rv = aBuilder->AddColumn(kLimitAlias, kObjSearchable);
         NS_ENSURE_SUCCESS(rv, rv);
 
         rv = aBuilder->AddJoin(sbISQLBuilder::JOIN_INNER,

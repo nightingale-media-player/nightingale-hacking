@@ -80,9 +80,9 @@ nsString sbLocalDatabaseSQL::MediaItemColumns(PRBool aIncludeMediaItem)
 nsString sbLocalDatabaseSQL::SecondaryPropertySelect()
 {
   nsString sql =
-    NS_LITERAL_STRING("SELECT media_item_id, property_id, obj, obj_sortable \
-                       FROM resource_properties \
-                       WHERE media_item_id IN (");
+    NS_LITERAL_STRING("SELECT media_item_id, property_id, obj, obj_searchable, obj_sortable \
+                      FROM resource_properties \
+                      WHERE media_item_id IN (");
   for (int i = 0; i < sbLocalDatabaseSQL::SecondaryPropertyBindCount-1; i++) {
     sql.AppendLiteral("?, ");
   }
@@ -116,7 +116,7 @@ nsString sbLocalDatabaseSQL::MediaItemsFtsAllInsert()
   nsString sql =
     NS_LITERAL_STRING("INSERT INTO resource_properties_fts_all \
                         (rowid, alldata) \
-                       SELECT media_item_id, group_concat(obj_sortable) \
+                       SELECT media_item_id, group_concat(obj_searchable) \
                        FROM resource_properties \
                        WHERE media_item_id = ? GROUP BY media_item_id");
   return sql;
@@ -155,8 +155,8 @@ nsString sbLocalDatabaseSQL::PropertiesSelect()
 nsString sbLocalDatabaseSQL::PropertiesInsert()
 {
   return NS_LITERAL_STRING("INSERT OR REPLACE INTO resource_properties \
-                            (media_item_id, property_id, obj, obj_sortable, obj_secondary_sortable) \
-                            VALUES (?, ?, ?, ?, ?)");
+                            (media_item_id, property_id, obj, obj_searchable, obj_sortable, obj_secondary_sortable) \
+                            VALUES (?, ?, ?, ?, ?, ?)");
 }
 
 

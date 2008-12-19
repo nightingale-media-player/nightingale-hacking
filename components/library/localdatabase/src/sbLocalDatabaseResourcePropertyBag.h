@@ -56,6 +56,7 @@ public:
   nsresult Init();
   nsresult PutValue(PRUint32 aPropertyID,
                     const nsAString& aValue,
+                    const nsAString& aSearchable,
                     const nsAString& aSortable);
 
   nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
@@ -63,23 +64,27 @@ public:
 
 private:
 
-  struct sbValuePair {
-    sbValuePair(const nsAString& aValue, const nsAString& aSortable) :
+  struct sbPropertyData {
+    sbPropertyData(const nsAString& aValue, 
+                   const nsAString& aSearchable, 
+                   const nsAString& aSortable) :
       value(aValue),
+      searchable(aSearchable),
       sortable(aSortable)
     {};
 
     nsString value;
+    nsString searchable;
     nsString sortable;
   };
 
   static PLDHashOperator PR_CALLBACK
     PropertyBagKeysToArray(const PRUint32& aPropertyID,
-                           sbValuePair* aValuePair,
+                           sbPropertyData* aData,
                            void *aArg);
 
   sbLocalDatabasePropertyCache* mCache;
-  nsClassHashtableMT<nsUint32HashKey, sbValuePair> mValueMap;
+  nsClassHashtableMT<nsUint32HashKey, sbPropertyData> mValueMap;
 
   nsCOMPtr<sbIPropertyManager> mPropertyManager;
 

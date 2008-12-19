@@ -113,9 +113,11 @@ function doTest(array) {
 
     case "getGuidByIndexAsync":
 
+      dump("------------------------------------- 1\n");
       var listener = new ArrayListener();
       array.addAsyncListener(listener);
       array.getGuidByIndexAsync(0);
+      dump("------------------------------------- 2\n");
 
       var tester = {};
       tester.listener = listener;
@@ -132,6 +134,7 @@ function doTest(array) {
         return 0;
       };
 
+      dump("------------------------------------- 3\n");
       return tester;
     break;
 

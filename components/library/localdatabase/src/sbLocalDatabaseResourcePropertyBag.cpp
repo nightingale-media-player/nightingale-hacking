@@ -102,7 +102,7 @@ sbLocalDatabaseResourcePropertyBag::Init()
 
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseResourcePropertyBag::PropertyBagKeysToArray(const PRUint32& aPropertyID,
-                                                           sbValuePair* aValuePair,
+                                                           sbPropertyData* aPropertyData,
                                                            void *aArg)
 {
   nsTArray<PRUint32>* propertyIDs = static_cast<nsTArray<PRUint32>*>(aArg);
@@ -171,10 +171,10 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
 {
   if(aPropertyDBID > 0) {
     nsAutoLock lock(mDirtyLock);
-    sbValuePair* pair;
+    sbPropertyData* data;
 
-    if (mValueMap.Get(aPropertyDBID, &pair)) {
-      _retval = pair->value;
+    if (mValueMap.Get(aPropertyDBID, &data)) {
+      _retval = data->value;
       return NS_OK;
     }
   }
@@ -190,10 +190,30 @@ sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDB
 {
   if(aPropertyDBID > 0) {
     nsAutoLock lock(mDirtyLock);
-    sbValuePair* pair;
+    sbPropertyData* data;
 
-    if (mValueMap.Get(aPropertyDBID, &pair)) {
-      _retval = pair->sortable;
+    if (mValueMap.Get(aPropertyDBID, &data)) {
+      _retval = data->sortable;
+      return NS_OK;
+    }
+  }
+
+  // The value hasn't been set, so return a void string.
+  _retval.SetIsVoid(PR_TRUE);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseResourcePropertyBag::
+  GetSearchablePropertyByID(PRUint32 aPropertyDBID,
+                            nsAString& _retval)
+{
+  if(aPropertyDBID > 0) {
+    nsAutoLock lock(mDirtyLock);
+    sbPropertyData* data;
+
+    if (mValueMap.Get(aPropertyDBID, &data)) {
+      _retval = data->searchable;
       return NS_OK;
     }
   }
@@ -237,6 +257,11 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
   nsString sortable;
   rv = propertyInfo->MakeSortable(aValue, sortable);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString searchable;
+  //XXXlone make it MakeSearchable !!
+  rv = propertyInfo->MakeSortable(aValue, searchable);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   // Find all properties whose secondary sort depends on this
   // property
@@ -248,7 +273,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
   rv = dependentProperties->GetLength(&dependentPropertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = PutValue(propertyDBID, aValue, sortable);
+  rv = PutValue(propertyDBID, aValue, searchable, sortable);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PR_Lock(mDirtyLock);
@@ -326,12 +351,15 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 nsresult
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
                                              const nsAString& aValue,
+                                             const nsAString& aSearchable,
                                              const nsAString& aSortable)
 {
-  nsAutoPtr<sbValuePair> pair(new sbValuePair(aValue, aSortable));
-  PRBool success = mValueMap.Put(aPropertyID, pair);
+  nsAutoPtr<sbPropertyData> data(new sbPropertyData(aValue, 
+                                                    aSearchable, 
+                                                    aSortable));
+  PRBool success = mValueMap.Put(aPropertyID, data);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  pair.forget();
+  data.forget();
 
   return NS_OK;
 }

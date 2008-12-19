@@ -64,6 +64,8 @@ interface sbILocalDatabaseResourcePropertyBag : nsISupports
 
   AString getSortablePropertyByID(in unsigned long aPropertyDBID);
 
+  AString getSearchablePropertyByID(in unsigned long aPropertyDBID);
+
   void setProperty(in AString aPropertyID, in AString aValue);
 
   void write();

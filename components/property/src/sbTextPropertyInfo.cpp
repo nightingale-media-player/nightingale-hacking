@@ -244,6 +244,7 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
 
 NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
 {
+  //XXXlone todo: change to use unicode collation etc, and add MakeSearchable.
   nsresult rv;
   PRBool valid = PR_FALSE;
 

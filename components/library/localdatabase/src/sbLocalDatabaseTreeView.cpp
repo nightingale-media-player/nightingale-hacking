@@ -2256,7 +2256,7 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
   nsString keyString(aKeyString);
   PRUint32 keyStringLength = keyString.Length();
 
-  // Make sure that this is lowercased. The obj_sortable table should always be
+  // Make sure that this is lowercased. The obj_searchable table should always be
   // lowercased.
   ToLowerCase(keyString);
 
