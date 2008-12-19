@@ -279,7 +279,7 @@ pref("songbird.mediacore.output.buffertime", 1000);
 // Value is in kilobytes
 pref("songbird.mediacore.streaming.buffersize", 128);
 
-pref("songbird.mediacore.normalization.enabled", false);
+pref("songbird.mediacore.normalization.enabled", true);
 
 // Prefer album gain over track gain. Valid values are 'album' and 'track'.
 pref("songbird.mediacore.normalization.preferredGain", "album");
