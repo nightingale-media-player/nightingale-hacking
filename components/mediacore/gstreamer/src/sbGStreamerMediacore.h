@@ -135,6 +135,8 @@ protected:
   nsresult SetBufferingProperties(GstElement *aPipeline);
   nsresult SendInitialBufferingEvent();
 
+  nsresult GetFileSize(nsIURI *aURI, PRInt64 *aFileSize);
+
 private:
   // Static helper for C callback
   static void syncHandler(GstBus *bus, GstMessage *message, gpointer data);
@@ -191,6 +193,9 @@ protected:
 
   PRInt64 mAudioSinkBufferTime; // Audio sink buffer time in usecs
   PRInt32 mStreamingBufferSize; // Streaming buffer max size in bytes
+
+  PRBool mResourceIsLocal;
+  PRInt64 mResourceSize;
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

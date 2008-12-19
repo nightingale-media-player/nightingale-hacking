@@ -88,6 +88,8 @@
 #undef CreateEvent
 #endif
 
+#define MAX_FILE_SIZE_FOR_ACCURATE_SEEK (20 * 1024 * 1024)
+
 /**
  * To log this class, set the following environment variable in a debug build:
  *
@@ -159,7 +161,9 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mVideoSinkDescription(),
     mAudioSinkDescription(),
     mAudioSinkBufferTime(0),
-    mStreamingBufferSize(0)
+    mStreamingBufferSize(0),
+    mResourceIsLocal(PR_FALSE),
+    mResourceSize(-1)
 {
   MOZ_COUNT_CTOR(sbGStreamerMediacore);
 
@@ -357,6 +361,30 @@ sbGStreamerMediacore::CreateSinkFromPrefs(const char *aSinkDescription)
   }
 
   return NULL;
+}
+
+nsresult
+sbGStreamerMediacore::GetFileSize(nsIURI *aURI, PRInt64 *aFileSize)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(aURI, &rv);
+  if (rv != NS_ERROR_NO_INTERFACE) {
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsCOMPtr<nsIFile> file;
+    rv = fileUrl->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = file->GetFileSize(aFileSize);
+    NS_ENSURE_SUCCESS (rv, rv);
+  }
+  else {
+    // That's ok, not a local file.
+    return rv;
+  }
+
+  return NS_OK;
 }
 
 GstElement *
@@ -623,6 +651,14 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
       mTags = nsnull;
     }
     mProperties = nsnull;
+    mResourceIsLocal = PR_TRUE;
+
+    nsCOMPtr<nsIURI> itemuri;
+    rv = item->GetContentSrc(getter_AddRefs(itemuri));
+    NS_ENSURE_SUCCESS (rv, /*void*/);
+
+    rv = GetFileSize (itemuri, &mResourceSize);
+    NS_ENSURE_TRUE(mPipeline, /*void*/);
 
     nsCString uri = NS_ConvertUTF16toUTF8(contentURL);
     LOG(("Setting URI to \"%s\"", uri.BeginReading()));
@@ -1068,6 +1104,15 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
   rv = aURI->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = GetFileSize (aURI, &mResourceSize);
+  if (rv == NS_ERROR_NO_INTERFACE) {
+    // Not being a file is fine - that's just something non-local
+    mResourceIsLocal = PR_FALSE;
+    mResourceSize = -1;
+  }
+  else
+    mResourceIsLocal = PR_TRUE;
+
   LOG(("Setting URI to \"%s\"", spec.get()));
 
   /* Set the URI to play */
@@ -1159,16 +1204,30 @@ sbGStreamerMediacore::OnSetPosition(PRUint64 aPosition)
 {
   GstClockTime position;
   gboolean ret;
+  GstSeekFlags flags;
+
   nsAutoMonitor lock(mMonitor);
 
   // Incoming position is in milliseconds, convert to GstClockTime (nanoseconds)
   position = aPosition * GST_MSECOND;
 
-  // Do a flushing keyframe seek to the requested position. This is the simplest
-  // and fastest type of seek.
+  // For gapless to work after seeking in MP3, we need to do accurate seeking.
+  // However, accurate seeks on large files is very slow.
+  // So, we do a KEY_UNIT seek (the fastest sort) unless it's all three of:
+  //  - a local file
+  //  - sufficiently small
+  
+  if (mResourceIsLocal &&
+      mResourceSize <= MAX_FILE_SIZE_FOR_ACCURATE_SEEK) 
+  {
+    flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_ACCURATE);
+  }
+  else {
+    flags = (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT);
+  }
+
   ret = gst_element_seek_simple (mPipeline, GST_FORMAT_TIME, 
-      (GstSeekFlags)(GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT),
-      position);
+      flags, position);
   
   if (!ret) {
     /* TODO: Is this appropriate for a non-fatal failure to seek? Should we
