@@ -502,8 +502,9 @@ sbGStreamerMediacore::CreateAudioSink()
   /* Add each filter, followed by an audioconvert. The first-added filter ends
    * last in the pipeline, so we iterate in reverse.
    */
-  std::vector<GstElement *>::const_reverse_iterator it = mAudioFilters.rbegin();
-  for ( ; it != mAudioFilters.rend(); ++it)
+  std::vector<GstElement *>::const_reverse_iterator it = mAudioFilters.rbegin(),
+      end = mAudioFilters.rend();
+  for ( ; it != end; ++it)
   {
     GstElement *audioconvert = gst_element_factory_make ("audioconvert", NULL);
     GstElement *filter = *it;
@@ -1789,7 +1790,6 @@ sbGStreamerMediacore::RemoveAudioFilter(GstElement *aElement)
 
   return NS_OK;
 }
-
 
 
 
