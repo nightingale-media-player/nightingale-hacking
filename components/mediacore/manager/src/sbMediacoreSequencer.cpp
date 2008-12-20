@@ -174,13 +174,10 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNeedsRecalculate(PR_FALSE)
 , mWatchingView(PR_FALSE)
 {
-  MOZ_COUNT_CTOR(sbMediacoreSequencer);
 }
 
 sbMediacoreSequencer::~sbMediacoreSequencer()
 {
-  MOZ_COUNT_DTOR(sbMediacoreSequencer);
-
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
   }

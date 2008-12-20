@@ -121,8 +121,6 @@ sbMediacoreManager::sbMediacoreManager()
   // mBaseEventTarget being null is handled on access
   NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
 
-  MOZ_COUNT_CTOR(sbMediacoreManager);
-
 #ifdef PR_LOGGING
   if (!gMediacoreManager)
     gMediacoreManager = PR_NewLogModule("sbMediacoreManager");
@@ -134,7 +132,6 @@ sbMediacoreManager::sbMediacoreManager()
 sbMediacoreManager::~sbMediacoreManager()
 {
   TRACE(("sbMediacoreManager[0x%x] - Destroyed", this));
-  MOZ_COUNT_DTOR(sbMediacoreManager);
 
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
