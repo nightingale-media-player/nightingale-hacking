@@ -912,7 +912,7 @@ ConcertTicketing.createTable = function() {
 ConcertTicketing.createTableHeader = function(str, className) {
 	var col = this._browseDoc.createElement("th");
 	col.className = className;
-	if (this._strings.getString(str) == "")
+	if (str == "tableHeaderTickets" || this._strings.getString(str) == "")
 		col.innerHTML = "&nbsp;";
 	else {
 		var colLabel =
