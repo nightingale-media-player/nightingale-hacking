@@ -62,6 +62,7 @@ SUBDIRS = aboutprotocol \
           sqlbuilder \
           update \
           controller \
+          filesystemevents \
           $(NULL)
 
 ifeq (1,$(SB_ENABLE_TEST_HARNESS))

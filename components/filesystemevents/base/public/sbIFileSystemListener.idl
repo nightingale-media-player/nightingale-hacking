@@ -1,0 +1,55 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+
+//
+// \brief Listener interface for objects that want to listen to file system
+//        events. Pass in an instance of this interface when creating a 
+//        |sbIFileSystemWatcher| instance.
+//
+[scriptable, uuid(47CFBE20-4E4F-4116-9CCD-3616C0D27F13)]
+interface sbIFileSystemListener : nsISupports
+{
+  //
+  // \brief Callback when something has change in the filesystem.
+  // \param aFilePath The event path of the file change.
+  //
+  void onFileSystemChanged(in AString aFilePath);
+  
+  //
+  // \brief Callback when something was removed in the filesystem.
+  // \param aFilePath The event path of the file removal.
+  //
+  void onFileSystemRemoved(in AString aFilePath);
+  
+  //
+  // \brief Callback when something was added in the filesystem.
+  // \param aFilePath The event path of the file addition.
+  //
+  void onFileSystemAdded(in AString aFilePath);
+};
+
