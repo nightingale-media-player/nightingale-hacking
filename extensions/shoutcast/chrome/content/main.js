@@ -87,12 +87,7 @@ var metricsObserver = {
 				metricsObserver.time = null;
 				break;
 			case Ci.sbIMediacoreEvent.METADATA_CHANGE:
-				dump("in METADATA_CHANGE\n");
-				dump("length: " + gMM.sequencer.view.length + "\n");
-				dump("idx: " + gMM.sequencer.viewPosition + "\n");
 				var currentItem = gMM.sequencer.currentItem;
-				dump("\tid: " + currentItem.getProperty(SC_id) + "\n");
-				dump("\tbitrate: " + currentItem.getProperty(SBProperties.bitRate) + "\n");
 				if (currentItem.getProperty(SC_id) == -1 &&
 						currentItem.getProperty(SBProperties.bitRate) == null)
 				{
