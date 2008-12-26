@@ -106,6 +106,9 @@ sbMacFileSystemWatcher::StopWatching()
 
   mIsWatching = PR_FALSE;
   
+  // Don't worry about checking the result from the listener.
+  mListener->OnWatcherStopped();
+  
   return NS_OK;
 }
 
@@ -153,5 +156,8 @@ sbMacFileSystemWatcher::OnTreeReady()
   // Now start the FSEvent stream
   mIsWatching = FSEventStreamStart(mStream);
   NS_ASSERTION(mIsWatching, "ERROR: Could not start the FSEvent stream!");
+
+  // Don't worry about checking the result from the listener.
+  mListener->OnWatcherStarted();
 }
 

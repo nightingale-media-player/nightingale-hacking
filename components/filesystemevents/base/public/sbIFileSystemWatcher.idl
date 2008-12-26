@@ -49,11 +49,15 @@ interface sbIFileSystemWatcher : nsISupports
 
   //
   // \brief  Start watching the path designated in |init()|.
+  //         Once the watching has fully initialized, the listener will be
+  //         informed via |onWatcherStarted()|.
   //
   void startWatching();
   
   //
   // \brief Stop watching the assigned path.
+  //        Once the watcher has fully stopped, the listener will be informed
+  //        via |onWatcherStopped()|.
   //
   void stopWatching();
   
