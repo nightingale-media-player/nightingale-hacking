@@ -760,6 +760,11 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
   LOG(("Handling about-to-finish signal"));
 
   nsAutoMonitor mon(sbBaseMediacore::mMonitor);
+
+  // Never try to handle the next file if we've seen an error.
+  if (mHasSeenError)
+    return;
+
   nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
   mon.Exit();
 
@@ -781,6 +786,8 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     rv = sequencer->RequestHandleNextItem(this);
     NS_ENSURE_SUCCESS(rv, /*void*/ );
 
+    mon.Enter();
+
     // Clear old tags so we don't merge them with the new ones
     if (mTags) {
       gst_tag_list_free (mTags);
@@ -800,7 +807,6 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     LOG(("Setting URI to \"%s\"", uri.BeginReading()));
 
     /* Set the URI to play */
-    nsAutoMonitor mon(mMonitor);
     NS_ENSURE_TRUE(mPipeline, /*void*/);
     g_object_set (G_OBJECT (mPipeline), "uri", uri.BeginReading(), NULL);
   }
