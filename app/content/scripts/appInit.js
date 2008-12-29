@@ -122,19 +122,80 @@ function SBAppInitialize()
     // XXXAus: We should not have to call this when mozbug 461399 is fixed.
     // Initialize the extension manager permissions.
     initExtensionManagerPermissions();
-    
+  }
+  catch( err ) {
+    alert( "SBAppInitialize:initExtensionManagerPermissions()\n" + err );
+  }
+  
+  try {
     // Startup the Metrics
     SBMetricsAppStart();
-
+  }
+  catch( err ) {
+    alert( "SBAppInitialize:SBMetricsAppStart()\n" + err );
+  }
+  
+  try {
     // Startup the Hotkeys
     initGlobalHotkeys();
-    
+  }
+  catch( err ) {
+    alert( "SBAppInitialize:initGlobalHotkeys()\n" + err );
+  }
+  
+  try {    
     // Handle dataremote commandline parameters
     initDataRemoteCmdLine();
   }
   catch( err ) {
-    alert( "SBAppInitialize\n" + err );
+    alert( "SBAppInitialize:initDataRemoteCmdLine()\n" + err );
   }
+  
+  try {
+    // On Windows, register the songbird:// protocol.
+    // (Mac is in the info.plist)
+    // XXX: TODO LINUX
+    var platform = Components.classes["@mozilla.org/system-info;1"]
+                             .getService(Components.interfaces.nsIPropertyBag2) 
+                             .getProperty("name");
+    if (platform == "Windows_NT") {
+	  SBRegisterWindowsSongbirdProtocol();
+    }
+  }
+  catch( err ) {
+    alert( "SBAppInitialize:SBRegisterWindowsSongbirdProtocol()\n" + err );
+  }
+}
+
+function SBRegisterWindowsSongbirdProtocol() {
+  var path = Components.classes["@mozilla.org/file/directory_service;1"]
+                       .getService(Components.interfaces.nsIProperties)
+                       .get("CurProcD", Components.interfaces.nsIFile);
+  var file = path.clone();
+  // It'd be nice if there were a way to look this up. 
+  // (mook suggests) ::GetModuleFileNameW(). 
+  // http://mxr.mozilla.org/seamonkey/source/browser/components/shell/src/nsWindowsShellService.cpp#264
+  file.append("songbird.exe");
+
+  var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
+                      .createInstance(Components.interfaces.nsIWindowsRegKey);
+
+  wrk.create(wrk.ROOT_KEY_CLASSES_ROOT,
+                        "songbird",
+                        wrk.ACCESS_WRITE);
+  wrk.writeStringValue("", "URL:Songbird protocol");
+  wrk.writeStringValue("URL Protocol", "");
+
+  wrk.create(wrk.ROOT_KEY_CLASSES_ROOT,
+             "songbird\\DefaultIcon",
+             wrk.ACCESS_WRITE);
+  wrk.writeStringValue("", '"' + file.path + '"');
+
+  wrk.create(wrk.ROOT_KEY_CLASSES_ROOT,
+             "songbird\\shell\\open\\command",
+             wrk.ACCESS_WRITE);
+  wrk.writeStringValue("", '"' + file.path + '" "%1"');
+  wrk.close();
 }
 
 //
