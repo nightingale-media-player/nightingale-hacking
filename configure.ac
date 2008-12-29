@@ -729,6 +729,10 @@ case "$SB_PLATFORM" in
     AC_SUBST(GTK_CFLAGS)
     AC_SUBST(GTK_LIBS)
 
+    PKG_CHECK_MODULES(GLIB, glib-2.0)
+    AC_SUBST(GLIB_CFLAGS)
+    AC_SUBST(GLIB_LIBS)
+
     # The iPod support needs dbus and hal.
     PKG_CHECK_MODULES(DBUS, dbus-glib-1)
     PKG_CHECK_MODULES(HAL, hal)

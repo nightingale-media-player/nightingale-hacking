@@ -215,6 +215,11 @@ private:
   PRBool                               mIsIntialized;
   PRLock                               *mRootNodeLock;
   PRLock                               *mListenersLock;
+
+  // Temporary member to store discovered paths while |AddChildren()| is
+  // still recursive.
+  // @see bug 14666 
+  sbStringArray                        mDiscoveredDirs;
 };
 
 #endif

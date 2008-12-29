@@ -46,7 +46,7 @@ ifeq ($(SB_PLATFORM), macosx)
 #
 #SUBDIRS += macosx
 else
-# XXX kreeger: Don't build linux yet (see bug 12082)
+SUBDIRS += linux
 endif
 endif
 

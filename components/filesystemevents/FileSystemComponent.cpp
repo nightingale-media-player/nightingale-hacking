@@ -33,7 +33,8 @@
 #include "macosx/sbMacFileSystemWatcher.h"
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemWatcher)
 #else
-// linux
+#include "linux/sbLinuxFileSystemWatcher.h"
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLinuxFileSystemWatcher)
 #endif
 
 
@@ -48,7 +49,7 @@ static nsModuleComponentInfo sbFileSystem[] =
 #elif defined(XP_MACOSX)
     sbMacFileSystemWatcherConstructor
 #else
-//  Linux
+    sbLinuxFileSystemWatcherConstructor
 #endif
   },
 };

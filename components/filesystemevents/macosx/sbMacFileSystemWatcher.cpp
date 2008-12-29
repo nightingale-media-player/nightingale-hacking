@@ -124,8 +124,8 @@ sbMacFileSystemWatcher::OnFileSystemEvents(const sbStringArray &aEventPaths)
 //------------------------------------------------------------------------------
 // sbFileSystemTreeListener
 
-void
-sbMacFileSystemWatcher::OnTreeReady()
+NS_IMETHODIMP
+sbMacFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
 {
   // Now start watching
   CFStringRef path = 
@@ -155,9 +155,11 @@ sbMacFileSystemWatcher::OnTreeReady()
                                    kCFRunLoopDefaultMode);
   // Now start the FSEvent stream
   mIsWatching = FSEventStreamStart(mStream);
-  NS_ASSERTION(mIsWatching, "ERROR: Could not start the FSEvent stream!");
+  NS_ENSURE_TRUE(mIsWatching, NS_ERROR_UNEXPECTED);
 
-  // Don't worry about checking the result from the listener.
-  mListener->OnWatcherStarted();
+  rv = mListener->OnWatcherStarted();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 

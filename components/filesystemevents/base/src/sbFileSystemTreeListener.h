@@ -29,15 +29,16 @@
 
 #include <nsStringAPI.h>
 
+typedef nsTArray<nsString> sbStringArray;
+
 
 //
 // \brief Enum for node change types used when diffing snapshots of nodes.
 //
 typedef enum {
-  eUnchanged = 0,
-  eChanged   = 1,
-  eAdded     = 2,
-  eRemoved   = 3,
+  eChanged   = 0,
+  eAdded     = 1,
+  eRemoved   = 2,
 } EChangeType;
 
 
@@ -50,13 +51,16 @@ public:
   //
   // \brief Callback function for when changes are found in the tree.
   //
-  virtual void OnChangeFound(nsAString & aChangePath, 
-                             EChangeType aChangeType) = 0;
+  NS_IMETHOD OnChangeFound(nsAString & aChangePath, 
+                           EChangeType aChangeType) = 0;
 
   //
   // \brief Callback function for when the tree has been full intialized.
+  // \param aDirPathArray A string array containing all the directory paths
+  //                      that were discovered during the initial build.
+  //                      NOTE: This does not include the root directory.
   //
-  virtual void OnTreeReady() = 0;
+  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray) = 0;
 };
 
 #endif  // sbFileSystemTreeListener_h_

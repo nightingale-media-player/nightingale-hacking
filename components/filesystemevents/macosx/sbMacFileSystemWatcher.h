@@ -44,10 +44,12 @@ public:
   sbMacFileSystemWatcher();
   virtual ~sbMacFileSystemWatcher();
 
+  // sbIFileSystemWatcher
   NS_IMETHOD StartWatching();
   NS_IMETHOD StopWatching();
 
-  virtual void OnTreeReady();
+  // sbFileSystemTreeListener
+  NS_IMETHOD OnTreeReady();
 
 protected:
   static void FSEventCallback(ConstFSEventStreamRef aStreamRef,

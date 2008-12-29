@@ -49,9 +49,10 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIFILESYSTEMWATCHER
 
-  virtual void OnChangeFound(nsAString & aChangePath, 
-                             EChangeType aChangeType);
-  virtual void OnTreeReady();
+  // sbFileSystemTreeListener
+  NS_IMETHOD OnChangeFound(nsAString & aChangePath, 
+                           EChangeType aChangeType);
+  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);
 
 protected:
   nsRefPtr<sbFileSystemTree>      mTree;

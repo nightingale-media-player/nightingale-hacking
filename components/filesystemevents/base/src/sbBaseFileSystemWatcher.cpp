@@ -83,26 +83,34 @@ sbBaseFileSystemWatcher::GetWatchPath(nsAString & aWatchPath)
 //------------------------------------------------------------------------------
 // sbFileSystemTreeListener
 
-void
+NS_IMETHODIMP
 sbBaseFileSystemWatcher::OnChangeFound(nsAString & aChangePath,
                                        EChangeType aChangeType)
 {
-  // Don't bother checking results for the listener.
+  nsresult rv;
+  
   switch (aChangeType) {
     case eChanged:
-      mListener->OnFileSystemChanged(aChangePath);
+      rv = mListener->OnFileSystemChanged(aChangePath);
       break;
     case eAdded:
-      mListener->OnFileSystemAdded(aChangePath);
+      rv = mListener->OnFileSystemAdded(aChangePath);
       break;
     case eRemoved:
-      mListener->OnFileSystemRemoved(aChangePath);
+      rv = mListener->OnFileSystemRemoved(aChangePath);
       break;
+    default:
+      rv = NS_ERROR_UNEXPECTED; 
   }
+
+  return rv;
 }
 
-void
-sbBaseFileSystemWatcher::OnTreeReady()
+NS_IMETHODIMP
+sbBaseFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
 {
+  // Return fail here - since the implementor needs to implement this to start
+  // its native file-system event system.
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 

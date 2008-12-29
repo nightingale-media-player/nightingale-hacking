@@ -118,6 +118,7 @@ sbFileSystemTree::RunBuildThread()
     nsAutoLock rootNodeLock(mRootNodeLock);
 
     // Init the recursive build
+    // @see bug 14666 
     nsresult rv = AddChildren(mRootPath, mRootNode, PR_FALSE);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to add children to root node!");
   }
@@ -142,8 +143,11 @@ sbFileSystemTree::NotifyBuildComplete()
 
   PRUint32 count = mListeners.Length();
   for (PRUint32 i = 0; i < count; i++) {
-    mListeners[i]->OnTreeReady();
+    mListeners[i]->OnTreeReady(mDiscoveredDirs);
   }
+
+  // Don't hang on to the values in |mDiscoveredDirs|.
+  mDiscoveredDirs.Clear();
 }
 
 nsresult
@@ -265,6 +269,9 @@ sbFileSystemTree::AddChildren(const nsAString & aPath,
                               sbFileSystemNode *aParentNode,
                               PRBool aNotifyListeners)
 {
+  // TODO: Implement this function non-recusively:
+  // @see bug 14666
+  
   sbNodeArray childNodes;
   nsresult rv = GetChildren(aPath, aParentNode, childNodes);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -291,6 +298,10 @@ sbFileSystemTree::AddChildren(const nsAString & aPath,
       // Only recusively add the next directory if the in-param flag is set
       if (mIsRecursiveBuild && isDir) {
         AddChildren(curNodePath, childNodes[i], aNotifyListeners);
+      
+        // This member variable should be a local variable to this function.
+        // @see bug 14666
+        mDiscoveredDirs.AppendElement(curNodePath);
       }
 
       if (aNotifyListeners) {
@@ -653,7 +664,14 @@ sbFileSystemTree::NotifyDirAdded(sbFileSystemNode *aAddedDirNode,
   // this needs to be threaded. If performance becomes a problem
   // (i.e. a large folder was moved into the watch path) this should be
   // moved to a background thread.
-  return AddChildren(fullPath, aAddedDirNode, PR_TRUE); 
+  nsresult rv = AddChildren(fullPath, aAddedDirNode, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Keep this here until |AddChildren| isn't recursive.
+  // @see bug 14666
+  mDiscoveredDirs.Clear();
+
+  return NS_OK;
 }
 
 nsresult
