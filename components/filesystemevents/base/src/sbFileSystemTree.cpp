@@ -160,6 +160,7 @@ sbFileSystemTree::Update(const nsAString & aPath)
   // Get the saved snapshot of the child nodes at the passed in path.
   sbNodeArray savedChildArray;
   rv = pathNode->GetChildren(savedChildArray);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the current snapshot of the child nodes at the passed in path.
   sbNodeArray newChildArray;
@@ -371,7 +372,7 @@ sbFileSystemTree::GetNode(const nsAString & aPath,
 
   // If this is the root path, simply return the root node.
   if (path.Equals(mRootPath)) {
-    *aNodeRetVal = mRootNode;
+    NS_IF_ADDREF(*aNodeRetVal = mRootNode);
     return NS_OK;
   }
 
