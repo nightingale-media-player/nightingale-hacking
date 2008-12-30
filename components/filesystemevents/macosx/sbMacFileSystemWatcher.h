@@ -45,11 +45,14 @@ public:
   virtual ~sbMacFileSystemWatcher();
 
   // sbIFileSystemWatcher
+  NS_IMETHOD Init(sbIFileSystemListener *aListener, 
+                  const nsAString & aRootPath, 
+                  PRBool aIsRecursive);
   NS_IMETHOD StartWatching();
   NS_IMETHOD StopWatching();
 
   // sbFileSystemTreeListener
-  NS_IMETHOD OnTreeReady();
+  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);
 
 protected:
   static void FSEventCallback(ConstFSEventStreamRef aStreamRef,
@@ -61,8 +64,9 @@ protected:
   void OnFileSystemEvents(const sbStringArray &aEventPaths);
 
 private:
-  FSEventStreamRef                mStream;   // strong
-  FSEventStreamContext            *mContext;  // strong
+  FSEventStreamRef     mStream;   // strong
+  FSEventStreamContext *mContext;  // strong
+  PRBool               mIsRunningLeopard;
 };
 
 #endif  // sbMacFileSystemWatcher_h_

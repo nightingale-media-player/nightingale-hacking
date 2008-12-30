@@ -58,15 +58,39 @@ sbMacFileSystemWatcher::FSEventCallback(ConstFSEventStreamRef aStreamRef,
 
 sbMacFileSystemWatcher::sbMacFileSystemWatcher()
 {
+  // Check to see if the current runtime is at least 10.5 or higher.
+  mIsRunningLeopard = PR_FALSE;
+  SInt32 macVersion;
+  if (Gestalt(gestaltSystemVersion, &macVersion) == noErr) {
+    if (macVersion >= 0x1050) {
+      mIsRunningLeopard = PR_TRUE;
+    }
+  }
 }
 
 sbMacFileSystemWatcher::~sbMacFileSystemWatcher()
 {
 }
 
+NS_IMETHODIMP
+sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener, 
+                             const nsAString & aRootPath, 
+                             PRBool aIsRecursive)
+{
+  if (!mIsRunningLeopard) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  return sbBaseFileSystemWatcher::Init(aListener, aRootPath, aIsRecursive);
+}
+
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StartWatching()
 {
+  if (!mIsRunningLeopard) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
   if (mIsWatching) {
     return NS_OK;
   }
@@ -90,6 +114,10 @@ sbMacFileSystemWatcher::StartWatching()
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StopWatching()
 {
+  if (!mIsRunningLeopard) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+  
   if (!mIsWatching) {
     return NS_OK;
   }
@@ -157,7 +185,7 @@ sbMacFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
   mIsWatching = FSEventStreamStart(mStream);
   NS_ENSURE_TRUE(mIsWatching, NS_ERROR_UNEXPECTED);
 
-  rv = mListener->OnWatcherStarted();
+  nsresult rv = mListener->OnWatcherStarted();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

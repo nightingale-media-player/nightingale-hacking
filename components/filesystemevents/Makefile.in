@@ -44,7 +44,7 @@ ifeq ($(SB_PLATFORM), macosx)
 #
 #     See bug 14642 
 #
-#SUBDIRS += macosx
+SUBDIRS += macosx
 else
 SUBDIRS += linux
 endif
