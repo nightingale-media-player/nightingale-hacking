@@ -145,6 +145,8 @@ protected:
 
   nsresult GetFileSize(nsIURI *aURI, PRInt64 *aFileSize);
 
+  void AbortAndRestartPlayback();
+
 private:
   // Static helper for C callback
   static GstBusSyncReply syncHandler(GstBus *bus, GstMessage *message, 
@@ -207,8 +209,22 @@ protected:
   PRInt64 mAudioSinkBufferTime; // Audio sink buffer time in usecs
   PRInt32 mStreamingBufferSize; // Streaming buffer max size in bytes
 
-  PRBool mResourceIsLocal;
-  PRInt64 mResourceSize;
+  PRBool mResourceIsLocal;   // True if the current resource is a local file.
+  PRInt64 mResourceSize;     // Size of current playing file, or -1 if unknown.
+
+  PRBool mGaplessDisabled;   // If true, gapless playback is disabled for the
+                             // currently-in-use pipeline. Recreating the 
+                             // pipeline will re-enable gapless.
+  PRBool mPlayingGaplessly;  // Gapless playback is currently happening - we're
+                             // on a second or subsequent file in a gapless
+                             // sequence.
+ 
+  PRBool mAbortingPlayback;  // Playback is being aborted (not normally 
+                             // stopped), and bus messages should not be 
+                             // processed.
+
+  nsCString mCurrentUri;     // UTF-8 String form (as used by GStreamer) of 
+                             // the currently-playing URI.
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

@@ -166,7 +166,10 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mAudioSinkBufferTime(0),
     mStreamingBufferSize(0),
     mResourceIsLocal(PR_FALSE),
-    mResourceSize(-1)
+    mResourceSize(-1),
+    mGaplessDisabled(PR_FALSE),
+    mPlayingGaplessly(PR_FALSE),
+    mAbortingPlayback(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbGStreamerMediacore);
 
@@ -393,6 +396,13 @@ sbGStreamerMediacore::syncHandler(GstBus* bus, GstMessage* message,
         gpointer data)
 {
   sbGStreamerMediacore *core = static_cast<sbGStreamerMediacore*>(data);
+
+  // Don't do message processing during an abort
+  if (core->mAbortingPlayback) {
+    TRACE(("Dropping message due to abort\n"));
+    gst_message_unref (message);
+    return GST_BUS_DROP;
+  }
 
   // Allow a sync handler to look at this first.
   // If it returns false (the default), we dispatch it asynchronously.
@@ -625,6 +635,9 @@ sbGStreamerMediacore::DestroyPipeline()
   mIsLive = PR_FALSE;
   mHasSeenError = PR_FALSE;
   mTargetState = GST_STATE_NULL;
+  mGaplessDisabled = PR_FALSE;
+  mPlayingGaplessly = PR_FALSE;
+  mAbortingPlayback = PR_FALSE;
 
   return NS_OK;
 }
@@ -761,8 +774,9 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
 
   nsAutoMonitor mon(sbBaseMediacore::mMonitor);
 
-  // Never try to handle the next file if we've seen an error.
-  if (mHasSeenError)
+  // Never try to handle the next file if we've seen an error, or if gapless
+  // is disabled for this resource
+  if (mHasSeenError || mGaplessDisabled)
     return;
 
   nsCOMPtr<sbIMediacoreSequencer> sequencer = mSequencer;
@@ -809,6 +823,9 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
     /* Set the URI to play */
     NS_ENSURE_TRUE(mPipeline, /*void*/);
     g_object_set (G_OBJECT (mPipeline), "uri", uri.BeginReading(), NULL);
+    mCurrentUri = uri;
+
+    mPlayingGaplessly = PR_TRUE;
   }
 
   return;
@@ -1177,6 +1194,36 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
       mPlatformInterface->SetDisplayAspectRatio(num, denom);
     }
   }
+
+  // We don't do gapless playback if video is involved. If we're already in
+  // gapless mode (this is the 2nd-or-subsequent resource), abort and try again
+  // in non-gapless mode. If it's the first resource, just flag that we
+  // shouldn't attempt gapless playback.
+  if (mPlayingGaplessly) {
+    // Ignore all messages while we're aborting playback
+    mAbortingPlayback = PR_TRUE;
+    nsCOMPtr<nsIRunnable> abort =
+        NS_NEW_RUNNABLE_METHOD(sbGStreamerMediacore, this, 
+                AbortAndRestartPlayback);
+    NS_DispatchToMainThread(abort);
+  }
+
+  mGaplessDisabled = PR_TRUE;
+}
+
+void sbGStreamerMediacore::AbortAndRestartPlayback()
+{
+  nsresult rv = Stop();
+  NS_ENSURE_SUCCESS (rv, /* void */);
+  mAbortingPlayback = PR_FALSE;
+
+  rv = CreatePlaybackPipeline();
+  NS_ENSURE_SUCCESS (rv, /* void */);
+
+  g_object_set (G_OBJECT (mPipeline), "uri", mCurrentUri.get(), NULL);
+
+  rv = Play();
+  NS_ENSURE_SUCCESS (rv, /* void */);
 }
 
 //-----------------------------------------------------------------------------
@@ -1259,6 +1306,7 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
 
   /* Set the URI to play */
   g_object_set (G_OBJECT (mPipeline), "uri", spec.get(), NULL);
+  mCurrentUri = spec;
 
   return NS_OK;
 }
