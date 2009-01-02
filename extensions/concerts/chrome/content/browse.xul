@@ -168,6 +168,7 @@
 					<description
 						id="library-text">&prefs.library.text;</description>
 					<checkbox id="checkbox-library-integration"
+						checked="true"
 						label="&prefs.library.checklabel;"/>
 				</vbox>
 				
