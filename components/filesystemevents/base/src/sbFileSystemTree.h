@@ -94,11 +94,11 @@ protected:
   //        assign them a parent node.
   // \param aPath The path to get the children at.
   // \param aParentNode The parent node to assign to each of the nodes.
-  // \param aNodeArray The array to assign the path's children to.
+  // \param aNodeMap The child node map to assign the path's children to.
   //
   nsresult GetChildren(const nsAString & aPath, 
                        sbFileSystemNode *aParentNode,
-                       sbNodeArray & aNodeArray);
+                       sbNodeMap & aNodeMap);
 
   //
   // \brief Get a node from the from the current saved snapshot at a 
@@ -142,15 +142,16 @@ protected:
                              PRBool *aOutResult);
 
   //
-  // \brief Compare two node arrays to get a resulting changelog.
-  // \param aOriginalArray The original array of nodes to compare.
-  // \param aCompareArray The new array to compare agains the original array.
-  // \param aOutChangeArray The change array to append all discovered
-  //                        differences between the two node arrays.
+  // \brief Compare two node maps to get a resulting changelog.
+  // \param aOriginalNodeMap The original node map to compare against.
+  // \param aCompareNodeMap The new node map to compare against the original 
+  //                        node map in |aOriginalNodeMap|.
+  // \param aOutChangeArray The change node map to append all discovered
+  //                        differences between the two node maps.
   //
-  nsresult CompareNodeArray(sbNodeArray & aOriginalArray,
-                            sbNodeArray & aCompareArray,
-                            sbChangeArray & aOutChangeArray);
+  nsresult CompareNodeMaps(sbNodeMap & aOriginalNodeMap,
+                           sbNodeMap & aCompareNodeMap,
+                           sbChangeArray & aOutChangeArray);
 
   //
   // \brief Notify the tree listeners that a directory was added by informing

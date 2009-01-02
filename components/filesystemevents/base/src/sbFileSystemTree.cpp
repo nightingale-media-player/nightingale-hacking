@@ -158,19 +158,18 @@ sbFileSystemTree::Update(const nsAString & aPath)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the saved snapshot of the child nodes at the passed in path.
-  sbNodeArray savedChildArray;
-  rv = pathNode->GetChildren(savedChildArray);
-  NS_ENSURE_SUCCESS(rv, rv);
+  sbNodeMap *savedChildMap = pathNode->GetChildren();
 
   // Get the current snapshot of the child nodes at the passed in path.
-  sbNodeArray newChildArray;
-  rv = GetChildren(aPath, pathNode, newChildArray);
+  sbNodeMap newChildMap;
+  rv = GetChildren(aPath, pathNode, newChildMap);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Compare the two maps.
   sbChangeArray pathChangesArray;
-  rv = CompareNodeArray(savedChildArray, newChildArray, pathChangesArray);
+  rv = CompareNodeMaps(*savedChildMap, newChildMap, pathChangesArray);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   nsString path(aPath);
   PRUint32 numChanges = pathChangesArray.Length();
   for (PRUint32 i = 0; i < numChanges; i++) {
@@ -272,25 +271,33 @@ sbFileSystemTree::AddChildren(const nsAString & aPath,
 {
   // TODO: Implement this function non-recusively:
   // @see bug 14666
-  
-  sbNodeArray childNodes;
+
+  sbNodeMap childNodes;
   nsresult rv = GetChildren(aPath, aParentNode, childNodes);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  PRUint32 childCount = childNodes.Length();
-  for (PRUint32 i = 0; i < childCount; i++) {
-    aParentNode->AddChild(childNodes[i]);
 
-    PRBool isDir;
-    rv = childNodes[i]->GetIsDir(&isDir);
-    if (NS_FAILED(rv))
+  sbNodeMapIter begin = childNodes.begin();
+  sbNodeMapIter end = childNodes.end();
+  sbNodeMapIter next;
+  for (next = begin; next != end; ++next) {
+    nsRefPtr<sbFileSystemNode> curNode(next->second);
+    if (!curNode) {
       continue;
+    }
+    
+    rv = aParentNode->AddChild(curNode);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
+
+    PRBool isDir = PR_FALSE;
+    rv = curNode->GetIsDir(&isDir);
+    if (NS_FAILED(rv)) {
+      continue;
+    }
 
     if (aNotifyListeners || isDir) {
-      nsString curNodeLeafName;
-      rv = childNodes[i]->GetLeafName(curNodeLeafName);
-      if (NS_FAILED(rv))
-        continue;
+      nsString curNodeLeafName(next->first);
 
       // Format the next child path
       nsString curNodePath = EnsureTrailingPath(aPath);
@@ -298,7 +305,7 @@ sbFileSystemTree::AddChildren(const nsAString & aPath,
 
       // Only recusively add the next directory if the in-param flag is set
       if (mIsRecursiveBuild && isDir) {
-        AddChildren(curNodePath, childNodes[i], aNotifyListeners);
+        AddChildren(curNodePath, curNode, aNotifyListeners);
       
         // This member variable should be a local variable to this function.
         // @see bug 14666
@@ -307,18 +314,20 @@ sbFileSystemTree::AddChildren(const nsAString & aPath,
 
       if (aNotifyListeners) {
         rv = NotifyChanges(curNodePath, eAdded);
-        NS_ENSURE_SUCCESS(rv, rv);
+        if (NS_FAILED(rv)) {
+          NS_WARNING("Could not notify listener of change!");
+        }
       }
     }
   }
-
+  
   return NS_OK;
 }
 
 nsresult
 sbFileSystemTree::GetChildren(const nsAString & aPath,
                               sbFileSystemNode *aParentNode,
-                              sbNodeArray & aNodeArray)
+                              sbNodeMap & aNodeMap)
 {
   nsresult rv;
   nsCOMPtr<nsILocalFile> pathFile = 
@@ -348,7 +357,12 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
     if (NS_FAILED(rv) || !curNode)
       continue;
 
-    aNodeArray.AppendElement(curNode);
+    nsString curNodeLeafName;
+    rv = curNode->GetLeafName(curNodeLeafName);
+    if (NS_FAILED(rv))
+      continue;
+
+    aNodeMap.insert(sbNodeMapPair(curNodeLeafName, curNode));
   }
 
   return NS_OK;
@@ -400,36 +414,21 @@ sbFileSystemTree::GetNode(const nsAString & aPath,
   PRUint32 numComponents = pathComponents.Length();
   for (PRUint32 i = 0; i < numComponents; i++) {
     nsString curPathComponent(pathComponents[i]);
-    PRBool foundComponent = PR_FALSE;
  
-    sbNodeArray curChildren;
-    rv = curSearchNode->GetChildren(curChildren);
-    if (NS_FAILED(rv)) {
+    sbNodeMap *curChildren = curSearchNode->GetChildren();
+    if (!curChildren) {
       continue;
     }
 
-    PRUint32 childCount = curChildren.Length();
-    for (PRUint32 j = 0; j < childCount; j++) {
-      nsRefPtr<sbFileSystemNode> curChildNode = curChildren[j];
-
-      // Compare the leaf name to the current path component.
-      nsString curLeafName;
-      rv = curChildNode->GetLeafName(curLeafName);
-      if (NS_FAILED(rv)) {
-        continue;
-      }
-      
-      if (curPathComponent.Equals(curLeafName)) {
-        foundComponent = PR_TRUE;
-        curSearchNode = curChildNode;
-      }
-    }
-
-    // If the current component was not found in the child nodes, bail.
-    if (!foundComponent) {
+    // If the current component was not found in the child nodes, bail.    
+    sbNodeMapIter foundNodeIter = curChildren->find(curPathComponent);
+    if (foundNodeIter == curChildren->end()) {
       foundTargetNode = PR_FALSE;
       break;
     }
+
+    // This is the found component node
+    curSearchNode = foundNodeIter->second;
   }  // end for
   
   if (foundTargetNode) {
@@ -517,100 +516,87 @@ sbFileSystemTree::CompareTimeStamps(sbFileSystemNode *aNode1,
 }
 
 nsresult
-sbFileSystemTree::CompareNodeArray(sbNodeArray & aOriginalArray,
-                                   sbNodeArray & aCompareArray,
-                                   sbChangeArray & aOutChangeArray)
+sbFileSystemTree::CompareNodeMaps(sbNodeMap & aOriginalNodeMap,
+                                  sbNodeMap & aCompareNodeMap,
+                                  sbChangeArray & aOutChangeArray)
 {
   NS_ASSERTION(NS_IsMainThread(), 
     "sbFileSystemTree::CompareNodeArray() not called on the main thread!");
   nsresult rv;
+  
+  // Make a copy of the working node maps.
+  sbNodeMap originalSnapshot(aOriginalNodeMap);
+  sbNodeMap compareSnapshot(aCompareNodeMap);
 
-  // Make a copy of the working arrays.
-  sbNodeArray originalSnapshot(aOriginalArray);
-  sbNodeArray compareSnapshot(aCompareArray);
-
-  // Loop through the original arrays, and pop items out of the duplicate
-  // arrays as needed.
-  PRUint32 originalArrayLength = aOriginalArray.Length();
-  for (PRUint32 i = 0; i < originalArrayLength; i++) {
+  // TODO: Search don't use two node maps for finding changes, simply iterate
+  //       through the nsIFile.directoryEntries enumerator.
+  // @see bug 14703
+  
+  // Loop through the original map. Pop items out of the duplicate maps
+  // as needed to help figure out the added/removed nodes.
+  sbNodeMapIter begin = aOriginalNodeMap.begin();
+  sbNodeMapIter end = aOriginalNodeMap.end();
+  sbNodeMapIter next;
+  for (next = begin; next != end; ++next) {
     // Compare the node at the current index with what is in the passed
-    // in compare array to look for changes in timestamps.
-    nsRefPtr<sbFileSystemNode> curOriginalNode(aOriginalArray[i]);
-    NS_ASSERTION(curOriginalNode, "Could not get the original node!");
-    if (!curOriginalNode) {
+    // in compare node map to look for changes in timestamps.
+    nsRefPtr<sbFileSystemNode> curOriginalNode(next->second);
+
+    // Look for the matching node name (by leaf name) in the compare map.
+    nsString curLeafName(next->first);
+    if (curLeafName.IsEmpty()) {
       continue;
     }
 
-    PRBool doSearch = PR_TRUE;
-    PRUint32 compareLength = aCompareArray.Length();
-    for (PRUint32 j = 0; j < compareLength && doSearch; j++) {
-      nsRefPtr<sbFileSystemNode> curCompareNode(aCompareArray[j]);
-      NS_ASSERTION(curCompareNode, "Could not get the current compare node!");
-      if (!curCompareNode) {
+    sbNodeMapIter foundNodeIter = aCompareNodeMap.find(curLeafName);
+    if (foundNodeIter == aCompareNodeMap.end()) {
+      // The node is not in the compare map, continue.
+      continue;
+    }
+
+    nsRefPtr<sbFileSystemNode> curCompareNode(foundNodeIter->second);
+    if (!curCompareNode) {
+      continue;
+    }
+
+    PRBool hasSameTs = PR_FALSE;
+    rv = CompareTimeStamps(curOriginalNode, curCompareNode, &hasSameTs);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!hasSameTs) {
+      // The original node has been modified, create a change object for
+      // this mutation event.
+      nsRefPtr<sbFileSystemChange> curChange =
+        new sbFileSystemChange(curCompareNode, eChanged);
+      NS_ASSERTION(curChange, "Could not create a sbFileSystemChange!");
+      if (!curChange) {
         continue;
       }
 
-      // Compare the names of the two current nodes to see if there is a match.
-      PRBool isMatch = PR_FALSE;
-      rv = CompareLeafNames(curOriginalNode, curCompareNode, &isMatch);
-      if (NS_FAILED(rv)) {
-        continue;
-      }
+      // Add the change the array of changes.
+      nsRefPtr<sbFileSystemChange> *resultChange =
+        aOutChangeArray.AppendElement(curChange);
+      NS_ASSERTION(resultChange, 
+                   "Coult not add a change to the change array!");
+    }
 
-      // No match here - just continue 
-      if (!isMatch) {
-        continue;
-      }
-      
-      // Found matching node names, now compare the timestamps to see
-      // if a change has occurred.
-      PRBool hasSameTs = PR_FALSE;
-      rv = CompareTimeStamps(curOriginalNode, curCompareNode, &hasSameTs);
-      if (NS_FAILED(rv)) {
-        continue;
-      }
+    // It's ok to fall-through since we want to remove these matched
+    // nodes from the original and compare snapshot maps.
 
-      if (!hasSameTs) {
-        // The original has been modified, create a change object for this
-        // mutation event.
-        nsRefPtr<sbFileSystemChange> curChange = 
-          new sbFileSystemChange(curCompareNode, eChanged);
-        NS_ASSERTION(curChange, "Could not create a sbFileSystemChange!");
-        if (!curChange) {
-          continue;
-        }
-        
-        // Add the change to the changes member array.
-        nsRefPtr<sbFileSystemChange> *resultChange = 
-          aOutChangeArray.AppendElement(curChange);
-        NS_ASSERTION(resultChange,
-                     "Could not add a change to the change array!");
-      }
-
-      // It's ok to fall-through since we want to remove these matched
-      // nodes from the original and compare snapshot arrays.
-
-      // Since a match has been found, remove these current nodes from both
-      // arrays. This helps determine which nodes have been added or removed.
-      PRBool result = PR_TRUE;
-      result = originalSnapshot.RemoveElement(curOriginalNode);
-      NS_ASSERTION(result, "Could not remove a node from the Original array!");
-      
-      result = compareSnapshot.RemoveElement(curCompareNode);
-      NS_ASSERTION(result, "Could not remove a node from the compare array!");
-
-      // No need to keep searching the compare array.
-      doSearch = PR_FALSE;
-    }  // end for
-  }  // end for
+    // Since a match has been found, remove these current nodes from both
+    // node maps. This determines which nodes have been added or removed.
+    originalSnapshot.erase(curLeafName);
+    compareSnapshot.erase(curLeafName);
+  }
 
   // Now that all the matching elements have been trimmed from the cloned
-  // arrays, go through and find the addded and removed nodes.
+  // node maps, go through and find the added and removed nodes.
   
   // Added items:
-  PRUint32 compareSnapshotLength = compareSnapshot.Length();
-  for (PRUint32 i = 0; i < compareSnapshotLength; i++) {
-    nsRefPtr<sbFileSystemNode> curNode = compareSnapshot[i];
+  begin = compareSnapshot.begin();
+  end = compareSnapshot.end();
+  for (next = begin; next != end; ++next) {
+    nsRefPtr<sbFileSystemNode> curNode(next->second);
     NS_ASSERTION(curNode, "Could not get the current compare snapshot node!");
     if (!curNode) {
       continue;
@@ -624,14 +610,15 @@ sbFileSystemTree::CompareNodeArray(sbNodeArray & aOriginalArray,
     }
 
     NS_ASSERTION(aOutChangeArray.AppendElement(curChange),
-                 "Could not add a change to the change array!");
+                 "Could not add a change to the change array!");  
   }
-  
+
   // Removed items:
-  PRUint32 originalSnapshotLength = originalSnapshot.Length();
-  for (PRUint32 i = 0; i < originalSnapshotLength; i++) {
-    nsRefPtr<sbFileSystemNode> curNode = originalSnapshot[i];
-    NS_ASSERTION(curNode, "Could not get the current Original snapshot node!");
+  begin = originalSnapshot.begin();
+  end = originalSnapshot.end();
+  for (next = begin; next != end; ++next) {
+    nsRefPtr<sbFileSystemNode> curNode(next->second);
+    NS_ASSERTION(curNode, "Could not get the current compare snapshot node!");
     if (!curNode) {
       continue;
     }
@@ -644,7 +631,7 @@ sbFileSystemTree::CompareNodeArray(sbNodeArray & aOriginalArray,
     }
 
     NS_ASSERTION(aOutChangeArray.AppendElement(curChange),
-                 "Could not add a change to the change array!");
+                 "Could not add a change to the change array!");  
   }
 
   return NS_OK;
@@ -685,24 +672,25 @@ sbFileSystemTree::NotifyDirRemoved(sbFileSystemNode *aRemovedDirNode,
 
   // Loop through all the children in |aRemovedDirNode| and notify of
   // removed events for each node.
-  sbNodeArray dirChildren;
-  nsresult rv = aRemovedDirNode->GetChildren(dirChildren);
-  NS_ENSURE_SUCCESS(rv, rv);
+  sbNodeMap *dirChildren = aRemovedDirNode->GetChildren();
+  NS_ENSURE_TRUE(dirChildren, NS_ERROR_UNEXPECTED);
 
-  PRUint32 childCount = dirChildren.Length();
-  for (PRUint32 i = 0; i < childCount; i++) {
-    // Keep this recursive for now, even though it kinda sucks.
-    nsRefPtr<sbFileSystemNode> curNode = dirChildren[i];
+  sbNodeMapIter begin = dirChildren->begin();
+  sbNodeMapIter end = dirChildren->end();
+  sbNodeMapIter next;
+  for (next = begin; next != end; ++next) {
+    nsRefPtr<sbFileSystemNode> curNode(next->second);
+    if (!curNode) {
+      continue;
+    }
 
-    nsString curNodeLeafName;
-    rv = curNode->GetLeafName(curNodeLeafName);
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsString curNodeLeafName(next->first);
 
     nsString curNodePath(fullPath);
     curNodePath.Append(curNodeLeafName);
 
     PRBool isDir;
-    rv = curNode->GetIsDir(&isDir);
+    nsresult rv = curNode->GetIsDir(&isDir);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // This is a dir, call out to have its children notified of their removal.

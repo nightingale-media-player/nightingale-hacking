@@ -69,18 +69,16 @@ sbFileSystemNode::GetParentNode(sbFileSystemNode **aRetVal)
 }
 
 nsresult
-sbFileSystemNode::SetChildren(const sbNodeArray & aNodeArray)
+sbFileSystemNode::SetChildren(const sbNodeMap & aNodeMap)
 {
-  mChildren.Clear();
-  mChildren.AppendElements(aNodeArray);
+  mChildMap = aNodeMap;
   return NS_OK;
 }
 
-nsresult
-sbFileSystemNode::GetChildren(sbNodeArray & aNodeArray)
+sbNodeMap*
+sbFileSystemNode::GetChildren()
 {
-  aNodeArray.AppendElements(mChildren);
-  return NS_OK;
+  return &mChildMap; 
 }
 
 nsresult
@@ -131,7 +129,13 @@ nsresult
 sbFileSystemNode::AddChild(sbFileSystemNode *aNode)
 {
   NS_ENSURE_ARG_POINTER(aNode);
-  mChildren.AppendElement(nsRefPtr<sbFileSystemNode>(aNode));
+
+  nsString leafName;
+  nsresult rv = aNode->GetLeafName(leafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  mChildMap.insert(sbNodeMapPair(leafName, aNode));
+
   return NS_OK;
 }
 
@@ -144,18 +148,7 @@ sbFileSystemNode::RemoveChild(sbFileSystemNode *aNode)
   nsresult rv = aNode->GetLeafName(nodeFileName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Loop through |mChildren| to find a leaf name that matches the leaf name
-  // of |aNode|.
-  for (PRUint32 i = 0; i < mChildren.Length(); i++) {
-    nsString curChildLeafName;
-    rv = mChildren[i]->GetLeafName(curChildLeafName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (nodeFileName.Equals(curChildLeafName)) {
-      mChildren.RemoveElementAt(i);
-      break;
-    }
-  }
+  mChildMap.erase(nodeFileName);
 
   return NS_OK;
 }
@@ -164,7 +157,7 @@ nsresult
 sbFileSystemNode::GetChildCount(PRUint32 *aChildCount)
 {
   NS_ENSURE_ARG_POINTER(aChildCount);
-  *aChildCount = mChildren.Length(); 
+  *aChildCount = mChildMap.size();
   return NS_OK;
 }
 
@@ -173,22 +166,8 @@ sbFileSystemNode::ReplaceNode(const nsAString & aLeafName,
                               sbFileSystemNode *aReplacementNode)
 {
   NS_ENSURE_ARG_POINTER(aReplacementNode);
-
-  // Find the node with the same leaf name
-  nsresult rv;
-  PRBool foundMatch = PR_FALSE;
-  PRUint32 childCount = mChildren.Length();
-  for (PRUint32 i = 0; i < childCount && !foundMatch; i++) {
-    nsString curChildLeafName;
-    rv = mChildren[i]->GetLeafName(curChildLeafName);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (curChildLeafName.Equals(aLeafName)) {
-      mChildren.ReplaceElementsAt(i, 1, aReplacementNode);
-      foundMatch = PR_TRUE;
-    }
-  }
-
-  return (foundMatch ? NS_OK : NS_ERROR_FAILURE);
+  nsString leafName(aLeafName);
+  mChildMap[leafName] = aReplacementNode;
+  return NS_OK;
 }
 

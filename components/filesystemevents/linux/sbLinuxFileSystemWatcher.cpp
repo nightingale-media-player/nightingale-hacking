@@ -30,7 +30,7 @@
 #include <sys/inotify.h>
 #include <unistd.h>
 
-typedef std::pair<int, nsString> sbFileDescPair;
+typedef sbFileDescMap::value_type sbFileDescPair;
 typedef sbFileDescMap::const_iterator sbFileDescIter;
 
 

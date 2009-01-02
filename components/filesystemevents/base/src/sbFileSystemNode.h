@@ -31,9 +31,13 @@
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
 #include <nsTArray.h>
+#include <map>
 
 class sbFileSystemNode;
 typedef nsTArray<nsRefPtr<sbFileSystemNode> > sbNodeArray;
+typedef std::map<nsString, nsRefPtr<sbFileSystemNode> > sbNodeMap;
+typedef sbNodeMap::value_type sbNodeMapPair;
+typedef sbNodeMap::const_iterator sbNodeMapIter;
 
 
 //------------------------------------------------------------------------------
@@ -70,8 +74,8 @@ public:
   //
   // \brief Setters and getters for the child array of this node.
   //
-  nsresult SetChildren(const sbNodeArray & aNodeArray);
-  nsresult GetChildren(sbNodeArray & aNodeArray);
+  nsresult SetChildren(const sbNodeMap & aNodeMap);
+  sbNodeMap* GetChildren();
   
   //
   // \brief Setters and getters for the leaf name of this node.
@@ -114,7 +118,7 @@ public:
  
 private:
   nsRefPtr<sbFileSystemNode> mParentNode;
-  sbNodeArray                mChildren;
+  sbNodeMap                  mChildMap;
   nsString                   mLeafName;
   PRBool                     mIsDir;
   PRInt64                    mLastModify;
