@@ -15,6 +15,8 @@ ac_add_options --disable-installer
 ac_add_options --enable-extensions=default,inspector,venkman
 ac_add_options --disable-dbus
 ac_add_options --enable-jemalloc
+ac_add_options --disable-safe-browsing
+ac_add_options --disable-url-classifier
 
 # The Crash Reporter is not implemented on x86_64 at the moment.
 ac_add_options --disable-crashreporter
