@@ -108,19 +108,19 @@ function testNumberInfo() {
   sample = "1";
   assertEqual(numberInfo.validate(sample), true);
   assertEqual(numberInfo.format(sample), "1");
-  assertEqual(numberInfo.makeSortable(sample), "+0000000000000000001");
+  assertEqual(numberInfo.makeSearchable(sample), "+0000000000000000001");
   
   numberInfo.radix = Ci.sbINumberPropertyInfo.RADIX_16;
   sample = "0x00aad";
   assertEqual(numberInfo.validate(sample), true);
   assertEqual(numberInfo.format(sample), "0xAAD");
-  assertEqual(numberInfo.makeSortable(sample), "0000000000000AAD");
+  assertEqual(numberInfo.makeSearchable(sample), "0000000000000AAD");
   
   numberInfo.radix = Ci.sbINumberPropertyInfo.RADIX_8;
   sample = "0644";
   assertEqual(numberInfo.validate(sample), true);
   assertEqual(numberInfo.format(sample), "0644");
-  assertEqual(numberInfo.makeSortable(sample), "0000000000000000000644");
+  assertEqual(numberInfo.makeSearchable(sample), "0000000000000000000644");
   
   numberInfo.radix = Ci.sbINumberPropertyInfo.RADIX_10;
   sample = "1000";
@@ -170,35 +170,35 @@ var numberInfo = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
   assertEqual(numberInfo.validate(sample), true);
 
   log(numberInfo.format(sample));
-  log(numberInfo.makeSortable(sample));
+  log(numberInfo.makeSearchable(sample));
   
   assertEqual(numberInfo.format(sample), "20.99");
   
-  var sortable = numberInfo.makeSortable(sample);
+  var sortable = numberInfo.makeSearchable(sample);
 
   var eps = 1e-10; // nearly zero, because floating points don't compare well.
 
-  var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
+  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
   assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "0.99";
   assertEqual(numberInfo.validate(sample), true);
   
   log(numberInfo.format(sample));
-  log(numberInfo.makeSortable(sample));
+  log(numberInfo.makeSearchable(sample));
   
   assertEqual(numberInfo.format(sample), "0.99");
-  var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
+  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
   assertTrue(delta < eps, "make sortable doesn't perturb the value");
 
   sample = "12347120349029834.1234341235";
   assertEqual(numberInfo.validate(sample), true);
 
   log(numberInfo.format(sample));
-  log(numberInfo.makeSortable(sample));
+  log(numberInfo.makeSearchable(sample));
   
   assertEqual(parseFloat(numberInfo.format(sample)), 1.23471e+016);
-  var delta = Math.abs(numberInfo.makeSortable(sample) - sample);
+  var delta = Math.abs(numberInfo.makeSearchable(sample) - sample);
   assertTrue(delta < eps, true, "make sortable doesn't perturb the value");
 }
 
@@ -286,12 +286,12 @@ function testBooleanInfo() {
   sample = "0";
   assertEqual(booleanInfo.validate(sample), true);
   assertEqual(booleanInfo.format(sample), "0");
-  assertEqual(booleanInfo.makeSortable(sample), "0");
+  assertEqual(booleanInfo.makeSearchable(sample), "0");
   
   sample = "1";
   assertEqual(booleanInfo.validate(sample), true);
   assertEqual(booleanInfo.format(sample), "1");
-  assertEqual(booleanInfo.makeSortable(sample), "1");
+  assertEqual(booleanInfo.makeSearchable(sample), "1");
 }
 
 function runTest () {

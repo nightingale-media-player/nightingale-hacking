@@ -1835,8 +1835,8 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
   }
   
   if (!leftValue.IsEmpty()) {
-    rv = aInfo->MakeSortable(leftValue, value);
-    // MakeSortable may fail if the value fails to validate, but since a smart
+    rv = aInfo->MakeSearchable(leftValue, value);
+    // MakeSearchable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
     // fatal to fail to make sortable, when that fails we just use the value
     // that we were given as is.
@@ -1858,8 +1858,8 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsAutoString rvalue;
-    rv = aInfo->MakeSortable(rightValue, rvalue);
-    // MakeSortable may fail if the value fails to validate, but since a smart
+    rv = aInfo->MakeSearchable(rightValue, rvalue);
+    // MakeSearchable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
     // fatal to fail to make sortable, when that fails we just use the value
     // that we were given as is.
@@ -2149,8 +2149,8 @@ sbLocalDatabaseSmartMediaList::GetConditionNeedsNull(sbRefPtrCondition& aConditi
   nsAutoString leftValue, value;
   leftValue = aCondition->mLeftValue;
   if (!leftValue.IsEmpty()) {
-    rv = aInfo->MakeSortable(leftValue, value);
-    // MakeSortable may fail if the value fails to validate, but since a smart
+    rv = aInfo->MakeSearchable(leftValue, value);
+    // MakeSearchable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
     // fatal to fail to make sortable, when that fails we just use the value
     // that we were given as is.

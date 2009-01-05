@@ -174,8 +174,7 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      _retval = data->value;
-      return NS_OK;
+      return data->GetValue(_retval);
     }
   }
 
@@ -193,8 +192,7 @@ sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDB
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      _retval = data->sortable;
-      return NS_OK;
+      return data->GetSortableValue(_retval);
     }
   }
 
@@ -213,8 +211,7 @@ sbLocalDatabaseResourcePropertyBag::
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      _retval = data->searchable;
-      return NS_OK;
+      return data->GetSearchableValue(_retval);
     }
   }
 
@@ -259,8 +256,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString searchable;
-  //XXXlone make it MakeSearchable !!
-  rv = propertyInfo->MakeSortable(aValue, searchable);
+  rv = propertyInfo->MakeSearchable(aValue, searchable);
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Find all properties whose secondary sort depends on this
@@ -383,5 +379,30 @@ sbLocalDatabaseResourcePropertyBag::ClearDirty()
 
   mDirty.Clear();
 
+  return NS_OK;
+}
+
+
+sbPropertyData::sbPropertyData(const nsAString& aValue, 
+                               const nsAString& aSearchable, 
+                               const nsAString& aSortable) :
+  value(aValue),
+  sortableValue(aSortable),
+  searchableValue(aSearchable)                              
+{
+}
+
+nsresult sbPropertyData::GetValue(nsAString &aValue) {
+  aValue = value;
+  return NS_OK;
+}
+
+nsresult sbPropertyData::GetSortableValue(nsAString &aSortableValue) {
+  aSortableValue = sortableValue;
+  return NS_OK;
+}
+
+nsresult sbPropertyData::GetSearchableValue(nsAString &aSearchableValue) {
+  aSearchableValue = searchableValue;
   return NS_OK;
 }

@@ -506,9 +506,17 @@ NS_IMETHODIMP sbPropertyInfo::Format(const nsAString & aValue, nsAString & _retv
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP sbPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP sbPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+{
+  // by default, the sortable value of a property is the same as the searchable
+  // value. this may be changed by specific properties, for instance by text
+  // properties which compute collation data for local-specific sort orders.
+  return MakeSearchable(aValue, _retval);
 }
 
 NS_IMETHODIMP sbPropertyInfo::GetRemoteReadable(PRBool *aRemoteReadable)

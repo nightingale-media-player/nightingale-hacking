@@ -38,7 +38,7 @@ class sbTextPropertyInfo : public sbPropertyInfo,
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(sbPropertyInfo::)
+  NS_FORWARD_SBIPROPERTYINFO_NOSPECIFICS(sbPropertyInfo::);
   NS_DECL_SBITEXTPROPERTYINFO
 
   sbTextPropertyInfo();
@@ -50,6 +50,7 @@ public:
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);
+  NS_IMETHOD MakeSearchable(const nsAString & aValue, nsAString & _retval);
 
 protected:
   nsresult InitializeOperators();

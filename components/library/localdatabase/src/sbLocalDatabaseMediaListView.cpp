@@ -1586,18 +1586,18 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
       rv = group->GetValues(property, getter_AddRefs(values));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Top level properties are not filtered as sortable
+      // Top level properties are not filtered as searchable
       if (!SB_IsTopLevelProperty(property)) {
 
         nsCOMPtr<sbIPropertyInfo> info;
         rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        nsCOMPtr<nsIStringEnumerator> sortable =
-          new sbMakeSortableStringEnumerator(info, values);
-        NS_ENSURE_TRUE(sortable, NS_ERROR_OUT_OF_MEMORY);
+        nsCOMPtr<nsIStringEnumerator> searchable =
+          new sbMakeSearchableStringEnumerator(info, values);
+        NS_ENSURE_TRUE(searchable, NS_ERROR_OUT_OF_MEMORY);
 
-        values = sortable;
+        values = searchable;
       }
 
       // Set the filter.
@@ -1655,18 +1655,18 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
           new sbTArrayStringEnumerator(&allValues);
         NS_ENSURE_TRUE(allValuesEnum, NS_ERROR_OUT_OF_MEMORY);
 
-        // Top level properties are not filtered as sortable
+        // Top level properties are not filtered as searchable
         if (!SB_IsTopLevelProperty(property)) {
 
           nsCOMPtr<sbIPropertyInfo> info;
           rv = mPropMan->GetPropertyInfo(property, getter_AddRefs(info));
           NS_ENSURE_SUCCESS(rv, rv);
 
-          nsCOMPtr<nsIStringEnumerator> sortable =
-            new sbMakeSortableStringEnumerator(info, allValuesEnum);
-          NS_ENSURE_TRUE(sortable, NS_ERROR_OUT_OF_MEMORY);
+          nsCOMPtr<nsIStringEnumerator> searchable =
+            new sbMakeSearchableStringEnumerator(info, allValuesEnum);
+          NS_ENSURE_TRUE(searchable, NS_ERROR_OUT_OF_MEMORY);
 
-          allValuesEnum = sortable;
+          allValuesEnum = searchable;
         }
 
         rv = mArray->AddFilter(property, allValuesEnum, PR_TRUE);
@@ -1947,10 +1947,11 @@ sbLocalDatabaseMediaListView::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
   return NS_ERROR_NOT_AVAILABLE;
 }
 
-NS_IMPL_ISUPPORTS1(sbMakeSortableStringEnumerator, nsIStringEnumerator)
+NS_IMPL_ISUPPORTS1(sbMakeSearchableStringEnumerator, nsIStringEnumerator)
 
-sbMakeSortableStringEnumerator::sbMakeSortableStringEnumerator(sbIPropertyInfo* aPropertyInfo,
-                                                               nsIStringEnumerator* aValues) :
+sbMakeSearchableStringEnumerator::
+  sbMakeSearchableStringEnumerator(sbIPropertyInfo* aPropertyInfo,
+                                   nsIStringEnumerator* aValues) :
   mPropertyInfo(aPropertyInfo),
   mValues(aValues)
 {
@@ -1959,13 +1960,13 @@ sbMakeSortableStringEnumerator::sbMakeSortableStringEnumerator(sbIPropertyInfo* 
 }
 
 NS_IMETHODIMP
-sbMakeSortableStringEnumerator::HasMore(PRBool* _retval)
+sbMakeSearchableStringEnumerator::HasMore(PRBool* _retval)
 {
   return mValues->HasMore(_retval);
 }
 
 NS_IMETHODIMP
-sbMakeSortableStringEnumerator::GetNext(nsAString& _retval)
+sbMakeSearchableStringEnumerator::GetNext(nsAString& _retval)
 {
   nsresult rv;
 
@@ -1973,7 +1974,7 @@ sbMakeSortableStringEnumerator::GetNext(nsAString& _retval)
   rv = mValues->GetNext(value);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPropertyInfo->MakeSortable(value, _retval);
+  rv = mPropertyInfo->MakeSearchable(value, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

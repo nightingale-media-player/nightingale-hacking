@@ -81,7 +81,7 @@ sbDummyPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
 }
 
 NS_IMETHODIMP
-sbDummyPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+sbDummyPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   _retval = aValue;
   return NS_OK;

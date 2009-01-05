@@ -354,7 +354,7 @@ NS_IMETHODIMP sbNumberPropertyInfo::Format(const nsAString & aValue, nsAString &
   return NS_OK;
 }
 
-NS_IMETHODIMP sbNumberPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP sbNumberPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
   _retval = aValue;

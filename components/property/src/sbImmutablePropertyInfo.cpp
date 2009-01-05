@@ -393,6 +393,16 @@ NS_IMETHODIMP
 sbImmutablePropertyInfo::MakeSortable(const nsAString& aValue,
                                       nsAString& _retval)
 {
+  // by default, the sortable value of a property is the same as the searchable
+  // value. this may be changed by specific properties, for instance by text
+  // properties which compute collation data for local-specific sort orders.
+  return MakeSearchable(aValue, _retval);
+}
+
+NS_IMETHODIMP
+sbImmutablePropertyInfo::MakeSearchable(const nsAString& aValue,
+                                        nsAString& _retval)
+{
   _retval = aValue;
   return NS_OK;
 }

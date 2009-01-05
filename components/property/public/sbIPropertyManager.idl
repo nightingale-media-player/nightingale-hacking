@@ -127,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(80fc8a30-8f2c-11dd-ad8b-0800200c9a66)]
+[scriptable, uuid(dbc4e321-3a05-44e1-9217-a5ba056e1bfd)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -281,11 +281,18 @@ interface sbIPropertyInfo : nsISupports
   AString format(in AString aValue);
 
   /**
-   * \brief Formats the value to enable proper sorting.
-   * \param aValue Value to format.
-   * \return The formatted sorting value.
+   * \brief Transforms the string into its sortable collation data equivalent.
+   * \param aValue Value to transform.
+   * \return The collation data used for sorting the value.
    */
   AString makeSortable(in AString aValue);
+
+  /**
+   * \brief Formats the value to enable proper search.
+   * \param aValue Value to format.
+   * \return The formatted search value.
+   */
+  AString makeSearchable(in AString aValue);
 
   /**
    * \brief A unit converter to convert to and from the units in

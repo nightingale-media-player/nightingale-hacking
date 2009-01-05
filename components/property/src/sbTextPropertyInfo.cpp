@@ -35,6 +35,10 @@
 
 #include <sbLockUtils.h>
 
+#include <locale>     // for collation
+#include <prmem.h>
+#include <errno.h>
+
 NS_IMPL_ADDREF_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
 NS_IMPL_RELEASE_INHERITED(sbTextPropertyInfo, sbPropertyInfo);
 
@@ -209,21 +213,21 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
   {
     sbSimpleAutoLock lock(mMinMaxLock);
 
-    //If a minimum length is specified and is not respected there's nothing
-    //we can do about it, so we reject it.
+    // If a minimum length is specified and is not respected there's nothing
+    // we can do about it, so we reject it.
     if(mMinLen && len < mMinLen) {
       _retval = EmptyString();
       return NS_ERROR_INVALID_ARG;
     }
 
-    //If a maximum length is specified and we exceed it, we cut the string to the
-    //maximum length.
+    // If a maximum length is specified and we exceed it, we cut the string to the
+    // maximum length.
     if(mMaxLen && len > mMaxLen) {
       _retval.SetLength(mMaxLen);
     }
   }
 
-  //Enforce lowercase if that is requested.
+  // Enforce lowercase if that is requested.
   {
     sbSimpleAutoLock lock(mEnforceLowercaseLock);
     if(mEnforceLowercase) {
@@ -242,9 +246,141 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
   return rv;
 }
 
+// XXXlone> jemalloc is missing _realloc_dbg (http://bugzilla.songbirdnest.com/show_bug.cgi?id=14615)
+// respin is coming, but until then, you can uncomment these lines to succesfuly
+// build in debug mode
+
+#ifdef DEBUG
+void *
+_realloc_dbg(void *userdata, size_t s, int blocktype, const char* r1, int r2)
+{
+        return realloc(userdata, s);
+} 
+#endif 
+
+// text property info needs to compute local-specific collation data instead
+// of relying on the ancestor's default implementation (which just calls
+// MakeSearchable), so that proper sort order are achieved.
 NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
 {
-  //XXXlone todo: change to use unicode collation etc, and add MakeSearchable.
+  // first compress whitespaces
+  nsAutoString val;
+  val = aValue;
+  CompressWhitespace(val);
+  
+  // we might want to limit the number of characters we are sorting on ? just
+  // so that we do not generate humongus collation data blocks ? disable for
+  // now.
+  // if (val.Length() > 256)
+  //     val.SetLength()
+  
+  // read the current locale for collate and ctype
+  const char *oldlocale_collate = setlocale(LC_COLLATE, NULL);
+  const char *oldlocale_ctype = setlocale(LC_CTYPE, NULL);
+
+  // loading locale "" loads the user defined locale
+  setlocale(LC_COLLATE, "");
+  // this sets mbstowcs and wcstombs' encoding. en_US is ignored because
+  // we're only setting LC_CTYPE.
+  setlocale(LC_CTYPE, "en_US.UTF-8");
+  
+  wchar_t *input;
+  
+#ifdef WIN32
+  input = (wchar_t *)val.BeginReading();
+#else
+  // convert from 4-bytes chars to 2-bytes chars
+  nsCString input_utf8 = NS_ConvertUTF16toUTF8(val);
+  PRUint32 wc32size = mbstowcs(NULL, 
+                               input_utf8.BeginReading(), 
+                               input_utf8.Length());
+  input = (wchar_t *)PR_Malloc((wc32size + 1) * 4);
+  if (!input) {
+    return NS_ERROR_OUT_OF_MEMORY;
+  }
+  mbstowcs(input, input_utf8.BeginReading(), input_utf8.Length() + 1);
+#endif
+
+  // ask how many characters we need to hold the collation data
+  PRUint32 xfrm_size = wcsxfrm(NULL, input, 0);
+  if (xfrm_size < 0) {
+    // uncollatable characters, fail.
+#ifdef __STDC_ISO_10646__
+    PR_Free(input);
+#endif
+    return NS_ERROR_FAILURE;
+  }
+  
+  PRUint32 buffer_size;
+
+// glibc uses 4-bytes wchar_t, but mozilla is compiled with 2-bytes wchar_t, 
+// we need to apply conversions. we add 1 char to hold the terminating null.
+#ifndef WIN32
+  buffer_size = (xfrm_size + 1) * 4;
+#else
+  buffer_size = (xfrm_size + 1) * sizeof(wchar_t);
+#endif
+
+  // allocate enough chars to hold the collation data
+  wchar_t *xform_data = (wchar_t *)PR_Malloc(buffer_size);
+  if (!xform_data) {
+#ifndef WIN32
+    PR_Free(input);
+#endif
+    return NS_ERROR_OUT_OF_MEMORY;
+  }
+
+  // apply the proper collation algorithm, depending on the user's locale.
+  
+  // note that it is impossible to use the proper sort for *all* languages at
+  // the same time, because what is proper depends on the original language from
+  // which the string came. for instance, hungarian artists should have their
+  // accented vowels sorted the same as non-accented ones, but a french artist 
+  // should have the last accent determine that order. because we cannot
+  // possibly guess the origin locale for the string, the only thing we can do
+  // is use the user's current locale on all strings.
+  
+  // that being said, many language-specific letters (such as the german eszett)
+  // have one one way of being properly sorted (in this instance, it must sort
+  // with the same weight as 'ss', and are collated that way no matter what
+  // locale is being used.
+  
+  // also note that if a user changes his locale at any point, the order of
+  // a sort will remain the same (it is stored in the db as collation data)
+  // until the sort values are regenerated. this could lead to inconsistent sort
+  // orders if some sort values have been regenerated (eg, because their track's
+  // metadata changed), but not others. perhaps we should have some ui somewhere
+  // that lets the user perform a complete sort data regeneration ? (more
+  // probably this should be part of the power tools extension, though)
+  wcsxfrm(xform_data, input, xfrm_size + 1); // +1 for terminating null
+  
+#ifdef WIN32
+  // if 2-bytes wchar_t, simply cast, then assign to the return value
+  _retval = (PRUnichar *)xform_data;
+#else
+  // we're done with the input
+  PR_Free(input);
+  // convert back from 4-bytes chars to 2-bytes chars
+  int mbsize = wcstombs(NULL, xform_data, xfrm_size);
+  char *xform_data_mbs = (char *)PR_Malloc(mbsize + 1);
+  wcstombs(xform_data_mbs, xform_data, xfrm_size + 1);
+  _retval = NS_ConvertUTF8toUTF16(xform_data_mbs, mbsize);
+  PR_Free(xform_data_mbs);
+#endif
+
+  // free the collation data buffer
+  PR_Free(xform_data);
+  
+  // restore the previous locale settings
+  setlocale(LC_COLLATE, oldlocale_collate);
+  setlocale(LC_CTYPE, oldlocale_ctype);
+
+  // all done
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbTextPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
+{
   nsresult rv;
   PRBool valid = PR_FALSE;
 
@@ -269,16 +405,16 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
 
   PR_Lock(mMinMaxLock);
 
-  //If a minimum length is specified and is not respected there's nothing
-  //we can do about it, so we reject it.
+  // If a minimum length is specified and is not respected there's nothing
+  // we can do about it, so we reject it.
   if(mMinLen && len < mMinLen) {
     PR_Unlock(mMinMaxLock);
     _retval = EmptyString();
     return NS_ERROR_INVALID_ARG;
   }
 
-  //If a maximum length is specified and we exceed it, we cut the string to the
-  //maximum length.
+  // If a maximum length is specified and we exceed it, we cut the string to the
+  // maximum length.
   if(mMaxLen && len > mMaxLen) {
     _retval.SetLength(mMaxLen);
   }

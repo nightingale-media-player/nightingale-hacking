@@ -35,6 +35,7 @@
 
 class sbLocalDatabasePropertyCache;
 class sbIPropertyManager;
+class sbPropertyData;
 
 /**
  * This holds the collection of properties usually related to a media item.
@@ -64,20 +65,6 @@ public:
 
 private:
 
-  struct sbPropertyData {
-    sbPropertyData(const nsAString& aValue, 
-                   const nsAString& aSearchable, 
-                   const nsAString& aSortable) :
-      value(aValue),
-      searchable(aSearchable),
-      sortable(aSortable)
-    {};
-
-    nsString value;
-    nsString searchable;
-    nsString sortable;
-  };
-
   static PLDHashOperator PR_CALLBACK
     PropertyBagKeysToArray(const PRUint32& aPropertyID,
                            sbPropertyData* aData,
@@ -94,5 +81,29 @@ private:
   PRLock* mDirtyLock;
   nsTHashtable<nsUint32HashKey> mDirty;
 };
+
+/**
+ * This holds the data for a property. The data is composed of three
+ * values: the actual property value, the sortable value (eg, collation data
+ * for strings), and the searchable value (eg, lowercased strings)
+ */
+class sbPropertyData
+{
+public:
+  sbPropertyData(const nsAString &aValue,
+                 const nsAString &aSearchableValue,
+                 const nsAString &aSortableValue);
+  virtual ~sbPropertyData() {}
+
+  nsresult GetValue(nsAString &aValue);
+  nsresult GetSortableValue(nsAString &aSortableValue);
+  nsresult GetSearchableValue(nsAString &aSearchableValue);
+  
+private:
+  nsString value;
+  nsString searchableValue;
+  nsString sortableValue;
+};
+
 
 #endif /* SBLOCALDATABASERESOURCEPROPERTYBAG_H_ */

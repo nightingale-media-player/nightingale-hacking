@@ -131,7 +131,7 @@ NS_IMETHODIMP sbBooleanPropertyInfo::Format(const nsAString & aValue, nsAString 
   return rv;
 }
 
-NS_IMETHODIMP sbBooleanPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP sbBooleanPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
   PRBool valid = PR_FALSE;

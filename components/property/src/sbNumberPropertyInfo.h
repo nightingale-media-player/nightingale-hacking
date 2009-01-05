@@ -42,7 +42,7 @@ class sbNumberPropertyInfo : public sbPropertyInfo,
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
-  NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(sbPropertyInfo::);
+  NS_FORWARD_SBIPROPERTYINFO_STDPROP(sbPropertyInfo::);
   NS_DECL_SBINUMBERPROPERTYINFO
 
   sbNumberPropertyInfo();
@@ -53,7 +53,7 @@ public:
   NS_IMETHOD Validate(const nsAString & aValue, PRBool *_retval);
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
-  NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);
+  NS_IMETHOD MakeSearchable(const nsAString & aValue, nsAString & _retval);
 
 protected:
   nsresult InitializeOperators();

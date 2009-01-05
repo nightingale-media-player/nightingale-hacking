@@ -278,7 +278,7 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
   return NS_OK;
 }
 
-NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP sbURIPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   PRBool bFailed = PR_FALSE;
   nsresult rv;

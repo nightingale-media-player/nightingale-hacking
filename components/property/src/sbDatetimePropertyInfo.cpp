@@ -346,7 +346,7 @@ NS_IMETHODIMP sbDatetimePropertyInfo::Format(const nsAString & aValue, nsAString
   return NS_OK;
 }
 
-NS_IMETHODIMP sbDatetimePropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP sbDatetimePropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
   PRInt64 value = 0;

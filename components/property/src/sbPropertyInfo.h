@@ -38,7 +38,7 @@
 #include <nsWeakReference.h>
 #include "sbPropertyOperator.h"
 
-#define NS_FORWARD_SBIPROPERTYINFO_NOVALIDATE_NOFORMAT(_to) \
+#define NS_FORWARD_SBIPROPERTYINFO_NOSPECIFICS(_to) \
 NS_IMETHOD GetOPERATOR_EQUALS(nsAString & aOPERATOR_EQUALS) { return _to GetOPERATOR_EQUALS(aOPERATOR_EQUALS); } \
 NS_IMETHOD GetOPERATOR_NOTEQUALS(nsAString & aOPERATOR_NOTEQUALS) { return _to GetOPERATOR_NOTEQUALS(aOPERATOR_NOTEQUALS); } \
 NS_IMETHOD GetOPERATOR_GREATER(nsAString & aOPERATOR_GREATER) { return _to GetOPERATOR_GREATER(aOPERATOR_GREATER); } \
@@ -77,6 +77,13 @@ NS_IMETHOD SetOperators(nsISimpleEnumerator * aOperators) { return _to SetOperat
 NS_IMETHOD GetOperator(const nsAString & aOperator, sbIPropertyOperator * *_retval) { return _to GetOperator(aOperator, _retval); } \
 NS_IMETHOD SetUnitConverter(sbIPropertyUnitConverter *aUnitConverter) { return _to SetUnitConverter(aUnitConverter); } \
 NS_IMETHOD GetUnitConverter(sbIPropertyUnitConverter **retVal) { return _to GetUnitConverter(retVal); }
+
+#define NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to) \
+NS_IMETHOD MakeSortable(const nsAString &aValue, nsAString &retVal) { return _to MakeSortable(aValue, retVal); }
+
+#define NS_FORWARD_SBIPROPERTYINFO_STDPROP(_to) \
+NS_FORWARD_SBIPROPERTYINFO_NOSPECIFICS(_to) \
+NS_FORWARD_SBIPROPERTYINFO_MAKESORTABLE(_to)
 
 #define SB_IPROPERTYINFO_CAST(__unambiguousBase, __expr) \
   static_cast<sbIPropertyInfo*>(static_cast<__unambiguousBase>(__expr))
