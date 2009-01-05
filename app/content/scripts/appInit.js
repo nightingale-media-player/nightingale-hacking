@@ -180,19 +180,22 @@ function SBRegisterWindowsSongbirdProtocol() {
   var wrk = Components.classes["@mozilla.org/windows-registry-key;1"]
                       .createInstance(Components.interfaces.nsIWindowsRegKey);
 
-  wrk.create(wrk.ROOT_KEY_CLASSES_ROOT,
-                        "songbird",
+  wrk.create(wrk.ROOT_KEY_CURRENT_USER,
+                        "Software\\Classes\\songbird",
                         wrk.ACCESS_WRITE);
   wrk.writeStringValue("", "URL:Songbird protocol");
   wrk.writeStringValue("URL Protocol", "");
+  // The EditFlags key will make the protocol show up in the File Types
+  // dialog in Windows XP.
+  wrk.writeBinaryValue("EditFlags", '\002\000\000\000');
 
-  wrk.create(wrk.ROOT_KEY_CLASSES_ROOT,
-             "songbird\\DefaultIcon",
+  wrk.create(wrk.ROOT_KEY_CURRENT_USER,
+             "Software\\Classes\\songbird\\DefaultIcon",
              wrk.ACCESS_WRITE);
   wrk.writeStringValue("", '"' + file.path + '"');
 
-  wrk.create(wrk.ROOT_KEY_CLASSES_ROOT,
-             "songbird\\shell\\open\\command",
+  wrk.create(wrk.ROOT_KEY_CURRENT_USER,
+             "Software\\Classes\\songbird\\shell\\open\\command",
              wrk.ACCESS_WRITE);
   wrk.writeStringValue("", '"' + file.path + '" "%1"');
   wrk.close();
