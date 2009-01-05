@@ -152,18 +152,20 @@ function SBAppInitialize()
   }
   
   try {
-    // On Windows, register the songbird:// protocol.
+    // On Windows and Linux, register the songbird:// protocol.
     // (Mac is in the info.plist)
-    // XXX: TODO LINUX
     var platform = Components.classes["@mozilla.org/system-info;1"]
                              .getService(Components.interfaces.nsIPropertyBag2) 
                              .getProperty("name");
     if (platform == "Windows_NT") {
-	  SBRegisterWindowsSongbirdProtocol();
+      SBRegisterWindowsSongbirdProtocol();
+    }
+    else if (platform == "Linux") {
+      SBRegisterGConfSongbirdProtocol();
     }
   }
   catch( err ) {
-    alert( "SBAppInitialize:SBRegisterWindowsSongbirdProtocol()\n" + err );
+    alert( "SBAppInitialize:SBRegisterSongbirdProtocol()\n" + err );
   }
 }
 
@@ -199,6 +201,20 @@ function SBRegisterWindowsSongbirdProtocol() {
              wrk.ACCESS_WRITE);
   wrk.writeStringValue("", '"' + file.path + '" "%1"');
   wrk.close();
+}
+
+function SBRegisterGConfSongbirdProtocol() {
+  var path = Components.classes["@mozilla.org/file/directory_service;1"]
+                       .getService(Components.interfaces.nsIProperties)
+                       .get("CurProcD", Components.interfaces.nsIFile);
+  var file = path.clone();
+  file.append("songbird");
+
+  var gconf = Components.classes["@mozilla.org/gnome-gconf-service;1"]
+                                       .getService(Components.interfaces.nsIGConfService);
+  gconf.setString("/desktop/gnome/url-handlers/songbird/command", '"' + file.path + '" "%s"');
+  gconf.setBool("/desktop/gnome/url-handlers/songbird/enabled", true);
+  gconf.setBool("/desktop/gnome/url-handlers/songbird/needs_terminal", false);
 }
 
 //
