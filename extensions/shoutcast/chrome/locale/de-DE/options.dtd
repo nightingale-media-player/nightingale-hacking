@@ -3,7 +3,7 @@
 <!ENTITY prefwindow.title "SHOUTcast Radio-Einstellungen">
 <!ENTITY bit-rate.limit.label "Nur SHOUTcast-Streams anzeigen, die eine Mindestbitrate haben">
 <!ENTITY listeners.limit.label "Nur SHOUTcast-Streams mit mindestens">
-<!ENTITY listeners.limit.label.2 "H�rern anzeigen">
+<!ENTITY listeners.limit.label.2 "Hörern anzeigen">
 <!ENTITY bit-rate.label "Bitrate (kb/s)">
 <!ENTITY bit-rate.accesskey "B">
 <!ENTITY listeners.label "Anzahl Hörer">
