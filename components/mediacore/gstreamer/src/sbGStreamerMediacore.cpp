@@ -654,6 +654,58 @@ sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
   return NS_OK;
 }
 
+// Set the property on the first applicable element we find. That's the first
+// in sorted-iteration order, at minimal depth.
+bool
+sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement, 
+        char *aPropertyName, gint64 aPropertyValue)
+{
+  bool done = false;
+  bool ret = false;
+
+  if (g_object_class_find_property(
+      G_OBJECT_GET_CLASS (aElement), aPropertyName))
+  {
+    g_object_set (aElement, aPropertyName, aPropertyValue, NULL);
+    return true;
+  }
+
+  if (GST_IS_BIN (aElement)) {
+    // Iterate in sorted order, so we look at sinks first
+    GstIterator *it = gst_bin_iterate_sorted ((GstBin *)aElement);
+
+    while (!done) {
+      gpointer data;
+      GstElement *child;
+      switch (gst_iterator_next (it, &data)) {
+        case GST_ITERATOR_OK:
+          child = GST_ELEMENT_CAST (data);
+          if (SetPropertyOnChild(child,
+                  aPropertyName, aPropertyValue))
+          {
+            ret = true;
+            done = true;
+          }
+          gst_object_unref (child);
+          break;
+        case GST_ITERATOR_DONE:
+          done = TRUE;
+          break;
+        case GST_ITERATOR_RESYNC:
+          gst_iterator_resync (it);
+          break;
+        case GST_ITERATOR_ERROR:
+          done = true;
+          break;
+      }
+    }
+
+    gst_iterator_free (it);
+  }
+
+  return ret;
+}
+
 nsresult 
 sbGStreamerMediacore::CreatePlaybackPipeline()
 {
@@ -677,9 +729,8 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
     g_object_set(mPipeline, "audio-sink", audiosink, NULL);
 
     // Set audio sink buffer time based on pref
-    if (g_object_class_find_property(
-        G_OBJECT_GET_CLASS (audiosink), "buffer-time"))
-      g_object_set (audiosink, "buffer-time", (gint64)mAudioSinkBufferTime, NULL);
+    SetPropertyOnChild(audiosink, "buffer-time", 
+            (gint64)mAudioSinkBufferTime);
 
     if (!mVideoDisabled) {
       GstElement *videosink = CreateVideoSink();

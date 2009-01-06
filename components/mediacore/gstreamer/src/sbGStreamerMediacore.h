@@ -147,6 +147,9 @@ protected:
 
   void AbortAndRestartPlayback();
 
+  bool SetPropertyOnChild(GstElement *aElement, 
+          char *aPropertyName, gint64 aPropertyValue);
+
 private:
   // Static helper for C callback
   static GstBusSyncReply syncHandler(GstBus *bus, GstMessage *message, 
