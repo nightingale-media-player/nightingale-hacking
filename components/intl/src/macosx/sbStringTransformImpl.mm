@@ -53,48 +53,48 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
                                        const nsAString & aInput, 
                                        nsAString & _retval)
 {
-	NSMutableString *str = [[NSMutableString alloc] initWithCharacters:aInput.BeginReading() 
-																								  length:aInput.Length()];
-	
+  NSMutableString *str = [[NSMutableString alloc] initWithCharacters:aInput.BeginReading() 
+                                                  length:aInput.Length()];
+  
   if(aTransformFlags & sbIStringTransform::TRANSFORM_LOWERCASE) {
-		NSString *lcaseStr = [str lowercaseString];
-		str = [NSString stringWithString:lcaseStr];
-	}
-	
+    NSString *lcaseStr = [str lowercaseString];
+    str = [NSString stringWithString:lcaseStr];
+  }
+  
   if(aTransformFlags & sbIStringTransform::TRANSFORM_UPPERCASE) {
-		NSString *ucaseStr = [str uppercaseString];
-		str = [NSString stringWithString:ucaseStr];
+    NSString *ucaseStr = [str uppercaseString];
+    str = [NSString stringWithString:ucaseStr];
   }
-	
+  
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
-		CFStringTransform( (CFMutableStringRef)str, 
-											 NULL, 
-											 kCFStringTransformStripCombiningMarks, 
-											 false);
+    CFStringTransform( (CFMutableStringRef)str, 
+                       NULL, 
+                       kCFStringTransformStripCombiningMarks, 
+                       false);
   }
-	
+  
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
-	  NSCharacterSet *symbols = [NSCharacterSet symbolCharacterSet];
-		
-		for(unsigned int current = 0; current < [str length]; ++current) {
-			unichar c = [str characterAtIndex:current];
-			if([symbols characterIsMember:c]) {
-				NSRange r = NSMakeRange(current, 1);
-				[str replaceCharactersInRange:r withString:@""];
-			}
-		}
+    NSCharacterSet *symbols = [NSCharacterSet symbolCharacterSet];
+    
+    for(unsigned int current = 0; current < [str length]; ++current) {
+      unichar c = [str characterAtIndex:current];
+      if([symbols characterIsMember:c]) {
+        NSRange r = NSMakeRange(current, 1);
+        [str replaceCharactersInRange:r withString:@""];
+      }
+    }
   }
-	
-	unichar *buf = (unichar *) malloc(sizeof(unichar) * [str length]);
-	NS_ENSURE_TRUE(buf, NS_ERROR_OUT_OF_MEMORY);
-	
-	[str getCharacters:buf];
-	 
+  
+  unichar *buf = (unichar *) malloc(sizeof(unichar) * [str length]);
+  NS_ENSURE_TRUE(buf, NS_ERROR_OUT_OF_MEMORY);
+  
+  [str getCharacters:buf];
+   
   _retval.Assign(buf, [str length]);
-	free(buf);
-	[str release];
-		
-	return NS_OK;
+  free(buf);
+  [str release];
+    
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
