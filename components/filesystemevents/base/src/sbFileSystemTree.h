@@ -82,11 +82,16 @@ protected:
   //
   // \brief Add children to a given parent node at a specified path.
   // \param aPath The path of the children to add.
+  // \param aParentNode The parent node of the children to add.
+  // \param aBuildDiscoveredDirArray Option to enable logging all directories
+  //        discovered into |mDiscoveredDirs|. This is usually only done on 
+  //        the initial tree build.
   // \param aNotifyListener Option to notify listeners of each node that
   //                        is added to the child list.
   //
   nsresult AddChildren(const nsAString & aPath,
                        sbFileSystemNode *aParentNode,
+                       PRBool aBuildDiscoveredDirArray,
                        PRBool aNotifyListener);
 
   //
@@ -216,10 +221,6 @@ private:
   PRBool                               mIsIntialized;
   PRLock                               *mRootNodeLock;
   PRLock                               *mListenersLock;
-
-  // Temporary member to store discovered paths while |AddChildren()| is
-  // still recursive.
-  // @see bug 14666 
   sbStringArray                        mDiscoveredDirs;
 };
 

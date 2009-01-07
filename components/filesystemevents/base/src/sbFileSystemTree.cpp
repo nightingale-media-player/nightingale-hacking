@@ -32,12 +32,30 @@
 #include <sbStringUtils.h>
 #include <nsCRT.h>
 #include "sbFileSystemChange.h"
+#include <stack>
 
 // Save ourselves some pain by getting the path seperator char.
 // NOTE: FILE_PATH_SEPARATOR is always going to one char long.
 #define PATH_SEPERATOR_CHAR \
   NS_LITERAL_STRING(FILE_PATH_SEPARATOR).CharAt(0)
 
+
+//------------------------------------------------------------------------------
+// Utility container, helps prevent running up the tree to find the 
+// ful path of a node.
+
+struct NodeContext
+{
+  NodeContext(const nsAString & aFullPath, sbFileSystemNode *aNode)
+    : fullPath(aFullPath), node(aNode)
+  {
+  }
+
+  nsString fullPath;
+  nsRefPtr<sbFileSystemNode> node;
+};
+
+//------------------------------------------------------------------------------
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileSystemTree, nsISupports)
 
@@ -117,9 +135,9 @@ sbFileSystemTree::RunBuildThread()
     // Don't allow any changes to structure
     nsAutoLock rootNodeLock(mRootNodeLock);
 
-    // Init the recursive build
-    // @see bug 14666 
-    nsresult rv = AddChildren(mRootPath, mRootNode, PR_FALSE);
+    // Build the tree and get the added dir paths to report back to the
+    // tree listener once the build finishes.
+    nsresult rv = AddChildren(mRootPath, mRootNode, PR_TRUE, PR_FALSE);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to add children to root node!");
   }
 
@@ -267,60 +285,66 @@ sbFileSystemTree::RemoveListener(sbFileSystemTreeListener *aListener)
 nsresult
 sbFileSystemTree::AddChildren(const nsAString & aPath,
                               sbFileSystemNode *aParentNode,
+                              PRBool aBuildDiscoveredDirArray,
                               PRBool aNotifyListeners)
 {
-  // TODO: Implement this function non-recusively:
-  // @see bug 14666
+  std::stack<NodeContext> nodeContextStack;
+  nodeContextStack.push(NodeContext(aPath, aParentNode));
 
-  sbNodeMap childNodes;
-  nsresult rv = GetChildren(aPath, aParentNode, childNodes);
-  NS_ENSURE_SUCCESS(rv, rv);
+  while (!nodeContextStack.empty()) {
+    NodeContext curNodeContext = nodeContextStack.top();
+    nodeContextStack.pop();
 
-  sbNodeMapIter begin = childNodes.begin();
-  sbNodeMapIter end = childNodes.end();
-  sbNodeMapIter next;
-  for (next = begin; next != end; ++next) {
-    nsRefPtr<sbFileSystemNode> curNode(next->second);
-    if (!curNode) {
-      continue;
-    }
-    
-    rv = aParentNode->AddChild(curNode);
-    if (NS_FAILED(rv)) {
-      continue;
-    }
+    sbNodeMap childNodes;
+    nsresult rv = GetChildren(curNodeContext.fullPath, 
+                              curNodeContext.node,
+                              childNodes);
 
-    PRBool isDir = PR_FALSE;
-    rv = curNode->GetIsDir(&isDir);
-    if (NS_FAILED(rv)) {
-      continue;
-    }
-
-    if (aNotifyListeners || isDir) {
-      nsString curNodeLeafName(next->first);
-
-      // Format the next child path
-      nsString curNodePath = EnsureTrailingPath(aPath);
-      curNodePath.Append(curNodeLeafName);
-
-      // Only recusively add the next directory if the in-param flag is set
-      if (mIsRecursiveBuild && isDir) {
-        AddChildren(curNodePath, curNode, aNotifyListeners);
-      
-        // This member variable should be a local variable to this function.
-        // @see bug 14666
-        mDiscoveredDirs.AppendElement(curNodePath);
+    sbNodeMapIter begin = childNodes.begin();
+    sbNodeMapIter end = childNodes.end();
+    sbNodeMapIter next;
+    for (next = begin; next != end; ++next) {
+      nsRefPtr<sbFileSystemNode> curNode(next->second);
+      if (!curNode) {
+        continue;
       }
 
-      if (aNotifyListeners) {
-        rv = NotifyChanges(curNodePath, eAdded);
-        if (NS_FAILED(rv)) {
-          NS_WARNING("Could not notify listener of change!");
+      rv = curNodeContext.node->AddChild(curNode);
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      PRBool isDir = PR_FALSE;
+      rv = curNode->GetIsDir(&isDir);
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      if (aNotifyListeners || isDir) {
+        nsString curNodeLeafName(next->first);
+
+        // Format the next child path
+        nsString curNodePath = EnsureTrailingPath(curNodeContext.fullPath);
+        curNodePath.Append(curNodeLeafName);
+
+        if (mIsRecursiveBuild && isDir) {
+          nodeContextStack.push(NodeContext(curNodePath, curNode));
+
+          if (aBuildDiscoveredDirArray) {
+            mDiscoveredDirs.AppendElement(curNodePath);
+          }
+        }
+
+        if (aNotifyListeners) {
+          rv = NotifyChanges(curNodePath, eAdded);
+          if (NS_FAILED(rv)) {
+            NS_WARNING("Could not notify listener of change!");
+          }
         }
       }
     }
   }
-  
+
   return NS_OK;
 }
 
@@ -652,12 +676,8 @@ sbFileSystemTree::NotifyDirAdded(sbFileSystemNode *aAddedDirNode,
   // this needs to be threaded. If performance becomes a problem
   // (i.e. a large folder was moved into the watch path) this should be
   // moved to a background thread.
-  nsresult rv = AddChildren(fullPath, aAddedDirNode, PR_TRUE);
+  nsresult rv = AddChildren(fullPath, aAddedDirNode, PR_FALSE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Keep this here until |AddChildren| isn't recursive.
-  // @see bug 14666
-  mDiscoveredDirs.Clear();
 
   return NS_OK;
 }
