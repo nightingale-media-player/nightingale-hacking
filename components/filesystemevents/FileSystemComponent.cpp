@@ -28,7 +28,8 @@
 #include "sbFileSystemCID.h"
 
 #if defined(XP_WIN) 
-// windows
+#include "win32/sbWin32FileSystemWatcher.h"
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbWin32FileSystemWatcher)
 #elif defined(XP_MACOSX)
 #include "macosx/sbMacFileSystemWatcher.h"
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemWatcher)
@@ -45,7 +46,7 @@ static nsModuleComponentInfo sbFileSystem[] =
     SONGBIRD_FILESYSTEMWATCHER_CID,
     SONGBIRD_FILESYSTEMWATCHER_CONTRACTID,
 #if defined(XP_WIN)
-//  Windows
+    sbWin32FileSystemWatcherConstructor
 #elif defined(XP_MACOSX)
     sbMacFileSystemWatcherConstructor
 #else

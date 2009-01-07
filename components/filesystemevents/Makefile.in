@@ -34,7 +34,7 @@ SUBDIRS += base     \
           $(NULL)
 
 ifeq ($(SB_PLATFORM), windows)
-# XXX kreeger: Don't build windows yet (see bug 12081)
+SUBDIRS += win32
 else
 ifeq ($(SB_PLATFORM), macosx)
 #

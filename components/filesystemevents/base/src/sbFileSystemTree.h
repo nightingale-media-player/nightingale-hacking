@@ -77,6 +77,14 @@ public:
   //
   nsresult RemoveListener(sbFileSystemTreeListener *aListener);
 
+  //
+  // \brief Get a string that has a native trailing path component.
+  //        For example:
+  //          INPUT: "/foo/bar"
+  //          OUTPUT: "/foo/bar/"
+  //
+  nsString EnsureTrailingPath(const nsAString & aFilePath); 
+
 protected:
   
   //
@@ -189,14 +197,6 @@ protected:
   //
   nsresult NotifyChanges(nsAString & aChangePath,
                          EChangeType aChangeType); 
-
-  //
-  // \brief Get a string that has a native trailing path component.
-  //        For example:
-  //          INPUT: "/foo/bar"
-  //          OUTPUT: "/foo/bar/"
-  //
-  nsString EnsureTrailingPath(const nsAString & aFilePath); 
  
   //
   // \brief Background thread method for doing the initial build of the

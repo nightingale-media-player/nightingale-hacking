@@ -363,8 +363,8 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
 
   nsCOMPtr<nsISimpleEnumerator> pathEnum;
   rv = pathFile->GetDirectoryEntries(getter_AddRefs(pathEnum));
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  NS_ENSURE_SUCCESS(rv, rv);  
+  
   PRBool hasMore = PR_FALSE;
   while ((NS_SUCCEEDED(pathEnum->HasMoreElements(&hasMore))) && hasMore) {
     nsCOMPtr<nsISupports> curItem;
@@ -374,6 +374,16 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
 
     nsCOMPtr<nsIFile> curFile = do_QueryInterface(curItem, &rv);
     if (NS_FAILED(rv) || !curFile)
+      continue;
+
+    // Don't track symlinks or special stuff
+    PRBool isSpecial;
+    rv = curFile->IsSpecial(&isSpecial);
+    if (NS_FAILED(rv) || isSpecial)
+      continue;
+    PRBool isSymlink;
+    rv = curFile->IsSymlink(&isSymlink);
+    if (NS_FAILED(rv) || isSymlink)
       continue;
 
     nsRefPtr<sbFileSystemNode> curNode;
