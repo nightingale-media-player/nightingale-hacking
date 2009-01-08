@@ -64,7 +64,12 @@ nsresult
 sbFileSystemNode::GetParentNode(sbFileSystemNode **aRetVal)
 {
   NS_ENSURE_ARG_POINTER(aRetVal);
-  NS_ADDREF(*aRetVal = mParentNode);
+  if (mParentNode) {
+    NS_ADDREF(*aRetVal = mParentNode);
+  }
+  else {
+    *aRetVal = nsnull;
+  }
   return NS_OK;
 }
 

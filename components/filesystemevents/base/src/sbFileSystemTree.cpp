@@ -175,19 +175,10 @@ sbFileSystemTree::Update(const nsAString & aPath)
   nsresult rv = GetNode(aPath, getter_AddRefs(pathNode));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the saved snapshot of the child nodes at the passed in path.
-  sbNodeMap *savedChildMap = pathNode->GetChildren();
-
-  // Get the current snapshot of the child nodes at the passed in path.
-  sbNodeMap newChildMap;
-  rv = GetChildren(aPath, pathNode, newChildMap);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Compare the two maps.
   sbChangeArray pathChangesArray;
-  rv = CompareNodeMaps(*savedChildMap, newChildMap, pathChangesArray);
+  rv = GetNodeChanges(pathNode, aPath, pathChangesArray);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsString path(aPath);
   PRUint32 numChanges = pathChangesArray.Length();
   for (PRUint32 i = 0; i < numChanges; i++) {
@@ -354,15 +345,8 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
                               sbNodeMap & aNodeMap)
 {
   nsresult rv;
-  nsCOMPtr<nsILocalFile> pathFile = 
-    do_CreateInstance("@mozilla.org/file/local;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = pathFile->InitWithPath(aPath);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<nsISimpleEnumerator> pathEnum;
-  rv = pathFile->GetDirectoryEntries(getter_AddRefs(pathEnum));
+  rv = GetPathEntries(aPath, getter_AddRefs(pathEnum));
   NS_ENSURE_SUCCESS(rv, rv);  
   
   PRBool hasMore = PR_FALSE;
@@ -376,11 +360,7 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
     if (NS_FAILED(rv) || !curFile)
       continue;
 
-    // Don't track symlinks or special stuff
-    PRBool isSpecial;
-    rv = curFile->IsSpecial(&isSpecial);
-    if (NS_FAILED(rv) || isSpecial)
-      continue;
+    // Don't track symlinks
     PRBool isSymlink;
     rv = curFile->IsSymlink(&isSymlink);
     if (NS_FAILED(rv) || isSymlink)
@@ -482,9 +462,30 @@ sbFileSystemTree::CreateNode(nsIFile *aFile,
                              sbFileSystemNode **aNodeRetVal)
 {
   NS_ENSURE_ARG_POINTER(aFile);
-  
+ 
+  nsresult rv;
+
+#if DEBUG
+  // Sanity checks to make sure that the passed in parent makes sense.
+  if (aParentNode) {
+    nsString parentNodeLeafName;
+    rv = aParentNode->GetLeafName(parentNodeLeafName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFile> parentFile;
+    rv = aFile->GetParent(getter_AddRefs(parentFile));
+    if (NS_SUCCEEDED(rv) && parentFile) {
+      nsString parentFileLeafName;
+      rv = parentFile->GetLeafName(parentFileLeafName);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ASSERTION(parentFileLeafName.Equals(parentNodeLeafName),
+                   "ERROR: CreateNode() Potential invalid parent used!");
+    }
+  }
+#endif
+
   nsString leafName;
-  nsresult rv = aFile->GetLeafName(leafName);
+  rv = aFile->GetLeafName(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isDir;
@@ -506,166 +507,124 @@ sbFileSystemTree::CreateNode(nsIFile *aFile,
 }
 
 nsresult
-sbFileSystemTree::CompareLeafNames(sbFileSystemNode *aNode1,
-                                   sbFileSystemNode *aNode2,
-                                   PRBool *aOutResult)
-{
-  NS_ENSURE_ARG_POINTER(aNode1);
-  NS_ENSURE_ARG_POINTER(aNode2);
-  NS_ENSURE_ARG_POINTER(aOutResult);
-
-  nsresult rv;
-  nsString node1Name;
-  rv = aNode1->GetLeafName(node1Name);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString node2Name;
-  rv = aNode2->GetLeafName(node2Name);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *aOutResult = node1Name.Equals(node2Name);
-  return NS_OK;
-}
-
-nsresult
-sbFileSystemTree::CompareTimeStamps(sbFileSystemNode *aNode1,
-                                    sbFileSystemNode *aNode2,
-                                    PRBool *aOutResult)
-{
-  NS_ENSURE_ARG_POINTER(aNode1);
-  NS_ENSURE_ARG_POINTER(aNode2);
-  NS_ENSURE_ARG_POINTER(aOutResult);
-
-  nsresult rv;
-  PRInt64 node1ts;
-  rv = aNode1->GetLastModify(&node1ts);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  PRInt64 node2ts;
-  rv = aNode2->GetLastModify(&node2ts);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  *aOutResult = (node1ts == node2ts);
-  return NS_OK;
-}
-
-nsresult
-sbFileSystemTree::CompareNodeMaps(sbNodeMap & aOriginalNodeMap,
-                                  sbNodeMap & aCompareNodeMap,
-                                  sbChangeArray & aOutChangeArray)
+sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
+                                 const nsAString & aNodePath,
+                                 sbChangeArray & aOutChangeArray)
 {
   NS_ASSERTION(NS_IsMainThread(), 
-    "sbFileSystemTree::CompareNodeArray() not called on the main thread!");
+    "sbFileSystemTree::GetNodeChanges() not called on the main thread!");
+
+  // This is a copy-constructor:
+  sbNodeMap childSnapshot(*aNode->GetChildren());
+
   nsresult rv;
-  
-  // Make a copy of the working node maps.
-  sbNodeMap originalSnapshot(aOriginalNodeMap);
-  sbNodeMap compareSnapshot(aCompareNodeMap);
+  nsCOMPtr<nsISimpleEnumerator> pathEnum;
+  rv = GetPathEntries(aNodePath, getter_AddRefs(pathEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: Search don't use two node maps for finding changes, simply iterate
-  //       through the nsIFile.directoryEntries enumerator.
-  // @see bug 14703
-  
-  // Loop through the original map. Pop items out of the duplicate maps
-  // as needed to help figure out the added/removed nodes.
-  sbNodeMapIter begin = aOriginalNodeMap.begin();
-  sbNodeMapIter end = aOriginalNodeMap.end();
-  sbNodeMapIter next;
-  for (next = begin; next != end; ++next) {
-    // Compare the node at the current index with what is in the passed
-    // in compare node map to look for changes in timestamps.
-    nsRefPtr<sbFileSystemNode> curOriginalNode(next->second);
-
-    // Look for the matching node name (by leaf name) in the compare map.
-    nsString curLeafName(next->first);
-    if (curLeafName.IsEmpty()) {
+  PRBool hasMore = PR_FALSE;
+  while ((NS_SUCCEEDED(pathEnum->HasMoreElements(&hasMore))) && hasMore) {
+    nsCOMPtr<nsISupports> curItem;
+    rv = pathEnum->GetNext(getter_AddRefs(curItem));
+    if (NS_FAILED(rv) || !curItem) {
+      NS_WARNING("ERROR: Could not GetNext() item in enumerator!");
       continue;
     }
 
-    sbNodeMapIter foundNodeIter = aCompareNodeMap.find(curLeafName);
-    if (foundNodeIter == aCompareNodeMap.end()) {
-      // The node is not in the compare map, continue.
+    nsCOMPtr<nsIFile> curFile = do_QueryInterface(curItem, &rv);
+    if (NS_FAILED(rv) || !curFile) {
+      NS_WARNING("ERROR: Could not QI to a nsIFile!");
       continue;
     }
 
-    nsRefPtr<sbFileSystemNode> curCompareNode(foundNodeIter->second);
-    if (!curCompareNode) {
+    nsString curFileLeafName;
+    rv = curFile->GetLeafName(curFileLeafName);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("ERROR: Could not get the leaf name from the file-spec!");
       continue;
     }
 
-    PRBool hasSameTs = PR_FALSE;
-    rv = CompareTimeStamps(curOriginalNode, curCompareNode, &hasSameTs);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (!hasSameTs) {
-      // The original node has been modified, create a change object for
-      // this mutation event.
-      nsRefPtr<sbFileSystemChange> curChange =
-        new sbFileSystemChange(curCompareNode, eChanged);
-      NS_ASSERTION(curChange, "Could not create a sbFileSystemChange!");
-      if (!curChange) {
+    // See if a node exists with this file name in the child snapshot.
+    sbNodeMapIter foundNodeIter = childSnapshot.find(curFileLeafName);
+    if (foundNodeIter == childSnapshot.end()) {
+      // The current file entry is not in the child snapshot, which means
+      // that it is a new addition to the file path. Add a change entry
+      // for this event.
+      nsRefPtr<sbFileSystemNode> newFileNode;
+      rv = CreateNode(curFile, aNode, getter_AddRefs(newFileNode));
+      if (NS_FAILED(rv) || !newFileNode) {
+        NS_WARNING("ERROR: Could not create a sbFileSystemNode!");
         continue;
       }
 
-      // Add the change the array of changes.
-      nsRefPtr<sbFileSystemChange> *resultChange =
-        aOutChangeArray.AppendElement(curChange);
-      NS_ASSERTION(resultChange, 
-                   "Coult not add a change to the change array!");
+      rv = AppendCreateChangeItem(newFileNode, eAdded, aOutChangeArray);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("ERROR: Could not add create change item!");
+        continue;
+      }
     }
+    else {
+      // Found a node that matches the leaf name in the child snapshot.
+      // Now look to see if the item has changed by comparing the last
+      // modify time stamps.
+      nsRefPtr<sbFileSystemNode> curChildNode(foundNodeIter->second);
+      if (!curChildNode) {
+        NS_WARNING("ERROR: Could not get node from sbNodeMapIter!");
+        continue;
+      }
 
-    // It's ok to fall-through since we want to remove these matched
-    // nodes from the original and compare snapshot maps.
+      // Now compare the timestamps
+      PRInt64 curFileLastModify;
+      rv = curFile->GetLastModifiedTime(&curFileLastModify);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("ERROR: Could not get file last modify time!");
+        continue;
+      }
+      PRInt64 curChildNodeLastModify;
+      rv = curChildNode->GetLastModify(&curChildNodeLastModify);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("ERROR: Could not get node last modify time!");
+        continue;
+      }
 
-    // Since a match has been found, remove these current nodes from both
-    // node maps. This determines which nodes have been added or removed.
-    originalSnapshot.erase(curLeafName);
-    compareSnapshot.erase(curLeafName);
+      if (curFileLastModify != curChildNodeLastModify) {
+        // The original node has been modified, create a change object for
+        // this mutation event.
+        nsRefPtr<sbFileSystemNode> changedNode;
+        rv = CreateNode(curFile, aNode, getter_AddRefs(changedNode));
+        if (NS_FAILED(rv) || !changedNode) {
+          NS_WARNING("ERROR: Could not create a sbFileSystemNode!");
+          continue;
+        }
+
+        rv = AppendCreateChangeItem(changedNode, eChanged, aOutChangeArray);
+        if (NS_FAILED(rv)) {
+          NS_WARNING("ERROR: Could not add create change item!");
+          continue;
+        }
+      }
+
+      // It's ok to fall-through since we want to remove the matched node
+      // from the child snapshot. This determines which nodes have been removed.
+      childSnapshot.erase(curFileLeafName);
+    }
   }
 
-  // Now that all the matching elements have been trimmed from the cloned
-  // node maps, go through and find the added and removed nodes.
-  
-  // Added items:
-  begin = compareSnapshot.begin();
-  end = compareSnapshot.end();
+  // Now that the current directory entries have been traversed, loop through
+  // and report all the nodes still in the child snapshot as removed events.
+  sbNodeMapIter begin = childSnapshot.begin();
+  sbNodeMapIter end = childSnapshot.end();
+  sbNodeMapIter next;
   for (next = begin; next != end; ++next) {
     nsRefPtr<sbFileSystemNode> curNode(next->second);
-    NS_ASSERTION(curNode, "Could not get the current compare snapshot node!");
+    NS_ASSERTION(curNode, "Could not get the current child snapshot node!");
     if (!curNode) {
+      NS_WARNING("ERROR: Could not get node from sbNodeMapIter!");
       continue;
     }
 
-    nsRefPtr<sbFileSystemChange> curChange = 
-      new sbFileSystemChange(curNode, eAdded);
-    NS_ASSERTION(curChange, "Could not create a sbFileSystemChange!");
-    if (!curChange) {
-      continue;
-    }
-
-    NS_ASSERTION(aOutChangeArray.AppendElement(curChange),
-                 "Could not add a change to the change array!");  
-  }
-
-  // Removed items:
-  begin = originalSnapshot.begin();
-  end = originalSnapshot.end();
-  for (next = begin; next != end; ++next) {
-    nsRefPtr<sbFileSystemNode> curNode(next->second);
-    NS_ASSERTION(curNode, "Could not get the current compare snapshot node!");
-    if (!curNode) {
-      continue;
-    }
-
-    nsRefPtr<sbFileSystemChange> curChange = 
-      new sbFileSystemChange(curNode, eRemoved);
-    NS_ASSERTION(curChange, "Could not create a sbFileSystemChange!");
-    if (!curChange) {
-      continue;
-    }
-
-    NS_ASSERTION(aOutChangeArray.AppendElement(curChange),
-                 "Could not add a change to the change array!");  
+    rv = AppendCreateChangeItem(curNode, eRemoved, aOutChangeArray);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Error: Could not add a change event!");
   }
 
   return NS_OK;
@@ -752,6 +711,40 @@ sbFileSystemTree::NotifyChanges(nsAString & aChangePath,
   }
 
   return NS_OK;
+}
+
+/* static */ nsresult
+sbFileSystemTree::GetPathEntries(const nsAString & aPath,
+                                 nsISimpleEnumerator **aResultEnum)
+{
+  NS_ENSURE_ARG_POINTER(aResultEnum);
+
+  nsresult rv;
+  nsCOMPtr<nsILocalFile> pathFile =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = pathFile->InitWithPath(aPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return pathFile->GetDirectoryEntries(aResultEnum);
+}
+
+/* static */ nsresult
+sbFileSystemTree::AppendCreateChangeItem(sbFileSystemNode *aChangedNode,
+                                         EChangeType aChangeType,
+                                         sbChangeArray & aChangeArray)
+{
+  NS_ENSURE_ARG_POINTER(aChangedNode);
+
+  nsRefPtr<sbFileSystemChange> changedItem =
+    new sbFileSystemChange(aChangedNode, aChangeType);
+  NS_ENSURE_TRUE(changedItem, NS_ERROR_OUT_OF_MEMORY);
+
+  nsRefPtr<sbFileSystemChange> *appendResult =
+    aChangeArray.AppendElement(changedItem);
+
+  return (appendResult ? NS_OK : NS_ERROR_FAILURE);
 }
 
 nsString

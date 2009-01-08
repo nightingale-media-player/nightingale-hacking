@@ -133,39 +133,18 @@ protected:
                       sbFileSystemNode **aNodeRetVal);
 
   //
-  // \brief Compare two nodes using their leaf names. This is simply a
-  //        comparision of the leaf names, this check does not care about
-  //        the parents of each node.
-  // \param aNode1 The first node to compare.
-  // \param aNode2 The second node to compare.
-  // \param aOutResult The out-param result of the leaf name comparison.
+  // \brief This method looks at all the current directory entries and
+  //        generates a change log of all the differences between the
+  //        children that are currently stored in |aNode|.
+  // \param aNode The path node that is used for comparing it's children
+  //              against.
+  // \param aNodePath The absolute path of the |aNode|.
+  // \param aOutChangeArray The arrary of changes found during the compare.
   //
-  nsresult CompareLeafNames(sbFileSystemNode *aNode1,
-                            sbFileSystemNode *aNode2,
-                            PRBool *aOutResult);
-
-  //
-  // \brief Compare two nodes using their time specs.
-  // \param aNode1 The first node to compare.
-  // \param aNode2 The second node to compare.
-  // \param aOutResult The out-param result of the time-spec comparison.
-  //
-  nsresult CompareTimeStamps(sbFileSystemNode *aNode1,
-                             sbFileSystemNode *aNode2,
-                             PRBool *aOutResult);
-
-  //
-  // \brief Compare two node maps to get a resulting changelog.
-  // \param aOriginalNodeMap The original node map to compare against.
-  // \param aCompareNodeMap The new node map to compare against the original 
-  //                        node map in |aOriginalNodeMap|.
-  // \param aOutChangeArray The change node map to append all discovered
-  //                        differences between the two node maps.
-  //
-  nsresult CompareNodeMaps(sbNodeMap & aOriginalNodeMap,
-                           sbNodeMap & aCompareNodeMap,
-                           sbChangeArray & aOutChangeArray);
-
+  nsresult GetNodeChanges(sbFileSystemNode *aNode,
+                          const nsAString & aNodePath,
+                          sbChangeArray & aOutChangeArray);  
+  
   //
   // \brief Notify the tree listeners that a directory was added by informing
   //        them of all the children inside the new directory. This function
@@ -196,8 +175,28 @@ protected:
   // \param aChangeType The type of change for the given resource path.
   //
   nsresult NotifyChanges(nsAString & aChangePath,
-                         EChangeType aChangeType); 
- 
+                         EChangeType aChangeType);
+
+  //
+  // \brief Utility method for getting a enumerator of the entries in a
+  //        directory at a given path.
+  // \param aPath The path to get the entries at.
+  // \param aResultEnum The out-param enumerator for the entries.
+  //
+  static nsresult GetPathEntries(const nsAString & aPath,
+                                 nsISimpleEnumerator **aResultEnum);
+
+  //
+  // \brief Utility method for creating and appending a change item to
+  //        a change array with a given node and change type.
+  // \param aChangedNode The node that has changed to use with the change item.
+  // \param aChangeType The change type for the change item.
+  // \param aChangeArray The change array to append the change item onto.
+  //
+  static nsresult AppendCreateChangeItem(sbFileSystemNode *aChangedNode,
+                                         EChangeType aChangeType,
+                                         sbChangeArray & aChangeArray);
+  
   //
   // \brief Background thread method for doing the initial build of the
   //        file system tree. Once the build is complete, the listeners
