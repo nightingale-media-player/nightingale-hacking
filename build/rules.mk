@@ -50,6 +50,11 @@ ifneq (,$(SB_ENABLE_STATIC))
   endif
 endif
 
+ifeq (macosx,$(SB_PLATFORM))
+  SB_DYLD_LIBRARY_PATH = $(DEPS_DIR)/libIDL/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib
+  export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
+endif
+
 #
 # Collect a list of rules to run. We use two variables so that 'make clean'
 # does what you'd expect.
