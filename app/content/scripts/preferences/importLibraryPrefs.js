@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -284,7 +284,8 @@ var importLibraryPrefsUI = {
     var autoImportPrefValue = this._getPrefElemValue(autoImportPrefElem);
 
     // Disable the library import command when there is no file selected.
-    var importCommand = document.getElementById("import_command");
+    var importCommand = document.getElementById
+                                   ("import_library_import_command");
     var libraryPath = this._getPrefElem("library_file_path_pref").value;
     var choseLibrary = (libraryPath != "");
     importCommand.setAttribute("disabled", choseLibrary ? "false" : "true");

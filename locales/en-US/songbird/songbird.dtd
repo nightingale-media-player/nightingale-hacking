@@ -493,9 +493,12 @@
 <!ENTITY first_run.welcome.description.line1 "&brandShortName; is a highly customizable alternative to traditional desktop media players.">
 <!ENTITY first_run.welcome.description.line2 "This assistant provides a quick and efficient way to get &brandShortName; up and running.">
 
-<!-- Import library dialog and preference pane entities. -->
+<!-- Import media dialog preference entities. -->
+<!ENTITY import_media.prefs.title                         "Media Importer">
+
+<!-- Import library dialog and preference entities. -->
 <!ENTITY import_library.dialog.title                      "Import a library">
-<!ENTITY import_library.prefs.title                       "iTunes Importer">
+<!ENTITY import_library.prefs.title                       "iTunes">
 <!ENTITY import_library.library_file_label                "Library File:">
 <!ENTITY import_library.auto_import_checkbox              "Automatically import changes in my iTunes library when &brandShortName; launches">
 <!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (only update songs)">
@@ -511,6 +514,13 @@
 <!ENTITY import_library.dirty_playlist_dialog.replace      "Replace this &brandShortName; playlist with the current iTunes playlist">
 <!ENTITY import_library.dirty_playlist_dialog.note         "Note: Merge and replace cannot be undone.">
 <!ENTITY import_library.dirty_playlist_dialog.apply_all    "Apply selection to all playlists">
+
+<!-- Watch folder preference entities. -->
+<!ENTITY watch_folder.prefs.title                  "Watch Folders">
+<!ENTITY watch_folder.prefs.settings_group_caption "Watch Folder Settings">
+<!ENTITY watch_folder.prefs.description            "&brandShortName; can monitor the contents of a folder and automatically add or remove items contained in it.">
+<!ENTITY watch_folder.prefs.enable_checkbox        "Automatically watch for changes in the following folder">
+<!ENTITY watch_folder.prefs.watch_folder_label     "Folder:">
 
 <!-- Advanced preference pane update tab entities. -->
 <!ENTITY enable_recommended_addons_update.label     "Recommended Add-ons">

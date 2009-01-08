@@ -6,6 +6,9 @@ songbird.jar:
 % overlay chrome://browser/content/preferences/tabs.xul                      chrome://songbird/content/xul/preferences/tabsOverlay.xul
 % overlay chrome://browser/content/preferences/permissions.xul               chrome://songbird/content/xul/preferences/permissionsOverlay.xul
 % overlay chrome://browser/content/preferences/sanitize.xul                  chrome://songbird/content/xul/preferences/sanitizeOverlay.xul
+% overlay chrome://songbird/content/xul/preferences/importMediaPrefs.xul     chrome://songbird/content/xul/preferences/importLibraryPrefs.xul os=WINNT
+% overlay chrome://songbird/content/xul/preferences/importMediaPrefs.xul     chrome://songbird/content/xul/preferences/importLibraryPrefs.xul os=Darwin
+% overlay chrome://songbird/content/xul/preferences/importMediaPrefs.xul     chrome://songbird/content/xul/preferences/watchFolderPrefs.xul
 # remove help button from pref windows
 % overlay chrome://browser/content/preferences/colors.xul                    chrome://songbird/content/xul/preferences/helpRemovalOverlay.xul
 % overlay chrome://browser/content/preferences/connection.xul                chrome://songbird/content/xul/preferences/helpRemovalOverlay.xul
@@ -33,5 +36,3 @@ songbird.jar:
 #ifdef MEDIA_CORE_GST_SYSTEM
 % overlay chrome://songbird/content/xul/songbird.xul                         chrome://songbird/content/xul/coreGStreamerOverlay.xul
 #endif
-% overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/importLibraryPrefs.xul os=WINNT
-% overlay chrome://browser/content/preferences/preferences.xul               chrome://songbird/content/xul/preferences/importLibraryPrefs.xul os=Darwin

@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -82,6 +82,11 @@
             insertafter="paneAddons"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/remoteAPI.xul" />
+  <prefpane id="paneImportMedia"
+            label="&import_media.prefs.title;"
+            insertafter="paneRemoteAPI"
+            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            src="chrome://songbird/content/xul/preferences/importMediaPrefs.xul" />
  </prefWindow>
 
 </overlay>
