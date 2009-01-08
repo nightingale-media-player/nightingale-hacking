@@ -225,6 +225,8 @@ protected:
   PRBool mAbortingPlayback;  // Playback is being aborted (not normally 
                              // stopped), and bus messages should not be 
                              // processed.
+  PRBool mHasReachedPlaying; // If we've ever made it to PLAYING state while
+                             // playing the current resource.
 
   nsCString mCurrentUri;     // UTF-8 String form (as used by GStreamer) of 
                              // the currently-playing URI.

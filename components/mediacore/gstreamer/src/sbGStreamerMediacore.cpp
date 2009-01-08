@@ -169,7 +169,8 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mResourceSize(-1),
     mGaplessDisabled(PR_FALSE),
     mPlayingGaplessly(PR_FALSE),
-    mAbortingPlayback(PR_FALSE)
+    mAbortingPlayback(PR_FALSE),
+    mHasReachedPlaying(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbGStreamerMediacore);
 
@@ -277,7 +278,7 @@ sbGStreamerMediacore::ReadPreferences()
 
   /* Defaults if the prefs aren't present */
   PRInt64 audioSinkBufferTime = 1000 * 1000; /* 1000 ms */
-  PRInt32 streamingBufferSize = 128 * 1024; /* 128 kB */
+  PRInt32 streamingBufferSize = 256 * 1024; /* 256 kB */
 
   rv = mPrefs->GetPrefType(AUDIO_SINK_BUFFERTIME_PREF, &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -298,6 +299,8 @@ sbGStreamerMediacore::ReadPreferences()
   if (prefType == nsIPrefBranch::PREF_INT) {
     rv = mPrefs->GetIntPref(STREAMING_BUFFERSIZE_PREF, &streamingBufferSize);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    streamingBufferSize *= 1024; /* pref is in kB, we want it in B */
   }
 
   mAudioSinkBufferTime = audioSinkBufferTime;
@@ -638,6 +641,7 @@ sbGStreamerMediacore::DestroyPipeline()
   mGaplessDisabled = PR_FALSE;
   mPlayingGaplessly = PR_FALSE;
   mAbortingPlayback = PR_FALSE;
+  mHasReachedPlaying = PR_FALSE;
 
   return NS_OK;
 }
@@ -923,8 +927,10 @@ void sbGStreamerMediacore::HandleStateChangedMessage(GstMessage *message)
 
     // Dispatch START, PAUSE, STOP/END (but only if it's our target state)
     if (pendingstate == GST_STATE_VOID_PENDING && newstate == mTargetState) {
-      if (newstate == GST_STATE_PLAYING)
+      if (newstate == GST_STATE_PLAYING) {
+        mHasReachedPlaying = PR_TRUE;
         DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_START);
+      }
       else if (newstate == GST_STATE_PAUSED)
         DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_PAUSE);
       else if (newstate == GST_STATE_NULL)
@@ -956,6 +962,7 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
   nsAutoMonitor lock(mMonitor);
 
   gint percent = 0;
+  gint maxpercent;
   gst_message_parse_buffering (message, &percent);
   TRACE(("Buffering (%u percent done)", percent));
 
@@ -963,11 +970,21 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
   if (mIsLive)
     return;
 
+  // 'maxpercent' is how much of our maximum buffer size we must fill before
+  // we start playing. We want to be able to keep buffering more data (if the
+  // server is sending it fast enough) even after we start playing - so we
+  // start with maxpercent at 33, then increase it to 100 if we ever have to 
+  // rebuffer (i.e. return to buffering AFTER starting playback)
+  if (mHasReachedPlaying)
+    maxpercent = 100;
+  else
+    maxpercent = 33;
+
   /* If we receive buffering messages, go to PAUSED.
-   * Then, return to PLAYING once we have 100% buffering (which will be
+   * Then, return to PLAYING once we have sufficient buffering (which will be
    * before we actually hit PAUSED)
    */
-  if (percent >= 100) {
+  if (percent >= maxpercent && mBuffering) {
     mBuffering = PR_FALSE;
 
     if (mTargetState == GST_STATE_PLAYING) {
@@ -979,7 +996,7 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
       DispatchMediacoreEvent (sbIMediacoreEvent::STREAM_PAUSE);
     }
   }
-  else if (percent < 100) {
+  else if (percent < maxpercent) {
     GstState cur_state;
     gst_element_get_state (mPipeline, &cur_state, NULL, 0);
 
@@ -996,7 +1013,7 @@ void sbGStreamerMediacore::HandleBufferingMessage (GstMessage *message)
     mBuffering = PR_TRUE;
 
     // Inform listeners of current progress
-    double bufferingProgress = (double)percent / 100.;
+    double bufferingProgress = (double)percent / (double)maxpercent;
     nsCOMPtr<nsIVariant> variant = sbNewVariant(bufferingProgress).get();
     DispatchMediacoreEvent(sbIMediacoreEvent::BUFFERING, variant);
   }
