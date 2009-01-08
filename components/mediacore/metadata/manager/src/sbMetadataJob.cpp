@@ -96,15 +96,17 @@ extern PRLogModuleInfo* gMetadataLog;
 
 // CLASSES ====================================================================
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataJob,
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbMetadataJob,
                               nsIClassInfo,
                               sbIJobProgress,
-                              sbIJobCancelable);
+                              sbIJobCancelable,
+                              sbIAlbumArtListener);
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbMetadataJob,
+NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob,
                              nsIClassInfo,
                              sbIJobProgress,
-                             sbIJobCancelable)
+                             sbIJobCancelable,
+                             sbIAlbumArtListener)
 
 NS_DECL_CLASSINFO(sbMetadataJob)
 NS_IMPL_THREADSAFE_CI(sbMetadataJob)
@@ -115,14 +117,14 @@ sbMetadataJob::sbMetadataJob() :
   mTotalItemCount(0),
   mJobType(TYPE_READ),
   mLibrary(nsnull),
+  mRequiredProperties(nsnull),
   mNextMainThreadIndex(0),
   mNextBackgroundThreadIndex(0),
   mBackgroundItemsLock(nsnull),
   mProcessedBackgroundThreadItems(nsnull),
   mProcessedBackgroundItemsLock(nsnull),
   mInLibraryBatch(PR_FALSE),
-  mStringBundle(nsnull),
-  mRequiredProperties(nsnull)
+  mStringBundle(nsnull)
 {
   TRACE(("sbMetadataJob[0x%.8x] - ctor", this));
   MOZ_COUNT_CTOR(sbMetadataJob);
@@ -703,6 +705,41 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
   return NS_OK;
 }
 
+//------------------------------------------------------------------------------
+//
+// sbIAlbumArtListner Implementation.
+//
+//------------------------------------------------------------------------------
+
+/* onChangeFetcher(in sbIAlbumArtFetcher aFetcher); */
+NS_IMETHODIMP sbMetadataJob::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
+{
+  TRACE(("sbMetadataJob::OnChangeFetcher"));
+  return NS_OK;
+}
+
+/* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
+NS_IMETHODIMP sbMetadataJob::OnResult(nsIURI* aImageLocation,
+                                      sbIMediaItem* aMediaItem)
+{
+  TRACE(("sbMetadataJob::OnResult"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  if (aImageLocation) {
+    nsCAutoString imageFileURISpec;
+    rv = aImageLocation->GetSpec(imageFileURISpec);
+    if (NS_SUCCEEDED(rv)) {
+      rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                                   NS_ConvertUTF8toUTF16(imageFileURISpec));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
 nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
 {
   NS_ENSURE_ARG_POINTER(aJobItem);
@@ -731,7 +768,7 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   nsCOMPtr<sbIMediaItem> item;
   rv = aJobItem->GetMediaItem(getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = artFetcher->FetchAlbumArtForMediaItem(item, nsnull, nsnull);
+  rv = artFetcher->FetchAlbumArtForMediaItem(item, this);
   NS_ENSURE_SUCCESS(rv, rv);
   
   TRACE(("sbMetadataJob::ReadAlbumArtwork - finished rv %08x\n",

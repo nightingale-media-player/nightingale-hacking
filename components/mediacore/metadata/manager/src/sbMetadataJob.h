@@ -44,6 +44,7 @@
 #include <nsAutoPtr.h>
 #include <nsIClassInfo.h>
 
+#include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
 #include <sbIJobProgress.h>
 #include <sbIJobCancelable.h>
@@ -72,7 +73,8 @@ class sbIMutablePropertyArray;
  */
 class sbMetadataJob : public nsIClassInfo,
                       public sbIJobProgress,  
-                      public sbIJobCancelable
+                      public sbIJobCancelable,
+                      public sbIAlbumArtListener
 {
   friend class sbMediaListBatchCallback;
   
@@ -81,6 +83,7 @@ public:
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBIJOBCANCELABLE
+  NS_DECL_SBIALBUMARTLISTENER
   
   enum JobType 
   {

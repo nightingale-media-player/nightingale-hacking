@@ -89,6 +89,22 @@ static const char* sbAlbumArtServiceValidExtensionList[] =
   "png"
 };
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbAlbumArtService:5
+ * Use the following to output to a file:
+ *   NSPR_LOG_FILE=path/to/file.log
+ */
+#include "prlog.h"
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gAlbumArtServiceLog = nsnull;
+#define TRACE(args) PR_LOG(gAlbumArtServiceLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gAlbumArtServiceLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
 
 //------------------------------------------------------------------------------
 //
@@ -121,11 +137,16 @@ NS_IMETHODIMP
 sbAlbumArtService::GetFetcherList(PRBool     aLocalOnly,
                                   nsIArray** _retval)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - GetFetcherList", this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(_retval);
 
   // Function variables.
   nsresult rv;
+  
+  // Update the fetcher information first so our priorities are correct
+  rv = UpdateAlbumArtFetcherInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Create the fetcher list array.
   nsCOMPtr<nsIMutableArray>
@@ -136,13 +157,23 @@ sbAlbumArtService::GetFetcherList(PRBool     aLocalOnly,
   // Add each fetcher contract ID to fetcher list.
   PRUint32 fetcherCount = mFetcherInfoList.Length();
   for (PRUint32 i = 0; i < fetcherCount; i++) {
-    nsCOMPtr<nsIVariant>
-      contractID = sbNewVariant(mFetcherInfoList[i].contractID).get();
-    NS_ENSURE_TRUE(contractID, NS_ERROR_OUT_OF_MEMORY);
-    rv = fetcherList->AppendElement(contractID, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+    // Append the fetcher to the list only if it is enabled
+    if (NS_SUCCEEDED(rv)) {    
+      if (mFetcherInfoList[i].enabled) {
+        if (aLocalOnly && !mFetcherInfoList[i].local) {
+          // Not a local fetcher and we only want locals
+          continue;
+        }
+        nsCOMPtr<nsIVariant>
+          contractID = sbNewVariant(mFetcherInfoList[i].contractID).get();
+        NS_ENSURE_TRUE(contractID, NS_ERROR_OUT_OF_MEMORY);
 
+        rv = fetcherList->AppendElement(contractID, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+  
   // Return results.
   NS_ADDREF(*_retval = fetcherList);
 
@@ -168,6 +199,7 @@ sbAlbumArtService::ImageIsValidAlbumArt(const nsACString& aMimeType,
                                         PRUint32          aDataLen,
                                         PRBool*           _retval)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - ImageIsValidAlbumArt", this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -215,6 +247,7 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
                               PRUint32          aDataLen,
                               nsIFileURL**      _retval)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - CacheImage", this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aData);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -304,6 +337,7 @@ NS_IMETHODIMP
 sbAlbumArtService::CacheTemporaryData(const nsAString& aKey,
                                       nsISupports* aData)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - CacheTemporaryData", this));
   NS_ENSURE_ARG_POINTER(aData);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   
@@ -339,6 +373,7 @@ NS_IMETHODIMP
 sbAlbumArtService::RetrieveTemporaryData(const nsAString& aKey,
                                          nsISupports** _retval)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - RetrieveTemporaryData", this));
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   *_retval = nsnull;
@@ -377,6 +412,7 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
                            const char*      aTopic,
                            const PRUnichar* aData)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - Observe", this));
   nsresult rv;
 
   // Dispatch processing of event.
@@ -420,6 +456,11 @@ sbAlbumArtService::sbAlbumArtService() :
   mPrefsAvailable(PR_FALSE),
   mCacheFlushTimer(nsnull)
 {
+#ifdef PR_LOGGING
+  if (!gAlbumArtServiceLog) {
+    gAlbumArtServiceLog = PR_NewLogModule("sbAlbumArtService");
+  }
+#endif
 }
 
 
@@ -440,6 +481,7 @@ sbAlbumArtService::~sbAlbumArtService()
 nsresult
 sbAlbumArtService::Initialize()
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - Initialize", this));
   nsresult rv;
 
   // Do nothing if already initialized.
@@ -483,8 +525,7 @@ sbAlbumArtService::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Sort the album art fetcher info.
-  rv = SortAlbumArtFetcherInfo();
-  NS_ENSURE_SUCCESS(rv, rv);
+  mFetcherInfoList.Sort(); 
 
   // Get the album art cache directory.
   rv = GetAlbumArtCacheDir();
@@ -514,6 +555,7 @@ sbAlbumArtService::Initialize()
 void
 sbAlbumArtService::Finalize()
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - Finalize", this));
   // Clear the fetcher info.
   mFetcherInfoList.Clear();
   
@@ -542,6 +584,7 @@ sbAlbumArtService::Finalize()
 nsresult
 sbAlbumArtService::GetAlbumArtCacheDir()
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - GetAlbumArtCacheDir", this));
   nsresult rv;
 
   // Get the album art cache directory.
@@ -581,6 +624,7 @@ sbAlbumArtService::GetAlbumArtCacheDir()
 nsresult
 sbAlbumArtService::GetAlbumArtFetcherInfo()
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - GetAlbumArtFetcherInfo", this));
   nsresult rv;
 
   // Get the category manager.
@@ -600,8 +644,10 @@ sbAlbumArtService::GetAlbumArtFetcherInfo()
     PRBool hasMoreElements;
     rv = albumArtFetcherEnum->HasMoreElements(&hasMoreElements);
     NS_ENSURE_SUCCESS(rv, rv);
-    if (!hasMoreElements)
+    if (!hasMoreElements) {
+      TRACE(("sbAlbumArtService::GetAlbumArtFetcherInfo - No fetchers!"));
       break;
+    }
 
     // Get the next album art fetcher category entry name.
     nsCOMPtr<nsISupports>        entryNameSupports;
@@ -620,15 +666,28 @@ sbAlbumArtService::GetAlbumArtFetcherInfo()
                                            entryName.get(),
                                            &contractID);
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("sbAlbumArtService::GetAlbumArtFetcherInfo - Found fetcher [%s]", contractID));
     sbAutoNSMemPtr autoContractID(contractID);
     nsCOMPtr<sbIAlbumArtFetcher> albumArtFetcher = do_CreateInstance(contractID,
                                                                      &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    PRInt32 priority = 0;
+    albumArtFetcher->GetPriority(&priority);
+    
+    PRBool isEnabled = PR_FALSE;
+    albumArtFetcher->GetIsEnabled(&isEnabled);
+
+    PRBool isLocal = PR_FALSE;
+    albumArtFetcher->GetIsLocal(&isLocal);
+
     // Add the album art fetcher info to the list.
     FetcherInfo fetcherInfo;
     fetcherInfo.contractID.Assign(contractID);
-    fetcherInfo.fetcher = albumArtFetcher;
+    fetcherInfo.priority = priority;
+    fetcherInfo.enabled = isEnabled;
+    fetcherInfo.local = isLocal;
+    
     NS_ENSURE_TRUE(mFetcherInfoList.AppendElement(fetcherInfo),
                    NS_ERROR_OUT_OF_MEMORY);
   }
@@ -638,31 +697,31 @@ sbAlbumArtService::GetAlbumArtFetcherInfo()
 
 
 /**
- * Sort the list of album art fetchers according to fetching priority.
+ * Update the list of album art fetchers (updates priority and enabled flags)
  */
-
 nsresult
-sbAlbumArtService::SortAlbumArtFetcherInfo()
+sbAlbumArtService::UpdateAlbumArtFetcherInfo()
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - UpdateAlbumArtFetcherInfo", this));
   nsresult rv;
-
-  // Order the album art fetchers.
-  //XXXeps just hardwire the metadata fetcher to come first for now.
+  
+  // Update each fetcher in the fetcher list.
   for (PRUint32 i = 0; i < mFetcherInfoList.Length(); i++) {
-    // Get the album art fetcher short name.
-    nsCOMPtr<sbIAlbumArtFetcher> fetcher = mFetcherInfoList[i].fetcher;
-    nsAutoString                 fetcherShortName;
-    rv = fetcher->GetShortName(fetcherShortName);
+    nsCOMPtr<sbIAlbumArtFetcher> albumArtFetcher =
+        do_CreateInstance(mFetcherInfoList[i].contractID.get(), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Put metadata album art fetcher first.
-    if (fetcherShortName.EqualsLiteral("metadata")) {
-      FetcherInfo fetcherInfo = mFetcherInfoList[i];
-      mFetcherInfoList.RemoveElementAt(i);
-      mFetcherInfoList.InsertElementAt(0, fetcherInfo);
-    }
+    PRInt32 priority = 0;
+    albumArtFetcher->GetPriority(&priority);
+    
+    PRBool isEnabled = PR_FALSE;
+    albumArtFetcher->GetIsEnabled(&isEnabled);
+
+    mFetcherInfoList[i].priority = priority;
+    mFetcherInfoList[i].enabled = isEnabled;
   }
 
+  mFetcherInfoList.Sort();
   return NS_OK;
 }
 
@@ -681,6 +740,7 @@ sbAlbumArtService::GetCacheFileBaseName(const PRUint8* aData,
                                         PRUint32       aDataLen,
                                         nsAString&     aFileBaseName)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - GetCacheFileBaseName", this));
   // Validate arguments.
   NS_ASSERTION(aData, "aData is null");
 
@@ -727,6 +787,7 @@ nsresult
 sbAlbumArtService::GetAlbumArtFileExtension(const nsACString& aMimeType,
                                             nsAString&        aFileExtension)
 {
+  TRACE(("sbAlbumArtService[0x%8.x] - GetAlbumArtFileExtension", this));
   nsCAutoString fileExtension;
   nsresult      rv;
 

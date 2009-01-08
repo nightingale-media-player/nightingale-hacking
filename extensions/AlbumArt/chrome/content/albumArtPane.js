@@ -1057,7 +1057,68 @@ var AlbumArt = {
   },
 
   /**
-   * \brief Clear the image from the playing or selected items.
+   * \brief Callbacks for the sbIAlbumArtListener
+   */
+  onChangeFetcher: function AlbumArt_onChangeFetcher(aFetcher) {
+  },
+  onResult: function AlbumArt_onResult(aImageLocation, aMediaItem) {
+    if (aImageLocation != "") {
+      AlbumArt.setCurrentStateItemImage(aImageLocation);
+    }
+  },
+
+  /**
+   * \brief Scan items for missing artwork.
+   */
+  onGetArtwork: function AlbumArt_onGetArtwork() {
+    // First we have to get the collection of items we want to scan,
+    // this will be either the selection or now playing.
+
+    var listProperties = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                           .createInstance(Ci.sbIPropertyArray);
+    listProperties.appendProperty(SBProperties.hidden, "1");
+
+    var getArtworkMediaList = LibraryUtils.mainLibrary
+                                          .createMediaList("simple",
+                                                           listProperties);
+    getArtworkMediaList.name = "Get artwork";
+
+    if (AlbumArt._currentState == STATE_SELECTED) {
+      // Now Selected
+      var selection = AlbumArt._mediaListView.selection;
+      var item = null;
+      var itemEnum = selection.selectedMediaItems;
+      while (itemEnum.hasMoreElements()) {
+        item = itemEnum.getNext();
+        if (item) {
+          getArtworkMediaList.add(item);
+        }
+      }
+
+    } else {
+      // Now playing
+      var item = AlbumArt.getNowPlayingItem();
+      if (item) {
+        getArtworkMediaList.add(item);
+      }
+    }
+
+    if (!getArtworkMediaList.isEmpty) {
+      // Since we monitor the changes to primaryImageURL we will update if the
+      // image is found for the first selected item.
+      var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
+                             .createInstance(Ci.sbIAlbumArtScanner);
+      artworkScanner.scanListForArtwork(getArtworkMediaList);
+      SBJobUtils.showProgressDialog(artworkScanner, window, 0);
+    }
+
+    // Make sure to remove our list, the scanner will have a copy.
+    LibraryUtils.mainLibrary.remove(getArtworkMediaList);
+  },
+
+
+  /**
+    * \brief Clear the image from the playing or selected items.
    */
   onClear: function AlbumArt_onClear() {
     AlbumArt.setCurrentStateItemImage("");

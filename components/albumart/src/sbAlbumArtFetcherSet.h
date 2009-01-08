@@ -51,9 +51,12 @@
 // Songbird imports.
 #include <sbIAlbumArtFetcherSet.h>
 #include <sbIAlbumArtService.h>
+#include <sbIAlbumArtListener.h>
+#include <sbIMediaItem.h>
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
+#include <nsIConsoleService.h>
 
 
 //------------------------------------------------------------------------------
@@ -87,7 +90,8 @@
  * This class implements the album art fetcher set component.
  */
 
-class sbAlbumArtFetcherSet : public sbIAlbumArtFetcherSet
+class sbAlbumArtFetcherSet : public sbIAlbumArtFetcherSet,
+                             public sbIAlbumArtListener
 {
   //----------------------------------------------------------------------------
   //
@@ -104,6 +108,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTFETCHER
   NS_DECL_SBIALBUMARTFETCHERSET
+  NS_DECL_SBIALBUMARTLISTENER
 
 
   //
@@ -127,27 +132,40 @@ private:
 
   //
   // mAlbumArtService           Album art service.
+  // mConsoleService            Console service for warning messages.
   // mAlbumArtSourceList        List of album art sources.
-  // mIsComplete                True if fetching is complete.
-  // mFoundAlbumArt             True if album art found.
   // mLocalOnly                 If true, only fetch locally.
   //
 
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
+  nsCOMPtr<nsIConsoleService>   mConsoleService;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
-  PRBool                        mIsComplete;
-  PRBool                        mFoundAlbumArt;
   PRBool                        mLocalOnly;
 
+  //
+  // mListener                  Listener for the fetching.
+  //
+  
+  nsCOMPtr<sbIAlbumArtListener> mListener;
+
+  //
+  // mFetcherList               List of fetchers to check.
+  // mFetcherIndex              Index of current fetcher we are checking.
+  // mFetcher                   Current Fetcher we are using.
+  //
+
+  nsCOMPtr<nsIArray>            mFetcherList;
+  PRInt32                       mFetcherIndex;
+  nsCOMPtr<sbIAlbumArtFetcher>  mFetcher;
 
   //
   // Internal services.
   //
 
-  nsresult FetchAlbumArtForMediaItem(const char*   aAlbumArtFetcherContractID,
-                                     sbIMediaItem* aMediaItem,
-                                     nsIDOMWindow* aWindow,
-                                     PRBool*       aFoundAlbumArt);
+  nsresult FinishFetch(nsIURI*        aImageLocation,
+                       sbIMediaItem*  aMediaItem);
+
+  nsresult NextFetcher(sbIMediaItem*  aMediaItem);
 };
 
 

@@ -805,9 +805,10 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
 }
 
 function SBGetArtworkOpen() {
-  SBOpenModalDialog("chrome://songbird/content/xul/albumArtFetchDialog.xul",
-                    "Songbird:GetArtwork", "chrome,centerscreen",
-                    null, null);
+  var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
+                         .createInstance(Ci.sbIAlbumArtScanner);
+  artworkScanner.scanListForArtwork(null); // defaults to main library
+  SBJobUtils.showProgressDialog(artworkScanner, window, 0);  
 }
 
 function SBRevealFile( initialTab, parentWindow ) {

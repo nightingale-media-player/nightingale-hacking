@@ -36,6 +36,8 @@ XPIDL_SRCS = sbIAlbumArtFetcherSet.idl \
              sbIAlbumArtFetcher.idl \
              sbIAlbumArtListener.idl \
              sbIAlbumArtService.idl \
+             sbIAlbumArtScanner.idl \
+             sbIAlbumArtDownloader.idl \
              $(NULL)
 
 XPIDL_MODULE = sbAlbumArt.xpt

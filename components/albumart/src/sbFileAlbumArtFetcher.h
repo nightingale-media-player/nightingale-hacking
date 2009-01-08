@@ -57,6 +57,7 @@
 #include <nsIArray.h>
 #include <nsIIOService.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIPrefBranch.h>
 #include <nsTArray.h>
 #include <nsStringGlue.h>
 #include <nsISupportsPrimitives.h>
@@ -133,22 +134,20 @@ public:
 private:
 
   //
+  // mPrefService               Preference service to get prefs.
   // mAlbumArtService           Art service - used for caching
   // mIOService                 I/O service.
   // mFileExtensionList         List of album art file extensions.
   // mFileBaseNameList          List of album art file names.
   // mAlbumArtSourceList        List of album art sources.
-  // mIsComplete                True if fetching is complete.
-  // mFoundAlbumArt             True if album art found.
   //
 
+  nsCOMPtr<nsIPrefBranch>       mPrefService;
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
   nsCOMPtr<nsIIOService>        mIOService;
   nsTArray<nsString>            mFileExtensionList;
   nsTArray<nsString>            mFileBaseNameList;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
-  PRBool                        mIsComplete;
-  PRBool                        mFoundAlbumArt;
 
 
   //
@@ -161,9 +160,6 @@ private:
 
   nsresult FindAlbumArtFile(sbIMediaItem*        aMediaItem,
                             nsIFile**            aAlbumArtFile);
-
-  nsresult SetMediaItemAlbumArt(sbIMediaItem* aMediaItem,
-                                nsIFile*      aAlbumArtFile);
 };
 
 

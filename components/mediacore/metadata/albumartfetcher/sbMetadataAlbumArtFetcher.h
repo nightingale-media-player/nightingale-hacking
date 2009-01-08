@@ -55,6 +55,7 @@
 
 // Mozilla imports.
 #include <nsCOMPtr.h>
+#include <nsIPrefBranch.h>
 
 
 //------------------------------------------------------------------------------
@@ -126,18 +127,16 @@ public:
 private:
 
   //
+  // mPrefService               Preference service to get prefs.
   // mAlbumArtService           Album art service.
   // mMetadataManager           Metadata manager.
   // mAlbumArtSourceList        List of album art sources.
-  // mIsComplete                True if fetching is complete.
-  // mFoundAlbumArt             True if album art found.
   //
 
+  nsCOMPtr<nsIPrefBranch>       mPrefService;
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
   nsCOMPtr<sbIMetadataManager>  mMetadataManager;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
-  PRBool                        mIsComplete;
-  PRBool                        mFoundAlbumArt;
 
 
   //

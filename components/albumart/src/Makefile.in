@@ -40,11 +40,13 @@ CPP_SRCS = \
   sbAlbumArtModule.cpp \
   sbAlbumArtService.cpp \
   sbFileAlbumArtFetcher.cpp \
+  sbAlbumArtScanner.cpp \
   $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/albumart/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/property/public \
+               $(DEPTH)/components/job/public \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
@@ -56,6 +58,8 @@ CPP_INCLUDES = $(DEPTH)/components/albumart/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/dom \
                $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
@@ -85,6 +89,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
   $(NULL)
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
+                      $(srcdir)/sbAlbumArtDownloader.js \
                       $(NULL)
 
 SONGBIRD_JSMODULES = $(srcdir)/sbCoverHelper.jsm \

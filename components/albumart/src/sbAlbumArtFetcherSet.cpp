@@ -51,10 +51,27 @@
 // Mozilla imports.
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIFile.h>
+#include <nsIURI.h>
 #include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbAlbumArtFetcherSet:5
+ * Use the following to output to a file:
+ *   NSPR_LOG_FILE=path/to/file.log
+ */
+#include "prlog.h"
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gAlbumArtFetcherSetLog = nsnull;
+#define TRACE(args) PR_LOG(gAlbumArtFetcherSetLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gAlbumArtFetcherSetLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 //------------------------------------------------------------------------------
 //
@@ -62,9 +79,10 @@
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbAlbumArtFetcherSet,
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbAlbumArtFetcherSet,
                               sbIAlbumArtFetcherSet,
-                              sbIAlbumArtFetcher)
+                              sbIAlbumArtFetcher,
+                              sbIAlbumArtListener)
 
 
 //------------------------------------------------------------------------------
@@ -84,6 +102,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbAlbumArtFetcherSet,
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetLocalOnly(PRBool* aLocalOnly)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetLocalOnly - IsLocalOnly = %s",
+          (mLocalOnly ? "TRUE" : "FALSE")));
   NS_ENSURE_ARG_POINTER(aLocalOnly);
   *aLocalOnly = mLocalOnly;
   return NS_OK;
@@ -92,6 +112,8 @@ sbAlbumArtFetcherSet::GetLocalOnly(PRBool* aLocalOnly)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetLocalOnly(PRBool aLocalOnly)
 {
+  TRACE(("sbAlbumArtFetcherSet::SetLocalOnly - IsLocalOnly = %s",
+          (aLocalOnly ? "TRUE" : "FALSE")));
   mLocalOnly = aLocalOnly;
   return NS_OK;
 }
@@ -106,55 +128,38 @@ sbAlbumArtFetcherSet::SetLocalOnly(PRBool aLocalOnly)
 /* \brief try to fetch album art for the given media item
  * \param aMediaItem the media item that we're looking for album art for
  * \param aListener the listener to inform of success or failure
- * \param aWindow the window this was called from, can be null
  */
 
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem
                          (sbIMediaItem*        aMediaItem,
-                          sbIAlbumArtListener* aListener,
-                          nsIDOMWindow*        aWindow)
+                          sbIAlbumArtListener* aListener)
 {
+  TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem"));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aListener);
 
-  // Function variables.
   nsresult rv;
-
-  // Reset fetcher state.
-  mIsComplete = PR_FALSE;
-  mFoundAlbumArt = PR_FALSE;
-
-  // Get the list of fetchers.
-  nsCOMPtr<nsIArray> fetcherList;
-  rv = mAlbumArtService->GetFetcherList(mLocalOnly,
-                                        getter_AddRefs(fetcherList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Try each fetcher until one is successful.
   PRUint32 fetcherListCount;
-  rv = fetcherList->GetLength(&fetcherListCount);
+  rv = mFetcherList->GetLength(&fetcherListCount);
   NS_ENSURE_SUCCESS(rv, rv);
-  for (PRUint32 i = 0; i < fetcherListCount; i++) {
-    // Get the next fetcher contract ID.
-    nsCAutoString fetcherContractID;
-    nsCOMPtr<nsIVariant>
-      fetcherContractIDVariant = do_QueryElementAt(fetcherList, i, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = fetcherContractIDVariant->GetAsACString(fetcherContractID);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    // Try fetching album art using the fetcher.  Continue fetching on error.
-    FetchAlbumArtForMediaItem(fetcherContractID.get(),
-                              aMediaItem,
-                              aWindow,
-                              &mFoundAlbumArt);
-    if (mFoundAlbumArt)
-      break;
+  if (fetcherListCount <= 0) {
+    // No fetchers so abort
+    aListener->OnResult(nsnull, aMediaItem);
+    return NS_OK;
   }
 
-  // Update fetcher state.
-  mIsComplete = PR_TRUE;
+  // Save the listener
+  mListener = aListener;
+
+  // Start with the first fetcher
+  mFetcherIndex = 0;
+  rv = NextFetcher(aMediaItem);
+  if (NS_FAILED(rv)) {
+    FinishFetch(nsnull, aMediaItem);
+  }
 
   return NS_OK;
 }
@@ -166,6 +171,12 @@ sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::Shutdown()
 {
+  TRACE(("sbAlbumArtFetcherSet::Shutdown"));
+  if (mFetcher) {
+    // Shutdown the current fetcher
+    mFetcher->Shutdown(); 
+    mFetcher = nsnull;
+  }
   return NS_OK;
 }
 
@@ -181,6 +192,7 @@ sbAlbumArtFetcherSet::Shutdown()
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetShortName(nsAString& aShortName)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetShortName"));
   aShortName.AssignLiteral("set");
   return NS_OK;
 }
@@ -189,12 +201,12 @@ sbAlbumArtFetcherSet::GetShortName(nsAString& aShortName)
 /**
  * \brief Name of AlbumArtFetcher to display to the user on things like
  *        menus.
- *XXXeps stub for now.
  */
 
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetName(nsAString& aName)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetName"));
   aName.AssignLiteral("set");
   return NS_OK;
 }
@@ -202,30 +214,15 @@ sbAlbumArtFetcherSet::GetName(nsAString& aName)
 
 /**
  * \brief Description of the AlbumArtFetcher to display to the user.
- *XXXeps stub for now.
  */
 
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetDescription(nsAString& aDescription)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetDescription"));
   aDescription.AssignLiteral("set");
   return NS_OK;
 }
-
-
-/**
- * \brief Flag to indicate if this Fetcher can be used as a fetcher from a
- *        user menu.
- */
-
-NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetUserFetcher(PRBool* aUserFetcher)
-{
-  NS_ENSURE_ARG_POINTER(aUserFetcher);
-  *aUserFetcher = PR_TRUE;
-  return NS_OK;
-}
-
 
 /**
  * \brief Flag to indicate if this Fetcher fetches from local sources.
@@ -236,20 +233,21 @@ sbAlbumArtFetcherSet::GetUserFetcher(PRBool* aUserFetcher)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetIsLocal(PRBool* aIsLocal)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetIsLocal"));
   NS_ENSURE_ARG_POINTER(aIsLocal);
-  *aIsLocal = PR_TRUE;
+  *aIsLocal = mLocalOnly;
   return NS_OK;
 }
 
-
 /**
- * \brief Flag to indicate if this Fetcher is enabled or not
- *XXXeps stub for now.
+ * \brief Flag to indicate if this Fetcher is enabled or not.
+ *        The fetcher set is always enabled.
  */
 
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetIsEnabled(PRBool* aIsEnabled)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetIsEnabled"));
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   *aIsEnabled = PR_TRUE;
   return NS_OK;
@@ -258,35 +256,30 @@ sbAlbumArtFetcherSet::GetIsEnabled(PRBool* aIsEnabled)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetIsEnabled(PRBool aIsEnabled)
 {
+  TRACE(("sbAlbumArtFetcherSet::SetIsEnabled"));
   return NS_OK;
 }
 
-
 /**
- * \brief Flag to indicate if fetching is complete.
+ * \brief Priority of this fetcher, this priority doesn't really matter since
+ *        we are not an actual fetcher.
  */
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetIsComplete(PRBool* aIsComplete)
+sbAlbumArtFetcherSet::GetPriority(PRInt32* aPriority)
 {
-  NS_ENSURE_ARG_POINTER(aIsComplete);
-  *aIsComplete = mIsComplete;
+  TRACE(("sbAlbumArtFetcherSet::GetPriority"));
+  NS_ENSURE_ARG_POINTER(aPriority);
+  *aPriority = -1;
   return NS_OK;
 }
-
-
-/**
- * \brief Flag to indicate whether album art was found.
- */
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetFoundAlbumArt(PRBool* aFoundAlbumArt)
+sbAlbumArtFetcherSet::SetPriority(PRInt32 aPriority)
 {
-  NS_ENSURE_ARG_POINTER(aFoundAlbumArt);
-  *aFoundAlbumArt = mFoundAlbumArt;
+  TRACE(("sbAlbumArtFetcherSet::SetPriority"));
   return NS_OK;
 }
-
 
 /**
  * \brief List of sources of album art (e.g., sbIMetadataHandler).
@@ -295,6 +288,7 @@ sbAlbumArtFetcherSet::GetFoundAlbumArt(PRBool* aFoundAlbumArt)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
 {
+  TRACE(("sbAlbumArtFetcherSet::GetFoundAlbumArt"));
   NS_ENSURE_ARG_POINTER(aAlbumArtSourceList);
   NS_ADDREF(*aAlbumArtSourceList = mAlbumArtSourceList);
   return NS_OK;
@@ -303,6 +297,7 @@ sbAlbumArtFetcherSet::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
 {
+  TRACE(("sbAlbumArtFetcherSet::SetAlbumArtSourceList"));
   mAlbumArtSourceList = aAlbumArtSourceList;
   return NS_OK;
 }
@@ -319,10 +314,19 @@ sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  */
 
 sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
-  mIsComplete(PR_FALSE),
-  mFoundAlbumArt(PR_FALSE),
-  mLocalOnly(PR_FALSE)
+  mLocalOnly(PR_FALSE),
+  mListener(nsnull),
+  mFetcherList(nsnull),
+  mFetcherIndex(-1),
+  mFetcher(nsnull)
 {
+#ifdef PR_LOGGING
+  if (!gAlbumArtFetcherSetLog) {
+    gAlbumArtFetcherSetLog = PR_NewLogModule("sbAlbumArtFetcherSet");
+  }
+#endif
+  TRACE(("sbAlbumArtFetcherSet[0x%.8x] - ctor", this));
+  MOZ_COUNT_CTOR(sbAlbumArtFetcherSet);
 }
 
 
@@ -332,6 +336,11 @@ sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
 
 sbAlbumArtFetcherSet::~sbAlbumArtFetcherSet()
 {
+  TRACE(("sbAlbumArtFetcherSet[0x%.8x] - dtor", this));
+  MOZ_COUNT_DTOR(sbAlbumArtFetcherSet);
+
+  // Make sure to shutdown
+  Shutdown();
 }
 
 
@@ -342,11 +351,59 @@ sbAlbumArtFetcherSet::~sbAlbumArtFetcherSet()
 nsresult
 sbAlbumArtFetcherSet::Initialize()
 {
+  TRACE(("sbAlbumArtFetcherSet::Intialize"));
   nsresult rv;
 
   // Get the album art service.
   mAlbumArtService = do_GetService(SB_ALBUMARTSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the list of fetchers.
+  rv = mAlbumArtService->GetFetcherList(mLocalOnly,
+                                        getter_AddRefs(mFetcherList));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Get the console service for warning messages
+  mConsoleService = do_GetService("@mozilla.org/consoleservice;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// sbIAlbumArtListner Implementation.
+//
+//------------------------------------------------------------------------------
+
+/* onChangeFetcher(in sbIAlbumArtFetcher aFetcher); */
+NS_IMETHODIMP sbAlbumArtFetcherSet::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
+{
+  TRACE(("sbAlbumArtFetcherSet::OnChangeFetcher"));
+  return NS_OK;
+}
+
+/* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
+NS_IMETHODIMP sbAlbumArtFetcherSet::OnResult(nsIURI* aImageLocation,
+                                             sbIMediaItem* aMediaItem)
+{
+  TRACE(("sbAlbumArtFetcherSet::OnResult"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  if (aImageLocation) {
+    // Success so we can now notify the caller and stop processing
+    TRACE(("sbAlbumArtFetcherSet::OnResult - Found Image"));
+    FinishFetch(aImageLocation, aMediaItem); 
+  } else {
+    // No image found so try the next fetcher
+    mFetcherIndex++;
+    rv = NextFetcher(aMediaItem);
+    if (NS_FAILED(rv)) {
+      FinishFetch(nsnull, aMediaItem);
+    }
+  }
 
   return NS_OK;
 }
@@ -358,51 +415,117 @@ sbAlbumArtFetcherSet::Initialize()
 //
 //------------------------------------------------------------------------------
 
-/**
- * Try fetching album art for the media item specified by aMediaItem using the
- * album art fetcher with the contract ID specified by
- * aAlbumArtFetcherContractID.  If album art was found, return true in
- * aFoundAlbumArt.
- *
- * \param aAlbumArtFetcherContractID
- *                              Contract ID of album art fetcher component.
- * \param aMediaItem            Media item for which to fetcher album art.
- * \param aWindow               The window this was called from, can be null.
- * \param aFoundAlbumArt        Set to true if album art was found.
- */
-
 nsresult
-sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem
-                        (const char*   aAlbumArtFetcherContractID,
-                         sbIMediaItem* aMediaItem,
-                         nsIDOMWindow* aWindow,
-                         PRBool*       aFoundAlbumArt)
+sbAlbumArtFetcherSet::FinishFetch(nsIURI* aImageLocation,
+                                  sbIMediaItem* aMediaItem)
 {
+  TRACE(("sbAlbumArtFetcherSet::FinishFetch"));
   // Validate arguments.
-  NS_ASSERTION(aAlbumArtFetcherContractID,
-               "aAlbumArtFetcherContractID is null");
-  NS_ASSERTION(aMediaItem, "aMediaItem is null");
-  NS_ASSERTION(aFoundAlbumArt, "aFoundAlbumArt is null");
-
-  // Function variables.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
 
-  // Set up the album art fetcher.
-  nsCOMPtr<sbIAlbumArtFetcher>
-    fetcher = do_CreateInstance(aAlbumArtFetcherContractID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = fetcher->SetAlbumArtSourceList(mAlbumArtSourceList);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Reset our counter
+  mFetcherIndex = -1;
 
-  // Try fetching album art using the fetcher.
-  rv = fetcher->FetchAlbumArtForMediaItem(aMediaItem, nsnull, aWindow);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Make sure we shutdown the current fetcher
+  if (mFetcher) {
+    rv = mFetcher->Shutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
+    mFetcher = nsnull;
+  }
 
-  // Check if album art was found.
-  rv = fetcher->GetFoundAlbumArt(aFoundAlbumArt);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Check if this is a local file and warn if not
+  if (aImageLocation) {
+    nsCOMPtr<nsIFile> fileLocation;
+    nsIID nsIFileIID = NS_IFILE_IID;
+    rv = aImageLocation->QueryInterface(nsIFileIID, getter_AddRefs(fileLocation));
+    if (NS_FAILED(rv) || !fileLocation) {
+      // Not a file so this must be online
+      mConsoleService->LogStringMessage(
+        NS_LITERAL_STRING("Fetcher returned non-local file for image.").get());
+    }
+  }
+
+  // Notify the listener
+  mListener->OnResult(aImageLocation, aMediaItem);
 
   return NS_OK;
 }
 
+nsresult
+sbAlbumArtFetcherSet::NextFetcher(sbIMediaItem* aMediaItem)
+{
+  TRACE(("sbAlbumArtFetcherSet::NextFetcher"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  // Shutdown the existing fetcher
+  if (mFetcher) {
+    mFetcher->Shutdown();
+    mFetcher = nsnull;
+  }
+  
+  // Try the next fetcher
+  PRUint32 fetcherListCount;
+  rv = mFetcherList->GetLength(&fetcherListCount);
+  if (NS_FAILED(rv)) {
+    TRACE(("sbAlbumArtFetcherSet::NextFetcher - Unable to get count of fetchers"));
+    FinishFetch(nsnull, aMediaItem);
+    return NS_OK;
+  }
+
+  if (mFetcherIndex >= fetcherListCount) {
+    TRACE(("sbAlbumArtFetcherSet::NextFetcher - No more fetchers"));
+    FinishFetch(nsnull, aMediaItem);
+    return NS_OK;
+  }
+
+  TRACE(("sbAlbumArtFetcherSet::NextFetcher - Querying fetcher at index %d",
+          mFetcherIndex));
+
+  // Get the next fetcher
+  nsCAutoString fetcherContractID;
+  nsCOMPtr<nsIVariant>
+    fetcherContractIDVariant = do_QueryElementAt(mFetcherList,
+                                                 mFetcherIndex,
+                                                 &rv);
+  if (NS_FAILED(rv)) {
+    OnResult(nsnull, aMediaItem);
+    return NS_OK;
+  }
+
+  rv = fetcherContractIDVariant->GetAsACString(fetcherContractID);
+  if (NS_FAILED(rv)) {
+    OnResult(nsnull, aMediaItem);
+    return NS_OK;
+  }
+
+  TRACE(("sbAlbumArtFetcherSet::NextFetcher - Trying fetcher %s",
+         fetcherContractID.get()));
+
+  // Notify listeners that we have moved on to the next fetcher
+  mFetcher = do_CreateInstance(fetcherContractID.get(), &rv);
+  if (NS_FAILED(rv)) {
+    OnResult(nsnull, aMediaItem);
+    return NS_OK;
+  }
+  mListener->OnChangeFetcher(mFetcher);
+
+  // Set the source list to what we have.
+  rv = mFetcher->SetAlbumArtSourceList(mAlbumArtSourceList);
+  if (NS_FAILED(rv)) {
+    OnResult(nsnull, aMediaItem);
+    return NS_OK;
+  }
+
+  // Try fetching album art using the fetcher.
+  rv = mFetcher->FetchAlbumArtForMediaItem(aMediaItem, this);
+  if (NS_FAILED(rv)) {
+    OnResult(nsnull, aMediaItem);
+    return NS_OK;
+  }
+
+  return NS_OK;
+}
 

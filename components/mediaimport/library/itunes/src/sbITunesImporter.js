@@ -2176,6 +2176,22 @@ sbITunesImporter.prototype =
       iTunesTrackIDTable[iTunesTrackID] = trackInfo;
     }
 
+
+    /**
+     * sbIAlbumArtListener - Callbacks for fetching album art.
+     */
+    var albumArtListener = {
+      onChangeFetcher: function (aFetcher) {
+        // We ignore this one since we don't need to update the user
+      },
+      onResult: function (aImageLocation, aMediaItem) {
+        if (aImageLocation) {
+          aMediaItem.setProperty(SBProperties.primaryImageURL,
+                                 aImageLocation.spec);
+        }
+      },
+    };
+
     // Post-process created media items.
     var createCount = createdMediaItems.length;
     for (var i = 0; i < createCount; i++) {
@@ -2189,7 +2205,8 @@ sbITunesImporter.prototype =
               Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
                 .createInstance(Ci.sbIAlbumArtFetcherSet);
         fileAlbumArtFetcherSet.localOnly = true;
-        fileAlbumArtFetcherSet.fetchAlbumArtForMediaItem(mediaItem, null, null);
+        fileAlbumArtFetcherSet.fetchAlbumArtForMediaItem(mediaItem,
+                                                         albumArtListener);
       } catch (ex) {
         Cu.reportError(ex);
       }

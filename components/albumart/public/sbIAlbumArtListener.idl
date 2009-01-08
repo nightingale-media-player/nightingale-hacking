@@ -36,17 +36,42 @@
 
 #include "nsISupports.idl"
 
+interface nsIURI;
+interface sbIAlbumArtFetcher;
+interface sbIMediaItem;
 
 /**
  * \interface sbIAlbumArtListener
  * \brief A component which is interested in the result of an album art fetch
  *        request
  * \sa sbIAlbumArtFetcher
- *XXXeps stub for now
+ * \sa sbIAlbumArtFetcherSet
  */
 
-[scriptable, uuid(64449da9-ce24-4d5f-b028-5d28f8ee77f9)]
+[scriptable, uuid(34b2e101-e6b5-4be4-a5fd-adfc67a70051)]
 interface sbIAlbumArtListener : nsISupports
 {
+  /**
+   * \brief onChangeFetcher - Notifies the listener when the fetcher
+   *          being used has changed. This is used from the
+   *          sbIAlbumArtFetcherSet component.
+   * \param aFetcher - Fetcher that has been changed to.
+   */
+  void onChangeFetcher(in sbIAlbumArtFetcher aFetcher);
+
+  /**
+   * \brief onResult - Notifies the listener when either an image has
+   *          or has not been found. aImageLocation will be null if
+   *          the operation failed to get artwork.
+   * \param aImageLocation - uri of the image location, this can be
+   *          a file, http, or other.
+   * \param aMediaItem - The media item that the result is for.
+   * \note This will be called even if the autoSet has been set in the
+   *       FetchAlbumArtForMediaItem call. In this case the aMediaItem
+   *       will have already been updated with the image location if
+   *       successfull.
+   */
+  void onResult(in nsIURI aImageLocation,
+                in sbIMediaItem aMediaItem);
 };
 

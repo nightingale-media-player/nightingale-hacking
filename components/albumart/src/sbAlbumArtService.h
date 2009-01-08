@@ -140,13 +140,27 @@ private:
   //
   //   contractID                   Album art fetcher contract ID.
   //   fetcher                      Album art fetcher.
+  //   priority                     Priority of the fetcher (used for sorting).
+  //   enabled                      used to filter our disabled fetchers.
   //
 
   class FetcherInfo
   {
   public:
     nsCString                       contractID;
-    nsCOMPtr<sbIAlbumArtFetcher>    fetcher;
+    PRUint32                        priority;
+    PRBool                          enabled;
+    PRBool                          local;
+
+    // Defined for the Sort function on nsTArray
+    PRBool operator<(const FetcherInfo& right) const {
+      return contractID.Equals(right.contractID);
+    };
+    
+    // This has to be defined for Sort as well, but is used for Searching.
+    PRBool operator==(const FetcherInfo& right) const {
+      return (priority == right.priority);
+    }
   };
 
 
@@ -185,7 +199,7 @@ private:
 
   nsresult GetAlbumArtFetcherInfo();
 
-  nsresult SortAlbumArtFetcherInfo();
+  nsresult UpdateAlbumArtFetcherInfo();
 
   nsresult GetCacheFileBaseName(const PRUint8* aData,
                                 PRUint32       aDataLen,

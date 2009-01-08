@@ -412,6 +412,11 @@ pref("songbird.albumart.file.extensions", "jpg,jpeg,png,gif,bmp,tif,tiff");
 pref("songbird.albumart.file.base_names", "cover,folder");
 // Enable writing artwork to meta data by default
 pref("songbird.metadata.artwork.enableWriting", true);
+// Setup default priorities and enable/disable fetchers
+pref("songbird.albumart.file.enabled", false);
+pref("songbird.albumart.file.priority", -1);
+pref("songbird.albumart.metadata.enabled", true);
+pref("songbird.albumart.metadata.priority", 0);
 
 // Show the 'rescan metadata' playlist command ?
 pref("songbird.commands.enableRescanItem", false);

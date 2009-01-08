@@ -1728,6 +1728,7 @@ TrackEditorArtwork.prototype = {
   _menuCut: null,
   _menuCopy: null,
   _menuPaste: null,
+  _menuGetArtwork: null,
   _menuClear: null,
   
   /**
@@ -1821,8 +1822,10 @@ TrackEditorArtwork.prototype = {
     this._menuCut = document.createElement("menuitem");
     this._menuCopy = document.createElement("menuitem");
     this._menuPaste = document.createElement("menuitem");
+    this._menuGetArtwork = document.createElement("menuitem");
     this._menuClear = document.createElement("menuitem");
-    var menuSeparator = document.createElement("menuseparator");
+    var menuSeparatorPaste = document.createElement("menuseparator");
+    var menuSeparatorArtwork = document.createElement("menuseparator");
     
     var self = this;
     this._menuCut.setAttribute("label", SBString("trackeditor.artwork.menu.cut"));
@@ -1837,13 +1840,20 @@ TrackEditorArtwork.prototype = {
     this._menuPaste.addEventListener("command",
                                    function() { self.onPaste();}, false);
 
+    this._menuGetArtwork.setAttribute("label",
+                                      SBString("trackeditor.artwork.menu.getartwork"));
+    this._menuGetArtwork.addEventListener("command",
+                                   function() { self.onGetArtwork();}, false);
+
     this._menuClear.setAttribute("label", SBString("trackeditor.artwork.menu.clear"));
     this._menuClear.addEventListener("command",
                                    function() { self.onClear();}, false);
     this._menuPopup.appendChild(this._menuCut);
     this._menuPopup.appendChild(this._menuCopy);
     this._menuPopup.appendChild(this._menuPaste);
-    this._menuPopup.appendChild(menuSeparator);
+    this._menuPopup.appendChild(menuSeparatorPaste);
+    this._menuPopup.appendChild(this._menuGetArtwork);
+    this._menuPopup.appendChild(menuSeparatorArtwork);
     this._menuPopup.appendChild(this._menuClear);
 
     this._menuPopup.addEventListener("popupshowing",
@@ -1899,6 +1909,7 @@ TrackEditorArtwork.prototype = {
       this._menuCopy.setAttribute("disabled", true);
       this._menuClear.setAttribute("disabled", true);
       this._menuPaste.setAttribute("disabled", true);
+      this._menuGetArtwork.setAttribute("disabled", true);
       return;
     }
     
@@ -1935,6 +1946,7 @@ TrackEditorArtwork.prototype = {
       this._menuPaste.removeAttribute("disabled");
     }
 
+    this._menuGetArtwork.removeAttribute("disabled");
   },
  
   /**
@@ -2062,7 +2074,38 @@ TrackEditorArtwork.prototype = {
   },
 
   /**
-   * \brief handle the cut command (invoked either from the keyboard or
+   * \brief Callbacks for the sbIAlbumArtListener
+   */
+  onChangeFetcher: function TrackEditorArtwork_onChangeFetcher(aFetcher) {
+  },
+  onResult: function TrackEditorArtwork_onResult(aImageLocation, aMediaItem) {
+    if (aImageLocation.spec != "") {
+      this._imageSrcChange(aImageLocation.spec);
+    }
+  },
+
+  /**
+   * \brief handle the get artwork command (invoked either from the keyboard or
+   *        context menu)
+   *        We don't want to use the sbIAlbumArtScanner since that does not
+   *        return the found image location. We use the fetcherSet so that when
+   *        we find an image we can set it in the track editor but not the item
+   *        until they click ok.
+   */
+  onGetArtwork: function TrackEditorArtwork_onGetArtwork() {
+    var item = TrackEditor.mediaListView.selection.currentMediaItem;
+    if (item) {
+      try {
+        var fetcherSet = Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
+                           .createInstance(Ci.sbIAlbumArtFetcherSet);
+        fetcherSet.fetchAlbumArtForMediaItem(item, this);
+      } catch (ex) {
+        Cu.reportError(ex);
+      }
+    }
+  },
+
+  /**   * \brief handle the cut command (invoked either from the keyboard or
    *        context menu)
    */
   onClear: function TrackEditorArtwork_onClear() {

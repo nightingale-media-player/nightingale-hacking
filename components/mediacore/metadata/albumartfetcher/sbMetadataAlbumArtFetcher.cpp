@@ -49,6 +49,7 @@
 #include "sbMetadataAlbumArtFetcher.h"
 
 // Songbird imports.
+#include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
 #include <sbMemoryUtils.h>
 #include <sbStandardProperties.h>
@@ -84,8 +85,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataAlbumArtFetcher, sbIAlbumArtFetcher)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
                              (sbIMediaItem*        aMediaItem,
-                              sbIAlbumArtListener* aListener,
-                              nsIDOMWindow*        aWindow)
+                              sbIAlbumArtListener* aListener)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -93,30 +93,19 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
   // Function variables.
   nsresult rv;
 
-  // Reset fetcher state.
-  mIsComplete = PR_FALSE;
-  mFoundAlbumArt = PR_FALSE;
-
   // Do nothing if media item content is not a local file.
   nsCOMPtr<nsIURI> contentSrcURI;
   nsCOMPtr<nsIFileURL> contentSrcFileURL;
   rv = aMediaItem->GetContentSrc(getter_AddRefs(contentSrcURI));
   NS_ENSURE_SUCCESS(rv, rv);
   contentSrcFileURL = do_QueryInterface(contentSrcURI, &rv);
-  if (NS_FAILED(rv)) {
-    mIsComplete = PR_TRUE;
-    return NS_OK;
-  }
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the metadata handler for the media item content.  Do nothing more if
   // none available.
   nsCOMPtr<sbIMetadataHandler> metadataHandler;
   rv = GetMetadataHandler(contentSrcURI, getter_AddRefs(metadataHandler));
-  if (NS_FAILED(rv) || !metadataHandler) {
-    NS_WARNING("Could not find metadata handler.\n");
-    mIsComplete = PR_TRUE;
-    return NS_OK;
-  }
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Try reading the front cover metadata image.
   nsCAutoString mimeType;
@@ -143,8 +132,7 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
 
   // If no album art found, do nothing more.
   if (dataLength == 0) {
-    mIsComplete = PR_TRUE;
-    return NS_OK;
+    return NS_ERROR_FAILURE;
   }
 
   // Set up album art data for auto-disposal.
@@ -158,17 +146,9 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
                                     getter_AddRefs(cacheFileURL));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set media item primary image URL property to the cached album art image.
-  nsCAutoString cacheFileURISpec;
-  rv = cacheFileURL->GetSpec(cacheFileURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                               NS_ConvertUTF8toUTF16(cacheFileURISpec));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Update fetcher state.
-  mFoundAlbumArt = PR_TRUE;
-  mIsComplete = PR_TRUE;
+  if (aListener) {
+    aListener->OnResult(cacheFileURL, aMediaItem);
+  }
 
   return NS_OK;
 }
@@ -228,20 +208,6 @@ sbMetadataAlbumArtFetcher::GetDescription(nsAString& aDescription)
 
 
 /**
- * \brief Flag to indicate if this Fetcher can be used as a fetcher from a
- *        user menu.
- */
-
-NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::GetUserFetcher(PRBool* aUserFetcher)
-{
-  NS_ENSURE_ARG_POINTER(aUserFetcher);
-  *aUserFetcher = PR_TRUE;
-  return NS_OK;
-}
-
-
-/**
  * \brief Flag to indicate if this Fetcher fetches from local sources.
  */
 
@@ -253,50 +219,59 @@ sbMetadataAlbumArtFetcher::GetIsLocal(PRBool* aIsLocal)
   return NS_OK;
 }
 
-
 /**
  * \brief Flag to indicate if this Fetcher is enabled or not
- *XXXeps stub for now.
  */
 
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
 {
   NS_ENSURE_ARG_POINTER(aIsEnabled);
-  *aIsEnabled = PR_TRUE;
+  NS_ENSURE_STATE(mPrefService);
+  
+  nsresult rv = mPrefService->GetBoolPref("songbird.albumart.metadata.enabled",
+                                          aIsEnabled);
+  if (NS_FAILED(rv)) {
+    *aIsEnabled = PR_FALSE;
+  }
+  
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
-  return NS_OK;
+  NS_ENSURE_STATE(mPrefService);
+  return mPrefService->SetBoolPref("songbird.albumart.metadata.enabled",
+                                   aIsEnabled);
 }
 
-
 /**
- * \brief Flag to indicate if fetching is complete.
+ * \brief Priority of this fetcher
  */
 
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::GetIsComplete(PRBool* aIsComplete)
+sbMetadataAlbumArtFetcher::GetPriority(PRInt32* aPriority)
 {
-  NS_ENSURE_ARG_POINTER(aIsComplete);
-  *aIsComplete = mIsComplete;
+  NS_ENSURE_ARG_POINTER(aPriority);
+  NS_ENSURE_STATE(mPrefService);
+  
+  nsresult rv = mPrefService->GetIntPref("songbird.albumart.metadata.priority",
+                                         aPriority);
+  if (NS_FAILED(rv)) {
+    // Default to appending
+    *aPriority = -1;
+  }
+  
   return NS_OK;
 }
 
-
-/**
- * \brief Flag to indicate whether album art was found.
- */
-
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::GetFoundAlbumArt(PRBool* aFoundAlbumArt)
+sbMetadataAlbumArtFetcher::SetPriority(PRInt32 aPriority)
 {
-  NS_ENSURE_ARG_POINTER(aFoundAlbumArt);
-  *aFoundAlbumArt = mFoundAlbumArt;
-  return NS_OK;
+  NS_ENSURE_STATE(mPrefService);
+  return mPrefService->SetIntPref("songbird.albumart.metadata.priority",
+                                  aPriority);
 }
 
 
@@ -330,9 +305,7 @@ sbMetadataAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  * Construct a metadata album art fetcher instance.
  */
 
-sbMetadataAlbumArtFetcher::sbMetadataAlbumArtFetcher() :
-  mIsComplete(PR_FALSE),
-  mFoundAlbumArt(PR_FALSE)
+sbMetadataAlbumArtFetcher::sbMetadataAlbumArtFetcher()
 {
 }
 
@@ -362,6 +335,10 @@ sbMetadataAlbumArtFetcher::Initialize()
   // Get the metadata manager.
   mMetadataManager =
     do_GetService("@songbirdnest.com/Songbird/MetadataManager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the preference branch.
+  mPrefService = do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

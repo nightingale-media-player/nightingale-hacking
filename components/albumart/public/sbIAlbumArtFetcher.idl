@@ -49,7 +49,7 @@ interface nsIDOMWindow;
 interface sbIAlbumArtListener;
 interface sbIMediaItem;
 
-[scriptable, uuid(36e82881-5285-4223-bc55-7ad546a82b77)]
+[scriptable, uuid(613e64a8-c0d0-4c3a-920f-272f66fe5256)]
 interface sbIAlbumArtFetcher : nsISupports
 {
   /**
@@ -69,31 +69,24 @@ interface sbIAlbumArtFetcher : nsISupports
   readonly attribute AString description;
 
   /**
-   * \brief Flag to indicate if this Fetcher can be used as a fetcher from a
-   *        user menu.
-   */
-  readonly attribute boolean userFetcher;
-
-  /**
    * \brief Flag to indicate if this Fetcher fetches from local sources.
    */
-
   readonly attribute boolean isLocal;
 
   /**
    * \brief Flag to indicate if this Fetcher is enabled or not
    */
   attribute boolean isEnabled;
-
+  
   /**
-   * \brief Flag to indicate if fetching is complete.
+   * \brief Priority of this fetcher, a lower number represents a higher
+   *        priority (so 0 is higher than 10). If multiple fetchers have the
+   *        same priority then it is first come first serve at that priority.
+   *        The priorities should not fall below 0 except where A priority of
+   *        -1 will mean to append to end of list (so it will be the lowest
+   *        priority).
    */
-  readonly attribute boolean isComplete;
-
-  /**
-   * \brief Flag to indicate whether album art was found.
-   */
-  readonly attribute boolean foundAlbumArt;
+  attribute PRInt32 priority;
 
   /**
    * \brief List of sources of album art (e.g., sbIMetadataHandler).
@@ -103,11 +96,9 @@ interface sbIAlbumArtFetcher : nsISupports
   /* \brief try to fetch album art for the given media item
    * \param aMediaItem the media item that we're looking for album art for
    * \param aListener the listener to inform of success or failure
-   * \param aWindow the window this was called from, can be null
    */
   void fetchAlbumArtForMediaItem(in sbIMediaItem        aMediaItem,
-                                 in sbIAlbumArtListener aListener,
-                                 in nsIDOMWindow        aWindow);
+                                 in sbIAlbumArtListener aListener);
 
   /* \brief shut down the fetcher
    */

@@ -50,6 +50,10 @@
                 label="&albumart.displaypane.selected.menu.paste;"
                 oncommand="AlbumArt.onPaste();"/>
       <menuseparator />
+      <menuitem id="getArtworkMenuItem"
+                label="&menu.tools.getartwork;"
+                oncommand="AlbumArt.onGetArtwork();"/>
+      <menuseparator />
       <menuitem id="clearMenuItem"
                 label="&albumart.displaypane.selected.menu.clear;"
                 oncommand="AlbumArt.onClear();"/>

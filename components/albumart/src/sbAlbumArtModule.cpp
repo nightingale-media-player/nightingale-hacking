@@ -47,6 +47,7 @@
 
 // Local imports.
 #include "sbAlbumArtFetcherSet.h"
+#include "sbAlbumArtScanner.h"
 #include "sbAlbumArtService.h"
 #include "sbFileAlbumArtFetcher.h"
 
@@ -125,6 +126,16 @@ sbAlbumArtServiceUnregister(nsIComponentManager*         aCompMgr,
 
   return NS_OK;
 }
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird album art scanner component 
+//
+//------------------------------------------------------------------------------
+
+// Construct the sbAlbumArtScanner object and call its Initialize method.
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbAlbumArtScanner, Initialize)
 
 
 //------------------------------------------------------------------------------
@@ -225,6 +236,14 @@ static nsModuleComponentInfo sbAlbumArtComponents[] =
     sbAlbumArtServiceConstructor,
     sbAlbumArtServiceRegister,
     sbAlbumArtServiceUnregister
+  },
+
+  // Album art scanner component info.
+  {
+    SB_ALBUMARTSCANNER_CLASSNAME,
+    SB_ALBUMARTSCANNER_CID,
+    SB_ALBUMARTSCANNER_CONTRACTID,
+    sbAlbumArtScannerConstructor
   },
 
   // Album art fetcher set component info.

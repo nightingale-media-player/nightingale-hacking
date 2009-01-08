@@ -49,6 +49,7 @@
 #include "sbFileAlbumArtFetcher.h"
 
 // Songbird imports.
+#include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
@@ -58,7 +59,6 @@
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
-#include <nsIPrefBranch.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <unicharutil/nsUnicharUtils.h>
@@ -82,14 +82,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileAlbumArtFetcher, sbIAlbumArtFetcher)
 /* \brief try to fetch album art for the given media item
  * \param aMediaItem the media item that we're looking for album art for
  * \param aListener the listener to inform of success or failure
- * \param aWindow the window this was called from, can be null
  */
 
 NS_IMETHODIMP
 sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
                          (sbIMediaItem*        aMediaItem,
-                          sbIAlbumArtListener* aListener,
-                          nsIDOMWindow*        aWindow)
+                          sbIAlbumArtListener* aListener)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -97,10 +95,6 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
   // Function variables.
   nsresult rv;
   nsCOMPtr<nsIFile> albumArtFile = nsnull;
-
-  // Reset fetcher state.
-  mIsComplete = PR_FALSE;
-  mFoundAlbumArt = PR_FALSE;
 
   // Figure out what album we're looking for
   nsString artistName;
@@ -128,11 +122,7 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
     
     // If there is an entry in the cache, but it isn't a file, then
     // we can assume there is nothing for this fetcher to find.
-    if (NS_FAILED(rv)) {
-      mFoundAlbumArt = PR_FALSE;
-      mIsComplete = PR_TRUE;
-      return NS_OK;
-    }
+    NS_ENSURE_SUCCESS(rv, rv);
 
   // If we get a cache miss, then look through the parent directory for art.
   } else {
@@ -159,20 +149,29 @@ sbFileAlbumArtFetcher::FetchAlbumArtForMediaItem
       supportsStr = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       rv = mAlbumArtService->CacheTemporaryData(cacheKey, supportsStr);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // If an album art file was found, set it as the media item album art.
+  // Indicate if an album art file was found or not.
   if (albumArtFile) {
-    rv = SetMediaItemAlbumArt(aMediaItem, albumArtFile);
+    // Create an album art file URI.
+    nsCOMPtr<nsIURI> albumArtURI;
+    rv = mIOService->NewFileURI(albumArtFile, getter_AddRefs(albumArtURI));
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Update fetcher state.    
-    mFoundAlbumArt = PR_TRUE;
+    
+    if (aListener) {
+      aListener->OnResult(albumArtURI, aMediaItem);
+    }
+  } else {
+    // Indicate we did not find album art.
+    if (aListener) {
+      aListener->OnResult(nsnull, aMediaItem);
+    }
+    return NS_ERROR_FAILURE;
   }
 
-  mIsComplete = PR_TRUE;
   return NS_OK;
 }
 
@@ -231,20 +230,6 @@ sbFileAlbumArtFetcher::GetDescription(nsAString& aDescription)
 
 
 /**
- * \brief Flag to indicate if this Fetcher can be used as a fetcher from a
- *        user menu.
- */
-
-NS_IMETHODIMP
-sbFileAlbumArtFetcher::GetUserFetcher(PRBool* aUserFetcher)
-{
-  NS_ENSURE_ARG_POINTER(aUserFetcher);
-  *aUserFetcher = PR_TRUE;
-  return NS_OK;
-}
-
-
-/**
  * \brief Flag to indicate if this Fetcher fetches from local sources.
  */
 
@@ -256,52 +241,60 @@ sbFileAlbumArtFetcher::GetIsLocal(PRBool* aIsLocal)
   return NS_OK;
 }
 
-
 /**
  * \brief Flag to indicate if this Fetcher is enabled or not
- *XXXeps stub for now.
  */
 
 NS_IMETHODIMP
 sbFileAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
 {
   NS_ENSURE_ARG_POINTER(aIsEnabled);
-  *aIsEnabled = PR_TRUE;
+  NS_ENSURE_STATE(mPrefService);
+  
+  nsresult rv = mPrefService->GetBoolPref("songbird.albumart.file.enabled",
+                                          aIsEnabled);
+  if (NS_FAILED(rv)) {
+    *aIsEnabled = PR_FALSE;
+  }
+  
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbFileAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
-  return NS_OK;
+  NS_ENSURE_STATE(mPrefService);
+  return mPrefService->SetBoolPref("songbird.albumart.file.enabled",
+                                   aIsEnabled);
 }
 
-
 /**
- * \brief Flag to indicate if fetching is complete.
+ * \brief Priority of this fetcher
  */
 
 NS_IMETHODIMP
-sbFileAlbumArtFetcher::GetIsComplete(PRBool* aIsComplete)
+sbFileAlbumArtFetcher::GetPriority(PRInt32* aPriority)
 {
-  NS_ENSURE_ARG_POINTER(aIsComplete);
-  *aIsComplete = mIsComplete;
+  NS_ENSURE_ARG_POINTER(aPriority);
+  NS_ENSURE_STATE(mPrefService);
+  
+  nsresult rv = mPrefService->GetIntPref("songbird.albumart.file.priority",
+                                         aPriority);
+  if (NS_FAILED(rv)) {
+    // Default to appending
+    *aPriority = -1;
+  }
+  
   return NS_OK;
 }
-
-
-/**
- * \brief Flag to indicate whether album art was found.
- */
 
 NS_IMETHODIMP
-sbFileAlbumArtFetcher::GetFoundAlbumArt(PRBool* aFoundAlbumArt)
+sbFileAlbumArtFetcher::SetPriority(PRInt32 aPriority)
 {
-  NS_ENSURE_ARG_POINTER(aFoundAlbumArt);
-  *aFoundAlbumArt = mFoundAlbumArt;
-  return NS_OK;
+  NS_ENSURE_STATE(mPrefService);
+  return mPrefService->SetIntPref("songbird.albumart.file.priority",
+                                  aPriority);
 }
-
 
 /**
  * \brief List of sources of album art (e.g., sbIMetadataHandler).
@@ -333,9 +326,7 @@ sbFileAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  * Construct a local file album art fetcher instance.
  */
 
-sbFileAlbumArtFetcher::sbFileAlbumArtFetcher() :
-  mIsComplete(PR_FALSE),
-  mFoundAlbumArt(PR_FALSE)
+sbFileAlbumArtFetcher::sbFileAlbumArtFetcher()
 {
 }
 
@@ -363,14 +354,13 @@ sbFileAlbumArtFetcher::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the preference branch.
-  nsCOMPtr<nsIPrefBranch>
-    prefService = do_GetService("@mozilla.org/preferences-service;1", &rv);
+  mPrefService = do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Read the album art file extension list.
   nsCString fileExtensions;
-  rv = prefService->GetCharPref("songbird.albumart.file.extensions",
-                                getter_Copies(fileExtensions));
+  rv = mPrefService->GetCharPref("songbird.albumart.file.extensions",
+                                 getter_Copies(fileExtensions));
   NS_ENSURE_SUCCESS(rv, rv);
   nsString_Split(NS_ConvertUTF8toUTF16(fileExtensions),
                  NS_LITERAL_STRING(","),
@@ -378,8 +368,8 @@ sbFileAlbumArtFetcher::Initialize()
 
   // Read the album art file base name list.
   nsCString fileBaseNames;
-  rv = prefService->GetCharPref("songbird.albumart.file.base_names",
-                                getter_Copies(fileBaseNames));
+  rv = mPrefService->GetCharPref("songbird.albumart.file.base_names",
+                                 getter_Copies(fileBaseNames));
   NS_ENSURE_SUCCESS(rv, rv);
   nsString_Split(NS_ConvertUTF8toUTF16(fileBaseNames),
                  NS_LITERAL_STRING(","),
@@ -598,42 +588,3 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
 
   return NS_OK;
 }
-
-
-/**
- * Set the album art for the media item specified by aMediaItem to the file
- * specified by aAlbumArtFile.
- *
- * \param aMediaItem            Media item for which to set album art.
- * \param aAlbumArtFile         Album art file.
- */
-
-nsresult
-sbFileAlbumArtFetcher::SetMediaItemAlbumArt(sbIMediaItem* aMediaItem,
-                                            nsIFile*      aAlbumArtFile)
-{
-  // Validate arguments.
-  NS_ASSERTION(aMediaItem, "aMediaItem is null");
-  NS_ASSERTION(aAlbumArtFile, "aAlbumArtFile is null");
-
-  // Function variables.
-  nsresult rv;
-
-  // Create an album art file URI.
-  nsCOMPtr<nsIURI> albumArtURI;
-  rv = mIOService->NewFileURI(aAlbumArtFile, getter_AddRefs(albumArtURI));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the album art file URI spec.
-  nsCString albumArtURISpec;
-  rv = albumArtURI->GetSpec(albumArtURISpec);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set the media item primary image URL property.
-  rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                               NS_ConvertUTF8toUTF16(albumArtURISpec));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
