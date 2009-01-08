@@ -35,6 +35,10 @@
 %songbirdDTD;
 ]>
 
+<!-- Overlay import media preference tabs. -->
+<?xul-overlay href="chrome://songbird/content/xul/preferences/importLibraryPrefs.xul"?>
+<?xul-overlay href="chrome://songbird/content/xul/preferences/watchFolderPrefs.xul"?>
+
 <!-- Import media prefs overlay. -->
 <overlay id="import_media_prefpane_overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
