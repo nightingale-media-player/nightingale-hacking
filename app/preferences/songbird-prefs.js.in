@@ -417,6 +417,8 @@ pref("songbird.albumart.file.enabled", false);
 pref("songbird.albumart.file.priority", -1);
 pref("songbird.albumart.metadata.enabled", true);
 pref("songbird.albumart.metadata.priority", 0);
+pref("songbird.albumart.lastfm.enabled", true);
+pref("songbird.albumart.lastfm.priority", 1);
 
 // Show the 'rescan metadata' playlist command ?
 pref("songbird.commands.enableRescanItem", false);

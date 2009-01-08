@@ -90,6 +90,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(srcdir)/sbAlbumArtDownloader.js \
+                      $(srcdir)/sbLastFmAlbumArtFetcher.js \
                       $(NULL)
 
 SONGBIRD_JSMODULES = $(srcdir)/sbCoverHelper.jsm \
