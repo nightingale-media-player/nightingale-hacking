@@ -37,14 +37,7 @@ ifeq ($(SB_PLATFORM), windows)
 SUBDIRS += win32
 else
 ifeq ($(SB_PLATFORM), macosx)
-#
-# XXX kreeger:
-#     Sadly, this won't build on 10.4 - we need to make sure we
-#     can check the OS version in configure. Leaving this out for now.
-#
-#     See bug 14642 
-#
-#SUBDIRS += macosx
+SUBDIRS += macosx
 else
 SUBDIRS += linux
 endif
