@@ -366,6 +366,14 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
     if (NS_FAILED(rv) || isSymlink)
       continue;
 
+#if defined(XP_WIN)
+    // This check only needs to be done on windows
+    PRBool isSpecial;
+    rv = curFile->IsSpecial(&isSpecial);
+    if (NS_FAILED(rv) || isSpecial)
+      continue;
+#endif
+
     nsRefPtr<sbFileSystemNode> curNode;
     rv = CreateNode(curFile, aParentNode, getter_AddRefs(curNode));
     if (NS_FAILED(rv) || !curNode)
