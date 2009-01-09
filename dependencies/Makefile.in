@@ -276,7 +276,8 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
 
 GST_PLUGINS_BAD_NAMES += gstacmenc \
                          gstacmmp3dec \
-                         gstqtwrapper \
+                         gstqtaudiowrapper \
+                         gstqtvideowrapper \
                          gstdshowdecwrapper \
                          gstdshowvideosink \
                          $(NULL)
@@ -355,7 +356,8 @@ GST_PLUGINS_GOOD_NAMES += gstosxaudio \
                           gstosxvideosink \
                           $(NULL)
 
-GST_PLUGINS_BAD_NAMES += gstqtwrapper \
+GST_PLUGINS_BAD_NAMES += gstqtaudiowrapper \
+                         gstqtvideowrapper \
                          $(NULL)
 
 GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/lib, \
