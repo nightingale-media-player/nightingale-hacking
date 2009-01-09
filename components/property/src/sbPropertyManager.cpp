@@ -649,6 +649,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_TRUE, PR_TRUE, new sbBitratePropertyUnitConverter());
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Channels
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_CHANNELS),
+                      NS_LITERAL_STRING("property.channels"),
+                      stringBundle, PR_TRUE, PR_FALSE, 0, PR_FALSE, 0, PR_FALSE,
+                      PR_TRUE, PR_TRUE, NULL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //Samplerate
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
                       NS_LITERAL_STRING("property.samplerate"),
