@@ -125,7 +125,8 @@ SCRIPTS_DIR        = $(topsrcdir)/tools/scripts
 # Where o' where have my lil' SDKs gone...
 #
 
-SB_MACOSX_SDK      = @SB_MACOSX_SDK@
+SB_MACOSX_SDK      = @SB_MACOSX_SDK_DEFAULT@
+SB_MACOSX_SDK_10_5 = @SB_MACOSX_SDK_10_5@
 
 MOZSDK_DIR         = $(DEPS_DIR)/mozilla/@SB_CONFIGURATION@
 MOZSDK_INCLUDE_DIR = $(MOZSDK_DIR)/include

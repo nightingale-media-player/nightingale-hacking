@@ -62,12 +62,18 @@ SUBDIRS = aboutprotocol \
           sqlbuilder \
           update \
           controller \
-          filesystemevents \
           webservices \
           $(NULL)
 
 ifeq (1,$(SB_ENABLE_TEST_HARNESS))
 SUBDIRS += testharness
+endif
+
+# Kinda weird logic; if we're on the mac, but not 10.5 SDK, we don't want to 
+# build filesystemevents (see bug 14218); in all other cases, we do, so
+# invert the test.
+ifneq (macosx_,$(SB_PLATFORM)_$(SB_MACOSX_SDK_10_5))
+   SUBDIRS += filesystemevents
 endif
 
 SUBDIRDEPS = library : sqlbuilder moz intl property metrics job dbengine

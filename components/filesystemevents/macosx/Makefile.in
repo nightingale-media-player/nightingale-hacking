@@ -70,11 +70,12 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(NULL)
 
-DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation -framework Cocoa -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk
-
+# componenets/Makefile.in ensures that if the 10.5 SDK isn't available, we
+# just won't even be called; see bug 14218
+DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation -framework Cocoa -Wl,-syslibroot,$(SB_MACOSX_SDK_10_5)
 
 # This component will only build on Mac OS X 10.5
-SB_MACOSX_SDK = /Developer/SDKs/MacOSX10.5.sdk  
+SB_MACOSX_SDK = $(SB_MACOSX_SDK_10_5)
 
 LIBSONGBIRD_COMPONENT = SongbirdFileSystemBase
 

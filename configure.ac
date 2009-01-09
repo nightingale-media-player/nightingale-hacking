@@ -297,11 +297,13 @@ AC_SUBST(_REQUIRES_CYGWIN_WRAPPER)
 # so we're not running e.g. win32-detection commands on mac.
 #
 
-SB_MACOSX_SDK=
+SB_MACOSX_SDK_DEFAULT=
+SB_MACOSX_SDK_10_5=
 
 case $SB_PLATFORM in
   macosx)
-    SB_MACOSX_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+    SB_MACOSX_SDK_DEFAULT=/Developer/SDKs/MacOSX10.4u.sdk
+    SB_MACOSX_SDK_10_5=/Developer/SDKs/MacOSX10.5.sdk
   ;;
 esac
 
@@ -311,9 +313,7 @@ esac
 
 AC_ARG_WITH(macosx-sdk,
             [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=/Developer/SDKs/MacOSX10.4u.sdk) ],
-            [ SB_MACOSX_SDK=$withval ])
-
-AC_SUBST(SB_MACOSX_SDK)
+            [ SB_MACOSX_SDK_DEFAULT=$withval ])
 
 #
 # Breakpad support
@@ -668,8 +668,11 @@ case "$SB_PLATFORM" in
     XULRUNNERDIR="/xulrunner"
   ;;
   macosx)
-    if ! test -e $SB_MACOSX_SDK/SDKSettings.plist; then
-      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK)
+    if ! test -e $SB_MACOSX_SDK_DEFAULT/SDKSettings.plist; then
+      AC_ERROR(Invalid Mac OS X SDK directory: $SB_MACOSX_SDK_DEFAULT)
+    fi
+    if ! test -e $SB_MACOSX_SDK_10_5/SDKSettings.plist; then
+      SB_MACOSX_SDK_10_5=
     fi
 
     MACOSX_APPBUNDLE="Songbird.app"
@@ -715,6 +718,9 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
+
+    AC_SUBST(SB_MACOSX_SDK_10_5)
+    AC_SUBST(SB_MACOSX_SDK_DEFAULT)
   ;;
   linux)
     XULRUNNERDIR="/xulrunner"
