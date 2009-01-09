@@ -49,8 +49,10 @@ panel {
   border:1px solid rgb(131,131,131);
 }
 
-dialog[hidechrome="true"],
-wizard[hidechrome="true"] {
+wizard[hidechrome]:not([resizers]),
+dialog[hidechrome]:not([resizers]),
+wizard[hidechrome][resizers="none"],
+dialog[hidechrome][resizers="none"] {
   border:3px solid black;
   border-top:1px solid rgb(131,131,131);
   -moz-border-right-colors:rgb(131,131,131) rgb(161,161,161) rgb(131,131,131);

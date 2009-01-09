@@ -56,7 +56,8 @@ dialog {
 
 }
 
-dialog .sb-sys-outer-frame-resizer  {
+dialog:not([resizers]) .sb-sys-outer-frame-resizer, 
+dialog[resizers="none"] .sb-sys-outer-frame-resizer {
   display:none;
 }
 

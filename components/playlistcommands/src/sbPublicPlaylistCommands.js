@@ -1371,7 +1371,7 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
     watcher.openWindow(aContext.window,
                       "chrome://songbird/content/xul/smartPlaylist.xul",
                       "_blank",
-                      "chrome,dialog=yes,centerscreen,modal,titlebar=no",
+                      "chrome,resizable=yes,dialog=yes,centerscreen,modal,titlebar=no",
                       medialist);
     unwrap(aContext.playlist).refreshCommands();
   }

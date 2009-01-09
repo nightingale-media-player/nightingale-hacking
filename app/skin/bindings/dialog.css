@@ -80,3 +80,17 @@ dialog:root
   margin: 5px !important;
   -moz-margin-end: 0 !important;
 }
+
+/* Contents Preservation:
+ * Don't allow the dialog buttons to escape the dialog box during resize.
+ * If you size a resizable dialog box too small, you'll get scrollbars this way. */
+dialog
+{
+  min-width: 125px;
+  min-height: 100px;
+}
+.dialog-content-box
+{
+  overflow: auto;
+}
+/* end Contents Preservation */

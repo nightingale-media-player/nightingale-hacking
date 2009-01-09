@@ -54,7 +54,8 @@
  buttons="accept,cancel"
  hidechrome="true"
  height="200"
- width="580"
+ width="650"
+ resizers="all"
 >
 
   <groupbox>

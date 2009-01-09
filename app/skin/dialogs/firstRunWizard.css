@@ -37,8 +37,8 @@ Additional styles imported directly by the first run dialog.
 
 /* Dialog styles. */
 #first_run_wizard {
-  height: 420px;
-  width: 420px;
+  height: 440px;
+  width: 440px;
 }
 
 /* Wizard page styles. */
