@@ -3,7 +3,7 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2009 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
@@ -29,21 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-
-SUBDIRS += base     \
+SUBDIRS = public \
+          src \
           $(NULL)
 
-ifeq ($(SB_PLATFORM), windows)
-SUBDIRS += win32
-else
-ifeq ($(SB_PLATFORM), macosx)
-# Only build the mac component if the build enviroment has the 10.5 SDK
-ifneq (macosx_,$(SB_PLATFORM)_$(SB_MACOSX_SDK_10_5))
-SUBDIRS += macosx
-endif
-else
-SUBDIRS += linux
-endif
-endif
+SUBDIRDEPS = src : public
 
 include $(topsrcdir)/build/rules.mk
