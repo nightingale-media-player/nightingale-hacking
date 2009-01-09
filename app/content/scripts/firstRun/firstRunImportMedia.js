@@ -97,12 +97,14 @@ firstRunImportMediaSvc.prototype = {
   //   _domEventListenerSet     Set of DOM event listeners.
   //   _libraryImporter         Library importer object.
   //   _metricsImportType       Import type to add to metrics.
+  //   _watchFolderAvailable    True if watch folder services are available.
   //
 
   _widget: null,
   _domEventListenerSet: null,
   _libraryImporter: null,
   _metricsImportType: "none",
+  _watchFolderAvailable: false,
 
 
   //----------------------------------------------------------------------------
@@ -134,6 +136,10 @@ firstRunImportMediaSvc.prototype = {
     // Select the default scan directory.
     this._selectDefaultScanDirectory();
 
+    // Determine whether the watch folder services are available.
+    //XXXeps hard code for now.
+    this._watchFolderAvailable = true;
+
     // Update the UI.
     this._update();
   },
@@ -163,23 +169,11 @@ firstRunImportMediaSvc.prototype = {
     var importRadioGroupElem = this._getElement("import_radiogroup");
     switch (importRadioGroupElem.value) {
       case "scan_directories" :
-        var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
-        Application.prefs.setValue("songbird.firstrun.scan_directory_path",
-                                   scanDirectoryTextBox.value);
-        Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
-        this._metricsImportType = "filescan";
+        this._saveScanDirectoriesSettings();
         break;
 
       case "itunes" :
-        var syncLibraryCheckbox =
-              this._getElement("itunes_keep_in_sync_checkbox");
-        Application.prefs.setValue("songbird.library_importer.auto_import",
-                                   syncLibraryCheckbox.checked);
-        Application.prefs.setValue
-                            ("songbird.library_importer.library_file_path",
-                             this._libraryImporter.libraryDefaultFilePath);
-        Application.prefs.setValue("songbird.firstrun.do_import_library", true);
-        this._metricsImportType = "itunes";
+        this._saveITunesImportSettings();
         break;
 
       default :
@@ -313,6 +307,14 @@ firstRunImportMediaSvc.prototype = {
    */
 
   _checkImportEnabled: function firstRunImportMediaSvc__checkImportEnabled() {
+    // If the watch folder services are not available, hide the watch folder
+    // options.
+    if (!this._watchFolderAvailable) {
+      var scanDirectoriesWatchCheckBox =
+            this._getElement("scan_directories_watch_checkbox");
+      scanDirectoriesWatchCheckBox.hidden = true;
+    }
+
     // If an iTunes library file is present, enable the iTunes import option;
     // otherwise, disable it.
     var iTunesRadioElem = this._getElement("itunes_radio");
@@ -320,6 +322,68 @@ firstRunImportMediaSvc.prototype = {
       iTunesRadioElem.disabled = false;
     else
       iTunesRadioElem.disabled = true;
+  },
+
+
+  /**
+   * Save the scan directories user settings.
+   */
+
+  _saveScanDirectoriesSettings:
+    function firstRunImportMediaSvc__savScanDirectoriesSettings() {
+    // Get the scan directories settings.
+    var scanDirectoryTextBox = this._getElement("scan_directory_textbox");
+    var scanDirectoryPath = scanDirectoryTextBox.value;
+
+    // Save the scan directories settings.
+    Application.prefs.setValue("songbird.firstrun.scan_directory_path",
+                               scanDirectoryPath);
+    Application.prefs.setValue("songbird.firstrun.do_scan_directory", true);
+
+    // If the watch folder services are available, save the watch folder
+    // settings.
+    if (this._watchFolderAvailable) {
+      // Get the watch folder settings.
+      var scanDirectoriesWatchCheckBox =
+            this._getElement("scan_directories_watch_checkbox");
+      var enableWatchFolder = scanDirectoriesWatchCheckBox.checked;
+
+      // Save the watch folder settings.
+      Application.prefs.setValue("songbird.watch_folder.enable",
+                                 enableWatchFolder);
+      if (enableWatchFolder) {
+        Application.prefs.setValue("songbird.watch_folder.path",
+                                   scanDirectoryPath);
+      }
+    }
+
+    // Set the selected media import type for metrics collection.
+    this._metricsImportType = "filescan";
+  },
+
+
+  /**
+   * Save the iTunes import user settings.
+   */
+
+  _saveITunesImportSettings:
+    function firstRunImportMediaSvc__saveITunesImportSettings() {
+    // Get the iTunes import settings.
+    var syncLibraryCheckbox =
+          this._getElement("itunes_keep_in_sync_checkbox");
+    var autoImportEnabled = syncLibraryCheckbox.checked;
+    var importLibraryFilePath = this._libraryImporter.libraryDefaultFilePath;
+
+    // Save the iTunes import settings.
+    Application.prefs.setValue("songbird.library_importer.auto_import",
+                               autoImportEnabled);
+    Application.prefs.setValue
+                        ("songbird.library_importer.library_file_path",
+                         importLibraryFilePath);
+    Application.prefs.setValue("songbird.firstrun.do_import_library", true);
+
+    // Set the selected media import type for metrics collection.
+    this._metricsImportType = "itunes";
   },
 
 

@@ -94,14 +94,12 @@
                     parentradio="scan_directories_radio"
                     action="browse_scan_directory"/>
           </hbox>
-          <!-- XXXeps Hide watch folder option for now. -->
           <checkbox
             anonid="scan_directories_watch_checkbox"
             class="indent sb-first-run-import-media-sub-radio"
             label="&first_run.import_media.scan_directories.watch.label;"
             parentradio="scan_directories_radio"
-            checked="true"
-            hidden="true"/>
+            checked="true"/>
 
           <!-- Import from iTunes radio button. -->
           <radio anonid="itunes_radio"
