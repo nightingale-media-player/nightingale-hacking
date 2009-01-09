@@ -26,6 +26,10 @@
 
 #include "sbGStreamerMediacoreUtils.h"
 
+#include <nsIRunnable.h>
+
+#include <nsAutoPtr.h>
+#include <nsThreadUtils.h>
 #include <sbStandardProperties.h>
 #include <prlog.h>
 #include <gst/gst.h>
@@ -253,5 +257,55 @@ ConvertTagListToPropertyArray(GstTagList *taglist,
 
   NS_ADDREF(*aPropertyArray = props);
   return NS_OK;
+}
+
+class sbGstMessageEvent : public nsIRunnable
+{
+public:
+  NS_DECL_ISUPPORTS
+
+  explicit sbGstMessageEvent(GstMessage *msg, sbGStreamerMessageHandler *handler) :
+      mHandler(handler)
+  {
+    gst_message_ref(msg);
+    mMessage = msg;
+  }
+
+  ~sbGstMessageEvent() {
+    gst_message_unref(mMessage);
+  }
+
+  NS_IMETHOD Run()
+  {
+    mHandler->HandleMessage(mMessage);
+    return NS_OK;
+  }
+
+private:
+  GstMessage *mMessage;
+  nsRefPtr<sbGStreamerMessageHandler> mHandler;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbGstMessageEvent,
+                              nsIRunnable)
+
+GstBusSyncReply
+SyncToAsyncDispatcher(GstBus* bus, GstMessage* message, gpointer data)
+{
+  sbGStreamerMessageHandler *handler =
+    static_cast<sbGStreamerMessageHandler*>(data);
+
+  // Allow a sync handler to look at this first.
+  // If it returns false (the default), we dispatch it asynchronously.
+  PRBool handled = handler->HandleSynchronousMessage(message);
+
+  if (!handled) {
+    nsCOMPtr<nsIRunnable> event = new sbGstMessageEvent(message, handler);
+    NS_DispatchToMainThread(event);
+  }
+
+  gst_message_unref (message);
+
+  return GST_BUS_DROP;
 }
 

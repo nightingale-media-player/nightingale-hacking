@@ -58,6 +58,7 @@
 #define SB_PROPERTY_SKIPCOUNT                 "http://songbirdnest.com/data/1.0#skipCount"
 #define SB_PROPERTY_RATING                    "http://songbirdnest.com/data/1.0#rating"
 #define SB_PROPERTY_BITRATE                   "http://songbirdnest.com/data/1.0#bitRate"
+#define SB_PROPERTY_CHANNELS                  "http://songbirdnest.com/data/1.0#channels"
 #define SB_PROPERTY_SAMPLERATE                "http://songbirdnest.com/data/1.0#sampleRate"
 #define SB_PROPERTY_BPM                       "http://songbirdnest.com/data/1.0#bpm"
 #define SB_PROPERTY_KEY                       "http://songbirdnest.com/data/1.0#key"
@@ -107,6 +108,7 @@
 #define SB_PROPERTY_ARTISTDETAILURL           "http://songbirdnest.com/data/1.0#artistDetailUrl"
 #define SB_PROPERTY_EXCLUDE_FROM_HISTORY      "http://songbirdnest.com/data/1.0#excludeFromHistory"
 #define SB_PROPERTY_DISABLE_DOWNLOAD          "http://songbirdnest.com/data/1.0#disableDownload"
+
 
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"

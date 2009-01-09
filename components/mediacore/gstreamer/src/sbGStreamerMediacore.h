@@ -55,6 +55,7 @@
 #include <gst/gst.h>
 #include "sbIGstPlatformInterface.h"
 #include "sbIGstAudioFilter.h"
+#include "sbGStreamerMediacoreUtils.h"
 
 #include <vector>
 
@@ -69,7 +70,8 @@ class sbGStreamerMediacore : public sbBaseMediacore,
                              public sbIMediacoreVideoWindow,
                              public nsIDOMEventListener,
                              public nsIObserver,
-                             public sbIGstAudioFilter
+                             public sbIGstAudioFilter,
+                             public sbGStreamerMessageHandler
 {
 public:
   NS_DECL_ISUPPORTS

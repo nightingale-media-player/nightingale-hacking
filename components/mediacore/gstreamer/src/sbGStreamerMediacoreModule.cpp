@@ -34,11 +34,14 @@
 #include "sbGStreamerMediacoreCID.h"
 #include "sbGStreamerMediacoreFactory.h"
 #include "sbGStreamerService.h"
+#include "metadata/sbGStreamerMetadataHandler.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerService, Init)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerMediacoreFactory, Init);
 SB_MEDIACORE_FACTORY_REGISTERSELF(sbGStreamerMediacoreFactory);
+
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbGStreamerMetadataHandler, Init)
 
 static const nsModuleComponentInfo components[] =
 {
@@ -55,7 +58,13 @@ static const nsModuleComponentInfo components[] =
     sbGStreamerMediacoreFactoryConstructor,
     sbGStreamerMediacoreFactoryRegisterSelf,
     sbGStreamerMediacoreFactoryUnregisterSelf
-  }
+  },
+  {
+    SB_GSTREAMER_METADATA_HANDLER_CLASSNAME,
+    SB_GSTREAMER_METADATA_HANDLER_CID,
+    SB_GSTREAMER_METADATA_HANDLER_CONTRACTID,
+    sbGStreamerMetadataHandlerConstructor
+  },
 };
 
 NS_IMPL_NSGETMODULE(sbGstreamerMediacoreModule, components)

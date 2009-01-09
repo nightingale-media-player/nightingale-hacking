@@ -241,7 +241,7 @@ sbMetadataHandlerWMA::Vote(const nsAString& aURL,
         ( strUrl.Find( ".asx", PR_TRUE ) != -1 ) ||
         ( strUrl.Find( ".avi", PR_TRUE ) != -1 )
      )
-    *_retval = 1;
+    *_retval = 100;
   else
     *_retval = -1;
 

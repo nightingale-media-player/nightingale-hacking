@@ -14,6 +14,9 @@ else
 MODULE = sbGStreamerMediacore
 endif
 
+SUBDIRS = metadata
+SUBDIRDEPS = dll_link: metadata
+
 CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreFactory.cpp \
@@ -47,10 +50,12 @@ CPP_INCLUDES = \
       $(DEPTH)/components/mediacore/base/public \
       $(topsrcdir)/components/mediacore/base/src \
       $(DEPTH)/components/mediacore/gstreamer/public \
+      $(topsrcdir)/components/mediacore/gstreamer/src \
+      $(DEPTH)/components/mediacore/metadata/manager/public \
       $(topsrcdir)/components/moz/strings/src \
       $(topsrcdir)/components/moz/threads/src \
-	    $(DEPTH)/components/property/public \
-	    $(topsrcdir)/components/property/src \
+      $(DEPTH)/components/property/public \
+      $(topsrcdir)/components/property/src \
       $(MOZSDK_INCLUDE_DIR) \
       $(MOZSDK_INCLUDE_DIR)/nspr \
       $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -118,7 +123,7 @@ endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
       nspr4 \
-	    plds4 \
+      plds4 \
       xpcomglue_s \
       xpcom \
       gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
@@ -133,6 +138,7 @@ DYNAMIC_LIB_IMPORT_PATHS = \
 DYNAMIC_LIB_STATIC_IMPORTS = \
       $(DEPTH)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
       $(DEPTH)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+      metadata/sbMetadataGstreamer$(DEBUG:%=_d) \
       $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only

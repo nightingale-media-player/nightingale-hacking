@@ -45,5 +45,13 @@ GstTagList *ConvertPropertyArrayToTagList(sbIPropertyArray *properties);
 nsresult ConvertTagListToPropertyArray(GstTagList *taglist, 
         sbIPropertyArray **aPropertyArray);
 
+class sbGStreamerMessageHandler : public nsISupports {
+public:
+  virtual void HandleMessage(GstMessage *message) = 0;
+  virtual PRBool HandleSynchronousMessage(GstMessage *message) = 0;
+};
+GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
+                                      gpointer data);
+
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 

@@ -204,7 +204,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".oga", PR_TRUE) != -1)
         || (_url.Find(".ogg", PR_TRUE) != -1))
     {
-        vote = 1;
+        vote = 100;
     }
 
     /* Check for unsupported files. */

@@ -70,8 +70,6 @@
 #include <sbIMediaItem.h>
 #include <sbStandardProperties.h>
 
-#include "sbGStreamerMediacoreUtils.h"
-
 #include <algorithm>
 
 #ifdef MOZ_WIDGET_GTK2
@@ -363,63 +361,6 @@ sbGStreamerMediacore::ReadPreferences()
 
 
 // Utility methods
-
-class sbGstMessageEvent : public nsIRunnable
-{
-public:
-  NS_DECL_ISUPPORTS
-
-  explicit sbGstMessageEvent(GstMessage *msg, sbGStreamerMediacore *core) :
-      mCore(core)
-  {
-    gst_message_ref(msg);
-    mMessage = msg;
-  }
-
-  ~sbGstMessageEvent() {
-    gst_message_unref(mMessage);
-  }
-
-  NS_IMETHOD Run()
-  {
-    mCore->HandleMessage(mMessage);
-    return NS_OK;
-  }
-
-private:
-  GstMessage *mMessage;
-  sbGStreamerMediacore *mCore;
-};
-
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbGstMessageEvent,
-                              nsIRunnable)
-
-/* static */ GstBusSyncReply
-sbGStreamerMediacore::syncHandler(GstBus* bus, GstMessage* message, 
-        gpointer data)
-{
-  sbGStreamerMediacore *core = static_cast<sbGStreamerMediacore*>(data);
-
-  // Don't do message processing during an abort
-  if (core->mAbortingPlayback) {
-    TRACE(("Dropping message due to abort\n"));
-    gst_message_unref (message);
-    return GST_BUS_DROP;
-  }
-
-  // Allow a sync handler to look at this first.
-  // If it returns false (the default), we dispatch it asynchronously.
-  PRBool handled = core->HandleSynchronousMessage(message);
-
-  if (!handled) {
-    nsCOMPtr<nsIRunnable> event = new sbGstMessageEvent(message, core);
-    NS_DispatchToMainThread(event);
-  }
-
-  gst_message_unref (message);
-
-  return GST_BUS_DROP;
-}
 
 /* static */ void
 sbGStreamerMediacore::aboutToFinishHandler(GstElement *playbin, gpointer data)
@@ -763,7 +704,8 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
 
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
-  gst_bus_set_sync_handler (bus, syncHandler, this);
+  gst_bus_set_sync_handler (bus, SyncToAsyncDispatcher,
+                            static_cast<sbGStreamerMessageHandler*>(this));
 
   g_object_unref ((GObject *)bus);
 
@@ -783,6 +725,12 @@ PRBool sbGStreamerMediacore::HandleSynchronousMessage(GstMessage *aMessage)
 {
   GstMessageType msg_type;
   msg_type = GST_MESSAGE_TYPE(aMessage);
+
+  // Don't do message processing during an abort
+  if (mAbortingPlayback) {
+    TRACE(("Dropping message due to abort\n"));
+    return PR_TRUE;
+  }
 
   switch (msg_type) {
     case GST_MESSAGE_ELEMENT: {
