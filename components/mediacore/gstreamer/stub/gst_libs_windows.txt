@@ -7,6 +7,7 @@
 @lib\libgthread-2.0-0.dll
 @lib\oil-0.3-0.dll
 @lib\ogg-0.dll
+@lib\theora-0.dll
 @lib\vorbis-0.dll
 @lib\vorbisenc-2.dll
 @lib\vorbisfile-3.dll

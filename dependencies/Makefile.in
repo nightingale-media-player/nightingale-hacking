@@ -189,6 +189,11 @@ VORBIS_NAMES = vorbis \
                vorbisfile \
                $(NULL)
 
+THEORA_NAMES = theora \
+               theoradec \
+               theoraenc \
+               $(NULL)
+
 FLAC_NAMES = FLAC \
              $(NULL)
 
@@ -211,6 +216,7 @@ GST_PLUGINS_BASE_NAMES = gstadder \
                          gstogg \
                          gstplaybin \
                          gstqueue2 \
+                         gsttheora \
                          gsttypefindfunctions \
                          gstvideorate \
                          gstvideoscale \
@@ -308,6 +314,10 @@ VORBIS_VERSIONED_NAMES = $(join $(VORBIS_NAMES), -0 -2 -3)
 VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/bin/, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_VERSIONED_NAMES)))
 
+THEORA_VERSIONED_NAMES = $(join $(THEORA_NAMES), -0 -1 -1)
+THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/bin/, \
+           $(addsuffix $(DLL_SUFFIX), $(THEORA_VERSIONED_NAMES)))
+
 FLAC_VERSIONED_NAMES = $(join $(FLAC_NAMES), -8)
 FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/bin/, \
            $(addsuffix $(DLL_SUFFIX), $(FLAC_VERSIONED_NAMES)))
@@ -337,6 +347,7 @@ SONGBIRD_LIB += $(GLIB) \
                 $(GST_PLUGINS_BASE_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
+                $(THEORA) \
                 $(FLAC) \
                 $(OIL) \
                 $(NULL)
@@ -381,6 +392,9 @@ OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
 VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
 
+THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(THEORA_NAMES)))
+
 FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
@@ -409,6 +423,7 @@ SONGBIRD_LIB += $(GLIB) \
                 $(GST_PLUGINS_BASE_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
+                $(THEORA) \
                 $(FLAC) \
                 $(OIL) \
                 $(NULL)
@@ -445,6 +460,9 @@ OGG = $(addprefix $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/lib, \
 VORBIS = $(addprefix $(DEPS_DIR)/libvorbis/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(VORBIS_NAMES)))
 
+THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/lib/lib, \
+           $(addsuffix $(DLL_SUFFIX), $(THEORA_NAMES)))
+
 FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
@@ -470,6 +488,7 @@ SONGBIRD_LIB += $(GSTREAMER) \
                 $(GST_PLUGINS_BASE_LIBS) \
                 $(OGG) \
                 $(VORBIS) \
+                $(THEORA) \
                 $(FLAC) \
                 $(OIL) \
                 $(NULL)
