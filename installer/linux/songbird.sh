@@ -310,6 +310,29 @@ then
 	elif [ -x "$MOZ_DIST_BIN/$MOZ_APPRUNNER_NAME" ]
 	then
 		MOZ_PROGRAM=$MOZ_DIST_BIN/$MOZ_APPRUNNER_NAME
+	##
+	## Try resolving symlinks
+	##
+	here=`pwd`
+	progname="$0"
+	while [ -h "$progname" ]; do
+		bn=`basename "$progname"`
+		cd `dirname "$progname"`
+		progname=`ls -l "$bn" | sed -e 's/^.* -> //' `
+		progbase=`basename "$progname"`
+		if [ ! -x "$progname" ]; then
+			break
+		fi
+		curdir=`dirname "$progname"`
+		run_moz="$curdir/$MOZ_DEFAULT_NAME"
+		if [ -x "$run_moz" ]; then
+			cd "$curdir"
+			MOZ_DIST_BIN=`pwd`
+			MOZ_PROGRAM=$MOZ_DIST_BIN/$MOZ_DEFAULT_NAME
+			break
+		fi
+	done
+	cd "$here"
 	fi
 fi
 #
