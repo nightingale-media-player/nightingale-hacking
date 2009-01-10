@@ -310,8 +310,10 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
     
     mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = mTimer->InitWithCallback(static_cast<nsITimerCallback*>(this),
+   
+    nsCOMPtr<nsITimerCallback> timerCallback =
+      do_QueryInterface(NS_ISUPPORTS_CAST(nsITimerCallback*, this));
+    rv = mTimer->InitWithCallback(timerCallback,
                                   METADATA_TIMEOUT,
                                   nsITimer::TYPE_ONE_SHOT);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -327,9 +329,10 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
     pipeline = gst_pipeline_new("metadata-pipeline");
     //// no longer protect anything below
   }
+  NS_ENSURE_TRUE(pipeline, NS_ERROR_OUT_OF_MEMORY);
   
   decodeBin = gst_element_factory_make("uridecodebin", "metadata-decodebin");
-  NS_ENSURE_TRUE(decodeBin, NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(decodeBin, NS_ERROR_OUT_OF_MEMORY);
   gst_bin_add(GST_BIN_CAST(pipeline.get()), decodeBin.get());
   gst_object_ref(decodeBin.get()); // the ref was taken by the bin
   
