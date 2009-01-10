@@ -92,7 +92,7 @@ private:
  * Example:
  *   SB_AUTO_CLASS(sbAutoMemPtr,
  *                 void*,
- *                 mValue,
+ *                 !!mValue,
  *                 NS_Free(mValue),
  *                 mValue = nsnull)
  *   sbAutoMemPtr autoMem(memPtr);
@@ -100,7 +100,7 @@ private:
  *   SB_AUTO_CLASS2(sbAutoClassData,
  *                  void*,
  *                  classType*,
- *                  mValue,
+ *                  !!mValue,
  *                  mValue2->Delete(mValue),
  *                  mValue = nsnull)
  *   sbAutoClassData(data, this);
@@ -134,7 +134,23 @@ public:                                                                        \
     Invalidate();                                                              \
     return value;                                                              \
   }                                                                            \
-                                                                               \
+  aType get()                                                                  \
+  {                                                                            \
+    return mValue;                                                             \
+  }                                                                            \
+  aType& operator=(aType& aValue)                                              \
+  {                                                                            \
+    if (aIsValid) {                                                            \
+      aDispose;                                                                \
+      aInvalidate;                                                             \
+    }                                                                          \
+    Set(aValue);                                                               \
+    return mValue;                                                             \
+  }                                                                            \
+  operator bool()                                                              \
+  {                                                                            \
+    return (aIsValid);                                                         \
+  }                                                                            \
 private:                                                                       \
   aType mValue;                                                                \
   aType2 mValue2;                                                              \
@@ -153,7 +169,7 @@ private:                                                                       \
 //                              with NS_Alloc.
 //
 
-SB_AUTO_CLASS(sbAutoNSMemPtr, void*, mValue, NS_Free(mValue), mValue = nsnull);
+SB_AUTO_CLASS(sbAutoNSMemPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
 
 
 #endif /* __SBMEMORYUTILS_H__ */

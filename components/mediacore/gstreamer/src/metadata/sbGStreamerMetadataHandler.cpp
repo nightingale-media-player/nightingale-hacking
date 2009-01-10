@@ -32,6 +32,7 @@
 #include <sbIGStreamerService.h>
 #include <sbIMediacoreCapabilities.h>
 
+#include <sbMemoryUtils.h>
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
 
@@ -66,13 +67,26 @@ static PRLogModuleInfo* gGSTMetadataLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-#define SB_ENSURE_TRUE(x)                               \
-  PR_BEGIN_MACRO                                        \
-    if (NS_UNLIKELY(!(x))) {                            \
-       NS_WARNING("NS_ENSURE_TRUE(" #x ") failed");     \
-       goto cleanup;                                    \
-    }                                                   \
-  PR_END_MACRO
+SB_AUTO_CLASS(sbGstElement,
+              GstElement*,
+              !!mValue,
+              gst_object_unref(mValue),
+              mValue = NULL);
+SB_AUTO_CLASS(sbGstBus,
+              GstBus*,
+              !!mValue,
+              gst_object_unref(mValue),
+              mValue = NULL);
+SB_AUTO_CLASS(sbGstPad,
+              GstPad*,
+              !!mValue,
+              gst_object_unref(mValue),
+              mValue = NULL);
+SB_AUTO_CLASS(sbGstCaps,
+              GstCaps*,
+              !!mValue,
+              gst_caps_unref(mValue),
+              mValue = NULL);
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbGStreamerMetadataHandler, sbIMetadataHandler)
 
@@ -286,10 +300,9 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
   rv = Close();
   NS_ENSURE_SUCCESS(rv, rv);
   
-  GstElement *decodeBin = NULL;
-  GstBus* bus = NULL;
+  sbGstElement decodeBin, pipeline;
+  sbGstBus bus;
   GstStateChangeReturn stateReturn;
-  GstElement *pipeline = NULL;
 
   { /* scope */
     nsAutoLock lock(mLock);
@@ -312,71 +325,43 @@ sbGStreamerMetadataHandler::Read(PRInt32 *_retval)
       mPipeline = NULL;
     }
     pipeline = gst_pipeline_new("metadata-pipeline");
-    if (pipeline) {
-      mPipeline = GST_ELEMENT(gst_object_ref(pipeline));
-    }
     //// no longer protect anything below
   }
-  SB_ENSURE_TRUE(pipeline);
   
   decodeBin = gst_element_factory_make("uridecodebin", "metadata-decodebin");
-  SB_ENSURE_TRUE(decodeBin);
-  gst_bin_add(GST_BIN_CAST(pipeline), decodeBin);
-  gst_object_ref(decodeBin); // hold a ref for now
+  NS_ENSURE_TRUE(decodeBin, NS_ERROR_FAILURE);
+  gst_bin_add(GST_BIN_CAST(pipeline.get()), decodeBin.get());
+  gst_object_ref(decodeBin.get()); // the ref was taken by the bin
   
-  rv = NS_ERROR_FAILURE;
-  bus = gst_pipeline_get_bus(GST_PIPELINE_CAST(pipeline));
-  SB_ENSURE_TRUE(bus);
+  bus = gst_pipeline_get_bus(GST_PIPELINE_CAST(pipeline.get()));
+  NS_ENSURE_TRUE(bus, NS_ERROR_FAILURE);
   
-  g_signal_connect(decodeBin, "pad-added", G_CALLBACK(on_pad_added), this);
+  g_signal_connect(decodeBin.get(), "pad-added", G_CALLBACK(on_pad_added), this);
 
   // We want to receive state-changed messages when shutting down, so we
   // need to turn off bus auto-flushing
-  g_object_set(pipeline, "auto-flush-bus", FALSE, NULL);
+  g_object_set(pipeline.get(), "auto-flush-bus", FALSE, NULL);
 
   // Handle GStreamer messages synchronously, either directly or
   // dispatching to the main thread.
-  gst_bus_set_sync_handler(bus, SyncToAsyncDispatcher,
+  gst_bus_set_sync_handler(bus.get(), SyncToAsyncDispatcher,
                            static_cast<sbGStreamerMessageHandler*>(this));
   
-  g_object_unref(bus);
-  bus = NULL;
-  
   TRACE(("%s: Setting URI to [%s]", __FUNCTION__, mSpec.get()));
-  g_object_set(G_OBJECT(decodeBin), "uri", mSpec.get(), NULL);
-  gst_object_unref(decodeBin);
-  decodeBin = NULL;
+  g_object_set(G_OBJECT(decodeBin.get()), "uri", mSpec.get(), NULL);
   
-  stateReturn = gst_element_set_state(pipeline, GST_STATE_PAUSED);
-  SB_ENSURE_TRUE(stateReturn == GST_STATE_CHANGE_SUCCESS ||
-                 stateReturn == GST_STATE_CHANGE_ASYNC);
-  
-  gst_object_unref(pipeline);
-  pipeline = NULL;
+  stateReturn = gst_element_set_state(pipeline.get(), GST_STATE_PAUSED);
+  NS_ENSURE_TRUE(stateReturn == GST_STATE_CHANGE_SUCCESS ||
+                 stateReturn == GST_STATE_CHANGE_ASYNC,
+                 NS_ERROR_FAILURE);
   
   *_retval = -1; // asynchronous
-  
-  return NS_OK;
-
-cleanup:
   { /* scope */
     nsAutoLock lock(mLock);
-    if (mPipeline) {
-      gst_object_unref(mPipeline);
-      mPipeline = NULL;
-    }
-  }
-  if (pipeline) {
-    gst_object_unref(pipeline);
-  }
-  if (decodeBin) {
-    gst_object_unref(decodeBin);
-  }
-  if (bus) {
-    gst_object_unref(bus);
+    mPipeline = pipeline.forget();
   }
   
-  return rv;
+  return NS_OK;
 }
 
 /* PRInt32 write (); */
@@ -562,9 +547,8 @@ sbGStreamerMetadataHandler::on_pad_added(GstElement *decodeBin,
 {
   TRACE((__FUNCTION__));
   
-  GstElement *queue = NULL, *sink = NULL, *pipeline = NULL;
-  GstPad *queueSink = NULL;
-  GstPad *oldPad, *pad;
+  sbGstElement queue, sink, pipeline;
+  sbGstPad queueSink, oldPad, pad;
   
   NS_ENSURE_TRUE(self, /* void */); // can't use goto before mon is initialized
   { /* scope */
@@ -576,67 +560,50 @@ sbGStreamerMetadataHandler::on_pad_added(GstElement *decodeBin,
     NS_ENSURE_TRUE(self->mPipeline, /* void */);
     pipeline = GST_ELEMENT(gst_object_ref(self->mPipeline));
   }
-  SB_ENSURE_TRUE(pipeline);
+  NS_ENSURE_TRUE(pipeline, /* void */);
   
   // attach a queue and a fakesink to the pad
   queue = gst_element_factory_make("queue", NULL);
-  SB_ENSURE_TRUE(queue);
+  NS_ENSURE_TRUE(queue, /* void */);
 
   sink = gst_element_factory_make("fakesink", NULL);
-  SB_ENSURE_TRUE(sink);
+  NS_ENSURE_TRUE(sink, /* void */);
 
   // we want to keep references after we sink these in the sbin
-  gst_object_ref(queue);
-  gst_object_ref(sink);
-  gst_bin_add_many(GST_BIN_CAST(pipeline), queue, sink, NULL);
+  gst_object_ref(queue.get());
+  gst_object_ref(sink.get());
+  gst_bin_add_many(GST_BIN_CAST(pipeline.get()), queue.get(), sink.get(), NULL);
 
-  gst_element_set_state (queue, GST_STATE_PAUSED);
-  gst_element_set_state (sink, GST_STATE_PAUSED);
+  gst_element_set_state(queue.get(), GST_STATE_PAUSED);
+  gst_element_set_state(sink.get(), GST_STATE_PAUSED);
   
-  queueSink = gst_element_get_static_pad(queue, "sink");
-  SB_ENSURE_TRUE(queueSink);
+  queueSink = gst_element_get_static_pad(queue.get(), "sink");
+  NS_ENSURE_TRUE(queueSink, /* void */);
   
   GstPadLinkReturn linkResult;
-  linkResult = gst_pad_link(newPad, queueSink);
-  SB_ENSURE_TRUE(GST_PAD_LINK_OK == linkResult);
+  linkResult = gst_pad_link(newPad, queueSink.get());
+  NS_ENSURE_TRUE(GST_PAD_LINK_OK == linkResult, /* void */);
   
   gboolean succeeded;
-  succeeded = gst_element_link_pads(queue, "src", sink, "sink");
-  SB_ENSURE_TRUE(succeeded);
+  succeeded = gst_element_link_pads(queue.get(), "src", sink.get(), "sink");
+  NS_ENSURE_TRUE(succeeded, /* void */);
 
   // due to gnome bug 564863, when the new pad is a ghost pad we never get the
   // notify::caps signal, and therefore never figure out the caps.  Get the
   // underlying pad (recusively) to work around this.  Fixed in GStreamer
   // 0.10.22.
   pad = newPad;
-  gst_object_ref(pad);
-  while (GST_IS_GHOST_PAD(pad)) {
+  gst_object_ref(pad.get());
+  while (GST_IS_GHOST_PAD(pad.get())) {
     oldPad = pad;
-    pad = gst_ghost_pad_get_target(GST_GHOST_PAD(pad));
-    gst_object_unref(oldPad);
+    pad = gst_ghost_pad_get_target(GST_GHOST_PAD(oldPad.get()));
   }
 
   // manually check for fixed (already negotiated) caps; it will harmlessly
   // return early if it's not already negotiated
-  on_pad_caps_changed(pad, NULL, self);
+  on_pad_caps_changed(pad.get(), NULL, self);
 
-  g_signal_connect(pad, "notify::caps", G_CALLBACK(on_pad_caps_changed), self);
-  gst_object_unref(pad);
-
-cleanup:
-  if (pipeline) {
-    gst_object_unref(pipeline);
-  }
-  if (queue) {
-    gst_object_unref(queue);
-  }
-  if (sink) {
-    gst_object_unref(sink);
-  }
-  if (queueSink) {
-    gst_object_unref(queueSink);
-  }
-  /* we don't own newPad, don't unref it */
+  g_signal_connect(pad.get(), "notify::caps", G_CALLBACK(on_pad_caps_changed), self);
 }
 
 static void
@@ -668,30 +635,30 @@ sbGStreamerMetadataHandler::on_pad_caps_changed(GstPad *pad,
     return;
   }
   GstStructure* capStruct = NULL;
-  GstCaps* caps = gst_pad_get_negotiated_caps(pad);
+  sbGstCaps caps = gst_pad_get_negotiated_caps(pad);
   if (!caps) {
     // no negotiated caps yet, keep waiting
     TRACE(("%s: no caps yet", __FUNCTION__));
     return;
   }
 
-  char *capsString = gst_caps_to_string(caps);
+  char *capsString = gst_caps_to_string(caps.get());
   const gchar *capName;
   TRACE(("%s: caps are %s", __FUNCTION__, capsString));
   if (capsString) {
     g_free(capsString);
   }
   
-  SB_ENSURE_TRUE(gst_caps_get_size(caps) > 0);
-  capStruct = gst_caps_get_structure(caps, 0);
-  SB_ENSURE_TRUE(capStruct);
+  NS_ENSURE_TRUE(gst_caps_get_size(caps.get()) > 0, /* void */);
+  capStruct = gst_caps_get_structure(caps.get(), 0);
+  NS_ENSURE_TRUE(capStruct, /* void */);
   if (!self->mProperties) {
     nsresult rv;
     self->mProperties = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, 
             &rv);
-    SB_ENSURE_TRUE(NS_SUCCEEDED(rv));
+    NS_ENSURE_SUCCESS(rv, /* void */);
   }
-  SB_ENSURE_TRUE(self->mProperties);
+  NS_ENSURE_TRUE(self->mProperties, /* void */);
   capName = gst_structure_get_name(capStruct);
   if (g_str_has_prefix(capName, "audio/")) {
     AddIntPropFromCaps(capStruct, "channels",
@@ -708,11 +675,6 @@ sbGStreamerMetadataHandler::on_pad_caps_changed(GstPad *pad,
     rv = self->mProperties->AppendProperty(NS_LITERAL_STRING(),
                                            NS_LITERAL_STRING("video"));
     #endif 
-  }
-  
-cleanup:
-  if (caps) {
-    gst_caps_unref(caps);
   }
 }
 
