@@ -23,12 +23,14 @@ var sbShoutcastFaceplate = {
 
 sbShoutcastFaceplate.onMediacoreEvent = function(e) {
 	var item = e.data;
-	var stationIcon = document.getElementById("shoutcast-station-icon");
 	switch (e.type) {
 		case Ci.sbIMediacoreEvent.VIEW_CHANGE:
 			if (gMM.sequencer.view == null)
 				return;
 			var list = gMM.sequencer.view.mediaList;
+			var stationIcon = document.getElementById("shoutcast-station-icon");
+			var stopButton = document.getElementById("play_stop_button");
+			var playButton = document.getElementById("play_pause_button");
 			if (list.getProperty(SBProperties.customType) ==
 					"radio_tempStreamList")
 			{
@@ -41,21 +43,37 @@ sbShoutcastFaceplate.onMediacoreEvent = function(e) {
 						elements[j].setAttribute('disabled', 'true');
 					}
 				}
+				playButton.setAttribute("hidden", "true");
+				stopButton.removeAttribute("hidden");
 			} else {
-				// we're playing something else
-				stationIcon.style.visibility = "collapse";
-				for (var i in sbShoutcastFaceplate.disableTags) {
-					var elements = document.getElementsByTagName(
-										sbShoutcastFaceplate.disableTags[i]);
-					for (var j=0; j<elements.length; j++) {
-						elements[j].removeAttribute('disabled');
-					}
-				}
+				sbShoutcastFaceplate.resetButtons();
 			}
+			break;
+		case Ci.sbIMediacoreEvent.STREAM_END:
+		case Ci.sbIMediacoreEvent.STREAM_STOP:
+			sbShoutcastFaceplate.resetButtons();
 			break;
 	}
 }
 	
+sbShoutcastFaceplate.resetButtons = function(e) {
+	var stationIcon = document.getElementById("shoutcast-station-icon");
+	var stopButton = document.getElementById("play_stop_button");
+	var playButton = document.getElementById("play_pause_button");
+
+	// we're playing something else
+	stationIcon.style.visibility = "collapse";
+	for (var i in sbShoutcastFaceplate.disableTags) {
+		var elements = document.getElementsByTagName(
+							sbShoutcastFaceplate.disableTags[i]);
+		for (var j=0; j<elements.length; j++) {
+			elements[j].removeAttribute('disabled');
+		}
+	}
+	stopButton.setAttribute("hidden", "true");
+	playButton.removeAttribute("hidden");
+}
+
 window.addEventListener('load', function () {
 	gMM.addListener(sbShoutcastFaceplate);
 }, false);
