@@ -58,6 +58,7 @@
 	<em:contributor>Nukeador (es-ES localisation)</em:contributor>
 	<em:contributor>mar (ja-JP localisation)</em:contributor>
 	<em:contributor>Lukas_Skywalker (de-DE localisation)</em:contributor>
+	<em:contributor>Fux (de-DE localisation)</em:contributor>
 	<em:contributor>inorbez (eu-ES localisation)</em:contributor>
 	<em:contributor>Waclaw Jacek (pl-PL localisation)</em:contributor>
 	<em:contributor>Joergen (da-DK localisation)</em:contributor>
@@ -67,6 +68,7 @@
 	<em:contributor>Joergen (da-DK localisation)</em:contributor>
 	<em:contributor>pokorny (kw-GB localisation)</em:contributor>
 	<em:contributor>Brogh (kw-GB localisation)</em:contributor>
+	<em:contributor>petruc (pt-BR localisation)</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:iconURL>chrome://shoutcast-radio/skin/shoutcast_icon-32x32.png</em:iconURL>
 	<em:optionsURL>chrome://shoutcast-radio/content/optionsWindow.xul</em:optionsURL>

@@ -9,7 +9,7 @@
 <!ENTITY listeners.label "Anzahl Hörer">
 <!ENTITY listeners.accesskey "L">
 <!ENTITY prefs.track.guessing.title "Künstler/Titel wird geparst">
-<!ENTITY prefs.track.guessing.label "Titel und Künstler-Parsing aktivieren">
+<!ENTITY prefs.track.guessing.label "Titel- und Künstler-Parsing aktivieren">
 <!ENTITY prefs.track.guessing.help "Einige SHOUTcast-Streams senden Informationen der Form &apos;Künstler-Liedtitel&apos;. Wenn Sie diese Option aktivieren, wird das SHOUTcast Addon versuchen, diese Informationen zu erhalten, damit andere Addons über Titeländerungen im Stream benachrichtigt werden können.">
 <!ENTITY prefs.customGenres "Benutzerdefinierte Genres">
 <!ENTITY custom-genres.help.label "Wenn Sie benutzerdefinierte Genres im SHOUTcast-Ordner anzeigen lassen wollen, geben Sie hier eine durch Kommas abgetrennte Liste der Genres ein">

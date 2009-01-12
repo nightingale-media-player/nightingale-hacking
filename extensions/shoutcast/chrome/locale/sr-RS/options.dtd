@@ -1,3 +1,4 @@
 <!ENTITY prefpane.label "SHOUTcast">
 <!ENTITY listeners.label "Број слушалаца">
 <!ENTITY prefs.tosCaption "Услови коришћења">
+<!ENTITY prefs.tosLinkText "Погледај услове коришћења">
