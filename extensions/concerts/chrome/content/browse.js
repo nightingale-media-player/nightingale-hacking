@@ -280,8 +280,13 @@ ConcertTicketing.showNoConcerts = function() {
 
 			// "None of the artists in your library are touring..."
 			var city = " " + this.skSvc.getCityString(this.pCity);
+			// ugly hack because SF Bay Area is the only one that needs "the"
+			// in front of it since it's not a proper city name.  This was
+			// causing problems for Babelzilla translators, so I've
+			// hardcoded it to assume that if you're using SF Bay Area, then
+			// you're also going to get it in English
 			if (this.pCity == 26330)
-				city = " " + this._strings.getString("sfCityPrefix") + city;
+				city = " the " + city;
 			label = document.getElementById("noresults-city-2");
 			label.value = this._strings.getString("noLibArtistsTouring") +
 				city + ".";
