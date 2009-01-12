@@ -503,6 +503,10 @@ var RadioDirectory = {
 			var item = this.radioLib.createMediaItem(uri, props);
 			RadioDirectory.favesList.add(item);
 			gMetrics.metricsInc("shoutcast", "custom", "added");
+			if (RadioDirectory.favesList.getProperty(SC_nodeCreated) == "0"
+					&& RadioDirectory.favesList.length > 0) {
+				createFavouritesNode();
+			}
 		}
 	}
 }
