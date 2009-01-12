@@ -22,7 +22,11 @@ function ArtistInfo() {
 				.getService(Ci.nsIPrefService).getBranch("general.");
 		var locale = prefBranch.getCharPref("useragent.locale");
 		language = locale.split(/-/)[0];
+		// last.fm screws up ja as jp
+		if (language == "ja")
+			language = "jp";
 		mtUtils.log("Info", "language set to " + language);
+		
 	}
 }
 
@@ -68,7 +72,10 @@ ArtistInfo.prototype = {
 		var url = "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo" +
 			"&api_key=b25b959554ed76058ac220b7b2e0a026" +
 			"&artist=" + encodeURIComponent(artist);
-		if (language)
+		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+			.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.");
+		var autolocalise = prefBranch.getBoolPref("info.autolocalise");
+		if (autolocalise && language)
 			url += "&lang=" + language;
 		mtUtils.log("Info", "Last.FM Bio URL: " + url);
 		bioReq.open("GET", url, true);

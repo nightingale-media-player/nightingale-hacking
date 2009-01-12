@@ -17,6 +17,8 @@
 		name="extensions.mashTape.autohide" />
 	<preference id="tab-info-enabled" type="bool"
 		name="extensions.mashTape.info.enabled" />
+	<preference id="tab-info-autolocalise" type="bool"
+		name="extensions.mashTape.info.autolocalise" />
 	<preference id="tab-review-enabled" type="bool"
 		name="extensions.mashTape.review.enabled" />
 	<preference id="tab-rss-enabled" type="bool"
@@ -112,6 +114,13 @@
 						<richlistbox class="box-services" id="services-info">
 						</richlistbox>
 					</radiogroup>
+				</groupbox>
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.info.autolocalise;" />
+					<hbox>
+						<checkbox preference="tab-info-autolocalise" />
+						<description>&mtprefs.tab.info.autolocalise.help;</description>
+					</hbox>
 				</groupbox>
 			</vbox>
 		</tabpanel>

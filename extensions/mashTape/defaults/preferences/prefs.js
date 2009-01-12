@@ -18,6 +18,7 @@ pref("extensions.mashTape.providers.all_previous", "{9a301ac0-745c-11dd-ad8b-080
 // Last.fm/Freebase/MusicBrainz
 pref("extensions.mashTape.info.enabled", true);
 pref("extensions.mashTape.info.providers", "{7792e470-75ec-11dd-ad8b-0800200c9a66}");
+pref("extensions.mashTape.info.autolocalise", true);
 
 // Amazon album reviews
 pref("extensions.mashTape.review.enabled", true);

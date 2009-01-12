@@ -33,6 +33,10 @@
 <!ENTITY mtprefs.single "This pane supports displaying content from one service at a time.  Please select a service from the list below.">
 <!ENTITY mtprefs.multiple "This pane supports displaying content from multiple services at a time.  Please select your choice of services from the list below.">
 
+<!-- Info prefs --> 
+<!ENTITY mtprefs.tab.info.autolocalise "Localized Data">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatically retrieve localised artist information if available.">
+
 <!-- Photo prefs -->
 <!ENTITY mtprefs.tab.photo.speed "Photo scrolling speed:">
 <!ENTITY mtprefs.tab.photo.faster "Faster">
