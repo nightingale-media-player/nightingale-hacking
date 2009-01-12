@@ -38,7 +38,6 @@
 #include <nsIDOMNodeList.h>
 #include <nsIDOMNamedNodeMap.h>
 #include "sbArticlesData.h"
-#include <objidl.h>
 
 #define DATA_URL "chrome://songbird/content/intl/sbArticleRemoval.xml" 
 #define DOCUMENT_DATA "sb-article-removal-document"
