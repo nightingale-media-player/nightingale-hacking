@@ -33,30 +33,18 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = $(NULL)
+SUBDIRS = chrome defaults
 
 EXTENSION_NAME = shoutcast-radio
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage
+EXTENSION_BUILD_ID = $(EXTENSION_NAME)-$(EXTENSION_VER)
 
-EXTENSION_VER := 0.7.1pre
+EXTENSION_VER := 0.7.2pre
 EXTENSION_MIN_VER := 1.1.0pre
 EXTENSION_MAX_VER := 1.1.0rc1
 
-XPI_NAME = $(EXTENSION_NAME)-$(EXTENSION_VER)
-
-SONGBIRD_PREFS = defaults/preferences/prefs.js
+XPI_NAME = $(EXTENSION_BUILD_ID)
 
 include $(topsrcdir)/build/rules.mk
 
-make_xpi: extinstall
-
-# hacky hacky ugly workaround for the fact that whatever script generates
-# chrome.manifest from my original jar.mn.in was non-deterministically
-# screwing up the order of the skin lines, and a particular order is required
-extinstall :
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(EXTENSION_STAGE_DIR)
-	$(CYGWIN_WRAPPER) $(CP) -rf $(srcdir)/chrome $(EXTENSION_STAGE_DIR)
-	$(CYGWIN_WRAPPER) find $(EXTENSION_STAGE_DIR)/chrome -depth -name .svn | xargs rm -rf
-	$(CYGWIN_WRAPPER) $(CP) -f $(srcdir)/chrome.manifest $(EXTENSION_STAGE_DIR)
-
-.PHONY : extinstall

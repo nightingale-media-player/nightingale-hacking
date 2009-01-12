@@ -1,0 +1,19 @@
+shoutcast.jar:
+% content shoutcast-radio %content/
+% locale shoutcast-radio en-US %locale/en-US/
+% locale shoutcast-radio en-GB %locale/en-GB/
+% locale shoutcast-radio zh-TW %locale/zh-TW/
+% locale shoutcast-radio kw-GB %locale/kw-GB/
+% locale shoutcast-radio da-DK %locale/da-DK/
+% locale shoutcast-radio fr-FR %locale/fr-FR/
+% locale shoutcast-radio de-DE %locale/de-DE/
+% locale shoutcast-radio ja-JP %locale/ja-JP/
+% locale shoutcast-radio pl-PL %locale/pl-PL/
+% locale shoutcast-radio es-ES %locale/es-ES/
+% skin shoutcast-radio classic/1.0 %skin/
+% overlay chrome://browser/content/preferences/preferences.xul chrome://shoutcast-radio/content/prefsOverlay.xul
+% overlay windowtype:Songbird:MediaPage chrome://shoutcast-radio/content/playlist.xul
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://shoutcast-radio/content/scripts-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul chrome://shoutcast-radio/content/faceplate-overlay.xul
+% overlay chrome://songbird/content/xul/layoutWithoutBrowserOverlay.xul chrome://shoutcast-radio/content/faceplate-overlay.xul
+@include_all_to

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://shoutcast-radio/skin/faceplate.css" ?>
+
+<overlay id="shoutcast-radio-faceplate-overlay"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script src="chrome://shoutcast-radio/content/faceplate.js"/>
+
+	<sb-autoscroll id="sb-faceplate-autoscroll-box">
+		<image id="shoutcast-station-icon" position="1"
+			src="chrome://shoutcast-radio/skin/shoutcast_favicon.png" />
+	</sb-autoscroll>
+</overlay>
+
