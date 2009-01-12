@@ -137,8 +137,9 @@ firstRunImportMediaSvc.prototype = {
     this._selectDefaultScanDirectory();
 
     // Determine whether the watch folder services are available.
-    //XXXeps hard code for now.
-    this._watchFolderAvailable = true;
+    var watchFolderService = Cc["@songbirdnest.com/watch-folder-service;1"]
+                               .getService(Ci.sbIWatchFolderService);
+    this._watchFolderAvailable = watchFolderService.isSupported;
 
     // Update the UI.
     this._update();
