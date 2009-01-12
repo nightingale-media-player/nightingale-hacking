@@ -23,8 +23,6 @@
 <!ENTITY mtprefs.tab.help "このタブを mashTape の中に表示します。">
 <!ENTITY mtprefs.single "この枠は一度でひとつのサービスからのコンテンツ表示に対応します。以下の一覧からサービスをひとつ選択してください。">
 <!ENTITY mtprefs.multiple "この枠は一度で複数のサービスからのコンテンツ表示に対応します。以下の一覧から好みのサービスを選択してください。">
-<!ENTITY mtprefs.tab.info.autolocalise "ローカライズデータ">
-<!ENTITY mtprefs.tab.info.autolocalise.help "利用可能な場合は自動的にローカライズアーティスト情報を検索する。">
 <!ENTITY mtprefs.tab.photo.speed "写真スクロール速度:">
 <!ENTITY mtprefs.tab.photo.faster "速く">
 <!ENTITY mtprefs.tab.photo.slower "遅く">

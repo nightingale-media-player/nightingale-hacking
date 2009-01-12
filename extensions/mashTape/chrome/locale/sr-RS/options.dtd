@@ -1,0 +1,25 @@
+<!ENTITY mtprefs.general "Опште">
+<!ENTITY mtprefs.info "Подаци о извођачу">
+<!ENTITY mtprefs.review "Рецензије">
+<!ENTITY mtprefs.rss "Вести">
+<!ENTITY mtprefs.photo "Слике">
+<!ENTITY mtprefs.flash "Видео">
+<!ENTITY mtprefs.defaulttab "Подразумевана картица">
+<!ENTITY mtprefs.defaulttab.help "При стртовању mashTape-а:">
+<!ENTITY mtprefs.show.info "Прикажи податке о извођачу">
+<!ENTITY mtprefs.show.review "Прикажи рецензије">
+<!ENTITY mtprefs.show.rss "Прикажи вести">
+<!ENTITY mtprefs.show.photo "Прикажи слике">
+<!ENTITY mtprefs.show.flash "Прикажи видео">
+<!ENTITY mtprefs.autohide "Аутоматско сакривање">
+<!ENTITY mtprefs.services "Сервиси">
+<!ENTITY mtprefs.tab.info "Својства картице Подаци о извођачу">
+<!ENTITY mtprefs.tab.review "Својства картице Рецензије">
+<!ENTITY mtprefs.tab.rss "Својства картице Вести">
+<!ENTITY mtprefs.tab.photo "Својства картице Слике">
+<!ENTITY mtprefs.tab.flash "Својства картице Видео">
+<!ENTITY mtprefs.tab.help "Прикажи ову картицу у mashTape-у.">
+<!ENTITY mtprefs.tab.photo.speed "Брзина померања слика:">
+<!ENTITY mtprefs.tab.photo.faster "Брже">
+<!ENTITY mtprefs.tab.photo.slower "Спорије">
+<!ENTITY mtprefs.tab.video.autoplay "Аутоматски пусти видео">

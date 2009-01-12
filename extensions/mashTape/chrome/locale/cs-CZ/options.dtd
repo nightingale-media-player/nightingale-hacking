@@ -27,3 +27,4 @@
 <!ENTITY mtprefs.tab.photo.faster "Rychleji">
 <!ENTITY mtprefs.tab.photo.slower "Pomaleji">
 <!ENTITY mtprefs.tab.video.autoplay "Automaticky přehrát videa">
+<!ENTITY mtprefs.tab.video.autoplay.help "Povolením této volby umožníte poskytovatelům videa automaticky přehrávat videa jedno po druhém. To je užitečné například pro automatické přehrávání všech hudebních videí z MTV. Tato funkce funguje jen s poskytovateli videa, kteří jsou součástí mashTape.">

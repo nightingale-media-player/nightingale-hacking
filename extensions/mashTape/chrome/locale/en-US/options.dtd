@@ -35,7 +35,7 @@
 
 <!-- Info prefs --> 
 <!ENTITY mtprefs.tab.info.autolocalise "Localized Data">
-<!ENTITY mtprefs.tab.info.autolocalise.help "Automatically retrieve localised artist information if available.">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatically retrieve localized artist information if available.">
 
 <!-- Photo prefs -->
 <!ENTITY mtprefs.tab.photo.speed "Photo scrolling speed:">
