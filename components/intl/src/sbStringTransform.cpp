@@ -76,3 +76,12 @@ sbStringTransform::GuessCharset(const nsAString & aInput,
 {
   return mImpl->GuessCharset(aInput, _retval);
 }
+
+NS_IMETHODIMP
+sbStringTransform::RemoveArticles(const nsAString & aInput,
+                                  const nsAString & aLanguage,
+                                  nsAString &_retval)
+{
+  return sbArticlesData::RemoveArticles(aInput, aLanguage, _retval);
+}
+

@@ -1218,7 +1218,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
       rv = mBuilder->AddCriterion(notEmptyString);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJSORTABLE_COLUMN);
+      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJSEARCHABLE_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }

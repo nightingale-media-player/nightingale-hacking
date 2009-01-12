@@ -24,35 +24,15 @@
 //
 */
 
-#ifndef __SB_STRINGTRANSFORM_H__
-#define __SB_STRINGTRANSFORM_H__
+#ifndef __SB_STRINGTRANSFORMDECL_H__
+#define __SB_STRINGTRANSFORMDECL_H__
 
 #include <sbIStringTransform.h>
 
-#include <nsAutoPtr.h>
-#include <nsCOMPtr.h>
+/* Use this macro when declaring classes that implement this interface. */
+#define NS_DECL_SBISTRINGTRANSFORM_IMPL \
+  NS_SCRIPTABLE NS_IMETHOD NormalizeString(const nsAString & aCharset, PRUint32 aTransformFlags, const nsAString & aInput, nsAString & _retval); \
+  NS_SCRIPTABLE NS_IMETHOD ConvertToCharset(const nsAString & aDestCharset, const nsAString & aInput, nsAString & _retval); \
+  NS_SCRIPTABLE NS_IMETHOD GuessCharset(const nsAString & aInput, nsAString & _retval); 
 
-#include <sbStringTransformImpl.h>
-
-#include "sbArticlesData.h"
-
-class sbStringTransformImpl;
- 
-class sbStringTransform : public sbIStringTransform
-{
-public:
-  sbStringTransform();
-
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBISTRINGTRANSFORM
-
-  nsresult Init();
-
-protected:
-  ~sbStringTransform();
-
-private:
-  sbStringTransformImpl* mImpl;
-};
-
-#endif /* __SB_STRINGTRANSFORM_H__ */
+#endif /* __SB_STRINGTRANSFORMDECL_H__ */

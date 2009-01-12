@@ -27,7 +27,7 @@
 #ifndef __SB_STRINGTRANSFORMIMPL_H__
 #define __SB_STRINGTRANSFORMIMPL_H__
 
-#include <sbIStringTransform.h>
+#include <sbStringTransformDecl.h>
 
 class sbStringTransformImpl
 {
@@ -35,7 +35,7 @@ public:
   sbStringTransformImpl();
   ~sbStringTransformImpl();
 
-  NS_DECL_SBISTRINGTRANSFORM
+  NS_DECL_SBISTRINGTRANSFORM_IMPL
 
   nsresult Init();
 };

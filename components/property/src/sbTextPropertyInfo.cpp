@@ -267,6 +267,18 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   nsAutoString val;
   val = aValue;
   CompressWhitespace(val);
+
+  nsresult rv;
+  
+  nsCOMPtr<sbIStringTransform> stringTransform = 
+    do_CreateInstance(SB_STRINGTRANSFORM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString outVal;
+  rv = stringTransform->RemoveArticles(val, EmptyString(), outVal);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  val = outVal;
   
   // we might want to limit the number of characters we are sorting on ? just
   // so that we do not generate humongus collation data blocks ? disable for

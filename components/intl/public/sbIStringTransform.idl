@@ -29,7 +29,7 @@
 /**
  *
  */
-[scriptable, uuid(adb3f438-ec1a-4552-a107-f85f8b4c202d)]
+[scriptable, uuid(a84e1183-8dbd-4518-b614-df5e53d7f60b)]
 interface sbIStringTransform : nsISupports
 {
   /**
@@ -85,6 +85,8 @@ interface sbIStringTransform : nsISupports
                            in AString aInput);
 
   AString guessCharset(in AString aInput);
+  
+  AString removeArticles(in AString aInput, [optional] in AString aLanguage);
 };
 
 %{C++
