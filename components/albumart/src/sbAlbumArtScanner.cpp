@@ -87,6 +87,8 @@ static PRLogModuleInfo* gAlbumArtScannerLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
+#define MAX_SCANNER_MESSAGE_TEXT_LENGTH 45
+
 //------------------------------------------------------------------------------
 //
 // nsISupports implementation.
@@ -231,6 +233,15 @@ NS_IMETHODIMP sbAlbumArtScanner::GetStatusText(nsAString& aText)
       aText.Assign(stringKey);
     } else {
       aText.Assign(outMessage);
+    }
+
+    // Force the filename to be one line in order to
+    // avoid sizeToContent pain (This is from the sbMetadataJob.cpp:1070)
+    if (aText.Length() > MAX_SCANNER_MESSAGE_TEXT_LENGTH) {
+      // Do a crop at the end
+      PRUint32 sectionSize = (MAX_SCANNER_MESSAGE_TEXT_LENGTH -5);
+      aText.Replace(sectionSize, aText.Length(), NS_LITERAL_STRING("..."));
+
     }
   } else {
     rv = mStringBundle->GetStringFromName(
