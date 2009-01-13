@@ -30,16 +30,26 @@
 #include <sbIWatchFolderService.h>
 #include <sbIFileSystemWatcher.h>
 #include <sbIFileSystemListener.h>
+#include <sbILibrary.h>
 #include <nsITimer.h>
 #include <nsIObserver.h>
 #include <nsIComponentManager.h>
 #include <nsIGenericFactory.h>
 #include <nsIFile.h>
+#include <nsTArray.h>
+#include <nsIMutableArray.h>
+#include <nsISupportsPrimitives.h>
+#include <nsStringAPI.h>
 #include <nsCOMPtr.h>
+#include <nsIIOService.h>
+#include <sbIMediaListListener.h>
+
+typedef nsTArray<nsString> sbStringArray;
 
 
 class sbWatchFolderService : public sbIWatchFolderService,
                              public sbIFileSystemListener,
+                             public sbIMediaListEnumerationListener,
                              public nsITimerCallback,
                              public nsIObserver
 {
@@ -50,6 +60,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIWATCHFOLDERSERVICE
   NS_DECL_SBIFILESYSTEMLISTENER
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
   NS_DECL_NSITIMERCALLBACK
   NS_DECL_NSIOBSERVER
 
@@ -64,9 +75,24 @@ public:
 protected:
   nsresult StartWatching();
   nsresult StopWatching();
+  nsresult SetTimer();
+  nsresult ProcessChangedPaths();
+  nsresult ProcessAddedPaths();
+  nsresult ProcessRemovedPaths();
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
+  nsCOMPtr<sbILibrary>           mMainLibrary;
+  nsCOMPtr<nsIIOService>         mIOService;
+  nsCOMPtr<nsITimer>             mTimer;
+  nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
+  sbStringArray                  mChangedPaths;
+  sbStringArray                  mAddedPaths;
+  sbStringArray                  mRemovedPaths;
+  nsString                       mWatchPath;
+  PRBool                         mIsEnabled;
+  PRBool                         mIsWatching;
+  PRBool                         mTimerIsSet;
 };
 
 

@@ -40,6 +40,11 @@ CPP_SRCS = sbWatchFolderService.cpp \
 
 CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(DEPTH)/components/watchfolder/public \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/job/public \
+               $(DEPTH)/components/mediacore/metadata/manager/public \
+               $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
