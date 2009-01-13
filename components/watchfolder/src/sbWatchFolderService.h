@@ -43,8 +43,9 @@
 #include <nsCOMPtr.h>
 #include <nsIIOService.h>
 #include <sbIMediaListListener.h>
+#include <queue>
 
-typedef nsTArray<nsString> sbStringArray;
+typedef std::queue<nsString> sbStringQueue;
 
 
 class sbWatchFolderService : public sbIWatchFolderService,
@@ -79,6 +80,7 @@ protected:
   nsresult ProcessChangedPaths();
   nsresult ProcessAddedPaths();
   nsresult ProcessRemovedPaths();
+  void ClearQueue(sbStringQueue & aStringQueue);
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
@@ -86,9 +88,9 @@ private:
   nsCOMPtr<nsIIOService>         mIOService;
   nsCOMPtr<nsITimer>             mTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
-  sbStringArray                  mChangedPaths;
-  sbStringArray                  mAddedPaths;
-  sbStringArray                  mRemovedPaths;
+  sbStringQueue                  mChangedPathsQueue;
+  sbStringQueue                  mAddedPathsQueue;
+  sbStringQueue                  mRemovedPathsQueue;
   nsString                       mWatchPath;
   PRBool                         mIsEnabled;
   PRBool                         mIsWatching;

@@ -152,9 +152,9 @@ sbWatchFolderService::StopWatching()
   }
 
   // Clear all event paths.
-  mAddedPaths.Clear();
-  mRemovedPaths.Clear();
-  mChangedPaths.Clear();
+  ClearQueue(mAddedPathsQueue);
+  ClearQueue(mRemovedPathsQueue);
+  ClearQueue(mChangedPathsQueue);
 
   // Stop and kill the file-system watcher.
   mFileSystemWatcher->StopWatching();
@@ -181,20 +181,23 @@ sbWatchFolderService::SetTimer()
 nsresult
 sbWatchFolderService::ProcessChangedPaths()
 {
+  if (mChangedPathsQueue.empty()) {
+    return NS_OK;
+  }
+
   //
   // TODO: Write Me! 
   //       - see bug 14769.
   //
 
-  mChangedPaths.Clear();
+  ClearQueue(mChangedPathsQueue);
   return NS_OK;
 }
 
 nsresult
 sbWatchFolderService::ProcessAddedPaths()
 {
-  PRUint32 addedCount = mAddedPaths.Length();
-  if (addedCount == 0) {
+  if (mAddedPathsQueue.empty()) { 
     return NS_OK;
   }
 
@@ -203,25 +206,73 @@ sbWatchFolderService::ProcessAddedPaths()
   //       - see bug 14768.
   //
 
-  mAddedPaths.Clear();
+  ClearQueue(mAddedPathsQueue);
   return NS_OK;
 }
 
 nsresult
 sbWatchFolderService::ProcessRemovedPaths()
 {
-  PRUint32 removeCount = mRemovedPaths.Length();
-  if (removeCount == 0) {
+  if (mRemovedPathsQueue.empty()) {
     return NS_OK;
   }
 
-  //
-  // TODO: Write Me! 
-  //       - see bug 14768.
-  //
+  nsresult rv;
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  mRemovedPaths.Clear();
+  nsString propName(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
+  while (!mRemovedPathsQueue.empty()) {
+    // Convert the current path to a URI, then get the spec.
+    nsCOMPtr<nsILocalFile> curPathFile =
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not create a local file!");
+      continue;
+    }
+
+    rv = curPathFile->InitWithPath(mRemovedPathsQueue.front());
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not init a local file with a remove path!");
+      continue;
+    }
+
+    nsCOMPtr<nsIURI> fileURI;
+    rv = mIOService->NewFileURI(curPathFile, getter_AddRefs(fileURI));
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not get a URI for a file!");
+      continue;
+    }
+
+    nsCString pathSpec;
+    rv = fileURI->GetSpec(pathSpec);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not get the URI spec!");
+      continue;
+    }
+
+    rv = properties->AppendProperty(propName, NS_ConvertUTF8toUTF16(pathSpec));
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not append a property!");
+    }
+
+    mRemovedPathsQueue.pop();
+  }
+
+  PRUint16 enumType = sbIMediaList::ENUMERATIONTYPE_SNAPSHOT;
+  rv = mMainLibrary->EnumerateItemsByProperties(properties, this, enumType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
+}
+
+void 
+sbWatchFolderService::ClearQueue(sbStringQueue & aStringQueue)
+{
+  while (!aStringQueue.empty()) {
+    aStringQueue.pop();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -269,7 +320,7 @@ sbWatchFolderService::OnWatcherStopped()
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
-  mChangedPaths.AppendElement(aFilePath);
+  mChangedPathsQueue.push(nsString(aFilePath));
   nsresult rv = SetTimer();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -279,7 +330,7 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
-  mRemovedPaths.AppendElement(aFilePath);
+  mRemovedPathsQueue.push(nsString(aFilePath));
   nsresult rv = SetTimer();
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
@@ -288,7 +339,7 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
-  mAddedPaths.AppendElement(aFilePath);
+  mAddedPathsQueue.push(nsString(aFilePath));
   nsresult rv = SetTimer();
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
@@ -325,7 +376,16 @@ NS_IMETHODIMP
 sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList, 
                                        nsresult aStatusCode)
 {
-  nsresult rv = mEnumeratedMediaItems->Clear();
+  // Remove the found media items from the library.
+  nsresult rv;
+  nsCOMPtr<nsISimpleEnumerator> mediaItemEnum;
+  rv = mEnumeratedMediaItems->Enumerate(getter_AddRefs(mediaItemEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMainLibrary->RemoveSome(mediaItemEnum);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mEnumeratedMediaItems->Clear();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
