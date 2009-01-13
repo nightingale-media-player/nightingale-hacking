@@ -33,7 +33,6 @@ SUBDIRS = directory \
           filescan \
           library \
           playlist \
-          dragdrop \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
