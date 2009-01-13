@@ -445,6 +445,9 @@
 <!ENTITY feedback.dialog.sentence3  "Regards,">
 <!ENTITY feedback.dialog.sentence4  "The &brandShortName; Team">
 
+<!-- title for the blank firstrun mediapage -->
+<!ENTITY mediapages.firstrun.title        "Welcome to &brandShortName;">
+
 <!-- First-run wizard entities. -->
 <!ENTITY first_run.title                  "&brandShortName; Setup">
 
