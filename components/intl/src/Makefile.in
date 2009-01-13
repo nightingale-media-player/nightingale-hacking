@@ -82,6 +82,7 @@ CMM_SRCS = $(SB_PLATFORM)/sbStringTransformImpl.mm \
 					 
 CMM_INCLUDES = $(DEPTH)/components/intl/public \
 							 $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
+							 $(topsrcdir)/components/intl/src \
 							 $(MOZSDK_INCLUDE_DIR) \
 							 $(MOZSDK_INCLUDE_DIR)/nspr \
 							 $(MOZSDK_INCLUDE_DIR)/xpcom \
