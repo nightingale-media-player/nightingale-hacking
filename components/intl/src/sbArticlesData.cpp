@@ -326,9 +326,11 @@ sbArticlesDataObserver::Observe(nsISupports* aSubject,
                          const PRUnichar* aData) {
 
   if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
-    gArticlesData->UnloadArticles();
-    delete gArticlesData;
-    gArticlesData = NULL;
+    if (gArticlesData) {
+      gArticlesData->UnloadArticles();
+      delete gArticlesData;
+      gArticlesData = NULL;
+    }
   }
 
   return NS_OK;
