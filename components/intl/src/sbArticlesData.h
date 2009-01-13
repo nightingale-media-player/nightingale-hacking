@@ -32,14 +32,12 @@
 #include <nsIObserver.h>
 #include <nsStringGlue.h>
 
-class sbArticlesData : public nsIObserver
+class sbArticlesData 
 {
+friend class sbArticlesDataObserver;
 public:
   sbArticlesData();
 
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSIOBSERVER
-  
   nsresult Init();
   
   static nsresult RemoveArticles(const nsAString & aInput,
@@ -49,6 +47,9 @@ public:
 protected:
   static nsresult EnsureLoaded();
   ~sbArticlesData();
+
+  nsresult LoadArticles();
+  nsresult UnloadArticles();
 
 private:
   class sbArticle : public nsISupports {
@@ -73,10 +74,8 @@ private:
       nsString mLanguage;
       nsTArray<nsRefPtr<sbArticle> > mArticles;
   };
-  nsresult LoadArticles();
-  nsresult UnloadArticles();
-  nsresult AddObserver();
-  nsresult RemoveObserver();
+  static nsresult AddObserver();
+  static nsresult RemoveObserver();
   nsresult ParsePattern(const nsAString &aPattern,
                         nsAString &aPrefix,
                         nsAString &aSuffix);
@@ -91,6 +90,18 @@ private:
   
   PRBool mArticlesLoaded;
   nsTArray<nsRefPtr<sbArticleLanguageData> > mLanguages;
+};
+
+class sbArticlesDataObserver : public nsIObserver
+{
+public:
+  sbArticlesDataObserver() {}
+  virtual ~sbArticlesDataObserver() {}
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
+
+private:
 };
 
 #endif /* __SB_ARTICLESDATA_H__ */

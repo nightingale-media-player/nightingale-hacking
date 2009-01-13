@@ -46,9 +46,9 @@
 
 #define CONVERTER_BUFFER_SIZE 8192
 
-nsRefPtr<sbArticlesData> gArticlesData;
+sbArticlesData *gArticlesData;
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbArticlesData, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbArticlesDataObserver, 
                               nsIObserver)
 
 NS_IMPL_ISUPPORTS0(sbArticlesData::sbArticle)
@@ -68,14 +68,25 @@ nsresult sbArticlesData::Init() {
   return LoadArticles();
 }
 
+nsCOMPtr<sbArticlesDataObserver> gArticlesDataObserver;
+
 nsresult sbArticlesData::AddObserver() {
+  if (gArticlesDataObserver)
+    return NS_OK;
+
   nsresult rv;
+
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsRefPtr<sbArticlesDataObserver> observer = new sbArticlesDataObserver();
+  gArticlesDataObserver = do_QueryInterface(observer, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // "xpcom-shutdown" is called right before the app will terminate
-  rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
+  rv = observerService->AddObserver(gArticlesDataObserver, 
+                                    NS_XPCOM_SHUTDOWN_OBSERVER_ID,
                                     PR_FALSE);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add shutdown observer");
   
@@ -83,15 +94,21 @@ nsresult sbArticlesData::AddObserver() {
 }
 
 nsresult sbArticlesData::RemoveObserver() {
+  if (!gArticlesDataObserver)
+    return NS_OK;
+    
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+  rv = observerService->RemoveObserver(gArticlesDataObserver, 
+                                       NS_XPCOM_SHUTDOWN_OBSERVER_ID);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                    "Failed to remove shutdown observer");
 
+  gArticlesDataObserver.forget();
+  
   return NS_OK;
 }
 
@@ -304,12 +321,14 @@ nsresult sbArticlesData::UnloadArticles() {
 }
 
 NS_IMETHODIMP
-sbArticlesData::Observe(nsISupports* aSubject,
+sbArticlesDataObserver::Observe(nsISupports* aSubject,
                          const char* aTopic,
                          const PRUnichar* aData) {
 
   if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
-    UnloadArticles();
+    gArticlesData->UnloadArticles();
+    delete gArticlesData;
+    gArticlesData = NULL;
   }
 
   return NS_OK;
@@ -368,7 +387,6 @@ nsresult sbArticlesData::_RemoveArticles(const nsAString & aInput,
         aLanguage.Equals(lang->mLanguage)) {
       PRUint32 narticles = lang->mArticles.Length();
       for (PRUint32 j=0;j<narticles;j++) {
-        sbArticle *article = lang->mArticles[j];
         nsString newVal;
         
         nsresult rv = RemoveArticle(val, lang->mArticles[j], newVal);
