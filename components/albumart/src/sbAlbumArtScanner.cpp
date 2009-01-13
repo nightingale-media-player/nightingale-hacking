@@ -51,8 +51,10 @@
 // Mozilla imports.
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIURI.h>
 #include <nsIPrefBranch.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
 #include <nsIMutableArray.h>
 #include <nsServiceManagerUtils.h>
@@ -90,12 +92,25 @@ static PRLogModuleInfo* gAlbumArtScannerLog = nsnull;
 // nsISupports implementation.
 //
 //------------------------------------------------------------------------------
-NS_IMPL_THREADSAFE_ISUPPORTS5(sbAlbumArtScanner,
-                              sbIAlbumArtScanner,
-                              sbIJobProgress,
-                              sbIJobCancelable,
-                              nsITimerCallback,
-                              sbIAlbumArtListener);
+NS_IMPL_THREADSAFE_ADDREF(sbAlbumArtScanner)
+NS_IMPL_THREADSAFE_RELEASE(sbAlbumArtScanner)
+NS_IMPL_QUERY_INTERFACE6_CI(sbAlbumArtScanner,
+                            sbIAlbumArtScanner,
+                            nsIClassInfo,
+                            sbIJobProgress,
+                            sbIJobCancelable,
+                            nsITimerCallback,
+                            sbIAlbumArtListener)
+NS_IMPL_CI_INTERFACE_GETTER5(sbAlbumArtScanner,
+                             sbIAlbumArtScanner,
+                             sbIJobProgress,
+                             sbIJobCancelable,
+                             nsITimerCallback,
+                             sbIAlbumArtListener)
+
+NS_DECL_CLASSINFO(sbAlbumArtScanner)
+NS_IMPL_THREADSAFE_CI(sbAlbumArtScanner)
+
 
 //------------------------------------------------------------------------------
 //

@@ -35,6 +35,10 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 
 // File operation constants for init (-1 is default mode)
 const FLAGS_DEFAULT = -1;
@@ -427,5 +431,57 @@ var sbCoverHelper = {
 
     // Finally a plain text flavour
     aTransferData.data.addDataForFlavour("text/plain", aImageURL);  
+  },
+  
+  /**
+   * \brief Sets up a media list to get artwork for each of the items passed in.
+   * \param aItemList An Array or enumerator of sbIMediaItem items.
+   * \param aWindow Window to bind to, this can be null.
+   */
+  getArtworkForItems: function(aItemList, aWindow) {
+    var mediaItems = aItemList;
+    if (aItemList instanceof Array) {
+      mediaItems = ArrayConverter.enumerator(aItemList);
+    } else if (!(aItemList instanceof Ci.nsISimpleEnumerator)) {
+      Cu.reportError("getArtworkForItems: Item list is not a valid array or enumerator.");
+      return;
+    }
+    
+    if (!mediaItems.hasMoreElements()) {
+      Cu.reportError("getArtworkForItems: No items passed in to get artwork for.");
+      return;
+    }
+    
+    // Create a hidden playlist temporarily
+    var listProperties = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                           .createInstance(Ci.sbIPropertyArray);
+    listProperties.appendProperty(SBProperties.hidden, "1");
+    var getArtworkMediaList = LibraryUtils.mainLibrary
+                                          .createMediaList("simple",
+                                                           listProperties);
+    getArtworkMediaList.name = "Get artwork";
+    // Add all the items to our new hidden temporary playlist
+    getArtworkMediaList.addSome(mediaItems);
+
+    // Set up the scanner
+    var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
+                           .createInstance(Ci.sbIAlbumArtScanner);
+
+    // Listener so that we can remove our list when done.
+    var jobProgressListener = {
+      onJobProgress: function(aJobProgress) {
+        if (aJobProgress.status != Ci.sbIJobProgress.STATUS_RUNNING) {
+          LibraryUtils.mainLibrary.remove(getArtworkMediaList);
+          // Remove ourselves so that we do not get called multiple times.
+          artworkScanner.removeJobProgressListener(jobProgressListener);
+        }
+      },
+      QueryInterface: XPCOMUtils.generateQI([Ci.sbIJobProgressListener])
+    };
+
+    // Now start scanning
+    artworkScanner.addJobProgressListener(jobProgressListener);
+    artworkScanner.scanListForArtwork(getArtworkMediaList);
+    SBJobUtils.showProgressDialog(artworkScanner, aWindow);
   }
 }

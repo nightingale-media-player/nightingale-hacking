@@ -39,6 +39,7 @@ Cu.import("resource://app/jsmodules/sbAddToDevice.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/DropHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 
 const WEB_PLAYLIST_CONTEXT      = "webplaylist";
 const WEB_PLAYLIST_TABLE        = "webplaylist";
@@ -584,6 +585,31 @@ PublicPlaylistCommands.prototype = {
                                                        plCmd_CanModifyPlaylist);
 
       // --------------------------------------------------------------------------
+      // The Get Artwork action
+      // --------------------------------------------------------------------------
+
+      this.m_cmd_GetArtwork = new PlaylistCommandsBuilder();
+      
+      this.m_cmd_GetArtwork.appendAction(null,
+                                         "library_cmd_getartwork",
+                                         "&command.getartwork",
+                                         "&command.tooltip.getartwork",
+                                         plCmd_GetArtwork_TriggerCallback);
+
+      this.m_cmd_GetArtwork.setCommandShortcut(null,
+                                               "library_cmd_getartwork",
+                                               "&command.shortcut.key.getartwork",
+                                               "&command.shortcut.keycode.getartwork",
+                                               "&command.shortcut.modifiers.getartwork",
+                                               true);
+
+      this.m_cmd_GetArtwork.setCommandEnabledCallback(null,
+                                                      "library_cmd_getartwork",
+                                                      plCmd_AND(
+                                                        plCmd_IsAnyTrackSelected,
+                                                        plCmd_CanModifyPlaylistContent));
+    
+      // --------------------------------------------------------------------------
 
       // Publish atomic commands
 
@@ -600,6 +626,7 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_GETARTWORK, this.m_cmd_GetArtwork);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
@@ -616,6 +643,9 @@ PublicPlaylistCommands.prototype = {
       this.m_defaultCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_reveal",
                                                     this.m_cmd_Reveal);
+      this.m_defaultCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_getartwork",
+                                                    this.m_cmd_GetArtwork);
       
       this.m_defaultCommands.appendSeparator(null, "default_commands_separator_1");
       
@@ -930,6 +960,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEANUPDOWNLOADS, this.m_cmd_CleanUpDownloads);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_CLEARHISTORY, this.m_cmd_ClearHistory);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_GETARTWORK, this.m_cmd_GetArtwork);
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_REMOVE, this.m_cmd_list_Remove);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_RENAME, this.m_cmd_list_Rename);
@@ -1021,6 +1052,7 @@ PublicPlaylistCommands.prototype = {
     this.m_cmd_PauseResumeDownload.shutdown();
     this.m_cmd_CleanUpDownloads.shutdown();
     this.m_cmd_ClearHistory.shutdown();
+    this.m_cmd_GetArtwork.shutdown();
     this.m_cmd_list_Remove.shutdown();
     this.m_cmd_list_Rename.shutdown();
     this.m_cmd_UpdateSmartPlaylist.shutdown();
@@ -1297,6 +1329,18 @@ function plCmd_ClearHistory_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   var wl = getWebLibrary();
   if (wl) {
     wl.clear();
+  }
+}
+
+// Called when the get album artwork action is triggered
+function plCmd_GetArtwork_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  // Load up a fetcher set, create a list and start the fetch
+  if (plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
+    var playlist = unwrap(aContext.playlist);
+    sbCoverHelper.getArtworkForItems(playlist.mediaListView
+                                             .selection
+                                             .selectedMediaItems,
+                                     null);
   }
 }
 

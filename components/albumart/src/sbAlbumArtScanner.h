@@ -60,6 +60,7 @@
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
+#include <nsIClassInfo.h>
 #include <nsIStringBundle.h>
 #include <nsITimer.h>
 #include <nsStringGlue.h>
@@ -106,6 +107,7 @@
  */
 
 class sbAlbumArtScanner : public sbIAlbumArtScanner,
+                          public nsIClassInfo,
                           public sbIJobProgress,
                           public sbIJobCancelable,
                           public nsITimerCallback,
@@ -114,6 +116,7 @@ class sbAlbumArtScanner : public sbIAlbumArtScanner,
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTSCANNER
+  NS_DECL_NSICLASSINFO
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBIJOBCANCELABLE
   NS_DECL_NSITIMERCALLBACK

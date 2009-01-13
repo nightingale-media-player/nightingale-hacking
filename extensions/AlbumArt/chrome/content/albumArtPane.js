@@ -1071,49 +1071,25 @@ var AlbumArt = {
    * \brief Scan items for missing artwork.
    */
   onGetArtwork: function AlbumArt_onGetArtwork() {
-    // First we have to get the collection of items we want to scan,
-    // this will be either the selection or now playing.
-
-    var listProperties = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-                           .createInstance(Ci.sbIPropertyArray);
-    listProperties.appendProperty(SBProperties.hidden, "1");
-
-    var getArtworkMediaList = LibraryUtils.mainLibrary
-                                          .createMediaList("simple",
-                                                           listProperties);
-    getArtworkMediaList.name = "Get artwork";
-
     if (AlbumArt._currentState == STATE_SELECTED) {
       // Now Selected
-      var selection = AlbumArt._mediaListView.selection;
-      var item = null;
-      var itemEnum = selection.selectedMediaItems;
-      while (itemEnum.hasMoreElements()) {
-        item = itemEnum.getNext();
-        if (item) {
-          getArtworkMediaList.add(item);
-        }
-      }
-
+      sbCoverHelper.getArtworkForItems(AlbumArt._mediaListView
+                                               .selection
+                                               .selectedMediaItems,
+                                       window);
     } else {
       // Now playing
       var item = AlbumArt.getNowPlayingItem();
       if (item) {
-        getArtworkMediaList.add(item);
+        try {
+          var fetcherSet = Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
+                             .createInstance(Ci.sbIAlbumArtFetcherSet);
+          fetcherSet.fetchAlbumArtForMediaItem(item, this);
+        } catch (ex) {
+          Cu.reportError(ex);
+        }
       }
     }
-
-    if (!getArtworkMediaList.isEmpty) {
-      // Since we monitor the changes to primaryImageURL we will update if the
-      // image is found for the first selected item.
-      var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
-                             .createInstance(Ci.sbIAlbumArtScanner);
-      artworkScanner.scanListForArtwork(getArtworkMediaList);
-      SBJobUtils.showProgressDialog(artworkScanner, window, 0);
-    }
-
-    // Make sure to remove our list, the scanner will have a copy.
-    LibraryUtils.mainLibrary.remove(getArtworkMediaList);
   },
 
 
