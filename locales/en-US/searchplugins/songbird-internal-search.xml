@@ -1,6 +1,10 @@
+<!DOCTYPE opensearch [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd" >
+  %brandDTD;
+]>
 <SearchPlugin xmlns="http://www.mozilla.org/2006/browser/search/">
-<ShortName>Songbird</ShortName>
-<Description>Songbird Library Search</Description>
+<ShortName>&brandShortName;</ShortName>
+<Description>&brandShortName; Library Search</Description>
 <InputEncoding>UTF-8</InputEncoding>
 <Image width="16" height="16">chrome://songbird-branding/skin/logo_16.png</Image>
 <!-- HACK: 
@@ -17,7 +21,7 @@
      
      See searchHandler.js and sbSearch.xml for more information.
   -->
-<Url type="text/html" method="GET" template="http://songbirdnest.com/"/>
+<Url type="text/html" method="GET" template="http://0/this_URL_is_not_used"/>
 <!-- Engines tagged with songbird:internal are not sent to the web browser. -->
 <Tags>songbird:internal</Tags>
 <!-- This alias allows gSearchHandler to indentify the Songbird engine -->
