@@ -330,6 +330,7 @@ sbArticlesDataObserver::Observe(nsISupports* aSubject,
       gArticlesData->UnloadArticles();
       delete gArticlesData;
       gArticlesData = NULL;
+      gArticlesDataObserver.forget();
     }
   }
 
