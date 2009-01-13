@@ -107,7 +107,7 @@ nsresult sbArticlesData::RemoveObserver() {
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                    "Failed to remove shutdown observer");
 
-  gArticlesDataObserver.forget();
+  gArticlesDataObserver = NULL;
   
   return NS_OK;
 }
@@ -330,7 +330,6 @@ sbArticlesDataObserver::Observe(nsISupports* aSubject,
       gArticlesData->UnloadArticles();
       delete gArticlesData;
       gArticlesData = NULL;
-      gArticlesDataObserver.forget();
     }
   }
 
@@ -432,4 +431,3 @@ nsresult sbArticlesData::RemoveArticle(const nsAString & aInput,
   
   return NS_OK;
 }
-
