@@ -524,9 +524,6 @@ sbAlbumArtService::Initialize()
   rv = GetAlbumArtFetcherInfo();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Sort the album art fetcher info.
-  mFetcherInfoList.Sort(); 
-
   // Get the album art cache directory.
   rv = GetAlbumArtCacheDir();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -692,6 +689,9 @@ sbAlbumArtService::GetAlbumArtFetcherInfo()
                    NS_ERROR_OUT_OF_MEMORY);
   }
 
+  // Sort the album art fetcher info.
+  mFetcherInfoList.Sort(); 
+
   return NS_OK;
 }
 
@@ -722,6 +722,7 @@ sbAlbumArtService::UpdateAlbumArtFetcherInfo()
   }
 
   mFetcherInfoList.Sort();
+
   return NS_OK;
 }
 

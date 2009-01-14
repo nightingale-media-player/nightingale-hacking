@@ -154,12 +154,12 @@ private:
 
     // Defined for the Sort function on nsTArray
     PRBool operator<(const FetcherInfo& right) const {
-      return contractID.Equals(right.contractID);
+      return (priority < right.priority);
     };
     
     // This has to be defined for Sort as well, but is used for Searching.
     PRBool operator==(const FetcherInfo& right) const {
-      return (priority == right.priority);
+      return contractID.Equals(right.contractID);
     }
   };
 
