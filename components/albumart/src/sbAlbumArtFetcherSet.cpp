@@ -56,6 +56,7 @@
 #include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
+#include <nsThreadUtils.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -136,6 +137,8 @@ sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem
                           sbIAlbumArtListener* aListener)
 {
   TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem"));
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem is main thread only!");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aListener);
@@ -156,6 +159,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForMediaItem
 
   // Start with the first fetcher
   mFetcherIndex = 0;
+  mShutdown = PR_FALSE;
   rv = NextFetcher(aMediaItem);
   if (NS_FAILED(rv)) {
     FinishFetch(nsnull, aMediaItem);
@@ -172,11 +176,14 @@ NS_IMETHODIMP
 sbAlbumArtFetcherSet::Shutdown()
 {
   TRACE(("sbAlbumArtFetcherSet::Shutdown"));
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbAlbumArtFetcherSet::Shutdown is main thread only!");
   if (mFetcher) {
     // Shutdown the current fetcher
     mFetcher->Shutdown(); 
     mFetcher = nsnull;
   }
+  mShutdown = PR_TRUE;
   return NS_OK;
 }
 
@@ -315,6 +322,7 @@ sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
 
 sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
   mLocalOnly(PR_FALSE),
+  mShutdown(PR_FALSE),
   mListener(nsnull),
   mFetcherList(nsnull),
   mFetcherIndex(-1),
@@ -456,6 +464,8 @@ nsresult
 sbAlbumArtFetcherSet::NextFetcher(sbIMediaItem* aMediaItem)
 {
   TRACE(("sbAlbumArtFetcherSet::NextFetcher"));
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbAlbumArtFetcherSet::NextFetcher is main thread only!");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
@@ -464,6 +474,11 @@ sbAlbumArtFetcherSet::NextFetcher(sbIMediaItem* aMediaItem)
   if (mFetcher) {
     mFetcher->Shutdown();
     mFetcher = nsnull;
+  }
+  
+  // Check if we have been shutdown
+  if (mShutdown) {
+    return NS_OK;
   }
   
   // Try the next fetcher
