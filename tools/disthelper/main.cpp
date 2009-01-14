@@ -98,14 +98,32 @@ int main(int argc, LPTSTR *argv) {
   IniEntry_t::const_iterator it, end = iniFile[section].end();
   
   // Always copy the distribution.ini / application.ini files to the appdir
-  // don't abort if this fails
-  result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
-  if (result) {
-    LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
+  // if the source appears newer, but don't abort if this fails
+  bool copyDistIni = true;
+  IniFile_t destDistIni;
+  std::string destDistPath = GetLeafName(ConvertUTFnToUTF8(distIni));
+  destDistPath.insert(0, "$/distribution/");
+  result = ReadIniFile(ResolvePathName(destDistPath).c_str(),
+                       destDistIni);
+  if (result == DH_ERROR_OK) {
+    std::string oldVersion = destDistIni["global"]["version"],
+                newVersion = iniFile["global"]["version"];
+    LogMessage("Checking distribution.ini versions... old=[%s] new=[%s]",
+               oldVersion.c_str(), newVersion.c_str());
+    if (VersionLessThan()(newVersion, oldVersion)) {
+      LogMessage("new version is older, not copying");
+      copyDistIni = false;
+    }
   }
-  result = CommandCopyFile(ConvertUTFnToUTF8(appIni), "$/");
-  if (result) {
-    LogMessage("Failed to copy application.ini file %S", appIni.c_str());
+  if (copyDistIni) {
+    result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
+    if (result) {
+      LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
+    }
+    result = CommandCopyFile(ConvertUTFnToUTF8(appIni), "$/");
+    if (result) {
+      LogMessage("Failed to copy application.ini file %S", appIni.c_str());
+    }
   }
 
   for (it = iniFile[section].begin(); it != end; ++it) {

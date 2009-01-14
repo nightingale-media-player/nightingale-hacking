@@ -50,10 +50,63 @@
 
 #include <map>
 #include <string>
+#include <algorithm>
+
+#include <debug.h>
 
 /* all strings are assumed to be UTF-8 */
-typedef std::map<std::string, std::string> IniEntry_t;
-typedef std::map<std::string, IniEntry_t> IniFile_t;
+class LowerCaseCompare {
+public:
+  bool operator()(const std::string& aLeft, const std::string& aRight) {
+    return lexicographical_compare(aLeft.begin(), aLeft.end(),
+                                   aRight.begin(), aRight.end(),
+                                   LowerCaseCompare());
+  }
+  /* note: this is not expected to deal with more than simple English
+     (unaccented Latin alphabet) */
+  bool operator()(const char& aLeft, const char& aRight) {
+    return tolower(aLeft) < tolower(aRight);
+  }
+};
+typedef std::map<std::string, std::string, LowerCaseCompare> IniEntry_t;
+typedef std::map<std::string, IniEntry_t, LowerCaseCompare> IniFile_t;
+
+class VersionLessThan {
+public:
+  bool operator()(const std::string& aLeft, const std::string& aRight) {
+    std::string::const_iterator leftBegin = aLeft.begin(), leftEnd,
+                                rightBegin = aRight.begin(), rightEnd;
+    const char *leftData = aLeft.c_str(),
+               *rightData = aRight.c_str();
+    do {
+      unsigned long leftVal, rightVal;
+      leftVal = strtoul(leftData + distance(aLeft.begin(), leftBegin), NULL, 10);
+      rightVal = strtoul(rightData + distance(aRight.begin(), rightBegin), NULL, 10);
+      DebugMessage("version parts: %s (%ul) / %s (%ul)",
+                   leftData + distance(aLeft.begin(), leftBegin),
+                   leftVal,
+                   rightData + distance(aRight.begin(), rightBegin),
+                   rightVal);
+      if (leftVal != rightVal) {
+        return (leftVal < rightVal);
+      }
+      leftEnd = find(leftBegin, aLeft.end(), '.');
+      rightEnd = find(rightBegin, aRight.end(), '.');
+      if (leftEnd != aLeft.end()) {
+        leftBegin = ++leftEnd;
+      } else {
+        leftBegin = leftEnd;
+      }
+      if (rightEnd != aRight.end()) {
+        rightBegin = ++rightEnd;
+      } else {
+        rightBegin = rightEnd;
+      }
+    } while (leftEnd != aLeft.end() || rightEnd != aRight.end());
+    DebugMessage("EOF");
+    return false;
+  }
+};
 
 /**
  * This function reads in entries in a .ini file

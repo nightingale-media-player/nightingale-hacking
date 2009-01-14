@@ -108,4 +108,9 @@ tstring GetDistributionDirectory(const TCHAR* aPath = NULL);
  */
 tstring ResolvePathName(std::string aSrc);
 
+/**
+ * Finds the leaf name of a path.  Equivalent to a basename() call.
+ */
+std::string GetLeafName(std::string aSrc);
+
 #endif /* _DISTHERLPER_COMMANDS_H__ */

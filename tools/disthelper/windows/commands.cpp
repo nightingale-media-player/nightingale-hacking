@@ -233,3 +233,16 @@ tstring GetDistributionDirectory(const TCHAR *aPath) {
   }
   return gDistributionDirectory;
 }
+
+std::string GetLeafName(std::string aSrc) {
+  std::string::size_type slash, backslash;
+  backslash = aSrc.rfind('\\');
+  if (backslash != std::string::npos) {
+    return aSrc.substr(backslash);
+  }
+  slash = aSrc.rfind('/');
+  if (slash != std::string::npos) {
+    return aSrc.substr(slash);
+  }
+  return aSrc;
+}
