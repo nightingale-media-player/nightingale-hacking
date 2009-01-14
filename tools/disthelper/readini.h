@@ -57,14 +57,14 @@
 /* all strings are assumed to be UTF-8 */
 class LowerCaseCompare {
 public:
-  bool operator()(const std::string& aLeft, const std::string& aRight) {
+  bool operator()(const std::string& aLeft, const std::string& aRight) const {
     return lexicographical_compare(aLeft.begin(), aLeft.end(),
                                    aRight.begin(), aRight.end(),
                                    LowerCaseCompare());
   }
   /* note: this is not expected to deal with more than simple English
      (unaccented Latin alphabet) */
-  bool operator()(const char& aLeft, const char& aRight) {
+  bool operator()(const char& aLeft, const char& aRight) const {
     return tolower(aLeft) < tolower(aRight);
   }
 };
@@ -73,7 +73,7 @@ typedef std::map<std::string, IniEntry_t, LowerCaseCompare> IniFile_t;
 
 class VersionLessThan {
 public:
-  bool operator()(const std::string& aLeft, const std::string& aRight) {
+  bool operator()(const std::string& aLeft, const std::string& aRight) const {
     std::string::const_iterator leftBegin = aLeft.begin(), leftEnd,
                                 rightBegin = aRight.begin(), rightEnd;
     const char *leftData = aLeft.c_str(),
