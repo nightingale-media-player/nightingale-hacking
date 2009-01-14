@@ -60,6 +60,7 @@
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+#include <sbStringBundle.h>
 
 #define PROPERTY_KEY_DATABASEFILE "databaseFile"
 
@@ -515,35 +516,17 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
 
   PRInt32 promptResult;
 
-  nsCOMPtr<nsIStringBundleService> stringBundleService =
-    do_GetService(NS_STRINGBUNDLE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // get dialog strings
-  nsCOMPtr<nsIStringBundle> bundle;
-  rv = stringBundleService->CreateBundle("chrome://songbird/locale/songbird.properties", 
-                                         getter_AddRefs(bundle));
-  NS_ENSURE_SUCCESS(rv, rv);
+  sbStringBundle bundle;
 
-  nsAutoString dialogTitle;
-  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.title").get(),
-                                 getter_Copies(dialogTitle));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString dialogTitle = bundle.Get("corruptdatabase.dialog.title");
 
-  nsAutoString dialogText;
-  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.text").get(),
-                                 getter_Copies(dialogText));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString dialogText = bundle.Get("corruptdatabase.dialog.text");
 
-  nsAutoString deleteText;
-  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.buttons.delete").get(),
-                                 getter_Copies(deleteText));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString deleteText = bundle.Get("corruptdatabase.dialog.buttons.delete");
 
-  nsAutoString continueText;
-  rv = bundle->GetStringFromName(NS_LITERAL_STRING("corruptdatabase.dialog.buttons.cancel").get(),
-                                 getter_Copies(continueText));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString continueText =
+                 bundle.Get("corruptdatabase.dialog.buttons.cancel");
 
 
   // prompt.

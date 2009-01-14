@@ -60,8 +60,33 @@ AppendInt(nsAString& str, PRUint64 val)
   str.Append(NS_ConvertASCIItoUTF16(buf));
 }
 
+PRInt64
+nsString_ToInt64(const nsAString& str, nsresult* rv)
+{
+  PRInt64 result;
+  NS_LossyConvertUTF16toASCII narrow(str);
+  PRInt32 converted = PR_sscanf(narrow.get(), "%lld", &result);
+  if (converted != 1) {
+    if (rv) {
+      *rv = NS_ERROR_INVALID_ARG;
+    }
+    return 0;
+  }
+
+#ifdef DEBUG
+  nsString check;
+  AppendInt(check, result);
+  NS_ASSERTION(check.Equals(str), "Conversion failed");
+#endif
+
+  if (rv) {
+    *rv = NS_OK;
+  }
+  return result;
+}
+
 PRUint64
-ToInteger64(const nsAString& str, nsresult* rv)
+nsString_ToUint64(const nsAString& str, nsresult* rv)
 {
   PRUint64 result;
   NS_LossyConvertUTF16toASCII narrow(str);

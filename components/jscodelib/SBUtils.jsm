@@ -37,7 +37,7 @@
 //
 //------------------------------------------------------------------------------
 
-EXPORTED_SYMBOLS = [ "SBUtils" ];
+EXPORTED_SYMBOLS = [ "SBUtils", "SBFilteredEnumerator" ];
 
 
 //------------------------------------------------------------------------------
@@ -50,6 +50,16 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 const Cu = Components.utils;
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird utilities imports.
+//
+//------------------------------------------------------------------------------
+
+// Mozilla imports.
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -76,4 +86,152 @@ var SBUtils = {
   }
 };
 
+
+//------------------------------------------------------------------------------
+//
+// Filtered enumerator services.
+//
+//   These services provide support for adding a filter to an nsIEnumerator.
+//
+// Example:
+//
+// // Return an enumerator that contains all even elements of aEnumerator.
+// function GetEvenEnumerator(aEnumerator) {
+//   var elementCount = 0;
+//   var func = function(aElement) {
+//     var isEven = (elementCount % 2) == 0 ? true : false;
+//     elementCount++;
+//     return isEven;
+//   }
+//
+//   return new SBFilteredEnumerator(aEnumerator, func);
+// }
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Construct a filtered enumerator for the enumerator specified by aEnumerator
+ * using the filter function specified by aFilterFunc.  The filter function is
+ * provided an element from the base enumerator and should return true if the
+ * element should not be filtered out.
+ *
+ * \param aEnumerator           Base enumerator to filter.
+ * \param aFilterFunc           Filter function.
+ */
+
+function SBFilteredEnumerator(aEnumerator, aFilterFunc)
+{
+  this._enumerator = aEnumerator;
+  this._filterFunc = aFilterFunc;
+}
+
+// Define to class.
+SBFilteredEnumerator.prototype = {
+  // Set the constructor.
+  constructor: SBFilteredEnumerator,
+
+  //
+  // Internal object fields.
+  //
+  //   _enumerator              Base enumerator.
+  //   _filterFunc              Filter function to apply to base enumerator.
+  //   _nextElement             Next available element.
+  //
+
+  _enumerator: null,
+  _filterFunc: null,
+  _nextElement: null,
+
+
+  //----------------------------------------------------------------------------
+  //
+  // nsISimpleEnumerator services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Called to determine whether or not the enumerator has
+   * any elements that can be returned via getNext(). This method
+   * is generally used to determine whether or not to initiate or
+   * continue iteration over the enumerator, though it can be
+   * called without subsequent getNext() calls. Does not affect
+   * internal state of enumerator.
+   *
+   * @see getNext()
+   * @return PR_TRUE if there are remaining elements in the enumerator.
+   *         PR_FALSE if there are no more elements in the enumerator.
+   */
+
+  hasMoreElements: function SBFilteredEnumerator_hasMoreElements() {
+    if (this._getNext())
+      return true;
+  },
+
+
+  /**
+   * Called to retrieve the next element in the enumerator. The "next"
+   * element is the first element upon the first call. Must be
+   * pre-ceeded by a call to hasMoreElements() which returns PR_TRUE.
+   * This method is generally called within a loop to iterate over
+   * the elements in the enumerator.
+   *
+   * @see hasMoreElements()
+   * @return NS_OK if the call succeeded in returning a non-null
+   *               value through the out parameter.
+   *         NS_ERROR_FAILURE if there are no more elements
+   *                          to enumerate.
+   * @return the next element in the enumeration.
+   */
+
+  getNext: function SBFilteredEnumerator_getNext() {
+    // Get the next element.  Throw an exception if none is available.
+    var nextElement = this._getNext();
+    if (!nextElement)
+      throw Components.results.NS_ERROR_FAILURE;
+
+    // Consume the next element and return it.
+    this._nextElement = null;
+    return nextElement;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // nsISupports services.
+  //
+  //----------------------------------------------------------------------------
+
+  QueryInterface: XPCOMUtils.generateQI([ Ci.nsISimpleEnumerator ]),
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Get and return the next element that passes the filter.  Store the element
+   * internally and continue returning it until it's consumed.
+   *
+   * \return                    Next available element.
+   */
+
+  _getNext: function SBFilteredEnumerator__getNext() {
+    // If next element is already available, simply return it.
+    if (this._nextElement)
+      return this._nextElement;
+
+    // Get the next element that passes the filter.
+    while (this._enumerator.hasMoreElements()) {
+      var nextElement = this._enumerator.getNext();
+      if (this._filterFunc(nextElement)) {
+        this._nextElement = nextElement;
+        break;
+      }
+    }
+
+    return this._nextElement;
+  }
+}
 

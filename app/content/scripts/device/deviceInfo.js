@@ -105,7 +105,8 @@ var DIW = {
 
     // Initialize object fields.
     this._device = this._widget.device;
-
+    this._deviceProperties = this._device.properties;
+    
     // Show specified elements.
     this._showElements();
 
@@ -129,7 +130,7 @@ var DIW = {
    */
 
   finalize: function DIW_finalize() {
-    // Finalize the pollsing services.
+    // Finalize the polling services.
     this._pollingFinalize();
     
     // Stop listening
@@ -526,10 +527,11 @@ var DIW = {
   // Device info services fields.
   //
   //   _device                  sbIDevice object.
-  //
+  //   _deviceProperties        Cache properties to avoid costly garbage
 
   _device: null,
 
+  _deviceProperties : null, 
 
   /**
    * \brief Finalize the device services.
@@ -553,7 +555,7 @@ var DIW = {
   
   _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
     try {
-      return this._device.properties.properties.getPropertyAsAString(aPropertyName);
+      return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
     } catch (err) {
       return aDefault;
     }
@@ -567,7 +569,7 @@ var DIW = {
 
   _getDeviceModel: function DIW__getDeviceModel() {
     try {
-      return this._device.properties.modelNumber;
+      return this._deviceProperties.modelNumber;
     } catch (err) {
       return SBString("device.info.unknown");
     }
@@ -598,7 +600,7 @@ var DIW = {
 
   _getDeviceFriendlyName: function DIW__getDeviceFriendlyName() {
     try {
-      return this._device.properties.friendlyName;
+      return this._deviceProperties.friendlyName;
     } catch (err) {
       return SBString("device.info.unknown");
     }
@@ -613,7 +615,7 @@ var DIW = {
 
   _getDeviceSerialNumber: function DIW__getDeviceSerialNumber() {
     try {
-      return this._device.properties.serialNumber;
+      return this._deviceProperties.serialNumber;
     } catch (err) {
       return SBString("device.info.unknown");
     }
@@ -628,7 +630,7 @@ var DIW = {
 
   _getDeviceVendor: function DIW__getDeviceVendor() {
     try {
-      return this._device.properties.vendorName;
+      return this._deviceProperties.vendorName;
     } catch (err) {
       return SBString("device.info.unknown");
     }
@@ -763,7 +765,7 @@ var DIW = {
 
   _getDeviceIcon: function DIW__getDeviceIcon() {
     try {
-      var uri = this._device.properties.iconUri;
+      var uri = this._deviceProperties.iconUri;
       var spec = uri.spec;
       if (uri.schemeIs("file") && /\.ico$/(spec)) {
         // try to use a suitably sized image

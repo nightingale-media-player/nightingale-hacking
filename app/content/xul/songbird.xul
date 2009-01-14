@@ -44,13 +44,7 @@
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-
 >
-  <!-- Sometimes we need to convince the DTD files to not be stupid
-  <script type="application/x-javascript"   
-  src="chrome://songbird/content/scripts/languageScan.js" />
-   -->
-
   <!-- Scripts needed by the inline js that loads/runs before onload() -->
   <script type="application/x-javascript" 
     src="chrome://global/content/globalOverlay.js"/>  
@@ -80,19 +74,11 @@
       <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" hidden="true"/>
     </menubar>
 
-    <spacer height="5"/>
     <hbox flex="1" id="video-box">
       <!-- video-box is the element that mediacores will use as their parent window
-           for their own output window. -->
+         for their own output window. -->
     </hbox>
-    <spacer height="5"/>
-    <hbox id="controls">
-      <spacer width="5"/>
-      <sb-mini-player-controls flex="1"/>
-      <sb-player-jumpto-button id="video_btn_jump" class="miniplayer"/>    
-      <sb-player-fullscreen-button id="video_btn_fullscreen" class="miniplayer"/>    
-      <spacer width="5"/>
-    </hbox>
+
   </sb-sys-outer-frame>
 
 
@@ -104,10 +90,6 @@
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/playerOpen.js"/>
    
-  <!-- Load the core wrappers (GREET THE NEW BOSS) -->
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/coreBase.js"/>
-
   <!-- XXXX TODO: Migrate the "background scripts" -->
   <!--script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/watchFolders.js"/-->

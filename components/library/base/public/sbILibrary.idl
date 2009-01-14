@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(a297421b-1986-46ff-8d03-96c310a0125b)]
+[scriptable, uuid(9153d1d0-ed79-4bc2-a3a6-259cf13781c4)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -162,6 +162,15 @@ interface sbILibrary : sbIMediaList
    * \return The requested media item
    */
   sbIMediaItem getMediaItem(in AString aGuid);
+
+  /**
+   * \brief Search for and return a duplicate of the media item specified by
+   *        aMediaItem.
+   *
+   * \param aMediaItem Media item for which to get duplicate.
+   * \return Duplicate media item or null if no duplicates.
+   */
+  sbIMediaItem getDuplicate(in sbIMediaItem aMediaItem);
 
   /**
    * \brief A list of available media list types.

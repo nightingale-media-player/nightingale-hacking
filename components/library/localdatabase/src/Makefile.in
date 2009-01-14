@@ -82,6 +82,7 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/mediacore/base/public \
                $(DEPTH)/components/metrics/public \
+               $(DEPTH)/components/moz/strings/components/public \
                $(DEPTH)/components/playlistplayback/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/sqlbuilder/public \
@@ -134,8 +135,8 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
+  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(NULL)
 
 ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))

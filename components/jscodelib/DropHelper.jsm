@@ -59,6 +59,8 @@ const Cu = Components.utils;
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/SBUtils.jsm");
  
 
 /*
@@ -624,11 +626,24 @@ var InternalDropHandler = {
                          metrics_totype, 
                          context.count);
 
+      // Create a media item duplicate enumerator filter to count the number of
+      // duplicate items and to remove them from the enumerator if the target is
+      // a library.
+      var dupFilter = new LibraryUtils.EnumeratorDuplicateFilter
+                                         (targetList.library);
+      if (targetList instanceof this._Ci.sbILibrary) {
+        dupFilter.removeDuplicates = true;
+      }
+
+      // Create a filtered item enumerator.
+      var func = function(aElement) { return dupFilter.filter(aElement); };
+      var filteredItems = new SBFilteredEnumerator(items, func);
+
       // Create an enumerator that wraps the enumerator we were handed.
       // We use this to set downloadStatusTarget and to notify the onFirstMediaItem
       // listener.
       var unwrapper = {
-        enumerator: items,
+        enumerator: filteredItems,
         first: true,
 
         hasMoreElements : function() {
@@ -659,10 +674,21 @@ var InternalDropHandler = {
               targetList instanceof this._Ci.sbIOrderableMediaList) {
         targetList.insertSomeBefore(unwrapper, aDropPosition);
       } else {
-        targetList.addSome(items);
+        targetList.addSome(unwrapper);
       }
       
-      this._dropComplete(aListener, targetList, context.count, 0, context.count, 0);
+      var totalImported = dupFilter.mediaItemCount - dupFilter.duplicateCount;
+      var totalDups = dupFilter.duplicateCount;
+      var totalInserted = dupFilter.mediaItemCount;
+      if (dupFilter.removeCopies)
+        totalInserted = totalImported;
+
+      this._dropComplete(aListener,
+                         targetList,
+                         totalImported,
+                         totalDups,
+                         totalInserted,
+                         0);
     }
   },
 

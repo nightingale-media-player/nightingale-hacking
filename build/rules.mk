@@ -112,6 +112,11 @@ targets += lib_link
 clean_targets += lib_clean
 endif
 
+ifdef SIMPLE_PROGRAM
+targets += exe_link
+clean_targets += exe_clean
+endif
+
 ifdef C_SRCS
 targets += c_compile
 clean_targets += c_clean
@@ -352,10 +357,7 @@ ifdef CPP_SRCS
 ifdef CPP_FLAGS
 compile_flags = $(CPP_FLAGS)
 else
-compile_flags = $(CXXFLAGS)
-ifdef CPP_EXTRA_FLAGS
-compile_flags += $(CPP_EXTRA_FLAGS)
-endif
+compile_flags = $(CXXFLAGS) $(CPP_EXTRA_FLAGS)
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
@@ -388,10 +390,13 @@ compiler_objects = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 $(compiler_objects) :%$(OBJ_SUFFIX): %.cpp
 	$(CYGWIN_WRAPPER) $(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $<
 
+%.i: %.cpp
+	$(CYGWIN_WRAPPER) $(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $(CFLAGS_PREPROCESS) $<
+
 cpp_compile: $(compiler_objects)
 
 cpp_clean:
-	$(CYGWIN_WRAPPER) $(RM) -f $(compiler_objects) vc70.pdb vc71.pdb
+	$(CYGWIN_WRAPPER) $(RM) -f $(compiler_objects) $(COMPILER_GARBAGE)
 
 .PHONY : cpp_compile cpp_clean
 
@@ -642,6 +647,91 @@ lib_clean:
 
 endif #STATIC_LIB
 
+#-----------------------
+
+# SIMPLE_PROGRAM - the name of a dll to link
+# SIMPLE_PROGRAM_OBJS - the object files to link into the dll
+# SIMPLE_PROGRAM_IMPORT_PATHS - a list of paths to search for libs
+# SIMPLE_PROGRAM_IMPORTS - an override to the default list of libs to link
+# SIMPLE_PROGRAM_EXTRA_IMPORTS - an additional list of libs to link
+# SIMPLE_PROGRAM_STATIC_IMPORTS - a list of static libs to link
+# SIMPLE_PROGRAM_FLAGS - an override to the default linker flags
+# SIMPLE_PROGRAM_EXTRA_FLAGS - a list of additional flags to pass to the linker
+
+ifdef SIMPLE_PROGRAM
+
+ifneq ($(STATIC_LIB)$(DYNAMIC_LIB),)
+$(error SIMPLE_PROGRAM cannot be specified together with DYNAMIC_LIB or STATIC_LIB)
+endif # STATIC_LIB || DYNAMIC_LIB
+
+CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
+
+ifdef SIMPLE_PROGRAM_FLAGS
+linker_flags = $(SIMPLE_PROGRAM_FLAGS)
+else
+
+linker_flags = $(LDFLAGS) $(LDFLAGS_BIN)
+ifdef SIMPLE_PROGRAM_EXTRA_FLAGS
+linker_flags += $(SIMPLE_PROGRAM_EXTRA_FLAGS)
+endif
+
+endif # SIMPLE_PROGRAM_FLAGS
+
+ifdef SIMPLE_PROGRAM_IMPORTS
+linker_imports_temp1 = $(SIMPLE_PROGRAM_IMPORTS)
+else
+linker_imports_temp1 = $(DEFAULT_LIBS)
+ifdef SIMPLE_PROGRAM_EXTRA_IMPORTS
+linker_imports_temp1 += $(SIMPLE_PROGRAM_EXTRA_IMPORTS)
+endif
+endif
+
+linker_objs = $(SIMPLE_PROGRAM_OBJS)
+
+ifeq (windows,$(SB_PLATFORM))
+ifdef SIMPLE_PROGRAM_STATIC_IMPORTS
+linker_imports_temp1 += $(SIMPLE_PROGRAM_STATIC_IMPORTS)
+endif
+else
+ifdef SIMPLE_PROGRAM_STATIC_IMPORTS
+static_objs = $(addsuffix $(LIB_SUFFIX),$(SIMPLE_PROGRAM_STATIC_IMPORTS))
+linker_objs += $(static_objs)
+endif
+endif
+
+linker_imports_temp2 = $(addprefix $(LDFLAGS_IMPORT_PREFIX), $(linker_imports_temp1))
+linker_imports = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), $(linker_imports_temp2))
+
+ifdef SIMPLE_PROGRAM_IMPORT_PATHS
+linker_paths_temp = $(addprefix $(LDFLAGS_PATH_PREFIX), \
+                      $(foreach dir,$(SIMPLE_PROGRAM_IMPORT_PATHS),$(call normalizepath,$(dir))))
+linker_paths = $(addsuffix $(LDFLAGS_PATH_SUFFIX), $(linker_paths_temp))
+endif
+
+linker_out = $(LDFLAGS_OUT_PREFIX)$(SIMPLE_PROGRAM)$(LDFLAGS_OUT_SUFFIX)
+
+ranlib_cmd =
+ifdef FORCE_RANLIB
+	ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
+endif
+
+exe_link: $(SIMPLE_PROGRAM_OBJS)
+	$(ranlib_cmd)
+	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
+	$(CYGWIN_WRAPPER) $(CHMOD) +x $(SIMPLE_PROGRAM)
+
+exe_clean:
+	$(CYGWIN_WRAPPER) $(RM) -f $(SIMPLE_PROGRAM) \
+	      $(SIMPLE_PROGRAM:$(BIN_SUFFIX)=.pdb) \
+	      $(SIMPLE_PROGRAM:$(BIN_SUFFIX)=.lib) \
+	      $(SIMPLE_PROGRAM:$(BIN_SUFFIX)=.exp) \
+              $(SIMPLE_PROGRAM).manifest \
+	      $(NULL)
+
+.PHONY : exe_clean
+
+endif #SIMPLE_PROGRAM
+
 #------------------------------------------------------------------------------
 # Rules for C compilation
 #------------------------------------------------------------------------------
@@ -690,7 +780,7 @@ $(c_compiler_objects) :%$(OBJ_SUFFIX): %.c
 c_compile: $(c_compiler_objects)
 
 c_clean:
-	$(CYGWIN_WRAPPER) $(RM) -f $(c_compiler_objects) vc70.pdb vc71.pdb
+	$(CYGWIN_WRAPPER) $(RM) -f $(c_compiler_objects) $(COMPILER_GARBAGE)
 
 .PHONY : c_compile c_clean
 
@@ -881,7 +971,7 @@ endif #CLONEDIR
 #-----------------------
 
 ifdef SONGBIRD_DIST
-copy_sb_dist:
+copy_sb_dist: $(SONGBIRD_DIST)
 ifeq (,$(wildcard $(SONGBIRD_DISTDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
 endif

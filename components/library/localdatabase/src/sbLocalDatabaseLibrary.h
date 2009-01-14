@@ -293,6 +293,10 @@ private:
   nsresult AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
                                   sbIMediaItem** _retval);
 
+  nsresult GetSimpleMediaListCopyProperties
+                          (sbIMediaList*      aMediaList,
+                           sbIPropertyArray** aSimpleProperties);
+
   nsresult GetContainingLists(sbMediaItemArray* aItems,
                               sbMediaListArray* aLists,
                               sbMediaItemToListsMap* aMap);

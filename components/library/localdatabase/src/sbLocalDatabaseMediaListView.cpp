@@ -600,7 +600,7 @@ sbLocalDatabaseMediaListView::GetIndexForViewItemUID(const nsAString& aViewItemU
 
   nsresult rv;
 
-  PRUint64 rowid = ToInteger64(aViewItemUID, &rv);
+  PRUint64 rowid = nsString_ToUint64(aViewItemUID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mArray->GetIndexByRowid(rowid, _retval);

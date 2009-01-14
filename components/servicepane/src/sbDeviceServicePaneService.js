@@ -69,6 +69,7 @@ function logcall(parentArgs) {
  */
 function sbDeviceServicePane() {
   this._servicePane = null;
+  this._libraryServicePane = null;
 
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
@@ -92,8 +93,10 @@ sbDeviceServicePane.prototype.servicePaneInit =
 function sbDeviceServicePane_servicePaneInit(sps) {
   //logcall(arguments);
 
-  // keep track of the service pane service
+  // keep track of the service pane services
   this._servicePane = sps;
+  this._libraryServicePane = Cc["@songbirdnest.com/servicepane/library;1"]
+                               .getService(Ci.sbILibraryServicePaneService);
 
   // load the device context menu document
   this._deviceContextMenuDoc =
@@ -105,6 +108,7 @@ sbDeviceServicePane.prototype.shutdown =
 function sbDeviceServicePane_shutdown() {
   // release object references
   this._servicePane = null;
+  this._libraryServicePane = null;
   this._deviceContextMenuDoc = null;
 }
 
@@ -121,11 +125,21 @@ function sbDeviceServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow)
   if (fillDefaultContextMenu != "true")
     return;
 
+  // Get the device node type.
+  var deviceNodeType = aNode.getAttributeNS(DEVICESP_NS, "deviceNodeType");
+
   // Import device context menu items into the context menu.
-  DOMUtils.importChildElements(aContextMenu,
-                               this._deviceContextMenuDoc,
-                               "device_context_menu_items",
-                               { "device-id": deviceID });
+  if (deviceNodeType == "device") {
+    DOMUtils.importChildElements(aContextMenu,
+                                 this._deviceContextMenuDoc,
+                                 "device_context_menu_items",
+                                 { "device-id": deviceID });
+  } else if (deviceNodeType == "library") {
+    DOMUtils.importChildElements(aContextMenu,
+                                 this._deviceContextMenuDoc,
+                                 "device_library_context_menu_items",
+                                 { "device-id": deviceID });
+  }
 }
 
 sbDeviceServicePane.prototype.fillNewItemMenu =
@@ -201,8 +215,8 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   // Refresh the information just in case it is supposed to change
   node.contractid = CONTRACTID;
   node.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
+  node.setAttributeNS(DEVICESP_NS, "deviceNodeType", "device");
   node.setAttributeNS(SP, "Weight", DEVICE_NODE_WEIGHT);
-  node.contractid = CONTRACTID;
   node.editable = false;
   node.properties = "device";
 
@@ -226,6 +240,30 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
   return node;
 }
 
+sbDeviceServicePane.prototype.createLibraryNodeForDevice =
+function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
+  // Create the library node.
+  var libraryNode = this._libraryServicePane.createNodeForLibrary(aLibrary);
+  if (!libraryNode)
+    return null;
+
+  // Set up the device library node info.
+  libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
+  libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
+
+  // Move the library node to be the first child of the device node.
+  var deviceNode = this.getNodeForDevice(aDevice);
+  if (deviceNode) {
+    var firstChild = deviceNode.firstChild;
+    if (!firstChild)
+      deviceNode.appendChild(libraryNode);
+    else if (firstChild.id != libraryNode.id)
+      deviceNode.insertBefore(libraryNode, firstChild);
+  }
+
+  return libraryNode;
+}
+
 sbDeviceServicePane.prototype.getNodeForDevice =
 function sbDeviceServicePane_getNodeForDevice(aDevice) {
   // Get the Node.
@@ -237,13 +275,9 @@ sbDeviceServicePane.prototype.setFillDefaultContextMenu =
 function sbDeviceServicePane_setFillDefaultContxtMenu(aNode,
                                                       aEnabled) {
   if (aEnabled) {
-    aNode.setAttributeNS("http://songbirdnest.com/rdf/device-servicepane#",
-                         "fillDefaultContextMenu",
-                         "true");
+    aNode.setAttributeNS(DEVICESP_NS, "fillDefaultContextMenu", "true");
   } else {
-    aNode.setAttributeNS("http://songbirdnest.com/rdf/device-servicepane#",
-                         "fillDefaultContextMenu",
-                         "false");
+    aNode.setAttributeNS(DEVICESP_NS, "fillDefaultContextMenu", "false");
   }
 }
 

@@ -250,7 +250,7 @@ sbMediacoreManager::Init()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreManager::PreShutdown()
 {
   TRACE(("sbMediacoreManager[0x%x] - PreShutdown", this));
@@ -260,7 +260,7 @@ sbMediacoreManager::PreShutdown()
 
   if(mPrimaryCore) {
     nsCOMPtr<sbIMediacoreStatus> status;
-    
+
     nsresult rv = GetStatus(getter_AddRefs(status));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -281,7 +281,7 @@ sbMediacoreManager::PreShutdown()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreManager::Shutdown()
 {
   TRACE(("sbMediacoreManager[0x%x] - Shutdown", this));
@@ -289,16 +289,22 @@ sbMediacoreManager::Shutdown()
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = mSequencer->Stop();
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to stop sequencer.");
+  nsresult rv;
+  if (mSequencer) {
+    rv = mSequencer->Stop();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to stop sequencer.");
+    mSequencer = nsnull;
+  }
 
-  mSequencer = nsnull;
+  if (mDataRemoteFaceplateVolume) {
+    rv = mDataRemoteFaceplateVolume->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteFaceplateVolume->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDataRemoteFaceplateMute->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteFaceplateMute) {
+    rv = mDataRemoteFaceplateMute->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<nsIMutableArray> mutableArray =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -316,7 +322,7 @@ sbMediacoreManager::Shutdown()
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = core->Shutdown();
-    NS_ASSERTION(NS_SUCCEEDED(rv), 
+    NS_ASSERTION(NS_SUCCEEDED(rv),
       "Failed to Shutdown a Mediacore. This may cause problems during final shutdown.");
   }
 
@@ -427,10 +433,10 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 
     nsString mediacoreInstanceName;
     GenerateInstanceName(mediacoreInstanceName);
-    
+
     nsCOMPtr<sbIMediacore> mediacore;
-    rv = CreateMediacoreWithFactory(factory, 
-                                    mediacoreInstanceName, 
+    rv = CreateMediacoreWithFactory(factory,
+                                    mediacoreInstanceName,
                                     getter_AddRefs(mediacore));
 #if defined(DEBUG)
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to create mediacore.");
@@ -472,14 +478,14 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
 // sbBaseMediacoreVolumeControl overrides
 // ----------------------------------------------------------------------------
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
 {
   nsString nullString;
   nullString.SetIsVoid(PR_TRUE);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  mDataRemoteFaceplateVolume = 
+  mDataRemoteFaceplateVolume =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -506,11 +512,11 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
     printf("[sbMediacoreManager] - Initializing volume from data remote\n\tVolume: %s\n",
            volStr.BeginReading());
 #endif
-   
+
   rv = SetVolumeDataRemote(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mDataRemoteFaceplateMute = 
+  mDataRemoteFaceplateMute =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -542,7 +548,7 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMediacoreManager::OnSetMute(PRBool aMute)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -554,7 +560,7 @@ sbMediacoreManager::OnSetMute(PRBool aMute)
     nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
       do_QueryInterface(mPrimaryCore, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     mon.Exit();
 
     rv = volumeControl->SetMute(aMute);
@@ -570,11 +576,11 @@ sbMediacoreManager::OnSetMute(PRBool aMute)
   return NS_OK;
 }
 
-/*virtual*/ nsresult 
+/*virtual*/ nsresult
 sbMediacoreManager::OnSetVolume(double aVolume)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
@@ -584,7 +590,7 @@ sbMediacoreManager::OnSetVolume(double aVolume)
     nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
       do_QueryInterface(mPrimaryCore, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     mon.Exit();
 
     rv = volumeControl->SetVolume(aVolume);
@@ -600,7 +606,7 @@ sbMediacoreManager::OnSetVolume(double aVolume)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreManager::SetVolumeDataRemote(PRFloat64 aVolume)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -612,7 +618,7 @@ sbMediacoreManager::SetVolumeDataRemote(PRFloat64 aVolume)
   // We have to replace the decimal point character with '.' so that
   // parseFloat in JS still understands that this number is a floating point
   // number. The JS Standard dictates that parseFloat _ONLY_ supports '.' as
-  // it's decimal point character. 
+  // it's decimal point character.
   volume[1] = '.';
 
   NS_ConvertUTF8toUTF16 volumeStr(volume);
@@ -763,7 +769,7 @@ sbMediacoreManager::GetCapabilities(
 }
 
 NS_IMETHODIMP
-sbMediacoreManager::GetStatus(sbIMediacoreStatus * *aStatus) 
+sbMediacoreManager::GetStatus(sbIMediacoreStatus * *aStatus)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetStatus", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -771,7 +777,7 @@ sbMediacoreManager::GetStatus(sbIMediacoreStatus * *aStatus)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
-  nsCOMPtr<sbIMediacoreStatus> status = 
+  nsCOMPtr<sbIMediacoreStatus> status =
     do_QueryInterface(mSequencer, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -790,7 +796,7 @@ sbMediacoreManager::GetSequencer(
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
-  nsCOMPtr<sbIMediacoreSequencer> sequencer = 
+  nsCOMPtr<sbIMediacoreSequencer> sequencer =
     do_QueryInterface(mSequencer, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -810,7 +816,7 @@ sbMediacoreManager::SetSequencer(
 }
 
 NS_IMETHODIMP
-sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow **aVideo) 
+sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow **aVideo)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1063,7 +1069,7 @@ sbMediacoreManager::UnregisterFactory(sbIMediacoreFactory *aFactory)
 // sbIMediacoreVideoWindow Interface
 // ----------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetFullscreen(PRBool *aFullscreen)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetFullscreen", this));
@@ -1071,20 +1077,42 @@ sbMediacoreManager::GetFullscreen(PRBool *aFullscreen)
   NS_ENSURE_ARG_POINTER(aFullscreen);
 
   nsAutoMonitor mon(mMonitor);
-  *aFullscreen = mFullscreen;
+
+  if(mPrimaryCore) {
+    nsresult rv = NS_ERROR_UNEXPECTED;;
+
+    nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
+      do_QueryInterface(mPrimaryCore, &rv);
+
+    if(NS_SUCCEEDED(rv)) {
+      rv = videoWindow->GetFullscreen(aFullscreen);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    *aFullscreen = mFullscreen;
+  }
 
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
 {
   TRACE(("sbMediacoreManager[0x%x] - SetFullscreen", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  if(aFullscreen != mFullscreen) {
-    //XXXAus: Toggle fullscreen.
+  if(mPrimaryCore) {
+    nsresult rv = NS_ERROR_UNEXPECTED;;
+
+    nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
+      do_QueryInterface(mPrimaryCore, &rv);
+
+    if(NS_SUCCEEDED(rv)) {
+      rv = videoWindow->SetFullscreen(aFullscreen);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   mFullscreen = aFullscreen;
@@ -1092,7 +1120,7 @@ sbMediacoreManager::SetFullscreen(PRBool aFullscreen)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::GetVideoWindow(nsIDOMXULElement * *aVideoWindow)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
@@ -1105,7 +1133,7 @@ sbMediacoreManager::GetVideoWindow(nsIDOMXULElement * *aVideoWindow)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreManager::SetVideoWindow(nsIDOMXULElement * aVideoWindow)
 {
   TRACE(("sbMediacoreManager[0x%x] - SetVideoWindow", this));

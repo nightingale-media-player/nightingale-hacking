@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -40,6 +40,7 @@
 #include <nsCOMArray.h>
 #include <nsDataHashtable.h>
 #include <nsISupportsImpl.h>
+#include <nsITimer.h>
 #include <prlock.h>
 
 #include <sbILibraryChangeset.h>
@@ -47,7 +48,6 @@
 #include "sbIMediaList.h"
 #include "sbDeviceStatistics.h"
 
-class nsITimer;
 class nsIPrefBranch;
 
 class sbBaseDeviceLibraryListener;
@@ -60,6 +60,8 @@ class sbIDeviceLibrary;
           "http://songbirdnest.com/device/1.0#forceDiff"
 
 #define SB_ERROR_REQUEST_ABORTED NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 2 )
+
+#define SB_SYNC_PARTNER_PREF NS_LITERAL_STRING("SyncPartner")
 
 /**
  * Base class for implementing a device
@@ -83,8 +85,8 @@ public:
      * The specific device may internally define more request types.
      */
 
-    static const int REQUEST_FLAG_USER  = 0x80000000;
-    static const int REQUEST_FLAG_WRITE = 0x40000000;
+    static const int REQUEST_FLAG_USER  = sbIDevice::REQUEST_FLAG_USER;
+    static const int REQUEST_FLAG_WRITE = sbIDevice::REQUEST_FLAG_WRITE;
 
     /* note that type 0 is reserved */
     enum {
@@ -93,11 +95,11 @@ public:
       REQUEST_READ          = sbIDevice::REQUEST_READ,
       REQUEST_EJECT         = sbIDevice::REQUEST_EJECT,
       REQUEST_SUSPEND       = sbIDevice::REQUEST_SUSPEND,
-      
+
       /* not in sbIDevice, internal use */
       REQUEST_BATCH_BEGIN,
       REQUEST_BATCH_END,
-      
+
       /* write requests */
       REQUEST_WRITE         = sbIDevice::REQUEST_WRITE,
       REQUEST_DELETE        = sbIDevice::REQUEST_DELETE,
@@ -108,8 +110,8 @@ public:
       REQUEST_MOVE          = sbIDevice::REQUEST_MOVE,
       REQUEST_UPDATE        = sbIDevice::REQUEST_UPDATE,
       REQUEST_NEW_PLAYLIST  = sbIDevice::REQUEST_NEW_PLAYLIST
-    };
-    
+   };
+
     int type;                        /* one of the REQUEST_* constants,
                                           or a custom type */
     nsCOMPtr<sbIMediaItem> item;     /* the item this request pertains to */
@@ -123,7 +125,7 @@ public:
     PRUint32 batchIndex;             /* index of item in the batch to process */
 
     PRUint32 itemTransferID;         /* id for this item transfer */
-    
+
     static const PRInt32 PRIORITY_DEFAULT = 0x1000000;
     PRInt32 priority;                /* priority for the request (lower first) */
 
@@ -150,7 +152,7 @@ public:
     TransferRequest() : spaceEnsured(PR_FALSE) {}
     ~TransferRequest(){} /* we're refcounted, no manual deleting! */
   };
-  
+
 public:
   /* selected methods from sbIDevice */
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
@@ -159,7 +161,7 @@ public:
   NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
   NS_IMETHOD SyncLibraries(void);
-  
+
 public:
   sbBaseDevice();
   ~sbBaseDevice();
@@ -184,7 +186,7 @@ public:
    * and PopRequest calls until after it has been popped.
    */
   nsresult PeekRequest(TransferRequest** _retval);
-  
+
   /* remove a given request from the transfer queue
      note: returns NS_OK on sucessful removal,
            and NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA if no match was found.
@@ -193,7 +195,7 @@ public:
   nsresult RemoveRequest(const int aType,
                          sbIMediaItem* aItem = nsnull,
                          sbIMediaList* aList = nsnull);
-  
+
   /* clear the request queue */
   nsresult ClearRequests(const nsAString &aDeviceID);
 
@@ -222,7 +224,7 @@ public:
    * @param aState new device state
    */
   nsresult SetState(PRUint32 aState);
-  
+
   /**
    * Create a local database library for the device.  The library must be
    * finalized by calling FinalizeDeviceLibrary.
@@ -298,7 +300,7 @@ public:
    * Ignores events for the given media item
    */
   nsresult IgnoreMediaItem(sbIMediaItem * aItem);
-  
+
   /**
    * Restores listening to events for the given item
    */
@@ -319,7 +321,7 @@ public:
     return mDeviceStatistics;
   }
 
-  nsresult CreateTransferRequest(PRUint32 aRequest, 
+  nsresult CreateTransferRequest(PRUint32 aRequest,
                                  nsIPropertyBag2 *aRequestParameters,
                                  TransferRequest **aTransferRequest);
 
@@ -349,14 +351,14 @@ public:
   NS_SCRIPTABLE NS_IMETHOD GetWarningDialogEnabled(const nsAString & aWarning, PRBool *_retval);
   NS_SCRIPTABLE NS_IMETHOD ResetWarningDialogs(void);
 
-  /** 
-   * Returns PR_TRUE if the request has been aborted or the device is 
+  /**
+   * Returns PR_TRUE if the request has been aborted or the device is
    * disconnected
    */
   PRBool IsRequestAbortedOrDeviceDisconnected() {
     PRUint32 deviceState;
-    return (IsRequestAborted() || 
-        NS_FAILED(GetState(&deviceState)) || 
+    return (IsRequestAborted() ||
+        NS_FAILED(GetState(&deviceState)) ||
         deviceState == sbIDevice::STATE_DISCONNECTED) ? PR_TRUE : PR_FALSE;
   }
 
@@ -404,12 +406,23 @@ protected:
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
-  
+
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
 
 protected:
+  /**
+   * Default per track storage overhead.  10000 is enough for one 8K block plus
+   * extra media database or filesystem overhead.
+   */
+  static const PRUint32 DEFAULT_PER_TRACK_OVERHEAD = 10000;
+
+  /**
+   * Percent free space to reserve as margin when building a sync playlist.
+   */
+  static const PRUint32 SYNC_PLAYLIST_MARGIN_PCT = 1;
+
   /**
    * Make sure that there is enough free space to complete the write request
    * specified by aRequest, taking batches into consideration.  If only a
@@ -610,13 +623,15 @@ protected:
                            nsIArray**        aSyncList);
 
   /**
-   * Return in aAvailableSpace the space available for sync.  The space
-   * available includes all free space available plus the space currently taken
-   * for items being synced.
+   * Return in aAvailableSpace the space available for syncing to the library
+   * specified by aLibrary.  The space available includes all free space
+   * available plus the space currently taken for items being synced.
    *
+   * \param aLibrary            Sync destination library.
    * \param aAvailableSpace     Space available for sync.
    */
-  nsresult SyncGetSyncAvailableSpace(PRInt64* aAvailableSpace);
+  nsresult SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
+                                     PRInt64*    aAvailableSpace);
 
   /**
    * Produce the sync change set for the sync request specified by aRequest and
@@ -666,6 +681,22 @@ protected:
   nsresult SyncUpdateProperties(sbILibraryChange* aChange);
 
   /**
+   * Merges the property value based on what property we're dealing with
+   */
+  nsresult SyncMergeProperty(sbIMediaItem * aItem,
+                             nsAString const & aPropertyId,
+                             nsAString const & aNewValue,
+                             nsAString const & aOldValue);
+
+  /**
+   * Returns the latest of the date/time. The dates are in milliseconds since
+   * the JS Data's epoch date.
+   */
+  nsresult SyncMergeSetToLatest(nsAString const & aNewValue,
+                                nsAString const & aOldValue,
+                                nsAString & aMergedValue);
+
+  /**
    * Set up all media lists within the media list specified by aMediaList to
    * trigger a difference when syncing.  The media list aMediaList is not set up
    * to force a difference.
@@ -673,10 +704,22 @@ protected:
    * This function triggers a difference by setting a property that should not
    * be set on any source media lists.
    *
-   * \param aMediaList            Media list containing media lists to force
-   *                              differences.
+   * \param aMediaList          Media list containing media lists to force
+   *                            differences.
    */
   nsresult SyncForceDiffMediaLists(sbIMediaList* aMediaList);
+
+  /**
+   * Determine whether the media list specified by aMediaList should be synced
+   * to the device.  Return true in aShouldSync if media list should be synced.
+   * The download media list and hidden media lists are examples of media lists
+   * that should not be synced.
+   *
+   * \param aMediaList          Media list to check.
+   * \param aShouldSync         Returned true if media list should be synced.
+   */
+  nsresult ShouldSyncMediaList(sbIMediaList* aMediaList,
+                               PRBool*       aShouldSync);
 
 
   /**
@@ -686,6 +729,7 @@ protected:
    * \param aEject [out, retval]  Should the device be ejected?
    */
   nsresult PromptForEjectDuringPlayback(PRBool* aEject);
+  nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
 };
 
 #endif /* __SBBASEDEVICE__H__ */

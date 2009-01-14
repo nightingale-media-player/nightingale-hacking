@@ -553,6 +553,12 @@ FeathersManager.prototype = {
    * 
    */
   _init: function init() {
+    // before reading the prefs, make sure they're stabilized; see bug
+    // 14504 for details.
+    Cc["@mozilla.org/browser/browserglue;1"]
+      .getService(Ci.nsIObserver)
+      .observe(null, "prefservice:after-app-defaults", null);
+    
     var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
                      .getService(Ci.fuelIApplication).prefs;
 

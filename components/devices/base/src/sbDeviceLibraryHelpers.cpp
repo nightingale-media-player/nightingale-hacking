@@ -37,6 +37,11 @@
 #include "sbDeviceLibrary.h"
 
 #include <sbLibraryUtils.h>
+#include <sbStandardProperties.h>
+
+static nsresult GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
+                                     sbILibrary*    aTargetLibrary,
+                                     sbIMediaItem** aSyncItem);
 
 // note: this isn't actually threadsafe, but may be used on multiple threads
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbLibraryUpdateListener, sbIMediaListListener)
@@ -157,9 +162,9 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
   
 #if DEBUG
   nsCOMPtr<sbIMediaItem> debugDeviceItem;
-  sbLibraryUtils::GetItemInLibrary(aMediaItem,
-                                   mTargetLibrary,
-                                   getter_AddRefs(debugDeviceItem));
+  GetSyncItemInLibrary(aMediaItem,
+                       mTargetLibrary,
+                       getter_AddRefs(debugDeviceItem));
   NS_ASSERTION(!debugDeviceItem, 
                "sbLibraryUpdateListener::OnItemAdded: Item was already added to the library");
 #endif 
@@ -198,9 +203,9 @@ sbLibraryUpdateListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   
   nsresult rv;
   nsCOMPtr<sbIMediaItem> targetListAsItem;
-  rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, 
-                                        mTargetLibrary,
-                                        getter_AddRefs(targetListAsItem));
+  rv = GetSyncItemInLibrary(aMediaItem,
+                            mTargetLibrary,
+                            getter_AddRefs(targetListAsItem));
   NS_ENSURE_SUCCESS(rv, rv);
   if (targetListAsItem) {
     rv = mTargetLibrary->Remove(targetListAsItem);
@@ -250,9 +255,9 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
   
   nsresult rv;
   nsCOMPtr<sbIMediaItem> targetItem;
-  rv = sbLibraryUtils::GetItemInLibrary(aMediaItem,
-                                        mTargetLibrary,
-                                        getter_AddRefs(targetItem));
+  rv = GetSyncItemInLibrary(aMediaItem,
+                            mTargetLibrary,
+                            getter_AddRefs(targetItem));
   NS_ENSURE_SUCCESS(rv, rv);
   if (targetItem) {
     // the property array here are the old values; we need the new ones
@@ -356,9 +361,9 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
     // a list being added to a list? we don't care, I think?
   } else {
     nsCOMPtr<sbIMediaItem> deviceMediaListAsItem;
-    rv = sbLibraryUtils::GetItemInLibrary(aMediaList, 
-                                          mTargetLibrary,
-                                          getter_AddRefs(deviceMediaListAsItem));
+    rv = GetSyncItemInLibrary(aMediaList,
+                              mTargetLibrary,
+                              getter_AddRefs(deviceMediaListAsItem));
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(deviceMediaListAsItem, NS_ERROR_FAILURE);
     
@@ -415,9 +420,9 @@ sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   nsresult rv;
   
   nsCOMPtr<sbIMediaItem> targetListAsItem;
-  rv = sbLibraryUtils::GetItemInLibrary(aMediaList, 
-                                        mTargetLibrary,
-                                        getter_AddRefs(targetListAsItem));
+  rv = GetSyncItemInLibrary(aMediaList,
+                            mTargetLibrary,
+                            getter_AddRefs(targetListAsItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> deviceMediaList = 
@@ -466,9 +471,9 @@ sbPlaylistSyncListener::OnItemMoved(sbIMediaList *aMediaList,
 
   nsresult rv;
   nsCOMPtr<sbIMediaItem> deviceMediaList;
-  rv = sbLibraryUtils::GetItemInLibrary(aMediaList, 
-                                        mTargetLibrary,
-                                        getter_AddRefs(deviceMediaList));
+  rv = GetSyncItemInLibrary(aMediaList,
+                            mTargetLibrary,
+                            getter_AddRefs(deviceMediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIOrderableMediaList> orderedMediaList = 
@@ -488,7 +493,26 @@ NS_IMETHODIMP
 sbPlaylistSyncListener::OnListCleared(sbIMediaList *aMediaList,
                                       PRBool *_retval)
 {
-  NS_NOTREACHED("Playlist clearing not yet implemented");
+  NS_ENSURE_ARG_POINTER(aMediaList);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> targetListAsItem;
+  rv = GetSyncItemInLibrary(aMediaList,
+                            mTargetLibrary,
+                            getter_AddRefs(targetListAsItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (targetListAsItem) {
+    nsCOMPtr<sbIMediaList> targetList = do_QueryInterface(targetListAsItem,
+                                                          &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = targetList->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (_retval) {
+    *_retval = PR_FALSE; /* don't stop */
+  }
+
   return NS_OK;
 }
 
@@ -503,3 +527,85 @@ sbPlaylistSyncListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
   return NS_OK;
 }
+
+/**
+ *   Return in aSyncItem the target sync media item in the target sync library
+ * specified by aTargetLibrary corresponding to the source sync media item
+ * specified by aMediaItem.  If no matching target sync media item can be found,
+ * this function returns NS_OK and returns nsnull in aSyncItem.
+ *
+ * \param aMediaItem            Sync source media item.
+ * \param aTargetLibrary        Sync target library.
+ * \param aSyncItem             Sync target media item.
+ */
+static nsresult
+GetSyncItemInLibrary(sbIMediaItem*  aMediaItem,
+                     sbILibrary*    aTargetLibrary,
+                     sbIMediaItem** aSyncItem)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aTargetLibrary);
+  NS_ENSURE_ARG_POINTER(aSyncItem);
+
+  // Function variables.
+  nsresult rv;
+
+  // Try getting the sync item directly in the target library.
+  rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, aTargetLibrary, aSyncItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (*aSyncItem)
+    return NS_OK;
+
+  // Get the source library.
+  nsCOMPtr<sbILibrary> sourceLibrary;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(sourceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Try getting the sync item using the outer GUID property.
+  nsAutoString outerGUID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID),
+                               outerGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!outerGUID.IsEmpty()) {
+    // Get the outer media item.
+    nsCOMPtr<sbIMediaItem> outerMediaItem;
+    rv = sourceLibrary->GetMediaItem(outerGUID, getter_AddRefs(outerMediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Try getting the sync item from the outer media item.
+    rv = sbLibraryUtils::GetItemInLibrary(outerMediaItem,
+                                          aTargetLibrary,
+                                          aSyncItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (*aSyncItem)
+      return NS_OK;
+  }
+
+  // Try getting the sync item using the storage GUID property.
+  nsAutoString storageGUID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_STORAGEGUID),
+                               storageGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!storageGUID.IsEmpty()) {
+    // Get the storage media item.
+    nsCOMPtr<sbIMediaItem> storageMediaItem;
+    rv = sourceLibrary->GetMediaItem(storageGUID,
+                                     getter_AddRefs(storageMediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Try getting the sync item from the storage media item.
+    rv = sbLibraryUtils::GetItemInLibrary(storageMediaItem,
+                                          aTargetLibrary,
+                                          aSyncItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (*aSyncItem)
+      return NS_OK;
+  }
+
+  // Could not find the sync item.
+  *aSyncItem = nsnull;
+
+  return NS_OK;
+}
+

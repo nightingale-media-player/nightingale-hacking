@@ -365,6 +365,8 @@
 <!ENTITY prefs.security.addons.label   "Add-on Installation" >
 
 <!-- Device entities -->
+<!ENTITY command.device.cancel                          "Cancel">
+<!ENTITY command.device.cancel.accesskey                "C">
 <!ENTITY command.device.canceldevicecopy                "Cancel Copy">
 <!ENTITY command.device.canceldevicecopy.accesskey      "C">
 <!ENTITY command.device.canceldevicedelete              "Cancel Delete">

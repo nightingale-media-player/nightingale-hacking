@@ -148,6 +148,14 @@ interface sbIMediacoreSequencer : nsISupports
    */
   void requestHandleNextItem(in sbIMediacore aMediacore);
 
+  /**
+   * \brief Abort the current item playback attempt.
+   * \note This method may only be called from BEFORE_TRACK_CHANGE. If
+   *       you attempt to call it from another context, it will silently 
+   *       fail.
+   */
+  void abort();
+
   // When in custom mode, this generator is used to generate the sequence.
   attribute sbIMediacoreSequenceGenerator customGenerator;
 };

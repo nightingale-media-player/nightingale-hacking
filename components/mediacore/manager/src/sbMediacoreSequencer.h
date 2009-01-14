@@ -114,6 +114,7 @@ public:
   nsresult ProcessNewPosition();
   nsresult Setup(nsIURI *aURI = nsnull);
   nsresult CoreHandleNextSetup();
+  PRBool   HandleAbort();
 
   // Set view with optional view position
   nsresult SetViewWithViewPosition(sbIMediaListView *aView, 
@@ -135,6 +136,8 @@ protected:
   nsresult DispatchMediacoreEvent(sbIMediacoreEvent *aEvent, 
                                   PRBool aAsync = PR_FALSE);
 
+  nsresult StartPlayback();
+
 protected:
   PRMonitor *mMonitor;
   
@@ -145,6 +148,9 @@ protected:
   PRPackedBool                   mStopTriggeredBySequencer;
   PRPackedBool                   mCoreWillHandleNext;
   PRPackedBool                   mPositionInvalidated;
+  
+  PRPackedBool                   mCanAbort;
+  PRPackedBool                   mShouldAbort;
   
   PRUint32                       mChainIndex;
   nsCOMPtr<nsIArray>             mChain;

@@ -182,9 +182,10 @@
         this._options = {};
         this._options.listLabel = SBString("device.error.dialog.listbox.caption");
         this._options.windowTitle = SBString("device.error.dialog.title");
-        this._options.errorMsg = SBFormattedString("device.error.dialog.msg",
-                                          [ errorItems.length,
-                                            this._getDeviceFriendlyName() ]);
+        this._options.errorMsg = SBBrandedFormattedString
+                                   ("device.error.dialog.msg",
+                                    [ errorItems.length,
+                                      this._getDeviceFriendlyName() ]);
         this._options.showAgainMsg = SBString("device.error.dialog.enable");
         this._options.maxRows = 9;
         this._options.allowDisable = false;

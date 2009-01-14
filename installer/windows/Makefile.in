@@ -71,3 +71,12 @@ SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(readme) $(SB_BUILD
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
+
+# We do this here because win32 is the only platform right now that needs it;
+# see bug 13809
+all:: copy-added-files-list
+
+copy-added-files-list:
+	$(CP) -dfp $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
+
+.PHONY: copy-added-files-list

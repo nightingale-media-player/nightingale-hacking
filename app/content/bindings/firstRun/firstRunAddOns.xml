@@ -38,8 +38,7 @@
 <bindings
       xmlns="http://www.mozilla.org/xbl"
       xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-      xmlns:xbl="http://www.mozilla.org/xbl"
-      xmlns:html="http://www.w3.org/1999/xhtml">
+      xmlns:xbl="http://www.mozilla.org/xbl">
 
   <!-- *************************************************************************
    *****************************************************************************
@@ -79,8 +78,8 @@
         <!-- Description. -->
         <xul:description>
           &first_run.add_ons.description.line1;
-          <html:br/>
-          <html:br/>
+        </xul:description>
+        <xul:description>
           &first_run.add_ons.description.line2;
         </xul:description>
 

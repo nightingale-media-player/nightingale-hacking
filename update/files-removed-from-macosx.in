@@ -2,7 +2,7 @@
 ./Contents/Resources/searchplugins/google-lyrics.xml
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/VLC Plugin.rsrc
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj/InfoPlist.strings
-./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj
+./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj/
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxtag_plugin.dylib
 ./Contents/Resources/plugins/VLC.plugin/Contents/MacOS/modules/libxml_plugin.dylib

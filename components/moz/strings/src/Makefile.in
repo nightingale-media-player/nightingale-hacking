@@ -36,10 +36,14 @@ target_name = sbMozStringUtils
 endif
 
 CPP_SRCS = sbTArrayStringEnumerator.cpp \
+           sbStringBundle.cpp \
            sbStringUtils.cpp \
            $(NULL)
 
 CPP_INCLUDES = \
+               $(DEPTH)/components/moz/strings/components/public \
+               $(topsrcdir)/components/include \
+               $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/nspr \

@@ -38,6 +38,7 @@ CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreTypeSniffer.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreVotingChain.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
+           $(topsrcdir)/components/mediacore/base/src/sbMediacoreError.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
            $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreVolumeControl.cpp \
            $(NULL)
@@ -50,6 +51,7 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/mediacore/base/src \
                $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/moz/strings/components/public \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
                $(DEPTH)/components/moz/windowwatcher/public \
@@ -59,6 +61,7 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+               $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/gfx \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \

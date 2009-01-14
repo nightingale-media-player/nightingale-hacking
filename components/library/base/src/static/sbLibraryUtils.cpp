@@ -71,7 +71,7 @@ nsresult sbLibraryUtils::GetItemInLibrary(/* in */  sbIMediaItem*  aItem,
     NS_ENSURE_SUCCESS(rv, rv);
     if (isSameLib) {
       /* okay, so we want to find the same item... */
-      *_retval = aItem;
+      NS_ADDREF(*_retval = aItem);
       return NS_OK;
     }
   }

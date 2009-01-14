@@ -155,10 +155,6 @@ sbWindowCloak::SetVisibility(nsIDOMWindow* aDOMWindow,
     cloakInfo->mVisible = PR_TRUE;
   }
 
-  // Return early if there's nothing to do.
-  if (cloakInfo->mVisible == aVisible)
-    return NS_OK;
-
   rv = embedWindow->SetVisibility(aVisible);
   NS_ENSURE_SUCCESS(rv, rv);
 

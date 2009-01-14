@@ -59,6 +59,7 @@
 #include "sbLocalDatabaseSchemaInfo.h"
 #include <sbIJobProgressService.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbMediaListBatchCallback.h>
 #include <sbIPropertyArray.h>
@@ -1013,7 +1014,7 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
      NS_ENSURE_SUCCESS(rv,rv);
     }
     else if (columnType == SB_COLUMN_TYPE_INTEGER) {
-     PRUint64 intVal = ToInteger64(value, &rv);
+     PRUint64 intVal = nsString_ToUint64(value, &rv);
      NS_ENSURE_SUCCESS(rv,rv);
      rv = mQuery->BindInt64Parameter(0, intVal);
      NS_ENSURE_SUCCESS(rv,rv);
@@ -1697,32 +1698,13 @@ nsresult sbLocalDatabaseSortInvalidateJob::Init(
   mCompletedItemCount = 0;
 
   // Localize some strings
-  nsCOMPtr<nsIStringBundleService> stringBundleService =
-    do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIStringBundle> strings;
-  rv = stringBundleService->CreateBundle(
-       "chrome://songbird/locale/songbird.properties",
-       getter_AddRefs(strings));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = strings->GetStringFromName(
-          NS_LITERAL_STRING("propertycache.invalidatesortjob.title").get(),
-          getter_Copies(mTitleText));
-  if (NS_FAILED(rv)) {
-    mTitleText.AssignLiteral("Updating Library");
-  }
-  rv = strings->GetStringFromName(
-          NS_LITERAL_STRING("propertycache.invalidatesortjob.status").get(),
-          getter_Copies(mStatusText));
-  if (NS_FAILED(rv)) {
-    mStatusText.AssignLiteral("Rebuilding library sorting data");
-  }
-  rv = strings->GetStringFromName(
-          NS_LITERAL_STRING("propertycache.invalidatesortjob.failed").get(),
-          getter_Copies(mFailedText));
-  if (NS_FAILED(rv)) {
-    mFailedText.AssignLiteral("Failed!");
-  }
+  sbStringBundle strings;
+  mTitleText = strings.Get("propertycache.invalidatesortjob.title",
+                           "Updating Library");
+  mStatusText = strings.Get("propertycache.invalidatesortjob.status",
+                            "Rebuilding library sorting data");
+  mFailedText = strings.Get("propertycache.invalidatesortjob.failed",
+                            "Failed!");
 
   // Start a timer to send job progress notifications
   if (!mNotificationTimer) {

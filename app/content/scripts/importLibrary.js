@@ -127,7 +127,7 @@ var importLibrary = {
     //XXXeps don't hardcode iTunes
     //XXXeps set query based on dialog params
     var queryDescElem = document.getElementById("import_library_query");
-    var userQuery = SBFormattedString
+    var userQuery = SBBrandedFormattedString
                       ("import_library.dialog_query." + this._importType,
                        [ "iTunes" ]);
     var userQueryNode = document.createTextNode(userQuery);

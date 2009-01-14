@@ -263,7 +263,8 @@ sbLibraryImporterManager.prototype = {
     // Present a non-existent media alert dialog.
     var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
-    var alertTitle = SBString("import_library.nonexistent_media_alert.title");
+    var alertTitle = SBBrandedString
+                       ("import_library.nonexistent_media_alert.title");
     var alertMsg =
           SBFormattedString("import_library.nonexistent_media_alert.msg",
                             [ aNonExistentMediaCount, aTrackCount ]);
@@ -291,7 +292,8 @@ sbLibraryImporterManager.prototype = {
     // Present an unsupported media alert dialog.
     var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                      .createInstance(Ci.sbIPrompter);
-    var alertTitle = SBString("import_library.unsupported_media_alert.title");
+    var alertTitle = SBBrandedString
+                       ("import_library.unsupported_media_alert.title");
     var alertMsg = SBString("import_library.unsupported_media_alert.msg");
     var alertCheckMsg =
           SBString("import_library.unsupported_media_alert.enable_label");

@@ -63,6 +63,7 @@
    *   default                  Default state.
    *   readonly                 Device is read-only.
    *   readwrite                Device is read/write.
+   *   cancel                   Device is cancelling operations.
    *   copy                     Device is copying content.
    *   delete                   Device is deleting content.
    *   mount                    Device is mounting.
@@ -363,6 +364,54 @@
                              action="rename"/>
     </content>
   </binding>
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device sync command widget.
+   *
+   *   This widget implements a device sync command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-sync-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.devicesync;"
+                             accesskey="&command.device.devicesync.accesskey;"
+                             disabled_default="true"
+                             disabled_mgmt_not_manual="remove_attribute"
+                             action="sync"/>
+    </content>
+  </binding> <!-- sb-device-sync-command -->
+
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device cancel command widget.
+   *
+   *   This widget implements a device cancel command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-cancel-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.cancel;"
+                             accesskey="&command.device.cancel.accesskey;"
+                             disabled_default="remove_attribute"
+                             disabled_cancel="true"
+                             action="cancel"/>
+    </content>
+  </binding> <!-- sb-device-sync-command -->
 
 
   <!-- *************************************************************************

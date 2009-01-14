@@ -65,5 +65,12 @@
 
     </box>
 
+    <!-- Device library context menu items. -->
+    <box id="device_library_context_menu_items">
+
+      <menuitem/><sb-device-new-playlist-command bindelem="prev"/>
+
+    </box>
+
 </box>
 

@@ -69,6 +69,7 @@
 #include <sbPropertiesCID.h>
 #include <sbIAlbumArtFetcherSet.h>
 
+#include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 
@@ -1083,29 +1084,20 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
     // Only set the status text for write jobs, since read jobs
     // are not currently reflected in the UI.
     if (mJobType == TYPE_WRITE) {
-        
+      char* textKey;
+
       // Single failure in single item write job
       if (mTotalItemCount == 1) {
-        rv = LocalizeString(
-              NS_LITERAL_STRING("metadatajob.writing.failed.one"),
-              text);
+        textKey = "metadatajob.writing.failed.one";
       // Single error in multiple file write job
       } else if (mErrorMessages.Length() == 1) {
-        rv = LocalizeString(
-              NS_LITERAL_STRING("metadatajob.writing.failed.oneofmany"),
-              text);
+        textKey = "metadatajob.writing.failed.oneofmany";
       // Multiple errors in multiple file write job
       } else {
-        rv = LocalizeString(
-              NS_LITERAL_STRING("metadatajob.writing.failed.manyofmany"),
-              text);
+        textKey = "metadatajob.writing.failed.manyofmany";
       }
-      
-      if (NS_FAILED(rv)) {
-        text.AssignLiteral("Job Failed");
-      }
-      
-      aText = text;
+
+      aText = sbStringBundle().Get(textKey, "Job Failed");
     }
   
   } else {

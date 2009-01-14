@@ -1071,66 +1071,12 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     }
     
     if (forceCreateAsSimple) {
-
-      // If we're forcing the new playlist to be of type "simple", we also need
-      // to strip some more properties in addition to those normally filtered
-      // out. 
-      PRUint32 length;
-      rv = properties->GetLength(&length);
+      nsCOMPtr<sbIPropertyArray> simpleProperties;
+      rv = GetSimpleMediaListCopyProperties(itemAsList,
+                                            getter_AddRefs(simpleProperties));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<nsIMutableArray> mutableArray;
-
-      PRUint32 index = 0;
-      while (index < length) {
-        nsCOMPtr<sbIProperty> property;
-        rv = properties->GetPropertyAt(index, getter_AddRefs(property));
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        nsString id;
-        rv = property->GetId(id);
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        // - storageGuid and outerGuid are stripped because a simple list stands
-        //   on its own
-        
-        // - listType is stripped because we're forcing the type to simple,
-        //   the new value for that property will be added to the array 
-        //   in CreateMediaList
-        
-        // - mediaListName is stripped because we're going to set it manually
-        //   using the value from list->GetName, so that the name is kept
-        //   even if it was stored as a property of a storage list
-        
-        if (id.EqualsLiteral(SB_PROPERTY_STORAGEGUID) ||
-            id.EqualsLiteral(SB_PROPERTY_OUTERGUID) ||
-            id.EqualsLiteral(SB_PROPERTY_LISTTYPE) ||
-            id.EqualsLiteral(SB_PROPERTY_MEDIALISTNAME)) {
-
-          if (!mutableArray) {
-            mutableArray = do_QueryInterface(mutableProperties, &rv);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-          
-          rv = mutableArray->RemoveElementAt(index);
-          NS_ENSURE_SUCCESS(rv, rv);
-          
-          length--;
-        } else {
-          index++;        
-        }
-      }
-      
-      nsString listName;
-      rv = itemAsList->GetName(listName);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mutableProperties->
-        AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME), 
-                       listName);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = CreateMediaList(NS_LITERAL_STRING("simple"), properties,
+      rv = CreateMediaList(NS_LITERAL_STRING("simple"), simpleProperties,
                            getter_AddRefs(newList));
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create simple media list!");
     }
@@ -1188,6 +1134,120 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   }
 
   newItem.swap(*_retval);
+  return NS_OK;
+}
+
+/**
+ * \brief Return in aSimpleProperties the list of properties to use to create a
+ *        simple media list copy of the media list specified by aMediaList.
+ *
+ * \param aMediaList            Media list to be copied.
+ * \param aSimpleProperties     Returned properties for the simple media list
+ *                              copy.
+ */
+nsresult
+sbLocalDatabaseLibrary::GetSimpleMediaListCopyProperties
+                          (sbIMediaList*      aMediaList,
+                           sbIPropertyArray** aSimpleProperties)
+{
+  NS_ASSERTION(aMediaList, "Null pointer!");
+  NS_ASSERTION(aSimpleProperties, "Null pointer!");
+
+  nsresult rv;
+
+  // Get the media list properties
+  nsCOMPtr<sbIPropertyArray> properties;
+  rv = aMediaList->GetProperties(nsnull, getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create an array of simple media list properties
+  nsCOMPtr<sbIMutablePropertyArray> simpleProperties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the simple media list properties
+  PRUint32 propCount;
+  rv = properties->GetLength(&propCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < propCount; i++) {
+    // Get the next property.
+    nsCOMPtr<sbIProperty> property;
+    rv = properties->GetPropertyAt(i, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Filter out some properties from the simple media list
+    // - storageGuid and outerGuid are stripped because a simple list stands
+    //   on its own
+    // - isContentReadOnly is stripped because the simple list has its own
+    //   content and will inherit isReadOnly
+    // - listType and customType are stripped because they will be set when the
+    //   simple media list is created
+    // - mediaListName is stripped because we're going to set it manually
+    //   using the value from list->GetName, so that the name is kept
+    //   even if it was stored as a property of a storage list
+    nsAutoString id;
+    rv = property->GetId(id);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (id.EqualsLiteral(SB_PROPERTY_STORAGEGUID) ||
+        id.EqualsLiteral(SB_PROPERTY_OUTERGUID) ||
+        id.EqualsLiteral(SB_PROPERTY_ISCONTENTREADONLY) ||
+        id.EqualsLiteral(SB_PROPERTY_LISTTYPE) ||
+        id.EqualsLiteral(SB_PROPERTY_CUSTOMTYPE) ||
+        id.EqualsLiteral(SB_PROPERTY_MEDIALISTNAME)) {
+      continue;
+    }
+
+    // Add the property to the simple media list property array
+    nsAutoString value;
+    rv = property->GetValue(value);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = simpleProperties->AppendProperty(id, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Get the simple media list name
+  nsAutoString listName;
+  rv = aMediaList->GetName(listName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = simpleProperties->AppendProperty
+                           (NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                            listName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the simple media list origin library GUID
+  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
+  nsAutoString originLibraryGUID;
+  rv = simpleProperties->GetPropertyValue(PROP_LIBRARY, originLibraryGUID);
+  if (NS_FAILED(rv) || originLibraryGUID.IsEmpty()) {
+    nsCOMPtr<sbILibrary> originLibrary;
+    rv = aMediaList->GetLibrary(getter_AddRefs(originLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = originLibrary->GetGuid(originLibraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simpleProperties->AppendProperty(PROP_LIBRARY, originLibraryGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Set the simple media list origin item GUID
+  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
+  nsAutoString originItemGUID;
+  rv = simpleProperties->GetPropertyValue(PROP_ITEM, originItemGUID);
+  if (NS_FAILED(rv) || originItemGUID.IsEmpty()) {
+    rv = aMediaList->GetGuid(originItemGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simpleProperties->AppendProperty(PROP_ITEM, originItemGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Return results
+  nsCOMPtr<sbIPropertyArray>
+    returnSimpleProperties = do_QueryInterface(simpleProperties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  returnSimpleProperties.forget(aSimpleProperties);
+
   return NS_OK;
 }
 
@@ -2460,8 +2520,15 @@ sbLocalDatabaseLibrary::CopyMediaList(const nsAString& aType,
   NS_ENSURE_ARG_POINTER(aSource);
   NS_ENSURE_ARG_POINTER(_retval);
 
+  nsresult rv;
+
+  // Get the source media list properties.  If copying as a simple media list,
+  // get the simple media list copy properties.
   nsCOMPtr<sbIPropertyArray> properties;
-  nsresult rv = aSource->GetProperties(nsnull, getter_AddRefs(properties));
+  if (aType.EqualsLiteral("simple"))
+    rv = GetSimpleMediaListCopyProperties(aSource, getter_AddRefs(properties));
+  else
+    rv = aSource->GetProperties(nsnull, getter_AddRefs(properties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaList> newList;
@@ -2613,6 +2680,24 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
   }
 
   NS_ADDREF(*_retval = strongMediaItem);
+  return NS_OK;
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::GetDuplicate(sbIMediaItem*  aMediaItem,
+                                     sbIMediaItem** _retval)
+{
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - GetDuplicate()", this));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  // Search for a duplicate item
+  nsresult rv = sbLibraryUtils::GetItemInLibrary(aMediaItem, this, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

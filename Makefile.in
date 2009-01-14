@@ -58,6 +58,7 @@ SUBDIRS = build \
           feathers \
           locales \
           extensions \
+          tools \
           $(SONGBIRD_BRANDING_DIR) \
           $(NULL)
 

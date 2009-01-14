@@ -29,6 +29,8 @@
  * \brief A reusable restart box.
  */
  
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
 //
 //  sbIRestartBox
 //
@@ -98,15 +100,8 @@ function sbRestartBox( title, message )
  * \internal
  */
 function sbRestartBox_strings(titlestring, msgstring, defaulttitle, defaultmsg) {
-  var sbs = Components.classes["@mozilla.org/intl/stringbundle;1"].getService(Components.interfaces.nsIStringBundleService);
-  var prop = sbs.createBundle("chrome://songbird/locale/songbird.properties");
-  var msg = defaultmsg;
-  var title = defaulttitle;
-  try {
-    // These can throw if the strings don't exist.
-    msg = prop.GetStringFromName(msgstring);
-    title = prop.GetStringFromName(titlestring);
-  } catch (e) { }
+  msg = SBBrandedString(msgstring, defaultmsg);
+  title = SBBrandedString(titlestring, defaulttitle);
   return sbRestartBox(title, msg);
 }
 

@@ -1394,7 +1394,7 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
     rv = result->GetRowCell(i, 4, rowidStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint64 rowid = ToInteger64(rowidStr, &rv);
+    PRUint64 rowid = nsString_ToUint64(rowidStr, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     ArrayItem* item = new ArrayItem(mediaItemId, guid, value, ordinal, rowid);
@@ -1747,7 +1747,7 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
     rv = result->GetRowCell(row, 3, rowidStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    item->rowid = ToInteger64(rowidStr, &rv);
+    item->rowid = nsString_ToUint64(rowidStr, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

@@ -85,7 +85,9 @@ PRInt32 nsString_FindCharInSet(const nsAString& aString,
 
 void AppendInt(nsAString& str, PRUint64 val);
 
-PRUint64 ToInteger64(const nsAString& str, nsresult* rv = nsnull);
+PRInt64 nsString_ToInt64(const nsAString& str, nsresult* rv = nsnull);
+
+PRUint64 nsString_ToUint64(const nsAString& str, nsresult* rv = nsnull);
 
 nsresult SB_StringEnumeratorEquals(nsIStringEnumerator* aLeft,
                                    nsIStringEnumerator* aRight,

@@ -58,19 +58,18 @@
 
     <content>
 
-      <xul:groupbox sbid="device_progress_box" class="device-progress-groupbox"
+      <xul:groupbox sbid="device_progress_box"
+                    class="device-progress-groupbox"
                     orient="horizontal">
 
         <!-- Device operation progress box. -->
         <xul:vbox sbid="progress_information_box"
                   class="device-progress-information-box"
-                  flex="1">
+                  flex="1"
+                  hidden="true">
 
           <!-- Progress text 1 label. -->
           <xul:label sbid="progress_text1_label"
-                     observestarget="true"
-                     observeskey="text1"
-                     observesattribute="value"
                      crop="end"
                      error="false"
                      action="show_errors"
@@ -81,15 +80,10 @@
           <!-- Operation progress meter. -->
           <xul:progressmeter sbid="progress_meter" 
                              class="device-progressmeter"
-                             mode="determined"
-                             observestarget="true"
-                             observeskey="progress"
-                             observesattribute="value"/>
+                             mode="determined"/>
 
           <!-- Progress text 2 label. -->
-          <xul:label observestarget="true"
-                     observeskey="text2"
-                     observesattribute="value"
+          <xul:label sbid="progress_text2_label"
                      crop="end"
                      class="dev-progress-text2-label"
                      flex="1" />
@@ -97,21 +91,18 @@
         </xul:vbox>
 
         <xul:vbox pack="center" class="dev-progress-button-box">
-        <!-- Sync device operation button. -->
+          <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
-                      class="device-progress-button"
-                      label="&device.progress.sync;"
-                      action="sync"
-                      oncommand="DPW.onAction(event);"/>
+                      class="device-progress-button"/>
+          <xul:sb-device-sync-command bindelem="prev" xbl:inherits="device-id"/>
 
-        <!-- Cancel device operation button. -->
+          <!-- Cancel device operation button. -->
           <xul:button sbid="cancel_operation_button"
-                      class="device-progress-button"
-                      label="&window.cancel;"
-                      action="cancel"
-                      oncommand="DPW.onAction(event);"/>
+                      class="device-progress-button"/>
+          <xul:sb-device-cancel-command bindelem="prev"
+                                        xbl:inherits="device-id"/>
 
-        <!-- Finish progress button. -->
+          <!-- Finish progress button. -->
           <xul:button sbid="finish_progress_button"
                       class="device-progress-button"
                       label="&window.ok;"

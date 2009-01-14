@@ -506,6 +506,7 @@ Section "Uninstall"
    ; List of files to uninstall
    Delete $INSTDIR\${ApplicationIni}
    Delete $INSTDIR\${FileMainEXE}
+   Delete $INSTDIR\${DistHelperEXE}
    !ifndef UsingJemalloc
       Delete $INSTDIR\${CRuntime}
       Delete $INSTDIR\${CPPRuntime}
@@ -518,6 +519,8 @@ Section "Uninstall"
    Delete $INSTDIR\${PreferredUninstallerIcon}
 
    Delete $INSTDIR\${VistaIcon}
+   ; Log file updater.exe redirects if the PostUpdateWin helper is called
+   Delete $INSTDIR\uninstall.update
   
    ; Text files to uninstall
    Delete $INSTDIR\LICENSE.html
@@ -530,6 +533,7 @@ Section "Uninstall"
  
    ; Mozilla updates can leave this folder behind when updates fail.
    RMDir /r $INSTDIR\updates
+
    ; Mozilla updates can leave some of these files over when updates fail.
    Delete $INSTDIR\removed-files
    Delete $INSTDIR\active-update.xml

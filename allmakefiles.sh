@@ -73,6 +73,7 @@ extras
 feathers
 installer
 locales
+tools
 tools/mochitest
 update
 "

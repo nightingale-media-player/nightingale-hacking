@@ -865,17 +865,17 @@ sbPlaybackHistoryService::CreateEntryFromResultSet(sbIDatabaseResult *aResult,
   rv = aResult->GetRowCell(aRow, 4, playDuration);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt64 timestamp = ToInteger64(playTime, &rv);
+  PRInt64 timestamp = nsString_ToUint64(playTime, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt64 duration = ToInteger64(playDuration, &rv);
+  PRInt64 duration = nsString_ToUint64(playDuration, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediaItem> item;
   rv = GetItem(libraryGuid, mediaItemGuid, getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt64 entryId = ToInteger64(entryIdStr, &rv);
+  PRInt64 entryId = nsString_ToUint64(entryIdStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyArray> annotations;
@@ -1612,7 +1612,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
   nsresult rv = mCurrentItem->GetProperty(PROPERTY_DURATION, durationStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint64 duration = ToInteger64(durationStr, &rv);
+  PRUint64 duration = nsString_ToUint64(durationStr, &rv);
   duration /= PR_USEC_PER_MSEC;
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1635,7 +1635,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
 
     PRUint64 playCount = 0;
     if(!playCountStr.IsEmpty()) {
-      playCount = ToInteger64(playCountStr, &rv);
+      playCount = nsString_ToUint64(playCountStr, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     playCount++;
@@ -1672,7 +1672,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
 
     PRUint64 skipCount = 0;
     if(!skipCountStr.IsEmpty()) {
-      skipCount = ToInteger64(skipCountStr, &rv);
+      skipCount = nsString_ToUint64(skipCountStr, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     skipCount++;
@@ -2030,7 +2030,7 @@ sbPlaybackHistoryService::GetEntryCount(PRUint64 *aEntryCount)
   rv = result->GetRowCell(0, 0, countStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  *aEntryCount = ToInteger64(countStr, &rv);
+  *aEntryCount = nsString_ToUint64(countStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2087,7 +2087,7 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
   rv = result->GetRowCell(0, 0, entryIdStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt64 entryId = ToInteger64(entryIdStr, &rv);
+  PRInt64 entryId = nsString_ToUint64(entryIdStr, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   aEntry->SetEntryId(entryId);
@@ -2155,7 +2155,7 @@ sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
       do_QueryElementAt(aEntries, currentRow, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRInt64 entryId = ToInteger64(entryIdStr, &rv);
+    PRInt64 entryId = nsString_ToUint64(entryIdStr, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     entry->SetEntryId(entryId);

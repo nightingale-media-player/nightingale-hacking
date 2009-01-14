@@ -99,9 +99,10 @@ var sbCoverHelper = {
                             .getService(Ci.nsIPromptService);
       
       var strTitle = SBString("albumart.maxsize.title", null);
-      var strMsg = SBFormattedString("albumart.maxsize.message",
-                                     [ StorageFormatter.format(maxFileSize),
-                                       StorageFormatter.format(checkFileSize) ]);
+      var strMsg = SBBrandedFormattedString
+                     ("albumart.maxsize.message",
+                      [ StorageFormatter.format(maxFileSize),
+                        StorageFormatter.format(checkFileSize) ]);
       
       promptService.alert(null, strTitle, strMsg);
       return false;

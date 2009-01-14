@@ -34,14 +34,16 @@
 interface sbIServicePaneNode;
 interface sbIDeviceBase;
 interface sbIDevice;
+interface sbILibrary;
 
 /**
  * \interface sbIDeviceServicePaneService
  * \brief Provides information about devices needed by the service pane
  */
-[scriptable, uuid(9e680f0f-5f1e-44e6-b4d8-46f02edfb311)]
+[scriptable, uuid(7d066a7f-c463-4fa3-84fd-d779ddbf0643)]
 interface sbIDeviceServicePaneService : nsISupports {
-  /* \brief Attempts to create a service pane node for a given device. Will
+  /**
+   * \brief Attempts to create a service pane node for a given device. Will
    *        group similar devices together in the service pane.
    *
    * \param aDevice an sbIDeviceBase.
@@ -51,7 +53,8 @@ interface sbIDeviceServicePaneService : nsISupports {
   sbIServicePaneNode createNodeForDevice (in sbIDeviceBase aDevice,
                                           in AString aDeviceIdentifier);
 
-  /* \brief Attempts to create a service pane node for a given device. Will
+  /**
+   * \brief Attempts to create a service pane node for a given device. Will
    *        group similar devices together in the service pane.
    *
    * \param aDevice an sbIDevice.
@@ -60,14 +63,27 @@ interface sbIDeviceServicePaneService : nsISupports {
    */
   sbIServicePaneNode createNodeForDevice2 (in sbIDevice aDevice);
 
-  /* \brief Return the service pane node for the given device.
+  /**
+   * \brief Attempts to create a service pane node for the device library
+   *        specified by aDevice and aLibrary.
+   *
+   * \param aDevice             Device containing library.
+   * \param aLibrary            Library for which to create node.
+   * \return                    Created node.
+   */
+  sbIServicePaneNode createLibraryNodeForDevice(in sbIDevice  aDevice,
+                                                in sbILibrary aLibrary);
+
+  /**
+   * \brief Return the service pane node for the given device.
    *
    * \param aDevice an sbIDevice.
    * \return a service pane node that represents the given device
    */
   sbIServicePaneNode getNodeForDevice (in sbIDevice aDevice);
 
-  /* \brief If aEnabled is true, fill the service pane context menu for the
+  /**
+   * \brief If aEnabled is true, fill the service pane context menu for the
    *        device node specified by aNode with a default set of device menu
    *        items.
    *

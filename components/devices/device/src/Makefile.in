@@ -42,6 +42,7 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/moz/strings/components/public \
                $(DEPTH)/components/moz/windowwatcher/public \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/devices/base/src \

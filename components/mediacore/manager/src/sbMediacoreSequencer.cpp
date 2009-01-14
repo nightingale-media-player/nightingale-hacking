@@ -66,9 +66,11 @@
 #include <sbIPropertyArray.h>
 #include <sbIWindowWatcher.h>
 
+#include <sbMediacoreError.h>
 #include <sbMediacoreEvent.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
+#include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbVariantUtils.h>
@@ -160,6 +162,8 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mStopTriggeredBySequencer(PR_FALSE)
 , mCoreWillHandleNext(PR_FALSE)
 , mPositionInvalidated(PR_FALSE)
+, mCanAbort(PR_FALSE)
+, mShouldAbort(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
 , mPosition(0)
@@ -1162,7 +1166,7 @@ sbMediacoreSequencer::ProcessNewPosition()
     rv = UpdatePlayStateDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mPlaybackControl->Play();
+    rv = StartPlayback();
   }
   else if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
     rv = mPlaybackControl->Pause();
@@ -1326,8 +1330,15 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
                                        getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
+    sbScopedBoolToggle canAbort(&mCanAbort);
+
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Process any pending abort requests
+    if(HandleAbort()) {
+      return NS_OK;
+    }
   }
 
   // Add listener to new core.
@@ -1423,8 +1434,18 @@ sbMediacoreSequencer::CoreHandleNextSetup()
                                      getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = DispatchMediacoreEvent(event);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Additional scope to handle 'canAbort' status
+  {
+    sbScopedBoolToggle canAbort(&mCanAbort);
+
+    rv = DispatchMediacoreEvent(event);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Process any pending abort requests
+    if(HandleAbort()) {
+      return NS_OK;
+    }
+  }
 
   rv = UpdateURLDataRemotes(uri);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1445,6 +1466,21 @@ sbMediacoreSequencer::CoreHandleNextSetup()
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+PRBool
+sbMediacoreSequencer::HandleAbort()
+{
+  if(mShouldAbort) {
+    mShouldAbort = PR_FALSE;
+
+    nsresult rv = Stop();
+    NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+    return PR_TRUE;
+  }
+
+  return PR_FALSE;
 }
 
 nsresult 
@@ -1760,6 +1796,58 @@ sbMediacoreSequencer::DispatchMediacoreEvent(sbIMediacoreEvent *aEvent,
 }
 
 
+nsresult
+sbMediacoreSequencer::StartPlayback()
+{
+  nsresult rv;
+
+  // Get the URI scheme for the media to playback
+  nsCOMPtr<nsIURI> uri;
+  rv = mPlaybackControl->GetUri(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCAutoString scheme;
+  rv = uri->GetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If attempting to play from an MTP device, dispatch an error event and do
+  // nothing more
+  if (scheme.Equals("x-mtp"))
+  {
+    // Create a mediacore error
+    nsCOMPtr<sbMediacoreError> error;
+    NS_NEWXPCOM(error, sbMediacoreError);
+    NS_ENSURE_TRUE(error, NS_ERROR_OUT_OF_MEMORY);
+
+    // Get the error message
+    error->Init
+      (0, sbStringBundle().Get("mediacore.device_media.error.text"));
+
+    // Create the error event
+    nsCOMPtr<sbIMediacoreEvent> event;
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::ERROR_EVENT,
+                                       error,
+                                       nsnull,
+                                       mCore,
+                                       getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Dispatch the event
+    nsCOMPtr<sbIMediacoreEventTarget> target = do_QueryInterface(mCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    PRBool dispatched;
+    rv = target->DispatchEvent(event, PR_TRUE, &dispatched);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+
+  // Start playback
+  rv = mPlaybackControl->Play();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 //  sbIMediacoreSequencer
 //------------------------------------------------------------------------------
@@ -2032,7 +2120,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPlaybackControl->Play();
+  rv = StartPlayback();
 
   if(NS_FAILED(rv)) {
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -2076,7 +2164,7 @@ sbMediacoreSequencer::Play()
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mPlaybackControl->Play();
+  rv = StartPlayback();
 
   if(NS_FAILED(rv)) {
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -2306,10 +2394,63 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediacore);
 
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = GetNextItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> uri;
+  rv = item->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsAutoMonitor mon(mMonitor);
   NS_ENSURE_TRUE(mCore == aMediacore, NS_ERROR_INVALID_ARG);
 
+  nsCOMPtr<sbIMediacoreVoting> voting = 
+    do_QueryReferent(mMediacoreManager, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(voting, NS_ERROR_UNEXPECTED);
+
+  mon.Exit();
+
+  nsCOMPtr<sbIMediacoreVotingChain> votingChain;
+  rv = voting->VoteWithURI(uri, getter_AddRefs(votingChain));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool validChain = PR_FALSE;
+  rv = votingChain->GetValid(&validChain);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(validChain, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<nsIArray> chain;
+  rv = votingChain->GetMediacoreChain(getter_AddRefs(chain));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacore> core = do_QueryElementAt(chain, 0, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Enter();
+
+  NS_ENSURE_TRUE(core == mCore, NS_ERROR_INVALID_ARG);
   mCoreWillHandleNext = PR_TRUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediacoreSequencer::Abort()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsAutoMonitor mon(mMonitor);
+
+  // If we can't abort right now, just return NS_OK.
+  NS_ENSURE_TRUE(mCanAbort, NS_OK);
+
+  mShouldAbort = PR_TRUE;
 
   return NS_OK;
 }

@@ -470,6 +470,10 @@ sb-device-control {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control");
 }
 
+sb-device-cancel-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-cancel-command");
+}
+
 sb-device-eject-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-eject-command");
 }
@@ -488,6 +492,10 @@ sb-device-new-playlist-command {
 
 sb-device-rename-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rename-command");
+}
+
+sb-device-sync-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-command");
 }
 
 sb-device-sync-cancel-command {

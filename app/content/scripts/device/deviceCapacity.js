@@ -87,6 +87,7 @@ var DCW = {
   //   _cfg                       Configuration.
   //   _widget                    Device capacity widget.
   //   _device                    sbIDevice object.
+  //   _deviceProperties          Cache properties to avoid costly garbage
   //   _updateInterval            Timing interval used for updating UI.
   //   _capTable                  Table of capacity values.
   //
@@ -94,6 +95,7 @@ var DCW = {
   _cfg: DCWCfg,
   _widget: null,
   _device: null,
+  _deviceProperties : null,
   _updateInterval: null,
   _capTable: null,
 
@@ -111,6 +113,7 @@ var DCW = {
 
     // Initialize object fields.
     this._device = this._widget.device;
+    this._deviceProperties = this._device.properties;
     this._capTable = {};
 
     // Update the UI.
@@ -277,7 +280,7 @@ var DCW = {
   
   _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
     try {
-      return this._device.properties.properties.getPropertyAsAString(aPropertyName);
+      return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
     } catch (err) {
       return aDefault;
     }

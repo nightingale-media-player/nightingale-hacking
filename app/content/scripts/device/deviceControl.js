@@ -468,6 +468,8 @@ deviceControlWidget.prototype = {
         this._getStateAttribute(attrVal, aAttrName, "readonly")) {}
     else if (!this._currentReadOnly &&
              this._getStateAttribute(attrVal, aAttrName, "readwrite")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_CANCEL) &&
+             this._getStateAttribute(attrVal, aAttrName, "cancel")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_COPYING) &&
              this._getStateAttribute(attrVal, aAttrName, "copy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_DELETING) &&

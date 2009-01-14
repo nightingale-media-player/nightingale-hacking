@@ -80,8 +80,8 @@
                           "(See details)."));
       document.getElementById("label3").
                setAttribute("value", 
-                 SBString("parsererror.label.mustquit", 
-                          "Songbird must quit."));
+                 SBBrandedString("parsererror.label.mustquit",
+                                 "Songbird must quit."));
       document.getElementById("label4").
                setAttribute("value", 
                  SBString("parsererror.label.maybecausedbylocale", 

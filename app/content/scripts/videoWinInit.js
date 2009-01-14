@@ -301,7 +301,7 @@ function resetVideoMinMaxCallback() {
  */
 function videoCheckAltF4(evt)
 {
-  if (evt.keyCode == VK_F4 && evt.altKey)
+  if (evt.keyCode == evt.VK_F4 && evt.altKey)
   {
     onHideButtonClick();
   }

@@ -233,7 +233,7 @@ DirectoryImportJob.prototype = {
                         .createInstance(Ci.sbIMediacoreTypeSniffer);
     try {
       var extensions = typeSniffer.mediaFileExtensions;
-      if (!Application.prefs.getValue("songbird.mediascan.enableVideo", false)) {
+      if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)) {
         // disable video, so scan only audio - see bug 13173
         extensions = typeSniffer.audioFileExtensions;
       }

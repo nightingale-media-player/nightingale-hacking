@@ -38,9 +38,13 @@
 //------------------------------------------------------------------------------
 
 EXPORTED_SYMBOLS = [ "SBString",
+                     "SBBrandedString",
                      "SBFormattedString",
+                     "SBBrandedFormattedString",
                      "SBFormattedCountString",
-                     "SBStringBrandShortName" ];
+                     "SBStringBrandShortName",
+                     "SBStringGetDefaultBundle",
+                     "SBStringGetBrandBundle"];
 
 
 //------------------------------------------------------------------------------
@@ -88,8 +92,8 @@ function SBString(aKey, aDefault, aStringBundle) {
   // Get the string bundle.
   var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
 
-  // Set the default value.
-  var value = aDefault ? aDefault : aKey;
+  // Set the default value.  Allow specifying an empty string as a default.
+  var value = aDefault || (typeof(aDefault) == "string") ? aDefault : aKey;
 
   // Try getting the string from the bundle.
   try {
@@ -101,25 +105,52 @@ function SBString(aKey, aDefault, aStringBundle) {
 
 
 /**
+ *   Get and return the localized, branded string with the bundle key specified
+ * by aKey using the string bundle specified by aStringBundle.  If the string
+ * cannot be found, return the string specified by aDefault; if aDefault is not
+ * specified, return aKey.
+ *   If aStringBundle is not specified, use the main Songbird string bundle.
+ *   The bundle string will be treated as a formatted string, and the first
+ * parameter will be set to the brand short name string.
+ *
+ * \param aKey                  String bundle key.
+ * \param aDefault              Default string value.
+ * \param aStringBundle         Optional string bundle.
+ *
+ * \return                      Localized string.
+ */
+
+function SBBrandedString(aKey, aDefault, aStringBundle) {
+  return SBFormattedString(aKey,
+                           [ SBStringBrandShortName() ],
+                           aStringBundle,
+                           aDefault);
+}
+
+
+/**
  *   Get the formatted localized string with the key specified by aKey using the
  * format parameters specified by aParams and the string bundle specified by
- * aStringBundle.
+ * aStringBundle.  If the string cannot be found, return the default string
+ * specified by aDefault; if aDefault is not specified, return aKey.
  *   If no string bundle is specified, get the string from the Songbird bundle.
  * If a string cannot be found, return aKey.
  *
  * \param aKey                  Localized string key.
  * \param aParams               Format params array.
  * \param aStringBundle         Optional string bundle.
+ * \param aDefault              Optional default string.
  *
  * \return                      Localized string.
+ *XXXeps should move aDefault before aStringBundle after Gwar
  */
 
-function SBFormattedString(aKey, aParams, aStringBundle) {
+function SBFormattedString(aKey, aParams, aStringBundle, aDefault) {
   // Get the string bundle.
   var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
 
-  // Set the default value.
-  var value = aKey;
+  // Set the default value.  Allow specifying an empty string as a default.
+  var value = aDefault || (typeof(aDefault) == "string") ? aDefault : aKey;
 
   // Try formatting string from bundle.
   try {
@@ -127,6 +158,33 @@ function SBFormattedString(aKey, aParams, aStringBundle) {
   } catch(ex) {}
 
   return value;
+}
+
+
+/**
+ *   Get the branded, formatted localized string with the key specified by aKey
+ * using the format parameters specified by aParams and the string bundle
+ * specified by aStringBundle.  If the string cannot be found, return the
+ * default string specified by aDefault; if aDefault is not specified, return
+ * aKey.
+ *   If no string bundle is specified, get the string from the Songbird bundle.
+ * If a string cannot be found, return aKey.
+ *   The brand short name string will be appended to the formatted string
+ * parameter list.
+ *
+ * \param aKey                  Localized string key.
+ * \param aParams               Format params array.
+ * \param aStringBundle         Optional string bundle.
+ * \param aDefault              Optional default string.
+ *
+ * \return                      Localized string.
+ */
+
+function SBBrandedFormattedString(aKey, aParams, aDefault, aStringBundle) {
+  return SBFormattedString(aKey,
+                           aParams.concat(SBStringBrandShortName()),
+                           aStringBundle,
+                           aDefault);
 }
 
 
