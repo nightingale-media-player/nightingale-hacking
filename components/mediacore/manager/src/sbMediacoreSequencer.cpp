@@ -2545,6 +2545,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING &&
          mIsWaitingForPlayback) {
         mIsWaitingForPlayback = PR_FALSE;
+        mStopTriggeredBySequencer = PR_FALSE;
         mStatus = sbIMediacoreStatus::STATUS_PLAYING;
 
 #if defined(DEBUG)
@@ -2583,6 +2584,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
       mon.Enter();
       mStatus = sbIMediacoreStatus::STATUS_PAUSED;
+      mStopTriggeredBySequencer = PR_FALSE;
       mon.Exit();
 
       rv = UpdatePlayStateDataRemotes();
@@ -2697,6 +2699,10 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     // Error Events
     case sbIMediacoreEvent::ERROR_EVENT: {
+      mon.Enter();
+      mStopTriggeredBySequencer = PR_FALSE;
+      mon.Exit();
+
       rv = HandleErrorEvent(aEvent);
       NS_ENSURE_SUCCESS(rv, rv);
     }
