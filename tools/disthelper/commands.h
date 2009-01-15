@@ -40,6 +40,7 @@
 #define _DISTHERLPER_COMMANDS_H__
 
 #include <string>
+#include <vector>
 #include "readini.h"
 #include "stringconvert.h"
 
@@ -83,10 +84,17 @@ int CommandSetIcon(std::string aExecutable, std::string aIconFile, std::string a
 int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection);
 
 /**
- * Execute a file with some number of arguments which will be parsed by this
- * function, in some OS-dependent way
+ * Parse a given command line (a line in the steps) into discrete components,
+ * argv-style.  The first item will be the command to execute ("copy", "exec",
+ * etc.).
  */
-int CommandExecuteFile(std::string aExecutable, std::string aArg);
+std::vector<std::string> ParseCommandLine(const std::string& aCommandLine);
+
+/**
+ * Execute a file with some number of arguments.  The arguments should not
+ * include the name of the executable.  (i.e. no argv[0])
+ */
+int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& aArgs);
 
 /**
  * Get the path to the application directory (where disthelper.exe lives).

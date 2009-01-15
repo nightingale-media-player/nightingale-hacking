@@ -127,32 +127,9 @@ int main(int argc, LPTSTR *argv) {
   }
 
   for (it = iniFile[section].begin(); it != end; ++it) {
-    std::vector<std::string> command;
     std::string line = it->second;
-    std::string::size_type prev = 0, offset;
     LogMessage("Executing command %s", line.c_str());
-    while ((offset = line.find_first_of(" \t\r\n", prev)) != std::string::npos) {
-      if (offset > prev) {
-        // skip empty params (e.g. more than one space in a row)
-        command.push_back(line.substr(prev, offset - prev));
-      }
-      prev = offset + 1;
-      if (prev > line.length()) {
-        break;
-      }
-      if (command.size() > 1 && command[0] == "exec") {
-        prev = line.find_first_not_of(" \t\r\n", prev);
-        if (prev != std::string::npos) {
-          offset = line.find_last_not_of(" \t\r\n");
-          command.push_back(line.substr(prev, offset - prev + 1));
-        }
-        prev = line.length();
-        break;
-      }
-    }
-    if (prev < line.length()) {
-      command.push_back(line.substr(prev));
-    }
+    std::vector<std::string> command = ParseCommandLine(line);
     if (command[0] == "copy") {
       if (command.size() < 3) {
         OutputDebugString(_T("Not enough arguments for copy"));
@@ -194,10 +171,9 @@ int main(int argc, LPTSTR *argv) {
       }
     } else if (command[0] == "exec") {
       command.erase(command.begin()); // the command name
-      if (command.size() < 2) {
-        command.push_back("");
-      }
-      result = CommandExecuteFile(command[0], command[1]);
+      std::string executable = command.front();
+      command.erase(command.begin()); // the executable name
+      result = CommandExecuteFile(executable, command);
     } else {
       OutputDebugString(_T("bad command!"));
       result = DH_ERROR_UNKNOWN;

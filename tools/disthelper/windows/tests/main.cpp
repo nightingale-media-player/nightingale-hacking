@@ -1,4 +1,4 @@
-/* vim: le=unix sw=2 : */
+// vim: set sw=2 :
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -36,81 +36,28 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include "debug.h"
-#include "commands.h"
-
-#if XP_WIN
-
 #include <windows.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sstream>
+#include <cstdio>
+#include <cstdarg>
+#include <cstdlib>
 
-#define CTIME_STRLEN 26
-/* According to the MSDN documentation on ctime(), it returns exactly 26
- * characters, and looks like "WWW MMM DD hh:mm:ss YYYY\n\0"
- */
+void TestParser();
+void TestDebug();
 
-extern bool gEnableLogging = true;
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+  TestParser();
+  TestDebug();
+  return 0;
+}
 
-void DebugMessage(const char* fmt, ...) {
+void check(int cond, const char* fmt, ...) {
+  if (cond)
+    return;
+
   va_list args;
-  int len;
-  char *buffer;
-
-  // retrieve the variable arguments
   va_start(args, fmt);
-  
-  len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                         + 1; // terminating '\0'
-  
-  buffer = (char*)malloc(len * sizeof(char));
-
-  vsprintf(buffer, fmt, args);
-  ::OutputDebugStringA(buffer);
-
-  free(buffer);
+  vprintf(fmt, args);
   va_end(args);
+  fflush(stdout);
+  exit(1);
 }
-
-void LogMessage(const char* fmt, ...) {
-  std::wstring appDir(ResolvePathName("$/disthelper.log"));
-  FILE* fout = _wfopen(appDir.c_str(), L"a");
-  if (fout) {
-    time_t timer;
-    time(&timer);
-    
-    // set up a string stream and dump the timestamp into it
-    std::ostringstream stream;
-    stream << '['
-           << std::string(ctime(&timer), CTIME_STRLEN - 2)
-           << "] ";
-    
-    // do printf()-style formatting into a string buffer
-    va_list args;
-    va_start(args, fmt);
-    size_t len = _vscprintf(fmt, args) // _vscprintf doesn't count
-                                  + 1; // terminating '\0'
-    va_end(args);
-    
-    char* buffer = (char*)malloc(len * sizeof(char));
-  
-    va_start(args, fmt);
-    vsprintf(buffer, fmt, args);
-    va_end(args);
-    stream << buffer;
-    free(buffer);
-    
-    ::OutputDebugStringA(stream.str().c_str());
-    fprintf(fout, "%s", stream.str().c_str());
-  
-    fclose(fout);
-  }
-}
-
-#else
-void LogMessage(const char* fmt, ...) {
-  #error not implemented
-}
-#endif

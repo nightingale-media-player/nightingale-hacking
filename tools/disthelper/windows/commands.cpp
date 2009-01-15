@@ -174,15 +174,64 @@ int CommandDeleteFile(std::string aFile, bool aRecursive) {
   return DoFileCommand(FO_DELETE, "delete", aFile, std::string(""), aRecursive);
 }
 
-int CommandExecuteFile(std::string aExecutable, std::string aArg) {
-  DebugMessage("<%s> <%s>", aExecutable.c_str(), aArg.c_str());
+int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& aArgs) {
+  std::string arg(" \"");
+  std::vector<std::string>::const_iterator it, end = aArgs.end();
+  for (it = aArgs.begin(); it < end; ++it) {
+    DebugMessage("<%s>", it->c_str());
+    arg.append(*it);
+    arg.append("\" \"");
+  }
+  arg.erase(arg.length() - 2);  // remove the excess quote at the end
+                                // if no args, comeletely earses the string
+  
+  DebugMessage("<%s> <%s>", aExecutable.c_str(), arg.c_str());
   HINSTANCE hInst = ::ShellExecuteW(NULL,
                                     L"open",
                                     ConvertUTF8ToUTF16(aExecutable).c_str(),
-                                    ConvertUTF8ToUTF16(aArg).c_str(),
+                                    ConvertUTF8ToUTF16(arg).c_str(),
                                     NULL,
                                     SW_SHOWDEFAULT);
   return ((ULONG_PTR)hInst > 32 ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
+}
+
+std::vector<std::string> ParseCommandLine(const std::string& aCommandLine) {
+  static const char WHITESPACE[] = " \t\r\n";
+  std::vector<std::string> args;
+  std::string::size_type prev = 0, offset;
+  offset = aCommandLine.find_last_not_of(WHITESPACE);
+  if (offset == std::string::npos) {
+    // there's nothing that's not whitespace, don't bother
+    return args;
+  }
+  std::string commandLine = aCommandLine.substr(0, offset + 1);
+  std::string::size_type length = commandLine.length();
+  do {
+    prev = commandLine.find_first_not_of(WHITESPACE, prev);
+    if (prev == std::string::npos) {
+      // nothing left that's not whitespace
+      break;
+    }
+    if (commandLine[prev] == '"') {
+      // start of quoted param
+      ++prev; // eat the quote
+      offset = commandLine.find('"', prev);
+      if (offset == std::string::npos) {
+        // no matching end quote; assume it lasts to the end of the command
+        offset = commandLine.length();
+      }
+    } else {
+      // unquoted
+      offset = commandLine.find_first_of(WHITESPACE, prev);
+      if (offset == std::string::npos) {
+        offset = commandLine.length();
+      }
+    }
+    args.push_back(commandLine.substr(prev, offset - prev));
+    prev = offset + 1;
+  } while (prev < length);
+  
+  return args;
 }
 
 tstring GetAppDirectory() {
