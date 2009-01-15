@@ -163,6 +163,18 @@ var watchFolderPrefsPane = {
       watchFolderDisabledElem.removeAttribute("disabled");
     else
       watchFolderDisabledElem.setAttribute("disabled", "true");
+
+    // Set the watch folder hidden if the watch folder services are not
+    // available.
+    var watchFolderService = Cc["@songbirdnest.com/watch-folder-service;1"]
+                               .getService(Ci.sbIWatchFolderService);
+    var watchFolderHiddenElem =
+          document.getElementById("watch_folder_hidden_broadcaster");
+    if (watchFolderService.isSupported) {
+        watchFolderHiddenElem.removeAttribute("hidden");
+    } else {
+        watchFolderHiddenElem.setAttribute("hidden", "true");
+    }
   },
 }
 

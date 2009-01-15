@@ -72,18 +72,22 @@
 
   <!-- Watch folder tab. -->
   <tabs id="import_media_tabs">
-    <tab id="watch_folder_tab" label="&watch_folder.prefs.title;"/>
+    <tab id="watch_folder_tab"
+         label="&watch_folder.prefs.title;"
+         observes="watch_folder_hidden_broadcaster"/>
   </tabs>
 
   <!-- Watch folder tab panel. -->
   <tabpanels id="import_media_tabpanels">
     <tabpanel id="watch_folder_tabpanel"
               orient="vertical"
+              observes="watch_folder_hidden_broadcaster"
               onpaneload="watchFolderPrefsPane.doPaneLoad();">
 
       <!-- Panel broadcasters. -->
       <broadcasterset>
         <broadcaster id="watch_folder_disabled_broadcaster"/>
+        <broadcaster id="watch_folder_hidden_broadcaster"/>
       </broadcasterset>
 
       <!-- Watch folder settings preference controls. -->
