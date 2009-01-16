@@ -142,7 +142,6 @@ ifdef MEDIA_CORE_GST
 
 GST_VERSION=0.10
 GLIB_VERSION=2.0
-OIL_VERSION=0.3
 
 GLIB_NAMES = glib \
              gmodule \
@@ -196,9 +195,6 @@ THEORA_NAMES = theora \
 
 FLAC_NAMES = FLAC \
              $(NULL)
-
-OIL_NAMES = oil \
-            $(NULL)
 
 GST_PLUGINS_CORE_NAMES = gstcoreelements \
                          gstcoreindexers \
@@ -322,9 +318,6 @@ FLAC_VERSIONED_NAMES = $(join $(FLAC_NAMES), -8)
 FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/bin/, \
            $(addsuffix $(DLL_SUFFIX), $(FLAC_VERSIONED_NAMES)))
 
-OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/bin/, \
-        $(addsuffix -$(OIL_VERSION)-0$(DLL_SUFFIX), $(OIL_NAMES)))
-
 GST_PLUGINS_CORE = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/, \
                      $(addsuffix $(DLL_SUFFIX), $(GST_PLUGINS_CORE_NAMES)))
 
@@ -349,7 +342,6 @@ SONGBIRD_LIB += $(GLIB) \
                 $(VORBIS) \
                 $(THEORA) \
                 $(FLAC) \
-                $(OIL) \
                 $(NULL)
 
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
@@ -398,9 +390,6 @@ THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/lib/lib, \
 FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
-OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/lib/lib, \
-        $(addsuffix -$(OIL_VERSION)$(DLL_SUFFIX), $(OIL_NAMES)))
-
 GST_PLUGINS_CORE = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
                      $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
 
@@ -425,7 +414,6 @@ SONGBIRD_LIB += $(GLIB) \
                 $(VORBIS) \
                 $(THEORA) \
                 $(FLAC) \
-                $(OIL) \
                 $(NULL)
 
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \
@@ -466,9 +454,6 @@ THEORA = $(addprefix $(DEPS_DIR)/libtheora/$(SB_CONFIGURATION)/lib/lib, \
 FLAC = $(addprefix $(DEPS_DIR)/flac/$(SB_CONFIGURATION)/lib/lib, \
            $(addsuffix $(DLL_SUFFIX), $(FLAC_NAMES)))
 
-OIL = $(addprefix $(DEPS_DIR)/liboil/$(SB_CONFIGURATION)/lib/lib, \
-        $(addsuffix -$(OIL_VERSION)$(DLL_SUFFIX), $(OIL_NAMES)))
-
 GST_PLUGINS_CORE = $(addprefix $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
                      $(addsuffix .so, $(GST_PLUGINS_CORE_NAMES)))
 
@@ -490,7 +475,6 @@ SONGBIRD_LIB += $(GSTREAMER) \
                 $(VORBIS) \
                 $(THEORA) \
                 $(FLAC) \
-                $(OIL) \
                 $(NULL)
 
 SONGBIRD_GST_PLUGINS += $(GST_PLUGINS_CORE) \

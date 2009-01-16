@@ -5,7 +5,6 @@
 @lib/libgmodule-2.0.dylib
 @lib/libgobject-2.0.dylib
 @lib/libgthread-2.0.dylib
-@lib/liboil-0.3.dylib
 @lib/libogg.dylib
 @lib/libtheora.dylib
 @lib/libvorbis.dylib

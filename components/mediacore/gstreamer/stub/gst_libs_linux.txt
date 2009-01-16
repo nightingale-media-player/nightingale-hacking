@@ -1,4 +1,3 @@
-@lib/liboil-0.3.so
 @lib/libogg.so
 @lib/libtheora.so
 @lib/libvorbis.so

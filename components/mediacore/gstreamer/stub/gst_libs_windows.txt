@@ -5,7 +5,6 @@
 @lib\libgmodule-2.0-0.dll
 @lib\libgobject-2.0-0.dll
 @lib\libgthread-2.0-0.dll
-@lib\oil-0.3-0.dll
 @lib\ogg-0.dll
 @lib\theora-0.dll
 @lib\vorbis-0.dll
