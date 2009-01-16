@@ -32,6 +32,9 @@
  * \sa sbIDataRemote.idl  sbIDataRemote.js
  */
 
+// Enable this to log number of active dataremotes for each key
+var DEBUG_DATAREMOTES = false;
+
 var Cr = Components.results;
 var Ci = Components.interfaces;
 var Cc = Components.classes;
@@ -113,9 +116,7 @@ DataRemote.prototype = {
     if ( this._observing )
       this._prefBranch.removeObserver(this._key, this);
 
-    // Temporary change in how we attach as observers
-    //this._prefBranch.addObserver(this._key, this, true);
-    this._prefBranch.addObserver(this._key, this, false);
+    this._prefBranch.addObserver(this._key, this, true);
     this._observing = true;
 
     // Now we are linked to an nsIObserver object
@@ -147,9 +148,7 @@ DataRemote.prototype = {
     if ( this._observing )
       this._prefBranch.removeObserver(this._key, this);
 
-    // Temporary change in how we attach as observers
-    //this._prefBranch.addObserver(this._key, this, true);
-    this._prefBranch.addObserver(this._key, this, false);
+    this._prefBranch.addObserver(this._key, this, true);
     this._observing = true;
 
     // Now we are linked to property on an element
@@ -180,11 +179,9 @@ DataRemote.prototype = {
     if ( this._observing )
       this._prefBranch.removeObserver(this._key, this);
 
-    // Temporary change in how we attach as observers
-    //this._prefBranch.addObserver(this._key, this, true);
-    this._prefBranch.addObserver(this._key, this, false);
+    this._prefBranch.addObserver(this._key, this, true);
     this._observing = true;
-    
+
     // Now we are linked to an attribute on an element
     this._boundObserver = null;
     this._boundElement = aElement;
@@ -462,6 +459,66 @@ DataRemote.prototype = {
 
 // be specific
 DataRemote.prototype.constructor = DataRemote;
+
+
+/**
+ * ----------------------------------------------------------------------------
+ * Debug Wrapper.  Subclasses and replaces DateRemote to keep 
+ * track of how many dataremotes are alive, and for which keys.
+ * Enable DEBUG_DATAREMOTES to track down leaks.
+ * ----------------------------------------------------------------------------
+ */
+
+if (DEBUG_DATAREMOTES) {
+  var RealDataRemote = DataRemote;
+  function DataRemote() {
+    dump("DEBUG_DATAREMOTE: NEW DATAREMOTE\n");	  
+  }
+  DataRemote.prototype = {
+    __proto__: RealDataRemote.prototype,
+    _activeDataremotes: {}, // Shared by all instances
+
+    // Overload some methods with debug logging
+
+    unbind: function() {
+      if (this._observing) {
+    	  this._activeDataremotes[this._key]--;
+        dump("DEBUG_DATAREMOTE: UNBIND " + this._key + ". Remaining:\n");	  
+    	  for (var key in this._activeDataremotes) {
+    	    dump("DEBUG_DATAREMOTE:\t" + key + "\t\t\t" +
+    	         this._activeDataremotes[key] + "\n");
+    	  }
+      }
+      // Call original unbind
+      this.__proto__.__proto__.unbind.call(this);
+    },
+
+    _logBind: function() {
+      dump("DEBUG_DATAREMOTE: BIND " + this._key + "\n");
+      if (!(this._key in this._activeDataremotes)) {
+        this._activeDataremotes[this._key] = 0;
+      }
+      this._activeDataremotes[this._key]++;
+    },
+
+    bindObserver: function() {
+      this.__proto__.__proto__.bindObserver.apply(this, arguments);
+      this._logBind();
+    },
+
+    bindProperty: function() {
+      this.__proto__.__proto__.bindProperty.apply(this, arguments);
+      this._logBind();    
+    },
+
+    bindAttribute: function() {
+      this.__proto__.__proto__.bindAttribute.apply(this, arguments);
+      this._logBind();
+    }  
+  } 
+  DataRemote.prototype.constructor = DataRemote;
+}
+
 
 /**
  * ----------------------------------------------------------------------------

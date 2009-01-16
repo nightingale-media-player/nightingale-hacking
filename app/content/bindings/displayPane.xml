@@ -355,6 +355,8 @@
           var paneMgr = Components.classes["@songbirdnest.com/Songbird/DisplayPane/Manager;1"]
                                   .getService(Components.interfaces.sbIDisplayPaneManager);
           paneMgr.unregisterInstantiator(this);
+
+          this._lastHiddenState.unbind();
         ]]></xbl:body>
       </xbl:method>
 
@@ -872,6 +874,12 @@
         this.destroy();
       ]]></xbl:destructor>
       
+      <xbl:method name="destroy">
+        <xbl:body><![CDATA[
+          this._lastHiddenState.unbind();
+        ]]></xbl:body>
+      </xbl:method>
+
       <xbl:field name="_popup">
         document.getAnonymousElementByAttribute(this, "anonid", "popup");
       </xbl:field>

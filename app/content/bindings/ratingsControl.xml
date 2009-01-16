@@ -312,6 +312,11 @@
                              .getService(Components.interfaces.sbIMediacoreManager);
           mm.removeListener(this._playbackListener);
           this._playbackListener = null;
+
+          if (this._curMediaList != null) {
+            this._curMediaList.removeListener(this._mediaListListener);
+            this._curMediaList = null;
+		      } 
         ]]>
       </destructor>
       <field name="_curMediaItem">null</field>
