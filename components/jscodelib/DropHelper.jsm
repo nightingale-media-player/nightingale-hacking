@@ -908,20 +908,8 @@ var ExternalDropHandler = {
   // --------------------------------------------------------------------------
   // methods below this point are pretend-private
   // --------------------------------------------------------------------------
-
-  _importInProgress    : false, // are we currently importing a drop ?
-  _fileList            : [],    // list of files URLs to import
-  _directoryList       : [],    // queue of nsIFile directories to scan
-  _targetList          : null,  // target mediaList for the drop
-  _targetPosition      : -1,    // position in the mediaList we should drop at
-  _firstMediaItem      : null,  // first mediaItem that was handled in this drop
-  _scanList            : null,  // list of newly created medaItems for metadata scan
-  _window              : null,  // window that received this drop
+  
   _listener            : null,  // listener object, for notifications
-  _totalImported       : 0,     // number of items imported in the library
-  _totalInserted       : 0,     // number of items inserted in the medialist
-  _totalDups           : 0,     // number of items we already had in the library
-  _otherDrops          : 0,     // number of other drops handled (eg, XPI, JAR)
 
   // initiate the handling of all dropped files: this handling is sliced up 
   // into a number of 'frames', each frame importing one item, or queuing up 
@@ -942,35 +930,23 @@ var ExternalDropHandler = {
       return;
     }
 
-    // the array to record items to feed to the metadata scanner
-    if (!this._scanList) {
-      this._scanList = this._Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                          .createInstance(this._Ci.nsIMutableArray);
-    }
-
     // if we are on win32, we will need to make local filenames lowercase
     var lcase = (this._getPlatformString() == "Windows_NT");
     
     // get drop data in any of the supported formats
     var dropdata = session ? this.getTransferData(session) : urlarray;
     
-    // remember the target list and position for this drop
-    this._targetList = targetlist;
-    this._targetPosition = position;
-    
     // reset first media item, so we know to record it again
     this._firstMediaItem = null;
-    
-    // remember window for openModalDialog
-    this._window = window;
     
     // remember listener
     this._listener = listener;
     
-    // reset stats
-    this._totalImported = 0;
-    this._totalInserted = 0;
-    this._totalDups = 0;
+    var uriList = this._Cc["@mozilla.org/array;1"]
+                      .createInstance(this._Ci.nsIMutableArray);
+
+    var ioService = this._Cc["@mozilla.org/network/io-service;1"]
+                        .getService(this._Ci.nsIIOService);
     
     // process all entries in the drop
     for (var dropentry in dropdata) {
@@ -995,6 +971,13 @@ var ExternalDropHandler = {
         var fileHandler = ioService.getProtocolHandler("file")
                           .QueryInterface(this._Ci.nsIFileProtocolHandler);
         rawData = fileHandler.getURLSpecFromFile(item);
+
+        // Check to see that this is a xpi/jar - if so handle that event
+        if ( /\.(xpi|jar)$/i.test(rawData) ) {
+          // this._window.installXPI(aURI.spec) will not work but this will:
+          window.setTimeout(window.installXPI, 10, rawData);
+          // wicked! :D
+        }
       } else {
         if (item instanceof this._Ci.nsISupportsString) {
           rawData = item.toString();
@@ -1011,7 +994,7 @@ var ExternalDropHandler = {
           continue;
         }
       }
-      
+
       // rawData contains a file or http URL to the dropped media.
 
       // check if there is a pretty name we can grab
@@ -1027,292 +1010,55 @@ var ExternalDropHandler = {
       }
 
       // record this file for later processing
-      this._fileList.push(rawData);
+      uriList.appendElement(ioService.newURI(rawData, null, null), false); 
     }
 
-    // if we are already importing, our entries will be processed at the end
-    // of the current batch, otherwise, we need to start a new one
-    if (!this._importInProgress) {
-      
-      // remember that we are currently processing the drop.
-      // if more files are dropped while we're importing, they will be added
-      // to the end of the batch import
-      this._importInProgress = true;
-      
-      // begin processing array of dropped items
-      // (the first item will be handled immediately, and the subsequent
-      // ones will be processed each time a new "frame" occurs, on a timer)
-      this._importDropFrame();
-    }
-  },
-  
-  // give a little bit of time for the main thread to react to UI events, and 
-  // then execute the next frame of the drop import session.
-  _nextImportDropFrame: function() {
-    this._timer = this._Cc["@mozilla.org/timer;1"]
-                      .createInstance(this._Ci.nsITimer);
-    this._timer.initWithCallback(this, 10, this._Ci.nsITimer.TYPE_ONE_SHOT);    
+    var uriImportService = this._Cc["@songbirdnest.com/uri-import-service;1"]
+                               .getService(this._Ci.sbIURIImportService);
+    uriImportService.importURIArray(uriList,
+                                    window,
+                                    targetlist,
+                                    position,
+                                    this);
   },
 
-  // one shot timer notification method
-  notify: function(timer) {
-    this._timer = null;
-    this._importDropFrame();
-  },
-  
-  // executes one frame of the drop import session
-  _importDropFrame: function() {
-    try {
-      // any more files to process ?
-      if (this._fileList.length > 0) {
-        
-        // get the first of the remaining files
-        var url;
-        url = this._fileList[0];
-        
-        // remove it from the array of files to process
-        this._fileList.splice(0, 1);
-        
-        // safety check
-        if (url != "") {
-
-          // make a URI object for this file
-          var ios = this._Cc["@mozilla.org/network/io-service;1"]
-                        .getService(this._Ci.nsIIOService);
-          var uri = ios.newURI(url, null, null);
-          
-          // make a file URL object and check if the object is a directory.
-          // if it is a directory, then we record it in a separate array,
-          // which we will process at the end of the batch.
-          var fileUrl;
-          try {
-            fileUrl = uri.QueryInterface(this._Ci.nsIFileURL);
-          } catch (e) { 
-            fileUrl = null; 
-          }
-          if (fileUrl) {
-            // is this is a directory?
-            if (fileUrl.file.isDirectory()) {
-              // yes, record it and delay processing
-              this._directoryList.push(fileUrl.file);
-              // continue with the current batch
-              this._nextImportDropFrame();
-              return;
-            }
-          }
-
-          // process this item
-          this._importDropFile(uri);
-        }
-
-        // continue with the current batch
-        this._nextImportDropFrame();
-
-      } else {
-        
-        // there are no more items in the drop array, start the metadata scanner
-        // if we created any mediaitem
-        if (this._scanList && 
-            this._scanList.length > 0) {
-          var metadataService = 
-            this._Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                .getService(this._Ci.sbIFileMetadataService);
-          metadataService.read(this._scanList);
-          this._scanList = null;
-        }
-        
-        // see if there are any directories to be scanned now.
-        if (this._directoryList.length > 0) {
-
-          // yes, there are, import them.
-          this._importDropDirectories();
-          
-          // continue with the current batch, in case more stuff
-          // has been dropped. this shouldnt be possible because the
-          // mediascan dialog is modal, but it is better to check than
-          // to lose drops
-          this._nextImportDropFrame();
-        } else {
-          // all done.
-          this._dropComplete();
-        }
-      }
-    } catch (e) {
-
-      // oops, something wrong happened, we do not want to abort the whole
-      // import batch tho, so just print a debug message and try the next
-      // frame
-      Components.utils.reportError(e);
-      this._nextImportDropFrame();
-
-    }
-  },
-  
-  // import the given file URI into the target library and optionally inserts in
-  // into the target playlist at the desired spot. if the item already exists,
-  // it is only inserted to the playlist
-  _importDropFile: function(aURI) {
-    try {    
-      // is this a media url ?
-      var typeSniffer = this._Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
-                            .createInstance(this._Ci.sbIMediacoreTypeSniffer);
-                            
-      if (typeSniffer.isValidMediaURL( aURI )) {
-        
-        // check whether the item already exists in the library 
-        // for the target list
-        var item = this._getFirstItemByProperty(this._targetList.library, 
-                        "http://songbirdnest.com/data/1.0#contentURL", 
-                        aURI.spec);
-        // If we didn't find the content URL try the originURL
-        if (!item) {
-            item = this._getFirstItemByProperty(this._targetList.library, 
-                                                "http://songbirdnest.com/data/1.0#originURL", 
-                                                aURI.spec);
-        }
-        
-        // if the item didnt exist before, create it now
-        var itemAdded = false;
-        if (!item) {
-          var holder = {};
-          var wasCreated = this._targetList
-                               .library
-                               .createMediaItemIfNotExist(aURI, null, holder);
-          item = holder.value;
-          
-          // Ensure we have an item and that it was created before 'currentTime'.
-          // We check the creation time specifically because items created before
-          // 'currentTime' were not created but rather returned to us.
-          if (wasCreated && item) {
-            
-            this._scanList.appendElement(item, false);
-            this._totalImported++;
-            
-            itemAdded = true;
-          }
-        } 
-
-        // The item was not added because it was a duplicate.
-        if(!itemAdded) {
-          this._totalDups++;
-        }
-
-        // if the item is valid, and we are inserting in a medialist, insert it 
-        // to the requested position
-        if (item) {
-          if ((this._targetList instanceof this._Ci.sbIOrderableMediaList) &&
-              (this._targetPosition >= 0) && 
-              (this._targetPosition < this._targetList.length)) {
-            this._targetList.insertBefore(this._targetPosition, item);
-            this._targetPosition++;
-          } else {
-            this._targetList.add(item);
-          }
-          this._totalInserted++;
-        }
-        // report the first item that was dropped
-        if (!this._firstMediaItem) {
-          this._firstMediaItem = item;
-          if (this._listener) {
-            this._listener.onFirstMediaItem(this._targetList, item);
-          }
-        }
-      } else if ( /\.(xpi|jar)$/i.test(aURI.spec) ) {
-        this._otherDrops++;
-        // this._window.installXPI(aURI.spec) will not work but this will:
-        this._window.setTimeout(this._window.installXPI, 10, aURI.spec);
-        // wicked! :D
-      }
-    } catch (e) {
-      Components.utils.reportError(e);
-    }
-  },
-  
-  // search for an item inside a list based on a property value. this is used
-  // by the drop handler to determine if a drop item is already in the target 
-  // library, by looking for its contentURL.
-  _getFirstItemByProperty: function(aMediaList, aProperty, aValue) {
-    var listener = {
-      item: null,
-      onEnumerationBegin: function() {
-      },
-      onEnumeratedItem: function(list, item) {
-        this.item = item;
-        return Components.interfaces.sbIMediaListEnumerationListener.CANCEL;
-      },
-      onEnumerationEnd: function() {
-      }
-    };
-
-    aMediaList.enumerateItemsByProperty(aProperty,
-                                        aValue,
-                                        listener);
-    return listener.item;
-  },
-
-  // trigger the import of all directory entries that have been defered until
-  // this point. this launches the media scanner dialog box.
-  _importDropDirectories: function() {
-    var importService = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
-                          .getService(Ci.sbIDirectoryImportService);
-    
-    var job = importService.import(ArrayConverter.nsIArray(this._directoryList),
-                                   this._targetList, this._targetPosition);
-    
-    // Reset list of directories
-    this._directoryList = [];
-                                   
-    SBJobUtils.showProgressDialog(job, this._window, /** No delay **/ 0);
-    
-    // If this job provided the first item, we may want to play it
-    if (!this._firstMediaItem) {
-      var allItems = job.enumerateAllItems();
-      if (allItems.hasMoreElements()) {
-        this._firstMediaItem = allItems.getNext().QueryInterface(Ci.sbIMediaItem);
-        if (this._listener) {
-          this._listener.
-            onFirstMediaItem(this._targetList, this._firstMediaItem);
-        }
-      }
-    }
-
-    this._totalImported += job.totalAddedToLibrary;
-    this._totalInserted += job.totalAddedToMediaList;
-    this._totalDups += job.totalDuplicates;
-  },
-  
-  // called when the whole drop handling operation has completed, used
-  // to notify the original caller and free up any resources we can
-  _dropComplete: function() {
-    // notify the listener that we're done
+  // sbIURIImportListener
+  onImportComplete: function(aTargetMediaList,
+                             aTotalImportCount,
+                             aTotalDupeCount,
+                             aTotalInserted,
+                             aOtherDrops)
+  {
     if (this._listener) {
-      if (this._listener.onDropComplete(this._targetList,
-                                        this._totalImported,
-                                        this._totalDups, 
-                                        this._totalInserted,
-                                        this._otherDrops)) {
-        DNDUtils.standardReport(this._targetList,
-                                this._totalImported,
-                                this._totalDups, 
-                                this._totalInserted,
-                                this._otherDrops);
+      if (this._listener.onDropComplete(aTargetMediaList,
+                                        aTotalImportCount,
+                                        aTotalDupeCount, 
+                                        aTotalInserted,
+                                        aOtherDrops)) {
+        DNDUtils.standardReport(aTargetMediaList,
+                                aTotalImportCount,
+                                aTotalDupeCount, 
+                                aTotalInserted,
+                                aOtherDrops);
       }
-    } else {
-      DNDUtils.standardReport(this._targetList,
-                              this._totalImported,
-                              this._totalDups, 
-                              this._totalInserted,
-                              this._otherDrops);
+    } 
+    else {
+      DNDUtils.standardReport(aTargetMediaList,
+                              aTotalImportCount,
+                              aTotalInserted, 
+                              aTotalInserted,
+                              aOtherDrops);
     }
-    
-    // and reset references we do not need anymore, coz leaks suck
-    this._importInProgress = false;
-    this._targetList = null;
-    this._scanList = null;
-    this._window = null;
-    this._listener = null;
   },
   
+  
+  onFirstMediaItem: function(aTargetMediaList, aTargetMediaItem)
+  {
+    if (this._listener) {
+      this._listener.onFirstMediaItem(aTargetMediaList, aTargetMediaItem);
+    }
+  },
+    
   // returns the platform string
   _getPlatformString: function() {
     try {
