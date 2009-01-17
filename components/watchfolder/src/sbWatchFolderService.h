@@ -43,6 +43,7 @@
 #include <nsCOMPtr.h>
 #include <nsIIOService.h>
 #include <sbIMediaListListener.h>
+#include <nsIDOMWindow.h>
 #include <queue>
 
 typedef std::queue<nsString> sbStringQueue;
@@ -76,17 +77,19 @@ public:
 protected:
   nsresult StartWatching();
   nsresult StopWatching();
-  nsresult SetTimer();
+  nsresult SetEventPumpTimer();
   nsresult ProcessChangedPaths();
   nsresult ProcessAddedPaths();
   nsresult ProcessRemovedPaths();
+  nsresult GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow);
   void ClearQueue(sbStringQueue & aStringQueue);
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
   nsCOMPtr<sbILibrary>           mMainLibrary;
   nsCOMPtr<nsIIOService>         mIOService;
-  nsCOMPtr<nsITimer>             mTimer;
+  nsCOMPtr<nsITimer>             mEventPumpTimer;
+  nsCOMPtr<nsITimer>             mAddDelayTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
   sbStringQueue                  mChangedPathsQueue;
   sbStringQueue                  mAddedPathsQueue;
@@ -94,7 +97,9 @@ private:
   nsString                       mWatchPath;
   PRBool                         mIsEnabled;
   PRBool                         mIsWatching;
-  PRBool                         mTimerIsSet;
+  PRBool                         mEventPumpTimerIsSet;
+  PRBool                         mAddDelayTimerIsSet;
+  PRBool                         mShouldProcessAddedPaths;
 };
 
 

@@ -40,9 +40,14 @@
 #include <sbPropertiesCID.h>
 #include <nsIPrefBranch2.h>
 #include <sbStandardProperties.h>
+#include <sbIURIImportService.h>
+#include <sbIApplicationController.h>
 
 #define PREF_WATCHFOLDER_ENABLE "songbird.watch_folder.enable"
 #define PREF_WATCHFOLDER_PATH   "songbird.watch_folder.path"
+
+#define ADD_DELAY_TIMER_DELAY  1500 
+#define EVENT_PUMP_TIMER_DELAY 1000 
 
 
 NS_IMPL_ISUPPORTS5(sbWatchFolderService, 
@@ -56,7 +61,8 @@ sbWatchFolderService::sbWatchFolderService()
 {
   mIsEnabled = PR_FALSE;
   mIsWatching = PR_FALSE;
-  mTimerIsSet = PR_FALSE;
+  mEventPumpTimerIsSet = PR_FALSE;
+  mAddDelayTimerIsSet = PR_FALSE;
 }
 
 sbWatchFolderService::~sbWatchFolderService()
@@ -165,16 +171,19 @@ sbWatchFolderService::StopWatching()
 }
 
 nsresult
-sbWatchFolderService::SetTimer()
+sbWatchFolderService::SetEventPumpTimer()
 {
-  if (mTimerIsSet) {
+  if (mEventPumpTimerIsSet) {
     return NS_OK;
   }
 
-  nsresult rv = mTimer->InitWithCallback(this, 500, nsITimer::TYPE_ONE_SHOT);
+  nsresult rv;
+  rv = mEventPumpTimer->InitWithCallback(this, 
+                                         EVENT_PUMP_TIMER_DELAY, 
+                                         nsITimer::TYPE_ONE_SHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mTimerIsSet = PR_TRUE;
+  mEventPumpTimerIsSet = PR_TRUE;
   return NS_OK;
 }
 
@@ -201,12 +210,61 @@ sbWatchFolderService::ProcessAddedPaths()
     return NS_OK;
   }
 
-  //
-  // TODO: Write Me! 
-  //       - see bug 14768.
-  //
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> uriArray = 
+    do_CreateInstance("@mozilla.org/array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  ClearQueue(mAddedPathsQueue);
+  while (!mAddedPathsQueue.empty()) {
+    // Convert the current path to a URI, then get the spec.
+    nsCOMPtr<nsILocalFile> curPathFile =
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not create a local file!");
+      continue;
+    }
+
+    rv = curPathFile->InitWithPath(mAddedPathsQueue.front());
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not init a local file with a added path!");
+      continue;
+    }
+
+    nsCOMPtr<nsIURI> fileURI;
+    rv = mIOService->NewFileURI(curPathFile, getter_AddRefs(fileURI));
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not get a URI for a file!");
+      continue;
+    }
+
+    rv = uriArray->AppendElement(fileURI, PR_FALSE);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not append the URI to the mutable array!");
+    }
+    
+    mAddedPathsQueue.pop();
+  }
+
+  nsCOMPtr<sbIURIImportService> uriImportService =
+    do_GetService("@songbirdnest.com/uri-import-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the current songbird window
+  nsCOMPtr<nsIDOMWindow> songbirdWindow;
+  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //
+  // XXX todo This can cause problems if this fires when the user is dragging
+  //          and dropping into a playlist. This will need to be fixed.
+  //
+  rv = uriImportService->ImportURIArray(uriArray,
+                                        songbirdWindow,
+                                        mMainLibrary,
+                                        -1,
+                                        nsnull);  // listener
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
@@ -267,6 +325,19 @@ sbWatchFolderService::ProcessRemovedPaths()
   return NS_OK;
 }
 
+nsresult
+sbWatchFolderService::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
+{
+  NS_ENSURE_ARG_POINTER(aSongbirdWindow);
+
+  nsresult rv;
+  nsCOMPtr<sbIApplicationController> appController =
+    do_GetService("@songbirdnest.com/Songbird/ApplicationController;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return appController->GetActiveMainWindow(aSongbirdWindow);
+}
+
 void 
 sbWatchFolderService::ClearQueue(sbStringQueue & aStringQueue)
 {
@@ -298,9 +369,12 @@ NS_IMETHODIMP
 sbWatchFolderService::OnWatcherStarted()
 {
   // Now start up the timer
-  if (!mTimer) {
+  if (!mEventPumpTimer) {
     nsresult rv;
-    mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    mEventPumpTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mAddDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -310,8 +384,11 @@ sbWatchFolderService::OnWatcherStarted()
 NS_IMETHODIMP 
 sbWatchFolderService::OnWatcherStopped()
 {
-  if (mTimer) {
-    mTimer->Cancel();
+  if (mEventPumpTimer) {
+    mEventPumpTimer->Cancel();
+  }
+  if (mAddDelayTimer) {
+    mAddDelayTimer->Cancel();
   }
   
   return NS_OK;
@@ -321,7 +398,7 @@ NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
   mChangedPathsQueue.push(nsString(aFilePath));
-  nsresult rv = SetTimer();
+  nsresult rv = SetEventPumpTimer();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -331,7 +408,7 @@ NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
   mRemovedPathsQueue.push(nsString(aFilePath));
-  nsresult rv = SetTimer();
+  nsresult rv = SetEventPumpTimer();
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
@@ -340,8 +417,24 @@ NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
   mAddedPathsQueue.push(nsString(aFilePath));
-  nsresult rv = SetTimer();
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mAddDelayTimerIsSet) {
+    // The timer is currently set, and more added events have been received.
+    // Toggle || so that the timer will reset itself instead of processing 
+    // the added event paths when it fires.
+    mShouldProcessAddedPaths = PR_FALSE;
+  }
+  else {
+    nsresult rv;
+    rv = mAddDelayTimer->InitWithCallback(this, 
+                                          ADD_DELAY_TIMER_DELAY,
+                                          nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mAddDelayTimerIsSet = PR_TRUE;
+    mShouldProcessAddedPaths = PR_TRUE;
+  }
+  
   return NS_OK;
 }
 
@@ -397,16 +490,36 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
 NS_IMETHODIMP
 sbWatchFolderService::Notify(nsITimer *aTimer)
 {
-  nsresult rv = ProcessChangedPaths();
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
+  if (aTimer == mEventPumpTimer) {
+    rv = ProcessChangedPaths();
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = ProcessAddedPaths();
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = ProcessRemovedPaths();
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = ProcessRemovedPaths();
-  NS_ENSURE_SUCCESS(rv, rv);
+    mEventPumpTimerIsSet = PR_FALSE;
+  }
+  else {
+    // If there has been no further add events for a second, begin to process
+    // the added path queue.
+    if (mShouldProcessAddedPaths) {
+      rv = ProcessAddedPaths();
+      NS_ENSURE_SUCCESS(rv, rv);
 
-  mTimerIsSet = PR_FALSE;
+      mAddDelayTimerIsSet = PR_FALSE;
+    }
+    else {
+      // More added events were received while the timer was set. Try and
+      // wait another timer session before processing events.
+      rv = mAddDelayTimer->InitWithCallback(this,
+                                            ADD_DELAY_TIMER_DELAY,
+                                            nsITimer::TYPE_ONE_SHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mShouldProcessAddedPaths = PR_TRUE;
+    }
+  }
 
   return NS_OK;
 }

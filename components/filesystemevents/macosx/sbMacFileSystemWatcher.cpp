@@ -175,7 +175,7 @@ sbMacFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
                                 mContext,
                                 paths, 
                                 kFSEventStreamEventIdSinceNow,
-                                3.0,  // lag in seconds
+                                1.0,  // lag in seconds
                                 kFSEventStreamCreateFlagNone);
   
   FSEventStreamScheduleWithRunLoop(mStream, 
