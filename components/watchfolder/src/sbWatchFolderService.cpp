@@ -59,6 +59,7 @@ NS_IMPL_ISUPPORTS5(sbWatchFolderService,
 
 sbWatchFolderService::sbWatchFolderService()
 {
+  mIsSupported = PR_FALSE;
   mIsEnabled = PR_FALSE;
   mIsWatching = PR_FALSE;
   mEventPumpTimerIsSet = PR_FALSE;
@@ -73,6 +74,20 @@ nsresult
 sbWatchFolderService::Init()
 {
   nsresult rv;
+
+  // The watch folder services are not supported if the file system watcher is
+  // not.  The file system watcher component may not be available at all on this
+  // OS or may not be supported on this OS version.  In either case, just return
+  // without logging any errors.
+  nsCOMPtr<sbIFileSystemWatcher> fileSystemWatcher =
+    do_CreateInstance("@songbirdnest.com/filesystem/watcher;1", &rv);
+  if (NS_FAILED(rv))
+    return NS_OK;
+  PRBool isSupported = PR_FALSE;
+  rv = fileSystemWatcher->GetIsSupported(&isSupported);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isSupported)
+    return NS_OK;
 
   nsCOMPtr<nsIObserverService> observerService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
@@ -113,6 +128,9 @@ sbWatchFolderService::Init()
 
   mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Indicate that the watch folder services are supported.
+  mIsSupported = PR_TRUE;
 
   return NS_OK;
 }
@@ -353,12 +371,7 @@ NS_IMETHODIMP
 sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
 {
   NS_ENSURE_ARG_POINTER(aIsSupported);
-  
-  //
-  // For now, just return PR_TRUE.
-  // @see bug 10274.
-  //
-  *aIsSupported = PR_TRUE;
+  *aIsSupported = mIsSupported;
   return NS_OK;
 }
 

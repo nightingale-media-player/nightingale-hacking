@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -34,7 +34,7 @@ interface sbIFileSystemListener;
 //        path of the fileystem resources that need to be monitored. Callbacks
 //        will begin once |startWatching()| has been called.
 //
-[scriptable, uuid(9075F004-57C0-4DF8-8B00-E4300E8784A6)]
+[scriptable, uuid(94424D38-CEED-4C8C-9E5C-25A7AB295815)]
 interface sbIFileSystemWatcher : nsISupports
 {
   //
@@ -70,5 +70,11 @@ interface sbIFileSystemWatcher : nsISupports
   // \brief Get the watch path of this watcher.
   //
   readonly attribute AString watchPath;
+
+  //
+  // \brief Find out if the file system watcher is supported on the current OS.
+  // \return True if file system watcher is supported, false if not.
+  //
+  readonly attribute boolean isSupported;
 };
 

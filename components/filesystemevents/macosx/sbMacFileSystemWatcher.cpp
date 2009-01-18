@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -59,11 +59,11 @@ sbMacFileSystemWatcher::FSEventCallback(ConstFSEventStreamRef aStreamRef,
 sbMacFileSystemWatcher::sbMacFileSystemWatcher()
 {
   // Check to see if the current runtime is at least 10.5 or higher.
-  mIsRunningLeopard = PR_FALSE;
+  mIsSupported = PR_FALSE;
   SInt32 macVersion;
   if (Gestalt(gestaltSystemVersion, &macVersion) == noErr) {
     if (macVersion >= 0x1050) {
-      mIsRunningLeopard = PR_TRUE;
+      mIsSupported = PR_TRUE;
     }
   }
 }
@@ -77,7 +77,7 @@ sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener,
                              const nsAString & aRootPath, 
                              PRBool aIsRecursive)
 {
-  if (!mIsRunningLeopard) {
+  if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
 
@@ -87,7 +87,7 @@ sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener,
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StartWatching()
 {
-  if (!mIsRunningLeopard) {
+  if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
 
@@ -114,7 +114,7 @@ sbMacFileSystemWatcher::StartWatching()
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StopWatching()
 {
-  if (!mIsRunningLeopard) {
+  if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
   

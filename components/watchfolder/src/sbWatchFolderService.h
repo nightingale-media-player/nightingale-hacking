@@ -95,6 +95,7 @@ private:
   sbStringQueue                  mAddedPathsQueue;
   sbStringQueue                  mRemovedPathsQueue;
   nsString                       mWatchPath;
+  PRBool                         mIsSupported;
   PRBool                         mIsEnabled;
   PRBool                         mIsWatching;
   PRBool                         mEventPumpTimerIsSet;
