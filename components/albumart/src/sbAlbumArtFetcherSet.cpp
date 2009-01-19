@@ -115,7 +115,18 @@ sbAlbumArtFetcherSet::SetLocalOnly(PRBool aLocalOnly)
 {
   TRACE(("sbAlbumArtFetcherSet::SetLocalOnly - IsLocalOnly = %s",
           (aLocalOnly ? "TRUE" : "FALSE")));
-  mLocalOnly = aLocalOnly;
+  
+  nsresult rv;
+  
+  // If this has changed we need to reload the fetcher list
+  if (aLocalOnly != mLocalOnly) {
+    mLocalOnly = aLocalOnly;
+    TRACE(("sbAlbumArtFetcherSet::SetLocalOnly - Reloading fetcher list."));
+    rv = mAlbumArtService->GetFetcherList(mLocalOnly,
+                                          getter_AddRefs(mFetcherList));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 

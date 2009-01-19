@@ -116,6 +116,8 @@ function sbAlbumArtDownloader__downloadFinished() {
                                          imageData.length);
   }
 
+  // Clean up our temporary file
+  this._outputFile.remove(false);
   this._listener.onResult(newFile, this._mediaItem);
 }
 
@@ -152,15 +154,7 @@ function sbAlbumArtDownloader__getImageData(imageFilePath) {
 /* sbIAlbumArtDownloader methods */
 sbAlbumArtDownloader.prototype.downloadImage =
 function sbAlbumArtDownloader_downloadImage(aURL, aMediaItem, aListener) {
-  // Check if we already have this item in the correct location
-  var currentLocation = aMediaItem.getProperty(SBProperties.primaryImageURL);
-  if (currentLocation == aURL) {
-    aListener.onResult(uri, aMediaItem);
-    return;
-  }
-
   // Check if this is a web file to download
-  var uri;
   var uri = Cc["@mozilla.org/network/standard-url;1"]
               .createInstance(Ci.nsIURI);
   uri.spec = aURL;
@@ -236,6 +230,8 @@ function sbAlbumArtDownloader_downloadImage(aURL, aMediaItem, aListener) {
                       null,               // ExtraHeaders (not used)
                       this._outputFile);  // Target File.
   } catch (err) {
+    // Clean up our temporary file.
+    this._outputFile.remove(false);
     aListener.onResult(null, aMediaItem);
   }
 }
