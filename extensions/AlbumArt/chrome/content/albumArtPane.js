@@ -861,7 +861,15 @@ var AlbumArt = {
     var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
     var mimeType = {};
-    var imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
+    var imageData = null;
+    try {
+      imageData = sbClipboard.copyImageFromClipboard(mimeType, {});
+    } catch (err) {
+      Cu.reportError("Error checking for image data on the clipboard: " + err);
+      aMimeType.value = null;
+      aImageData.value = null;
+      aIsValidAlbumArt.value = false;
+    }
     mimeType = mimeType.value;
 
     // Validate image as valid album art.
@@ -908,7 +916,7 @@ var AlbumArt = {
     
     if (!this.canEditItems(itemArray)) {
       cutElem.disabled = true;
-      copyElem.disabled = true
+      copyElem.disabled = (curImageUrl == DROP_TARGET_IMAGE);
       pasteElem.disabled = true;
       clearElem.disabled = true;
       return;
@@ -927,7 +935,7 @@ var AlbumArt = {
     } else {
       // Only allow valid images to be modified.
       cutElem.disabled = !curImageUrl;
-      copyElem.disabeld = !curImageUrl;
+      copyElem.disabled = !curImageUrl;
       clearElem.disabled = !curImageUrl;
     }
 
@@ -1021,6 +1029,7 @@ var AlbumArt = {
     var aImageURL = AlbumArt.getCurrentStateItemImage();
     var ioService = Cc["@mozilla.org/network/io-service;1"]
                       .getService(Ci.nsIIOService);
+    var imageURI = null;
     try {
       imageURI = ioService.newURI(aImageURL, null, null);
     } catch (err) {
@@ -1032,7 +1041,7 @@ var AlbumArt = {
     var copyOk = false;
     if (imageURI instanceof Ci.nsIFileURL) {
       var imageFile = imageURI.file.QueryInterface(Ci.nsILocalFile);
-      var imageData, mimetype;
+      var imageData, mimeType;
       [imageData, mimeType] = sbCoverHelper.readImageData(imageFile);
     
       try {
