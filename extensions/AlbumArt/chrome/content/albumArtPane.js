@@ -869,6 +869,7 @@ var AlbumArt = {
       aMimeType.value = null;
       aImageData.value = null;
       aIsValidAlbumArt.value = false;
+      return;
     }
     mimeType = mimeType.value;
 
