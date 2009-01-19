@@ -1,9 +1,9 @@
 <!ENTITY prefpane.label "SHOUTcast">
-<!ENTITY prefs.caption "Stream-filtrer">
+<!ENTITY prefs.caption "Stream-filtre">
 <!ENTITY prefwindow.title "SHOUTcast Radio indstillinger">
 <!ENTITY bit-rate.limit.label "Vis kun SHOUTcast streams med en bitrate på mindst">
 <!ENTITY listeners.limit.label "Vis kun SHOUTcast streams med mindst">
-<!ENTITY listeners.limit.label.2 "pesoner der lytter.">
+<!ENTITY listeners.limit.label.2 "pesoner der lytter">
 <!ENTITY bit-rate.label "Bitrate (kbps)">
 <!ENTITY bit-rate.accesskey "B">
 <!ENTITY listeners.label "Antal lyttere">

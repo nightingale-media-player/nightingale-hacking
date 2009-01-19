@@ -1,0 +1,8 @@
+<!ENTITY shoutcast-radio.filter "Фильтр">
+<!ENTITY shoutcast-radio.genre "Жанр">
+<!ENTITY shoutcast-radio.clear "Очистить">
+<!ENTITY shoutcast-radio.add-station "Добавление станции">
+<!ENTITY shoutcast-radio.enter-name "Введите название, которое вы хотите дать радиостанции">
+<!ENTITY shoutcast-radio.station-name "Название станции">
+<!ENTITY shoutcast-radio.enter-url "Введите адрес радиостанции">
+<!ENTITY shoutcast-radio.enter-genre "Выберите жанр для станции">
