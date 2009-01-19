@@ -189,6 +189,7 @@ sbWin32FileSystemWatcher::Cleanup()
 
   if (mRootDirHandle) {
     CloseHandle(mRootDirHandle);
+    mRootDirHandle = nsnull;
   }
 }
 
