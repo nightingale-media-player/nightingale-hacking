@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -65,7 +65,7 @@
   <!-- EULA page. -->
   <wizardpage id="first_run_eula_page"
               pageid="first_run_eula_page"
-              next="first_run_locale_page"
+              next="first_run_welcome_page"
               label="&first_run.title;"
               showextra1="true"
               hideback="true"
@@ -75,19 +75,6 @@
                        class="first-run-wizard-page"
                        firstrunwizardpage="true"
                        oncommand="firstRunWizard.update();"/>
-  </wizardpage>
-
-  <!-- Locale page. -->
-  <wizardpage id="first_run_locale_page"
-              pageid="first_run_locale_page"
-              next="first_run_welcome_page"
-              label="&first_run.title;"
-              hideback="true"
-              onpageshow="firstRunWizard.doPageShow();">
-    <sb-first-run-locale
-      id="first_run_locale"
-      class="first-run-wizard-page"
-      firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Welcome page. -->

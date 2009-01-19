@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -184,7 +184,7 @@ firstRunConnectionSvc.prototype = {
    */
 
   _doConnectionSettings:
-    function firstRunConnactionSvc__doConnectionSettings() {
+    function firstRunConnectionSvc__doConnectionSettings() {
     // Get the preference services.
     var prefService = Cc["@mozilla.org/preferences-service;1"]
                         .getService(Ci.nsIPrefService);

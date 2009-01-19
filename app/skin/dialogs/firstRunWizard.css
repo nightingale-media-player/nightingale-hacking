@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -72,6 +72,14 @@ Additional styles imported directly by the first run dialog.
 }
 
 .sb-first-run-eula-browser {
+  -moz-box-flex: 1;
+}
+
+.sb-first-run-eula-language-box {
+  -moz-box-align: center;
+}
+
+.sb-first-run-eula-language-menulist {
   -moz-box-flex: 1;
 }
 
@@ -202,10 +210,6 @@ sb-first-run-import-media {
 
 sb-first-run-install-add-ons {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunInstallAddOns.xml#sb-first-run-install-add-ons");
-}
-
-sb-first-run-locale {
-  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunLocale.xml#sb-first-run-locale");
 }
 
 sb-first-run-welcome {

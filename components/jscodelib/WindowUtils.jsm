@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -244,7 +244,7 @@ var WindowUtils = {
   _getArgString: function WindowUtils__getArgString(aArg, aLocale) {
     if (aArg instanceof Array) {
       var localeKeyMatch = aArg[0].match(/^&(.*);$/);
-      return SBFormattedString(localeKeyMatch[1], aArg.slice(1), aLocale);
+      return SBFormattedString(localeKeyMatch[1], aArg.slice(1), null, aLocale);
     }
     else {
       var localeKeyMatch = aArg.match(/^&(.*);$/);

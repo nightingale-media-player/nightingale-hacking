@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -138,14 +138,13 @@ function SBBrandedString(aKey, aDefault, aStringBundle) {
  *
  * \param aKey                  Localized string key.
  * \param aParams               Format params array.
- * \param aStringBundle         Optional string bundle.
  * \param aDefault              Optional default string.
+ * \param aStringBundle         Optional string bundle.
  *
  * \return                      Localized string.
- *XXXeps should move aDefault before aStringBundle after Gwar
  */
 
-function SBFormattedString(aKey, aParams, aStringBundle, aDefault) {
+function SBFormattedString(aKey, aParams, aDefault, aStringBundle) {
   // Get the string bundle.
   var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
 

@@ -3,31 +3,31 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
-/** 
-* \file  devicePRogress.js
+/**
+* \file  deviceProgress.js
 * \brief Javascript source for the device progress widget.
 */
 
@@ -217,7 +217,7 @@ var DPW = {
   initialize: function DPW__initialize(aWidget) {
     // Get the device widget.
     this._widget = aWidget;
-    
+
     // Initialize the operation info table.
     this._operationInfoTable = {};
     for (var i = 0; i < this._cfg.operationInfoList.length; i++) {
@@ -349,7 +349,7 @@ var DPW = {
     localeSuffix = lastCompletedEventOperationInfo.localeSuffix;
     localeKey = "device.status.progress_complete_" + localeSuffix;
     this._progressText1Label.value =
-      SBFormattedString(localeKey, [ this._totalItems.intValue ], null, "");
+      SBFormattedString(localeKey, [ this._totalItems.intValue ], "");
 
     // Update the sub-operation progress text.
     localeSuffix = currentOperationInfo.localeSuffix;
@@ -436,7 +436,7 @@ var DPW = {
     // Update the operation progress text.
     localeKey = "device.status.progress_header_" + operationLocaleSuffix;
     this._progressText1Label.value =
-           SBFormattedString(localeKey, [ curItemIndex, totalItems ], null, "");
+           SBFormattedString(localeKey, [ curItemIndex, totalItems ], "");
 
     // Update the sub-operation progress text.
     if (mediaItem || !operationNeedsMediaItem) {
@@ -444,7 +444,6 @@ var DPW = {
       this._progressText2Label.value =
              SBFormattedString(localeKey,
                                [ itemName, itemArtist, itemAlbum ],
-                               null,
                                "");
     } else {
       this._progressText2Label.value = "";
@@ -708,7 +707,7 @@ var DPW = {
       Cu.reportError(err);
     }
   },
-  
+
   /**
    * \brief Listener for device events.
    *

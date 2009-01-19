@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -83,6 +83,27 @@ var SBUtils = {
                                                   false);
 
     return hasCompleted;
+  },
+
+
+  /**
+   *   Defer invocation of the function specified by aFunction by queueing an
+   * invocation event on the current thread event queue.
+   *   Use deferFunction instead of a zero-delay timer for deferring function
+   * invocation.
+   *
+   * \param aFunction           Function for which to defer invocation.
+   */
+
+  deferFunction: function SBUtils_deferFunction(aFunction) {
+    // Get the current thread.
+    var threadManager = Cc["@mozilla.org/thread-manager;1"]
+                            .getService(Ci.nsIThreadManager);
+    var currentThread = threadManager.currentThread;
+
+    // Queue an event to call the function.
+    var runnable = { run: aFunction };
+    currentThread.dispatch(runnable, Ci.nsIEventTarget.DISPATCH_NORMAL);
   }
 };
 

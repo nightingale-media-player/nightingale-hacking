@@ -469,6 +469,7 @@
 <!-- First-run eula entities. -->
 <!ENTITY first_run.eula.header.label          "License Agreement">
 <!ENTITY first_run.eula.accept_checkbox.label "I have read and accepted the terms of this license.">
+<!ENTITY first_run.eula.language.label        "Language:">
 
 <!-- First-run feedback entities. -->
 <!ENTITY first_run.feedback.header.label            "Help Make &brandShortName; Better">

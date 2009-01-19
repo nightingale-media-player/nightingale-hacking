@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -47,6 +47,7 @@
 
 // Songbird imports.
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 
 
 //------------------------------------------------------------------------------
@@ -227,14 +228,37 @@ var firstRunWizard = {
     if (this._connectionErrorHandled)
       return false;
 
+    // Defer handling of the connection error until after the current event
+    // completes.  This allows the calling wizard page to complete any updates
+    // before the first-run wizard connection page is presented.
+    var _this = this;
+    var func = function() { _this._handleConnectionError(); };
+    SBUtils.deferFunction(func);
+
+    return true;
+  },
+
+  _handleConnectionError: function firstRunWizard__handleConnectionError() {
+    // Only handle connection errors once.
+    if (this._connectionErrorHandled)
+      return;
+    this._connectionErrorHandled = true;
+
+    // Suppress the wizard page advanced event sent when advancing to the
+    // first-run wizard connection page.  The wizard is not really advancing.
+    var func = function(aEvent) { aEvent.stopPropagation(); };
+    this._domEventListenerSet.add(this.wizardElem,
+                                  "pageadvanced",
+                                  func,
+                                  true,
+                                  true);
+
     // Go to the first-run wizard connection page.
     this.wizardElem.canAdvance = true;
     this.wizardElem.advance("first_run_connection_page");
 
     // A connection error has been handled.
     this._connectionErrorHandled = true;
-
-    return true;
   },
 
 
