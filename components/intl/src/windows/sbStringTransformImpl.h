@@ -32,6 +32,14 @@
 
 #include <windows.h>
 
+#define C1 0
+#define C2 1
+#define C3 2
+
+#define FIRSTTYPE C1
+#define LASTTYPE C3
+#define NTYPES (LASTTYPE-FIRSTTYPE+1)
+
 class sbStringTransformImpl
 {
 public:
@@ -42,7 +50,9 @@ public:
 
   nsresult Init();
 
-  unsigned long MakeFlags(PRUint32 aFlags, nsTArray<WORD> &aInvalidChars);
+  unsigned long MakeFlags(PRUint32 aFlags, 
+                          nsTArray<WORD> aExcludeChars[NTYPES],
+                          nsTArray<WORD> aIncludeChars[NTYPES]);
 };
 
 #endif /* __SB_STRINGTRANSFORMIMPL_H__ */

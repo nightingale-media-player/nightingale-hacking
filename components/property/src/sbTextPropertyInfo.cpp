@@ -275,6 +275,17 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString outVal;
+
+  rv = stringTransform->
+         NormalizeString(EmptyString(), 
+                         sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM |
+                         sbIStringTransform::TRANSFORM_IGNORE_LEADING, 
+                         val,
+                         outVal);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  val = outVal;
+
   rv = stringTransform->RemoveArticles(val, EmptyString(), outVal);
   NS_ENSURE_SUCCESS(rv, rv);
 

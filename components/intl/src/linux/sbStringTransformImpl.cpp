@@ -72,6 +72,10 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
     nsString workingStr;
 
+    PRBool leadingOnly = aTransformFlags & 
+                         sbIStringTransform::TRANSFORM_IGNORE_LEADING;
+    PRBool bypassTest = PR_FALSE;
+
     gchar* nonspaceStr = g_utf8_normalize(str.BeginReading(), 
                                           str.Length(), 
                                           G_NORMALIZE_ALL);
@@ -85,10 +89,13 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
       gunichar unichar = g_utf8_get_char(offset);
       GUnicodeType unicharType = g_unichar_type(unichar);
 
-      if(unicharType != G_UNICODE_NON_SPACING_MARK && 
-         unicharType != G_UNICODE_COMBINING_MARK &&
-         unicharType != G_UNICODE_ENCLOSING_MARK) {
+      if(bypassTest ||
+         (unicharType != G_UNICODE_NON_SPACING_MARK && 
+          unicharType != G_UNICODE_COMBINING_MARK &&
+          unicharType != G_UNICODE_ENCLOSING_MARK)) {
         workingStr += unichar;
+        if(leadingOnly)
+          bypassTest = PR_TRUE;
       }
     }
 
@@ -98,6 +105,10 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
     nsString workingStr;
+
+    PRBool leadingOnly = aTransformFlags & 
+                         sbIStringTransform::TRANSFORM_IGNORE_LEADING;
+    PRBool bypassTest = PR_FALSE;
 
     gchar* nosymbolsStr = g_utf8_normalize(str.BeginReading(), 
                                            str.Length(), 
@@ -112,11 +123,51 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
       gunichar unichar = g_utf8_get_char(offset);
       GUnicodeType unicharType = g_unichar_type(unichar);
 
-      if(unicharType != G_UNICODE_CURRENCY_SYMBOL &&
-         unicharType != G_UNICODE_MODIFIER_SYMBOL &&
-         unicharType != G_UNICODE_MATH_SYMBOL &&
-         unicharType != G_UNICODE_OTHER_SYMBOL) {
+      if(bypassTest ||
+         (unicharType != G_UNICODE_CURRENCY_SYMBOL &&
+          unicharType != G_UNICODE_MODIFIER_SYMBOL &&
+          unicharType != G_UNICODE_MATH_SYMBOL &&
+          unicharType != G_UNICODE_OTHER_SYMBOL)) {
         workingStr += unichar;
+        if(leadingOnly)
+          bypassTest = PR_TRUE;
+      }
+    }
+  }
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
+    nsString workingStr;
+
+    PRBool leadingOnly = aTransformFlags & 
+                         sbIStringTransform::TRANSFORM_IGNORE_LEADING;
+    PRBool bypassTest = PR_FALSE;
+
+    gchar* nosymbolsStr = g_utf8_normalize(str.BeginReading(), 
+                                           str.Length(), 
+                                           G_NORMALIZE_ALL);
+    NS_ENSURE_TRUE(nosymbolsStr, NS_ERROR_OUT_OF_MEMORY);
+
+    glong strLen = g_utf8_strlen(nosymbolsStr, -1);
+    
+    for(glong currentChar = 0; currentChar < strLen; ++currentChar) {
+
+      gchar* offset = g_utf8_offset_to_pointer(nosymbolsStr, currentChar);
+      gunichar unichar = g_utf8_get_char(offset);
+      GUnicodeType unicharType = g_unichar_type(unichar);
+
+      if(bypassTest ||
+         (unicharType == G_UNICODE_LOWERCASE_LETTER ||
+          unicharType == G_UNICODE_MODIFIER_LETTER ||
+          unicharType == G_UNICODE_OTHER_LETTER ||
+          unicharType == G_UNICODE_TITLECASE_LETTER ||
+          unicharType == G_UNICODE_UPPERCASE_LETTER ||
+          unicharType == G_UNICODE_DECIMAL_NUMBER ||
+          unicharType == G_UNICODE_LETTER_NUMBER ||
+          unicharType == G_UNICODE_OTHER_NUMBER ||
+          unicharType == G_UNICODE_SPACE_SEPARATOR)) {
+        workingStr += unichar;
+        if(leadingOnly)
+          bypassTest = PR_TRUE;
       }
     }
 

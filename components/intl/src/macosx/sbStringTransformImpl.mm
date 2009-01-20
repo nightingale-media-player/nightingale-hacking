@@ -53,6 +53,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
                                        const nsAString & aInput, 
                                        nsAString & _retval)
 {
+  PRBool leadingOnly = 
+    aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_LEADING;
+
   NSMutableString *str = [[NSMutableString alloc] initWithCharacters:aInput.BeginReading() 
                                                   length:aInput.Length()];
   
@@ -67,20 +70,62 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
   }
   
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE) {
-    CFStringTransform( (CFMutableStringRef)str, 
-                       NULL, 
-                       kCFStringTransformStripCombiningMarks, 
-                       false);
+    if (leadingOnly) {
+      NSString *strCopy = 
+        [[NSMutableString alloc] initWithCharacters:aInput.BeginReading()
+                                 length:aInput.Length()];
+      // Perform the full transform on |strCpy| - then look for the first
+      // similar character.
+      CFStringTransform( (CFMutableStringRef)strCopy, 
+                         NULL, 
+                         kCFStringTransformStripCombiningMarks, 
+                         false);
+      
+      // Find the first occurance of matching non-ignored characters. Then,
+      // remove the 0 to i-th char from |str|.
+      for (unsigned int i = 0; i < [str length]; i++) {
+        if ([strCopy characterAtIndex:0] == [str characterAtIndex:i]) {
+          [str replaceCharactersInRange:NSMakeRange(0, i)
+               withString:@""];
+          break;
+        }
+      }
+    }
+    else {
+      // Just transform the whole string
+      CFStringTransform((CFMutableStringRef)str, 
+                        NULL, 
+                        kCFStringTransformStripCombiningMarks, 
+                        false); 
+    }
   }
   
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
     NSCharacterSet *symbols = [NSCharacterSet symbolCharacterSet];
     
-    for(unsigned int current = 0; current < [str length]; ++current) {
+    for(int current = 0; current < [str length]; ++current) {
       unichar c = [str characterAtIndex:current];
       if([symbols characterIsMember:c]) {
-        NSRange r = NSMakeRange(current, 1);
-        [str replaceCharactersInRange:r withString:@""];
+        [str replaceCharactersInRange:NSMakeRange(current--, 1) withString:@""];
+      } else {
+        if (leadingOnly) {
+          break;
+        }
+      }
+    }
+  }
+
+  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
+    NSCharacterSet *alphaNumSet = [NSCharacterSet alphanumericCharacterSet];
+    
+    for(int current = 0; current < [str length]; ++current) {
+      unichar c = [str characterAtIndex:current];
+      if(![alphaNumSet characterIsMember:c]) {
+        [str replaceCharactersInRange:NSMakeRange(current--, 1) withString:@""];
+      } else {
+        if (leadingOnly) {
+          break;
+        }
       }
     }
   }

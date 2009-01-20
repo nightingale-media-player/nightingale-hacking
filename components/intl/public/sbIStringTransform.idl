@@ -29,7 +29,7 @@
 /**
  *
  */
-[scriptable, uuid(a84e1183-8dbd-4518-b614-df5e53d7f60b)]
+[scriptable, uuid(711cd060-dce8-4264-807a-b8d118265abd)]
 interface sbIStringTransform : nsISupports
 {
   /**
@@ -76,6 +76,18 @@ interface sbIStringTransform : nsISupports
   const unsigned long TRANSFORM_IGNORE_NONSPACE = 1 << 9;
 
   const unsigned long TRANSFORM_REVERSE_BYTES = 1 << 11; 
+
+  /**
+   * \brief Ignore non-alphanumerical characters.
+   */
+  const unsigned long TRANSFORM_IGNORE_NONALPHANUM = 1 << 12;
+
+  /**
+   * \brief TRANSFORM_IGNORE_* operates on leading characters and stops as soon
+   *        as a non-ignored character is found, at which point the rest of the
+   *        string is copied as-is.
+   */
+  const unsigned long TRANSFORM_IGNORE_LEADING = 1 << 13;
 
   AString normalizeString(in AString aCharset,
                           in unsigned long aTransformFlags,
