@@ -133,6 +133,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
           bypassTest = PR_TRUE;
       }
     }
+
+    g_free(nosymbolsStr);
+    CopyUTF16toUTF8(workingStr, str); 
   }
 
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
