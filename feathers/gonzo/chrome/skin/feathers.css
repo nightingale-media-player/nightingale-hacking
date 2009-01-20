@@ -50,6 +50,7 @@ TABLE OF CONTENTS
 > DEVICE SUMMARY PAGE
 > FIRST RUN WIZARD
 > TRACK EDITOR
+> MEDIACORE ERROR DIALOG
 > SMART PLAYLIST EDITOR
 > ABOUT DIALOG
 > FIND BAR
@@ -833,6 +834,17 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 
+
+/******************************************************************************
+> MEDIACORE ERROR DIALOG
+******************************************************************************/
+#mediacore_error > sb-sys-outer-frame > .dialog-content-box {
+  overflow: visible;
+}
+
+#mediacore_error_desc_box {
+  width: 440px;
+}
 
 /******************************************************************************
 > SMART PLAYLIST EDITOR

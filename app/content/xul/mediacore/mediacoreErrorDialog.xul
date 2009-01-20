@@ -52,8 +52,6 @@
  onload="doOnLoad();"
  ondialogaccept="return doStop();"
  ondialogcancel="return doNext();"
- width="440"
- height="180"
 >
 
   <vbox>
@@ -62,7 +60,9 @@
       <label class="header" style="font-size: 105%"  value="&mediacore.error.preface;" />
 
       <!-- Detailed description of the error -->
-      <description class="indent" flex="1" id="mediacore_error_desc" />
+      <vbox id="mediacore_error_desc_box">
+        <description class="indent" flex="1" id="mediacore_error_desc" />
+      </vbox>
     </vbox>
 
     <spacer height="5" />
@@ -84,7 +84,6 @@
           var desc = document.getElementById("mediacore_error_desc");
           
           desc.textContent = mediacoreError.message;
-          window.sizeToContent();
         }
       }
       catch( err ) {
