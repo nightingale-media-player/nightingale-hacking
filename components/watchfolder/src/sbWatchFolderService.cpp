@@ -46,8 +46,11 @@
 #define PREF_WATCHFOLDER_ENABLE "songbird.watch_folder.enable"
 #define PREF_WATCHFOLDER_PATH   "songbird.watch_folder.path"
 
-#define ADD_DELAY_TIMER_DELAY  1500 
-#define EVENT_PUMP_TIMER_DELAY 1000 
+#define ADD_DELAY_TIMER_DELAY    1500
+#define CHANGE_DELAY_TIMER_DELAY 30000
+#define EVENT_PUMP_TIMER_DELAY   1000 
+
+typedef sbStringVector::const_iterator sbStringVectorIter;
 
 
 NS_IMPL_ISUPPORTS5(sbWatchFolderService, 
@@ -64,6 +67,8 @@ sbWatchFolderService::sbWatchFolderService()
   mIsWatching = PR_FALSE;
   mEventPumpTimerIsSet = PR_FALSE;
   mAddDelayTimerIsSet = PR_FALSE;
+  mChangeDelayTimerIsSet = PR_FALSE;
+  mCurrentProcessType = eNone;
 }
 
 sbWatchFolderService::~sbWatchFolderService()
@@ -176,9 +181,10 @@ sbWatchFolderService::StopWatching()
   }
 
   // Clear all event paths.
-  ClearQueue(mAddedPathsQueue);
-  ClearQueue(mRemovedPathsQueue);
-  ClearQueue(mChangedPathsQueue);
+  mAddedPaths.clear();
+  mRemovedPaths.clear();
+  mChangedPaths.clear();
+  mDelayedChangedPaths.clear();
 
   // Stop and kill the file-system watcher.
   mFileSystemWatcher->StopWatching();
@@ -206,25 +212,26 @@ sbWatchFolderService::SetEventPumpTimer()
 }
 
 nsresult
-sbWatchFolderService::ProcessChangedPaths()
+sbWatchFolderService::ProcessEventPaths(sbStringVector & aEventPathVector,
+                                        EProcessType aProcessType)
 {
-  if (mChangedPathsQueue.empty()) {
+  if (aEventPathVector.empty()) {
     return NS_OK;
   }
 
-  //
-  // TODO: Write Me! 
-  //       - see bug 14769.
-  //
+  mCurrentProcessType = aProcessType;
 
-  ClearQueue(mChangedPathsQueue);
+  nsresult rv = EnumerateItemsByPaths(aEventPathVector);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  aEventPathVector.clear();
   return NS_OK;
 }
 
 nsresult
 sbWatchFolderService::ProcessAddedPaths()
 {
-  if (mAddedPathsQueue.empty()) { 
+  if (mAddedPaths.empty()) { 
     return NS_OK;
   }
 
@@ -233,23 +240,12 @@ sbWatchFolderService::ProcessAddedPaths()
     do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  while (!mAddedPathsQueue.empty()) {
-    // Convert the current path to a URI, then get the spec.
-    nsCOMPtr<nsILocalFile> curPathFile =
-      do_CreateInstance("@mozilla.org/file/local;1", &rv);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not create a local file!");
-      continue;
-    }
-
-    rv = curPathFile->InitWithPath(mAddedPathsQueue.front());
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not init a local file with a added path!");
-      continue;
-    }
-
+  sbStringVectorIter begin = mAddedPaths.begin();
+  sbStringVectorIter end = mAddedPaths.end();
+  sbStringVectorIter next;
+  for (next = begin; next != end; ++next) {
     nsCOMPtr<nsIURI> fileURI;
-    rv = mIOService->NewFileURI(curPathFile, getter_AddRefs(fileURI));
+    rv = GetFilePathURI(*next, getter_AddRefs(fileURI));
     if (NS_FAILED(rv)) {
       NS_WARNING("Could not get a URI for a file!");
       continue;
@@ -259,9 +255,9 @@ sbWatchFolderService::ProcessAddedPaths()
     if (NS_FAILED(rv)) {
       NS_WARNING("Could not append the URI to the mutable array!");
     }
-    
-    mAddedPathsQueue.pop();
   }
+
+  mAddedPaths.clear();
 
   nsCOMPtr<sbIURIImportService> uriImportService =
     do_GetService("@songbirdnest.com/uri-import-service;1", &rv);
@@ -287,37 +283,41 @@ sbWatchFolderService::ProcessAddedPaths()
 }
 
 nsresult
-sbWatchFolderService::ProcessRemovedPaths()
+sbWatchFolderService::GetFilePathURI(const nsAString & aFilePath, 
+                                     nsIURI **aURIRetVal)
 {
-  if (mRemovedPathsQueue.empty()) {
-    return NS_OK;
-  }
+  NS_ENSURE_ARG_POINTER(aURIRetVal);
 
+  nsresult rv;
+  nsCOMPtr<nsILocalFile> pathFile =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = pathFile->InitWithPath(aFilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return mIOService->NewFileURI(pathFile, aURIRetVal);
+}
+
+nsresult
+sbWatchFolderService::EnumerateItemsByPaths(sbStringVector & aPathVector)
+{
   nsresult rv;
   nsCOMPtr<sbIMutablePropertyArray> properties =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString propName(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
-  while (!mRemovedPathsQueue.empty()) {
+
+  sbStringVectorIter begin = aPathVector.begin();
+  sbStringVectorIter end = aPathVector.end();
+  sbStringVectorIter next;
+  for (next = begin; next != end; ++next) {
     // Convert the current path to a URI, then get the spec.
-    nsCOMPtr<nsILocalFile> curPathFile =
-      do_CreateInstance("@mozilla.org/file/local;1", &rv);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not create a local file!");
-      continue;
-    }
-
-    rv = curPathFile->InitWithPath(mRemovedPathsQueue.front());
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not init a local file with a remove path!");
-      continue;
-    }
-
     nsCOMPtr<nsIURI> fileURI;
-    rv = mIOService->NewFileURI(curPathFile, getter_AddRefs(fileURI));
+    rv = GetFilePathURI(*next, getter_AddRefs(fileURI));
     if (NS_FAILED(rv)) {
-      NS_WARNING("Could not get a URI for a file!");
+      NS_WARNING("Could not get the file path URI!");
       continue;
     }
 
@@ -332,8 +332,6 @@ sbWatchFolderService::ProcessRemovedPaths()
     if (NS_FAILED(rv)) {
       NS_WARNING("Could not append a property!");
     }
-
-    mRemovedPathsQueue.pop();
   }
 
   PRUint16 enumType = sbIMediaList::ENUMERATIONTYPE_SNAPSHOT;
@@ -356,14 +354,6 @@ sbWatchFolderService::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
   return appController->GetActiveMainWindow(aSongbirdWindow);
 }
 
-void 
-sbWatchFolderService::ClearQueue(sbStringQueue & aStringQueue)
-{
-  while (!aStringQueue.empty()) {
-    aStringQueue.pop();
-  }
-}
-
 //------------------------------------------------------------------------------
 // sbWatchFolderService
 
@@ -382,12 +372,19 @@ NS_IMETHODIMP
 sbWatchFolderService::OnWatcherStarted()
 {
   // Now start up the timer
+  nsresult rv;
   if (!mEventPumpTimer) {
-    nsresult rv;
     mEventPumpTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+  }
 
+  if (!mAddDelayTimer) {
     mAddDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (!mChangeDelayTimer) {
+    mChangeDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -403,6 +400,9 @@ sbWatchFolderService::OnWatcherStopped()
   if (mAddDelayTimer) {
     mAddDelayTimer->Cancel();
   }
+  if (mChangeDelayTimer) {
+    mChangeDelayTimer->Cancel();
+  }
   
   return NS_OK;
 }
@@ -410,9 +410,38 @@ sbWatchFolderService::OnWatcherStopped()
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
-  mChangedPathsQueue.push(nsString(aFilePath));
-  nsresult rv = SetEventPumpTimer();
-  NS_ENSURE_SUCCESS(rv, rv);
+  // See if the changed path queue already has this path inside of it.
+  PRBool foundMatchingPath = PR_FALSE;
+  sbStringVectorIter begin = mChangedPaths.begin();
+  sbStringVectorIter end = mChangedPaths.end();
+  sbStringVectorIter next;
+  for (next = begin; next != end && !foundMatchingPath; ++next) {
+    if (aFilePath.Equals(*next)) {
+      foundMatchingPath = PR_TRUE;
+    }
+  }
+
+  nsresult rv;
+  if (foundMatchingPath) {
+    // If this path is currently in the changed path vector already, 
+    // delay processing this path until a later time.
+    mDelayedChangedPaths.push_back(nsString(aFilePath));
+
+    // Start the delayed timer if it isn't running already.
+    if (!mChangeDelayTimerIsSet) {
+      rv = mChangeDelayTimer->InitWithCallback(this,
+                                               CHANGE_DELAY_TIMER_DELAY,
+                                               nsITimer::TYPE_ONE_SHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mChangeDelayTimerIsSet = PR_TRUE;
+    }
+  }
+  else {
+    mChangedPaths.push_back(nsString(aFilePath));
+    rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -420,7 +449,7 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
-  mRemovedPathsQueue.push(nsString(aFilePath));
+  mRemovedPaths.push_back(nsString(aFilePath));
   nsresult rv = SetEventPumpTimer();
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
@@ -429,7 +458,7 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
-  mAddedPathsQueue.push(nsString(aFilePath));
+  mAddedPaths.push_back(nsString(aFilePath));
 
   if (mAddDelayTimerIsSet) {
     // The timer is currently set, and more added events have been received.
@@ -482,18 +511,39 @@ NS_IMETHODIMP
 sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList, 
                                        nsresult aStatusCode)
 {
-  // Remove the found media items from the library.
   nsresult rv;
-  nsCOMPtr<nsISimpleEnumerator> mediaItemEnum;
-  rv = mEnumeratedMediaItems->Enumerate(getter_AddRefs(mediaItemEnum));
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mMainLibrary->RemoveSome(mediaItemEnum);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mCurrentProcessType == eRemoval) {
+    // Remove the found items from the library.
+    nsCOMPtr<nsISimpleEnumerator> mediaItemEnum;
+    rv = mEnumeratedMediaItems->Enumerate(getter_AddRefs(mediaItemEnum));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mMainLibrary->RemoveSome(mediaItemEnum);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (mCurrentProcessType == eChanged) {
+    PRUint32 length;
+    rv = mEnumeratedMediaItems->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (length > 0) {
+      // Rescan the changed items.
+      nsCOMPtr<sbIFileMetadataService> metadataService =
+        do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIJobProgress> jobProgress;
+      rv = metadataService->Read(mEnumeratedMediaItems, 
+                                 getter_AddRefs(jobProgress));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   rv = mEnumeratedMediaItems->Clear();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mCurrentProcessType = eNone;
   return NS_OK;
 }
 
@@ -505,15 +555,15 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
 {
   nsresult rv;
   if (aTimer == mEventPumpTimer) {
-    rv = ProcessChangedPaths();
+    rv = ProcessEventPaths(mChangedPaths, eChanged);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = ProcessRemovedPaths();
+    rv = ProcessEventPaths(mRemovedPaths, eRemoval);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mEventPumpTimerIsSet = PR_FALSE;
   }
-  else {
+  else if (aTimer == mAddDelayTimer) {
     // If there has been no further add events for a second, begin to process
     // the added path queue.
     if (mShouldProcessAddedPaths) {
@@ -532,6 +582,12 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
 
       mShouldProcessAddedPaths = PR_TRUE;
     }
+  }
+  else if (aTimer == mChangeDelayTimer) {
+    rv = ProcessEventPaths(mDelayedChangedPaths, eChanged);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mChangeDelayTimerIsSet = PR_FALSE;
   }
 
   return NS_OK;

@@ -44,9 +44,15 @@
 #include <nsIIOService.h>
 #include <sbIMediaListListener.h>
 #include <nsIDOMWindow.h>
-#include <queue>
+#include <vector>
 
-typedef std::queue<nsString> sbStringQueue;
+typedef std::vector<nsString> sbStringVector;
+
+typedef enum {
+  eNone  = 0,
+  eRemoval = 1,
+  eChanged = 2,
+} EProcessType;
 
 
 class sbWatchFolderService : public sbIWatchFolderService,
@@ -78,11 +84,12 @@ protected:
   nsresult StartWatching();
   nsresult StopWatching();
   nsresult SetEventPumpTimer();
-  nsresult ProcessChangedPaths();
+  nsresult ProcessEventPaths(sbStringVector & aEventPathVector,
+                             EProcessType aProcessType);
   nsresult ProcessAddedPaths();
-  nsresult ProcessRemovedPaths();
+  nsresult EnumerateItemsByPaths(sbStringVector & aPathVector);
+  nsresult GetFilePathURI(const nsAString & aFilePath, nsIURI **aURIRetVal);
   nsresult GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow);
-  void ClearQueue(sbStringQueue & aStringQueue);
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
@@ -90,17 +97,21 @@ private:
   nsCOMPtr<nsIIOService>         mIOService;
   nsCOMPtr<nsITimer>             mEventPumpTimer;
   nsCOMPtr<nsITimer>             mAddDelayTimer;
+  nsCOMPtr<nsITimer>             mChangeDelayTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
-  sbStringQueue                  mChangedPathsQueue;
-  sbStringQueue                  mAddedPathsQueue;
-  sbStringQueue                  mRemovedPathsQueue;
+  sbStringVector                 mChangedPaths;
+  sbStringVector                 mDelayedChangedPaths;
+  sbStringVector                 mAddedPaths;
+  sbStringVector                 mRemovedPaths;
   nsString                       mWatchPath;
   PRBool                         mIsSupported;
   PRBool                         mIsEnabled;
   PRBool                         mIsWatching;
   PRBool                         mEventPumpTimerIsSet;
   PRBool                         mAddDelayTimerIsSet;
+  PRBool                         mChangeDelayTimerIsSet;
   PRBool                         mShouldProcessAddedPaths;
+  EProcessType                   mCurrentProcessType;
 };
 
 
