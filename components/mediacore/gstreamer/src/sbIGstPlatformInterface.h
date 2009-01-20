@@ -36,6 +36,8 @@
 class sbIGstPlatformInterface
 {
 public:
+  virtual ~sbIGstPlatformInterface() {}
+
   // Resize the available video window to the current size/location of the
   // video box object.
   // The actual video will often be smaller, in order to maintain the display

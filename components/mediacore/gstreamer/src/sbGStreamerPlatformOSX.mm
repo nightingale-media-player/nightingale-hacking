@@ -69,6 +69,11 @@ OSXPlatformInterface::OSXPlatformInterface(nsIBoxObject *aVideoBox,
 {
 }
 
+OSXPlatformInterface::~OSXPlatformInterface()
+{
+  RemoveView();
+}
+
 GstElement *
 OSXPlatformInterface::SetVideoSink(GstElement *aVideoSink)
 {
@@ -134,10 +139,14 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   if (!value || !G_VALUE_HOLDS_POINTER(value))
     return;
 
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  RemoveView();
+
+  NSView *parentView = (NSView *)mParentView;
   mVideoView = g_value_get_pointer (value);
   view = (NSView *)mVideoView;
 
-  NSView *parentView = (NSView *)mParentView;
   // Now, we want to set this view as a subview of the NSView we have
   // as our window-for-displaying-video. Don't do this from a non-main
   // thread, though!
@@ -145,6 +154,8 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 
   nsCOMPtr<nsIRunnable> runnable = NS_NEW_RUNNABLE_METHOD(OSXPlatformInterface, this, ResizeToWindow);
   NS_DispatchToMainThread(runnable);
+
+  [pool release];
 }
 
 void
@@ -155,13 +166,28 @@ OSXPlatformInterface::MoveVideoWindow (int x, int y, int width, int height)
   if (view) {
     NSRect rect;
     // Remap to OSX's coordinate system, which is from the bottom left.
-    rect.origin.y = [[view window] frame].size.height - y - height;
+    rect.origin.y = [[view superview] frame].size.height - y - height;
 
     rect.origin.x = x;
     rect.size.width = width;
     rect.size.height = height;
 
     [view setFrame:rect];
+  }
+}
+
+void OSXPlatformInterface::RemoveView()
+{
+  if (mVideoView) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    NSView *view = (NSView *)mVideoView;
+    mVideoView = NULL;
+
+    // Remove the old view, if there was one.
+    [view performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+
+    [pool release];
   }
 }
 

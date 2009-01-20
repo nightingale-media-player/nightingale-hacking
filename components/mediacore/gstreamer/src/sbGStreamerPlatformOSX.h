@@ -38,6 +38,7 @@ class OSXPlatformInterface : public BasePlatformInterface
 {
 public:
   OSXPlatformInterface (nsIBoxObject *aVideoBox, void *aParentView);
+  virtual ~OSXPlatformInterface();
 
   // Implementation of the rest of sbIGstPlatformInterface interface
   GstElement * SetVideoSink (GstElement *aVideoSink);
@@ -55,6 +56,8 @@ protected:
   void SetXOverlayWindowID (GstXOverlay *aXOverlay) {}
   void FullScreen() {}
   void UnFullScreen() {}
+
+  void RemoveView();
 
   void *mParentView;
   void *mVideoView;
