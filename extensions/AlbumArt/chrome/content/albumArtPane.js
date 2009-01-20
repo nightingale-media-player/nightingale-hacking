@@ -677,7 +677,8 @@ var AlbumArt = {
       var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
                               .getService(Ci.sbIFileMetadataService);      
       try {
-        var job = metadataService.write([aMediaItem], propArray);
+        var job = metadataService.write(ArrayConverter.nsIArray([aMediaItem]),
+                                        propArray);
       
         SBJobUtils.showProgressDialog(job, window);
       } catch (e) {
@@ -1091,13 +1092,12 @@ var AlbumArt = {
       // Now playing
       var item = AlbumArt.getNowPlayingItem();
       if (item) {
-        try {
-          var fetcherSet = Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
-                             .createInstance(Ci.sbIAlbumArtFetcherSet);
-          fetcherSet.fetchAlbumArtForMediaItem(item, this);
-        } catch (ex) {
-          Cu.reportError(ex);
-        }
+        // damn it I hate this whole stupid thing where each JS global gets a
+        // completely _different_ set of global classes
+        var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+                    .createInstance(Ci.nsISupportsInterfacePointer);
+        sip.data = ArrayConverter.enumerator([item]);
+        sbCoverHelper.getArtworkForItems(sip.data, window);
       }
     }
   },
