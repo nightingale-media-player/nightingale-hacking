@@ -73,6 +73,13 @@ var gSongbirdSanitizeOverlay = {
     if (this.checkBox && this.prefs) {
       this.checkBox.setAttribute("checked", this.prefs.rootBranch.getBoolPref("privacy.item.mediaHistory"));
     }
+    
+    var helpButton = document.documentElement.getButton("help");
+    if (helpButton) {
+      // remove the help button from the sanitize prefs dialog (not the do sanitize one)
+      // Would be better to just set the dlgbuttons attribute, but that doesn't work
+      helpButton.collapsed = true;
+    }
   },
 
   updateDisabled: function() {
