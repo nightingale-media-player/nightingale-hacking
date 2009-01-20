@@ -95,7 +95,7 @@ sbLastFMAlbumArtFetcher.prototype = {
   
   // These are preference settings
   get priority() {
-    return Application.prefs.getValue(PREF_BRANCH + "priority", 0);
+    return parseInt(Application.prefs.getValue(PREF_BRANCH + "priority", 10), 10);
   },
   set priority(aNewVal) {
     return Application.prefs.setValue(PREF_BRANCH + "priority", aNewVal);

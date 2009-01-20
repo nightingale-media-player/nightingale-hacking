@@ -259,8 +259,7 @@ sbMetadataAlbumArtFetcher::GetPriority(PRInt32* aPriority)
   nsresult rv = mPrefService->GetIntPref("songbird.albumart.metadata.priority",
                                          aPriority);
   if (NS_FAILED(rv)) {
-    // Default to appending
-    *aPriority = -1;
+    *aPriority = 0;
   }
   
   return NS_OK;
