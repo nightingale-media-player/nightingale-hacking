@@ -199,7 +199,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 
       if (!bypassTest) {
         // first check if the char is excluded by any of its type flags
-        for (int type = FIRSTTYPE; type < LASTTYPE && validChar; type++) {
+        for (int type = FIRSTTYPE; type <= LASTTYPE && validChar; type++) {
           PRUint32 excludeCharsLength = excludeChars[type].Length();
           for(PRUint32 invalid = 0; invalid < excludeCharsLength; ++invalid) {
             if(excludeChars[type][invalid] & charTypes[type][current]) {
@@ -213,7 +213,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
         PRBool found = PR_FALSE;
         PRBool testedAnything = PR_FALSE;
         for (int type = FIRSTTYPE; 
-             type < LASTTYPE && validChar && !found; 
+             type <= LASTTYPE && validChar && !found; 
              type++) {
           PRUint32 includeCharsLength = includeChars[type].Length();
           for(PRUint32 valid = 0; valid < includeCharsLength; ++valid) {
