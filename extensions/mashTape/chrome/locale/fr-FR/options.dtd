@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Afficher cet onglet dans mashTape">
 <!ENTITY mtprefs.single "Ce panneau assure l&apos;affichage d&apos;un seul service à la fois. Veuillez le sélectionner dans la liste ci-dessous.">
 <!ENTITY mtprefs.multiple "Ce panneau assure l&apos;affichage de multiples services en même temps. Veuillez choisir vos services dans la liste ci-dessous.">
+<!ENTITY mtprefs.tab.info.autolocalise "Données localisées">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Récupérer automatiquement des informations localisées sur l&apos;artiste si elles sont disponibles.">
 <!ENTITY mtprefs.tab.photo.speed "Vitesse de défilement des photos :">
 <!ENTITY mtprefs.tab.photo.faster "Plus rapide">
 <!ENTITY mtprefs.tab.photo.slower "Plus lente">

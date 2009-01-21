@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Mostra questo tab in mashTape.">
 <!ENTITY mtprefs.single "Questo pannello consente di visualizzare contenuti da un servizio alla volta. Selezionare un servizio dalla lista in basso.">
 <!ENTITY mtprefs.multiple "Questo pannello consente di visualizzare contenuti da più servizi contemporaneamente. Effettuare la scelta dei servizi dalla lista in basso.">
+<!ENTITY mtprefs.tab.info.autolocalise "Dati localizati">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Recupera automaticamente le informazioni sull&apos;artista se disponibili.">
 <!ENTITY mtprefs.tab.photo.speed "Velocità scorrimento foto">
 <!ENTITY mtprefs.tab.photo.faster "Più veloce">
 <!ENTITY mtprefs.tab.photo.slower "Più lento">

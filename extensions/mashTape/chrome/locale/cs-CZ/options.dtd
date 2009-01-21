@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Zobrazit tento panel v mashTape">
 <!ENTITY mtprefs.single "Tento panel podporuje zobrazení obsahu pouze z jedné služby v daný moment. Prosím vyberte službu z následujícího seznamu.">
 <!ENTITY mtprefs.multiple "Tento panel podporuje zobrazení obsahu z více služeb zároveň. Prosím vyberte služby z následujícího seznamu.">
+<!ENTITY mtprefs.tab.info.autolocalise "Lokalizované informace">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automaticky získávat lokalizované informace o umělci, jsou-li dostupné.">
 <!ENTITY mtprefs.tab.photo.speed "Rychlost rolování fotografií">
 <!ENTITY mtprefs.tab.photo.faster "Rychleji">
 <!ENTITY mtprefs.tab.photo.slower "Pomaleji">

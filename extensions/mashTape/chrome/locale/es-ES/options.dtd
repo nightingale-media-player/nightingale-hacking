@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Mostrar esta pestaña en mashTape">
 <!ENTITY mtprefs.single "Este panel permite mostrar contenido de un solo servicio a la vez. Por favor, elige un servicio de la lista.">
 <!ENTITY mtprefs.multiple "Este panel permite mostrar contenido de más de un servicio a la vez. Por favor, elige los servicios que quieras de la lista.">
+<!ENTITY mtprefs.tab.info.autolocalise "Datos en tu idioma">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Obtener automáticamente información del artista en tu idioma si está disponible.">
 <!ENTITY mtprefs.tab.photo.speed "Velocidad de desplazamiento de las fotos">
 <!ENTITY mtprefs.tab.photo.faster "Más rápido">
 <!ENTITY mtprefs.tab.photo.slower "Más lento">

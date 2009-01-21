@@ -23,8 +23,10 @@
 <!ENTITY mtprefs.tab.help "显示此mashTape标签。">
 <!ENTITY mtprefs.single "此窗口支持显示一个服务时间。请从下面列表中选择一个服务。">
 <!ENTITY mtprefs.multiple "此窗口支持显示多个服务时间。请从下面列表中选择一个服务。">
+<!ENTITY mtprefs.tab.info.autolocalise "本地化数据">
+<!ENTITY mtprefs.tab.info.autolocalise.help "尽量撷取翻译过的演出者资讯。">
 <!ENTITY mtprefs.tab.photo.speed "照片移动速度:">
 <!ENTITY mtprefs.tab.photo.faster "快">
 <!ENTITY mtprefs.tab.photo.slower "慢">
 <!ENTITY mtprefs.tab.video.autoplay "自动播放视频">
-<!ENTITY mtprefs.tab.video.autoplay.help "当此选项打开时内附的视频服务会自动连续播放。不适用于外挂的视频服务。">
+<!ENTITY mtprefs.tab.video.autoplay.help "当此选项打开时内附的视频服务会自动连续播放，当你要播放所有 MTV 的 MV 时非常有效。不适用于外挂的视频服务。">

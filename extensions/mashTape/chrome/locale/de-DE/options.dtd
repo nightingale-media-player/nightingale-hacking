@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Diese Registerkarte in MashTape anzeigen.">
 <!ENTITY mtprefs.single "Dieser Ausschnitt zeigt Inhalte eines Dienstes an. Bitte wählen Sie einen untensthehenden Dienst aus.">
 <!ENTITY mtprefs.multiple "Dieser Ausschnitt zeigt Inhlate von mehreren Diensten aus. Bitte wählen Sie sie aus der untenstehenden Liste.">
+<!ENTITY mtprefs.tab.info.autolocalise "Lokalisierte Daten">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Lokalisierte Künstlerinformationen automatisch herunterladen.">
 <!ENTITY mtprefs.tab.photo.speed "Foto-Scrollgeschwindigkeit">
 <!ENTITY mtprefs.tab.photo.faster "Schneller">
 <!ENTITY mtprefs.tab.photo.slower "Langsamer">

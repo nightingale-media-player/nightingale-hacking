@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Dit tabblad in mashTape weergeven">
 <!ENTITY mtprefs.single "Dit venster ondersteunt weergave van inhoud van één dienst tegelijk. Selecteer a.u.b. een dienst in onderstaande lijst.">
 <!ENTITY mtprefs.multiple "Dit venster ondersteunt weergave van inhoud van meerdere diensten tegelijk. Selecteer a.u.b. de door u gewenste diensten in onderstaande lijst.">
+<!ENTITY mtprefs.tab.info.autolocalise "Gelocaliseerde gegevens">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatisch gelokaliseerde artiestinformatie ophalen indien beschikbaar.">
 <!ENTITY mtprefs.tab.photo.speed "Snelheid fotoscrollen:">
 <!ENTITY mtprefs.tab.photo.faster "Sneller">
 <!ENTITY mtprefs.tab.photo.slower "Langzamer">

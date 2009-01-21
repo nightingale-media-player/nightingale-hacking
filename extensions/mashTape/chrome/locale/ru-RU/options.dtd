@@ -14,7 +14,7 @@
 <!ENTITY mtprefs.autohide "Автоматически прятать">
 <!ENTITY mtprefs.autohide.help "Автоматически прятать панель mashTape при переходе на закладку для просмотра WEB-старниц">
 <!ENTITY mtprefs.services "Сервисы">
-<!ENTITY mtprefs.getmore "Еше сервисы для mashTape">
+<!ENTITY mtprefs.getmore "Еще сервисы для mashTape">
 <!ENTITY mtprefs.tab.info "Настройка закладки &quot;Об Исполнителе&quot;">
 <!ENTITY mtprefs.tab.review "Настройка закладки &quot;Обзоры&quot;">
 <!ENTITY mtprefs.tab.rss "Настройка закладки &quot;Новости&quot;">
@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Показывать эту закладку в mashTape">
 <!ENTITY mtprefs.single "Эта панель поддерживает отображение контента только с одного сервиса. Пожалуйста выберите сервис из списка.">
 <!ENTITY mtprefs.multiple "Эта панель поддерживает отображение контента с нескольких сервисов. Пожалуйста выберите сервис из списка.">
+<!ENTITY mtprefs.tab.info.autolocalise "Локализованные данные">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Получать локализованную информацию об исполнителе автоматически, если доступна.">
 <!ENTITY mtprefs.tab.photo.speed "Скорость прокрутки фотографий">
 <!ENTITY mtprefs.tab.photo.faster "Быстрее">
 <!ENTITY mtprefs.tab.photo.slower "Медленнее">

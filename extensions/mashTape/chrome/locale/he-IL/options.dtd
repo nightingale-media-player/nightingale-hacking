@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "הראה לשונית זו במאשטייפ">
 <!ENTITY mtprefs.single "פאנל זה תומך בהצגת תוכן משירות אחד בלבד כל פעם. אנא בחר את השירות מהרשימה המוצגת להלן.">
 <!ENTITY mtprefs.multiple "פאנל זה תומך בהצגת תוכן משירותים שונים בו זמנית. אנא בחר את השירותים מהרשימה המוצגת להלן.">
+<!ENTITY mtprefs.tab.info.autolocalise "מידע מקומי">
+<!ENTITY mtprefs.tab.info.autolocalise.help "מצא מידע מקומי על אמן באופן אוטומטי אם הדבר אפשרי.">
 <!ENTITY mtprefs.tab.photo.speed "מהירות גלילת התמונה">
 <!ENTITY mtprefs.tab.photo.faster "מהר יותר">
 <!ENTITY mtprefs.tab.photo.slower "איטי יותר">

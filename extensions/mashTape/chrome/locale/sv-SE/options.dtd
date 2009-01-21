@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Visa denna Tabb i mashTape">
 <!ENTITY mtprefs.single "Denna del kan endast visa innehåll från en tjänst i taget. Var vänlig markera ett av alternativen i listan nedan.">
 <!ENTITY mtprefs.multiple "Denna del kan visa innehåll från mer än en tjänst i taget. Var vänlig markera ett eller flera av alternativen i listan nedan.">
+<!ENTITY mtprefs.tab.info.autolocalise "Hittad Data">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Hämta automatiskt data om artisten om det är möjligt.">
 <!ENTITY mtprefs.tab.photo.speed "Visningshastighet, Foto:">
 <!ENTITY mtprefs.tab.photo.faster "Snabbare">
 <!ENTITY mtprefs.tab.photo.slower "Långsammare">

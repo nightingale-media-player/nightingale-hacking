@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "Wyświetlaj tę kartę w mashTapie.">
 <!ENTITY mtprefs.single "Ten panel może jednocześnie wyświetlać dane z jednego serwisu. Proszę wybrać serwis z poniższej listy.">
 <!ENTITY mtprefs.multiple "Ten panel może jednocześnie wyświetlać dane z wielu serwisów. Proszę wybrać serwisy z poniższej listy.">
+<!ENTITY mtprefs.tab.info.autolocalise "Zlokalizowane dane">
+<!ENTITY mtprefs.tab.info.autolocalise.help "Automatycznie pobieraj zlokalizowane dane (jeśli są dostępne).">
 <!ENTITY mtprefs.tab.photo.speed "Szybkość przewijania zdjęć:">
 <!ENTITY mtprefs.tab.photo.faster "szybciej">
 <!ENTITY mtprefs.tab.photo.slower "wolniej">

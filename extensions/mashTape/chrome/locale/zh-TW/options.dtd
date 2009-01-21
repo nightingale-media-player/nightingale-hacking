@@ -23,6 +23,8 @@
 <!ENTITY mtprefs.tab.help "於 mashTape 顯示此分頁">
 <!ENTITY mtprefs.single "此窗格只能顯示一個服務的內容，請從下面的清單中選擇要顯示的服務內容。">
 <!ENTITY mtprefs.multiple "此窗格可以同時顯示多個服務的內容，請從下面的清單中選擇要顯示的服務內容。">
+<!ENTITY mtprefs.tab.info.autolocalise "在地化資訊">
+<!ENTITY mtprefs.tab.info.autolocalise.help "盡量擷取翻譯過的演出者資訊。">
 <!ENTITY mtprefs.tab.photo.speed "照片捲動速度:">
 <!ENTITY mtprefs.tab.photo.faster "快">
 <!ENTITY mtprefs.tab.photo.slower "慢">
