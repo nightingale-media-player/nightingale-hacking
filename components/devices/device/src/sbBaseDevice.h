@@ -28,7 +28,7 @@
 #ifndef __SBBASEDEVICE__H__
 #define __SBBASEDEVICE__H__
 
-#include <deque>
+#include <list>
 #include <map>
 
 #include "sbIDevice.h"
@@ -395,8 +395,16 @@ protected:
    */
   PRLock * mRequestBatchTimerLock;
 
-  typedef std::deque<nsRefPtr<TransferRequest> > TransferRequestQueue;
+public:
+  /**
+   * The request queue type
+   */
+  typedef std::list<nsRefPtr<TransferRequest> > TransferRequestQueue;
+  /**
+   * The type of collection used to hold request queues based on priority
+   */
   typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
+protected:
   TransferRequestQueueMap mRequests;
   PRUint32 mLastTransferID;
   PRInt32 mLastRequestPriority; // to make sure peek returns the same
@@ -445,15 +453,8 @@ protected:
    * transfer a subset.
    *
    * \param aQueue the queue to check size for
-   * \param aRequestsRemoved [out, optional] true if at least one request had
-   *                         to be removed
-   * \param aItemsToCopy [out, optional] the items that will be copied
-   *                     note this won't be set if all items will be copied or
-   *                     if the device library is in manual mode
    */
-  virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue,
-                                       PRBool * aRequetsRemoved = nsnull,
-                                       nsIArray** aItemsToWrite = nsnull);
+  virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue);
 
   /**
    * Wait for the end of a request batch to be enqueued.
