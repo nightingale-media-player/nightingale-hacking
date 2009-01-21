@@ -47,3 +47,10 @@
 {
   -moz-box-pack: start;
 }
+
+/* This counteracts the "contents preservation" overflow logic for
+   prompt-style dialogs. */
+dialog[type="songbird"] .dialog-content-box
+{
+    overflow: visible !important;
+}

@@ -84,12 +84,12 @@ dialog:root
 /* Contents Preservation:
  * Don't allow the dialog buttons to escape the dialog box during resize.
  * If you size a resizable dialog box too small, you'll get scrollbars this way. */
-dialog
+dialog[type="songbird"]
 {
-  min-width: 125px;
-  min-height: 100px;
+  min-width: 8em;
+  min-height: 6.5em;
 }
-.dialog-content-box
+dialog[type="songbird"] .dialog-content-box
 {
   overflow: auto;
 }
