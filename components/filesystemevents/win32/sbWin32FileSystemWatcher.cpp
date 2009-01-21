@@ -112,6 +112,9 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbWin32FileSystemWatcher,
 
 sbWin32FileSystemWatcher::sbWin32FileSystemWatcher()
 {
+  mRootDirHandle = INVALID_HANDLE_VALUE;
+  mWatcherThread = NULL;
+  mBuffer = NULL;
   mIsThreadRunning = PR_FALSE;
   mShouldRunThread = PR_FALSE;
   mEventPathsQueueLock = 
@@ -187,9 +190,9 @@ sbWin32FileSystemWatcher::Cleanup()
     mBuffer = NULL;
   }
 
-  if (mRootDirHandle) {
+  if (mRootDirHandle != INVALID_HANDLE_VALUE) {
     CloseHandle(mRootDirHandle);
-    mRootDirHandle = nsnull;
+    mRootDirHandle = INVALID_HANDLE_VALUE;
   }
 }
 
@@ -214,7 +217,7 @@ sbWin32FileSystemWatcher::WatchNextChange()
   if (!result) {
     NS_WARNING("ERROR: Could not ReadDirectoryChangesW()");
     CloseHandle(mRootDirHandle);
-    mRootDirHandle = NULL;
+    mRootDirHandle = INVALID_HANDLE_VALUE;
   }
 }
 
@@ -280,12 +283,12 @@ sbWin32FileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
                 FILE_FLAG_OVERLAPPED,
                 NULL);                       // template file
 
-  NS_ENSURE_TRUE(mRootDirHandle, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(mRootDirHandle != INVALID_HANDLE_VALUE, NS_ERROR_UNEXPECTED);
 
   memset(&mOverlapped, 0, sizeof(mOverlapped));
   mOverlapped.hEvent = (HANDLE)this;
 
-  if (mBuffer) {
+  if (!mBuffer) {
     mBuffer = nsMemory::Alloc(BUFFER_LEN);
   }
 
