@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -98,6 +98,8 @@ sbStringBundle::sbStringBundle(const char* aURI)
  *   Construct a Songbird string bundle with the string bundle specified by
  * aBundle.
  *   Upon any failure, ensure that use of the Songbird string bundle is safe.
+ *
+ * \param aBundle               String bundle object.
  */
 
 sbStringBundle::sbStringBundle(nsIStringBundle* aBundle)

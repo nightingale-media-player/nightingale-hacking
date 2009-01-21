@@ -44,7 +44,8 @@ EXPORTED_SYMBOLS = [ "SBString",
                      "SBFormattedCountString",
                      "SBStringBrandShortName",
                      "SBStringGetDefaultBundle",
-                     "SBStringGetBrandBundle"];
+                     "SBStringGetBrandBundle",
+                     "SBStringBundle" ];
 
 
 //------------------------------------------------------------------------------
@@ -78,7 +79,7 @@ var gSBStringBrandBundle = null;
  *   Get and return the localized string with the key specified by aKey using
  * the string bundle specified by aStringBundle.  If the string cannot be found,
  * return the default string specified by aDefault; if aDefault is not
- * specified, return aKey.
+ * specified or is null, return aKey.
  *   If aStringBundle is not specified, use the main Songbird string bundle.
  *
  * \param aKey                  Localized string key.
@@ -89,15 +90,18 @@ var gSBStringBrandBundle = null;
  */
 
 function SBString(aKey, aDefault, aStringBundle) {
-  // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
+  // Use default Songbird string bundle utility object if no bundle specified.
+  if (!aStringBundle)
+    return SBStringGetDefaultBundle().get(aKey, aDefault);
 
-  // Set the default value.  Allow specifying an empty string as a default.
-  var value = aDefault || (typeof(aDefault) == "string") ? aDefault : aKey;
+  // Set the default value.
+  var value = aKey;
+  if ((typeof(aDefault) != "undefined") && (aDefault !== null))
+    value = aDefault;
 
   // Try getting the string from the bundle.
   try {
-    value = stringBundle.GetStringFromName(aKey);
+    value = aStringBundle.GetStringFromName(aKey);
   } catch(ex) {}
 
   return value;
@@ -123,8 +127,8 @@ function SBString(aKey, aDefault, aStringBundle) {
 function SBBrandedString(aKey, aDefault, aStringBundle) {
   return SBFormattedString(aKey,
                            [ SBStringBrandShortName() ],
-                           aStringBundle,
-                           aDefault);
+                           aDefault,
+                           aStringBundle);
 }
 
 
@@ -132,7 +136,7 @@ function SBBrandedString(aKey, aDefault, aStringBundle) {
  *   Get the formatted localized string with the key specified by aKey using the
  * format parameters specified by aParams and the string bundle specified by
  * aStringBundle.  If the string cannot be found, return the default string
- * specified by aDefault; if aDefault is not specified, return aKey.
+ * specified by aDefault; if aDefault is not specified or is null, return aKey.
  *   If no string bundle is specified, get the string from the Songbird bundle.
  * If a string cannot be found, return aKey.
  *
@@ -145,15 +149,18 @@ function SBBrandedString(aKey, aDefault, aStringBundle) {
  */
 
 function SBFormattedString(aKey, aParams, aDefault, aStringBundle) {
-  // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
+  // Use default Songbird string bundle utility object if no bundle specified.
+  if (!aStringBundle)
+    return SBStringGetDefaultBundle().format(aKey, aParams, aDefault);
 
-  // Set the default value.  Allow specifying an empty string as a default.
-  var value = aDefault || (typeof(aDefault) == "string") ? aDefault : aKey;
+  // Set the default value.
+  var value = aKey;
+  if ((typeof(aDefault) != "undefined") && (aDefault !== null))
+    value = aDefault;
 
   // Try formatting string from bundle.
   try {
-    value = stringBundle.formatStringFromName(aKey, aParams, aParams.length);
+    value = aStringBundle.formatStringFromName(aKey, aParams, aParams.length);
   } catch(ex) {}
 
   return value;
@@ -182,8 +189,8 @@ function SBFormattedString(aKey, aParams, aDefault, aStringBundle) {
 function SBBrandedFormattedString(aKey, aParams, aDefault, aStringBundle) {
   return SBFormattedString(aKey,
                            aParams.concat(SBStringBrandShortName()),
-                           aStringBundle,
-                           aDefault);
+                           aDefault,
+                           aStringBundle);
 }
 
 
@@ -199,7 +206,7 @@ function SBBrandedFormattedString(aKey, aParams, aDefault, aStringBundle) {
  *   Use the string bundle specified by aStringBundle.  If the string bundle is
  * not specified, use the main Songbird string bundle.
  *   If the string cannot be found, return the default string specified by
- * aDefault; if aDefault is not specified, return aKey.
+ * aDefault; if aDefault is not specified or is null, return aKeyBase.
  *
  * \param aKeyBase              Localized string key base.
  * \param aCount                Count value for string.
@@ -215,8 +222,13 @@ function SBFormattedCountString(aKeyBase,
                                 aParams,
                                 aDefault,
                                 aStringBundle) {
-  // Get the string bundle.
-  var stringBundle = aStringBundle ? aStringBundle : SBStringGetDefaultBundle();
+  // Use default Songbird string bundle utility object if no bundle specified.
+  if (!aStringBundle) {
+    return SBStringGetDefaultBundle().formatCountString(aKeyBase,
+                                                        aCount,
+                                                        aParams,
+                                                        aDefault);
+  }
 
   // Get the format parameters.
   var params;
@@ -233,11 +245,13 @@ function SBFormattedCountString(aKeyBase,
     key += "_n";
 
   // Set the default value.
-  var value = aDefault ? aDefault : aKeyBase;
+  var value = aKeyBase;
+  if ((typeof(aDefault) != "undefined") && (aDefault !== null))
+    value = aDefault;
 
   // Try formatting the string from the bundle.
   try {
-    value = stringBundle.formatStringFromName(key, params, params.length);
+    value = aStringBundle.formatStringFromName(key, params, params.length);
   } catch(ex) {}
 
   return value;
@@ -262,18 +276,14 @@ function SBStringBrandShortName() {
 //------------------------------------------------------------------------------
 
 /**
- * Return the default Songbird localized string bundle.
+ * Return the default Songbird string bundle utility object.
  *
- * \return Default Songbird localized string bundle.
+ * \return Default Songbird string bundle utility object.
  */
 
 function SBStringGetDefaultBundle() {
-  if (!gSBStringDefaultBundle) {
-    gSBStringDefaultBundle =
-      Cc["@mozilla.org/intl/stringbundle;1"]
-        .getService(Ci.nsIStringBundleService)
-        .createBundle("chrome://songbird/locale/songbird.properties");
-  }
+  if (!gSBStringDefaultBundle)
+    gSBStringDefaultBundle = new SBStringBundle();
 
   return gSBStringDefaultBundle;
 }
@@ -295,4 +305,263 @@ function SBStringGetBrandBundle() {
 
   return gSBStringBrandBundle;
 }
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird string bundle utility object.
+//
+//   The Songbird string bundle utility object provides an expanded set of
+// string bundle services.  In particular, this object allows string bundles to
+// include other string bundles and to include bundle strings in other bundle
+// strings.
+//   To include one or more string bundles in a top-level string bundle, define
+// the string "include_bundle_list" in the top-level bundle.  This string should
+// consist of a comma separated list of included string bundle URI's.  When
+// the Songbird string bundle utility object looks up a string, it will look in
+// the top-level string bundle and all included string bundles.  The included
+// string bundles can include additional string bundles too.
+//   To include a bundle string in another budle string, encapsulate the
+// included bundle string in "&" and ";", much like XML entities.  Use "&amp;"
+// for a literal "&".
+//
+// Example:
+//
+// include_bundle_list=chrome://bundles1.properties,chrome://bundle2.properties
+//
+// string1=World
+// string2=Hello &string1; &amp; Everyone Else
+//
+// string2 evaluates to "Hello World & Everyone Else".
+//
+//------------------------------------------------------------------------------
+
+/**
+ *   Construct a Songbird string bundle utility object using the base string
+ * bundle specified by aBundle.  If aBundle is a string, it is treated as a
+ * URI for a string bundle; otherwise, it is treated as a string bundle object.
+ * If aBundle is not specified, the default Songbird string bundle is used.
+ *
+ *   ==> aBundle                Base string bundle.
+ */
+
+function SBStringBundle(aBundle)
+{
+  // Get the string bundle service. */
+  this._stringBundleService = Cc["@mozilla.org/intl/stringbundle;1"]
+                                .getService(Ci.nsIStringBundleService);
+
+  // Use the default Songbird string bundle if none specified.
+  if (!aBundle)
+    aBundle = "chrome://songbird/locale/songbird.properties";
+
+  // Initialize the bundle list.
+  this._bundleList = [];
+
+  // Load the string bundle.
+  this._loadBundle(aBundle);
+}
+
+// Define the class.
+SBStringBundle.prototype = {
+  // Set the constructor.
+  constructor: SBStringBundle,
+
+  //
+  // Songbird string bundle utility object fields.
+  //
+  //   _stringBundleService     String bundle service object.
+  //   _bundleList              List of string bundles.
+  //
+
+  _stringBundleService: null,
+  _bundleList: null,
+
+
+  /**
+   *   Get and return the string with the bundle key specified by aKey.  If the
+   * string cannot be found, return the string specified by aDefault; if
+   * aDefault is not specified or is null, return aKey.
+   *
+   * \param aKey                  String bundle key.
+   * \param aDefault              Default string value.
+   *
+   * \return                      Bundle string.
+   */
+
+  get: function SBStringBundle_get(aKey, aDefault) {
+    // Set the default string value.
+    var value = aKey;
+    if ((typeof(aDefault) != "undefined") && (aDefault !== null))
+      value = aDefault;
+
+    // Get the string from the bundle list.
+    for (var i = 0; i < this._bundleList.length; i++) {
+      var bundle = this._bundleList[i];
+      try {
+        value = bundle.GetStringFromName(aKey);
+        break;
+      } catch (ex) {}
+    }
+
+    // Apply string substitutions.
+    value = this._applySubstitutions(value);
+
+    return value;
+  },
+
+
+  /**
+   *   Get and return the formatted string with the bundle key specified by aKey
+   * and the parameters specified by aParams.  If the string cannot be found,
+   * return the string specified by aDefault; if aDefault is not specified or is
+   * null, return aKey.
+   *
+   * \param aKey                  String bundle key.
+   * \param aParams               Bundle string format parameters.
+   * \param aDefault              Default string value.
+   *
+   * \return                      Bundle string.
+   */
+
+  format: function SBStringBundle_format(aKey, aParams, aDefault) {
+    // Set the default string value.
+    var value = aKey;
+    if ((typeof(aDefault) != "undefined") && (aDefault !== null))
+      value = aDefault;
+
+    // Get the string from the bundle list.
+    for (var i = 0; i < this._bundleList.length; i++) {
+      var bundle = this._bundleList[i];
+      try {
+        value = bundle.formatStringFromName(aKey, aParams, aParams.length);
+        break;
+      } catch (ex) {}
+    }
+
+    // Apply string substitutions.
+    value = this._applySubstitutions(value);
+
+    return value;
+  },
+
+
+  /**
+   *   Get and return the formatted count string with the key base specified by
+   * aKeyBase using the count specified by aCount.  If the count is one, get the
+   * string using the singular string key; otherwise, get the formatted string
+   * using the plural string key and count.
+   *   The singular string key is the key base with the suffix "_1".  The plural
+   * string key is the key base with the suffix "_n".
+   *   Use the format parameters specified by aParams.  If aParams is not
+   * specified, use the count as the single format parameter.
+   *   If the string cannot be found, return the default string specified by
+   * aDefault; if aDefault is not specified or is null, return aKeyBase.
+   *
+   * \param aKeyBase              String bundle key base.
+   * \param aCount                Count value for string.
+   * \param aParams               Format params array.
+   * \param aDefault              Default string value.
+   *
+   * \return                      Bundle string.
+   */
+
+  formatCountString: function SBStringBundle_formatCountString(aKeyBase,
+                                                               aCount,
+                                                               aParams,
+                                                               aDefault) {
+    // Get the format parameters.
+    var params;
+    if (aParams)
+      params = aParams;
+    else
+      params = [ aCount ];
+
+    // Produce the string key.
+    var key = aKeyBase;
+    if (aCount == 1)
+      key += "_1";
+    else
+      key += "_n";
+
+    // Set the default string value.
+    var value = aKeyBase;
+    if ((typeof(aDefault) != "undefined") && (aDefault !== null))
+      value = aDefault;
+
+    // Get the string from the bundle list.
+    for (var i = 0; i < this._bundleList.length; i++) {
+      var bundle = this._bundleList[i];
+      try {
+        value = bundle.formatStringFromName(key, params, params.length);
+        break;
+      } catch (ex) {}
+    }
+
+    // Apply string substitutions.
+    value = this._applySubstitutions(value);
+
+    return value;
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Internal Songbird string bundle utility object services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   *   Load the string bundle specified by aBundle and all of its included
+   * bundles.  If aBundle is a string, it is treated as a URI for the string
+   * bundle; otherwise, it is treated as a string bundle object.
+   *
+   *   ==> aBundle              Bundle to load.
+   */
+
+  _loadBundle: function SBStringBundle__loadBundle(aBundle) {
+    var bundle = aBundle;
+
+    // If the bundle is specified as a URI spec string, create a bundle from it.
+    if (typeof(bundle) == "string")
+      bundle = this._stringBundleService.createBundle(bundle);
+
+    // Add the string bundle to the list of string bundles.
+    this._bundleList.push(bundle);
+
+    // Get the list of included string bundles.
+    var includeBundleList;
+    try {
+      includeBundleList =
+        bundle.GetStringFromName("include_bundle_list").split(",");
+    } catch (ex) {
+      includeBundleList = [];
+    }
+
+    // Load each of the included string bundles.
+    for (var i = 0; i < includeBundleList.length; i++) {
+        this._loadBundle(includeBundleList[i]);
+    }
+  },
+
+
+  /*
+   * Apply and string bundle substitutions to the string specified by aString.
+   *
+   * \param aString               String to which to apply substitutions.
+   */
+
+  _applySubstitutions: function SBStringBundle__applySubstitutions(aString) {
+    // Set up a replacement function.
+    var _this = this;
+    var replaceFunc = function(aMatch, aKey) {
+      if (aKey == "amp")
+        return "&";
+      return _this.get(aKey, "");
+    }
+
+    // Apply all string substitutions and return result.
+    return aString.replace(/&([^&;]*);/g, replaceFunc);
+  }
+};
 
