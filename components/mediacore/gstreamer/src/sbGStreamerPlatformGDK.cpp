@@ -246,8 +246,16 @@ GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
   // Use the audio sink provided, if any.
   mAudioSink = aAudioSink;
 
-  if (!mAudioSink)
+  if (!mAudioSink) {
     mAudioSink = gst_element_factory_make("gconfaudiosink", "audio-sink");
+    if (mAudioSink) {
+      // Set the profile for gconfaudiosink to use to 'Music and Movies',
+      // this is profile 1 (we can't use the enum directly, as the header 
+      // is not installed).
+      g_object_set (G_OBJECT (mAudioSink), "profile", 1, NULL);
+    }
+  }
+
   if (!mAudioSink) {
     // Then hopefully autoaudiosink will pick something appropriate...
     mAudioSink = gst_element_factory_make("autoaudiosink", "audio-sink");
