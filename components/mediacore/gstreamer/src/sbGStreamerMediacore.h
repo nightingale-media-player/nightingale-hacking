@@ -132,6 +132,7 @@ protected:
   void HandleWarningMessage (GstMessage *message);
   void HandleBufferingMessage (GstMessage *message);
   void HandleRedirectMessage (GstMessage *message);
+  void OnAudioCapsSet(GstCaps *caps);
   void OnVideoCapsSet(GstCaps *caps);
 
   nsresult LogMessageToErrorConsole(nsString message, PRUint32 flags);
@@ -160,6 +161,10 @@ private:
   static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
   static void currentVideoSetHelper(GObject *obj, GParamSpec *pspec, 
+          sbGStreamerMediacore *core);
+  static void audioCapsSetHelper(GObject *obj, GParamSpec *pspec, 
+          sbGStreamerMediacore *core);
+  static void currentAudioSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);
 
 protected:
@@ -232,6 +237,8 @@ protected:
 
   nsCString mCurrentUri;     // UTF-8 String form (as used by GStreamer) of 
                              // the currently-playing URI.
+
+  GstCaps *mCurrentAudioCaps; // Caps of currently playing audio, or NULL
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */

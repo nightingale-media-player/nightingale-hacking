@@ -168,10 +168,9 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mGaplessDisabled(PR_FALSE),
     mPlayingGaplessly(PR_FALSE),
     mAbortingPlayback(PR_FALSE),
-    mHasReachedPlaying(PR_FALSE)
+    mHasReachedPlaying(PR_FALSE),
+    mCurrentAudioCaps(NULL)
 {
-  MOZ_COUNT_CTOR(sbGStreamerMediacore);
-
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
 
@@ -179,8 +178,6 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
 
 sbGStreamerMediacore::~sbGStreamerMediacore()
 {
-  MOZ_COUNT_DTOR(sbGStreamerMediacore);
-
   if (mTags)
     gst_tag_list_free(mTags);
 
@@ -491,6 +488,48 @@ sbGStreamerMediacore::CreateAudioSink()
 }
 
 /* static */ void
+sbGStreamerMediacore::currentAudioSetHelper(GObject* obj, GParamSpec* pspec,
+        sbGStreamerMediacore *core)
+{
+  int current_audio;
+  GstPad *pad;
+
+  /* Which audio stream has been activated? */
+  g_object_get(obj, "current-audio", &current_audio, NULL);
+  NS_ASSERTION(current_audio >= 0, "current audio is negative");
+
+  /* Get the audio pad for this stream number */
+  g_signal_emit_by_name(obj, "get-audio-pad", current_audio, &pad);
+
+  if (pad) {
+    GstCaps *caps;
+    caps = gst_pad_get_negotiated_caps(pad);
+    if (caps) {
+      core->OnAudioCapsSet(caps);
+      gst_caps_unref(caps);
+    }
+
+    g_signal_connect(pad, "notify::caps",
+            G_CALLBACK(audioCapsSetHelper), core);
+
+    gst_object_unref(pad);
+  }
+}
+
+/* static */ void
+sbGStreamerMediacore::audioCapsSetHelper(GObject* obj, GParamSpec* pspec,
+        sbGStreamerMediacore *core)
+{
+  GstPad *pad = GST_PAD(obj);
+  GstCaps *caps = gst_pad_get_negotiated_caps(pad);
+
+  if (caps) {
+    core->OnAudioCapsSet(caps);
+    gst_caps_unref (caps);
+  }
+}
+
+/* static */ void
 sbGStreamerMediacore::currentVideoSetHelper(GObject* obj, GParamSpec* pspec,
         sbGStreamerMediacore *core)
 {
@@ -573,6 +612,11 @@ sbGStreamerMediacore::DestroyPipeline()
     mTags = nsnull;
   }
   mProperties = nsnull;
+
+  if (mCurrentAudioCaps) {
+    gst_caps_unref (mCurrentAudioCaps);
+    mCurrentAudioCaps = NULL;
+  }
 
   mStopped = PR_FALSE;
   mBuffering = PR_FALSE;
@@ -712,11 +756,13 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   // Handle about-to-finish signal emitted by playbin2
   g_signal_connect (mPipeline, "about-to-finish", 
           G_CALLBACK (aboutToFinishHandler), this);
-  // Get notified when the current video stream changes.
-  // This will let us get information about the specific video stream
+  // Get notified when the current audio/video stream changes.
+  // This will let us get information about the specific audio or video stream
   // being played.
   g_signal_connect (mPipeline, "notify::current-video",
           G_CALLBACK (currentVideoSetHelper), this);
+  g_signal_connect (mPipeline, "notify::current-audio",
+          G_CALLBACK (currentAudioSetHelper), this);
 
   return NS_OK;
 }
@@ -1225,6 +1271,26 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
   }
 
   mGaplessDisabled = PR_TRUE;
+}
+
+void
+sbGStreamerMediacore::OnAudioCapsSet(GstCaps *caps)
+{
+  if (mPlayingGaplessly && mCurrentAudioCaps && 
+          !gst_caps_is_equal_fixed (caps, mCurrentAudioCaps))
+  {
+    // Ignore all messages while we're aborting playback
+    mAbortingPlayback = PR_TRUE;
+    nsCOMPtr<nsIRunnable> abort =
+        NS_NEW_RUNNABLE_METHOD(sbGStreamerMediacore, this, 
+                AbortAndRestartPlayback);
+    NS_DispatchToMainThread(abort);
+  }
+
+  if (mCurrentAudioCaps) {
+    gst_caps_unref (mCurrentAudioCaps);
+  }
+  mCurrentAudioCaps = gst_caps_ref (caps);
 }
 
 void sbGStreamerMediacore::AbortAndRestartPlayback()
