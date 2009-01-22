@@ -53,6 +53,7 @@ Inotify_Callback(GIOChannel *source, GIOCondition condition, gpointer data)
 
 sbLinuxFileSystemWatcher::sbLinuxFileSystemWatcher()
 {
+  mIsWatching = PR_FALSE;
 }
 
 sbLinuxFileSystemWatcher::~sbLinuxFileSystemWatcher()
