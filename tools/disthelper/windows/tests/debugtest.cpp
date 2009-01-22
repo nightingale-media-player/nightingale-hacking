@@ -43,6 +43,7 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
+#include <errno.h>
 
 void check(int cond, const char* fmt, ...);
 
@@ -52,7 +53,7 @@ void TestDebug() {
   // delete any existing log files first...
   tstring logpath = ResolvePathName("$/disthelper.log");
   int result = _tunlink(logpath.c_str());
-  check(result == 0,
+  check(result == 0 || errno == ENOENT,
         "TestDebug: failed to remove old file %S, errno %i\n",
         logpath.c_str(),
         errno);

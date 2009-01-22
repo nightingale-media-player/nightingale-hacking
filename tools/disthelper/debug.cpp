@@ -103,7 +103,7 @@ void LogMessage(const char* fmt, ...) {
     free(buffer);
     
     ::OutputDebugStringA(stream.str().c_str());
-    fprintf(fout, "%s", stream.str().c_str());
+    fprintf(fout, "%s\n", stream.str().c_str());
   
     fclose(fout);
   }

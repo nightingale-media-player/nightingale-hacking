@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 CPP_SRCS = main.cpp \
            parser.cpp \
            debugtest.cpp \
+           version.cpp \
            $(NULL)
 
 # things from ../
@@ -39,6 +40,7 @@ CPP_SRCS += commands.cpp \
 
 # things from ../../
 CPP_SRCS += debug.cpp \
+            readini.cpp \
             stringconvert.cpp \
             $(NULL)
 

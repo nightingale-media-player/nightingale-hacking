@@ -43,6 +43,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <stdlib.h>
 
 #ifndef UNICODE
 #error This only supports the UNICODE configuration (no SBCS/MBCS)
@@ -294,4 +295,40 @@ std::string GetLeafName(std::string aSrc) {
     return aSrc.substr(slash);
   }
   return aSrc;
+}
+
+void ShowFatalError(const char* fmt, ...) {
+  tstring appIni = ResolvePathName("$/application.ini");
+  tstring bakIni = ResolvePathName("$/broken.application.ini");
+  _tunlink(bakIni.c_str());
+  _trename(appIni.c_str(), bakIni.c_str());
+
+  if (_tgetenv(_T("DISTHELPER_SILENT_FAILURE"))) {
+    return;
+  }
+
+  va_list args;
+  int len;
+  TCHAR *buffer;
+
+  // retrieve the variable arguments
+  va_start(args, fmt);
+  tstring msg(_T("An application update error has occurred; please re-install ")
+              _T("the application.  Your media has not been affected.\n\n")
+              _T("Related deatails:\n\n"));
+  msg.append(ConvertUTF8ToUTF16(fmt));
+  
+  len = _vsctprintf(msg.c_str(), args) // _vscprintf doesn't count
+                         + 1; // terminating '\0'
+  
+  buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
+
+  _vstprintf(buffer, msg.c_str(), args);
+  ::MessageBox(NULL,
+               buffer,
+               _T("Update Distribution Helper"),
+               MB_OK | MB_ICONERROR);
+
+  free(buffer);
+  va_end(args);
 }

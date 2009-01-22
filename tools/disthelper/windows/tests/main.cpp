@@ -43,10 +43,12 @@
 
 void TestParser();
 void TestDebug();
+void TestVersion();
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   TestParser();
   TestDebug();
+  TestVersion();
   return 0;
 }
 

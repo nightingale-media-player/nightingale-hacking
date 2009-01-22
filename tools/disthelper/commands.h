@@ -121,4 +121,9 @@ tstring ResolvePathName(std::string aSrc);
  */
 std::string GetLeafName(std::string aSrc);
 
+/**
+ * Report a generic fatal error to the user, and prevent the application from running
+ */
+void ShowFatalError(const char* fmt, ...);
+
 #endif /* _DISTHERLPER_COMMANDS_H__ */

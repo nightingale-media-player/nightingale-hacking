@@ -82,7 +82,7 @@ public:
       unsigned long leftVal, rightVal;
       leftVal = strtoul(leftData + distance(aLeft.begin(), leftBegin), NULL, 10);
       rightVal = strtoul(rightData + distance(aRight.begin(), rightBegin), NULL, 10);
-      DebugMessage("version parts: %s (%ul) / %s (%ul)",
+      DebugMessage("version parts: %s (%u) / %s (%u)",
                    leftData + distance(aLeft.begin(), leftBegin),
                    leftVal,
                    rightData + distance(aRight.begin(), rightBegin),

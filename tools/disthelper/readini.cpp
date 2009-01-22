@@ -117,6 +117,7 @@ int ReadIniFile(const TCHAR* path, IniFile_t& results) {
       return DH_ERROR_PARSE;
     }
     *sep = '\0';
+    p[len] = '\0';
     
     results[section][p] = (sep + 1);
   }
