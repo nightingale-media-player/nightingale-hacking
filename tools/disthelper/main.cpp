@@ -1,4 +1,3 @@
-/* vim: le=unix sw=2 : */
 /* ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -138,17 +137,6 @@ int main(int argc, LPTSTR *argv) {
                ConvertUTFnToUTF8(distIni).c_str(),
                ResolvePathName("$/distribution/").c_str());
 
-  IniFile_t destDistIni;
-  std::string destDistPath = GetLeafName(ConvertUTFnToUTF8(distIni));
-  destDistPath.insert(0, "$/distribution/");
-  tstring destDistIniFile = ResolvePathName(destDistPath);
-  result = ReadIniFile(destDistIniFile.c_str(), destDistIni);
-  if (result != DH_ERROR_OK) {
-    LogMessage("Failed to read existing distribution.ini %S", destDistIniFile.c_str());
-    ShowFatalError("Failed to read existing distribution.ini %s", destDistIniFile.c_str());
-    return DH_ERROR_UNKNOWN;
-  }
-
   if (section == "steps:install") {
     LogMessage("Skipping distribution.ini check for installation, forcing copy");
     result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
@@ -156,7 +144,18 @@ int main(int argc, LPTSTR *argv) {
       LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
     }
   } else {
-    std::string oldVersion = destDistIni["global"]["version"],
+    IniFile_t destDistIni;
+    std::string destDistPath = GetLeafName(ConvertUTFnToUTF8(distIni));
+    destDistPath.insert(0, "$/distribution/");
+    tstring destDistIniFile = ResolvePathName(destDistPath);
+    result = ReadIniFile(destDistIniFile.c_str(), destDistIni);
+    if (result != DH_ERROR_OK) {
+      LogMessage("Failed to read existing distribution.ini %S", destDistIniFile.c_str());
+      ShowFatalError("Failed to read existing distribution.ini %s", destDistIniFile.c_str());
+      return DH_ERROR_UNKNOWN;
+    }
+
+   std::string oldVersion = destDistIni["global"]["version"],
                 newVersion = iniFile["global"]["version"];
     LogMessage("Checking distribution.ini versions... old=[%s] new=[%s]",
                oldVersion.c_str(), newVersion.c_str());
