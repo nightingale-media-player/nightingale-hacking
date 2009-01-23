@@ -149,31 +149,39 @@ int main(int argc, LPTSTR *argv) {
     return DH_ERROR_UNKNOWN;
   }
 
-  std::string oldVersion = destDistIni["global"]["version"],
-              newVersion = iniFile["global"]["version"];
-  LogMessage("Checking distribution.ini versions... old=[%s] new=[%s]",
-             oldVersion.c_str(), newVersion.c_str());
-  if (VersionLessThan()(newVersion, oldVersion)) {
-    // the new version is older than the old version? abort!
-    LogMessage("Existing distribution.ini %S has version %s, which is newer than replacement %S of version %s",
-               ResolvePathName(destDistPath).c_str(), oldVersion.c_str(),
-               distIni.c_str(), newVersion.c_str());
-    ShowFatalError("existing distribution.ini %s has version %S, which is newer than replacement %s of version %S",
-               ResolvePathName(destDistPath).c_str(), oldVersion.c_str(),
-               distIni.c_str(), newVersion.c_str());
-    return DH_ERROR_UNKNOWN;
-  }
-
-  if (VersionLessThan()(oldVersion, newVersion)) {
-    // we have a newer file, copy it over
+  if (section == "steps:install") {
+    LogMessage("Skipping distribution.ini check for installation, forcing copy");
     result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
     if (result) {
       LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
     }
   } else {
-    LogMessage("Not copying identical versions %S (version %s) to %S (version %s)",
-               distIni.c_str(), oldVersion.c_str(),
-               ResolvePathName("$/distribution/").c_str(), newVersion.c_str());
+    std::string oldVersion = destDistIni["global"]["version"],
+                newVersion = iniFile["global"]["version"];
+    LogMessage("Checking distribution.ini versions... old=[%s] new=[%s]",
+               oldVersion.c_str(), newVersion.c_str());
+    if (VersionLessThan()(newVersion, oldVersion)) {
+      // the new version is older than the old version? abort!
+      LogMessage("Existing distribution.ini %S has version %s, which is newer than replacement %S of version %s",
+                 ResolvePathName(destDistPath).c_str(), oldVersion.c_str(),
+                 distIni.c_str(), newVersion.c_str());
+      ShowFatalError("existing distribution.ini %s has version %S, which is newer than replacement %s of version %S",
+                 ResolvePathName(destDistPath).c_str(), oldVersion.c_str(),
+                 distIni.c_str(), newVersion.c_str());
+      return DH_ERROR_UNKNOWN;
+    }
+
+    if (VersionLessThan()(oldVersion, newVersion)) {
+      // we have a newer file, copy it over
+      result = CommandCopyFile(ConvertUTFnToUTF8(distIni), "$/distribution/");
+      if (result) {
+        LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
+      }
+    } else {
+      LogMessage("Not copying identical versions %S (version %s) to %S (version %s)",
+                 distIni.c_str(), oldVersion.c_str(),
+                 ResolvePathName("$/distribution/").c_str(), newVersion.c_str());
+    }
   }
 
   result = CommandCopyFile(ConvertUTFnToUTF8(srcAppIniName), "$/");

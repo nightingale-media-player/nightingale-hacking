@@ -113,7 +113,7 @@ void TestDistVersion() {
     }
 
     fflush(stdout); fflush(stderr);
-    int result = system("..\\..\\disthelper.exe install test.ini");
+    int result = system("..\\..\\disthelper.exe test test.ini");
     check(result != -1, "Failed to execute disthelper: %08x\n", errno);
     
     IniFile_t data;
@@ -203,7 +203,7 @@ void TestAppVersion() {
     }
 
     fflush(stdout); fflush(stderr);
-    int result = system("..\\..\\disthelper.exe install test.ini");
+    int result = system("..\\..\\disthelper.exe test test.ini");
     check(result != -1, "Failed to execute disthelper: %08x\n", errno);
     
     IniFile_t data;
