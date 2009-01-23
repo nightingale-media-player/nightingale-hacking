@@ -252,6 +252,7 @@ Section "-Application" Section1
    ; List of files to install
    File ${ApplicationIni}
    File ${FileMainEXE}
+   File ${DistHelperEXE}
    !ifndef UsingJemalloc
       File ${CRuntime}
       File ${CPPRuntime}
@@ -519,8 +520,6 @@ Section "Uninstall"
    Delete $INSTDIR\${PreferredUninstallerIcon}
 
    Delete $INSTDIR\${VistaIcon}
-   ; Log file updater.exe redirects if the PostUpdateWin helper is called
-   Delete $INSTDIR\uninstall.update
   
    ; Text files to uninstall
    Delete $INSTDIR\LICENSE.html
@@ -538,7 +537,10 @@ Section "Uninstall"
    Delete $INSTDIR\removed-files
    Delete $INSTDIR\active-update.xml
    Delete $INSTDIR\updates.xml
-   
+
+   ; Log file updater.exe redirects if the PostUpdateWin helper is called
+   Delete $INSTDIR\uninstall.update
+
    ; List of directories to remove recursively.
    RMDir /r $INSTDIR\chrome
    RMDir /r $INSTDIR\components
