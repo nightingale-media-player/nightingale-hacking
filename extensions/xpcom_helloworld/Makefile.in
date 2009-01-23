@@ -43,6 +43,10 @@ EXTENSION_STAGE_DIR = ./.xpistage
 
 XPI_NAME = $(EXTENSION_NAME)
 
+EXTENSION_VER := 1.0.0
+EXTENSION_MIN_VER := 1.1.1a
+EXTENSION_MAX_VER := 1.1.1b1
+
 # Set this to 1 to install the extension
 ifdef DEBUG
 INSTALL_EXTENSION = 1
