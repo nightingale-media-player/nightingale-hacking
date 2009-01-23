@@ -2,8 +2,8 @@
 AppName=Songbird
 BuildID=00000000000000
 BuildNumber=939
-Milestone=1.1.0pre
-MilestoneWindows=1.1.0.0
+Milestone=1.1.1a
+MilestoneWindows=1.1.1.0
 Branch=trunk
 ProfileVersion=2
 # Why is there no RepoRevisionClient, you ask? We have to treat client-pull
