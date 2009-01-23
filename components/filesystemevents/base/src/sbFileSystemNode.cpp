@@ -25,9 +25,37 @@
 */
 
 #include "sbFileSystemNode.h"
+#include <sbFileSystemCID.h>
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
+#include <nsIObjectInputStream.h>
+#include <nsIObjectOutputStream.h>
+#include <nsMemory.h>
+#include <stack>
 
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileSystemNode, nsISupports)
+struct NodeContext
+{
+  NodeContext(const nsAString & aFullPath, sbFileSystemNode *aNode)
+    : fullPath(aFullPath), node(aNode)
+  {
+  }
+
+  nsString fullPath;
+  nsRefPtr<sbFileSystemNode> node;
+};
+
+
+static NS_DEFINE_CID(kFileSystemTreeCID,
+                     SONGBIRD_FILESYSTEMNODE_CID);
+
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbFileSystemNode,
+                              nsISerializable,
+                              nsIClassInfo)
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbFileSystemNode, 
+                             nsISerializable, 
+                             nsIClassInfo)
 
 sbFileSystemNode::sbFileSystemNode()
 {
@@ -138,7 +166,7 @@ sbFileSystemNode::AddChild(sbFileSystemNode *aNode)
   nsString leafName;
   nsresult rv = aNode->GetLeafName(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   mChildMap.insert(sbNodeMapPair(leafName, aNode));
 
   return NS_OK;
@@ -173,6 +201,145 @@ sbFileSystemNode::ReplaceNode(const nsAString & aLeafName,
   NS_ENSURE_ARG_POINTER(aReplacementNode);
   nsString leafName(aLeafName);
   mChildMap[leafName] = aReplacementNode;
+  return NS_OK;
+}
+
+nsresult
+sbFileSystemNode::SetParentID(const nsID & aID)
+{
+  mParentID = aID;
+  return NS_OK;
+}
+ 
+nsresult 
+sbFileSystemNode::GetParentID(nsID & aOutID)
+{
+  aOutID = mParentID;
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// nsISerializable
+
+NS_IMETHODIMP 
+sbFileSystemNode::Read(nsIObjectInputStream *aInputStream)
+{
+  NS_ENSURE_ARG_POINTER(aInputStream);
+
+  nsresult rv;
+  char *buffer;
+  rv = aInputStream->ReadBytes(sizeof(nsID), &buffer);
+  if (buffer) {
+    mParentID = *((nsID *)buffer);
+    NS_Free(buffer);
+  }
+
+  rv = aInputStream->ReadString(mLeafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aInputStream->ReadBoolean(&mIsDir);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 lastmodify;
+  rv = aInputStream->Read64(&lastmodify);
+  if (NS_SUCCEEDED(rv)) {
+    mLastModify = lastmodify;
+  }
+  else {
+    mLastModify = 0;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbFileSystemNode::Write(nsIObjectOutputStream *aOutputStream)
+{
+  NS_ENSURE_ARG_POINTER(aOutputStream);
+
+  nsresult rv;
+  rv = aOutputStream->WriteBytes(((char *)&mParentID), sizeof(nsID));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aOutputStream->WriteWStringZ(mLeafName.BeginReading());
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aOutputStream->WriteBoolean(mIsDir);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint64 lastmodify = mLastModify;
+  rv = aOutputStream->Write64(lastmodify);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// nsIClassInfo
+
+NS_IMETHODIMP
+sbFileSystemNode::GetInterfaces(PRUint32* count, nsIID*** array)
+{
+  NS_ENSURE_ARG_POINTER(count);
+  NS_ENSURE_ARG_POINTER(array);
+
+  return NS_CI_INTERFACE_GETTER_NAME(sbFileSystemNode)(count, array);
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetHelperForLanguage(PRUint32 language,
+                                    nsISupports** _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetContractID(char** aContractID)
+{
+  NS_ENSURE_ARG_POINTER(aContractID);
+  *aContractID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetClassDescription(char** aClassDescription)
+{
+  NS_ENSURE_ARG_POINTER(aClassDescription);
+  *aClassDescription = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetClassID(nsCID** aClassID)
+{
+  NS_ENSURE_ARG_POINTER(aClassID);
+  *aClassID = nsnull;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetImplementationLanguage(PRUint32* aImplementationLanguage)
+{
+  NS_ENSURE_ARG_POINTER(aImplementationLanguage);
+  *aImplementationLanguage = nsIProgrammingLanguage::CPLUSPLUS;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetFlags(PRUint32* aFlags)
+{
+  NS_ENSURE_ARG_POINTER(aFlags);
+  *aFlags = 0;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileSystemNode::GetClassIDNoAlloc(nsCID* aClassIDNoAlloc)
+{
+  NS_ENSURE_ARG_POINTER(aClassIDNoAlloc);
+  *aClassIDNoAlloc = kFileSystemTreeCID;
   return NS_OK;
 }
 

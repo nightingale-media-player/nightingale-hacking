@@ -26,6 +26,7 @@
 
 #include <nsIGenericFactory.h>
 #include "sbFileSystemCID.h"
+#include "sbFileSystemNode.h"
 
 #if defined(XP_WIN) 
 #include "win32/sbWin32FileSystemWatcher.h"
@@ -37,6 +38,8 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbMacFileSystemWatcher)
 #include "linux/sbLinuxFileSystemWatcher.h"
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLinuxFileSystemWatcher)
 #endif
+
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFileSystemNode)
 
 
 static nsModuleComponentInfo sbFileSystem[] =
@@ -52,6 +55,13 @@ static nsModuleComponentInfo sbFileSystem[] =
 #else
     sbLinuxFileSystemWatcherConstructor
 #endif
+  },
+
+  {
+    SONGBIRD_FILESYSTEMNODE_CLASSNAME,
+    SONGBIRD_FILESYSTEMNODE_CID,
+    nsnull,
+    sbFileSystemNodeConstructor
   },
 };
 

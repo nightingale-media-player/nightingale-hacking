@@ -169,13 +169,19 @@ sbWin32FileSystemWatcher::StartWatching()
 }
 
 NS_IMETHODIMP
-sbWin32FileSystemWatcher::StopWatching()
+sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
   if (!mIsWatching) {
     return NS_OK;
   }
 
   Cleanup();
+
+  if (aShouldSaveSession) {
+    nsresult rv = mTree->SaveTreeSession(mSessionGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 

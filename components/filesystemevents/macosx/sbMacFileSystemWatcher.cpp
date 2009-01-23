@@ -84,6 +84,17 @@ sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener,
   return sbBaseFileSystemWatcher::Init(aListener, aRootPath, aIsRecursive);
 }
 
+NS_IMETHODIMP
+sbMacFileSystemWatcher::InitWithSession(const nsAString & aSessionGuid,
+                                        sbIFileSystemListener *aListener)
+{
+  if (!mIsSupported) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  return sbBaseFileSystemWatcher::InitWithSession(aSessionGuid, aListener);
+}
+
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StartWatching()
 {
@@ -112,7 +123,7 @@ sbMacFileSystemWatcher::StartWatching()
 }
 
 NS_IMETHODIMP 
-sbMacFileSystemWatcher::StopWatching()
+sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
@@ -130,12 +141,15 @@ sbMacFileSystemWatcher::StopWatching()
   FSEventStreamInvalidate(mStream);
   FSEventStreamRelease(mStream);
  
-  // TODO: Snapshot the tree?
-
   mIsWatching = PR_FALSE;
   
   // Don't worry about checking the result from the listener.
   mListener->OnWatcherStopped();
+
+  if (aShouldSaveSession) {
+    nsresult rv = mTree->SaveTreeSession(mSessionGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
   return NS_OK;
 }

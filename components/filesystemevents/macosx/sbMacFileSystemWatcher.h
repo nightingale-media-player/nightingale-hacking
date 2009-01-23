@@ -48,8 +48,10 @@ public:
   NS_IMETHOD Init(sbIFileSystemListener *aListener, 
                   const nsAString & aRootPath, 
                   PRBool aIsRecursive);
+  NS_IMETHOD InitWithSession(const nsAString & aSessionGuid,
+                             sbIFileSystemListener *aListener);
   NS_IMETHOD StartWatching();
-  NS_IMETHOD StopWatching();
+  NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbFileSystemTreeListener
   NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);

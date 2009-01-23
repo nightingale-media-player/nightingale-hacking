@@ -187,7 +187,7 @@ sbWatchFolderService::StopWatching()
   mDelayedChangedPaths.clear();
 
   // Stop and kill the file-system watcher.
-  mFileSystemWatcher->StopWatching();
+  mFileSystemWatcher->StopWatching(PR_FALSE);  // don't save tree yet
   mFileSystemWatcher = nsnull;
   
   mIsWatching = PR_FALSE;

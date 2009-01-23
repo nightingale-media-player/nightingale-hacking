@@ -58,6 +58,7 @@ protected:
   nsRefPtr<sbFileSystemTree>      mTree;
   nsCOMPtr<sbIFileSystemListener> mListener;
   nsString                        mWatchPath;
+  nsString                        mSessionGuid;
   PRBool                          mIsRecursive;
   PRBool                          mIsWatching;
   PRBool                          mIsSupported;

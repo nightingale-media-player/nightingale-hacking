@@ -40,5 +40,17 @@
   {0xAA, 0xA0, 0xA2, 0x5E, 0xA2, 0xBF, 0xBE, 0x64}             \
 }
 
+
+#define SONGBIRD_FILESYSTEMNODE_CLASSNAME                      \
+  "Songbird FileSystem Node"
+#define SONGBIRD_FILESYSTEMNODE_CID                            \
+{ /* 57DAC47F-2796-4570-86C3-F67CDC11CD31 */                   \
+  0x57DAC47F,                                                  \
+  0x2796,                                                      \
+  0x4570,                                                      \
+  {0x86, 0xC3, 0xF6, 0x7C, 0xDC, 0x11, 0xCD, 0x31}             \
+}
+
+
 #endif  // sbFileSystemCID_h_
 

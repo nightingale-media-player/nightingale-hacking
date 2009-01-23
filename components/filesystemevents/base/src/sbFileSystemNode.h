@@ -31,6 +31,8 @@
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
 #include <nsTArray.h>
+#include <nsISerializable.h>
+#include <nsIClassInfo.h>
 #include <map>
 
 class sbFileSystemNode;
@@ -43,13 +45,16 @@ typedef sbNodeMap::const_iterator sbNodeMapIter;
 //------------------------------------------------------------------------------
 // A class to model a file-system resource node (w/ children)
 //------------------------------------------------------------------------------
-class sbFileSystemNode : public nsISupports
+class sbFileSystemNode : public nsISerializable,
+                         public nsIClassInfo 
 {
 public:
   sbFileSystemNode();
   virtual ~sbFileSystemNode();
 
   NS_DECL_ISUPPORTS
+  NS_DECL_NSISERIALIZABLE
+  NS_DECL_NSICLASSINFO
 
   //
   // \brief Initialize a node with a given leaf name, directory flag, last 
@@ -115,11 +120,26 @@ public:
   //
   nsresult ReplaceNode(const nsAString & aLeafName,
                        sbFileSystemNode *aReplacementNode);
+
+  //
+  // \brief Set the ID of the parent node. This is only used for
+  //        serialization and the value is never generated.
+  // \param aID The ID of the parent.
+  //
+  nsresult SetParentID(const nsID & aID);
  
+  //
+  // \brief Get the ID of the parent node. This is only used for 
+  //        serialization and the value is never generated.
+  // \param aOutID The string to assign the parent ID to.
+  //
+  nsresult GetParentID(nsID & aOutID);
+
 private:
   nsRefPtr<sbFileSystemNode> mParentNode;
   sbNodeMap                  mChildMap;
   nsString                   mLeafName;
+  nsID                       mParentID;
   PRBool                     mIsDir;
   PRInt64                    mLastModify;
 };

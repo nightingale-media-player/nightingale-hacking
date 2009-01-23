@@ -40,6 +40,7 @@ CPP_SRCS = sbFileSystemNode.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
+               $(topsrcdir)/components/filesystemevents \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \

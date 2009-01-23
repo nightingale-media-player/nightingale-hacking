@@ -127,13 +127,22 @@ sbLinuxFileSystemWatcher::StartWatching()
 }
 
 NS_IMETHODIMP 
-sbLinuxFileSystemWatcher::StopWatching()
+sbLinuxFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
   if (!mIsWatching) {
     return NS_OK;
   }
 
-  return Cleanup();
+  nsresult rv;
+  rv = Cleanup();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aShouldSaveSession) {
+    rv = mTree->SaveTreeSession(mSessionGuid);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 nsresult

@@ -54,7 +54,7 @@ public:
                   const nsAString & aRootPath,
                   PRBool aIsRecursive);
   NS_IMETHOD StartWatching();
-  NS_IMETHOD StopWatching();
+  NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbIFileSystemTreeListener
   NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);

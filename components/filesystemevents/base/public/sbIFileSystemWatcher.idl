@@ -34,11 +34,11 @@ interface sbIFileSystemListener;
 //        path of the fileystem resources that need to be monitored. Callbacks
 //        will begin once |startWatching()| has been called.
 //
-[scriptable, uuid(94424D38-CEED-4C8C-9E5C-25A7AB295815)]
+[scriptable, uuid(9656EBDC-B88F-4FA7-A16F-E203F1A34F9D)]
 interface sbIFileSystemWatcher : nsISupports
 {
   //
-  // \brief Initialize a file system listener with a given path and listnener.
+  // \brief Initialize a file system watcher with a given path and listnener.
   // \param aListener The file sytem listener callback instance.
   // \param aRootPath The root file path to listen at.
   // \param aIsRecursive If the file path should be recusively watched.
@@ -48,6 +48,17 @@ interface sbIFileSystemWatcher : nsISupports
             in boolean aIsRecursive);
 
   //
+  // \brief Initialize a file system watcher from a previous watched 
+  //        session. Use this method to retreive change information since
+  //        the watcher was last run. All previous changed callback information
+  //        will be sent out before |onWatcherStarted()| is called.
+  // \param aSessionGuid The session GUID to attempt to restore from.
+  // \param aListener the file system listener callback instance.
+  //
+  void initWithSession(in AString aSessionGuid,
+                       in sbIFileSystemListener aListener);
+
+  //
   // \brief  Start watching the path designated in |init()|.
   //         Once the watching has fully initialized, the listener will be
   //         informed via |onWatcherStarted()|.
@@ -55,11 +66,15 @@ interface sbIFileSystemWatcher : nsISupports
   void startWatching();
   
   //
-  // \brief Stop watching the assigned path.
-  //        Once the watcher has fully stopped, the listener will be informed
-  //        via |onWatcherStopped()|.
+  // \brief Stop watching the assigned path with the option to save 
+  //        information from the watched session.
+  //        NOTE:
+  //          Once the watcher has fully stopped, the listener will be informed
+  //          via |onWatcherStopped()|. 
+  // \pram aShouldSaveSession If true, the watcher will save information about
+  //                          the current state of the watched path.
   //
-  void stopWatching();
+  void stopWatching(in boolean aShouldSaveSession);
   
   //
   // \brief Find out if the watcher is running.
@@ -70,6 +85,13 @@ interface sbIFileSystemWatcher : nsISupports
   // \brief Get the watch path of this watcher.
   //
   readonly attribute AString watchPath;
+
+  //
+  // \brief Get the session GUID of the file system watcher instance.
+  //        NOTE: Use this value to restore a session and receive callback
+  //              information about all changes since the session was last run.
+  //
+  readonly attribute AString sessionGuid;
 
   //
   // \brief Find out if the file system watcher is supported on the current OS.

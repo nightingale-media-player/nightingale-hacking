@@ -128,6 +128,15 @@ sbFileSystemTree::Init(const nsAString & aPath, PRBool aIsRecursive)
   return NS_OK;
 }
 
+nsresult
+sbFileSystemTree::InitWithTreeSession(const nsAString & aSessionGuid)
+{
+  //
+  // TODO: Write Me!
+  //
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 void
 sbFileSystemTree::RunBuildThread()
 {
@@ -271,6 +280,15 @@ sbFileSystemTree::RemoveListener(sbFileSystemTreeListener *aListener)
 
   NS_ENSURE_TRUE(mListeners.RemoveElement(aListener), NS_ERROR_FAILURE);
   return NS_OK;
+}
+
+nsresult
+sbFileSystemTree::SaveTreeSession(const nsAString & aSessionGuid)
+{
+  //
+  // TODO: Write Me!
+  //
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 nsresult

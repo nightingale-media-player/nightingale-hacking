@@ -58,6 +58,12 @@ public:
   //        given path.
   //
   nsresult Init(const nsAString & aPath, PRBool aIsRecursive);
+
+  //
+  // \brief Init a tree from a saved session.
+  // \param aSessionGuid The saved tree session GUID.
+  //
+  nsresult InitWithTreeSession(const nsAString & aSessionGuid);
   
   //
   // \brief Inform the tree to sync at a given path.
@@ -78,12 +84,20 @@ public:
   nsresult RemoveListener(sbFileSystemTreeListener *aListener);
 
   //
+  // \brief Save the current state of a tree. The session GUID passed in
+  //        to this method can be used in |InitWithTreeSession()| to restore
+  //        a tree from a save performed in this method.
+  // \param aSessionGuid The session GUID to associate to the saved tree.
+  //
+  nsresult SaveTreeSession(const nsAString & aSessionGuid);
+
+  //
   // \brief Get a string that has a native trailing path component.
   //        For example:
   //          INPUT: "/foo/bar"
   //          OUTPUT: "/foo/bar/"
   //
-  nsString EnsureTrailingPath(const nsAString & aFilePath); 
+  nsString EnsureTrailingPath(const nsAString & aFilePath);
 
 protected:
   
