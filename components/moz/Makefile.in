@@ -42,6 +42,7 @@ SUBDIRS = strings \
           variant \
           windowwatcher \
           xpcom \
+          streams \
           $(NULL)
 
 SUBDIRDEPS = prompter : windowwatcher
