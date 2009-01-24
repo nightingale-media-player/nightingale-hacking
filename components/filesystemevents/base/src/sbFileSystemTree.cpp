@@ -32,6 +32,7 @@
 #include <sbStringUtils.h>
 #include <nsCRT.h>
 #include "sbFileSystemChange.h"
+#include "sbFileSystemTreeState.h"
 #include <stack>
 
 // Save ourselves some pain by getting the path seperator char.
@@ -175,6 +176,16 @@ sbFileSystemTree::NotifyBuildComplete()
 
   // Don't hang on to the values in |mDiscoveredDirs|.
   mDiscoveredDirs.Clear();
+
+  // XXX kreeger
+  // Test tree writing and flushing
+  nsRefPtr<sbFileSystemTreeState> treeState =
+    new sbFileSystemTreeState();
+
+  treeState->WriteTree(mRootNode);
+
+  nsRefPtr<sbFileSystemNode> readRootNode;
+  treeState->ReadTree(getter_AddRefs(readRootNode));
 }
 
 nsresult
