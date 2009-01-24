@@ -119,7 +119,7 @@ sbFileObjectOutputStream::WriteUint32(PRUint32 aOutInt)
 nsresult
 sbFileObjectOutputStream::WriteBytes(const char *aData, PRUint32 aLength)
 {
-  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_ARG_POINTER(aString);
 
   if (!mFileStreamIsActive || !mObjectStreamIsActive) {
     return NS_ERROR_NOT_AVAILABLE;

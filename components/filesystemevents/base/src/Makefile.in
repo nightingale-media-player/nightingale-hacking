@@ -36,14 +36,12 @@ endif
 
 CPP_SRCS = sbFileSystemNode.cpp \
            sbFileSystemTree.cpp \
-           sbFileSystemTreeState.cpp \
            sbBaseFileSystemWatcher.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(topsrcdir)/components/filesystemevents \
                $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/streams/src \
                $(topsrcdir)/components/moz/strings/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/necko \
@@ -68,7 +66,6 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/streams/src/sbMozStreams$(DEBUG:%=_d) \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(NULL)
 
