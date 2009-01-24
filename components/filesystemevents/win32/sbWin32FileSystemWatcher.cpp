@@ -322,7 +322,9 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
 {
   if (strcmp(aTopic, "quit-application-granted") == 0) {
     if (mIsWatching) {
-      StopWatching();
+      // Pass in PR_FALSE - the owner of the file system watcher should stop
+      // the class themselves in order to save the current tree to disk.
+      StopWatching(PR_FALSE);
     }
 
     // Remove observer hook
