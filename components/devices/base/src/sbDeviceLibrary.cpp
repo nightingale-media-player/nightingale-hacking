@@ -79,7 +79,7 @@
 /* List of properties for which to sync updates. */
 const static char* sbDeviceLibrarySyncUpdatePropertyTable[] =
 {
-  SB_PROPERTY_CONTENTMIMETYPE,
+  SB_PROPERTY_CONTENTTYPE,
   SB_PROPERTY_CONTENTLENGTH,
   SB_PROPERTY_TRACKNAME,
   SB_PROPERTY_ALBUMNAME,

@@ -872,7 +872,7 @@ sbLocalDatabaseMediaItem::SetContentLength(PRInt64 aContentLength)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::GetContentType(nsAString& aContentType)
 {
-  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
+  nsresult rv = GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
                             aContentType);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -885,7 +885,7 @@ sbLocalDatabaseMediaItem::GetContentType(nsAString& aContentType)
 NS_IMETHODIMP
 sbLocalDatabaseMediaItem::SetContentType(const nsAString& aContentType)
 {
-  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
+  nsresult rv = SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
                             aContentType);
   NS_ENSURE_SUCCESS(rv, rv);
 

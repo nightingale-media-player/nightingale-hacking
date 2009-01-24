@@ -66,6 +66,8 @@ function(aFile, aMediaList, aReplace)
         var uri = SB_ResolveURI(entry.link.spec);
         if (typeSniffer.isValidMediaURL(uri)) {
           var item = { uri: entry.link, properties: {} };
+          /* all items coming in through the feed reader are podcasts */
+          item.properties[SBProperties.contentType] = "podcast";
           toAdd.push(item);
         }
         else {
@@ -95,6 +97,8 @@ function(aFile, aMediaList, aReplace)
             return false;
 
       var item = { uri: resolvedURI, properties: {} };
+      /* all items coming in through the feed reader are podcasts */
+      item.properties[SBProperties.contentType] = "podcast";
       toAdd.push(item);
 
       return true;

@@ -54,8 +54,8 @@ function runTest () {
     item.contentType = item.contentType + (i % 3);
   }
 
-  array.addFilter(SBProperties.contentMimeType,
-                  new StringArrayEnumerator(["audio/mpeg0"]),
+  array.addFilter(SBProperties.contentType,
+                  new StringArrayEnumerator(["audio"]),
                   false);
 
   array.addSort(SBProperties.artistName, true);

@@ -94,6 +94,8 @@ sbGStreamerMetadataHandler::sbGStreamerMetadataHandler()
   : mLock(nsnull),
     mPipeline(nsnull),
     mTags(nsnull),
+    mHasAudio(PR_FALSE),
+    mHasVideo(PR_FALSE),
     mCompleted(PR_FALSE)
 {
   /* member initializers and constructor code */
@@ -662,22 +664,16 @@ sbGStreamerMetadataHandler::on_pad_caps_changed(GstPad *pad,
     NS_ENSURE_SUCCESS(rv, /* void */);
   }
   NS_ENSURE_TRUE(self->mProperties, /* void */);
+
   capName = gst_structure_get_name(capStruct);
   if (g_str_has_prefix(capName, "audio/")) {
     AddIntPropFromCaps(capStruct, "channels",
                        SB_PROPERTY_CHANNELS, self->mProperties);
     AddIntPropFromCaps(capStruct, "rate",
                        SB_PROPERTY_SAMPLERATE, self->mProperties);
-    #if 0 /* bug 14311 */
-    rv = self->mProperties->AppendProperty(NS_LITERAL_STRING(),
-                                           NS_LITERAL_STRING("audio"));
-    #endif 
+    self->mHasAudio = PR_TRUE;
   } else if (g_str_has_prefix(capName, "video/")) {
-    /* bug 14310 */
-    #if 0 /* bug 14311 */
-    rv = self->mProperties->AppendProperty(NS_LITERAL_STRING(),
-                                           NS_LITERAL_STRING("video"));
-    #endif 
+    self->mHasVideo = PR_TRUE;
   }
 }
 
@@ -745,6 +741,21 @@ sbGStreamerMetadataHandler::FinalizeTags()
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
+
+  nsString contentType;
+  if (mHasVideo) {
+    contentType = NS_LITERAL_STRING("video");
+  }
+  else if (mHasAudio) {
+    contentType = NS_LITERAL_STRING("audio");
+  }
+
+  if (!contentType.IsEmpty()) {
+    rv = mProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                     contentType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -762,6 +773,8 @@ sbGStreamerMetadataHandler::Notify(nsITimer* aTimer)
   nsAutoLock lock(mLock);
   mCompleted = PR_TRUE;
   mProperties = nsnull;
+  mHasAudio = PR_FALSE;
+  mHasVideo = PR_FALSE;
   NS_ENSURE_SUCCESS(rv, rv);
  
   return NS_OK;

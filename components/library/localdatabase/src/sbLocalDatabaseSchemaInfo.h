@@ -73,7 +73,7 @@ static sbStaticProperty sStaticProperties[] = {
     PR_UINT32_MAX - 3,
   },
   {
-    SB_PROPERTY_CONTENTMIMETYPE,
+    SB_PROPERTY_CONTENTTYPE,
     "content_mime_type",
     SB_COLUMN_TYPE_TEXT,
     PR_UINT32_MAX - 4,

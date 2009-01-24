@@ -194,7 +194,8 @@ sbITunesImporter.prototype =
         { songbird: SBProperties.bpm,              iTunes: "BPM" },
         { songbird: SBProperties.comment,          iTunes: "Comments" },
         { songbird: SBProperties.composerName,     iTunes: "Composer" },
-        { songbird: SBProperties.contentMimeType,  iTunes: "Kind" },
+        { songbird: SBProperties.contentType,      iTunes: "Kind",
+          convertFunc: "_convertKind" },
         { songbird: SBProperties.discNumber,       iTunes: "Disc Number" },
         { songbird: SBProperties.duration,         iTunes: "Total Time",
           convertFunc: "_convertDuration" },
@@ -204,6 +205,8 @@ sbITunesImporter.prototype =
         { songbird: SBProperties.lastSkipTime,     iTunes: "Skip Date",
           convertFunc: "_convertDateTime" },
         { songbird: SBProperties.playCount,        iTunes: "Play Count" },
+        { songbird: SBProperties.contentType,      iTunes: "Podcast",
+          convertFunc: "_convertKind" },
         { songbird: SBProperties.rating,           iTunes: "Rating",
           convertFunc: "_convertRating" },
         { songbird: SBProperties.sampleRate,       iTunes: "Sample Rate" },
@@ -1995,6 +1998,31 @@ sbITunesImporter.prototype =
     return sbDateTime.toString();
   },
 
+  /**
+   * Convert the iTunes 'kind' value specified by aITunesMetaValue to a
+   * Songbird contentType property value and return the result.
+   *
+   * \param aITunesMetaValue    iTunes metadata value.
+   *
+   * \return                    Songbird property value.
+   */
+
+  _convertKind:
+    function sbITunesImporter__convertKind(aITunesMetaValue) {
+    var value = "";
+    
+    if(aITunesMetaValue.indexOf("video") != -1) {
+      value = "video;";
+    }
+    else if(aITunesMetaValue.indexOf("audio") != -1) {
+      value = "audio";
+    }
+    else if(aITunesMetaValue === true) {
+      value = "podcast";
+    }
+   
+    return value;
+  },
 
   /**
    * Import the batch of tracks specified by aTrackBatch into Songbird.

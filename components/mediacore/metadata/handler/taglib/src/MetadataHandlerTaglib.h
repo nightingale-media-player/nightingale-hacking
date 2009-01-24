@@ -347,6 +347,10 @@ private:
         const char                  *name,
         PRUint64                    value);
 
+    nsresult AddMetadataValue(
+        const char                   *name, 
+        const nsAString             &value);
+
     void FixTrackDiscNumber(
         nsString                    numberKey,
         nsString                    totalKey);

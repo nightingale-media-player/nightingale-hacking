@@ -398,7 +398,7 @@ var RadioDirectory = {
 				props.appendProperty(SBProperties.bitRate, bitrate);
 				props.appendProperty(SBProperties.genre, thisgenre);
 				props.appendProperty(SBProperties.comment, currentTrack);
-				props.appendProperty(SBProperties.contentMimeType, mimeType);
+				props.appendProperty(SBProperties.contentType, "audio");
 				props.appendProperty(SC_listenerCount, numListeners);
 				props.appendProperty(SC_id, parseInt(id));
 				props.appendProperty(SC_bookmark, heartSrc);
@@ -493,7 +493,7 @@ var RadioDirectory = {
 			props.appendProperty(SC_streamName, retVals.name);
 			props.appendProperty(SBProperties.bitRate, 0);
 			props.appendProperty(SBProperties.genre, retVals.genre);
-			props.appendProperty(SBProperties.contentMimeType, "audio/mpeg");
+			props.appendProperty(SBProperties.contentType, "audio");
 			//props.appendProperty(SBProperties.comment, "Not available");
 			//props.appendProperty(SC_listenerCount, 0);
 			props.appendProperty(SC_id, -1);

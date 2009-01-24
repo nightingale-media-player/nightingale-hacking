@@ -54,8 +54,8 @@ function runTest(tester) {
 
     // test non-readable property
     try {
-        item.getProperty(SB_NS + "contentMimeType");
-        tester.fail("did not throw: getProperty(contentMimeType)");
+        item.getProperty(SB_NS + "contentType");
+        tester.fail("did not throw: getProperty(contentType)");
     } catch(e) { }
 
     // test readable property

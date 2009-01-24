@@ -74,6 +74,9 @@ protected:
   // if we have failed to read the data.
   GstTagList *mTags;
   nsCOMPtr<sbIMutablePropertyArray> mProperties;
+
+  PRBool mHasAudio;
+  PRBool mHasVideo;
   
   static void on_pad_added(GstElement *decodeBin,
                            GstPad *newPad,

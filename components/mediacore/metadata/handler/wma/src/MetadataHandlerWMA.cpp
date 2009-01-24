@@ -333,91 +333,73 @@ sbMetadataHandlerWMA::GetRequiresMainThread(PRBool *_retval)
   return NS_OK;
 }
 
-NS_METHOD
-sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
-                                         PRInt32* _retval)
+nsString 
+sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo, 
+                                      const nsAString &aKey)
 {
-  CComPtr<IWMSyncReader> reader;
-  HRESULT hr = WMCreateSyncReader(nsnull, 0, &reader);
-  COM_ENSURE_SUCCESS(hr);
+  HRESULT hr;
+  nsString value;
 
-  nsAutoString filePath(aFilePath);
+  // Get the number of indices
+  WORD count = 0;
+  hr = aHeaderInfo->GetAttributeIndices(0xFFFF, aKey.BeginReading(), nsnull, nsnull, &count);
+  if (FAILED(hr) || !count) {
+    return value;
+  }
 
-  // This will fail for all protected files, so silence the warning
-  hr = reader->Open(filePath.get());
-  if (FAILED(hr))
-    return NS_ERROR_FAILURE;
+  // Alloc the space for the indices
+  WORD* indices = (WORD*)nsMemory::Alloc(sizeof(WORD) * count);
+  if (!indices) {
+    NS_ERROR("nsMemory::Alloc failed!");
+    return value;
+  }
 
-  CComPtr<IWMHeaderInfo3> headerInfo;
-  hr = reader->QueryInterface(&headerInfo);
-  COM_ENSURE_SUCCESS(hr);
+  // Ask for the indices
+  hr = aHeaderInfo->GetAttributeIndices(0xFFFF, aKey.BeginReading(), nsnull, indices,
+    &count);
+  if (FAILED(hr)) {
+    nsMemory::Free(indices);
+    return value;
+  }
 
-  PRUint32 count = kMetadataArrayCount;
-  for (PRUint32 index = 0; index < count; index += 2) {
+  // For now, get the first one?
+  WMT_ATTR_DATATYPE type;
+  WORD lang;
+  DWORD size;
+  BYTE *data;
+  WORD namesize;
 
-    nsAutoString wmpKey;
-    wmpKey.AssignLiteral(kMetadataKeys[index + 1]);
+  // Get the type and size
+  hr = aHeaderInfo->GetAttributeByIndexEx(0xFFFF, *indices, nsnull, &namesize,
+    &type, &lang, nsnull, &size);
+  if (FAILED(hr)) {
+    NS_WARNING("GetAttributeByIndexEx failed");
+    nsMemory::Free(indices);
+    return value;
+  }
 
-    // Get the number of indices
-    WORD count = 0;
-    hr = headerInfo->GetAttributeIndices(0xFFFF, wmpKey.get(), nsnull, nsnull, &count);
-    if (FAILED(hr) || !count) {
-      continue;
-    }
+  // Alloc
+  data = (BYTE*)nsMemory::Alloc(size);
+  if (!data) {
+    NS_ERROR("nsMemory::Alloc failed!");
+    nsMemory::Free(indices);
+    return value;
+  }
 
-    // Alloc the space for the indices
-    WORD* indices = (WORD*)nsMemory::Alloc(sizeof(WORD) * count);
-    if (!indices) {
-      NS_ERROR("nsMemory::Alloc failed!");
-      continue;
-    }
+  // Get the data
+  hr = aHeaderInfo->GetAttributeByIndexEx(0xFFFF, *indices, NULL, &namesize,
+    &type, &lang, data, &size);
+  if (FAILED(hr)) {
+    NS_WARNING("GetAttributeByIndexEx failed");
+    nsMemory::Free(data);
+    nsMemory::Free(indices);
+    return value;
+  }
 
-    // Ask for the indices
-    hr = headerInfo->GetAttributeIndices(0xFFFF, wmpKey.get(), nsnull, indices,
-                                         &count);
-    if (FAILED(hr)) {
-      nsMemory::Free(indices);
-      continue;
-    }
+  // Calculate the value
+  PRInt32 datatype = 0;
 
-    // For now, get the first one?
-    WMT_ATTR_DATATYPE type;
-    WORD lang;
-    DWORD size;
-    BYTE *data;
-    WORD namesize;
-
-    // Get the type and size
-    hr = headerInfo->GetAttributeByIndexEx(0xFFFF, *indices, nsnull, &namesize,
-                                           &type, &lang, nsnull, &size);
-    if (FAILED(hr)) {
-      NS_WARNING("GetAttributeByIndexEx failed");
-      nsMemory::Free(indices);
-      continue;
-    }
-
-    // Alloc
-    data = (BYTE*)nsMemory::Alloc(size);
-    if (!data) {
-      NS_ERROR("nsMemory::Alloc failed!");
-      nsMemory::Free(indices);
-      continue;
-    }
-
-    // Get the data
-    hr = headerInfo->GetAttributeByIndexEx(0xFFFF, *indices, NULL, &namesize,
-                                           &type, &lang, data, &size);
-    if (FAILED(hr)) {
-      NS_WARNING("GetAttributeByIndexEx failed");
-      nsMemory::Free(data);
-      nsMemory::Free(indices);
-      continue;
-    }
-
-    // Calculate the value
-    PRInt32 datatype = 0;
-    nsAutoString value;
-    switch(type) {
+  switch(type) {
       case WMT_TYPE_STRING:
         value.Assign((PRUnichar*)data);
         break;
@@ -427,7 +409,7 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
 
       case WMT_TYPE_QWORD: {
         PRInt64 intVal = *((QWORD*)data);
-        if (wmpKey.EqualsLiteral(WMP_LENGTH)) {
+        if (aKey.EqualsLiteral(WMP_LENGTH)) {
           // "Duration" comes in 100-nanosecond chunks. Wow.
           // Songbird wants it in microseconds.
           intVal /= 10;
@@ -443,7 +425,7 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
 
       case WMT_TYPE_DWORD: {
         PRUint32 intVal = *((DWORD*)data);
-        if (wmpKey.EqualsLiteral(WMP_BITRATE)) {
+        if (aKey.EqualsLiteral(WMP_BITRATE)) {
           // Songbird wants bit rate in kbps
           intVal /= 1000;
         }
@@ -467,23 +449,82 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
       default:
         NS_WARNING("Value given in an unsupported type");
         break;
-    }
+  }
+
+  // Free the space for the indices
+  nsMemory::Free(data);
+  nsMemory::Free(indices);
+
+  return value;
+}
+
+NS_METHOD
+sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
+                                         PRInt32* _retval)
+{
+  CComPtr<IWMSyncReader> reader;
+  HRESULT hr = WMCreateSyncReader(nsnull, 0, &reader);
+  COM_ENSURE_SUCCESS(hr);
+
+  nsAutoString filePath(aFilePath);
+
+  // This will fail for all protected files, so silence the warning
+  hr = reader->Open(filePath.get());
+  if (FAILED(hr))
+    return NS_ERROR_FAILURE;
+
+  CComPtr<IWMHeaderInfo3> headerInfo;
+  hr = reader->QueryInterface(&headerInfo);
+  COM_ENSURE_SUCCESS(hr);
+
+  nsString value, wmpKey;
+  PRUint32 count = kMetadataArrayCount;
+
+  for (PRUint32 index = 0; index < count; index += 2) {
+    wmpKey.AssignLiteral(kMetadataKeys[index + 1]);
+
+    value = ReadHeaderValue(headerInfo, wmpKey);
 
     // If there is a value, add it to the Songbird values.
     if (!value.IsEmpty()) {
       nsAutoString sbKey;
       sbKey.AssignLiteral(kMetadataKeys[index]);
       nsresult rv = m_PropertyArray->AppendProperty(sbKey, value);
-      if (NS_SUCCEEDED(rv))
+      if (NS_SUCCEEDED(rv)) {
         *_retval += 1;
-      else
-        NS_WARNING("SetValue failed!");
+      }
+      else {
+        NS_WARNING("AppendProperty failed!");
+      }
     }
+  }
 
-    // Free the space for the indices
-    nsMemory::Free(data);
-    nsMemory::Free(indices);
-}
+  // Figure out whether it's audio or video
+  wmpKey.AssignLiteral("HasAudio");
+  nsString hasVideo = ReadHeaderValue(headerInfo, wmpKey);
+
+  wmpKey.AssignLiteral("HasVideo");
+  nsString hasAudio = ReadHeaderValue(headerInfo, wmpKey);
+
+  value = EmptyString();
+
+  if(hasVideo.EqualsLiteral("1")) {
+    value = NS_LITERAL_STRING("video");
+  }
+  else if(hasAudio.EqualsLiteral("1")) {
+    value = NS_LITERAL_STRING("audio");
+  }
+
+  nsresult rv = 
+    m_PropertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE), 
+                                    value);
+
+  if(NS_SUCCEEDED(rv)) {
+    *_retval += 1;
+  }
+  else {
+    NS_WARNING("AppendProperty Failed!");
+  }
 
   hr = reader->Close();
   COM_ENSURE_SUCCESS(hr);

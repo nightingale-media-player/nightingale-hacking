@@ -1763,6 +1763,7 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     AddMetadataValue(SB_PROPERTY_DISCNUMBER,      pTag->disc());
     AddMetadataValue(SB_PROPERTY_TOTALDISCS,      pTag->totalDiscs());
     AddMetadataValue(SB_PROPERTY_BPM,             pTag->bpm());
+    AddMetadataValue(SB_PROPERTY_CONTENTTYPE,     NS_LITERAL_STRING("audio"));
     // todo: compilation!
   }
   
@@ -2338,4 +2339,19 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
                                       valueString);
 
     return (result);
+}
+
+nsresult sbMetadataHandlerTaglib::AddMetadataValue(
+    const char                   *name, 
+    const nsAString             &value)
+{
+  nsresult                       result = NS_OK;
+
+  if(value.IsEmpty()) {
+    return (result);
+  }
+
+  result = mpMetadataPropertyArray->AppendProperty(NS_ConvertASCIItoUTF16(name),
+                                                   value);
+  return (result);
 }

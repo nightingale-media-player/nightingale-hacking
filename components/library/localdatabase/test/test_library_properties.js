@@ -41,8 +41,8 @@ function runTest () {
   assertEqual(library.getProperty(SBProperties.hidden), "0");
 
   var uniqueString = (new Date()).getTime();
-  library.setProperty(SBProperties.contentMimeType, uniqueString);
-  assertEqual(library.getProperty(SBProperties.contentMimeType), uniqueString);
+  library.setProperty(SBProperties.contentType, uniqueString);
+  assertEqual(library.getProperty(SBProperties.contentType), uniqueString);
   library.setProperty(SBProperties.albumName, uniqueString);
   assertEqual(library.getProperty(SBProperties.albumName), uniqueString);
 
@@ -73,7 +73,7 @@ function runTest () {
   assertTrue(library2.updated > 0);
   assertTrue(library2.contentSrc.schemeIs("file"));
   assertEqual(library2.getProperty(SBProperties.hidden), "0");
-  assertEqual(library2.getProperty(SBProperties.contentMimeType), uniqueString);
+  assertEqual(library2.getProperty(SBProperties.contentType), uniqueString);
   assertEqual(library2.getProperty(SBProperties.albumName), uniqueString);
 }
 

@@ -421,9 +421,9 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                    PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Content Mime Type
-  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONTENTMIMETYPE),
-                    NS_LITERAL_STRING("property.content_mime_type"),
+  //Content Type
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                    NS_LITERAL_STRING("property.content_type"),
                     stringBundle,
                     PR_FALSE,
                     PR_FALSE,

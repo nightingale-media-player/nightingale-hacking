@@ -51,6 +51,7 @@
 // CLASSES ====================================================================
 
 class nsIChannel;
+struct IWMHeaderInfo3;
 
 class sbMetadataHandlerWMA : public sbIMetadataHandler
 {
@@ -68,6 +69,8 @@ protected:
   nsString                     m_FilePath;
   PRBool                       m_Completed;
   PRBool                       m_COMInitialized;
+
+  nsString ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo, const nsAString &aKey);
 
   NS_METHOD ReadMetadataWMFSDK(const nsAString& aFilePath, PRInt32* _retval);
   NS_METHOD ReadMetadataWMP(const nsAString& aFilePath, PRInt32* _retval);
