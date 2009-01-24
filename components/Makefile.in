@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = aboutprotocol \
-          addonmetadata \
+SUBDIRS = addonmetadata \
           albumart \
           bundle \
           commandline \
@@ -56,6 +55,7 @@ SUBDIRS = aboutprotocol \
           parsererror \
           playlistcommands \
           property \
+          protocol \
           remoteapi \
           search \
           servicepane \

@@ -59,6 +59,12 @@ sbSongbirdDispatch.prototype = {
             // setting the spec here makes the address bar
             // look nice and correct.
             aUri.spec = params["url"];
+            if (aUri.scheme == "chrome") {
+              Components.utils.reportError(
+               "sbSongbirdProtocol::newChannel: " +
+               "chrome URLs are not permitted as an argument to open.");
+              return new BogusChannel(aUri, "application/dummy-mime-type");
+            }
             return channel;
           }
           catch (e) {
