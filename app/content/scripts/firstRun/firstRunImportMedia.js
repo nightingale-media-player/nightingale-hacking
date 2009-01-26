@@ -319,10 +319,15 @@ firstRunImportMediaSvc.prototype = {
     // If an iTunes library file is present, enable the iTunes import option;
     // otherwise, disable it.
     var iTunesRadioElem = this._getElement("itunes_radio");
-    if (this._libraryImporter.libraryDefaultFilePath)
+    var iTunesRadioDescElem = this._getElement("itunes_radio_desc");
+    if (this._libraryImporter.libraryDefaultFilePath) {
       iTunesRadioElem.disabled = false;
-    else
+      iTunesRadioDescElem.disabled = false;
+    }
+    else {
       iTunesRadioElem.disabled = true;
+      iTunesRadioDescElem.disabled = true;
+    }
   },
 
 

@@ -106,6 +106,7 @@
                  value="itunes"
                  label="&first_run.import_media.radio.itunes.label;"/>
           <description
+            anonid="itunes_radio_desc" 
             class="indent sb-first-run-import-media-sub-radio can-disable"
             parentradio="itunes_radio">
             &first_run.import_media.itunes.description;
