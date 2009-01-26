@@ -410,6 +410,8 @@
     <method name="onFwdMouseDown">
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
           this.seen_skip = false;
           if ( this.mm.status.state == sbIMediacoreStatus.STATUS_PLAYING)
@@ -428,10 +430,12 @@
     <method name="onFwdMouseOut">
       <body>
         <![CDATA[
-           if (this.skip_interval) {
-             clearInterval( this.skip_interval );
-             this.skip_interval = null;
-           }
+          if (this.disabled)
+            return;
+          if (this.skip_interval) {
+            clearInterval( this.skip_interval );
+            this.skip_interval = null;
+          }
         ]]>
       </body>
     </method>
@@ -439,10 +443,12 @@
     <method name="onFwdMouseOver">
       <body>
         <![CDATA[
-           if (this.skip && !this.skip_interval ) {
-              document.__SKIPLOOPOBJECT__ = this;
-              this.skip_interval = setInterval( this.skipLoop, 1000 );
-           }
+          if (this.disabled)
+            return;
+          if (this.skip && !this.skip_interval ) {
+             document.__SKIPLOOPOBJECT__ = this;
+             this.skip_interval = setInterval( this.skipLoop, 1000 );
+          }
         ]]>
       </body>
     </method>
@@ -450,6 +456,8 @@
     <method name="onFwdMouseUp">
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           this.skip = false;
           this.onFwdCommand();
         ]]>
@@ -536,6 +544,8 @@
     <method name="onBackMouseDown">
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           var sbIMediacoreStatus = Components.interfaces.sbIMediacoreStatus;
           this.seen_skip = false;
           var status = this.mm.status;
@@ -555,6 +565,8 @@
     <method name="onBackMouseUp">
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           this.skip = false;
           this.onBackCommand();
         ]]>
@@ -564,9 +576,11 @@
     <method name="onBackMouseOut">
       <body>
         <![CDATA[
-           if (this.skip_interval) {
-             clearInterval( this.skip_interval );
-             this.skip_interval = null;
+          if (this.disabled)
+            return;
+          if (this.skip_interval) {
+            clearInterval( this.skip_interval );
+            this.skip_interval = null;
            }
         ]]>
       </body>
@@ -575,10 +589,12 @@
     <method name="onBackMouseOver">
       <body>
         <![CDATA[
-           if (this.skip && !this.skip_interval ) {
-              document.__SKIPLOOPOBJECT__ = this;
-              this.skip_interval = setInterval( this.skipLoop, 1000 );
-           }
+          if (this.disabled)
+            return;
+          if (this.skip && !this.skip_interval ) {
+             document.__SKIPLOOPOBJECT__ = this;
+             this.skip_interval = setInterval( this.skipLoop, 1000 );
+          }
         ]]>
       </body>
     </method>
@@ -682,6 +698,11 @@
    </content>
 
   <implementation>
+    <property name="disabled"
+              onset="if (val) this.setAttribute('disabled', 'true');
+                     else this.removeAttribute('disabled');
+                     return val;"
+              onget="return this.hasAttribute('disabled');" />
 
     <constructor>
       <![CDATA[
@@ -715,6 +736,8 @@
       <parameter name="target"/>
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           var value = 0;
           switch( target.id )
           {
@@ -796,6 +819,11 @@
    </content>
 
   <implementation>
+    <property name="disabled"
+              onset="if (val) this.setAttribute('disabled', 'true');
+                     else this.removeAttribute('disabled');
+                     return val;"
+              onget="return this.hasAttribute('disabled');" />
 
     <constructor>
       <![CDATA[
@@ -827,6 +855,8 @@
     <method name="onShuffle">
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           this.mm.sequencer.mode = 
             !this.remote_shuffle.boolValue ? 
             this.mm.sequencer.MODE_SHUFFLE : 
@@ -1123,13 +1153,21 @@
 
     <method name="onPause">
       <body>
-        this.playbackPause();
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.playbackPause();
+        ]]>
       </body>
     </method>
 
     <method name="onPlay">
       <body>
-        this.playbackPlay();
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.playbackPlay();
+        ]]>
       </body>
     </method>
 
@@ -1178,7 +1216,11 @@
 
     <method name="onStop">
       <body>
-        this.playbackStop();
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.playbackStop();
+        ]]>
       </body>
     </method>
 
@@ -1303,19 +1345,31 @@
 
     <method name="onPlay">
       <body>
-        this.playbackPlay();
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.playbackPlay();
+        ]]>
       </body>
     </method>
     
     <method name="onPause">
       <body>
-        this.playbackPause();
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.playbackPause();
+        ]]>
       </body>
     </method>
 
     <method name="onStop">
       <body>
-        this.playbackStop();
+        <![CDATA[
+          if (this.disabled)
+            return;
+          this.playbackStop();
+        ]]>
       </body>
     </method>
     
@@ -1323,6 +1377,8 @@
       <parameter name="target"/>
       <body>
         <![CDATA[
+          if (this.disabled)
+            return;
           var sbid = target.getAttribute("sbid");
           if (sbid == "play") this.onPlay();
           else if (sbid == "pause") this.onPause();
