@@ -1100,8 +1100,29 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
     break;
     case sbIMediacoreSequencer::MODE_CUSTOM:
     {
-      // XXXAus: Use custom generator.
-      // XXXAus: Match view position if present.
+      NS_ENSURE_TRUE(mCustomGenerator, NS_ERROR_UNEXPECTED);
+      
+      PRUint32 sequenceLength = 0;
+      PRUint32 *sequence = nsnull;
+      
+      rv = mCustomGenerator->OnGenerateSequence(mView, 
+                                                &sequenceLength, 
+                                                &sequence);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for(PRUint32 i = 0; i < sequenceLength; ++i) {
+        mSequence.push_back(sequence[i]);
+        mViewIndexToSequenceIndex[sequence[i]] = i;
+
+        if(aViewPosition &&
+           *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX &&
+           *aViewPosition == sequence[i]) {
+          // Match the sequence position to the item that is selected
+          mPosition = i;
+        }
+      }
+
+      NS_Free(sequence);
     }
     break;
   }
