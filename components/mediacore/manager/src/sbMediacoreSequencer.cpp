@@ -2334,7 +2334,7 @@ sbMediacoreSequencer::Previous()
   else if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
     hasNext = PR_TRUE;
 
-    if(mNextTriggeredByStreamEnd) {
+    if(!mNextTriggeredByStreamEnd) {
       if(position - 1 < 0) {
         mPosition = length - 1;
       }
