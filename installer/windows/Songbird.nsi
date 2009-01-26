@@ -737,9 +737,9 @@ Valid:
       ${EndIf}
 
       ; If we still don't have a valid empty directory to install
-      ; to, throw up the error message.
+      ; to, throw up a confirmation message
       ${If} $HasValidInstallDirectory == "0"
-         MessageBox MB_OK|MB_ICONSTOP "${DirectoryNotEmptyMessage}"
+         MessageBox MB_YESNO|MB_ICONSTOP "${DirectoryNotEmptyMessage}" /SD IDNO IDYES +2
          Abort
       ${EndIf}
    ${EndIf}
