@@ -630,7 +630,7 @@ try
     var cfs = view.cascadeFilterSet;
     for ( var i=0; i < cfs.length; i++ ) {
       if (cfs.isSearch(i)) {
-        cfs.remove(i);
+        cfs.set(i, [], 0);
         break;
       }
     }

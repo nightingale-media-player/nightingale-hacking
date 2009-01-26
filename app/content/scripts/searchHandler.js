@@ -592,20 +592,28 @@ const gSearchHandler = {
     // Get the currently displayed sbIMediaListView
     var mediaListView = this._getCurrentMediaListView();
 
-    /* we need an sbIMediaListView with a cascadeFilterSet whose first
-     * filter is a search */
-    if (!mediaListView || !mediaListView.cascadeFilterSet ||
-        mediaListView.cascadeFilterSet.length < 1 ||
-        !mediaListView.cascadeFilterSet.isSearch(0)) {
+    /* we need an sbIMediaListView with a cascadeFilterSet */
+    if (!mediaListView || !mediaListView.cascadeFilterSet) {
+      Components.utils.reportError("Error: no cascade filter set!");
       return;
     }
 
     // Attempt to set the search filter on the media list view
     var filters = mediaListView.cascadeFilterSet;
 
-    // The search is always the first filter in the cascade set
+    var searchIndex = -1;
+    for (let i = 0; i < filters.length; ++i) {
+      if (filters.isSearch(i)) {
+        searchIndex = i;
+        break;
+      }
+    }
+    if (searchIndex < 0) {
+      searchIndex = filters.appendSearch(["*"], 1);
+    }
+
     if (query == "" || query == null) {
-      filters.set(0, [], 0);
+      filters.set(searchIndex, [], 0);
     } else {
 
       var stringTransform = 
@@ -619,7 +627,7 @@ const gSearchHandler = {
       
       var valArray = query.split(" ");
       
-      filters.set(0, valArray, valArray.length);
+      filters.set(searchIndex, valArray, valArray.length);
     }
   },
 
