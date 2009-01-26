@@ -119,6 +119,8 @@ protected:
   propertyUnitMap mUnitsMap;
   propertyUnitMapInternal mUnitsMapInternal;
   propertyUnitList mUnits;
+
+  PRUnichar mDecimalPoint;
   
   nsCOMPtr<nsIWeakReference> mPropertyInfo;
   nsresult SscanfFloat64(const nsAString &aValue, PRFloat64 &aOutValue);

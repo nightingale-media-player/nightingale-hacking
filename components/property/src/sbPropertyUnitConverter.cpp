@@ -34,8 +34,21 @@
 #include "nsArrayEnumerator.h"
 #include <prprf.h>
 
+#include <locale.h>
+
 static const char *gsFmtFloatOut = "%f";
 static const char *gsFmtFloatIn = "%lf";
+
+static inline 
+PRUnichar GetDecimalPoint() {
+  PRUnichar decimalPoint = '.';
+  lconv *localInfo = localeconv();
+  if(localInfo) {
+    decimalPoint = localInfo->decimal_point[0];
+  }
+    
+  return decimalPoint;
+}
 
 // ---------------------------------------------------------------------------
 // sbPropertyUnit class - describes a unit exposed by sbIPropertyUnitConverter
@@ -135,9 +148,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyUnitConverter, sbIPropertyUnitConverter)
 sbPropertyUnitConverter::sbPropertyUnitConverter()
 : mNativeInternal(-1)
 , mLock(nsnull)
+, mDecimalPoint('.')
 {
   mLock = PR_NewLock();
   NS_ASSERTION(mLock, "sbPropertyUnitConverter::mLock failed to create lock!");
+
+  mDecimalPoint = GetDecimalPoint();
 }
 
 // dtor
@@ -266,7 +282,7 @@ sbPropertyUnitConverter::Convert(const nsAString & aValue,
 
 // iteratively remove all trailing zeroes, and the period if necessary
 void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
-  PRUint32 decimal = aValue.FindChar('.');
+  PRUint32 decimal = aValue.FindChar(mDecimalPoint);
   if (decimal != -1) {
     while (aValue.CharAt(aValue.Length()-1) == '0')
       aValue.Cut(aValue.Length()-1, 1);
@@ -278,7 +294,7 @@ void sbPropertyUnitConverter::RemoveTrailingZeroes(nsAString &aValue) {
 // limit precision of a value to N decimals
 void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
                                                PRUint32 aDecimals) {
-  PRUint32 decimal = aValue.FindChar('.');
+  PRUint32 decimal = aValue.FindChar(mDecimalPoint);
   if (decimal != -1) {
     PRUint32 p = decimal + aDecimals;
     if (aValue.Length() > p+1) {
@@ -290,9 +306,9 @@ void sbPropertyUnitConverter::LimitToNDecimals(nsAString &aValue,
 // force at least N decimals
 void sbPropertyUnitConverter::ForceToNDecimals(nsAString &aValue,
                                                PRUint32 aDecimals) {
-  PRUint32 decimal = aValue.FindChar('.');
+  PRUint32 decimal = aValue.FindChar(mDecimalPoint);
   if (decimal == -1) {
-    aValue += NS_LITERAL_STRING(".");
+    aValue += mDecimalPoint;
     decimal = aValue.Length()-1;
   }
   PRUint32 n = aValue.Length() - decimal - 1;
