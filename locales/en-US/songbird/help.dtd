@@ -100,7 +100,7 @@
 <!ENTITY help.keyboard.name.tab.6               "Switch to Tab 6" >
 <!ENTITY help.keyboard.name.tab.7               "Switch to Tab 7" >
 <!ENTITY help.keyboard.name.tab.8               "Switch to Tab 8" >
-<!ENTITY help.keyboard.name.tab.9               "Switch to Tab 9" >
+<!ENTITY help.keyboard.name.tab.9               "Switch to Last Tab" >
 <!ENTITY help.keyboard.name.page.top            "Move to Top of Page" >
 <!ENTITY help.keyboard.name.page.bottom         "Move to Bottom of Page" >
 <!ENTITY help.keyboard.name.view.fullscreen     "Full Screen" >
