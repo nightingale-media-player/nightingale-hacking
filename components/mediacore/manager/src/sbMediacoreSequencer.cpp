@@ -1604,6 +1604,7 @@ sbMediacoreSequencer::StartWatchingView()
                               PR_FALSE, 
                               sbIMediaList::LISTENER_FLAGS_ITEMADDED |
                               sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
+                              sbIMediaList::LISTENER_FLAGS_ITEMMOVED |
                               sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
                               sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
                               sbIMediaList::LISTENER_FLAGS_BATCHEND |
@@ -2915,6 +2916,12 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
   if(aMediaItem == item) {
     rv = SetMetadataDataRemotesFromItem(item);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if(!mSmartRebuildDetectBatchCount) {
+      mNeedsRecalculate = PR_TRUE;
+      rv = UpdateItemUIDIndex();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
