@@ -1163,6 +1163,8 @@ sbMediacoreSequencer::GetItem(const sequence_t &aSequence,
 nsresult
 sbMediacoreSequencer::ProcessNewPosition() 
 {
+  nsAutoMonitor mon(mMonitor);
+
   nsresult rv = ResetMetadataDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1187,13 +1189,17 @@ sbMediacoreSequencer::ProcessNewPosition()
     rv = UpdatePlayStateDataRemotes();
     NS_ENSURE_SUCCESS(rv, rv);
 
+    mon.Exit();
+
     rv = StartPlayback();
   }
   else if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
+    mon.Exit();
     rv = mPlaybackControl->Pause();
   }
 
   if(NS_FAILED(rv)) {
+    mon.Enter();
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
     mIsWaitingForPlayback = PR_FALSE;
 
@@ -2142,9 +2148,13 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mon.Exit();
+
   rv = StartPlayback();
 
   if(NS_FAILED(rv)) {
+    mon.Enter();
+
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
     mIsWaitingForPlayback = PR_FALSE;
 
@@ -2186,9 +2196,13 @@ sbMediacoreSequencer::Play()
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mon.Exit();
+
   rv = StartPlayback();
 
   if(NS_FAILED(rv)) {
+    mon.Enter();
+
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
     mIsWaitingForPlayback = PR_FALSE;
 
@@ -2319,6 +2333,8 @@ sbMediacoreSequencer::Next()
     return NS_OK;
   }
 
+  mon.Exit();
+
   nsresult rv = ProcessNewPosition();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2403,6 +2419,8 @@ sbMediacoreSequencer::Previous()
 
     return NS_OK;
   }
+
+  mon.Exit();
 
   nsresult rv = ProcessNewPosition();
   NS_ENSURE_SUCCESS(rv, rv);
