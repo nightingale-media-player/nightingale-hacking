@@ -46,7 +46,7 @@ interface nsIFile;
 *
 * \sa sbIDatabaseQuery, sbIDatabaseResult
 */
-[scriptable, uuid(35e0ae00-ac6e-11dd-ad8b-0800200c9a66)]
+[scriptable, uuid(4c57b674-bcdb-4f15-86b5-2aa3da2e55ce)]
 interface sbIDatabaseEngine : nsISupports
 {
   /**
@@ -84,4 +84,11 @@ interface sbIDatabaseEngine : nsISupports
    * used to cache database pages that are not currently in use.
    */
   void releaseMemory();
+  
+  /**
+   * \brief This flag may be set to false to disable locale collation sequences
+   * (eg, for consistent unit tests regardless of locale and platform collation
+   * implementation)
+   */
+  attribute boolean localeCollationEnabled;
 };

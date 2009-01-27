@@ -58,6 +58,14 @@
 
 #include <nsCOMArray.h>
 
+#ifdef XP_MACOSX
+#include <Carbon/Carbon.h>
+#else
+#ifdef XP_UNIX
+#include <glib.h>
+#endif
+#endif
+
 // The maximum characters to output in a single PR_LOG call
 #define MAX_PRLOG 400
 
@@ -235,6 +243,212 @@ static int tree_collate_func_utf8(void *pCtx,
                                   const void *zB)
 {
   return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF8);
+}
+
+static PRInt32 gLocaleCollationEnabled = PR_TRUE;
+
+/*
+ * Perform collation for current locale (data always comes in as UTF8)
+ *
+ * IMPORTANT NOTE: Whenever the algorithm for library_collate is changed and
+ * yields a different sort order than before for *any* set of arbitrary strings,
+ * a new migration step must be added to issue the "reindex 'library_collate'"
+ * sql query. THIS IS OF UTMOST IMPORTANCE because otherwise, the library's
+ * index can become entirely trashed!
+ *
+ */
+static int library_collate_func(int nA,
+                                const char *zA,
+                                int nB,
+                                const char *zB)
+{
+  int retval;
+
+  // shortcut when both strings are empty
+  if (nA == 0 && nB == 0) 
+    return 0;
+
+  nsCString _zA(zA, nA);
+  nsCString _zB(zB, nB);
+    
+  // if collation is disabled, just do a C compare
+  if (!gLocaleCollationEnabled) {
+    return strcmp(_zA.get(), _zB.get());
+  }
+  
+#ifndef XP_MACOSX
+
+  // unless we are on osx, we rely on the CRT's locale settings, so read the
+  // current locale for collate so we can restore it later
+  nsCString oldlocale_collate(setlocale(LC_COLLATE, NULL));
+
+  // loading locale "" loads the user defined locale
+  setlocale(LC_COLLATE, "");
+
+#ifdef XP_UNIX
+
+  // on linux, use glib's utf8 collate function, so we don't have to care about
+  // the whole wchar_t size mess
+
+  retval = g_utf8_collate(_zA.get(), _zB.get());
+  
+#endif
+
+#ifdef XP_WIN
+
+  // on windows, use wcscoll with wchar_t strings
+
+  wchar_t *input_a;
+  wchar_t *input_b;
+  
+  // convert to utf16
+  nsString input_a_utf16 = NS_ConvertUTF8toUTF16(_zA);
+  input_a = (wchar_t *)input_a_utf16.BeginReading();
+  nsString input_b_utf16 = NS_ConvertUTF8toUTF16(_zB);
+  input_b = (wchar_t *)input_b_utf16.BeginReading();
+
+  // apply the proper collation algorithm, depending on the user's locale.
+  
+  // note that it is impossible to use the proper sort for *all* languages at
+  // the same time, because what is proper depends on the original language from
+  // which the string came. for instance, hungarian artists should have their
+  // accented vowels sorted the same as non-accented ones, but a french artist 
+  // should have the last accent determine that order. because we cannot
+  // possibly guess the origin locale for the string, the only thing we can do
+  // is use the user's current locale on all strings.
+  
+  // that being said, many language-specific letters (such as the german eszett)
+  // have one one way of being properly sorted (in this instance, it must sort
+  // with the same weight as 'ss', and are collated that way no matter what
+  // locale is being used.
+  retval = wcscoll(input_a, input_b);
+
+#endif
+
+  // restore the previous collate setting
+  setlocale(LC_COLLATE, oldlocale_collate.get());
+  
+#else
+
+  // on osx, use carbon collate functions because the CRT functions do not
+  // have access to carbon's collation setting.
+
+  NS_ConvertUTF8toUTF16 _zA16(_zA.get());
+  NS_ConvertUTF8toUTF16 _zB16(_zB.get());
+  
+  ::UCCompareTextDefault(kUCCollateStandardOptions, 
+                         (const UniChar *)_zA16.BeginReading(),
+                         _zA16.Length(),
+                         (const UniChar *)_zB16.BeginReading(),
+                         _zB16.Length(), 
+                         NULL,
+                         (SInt32 *)&retval);
+
+#endif
+
+  return retval;
+}
+
+void swap_string(const void *aDest,
+                 const void *aSrc,
+                 int len) {
+                        
+  char *d = (char *)aDest;
+  char *s = (char *)aSrc;
+  for (int i=0;i<len;i++) {
+    *d++ = *(s+1);
+    *d++ = *s++;
+    s++;
+  }
+  *s++ = 0;
+  *s++ = 0;
+}
+
+static int library_collate_func_utf16be(void *pCtx,
+                                        int nA,
+                                        const void *zA,
+                                        int nB,
+                                        const void *zB)
+{
+  #ifdef BIGENDIAN
+
+  const wchar_t *_zA = (const wchar_t *)PR_Malloc((nA+1)*2);
+  const wchar_t *_zB = (const wchar_t *)PR_Malloc((nB+1)*2);
+
+  swap_string(_zA, zA, nA);
+  swap_string(_zB, zB, nB);
+
+  #else
+
+  const wchar_t *_zA = (const wchar_t *)zA;
+  const wchar_t *_zB = (const wchar_t *)zB;
+
+  #endif
+  
+  NS_ConvertUTF16toUTF8 _zA8((const PRUnichar *)_zA, nA);
+  NS_ConvertUTF16toUTF8 _zB8((const PRUnichar *)_zB, nB);
+  
+  int r = library_collate_func(_zA8.Length(), 
+                               _zA8.BeginReading(), 
+                               _zB8.Length(), 
+                               _zB8.BeginReading());
+
+  #ifdef BIGENDIAN
+  
+  PR_Free(_zA);
+  PR_Free(_zB);
+  
+  #endif
+  
+  return r;
+}
+                        
+static int library_collate_func_utf16le(void *pCtx,
+                                        int nA,
+                                        const void *zA,
+                                        int nB,
+                                        const void *zB)
+{
+  #ifdef LITTLEENDIAN
+
+  const wchar_t *_zA = (const wchar_t *)PR_Malloc((nA+1)*2);
+  const wchar_t *_zB = (const wchar_t *)PR_Malloc((nB+1)*2);
+
+  swap_string(_zA, zA, nA);
+  swap_string(_zB, zB, nB);
+
+  #else
+
+  const wchar_t *_zA = (const wchar_t *)zA;
+  const wchar_t *_zB = (const wchar_t *)zB;
+
+  #endif
+  
+  NS_ConvertUTF16toUTF8 _zA8((const PRUnichar *)_zA, nA);
+  NS_ConvertUTF16toUTF8 _zB8((const PRUnichar *)_zB, nB);
+  
+  int r = library_collate_func(_zA8.Length(), 
+                               _zA8.BeginReading(), 
+                               _zB8.Length(), 
+                               _zB8.BeginReading());
+
+  #ifdef LITTLEENDIAN
+  
+  PR_Free(_zA);
+  PR_Free(_zB);
+  
+  #endif
+  
+  return r;
+}
+
+static int library_collate_func_utf8(void *pCtx,
+                                     int nA,
+                                     const void *zA,
+                                     int nB,
+                                     const void *zB)
+{
+  return library_collate_func(nA, (const char *)zA, nB, (const char *)zB);
 }
 
 //-----------------------------------------------------------------------------
@@ -657,7 +871,7 @@ NS_IMETHODIMP CDatabaseEngine::Init()
     NS_ERROR("Unable to register xpcom-shutdown observer");
     m_AttemptShutdownOnDestruction = PR_TRUE;
   }
-  
+
   return NS_OK;
 }
 
@@ -773,6 +987,30 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
                                  NULL,
                                  tree_collate_func_utf8);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf8!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
+
+  ret = sqlite3_create_collation(pHandle,
+                                 "library_collate",
+                                 SQLITE_UTF8,
+                                 NULL,
+                                 library_collate_func_utf8);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf8!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
+
+  ret = sqlite3_create_collation(pHandle,
+                                 "library_collate",
+                                 SQLITE_UTF16LE,
+                                 NULL,
+                                 library_collate_func_utf16le);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf16le!");
+  NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
+
+  ret = sqlite3_create_collation(pHandle,
+                                 "library_collate",
+                                 SQLITE_UTF16BE,
+                                 NULL,
+                                 library_collate_func_utf16be);
+  NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf16be!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
 #if defined(USE_SQLITE_LARGE_PAGE_SIZE)
@@ -1532,6 +1770,20 @@ nsresult CDatabaseEngine::GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery
 
   return NS_OK;
 } //GetDBStorePath
+
+NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationEnabled(PRBool *aEnabled)
+{
+  NS_ENSURE_ARG_POINTER(aEnabled);
+  *aEnabled = (PRBool)gLocaleCollationEnabled;
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(PRBool aEnabled)
+{
+  PR_AtomicSet(&gLocaleCollationEnabled, (PRInt32)aEnabled);
+  return NS_OK;
+}
+
 
 #ifdef PR_LOGGING
 sbDatabaseEnginePerformanceLogger::sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,

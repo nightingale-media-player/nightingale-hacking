@@ -138,6 +138,8 @@ CPP_INCLUDES = $(srcdir) \
                $(MOZSDK_INCLUDE_DIR)/xpconnect \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/locale \
+               $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -165,12 +167,19 @@ ifeq (linux,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s 
   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver \
                              $(PTHREAD_LIBS) \
+                             $(GLIB_LIBS) \
                              $(NULL)
+  CPP_EXTRA_INCLUDES = $(GLIB_CFLAGS) \
+                       $(NULL)
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
   DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver
+endif
+
+ifeq (macosx,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation -framework Cocoa
 endif
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \

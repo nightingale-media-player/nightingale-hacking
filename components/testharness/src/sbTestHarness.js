@@ -83,6 +83,18 @@ sbTestHarness.prototype = {
       prefs.setIntPref(NS_SCRIPT_TIMEOUT_PREF, mOldScriptTimeout);
     }
   },
+  
+  _disableDatabaseLocaleCollation : function() {
+    var dbe = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+                .getService(Ci.sbIDatabaseEngine)
+    dbe.localeCollationEnabled = false;
+  },
+  
+  _enableDatabaseLocaleCollation : function() {
+    var dbe = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+                .getService(Ci.sbIDatabaseEngine)
+    dbe.localeCollationEnabled = true;
+  },
 
   mTempDownloadFolder: null,
   mOldDownloadPath: "",
@@ -197,6 +209,7 @@ sbTestHarness.prototype = {
     this.mTailSongbird.append(SONGBIRD_DEFAULT_DIR);
     this.mTailSongbird.append(SONGBIRD_TAIL_FILE);
 
+    this._disableDatabaseLocaleCollation();
     this._disableScriptTimeout();
     this._setTempDownloadFolder();
   },
@@ -366,6 +379,7 @@ sbTestHarness.prototype = {
     consoleService.unregisterListener(consoleListener);
     this._unsetTempDownloadFolder();
     this._enableScriptTimeout();
+    this._enableDatabaseLocaleCollation();
 
     if (this.mFailedTests) {
       throw Cr.NS_ERROR_ABORT;

@@ -276,6 +276,12 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
 
   nsString outVal;
 
+  // lone> note that if we ever decide to remove the non-alphanum chars from
+  // more than the leading part of the string, we must still not remove those
+  // chars from the entire string. Ie, we can only extend the filtering to the
+  // trailing part of the string, but not the whole string. the reason for this
+  // is that we do not want to remove the "," in "Beatles, The", or it will not
+  // be recognized by the articles removal code since the pattern is "*, The".
   rv = stringTransform->
          NormalizeString(EmptyString(), 
                          sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM |
@@ -289,115 +295,8 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   rv = stringTransform->RemoveArticles(val, EmptyString(), outVal);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  val = outVal;
+  _retval = outVal;
   
-  // we might want to limit the number of characters we are sorting on ? just
-  // so that we do not generate humongus collation data blocks ? disable for
-  // now.
-  // if (val.Length() > 256)
-  //     val.SetLength()
-  
-  // read the current locale for collate and ctype
-  const char *oldlocale_collate = setlocale(LC_COLLATE, NULL);
-  const char *oldlocale_ctype = setlocale(LC_CTYPE, NULL);
-
-  // loading locale "" loads the user defined locale
-  setlocale(LC_COLLATE, "");
-  // this sets mbstowcs and wcstombs' encoding. en_US is ignored because
-  // we're only setting LC_CTYPE.
-  setlocale(LC_CTYPE, "en_US.UTF-8");
-  
-  wchar_t *input;
-  
-#ifdef WIN32
-  input = (wchar_t *)val.BeginReading();
-#else
-  // convert from 4-bytes chars to 2-bytes chars
-  nsCString input_utf8 = NS_ConvertUTF16toUTF8(val);
-  PRUint32 wc32size = mbstowcs(NULL, 
-                               input_utf8.BeginReading(), 
-                               input_utf8.Length());
-  input = (wchar_t *)PR_Malloc((wc32size + 1) * 4);
-  if (!input) {
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-  mbstowcs(input, input_utf8.BeginReading(), input_utf8.Length() + 1);
-#endif
-
-  // ask how many characters we need to hold the collation data
-  PRUint32 xfrm_size = wcsxfrm(NULL, input, 0);
-  if (xfrm_size < 0) {
-    // uncollatable characters, fail.
-#ifdef __STDC_ISO_10646__
-    PR_Free(input);
-#endif
-    return NS_ERROR_FAILURE;
-  }
-  
-  PRUint32 buffer_size;
-
-// glibc uses 4-bytes wchar_t, but mozilla is compiled with 2-bytes wchar_t, 
-// we need to apply conversions. we add 1 char to hold the terminating null.
-#ifndef WIN32
-  buffer_size = (xfrm_size + 1) * 4;
-#else
-  buffer_size = (xfrm_size + 1) * sizeof(wchar_t);
-#endif
-
-  // allocate enough chars to hold the collation data
-  wchar_t *xform_data = (wchar_t *)PR_Malloc(buffer_size);
-  if (!xform_data) {
-#ifndef WIN32
-    PR_Free(input);
-#endif
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-
-  // apply the proper collation algorithm, depending on the user's locale.
-  
-  // note that it is impossible to use the proper sort for *all* languages at
-  // the same time, because what is proper depends on the original language from
-  // which the string came. for instance, hungarian artists should have their
-  // accented vowels sorted the same as non-accented ones, but a french artist 
-  // should have the last accent determine that order. because we cannot
-  // possibly guess the origin locale for the string, the only thing we can do
-  // is use the user's current locale on all strings.
-  
-  // that being said, many language-specific letters (such as the german eszett)
-  // have one one way of being properly sorted (in this instance, it must sort
-  // with the same weight as 'ss', and are collated that way no matter what
-  // locale is being used.
-  
-  // also note that if a user changes his locale at any point, the order of
-  // a sort will remain the same (it is stored in the db as collation data)
-  // until the sort values are regenerated. this could lead to inconsistent sort
-  // orders if some sort values have been regenerated (eg, because their track's
-  // metadata changed), but not others. perhaps we should have some ui somewhere
-  // that lets the user perform a complete sort data regeneration ? (more
-  // probably this should be part of the power tools extension, though)
-  wcsxfrm(xform_data, input, xfrm_size + 1); // +1 for terminating null
-  
-#ifdef WIN32
-  // if 2-bytes wchar_t, simply cast, then assign to the return value
-  _retval = (PRUnichar *)xform_data;
-#else
-  // we're done with the input
-  PR_Free(input);
-  // convert back from 4-bytes chars to 2-bytes chars
-  int mbsize = wcstombs(NULL, xform_data, xfrm_size);
-  char *xform_data_mbs = (char *)PR_Malloc(mbsize + 1);
-  wcstombs(xform_data_mbs, xform_data, xfrm_size + 1);
-  _retval = NS_ConvertUTF8toUTF16(xform_data_mbs, mbsize);
-  PR_Free(xform_data_mbs);
-#endif
-
-  // free the collation data buffer
-  PR_Free(xform_data);
-  
-  // restore the previous locale settings
-  setlocale(LC_COLLATE, oldlocale_collate);
-  setlocale(LC_CTYPE, oldlocale_ctype);
-
   // all done
   return NS_OK;
 }

@@ -62,8 +62,8 @@ create table resource_properties (
   property_id integer not null,
   obj text not null,
   obj_searchable text,
-  obj_sortable text,
-  obj_secondary_sortable text,
+  obj_sortable text collate library_collate,
+  obj_secondary_sortable text collate library_collate,
   primary key (media_item_id, property_id)
 );
 create index idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id on resource_properties (property_id, obj_sortable, obj_secondary_sortable, media_item_id);
@@ -116,8 +116,8 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
-/* XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update sbLocalDatabaseMigration._latestSchemaVersion to match this value */
-insert into library_metadata (name, value) values ('version', '14');
+/* XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update sbLocalDatabaseMigration._latestSchemaVersion and testMigration.latestSchemaVersion to match this value */
+insert into library_metadata (name, value) values ('version', '15');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */
