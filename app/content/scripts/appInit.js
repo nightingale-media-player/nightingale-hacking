@@ -373,13 +373,57 @@ function SBMetricsAppShutdown()
   var ticsPerMinute = 1000 * 60;
   var minutes = ( (timenow - startstamp) / ticsPerMinute ) + 1; // Add one for fractionals
   metrics_add("app", "timerun", null, minutes);
+
+  // we shut down cleanly, let AppStart know that -- for some reason
+  // SBDataSetBoolValue didn't work here, create the dataremote entirely.
+  var dirtyExit = SB_NewDataRemote( "crashlog.dirtyExit", null );
+  dirtyExit.boolValue = false;
+
+  // increment uptime since last crash
+  var uptime = SB_NewDataRemote( "crashlog.uptime", null );
+  uptime.intValue = uptime.intValue + minutes;
 }
 
 function SBMetricsAppStart()
 {
+  // saw some strange issues with using the shortcut get/set versions of our
+  //   dataremote global methods so actually creating the dataremotes.
+  var reportedCrash = SB_NewDataRemote( "crashlog.reported", null );
+  var dirtyExit = SB_NewDataRemote( "crashlog.dirtyExit", null );
+  if ( dirtyExit.boolValue ) {
+    // we are reporting the crash, save that knowledge
+    reportedCrash.boolValue = true;
+
+    var crashNum = SB_NewDataRemote( "crashlog.num", null );
+    var uptime = SB_NewDataRemote( "crashlog.uptime", null );
+
+    // send the uptime for this past crash
+    // metrics key = crashlog.app.# = minute.
+    // The thinking here is that we may want to report on different kinds of
+    // crashes in the future. Therefore we will keep the top level bucket as
+    // crashlog, with a subdivision for the app.
+    metrics_add("crashlog", "app" , crashNum.intValue, uptime.intValue);
+
+    // reset the uptime, inc the crashNum
+    uptime.intValue = 0;
+    crashNum.intValue = crashNum.intValue+1
+  } else {
+    // keep track of if we are reporting the crash, may be useful later
+    reportedCrash.boolValue = false;
+  }
+
+  // mark this true so if we crash we know it. It gets reset by AppShutdown
+  dirtyExit.boolValue = true;
+  
   metrics_inc("app", "appstart", null);
   var startstamp = (new Date()).getTime();
   SBDataSetStringValue("startup_timestamp", startstamp); // 64bit, use StringValue
+
+  // force prefs to write out
+  //  - too bad Application.prefs doesn't expose this method.
+  var prefService =
+    Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefService);
+  prefService.savePrefFile(null);
 }
 
 //
