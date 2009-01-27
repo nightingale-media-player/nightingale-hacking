@@ -111,7 +111,9 @@ interface sbILibrary : sbIMediaList
 
   /**
    * \brief Creates a new media item
-   * \prarm aContentUri The URI pointing to the content of the new media item
+   * \prarm aContentUri The URI pointing to the content of the new media item.
+   *        Use sbILibraryUtils.getContentURI or getFileContentURI to produce
+   *        library content URI's.
    * \param aProperties Optional initial properties for this new item
    * \param aAllowDuplicates If false, an attempt to create a new media item
    *        with a content URI that already exists in the library will simply

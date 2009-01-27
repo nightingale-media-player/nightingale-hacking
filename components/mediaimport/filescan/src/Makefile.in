@@ -39,7 +39,8 @@ CPP_SRCS = sbFileScan.cpp \
            sbFileScanComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/mediaimport/filescan/public \
+CPP_INCLUDES = $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/mediaimport/filescan/public \
                $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \

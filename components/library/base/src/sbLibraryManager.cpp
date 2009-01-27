@@ -54,6 +54,7 @@
 #include <prlog.h>
 #include <rdf.h>
 #include <sbProxyUtils.h>
+#include <sbLibraryUtils.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -71,9 +72,10 @@ static PRLogModuleInfo* gLibraryManagerLog = nsnull;
 #define NS_PROFILE_STARTUP_OBSERVER_ID  "profile-after-change"
 #define NS_PROFILE_TEARDOWN_OBSERVER_ID "profile-change-teardown"
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbLibraryManager, nsIObserver,
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbLibraryManager, nsIObserver,
                                                 nsISupportsWeakReference,
-                                                sbILibraryManager)
+                                                sbILibraryManager,
+                                                sbILibraryUtils)
 
 static nsString sString;
 
@@ -881,6 +883,34 @@ sbLibraryManager::RemoveListener(sbILibraryManagerListener* aListener)
   mListeners.Remove(aListener);
 
   return NS_OK;
+}
+
+/**
+ * See sbILibraryUtils.idl
+ */
+NS_IMETHODIMP
+sbLibraryManager::GetContentURI(nsIURI* aURI,
+                                nsIURI** _retval)
+{
+  TRACE(("sbLibraryManager[0x%x] - GetContentURI", this));
+  NS_ENSURE_ARG_POINTER(aURI);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  return sbLibraryUtils::GetContentURI(aURI, _retval);
+}
+
+/**
+ * Sett sbILibraryUtils.idl
+ */
+NS_IMETHODIMP
+sbLibraryManager::GetFileContentURI(nsIFile* aFile,
+                                    nsIURI** _retval)
+{
+  TRACE(("sbLibraryManager[0x%x] - GetFileContentURI", this));
+  NS_ENSURE_ARG_POINTER(aFile);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  return sbLibraryUtils::GetFileContentURI(aFile, _retval);
 }
 
 /**

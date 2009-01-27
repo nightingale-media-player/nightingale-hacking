@@ -42,6 +42,7 @@
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
 #include <nsIIOService.h>
+#include <sbILibraryUtils.h>
 #include <sbIMediaListListener.h>
 #include <nsIDOMWindow.h>
 #include <vector>
@@ -94,7 +95,7 @@ protected:
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
   nsCOMPtr<sbILibrary>           mMainLibrary;
-  nsCOMPtr<nsIIOService>         mIOService;
+  nsCOMPtr<sbILibraryUtils>      mLibraryUtils;
   nsCOMPtr<nsITimer>             mEventPumpTimer;
   nsCOMPtr<nsITimer>             mAddDelayTimer;
   nsCOMPtr<nsITimer>             mChangeDelayTimer;

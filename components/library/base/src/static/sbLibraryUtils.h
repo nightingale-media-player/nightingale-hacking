@@ -111,6 +111,35 @@ public:
    */
   static nsresult GetOriginItem(/* in */ sbIMediaItem*   aItem,
                                 /* out */ sbIMediaItem** _retval);
+
+  /**
+   * \brief Return a library content URI for the URI specified by aURI.
+   *        A library content URI is a specially formatted URI for use within
+   *        Songbird libraries and is formatted to facilitate searching for
+   *        equivalent URI's (e.g., "file:" URI's are all lower case on
+   *        Windows).
+   *        URI's provided to createMediaItem and related methods must be
+   *        library content URI's.
+   *
+   * \param aURI                URI for which to get content URI.
+   *
+   * \return                    Library content URI.
+   */
+  static nsresult GetContentURI(/* in */ nsIURI*   aURI,
+                                /* out */ nsIURI** _retval);
+
+  /**
+   * \brief Return a library content URI for the file specified by aFile.
+   *        Special processing is required to convert an nsIFile to a library
+   *        content URI (see bug 6227).  getFileContentURI must be used instead
+   *        of nsIIOService.newFileURI for generating library content URI's.
+   *
+   * \param aFile               File for which to get content URI.
+   *
+   * \return                    Library content URI.
+   */
+  static nsresult GetFileContentURI(/* in */ nsIFile*  aFile,
+                                    /* out */ nsIURI** _retval);
 };
 
 /**

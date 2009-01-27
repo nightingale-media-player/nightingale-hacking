@@ -35,6 +35,7 @@
 
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsNetUtil.h>
 #include <nsStringAPI.h>
 #include <nsThreadUtils.h>
 
@@ -261,5 +262,95 @@ nsresult sbLibraryUtils::GetOriginItem(/* in */ sbIMediaItem*   aItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+/* static */
+nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
+                                       nsIURI** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aURI);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<nsIURI> uri = aURI;
+  nsresult rv;
+
+  // On Windows, convert "file:" URI's to lower-case.
+#ifdef XP_WIN
+  PRBool isFileScheme;
+  rv = uri->SchemeIs("file", &isFileScheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (isFileScheme) {
+    // Get the URI spec.
+    nsCAutoString spec;
+    rv = uri->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Convert the URI spec to lower case.
+    ToLowerCase(spec);
+
+    // Regenerate the URI.
+    nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
+    rv = ioService->NewURI(spec, nsnull, nsnull, getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+#endif // XP_WIN
+
+  // Return results.
+  NS_ADDREF(*_retval = uri);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
+                                           nsIURI** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aFile);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<nsIURI> uri;
+  nsresult rv;
+
+  // Get the IO service.
+  nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Note that NewFileURI is broken on Linux when dealing with
+  // file names not in the filesystem charset; see bug 6227
+#if XP_UNIX && !XP_MACOSX
+  nsCOMPtr<nsILocalFile> localFile = do_QueryInterface(aFile, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    // Use the local file persistent descriptor to form a URI spec.
+    nsCAutoString descriptor;
+    rv = localFile->GetPersistentDescriptor(descriptor);
+    if (NS_SUCCEEDED(rv)) {
+      // Escape the descriptor into a spec.
+      nsCOMPtr<nsINetUtil> netUtil =
+        do_CreateInstance("@mozilla.org/network/util;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCAutoString spec;
+      rv = netUtil->EscapeString(descriptor,
+                                 nsINetUtil::ESCAPE_URL_PATH,
+                                 spec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Add the "file:" scheme.
+      spec.Insert("file://", 0);
+
+      // Create the URI.
+      rv = ioService->NewURI(spec, nsnull, nsnull, getter_AddRefs(uri));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+#endif
+
+  // Get a URI directly from the file.
+  if (!uri) {
+    rv = ioService->NewFileURI(aFile, getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Convert URI to a content URI.
+  return GetContentURI(uri, _retval);
 }
 

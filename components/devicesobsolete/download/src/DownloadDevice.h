@@ -89,6 +89,7 @@
 #include <sbDownloadButtonPropertyInfo.h>
 #include <sbIDataRemote.h>
 #include <sbILibrary.h>
+#include <sbILibraryUtils.h>
 
 
 
@@ -344,7 +345,7 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
      * mpStringBundle           Download device string bundle.
      * mCompleteStr             Download complete string.
      * mErrorStr                Download error string.
-     * mpIOService              I/O service.
+     * mpLibraryUtils           Library utilities service.
      * mpFileProtocolHandler    File protocol handler.
      * mpWebBrowser             Web browser used for download.
      * mpChannel                Download channel.
@@ -366,7 +367,7 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
     nsCOMPtr<nsIStringBundle>   mpStringBundle;
     nsString                    mCompleteStr;
     nsString                    mErrorStr;
-    nsCOMPtr<nsIIOService>      mpIOService;
+    nsCOMPtr<sbILibraryUtils>   mpLibraryUtils;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
     nsCOMPtr<nsIRequest>        mpRequest;

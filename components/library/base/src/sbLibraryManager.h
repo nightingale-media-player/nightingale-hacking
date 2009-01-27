@@ -36,6 +36,7 @@
 #include <nsWeakReference.h>
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
+#include <sbILibraryUtils.h>
 
 #include <nsCategoryCache.h>
 #include <nsAutoLock.h>
@@ -61,6 +62,7 @@ class sbILibraryManagerListener;
 struct nsModuleComponentInfo;
 
 class sbLibraryManager : public sbILibraryManager,
+                         public sbILibraryUtils,
                          public nsIObserver,
                          public nsSupportsWeakReference
 {
@@ -83,6 +85,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
   NS_DECL_SBILIBRARYMANAGER
+  NS_DECL_SBILIBRARYUTILS
 
   sbLibraryManager();
 

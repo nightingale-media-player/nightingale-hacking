@@ -74,13 +74,11 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-ifdef DEBUG
-moz_utils = sbMozStringUtils_d
-else
-moz_utils = sbMozStringUtils
-endif
-
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
+DYNAMIC_LIB_STATIC_IMPORTS += \
+  $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
+  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdLibraryManager
 

@@ -131,7 +131,8 @@ sbWatchFolderService::Init()
   rv = prefBranch->AddObserver(PREF_WATCHFOLDER_PATH, this, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
+  mLibraryUtils =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Indicate that the watch folder services are supported.
@@ -289,6 +290,7 @@ sbWatchFolderService::GetFilePathURI(const nsAString & aFilePath,
   NS_ENSURE_ARG_POINTER(aURIRetVal);
 
   nsresult rv;
+
   nsCOMPtr<nsILocalFile> pathFile =
     do_CreateInstance("@mozilla.org/file/local;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -296,7 +298,7 @@ sbWatchFolderService::GetFilePathURI(const nsAString & aFilePath,
   rv = pathFile->InitWithPath(aFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return mIOService->NewFileURI(pathFile, aURIRetVal);
+  return mLibraryUtils->GetFileContentURI(pathFile, aURIRetVal);
 }
 
 nsresult

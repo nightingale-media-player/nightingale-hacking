@@ -46,6 +46,7 @@
 #include <nsStringGlue.h>
 #include <nsIMutableArray.h>
 #include <nsNetUtil.h>
+#include <sbILibraryUtils.h>
 #include <sbLockUtils.h>
 
 /**
@@ -552,6 +553,10 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
     do_GetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbILibraryUtils> pLibraryUtils =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = pFile->InitWithPath(strDirectory);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -594,44 +599,12 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
               {
                 if(NS_SUCCEEDED(pEntry->IsFile(&bIsFile)) && bIsFile)
                 {
-                  // Get the file:// uri from the file object.
+                  // Get a library content URI for the file.
+                  NS_ENSURE_SUCCESS(rv, rv);
                   nsCOMPtr<nsIURI> pURI;
-                  rv = pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
-                  #if XP_UNIX && !XP_MACOSX
-                    // Note that NewFileURI is broken on Linux when dealing with
-                    // file names not in the filesystem charset; see bug 6227
-                    // Mac uses a different persistentDescriptor; see bug 6341
-                    nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(pEntry));
-                    if (localFile) {
-                      nsCString spec;
-                      nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+                  rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                        getter_AddRefs(pURI));
 
-                      if (NS_SUCCEEDED(rv2)) {
-                        if(!mNetUtil) {
-                      	  mNetUtil = do_CreateInstance("@mozilla.org/network/util;1",
-                      	                               &rv2);
-                      	  NS_ENSURE_SUCCESS(rv2, rv2);
-                        }
-
-                        nsCString escapedSpec;
-                        rv2 = mNetUtil->EscapeString(spec,
-                                                     nsINetUtil::ESCAPE_XPALPHAS,
-                                                     escapedSpec);
-                        NS_ENSURE_SUCCESS(rv2, rv2);
-
-                        nsCOMPtr<nsIURI> pNewURI;
-
-                        spec.Insert("file://", 0);
-                        rv2 = pIOService->NewURI(escapedSpec,
-                                                 nsnull,
-                                                 nsnull,
-                                                 getter_AddRefs(pNewURI));
-                        if (NS_SUCCEEDED(rv2)) {
-                          pURI = pNewURI;
-                        }
-                      }
-                    }
-                  #endif
                   if (NS_SUCCEEDED(rv))
                   {
                     nsCAutoString u8spec;
@@ -744,12 +717,17 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   dirstack_t dirStack;
   fileentrystack_t fileEntryStack;
   entrystack_t entryStack;
+  nsresult rv;
 
   PRInt32 nFoundCount = 0;
 
   nsresult ret = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
   nsCOMPtr<nsIIOService> pIOService = do_GetService("@mozilla.org/network/io-service;1");
+
+  nsCOMPtr<sbILibraryUtils> pLibraryUtils =
+    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   sbIFileScanCallback *pCallback = nsnull;
   pQuery->GetCallback(&pCallback);
@@ -821,63 +799,29 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
               {
                 if(bIsFile)
                 {
-                  nsString strPath;
-                  // Get the file:// uri from the file object.
+                  // Get a library content URI for the file.
                   nsCOMPtr<nsIURI> pURI;
-                  pIOService->NewFileURI(pEntry, getter_AddRefs(pURI));
+                  rv = pLibraryUtils->GetFileContentURI(pEntry,
+                                                        getter_AddRefs(pURI));
 
-                  #if XP_UNIX && !XP_MACOSX
-                    // Note that NewFileURI is broken on Linux when dealing with
-                    // file names not in the filesystem charset; see bug 6227
-                    // Mac uses a different persistentDescriptor; see bug 6341
-                    nsCOMPtr<nsILocalFile> localFile(do_QueryInterface(pEntry));
-                    if (localFile) {
-                      nsCString spec;
-                      nsresult rv2 = localFile->GetPersistentDescriptor(spec);
+                  // Get the file URI spec.
+                  nsCAutoString spec;
+                  if (NS_SUCCEEDED(rv)) {
+                    rv = pURI->GetSpec(spec);
+                    LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n",
+                         spec.get()));
+                  }
 
-                      if (NS_SUCCEEDED(rv2)) {
-                        if(!mNetUtil) {
-                      	  mNetUtil = do_CreateInstance("@mozilla.org/network/util;1",
-                      	                               &rv2);
-                      	  NS_ENSURE_SUCCESS(rv2, rv2);
-                        }
+                  // Add the file path to the query.
+                  if (NS_SUCCEEDED(rv)) {
+                    nsString strPath = NS_ConvertUTF8toUTF16(spec);
+                    pQuery->AddFilePath(strPath);
+                    nFoundCount += 1;
 
-                        nsCString escapedSpec;
-                        rv2 = mNetUtil->EscapeString(spec,
-                                                     nsINetUtil::ESCAPE_URL_PATH,
-                                                     escapedSpec);
-                        NS_ENSURE_SUCCESS(rv2, rv2);
-
-                        nsCOMPtr<nsIURI> pNewURI;
-                        LOG(("sbFileScan: escaped spec: %s\n", escapedSpec.get()));
-
-                        escapedSpec.Insert("file://", 0);
-                        rv2 = pIOService->NewURI(escapedSpec,
-                                                 nsnull,
-                                                 nsnull,
-                                                 getter_AddRefs(pNewURI));
-                        if (NS_SUCCEEDED(rv2)) {
-                          LOG(("replacing URI!\n"));
-                          pURI = pNewURI;
-                        }
-                      }
+                    if(pCallback)
+                    {
+                      pCallback->OnFileScanFile(strPath, nFoundCount);
                     }
-                  #endif
-
-                  nsCString u8spec;
-                  pURI->GetSpec(u8spec);
-                  strPath = NS_ConvertUTF8toUTF16(u8spec);
-
-#if defined(XP_WIN)
-                  ToLowerCase(strPath);
-#endif
-                  LOG(("sbFileScan::ScanDirectory (C++) found spec: %s\n", u8spec.get()));
-                  pQuery->AddFilePath(strPath);
-                  nFoundCount += 1;
-
-                  if(pCallback)
-                  {
-                    pCallback->OnFileScanFile(strPath, nFoundCount);
                   }
                 }
                 else if(bIsDirectory && bRecurse)

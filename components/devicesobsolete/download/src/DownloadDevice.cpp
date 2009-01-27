@@ -2624,10 +2624,9 @@ nsresult sbDownloadSession::Initiate()
     nsCOMPtr<nsIStandardURL>    pStandardURL;
     nsresult                    result = NS_OK;
 
-    /* Get the IO and file protocol services. */
-    mpIOService = do_GetService("@mozilla.org/network/io-service;1",
-                                &result);
-
+    /* Get the library manager and utilities services. */
+    mpLibraryUtils =
+        do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &result);
     if (NS_SUCCEEDED(result))
     {
         pLibraryManager = do_GetService
@@ -3388,13 +3387,15 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
         /* append to the path */
         result = mpDstFile->Append(leafName);
         NS_ENSURE_SUCCESS(result, result);
+
         /* ensure the filename is unique */
         result = sbDownloadDevice::MakeFileUnique(mpDstFile);
         NS_ENSURE_SUCCESS(result, result);
 
         /* Get the destination URI spec. */
         nsCOMPtr<nsIURI> pDstURI;
-        result = mpIOService->NewFileURI(mpDstFile, getter_AddRefs(mpDstURI));
+        result = mpLibraryUtils->GetFileContentURI(mpDstFile,
+                                                   getter_AddRefs(mpDstURI));
         NS_ENSURE_SUCCESS(result, result);
         
         nsCString dstCSpec;
@@ -3417,13 +3418,6 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
 
     /* Update the download media item content source property. */
     if (NS_SUCCEEDED(result)) {
-#if defined(XP_WIN)
-      nsCString actualDstSpec;
-      ToLowerCase(NS_ConvertUTF16toUTF8(mDstURISpec), actualDstSpec);
-
-      result = mpDstURI->SetSpec(actualDstSpec);
-      NS_ENSURE_SUCCESS(result, result);
-#endif
       result = mpMediaItem->SetContentSrc(mpDstURI);
     }
 
