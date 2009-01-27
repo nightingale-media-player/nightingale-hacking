@@ -95,7 +95,6 @@ try
       if (v < 0) v = 0;
       if (v > 1) v = 1;
       mm.volumeControl.volume = v;
-      dump("mouseWheelVolume: " + v + "\n\n");
       if (v != 0) SBDataSetStringValue("faceplate.volume.last", v);
     }
     catch (err)

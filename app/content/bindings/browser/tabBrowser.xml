@@ -1989,6 +1989,31 @@
 
               processKeyEvent = true;
             }
+            else if (!('ctrlKey' in aEvent && aEvent.ctrlKey) &&
+                     !('shiftKey' in aEvent && aEvent.shiftKey) &&
+                     !('metaKey' in aEvent && aEvent.metaKey)) {
+              /*
+               * We have to disable the find bar by eating the key event
+               * since there is no programmatic way of telling it to disable
+               * itself.
+               */
+              if ((aEvent.charCode == "/".charCodeAt(0) ||
+                  aEvent.charCode == "'".charCodeAt(0)) &&
+                  this.tabbrowser.shouldDisableFindForSelectedTab())
+              {
+                if (window.gSearchHandler && 
+                    window.gSearchHandler.getSearchBar) {
+                  var searchBar = window.gSearchHandler.getSearchBar();
+                  if (searchBar) {
+                    searchBar.select();
+                    searchBar.focus();
+                  }
+                }
+                
+                aEvent.preventDefault();
+                return;
+              }
+            }
           }
 
           if (processKeyEvent) {
@@ -2041,7 +2066,9 @@
           };
 
           this.mCurrentTab = this.mTabContainer.firstChild;
-          document.addEventListener("keypress", this._keyEventHandler, false);
+          
+          /* capture events on process */
+          document.addEventListener("keypress", this._keyEventHandler, true);
 
           var uniqueId = "panel" + Date.now();
           this.mPanelContainer.childNodes[0].id = uniqueId;
