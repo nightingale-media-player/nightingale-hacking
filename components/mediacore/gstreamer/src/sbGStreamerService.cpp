@@ -160,7 +160,8 @@ sbGStreamerService::Init()
     // GST_PLUGIN_PATH).
     //
     // We use the following paths:
-    //   1. Plugin directories set by the user using GST_PLUGIN_PATH (if any)
+    //   1. Plugin directories set by the user using GST_PLUGIN_PATH (if any),
+    //      on unix systems (not windows/osx) only.
     //   2. Extension-provided plugin directories (in no particular order)
     //   3. Our bundled gst-plugins directory
     //
@@ -168,6 +169,9 @@ sbGStreamerService::Init()
     //   4. $HOME/.gstreamer-0.10/plugins
     //   5. /usr/lib/gstreamer-0.10 or /usr/lib64/gstreamer-0.10
 
+#if defined(XP_MACOSX) || defined(XP_WIN)
+    pluginPaths = EmptyString();
+#else
     // 1. Read the existing GST_PLUGIN_PATH (if any)
     rv = envSvc->Exists(kGstPluginPath, &pluginPathExists);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -178,6 +182,7 @@ sbGStreamerService::Init()
     }
     else
       pluginPaths = EmptyString();
+#endif
 
     // 2. Add extension-provided plugin directories (if any)
     rv = directorySvc->Get(XRE_EXTENSIONS_DIR_LIST,
