@@ -1615,21 +1615,24 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
 
   // get the management type
   PRUint32 mgmtType;
-  rv = ownerLibrary->GetMgmtType(&mgmtType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // if not enough free space is available, ask user what to do
   PRBool continueWrite = PR_TRUE;
-  if (freeSpace < totalLength) {
-    PRBool abort;
-    rv = sbDeviceUtils::QueryUserSpaceExceeded
-                          (this,
-                           mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL,
-                           totalLength,
-                           freeSpace,
-                           &abort);
+  { // Unlock so we don't deadlock with prefs branch and UI logic
+    sbAutoMonitorUnlock unlock(mRequestMonitor);
+    rv = ownerLibrary->GetMgmtType(&mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
-    continueWrite = !abort;
+
+    // if not enough free space is available, ask user what to do
+    if (freeSpace < totalLength) {
+      PRBool abort;
+      rv = sbDeviceUtils::QueryUserSpaceExceeded
+                            (this,
+                             mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                             totalLength,
+                             freeSpace,
+                             &abort);
+      NS_ENSURE_SUCCESS(rv, rv);
+      continueWrite = !abort;
+    }
   }
 
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite - %u items = %lld bytes / free %lld bytes\n",
