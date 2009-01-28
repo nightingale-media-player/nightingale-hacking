@@ -38,11 +38,13 @@ CPP_SRCS = \
 
 CPP_INCLUDES = \
   $(DEPTH)/components/mediacore/base/public \
+  $(DEPTH)/components/mediaimport/playlist/public \
   $(MOZSDK_INCLUDE_DIR) \
   $(MOZSDK_INCLUDE_DIR)/nspr \
   $(MOZSDK_INCLUDE_DIR)/necko \
   $(MOZSDK_INCLUDE_DIR)/string \
   $(MOZSDK_INCLUDE_DIR)/xpcom \
+  $(MOZSDK_INCLUDE_DIR)/uriloader \
   $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)

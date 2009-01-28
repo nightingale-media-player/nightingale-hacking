@@ -46,6 +46,7 @@
 }
 
 #define TYPE_MAYBE_MEDIA "application/vnd.songbird.maybe.media"
+#define TYPE_MAYBE_PLAYLIST "application/vnd.songbird.maybe.playlist"
 
 class sbMediaSniffer : public nsIContentSniffer
 {

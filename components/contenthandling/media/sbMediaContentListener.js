@@ -45,6 +45,7 @@ const CATEGORY_CONTENT_LISTENER = "external-uricontentlisteners";
 const PREF_WEBLIBRARY_GUID = "songbird.library.web";
 
 const TYPE_MAYBE_MEDIA = "application/vnd.songbird.maybe.media";
+const TYPE_MAYBE_PLAYLIST = "application/vnd.songbird.maybe.playlist";
 
 // For XPCOM boilerplate.
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
@@ -83,15 +84,17 @@ sbMediaContentListener.prototype = {
   /**
    * Takes care of adding a url to the library and playing it.
    */
-  _handleURI: function _handleURI(aURI) {
+  _handleMediaURI: function _handleMediaURI(aURI) {
     // TODO: Check a pref to determine if this should be going into our library?
     var libraryManager = Cc[CONTRACTID_LIBRARYMANAGER].
                          getService(Ci.sbILibraryManager);
     var library;
+    var uri = aURI;
     
     if (aURI instanceof Ci.nsIFileURL) {
       // Local files go into the main library.
       library = libraryManager.mainLibrary;
+      libraryManager.getContentURI(aURI).spec;
     }
     else {
       // All other files go into the web library.
@@ -115,7 +118,7 @@ sbMediaContentListener.prototype = {
       }
     };
 
-    var url = aURI.spec;
+    var url = uri.spec;
     library.enumerateItemsByProperty(SBProperties.contentURL, url, listener );
     if (!listener.foundItem) {
       var mediaItem = library.createMediaItem(aURI);
@@ -140,6 +143,16 @@ sbMediaContentListener.prototype = {
     this._mm.sequencer.playView(view, 0);
   },
 
+  _handlePlaylistURI: function _handlePlaylistURI(aURI) {
+    var app = Cc["@songbirdnest.com/Songbird/ApplicationController;1"]
+                .getService(Ci.sbIApplicationController);
+    var window = app.activeMainWindow;
+    if (window) {
+      var tabbrowser = window.document.getElementById("content");
+      tabbrowser.handleMediaURL(aURI.spec, true, true, null, null);
+    }
+  },
+
   /**
    * See nsIURIContentListener.
    */
@@ -161,12 +174,6 @@ sbMediaContentListener.prototype = {
     var contentType = channel.contentType;
     
     dump("\n---------------------------\nsbMediaContentListener -- contentType: " + contentType + "\n---------------------------\n");
-
-    if (!this._typeSniffer.isValidMediaURL(uri)) {
-      // Hmm, badness. We can't actually play this file type. Throw an error
-      // here to get the URILoader to keep trying with other content listeners.
-      throw Cr.NS_ERROR_UNEXPECTED;
-    }
     
     // We seem to think this is a media file, let's make sure it doesn't have a
     // content type that we know for sure isn't media.
@@ -182,12 +189,35 @@ sbMediaContentListener.prototype = {
     }
 
     // Let exceptions propogate from here!
-    try {
-      this._handleURI(uri);
+    if (aContentType == TYPE_MAYBE_MEDIA) {
+      if (!this._typeSniffer.isValidMediaURL(uri)) {
+        // Hmm, badness. We can't actually play this file type. Throw an error
+        // here to get the URILoader to keep trying with other content listeners.
+        throw Cr.NS_ERROR_UNEXPECTED;
+      }
+
+      try {
+        this._handleMediaURI(uri);
+      }
+      catch (e) {
+        Components.utils.reportError(e);
+        throw e;
+      }
     }
-    catch (e) {
-      Components.utils.reportError(e);
-      throw e;
+    else if (aContentType == TYPE_MAYBE_PLAYLIST) {
+      if (!this._typeSniffer.isValidWebSafePlaylistURL(uri)) {
+        // We thought it looked like a playlist but it in the end 
+        // it wasn't!
+        throw Cr.NS_ERROR_UNEXPECTED;
+      }
+      
+      try {
+        this._handlePlaylistURI(uri);
+      }
+      catch (e) {
+        Components.utils.reportError(e);
+        throw e;
+      }
     }
 
     // The request is active, so make sure to cancel it.
@@ -200,14 +230,16 @@ sbMediaContentListener.prototype = {
    * See nsIURIContentListener.
    */
   isPreferred: function isPreferred(aContentType, aDesiredContentType) {
-    return aContentType == TYPE_MAYBE_MEDIA;
+    return aContentType == TYPE_MAYBE_MEDIA ||
+      aContentType == TYPE_MAYBE_PLAYLIST;
   },
 
   /**
    * See nsIURIContentListener.
    */
   canHandleContent: function canHandleContent(aContentType, aIsContentPreferred, aDesiredContentType) {
-    return aContentType == TYPE_MAYBE_MEDIA;
+    return aContentType == TYPE_MAYBE_MEDIA ||
+      aContentType == TYPE_MAYBE_PLAYLIST;
   },
 
   /**
@@ -240,11 +272,16 @@ function postRegister(aCompMgr, aFileSpec, aLocation) {
   XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
                                               TYPE_MAYBE_MEDIA, CONTRACTID,
                                               true, true);
+  XPCOMUtils.categoryManager.addCategoryEntry(CATEGORY_CONTENT_LISTENER,
+                                              TYPE_MAYBE_PLAYLIST, CONTRACTID,
+                                              true, true);
 }
 
 function preUnregister(aCompMgr, aFileSpec, aLocation) {
   XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
                                                  TYPE_MAYBE_MEDIA, true);
+  XPCOMUtils.categoryManager.deleteCategoryEntry(CATEGORY_CONTENT_LISTENER,
+                                                 TYPE_MAYBE_PLAYLIST, true);
 }
 
 var NSGetModule = XPCOMUtils.generateNSGetModule([sbMediaContentListener],

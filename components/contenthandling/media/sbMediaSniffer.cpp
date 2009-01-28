@@ -32,6 +32,7 @@
 #include <nsIServiceManager.h>
 #include <nsIURI.h>
 #include <sbIMediacoreTypeSniffer.h>
+#include <sbIPlaylistReader.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsCOMPtr.h>
@@ -39,6 +40,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOM.h>
 #include <nsXPCOMCID.h>
+#include <nsMemory.h>
 
 /**
  * An implementation of nsIContentSniffer that prevents audio and video files
@@ -82,6 +84,17 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
   nsCOMPtr<nsIChannel> channel = do_QueryInterface(aRequest, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCAutoString contentType;
+  rv = channel->GetContentType(contentType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Never let a media core or playlist reader override the handling
+  // of the basic web content types.
+  if (contentType.EqualsLiteral("text/html")) {
+    aSniffedType.Truncate();
+    return NS_OK;
+  }
+
   // There are apparently problems with 'view-source'... See nsFeedSniffer.
   nsCOMPtr<nsIURI> originalURI;
   rv = channel->GetOriginalURI(getter_AddRefs(originalURI));
@@ -114,11 +127,6 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
     // the server handed us at least makes sense. If it doesn't we will
     // leave the contentType alone and let other sniffers have a go at
     // it.
-    
-    nsCAutoString contentType;
-    rv = channel->GetContentType(contentType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     if( contentType.EqualsLiteral("text/html") ||
         contentType.EqualsLiteral("application/atom+xml") ||
         contentType.EqualsLiteral("application/rdf+xml") ||
@@ -128,11 +136,18 @@ sbMediaSniffer::GetMIMETypeFromContent(nsIRequest* aRequest,
     }
 
     aSniffedType.AssignLiteral(TYPE_MAYBE_MEDIA);
-  }
-  else {
-    aSniffedType.Truncate();
+    return NS_OK;
   }
 
+  PRBool isPlaylistURL = PR_FALSE;
+  rv = typeSniffer->IsValidWebSafePlaylistURL(uri, 
+                                              &isPlaylistURL);
+  if (NS_SUCCEEDED(rv) && isPlaylistURL) {
+    aSniffedType.AssignLiteral(TYPE_MAYBE_PLAYLIST);
+    return NS_OK;
+  }
+
+  aSniffedType.Truncate();
   return NS_OK;
 }
 

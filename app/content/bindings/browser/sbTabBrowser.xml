@@ -826,7 +826,8 @@
         <parameter name="forcePlaylist" />
         <parameter name="target" />
         <parameter name="referrer" />
-        <body><![CDATA[
+        <body>
+                      <![CDATA[
           var retval = false;
           var tab = this.selectedTab;
           try
@@ -881,7 +882,8 @@
                                                  getFirstListener );
 
               // If we found a matching list, clear it, otherwise create it
-              var mediaList;
+              var mediaList = null;;
+              var mediaListView = null;
               if (getFirstListener.item) {
                 mediaList = getFirstListener.item;
                 mediaList.clear();
@@ -889,6 +891,8 @@
               else {
                 if ( scheme == "http" ){
                   mediaList = tab.outerPlaylist.mediaList;
+                  mediaListView = tab.outerPlaylist.getListView();
+                  
                   if (mediaList) {
                     mediaList.clear();
                     tab.outerPlaylistShowing = true;
@@ -922,6 +926,8 @@
                 mm: self.mm,
                 observe: function ( aSubject, aTopic, aData ) {
                   if (aTopic.indexOf("error") != -1) {
+                    Components.utils.reportError("Failed to parse playlist at " + aURL);
+                    
                     // if we get an error parsing a page we thought was a 
                     // playlist then we were probably wrong. let's just load
                     // it in the browser
@@ -944,8 +950,9 @@
                     // Start playback
                     var view = tab.mediaListView;
                     if ((!view) || (view.mediaList != mediaList)) {
-                      mediaList.createView();
+                      view = mediaList.createView();
                     }
+
                     this.mm.sequencer.playView(view, 0);
                   }
                 }
