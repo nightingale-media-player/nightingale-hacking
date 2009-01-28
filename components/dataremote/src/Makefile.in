@@ -31,7 +31,40 @@ include $(DEPTH)/build/autodefs.mk
 
 JAR_MANIFEST = jar.mn
 
+target_name = sbdataremote$(DEBUG:%=_d)
+
+CPP_SRCS = sbDataRemoteWrapper.cpp \
+           sbDataRemoteModule.cpp \
+           $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+# build a component (ie: a dynamically loadable module)
+IS_COMPONENT = 1
+LIBSONGBIRD_COMPONENT = SongbirdDataRemoteLib
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = xpcomglue_s \
+                            xpcom \
+                            nspr4 \
+                            plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(NULL)
+
 SONGBIRD_COMPONENTS = $(COMPONENTS_DIR)/dataremote/src/sbDataRemote.js \
+                      $(DYNAMIC_LIB) \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

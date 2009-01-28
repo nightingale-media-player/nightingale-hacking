@@ -22,27 +22,25 @@
 //
 // END SONGBIRD GPL
 //
-*/
-
-/**
- * \brief Test file
  */
- 
- var latestSchemaVersion = 15;
 
-function runTest() {
+#include "sbDataRemoteWrapper.h"
 
-  var databaseGUID = "test_migration";
-  var library = createLibrary(databaseGUID);
-  
-  var migrationHelper = 
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1"]
-      .createInstance(Ci.sbILocalDatabaseMigrationHelper);
-      
-  assertEqual(migrationHelper.getLatestSchemaVersion() , 
-              latestSchemaVersion, 
-              "Error: Schema Version incorrect. Please ensure that the schema version in schema.sql matches the version we're testing for!");
-  
-  assertEqual(migrationHelper.canMigrate(1, 1000), false);
-  assertEqual(migrationHelper.canMigrate(5, 6), true);
-}
+#include <nsIGenericFactory.h>
+
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDataRemoteWrapper, InitWrapper)
+
+// fill out data struct to register with component system
+static const nsModuleComponentInfo components[] =
+{
+  {
+    SB_DATAREMOTEWRAPPER_CLASSNAME,
+    SB_DATAREMOTEWRAPPER_CID,
+    SB_DATAREMOTEWRAPPER_CONTRACTID,
+    sbDataRemoteWrapperConstructor
+  }
+};
+
+// create the module info struct that is used to regsiter
+NS_IMPL_NSGETMODULE(SongbirdDataRemoteLib, components)
+

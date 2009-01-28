@@ -39,10 +39,14 @@ var Cr = Components.results;
 var Ci = Components.interfaces;
 var Cc = Components.classes;
 
-const SONGBIRD_DATAREMOTE_CONTRACTID = "@songbirdnest.com/Songbird/DataRemote;1";
-const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Service";
-const SONGBIRD_DATAREMOTE_CID = Components.ID("{950952aa-cb6b-4806-b39a-307b1b1eadb6}");
-const SONGBIRD_DATAREMOTE_IID = Ci.sbIDataRemote;
+// This object should not be instantiated by user code.  Instead, use 
+// the original contract id "@songbirdnest.com/Songbird/DataRemote;1"
+// which will give a wrapper around this object.  See sbPIDataRemote2
+// and sbDataRemoteWrapper for details.
+const SONGBIRD_DATAREMOTE_CONTRACTID = null;
+const SONGBIRD_DATAREMOTE_CLASSNAME = "Songbird Data Remote Instance";
+const SONGBIRD_DATAREMOTE_CID = Components.ID("{e0990420-e9c0-11dd-ba2f-0800200c9a66}");
+const SONGBIRD_DATAREMOTE_IID = Ci.sbPIDataRemote2;
 
 function DataRemote() {
   // Nothing here...
@@ -195,6 +199,9 @@ DataRemote.prototype = {
     this.observe(null, null, this._key);
   },
 
+
+  // Original attribute getter/setters
+
   get stringValue() {
     if (!this._initialized)
       throw Cr.NS_ERROR_NOT_INITIALIZED;
@@ -240,6 +247,35 @@ DataRemote.prototype = {
       throw Cr.NS_ERROR_NOT_INITIALIZED;
 
     this._setValue(aIntValue + "");
+  },
+
+
+  // Newer method getter/setters, used to work around
+  // BMO 304048. See sbIDataRemote for details.
+  // These are temporary and internal, but in general
+  // this entire implementation should go away.
+  getAsString: function() {
+    return this.stringValue;
+  },
+
+  setAsString: function(aStringValue) {
+    this.stringValue = aStringValue;
+  },
+
+  setAsBool: function(aBoolValue) {
+    this.boolValue = aBoolValue;
+  },
+
+  getAsBool: function(aBoolValue) {
+    return this.boolValue;
+  },
+
+  getAsInt: function() {
+    return this.intValue;
+  },
+
+  setAsInt: function(aIntValue) {
+    this.intValue = aIntValue;
   },
 
   // internal helper function - all setters ultimately call this
@@ -384,13 +420,8 @@ DataRemote.prototype = {
   // nsISecurityCheckedComponent -- implemented by the security mixin
   _securityMixin: null,
   _initializedSCC: false,
-  _publicWProps: [ "internal:stringValue",
-                   "internal:boolValue",
-                   "internal:intValue" ],
-  _publicRProps: [ "internal:stringValue",
-                   "internal:boolValue",
-                   "internal:intValue",
-                   "classinfo:classDescription",
+  _publicWProps: [ ],
+  _publicRProps: [ "classinfo:classDescription",
                    "classinfo:contractID",
                    "classinfo:classID",
                    "classinfo:implementationLanguage",
@@ -398,6 +429,12 @@ DataRemote.prototype = {
   _publicMethods: [ "internal:bindAttribute",
                     "internal:bindObserver",
                     "internal:bindProperty",
+                    "internal:setAsString",
+                    "internal:getAsString",
+                    "internal:setAsInt",
+                    "internal:getAsInt",
+                    "internal:setAsBool",
+                    "internal:getAsBool",
                     "internal:unbind",
                     "internal:init" ],
   _publicInterfaces: [ Ci.nsISupports,

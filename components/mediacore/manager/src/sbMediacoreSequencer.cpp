@@ -86,6 +86,13 @@
 #define MEDIACORE_ERROR_DIALOG_ID \
   "mediacoreErrorDialog"
 
+// Time in ms between dataremote updates
+#define MEDIACORE_UPDATE_NOTIFICATION_DELAY 500
+
+// Time in ms to wait before deferred media list check
+#define MEDIACORE_CHECK_DELAY 100
+
+
 inline nsresult 
 EmitMillisecondsToTimeString(PRUint64 aValue, 
                              nsAString &aString, 
@@ -247,7 +254,7 @@ sbMediacoreSequencer::StartSequenceProcessor()
 
   nsresult rv = 
     mSequenceProcessorTimer->InitWithCallback(this, 
-                                              100, 
+                                              MEDIACORE_UPDATE_NOTIFICATION_DELAY, 
                                               nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1726,7 +1733,8 @@ sbMediacoreSequencer::DelayedCheck()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mDelayedCheckTimer->InitWithCallback(this, 100, nsITimer::TYPE_ONE_SHOT);
+  rv = mDelayedCheckTimer->InitWithCallback(
+          this, MEDIACORE_CHECK_DELAY, nsITimer::TYPE_ONE_SHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

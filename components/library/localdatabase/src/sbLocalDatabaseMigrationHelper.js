@@ -71,13 +71,13 @@ sbLocalDatabaseMigrationHelper.prototype = {
   _initializedSCC: false,
   
   _publicWProps: [ "" ],
-  _publicRProps: [ "internal:latestSchemaVersion",
-                   "classinfo:classDescription",
+  _publicRProps: [ "classinfo:classDescription",
                    "classinfo:contractID",
                    "classinfo:classID",
                    "classinfo:implementationLanguage",
                    "classinfo:flags" ],
   _publicMethods: [ "internal:canMigrate",
+                    "internal:getLatestSchemaVersion",
                     "internal:migrate"],
   _publicInterfaces: [ Ci.nsISupports,
                        Ci.nsIClassInfo,
@@ -124,7 +124,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
   // sbILocalDatabaseMigration
   // 
 
-  get latestSchemaVersion() {
+  getLatestSchemaVersion: function sbLDBM_getLatestSchemaVersion() {
     return this._latestSchemaVersion;
   },
 

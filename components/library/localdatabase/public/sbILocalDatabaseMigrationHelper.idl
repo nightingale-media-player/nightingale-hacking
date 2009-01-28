@@ -34,13 +34,13 @@
 
 interface sbILocalDatabaseLibrary;
 
-[scriptable, uuid(0b42f045-604e-4f7f-8db4-5bcdec0af4e7)]
+[scriptable, uuid(a8a30690-e9bd-11dd-ba2f-0800200c9a66)]
 interface sbILocalDatabaseMigrationHelper : nsISupports
 {
   /**
    * \brief The latest schema version.
    */
-  readonly attribute unsigned long latestSchemaVersion;
+  unsigned long getLatestSchemaVersion();
 
   /**
    * \brief Check for appropriate migration between 
