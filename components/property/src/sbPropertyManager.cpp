@@ -468,13 +468,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = albumSecondarySort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Sorting by album will sort by album->disc no->track no
+  //Sorting by album will sort by album->disc no->track no->track name
   rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                                         NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
@@ -491,7 +495,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = artistSecondarySort->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Sorting by artist will sort by artist->album->disc no->track no
+  //Sorting by artist will sort by artist->album->disc no->track no->track name
   rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                                          NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -501,6 +505,10 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                         NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = artistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
                                          NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -517,17 +525,76 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Genre
+
+  nsCOMPtr<sbIMutablePropertyArray> genreSecondarySort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = genreSecondarySort->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Sorting by genre will sort by genre->artist->album->disc no->track no->track name
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = genreSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_GENRE),
                     NS_LITERAL_STRING("property.genre"),
                     stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, genreSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Year
+
+  nsCOMPtr<sbIMutablePropertyArray> yearSecondarySort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = yearSecondarySort->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Sorting by year will sort by year->artist->album->disc no->track no->track name
+
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = yearSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_YEAR),
                       NS_LITERAL_STRING("property.year"),
                       stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, 9999, PR_TRUE,
-                      PR_TRUE, PR_TRUE, NULL);
+                      PR_TRUE, PR_TRUE, NULL, yearSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Track number
@@ -992,10 +1059,35 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                       PR_FALSE, PR_FALSE, NULL);
 
   // Album/Artist Name
+
+  nsCOMPtr<sbIMutablePropertyArray> albumArtistSecondarySort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumArtistSecondarySort->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Sorting by album/artist will sort by album/artist->album->disc no->track no->track name
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                        NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = albumArtistSecondarySort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                                         NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
                     NS_LITERAL_STRING("property.albumartistname"),
                     stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE,
-                    PR_TRUE, PR_TRUE);
+                    PR_TRUE, PR_TRUE, albumArtistSecondarySort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Peristent ID of the object on the device (internal use only)
@@ -1355,7 +1447,8 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
                                   PRBool aHasMaxValue,
                                   PRBool aRemoteReadable,
                                   PRBool aRemoteWritable,
-                                  sbIPropertyUnitConverter *aUnitConverter)
+                                  sbIPropertyUnitConverter *aUnitConverter,
+                                  sbIPropertyArray* aSecondarySort)
 {
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
@@ -1395,6 +1488,11 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
   
   rv = numberProperty->SetUnitConverter(aUnitConverter);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aSecondarySort) {
+    rv = numberProperty->SetSecondarySort(aSecondarySort);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbINumberPropertyInfo*, numberProperty), &rv);

@@ -32,23 +32,38 @@ function runTest () {
   Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
   var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                   .getService(Ci.sbIPropertyManager);
-  var deps = propMan.getDependentProperties(SBProperties.albumName);
 
-  // Sorting by album will sort by album->disc no->track no
-  // Sorting by artist will sort by artist->album->disc no->track no
+  // Sorting by album will sort by album->disc no->track no->track name
+  // Sorting by artist will sort by artist->album->disc no->track no->track name
+  // Sorting by albumartist will sort by albumartist->album->disc no->track no->track name
+  // Sorting by genre will sort by genre->artist->album->disc no->track no->track name
+  // Sorting by year will sort by year->artist->album->disc no->track no->track name
 
-  // Expect track no to return album, artist
-  var deps = propMan.getDependentProperties(SBProperties.trackNumber);
+  // Expect track name to return album, artist
+  var deps = propMan.getDependentProperties(SBProperties.trackName);
   assertPropertyArrayContains(deps, 
-      [SBProperties.albumName, SBProperties.artistName]);
+      [SBProperties.albumName, 
+       SBProperties.artistName,
+       SBProperties.albumArtistName,
+       SBProperties.genre,
+       SBProperties.year]);
   
-  // Expect album to return artist
+  // Expect album to return artist, albumartist, genre, year
   deps = propMan.getDependentProperties(SBProperties.albumName);
   assertPropertyArrayContains(deps, 
-      [SBProperties.artistName]);
+      [SBProperties.artistName,
+       SBProperties.albumArtistName,
+       SBProperties.genre,
+       SBProperties.year]);
 
-  // Expect artist to return nothing
+  // Expect artist to return genre, year
   deps = propMan.getDependentProperties(SBProperties.artistName);
+  assertPropertyArrayContains(deps, 
+      [SBProperties.genre,
+       SBProperties.year]);
+
+  // Expect contentURL to return nothing
+  deps = propMan.getDependentProperties(SBProperties.contentURL);
   assertPropertyArrayContains(deps, []);
 }
 

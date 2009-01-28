@@ -85,7 +85,8 @@ private:
                           PRBool aHasMaxValue,
                           PRBool aRemoteReadable,
                           PRBool aRemoteWritable,
-                          sbIPropertyUnitConverter *aConverter);
+                          sbIPropertyUnitConverter *aConverter,
+                          sbIPropertyArray* aSecondarySort = nsnull);
 
   nsresult RegisterProgress(const nsAString& aValuePropertyID,
                             const nsAString& aValueDisplayKey,
