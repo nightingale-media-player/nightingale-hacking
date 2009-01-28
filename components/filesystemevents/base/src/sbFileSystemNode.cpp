@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -58,6 +58,7 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbFileSystemNode,
                              nsIClassInfo)
 
 sbFileSystemNode::sbFileSystemNode()
+  : mID(0), mParentID(0)
 {
 }
 
@@ -204,17 +205,33 @@ sbFileSystemNode::ReplaceNode(const nsAString & aLeafName,
   return NS_OK;
 }
 
+nsresult 
+sbFileSystemNode::SetNodeID(PRUint32 aID)
+{
+  mID = aID;
+  return NS_OK;
+}
+
 nsresult
-sbFileSystemNode::SetParentID(const nsID & aID)
+sbFileSystemNode::GetNodeID(PRUint32 *aID)
+{
+  NS_ENSURE_ARG_POINTER(aID);
+  *aID = mID;
+  return NS_OK;
+}
+
+nsresult
+sbFileSystemNode::SetParentID(const PRUint32 aID)
 {
   mParentID = aID;
   return NS_OK;
 }
  
 nsresult 
-sbFileSystemNode::GetParentID(nsID & aOutID)
+sbFileSystemNode::GetParentID(PRUint32 *aOutID)
 {
-  aOutID = mParentID;
+  NS_ENSURE_ARG_POINTER(aOutID);
+  *aOutID = mParentID;
   return NS_OK;
 }
 
@@ -227,15 +244,18 @@ sbFileSystemNode::Read(nsIObjectInputStream *aInputStream)
   NS_ENSURE_ARG_POINTER(aInputStream);
 
   nsresult rv;
-  char *buffer;
-  rv = aInputStream->ReadBytes(sizeof(nsID), &buffer);
-  if (buffer) {
-    mParentID = *((nsID *)buffer);
-    NS_Free(buffer);
-  }
-
-  rv = aInputStream->ReadString(mLeafName);
+  rv = aInputStream->Read32(&mID);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = aInputStream->Read32(&mParentID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The string is stored as 8-bit string, convert back to UTF16.
+  nsCString storedLeafName;
+  rv = aInputStream->ReadCString(storedLeafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  mLeafName.Assign(NS_ConvertUTF8toUTF16(storedLeafName));
 
   rv = aInputStream->ReadBoolean(&mIsDir);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -258,10 +278,14 @@ sbFileSystemNode::Write(nsIObjectOutputStream *aOutputStream)
   NS_ENSURE_ARG_POINTER(aOutputStream);
 
   nsresult rv;
-  rv = aOutputStream->WriteBytes(((char *)&mParentID), sizeof(nsID));
+  rv = aOutputStream->Write32(mID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aOutputStream->WriteWStringZ(mLeafName.BeginReading());
+  rv = aOutputStream->Write32(mParentID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Save disk space by storing as UTF8 and decode back in Read().
+  rv = aOutputStream->WriteUtf8Z(mLeafName.BeginReading());
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aOutputStream->WriteBoolean(mIsDir);

@@ -85,7 +85,7 @@ sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener,
 }
 
 NS_IMETHODIMP
-sbMacFileSystemWatcher::InitWithSession(const nsAString & aSessionGuid,
+sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
                                         sbIFileSystemListener *aListener)
 {
   if (!mIsSupported) {
@@ -116,9 +116,17 @@ sbMacFileSystemWatcher::StartWatching()
 
   // Build the tree snapshot now, FSEvent stream will start once the tree
   // has been built.
-  rv = mTree->Init(mWatchPath, mIsRecursive);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  if (mShouldLoadSession) {
+#if DEBUG
+    printf("\n\n  InitWithTreeSession( %s )\n\n", mSessionID.ToString());
+#endif
+    rv = mTree->InitWithTreeSession(mSessionID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mTree->Init(mWatchPath, mIsRecursive);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 
@@ -147,7 +155,7 @@ sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
   mListener->OnWatcherStopped();
 
   if (aShouldSaveSession) {
-    nsresult rv = mTree->SaveTreeSession(mSessionGuid);
+    nsresult rv = mTree->SaveTreeSession(mSessionID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
@@ -167,8 +175,15 @@ sbMacFileSystemWatcher::OnFileSystemEvents(const sbStringArray &aEventPaths)
 // sbFileSystemTreeListener
 
 NS_IMETHODIMP
-sbMacFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
+sbMacFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
+                                    sbStringArray & aDirPathArray)
 {
+  if (mWatchPath.Equals(EmptyString())) {
+    // If the watch path is empty here, this means that the tree was loaded
+    // from a previous session. Set the watch path now.
+    mWatchPath.Assign(aTreeRootPath);
+  }
+
   // Now start watching
   CFStringRef path = 
     CFStringCreateWithCString(NULL, 

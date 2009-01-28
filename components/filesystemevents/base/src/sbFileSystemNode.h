@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -122,24 +122,27 @@ public:
                        sbFileSystemNode *aReplacementNode);
 
   //
-  // \brief Set the ID of the parent node. This is only used for
-  //        serialization and the value is never generated.
-  // \param aID The ID of the parent.
+  // \brief Setter and getters of the node ID. 
+  //        This is only used for serialization and the value is never 
+  //        generated.
   //
-  nsresult SetParentID(const nsID & aID);
- 
+  nsresult SetNodeID(PRUint32 aID);
+  nsresult GetNodeID(PRUint32 *aID);
+
   //
-  // \brief Get the ID of the parent node. This is only used for 
-  //        serialization and the value is never generated.
-  // \param aOutID The string to assign the parent ID to.
+  // \brief Getter and setters for the ID of the parent node. 
+  //        This is only used for serialization and the value is never 
+  //        generated.
   //
-  nsresult GetParentID(nsID & aOutID);
+  nsresult SetParentID(PRUint32 aID);
+  nsresult GetParentID(PRUint32 *aOutID);
 
 private:
   nsRefPtr<sbFileSystemNode> mParentNode;
   sbNodeMap                  mChildMap;
   nsString                   mLeafName;
-  nsID                       mParentID;
+  PRUint32                   mID;
+  PRUint32                   mParentID;
   PRBool                     mIsDir;
   PRInt64                    mLastModify;
 };

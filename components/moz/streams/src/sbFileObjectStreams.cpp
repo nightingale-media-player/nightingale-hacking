@@ -117,6 +117,16 @@ sbFileObjectOutputStream::WriteUint32(PRUint32 aOutInt)
 }
 
 nsresult
+sbFileObjectOutputStream::WritePRBool(PRBool aBoolean)
+{
+  if (!mFileStreamIsActive || !mObjectStreamIsActive) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  return mObjectOutputStream->WriteBoolean(aBoolean);
+}
+
+nsresult
 sbFileObjectOutputStream::WriteBytes(const char *aData, PRUint32 aLength)
 {
   NS_ENSURE_ARG_POINTER(aData);
@@ -263,6 +273,21 @@ sbFileObjectInputStream::ReadUint32(PRUint32 *aReadInt)
   }
 
   return mObjectInputStream->Read32(aReadInt);
+}
+
+nsresult
+sbFileObjectInputStream::ReadPRBool(PRBool *aReadBoolean)
+{
+  NS_ENSURE_ARG_POINTER(aReadBoolean);
+
+  if (!mFileStreamIsActive || 
+      !mBufferedStreamIsActive ||
+      !mObjectStreamIsActive) 
+  {
+    return NS_ERROR_FAILURE;
+  }
+
+  return mObjectInputStream->ReadBoolean(aReadBoolean);
 }
 
 nsresult

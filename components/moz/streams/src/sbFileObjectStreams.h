@@ -1,6 +1,6 @@
 /*
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -80,6 +80,8 @@ public:
 
   nsresult WriteUint32(PRUint32 aOutInt);
 
+  nsresult WritePRBool(PRBool aBoolean);
+
   nsresult WriteBytes(const char *aData, PRUint32 aLength);
 
 private:
@@ -108,6 +110,8 @@ public:
   nsresult ReadString(nsAString & aReadString);
 
   nsresult ReadUint32(PRUint32 *aReadInt);
+
+  nsresult ReadPRBool(PRBool *aReadBoolean);
 
   nsresult ReadBytes(PRUint32 aLength, char **aString);
 

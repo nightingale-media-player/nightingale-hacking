@@ -1,6 +1,6 @@
 /*
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -32,7 +32,6 @@
 #include <sbStringUtils.h>
 #include <nsCRT.h>
 #include "sbFileSystemChange.h"
-#include <stack>
 
 // Save ourselves some pain by getting the path seperator char.
 // NOTE: FILE_PATH_SEPARATOR is always going to one char long.
@@ -57,10 +56,11 @@ struct NodeContext
 
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileSystemTree, nsISupports)
+NS_IMPL_THREADSAFE_ISUPPORTS0(sbFileSystemTree)
 
 sbFileSystemTree::sbFileSystemTree()
-  : mIsIntialized(PR_FALSE)
+  : mShouldLoadSession(PR_FALSE)
+  , mIsIntialized(PR_FALSE)
   , mRootNodeLock(PR_NewLock())
   , mListenersLock(PR_NewLock())
 {
@@ -89,22 +89,30 @@ sbFileSystemTree::Init(const nsAString & aPath, PRBool aIsRecursive)
 
   mRootPath.Assign(aPath);
   mIsRecursiveBuild = aIsRecursive;
-  
-  nsresult rv;
-  mRootFile = do_CreateInstance("@mozilla.org/file/local;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mRootFile->InitWithPath(mRootPath);
-  NS_ENSURE_SUCCESS(rv, rv);
+  return InitTree();
+}
 
-  {
-    nsAutoLock rootNodeLock(mRootNodeLock);
-
-    rv = CreateNode(mRootFile, nsnull, getter_AddRefs(mRootNode));
-    NS_ENSURE_SUCCESS(rv, rv);
+nsresult
+sbFileSystemTree::InitWithTreeSession(nsID & aSessionID)
+{
+  if (mIsIntialized) {
+    return NS_ERROR_ALREADY_INITIALIZED;
   }
 
-  nsCOMPtr<nsIThreadManager> threadMgr = 
+  mSavedSessionID = aSessionID;
+  mShouldLoadSession = PR_TRUE;
+  
+  return InitTree();
+}
+
+nsresult
+sbFileSystemTree::InitTree()
+{
+  // This method just sets up the initial build thread. All pre-build
+  // initialization should have been done before calling this method.
+  nsresult rv;
+  nsCOMPtr<nsIThreadManager> threadMgr =
     do_GetService("@mozilla.org/thread-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -128,26 +136,54 @@ sbFileSystemTree::Init(const nsAString & aPath, PRBool aIsRecursive)
   return NS_OK;
 }
 
-nsresult
-sbFileSystemTree::InitWithTreeSession(const nsAString & aSessionGuid)
-{
-  //
-  // TODO: Write Me!
-  //
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
 void
 sbFileSystemTree::RunBuildThread()
 {
+  nsresult rv;
+
+  // If the tree should compare itself from a previous state - load that now.
+  nsRefPtr<sbFileSystemNode> savedRootNode;
+  if (mShouldLoadSession) {
+    nsRefPtr<sbFileSystemTreeState> savedTreeState = 
+      new sbFileSystemTreeState();
+    NS_ASSERTION(savedTreeState, "Could not create a sbFileSystemTreeState!");
+  
+    rv = savedTreeState->LoadTreeState(mSavedSessionID,
+                                       mRootPath,
+                                       &mIsRecursiveBuild,
+                                       getter_AddRefs(savedRootNode));
+    if (NS_FAILED(rv)) {
+      // TODO: Report error...
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to load saved tree session!");
+    }
+  }
+
+  mRootFile = do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Could not create a nsILocalFile!");
+
+  rv = mRootFile->InitWithPath(mRootPath);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Could not InitWithPath a nsILocalFile!");
+
   {
     // Don't allow any changes to structure
     nsAutoLock rootNodeLock(mRootNodeLock);
 
+    rv = CreateNode(mRootFile, nsnull, getter_AddRefs(mRootNode));
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Could not create a sbFileSystemNode!"); 
+
     // Build the tree and get the added dir paths to report back to the
     // tree listener once the build finishes.
-    nsresult rv = AddChildren(mRootPath, mRootNode, PR_TRUE, PR_FALSE);
+    rv = AddChildren(mRootPath, mRootNode, PR_TRUE, PR_FALSE);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to add children to root node!");
+  }
+
+  if (mShouldLoadSession && savedRootNode) {
+    // Now that the saved tree has been reloaded, and the current tree has
+    // been built, build a change list.
+    rv = GetTreeChanges(savedRootNode, mSessionChanges);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not get the old session tree changes!");
+    }
   }
 
   // Now notify our listeners on the main thread
@@ -156,7 +192,7 @@ sbFileSystemTree::RunBuildThread()
   NS_ASSERTION(runnable, 
                "Could not create a runnable for NotifyBuildComplete()!!");
 
-  nsresult rv = mTreesCurrentThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  rv = mTreesCurrentThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Could not dispatch NotifyBuildComplete()!");
 }
 
@@ -166,11 +202,48 @@ sbFileSystemTree::NotifyBuildComplete()
   NS_ASSERTION(NS_IsMainThread(), 
     "sbFileSystemTree::NotifyBuildComplete() not called on the main thread!");
 
+  // If the tree was initialized from a previous session, inform the listener
+  // of all the changes that have been detected from between sessions before
+  // noitifying the tree is ready. This is the documented behavior of
+  // |sbIFileSystemWatcher|. 
+  if (mShouldLoadSession && mSessionChanges.Length() > 0) {
+    nsresult rv;
+    for (PRUint32 i = 0; i < mSessionChanges.Length(); i++) {
+      nsRefPtr<sbFileSystemPathChange> curPathChange(mSessionChanges[i]);
+      if (!curPathChange) {
+        NS_WARNING("Could not get current path change!");
+        continue;
+      }
+
+      nsString curEventPath;
+      rv = curPathChange->GetChangePath(curEventPath);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Could not get the current change event path!");
+        continue;
+      }
+
+      EChangeType curChangeType;
+      rv = curPathChange->GetChangeType(&curChangeType);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Could not get current change type!");
+        continue;
+      }
+
+      rv = NotifyChanges(curEventPath, curChangeType);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Could not notify listeners of changes!");
+      }
+    }
+    
+    mSessionChanges.Clear();
+  }
+
+  // Now lock the changes.
   nsAutoLock listenerLock(mListenersLock);
 
   PRUint32 count = mListeners.Length();
   for (PRUint32 i = 0; i < count; i++) {
-    mListeners[i]->OnTreeReady(mDiscoveredDirs);
+    mListeners[i]->OnTreeReady(mRootPath, mDiscoveredDirs);
   }
 
   // Don't hang on to the values in |mDiscoveredDirs|.
@@ -181,17 +254,18 @@ nsresult
 sbFileSystemTree::Update(const nsAString & aPath)
 {
   nsRefPtr<sbFileSystemNode> pathNode;
-  nsresult rv = GetNode(aPath, getter_AddRefs(pathNode));
+  nsresult rv = GetNode(aPath, mRootNode, getter_AddRefs(pathNode));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbChangeArray pathChangesArray;
+  sbNodeChangeArray pathChangesArray;
   rv = GetNodeChanges(pathNode, aPath, pathChangesArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString path(aPath);
   PRUint32 numChanges = pathChangesArray.Length();
   for (PRUint32 i = 0; i < numChanges; i++) {
-    nsRefPtr<sbFileSystemChange> curChange = pathChangesArray[i];
+    nsRefPtr<sbFileSystemNodeChange> curChange = 
+      static_cast<sbFileSystemNodeChange *>(pathChangesArray[i].get());
 
     EChangeType curChangeType;
     rv = curChange->GetChangeType(&curChangeType);
@@ -283,12 +357,23 @@ sbFileSystemTree::RemoveListener(sbFileSystemTreeListener *aListener)
 }
 
 nsresult
-sbFileSystemTree::SaveTreeSession(const nsAString & aSessionGuid)
+sbFileSystemTree::SaveTreeSession(const nsID & aSessionID)
 {
-  //
-  // TODO: Write Me!
-  //
-  return NS_ERROR_NOT_IMPLEMENTED;
+  if (!mRootNode) {
+    return NS_ERROR_UNEXPECTED;
+  }
+
+  // XXX Move this off of the main thread
+  nsAutoLock rootNodeLock(mRootNodeLock);
+
+  nsRefPtr<sbFileSystemTreeState> treeState = new sbFileSystemTreeState();
+  NS_ENSURE_TRUE(treeState, NS_ERROR_OUT_OF_MEMORY);
+
+  nsresult rv;
+  rv = treeState->SaveTreeState(this, aSessionID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 nsresult
@@ -410,8 +495,10 @@ sbFileSystemTree::GetChildren(const nsAString & aPath,
 
 nsresult
 sbFileSystemTree::GetNode(const nsAString & aPath,
+                          sbFileSystemNode * aRootSearchNode,
                           sbFileSystemNode **aNodeRetVal)
 {
+  NS_ENSURE_ARG_POINTER(aRootSearchNode);
   NS_ENSURE_ARG_POINTER(aNodeRetVal);
   NS_ENSURE_ARG(StringBeginsWith(aPath, mRootPath));
 
@@ -426,7 +513,7 @@ sbFileSystemTree::GetNode(const nsAString & aPath,
 
   // If this is the root path, simply return the root node.
   if (path.Equals(mRootPath)) {
-    NS_IF_ADDREF(*aNodeRetVal = mRootNode);
+    NS_IF_ADDREF(*aNodeRetVal = aRootSearchNode);
     return NS_OK;
   }
 
@@ -447,8 +534,8 @@ sbFileSystemTree::GetNode(const nsAString & aPath,
                  NS_LITERAL_STRING(FILE_PATH_SEPARATOR), 
                  pathComponents);
 
-  // Start searching at the root node
-  nsRefPtr<sbFileSystemNode> curSearchNode = mRootNode;
+  // Start searching at the passed in root node
+  nsRefPtr<sbFileSystemNode> curSearchNode = aRootSearchNode;
   
   PRBool foundTargetNode = PR_TRUE;  // assume true, prove below
   PRUint32 numComponents = pathComponents.Length();
@@ -535,7 +622,7 @@ sbFileSystemTree::CreateNode(nsIFile *aFile,
 nsresult
 sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
                                  const nsAString & aNodePath,
-                                 sbChangeArray & aOutChangeArray)
+                                 sbNodeChangeArray & aOutChangeArray)
 {
   NS_ASSERTION(NS_IsMainThread(), 
     "sbFileSystemTree::GetNodeChanges() not called on the main thread!");
@@ -583,7 +670,7 @@ sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
         continue;
       }
 
-      rv = AppendCreateChangeItem(newFileNode, eAdded, aOutChangeArray);
+      rv = AppendCreateNodeChangeItem(newFileNode, eAdded, aOutChangeArray);
       if (NS_FAILED(rv)) {
         NS_WARNING("ERROR: Could not add create change item!");
         continue;
@@ -623,7 +710,7 @@ sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
           continue;
         }
 
-        rv = AppendCreateChangeItem(changedNode, eChanged, aOutChangeArray);
+        rv = AppendCreateNodeChangeItem(changedNode, eChanged, aOutChangeArray);
         if (NS_FAILED(rv)) {
           NS_WARNING("ERROR: Could not add create change item!");
           continue;
@@ -649,9 +736,140 @@ sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
       continue;
     }
 
-    rv = AppendCreateChangeItem(curNode, eRemoved, aOutChangeArray);
+    rv = AppendCreateNodeChangeItem(curNode, eRemoved, aOutChangeArray);
     NS_ASSERTION(NS_SUCCEEDED(rv), "Error: Could not add a change event!");
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbFileSystemTree::GetTreeChanges(sbFileSystemNode *aOldRootNode,
+                                 sbPathChangeArray & aOutChangeArray)
+{
+  NS_ENSURE_ARG_POINTER(mRootNode);
+  NS_ENSURE_ARG_POINTER(aOldRootNode);
+
+  // This method is called from a background thread, prevent changes
+  // to the root node until the changes have been found.
+  nsAutoLock rootNodeLock(mRootNodeLock);
+
+  // Both |mRootNode| and |aOldRootNode| are guarenteed, compare them and than
+  // start the tree search.
+  PRBool isSame = PR_FALSE;
+  nsresult rv;
+  rv = CompareNodes(mRootNode, aOldRootNode, &isSame);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!isSame) {
+    rv = AppendCreatePathChangeItem(mRootPath, eChanged, aOutChangeArray);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Need to keep the context of the node for building the path changes.
+  std::stack<NodeContext> nodeContextStack;
+  nodeContextStack.push(NodeContext(mRootPath, mRootNode));
+
+  while (!nodeContextStack.empty()) {
+    NodeContext curNodeContext = nodeContextStack.top();
+    nodeContextStack.pop();
+
+    // Lookup the old node in the tree (if it is not there, something is
+    // really wrong!).
+    nsRefPtr<sbFileSystemNode> oldNodeContext;
+    rv = GetNode(curNodeContext.fullPath, 
+                 aOldRootNode, 
+                 getter_AddRefs(oldNodeContext));
+    if (NS_FAILED(rv) || !oldNodeContext) {
+      NS_WARNING("Could not find old context node!!! Something is really bad!");
+      continue;
+    }
+
+    sbNodeMap *curNodeChildren = curNodeContext.node->GetChildren();
+    sbNodeMap oldNodeChildSnapshot(*oldNodeContext->GetChildren());
+
+    nsString curContextRootPath = EnsureTrailingPath(curNodeContext.fullPath);
+    
+    // Loop through all the added children to find changes.
+    sbNodeMapIter begin = curNodeChildren->begin();
+    sbNodeMapIter end = curNodeChildren->end();
+    sbNodeMapIter next;
+    for (next = begin; next != end; ++next) {
+      nsString curChildPath(curContextRootPath);
+      curChildPath.Append(next->first);
+        
+      // See if the current child is in the old child snapshot.
+      sbNodeMapIter found = oldNodeChildSnapshot.find(next->first);
+      if (found == oldNodeChildSnapshot.end()) {
+        // The current child node is not in the current snapshot. Report 
+        // this node and all of its children as added events.
+        std::stack<NodeContext> addedNodeContext;
+        addedNodeContext.push(NodeContext(curChildPath, next->second));
+
+        rv = CreateTreeEvents(addedNodeContext, eAdded, aOutChangeArray);
+        if (NS_FAILED(rv)) {
+          NS_WARNING("Could not report tree added events!");
+          continue;
+        }
+      }
+      else {
+        // The current child node has a match in the old snapshot. Look to see
+        // if the nodes have changed. If so, report an event.
+        isSame = PR_FALSE;
+        rv = CompareNodes(next->second, found->second, &isSame);
+        if (NS_FAILED(rv)) {
+          NS_WARNING("Could not compare child nodes!");
+          continue;
+        }
+
+        if (!isSame) {
+          rv = AppendCreatePathChangeItem(curChildPath, 
+                                          eChanged, 
+                                          aOutChangeArray);
+          if (NS_FAILED(rv)) {
+            NS_WARNING("could not create change item!");
+            continue;
+          }
+        }
+
+        // Remove this node from the old child node snapshot so that removed
+        // nodes can be determined below. Also push the current node onto the
+        // context stack so that the next batch of children can be compared.
+        oldNodeChildSnapshot.erase(found->first);
+
+        // If the current child has children, push a new node context to 
+        // process.
+        nsRefPtr<sbFileSystemNode> curChildNode(next->second);
+        if (curChildNode->GetChildren() && 
+            curChildNode->GetChildren()->size() > 0)
+        {
+          nodeContextStack.push(NodeContext(curChildPath, curChildNode));
+        }
+      }
+    }
+
+    // If there are remaining children in the old node child snapshot, report
+    // all of them and their children as deleted events.
+    if (oldNodeChildSnapshot.size() > 0) {
+      // Push all changes into the remove context stack.
+      sbNodeContextStack removedNodeContext;
+
+      sbNodeMapIter removeBegin = oldNodeChildSnapshot.begin();
+      sbNodeMapIter removeEnd = oldNodeChildSnapshot.end();
+      sbNodeMapIter removeNext;
+      for (removeNext = removeBegin; removeNext != removeEnd; ++removeNext) {
+        nsString curRemoveChildPath(curContextRootPath);
+        curRemoveChildPath.Append(removeNext->first);
+
+        removedNodeContext.push(NodeContext(curRemoveChildPath, 
+                                            removeNext->second));
+      }
+    
+      rv = CreateTreeEvents(removedNodeContext, eRemoved, aOutChangeArray);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  }  // end while
 
   return NS_OK;
 }
@@ -728,7 +946,7 @@ sbFileSystemTree::NotifyChanges(nsAString & aChangePath,
 {
   NS_ASSERTION(NS_IsMainThread(), 
     "sbFileSystemTree::NotifyChanges() not called on the main thread!");
-
+  
   nsAutoLock listenerLock(mListenersLock);
 
   PRUint32 listenerCount = mListeners.Length();
@@ -757,17 +975,110 @@ sbFileSystemTree::GetPathEntries(const nsAString & aPath,
 }
 
 /* static */ nsresult
-sbFileSystemTree::AppendCreateChangeItem(sbFileSystemNode *aChangedNode,
-                                         EChangeType aChangeType,
-                                         sbChangeArray & aChangeArray)
+sbFileSystemTree::CompareNodes(sbFileSystemNode *aNode1,
+                               sbFileSystemNode *aNode2,
+                               PRBool *aIsSame)
+{
+  NS_ENSURE_ARG_POINTER(aNode1);
+  NS_ENSURE_ARG_POINTER(aNode2);
+
+  nsresult rv;
+#if DEBUG
+  // Sanity check the node leaf names.
+  nsString node1Name;
+  rv = aNode1->GetLeafName(node1Name);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString node2Name;
+  rv = aNode2->GetLeafName(node2Name);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!node1Name.Equals(node2Name)) {
+    NS_WARNING("CompareNodes() was given two nodes w/o the same leaf name!");
+    return NS_ERROR_FAILURE;
+  }
+#endif
+
+  PRInt64 node1Modify;
+  rv = aNode1->GetLastModify(&node1Modify);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRInt64 node2Modify;
+  rv = aNode2->GetLastModify(&node2Modify);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aIsSame = (node1Modify == node2Modify);
+  return NS_OK;
+}
+
+nsresult
+sbFileSystemTree::CreateTreeEvents(sbNodeContextStack & aContextStack,
+                                   EChangeType aChangeType,
+                                   sbPathChangeArray & aChangeArray)
+{
+  nsresult rv;
+  while (!aContextStack.empty()) {
+    NodeContext curNodeContext = aContextStack.top();
+    aContextStack.pop();
+
+    // First, create the change item.
+    rv = AppendCreatePathChangeItem(curNodeContext.fullPath,
+                                    aChangeType,
+                                    aChangeArray);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not create a change item!");
+      continue;
+    }
+
+    // Next, push all the child nodes of the current path onto the stack.
+    sbNodeMap *childNodes = curNodeContext.node->GetChildren();
+    if (!childNodes || childNodes->size() == 0) {
+      continue;
+    }
+
+    nsString curContextPath = EnsureTrailingPath(curNodeContext.fullPath);
+
+    sbNodeMapIter begin = childNodes->begin();
+    sbNodeMapIter end = childNodes->end();
+    sbNodeMapIter next;
+    for (next = begin; next != end; ++next) {
+      nsString curChildPath(curContextPath);
+      curChildPath.Append(next->first);
+
+      aContextStack.push(NodeContext(curChildPath, next->second));
+    }
+  }
+
+  return NS_OK;
+}
+
+/* static */ nsresult
+sbFileSystemTree::AppendCreateNodeChangeItem(sbFileSystemNode *aChangedNode,
+                                             EChangeType aChangeType,
+                                             sbNodeChangeArray & aChangeArray)
 {
   NS_ENSURE_ARG_POINTER(aChangedNode);
 
-  nsRefPtr<sbFileSystemChange> changedItem =
-    new sbFileSystemChange(aChangedNode, aChangeType);
+  nsRefPtr<sbFileSystemNodeChange> changedItem =
+    new sbFileSystemNodeChange(aChangedNode, aChangeType);
   NS_ENSURE_TRUE(changedItem, NS_ERROR_OUT_OF_MEMORY);
 
-  nsRefPtr<sbFileSystemChange> *appendResult =
+  nsRefPtr<sbFileSystemNodeChange> *appendResult =
+    aChangeArray.AppendElement(changedItem);
+
+  return (appendResult ? NS_OK : NS_ERROR_FAILURE);
+}
+
+/* static */ nsresult
+sbFileSystemTree::AppendCreatePathChangeItem(const nsAString & aEventPath,
+                                             EChangeType aChangeType,
+                                             sbPathChangeArray & aChangeArray)
+{
+  nsRefPtr<sbFileSystemPathChange> changedItem =
+    new sbFileSystemPathChange(aEventPath, aChangeType);
+  NS_ENSURE_TRUE(changedItem, NS_ERROR_OUT_OF_MEMORY);
+
+  nsRefPtr<sbFileSystemPathChange> *appendResult =
     aChangeArray.AppendElement(changedItem);
 
   return (appendResult ? NS_OK : NS_ERROR_FAILURE);

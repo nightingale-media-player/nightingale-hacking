@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -28,6 +28,7 @@
 #define sbFileSystemTreeListener_h_
 
 #include <nsStringAPI.h>
+#include <nsTArray.h>
 
 typedef nsTArray<nsString> sbStringArray;
 
@@ -60,7 +61,8 @@ public:
   //                      that were discovered during the initial build.
   //                      NOTE: This does not include the root directory.
   //
-  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray) = 0;
+  NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
+                         sbStringArray & aDirPathArray) = 0;
 };
 
 #endif  // sbFileSystemTreeListener_h_

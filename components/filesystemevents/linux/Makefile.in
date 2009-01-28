@@ -3,7 +3,7 @@
 #
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2009 POTI, Inc.
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
@@ -37,6 +37,8 @@ endif
 CPP_SRCS = $(topsrcdir)/components/filesystemevents/base/src/sbBaseFileSystemWatcher.cpp \
            $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemNode.cpp \
            $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemTree.cpp \
+           $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemTreeState.cpp \
+           $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemChange.cpp \
            sbLinuxFileSystemWatcher.cpp \
            ../FileSystemComponent.cpp \
            $(NULL)
@@ -45,10 +47,12 @@ CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(topsrcdir)/components/filesystemevents \
                $(topsrcdir)/components/filesystemevents/base/src \
                $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/streams/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -74,6 +78,7 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozStreams$(DEBUG:%=_d) \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(NULL)
 

@@ -35,8 +35,10 @@ NS_IMPL_ISUPPORTS1(sbBaseFileSystemWatcher, sbIFileSystemWatcher)
 
 sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()
 {
-  // Assume the file system watcher is supported and let sub-class override.
+  mIsRecursive = PR_TRUE;
+  mIsWatching = PR_FALSE;
   mIsSupported = PR_TRUE;
+  mShouldLoadSession = PR_FALSE;
 }
 
 sbBaseFileSystemWatcher::~sbBaseFileSystemWatcher()
@@ -61,30 +63,27 @@ sbBaseFileSystemWatcher::Init(sbIFileSystemListener *aListener,
     do_GetService("@mozilla.org/uuid-generator;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsID id;
-  rv = uuidGen->GenerateUUIDInPlace(&id);
+  rv = uuidGen->GenerateUUIDInPlace(&mSessionID);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  char guidChars[NSID_LENGTH];
-  id.ToProvidedString(guidChars);
-  mSessionGuid.Assign(NS_ConvertASCIItoUTF16(guidChars));
-
+  
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbBaseFileSystemWatcher::InitWithSession(const nsAString & aSessionGuid,
+sbBaseFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
                                          sbIFileSystemListener *aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
 
+  mIsWatching = PR_FALSE;
   mListener = aListener;
-  mSessionGuid.Assign(aSessionGuid);
 
-  //
-  // TODO: Load the tree from the saved session GUID.
-  //
-
+  if (!mSessionID.Parse(nsCString(aSessionGuid).get())) {
+    return NS_ERROR_FAILURE;
+  }
+  
+  mShouldLoadSession = PR_TRUE;
+  
   return NS_OK;
 }
 
@@ -118,9 +117,11 @@ sbBaseFileSystemWatcher::GetWatchPath(nsAString & aWatchPath)
 }
 
 NS_IMETHODIMP
-sbBaseFileSystemWatcher::GetSessionGuid(nsAString & aSessionGuid)
+sbBaseFileSystemWatcher::GetSessionGuid(nsACString & aSessionGuid)
 {
-  aSessionGuid.Assign(mSessionGuid);
+  char idChars[NSID_LENGTH];
+  mSessionID.ToProvidedString(idChars);
+  aSessionGuid.Assign(idChars);
   return NS_OK;
 }
 
@@ -159,7 +160,8 @@ sbBaseFileSystemWatcher::OnChangeFound(nsAString & aChangePath,
 }
 
 NS_IMETHODIMP
-sbBaseFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
+sbBaseFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
+                                     sbStringArray & aDirPathArray)
 {
   // Return fail here - since the implementor needs to implement this to start
   // its native file-system event system.

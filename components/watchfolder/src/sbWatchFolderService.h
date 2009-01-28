@@ -105,9 +105,11 @@ private:
   sbStringVector                 mAddedPaths;
   sbStringVector                 mRemovedPaths;
   nsString                       mWatchPath;
+  nsCString                      mFileSystemWatcherGUID;
   PRBool                         mIsSupported;
   PRBool                         mIsEnabled;
   PRBool                         mIsWatching;
+  PRBool                         mWatcherIsReady;
   PRBool                         mEventPumpTimerIsSet;
   PRBool                         mAddDelayTimerIsSet;
   PRBool                         mChangeDelayTimerIsSet;

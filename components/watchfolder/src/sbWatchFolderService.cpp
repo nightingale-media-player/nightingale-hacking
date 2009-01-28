@@ -43,8 +43,9 @@
 #include <sbIURIImportService.h>
 #include <sbIApplicationController.h>
 
-#define PREF_WATCHFOLDER_ENABLE "songbird.watch_folder.enable"
-#define PREF_WATCHFOLDER_PATH   "songbird.watch_folder.path"
+#define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
+#define PREF_WATCHFOLDER_PATH        "songbird.watch_folder.path"
+#define PREF_WATCHFOLDER_SESSIONGUID "songbird.watch_folder.sessionguid"
 
 #define ADD_DELAY_TIMER_DELAY    1500
 #define CHANGE_DELAY_TIMER_DELAY 30000
@@ -68,6 +69,7 @@ sbWatchFolderService::sbWatchFolderService()
   mEventPumpTimerIsSet = PR_FALSE;
   mAddDelayTimerIsSet = PR_FALSE;
   mChangeDelayTimerIsSet = PR_FALSE;
+  mWatcherIsReady = PR_FALSE;
   mCurrentProcessType = eNone;
 }
 
@@ -131,6 +133,9 @@ sbWatchFolderService::Init()
   rv = prefBranch->AddObserver(PREF_WATCHFOLDER_PATH, this, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = prefBranch->AddObserver(PREF_WATCHFOLDER_SESSIONGUID, this, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mLibraryUtils =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -164,8 +169,16 @@ sbWatchFolderService::StartWatching()
     do_CreateInstance("@songbirdnest.com/filesystem/watcher;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mFileSystemWatcherGUID.Equals(EmptyCString())) {
+    // Init a new file-system watcher. The session GUID for the new watcher
+    // will be saved in StopWatching().
+    rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mFileSystemWatcher->InitWithSession(mFileSystemWatcherGUID, this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = mFileSystemWatcher->StartWatching();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -187,8 +200,26 @@ sbWatchFolderService::StopWatching()
   mChangedPaths.clear();
   mDelayedChangedPaths.clear();
 
+  nsresult rv;
+  if (mFileSystemWatcherGUID.Equals(EmptyCString())) {
+    // This is the first time the file system watcher has run. Save the session
+    // guid so changes can be determined when the watcher starts next.
+    nsCOMPtr<nsIPrefBranch2> prefBranch =
+      do_GetService("@mozilla.org/preferences-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mFileSystemWatcher->GetSessionGuid(mFileSystemWatcherGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = prefBranch->SetCharPref(PREF_WATCHFOLDER_SESSIONGUID,
+                                 mFileSystemWatcherGUID.get());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Stop and kill the file-system watcher.
-  mFileSystemWatcher->StopWatching(PR_FALSE);  // don't save tree yet
+  rv = mFileSystemWatcher->StopWatching(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mFileSystemWatcher = nsnull;
   
   mIsWatching = PR_FALSE;
@@ -373,8 +404,9 @@ sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
 NS_IMETHODIMP
 sbWatchFolderService::OnWatcherStarted()
 {
-  // Now start up the timer
   nsresult rv;
+
+  // Now start up the timer
   if (!mEventPumpTimer) {
     mEventPumpTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -389,6 +421,29 @@ sbWatchFolderService::OnWatcherStarted()
     mChangeDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Process any event received before the watcher has started. These will
+  // be all the events from comparing the de-serialized session to the current
+  // filesystem state.
+  if (mChangedPaths.size() > 0) {
+    rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  if (mAddedPaths.size() > 0) {
+    rv = mAddDelayTimer->InitWithCallback(this, 
+                                          ADD_DELAY_TIMER_DELAY,
+                                          nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mAddDelayTimerIsSet = PR_TRUE;
+    mShouldProcessAddedPaths = PR_TRUE;
+  }
+  if (mRemovedPaths.size() > 0) {
+    rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  mWatcherIsReady = PR_TRUE;
 
   return NS_OK;
 }
@@ -405,6 +460,8 @@ sbWatchFolderService::OnWatcherStopped()
   if (mChangeDelayTimer) {
     mChangeDelayTimer->Cancel();
   }
+
+  mWatcherIsReady = PR_FALSE;
   
   return NS_OK;
 }
@@ -412,37 +469,45 @@ sbWatchFolderService::OnWatcherStopped()
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
-  // See if the changed path queue already has this path inside of it.
-  PRBool foundMatchingPath = PR_FALSE;
-  sbStringVectorIter begin = mChangedPaths.begin();
-  sbStringVectorIter end = mChangedPaths.end();
-  sbStringVectorIter next;
-  for (next = begin; next != end && !foundMatchingPath; ++next) {
-    if (aFilePath.Equals(*next)) {
-      foundMatchingPath = PR_TRUE;
+  // The watcher will report all changes from the previous session before the
+  // watcher has started. Don't set the timer until then.
+  if (mWatcherIsReady) {
+    // See if the changed path queue already has this path inside of it.
+    
+    PRBool foundMatchingPath = PR_FALSE;
+    sbStringVectorIter begin = mChangedPaths.begin();
+    sbStringVectorIter end = mChangedPaths.end();
+    sbStringVectorIter next;
+    for (next = begin; next != end && !foundMatchingPath; ++next) {
+      if (aFilePath.Equals(*next)) {
+        foundMatchingPath = PR_TRUE;
+      }
     }
-  }
 
-  nsresult rv;
-  if (foundMatchingPath) {
-    // If this path is currently in the changed path vector already, 
-    // delay processing this path until a later time.
-    mDelayedChangedPaths.push_back(nsString(aFilePath));
+    nsresult rv;
+    if (foundMatchingPath) {
+      // If this path is currently in the changed path vector already, 
+      // delay processing this path until a later time.
+      mDelayedChangedPaths.push_back(nsString(aFilePath));
 
-    // Start the delayed timer if it isn't running already.
-    if (!mChangeDelayTimerIsSet) {
-      rv = mChangeDelayTimer->InitWithCallback(this,
-                                               CHANGE_DELAY_TIMER_DELAY,
-                                               nsITimer::TYPE_ONE_SHOT);
+      // Start the delayed timer if it isn't running already.
+      if (!mChangeDelayTimerIsSet) {
+        rv = mChangeDelayTimer->InitWithCallback(this,
+                                                 CHANGE_DELAY_TIMER_DELAY,
+                                                 nsITimer::TYPE_ONE_SHOT);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mChangeDelayTimerIsSet = PR_TRUE;
+      }
+    }
+    else {
+      mChangedPaths.push_back(nsString(aFilePath));
+      rv = SetEventPumpTimer();
       NS_ENSURE_SUCCESS(rv, rv);
-
-      mChangeDelayTimerIsSet = PR_TRUE;
     }
   }
   else {
     mChangedPaths.push_back(nsString(aFilePath));
-    rv = SetEventPumpTimer();
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -452,8 +517,13 @@ NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
   mRemovedPaths.push_back(nsString(aFilePath));
-  nsresult rv = SetEventPumpTimer();
-  NS_ENSURE_SUCCESS(rv, rv);
+
+  // The watcher will report all changes from the previous session before the
+  // watcher has started. Don't set the timer until then.
+  if (mWatcherIsReady) {
+    nsresult rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 
@@ -462,23 +532,27 @@ sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
   mAddedPaths.push_back(nsString(aFilePath));
 
-  if (mAddDelayTimerIsSet) {
-    // The timer is currently set, and more added events have been received.
-    // Toggle || so that the timer will reset itself instead of processing 
-    // the added event paths when it fires.
-    mShouldProcessAddedPaths = PR_FALSE;
+  // The watcher will report all changes from the previous session before the
+  // watcher has started. Don't set the timer until then.
+  if (mWatcherIsReady) {
+    if (mAddDelayTimerIsSet) {
+      // The timer is currently set, and more added events have been received.
+      // Toggle || so that the timer will reset itself instead of processing 
+      // the added event paths when it fires.
+      mShouldProcessAddedPaths = PR_FALSE;
+    }
+    else {
+      nsresult rv;
+      rv = mAddDelayTimer->InitWithCallback(this, 
+                                            ADD_DELAY_TIMER_DELAY,
+                                            nsITimer::TYPE_ONE_SHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      mAddDelayTimerIsSet = PR_TRUE;
+      mShouldProcessAddedPaths = PR_TRUE;
+    }
   }
-  else {
-    nsresult rv;
-    rv = mAddDelayTimer->InitWithCallback(this, 
-                                          ADD_DELAY_TIMER_DELAY,
-                                          nsITimer::TYPE_ONE_SHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    mAddDelayTimerIsSet = PR_TRUE;
-    mShouldProcessAddedPaths = PR_TRUE;
-  }
-  
+
   return NS_OK;
 }
 
@@ -688,6 +762,11 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
           }
         }
       }
+    }
+    else if (changedPrefName.Equals(NS_LITERAL_STRING(PREF_WATCHFOLDER_SESSIONGUID))) {
+      rv = prefBranch->GetCharPref(PREF_WATCHFOLDER_SESSIONGUID,
+                                   getter_Copies(mFileSystemWatcherGUID));
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
  

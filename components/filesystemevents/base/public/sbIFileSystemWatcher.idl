@@ -55,7 +55,7 @@ interface sbIFileSystemWatcher : nsISupports
   // \param aSessionGuid The session GUID to attempt to restore from.
   // \param aListener the file system listener callback instance.
   //
-  void initWithSession(in AString aSessionGuid,
+  void initWithSession(in ACString aSessionGuid,
                        in sbIFileSystemListener aListener);
 
   //
@@ -91,7 +91,7 @@ interface sbIFileSystemWatcher : nsISupports
   //        NOTE: Use this value to restore a session and receive callback
   //              information about all changes since the session was last run.
   //
-  readonly attribute AString sessionGuid;
+  readonly attribute ACString sessionGuid;
 
   //
   // \brief Find out if the file system watcher is supported on the current OS.

@@ -52,16 +52,18 @@ public:
   // sbFileSystemTreeListener
   NS_IMETHOD OnChangeFound(nsAString & aChangePath, 
                            EChangeType aChangeType);
-  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);
+  NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
+                         sbStringArray & aDirPathArray);
 
 protected:
   nsRefPtr<sbFileSystemTree>      mTree;
   nsCOMPtr<sbIFileSystemListener> mListener;
   nsString                        mWatchPath;
-  nsString                        mSessionGuid;
+  nsID                            mSessionID;
   PRBool                          mIsRecursive;
   PRBool                          mIsWatching;
   PRBool                          mIsSupported;
+  PRBool                          mShouldLoadSession;
 };
 
 #endif  // sbBaseFileSystemWatcher_h_

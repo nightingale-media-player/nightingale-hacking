@@ -1,6 +1,6 @@
 /*
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -23,71 +23,76 @@
 #ifndef sbFileSystemChange_h_
 #define sbFileSystemChange_h_
 
-class sbFileSystemNode;
+#include <nsAutoPtr.h>
+#include <nsStringAPI.h>
 #include "sbFileSystemTreeListener.h"
+
+class sbFileSystemNode;
 
 
 //
-// \brief Simple class for mapping a change type and a file system node.
-//        This class is used to determine diffs between file system snapshots.
+// \brief Abstract class for changes.
 //
 class sbFileSystemChange : public nsISupports
 {
 public:
   sbFileSystemChange();
-  sbFileSystemChange(sbFileSystemNode *aNode, EChangeType aChangeType);
   virtual ~sbFileSystemChange();
 
   NS_DECL_ISUPPORTS
 
-  nsresult SetNode(sbFileSystemNode *aNode)
-  {
-    NS_ENSURE_ARG_POINTER(aNode);
-    mNode = aNode;
-    return NS_OK;
-  }
+  //
+  // \brief Getter and setter for the change type of the change.
+  //
+  NS_IMETHOD SetChangeType(EChangeType aChangeType);
+  NS_IMETHOD GetChangeType(EChangeType *aChangeType);
 
-  nsresult GetNode(sbFileSystemNode **aRetVal)
-  {
-    NS_ENSURE_ARG_POINTER(aRetVal);
-    NS_IF_ADDREF(*aRetVal = mNode);
-    return NS_OK;
-  }
+protected:
+  EChangeType mChangeType;
+};
 
-  nsresult SetChangeType(EChangeType aChangeType)
-  {
-    mChangeType = aChangeType;
-    return NS_OK;
-  }
+//------------------------------------------------------------------------------
 
-  nsresult GetChangeType(EChangeType *aRetVal)
-  {
-    NS_ENSURE_ARG_POINTER(aRetVal);
-    *aRetVal = mChangeType;
-    return NS_OK;
-  }
+//
+// \brief Simple class for mapping a change type and a file system node.
+//        This class is used to determine diffs between file system snapshots.
+//
+class sbFileSystemNodeChange : public sbFileSystemChange 
+{
+public:
+  sbFileSystemNodeChange();
+  sbFileSystemNodeChange(sbFileSystemNode *aNode, EChangeType aChangeType);
+  virtual ~sbFileSystemNodeChange();
+
+  //
+  // \brief Getter and setter for the changed node.
+  //
+  nsresult SetNode(sbFileSystemNode *aNode);
+  nsresult GetNode(sbFileSystemNode **aRetVal);
 
 private:
   nsRefPtr<sbFileSystemNode> mNode;
-  EChangeType                mChangeType; 
 };
 
-NS_IMPL_ISUPPORTS0(sbFileSystemChange)
+//------------------------------------------------------------------------------
 
-sbFileSystemChange::sbFileSystemChange()
+class sbFileSystemPathChange : public sbFileSystemChange
 {
-}
+public:
+  sbFileSystemPathChange();
+  sbFileSystemPathChange(const nsAString & aChangePath, 
+                         EChangeType aChangeType);
+  virtual ~sbFileSystemPathChange();
 
-sbFileSystemChange::sbFileSystemChange(sbFileSystemNode *aNode, 
-                                       EChangeType aChangeType)
-  : mNode(aNode), mChangeType(aChangeType)
-{
-  NS_ASSERTION(aNode, "Invalid node passed in to constructor!");
-}
+  //
+  // \brief Getter and setter for the changed path.
+  //
+  nsresult SetChangePath(const nsAString & aChangePath);
+  nsresult GetChangePath(nsAString & aChangePath);
 
-sbFileSystemChange::~sbFileSystemChange()
-{
-}
+private:
+  nsString    mChangePath;
+};
 
 #endif  // sbFileSystemChange_h_
 
