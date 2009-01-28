@@ -178,7 +178,7 @@ sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
   Cleanup();
 
   if (aShouldSaveSession) {
-    nsresult rv = mTree->SaveTreeSession(mSessionGuid);
+    nsresult rv = mTree->SaveTreeSession(mSessionID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

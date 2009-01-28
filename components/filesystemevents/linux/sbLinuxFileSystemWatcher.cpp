@@ -138,7 +138,7 @@ sbLinuxFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (aShouldSaveSession) {
-    rv = mTree->SaveTreeSession(mSessionGuid);
+    rv = mTree->SaveTreeSession(mSessionID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
