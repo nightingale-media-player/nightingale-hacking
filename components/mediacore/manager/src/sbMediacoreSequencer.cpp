@@ -837,12 +837,19 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   }
 #endif
 
+  if(!mCurrentItem) {
+    return NS_OK;
+  }
+
+  //
   // For local files,  we want to keep the existing property rather than 
   // overriding it here if we successfully imported metadata in the first
   // place. As a proxy for "successfully imported metadata", we check if
   // the artist is non-empty.
+  //
   // We allow overriding for non-file URIs so that streams that update
   // their metadata periodically can continue to do so.
+  //
   nsString artistName;
   nsresult rv = mCurrentItem->GetProperty(
           NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), artistName);
@@ -1243,6 +1250,9 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   }
   else {
     uri = aURI;
+    
+    mCurrentItem = nsnull;
+    mCurrentItemIndex = 0;
   }
 
   nsCOMPtr<sbIMediacoreVoting> voting = 

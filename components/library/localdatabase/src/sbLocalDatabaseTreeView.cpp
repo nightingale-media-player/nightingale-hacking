@@ -2019,34 +2019,20 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
           rv = sequencer->GetView(getter_AddRefs(playingView));
           NS_ENSURE_SUCCESS(rv, rv);
 
-          PRUint32 playingIndex = 0;
-          rv = sequencer->GetViewPosition(&playingIndex);
-          NS_ENSURE_SUCCESS(rv, rv);
+          // GetView can return null without error.
+          if (playingView) {
+            PRUint32 playingIndex = 0;
+            rv = sequencer->GetViewPosition(&playingIndex);
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          nsCOMPtr<sbIMediaItem> playingItem;
-          rv = playingView->GetItemByIndex(playingIndex,
-                                           getter_AddRefs(playingItem));
-          NS_ENSURE_SUCCESS(rv, rv);
+            nsCOMPtr<sbIMediaItem> playingItem;
+            rv = playingView->GetItemByIndex(playingIndex,
+              getter_AddRefs(playingItem));
+            NS_ENSURE_SUCCESS(rv, rv);
 
-          rv = OnTrackChange(playingItem, playingView, playingIndex);
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          // XXXsteve It is possible that the item at the currently playing index
-          // is not actually the playing item if the item has been removed from
-          // the view.  Double check this before lighting up the indicator.
-          // This should be removed when bug 7409 is fixed.
-          //nsString playingItemGUID;
-          //rv = playingItem->GetGuid(playingItemGUID);
-          //NS_ENSURE_SUCCESS(rv, rv);
-
-          //nsString actuallyPlayingGUID;
-          //rv = mPlaylistPlayback->GetCurrentGUID(actuallyPlayingGUID);
-          //NS_ENSURE_SUCCESS(rv, rv);
-
-          //if (playingItemGUID.Equals(actuallyPlayingGUID)) {
-          //  rv = OnTrackChange(playingItem, playingView, playingIndex);
-          //  NS_ENSURE_SUCCESS(rv, rv);
-          //}
+            rv = OnTrackChange(playingItem, playingView, playingIndex);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         }
       }
       else {
