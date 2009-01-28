@@ -67,7 +67,7 @@ sbFileSystemNodeChange::~sbFileSystemNodeChange()
 {
 }
 
-NS_IMETHODIMP
+nsresult
 sbFileSystemNodeChange::SetNode(sbFileSystemNode *aNode)
 {
   NS_ENSURE_ARG_POINTER(aNode);
@@ -75,7 +75,7 @@ sbFileSystemNodeChange::SetNode(sbFileSystemNode *aNode)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbFileSystemNodeChange::GetNode(sbFileSystemNode **aRetVal)
 {
   NS_ENSURE_ARG_POINTER(aRetVal);
