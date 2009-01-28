@@ -72,7 +72,7 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozStreams$(DEBUG:%=_d) \
+  $(SONGBIRD_OBJDIR)/components/moz/streams/src/sbMozStreams$(DEBUG:%=_d) \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
   $(NULL)
 
