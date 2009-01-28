@@ -57,7 +57,7 @@
   <vbox>
     <vbox>
       <!-- Preface the error with a quick message -->
-      <label class="header" style="font-size: 105%"  value="&mediacore.error.preface;" />
+      <label class="header" value="&mediacore.error.preface;" />
 
       <!-- Detailed description of the error -->
       <vbox id="mediacore_error_desc_box">
