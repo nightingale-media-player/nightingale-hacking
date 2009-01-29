@@ -86,37 +86,39 @@ int main(int argc, LPTSTR *argv) {
           destAppIniName(ResolvePathName("$/application.ini"));
   srcAppIniName.append(_T("application.ini"));
   
-  /// check for the application.ini versions
-  IniFile_t srcAppIni, destAppIni;
-  result = ReadIniFile(srcAppIniName.c_str(), srcAppIni);
-  if (result) {
-    LogMessage("Failed to read source application.ini file %S: %i",
-               srcAppIniName.c_str(), result);
-    ShowFatalError("Failed to read source application.ini file %s: %i",
-                   srcAppIniName.c_str(), result);
-    return result;
-  }
-  result = ReadIniFile(destAppIniName.c_str(), destAppIni);
-  if (result) {
-    LogMessage("Failed to read destination application.ini file %S: %i",
-               destAppIniName.c_str(), result);
-    ShowFatalError("Failed to read destination application.ini file %s: %i",
-                   destAppIniName.c_str(), result);
-    return result;
-  }
-  
-  std::string srcAppVer = srcAppIni["app"]["BuildID"],
-              destAppVer = destAppIni["app"]["BuildID"];
-  LogMessage("Checking application.ini build IDs... old=[%s] new=[%s]",
-             srcAppVer.c_str(), destAppVer.c_str());
-  if (srcAppVer != destAppVer) {
-    LogMessage("source and destination application.ini are for different builds! (%s / %s)",
-               srcAppVer.c_str(),
-               destAppVer.c_str());
-    ShowFatalError("source and destination application.ini are for different builds! (%S / %S)",
-                   srcAppVer.c_str(),
-                   destAppVer.c_str());
-    return DH_ERROR_UNKNOWN;
+  /// check for the application.ini versions, except during uninstall
+  if (ConvertUTFnToUTF8(argv[1]) != "uninstall") {
+    IniFile_t srcAppIni, destAppIni;
+    result = ReadIniFile(srcAppIniName.c_str(), srcAppIni);
+    if (result) {
+      LogMessage("Failed to read source application.ini file %S: %i",
+                 srcAppIniName.c_str(), result);
+      ShowFatalError("Failed to read source application.ini file %s: %i",
+                     srcAppIniName.c_str(), result);
+      return result;
+    }
+    result = ReadIniFile(destAppIniName.c_str(), destAppIni);
+    if (result) {
+      LogMessage("Failed to read destination application.ini file %S: %i",
+                 destAppIniName.c_str(), result);
+      ShowFatalError("Failed to read destination application.ini file %s: %i",
+                     destAppIniName.c_str(), result);
+      return result;
+    }
+    
+    std::string srcAppVer = srcAppIni["app"]["BuildID"],
+                destAppVer = destAppIni["app"]["BuildID"];
+    LogMessage("Checking application.ini build IDs... old=[%s] new=[%s]",
+               srcAppVer.c_str(), destAppVer.c_str());
+    if (srcAppVer != destAppVer) {
+      LogMessage("source and destination application.ini are for different builds! (%s / %s)",
+                 srcAppVer.c_str(),
+                 destAppVer.c_str());
+      ShowFatalError("source and destination application.ini are for different builds! (%S / %S)",
+                     srcAppVer.c_str(),
+                     destAppVer.c_str());
+      return DH_ERROR_UNKNOWN;
+    }
   }
   
   /// read the new distribution.ini
@@ -143,7 +145,7 @@ int main(int argc, LPTSTR *argv) {
     if (result) {
       LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
     }
-  } else {
+  } else if (section != "steps:uninstall") { /* don't copy on uninstall */
     IniFile_t destDistIni;
     std::string destDistPath = GetLeafName(ConvertUTFnToUTF8(distIni));
     destDistPath.insert(0, "$/distribution/");
