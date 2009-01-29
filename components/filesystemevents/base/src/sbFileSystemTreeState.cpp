@@ -390,7 +390,7 @@ sbFileSystemTreeState::GetTreeSessionFile(const nsID & aSessionID,
 
   PRBool folderExists = PR_FALSE;
   if (NS_SUCCEEDED(treeFolder->Exists(&folderExists)) && !folderExists) {
-    rv = treeFolder->Create(nsIFile::DIRECTORY_TYPE, 0x600);
+    rv = treeFolder->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -408,7 +408,7 @@ sbFileSystemTreeState::GetTreeSessionFile(const nsID & aSessionID,
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    rv = newFile->Create(nsIFile::NORMAL_FILE_TYPE, 0x600);
+    rv = newFile->Create(nsIFile::NORMAL_FILE_TYPE, 0600);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
