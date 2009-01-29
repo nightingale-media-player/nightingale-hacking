@@ -81,7 +81,6 @@ Metrics.prototype = {
    */
   uploadMetrics: function()
   {
-    dump("*** UPLOADING METRICS ***");
     var user_install_uuid = this._getPlayerUUID();
     
     var xulRuntime = Components.classes["@mozilla.org/xre/app-info;1"].getService(Components.interfaces.nsIXULRuntime);    
