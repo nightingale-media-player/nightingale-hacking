@@ -68,6 +68,7 @@
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
 #include <sbIAlbumArtFetcherSet.h>
+#include <sbAlbumArtCommon.h>
 
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -720,7 +721,7 @@ NS_IMETHODIMP sbMetadataJob::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 }
 
 /* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
-NS_IMETHODIMP sbMetadataJob::OnResult(nsIURI* aImageLocation,
+NS_IMETHODIMP sbMetadataJob::OnResult(nsIURI*       aImageLocation,
                                       sbIMediaItem* aMediaItem)
 {
   TRACE(("sbMetadataJob::OnResult"));
@@ -729,15 +730,32 @@ NS_IMETHODIMP sbMetadataJob::OnResult(nsIURI* aImageLocation,
   nsresult rv;
 
   if (aImageLocation) {
-    nsCAutoString imageFileURISpec;
-    rv = aImageLocation->GetSpec(imageFileURISpec);
-    if (NS_SUCCEEDED(rv)) {
-      rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                                   NS_ConvertUTF8toUTF16(imageFileURISpec));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    rv = SetItemArtwork(aImageLocation, aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  return NS_OK;
+}
+
+/* onAlbumResult(in nsIURI aImageLocation, in nsIArray aMediaItems); */
+NS_IMETHODIMP sbMetadataJob::OnAlbumResult(nsIURI*    aImageLocation,
+                                           nsIArray*  aMediaItems)
+{
+  TRACE(("sbMetadataJob::OnAlbumResult"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  nsresult rv;
+
+  if (aImageLocation) {
+    rv = SetItemsArtwork(aImageLocation, aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+/* onAlbumComplete(in nsIArray aMediaItems); */
+NS_IMETHODIMP sbMetadataJob::OnAlbumComplete(nsIArray* aMediaItems)
+{
   return NS_OK;
 }
 
@@ -769,7 +787,12 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   nsCOMPtr<sbIMediaItem> item;
   rv = aJobItem->GetMediaItem(getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = artFetcher->FetchAlbumArtForMediaItem(item, this);
+  nsCOMPtr<nsIMutableArray> items =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = items->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, item), PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = artFetcher->FetchAlbumArtForAlbum(items, this);
   NS_ENSURE_SUCCESS(rv, rv);
   
   TRACE(("sbMetadataJob::ReadAlbumArtwork - finished rv %08x\n",

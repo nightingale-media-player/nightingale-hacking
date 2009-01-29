@@ -49,7 +49,7 @@ interface nsIDOMWindow;
 interface sbIAlbumArtListener;
 interface sbIMediaItem;
 
-[scriptable, uuid(613e64a8-c0d0-4c3a-920f-272f66fe5256)]
+[scriptable, uuid(55cf9123-343b-4012-9f99-11f114bc2f1b)]
 interface sbIAlbumArtFetcher : nsISupports
 {
   /**
@@ -82,7 +82,7 @@ interface sbIAlbumArtFetcher : nsISupports
    * \brief Priority of this fetcher, a lower number represents a higher
    *        priority (so 0 is higher than 10). If multiple fetchers have the
    *        same priority then it is first come first serve at that priority.
-   *        The priorities should not fall below 0 except where A priority of
+   *        The priorities should not fall below 0 except where a priority of
    *        -1 will mean to append to end of list (so it will be the lowest
    *        priority).
    */
@@ -93,12 +93,17 @@ interface sbIAlbumArtFetcher : nsISupports
    */
   attribute nsIArray albumArtSourceList;
 
-  /* \brief try to fetch album art for the given media item
-   * \param aMediaItem the media item that we're looking for album art for
+  /**
+   * \brief Try to fetch album art for a list of items that belong to the same
+   *        album. This function infers that all items in the list are from
+   *        the same album.
+   * \param aMediaItems is an array of sbIMediaItems from the same album
    * \param aListener the listener to inform of success or failure
+   *
+   * \note A call to aListener will be done for each item in the list.
    */
-  void fetchAlbumArtForMediaItem(in sbIMediaItem        aMediaItem,
-                                 in sbIAlbumArtListener aListener);
+  void fetchAlbumArtForAlbum(in nsIArray            aMediaItems,
+                             in sbIAlbumArtListener aListener);
 
   /* \brief shut down the fetcher
    */
@@ -118,5 +123,8 @@ interface sbIAlbumArtFetcher : nsISupports
 
 #define SB_METADATAALBUMARTFETCHER_CONTRACTID \
           "@songbirdnest.com/Songbird/album-art/metadata-fetcher;1"
+
+#define SB_LASTFMALBUMARTFETCHER_CONTRACTID \
+          "@songbirdnest.com/Songbird/album-art/lastfm-fetcher;1"
 %}C++
 

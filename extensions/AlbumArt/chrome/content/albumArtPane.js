@@ -1068,17 +1068,6 @@ var AlbumArt = {
   },
 
   /**
-   * \brief Callbacks for the sbIAlbumArtListener
-   */
-  onChangeFetcher: function AlbumArt_onChangeFetcher(aFetcher) {
-  },
-  onResult: function AlbumArt_onResult(aImageLocation, aMediaItem) {
-    if (aImageLocation != "") {
-      AlbumArt.setCurrentStateItemImage(aImageLocation);
-    }
-  },
-
-  /**
    * \brief Scan items for missing artwork.
    */
   onGetArtwork: function AlbumArt_onGetArtwork() {
@@ -1096,7 +1085,7 @@ var AlbumArt = {
         // completely _different_ set of global classes
         var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
                     .createInstance(Ci.nsISupportsInterfacePointer);
-        sip.data = ArrayConverter.enumerator([item]);
+        sip.data = ArrayConverter.nsIArray([item]);
         sbCoverHelper.getArtworkForItems(sip.data, window);
       }
     }

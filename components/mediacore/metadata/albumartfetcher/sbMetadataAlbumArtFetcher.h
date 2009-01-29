@@ -143,8 +143,11 @@ private:
   // Internal services.
   //
 
-  nsresult GetMetadataHandler(nsIURI*              aContentSrcURI,
-                              sbIMetadataHandler** aMetadataHandler);
+  nsresult GetMetadataHandler(nsIURI*               aContentSrcURI,
+                              sbIMetadataHandler**  aMetadataHandler);
+  
+  nsresult GetImageForItem(sbIMediaItem*            aMediaItem,
+                           sbIAlbumArtListener*     aListener);
 };
 
 

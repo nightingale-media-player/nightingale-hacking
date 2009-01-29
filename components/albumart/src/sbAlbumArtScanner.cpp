@@ -47,26 +47,30 @@
 
 // Self imports.
 #include "sbAlbumArtScanner.h"
+#include "sbAlbumArtCommon.h"
 
 // Mozilla imports.
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIURI.h>
-#include <nsIPrefBranch.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
-#include <nsIMutableArray.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 #include <nsThreadUtils.h>
 
 // Songbird imports
-#include <sbIAlbumArtDownloader.h>
 #include <sbICascadeFilterSet.h>
+#include <sbIFilterableMediaListView.h>
 #include <sbILibraryManager.h>
+#include <sbILibraryConstraints.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
+#include <sbIPropertyArray.h>
+#include <sbISortableMediaListView.h>
+#include <sbPrefBranch.h>
+#include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -131,6 +135,8 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
   TRACE(("sbAlbumArtScanner[0x%8.x] - ScanListForArtwork", this));
   nsresult rv = NS_OK;
 
+  nsCOMPtr<sbIMediaList> mediaList = aMediaList;
+
   // If aMediaList is null then we need to grab the main library
   // TODO: Should we make a copy?
   if (aMediaList == nsnull) {
@@ -142,39 +148,117 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
     rv = libManager->GetMainLibrary(getter_AddRefs(mLibrary));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mMediaList = do_QueryInterface(mLibrary, &rv);
+    mediaList = do_QueryInterface(mLibrary, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    mMediaList = aMediaList;
   }
 
   // Now create a view and get the filter set so that we can filter/sort the items
   // Create the view
-  nsCOMPtr<sbIMediaListView> mediaListView;
-  rv = mMediaList->CreateView(nsnull, getter_AddRefs(mediaListView));
+  rv = mediaList->CreateView(nsnull, getter_AddRefs(mMediaListView));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the filterset for this view
-  rv = mediaListView->GetCascadeFilterSet(getter_AddRefs(mFilterSet));
+  // Filter out the lists (it would be nice to filter out the items that
+  // already have primaryImageURL set)
+  nsCOMPtr<sbIFilterableMediaListView> filterView =
+    do_QueryInterface(mMediaListView, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Filter by albums
-  rv = mFilterSet->AppendFilter(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                &mAlbumFilterIndex);
+  // get the old constraints
+  nsCOMPtr<sbILibraryConstraint> constraint;
+  rv = filterView->GetFilterConstraint(getter_AddRefs(constraint));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get how many albums in this list
-  rv = mFilterSet->GetValueCount(mAlbumFilterIndex,
-                                 PR_FALSE,            // Do not use cache
-                                 &mTotalAlbumCount);
+  nsCOMPtr<sbILibraryConstraintBuilder> builder =
+    do_CreateInstance("@songbirdnest.com/Songbird/Library/ConstraintBuilder;1",
+                      &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // push the original constraints into it if there's an existing one
+  if (constraint) {
+    rv = builder->IncludeConstraint(constraint, nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = builder->Intersect(nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Add the isList and Hidden filters
+  rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                        NS_LITERAL_STRING("0"),
+                        nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = builder->Intersect(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                        NS_LITERAL_STRING("0"),
+                        nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now reset the constraint on the view
+  rv = builder->Get(getter_AddRefs(constraint));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = filterView->SetFilterConstraint(constraint);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now sort the items
+  // Sort by:
+  //  AlbumName       - Asc
+  //  AlbumArtistName - Asc
+  //  ArtistName      - Asc
+  //  Disc Number     - Asc
+  //  Track Number    - Asc
+  nsCOMPtr<sbIMutablePropertyArray> newSort =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = newSort->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // AlbumName
+  rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                               NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /**
+   * We would like to add these to the sort however doing this in C+ seems to
+   * cause errors when attempting to retrieve the items from the view.
+   * See Bug 15021. (Commenting out for now)
+   */
+/*
+  // AlbumArtistName
+  rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
+                               NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // ArtistName
+  rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                               NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Disc Number
+  rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DISCNUMBER),
+                               NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Track Number
+  rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                               NS_LITERAL_STRING("a"));
+  NS_ENSURE_SUCCESS(rv, rv);
+*/
+  // Now set the sort on this list
+  nsCOMPtr<sbISortableMediaListView> sortable =
+    do_QueryInterface(mMediaListView, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sortable->SetSort(newSort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset all the progress information
-  mCompletedAlbumCount = 0;
+  rv = mMediaListView->GetLength(&mTotalItemCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mCompletedItemCount = 0;
   mProcessNextAlbum = PR_TRUE;
-  mProcessNextItem = PR_FALSE;
-
+  
   // Update the progress and inform listeners
   UpdateProgress();
 
@@ -216,7 +300,7 @@ NS_IMETHODIMP sbAlbumArtScanner::GetStatusText(nsAString& aText)
     nsString stringKey;
 
     const PRUnichar *strings[2] = {
-      mCurrentAlbum.get(),
+      mCurrentAlbumName.get(),
       mCurrentFetcherName.get()
     };
     if (mCurrentFetcherName.IsEmpty()) {
@@ -241,7 +325,6 @@ NS_IMETHODIMP sbAlbumArtScanner::GetStatusText(nsAString& aText)
       // Do a crop at the end
       PRUint32 sectionSize = (MAX_SCANNER_MESSAGE_TEXT_LENGTH -5);
       aText.Replace(sectionSize, aText.Length(), NS_LITERAL_STRING("..."));
-
     }
   } else {
     rv = mStringBundle->GetStringFromName(
@@ -284,7 +367,7 @@ NS_IMETHODIMP sbAlbumArtScanner::GetProgress(PRUint32* aProgress)
   NS_ASSERTION(NS_IsMainThread(), \
     "sbAlbumArtScanner::GetProgress is main thread only!");
 
-  *aProgress = mCompletedAlbumCount;
+  *aProgress = mCompletedItemCount;
   return NS_OK;
 }
 
@@ -296,7 +379,7 @@ NS_IMETHODIMP sbAlbumArtScanner::GetTotal(PRUint32* aTotal)
   NS_ASSERTION(NS_IsMainThread(), \
     "sbAlbumArtScanner::GetTotal is main thread only!");
 
-  *aTotal = mTotalAlbumCount;
+  *aTotal = mTotalItemCount;
   return NS_OK;
 }
 
@@ -417,28 +500,9 @@ NS_IMETHODIMP sbAlbumArtScanner::Notify(nsITimer* aTimer)
       if (NS_FAILED(rv)) {
         TRACE(("sbAlbumArtScanner::Notify - Fetch Failed for album"));
         // Hmm, not good so we should skip this album
-        mTimeoutTimer->Cancel();
-        mCompletedAlbumCount++;
         mProcessNextAlbum = PR_TRUE;
       }
-    } else  if (mProcessNextItem) {
-      // Make sure we cancel the timeout timer
-      mTimeoutTimer->Cancel();
-      rv = ProcessItem();
-      if (NS_FAILED(rv)) {
-        TRACE(("sbAlbumArtScanner::Notify - Fetch Failed for item"));
-        // Hmm, not good so we should skip this item
-        mTimeoutTimer->Cancel();
-        mCompletedItemCount++;
-        mProcessNextItem = PR_TRUE;
-      }
     }
-  } else  if (aTimer == mTimeoutTimer) {
-    // We have taken too long to find album art so skip this item.
-    TRACE(("sbAlbumArtScanner::Notify - Timeout exceeded so moving to next item"));
-    mFetcherSet->Shutdown();
-    mCompletedItemCount++;
-    mProcessNextItem = PR_TRUE;
   }
   return NS_OK;
 }
@@ -446,12 +510,13 @@ NS_IMETHODIMP sbAlbumArtScanner::Notify(nsITimer* aTimer)
 
 //------------------------------------------------------------------------------
 //
-// sbIAlbumArtListner Implementation.
+// sbIAlbumArtListener Implementation.
 //
 //------------------------------------------------------------------------------
 
 /* onChangeFetcher(in sbIAlbumArtFetcher aFetcher); */
-NS_IMETHODIMP sbAlbumArtScanner::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
+NS_IMETHODIMP
+sbAlbumArtScanner::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnChangeFetcher", this));
   aFetcher->GetName(mCurrentFetcherName);
@@ -460,55 +525,52 @@ NS_IMETHODIMP sbAlbumArtScanner::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 }
 
 /* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
-NS_IMETHODIMP sbAlbumArtScanner::OnResult(nsIURI* aImageLocation,
-                                          sbIMediaItem* aMediaItem)
+NS_IMETHODIMP
+sbAlbumArtScanner::OnResult(nsIURI*       aImageLocation,
+                            sbIMediaItem* aMediaItem)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnResult", this));
-  nsresult rv = NS_OK;
-
-  // Cancel the timeout timer since we have an answer
-  mTimeoutTimer->Cancel();
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
 
   // A null aImageLocation indicates a failure
-  if (!aImageLocation) {
-    // Log an error for this item
-    TRACE(("sbAlbumArtScanner::OnResult - No image found for item."));
-  } else {
-    // Get the spec for the image location
-    // if it is file then set the property and write metadata back.
-    nsCAutoString scheme;
-    rv = aImageLocation->GetScheme(scheme);
+  if (aImageLocation) {
+    rv = SetItemArtwork(aImageLocation, aMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    nsCAutoString imageFileURISpec;
-    rv = aImageLocation->GetSpec(imageFileURISpec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (scheme.EqualsLiteral("file") ||
-        scheme.EqualsLiteral("chrome")) {
-      TRACE(("sbAlbumArtScanner::OnResult - Setting primaryImageURL to %s",
-             imageFileURISpec.get()));
-      rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                                   NS_ConvertUTF8toUTF16(imageFileURISpec));
-      NS_ENSURE_SUCCESS(rv, rv);
-    } else {
-      TRACE(("sbAlbumArtScanner::OnResult - Not a local file so trying to download."));
-      // If this is http, https, ftp, etc we need to try and download
-      nsCOMPtr<sbIAlbumArtDownloader> albumArtDownloader =
-          do_CreateInstance("@songbirdnest.com/Songbird/album-art/downloader;1",
-                            &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = albumArtDownloader->DownloadImage(NS_ConvertUTF8toUTF16(imageFileURISpec),
-                                             aMediaItem,
-                                             this);
-      return NS_OK;
-    }
   }
 
-  // Now that we are done this item move on to the next
-  mCompletedItemCount++;
-  mProcessNextItem = PR_TRUE;
+  return NS_OK;
+}
 
+/* onAlbumResult(in nsIURI aImageLocation, in nsIArray aMediaItems); */
+NS_IMETHODIMP
+sbAlbumArtScanner::OnAlbumResult(nsIURI*    aImageLocation,
+                                 nsIArray*  aMediaItems)
+{
+  TRACE(("sbAlbumArtScanner[0x%8.x] - OnAlbumResult", this));
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  nsresult rv;
+
+  // A null aImageLocation indicates a failure
+  if (aImageLocation) {
+    rv = SetItemsArtwork(aImageLocation, aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/* onComplete(in nsIArray aMediaItems); */
+NS_IMETHODIMP
+sbAlbumArtScanner::OnAlbumComplete(nsIArray* aMediaItems)
+{
+  TRACE(("sbAlbumArtScanner[0x%8.x] - OnAlbumComplete", this));
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+
+  // BUG 14907 - Write metadata (image only)
+  
+  // Now that we are done this item move on to the next
+  mProcessNextAlbum = PR_TRUE;
   return NS_OK;
 }
 
@@ -524,16 +586,12 @@ NS_IMETHODIMP sbAlbumArtScanner::OnResult(nsIURI* aImageLocation,
 
 sbAlbumArtScanner::sbAlbumArtScanner() :
   mIntervalTimerValue(ALBUMART_SCANNER_INTERVAL),
-  mTimeoutTimerValue(ALBUMART_SCANNER_TIMEOUT),
   mStatus(sbIJobProgress::STATUS_RUNNING),
-  mCompletedAlbumCount(0),
-  mTotalAlbumCount(0),
-  mProcessNextAlbum(PR_FALSE),
   mCompletedItemCount(0),
   mTotalItemCount(0),
-  mProcessNextItem(PR_FALSE),
-  mMediaList(nsnull),
-  mAlbumFilterIndex(0)
+  mProcessNextAlbum(PR_FALSE),
+  mCurrentAlbumItemList(nsnull),
+  mMediaListView(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gAlbumArtScannerLog) {
@@ -564,35 +622,26 @@ sbAlbumArtScanner::Initialize()
   TRACE(("sbAlbumArtScanner[0x%.8x] - Initialize", this));
   nsresult rv = NS_OK;
 
-  // Create our timers
-  mIntervalTimer = do_CreateInstance("@mozilla.org/timer;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mTimeoutTimer = do_CreateInstance("@mozilla.org/timer;1", &rv);
+  // Create our timer
+  mIntervalTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get our timer values
   // Get the preference branch.
-  nsCOMPtr<nsIPrefBranch>
-    prefService = do_GetService("@mozilla.org/preferences-service;1", &rv);
+  sbPrefBranch prefBranch(PREF_ALBUMART_SCANNER_BRANCH, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 prefType;
-  rv = prefService->GetPrefType(PREF_ALBUMART_SCANNER_INTERVAL, &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (prefType == nsIPrefBranch::PREF_INT) {
-    rv = prefService->GetIntPref(PREF_ALBUMART_SCANNER_INTERVAL,
-                                &mIntervalTimerValue);
-  }
-  rv = prefService->GetPrefType(PREF_ALBUMART_SCANNER_INTERVAL, &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (prefType == nsIPrefBranch::PREF_INT) {
-    rv = prefService->GetIntPref(PREF_ALBUMART_SCANNER_TIMEOUT,
-                                &mTimeoutTimerValue);
-  }
+  mIntervalTimerValue = prefBranch.GetIntPref(PREF_ALBUMART_SCANNER_INTERVAL,
+                                              ALBUMART_SCANNER_INTERVAL);
 
   // Create our fetcher set
   mFetcherSet =
     do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create an array for items in an album
+  mCurrentAlbumItemList =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Grab our string bundle
@@ -627,10 +676,8 @@ sbAlbumArtScanner::UpdateProgress()
     // listeners since they may take some time and we need to cancel
     // the timers as soon as possible.
     TRACE(("sbAlbumArtScanner::UpdateProgress - Shutting down Job"));
-    mProcessNextItem = PR_FALSE;
     mProcessNextAlbum = PR_FALSE;
     mIntervalTimer->Cancel();
-    mTimeoutTimer->Cancel();
     mFetcherSet->Shutdown();
   }
 
@@ -647,117 +694,162 @@ sbAlbumArtScanner::UpdateProgress()
 }
 
 nsresult
+sbAlbumArtScanner::GetNextAlbumItems()
+{
+  nsresult rv;
+
+  nsString mLastAlbumName;
+  nsString mLastArtistName;
+
+  // Clear the item list so we can start fresh
+  mCurrentAlbumItemList->Clear();
+  
+  // Loop while we still have items and we haven't gotten to the next album
+  // We need to check the albumName first with the previous one, then if that
+  // matches we can check the albumArtist/artist with previous artist.
+  // If all that matches then we are still on the same album and we do a check
+  // to see if the image has already been found or not (since we can not filter
+  // out non-null properties).
+  while (mCompletedItemCount < mTotalItemCount) {
+    TRACE(("Processing %d of %d", mCompletedItemCount, mTotalItemCount));
+
+    nsCOMPtr<sbIMediaItem> item;
+    rv = mMediaListView->GetItemByIndex(mCompletedItemCount,
+                                        getter_AddRefs(item));
+    if (NS_FAILED(rv)) {
+      // Move on to the next item
+      TRACE(("Processing : Item %d failed with %08X", mCompletedItemCount,rv));
+      mCompletedItemCount++;
+      continue;
+    }
+    TRACE(("Found Item %d", mCompletedItemCount));
+
+    // We need an album name or this is completely pointless.
+    nsString albumName;
+    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), albumName);
+    if (NS_FAILED(rv) || albumName.IsEmpty()) {
+      // Move on to the next item
+      mCompletedItemCount++;
+      continue;
+    }
+
+    // Next we use either the albumArtistName (preferred) or artistName
+    nsString artistName;
+    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                           artistName);
+    if (NS_FAILED(rv)) {
+      // Move on to the next item
+      mCompletedItemCount++;
+      continue;
+    }
+    nsString albumArtistName;
+    item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
+                      albumArtistName);
+    // If the albumArtistName fails we will fall back to the artist name
+    
+    if (!albumArtistName.IsEmpty()) {
+      // Try to use the album artist name if possible
+      artistName = albumArtistName;
+    }
+    
+    if (artistName.IsEmpty()) {
+      // No artist then how are we going to know what album this belongs to?
+      mCompletedItemCount++;
+      continue;
+    }
+
+    // if this is the first album then just set the Last* values and append the
+    // item to the list
+    if (mLastAlbumName.IsEmpty()) {
+      mLastAlbumName.Assign(albumName);
+      mCurrentAlbumName.Assign(albumName);
+      mLastArtistName.Assign(artistName);
+  
+      TRACE(("Processing Album %s by %s",
+             NS_ConvertUTF16toUTF8(albumName).get(),
+             NS_ConvertUTF16toUTF8(artistName).get()
+           ));
+    } else if (!mLastAlbumName.Equals(albumName)) {
+      // if the album names are different then we definitly have a new album
+      // so don't add this track or increment the index, just break out of the
+      // loop.
+      TRACE(("Sending album to be processed for album art."));
+      break;
+    } else {
+      // Check if the artist is the same as the previous artist
+      TRACE(("Checking artist: prev %s, current %s",
+             NS_ConvertUTF16toUTF8(mLastArtistName).get(),
+             NS_ConvertUTF16toUTF8(artistName).get()
+             ));
+      if (!mLastArtistName.Equals(artistName) &&
+          !artistName.Find(mLastArtistName, PR_TRUE) &&
+          !mLastArtistName.Find(artistName, PR_TRUE)) {
+          // No substring so this must not be the same artist
+          TRACE(("Sending album to be processed for album art."));
+          break;
+      }
+    }
+
+    // If this item already has album art then we can just skip it.
+    nsString primaryImageUrl;
+    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                           primaryImageUrl);
+    if (NS_FAILED(rv) || !primaryImageUrl.IsEmpty()) {
+      // Move on to the next item
+      mCompletedItemCount++;
+      continue;
+    }
+  
+    nsString trackName;
+    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                           trackName);
+    if (NS_SUCCEEDED(rv)) {
+      TRACE(("  Adding track to album: %s", NS_ConvertUTF16toUTF8(trackName).get()));
+    }
+    rv = mCurrentAlbumItemList->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem *,
+                                                                item),
+                                              PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mCompletedItemCount++;
+  }
+  
+  return NS_OK;
+}
+
+nsresult
 sbAlbumArtScanner::ProcessAlbum()
 {
   TRACE(("sbAlbumArtScanner[0x%.8x] - ProcessAlbum", this));
   nsresult rv = NS_OK;
 
   // Clear our flags
-  mProcessNextItem = PR_FALSE;
   mProcessNextAlbum = PR_FALSE;
 
-  if (mCompletedAlbumCount < mTotalAlbumCount) {
-    rv = mFilterSet->GetValueAt(mAlbumFilterIndex,
-                                mCompletedAlbumCount,
-                                mCurrentAlbum);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    TRACE(("sbAlbumArtScanner::ProcessAlbum - Scanning %s [%u of %u]",
-            NS_ConvertUTF16toUTF8(mCurrentAlbum).get(),
-            mCompletedAlbumCount,
-            mTotalAlbumCount));
-
-    // Get the list of items for this album
-    mCurrentAlbumItemList = nsnull;
-    rv = mMediaList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
-                                        mCurrentAlbum,
-                                        getter_AddRefs(mCurrentAlbumItemList));
-    NS_ENSURE_SUCCESS(rv, rv);
-    mCompletedItemCount = 0;
-    rv = mCurrentAlbumItemList->GetLength(&mTotalItemCount);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Trigger to get next item
+  rv = GetNextAlbumItems();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRUint32 trackCount = 0;
+  rv = mCurrentAlbumItemList->GetLength(&trackCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  TRACE(("Collected %d of %d items, current list has %d items",
+         mCompletedItemCount,
+         mTotalItemCount,
+         trackCount));
+  if (trackCount > 0) {
+    TRACE(("sbAlbumArtScanner::ProcessAlbum - Fetching artwork for items."));
+    mCurrentFetcherName.Truncate();
     UpdateProgress();
-    mProcessNextItem = PR_TRUE;
-  } else {
+    rv = mFetcherSet->FetchAlbumArtForAlbum(mCurrentAlbumItemList, this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (mCompletedItemCount >= mTotalItemCount) {
     // We need to shut everything down.
     TRACE(("sbAlbumArtScanner::ProcessAlbum - All albums scanned."));
     mStatus = sbIJobProgress::STATUS_SUCCEEDED;
     UpdateProgress();
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbAlbumArtScanner::ProcessItem()
-{
-  TRACE(("sbAlbumArtScanner[0x%.8x] - ProcessItem", this));
-  nsresult rv = NS_OK;
-
-  // Clear our flags
-  mProcessNextItem = PR_FALSE;
-  mProcessNextAlbum = PR_FALSE;
-
-  // Now we try to get the album art for this item
-  // This will be async so we have a timeout timer and
-  // we listen for events on the fetcher
-  if (mCompletedItemCount < mTotalItemCount) {
-    TRACE(("sbAlbumArtScanner::ProcessItem - Checking for artwork for %s Item %u of %u",
-            NS_ConvertUTF16toUTF8(mCurrentAlbum).get(),
-            mCompletedItemCount,
-            (mTotalItemCount - 1)));
-    // Shutdown any existing fetching so we start clean
-    rv = mFetcherSet->Shutdown();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the next item
-    nsCOMPtr<sbIMediaItem> nextItem;
-    nextItem = do_QueryElementAt(mCurrentAlbumItemList,
-                                 mCompletedItemCount,
-                                 &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Clear the fetchername and update the progress
-    mCurrentFetcherName.Truncate();
-    UpdateProgress();
-
-    // Get the current primaryImageURL value
-    nsString currentArtwork;
-    rv = nextItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                               currentArtwork);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (currentArtwork.IsEmpty()) {
-      TRACE(("sbAlbumArtScanner::ProcessItem - Searching for artwork for %s Item %u of %u",
-              NS_ConvertUTF16toUTF8(mCurrentAlbum).get(),
-              mCompletedItemCount,
-              (mTotalItemCount - 1)));
-      // Start the timeouttimer
-      mTimeoutTimer->Cancel();
-      TRACE(("sbAlbumArtScanner::ProcessItem - Setting timeout for %u",
-             mTimeoutTimerValue));
-      rv = mTimeoutTimer->InitWithCallback(this,
-                                           mTimeoutTimerValue,
-                                           nsITimer::TYPE_ONE_SHOT);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Now search for the artwork
-      rv = mFetcherSet->FetchAlbumArtForMediaItem(nextItem, this);
-      NS_ENSURE_SUCCESS(rv, rv);
-    } else {
-      TRACE(("sbAlbumArtScanner::ProcessItem -  Artwork already set for %s Item %u",
-              NS_ConvertUTF16toUTF8(mCurrentAlbum).get(),
-              mCompletedItemCount));
-      // This item does not need to be scanned so advance to the next one.
-      mCompletedItemCount++;
-      mProcessNextItem = PR_TRUE;
-    }
   } else {
-    // All items have been processed so move to the next album.
-    TRACE(("sbAlbumArtScanner::ProcessItem - All Items in album scanned."));
-    mCompletedAlbumCount++;
+    // We have items left but no items in mCurrentAlbumItemList?
+    mCompletedItemCount++;
+    UpdateProgress();
     mProcessNextAlbum = PR_TRUE;
   }
 

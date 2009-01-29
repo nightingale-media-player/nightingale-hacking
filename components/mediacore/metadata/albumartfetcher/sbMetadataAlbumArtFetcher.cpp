@@ -57,6 +57,7 @@
 // Mozilla imports.
 #include <nsArrayUtils.h>
 #include <nsIFileURL.h>
+#include <nsISimpleEnumerator.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
@@ -76,83 +77,48 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataAlbumArtFetcher, sbIAlbumArtFetcher)
 //
 //------------------------------------------------------------------------------
 
-/* \brief try to fetch album art for the given media item
- * \param aMediaItem the media item that we're looking for album art for
+/* \brief try to fetch album art for the given list of media items
+ * \param aMediaItems the list of media items that we're looking for album art
  * \param aListener the listener to inform of success or failure
- * \param aWindow the window this was called from, can be null
  */
 
 NS_IMETHODIMP
-sbMetadataAlbumArtFetcher::FetchAlbumArtForMediaItem
-                             (sbIMediaItem*        aMediaItem,
-                              sbIAlbumArtListener* aListener)
+sbMetadataAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
+                                                 sbIAlbumArtListener* aListener)
 {
   // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-
-  // Function variables.
+  NS_ENSURE_ARG_POINTER(aMediaItems);
   nsresult rv;
 
-  // Do nothing if media item content is not a local file.
-  nsCOMPtr<nsIURI> contentSrcURI;
-  nsCOMPtr<nsIFileURL> contentSrcFileURL;
-  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentSrcURI));
+  nsCOMPtr<nsISimpleEnumerator> listEnum;
+  rv = aMediaItems->Enumerate(getter_AddRefs(listEnum));
   NS_ENSURE_SUCCESS(rv, rv);
-  contentSrcFileURL = do_QueryInterface(contentSrcURI, &rv);
+  
+  PRBool hasMore;
+  rv = listEnum->HasMoreElements(&hasMore);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the metadata handler for the media item content.  Do nothing more if
-  // none available.
-  nsCOMPtr<sbIMetadataHandler> metadataHandler;
-  rv = GetMetadataHandler(contentSrcURI, getter_AddRefs(metadataHandler));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Try reading the front cover metadata image.
-  nsCAutoString mimeType;
-  PRUint32      dataLength = 0;
-  PRUint8*      data = nsnull;
-  rv = metadataHandler->GetImageData
-                          (sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
-                           mimeType,
-                           &dataLength,
-                           &data);
-  if (NS_FAILED(rv))
-    dataLength = 0;
-
-  // If album art not found, try reading from other metadata image.
-  if (dataLength == 0) {
-    rv = metadataHandler->GetImageData
-                            (sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
-                             mimeType,
-                             &dataLength,
-                             &data);
-    if (NS_FAILED(rv))
-      dataLength = 0;
+  if (!hasMore) {
+    return NS_ERROR_NOT_AVAILABLE;
   }
 
-  // If no album art found, do nothing more.
-  if (dataLength == 0) {
-    return NS_ERROR_FAILURE;
+  while (NS_SUCCEEDED(listEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> next;
+    if (NS_SUCCEEDED(listEnum->GetNext(getter_AddRefs(next))) && next) {
+      nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(next, &rv));
+      if (NS_SUCCEEDED(rv) && mediaItem) {
+        rv = GetImageForItem(mediaItem, aListener);
+        if (NS_FAILED(rv) && aListener) {
+          aListener->OnResult(nsnull, mediaItem);
+        }
+      }
+    }
   }
-
-  // Set up album art data for auto-disposal.
-  sbAutoNSMemPtr autoData(data);
-
-  // Cache album art image.
-  nsCOMPtr<nsIFileURL> cacheFileURL;
-  rv = mAlbumArtService->CacheImage(mimeType,
-                                    data,
-                                    dataLength,
-                                    getter_AddRefs(cacheFileURL));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   if (aListener) {
-    aListener->OnResult(cacheFileURL, aMediaItem);
+    aListener->OnAlbumComplete(aMediaItems);
   }
-
   return NS_OK;
 }
-
 
 /* \brief shut down the fetcher
  */
@@ -409,4 +375,74 @@ sbMetadataAlbumArtFetcher::GetMetadataHandler
   return NS_OK;
 }
 
+nsresult
+sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
+                                           sbIAlbumArtListener* aListener)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  // Function variables.
+  nsresult rv;
+
+  // Do nothing if media item content is not a local file.
+  nsCOMPtr<nsIURI> contentSrcURI;
+  nsCOMPtr<nsIFileURL> contentSrcFileURL;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentSrcURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  contentSrcFileURL = do_QueryInterface(contentSrcURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the metadata handler for the media item content.  Do nothing more if
+  // none available.
+  nsCOMPtr<sbIMetadataHandler> metadataHandler;
+  rv = GetMetadataHandler(contentSrcURI, getter_AddRefs(metadataHandler));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Try reading the front cover metadata image.
+  nsCAutoString mimeType;
+  PRUint32      dataLength = 0;
+  PRUint8*      data = nsnull;
+  rv = metadataHandler->GetImageData
+                          (sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
+                           mimeType,
+                           &dataLength,
+                           &data);
+  if (NS_FAILED(rv))
+    dataLength = 0;
+
+  // If album art not found, try reading from other metadata image.
+  if (dataLength == 0) {
+    rv = metadataHandler->GetImageData
+                            (sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
+                             mimeType,
+                             &dataLength,
+                             &data);
+    if (NS_FAILED(rv))
+      dataLength = 0;
+  }
+
+  // If no album art found, do nothing more.
+  if (dataLength == 0) {
+    return NS_ERROR_FAILURE;
+  }
+
+  // Set up album art data for auto-disposal.
+  sbAutoNSMemPtr autoData(data);
+
+  // Cache album art image.
+  nsCOMPtr<nsIFileURL> cacheFileURL;
+  rv = mAlbumArtService->CacheImage(mimeType,
+                                    data,
+                                    dataLength,
+                                    getter_AddRefs(cacheFileURL));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aListener) {
+    // Notify caller we found an image for this item
+    aListener->OnResult(cacheFileURL, aMediaItem);
+  }
+
+  return NS_OK;
+}
 

@@ -36,6 +36,9 @@
 
 #include "nsISupports.idl"
 
+interface nsIArray;
+interface nsIFileURL;
+
 
 /**
  * \interface sbIAlbumArtService
@@ -44,10 +47,6 @@
  *
  * "@songbirdnest.com/Songbird/album-art-service;1"
  */
-
-interface nsIArray;
-interface nsIFileURL;
-
 [scriptable, uuid(9c101073-c3a4-4c8a-a967-32ff855cd748)]
 interface sbIAlbumArtService : nsISupports
 {
@@ -124,7 +123,6 @@ interface sbIAlbumArtService : nsISupports
    * \throws NS_ERROR_NOT_AVAILABLE if the key is not found
    */
   nsISupports retrieveTemporaryData(in AString aKey);
-
 };
 
 

@@ -52,15 +52,17 @@
 #include <sbIAlbumArtFetcherSet.h>
 #include <sbIAlbumArtListener.h>
 #include <sbIAlbumArtScanner.h>
-#include <sbILibrary.h>
-#include <sbIJobProgress.h>
+#include <sbIAlbumArtService.h>
 #include <sbIJobCancelable.h>
+#include <sbIJobProgress.h>
+#include <sbILibrary.h>
 
 // Mozilla imports.
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIArray.h>
 #include <nsIClassInfo.h>
+#include <nsIMutableArray.h>
 #include <nsIStringBundle.h>
 #include <nsITimer.h>
 #include <nsStringGlue.h>
@@ -90,11 +92,10 @@
 
 // Default values for the timers (milliseconds)
 #define ALBUMART_SCANNER_INTERVAL 10
-#define ALBUMART_SCANNER_TIMEOUT  10000
 
 // Preference keys
-#define PREF_ALBUMART_SCANNER_INTERVAL "songbird.albumart.scanner.interval"
-#define PREF_ALBUMART_SCANNER_TIMEOUT  "songbird.albumart.scanner.timeout"
+#define PREF_ALBUMART_SCANNER_BRANCH    "songbird.albumart.scanner."
+#define PREF_ALBUMART_SCANNER_INTERVAL  "interval"
 
 //------------------------------------------------------------------------------
 //
@@ -140,15 +141,13 @@ private:
   nsresult ProcessAlbum();
 
   /**
-   * Process the next item in the album if any are left to process
+   * Get a list of albums
    */
-  nsresult ProcessItem();
+  nsresult GetNextAlbumItems();
 
   // Timers for doing our work
   nsCOMPtr<nsITimer>                       mIntervalTimer;
   PRInt32                                  mIntervalTimerValue;
-  nsCOMPtr<nsITimer>                       mTimeoutTimer;
-  PRInt32                                  mTimeoutTimerValue;
 
   // Our fetcher set for scanning for album art
   nsCOMPtr<sbIAlbumArtFetcherSet>          mFetcherSet;
@@ -158,23 +157,21 @@ private:
   nsTArray<nsString>                       mErrorMessages;
   nsString                                 mTitleText;
   nsCOMArray<sbIJobProgressListener>       mListeners;
-
-  // Progress information (Albums)
-  nsAutoString                             mCurrentAlbum;
-  PRUint32                                 mCompletedAlbumCount;
-  PRUint32                                 mTotalAlbumCount;
-  PRBool                                   mProcessNextAlbum;
-  // Progress information (Items per album)
-  nsCOMPtr<nsIArray>                       mCurrentAlbumItemList;
-  nsAutoString                             mCurrentFetcherName;
   PRUint32                                 mCompletedItemCount;
   PRUint32                                 mTotalItemCount;
-  PRBool                                   mProcessNextItem;
 
-  // The MediaList we are scanning.
-  nsCOMPtr<sbIMediaList>                   mMediaList;
-  nsCOMPtr<sbICascadeFilterSet>            mFilterSet;
-  PRUint16                                 mAlbumFilterIndex;
+  // Name of fetcher we are currently using
+  nsAutoString                             mCurrentFetcherName;
+  nsAutoString                             mCurrentAlbumName;
+
+  // Flag to indicate when we are ready to process the next album
+  PRBool                                   mProcessNextAlbum;
+
+  // List of items to scan that make up an album
+  nsCOMPtr<nsIMutableArray>                mCurrentAlbumItemList;
+
+  // The MediaView of the MediaList we are scanning.
+  nsCOMPtr<sbIMediaListView>               mMediaListView;
 
   // String bundle for status messages.
   nsCOMPtr<nsIStringBundle>                mStringBundle;

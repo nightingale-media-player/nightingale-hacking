@@ -42,6 +42,7 @@ const PREF_BRANCH = "songbird.albumart.lastfm.";
 Cu.import('resource://app/jsmodules/sbProperties.jsm');
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/sbCoverHelper.jsm");
 Cu.import('resource://gre/modules/XPCOMUtils.jsm');
 
 /**
@@ -75,6 +76,64 @@ sbLastFMAlbumArtFetcher.prototype = {
   _shutdown: false,
   _albumArtSourceList: null,
 
+
+  _findImageForItem: function(aMediaItem, aCallback) {
+    
+    var albumName = aMediaItem.getProperty(SBProperties.albumName);
+    var artistName = aMediaItem.getProperty(SBProperties.artistName);
+    var albumArtistName = aMediaItem.getProperty(SBProperties.albumArtistName);
+    if (albumArtistName) {
+      artistName = albumArtistName;
+    }
+    
+    var arguments = Cc["@mozilla.org/hash-property-bag;1"]
+                    .createInstance(Ci.nsIWritablePropertyBag2);
+    arguments.setPropertyAsACString("album", albumName);
+    arguments.setPropertyAsACString("artist", artistName);
+    
+    var self = this;
+    var apiResponse = function response(success, xml) {
+      // Abort if we are shutting down
+      if (self._shutdown) {
+        return;
+      }
+      
+      // Failed to get a good response back from the server :(
+      if (!success) {
+        aCallback(null);
+        return;
+      }
+      
+      var foundCover = null;
+      var imageSizes = ['large', 'medium', 'small'];
+      // Use XPath to parse out the image, we want to find the first image
+      // in the order of the imageSizes array above.
+      var nsResolver = xml.createNSResolver(xml.ownerDocument == null ?
+                                            xml.documentElement :
+                                            xml.ownerDocument.documentElement);
+      for (var iSize = 0; iSize < imageSizes.length; iSize++) {
+        var result = xml.evaluate("//image[@size='" + imageSizes[iSize] + "']",
+                                  xml,
+                                  nsResolver,
+                                  7,  //XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+                                  null);
+        if (result.snapshotLength > 0) {
+          foundCover = result.snapshotItem(0).textContent;
+          break;
+        }
+      }
+    
+      aCallback(foundCover);
+    };
+
+    this._lastFMWebApi.apiCall("album.getInfo",  // method
+                               arguments,        // Property bag of strings
+                               apiResponse);     // Callback
+  },
+
+  /*********************************
+   * sbIAlbumArtFetcher
+   ********************************/
   // These are a bunch of getters for attributes in the sbICoverFetcher.idl
   get shortName() {
     return "lastfm"; // Change this to something that represents your fetcher
@@ -114,64 +173,55 @@ sbLastFMAlbumArtFetcher.prototype = {
   set albumArtSourceList(aNewVal) {
     this._albumArtSourceList = aNewVal;
   },
-
-  /*********************************
-   * sbIAlbumArtFetcher
-   ********************************/
-  fetchAlbumArtForMediaItem: function (aMediaItem, aListener) {
-    var arguments = Cc["@mozilla.org/hash-property-bag;1"]
-                    .createInstance(Ci.nsIWritablePropertyBag2);
-    arguments.setPropertyAsACString("track",
-                              aMediaItem.getProperty(SBProperties.trackName));
-    arguments.setPropertyAsACString("artist",
-                              aMediaItem.getProperty(SBProperties.artistName));
-
-    var apiResponse = function response(success, xml) {
-      // Abort if we are shutting down
-      if (this._shutdown) {
-        return;
+  
+  fetchAlbumArtForAlbum: function (aMediaItems, aListener) {
+    if (aMediaItems.length <= 0) {
+      // No Items so abort
+      Cu.reportError("No media items passed to fetchAlbumArtForAlbum.");
+      if (aListener) {
+        aListener.onAlbumResult(null, aMediaItems);
+        aListener.onAlbumComplete(aMediaItems);
       }
-      
-      // Failed to get a good response back from the server :(
-      if (!success) {
-        aListener.onResult(null, aMediaItem);
-        return;
-      }
-      
-      var foundCover;
-      var imageSizes = ['large', 'medium', 'small'];
-      // Use XPath to parse out the image, we want to find the first image
-      // in the order of the imageSizes array above.
-      var nsResolver = xml.createNSResolver(xml.ownerDocument == null ?
-                                            xml.documentElement :
-                                            xml.ownerDocument.documentElement);
-      for (var iSize = 0; iSize < imageSizes.length; iSize++) {
-        var result = xml.evaluate("//image[@size='" + imageSizes[iSize] + "']",
-                                  xml,
-                                  nsResolver,
-                                  7,  //XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-                                  null);
-        if (result.snapshotLength > 0) {
-          foundCover = result.snapshotItem(0).textContent;
-          break;
-        }
-      }
+      return;
+    }
     
-      if (foundCover == null) {
-        // No cover so indicate failure
-        aListener.onResult(null, aMediaItem);
+    // Extract the first item and use that to get album information
+    var firstMediaItem = null;
+    try {
+      firstMediaItem = aMediaItems.queryElementAt(0, Ci.sbIMediaItem);
+    } catch (err) {
+      Cu.reportError(err);
+      aListener.onAlbumResult(null, aMediaItems);
+      aListener.onAlbumComplete(aMediaItems);
+      return;
+    }
+
+    var returnResult = function (aImageLocation) {
+      if (aImageLocation) {
+        // Convert to an nsIURI
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService);
+        var uri = null;
+        try {
+          uri = ioService.newURI(aImageLocation, null, null);
+        } catch (err) {
+          Cu.reportError("lastFM: Unable to convert to URI: [" + aImageLocation +
+                         "] " + err);
+          uri = null;
+        }
+        aImageLocation = uri;
+      }
+      aListener.onAlbumResult(aImageLocation, aMediaItems);
+      aListener.onAlbumComplete(aMediaItems);
+    };
+    var downloadCover = function (aFoundCover) {
+      if (aFoundCover) {
+        sbCoverHelper.downloadFile(aFoundCover, returnResult);
       } else {
-        // Found the cover so we need to download it
-        var albumArtDownloader = Cc["@songbirdnest.com/Songbird/album-art/downloader;1"]
-                                   .createInstance(Ci.sbIAlbumArtDownloader);
-        albumArtDownloader.downloadImage(foundCover, aMediaItem, aListener);
+        returnResult(null);
       }
     };
-
-    this._lastFMWebApi.apiCall("track.getInfo",  // method
-                               arguments,        // Property bag of strings
-                               apiResponse);     // Callback
-
+    this._findImageForItem(firstMediaItem, downloadCover);
   },
   
   shutdown: function () {

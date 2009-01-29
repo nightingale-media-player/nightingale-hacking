@@ -57,6 +57,8 @@
 // Mozilla imports.
 #include <nsCOMPtr.h>
 #include <nsIConsoleService.h>
+#include <nsIArray.h>
+#include <nsITimer.h>
 
 
 //------------------------------------------------------------------------------
@@ -79,6 +81,12 @@
     { 0xbb, 0xd7, 0x34, 0x8a, 0x44, 0x7c, 0x78, 0x4f }                         \
   }
 
+// Default values for the timers (milliseconds)
+#define ALBUMART_SCANNER_TIMEOUT  10000
+
+// Preference keys
+#define PREF_ALBUMART_SCANNER_BRANCH    "songbird.albumart.scanner."
+#define PREF_ALBUMART_SCANNER_TIMEOUT   "timeout"
 
 //------------------------------------------------------------------------------
 //
@@ -91,6 +99,7 @@
  */
 
 class sbAlbumArtFetcherSet : public sbIAlbumArtFetcherSet,
+                             public nsITimerCallback,
                              public sbIAlbumArtListener
 {
   //----------------------------------------------------------------------------
@@ -108,6 +117,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTFETCHER
   NS_DECL_SBIALBUMARTFETCHERSET
+  NS_DECL_NSITIMERCALLBACK
   NS_DECL_SBIALBUMARTLISTENER
 
 
@@ -154,20 +164,37 @@ private:
   // mFetcherList               List of fetchers to check.
   // mFetcherIndex              Index of current fetcher we are checking.
   // mFetcher                   Current Fetcher we are using.
+  // mMediaItems                List of items we are scanning.
   //
 
   nsCOMPtr<nsIArray>            mFetcherList;
-  PRInt32                       mFetcherIndex;
+  PRUint32                      mFetcherIndex;
   nsCOMPtr<sbIAlbumArtFetcher>  mFetcher;
+  nsCOMPtr<nsIArray>            mMediaItems;
+
+  //
+  // mTimeoutTimer              Time out timer for fetch opertaions
+  // mTimeoutTimerValue         Max time a fetch operation is allowed.
+  //
+  nsCOMPtr<nsITimer>            mTimeoutTimer;
+  PRInt32                       mTimeoutTimerValue;
+
+  //
+  // mFoundAllArtwork           Flag to determine if we have found all artwork
+  //                            for the items requested.
+  //
+
+  PRBool                        mFoundAllArtwork;
 
   //
   // Internal services.
   //
 
-  nsresult FinishFetch(nsIURI*        aImageLocation,
-                       sbIMediaItem*  aMediaItem);
-
-  nsresult NextFetcher(sbIMediaItem*  aMediaItem);
+  nsresult CheckLocalImage(nsIURI*    aImageLocation);
+  
+  nsresult TryNextFetcher();
+  
+  nsresult NextFetcher();
 };
 
 
