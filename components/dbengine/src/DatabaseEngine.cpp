@@ -2075,7 +2075,7 @@ CDatabaseEngine::GetCurrentCollationLocale(nsCString &aCollationLocale) {
     aCollationLocale = buf;
 
   } else {
-    LOG(("Could not retrieve the collation locale identifier"))
+    LOG(("Could not retrieve the collation locale identifier"));
   }
 #else
 
