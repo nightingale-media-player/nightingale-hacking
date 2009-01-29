@@ -37,6 +37,8 @@
 #include "sbIDeviceEventTarget.h"
 #include "sbIDeviceManager.h"
 
+#define STRESS_TEST_THREAD_COUNT 200
+
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceEventTesterStressThreads,
                               nsIRunnable,
                               sbIDeviceEventListener)
@@ -72,7 +74,7 @@ NS_IMETHODIMP sbDeviceEventTesterStressThreads::Run()
   
   // spin up a *ton* of threads...
   mCounter = 0;
-  for (int i = 0; i < 300; ++i) {
+  for (int i = 0; i < STRESS_TEST_THREAD_COUNT; ++i) {
     nsAutoMonitor mon(mMonitor);
     nsCOMPtr<nsIRunnable> event =
       NS_NEW_RUNNABLE_METHOD(sbDeviceEventTesterStressThreads, this, OnEvent);
