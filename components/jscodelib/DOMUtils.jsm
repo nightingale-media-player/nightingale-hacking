@@ -275,6 +275,10 @@ var DOMUtils = {
    */
 
   destroyNode: function DOMUtils_destroyNode(aNode) {
+    /* Can only destroy element nodes. */
+    if (aNode.nodeType != Ci.nsIDOMNode.ELEMENT_NODE)
+      return;
+
     // Destroy all of the node's children, including the anonymous children.
     var nodeDocument = aNode.ownerDocument;
     this.destroyNodeList(nodeDocument.getAnonymousNodes(aNode));
@@ -284,7 +288,14 @@ var DOMUtils = {
     while (aNode.destroyFuncList) {
       // Pop the next destroy function from the end of the list and call it.
       var destroyFunc = aNode.destroyFuncList.pop();
-      destroyFunc();
+      try {
+        destroyFunc();
+      } catch (ex) {
+        var msg = "Exception: " + ex +
+                  " at " + ex.fileName +
+                  ", line " + ex.lineNumber;
+        Cu.reportError(msg);
+      }
 
       // If the destroy function list is empty, remove it.
       if (!aNode.destroyFuncList.length)
