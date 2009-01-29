@@ -58,14 +58,6 @@
 
 #include <nsCOMArray.h>
 
-#ifdef XP_MACOSX
-#include <Carbon/Carbon.h>
-#else
-#ifdef XP_UNIX
-#include <glib.h>
-#endif
-#endif
-
 // The maximum characters to output in a single PR_LOG call
 #define MAX_PRLOG 400
 
@@ -245,6 +237,170 @@ static int tree_collate_func_utf8(void *pCtx,
   return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF8);
 }
 
+#define CHARTYPE_OTHER 0
+#define CHARTYPE_DIGIT 1
+#define CHARTYPE_DECIMALPOINT 2
+#define CHARTYPE_SIGN 3
+#define CHARTYPE_EXPONENT 4
+
+PRInt32 getCharType(const char *p) {
+  switch (*p) {
+    case '.': 
+    case ',': 
+      return CHARTYPE_DECIMALPOINT;
+    case '+':
+    case '-': 
+      return CHARTYPE_SIGN;
+    case 'e':
+    case 'E':
+      return CHARTYPE_EXPONENT;
+  }
+  if (*p >= '0' && *p <= '9')
+    return CHARTYPE_DIGIT;
+  return CHARTYPE_OTHER;
+}
+
+// extract a leading number from a C or UTF8 string.
+void extractLeadingNumber(const char *str,
+                          PRBool *hasLeadingNumber,
+                          PRFloat64 *leadingNumber,
+                          nsCString &strippedString) {
+
+  // it would be nice to be able to do all of this with just sscanf, but 
+  // unfortunately that function does not tell us where the parsed number ended,
+  // and we need to know that in order to strip it from the string, so we have
+  // to parse manually. also, we want to handle ',' as '.', which sscanf doesn't
+  // do.
+
+  PRBool gotDecimalPoint = PR_FALSE;
+  PRBool gotExponent = PR_FALSE;
+  PRBool gotSign = PR_FALSE;
+  PRBool gotExponentSign = PR_FALSE;
+  PRBool gotDigit = PR_FALSE;
+  PRBool gotExponentDigit = PR_FALSE;
+  PRBool abortParsing = PR_FALSE;
+  
+  const char *p = str;
+  
+  while (!abortParsing && *p) {
+    switch (getCharType(p)) {
+      case CHARTYPE_SIGN: 
+        if (!gotExponent) {
+          // if we already had a sign for this number, or if the number part has
+          // already started (already had digits or a decimal point) we can't
+          // accept a sign here, so abort parsing.
+          if (gotSign || gotDigit || gotDecimalPoint) {
+            abortParsing = PR_TRUE;
+            break;
+          }
+          // remember that we got a sign for the number part
+          gotSign = PR_TRUE;
+        } else {
+          // if we already had a sign for this exponent, or if the number part
+          // of the exponent has already started (already had a digit in the
+          // exponent) we can't accept a sign here, so abort parsing.
+          if (gotExponentSign || gotExponentDigit) {
+            abortParsing = PR_TRUE;
+            break;
+          }
+          // remember that we got a sign for the exponent part
+          gotExponentSign = PR_TRUE;
+        }
+        break;
+      case CHARTYPE_DIGIT:
+        // remember that the number part has started
+        if (!gotExponent)
+          gotDigit = PR_TRUE;
+        else
+          gotExponentDigit = PR_TRUE;
+        break;
+      case CHARTYPE_DECIMALPOINT:
+        if (!gotExponent) {
+          // if we already had a decimal point for this number, we can't have
+          // another one, so abort parsing.
+          if (gotDecimalPoint) {
+            abortParsing = PR_TRUE;
+            break;
+          }
+          // remember that we got a decimal point for the number part
+          gotDecimalPoint = PR_TRUE;
+        } else {
+          // decimal points cannot be part of an exponent, so abort parsing.
+          abortParsing = PR_TRUE;
+          break;
+        }
+        break;
+      case CHARTYPE_EXPONENT:
+        // if we already are in the exponent part, we cannot get another
+        // exponent character, so abort parsing.
+        if (gotExponent) {
+          abortParsing = PR_TRUE;
+          break;
+        }
+        // this is only an exponent character if the next character is either
+        // a digit or a sign (it is safe to dereference p+1, since at worst
+        // it will be a null terminator)
+        switch (getCharType(p+1)) {
+          case CHARTYPE_DIGIT:
+          case CHARTYPE_SIGN:
+            // remember that we got an exponent.
+            gotExponent = PR_TRUE;
+            break;
+          default:
+            // anything else means this is not an exponent, but just the letter
+            // 'e' or 'E', so abort parsing.
+            abortParsing = PR_TRUE;
+            break;
+        }
+        break;
+      case CHARTYPE_OTHER:
+        // anything else is a character or symbol that isn't part of a valid
+        // number, so abort parsing.
+        abortParsing = PR_TRUE;
+        break;
+    }
+    p++;
+  }
+  
+  // if we stopped the parser on an invalid char, we need to back up one char,
+  // otherwise the whole string was a number and p just points at the terminal
+  // null char.
+  if (abortParsing)
+    p--;
+  
+  // p now points at the first character that isn't part of a valid number.
+  // copy the string, without the number.
+  strippedString = p;
+  
+  if (p == str) {
+    // no number found
+    *hasLeadingNumber = PR_FALSE;
+    *leadingNumber = 0;
+  } else {
+    // copy the number
+    nsCString number(str, p-str);
+    
+    // if the number contains a ',', change it to '.'
+    PRInt32 pos = number.FindChar(',');
+    if (pos != -1) number.Replace(pos, 1, '.');
+    
+    // read the number
+    PRFloat64 value;
+    
+    if(PR_sscanf(number.get(), "%lf", &value) != 1) {
+      // this should not happen, we just parsed and we know there is a valid
+      // number... handle it anyway.
+      *hasLeadingNumber = PR_FALSE;
+      *leadingNumber = 0;
+      strippedString = str;
+      LOG(("Failed to PR_sscanf a number in string '%s', this should not happen", str));
+    } else {
+      *hasLeadingNumber = PR_TRUE;
+      *leadingNumber = value;
+    }
+  }
+}
+ 
 static PRInt32 gLocaleCollationEnabled = PR_TRUE;
 
 /*
@@ -262,91 +418,20 @@ static int library_collate_func(int nA,
                                 int nB,
                                 const char *zB)
 {
-  int retval;
-
   // shortcut when both strings are empty
   if (nA == 0 && nB == 0) 
     return 0;
 
   nsCString _zA(zA, nA);
   nsCString _zB(zB, nB);
-    
-  // if collation is disabled, just do a C compare
-  if (!gLocaleCollationEnabled) {
+  
+  CDatabaseEngine *db = CDatabaseEngine::GetSingleton();
+  // if no dbengine service or if collation is disabled, just do a C compare
+  if (!db || !gLocaleCollationEnabled) {
     return strcmp(_zA.get(), _zB.get());
   }
   
-#ifndef XP_MACOSX
-
-  // unless we are on osx, we rely on the CRT's locale settings, so read the
-  // current locale for collate so we can restore it later
-  nsCString oldlocale_collate(setlocale(LC_COLLATE, NULL));
-
-  // loading locale "" loads the user defined locale
-  setlocale(LC_COLLATE, "");
-
-#ifdef XP_UNIX
-
-  // on linux, use glib's utf8 collate function, so we don't have to care about
-  // the whole wchar_t size mess
-
-  retval = g_utf8_collate(_zA.get(), _zB.get());
-  
-#endif
-
-#ifdef XP_WIN
-
-  // on windows, use wcscoll with wchar_t strings
-
-  wchar_t *input_a;
-  wchar_t *input_b;
-  
-  // convert to utf16
-  nsString input_a_utf16 = NS_ConvertUTF8toUTF16(_zA);
-  input_a = (wchar_t *)input_a_utf16.BeginReading();
-  nsString input_b_utf16 = NS_ConvertUTF8toUTF16(_zB);
-  input_b = (wchar_t *)input_b_utf16.BeginReading();
-
-  // apply the proper collation algorithm, depending on the user's locale.
-  
-  // note that it is impossible to use the proper sort for *all* languages at
-  // the same time, because what is proper depends on the original language from
-  // which the string came. for instance, hungarian artists should have their
-  // accented vowels sorted the same as non-accented ones, but a french artist 
-  // should have the last accent determine that order. because we cannot
-  // possibly guess the origin locale for the string, the only thing we can do
-  // is use the user's current locale on all strings.
-  
-  // that being said, many language-specific letters (such as the german eszett)
-  // have one one way of being properly sorted (in this instance, it must sort
-  // with the same weight as 'ss', and are collated that way no matter what
-  // locale is being used.
-  retval = wcscoll(input_a, input_b);
-
-#endif
-
-  // restore the previous collate setting
-  setlocale(LC_COLLATE, oldlocale_collate.get());
-  
-#else
-
-  // on osx, use carbon collate functions because the CRT functions do not
-  // have access to carbon's collation setting.
-
-  NS_ConvertUTF8toUTF16 _zA16(_zA.get());
-  NS_ConvertUTF8toUTF16 _zB16(_zB.get());
-  
-  ::UCCompareTextDefault(kUCCollateStandardOptions, 
-                         (const UniChar *)_zA16.BeginReading(),
-                         _zA16.Length(),
-                         (const UniChar *)_zB16.BeginReading(),
-                         _zB16.Length(), 
-                         NULL,
-                         (SInt32 *)&retval);
-
-#endif
-
-  return retval;
+  return db->CollateUTF8(_zA.get(), _zB.get());
 }
 
 void swap_string(const void *aDest,
@@ -788,6 +873,9 @@ CDatabaseEngine::CDatabaseEngine()
 , m_pThreadMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 , m_IsShutDown(PR_FALSE)
+#ifdef XP_MACOSX
+, m_Collator(nsnull)
+#endif
 {
 #ifdef PR_LOGGING
   if (!sDatabaseEngineLog)
@@ -871,6 +959,22 @@ NS_IMETHODIMP CDatabaseEngine::Init()
     NS_ERROR("Unable to register xpcom-shutdown observer");
     m_AttemptShutdownOnDestruction = PR_TRUE;
   }
+  
+  // Select a collation locale for the entire lifetime of the app, so that
+  // it cannot change on us.
+  
+  rv = GetCurrentCollationLocale(mCollationLocale);
+
+#ifdef XP_MACOSX
+
+  LocaleRef l;
+  ::LocaleRefFromLocaleString(mCollationLocale.get(), &l);
+  
+  ::UCCreateCollator(l,
+                     kUnicodeCollationClass, 
+                     kUCCollateStandardOptions,
+                     &m_Collator);
+#endif
 
   return NS_OK;
 }
@@ -923,6 +1027,11 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
   m_ThreadPool.EnumerateRead(EnumThreadsOperate, &op);
 
   m_ThreadPool.Clear();
+  
+#ifdef XP_MACOSX
+  if (m_Collator)
+    ::UCDisposeCollator(&m_Collator);
+#endif
 
   return NS_OK;
 }
@@ -1784,6 +1893,201 @@ NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(PRBool aEnabled)
   return NS_OK;
 }
 
+PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
+
+  PRInt32 retval;
+
+  // extract leading numbers
+  
+  PRBool hasLeadingNumberA = PR_FALSE;
+  PRBool hasLeadingNumberB = PR_FALSE;
+  
+  PRFloat64 leadingNumberA;
+  PRFloat64 leadingNumberB;
+  
+  nsCString strippedA;
+  nsCString strippedB;
+  
+  extractLeadingNumber(aStr1, &hasLeadingNumberA, &leadingNumberA, strippedA);
+  extractLeadingNumber(aStr2, &hasLeadingNumberB, &leadingNumberB, strippedB);
+  
+  // we want strings with leading numbers to always sort at the end
+  if (hasLeadingNumberA && !hasLeadingNumberB) {
+    return 1;
+  } else if (!hasLeadingNumberA && hasLeadingNumberB) {
+    return -1;
+  } else if (hasLeadingNumberA && hasLeadingNumberB) {
+    if (leadingNumberA > leadingNumberB) 
+      return 1;
+    else if (leadingNumberA < leadingNumberB)
+      return -1;
+  }
+  
+  // either both numbers are equal, or neither string had a leading number,
+  // use the (possibly) stripped down strings to collate.
+  
+#ifndef XP_MACOSX
+
+  // unless we are on osx, we rely on the CRT's locale settings, so read the
+  // current locale for collate so we can restore it later
+  nsCString oldlocale_collate(setlocale(LC_COLLATE, NULL));
+
+  setlocale(LC_COLLATE, mCollationLocale.get());
+
+#ifdef XP_UNIX
+
+  // on linux, use glib's utf8 collate function, so we don't have to care about
+  // the whole wchar_t size mess
+
+  retval = g_utf8_collate(strippedA.get(), strippedB.get());
+  
+#endif
+
+#ifdef XP_WIN
+
+  // on windows, use wcscoll with wchar_t strings
+
+  // convert to utf16
+  nsString input_a_utf16 = NS_ConvertUTF8toUTF16(strippedA);
+  nsString input_b_utf16 = NS_ConvertUTF8toUTF16(strippedB);
+
+  // apply the proper collation algorithm, depending on the user's locale.
+  
+  // note that it is impossible to use the proper sort for *all* languages at
+  // the same time, because what is proper depends on the original language from
+  // which the string came. for instance, hungarian artists should have their
+  // accented vowels sorted the same as non-accented ones, but a french artist 
+  // should have the last accent determine that order. because we cannot
+  // possibly guess the origin locale for the string, the only thing we can do
+  // is use the user's current locale on all strings.
+  
+  // that being said, many language-specific letters (such as the german eszett)
+  // have one one way of being properly sorted (in this instance, it must sort
+  // with the same weight as 'ss', and are collated that way no matter what
+  // locale is being used.
+  retval = wcscoll((wchar_t *)input_a_utf16.BeginReading(), 
+                   (wchar_t *)input_b_utf16.BeginReading());
+
+#endif
+
+  // restore the previous collate setting
+  setlocale(LC_COLLATE, oldlocale_collate.get());
+  
+#else
+
+  // on osx, use carbon collate functions because the CRT functions do not
+  // have access to carbon's collation setting.
+
+  NS_ConvertUTF8toUTF16 _zA16(strippedA);
+  NS_ConvertUTF8toUTF16 _zB16(strippedB);
+  
+  // we should always have a collator, but just in case we don't,
+  // use the default collation algorithm.
+  if (!m_Collator) {
+    ::UCCompareTextDefault(kUCCollateStandardOptions, 
+                           (const UniChar *)_zA16.BeginReading(),
+                           _zA16.Length(),
+                           (const UniChar *)_zB16.BeginReading(),
+                           _zB16.Length(), 
+                           NULL,
+                           (SInt32 *)&retval);
+  } else {
+    ::UCCompareText(m_Collator,
+                    (const UniChar *)_zA16.BeginReading(),
+                    _zA16.Length(),
+                    (const UniChar *)_zB16.BeginReading(),
+                    _zB16.Length(), 
+                    NULL,
+                    (SInt32 *)&retval);
+  }
+  
+#endif
+
+  return retval;
+}
+
+nsresult
+CDatabaseEngine::GetCurrentCollationLocale(nsCString &aCollationLocale) {
+
+#ifdef XP_MACOSX
+
+  CFStringRef collationIdentifier = NULL;
+
+  // try to read the collation language from the prefs (note, CFLocaleGetValue
+  // with kCFLocaleCollationIdentifier would be ideal, but although that call
+  // works for other constants, it does not for the collation identifier, at
+  // least on 10.4, which we want to support).
+
+  CFPropertyListRef pl = 
+    CFPreferencesCopyAppValue(CFSTR("AppleCollationOrder"),
+                              kCFPreferencesCurrentApplication);
+
+  // use the value we've read if it existed and is what we're expecting
+  if (pl != NULL && 
+      CFGetTypeID(pl) == CFStringGetTypeID()) {
+    collationIdentifier = (CFStringRef)pl;
+  } else {
+    // otherwise, retrieve the list of prefered languages, the first item
+    // is the user's language, and defines the default collation.
+    CFPropertyListRef al =
+      CFPreferencesCopyAppValue(CFSTR("AppleLanguages"),
+                                kCFPreferencesCurrentApplication);
+    // if the array exists and is what we expect, read the first item
+    if (al != NULL &&
+        CFGetTypeID(al) == CFArrayGetTypeID()) {
+      CFArrayRef ar = (CFArrayRef)al;
+      if (CFArrayGetCount(ar) > 0) {
+        CFTypeRef lang = CFArrayGetValueAtIndex(ar, 0);
+        if (lang != NULL &&
+            CFGetTypeID(lang) == CFStringGetTypeID()) {
+          collationIdentifier = (CFStringRef)lang;
+        }
+      }
+    }
+  }
+
+  // if everything goes wrong and we're completely unable to read either values,
+  // that's kind of a bummer, print a debug message and assume that we are using
+  // the standard "C" collation (strcmp). a reason this could happen might be
+  // that we are running on an unsupported version of osx that does not have
+  // these strings (either real old, or a future version which stores them
+  // elsewhere or with different types). another reason this might happen is
+  // if the computer is about to explode.
+
+  if (collationIdentifier) {
+    char buf[64]="";
+    CFStringGetCString(collationIdentifier, 
+                       buf, 
+                       sizeof(buf), 
+                       kCFStringEncodingASCII);
+    buf[sizeof(buf)-1] = 0;
+
+    aCollationLocale = buf;
+
+  } else {
+    LOG(("Could not retrieve the collation locale identifier"))
+  }
+#else
+
+  // read the current collation id, this is usually the standard C collate
+  nsCString curCollate(setlocale(LC_COLLATE, NULL));
+  
+  // read the user defined collation id, this usually corresponds to the
+  // user's OS language selection
+  aCollationLocale = setlocale(LC_COLLATE, "");
+  
+  // restore the default collation
+  setlocale(LC_COLLATE, curCollate.get());
+
+#endif
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationID(nsAString &aID) {
+  aID = NS_ConvertASCIItoUTF16(mCollationLocale);
+  return NS_OK;
+}
 
 #ifdef PR_LOGGING
 sbDatabaseEnginePerformanceLogger::sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,

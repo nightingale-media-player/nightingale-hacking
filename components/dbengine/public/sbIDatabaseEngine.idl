@@ -46,7 +46,7 @@ interface nsIFile;
 *
 * \sa sbIDatabaseQuery, sbIDatabaseResult
 */
-[scriptable, uuid(4c57b674-bcdb-4f15-86b5-2aa3da2e55ce)]
+[scriptable, uuid(4661378b-addc-4d1e-aece-0a49cd169b8d)]
 interface sbIDatabaseEngine : nsISupports
 {
   /**
@@ -91,4 +91,10 @@ interface sbIDatabaseEngine : nsISupports
    * implementation)
    */
   attribute boolean localeCollationEnabled;
+  
+  /**
+   * \brief Returns the identifier of the localized collation sequence
+   */
+  readonly attribute AString localeCollationID;
+   
 };

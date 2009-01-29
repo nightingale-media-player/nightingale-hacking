@@ -62,6 +62,7 @@
 #include <nsITimer.h>
 
 #include <DatabaseQuery.h>
+#include <sbIDatabaseEngine.h>
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -487,6 +488,16 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   if(needsMigration) {
     rv = MigrateLibrary(fromVersion, toVersion);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  // Check locale and reindex collated indices if needed
+  PRBool needsReindexCollations = PR_FALSE;
+  rv = NeedsReindexCollations(&needsReindexCollations);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (needsReindexCollations) {
+    rv = ReindexCollations();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -4236,6 +4247,97 @@ sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty,
   }
 
   return CallQueryInterface(array, _retval);
+}
+
+nsresult
+sbLocalDatabaseLibrary::NeedsReindexCollations(PRBool *aNeedsReindexCollations) {
+
+  // Read the identifier for the collation locale
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(NS_LITERAL_STRING("SELECT value FROM library_metadata WHERE name = 'collation-locale'"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = query->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rowCount = 0;
+  rv = result->GetRowCount(&rowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // If the collation-locale has not been set yet, cause a reindex
+  if (rowCount == 0) {
+    *aNeedsReindexCollations = PR_TRUE;
+    return NS_OK;
+  }
+
+  NS_ENSURE_TRUE(rowCount == 1, NS_ERROR_UNEXPECTED);
+
+  nsAutoString previousCollationLocale;
+  rv = result->GetRowCell(0, 0, previousCollationLocale);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIDatabaseEngine> dbEngine = 
+    do_GetService("@songbirdnest.com/Songbird/DatabaseEngine;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsString currentCollationLocale;
+  dbEngine->GetLocaleCollationID(currentCollationLocale);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  *aNeedsReindexCollations = 
+    !currentCollationLocale.Equals(previousCollationLocale);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseLibrary::ReindexCollations() {
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Reindex all library_collate sequences
+  
+  nsAutoString queryStr;
+  queryStr = NS_LITERAL_STRING("REINDEX 'library_collate'");
+
+  rv = query->AddQuery(queryStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Write the new collation locale identifier in the db
+
+  nsCOMPtr<sbIDatabaseEngine> dbEngine = 
+    do_GetService("@songbirdnest.com/Songbird/DatabaseEngine;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsString currentCollationLocale;
+  dbEngine->GetLocaleCollationID(currentCollationLocale);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  queryStr =
+    NS_LITERAL_STRING("INSERT OR REPLACE INTO library_metadata VALUES('collation-locale', '");
+  
+  queryStr += currentCollationLocale;
+  
+  queryStr += NS_LITERAL_STRING("')");
+  
+  rv = query->AddQuery(queryStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 dbOk = 0;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 

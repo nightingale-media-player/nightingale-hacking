@@ -58,6 +58,14 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 
+#ifdef XP_MACOSX
+#include <Carbon/Carbon.h>
+#else
+#ifdef XP_UNIX
+#include <glib.h>
+#endif
+#endif
+
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
   "@songbirdnest.com/Songbird/DatabaseEngine;1"
@@ -94,6 +102,8 @@ public:
   virtual ~CDatabaseEngine();
 
   static CDatabaseEngine* GetSingleton();
+  
+  PRInt32 CollateUTF8(const char *aStr1, const char *aStr2);
 
   typedef enum {
     dbEnginePreShutdown = 0,
@@ -128,6 +138,8 @@ private:
   nsresult CreateDBStorePath();
   nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);
 
+  nsresult GetCurrentCollationLocale(nsCString &aCollationLocale);
+
 private:
   PRLock * m_pDBStorePathLock;
   nsString m_DBStorePath;
@@ -142,6 +154,11 @@ private:
 
   PRBool m_AttemptShutdownOnDestruction;
   PRBool m_IsShutDown;
+
+  nsCString mCollationLocale;
+#ifdef XP_MACOSX
+  CollatorRef m_Collator;
+#endif
 };
 
 class QueryProcessorThread : public nsIRunnable

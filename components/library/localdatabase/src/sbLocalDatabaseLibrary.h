@@ -337,6 +337,10 @@ private:
                           PRUint32 *aToVersion);
 
   nsresult MigrateLibrary(PRUint32 aFromVersion, PRUint32 aToVersion);
+  
+  nsresult NeedsReindexCollations(PRBool *aNeedsReindexCollations);
+  
+  nsresult ReindexCollations();
 
 private:
   // This is the GUID used by the DBEngine to uniquely identify the sqlite
