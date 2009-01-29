@@ -52,6 +52,7 @@
 #include <prmem.h>
 #include <prtypes.h>
 #include <assert.h>
+#include <prprf.h>
 
 #include <nsIScriptError.h>
 #include <nsIConsoleService.h>
