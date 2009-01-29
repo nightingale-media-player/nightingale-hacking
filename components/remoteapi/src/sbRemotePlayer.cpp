@@ -1477,7 +1477,7 @@ sbRemotePlayer::Previous()
   rv = manager->GetSequencer(getter_AddRefs(sequencer));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = sequencer->Next();
+  rv = sequencer->Previous();
   NS_ENSURE_SUCCESS( rv, rv );
 
   rv = TakePlaybackControl( nsnull );
