@@ -425,13 +425,22 @@ static int library_collate_func(int nA,
   nsCString _zA(zA, nA);
   nsCString _zB(zB, nB);
   
-  CDatabaseEngine *db = CDatabaseEngine::GetSingleton();
   // if no dbengine service or if collation is disabled, just do a C compare
-  if (!db || !gLocaleCollationEnabled) {
+  // (note that GetSingleton adds a ref to the db object)
+
+  CDatabaseEngine *db = gLocaleCollationEnabled ? 
+                          CDatabaseEngine::GetSingleton() : nsnull;
+  
+  if (!db) {
     return strcmp(_zA.get(), _zB.get());
   }
+
+  PRInt32 retval = db->CollateUTF8(_zA.get(), _zB.get());
   
-  return db->CollateUTF8(_zA.get(), _zB.get());
+  // release the ref
+  NS_RELEASE(db);
+  
+  return retval;
 }
 
 void swap_string(const void *aDest,
