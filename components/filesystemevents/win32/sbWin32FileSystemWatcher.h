@@ -57,7 +57,8 @@ public:
   NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbIFileSystemTreeListener
-  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);
+  NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
+                         sbStringArray & aDirPathArray);
 
   //
   // \brief Accessor for the thread should run boolean. This returns

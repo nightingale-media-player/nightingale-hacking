@@ -162,8 +162,14 @@ sbWin32FileSystemWatcher::StartWatching()
   nsresult rv = mTree->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mTree->Init(mWatchPath, mIsRecursive);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mShouldLoadSession) {
+    rv = mTree->InitWithTreeSession(mSessionID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mTree->Init(mWatchPath, mIsRecursive);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -267,8 +273,15 @@ sbWin32FileSystemWatcher::GetEventPathsQueueLock()
 // sbFileSystemTreeListener
 
 NS_IMETHODIMP
-sbWin32FileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
+sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
+                                      sbStringArray & aDirPathArray)
 {
+  if (mWatchPath.Equals(EmptyString())) {
+    // If the watch path is empty here, this means that the tree was loaded
+    // from a previous session. Set the watch path now.
+    mWatchPath.Assign(aTreeRootPath);
+  }
+
   // Setup the timer callback
   nsresult rv;
   mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
