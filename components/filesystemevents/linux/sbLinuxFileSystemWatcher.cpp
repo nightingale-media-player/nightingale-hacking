@@ -120,8 +120,14 @@ sbLinuxFileSystemWatcher::StartWatching()
   nsresult rv = mTree->AddListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mTree->Init(mWatchPath, mIsRecursive);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mShouldLoadSession) {
+    rv = mTree->InitWithTreeSession(mSessionID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mTree->Init(mWatchPath, mIsRecursive);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -233,8 +239,15 @@ sbLinuxFileSystemWatcher::OnChangeFound(nsAString & aChangePath,
 }
 
 NS_IMETHODIMP 
-sbLinuxFileSystemWatcher::OnTreeReady(sbStringArray & aDirPathArray)
+sbLinuxFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
+                                      sbStringArray & aDirPathArray)
 {
+  if (mWatchPath.Equals(EmptyString())) {
+    // If the watch path is empty here, this means that the tree was loaded
+    // from a previous session. Set the watch path now.
+    mWatchPath.Assign(aTreeRootPath);
+  }
+  
   // Now that the tree has been built, start the inotify file-descriptor.
   mInotifyFileDesc = inotify_init();
   NS_ENSURE_TRUE(mInotifyFileDesc != -1, NS_ERROR_UNEXPECTED);

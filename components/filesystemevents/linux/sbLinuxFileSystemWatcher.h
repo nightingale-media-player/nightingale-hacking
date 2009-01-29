@@ -52,7 +52,8 @@ public:
   // |sbFileSystemTreeListener|
   NS_IMETHOD OnChangeFound(nsAString & aChangePath,
                            EChangeType aChangeType);
-  NS_IMETHOD OnTreeReady(sbStringArray & aDirPathArray);
+  NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
+                         sbStringArray & aDirPathArray);
 
 protected:
   //
