@@ -76,8 +76,20 @@ try
     handleItem: function(aUriSpec, aCount, aTotal) {
       if (aUriSpec.toLowerCase().indexOf("http:") == 0 ||
           aUriSpec.toLowerCase().indexOf("https:") == 0 ||
-          aUriSpec.toLowerCase().indexOf("songbird:") == 0) {
-        gBrowser.loadOneTab(aUriSpec, null, null, null, false, false);
+          aUriSpec.toLowerCase().indexOf("songbird:") == 0)
+      {
+        var newTab = gBrowser.loadOneTab(aUriSpec, null, null, null, false, false);
+        if (gBrowser._sessionStore) {
+          // since the session restore might choose to focus another tab instead,
+          // add an event handler to select this externally-opened tab instead.
+          // this will happen only after the tabs have been restored and the
+          // selection from session restore has been applied.
+          gBrowser.addEventListener("sessionstore-tabs-restored", function() {
+            gBrowser.delayedSelectTab(newTab);
+            gBrowser.removeEventListener("sessionstore-tabs-restored", arguments.callee, false);
+          }, false);
+        }
+        gBrowser.selectedTab = newTab;
       } else {
         var typeSniffer = Components.classes["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
                                     .createInstance(Components.interfaces.sbIMediacoreTypeSniffer);

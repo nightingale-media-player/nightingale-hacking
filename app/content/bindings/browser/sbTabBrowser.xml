@@ -110,6 +110,20 @@
             }
             // *****************************
             
+            // session restore has completed; focus the desired tab to select,
+            // and dispatch an event notifying the end of the whole session
+            // restore process.  However, since sbTabBrowser::loadURI will use
+            // a setTimeout to focus the (effectively) last-opened tab, we need
+            // to likewise use a setTimeout to focus the tab we want.
+            setTimeout(function(aTabBrowser){
+              var tab = aTabBrowser._tabToSelect;
+              aTabBrowser._tabToSelect = null;
+              aTabBrowser.selectedTab = tab;
+              var event = document.createEvent("Events");
+              event.initEvent("sessionstore-tabs-restored", true, false);
+              aTabBrowser.dispatchEvent(event);
+            }, 0, this.tabbrowser);
+            window.removeEventListener('load', arguments.callee, true);
           }
         }
         window.addEventListener('load', this.windowLoadEventListener, true);
@@ -1261,6 +1275,26 @@
         </getter>
       </property>
 
+      <!-- set the tab to select when loading is complete
+        -  This will get called from the session restore (if it exists),
+        -  and possibly from command-line handlers that feel like opening new
+        -  tabs during startup (e.g. the protocol handler)
+        -->
+      <method name="delayedSelectTab">
+        <parameter name="aTab"/>
+        <body>
+          <![CDATA[
+            if (this._tabToSelect === null) {
+              // already done loading
+              this.mTabBox.selectedTab = aTab;
+            } else {
+              // wait to load things
+              this._tabToSelect = aTab;
+            }
+          ]]>
+        </body>
+      </method>
+      <field name="_tabToSelect"/> <!-- default to undefined -->
     </implementation>
 
     <handlers>

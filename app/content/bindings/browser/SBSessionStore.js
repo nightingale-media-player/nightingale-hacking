@@ -269,14 +269,12 @@ var SBSessionStore = {
 
     // Select the selected tab from the previous session (or the first one if
     // we don't know which one that is)
-    // in a setTimeout due to sbTabBrowser::loadURI not letting us force load
-    // in background.  To be fixed better on trunk.
-    setTimeout(function(){
-      if (!selectedTab && aTabBrowser.mediaTab) {
-        selectedTab = aTabBrowser.mediaTab;
-      }
-      aTabBrowser.selectedTab = selectedTab;
-    }, 0);
+    // use delayedSelectTab because sbTabBrowser::loadURI uses a timeout to
+    // force the new tab to be selected :(
+    if (!selectedTab && aTabBrowser.mediaTab) {
+      selectedTab = aTabBrowser.mediaTab;
+    }
+    aTabBrowser.delayedSelectTab(selectedTab);
 
     this.tabStateRestored = true;
     
