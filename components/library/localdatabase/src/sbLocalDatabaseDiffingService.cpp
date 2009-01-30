@@ -76,7 +76,7 @@ sbLocalDatabaseDiffingService::~sbLocalDatabaseDiffingService()
 {
 }
 
-/*static*/ 
+/*static*/
 NS_METHOD sbLocalDatabaseDiffingService::RegisterSelf(
                           nsIComponentManager* aCompMgr,
                           nsIFile* aPath,
@@ -92,26 +92,26 @@ NS_METHOD sbLocalDatabaseDiffingService::RegisterSelf(
   rv = categoryManager->AddCategoryEntry(APPSTARTUP_CATEGORY,
                                          SB_LOCALDATABASE_DIFFINGSERVICE_DESCRIPTION,
                                          "service," SB_LOCALDATABASE_DIFFINGSERVICE_CONTRACTID,
-                                         PR_TRUE, 
-                                         PR_TRUE, 
+                                         PR_TRUE,
+                                         PR_TRUE,
                                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::Init()
 {
   nsresult rv;
-  
+
   mPropertyManager = do_CreateInstance(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::GetPropertyIDs(nsIStringEnumerator **aPropertyIDs)
 {
   NS_ENSURE_ARG_POINTER(aPropertyIDs);
@@ -127,9 +127,9 @@ sbLocalDatabaseDiffingService::GetPropertyIDs(nsIStringEnumerator **aPropertyIDs
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateLibraryChangeFromItems(
-                                sbIMediaItem *aSourceItem, 
+                                sbIMediaItem *aSourceItem,
                                 sbIMediaItem *aDestinationItem,
                                 sbILibraryChange **aLibraryChange)
 {
@@ -144,11 +144,11 @@ sbLocalDatabaseDiffingService::CreateLibraryChangeFromItems(
   nsCOMPtr<sbIPropertyArray> sourceProperties;
   nsCOMPtr<sbIPropertyArray> destinationProperties;
 
-  nsresult rv = aSourceItem->GetProperties(nsnull, 
+  nsresult rv = aSourceItem->GetProperties(nsnull,
                                            getter_AddRefs(sourceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aDestinationItem->GetProperties(nsnull, 
+  rv = aDestinationItem->GetProperties(nsnull,
                                        getter_AddRefs(destinationProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -170,7 +170,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangeFromItems(
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
                                 sbIMediaItem *aSourceItem,
                                 sbILibraryChange **aLibraryChange)
@@ -186,7 +186,7 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
   nsresult rv = aSourceItem->GetProperties(nsnull, getter_AddRefs(properties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIMutableArray> propertyChanges = 
+  nsCOMPtr<nsIMutableArray> propertyChanges =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -213,17 +213,17 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
     NS_NEWXPCOM(propertyChange, sbPropertyChange);
     NS_ENSURE_TRUE(propertyChange, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = propertyChange->InitWithValues(sbIChangeOperation::ADDED, 
+    rv = propertyChange->InitWithValues(sbIChangeOperation::ADDED,
                                         strPropertyID,
                                         EmptyString(),
                                         strPropertyValue);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<nsISupports> element = 
+    nsCOMPtr<nsISupports> element =
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIPropertyChange *, propertyChange), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = propertyChanges->AppendElement(element, 
+    rv = propertyChanges->AppendElement(element,
                                         PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -240,11 +240,11 @@ sbLocalDatabaseDiffingService::CreateItemAddedLibraryChange(
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourceItem,
                                                             PRUint32 aItemOrdinal,
                                                             sbILibraryChange **aLibraryChange)
-{ 
+{
   NS_ENSURE_ARG_POINTER(aSourceItem);
   NS_ENSURE_ARG_POINTER(aLibraryChange);
 
@@ -254,7 +254,7 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
   NS_NEWXPCOM(libraryChange, sbLibraryChange);
   NS_ENSURE_TRUE(libraryChange, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<nsIMutableArray> propertyChanges = 
+  nsCOMPtr<nsIMutableArray> propertyChanges =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -265,17 +265,17 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
   nsString strPropertyValue;
   strPropertyValue.AppendInt(aItemOrdinal);
 
-  rv = propertyChange->InitWithValues(sbIChangeOperation::MODIFIED, 
+  rv = propertyChange->InitWithValues(sbIChangeOperation::MODIFIED,
                                       NS_LITERAL_STRING(SB_PROPERTY_ORDINAL),
                                       EmptyString(),
                                       strPropertyValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsISupports> element = 
+  nsCOMPtr<nsISupports> element =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIPropertyChange *, propertyChange), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = propertyChanges->AppendElement(element, 
+  rv = propertyChanges->AppendElement(element,
                                       PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -291,7 +291,7 @@ sbLocalDatabaseDiffingService::CreateItemMovedLibraryChange(sbIMediaItem *aSourc
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateItemDeletedLibraryChange(sbIMediaItem *aDestinationItem,
                                                               sbILibraryChange **aLibraryChange)
 {
@@ -314,7 +314,7 @@ sbLocalDatabaseDiffingService::CreateItemDeletedLibraryChange(sbIMediaItem *aDes
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
                                 sbIPropertyArray *aSourceProperties,
                                 sbIPropertyArray *aDestinationProperties,
@@ -325,7 +325,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
   NS_ENSURE_ARG_POINTER(aPropertyChanges);
 
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> propertyChanges = 
+  nsCOMPtr<nsIMutableArray> propertyChanges =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -338,10 +338,10 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
 
   nsCOMPtr<sbIProperty> property;
   nsTHashtable<nsStringHashKey> sourcePropertyNamesFoundInDestination;
-  
+
   PRBool success = sourcePropertyNamesFoundInDestination.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  
+
   // These properties are excluded from checking since they
   // are automatically maintained and do not reflect actual
   // metadata differences in the items.
@@ -349,23 +349,23 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
   success = propertyExclusionList.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsStringHashKey* successHashkey = 
+  nsStringHashKey* successHashkey =
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CREATED));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
-  successHashkey = 
+  successHashkey =
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_UPDATED));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
-  successHashkey = 
+  successHashkey =
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_GUID));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
-  successHashkey = 
+  successHashkey =
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
-  successHashkey = 
+  successHashkey =
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
@@ -404,10 +404,10 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
                                           propertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<nsISupports> element = 
+      nsCOMPtr<nsISupports> element =
         do_QueryInterface(NS_ISUPPORTS_CAST(sbIPropertyChange *, propertyChange), &rv);
 
-      rv = propertyChanges->AppendElement(element, 
+      rv = propertyChanges->AppendElement(element,
                                           PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -419,7 +419,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
       successHashkey = sourcePropertyNamesFoundInDestination.PutEntry(propertyId);
       NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
-      // Property values are the same, nothing changed, 
+      // Property values are the same, nothing changed,
       // continue onto the next property.
       if(propertyValue.Equals(propertyDestinationValue)) {
         continue;
@@ -435,9 +435,9 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
                                           propertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsCOMPtr<nsISupports> element = 
+      nsCOMPtr<nsISupports> element =
         do_QueryInterface(NS_ISUPPORTS_CAST(sbIPropertyChange *, propertyChange), &rv);
-      rv = propertyChanges->AppendElement(element, 
+      rv = propertyChanges->AppendElement(element,
                                           PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -461,7 +461,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
     }
 
     if(!sourcePropertyNamesFoundInDestination.GetEntry(propertyId)) {
-      
+
       // We couldn't find the property in the source properties, this means
       // the property must've been removed.
       nsRefPtr<sbPropertyChange> propertyChange;
@@ -474,7 +474,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
                                           EmptyString());
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = propertyChanges->AppendElement(NS_ISUPPORTS_CAST(sbIPropertyChange *, propertyChange), 
+      rv = propertyChanges->AppendElement(NS_ISUPPORTS_CAST(sbIPropertyChange *, propertyChange),
                                           PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -489,7 +489,7 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
   return propertyChangesCount ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
                                 sbIMediaList *aSourceList,
                                 sbIMediaList *aDestinationList,
@@ -504,7 +504,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   NS_ENSURE_TRUE(libraryChangeset, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIMutableArray> libraryChanges = 
+  nsCOMPtr<nsIMutableArray> libraryChanges =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -522,11 +522,11 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   rv = destinationEnum->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aSourceList->EnumerateAllItems(sourceEnum, 
+  rv = aSourceList->EnumerateAllItems(sourceEnum,
     sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aDestinationList->EnumerateAllItems(destinationEnum, 
+  rv = aDestinationList->EnumerateAllItems(destinationEnum,
     sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -546,14 +546,14 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   rv = destinationArray->GetLength(&destinationLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMutablePropertyArray> propertyArray = 
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = propertyArray->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
     EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -598,7 +598,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
     PRUint32 propertyCount = 0;
     rv = currentArray->GetLength(&propertyCount);
 
-    // Couldn't get the property count or property count 
+    // Couldn't get the property count or property count
     // is unexpected, skip item and continue.
     if(NS_FAILED(rv) ||
        propertyCount != 2) {
@@ -607,14 +607,15 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
 
     nsString strPropertyID;
     nsString strPropertyValue;
+    nsString contentURL;
 
     PRBool hasFoundItem = PR_FALSE;
     nsCOMPtr<nsIArray> foundItems;
     nsCOMPtr<sbIProperty> property;
     nsCOMPtr<sbIMediaItem> itemDestination;
 
-    for(PRUint32 currentProperty = 0; 
-        currentProperty < propertyCount && !hasFoundItem; 
+    for(PRUint32 currentProperty = 0;
+        currentProperty < propertyCount && !hasFoundItem;
         ++currentProperty) {
 
       rv = currentArray->GetPropertyAt(currentProperty,
@@ -627,12 +628,34 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
       rv = property->GetValue(strPropertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if(strPropertyValue.IsEmpty()) {
+      // If there is no value, and we're not dealing with the origin URL then skip
+      if(strPropertyValue.IsEmpty() &&
+          (contentURL.IsEmpty() ||
+           !strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL))) {
         continue;
       }
 
+      // Need to determine if the origin URL is blank. We'll default to
+      // false since this may not even be the origin URL. We need to know
+      // if we're dealing with a blank origin URL below, where we check the
+      // source library.
+      PRBool const propertyWasBlank = strPropertyValue.IsEmpty();
+
+      // If this is the content URL save off the value for the origin URL
+      if(strPropertyID.EqualsLiteral(SB_PROPERTY_CONTENTURL)) {
+        contentURL = strPropertyValue;
+      }
+      // We've got an origin URL switch to the value content URL
+      // if there is no origin URL
+      else if(strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL)) {
+        // Determine if the originURL is blank
+        if (propertyWasBlank) {
+          strPropertyValue = contentURL;
+        }
+      }
+
       // Try and find it.
-      rv = aDestinationList->GetItemsByProperty(strPropertyID, 
+      rv = aDestinationList->GetItemsByProperty(strPropertyID,
                                                 strPropertyValue,
                                                 getter_AddRefs(foundItems));
       if(rv == NS_ERROR_NOT_AVAILABLE) {
@@ -652,9 +675,16 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
           continue;
       }
 
+      // If we're dealing with the origin URL and the source one is blank
+      // we need to switch back to the content URL to lookup the source
+      if (strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL) &&
+          propertyWasBlank) {
+        strPropertyID.AssignLiteral(SB_PROPERTY_CONTENTURL);
+      }
+
       // Figure out how many occurrences of the item we have
       // in the source, this will help us figure out if we should
-      // mark an item "added" instead of "modified" when its 
+      // mark an item "added" instead of "modified" when its
       // present more than once.
       nsCOMPtr<nsIArray> foundItemsInSource;
       rv = aSourceList->GetItemsByProperty(strPropertyID,
@@ -668,13 +698,13 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
 
       // Is this the first time we've found this item?
       if(foundItemsInSourceCount > 1) {
-        
+
         PRUint32 itemTotal = 0;
         if(itemsInSourceAvailableOccurrences.Get(strPropertyValue, &itemTotal)){
           // We've already found this item, only continue if it has occurrences
           // left to use.
           if(itemTotal > 1) {
-            success = 
+            success =
               itemsInSourceAvailableOccurrences.Put(strPropertyValue, itemTotal - 1);
           }
           else {
@@ -687,7 +717,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
           success = itemsInSourceCount.Put(strPropertyValue, foundItemsInSourceCount);
           NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-          // Also put it in a counter that we decrement. This will prevent us 
+          // Also put it in a counter that we decrement. This will prevent us
           // from going over the amount of occurrences for the item.
           success = itemsInSourceAvailableOccurrences.Put(strPropertyValue, foundItemsInSourceCount - 1);
         }
@@ -747,7 +777,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
     PRUint32 propertyCount = 0;
     rv = currentArray->GetLength(&propertyCount);
 
-    // Couldn't get the property count or property count 
+    // Couldn't get the property count or property count
     // is unexpected, skip item and continue.
     if(NS_FAILED(rv) ||
       propertyCount != 2) {
@@ -769,14 +799,14 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
       // Present in source, check to see if we've run out of occurrences
       // for this item or not.
       if(itemsInSource.GetEntry(strPropertyValue)) {
-        
+
         PRUint32 destCount = 0;
         PRUint32 sourceCount = 0;
 
         if(itemsInSourceCount.Get(strPropertyValue, &sourceCount)) {
-          
+
           if(itemsInDestinationCount.Get(strPropertyValue, &destCount)) {
-            
+
             // We ran out of occurrences for this item.
             // It should be marked as deleted.
             if(destCount >= sourceCount) {
@@ -816,15 +846,15 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
       }
     }
   }
-  
+
   // Ensure that all items present will be in the correct order
-  // by explicity including a move operation for each item present 
+  // by explicity including a move operation for each item present
   // the source.
 
   PRUint32 sourceListLength = 0;
   rv = aSourceList->GetLength(&sourceListLength);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   for(PRUint32 i = 0; i < sourceListLength; ++i) {
     rv = aSourceList->GetItemByIndex(i, getter_AddRefs(item));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -855,7 +885,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLists(
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
                                 sbILibrary *aSourceLibrary,
                                 sbILibrary *aDestinationLibrary,
@@ -870,14 +900,14 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
   NS_ENSURE_TRUE(libraryChangeset, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIMutableArray> libraryChanges = 
+  nsCOMPtr<nsIMutableArray> libraryChanges =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsRefPtr<sbLocalDatabaseDiffingServiceEnumerator> sourceEnum;
   NS_NEWXPCOM(sourceEnum, sbLocalDatabaseDiffingServiceEnumerator);
   NS_ENSURE_TRUE(sourceEnum, NS_ERROR_OUT_OF_MEMORY);
-  
+
   rv = sourceEnum->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -888,11 +918,11 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
   rv = destinationEnum->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aSourceLibrary->EnumerateAllItems(sourceEnum, 
+  rv = aSourceLibrary->EnumerateAllItems(sourceEnum,
                                          sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aDestinationLibrary->EnumerateAllItems(destinationEnum, 
+  rv = aDestinationLibrary->EnumerateAllItems(destinationEnum,
                                               sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -912,14 +942,14 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
   rv = destinationArray->GetLength(&destinationLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMutablePropertyArray> propertyArray = 
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = propertyArray->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                      EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -952,8 +982,8 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
 
     PRUint32 propertyCount = 0;
     rv = currentArray->GetLength(&propertyCount);
-    
-    // Couldn't get the property count or property count 
+
+    // Couldn't get the property count or property count
     // is unexpected, skip item and continue.
     if(NS_FAILED(rv) ||
        propertyCount != 2) {
@@ -962,14 +992,15 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
 
     nsString strPropertyID;
     nsString strPropertyValue;
+    nsString contentURL;
 
     PRBool hasFoundItem = PR_FALSE;
     nsCOMPtr<nsIArray> foundItems;
     nsCOMPtr<sbIProperty> property;
     nsCOMPtr<sbIMediaItem> itemDestination;
 
-    for(PRUint32 currentProperty = 0; 
-        currentProperty < propertyCount && !hasFoundItem; 
+    for(PRUint32 currentProperty = 0;
+        currentProperty < propertyCount && !hasFoundItem;
         ++currentProperty) {
       rv = currentArray->GetPropertyAt(currentProperty,
                                        getter_AddRefs(property));
@@ -981,27 +1012,42 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
       rv = property->GetValue(strPropertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if(strPropertyValue.IsEmpty()) {
+      // If there is no value, and we're not dealing with the origin URL then skip
+      if(strPropertyValue.IsEmpty() &&
+          (contentURL.IsEmpty() ||
+           !strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL))) {
         continue;
       }
 
+      // If this is the content URL save off the value for the origin URL
+      if(strPropertyID.EqualsLiteral(SB_PROPERTY_CONTENTURL) &&
+         strPropertyValue.IsEmpty()) {
+        contentURL = strPropertyValue;
+      }
+      // We've got an origin URL switch to the value content URL if there
+      // is no origin URL
+      else if(strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL) &&
+              strPropertyValue.IsEmpty()) {
+        strPropertyValue = contentURL;
+      }
+
       // Try and find it.
-      rv = aDestinationLibrary->GetItemsByProperty(strPropertyID, 
+      rv = aDestinationLibrary->GetItemsByProperty(strPropertyID,
                                                    strPropertyValue,
                                                    getter_AddRefs(foundItems));
 
       if(rv == NS_ERROR_NOT_AVAILABLE) {
         continue;
       }
-      
+
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // Hooray, we found it. Add it the found list.
       nsStringHashKey *successHashkey = itemsInSource.PutEntry(strPropertyValue);
       NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
       // There's no way to be certain which item is correct if we get multiple matches.
-      // Because of this, we will reject multiple matches on contentURL and originURL 
+      // Because of this, we will reject multiple matches on contentURL and originURL
       // until we can create hashes of files to enable identifying them uniquely.
       PRUint32 foundItemsCount = 0;
       rv = foundItems->GetLength(&foundItemsCount);
@@ -1021,7 +1067,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
       // Present in destination, verify for property changes.
       nsCOMPtr<sbILibraryChange> libraryChange;
       rv = CreateLibraryChangeFromItems(item, itemDestination, getter_AddRefs(libraryChange));
-      
+
       // Item did not change.
       if(rv == NS_ERROR_NOT_AVAILABLE) {
         continue;
@@ -1059,7 +1105,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
     PRUint32 propertyCount = 0;
     rv = currentArray->GetLength(&propertyCount);
 
-    // Couldn't get the property count or property count 
+    // Couldn't get the property count or property count
     // is unexpected, skip item and continue.
     if(NS_FAILED(rv) ||
       propertyCount != 2) {
@@ -1071,11 +1117,11 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
     // We verify its presence using contentURL and originURL.
     PRBool found = PR_FALSE;
     for(PRUint32 currentProperty = 0; currentProperty < propertyCount; ++currentProperty) {
-      
+
       nsCOMPtr<sbIProperty> property;
       rv = currentArray->GetPropertyAt(currentProperty, getter_AddRefs(property));
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       rv = property->GetValue(strPropertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1108,13 +1154,13 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromLibraries(
                                         aDestinationLibrary,
                                         libraryChanges);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   NS_ADDREF(*aLibraryChangeset = libraryChangeset);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
                                   nsIArray *aSourceLists,
                                   sbILibrary *aDestinationLibrary,
@@ -1138,20 +1184,20 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
   PRBool success = uniqueItems.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  // Items present in the source (in the form of contentURL, originURL and 
+  // Items present in the source (in the form of contentURL, originURL and
   // originGUID for each).
   nsTHashtable<nsStringHashKey> itemsInSource;
   success = itemsInSource.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<sbIMutablePropertyArray> propertyArray = 
+  nsCOMPtr<sbIMutablePropertyArray> propertyArray =
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = propertyArray->SetStrict(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+  rv = propertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
                                      EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1163,12 +1209,10 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
                                      EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString contentURL, originURL, originGUID;
-
-  for(PRUint32 currentSource = 0; 
-      currentSource < sourcesLength; 
+  for(PRUint32 currentSource = 0;
+      currentSource < sourcesLength;
       ++currentSource) {
-    
+
     sourceList = do_QueryElementAt(aSourceLists, currentSource, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1179,8 +1223,8 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
     for(PRUint32 currentItem = 0;
         currentItem < sourceLength;
         ++currentItem) {
-      
-      rv = sourceList->GetItemByIndex(currentItem, 
+
+      rv = sourceList->GetItemByIndex(currentItem,
                                       getter_AddRefs(sourceItem));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1208,7 +1252,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
   NS_NEWXPCOM(libraryChangeset, sbLibraryChangeset);
   NS_ENSURE_TRUE(libraryChangeset, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<nsIMutableArray> libraryChanges = 
+  nsCOMPtr<nsIMutableArray> libraryChanges =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1219,7 +1263,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
   rv = destinationEnum->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aDestinationLibrary->EnumerateAllItems(destinationEnum, 
+  rv = aDestinationLibrary->EnumerateAllItems(destinationEnum,
     sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1240,7 +1284,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
   for(PRUint32 current = 0; current < sourceLength; ++current) {
 
     // We verify its presence using contentURL and originURL.
-    success = uniqueItems.Get(uniqueItemGUIDs[current], 
+    success = uniqueItems.Get(uniqueItemGUIDs[current],
                               getter_AddRefs(item));
 
     // Bad item
@@ -1255,7 +1299,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
     PRUint32 propertyCount = 0;
     rv = currentArray->GetLength(&propertyCount);
 
-    // Couldn't get the property count or property count 
+    // Couldn't get the property count or property count
     // is unexpected, skip item and continue.
     if(NS_FAILED(rv) ||
        propertyCount != 3) {
@@ -1264,14 +1308,15 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
 
     nsString strPropertyID;
     nsString strPropertyValue;
+    nsString contentURL;
 
     PRBool hasFoundItem = PR_FALSE;
     nsCOMPtr<nsIArray> foundItems;
     nsCOMPtr<sbIProperty> property;
     nsCOMPtr<sbIMediaItem> itemDestination;
 
-    for(PRUint32 currentProperty = 0; 
-        currentProperty < propertyCount && !hasFoundItem; 
+    for(PRUint32 currentProperty = 0;
+        currentProperty < propertyCount && !hasFoundItem;
         ++currentProperty) {
       rv = currentArray->GetPropertyAt(currentProperty,
                                        getter_AddRefs(property));
@@ -1283,12 +1328,26 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
       rv = property->GetValue(strPropertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if(strPropertyValue.IsEmpty()) {
+      // If there is no value, and we're not dealing with the origin URL then skip
+      if(strPropertyValue.IsEmpty() &&
+          (contentURL.IsEmpty() ||
+           !strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL))) {
         continue;
       }
 
+      // If this is the content URL save off the value for the origin URL
+      if(strPropertyID.EqualsLiteral(SB_PROPERTY_CONTENTURL)) {
+        contentURL = strPropertyValue;
+      }
+      // We've got an origin URL switch to the value content URL if there
+      // is no origin URL
+      else if(strPropertyID.EqualsLiteral(SB_PROPERTY_ORIGINURL) &&
+              strPropertyValue.IsEmpty()) {
+        strPropertyValue = contentURL;
+      }
+
       // Try and find it.
-      rv = aDestinationLibrary->GetItemsByProperty(strPropertyID, 
+      rv = aDestinationLibrary->GetItemsByProperty(strPropertyID,
                                                    strPropertyValue,
                                                    getter_AddRefs(foundItems));
 
@@ -1303,7 +1362,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
       NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
       // There's no way to be certain which item is correct if we get multiple matches.
-      // Because of this, we will reject multiple matches on contentURL and originURL 
+      // Because of this, we will reject multiple matches on contentURL and originURL
       // until we can create hashes of files to enable identifying them uniquely.
       PRUint32 foundItemsCount = 0;
       rv = foundItems->GetLength(&foundItemsCount);
@@ -1348,7 +1407,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
 
   // For each item in the destination
   for(PRUint32 current = 0; current < destinationLength; ++current) {
-    
+
     // Verify if present in source library.
     item = do_QueryElementAt(destinationArray, current, &rv);
     // Bad item.
@@ -1363,7 +1422,7 @@ sbLocalDatabaseDiffingService::CreateLibraryChangesetFromListsToLibrary(
     PRUint32 propertyCount = 0;
     rv = currentArray->GetLength(&propertyCount);
 
-    // Couldn't get the property count or property count 
+    // Couldn't get the property count or property count
     // is unexpected, skip item and continue.
     if(NS_FAILED(rv) ||
        propertyCount != 3) {
@@ -1501,8 +1560,8 @@ sbLocalDatabaseDiffingService::AddToUniqueItemList(
 }
 
 /* sbILibraryChangeset createChangeset (in sbIMediaList aSource, in sbIMediaList aDestination); */
-NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangeset(sbIMediaList *aSource, 
-                                                             sbIMediaList *aDestination, 
+NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangeset(sbIMediaList *aSource,
+                                                             sbIMediaList *aDestination,
                                                              sbILibraryChangeset **_retval)
 {
   NS_ENSURE_ARG_POINTER(aSource);
@@ -1516,14 +1575,14 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangeset(sbIMediaList *aSour
   nsCOMPtr<sbILibraryChangeset> changeset;
 
   if(sourceLibrary && destinationLibrary) {
-    
+
     rv = CreateLibraryChangesetFromLibraries(sourceLibrary,
                                              destinationLibrary,
                                              getter_AddRefs(changeset));
 
   }
   else {
-    rv = CreateLibraryChangesetFromLists(aSource, 
+    rv = CreateLibraryChangesetFromLists(aSource,
                                          aDestination,
                                          getter_AddRefs(changeset));
   }
@@ -1535,8 +1594,8 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangeset(sbIMediaList *aSour
 }
 
 /* sbILibraryChangeset createMultiChangeset (in nsIArray aSources, in sbIMediaList aDestination); */
-NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangeset(nsIArray *aSources, 
-                                                                  sbIMediaList *aDestination, 
+NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangeset(nsIArray *aSources,
+                                                                  sbIMediaList *aDestination,
                                                                   sbILibraryChangeset **_retval)
 {
   NS_ENSURE_ARG_POINTER(aSources);
@@ -1557,25 +1616,25 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangeset(nsIArray *aSou
   }
 
   // Destination must be a library.
-  nsCOMPtr<sbILibrary> destinationLibrary = 
+  nsCOMPtr<sbILibrary> destinationLibrary =
     do_QueryInterface(aDestination);
   NS_ENSURE_TRUE(destinationLibrary, NS_ERROR_INVALID_ARG);
 
   nsCOMPtr<sbILibraryChangeset> changeset;
-  rv = CreateLibraryChangesetFromListsToLibrary(aSources, 
-                                                destinationLibrary, 
+  rv = CreateLibraryChangesetFromListsToLibrary(aSources,
+                                                destinationLibrary,
                                                 getter_AddRefs(changeset));
   NS_ENSURE_SUCCESS(rv, rv);
 
   changeset.forget(_retval);
-  
+
   return NS_OK;
 }
 
 /* AString createChangesetAsync (in sbIMediaList aSource, in sbIMediaList aDestination, [optional] in nsIObserver aObserver); */
-NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangesetAsync(sbIMediaList *aSource, 
-                                                                  sbIMediaList *aDestination, 
-                                                                  nsIObserver *aObserver, 
+NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangesetAsync(sbIMediaList *aSource,
+                                                                  sbIMediaList *aDestination,
+                                                                  nsIObserver *aObserver,
                                                                   nsAString & _retval)
 {
   NS_ENSURE_ARG_POINTER(aSource);
@@ -1585,9 +1644,9 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateChangesetAsync(sbIMediaList *
 }
 
 /* sbILibraryChangeset createMultiChangesetAsync (in nsIArray aSources, in sbIMediaList aDestination, [optional] in nsIObserver aObserver); */
-NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangesetAsync(nsIArray *aSources, 
-                                                                       sbIMediaList *aDestination, 
-                                                                       nsIObserver *aObserver, 
+NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangesetAsync(nsIArray *aSources,
+                                                                       sbIMediaList *aDestination,
+                                                                       nsIObserver *aObserver,
                                                                        sbILibraryChangeset **_retval)
 {
   NS_ENSURE_ARG_POINTER(aSources);
@@ -1598,7 +1657,7 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::CreateMultiChangesetAsync(nsIArray 
 }
 
 /* sbILibraryChangeset getChangeset (in AString aChangesetCookie); */
-NS_IMETHODIMP sbLocalDatabaseDiffingService::GetChangeset(const nsAString & aChangesetCookie, 
+NS_IMETHODIMP sbLocalDatabaseDiffingService::GetChangeset(const nsAString & aChangesetCookie,
                                                           sbILibraryChangeset **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -1609,7 +1668,7 @@ NS_IMETHODIMP sbLocalDatabaseDiffingService::GetChangeset(const nsAString & aCha
 //-----------------------------------------------------------------------------
 // sbLocalDatabaseDiffingServiceComparator
 //-----------------------------------------------------------------------------
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseDiffingServiceEnumerator, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseDiffingServiceEnumerator,
                               sbIMediaListEnumerationListener)
 
 sbLocalDatabaseDiffingServiceEnumerator::sbLocalDatabaseDiffingServiceEnumerator()
@@ -1632,19 +1691,19 @@ sbLocalDatabaseDiffingServiceEnumerator::Init()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseDiffingServiceEnumerator::GetArray(nsIArray **aArray)
 {
   NS_ENSURE_TRUE(mArray, NS_ERROR_NOT_AVAILABLE);
-  
+
   NS_ADDREF(*aArray = mArray);
 
   return NS_OK;
 }
 
 /* unsigned short onEnumerationBegin (in sbIMediaList aMediaList); */
-NS_IMETHODIMP 
-sbLocalDatabaseDiffingServiceEnumerator::OnEnumerationBegin(sbIMediaList *aMediaList, 
+NS_IMETHODIMP
+sbLocalDatabaseDiffingServiceEnumerator::OnEnumerationBegin(sbIMediaList *aMediaList,
                                                             PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1656,9 +1715,9 @@ sbLocalDatabaseDiffingServiceEnumerator::OnEnumerationBegin(sbIMediaList *aMedia
 }
 
 /* unsigned short onEnumeratedItem (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem); */
-NS_IMETHODIMP 
-sbLocalDatabaseDiffingServiceEnumerator::OnEnumeratedItem(sbIMediaList *aMediaList, 
-                                                          sbIMediaItem *aMediaItem, 
+NS_IMETHODIMP
+sbLocalDatabaseDiffingServiceEnumerator::OnEnumeratedItem(sbIMediaList *aMediaList,
+                                                          sbIMediaItem *aMediaItem,
                                                           PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
@@ -1674,8 +1733,8 @@ sbLocalDatabaseDiffingServiceEnumerator::OnEnumeratedItem(sbIMediaList *aMediaLi
 }
 
 /* void onEnumerationEnd (in sbIMediaList aMediaList, in nsresult aStatusCode); */
-NS_IMETHODIMP 
-sbLocalDatabaseDiffingServiceEnumerator::OnEnumerationEnd(sbIMediaList *aMediaList, 
+NS_IMETHODIMP
+sbLocalDatabaseDiffingServiceEnumerator::OnEnumerationEnd(sbIMediaList *aMediaList,
                                                           nsresult aStatusCode)
 {
   return NS_OK;
