@@ -62,14 +62,21 @@
 
       <xul:vbox anonid="container_box" class="sb-first-run-eula-box">
 
-        <!-- Header. -->
-        <xul:label class="sb-first-run-header"
-                   value="&first_run.eula.header.label;"/>
+        <xul:groupbox flex="1">
+          <!-- Header. -->
+          <xul:label class="sb-first-run-header"
+                     value="&first_run.eula.header.label;"/>
 
-        <!-- EULA browser. -->
-        <xul:browser anonid="eula_browser"
-                     class="sb-first-run-eula-browser"
-                     src="chrome://songbird/content/html/eula.html"/>
+          <!-- EULA browser. -->
+          <xul:browser anonid="eula_browser"
+                       class="sb-first-run-eula-browser"
+                       src="chrome://songbird/content/html/eula.html"/>
+
+          <!-- Accept EULA checkbox. -->
+          <xul:checkbox anonid="accept_checkbox"
+                        label="&first_run.eula.accept_checkbox.label;"
+                        oncommand="_widgetSvc.doAcceptChanged();"/>
+        </xul:groupbox>
 
         <!-- Language selection list. -->
         <xul:hbox class="sb-first-run-eula-language-box">
@@ -80,11 +87,6 @@
             <xul:menupopup anonid="locale_menupopup"/>
           </xul:menulist>
         </xul:hbox>
-
-        <!-- Accept EULA checkbox. -->
-        <xul:checkbox anonid="accept_checkbox"
-                      label="&first_run.eula.accept_checkbox.label;"
-                      oncommand="_widgetSvc.doAcceptChanged();"/>
 
       </xul:vbox> <!-- container_box -->
 
