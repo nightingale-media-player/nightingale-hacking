@@ -52,7 +52,7 @@ public:
   //
   // \brief Callback function for when changes are found in the tree.
   //
-  NS_IMETHOD OnChangeFound(nsAString & aChangePath, 
+  NS_IMETHOD OnChangeFound(const nsAString & aChangePath, 
                            EChangeType aChangeType) = 0;
 
   //

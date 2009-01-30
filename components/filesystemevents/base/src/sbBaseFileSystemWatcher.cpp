@@ -31,7 +31,7 @@
 #include <nsServiceManagerUtils.h>
 
 
-NS_IMPL_ISUPPORTS1(sbBaseFileSystemWatcher, sbIFileSystemWatcher)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseFileSystemWatcher, sbIFileSystemWatcher)
 
 sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()
 {
@@ -137,7 +137,7 @@ sbBaseFileSystemWatcher::GetIsSupported(PRBool *aIsSupported)
 // sbFileSystemTreeListener
 
 NS_IMETHODIMP
-sbBaseFileSystemWatcher::OnChangeFound(nsAString & aChangePath,
+sbBaseFileSystemWatcher::OnChangeFound(const nsAString & aChangePath,
                                        EChangeType aChangeType)
 {
   nsresult rv;

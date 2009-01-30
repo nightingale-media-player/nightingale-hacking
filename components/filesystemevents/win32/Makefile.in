@@ -46,6 +46,7 @@ CPP_SRCS = $(topsrcdir)/components/filesystemevents/base/src/sbBaseFileSystemWat
 CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(topsrcdir)/components/filesystemevents \
                $(topsrcdir)/components/filesystemevents/base/src \
+               $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/streams/src \
                $(MOZSDK_INCLUDE_DIR) \

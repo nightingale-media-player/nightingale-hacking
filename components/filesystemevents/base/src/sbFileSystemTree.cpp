@@ -25,10 +25,12 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIProxyObjectManager.h>
 #include <nsIRunnable.h>
 #include <nsIThreadManager.h>
 #include <nsThreadUtils.h>
 #include <nsAutoLock.h>
+#include <sbProxyUtils.h>
 #include <sbStringUtils.h>
 #include <nsCRT.h>
 #include "sbFileSystemChange.h"
@@ -56,7 +58,7 @@ struct NodeContext
 
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS0(sbFileSystemTree)
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileSystemTree, sbPIFileSystemTree)
 
 sbFileSystemTree::sbFileSystemTree()
   : mShouldLoadSession(PR_FALSE)
@@ -118,7 +120,7 @@ sbFileSystemTree::InitTree()
 
   // Save the threading context for notifying the listeners on the current
   // thread once the build operation has completed.
-  rv = threadMgr->GetCurrentThread(getter_AddRefs(mTreesCurrentThread));
+  rv = threadMgr->GetCurrentThread(getter_AddRefs(mOwnerContextThread));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Does this need to be a member?
@@ -192,7 +194,7 @@ sbFileSystemTree::RunBuildThread()
   NS_ASSERTION(runnable, 
                "Could not create a runnable for NotifyBuildComplete()!!");
 
-  rv = mTreesCurrentThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Could not dispatch NotifyBuildComplete()!");
 }
 
@@ -254,7 +256,11 @@ nsresult
 sbFileSystemTree::Update(const nsAString & aPath)
 {
   nsRefPtr<sbFileSystemNode> pathNode;
-  nsresult rv = GetNode(aPath, mRootNode, getter_AddRefs(pathNode));
+  nsresult rv;
+  { /* scope */
+    nsAutoLock rootLock(mRootNodeLock);
+    rv = GetNode(aPath, mRootNode, getter_AddRefs(pathNode));
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbNodeChangeArray pathChangesArray;
@@ -299,7 +305,10 @@ sbFileSystemTree::Update(const nsAString & aPath)
           NS_ENSURE_SUCCESS(rv, rv);
 
           // Replace the node
-          rv = pathNode->ReplaceNode(curChangeLeafName, curChangeNode);
+          { /* scope */
+            nsAutoLock rootLock(mRootNodeLock);
+            rv = pathNode->ReplaceNode(curChangeLeafName, curChangeNode);
+          }
           NS_ENSURE_SUCCESS(rv, rv);
         }
         break;
@@ -311,7 +320,10 @@ sbFileSystemTree::Update(const nsAString & aPath)
         }
         
         // Simply add this child to the path node's children.
-        rv = pathNode->AddChild(curChangeNode);
+        { /* scope */
+          nsAutoLock rootLock(mRootNodeLock);
+          rv = pathNode->AddChild(curChangeNode);
+        }
         NS_ENSURE_SUCCESS(rv, rv);
         break;
 
@@ -321,7 +333,10 @@ sbFileSystemTree::Update(const nsAString & aPath)
           NS_ENSURE_SUCCESS(rv, rv);
         }
 
-        rv = pathNode->RemoveChild(curChangeNode);
+        { /* scope */
+          nsAutoLock rootLock(mRootNodeLock);
+          rv = pathNode->RemoveChild(curChangeNode);
+        }
         NS_ENSURE_SUCCESS(rv, rv);
         break;
     }
@@ -624,9 +639,6 @@ sbFileSystemTree::GetNodeChanges(sbFileSystemNode *aNode,
                                  const nsAString & aNodePath,
                                  sbNodeChangeArray & aOutChangeArray)
 {
-  NS_ASSERTION(NS_IsMainThread(), 
-    "sbFileSystemTree::GetNodeChanges() not called on the main thread!");
-
   // This is a copy-constructor:
   sbNodeMap childSnapshot(*aNode->GetChildren());
 
@@ -940,18 +952,32 @@ sbFileSystemTree::NotifyDirRemoved(sbFileSystemNode *aRemovedDirNode,
   return NS_OK;
 }
 
-nsresult
-sbFileSystemTree::NotifyChanges(nsAString & aChangePath,
-                                EChangeType aChangeType)
+NS_IMETHODIMP
+sbFileSystemTree::NotifyChanges(const nsAString & aChangePath,
+                                PRUint32 aChangeType)
 {
-  NS_ASSERTION(NS_IsMainThread(), 
-    "sbFileSystemTree::NotifyChanges() not called on the main thread!");
-  
+  NS_ENSURE_TRUE(aChangeType == eChanged ||
+                 aChangeType == eAdded ||
+                 aChangeType == eRemoved,
+                 NS_ERROR_INVALID_ARG);
+
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<sbPIFileSystemTree> proxiedThis;
+    nsresult rv = SB_GetProxyForObject(mOwnerContextThread,
+                                       NS_GET_IID(sbPIFileSystemTree),
+                                       this,
+                                       nsIProxyObjectManager::INVOKE_SYNC,
+                                       getter_AddRefs(proxiedThis));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = proxiedThis->NotifyChanges(aChangePath, aChangeType);
+    return rv;
+  }
+
   nsAutoLock listenerLock(mListenersLock);
 
   PRUint32 listenerCount = mListeners.Length();
   for (PRUint32 i = 0; i < listenerCount; i++) {
-    mListeners[i]->OnChangeFound(aChangePath, aChangeType);
+    mListeners[i]->OnChangeFound(aChangePath, EChangeType(aChangeType));
   }
 
   return NS_OK;

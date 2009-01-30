@@ -30,6 +30,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIObserverService.h>
 #include <nsMemory.h>
+#include <nsThreadUtils.h>
 #include <nsAutoLock.h>
 #include <sbStringUtils.h>
 
@@ -206,6 +207,21 @@ sbWin32FileSystemWatcher::Cleanup()
     CloseHandle(mRootDirHandle);
     mRootDirHandle = INVALID_HANDLE_VALUE;
   }
+  
+  if (mRebuildThread) {
+    mRebuildThread->Shutdown();
+  }
+}
+
+void
+sbWin32FileSystemWatcher::InitRebuildThread()
+{
+  nsresult rv;
+  mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  rv = mTimer->InitWithCallback(this, 100, nsITimer::TYPE_REPEATING_SLACK);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
 void
@@ -284,12 +300,16 @@ sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
 
   // Setup the timer callback
   nsresult rv;
-  mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_STATE(!mRebuildThread);
 
-  rv = mTimer->InitWithCallback(this, 100, nsITimer::TYPE_REPEATING_SLACK);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Setup the timer callback, on a background thread
+  nsCOMPtr<nsIRunnable> initRebuildEvent =
+    NS_NEW_RUNNABLE_METHOD(sbWin32FileSystemWatcher, this, InitRebuildThread);
+  NS_ENSURE_TRUE(initRebuildEvent, NS_ERROR_OUT_OF_MEMORY);
 
+  rv = NS_NewThread(getter_AddRefs(mRebuildThread), initRebuildEvent);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   // Get a handle to the root directory.
   mRootDirHandle =
     CreateFileW(mWatchPath.get(),            // path

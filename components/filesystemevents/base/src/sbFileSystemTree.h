@@ -37,6 +37,7 @@
 #include "sbFileSystemNode.h"
 #include "sbFileSystemTreeListener.h"
 #include "sbFileSystemTreeState.h"
+#include "sbPIFileSystemTree.h"
 
 class sbFileSystemNodeChange;
 class sbFileSystemPathChange;
@@ -50,7 +51,7 @@ typedef std::stack<NodeContext> sbNodeContextStack;
 //------------------------------------------------------------------------------
 // A class to build a tree snapsot of a filesystem specified at a root.
 //------------------------------------------------------------------------------
-class sbFileSystemTree : public nsISupports
+class sbFileSystemTree : public sbPIFileSystemTree
 {
   friend class sbFileSystemTreeState;
 
@@ -59,6 +60,7 @@ public:
   virtual ~sbFileSystemTree();
 
   NS_DECL_ISUPPORTS
+  NS_DECL_SBPIFILESYSTEMTREE
   
   //
   // \brief Initialize the tree with a given path.
@@ -213,15 +215,6 @@ protected:
                             nsAString & aFullPath);
 
   //
-  // \brief Notify the tree listeners that a resource has changed (could
-  //        be either a file or a directory) with a given change type.
-  // \param aChangePath The absolute path of the changed resource.
-  // \param aChangeType The type of change for the given resource path.
-  //
-  nsresult NotifyChanges(nsAString & aChangePath,
-                         EChangeType aChangeType);
-
-  //
   // \brief Utility method for getting a enumerator of the entries in a
   //        directory at a given path.
   // \param aPath The path to get the entries at.
@@ -292,7 +285,7 @@ protected:
 private:
   nsRefPtr<sbFileSystemNode>           mRootNode;
   nsTArray<sbFileSystemTreeListener *> mListeners;
-  nsCOMPtr<nsIThread>                  mTreesCurrentThread;
+  nsCOMPtr<nsIThread>                  mOwnerContextThread;
   nsCOMPtr<nsILocalFile>               mRootFile;
   nsString                             mRootPath;
   PRBool                               mIsRecursiveBuild;

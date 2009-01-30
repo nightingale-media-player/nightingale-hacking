@@ -50,7 +50,7 @@ public:
   NS_DECL_SBIFILESYSTEMWATCHER
 
   // sbFileSystemTreeListener
-  NS_IMETHOD OnChangeFound(nsAString & aChangePath, 
+  NS_IMETHOD OnChangeFound(const nsAString & aChangePath, 
                            EChangeType aChangeType);
   NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
                          sbStringArray & aDirPathArray);

@@ -103,11 +103,13 @@ public:
 
 protected:
   void Cleanup();
+  void InitRebuildThread();
 
 private:
   nsCOMPtr<nsITimer>   mTimer;
   HANDLE               mRootDirHandle;
   HANDLE               mWatcherThread;
+  nsCOMPtr<nsIThread>  mRebuildThread;
   void                 *mBuffer;
   OVERLAPPED           mOverlapped;
   PRBool               mShouldRunThread;
