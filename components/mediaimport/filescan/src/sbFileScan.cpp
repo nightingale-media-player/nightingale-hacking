@@ -257,7 +257,12 @@ NS_IMETHODIMP sbFileScanQuery::GetCallback(sbIFileScanCallback **_retval)
 NS_IMETHODIMP sbFileScanQuery::GetFileCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  m_pFileStack->GetLength(_retval);
+  if (m_pFileStack) {
+    m_pFileStack->GetLength(_retval);
+  } else {
+    // no stack, scanning never started
+    *_retval = 0;
+  }
   LOG(("sbFileScanQuery: reporting %d files\n", *_retval));
   return NS_OK;
 } //GetFileCount

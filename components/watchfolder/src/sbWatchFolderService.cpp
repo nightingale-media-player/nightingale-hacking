@@ -27,21 +27,26 @@
 #include "sbWatchFolderService.h"
 
 #include "sbWatchFolderServiceCID.h"
+
+#include <sbPropertiesCID.h>
+#include <sbStandardProperties.h>
+
+#include <sbIApplicationController.h>
+#include <sbIDirectoryImportService.h>
+#include <sbIFileMetadataService.h>
+#include <sbIJobProgress.h>
+#include <sbIJobProgressService.h>
+#include <sbILibraryManager.h>
+#include <sbIPropertyArray.h>
+
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
+
 #include <nsICategoryManager.h>
-#include <nsIObserverService.h>
-#include <sbILibraryManager.h>
 #include <nsILocalFile.h>
-#include <nsIURI.h>
-#include <sbIJobProgress.h>
-#include <sbIFileMetadataService.h>
-#include <sbIPropertyArray.h>
-#include <sbPropertiesCID.h>
 #include <nsIPrefBranch2.h>
-#include <sbStandardProperties.h>
-#include <sbIURIImportService.h>
-#include <sbIApplicationController.h>
+#include <nsIObserverService.h>
+#include <nsIURI.h>
 
 #define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
 #define PREF_WATCHFOLDER_PATH        "songbird.watch_folder.path"
@@ -290,26 +295,28 @@ sbWatchFolderService::ProcessAddedPaths()
   }
 
   mAddedPaths.clear();
-
-  nsCOMPtr<sbIURIImportService> uriImportService =
-    do_GetService("@songbirdnest.com/uri-import-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the current songbird window
-  nsCOMPtr<nsIDOMWindow> songbirdWindow;
-  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  
+  nsCOMPtr<sbIDirectoryImportService> importService =
+    do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //
   // XXX todo This can cause problems if this fires when the user is dragging
   //          and dropping into a playlist. This will need to be fixed.
   //
-  rv = uriImportService->ImportURIArray(uriArray,
-                                        songbirdWindow,
-                                        mMainLibrary,
-                                        -1,
-                                        nsnull);  // listener
+  nsCOMPtr<sbIDirectoryImportJob> job;
+  rv = importService->Import(uriArray, mMainLibrary, -1, getter_AddRefs(job));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIJobProgressService> progressService =
+    do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+  if (NS_SUCCEEDED(rv) && progressService) {
+    nsCOMPtr<sbIJobProgress> jobProgress = do_QueryInterface(job, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = progressService->ShowProgressDialog(jobProgress, nsnull, 1);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
   return NS_OK;
 }

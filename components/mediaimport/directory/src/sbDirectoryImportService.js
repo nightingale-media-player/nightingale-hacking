@@ -39,25 +39,32 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 // used to identify directory import profiling runs
 var gCounter = 0;
 
+__defineGetter__("gIOService", function(){
+  delete gIOService;
+  gIOService = Cc["@mozilla.org/network/io-service;1"]
+                 .getService(Ci.nsIIOService);
+  return gIOService;
+});
+
 /******************************************************************************
  * Object implementing sbIDirectoryImportJob, responsible for finding media
  * items on disk, adding them to the library and performing a metadata scan.
  *
  * Call begin() to start the job.
  *****************************************************************************/
-function DirectoryImportJob(aDirectoryArray, 
+function DirectoryImportJob(aInputArray, 
                             aTargetMediaList, 
                             aTargetIndex, 
                             aImportService) {
-  if (!(aDirectoryArray instanceof Ci.nsIArray && 
-        aDirectoryArray.length > 0) ||
+  if (!(aInputArray instanceof Ci.nsIArray && 
+        aInputArray.length > 0) ||
       !(aTargetMediaList instanceof Ci.sbIMediaList)) {
     throw Components.results.NS_ERROR_INVALID_ARG;
   }
   // Call super constructor
   SBJobUtils.JobBase.call(this);
 
-  this._directories = ArrayConverter.JSArray(aDirectoryArray);
+  this._inputFiles = ArrayConverter.JSArray(aInputArray);
   this.targetMediaList = aTargetMediaList;
   this.targetIndex = aTargetIndex;
 
@@ -105,14 +112,14 @@ DirectoryImportJob.prototype = {
   _fileScanner              : null,
   _fileScanQuery            : null,
   
-  // Array of nsIFile directory paths
-  _directories              : null,
+  // Array of nsIFile directory paths or files
+  _inputFiles               : null,
   _fileExtensions           : null,
   
   // The sbIDirectoryImportService.  Called back on job completion.
   _importService            : null,
   
-  // nsIMutableArray of URI strings for all found media items
+  // JS Array of URI strings for all found media items
   _itemURIStrings           : null,
   
   // Rather than create all the items in one pass, then scan them all,
@@ -150,7 +157,7 @@ DirectoryImportJob.prototype = {
     
     // If no URIs, just return the empty enumerator
     if (this._itemURIStrings.length == 0) {
-      return this._itemURIStrings.enumerate();
+      return ArrayConverter.enumerator([]);
     }
     
     // If all the URIs resulted in new items, and 
@@ -167,7 +174,7 @@ DirectoryImportJob.prototype = {
     // all the items at once (since there may be hundreds of thousands),
     // so instead get a few at a time. 
 
-    var uriEnumerator = this._itemURIStrings.enumerate();
+    var uriEnumerator = ArrayConverter.enumerator(this._itemURIStrings);
     var library = this.targetMediaList.library;
     const BATCHSIZE = this.BATCHCREATE_SIZE;
 
@@ -266,7 +273,7 @@ DirectoryImportJob.prototype = {
   },
   
   /**
-   * Kick off a FileScanQuery for the next directory in _directories.
+   * Kick off a FileScanQuery for the next directory in _inputFiles.
    * Assumes there are directories left to scan.
    */
   _startNextDirectoryScan: function DirectoryImportJob__startNextDirectoryScan() {
@@ -278,11 +285,15 @@ DirectoryImportJob.prototype = {
       return;
     }
     
-    var directory = this._directories.shift(); // Process directories in the order provided
+    var file = this._inputFiles.shift(); // Process directories in the order provided
+    
+    if (file && file instanceof Ci.nsIFileURL) {
+      file = file.file;
+    }
     
     // If something is messed up, just report and wait. The poll function will
     // move on to the next step.
-    if (!directory || !(directory instanceof Ci.nsIFile)) {
+    if (!file || !(file instanceof Ci.nsIFile)) {
       Cu.reportError("DirectoryImportJob__startNextDirectoryScan: invalid directory");
       return;
     }
@@ -294,9 +305,21 @@ DirectoryImportJob.prototype = {
       var fileScanQuery = this._fileScanQuery;
       this._fileExtensions.forEach(function(ext) { fileScanQuery.addFileExtension(ext) });
     }
-    this._fileScanQuery.setDirectory(directory.path);
-    this._fileScanQuery.setRecurse(true);
-    this._fileScanner.submitQuery(this._fileScanQuery);
+    
+    if (file.exists() && file.isDirectory()) {
+      this._fileScanQuery.setDirectory(file.path);
+      this._fileScanQuery.setRecurse(true);
+      this._fileScanner.submitQuery(this._fileScanQuery);
+    } else {
+      if (!this._itemURIStrings) {
+        this._itemURIStrings = [];
+      }
+      var urispec = gIOService.newFileURI(file).spec;
+      var supportsString = Cc["@mozilla.org/supports-string;1"]
+                             .createInstance(Ci.nsISupportsString);
+      supportsString.data = urispec;
+      this._itemURIStrings.push(supportsString);
+    }
   },
   
   /** 
@@ -309,14 +332,19 @@ DirectoryImportJob.prototype = {
     // the next directory
     if (!this._fileScanQuery.isScanning()) {
       // If there are more directories to scan, start the next one
-      if (this._directories.length > 0) {
+      if (this._inputFiles.length > 0) {
         this._startNextDirectoryScan();
       } else {
         // Otherwise, we're done scanning directories, and it is time to collect
         // information and create media items
         var fileCount = this._fileScanQuery.getFileCount();
         if (fileCount > 0 ) {
-          this._itemURIStrings = this._fileScanQuery.getResultRangeAsURIStrings(0, fileCount - 1);
+          var strings = this._fileScanQuery.getResultRangeAsURIStrings(0, fileCount - 1);
+          if (!this._itemURIStrings) {
+            this._itemURIStrings = ArrayConverter.JSArray(strings);
+          } else {
+            Array.prototype.push.apply(this._itemURIStrings, ArrayConverter.JSArray(strings));
+          }
         }
         this._finishFileScan();
         this._startMediaItemCreation();
@@ -378,18 +406,19 @@ DirectoryImportJob.prototype = {
       onComplete: function(aMediaItems, aResult) {
         thisJob._onItemCreation(aMediaItems, aResult);
       }
-    }
+    };
 
     // Process the URIs a slice at a time, since creating all 
     // of them at once may require a very large amount of memory.
-    var endIndex = Math.min(this._nextURIIndex + this.BATCHCREATE_SIZE,
-                            this._itemURIStrings.length);
-    var uris = this._fileScanQuery.getResultRangeAsURIStrings(this._nextURIIndex, endIndex - 1);
+    var size = Math.min(this.BATCHCREATE_SIZE,
+                        this._itemURIStrings.length - this._nextURIIndex);
+    var endIndex = this._nextURIIndex + size;
+    var uris = this._itemURIStrings.slice(this._nextURIIndex, endIndex);
     this._nextURIIndex = endIndex;
     
     // BatchCreateMediaItems needs to return an sbIJobProgress
     this.targetMediaList.library.batchCreateMediaItemsAsync(
-        batchCreateListener, uris, null);
+        batchCreateListener, ArrayConverter.nsIArray(uris), null, false);
   },
   
   /** 
@@ -408,11 +437,17 @@ DirectoryImportJob.prototype = {
                                       .createInstance(Components.interfaces.nsIArray);
     }
     
-    this.totalAddedToLibrary += this._currentMediaItems.length;
-    this.totalDuplicates += this._itemURIStrings.length - this._currentMediaItems.length;
-    
-    // Make sure we have metadata for all the added items
-    this._startMetadataScan();
+    if (this._currentMediaItems.length > 0) {
+      this.totalAddedToLibrary += this._currentMediaItems.length;
+      this.totalDuplicates += this._itemURIStrings.length - this._currentMediaItems.length;
+      
+      // Make sure we have metadata for all the added items
+      this._startMetadataScan();
+    } else {
+      // no items were created, probably because they were all old.
+      // try the next batch.
+      this._startMediaItemCreation();
+    }
   },
   
   /** 
