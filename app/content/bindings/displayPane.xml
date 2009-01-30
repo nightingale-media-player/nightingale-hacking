@@ -64,7 +64,7 @@
                 onselect="document.getBindingParent(this).onTabSelect(event)"/>
           <button type="menu" mousethrough="never" class="sb-displaypane-menubutton"
                   onclick="event.stopPropagation();">
-            <menupopup anonid="menu">
+            <menupopup anonid="menu" class="menulist-menupopup">
               <sb-displaypane-content-menuitems anonid="contentitems" xbl:inherits="paneid=id"/>
             </menupopup>
           </button>
@@ -653,6 +653,17 @@
           return binding.contentGroup;
         </xbl:getter>
       </xbl:property>
+
+      <xbl:property name="contentUrl" readonly="true">
+        <xbl:getter>
+          // return the contentUrl for the associated display pane
+          var paneid = this.getAttribute("paneid");
+          if (!paneid)
+            return null;
+          var binding = document.getElementById(paneid);
+          return binding.contentUrl;
+        </xbl:getter>
+      </xbl:property>
       
       <xbl:method name="_buildItems">
         <xbl:body><![CDATA[
@@ -835,7 +846,7 @@
     <xbl:content>
       <button anonid="button"/>
       <popupset>
-        <popup class="sb-playlist-popup"
+        <popup class="sb-playlist-popup menulist-menupopup"
                anonid="popup">
           <sb-displaypane-content-menuitems anonid="contentitems" 
                                             xbl:inherits="paneid"/>
