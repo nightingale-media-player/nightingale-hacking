@@ -136,6 +136,8 @@ DirectoryImportJob.prototype = {
   // used to pass newly created items to a metadata scan job. 
   // Set in _onItemCreation.
   _currentMediaItems        : null,
+  // The size of the current batch
+  _currentBatchSize         : 0,
     
   // True if we've forced the library into a batch state for
   // performance reasons
@@ -410,9 +412,9 @@ DirectoryImportJob.prototype = {
 
     // Process the URIs a slice at a time, since creating all 
     // of them at once may require a very large amount of memory.
-    var size = Math.min(this.BATCHCREATE_SIZE,
-                        this._itemURIStrings.length - this._nextURIIndex);
-    var endIndex = this._nextURIIndex + size;
+    this._currentBatchSize = Math.min(this.BATCHCREATE_SIZE,
+                                      this._itemURIStrings.length - this._nextURIIndex);
+    var endIndex = this._nextURIIndex + this._currentBatchSize;
     var uris = this._itemURIStrings.slice(this._nextURIIndex, endIndex);
     this._nextURIIndex = endIndex;
     
@@ -437,9 +439,9 @@ DirectoryImportJob.prototype = {
                                       .createInstance(Components.interfaces.nsIArray);
     }
     
+    this.totalAddedToLibrary += this._currentMediaItems.length;
+    this.totalDuplicates += this._currentBatchSize - this._currentMediaItems.length;
     if (this._currentMediaItems.length > 0) {
-      this.totalAddedToLibrary += this._currentMediaItems.length;
-      this.totalDuplicates += this._itemURIStrings.length - this._currentMediaItems.length;
       
       // Make sure we have metadata for all the added items
       this._startMetadataScan();

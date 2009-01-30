@@ -154,7 +154,7 @@ function onSecondImportProgress(job) {
 
    // Make sure everything adds up
    assertEqual(job.totalAddedToLibrary, 0);
-   assertTrue(job.totalDuplicates > 0);
+   assertEqual(job.totalDuplicates, gLibrary.length - 1);
    assertEqual(gLibrary.length, job.totalAddedToMediaList + 1);
    assertEqual(gLibrary.length - 1, gMediaList.length - 2);
    assertEqual(gMediaList, job.targetMediaList);
