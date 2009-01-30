@@ -46,6 +46,9 @@
 #include <nsIURI.h>
 #include <nsNetUtil.h>
 #include <sbLockUtils.h>
+#include <nsIPrefService.h>
+#include <nsIPrefBranch.h>
+#include <prsystem.h>
 
 #include <vector>
 #include <algorithm>
@@ -75,13 +78,36 @@
 #endif
 
 #define USE_SQLITE_FULL_DISK_CACHING
-#define USE_SQLITE_LARGE_CACHE_SIZE
-#define USE_SQLITE_LARGE_PAGE_SIZE
 #define USE_SQLITE_READ_UNCOMMITTED
 #define USE_SQLITE_MEMORY_TEMP_STORE
 #define USE_SQLITE_BUSY_TIMEOUT
 // Can not use FTS with shared cache enabled
 //#define USE_SQLITE_SHARED_CACHE
+
+///////////////////////////////////////////////////////////////////////////////
+// Prefs used to control memory usage.  
+//
+// All prefs require a restart to take effect, and pageSize
+// can only be changed before databases have been created.
+//
+// See http://www.sqlite.org/malloc.html for details
+// 
+// Also note that page cache and page size can be specified on a 
+// per db basis with keys like
+//  songbird.dbengine.main@library.songbirdnest.com.cacheSize
+
+#define PREF_BRANCH_BASE                      "songbird.dbengine."
+#define PREF_DB_PAGE_SIZE                     "pageSize"
+#define PREF_DB_CACHE_SIZE                    "cacheSize"
+#define PREF_DB_PREALLOCCACHE_SIZE            "preAllocCacheSize"
+#define PREF_DB_PREALLOCSCRATCH_SIZE          "preAllocScratchSize"
+#define PREF_DB_SOFT_LIMIT                    "softHeapLimit"
+
+
+// Unless prefs state otherwise, allow 262144000 bytes
+// of page cache.  WOW!
+#define DEFAULT_PAGE_SIZE             16384
+#define DEFAULT_CACHE_SIZE            16000
 
 #define SQLITE_MAX_RETRIES            666
 
@@ -883,6 +909,9 @@ CDatabaseEngine::CDatabaseEngine()
 , m_pThreadMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 , m_IsShutDown(PR_FALSE)
+, m_MemoryConstraintsSet(PR_FALSE)
+, m_pPageSpace(nsnull)
+, m_pScratchSpace(nsnull)
 #ifdef XP_MACOSX
 , m_Collator(nsnull)
 #endif
@@ -904,6 +933,15 @@ CDatabaseEngine::CDatabaseEngine()
     PR_DestroyLock(m_pDBStorePathLock);
   if (m_pThreadMonitor)
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
+    
+  if (m_MemoryConstraintsSet) {
+    if (m_pPageSpace) {
+      NS_Free(m_pPageSpace);
+    }
+    if (m_pScratchSpace) {
+      NS_Free(m_pScratchSpace);
+    }
+  }
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -1066,6 +1104,125 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
   return observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
 }
 
+
+
+//-----------------------------------------------------------------------------
+nsresult CDatabaseEngine::InitMemoryConstraints()
+{
+  if (m_MemoryConstraintsSet) 
+    return NS_ERROR_ALREADY_INITIALIZED;
+    
+  nsresult rv = NS_OK;
+
+  PRInt32 preAllocCache;
+  PRInt32 preAllocScratch;
+  PRInt32 softLimit;
+  PRInt32 pageSize;
+  
+  // Load values from the pref system
+  nsCOMPtr<nsIPrefService> prefService =
+     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = prefService->GetBranch(PREF_BRANCH_BASE, getter_AddRefs(prefBranch));
+  if (NS_FAILED(rv) || 
+      NS_FAILED(prefBranch->GetIntPref(PREF_DB_PREALLOCCACHE_SIZE,
+                                       &preAllocCache))) {
+    NS_WARNING("DBEngine failed to get preAllocCache pref. Using default.");
+    preAllocCache = 0; 
+  }
+  if (NS_FAILED(rv) ||
+      NS_FAILED(prefBranch->GetIntPref(PREF_DB_PREALLOCSCRATCH_SIZE,
+                                       &preAllocScratch))) {
+    NS_WARNING("DBEngine failed to get preAllocScratch pref. Using default.");
+    preAllocScratch = 0; 
+  }
+  if (NS_FAILED(rv) ||NS_FAILED(prefBranch->GetIntPref(PREF_DB_SOFT_LIMIT,
+                                       &softLimit))) {
+    NS_WARNING("DBEngine failed to get soft heap limit pref. Using default.");
+    softLimit = 0; 
+  }
+  if (NS_FAILED(rv) || NS_FAILED(prefBranch->GetIntPref(PREF_DB_PAGE_SIZE,
+                                                        &pageSize))) {
+    NS_WARNING("DBEngine failed to get page size pref. Using default.");
+    pageSize = DEFAULT_PAGE_SIZE; 
+  }
+
+  PRInt32 ret;
+  
+  if (preAllocCache > 0) {
+    m_pPageSpace = NS_Alloc(pageSize * preAllocCache);
+    if (!m_pPageSpace) {
+       return NS_ERROR_OUT_OF_MEMORY;
+    }
+    ret = sqlite3_config(SQLITE_CONFIG_PAGECACHE, m_pPageSpace,
+                         pageSize, preAllocCache);
+    NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_FAILURE);
+  }
+
+  if (preAllocScratch > 0) {
+    // http://www.sqlite.org/malloc.html recommends slots 6x page size,
+    // with as many slots as there are threads.
+    PRInt32 scratchSlotSize = pageSize * 6; 
+    m_pScratchSpace = NS_Alloc(scratchSlotSize * preAllocScratch);  
+    if (!m_pScratchSpace) {
+       return NS_ERROR_OUT_OF_MEMORY;
+    }
+    ret = sqlite3_config(SQLITE_CONFIG_SCRATCH, m_pScratchSpace,
+                         scratchSlotSize, preAllocScratch);
+    NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_FAILURE);
+  }
+  
+  // Try not to use more than X memory...
+  if (softLimit > 0) {
+    sqlite3_soft_heap_limit(softLimit);
+  }
+  
+  // Only allow init to happen once
+  m_MemoryConstraintsSet = PR_TRUE;
+
+  return rv;
+}
+
+//-----------------------------------------------------------------------------
+nsresult CDatabaseEngine::GetDBPrefs(const nsAString &dbGUID,
+                                     PRInt32 *cacheSize, 
+                                     PRInt32 *pageSize)
+{
+  nsresult rv = NS_OK;
+  
+  nsCOMPtr<nsIPrefService> prefService =
+     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = prefService->GetBranch(PREF_BRANCH_BASE, getter_AddRefs(prefBranch));
+
+  if (NS_FAILED(rv) || NS_FAILED(prefBranch->GetIntPref(PREF_DB_CACHE_SIZE,
+                                                        cacheSize))) {
+    NS_WARNING("DBEngine failed to get cache size pref. Using default.");
+    *cacheSize = DEFAULT_CACHE_SIZE; 
+  }
+  
+  if (NS_FAILED(rv) || NS_FAILED(prefBranch->GetIntPref(PREF_DB_PAGE_SIZE,
+                                                        pageSize))) {
+    NS_WARNING("DBEngine failed to get page size pref. Using default.");
+    *pageSize = DEFAULT_PAGE_SIZE; 
+  }
+  
+  // Now try for values that are specific to this database guid
+  // e.g. songbird.dbengine.main@library.songbirdnest.com.cacheSize
+  nsCString dbBranch(PREF_BRANCH_BASE);
+  dbBranch.Append(NS_ConvertUTF16toUTF8(dbGUID));
+  dbBranch.Append(NS_LITERAL_CSTRING("."));
+  if (NS_SUCCEEDED(prefService->GetBranch(dbBranch.get(), 
+          getter_AddRefs(prefBranch)))) {
+    prefBranch->GetIntPref(PREF_DB_CACHE_SIZE, cacheSize);
+    prefBranch->GetIntPref(PREF_DB_PAGE_SIZE, pageSize);    
+  }
+
+  return rv;
+}
+
 //-----------------------------------------------------------------------------
 nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
                                  CDatabaseQuery *pQuery,
@@ -1079,6 +1236,13 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 #if defined(USE_SQLITE_SHARED_CACHE)
   sqlite3_enable_shared_cache(1);
 #endif
+  
+  // Allow the user to control how much memory sqlite uses.
+  if (!m_MemoryConstraintsSet) {
+    if (NS_FAILED(InitMemoryConstraints())) {
+      NS_WARNING("DBEngine failed to set memory usage constraints.");
+    }
+  }
  
   PRInt32 ret = sqlite3_open(NS_ConvertUTF16toUTF8(strFilename).get(), &pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open failed!");
@@ -1132,32 +1296,42 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf16be!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
-#if defined(USE_SQLITE_LARGE_PAGE_SIZE)
+
+  PRInt32 pageSize = DEFAULT_PAGE_SIZE;
+  PRInt32 cacheSize = DEFAULT_CACHE_SIZE;
+  
+  if (NS_FAILED(GetDBPrefs(dbGUID, &cacheSize, &pageSize))) {
+    NS_WARNING("DBEngine failed to get memory prefs. Using default.");
+  }
+
+  nsCString query;
+  
   {
     char *strErr = nsnull;
-    sqlite3_exec(pHandle, "PRAGMA page_size = 16384", nsnull, nsnull, &strErr);
+    query = NS_LITERAL_CSTRING("PRAGMA page_size = ");
+    query.AppendInt(pageSize);
+    sqlite3_exec(pHandle, query.get(), nsnull, nsnull, &strErr);
     if(strErr) {
       NS_WARNING(strErr);
       sqlite3_free(strErr);
     }
   }
-#endif
+
+  {
+    char *strErr = nsnull;
+    query = NS_LITERAL_CSTRING("PRAGMA cache_size = ");
+    query.AppendInt(cacheSize);
+    sqlite3_exec(pHandle, query.get(), nsnull, nsnull, &strErr);
+    if(strErr) {
+      NS_WARNING(strErr);
+      sqlite3_free(strErr);
+    }
+  }
 
 #if defined(USE_SQLITE_FULL_DISK_CACHING)
   {
     char *strErr = nsnull;
     sqlite3_exec(pHandle, "PRAGMA synchronous = 0", nsnull, nsnull, &strErr);
-    if(strErr) {
-      NS_WARNING(strErr);
-      sqlite3_free(strErr);
-    }
-  }
-#endif
-
-#if defined(USE_SQLITE_LARGE_CACHE_SIZE)
-  {
-    char *strErr = nsnull;
-    sqlite3_exec(pHandle, "PRAGMA cache_size = 16000", nsnull, nsnull, &strErr);
     if(strErr) {
       NS_WARNING(strErr);
       sqlite3_free(strErr);

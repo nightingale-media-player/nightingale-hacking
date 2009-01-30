@@ -135,6 +135,12 @@ private:
   void DoSimpleCallback(CDatabaseQuery *pQuery);
   void ReportError(sqlite3*, sqlite3_stmt*);
   
+  nsresult InitMemoryConstraints();
+  
+  nsresult GetDBPrefs(const nsAString &dbGUID,
+                      PRInt32 *cacheSize, 
+                      PRInt32 *pageSize);
+                      
   nsresult CreateDBStorePath();
   nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);
 
@@ -154,6 +160,14 @@ private:
 
   PRBool m_AttemptShutdownOnDestruction;
   PRBool m_IsShutDown;
+
+  PRBool m_MemoryConstraintsSet;
+  
+  // Pre-allocated memory for sqlite page cache and scratch.
+  // Created in InitMemoryConstraints and destroyed in Shutdown.
+  // Used to avoid fragmentation.
+  void* m_pPageSpace;
+  void* m_pScratchSpace;
 
   nsCString mCollationLocale;
 #ifdef XP_MACOSX

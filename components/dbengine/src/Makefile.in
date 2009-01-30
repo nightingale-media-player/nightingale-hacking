@@ -140,6 +140,7 @@ CPP_INCLUDES = $(srcdir) \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/locale \
                $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
