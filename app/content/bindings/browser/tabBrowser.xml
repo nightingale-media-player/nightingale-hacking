@@ -1951,27 +1951,25 @@
 
           var processKeyEvent = false;
           var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';          
-          if (isMac) {
-            if ('metaKey' in aEvent && aEvent.metaKey) {
-              var offset = 1;
-              switch (aEvent.charCode) {
-                // Fallthrough to handle when the text direction is left-to-right 
-                case '}'.charCodeAt(0):
-                  offset *= -1;
-                case '{'.charCodeAt(0):
-                  if (window.getComputedStyle(this.tabbrowser, null).direction == "ltr")
-                    offset *= -1;
+          if (isMac && 'metaKey' in aEvent && aEvent.metaKey) {
+            var offset = 1;
+            switch (aEvent.charCode) {
+            // Fallthrough to handle when the text direction is left-to-right 
+            case '}'.charCodeAt(0):
+              offset *= -1;
+            case '{'.charCodeAt(0):
+              if (window.getComputedStyle(this.tabbrowser, null).direction == "ltr")
+              offset *= -1;
 
-                  this.tabbrowser.mTabContainer.advanceSelectedTab(offset, true);
-                  aEvent.stopPropagation();
-                  aEvent.preventDefault();
-                  return;
-              }
-              if ('shiftKey' in aEvent && aEvent.shiftKey)
-                return;
-
-              processKeyEvent = true;
+              this.tabbrowser.mTabContainer.advanceSelectedTab(offset, true);
+              aEvent.stopPropagation();
+              aEvent.preventDefault();
+              return;
             }
+            if ('shiftKey' in aEvent && aEvent.shiftKey)
+              return;
+
+            processKeyEvent = true;
           }
           else {
             if (('ctrlKey' in aEvent && aEvent.ctrlKey) &&
@@ -2010,6 +2008,7 @@
                   }
                 }
                 
+				aEvent.stopPropagation();
                 aEvent.preventDefault();
                 return;
               }
