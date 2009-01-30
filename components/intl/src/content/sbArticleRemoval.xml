@@ -33,58 +33,57 @@
 	<article-removal-data lang="English">
 	  <article pattern="The *"/>
 	  <article pattern="*, The"/>
-	  <article pattern="THE *"/>
-	  <article pattern="*, THE"/>
 	  <article pattern="A *"/>
+	  <article pattern="*, A"/>
 	  <article pattern="An *"/>
-	  <article pattern="AN *"/>
+	  <article pattern="*, An"/>
 	</article-removal-data>
 
 	<article-removal-data lang="Spanish">
 	  <article pattern="El *"/>
 	  <article pattern="*, El"/>
-	  <article pattern="EL *"/>
-	  <article pattern="*, EL"/>
 	  <article pattern="La *"/>
 	  <article pattern="*, La"/>
-	  <article pattern="LA *"/>
-	  <article pattern="*, LA"/>
 	  <article pattern="Los *"/>
 	  <article pattern="*, Los"/>
-	  <article pattern="LOS *"/>
-	  <article pattern="*, LOS"/>
 	  <article pattern="Las *"/>
 	  <article pattern="*, Las"/>
-	  <article pattern="LAS *"/>
-	  <article pattern="*, LAS"/>
+	  <article pattern="Un *"/>
+	  <article pattern="*, Un"/>
+	  <article pattern="Una *"/>
+	  <article pattern="*, Una"/>
+	  <article pattern="Unos *"/>
+	  <article pattern="*, Unos"/>
+	  <article pattern="Unas *"/>
+	  <article pattern="*, Unas"/>
 	</article-removal-data>
 
 	<article-removal-data lang="French">
 	  <article pattern="Le *"/>
 	  <article pattern="*, Le"/>
-	  <article pattern="LE *"/>
-	  <article pattern="*, LE"/>
+	  <article pattern="La *"/>
+	  <article pattern="*, La"/>
 	  <article pattern="L'*"/>
 	  <article pattern="*, L'"/>
 	  <article pattern="Les *"/>
 	  <article pattern="*, Les"/>
-	  <article pattern="LES *"/>
-	  <article pattern="*, LES"/>
+	  <article pattern="Un *"/>
+	  <article pattern="*, Un"/>
+	  <article pattern="Une *"/>
+	  <article pattern="*, Une"/>
 	</article-removal-data>
 
 	<article-removal-data lang="German">
 	  <article pattern="Die *"/>
 	  <article pattern="*, Die"/>
-	  <article pattern="DIE *"/>
-	  <article pattern="*, DIE"/>
 	  <article pattern="Das *"/>
 	  <article pattern="*, Das"/>
-	  <article pattern="DAS *"/>
-	  <article pattern="*, DAS"/>
 	  <article pattern="Der *"/>
 	  <article pattern="*, Der"/>
-	  <article pattern="DER *"/>
-	  <article pattern="*, DER"/>
+	  <article pattern="Ein *"/>
+	  <article pattern="*, Ein"/>
+	  <article pattern="Eine *"/>
+	  <article pattern="*, Eine"/>
 	</article-removal-data>
 
 	<article-removal-data lang="Portuguese">
@@ -94,29 +93,35 @@
 	  <article pattern="*, A"/>
 	  <article pattern="Os *"/>
 	  <article pattern="*, Os"/>
-	  <article pattern="OS *"/>
-	  <article pattern="*, OS"/>
 	  <article pattern="As *"/>
 	  <article pattern="*, As"/>
-	  <article pattern="AS *"/>
-	  <article pattern="*, AS"/>
+	  <article pattern="Um *"/>
+	  <article pattern="*, Um"/>
+	  <article pattern="Uma *"/>
+	  <article pattern="*, Uma"/>
+	  <article pattern="Uns *"/>
+	  <article pattern="*, Uns"/>
+	  <article pattern="Umas *"/>
+	  <article pattern="*, Umas"/>
 	</article-removal-data>
 
 	<article-removal-data lang="Italian">
 	  <article pattern="Il *"/>
 	  <article pattern="*, Il"/>
-	  <article pattern="IL *"/>
-	  <article pattern="*, IL"/>
 	  <article pattern="Lo *"/>
 	  <article pattern="*, Lo"/>
-	  <article pattern="LO *"/>
-	  <article pattern="*, LO"/>
 	  <article pattern="I *"/>
 	  <article pattern="*, I"/>
 	  <article pattern="Gli *"/>
 	  <article pattern="*, Gli"/>
-	  <article pattern="GLI *"/>
-	  <article pattern="*, GLI"/>
+	  <article pattern="L'*"/>
+	  <article pattern="*, L'"/>
+	  <article pattern="La *"/>
+	  <article pattern="*, La"/>
+	  <article pattern="Un *"/>
+	  <article pattern="*, Un"/>
+	  <article pattern="Una *"/>
+	  <article pattern="*, Una"/>
 	</article-removal-data>
 
 </sb-article-removal-document>

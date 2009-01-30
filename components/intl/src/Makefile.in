@@ -123,6 +123,16 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
+ifeq (macosx,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+endif
+
+ifeq (windows,$(SB_PLATFORM))
+  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+else
+  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+endif
+
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
     CPP_EXTRA_FLAGS += $(shell pkg-config --cflags glib-2.0) \
                        $(NULL)

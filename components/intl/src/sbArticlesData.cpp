@@ -37,6 +37,7 @@
 #include <nsIDOMNode.h>
 #include <nsIDOMNodeList.h>
 #include <nsIDOMNamedNodeMap.h>
+#include <unicharutil/nsUnicharUtils.h>
 #include "sbArticlesData.h"
 
 #define DATA_URL "chrome://songbird/content/intl/sbArticleRemoval.xml" 
@@ -416,13 +417,13 @@ nsresult sbArticlesData::RemoveArticle(const nsAString & aInput,
   
   if (!aArticle->mPrefix.IsEmpty()) {
     const nsAString &left = Substring(val, 0, aArticle->mPrefix.Length());
-    if (left.Equals(aArticle->mPrefix)) {
+    if (left.Equals(aArticle->mPrefix, CaseInsensitiveCompare)) {
       val = Substring(val, left.Length());
     }
   }
   if (!aArticle->mSuffix.IsEmpty()) {
     const nsAString &right = Substring(val, val.Length() - aArticle->mSuffix.Length());
-    if (right.Equals(aArticle->mSuffix)) {
+    if (right.Equals(aArticle->mSuffix, CaseInsensitiveCompare)) {
       val = Substring(val, 0, val.Length()-right.Length());
     }
   }
