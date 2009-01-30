@@ -75,62 +75,86 @@ SUBDIRDEPS3 = update : installer
 endif
 
 ifdef MAKE_INSTALLER
-SUBDIRS += installer
-SUBDIRDEPS = installer : components app feathers locales
+   SUBDIRS += installer
+   SUBDIRDEPS = installer : components app feathers locales stripsymbols
 endif
 
 ifdef SB_ENABLE_BREAKPAD
+   BREAKPAD_SYMBOL_PATH = $(SONGBIRD_OBJDIR)/breakpad-symbols
+   BREAKPAD_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
+   BREAKPAD_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).zip
 
-BREAKPAD_SYMBOL_PATH = $(SONGBIRD_OBJDIR)/breakpad-symbols
-BREAKPAD_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
-BREAKPAD_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).zip
+   ifeq ($(SB_PLATFORM),windows)
+      # we want to copy PDB files on Windows
+      MAKE_SYM_STORE_ARGS = -c --vcs-info
+      DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms.exe
+      # PDB files don't get moved to dist, so we need to scan the whole objdir
+      MAKE_SYM_STORE_PATH = ./
+   endif
 
-ifeq ($(SB_PLATFORM),windows)
-# we want to copy PDB files on Windows
-MAKE_SYM_STORE_ARGS := -c --vcs-info
-ifeq ($(_MSC_VER),1400)
-DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms.exe
-else
-DUMP_SYMS_BIN := $(topsrcdir)/tools/win32/breakpad/dump_syms-vc71.exe
-endif
-# PDB files don't get moved to dist, so we need to scan the whole objdir
-MAKE_SYM_STORE_PATH := ./
-endif
+   ifeq ($(SB_PLATFORM),macosx)
+      ifeq ($(SB_ARCH),i686)
+         BREAKPAD_ARCH = i386
+      else
+         BREAKPAD_ARCH = $(SB_ARCH)
+      endif
 
-ifeq ($(SB_PLATFORM),macosx)
-ifeq ($(SB_ARCH),i686)
-BREAKPAD_ARCH = i386
-else
-BREAKPAD_ARCH = $(SB_ARCH)
-endif
-MAKE_SYM_STORE_ARGS := -a $(BREAKPAD_ARCH) --vcs-info
-DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms
-MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/Songbird.app/Contents/Resources/components
-  $(NULL)
-endif
+      MAKE_SYM_STORE_ARGS = -a $(BREAKPAD_ARCH) --vcs-info
+      DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms
+      MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/Songbird.app
+   endif
 
-ifeq ($(SB_PLATFORM),linux)
-MAKE_SYM_STORE_ARGS := --vcs-info
-DUMP_SYMS_BIN := $(MOZSDK_BIN_DIR)/dump_syms
-MAKE_SYM_STORE_PATH := $(SONGBIRD_OBJDIR)/dist/components
-endif
-
+   ifeq ($(SB_PLATFORM),linux)
+      MAKE_SYM_STORE_ARGS = --vcs-info
+      DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms
+      MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist
+   endif
 endif #SB_ENABLE_BREAKPAD
 
 include $(topsrcdir)/build/rules.mk
 
+# We have both stripsymbols and do_stripsymbols because in the common case,
+# where we do a |make -f songbird.mk clobber && make -f songbird.mk|,
+# sbBuildInfo.ini won't be pre-processed yet. This means that things like
+# SB_BUILD_APP and SB_BUILD_ID, taken from that file in build/config.mk
+# will get filled with empty values (it uses := in the assignment for perf
+# reasons) when this top-level makefile gets initially called; we solve that
+# by calling ourselves with a specific targe, which will cause the makefile
+# to re-include build/config.mk, at which point sbBuildInfo.ini will have been
+# pre-processed, exist, and all will be good with the world.
+
+stripsymbols:
+	$(MAKE) -f $(THISMAKEFILE) do_stripsymbols 
+
+# The strip-symbols target is only run for Mac and linux; it looks for
+# .so's on Linux, .dylibs AND .sos on Mac, because the gstreamer vendor build
+# gets the extension stuff wrong, and creates libraries with the .so extension
+# even on the Mac. Whee...
+do_stripsymbols: buildsymbols
+ifdef MAKE_INSTALLER
+   ifneq (windows,$(SB_PLATFORM))
+	   @echo "Stripping package directory..."
+      ifeq (macosx,$(SB_PLATFORM))
+	      $(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.dylib" \
+          -exec $(STRIP) $(STRIP_FLAGS) {} \; 
+      endif
+	   $(FIND) $(SONGBIRD_DISTDIR) -type f -name "*.so" \
+       -exec $(STRIP) $(STRIP_FLAGS) {} \; 
+   endif
+endif
+
 buildsymbols:
 ifdef SB_ENABLE_BREAKPAD
-	@echo building symbol store
+	@echo Building Breakpad symbol store $(SB_BUILD_ID)...
 	$(MKDIR) -p $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID)
 	$(PYTHON) $(MOZSDK_SCRIPTS_DIR)/symbolstore.py \
     $(MAKE_SYM_STORE_ARGS) -s $(topsrcdir)/ $(DUMP_SYMS_BIN) \
     $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) \
     $(MAKE_SYM_STORE_PATH) > \
     $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID)/$(SB_APPNAME)-$(SB_MILESTONE)-$(SB_PLATFORM)-$(SB_ARCH)-$(SB_BUILD_ID)-symbols.txt
-	@echo packing symbols
+	@echo Packing up symbols...
 	cd $(BREAKPAD_SYMBOL_PATH)/$(SB_BUILD_ID) && \
-    zip -r9D ../$(BREAKPAD_ARCHIVE_FILENAME) .
+    $(ZIP) -r9D $(BREAKPAD_SYMBOL_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) .
 	$(MKDIR) -p $(BREAKPAD_ARCHIVE_PATH)
 	$(MV) $(BREAKPAD_SYMBOL_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) \
     $(BREAKPAD_ARCHIVE_PATH)
@@ -141,3 +165,5 @@ ifdef SB_ENABLE_BREAKPAD
 	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh \
     $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME)
 endif
+
+.PHONY: uploadsymbols buildsymbols stripsymbols do_stripsymbols

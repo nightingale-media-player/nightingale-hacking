@@ -469,6 +469,8 @@ case "$SB_PLATFORM" in
     if test -z "$GZIP"; then AC_MSG_ERROR(Gzip not found); fi
     if test -z "$GUNZIP"; then AC_MSG_ERROR(Gunzip not found); fi
     if test -z "$TAR"; then AC_MSG_ERROR(Tar not found); fi
+    AC_CHECK_PROGS(STRIP, ${STRIP} strip)
+    if test -z "$STRIP"; then AC_MSG_WARN(strip not found); fi
   ;;
 esac
 
@@ -687,10 +689,10 @@ case "$SB_PLATFORM" in
 
     GCC_COMPILER_FLAGS="-c -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-common -fpascal-strings -fno-rtti -no-cpp-precomp -Wall -Wconversion -Wpointer-arith -Wcast-align -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wno-long-long -fshort-wchar -pipe"
     if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="-ggdb3 $GCC_COMPILER_FLAGS -fno-inline -O1"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
       # Use -O2 on OS X, better than -Os according to moz perf tests
-      GCC_COMPILER_FLAGS="-gstabs+ $GCC_COMPILER_FLAGS -O2"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -gstabs+ -O2"
     fi
 
     # We always want to include "mozilla-config.h"
@@ -724,7 +726,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
-
+    STRIP_FLAGS="-x -S"
     AC_SUBST(SB_MACOSX_SDK_10_5)
     AC_SUBST(SB_MACOSX_SDK_DEFAULT)
   ;;
@@ -757,10 +759,10 @@ case "$SB_PLATFORM" in
     # -gstabs+
     GCC_COMPILER_FLAGS="-c -fPIC -fshort-wchar -fexceptions -fnon-call-exceptions -funwind-tables -fasynchronous-unwind-tables -fno-rtti -Wall -Wno-conversion -Wno-attributes -Wpointer-arith -Wcast-align -Wno-long-long -pipe -pthread"
     if test "$enable_debug" = "yes"; then
-      GCC_COMPILER_FLAGS="-ggdb3 $GCC_COMPILER_FLAGS -fno-inline -O1"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -g -ggdb3 -fno-inline"
     else
       # Use -Os on linux, better than -O2 according to moz perf tests
-      GCC_COMPILER_FLAGS="-gstabs+ $GCC_COMPILER_FLAGS -Os"
+      GCC_COMPILER_FLAGS="$GCC_COMPILER_FLAGS -gstabs+ -Os"
     fi
 
     # We always want to include "mozilla-config.h"
@@ -793,6 +795,7 @@ case "$SB_PLATFORM" in
     UNZIPFLAGS="-u -o -q -X"
     UNZIPFLAGS_EXTRACT="-d"
     USING_RANLIB=1
+    STRIP_FLAGS="-v"
   ;;
   solaris)
     XULRUNNERDIR="/xulrunner"
@@ -892,6 +895,7 @@ AC_SUBST(XULRUNNERDIR)
 AC_SUBST(CMMFLAGS)
 AC_SUBST(CFLAGS_STATIC_LIBC)
 AC_SUBST(CFLAGS_PREPROCESS)
+AC_SUBST(STRIP_FLAGS)
 
 #
 # Check for --with-license-file
