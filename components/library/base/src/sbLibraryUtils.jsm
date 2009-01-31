@@ -560,8 +560,15 @@ LibraryUtils.MediaListEnumeratorToArray.prototype = {
  *        and lists in the system, and monitors the new playlists 
  *        and libraries in order to automatically attach the
  *        listener whenever they are created.
+ *        You may also specify a library to restrict the listeners
+ *        to that library and its playlists' events instead of
+ *        listening for all events in all libraries and lists.
  */
-LibraryUtils.GlobalMediaListListener = function(aListener, aOwnsWeak, aFlags, aPropFilter) {
+LibraryUtils.GlobalMediaListListener = function(aListener, 
+                                                aOwnsWeak, 
+                                                aFlags, 
+                                                aPropFilter, 
+                                                aOnlyThisLibrary) {
   if (aFlags === undefined) {
     aFlags = Components.interfaces.sbIMediaList.LISTENER_FLAGS_ALL;
   }
@@ -656,6 +663,9 @@ LibraryUtils.GlobalMediaListListener = function(aListener, aOwnsWeak, aFlags, aP
   var libs = this.libraryManager.getLibraries();
   while (libs.hasMoreElements()) {
     var library = libs.getNext();
+    if (aOnlyThisLibrary &&
+        library != aOnlyThisLibrary)
+      continue;
     enumListener.onEnumeratedItem(library, library);
     library.
       enumerateItemsByProperty(
@@ -664,27 +674,29 @@ LibraryUtils.GlobalMediaListListener = function(aListener, aOwnsWeak, aFlags, aP
         enumListener, 
         Components.interfaces.sbIMediaList.ENUMERATIONTYPE_LOCKING);
   }
-
-  this.managerListener = {
-    cb: this,
-    onLibraryRegistered: function(aLibrary) {
-      this.cb.addMediaListListener(aLibrary);
-      this.cb.listener.onItemAdded(null, aLibrary, 0);
-    },
-    onLibraryUnregistered: function(aLibrary) {
-      this.cb.listener.onBeforeItemRemoved(null, aLibrary, 0);
-      this.cb.removeMediaListListener(aLibrary);
-      this.cb.listener.onAfterItemRemoved(null, aLibrary, 0);
-    },
-    QueryInterface: function(iid) {
-      if (iid.equals(Components.interfaces.sbILibraryManagerListener) || 
-          iid.equals(Components.interfaces.nsISupports))
-        return this;
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    }
-  };
   
-  this.libraryManager.addListener(this.managerListener);
+  if (!aOnlyThisLibrary) {
+    this.managerListener = {
+      cb: this,
+      onLibraryRegistered: function(aLibrary) {
+        this.cb.addMediaListListener(aLibrary);
+        this.cb.listener.onItemAdded(null, aLibrary, 0);
+      },
+      onLibraryUnregistered: function(aLibrary) {
+        this.cb.listener.onBeforeItemRemoved(null, aLibrary, 0);
+        this.cb.removeMediaListListener(aLibrary);
+        this.cb.listener.onAfterItemRemoved(null, aLibrary, 0);
+      },
+      QueryInterface: function(iid) {
+        if (iid.equals(Components.interfaces.sbILibraryManagerListener) || 
+            iid.equals(Components.interfaces.nsISupports))
+          return this;
+        throw Components.results.NS_ERROR_NO_INTERFACE;
+      }
+    };
+  
+    this.libraryManager.addListener(this.managerListener);
+  }
 }
 
 LibraryUtils.GlobalMediaListListener.prototype = {
@@ -706,7 +718,8 @@ LibraryUtils.GlobalMediaListListener.prototype = {
     this.listener = null;
     this.propFilter = null;
 
-    this.libraryManager.removeListener(this.managerListener);
+    if (this.managerListener)
+      this.libraryManager.removeListener(this.managerListener);
     this.managerListener = null;
     
     this.libraryManager = null;

@@ -118,7 +118,8 @@ SmartMediaListsUpdater.prototype = {
                                                Ci.sbIMediaList.LISTENER_FLAGS_BATCHBEGIN |
                                                Ci.sbIMediaList.LISTENER_FLAGS_BATCHEND |
                                                Ci.sbIMediaList.LISTENER_FLAGS_LISTCLEARED,
-                                               null);
+                                               null,
+                                               LibraryUtils.mainLibrary);
 
     // Init the dirty properties db and tables
     this._dbQuery = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
