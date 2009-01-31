@@ -1,0 +1,6 @@
+seeqpod.jar:
+% content seeqpod  %content/
+% locale  seeqpod en-US  %locale/en-US/
+% skin    seeqpod classic/1.0 %skin/
+% overlay chrome://songbird/content/xul/layoutBaseOverlay.xul chrome://seeqpod/content/scripts-overlay.xul
+@include_all_to
