@@ -293,7 +293,7 @@ GstBusSyncReply
 SyncToAsyncDispatcher(GstBus* bus, GstMessage* message, gpointer data)
 {
   sbGStreamerMessageHandler *handler =
-    static_cast<sbGStreamerMessageHandler*>(data);
+    reinterpret_cast<sbGStreamerMessageHandler*>(data);
 
   // Allow a sync handler to look at this first.
   // If it returns false (the default), we dispatch it asynchronously.

@@ -963,6 +963,30 @@ sbMediacoreSequencer::ResetMetadataDataRemotes() {
 }
 
 nsresult 
+sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
+{
+  if(mCurrentItem) {
+    NS_NAMED_LITERAL_STRING(PROPERTY_DURATION, SB_PROPERTY_DURATION);
+    nsString strDuration;
+    nsresult rv = mCurrentItem->GetProperty(PROPERTY_DURATION,
+                                            strDuration);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint64 itemDuration = nsString_ToUint64(strDuration, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    itemDuration /= PR_USEC_PER_MSEC;
+
+    if(itemDuration != aDuration) {
+      sbAutoString strNewDuration(aDuration * PR_USEC_PER_MSEC);
+      rv = mCurrentItem->SetProperty(PROPERTY_DURATION, strNewDuration);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  return NS_OK;
+}
+
+nsresult 
 sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1185,14 +1209,20 @@ sbMediacoreSequencer::ProcessNewPosition()
   // if the current core requested handling of the next item, we have nothing
   // to do here but reset the flag.
   if(mCoreWillHandleNext) {
+    mon.Exit();
+
     rv = CoreHandleNextSetup();
     NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_OK;
   }
 
+  mon.Exit();
+
   rv = Setup();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Enter();
 
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
      mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
@@ -1229,6 +1259,8 @@ sbMediacoreSequencer::ProcessNewPosition()
 nsresult 
 sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 {
+  nsAutoMonitor mon(mMonitor);
+
   nsCOMPtr<nsIURI> uri;
   nsCOMPtr<sbIMediaItem> item;
 
@@ -1308,10 +1340,15 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
         mStopTriggeredBySequencer = PR_TRUE;
       }
 
-      // Also stop the current core.
-      rv = mPlaybackControl->Stop();
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      mon.Exit();
+      
+      rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv), 
         "Stop returned failure. Attempting to recover.");
+
+      mon.Enter();
     }
   }
 
@@ -1379,10 +1416,14 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    mon.Exit();
+
     // Process any pending abort requests
     if(HandleAbort()) {
       return NS_OK;
     }
+
+    mon.Enter();
   }
 
   // Add listener to new core.
@@ -1440,7 +1481,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
                                        getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = DispatchMediacoreEvent(event);
+    rv = DispatchMediacoreEvent(event, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1450,6 +1491,8 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 nsresult 
 sbMediacoreSequencer::CoreHandleNextSetup()
 {
+  nsAutoMonitor mon(mMonitor);
+
   mCoreWillHandleNext = PR_FALSE;
 
   nsCOMPtr<sbIMediaItem> item;
@@ -1485,6 +1528,8 @@ sbMediacoreSequencer::CoreHandleNextSetup()
     rv = DispatchMediacoreEvent(event);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    mon.Exit();
+
     // Process any pending abort requests
     if(HandleAbort()) {
       return NS_OK;
@@ -1515,8 +1560,12 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 PRBool
 sbMediacoreSequencer::HandleAbort()
 {
+  nsAutoMonitor mon(mMonitor);
+
   if(mShouldAbort) {
     mShouldAbort = PR_FALSE;
+
+    mon.Exit();
 
     nsresult rv = Stop();
     NS_ENSURE_SUCCESS(rv, PR_FALSE);
@@ -2130,8 +2179,6 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aView);
 
-  nsAutoMonitor mon(mMonitor);
-  
   nsresult rv = SetViewWithViewPosition(aView, &aItemIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2208,8 +2255,13 @@ sbMediacoreSequencer::Play()
   rv = ResetMetadataDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // never call setup holding the monitor!
+  mon.Exit();
+
   rv = Setup();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Enter();
   
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2237,6 +2289,8 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Stop() {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   
+  nsAutoMonitor mon(mMonitor);
+
   mStatus = sbIMediacoreStatus::STATUS_STOPPED;
   
   nsresult rv = StopSequenceProcessor();
@@ -2244,12 +2298,16 @@ sbMediacoreSequencer::Stop() {
   
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsAutoMonitor mon(mMonitor);
-  
+ 
   if(mPlaybackControl) {
-    rv = mPlaybackControl->Stop();
+    // Grip.
+    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+    mon.Exit();
+
+    rv = playbackControl->Stop();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't stop core.");
+
+    mon.Enter();
   }
   
   if(mSeenPlaying) {
@@ -3176,6 +3234,12 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
     if(NS_SUCCEEDED(rv)) {
       rv = UpdateDurationDataRemotes(duration);
       NS_ENSURE_SUCCESS(rv, rv);
+      
+      // only updates if there is a current item and the duration
+      // reported by the core is different than the one the item
+      // currently has.
+      rv = UpdateCurrentItemDuration(duration);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 
@@ -3213,6 +3277,14 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    PRUint32 viewLength = 0;
+    nsresult rv = mView->GetLength(&viewLength);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mSequence.size() != viewLength) {
+      mNeedsRecalculate = PR_TRUE;
+    }
+
     rv = UpdateItemUIDIndex();
     NS_ENSURE_SUCCESS(rv, rv);
   }

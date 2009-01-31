@@ -821,7 +821,7 @@ void sbGStreamerMediacore::HandleAboutToFinishSignal()
 {
   LOG(("Handling about-to-finish signal"));
 
-  nsAutoMonitor mon(sbBaseMediacore::mMonitor);
+  nsAutoMonitor mon(mMonitor);
 
   // Never try to handle the next file if we've seen an error, or if gapless
   // is disabled for this resource

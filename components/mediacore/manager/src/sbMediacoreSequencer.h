@@ -99,6 +99,8 @@ public:
   nsresult SetMetadataDataRemotesFromItem(sbIMediaItem *aItem);
   nsresult ResetMetadataDataRemotes();
 
+  nsresult UpdateCurrentItemDuration(PRUint64 aDuration);
+
   // Error Event
   nsresult HandleErrorEvent(sbIMediacoreEvent *aEvent);
 
