@@ -47,8 +47,13 @@
 
 // Self imports.
 #include "sbAlbumArtService.h"
+#include "sbAlbumArtCommon.h"
 
 // Songbird imports.
+#include <sbIAlbumArtFetcherSet.h>
+#include <sbILibrary.h>
+#include <sbIMediaList.h>
+#include <sbLibraryUtils.h>
 #include <sbVariantUtils.h>
 
 // Mozilla imports.
@@ -112,14 +117,16 @@ static PRLogModuleInfo* gAlbumArtServiceLog = nsnull;
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbAlbumArtService,
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbAlbumArtService,
                               sbIAlbumArtService,
+                              sbIMediaListListener,
+                              sbIAlbumArtListener,
                               nsIObserver)
 
 
 //------------------------------------------------------------------------------
 //
-// sbIAlbumArtFetcher implementation.
+// sbIAlbumArtService implementation.
 //
 //------------------------------------------------------------------------------
 
@@ -416,12 +423,12 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   nsresult rv;
 
   // Dispatch processing of event.
-  if (!strcmp(aTopic, "profile-after-change")) {
+  if (!strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC)) {
     // Mark preferences as available and continue with initialization.
     mPrefsAvailable = PR_TRUE;
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
-  } else if (!strcmp(aTopic, "quit-application")) {
+  } else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
     // Finalize the album art service.
     Finalize();
   } else if (!strcmp(NS_TIMER_CALLBACK_TOPIC, aTopic)) {
@@ -440,6 +447,226 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   return NS_OK;
 }
 
+//------------------------------------------------------------------------------
+//
+// sbIMediaListListener implementation.
+//
+//------------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbAlbumArtService::OnItemAdded(sbIMediaList *aMediaList,
+                               sbIMediaItem *aMediaItem,
+                               PRUint32 aIndex,
+                               PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnItemAdded", this));
+
+  nsresult rv;
+  mIsBatchAdd = PR_TRUE;
+  rv = mProcessItemList->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem *,
+                                                         aMediaItem),
+                                       PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                       sbIMediaItem *aMediaItem,
+                                       PRUint32 aIndex,
+                                       PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnBeforeItemRemoved", this));
+  
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                      sbIMediaItem *aMediaItem,
+                                      PRUint32 aIndex,
+                                      PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnAfterItemRemoved", this));
+
+  nsresult rv;
+  mIsBatchAdd = PR_FALSE;
+  rv = mProcessItemList->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem *,
+                                                         aMediaItem),
+                                       PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnItemUpdated(sbIMediaList *aMediaList,
+                                 sbIMediaItem *aMediaItem,
+                                 sbIPropertyArray *aProperties,
+                                 PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnItemUpdated", this));
+  
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnItemMoved(sbIMediaList *aMediaList,
+                               PRUint32 aFromIndex,
+                               PRUint32 aToIndex,
+                               PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnItemMoved", this));
+  
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnListCleared(sbIMediaList *aMediaList,
+                                 PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnListCleared", this));
+  
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnBatchBegin(sbIMediaList *aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnBatchBegin", this));
+  mBatchCounter++;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnBatchEnd(sbIMediaList *aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnBatchEnd", this));
+  nsresult rv;
+  
+  // On the last batch end we process the items, this way they are updated
+  mBatchCounter--;
+  
+  PRUint32 itemCount = 0;
+  rv = mProcessItemList->GetLength(&itemCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mBatchCounter <= 0 && itemCount > 0) {
+    if (mIsBatchAdd) {
+      // Scan the new items
+      nsCOMPtr<nsISimpleEnumerator> listEnum;
+      rv = mProcessItemList->Enumerate(getter_AddRefs(listEnum));
+      NS_ENSURE_SUCCESS(rv, rv);
+      PRBool hasMore;
+      while (NS_SUCCEEDED(listEnum->HasMoreElements(&hasMore)) && hasMore) {
+        nsCOMPtr<nsISupports> next;
+        if (NS_SUCCEEDED(listEnum->GetNext(getter_AddRefs(next))) && next) {
+          nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(next));
+          rv = ReadAlbumArtwork(mediaItem);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      rv = mProcessItemList->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+      // Check if there is any images in the cache we should clean up
+      /*
+      nsCOMPtr<nsISimpleEnumerator> listEnum;
+      rv = mProcessItemList->Enumerate(getter_AddRefs(listEnum));
+      NS_ENSURE_SUCCESS(rv, rv);
+      PRBool hasMore;
+      while (NS_SUCCEEDED(listEnum->HasMoreElements(&hasMore)) && hasMore) {
+        nsCOMPtr<nsISupports> next;
+        if (NS_SUCCEEDED(listEnum->GetNext(getter_AddRefs(next))) && next) {
+          nsCOMPtr<sbIMediaItem> mediaItem(do_QueryInterface(next));
+          rv = CleanUpArtwork(mediaItem);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      */
+    }
+  }
+  
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// sbIAlbumArtListner Implementation.
+//
+//------------------------------------------------------------------------------
+
+/* onChangeFetcher(in sbIAlbumArtFetcher aFetcher); */
+NS_IMETHODIMP
+sbAlbumArtService::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
+{
+  TRACE(("sbAlbumArtService::OnChangeFetcher"));
+  return NS_OK;
+}
+
+/* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
+NS_IMETHODIMP
+sbAlbumArtService::OnResult(nsIURI*       aImageLocation,
+                            sbIMediaItem* aMediaItem)
+{
+  TRACE(("sbAlbumArtService::OnResult"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  if (aImageLocation) {
+    rv = SetItemArtwork(aImageLocation, aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/* onAlbumResult(in nsIURI aImageLocation, in nsIArray aMediaItems); */
+NS_IMETHODIMP
+sbAlbumArtService::OnAlbumResult(nsIURI*    aImageLocation,
+                                 nsIArray*  aMediaItems)
+{
+  TRACE(("sbAlbumArtService::OnAlbumResult"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItems);
+  nsresult rv;
+
+  if (aImageLocation) {
+    rv = SetItemsArtwork(aImageLocation, aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+/* onAlbumComplete(in nsIArray aMediaItems); */
+NS_IMETHODIMP
+sbAlbumArtService::OnAlbumComplete(nsIArray* aMediaItems)
+{
+  TRACE(("sbAlbumArtService::OnAlbumResult"));
+
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -454,7 +681,9 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
 sbAlbumArtService::sbAlbumArtService() :
   mInitialized(PR_FALSE),
   mPrefsAvailable(PR_FALSE),
-  mCacheFlushTimer(nsnull)
+  mCacheFlushTimer(nsnull),
+  mBatchCounter(0),
+  mIsBatchAdd(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gAlbumArtServiceLog) {
@@ -495,9 +724,13 @@ sbAlbumArtService::Initialize()
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Add observers.
-    rv = mObserverService->AddObserver(this, "profile-after-change", PR_FALSE);
+    rv = mObserverService->AddObserver(this,
+                                       SB_LIBRARY_MANAGER_READY_TOPIC,
+                                       PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = mObserverService->AddObserver(this, "quit-application", PR_FALSE);
+    rv = mObserverService->AddObserver(this,
+                                       SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
+                                       PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -532,6 +765,28 @@ sbAlbumArtService::Initialize()
   PRBool succeeded = mTemporaryCache.Init(TEMPORARY_CACHE_SIZE);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
+  // Create our processing array
+  mProcessItemList =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the main library and monitor it for changes
+  nsCOMPtr<sbILibrary> mLibrary;
+  rv = GetMainLibrary(getter_AddRefs(mLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  mMainLibraryList = do_QueryInterface(mLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMainLibraryList->AddListener(this,
+                                     PR_FALSE,  /* not weak */
+                                     sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
+                                     sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                                      sbIMediaList::LISTENER_FLAGS_BATCHEND  |
+                                      sbIMediaList::LISTENER_FLAGS_ITEMADDED,
+                                     nsnull     /* filter */);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Mark component as initialized.
   mInitialized = PR_TRUE;
 
@@ -559,10 +814,18 @@ sbAlbumArtService::Finalize()
   // Clear any cache info
   mTemporaryCache.Clear();
   
+  // Remove the Main library listener
+  if (mMainLibraryList) {
+    mMainLibraryList->RemoveListener(this);
+    mMainLibraryList = nsnull;
+  }
+  
   // Remove observers.
   if (mObserverService) {
-    mObserverService->RemoveObserver(this, "profile-after-change");
-    mObserverService->RemoveObserver(this, "quit-application");
+    mObserverService->RemoveObserver(this,
+                                     SB_LIBRARY_MANAGER_READY_TOPIC);
+    mObserverService->RemoveObserver(this,
+                                     SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     mObserverService = nsnull;
   }
 
@@ -823,3 +1086,28 @@ sbAlbumArtService::GetAlbumArtFileExtension(const nsACString& aMimeType,
   return NS_OK;
 }
 
+nsresult
+sbAlbumArtService::ReadAlbumArtwork(sbIMediaItem *aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  TRACE(("sbAlbumArtService::ReadAlbumArtwork - starting\n"));
+  nsresult rv;
+
+  nsCOMPtr<sbIAlbumArtFetcherSet> artFetcher =
+    do_GetService("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = artFetcher->SetLocalOnly(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Attempt to fetch some art
+  nsCOMPtr<nsIMutableArray> items =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = items->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
+                            PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = artFetcher->FetchAlbumArtForAlbum(items, this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}

@@ -50,6 +50,7 @@
 #include "sbAlbumArtScanner.h"
 #include "sbAlbumArtService.h"
 #include "sbFileAlbumArtFetcher.h"
+#include "sbMetadataAlbumArtFetcher.h"
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
@@ -218,6 +219,78 @@ sbFileAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
   return NS_OK;
 }
 
+//------------------------------------------------------------------------------
+//
+// Songbird metadata album art fetcher component.
+//
+//------------------------------------------------------------------------------
+
+// Construct the sbMetadataAlbumArtFetcher object and call its Initialize
+// method.
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMetadataAlbumArtFetcher, Initialize)
+
+
+/**
+ * Register the Songbird metadata album art component.
+ */
+
+static NS_METHOD
+sbMetadataAlbumArtFetcherRegister(nsIComponentManager*         aCompMgr,
+                                  nsIFile*                     aPath,
+                                  const char*                  aLoaderStr,
+                                  const char*                  aType,
+                                  const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add self to the album art fetcher category.
+  rv = categoryManager->AddCategoryEntry
+                          (SB_ALBUM_ART_FETCHER_CATEGORY,
+                           SB_METADATAALBUMARTFETCHER_CLASSNAME,
+                           SB_METADATAALBUMARTFETCHER_CONTRACTID,
+                           PR_TRUE,
+                           PR_TRUE,
+                           nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * Unregister the Songbird metadata album art component.
+ */
+
+static NS_METHOD
+sbMetadataAlbumArtFetcherUnregister(nsIComponentManager*         aCompMgr,
+                                    nsIFile*                     aPath,
+                                    const char*                  aLoaderStr,
+                                    const nsModuleComponentInfo* aInfo)
+{
+  nsresult rv;
+
+  // Get the category manager.
+  nsCOMPtr<nsICategoryManager> categoryManager =
+                                 do_GetService(NS_CATEGORYMANAGER_CONTRACTID,
+                                               &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Delete self from the album art fetcher category.
+  rv = categoryManager->DeleteCategoryEntry
+                          (SB_ALBUM_ART_FETCHER_CATEGORY,
+                           SB_METADATAALBUMARTFETCHER_CLASSNAME,
+                           PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 
 //------------------------------------------------------------------------------
 //
@@ -262,6 +335,15 @@ static nsModuleComponentInfo sbAlbumArtComponents[] =
     sbFileAlbumArtFetcherConstructor,
     sbFileAlbumArtFetcherRegister,
     sbFileAlbumArtFetcherUnregister
+  },
+  // Metadata album art fetcher component info.
+  {
+    SB_METADATAALBUMARTFETCHER_CLASSNAME,
+    SB_METADATAALBUMARTFETCHER_CID,
+    SB_METADATAALBUMARTFETCHER_CONTRACTID,
+    sbMetadataAlbumArtFetcherConstructor,
+    sbMetadataAlbumArtFetcherRegister,
+    sbMetadataAlbumArtFetcherUnregister
   }
 };
 

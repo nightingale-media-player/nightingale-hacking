@@ -566,9 +566,12 @@ sbAlbumArtScanner::OnAlbumComplete(nsIArray* aMediaItems)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnAlbumComplete", this));
   NS_ENSURE_ARG_POINTER(aMediaItems);
+  nsresult rv;
 
-  // BUG 14907 - Write metadata (image only)
-  
+  // Write the images to metadata
+  rv = WriteImageMetadata(aMediaItems);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Now that we are done this item move on to the next
   mProcessNextAlbum = PR_TRUE;
   return NS_OK;

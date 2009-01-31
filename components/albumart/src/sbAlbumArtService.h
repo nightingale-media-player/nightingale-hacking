@@ -50,7 +50,9 @@
 
 // Songbird imports.
 #include <sbIAlbumArtFetcher.h>
+#include <sbIAlbumArtListener.h>
 #include <sbIAlbumArtService.h>
+#include <sbIMediaListListener.h>
 #include <sbMemoryUtils.h>
 
 // Mozilla imports.
@@ -97,6 +99,8 @@
  */
 
 class sbAlbumArtService : public sbIAlbumArtService,
+                          public sbIMediaListListener,
+                          public sbIAlbumArtListener,
                           public nsIObserver
 {
   //----------------------------------------------------------------------------
@@ -113,6 +117,8 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTSERVICE
+  NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBIALBUMARTLISTENER
   NS_DECL_NSIOBSERVER
 
 
@@ -175,6 +181,10 @@ private:
   // mValidExtensionList        List of valid album art file extensions.
   // mTemporaryCache            Hash of arbitrary data used by art fetchers
   // mCacheFlushTimer           Timer used to empty the temporary cache
+  // mMainLibraryList           Main library we listen to for changes.
+  // mProcessItemList           Items to process that have been added or removed
+  // mBatchCounter              Keep track of how many batches are running
+  // mIsBatchAdd                Flag for adding(true) or removing(false) items.
   //
 
   nsCOMPtr<nsIObserverService>  mObserverService;
@@ -188,6 +198,10 @@ private:
   nsInterfaceHashtable<nsStringHashKey, nsISupports> 
                                 mTemporaryCache;
   nsCOMPtr<nsITimer>            mCacheFlushTimer;
+  nsCOMPtr<sbIMediaList>        mMainLibraryList;
+  nsCOMPtr<nsIMutableArray>     mProcessItemList;
+  PRUint32                      mBatchCounter;
+  PRBool                        mIsBatchAdd;
 
   //
   // Internal services.
@@ -207,6 +221,8 @@ private:
 
   nsresult GetAlbumArtFileExtension(const nsACString& aMimeType,
                                     nsAString&        aFileExtension);
+  
+  nsresult ReadAlbumArtwork(sbIMediaItem *aMediaItem);
 };
 
 
