@@ -44,9 +44,10 @@
 #include <nsIURI.h>
 
 #define PREF_WATCHFOLDER_ROOT        "songbird.watch_folder."
-#define PREF_WATCHFOLDER_ENABLE      PREF_WATCHFOLDER_ROOT "enable"
-#define PREF_WATCHFOLDER_PATH        PREF_WATCHFOLDER_ROOT "path"
-#define PREF_WATCHFOLDER_SESSIONGUID PREF_WATCHFOLDER_ROOT "sessionguid"
+#define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
+#define PREF_WATCHFOLDER_PATH        "songbird.watch_folder.path"
+#define PREF_WATCHFOLDER_SESSIONGUID "songbird.watch_folder.sessionguid"
+#define PREF_FIRSTRUN_CHECK          "songbird.firstrun.check.0.3"
 
 #define STARTUP_TIMER_DELAY      2000
 #define FLUSH_FS_WATCHER_DELAY   1000
@@ -111,12 +112,30 @@ sbWatchFolderService::Init()
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Don't really start the service until a short delay after ui startup.
-  rv = observerService->AddObserver(this, "final-ui-startup", PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = observerService->AddObserver(this, "quit-application", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+
+    // songbird.firstrun.check.0.3
+  nsCOMPtr<nsIPrefBranch2> prefBranch =
+    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasFirstRunCheck = PR_FALSE;
+  rv = prefBranch->PrefHasUserValue(PREF_FIRSTRUN_CHECK, &hasFirstRunCheck);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // First run dialog has run - go ahead and start the delayed init on 
+  // "final-ui-startup".
+  if (hasFirstRunCheck) {
+    rv = observerService->AddObserver(this, "final-ui-startup", PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  // If the first run pref does not exist, wait until after the first run
+  // dialog has been completed before delay starting the service.
+  else {
+    prefBranch->AddObserver(PREF_FIRSTRUN_CHECK, this, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv); 
+  }
 
   return NS_OK;
 }
@@ -870,6 +889,19 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
           }
         }
       }
+    }
+    else if (changedPrefName.Equals(NS_LITERAL_STRING(PREF_FIRSTRUN_CHECK))) {
+      // The first run dialog has just closed, start the delayed timer.
+      rv = prefBranch->RemoveObserver(PREF_FIRSTRUN_CHECK, this);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mStartupDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mStartupDelayTimer->InitWithCallback(this,
+                                                STARTUP_TIMER_DELAY,
+                                                nsITimer::TYPE_ONE_SHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
  
