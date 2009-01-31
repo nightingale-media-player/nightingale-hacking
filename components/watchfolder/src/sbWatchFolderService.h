@@ -55,6 +55,13 @@ typedef enum {
   eChanged = 2,
 } EProcessType;
 
+typedef enum {
+  eNotSupported = 0,  // Service is not supported on current platform
+  eDisabled     = 1,  // Service is disabled (by user pref)
+  eStarted      = 2,  // Service has initialized internally, not watching yet.
+  eWatching     = 3,  // Service is now watching changes
+} EWatchFolderState;
+
 
 class sbWatchFolderService : public sbIWatchFolderService,
                              public sbIFileSystemListener,
@@ -82,8 +89,9 @@ public:
                                 const nsModuleComponentInfo *aInfo);
 
 protected:
-  nsresult StartWatching();
-  nsresult StopWatching();
+  nsresult InitInternal();
+  nsresult StartWatchingFolder();
+  nsresult StopWatchingFolder();
   nsresult SetEventPumpTimer();
   nsresult ProcessEventPaths(sbStringVector & aEventPathVector,
                              EProcessType aProcessType);
@@ -99,6 +107,8 @@ private:
   nsCOMPtr<nsITimer>             mEventPumpTimer;
   nsCOMPtr<nsITimer>             mAddDelayTimer;
   nsCOMPtr<nsITimer>             mChangeDelayTimer;
+  nsCOMPtr<nsITimer>             mStartupDelayTimer;
+  nsCOMPtr<nsITimer>             mFlushFSWatcherTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
   sbStringVector                 mChangedPaths;
   sbStringVector                 mDelayedChangedPaths;
@@ -106,10 +116,9 @@ private:
   sbStringVector                 mRemovedPaths;
   nsString                       mWatchPath;
   nsCString                      mFileSystemWatcherGUID;
-  PRBool                         mIsSupported;
-  PRBool                         mIsEnabled;
-  PRBool                         mIsWatching;
-  PRBool                         mWatcherIsReady;
+  EWatchFolderState              mServiceState;
+  PRBool                         mHasWatcherStarted;
+  PRBool                         mShouldReinitWatcher;
   PRBool                         mEventPumpTimerIsSet;
   PRBool                         mAddDelayTimerIsSet;
   PRBool                         mChangeDelayTimerIsSet;
