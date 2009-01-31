@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
+
+  <Description about="urn:mozilla:install-manifest">
+    <em:id>{ab4bf7ab-0100-b748-a82c-a0a467773cca}</em:id>
+    <em:type>2</em:type>
+    <em:name>seeqpod</em:name>
+    <em:version>1.2.1</em:version>
+    <em:creator>Georges Auberger</em:creator>
+    <em:contributor>Ian McKellar</em:contributor>
+    <em:description>Search for music on the web via SeeqPod</em:description>
+    <em:iconURL>chrome://seeqpod/skin/seeqpod_icon.png</em:iconURL>
+    <em:targetApplication>
+      <Description>
+        <em:id>songbird@songbirdnest.com</em:id>
+        <em:minVersion>0.6</em:minVersion>
+        <em:maxVersion>1.1.0pre</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+  </Description>
+</RDF>

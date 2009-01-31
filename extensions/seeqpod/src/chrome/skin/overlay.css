@@ -1,0 +1,47 @@
+#search-box {
+  background-color: rgb(220,220,220) !important;
+  background-image:url('chrome://songbird/skin/service-pane/bg-service-pane.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+  border-bottom: 1px solid grey;
+  padding: 0 10px 4px 0;
+}
+
+
+#logo {
+  list-style-image: url(seeqpod-logo.png);
+  width: 147px;
+  height: 30px;
+}
+
+.actions>label {
+  padding-top: 3px;
+}
+
+.hidden { display: none; }
+.unhidden { display: block; }
+
+.suggestion-label {
+  color: #aa0000;
+}
+
+
+#busy {
+  visibility: collapse;
+  background-color: rgba(255, 255, 255, 0.6);
+}
+.busy #busy {
+  visibility: visible;
+}
+#busy spacer {
+  opacity: 0.5;
+}
+
+#progress {
+  width: 20em;
+}
+
+/* hide the commands toolbar because it's dumb */
+#sb-commands-toolbar {
+  visibility: collapse;
+}
