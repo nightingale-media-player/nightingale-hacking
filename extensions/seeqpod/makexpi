@@ -1,5 +1,0 @@
-#!/bin/bash
-cd src
-zip -r  ../seeqpod.zip * -x \*svn\/\* \*DS_Store
-mv ../seeqpod.zip ../seeqpod.xpi
-cd ..
