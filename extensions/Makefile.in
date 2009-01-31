@@ -40,6 +40,7 @@ NOARCH_EXTENSIONS = shoutcast \
                     concerts \
                     mashTape \
                     7digital \
+                    seeqpod \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
@@ -58,7 +59,7 @@ ifeq (,$(filter-out windows,$(SB_PLATFORM)))
   SUBDIRS += systray
 endif # platforms with systray support
 
-ifneq (default, $(SB_EXTENSIONS))
+ifneq (default,$(SB_EXTENSIONS))
   SUBDIRS = $(subst $(COMMA),$(SPACE),$(SB_EXTENSIONS))
 endif
 
