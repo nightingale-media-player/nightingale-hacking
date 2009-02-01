@@ -34,7 +34,7 @@ interface sbIFileSystemListener;
 //        path of the fileystem resources that need to be monitored. Callbacks
 //        will begin once |startWatching()| has been called.
 //
-[scriptable, uuid(9656EBDC-B88F-4FA7-A16F-E203F1A34F9D)]
+[scriptable, uuid(61D13E2E-4927-4BAB-A327-23607AC4872F)]
 interface sbIFileSystemWatcher : nsISupports
 {
   //
@@ -75,7 +75,15 @@ interface sbIFileSystemWatcher : nsISupports
   //                          the current state of the watched path.
   //
   void stopWatching(in boolean aShouldSaveSession);
-  
+
+  //
+  // \brief When a session is saved in |stopWatching()|, serialized data is
+  //        stored in the users profile. Use this method to remove the stored
+  //        serialized data when a session is no longer needed.
+  // \param aSessionGuid The GUID of the session to remove.
+  //
+  void deleteSession(in ACString aSessionGuid);
+
   //
   // \brief Find out if the watcher is running.
   //

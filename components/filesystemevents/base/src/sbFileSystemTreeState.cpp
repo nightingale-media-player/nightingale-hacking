@@ -292,6 +292,23 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
   return NS_OK;
 }
 
+/* static */ nsresult
+sbFileSystemTreeState::DeleteSavedTreeState(const nsID & aSessionID)
+{
+  nsresult rv;
+  nsCOMPtr<nsIFile> sessionFile;
+  rv = GetTreeSessionFile(aSessionID, PR_FALSE, getter_AddRefs(sessionFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool fileExists = PR_FALSE;
+  if (NS_SUCCEEDED(sessionFile->Exists(&fileExists)) && fileExists) {
+    rv = sessionFile->Remove(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 nsresult
 sbFileSystemTreeState::WriteNode(sbFileObjectOutputStream *aOutputStream,
                                  sbFileSystemNode *aOutNode)
@@ -359,7 +376,7 @@ sbFileSystemTreeState::AssignRelationships(sbFileSystemNode *aChildNode,
   return NS_OK;
 }
 
-nsresult
+/* static */ nsresult
 sbFileSystemTreeState::GetTreeSessionFile(const nsID & aSessionID,
                                           PRBool aShouldCreate,
                                           nsIFile **aOutFile)

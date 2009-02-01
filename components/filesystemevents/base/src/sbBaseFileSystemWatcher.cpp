@@ -45,6 +45,9 @@ sbBaseFileSystemWatcher::~sbBaseFileSystemWatcher()
 {
 }
 
+//------------------------------------------------------------------------------
+// sbIFileSystemWatcher
+
 NS_IMETHODIMP 
 sbBaseFileSystemWatcher::Init(sbIFileSystemListener *aListener, 
                               const nsAString & aRootPath, 
@@ -99,6 +102,20 @@ sbBaseFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
   // This function is defined by the inherited class
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbBaseFileSystemWatcher::DeleteSession(const nsACString & aSessionGuid)
+{
+  nsID sessionID;
+  if (!sessionID.Parse(nsCString(aSessionGuid).get())) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsresult rv = sbFileSystemTreeState::DeleteSavedTreeState(sessionID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 

@@ -60,6 +60,8 @@ public:
                          PRBool *aIsRecursiveWatch,
                          sbFileSystemNode **aOutRootNode);
 
+  static nsresult DeleteSavedTreeState(const nsID & aSessionID);
+
 protected:
   nsresult WriteNode(sbFileObjectOutputStream *aOutputStream,
                      sbFileSystemNode *aOutNode);
@@ -70,9 +72,9 @@ protected:
   nsresult AssignRelationships(sbFileSystemNode *aChildNode,
                                sbNodeIDMap & aParentGuidMap);
 
-  nsresult GetTreeSessionFile(const nsID & aSessionID,
-                              PRBool aShouldCreate,
-                              nsIFile **aOutFile);
+  static nsresult GetTreeSessionFile(const nsID & aSessionID,
+                                     PRBool aShouldCreate,
+                                     nsIFile **aOutFile);
 
   nsresult GetTreeNodeCount(sbFileSystemNode *aRootNode,
                             PRUint32 *aNodeCount);

@@ -281,8 +281,6 @@ sbWatchFolderService::StopWatchingFolder()
   rv = mFileSystemWatcher->StopWatching(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mFileSystemWatcher = nsnull;
- 
   // The service is no longer watching - mark as |eStarted|.
   mServiceState = eStarted;
   return NS_OK;
@@ -867,16 +865,24 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
             if (hasSavedSessionGUID) {
               rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
               NS_ENSURE_SUCCESS(rv, rv);
-              //
-              // XXX todo Add delete old session support to 
-              //     |sbIFileSystemWatcher|.
-              // @see bug 15054
-              //
+            }
+           
+            if (!mFileSystemWatcherGUID.Equals(EmptyCString())) {
+              // Clear any previously stored data from the session that might
+              // be stored in the users profile.
+              rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
+              if (NS_FAILED(rv)) {
+                // Just warn if deleting the previous session fails.
+                NS_WARNING("Could not delete old session data!");
+              }
             }
 
             // Set a flag to re-setup a file system watcher once the current
             // one has shutdown.
             mShouldReinitWatcher = PR_TRUE;
+
+            // The service is no longer watching
+            mServiceState = eStarted;
 
             // Flush all event paths, reset flags, and stop the watcher.
             mAddedPaths.clear();
