@@ -51,7 +51,7 @@
 // Mozilla imports.
 #include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
-#include <nsIFile.h>
+#include <nsIFileURL.h>
 #include <nsIMutableArray.h>
 #include <nsIURI.h>
 #include <nsIVariant.h>
@@ -540,21 +540,20 @@ sbAlbumArtFetcherSet::CheckLocalImage(nsIURI* aImageLocation)
 {
   NS_ENSURE_ARG_POINTER(aImageLocation);
   nsresult rv;
-  nsCOMPtr<nsIFile> fileLocation;
-  nsIID nsIFileIID = NS_IFILE_IID;
-  rv = aImageLocation->QueryInterface(nsIFileIID, getter_AddRefs(fileLocation));
-  if (NS_FAILED(rv) || !fileLocation) {
+  nsCOMPtr<nsIFileURL> localFile = do_QueryInterface(aImageLocation, &rv);
+  if (NS_FAILED(rv)) {
     // Not a file so this must be online
     nsString message(NS_LITERAL_STRING("Fetcher returned non-local file for image"));
     // try and get the location returned and put in message to user.
     nsCString uriSpec;
     rv = aImageLocation->GetSpec(uriSpec);
-    if (!NS_FAILED(rv)) {
+    if (NS_SUCCEEDED(rv)) {
       message.AppendLiteral(": ");
       message.AppendLiteral(uriSpec.get());
-      mConsoleService->LogStringMessage(message.get());
     }
+    mConsoleService->LogStringMessage(message.get());
   }
+
   return NS_OK;
 }
 
