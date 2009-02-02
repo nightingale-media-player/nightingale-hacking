@@ -48,61 +48,6 @@ const FLAGS_DEFAULT = -1;
 // We are defaulting to this since we only read/write id3v2 tags for album art.
 const MAX_FILE_SIZE_BYTES = 16777216;
 
-function sbCoverHelperAlbumArtListener(aWindow) {
-  this._window = aWindow;
-}
-sbCoverHelperAlbumArtListener.prototype = {
-  /**
-   * \brief Callbacks for the sbIAlbumArtListener
-   */
-  onChangeFetcher: function AlbumArt_onChangeFetcher(aFetcher) {
-  },
-  onResult: function AlbumArt_onResult(aImageLocation, aMediaItem) {
-    if (aImageLocation) {
-      aMediaItem.setProperty(SBProperties.primaryImageURL,
-                             aImageLocation.spec);
-    }
-  },
-  onAlbumResult: function AlbumArt_onAlbumResult(aImageLocation, aMediaItems) {
-    if (aImageLocation) {
-      var newImageLocation = aImageLocation.spec;
-      var itemEnum = aMediaItems.enumerate();
-      while (itemEnum.hasMoreElements()) {
-        var mediaItem = itemEnum.getNext();
-        mediaItem.QueryInterface(Ci.sbIMediaItem);
-        mediaItem.setProperty(SBProperties.primaryImageURL,
-                              newImageLocation);
-      }
-    }
-  },
-  onAlbumComplete: function AlbumArt_onAlbumComplete(aMediaItems) {
-    // Write the images to metadata
-    if (aMediaItems.length > 0) {
-      var propArray = ArrayConverter.stringEnumerator([SBProperties.primaryImageURL]);
-      var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"]
-                              .getService(Ci.sbIFileMetadataService);      
-      try {
-        var job = metadataService.write(aMediaItems, propArray);
-      
-        SBJobUtils.showProgressDialog(job, this._window);
-      } catch (e) {
-        // Job will fail if writing is disabled by the pref
-        Components.utils.reportError(e);
-      }
-    }
-  },
-  // nsISupports
-  QueryInterface: function QueryInterface(aIID)
-  {
-    if (aIID.equals(Ci.sbIAlbumArtListener) ||
-        aIID.equals(Ci.nsISupports))
-      return this;
-
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  }
-}
-
-
 var sbCoverHelper = {
   
   /**
@@ -491,34 +436,55 @@ var sbCoverHelper = {
 
   /**
    * \brief Sets up a media list to get artwork for each of the items passed in.
-   * \param aItemList An nsIArray or nsISimpleEnumerator of sbIMediaItem items.
+   * \param aItemList A nsIArray or nsISimpleEnumerator of sbIMediaItem items.
    * \param aWindow Window to bind to, this can be null.
    */
   getArtworkForItems: function(aItemList, aWindow) {
     var mediaItems = aItemList;
-
-    if (aItemList instanceof Ci.nsISimpleEnumerator) {
-      // Convert to an nsIArray
-      var newItemList = [];
-      while (aItemList.hasMoreElements()) {
-        newItemList.push(aItemList.getNext());
-      }
-      
-      mediaItems = ArrayConverter.nsIArray(newItemList);
-    } else if (!(aItemList instanceof Ci.nsIArray)) {
-      Cu.reportError("getArtworkForItems: No valid array or enumerator passed in.");
-      return;
-    }
-
-    if (mediaItems.length <= 0) {
-      Cu.reportError("getArtworkForItems: No items passed in to get artwork for.");
+    if (aItemList instanceof Ci.nsIArray) {
+      mediaItems = aItemList.enumerate();
+    } else if (!(aItemList instanceof Ci.nsISimpleEnumerator)) {
+      Cu.reportError("getArtworkForItems: Item list is not a valid" +
+                     " nsIArray or nsISimpleEnumerator.");
       return;
     }
     
-    var listener = new sbCoverHelperAlbumArtListener(aWindow);
-    var artworkFetcher = Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
-                           .createInstance(Ci.sbIAlbumArtFetcherSet);
-    artworkFetcher.fetchAlbumArtForAlbum(mediaItems,
-                                         listener);
+    if (!mediaItems.hasMoreElements()) {
+      Cu.reportError("getArtworkForItems: No items to get artwork for.");
+      return;
+    }
+    
+    // Create a hidden playlist temporarily
+    var listProperties =
+      Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+        .createInstance(Ci.sbIPropertyArray);
+    listProperties.appendProperty(SBProperties.hidden, "1");
+    listProperties.appendProperty(SBProperties.mediaListName, "Get Artwork");
+    var getArtworkMediaList = LibraryUtils.mainLibrary
+                                          .createMediaList("simple",
+                                                           listProperties);
+    // Add all the items to our new hidden temporary playlist
+    getArtworkMediaList.addSome(mediaItems);
+
+    // Set up the scanner
+    var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
+                           .createInstance(Ci.sbIAlbumArtScanner);
+
+    // Listener so that we can remove our list when done.
+    var jobProgressListener = {
+      onJobProgress: function(aJobProgress) {
+        if (aJobProgress.status != Ci.sbIJobProgress.STATUS_RUNNING) {
+          LibraryUtils.mainLibrary.remove(getArtworkMediaList);
+          // Remove ourselves so that we do not get called multiple times.
+          artworkScanner.removeJobProgressListener(jobProgressListener);
+        }
+      },
+      QueryInterface: XPCOMUtils.generateQI([Ci.sbIJobProgressListener])
+    };
+
+    // Now start scanning
+    artworkScanner.addJobProgressListener(jobProgressListener);
+    artworkScanner.scanListForArtwork(getArtworkMediaList);
+    SBJobUtils.showProgressDialog(artworkScanner, aWindow);
   }
 }
