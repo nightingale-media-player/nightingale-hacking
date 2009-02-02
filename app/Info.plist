@@ -723,7 +723,7 @@
       </array>
     </dict>
     <dict>
-      <key>CFBundleURLSchemes</key>
+      <key>CFBundleURLName</key>
       <string>songbird URL</string>
       <key>CFBundleURLSchemes</key>
       <array>
