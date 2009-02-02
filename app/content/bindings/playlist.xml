@@ -3026,6 +3026,27 @@
         ]]></body>
       </method>
 
+      <method name="issueCommand">
+        <parameter name="aCommand"/>
+        <parameter name="aEvent"/>
+        <body>
+          <![CDATA[
+          var windowMediator = 
+            Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                      .getService(Components.interfaces.nsIWindowMediator);
+          var songbirdWindow = 
+            windowMediator.getMostRecentWindow("Songbird:Main");          
+
+          var controller = 
+            songbirdWindow.controllers.getControllerForCommand(aCommand);
+          
+          if (controller) {
+            controller.doCommand(aCommand);
+            aEvent.preventDefault();
+            aEvent.stopPropagation();
+          }
+        ]]></body>
+      </method>
     </implementation>
 
     <handlers>
@@ -3139,7 +3160,16 @@
           }       
         ]]>
       </handler>
-      
+      <handler event="keypress" keycode="VK_UP" modifiers="accel" phase="capturing">
+        <![CDATA[
+          this.issueCommand("cmd_volume_up", event);
+        ]]>
+      </handler>
+      <handler event="keypress" keycode="VK_DOWN" modifiers="accel" phase="capturing">
+        <![CDATA[
+          this.issueCommand("cmd_volume_down", event);
+        ]]>
+      </handler>
       <handler event="keypress" keycode="VK_LEFT" modifiers="control" phase="target">
         <![CDATA[
           if (event.originalTarget != this.tree) {
