@@ -149,13 +149,17 @@ endif
 # Set some needed commands
 #
 
-AUTOCONF ?= autoconf
-GREP ?= grep
-MAKE ?= gmake
-MKDIR ?= mkdir -p
-PERL ?= perl
-SED ?= sed
-SVN ?= svn
+ifndef AUTOCONF
+AUTOCONF := autoconf
+endif
+
+ifndef MKDIR
+MKDIR := mkdir
+endif
+
+ifndef MAKE
+MAKE := gmake
+endif
 
 SONGBIRD_MESSAGE = Songbird Build System
 
@@ -164,7 +168,7 @@ RUN_AUTOCONF_CMD = cd $(TOPSRCDIR) && \
                    rm -rf $(TOPSRCDIR)/autom4te.cache/ \
                    $(NULL)
 
-CREATE_OBJ_DIR_CMD = $(MKDIR) $(OBJDIR) $(DISTDIR) \
+CREATE_OBJ_DIR_CMD = $(MKDIR) -p $(OBJDIR) $(DISTDIR) \
                      $(NULL)
 
 # When calling configure we need to use a relative path so that it will spit
@@ -176,6 +180,10 @@ RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
 CLEAN_CMD = $(MAKE) -C $(OBJDIR) clean \
             $(NULL)
 
+CLOBBER_CMD = rm -f $(CONFIGURE) && \
+              rm -rf $(OBJDIR) \
+              $(NULL)
+
 BUILD_CMD = $(MAKE) -C $(OBJDIR) \
             $(NULL)
 
@@ -183,31 +191,35 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
-MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
-MOZBROWSER_UPDATE ?= $(SVN) up $(MOZBROWSER_DIR)
-MOZBROWSER_CHECKOUT ?= $(SVN) co $(SVN_MOZBROWSER_URL) $(MOZBROWSER_DIR)
-
 all : songbird_output build
 
 debug : all
 
-ifeq (,$(wildcard $(MOZBROWSER_DIR)))
-   SVNBASE := $(shell $(SVN) info --xml $(TOPSRCDIR) | $(GREP) '^<url>' | $(SED) -e 's;</*url>;;g')
-   ifneq (,$(SVNBASE))
-      SVN_MOZBROWSER_URL := $(shell echo $(SVNBASE) | $(PERL) -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
-      SB_MOZBROWSER_DEP = mozbrowser_checkout
-   endif
+SB_MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
+
+ifeq (,$(wildcard $(SB_MOZBROWSER_DIR)))
+  # Seems weird, but we do this so people can get this directory in other ways
+  # (tarballs/git/whatever)
+  SVNBASE := $(shell svn info $(TOPSRCDIR) | grep '^URL:' | cut -d ' ' -f 2-)
+ifneq (,$(SVNBASE))
+  SVN_MOZBROWSER_URL := $(shell echo $(SVNBASE) | perl -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
+  SB_NEW_MOZBROWSER_DEP = getmozbrowser
+endif # no SVNBASE
 else
-   SB_MOZBROWSER_DEP = mozbrowser_update
+  SB_NEW_MOZBROWSER_DEP = updatemozbrowser
+endif # need to pull mozbrowser
+
+# TODO: add a variable users can define do their own "version" of "svn up"
+# (Looking in Mook's general direction... ;-)
+updatemozbrowser:
+ifneq (,$(wildcard $(SB_MOZBROWSER_DIR)/.svn))
+	svn up $(SB_MOZBROWSER_DIR)
 endif
 
-mozbrowser_update:
-	$(MOZBROWSER_UPDATE)
+getmozbrowser:
+	svn co $(SVN_MOZBROWSER_URL) $(SB_MOZBROWSER_DIR)
 
-mozbrowser_checkout:
-	$(MOZBROWSER_CHECKOUT)
-
-$(CONFIGSTATUS) : $(CONFIGURE) $(SB_MOZBROWSER_DEP)
+$(CONFIGSTATUS) : $(CONFIGURE) $(SB_NEW_MOZBROWSER_DEP)
 	$(CREATE_OBJ_DIR_CMD)
 	$(RUN_CONFIGURE_CMD)
 
@@ -234,15 +246,11 @@ clean :
 	$(CLEAN_CMD)
 
 clobber:
-	$(RM) -f $(CONFIGURE)
-	$(RM) -rf $(OBJDIR)
-
-depclobber:
-	$(RM) -rf $(MOZBROWSER_DIR)
+	$(CLOBBER_CMD)
 
 build : $(CONFIGSTATUS)
 	$(BUILD_CMD)
 
-.PHONY : all debug songbird_output run_autoconf create_dist_dir run_configure clean clobber depclobber build mozbrowser_checkout mozbrowser_update
+.PHONY : all debug songbird_output run_autoconf create_dist_dir run_configure clean clobber build
 
 #end
