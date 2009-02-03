@@ -34,7 +34,6 @@
 #include <nsIUUIDGenerator.h>
 #include <nsStringAPI.h>
 
-
 class sbFileSystemNode;
 class sbFileSystemTree;
 
@@ -42,7 +41,6 @@ typedef std::map<PRUint32, nsRefPtr<sbFileSystemNode> > sbNodeIDMap;
 typedef sbNodeIDMap::value_type sbNodeIDMapPair;
 typedef sbNodeIDMap::const_iterator sbNodeIDMapIter;
 
-//------------------------------------------------------------------------------
 
 class sbFileSystemTreeState : public nsISupports
 {

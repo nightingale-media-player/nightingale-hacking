@@ -544,6 +544,39 @@ sbWatchFolderService::OnWatcherStopped()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbWatchFolderService::OnSessionLoadError()
+{
+  // If this method gets called, than the watcher could not load the stored
+  // session. The tree will need to be re-initialized, this time without 
+  // loading a session.
+  nsresult rv;
+  if (!mFileSystemWatcherGUID.Equals(EmptyCString())) {
+    // Attempt the remove the session data. Don't bother returning the result
+    // if it fails, just warn about it.
+    rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not delete the bad session data file!");
+    }
+    
+    mFileSystemWatcherGUID.Assign(EmptyCString());
+  }
+  
+  rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFileSystemWatcher->StartWatching();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //
+  // TODO: Inform the user that the session could not be loaded and that their
+  //       watch directory should be rescanned.
+  // SEE: bug 15089.
+  //
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {

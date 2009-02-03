@@ -282,6 +282,12 @@ protected:
   //
   void NotifyBuildComplete();
 
+  //
+  // \brief Internal method for informing tree listeners that the tree could
+  //        not be restored from a previous session on the main thread.
+  //
+  void NotifySessionLoadError();
+
 private:
   nsRefPtr<sbFileSystemNode>           mRootNode;
   nsTArray<sbFileSystemTreeListener *> mListeners;

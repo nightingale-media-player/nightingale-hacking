@@ -31,7 +31,7 @@
 //        events. Pass in an instance of this interface when creating a 
 //        |sbIFileSystemWatcher| instance.
 //
-[scriptable, uuid(46347A60-4C3C-4558-9991-3572EEA654EB)]
+[scriptable, uuid(9629A5A4-82E7-434F-9684-043A778695AF)]
 interface sbIFileSystemListener : nsISupports
 {
   //
@@ -45,6 +45,14 @@ interface sbIFileSystemListener : nsISupports
   //        to file system events.
   //
   void onWatcherStopped();
+
+  //
+  // \brief Callback when the |sbIFileSystemWatcher| could not load a session.
+  //        NOTE: If a listener receives this callback, the watcher should be
+  //              re-initialized via |init()| in order to receive callbacks 
+  //              about changes to the watched path.
+  //
+  void onSessionLoadError();
 
   //
   // \brief Callback when something has change in the filesystem.

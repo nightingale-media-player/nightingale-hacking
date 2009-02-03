@@ -88,7 +88,7 @@ sbFileSystemTree::Init(const nsAString & aPath, PRBool aIsRecursive)
   }
 
   mIsIntialized = PR_TRUE;
-
+  mShouldLoadSession = PR_FALSE;
   mRootPath.Assign(aPath);
   mIsRecursiveBuild = aIsRecursive;
 
@@ -104,7 +104,8 @@ sbFileSystemTree::InitWithTreeSession(nsID & aSessionID)
 
   mSavedSessionID = aSessionID;
   mShouldLoadSession = PR_TRUE;
-  
+  mIsIntialized = PR_FALSE;  // not really initialized until session is loaded.
+
   return InitTree();
 }
 
@@ -155,8 +156,23 @@ sbFileSystemTree::RunBuildThread()
                                        &mIsRecursiveBuild,
                                        getter_AddRefs(savedRootNode));
     if (NS_FAILED(rv)) {
-      // TODO: Report error...
       NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to load saved tree session!");
+
+      // In the event that a session failed to load from disk, inform all the
+      // listeners of the error and return. The tree can not be built w/o a
+      // root watch path, which is stored in the stored session data.
+      nsCOMPtr<nsIRunnable> runnable = 
+        NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, NotifySessionLoadError);
+      NS_ASSERTION(runnable, 
+          "Could not create a runnable for NotifySessionLoadError()!");
+      rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+      NS_ASSERTION(NS_SUCCEEDED(rv), 
+          "Could not dispatch NotifySessionLoadError()!");
+      
+      return;
+    }
+    else {
+      mIsIntialized = PR_TRUE;
     }
   }
 
@@ -201,9 +217,6 @@ sbFileSystemTree::RunBuildThread()
 void
 sbFileSystemTree::NotifyBuildComplete()
 {
-  NS_ASSERTION(NS_IsMainThread(), 
-    "sbFileSystemTree::NotifyBuildComplete() not called on the main thread!");
-
   // If the tree was initialized from a previous session, inform the listener
   // of all the changes that have been detected from between sessions before
   // noitifying the tree is ready. This is the documented behavior of
@@ -250,6 +263,17 @@ sbFileSystemTree::NotifyBuildComplete()
 
   // Don't hang on to the values in |mDiscoveredDirs|.
   mDiscoveredDirs.Clear();
+}
+
+void 
+sbFileSystemTree::NotifySessionLoadError()
+{
+  nsAutoLock listenerLock(mListenersLock);
+
+  PRUint32 count = mListeners.Length();
+  for (PRUint32 i = 0; i < count; i++) {
+    mListeners[i]->OnTreeSessionLoadError();
+  }
 }
 
 nsresult

@@ -287,7 +287,7 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
       readWasSuccess = PR_FALSE;
     }
   }
-  
+
   savedRootNode.swap(*aOutRootNode);
   return NS_OK;
 }

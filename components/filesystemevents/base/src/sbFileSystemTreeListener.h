@@ -63,6 +63,13 @@ public:
   //
   NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
                          sbStringArray & aDirPathArray) = 0;
+
+  //
+  // \brief Callback function for when a tree failed to de-serialize. When 
+  //        this method is sent, the tree is in a non-initialized state and
+  //        will need to be re-initialized in order to become active. 
+  //
+  NS_IMETHOD OnTreeSessionLoadError() = 0;
 };
 
 #endif  // sbFileSystemTreeListener_h_

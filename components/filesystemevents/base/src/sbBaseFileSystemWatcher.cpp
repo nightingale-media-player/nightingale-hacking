@@ -59,6 +59,7 @@ sbBaseFileSystemWatcher::Init(sbIFileSystemListener *aListener,
   mWatchPath.Assign(aRootPath);
   mIsRecursive = PR_TRUE;
   mIsWatching = PR_FALSE;
+  mShouldLoadSession = PR_FALSE;
 
   // Generate a session GUID.
   nsresult rv;
@@ -183,5 +184,11 @@ sbBaseFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
   // Return fail here - since the implementor needs to implement this to start
   // its native file-system event system.
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbBaseFileSystemWatcher::OnTreeSessionLoadError()
+{
+  return mListener->OnSessionLoadError();
 }
 
