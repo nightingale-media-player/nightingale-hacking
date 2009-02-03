@@ -36,7 +36,7 @@ CRCCheck force
 
 ; Vista compatibility - admin priviledges needed to write things such as
 ; uninstaller registry entries into HKLM
-RequestExecutionLevel admin
+RequestExecutionLevel user
 
 ; empty files - except for the comment line - for generating custom pages.
 ;!system 'echo ; > options.ini'
@@ -51,12 +51,13 @@ Var StartMenuDir
 ;From NSIS
 !include FileFunc.nsh
 !include LogicLib.nsh
+!include MUI.nsh
+!include nsProcess.nsh
 !include TextFunc.nsh
+!include UAC.nsh
 !include WinMessages.nsh
 !include WinVer.nsh
 !include WordFunc.nsh
-!include MUI.nsh
-!include nsProcess.nsh
 !include x64.nsh
 
 !insertmacro DirState
@@ -157,6 +158,10 @@ UninstallIcon ${PreferredUninstallerIcon}
 !define MUI_FINISHPAGE_RUN_FUNCTION LaunchApp
 !insertmacro MUI_PAGE_FINISH
 
+; Custom abort
+!define MUI_CUSTOMFUNCTION_ABORT AbortOperation
+!define MUI_CUSTOMFUNCTION_UNABORT un.AbortOperation
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Uninstaller pages.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -186,6 +191,11 @@ var BackupLocation
 var HasValidInstallDirectory
 var UnpackMode
 var DistributionMode 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; UAC Handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+${UAC.AutoCodeUnload} "1"
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Install Sections
@@ -577,9 +587,22 @@ SectionEnd
 ; Installer Helper Functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+Function LaunchAppUserPrivilege
+   Exec '"$INSTDIR\${FileMainEXE}"'   
+FunctionEnd
+
 Function LaunchApp
    Call CloseApp
-   Exec "$INSTDIR\${FileMainEXE}"
+   GetFunctionAddress $0 LaunchAppUserPrivilege
+   UAC::ExecCodeSegment $0
+FunctionEnd
+
+Function AbortOperation
+  ${UAC.Unload}
+FunctionEnd
+
+Function un.AbortOperation
+  ${UAC.Unload}
 FunctionEnd
 
 Function CloseApp
@@ -874,6 +897,8 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
+   ${UAC.I.Elevate.AdminOnly}
+   
    StrCpy $UnpackMode "0"
    StrCpy $DistributionMode "0"
 
@@ -899,6 +924,8 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function un.onInit
+  ${UAC.U.Elevate.AdminOnly} ${FileUninstallEXE}
+  
    StrCpy $DistributionMode "0"
 
    ${un.GetParameters} $R0
