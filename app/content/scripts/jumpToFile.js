@@ -273,14 +273,16 @@ try
         source_search == search &&
         filtersEqual(filters, source_filters)) return;
     
-    //dump("source_guid = " + source_guid + "\n");
-    //dump("guid = " + guid + "\n");
-    //dump("source_view = " + source_view + "\n");
-    //dump("sourceview = " + sourceview + "\n");
-    //dump("source_search = " + source_search + "\n");
-    //dump("search = " + search + "\n");
-    //dump("source_filters.length = " + (source_filters ? source_filters.length : 0) + "\n");
-    //dump("filters.length = " + (filters ? filters.length : 0) + "\n");
+    /*
+    dump("source_guid = " + source_guid + "\n");
+    dump("guid = " + guid + "\n");
+    dump("source_view = " + source_view + "\n");
+    dump("sourceview = " + sourceview + "\n");
+    dump("source_search = " + source_search + "\n");
+    dump("search = " + search + "\n");
+    dump("source_filters.length = " + (source_filters ? source_filters.length : 0) + "\n");
+    dump("filters.length = " + (filters ? filters.length : 0) + "\n");
+    /* */
     
     if (libraryguid == null) {
       libraryguid = defaultlibraryguid;
@@ -460,7 +462,15 @@ try
     if (source_search != "") search = source_search + " " + search;
 
     var cfs = jumpto_view.cascadeFilterSet;
-    var searchIndex = cfs.appendSearch(["*"], 1);
+    var searchIndex;
+    for (searchIndex = 0; searchIndex < cfs.length; ++searchIndex) {
+      if (cfs.isSearch(searchIndex)) {
+        break;
+      }
+    }
+    if (searchIndex == cfs.length) {
+      searchIndex = cfs.appendSearch(["*"], 1);
+    }
     if (search && search != "") {
       var searchArray = search.split(" ");
       cfs.set(searchIndex, searchArray, searchArray.length);
