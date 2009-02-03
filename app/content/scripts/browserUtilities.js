@@ -590,6 +590,52 @@ function BrowserBack(aEvent, aIgnoreAlt)
   }
 } 
 
+// From browser.js
+function BrowserHomeClick(aEvent)
+{
+  if (aEvent.button == 2) // right-click: do nothing
+    return;
+
+  var homePage = gBrowser.homePage;
+  var where = whereToOpenLink(aEvent);
+  var urls;
+
+  // openUILinkIn in utilityOverlay.js doesn't handle loading multiple pages
+  switch (where) {
+  case "save":
+    urls = homePage.split("|");
+    saveURL(urls[0], null, null, true);  // only save the first page
+    break;
+  case "current":
+    loadOneOrMoreURIs(homePage);
+    break;
+  case "tabshifted":
+  case "tab":
+  case "window": // because songbird does not support new browser windows
+    urls = homePage.split("|");
+    var loadInBackground = getBoolPref("browser.tabs.loadBookmarksInBackground", false);
+    gBrowser.loadTabs(urls, loadInBackground);
+    break;
+  /* case "window":
+    OpenBrowserWindow();
+    break; */
+  }
+}
+
+// From browser.js
+function loadOneOrMoreURIs(aURIString)
+{
+//@line 1651 "/cygdrive/c/builds/tinderbox/Fx-Mozilla1.8-Release/WINNT_5.2_Depend/mozilla/browser/base/content/browser.js"
+  // This function throws for certain malformed URIs, so use exception handling
+  // so that we don't disrupt startup
+  try {
+    gBrowser.loadTabs(aURIString.split("|"), false, true);
+  } 
+  catch (e) {
+  }
+}
+ 
+
 /**
  * This is a hacked version of nsBrowserStatusHandler
  * from firefox/browser.js.

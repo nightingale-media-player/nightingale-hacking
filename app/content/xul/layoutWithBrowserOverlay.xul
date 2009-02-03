@@ -609,8 +609,8 @@
                       
       <toolbarbutton id="home-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.home;"
-                     command="Browser:Home"
-                     tooltiptext="&tooltip.browser.home;"/>
+                     tooltiptext="&tooltip.browser.home;"
+                     onclick="BrowserHomeClick(event);"/>
 
       <toolbarbutton id="bookmark-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
                      label="&tooltip.browser.bookmark;"
