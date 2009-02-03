@@ -296,6 +296,7 @@ var sbCoverHelper = {
    */
   getFlavours: function(flavours) {
     flavours.appendFlavour("application/x-moz-file", "nsIFile");
+    flavours.appendFlavour("text/html");
     flavours.appendFlavour("text/x-moz-url");
     flavours.appendFlavour("text/uri-list");
     flavours.appendFlavour("text/unicode");
@@ -312,6 +313,7 @@ var sbCoverHelper = {
    */
   handleDrop: function(aCallback, aDropData) {
     switch(aDropData.flavour.contentType) {
+      case "text/html":
       case "text/x-moz-url":
       case "text/uri-list":
       case "text/unicode":
@@ -324,9 +326,19 @@ var sbCoverHelper = {
           url = aDropData.data;
         }
 
-        // Only take the first url if there are more than one.
-        url = url.split("\n")[0];
-        
+        if (aDropData.flavour.contentType == "text/html") {
+          // Check the html code for images
+          // Find an image tag and then parse out the src attribute
+          var imgRegExpr = /\<img.+src=\"(.+?)\"/i;
+          var matches = url.match(imgRegExpr);
+          if (matches && matches.length > 1) {
+            url = matches[1];
+          }
+        } else {
+          // Only take the first url if there are more than one.
+          url = url.split("\n")[0];
+        }
+
         // Now convert it into an URI so we can determine what to do with it
         var ioService = Cc["@mozilla.org/network/io-service;1"]
                           .getService(Ci.nsIIOService);
@@ -342,7 +354,7 @@ var sbCoverHelper = {
         switch (uri.scheme) {
           case 'file':
             if (uri instanceof Ci.nsIFileURL) {
-              var fileName = this.saveFileToArtworkFolder(uri);
+              var fileName = this.saveFileToArtworkFolder(uri.file);
               aCallback(fileName);
             }
           break; 
