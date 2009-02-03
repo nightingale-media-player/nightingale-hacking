@@ -548,9 +548,47 @@ function toOpenWindowByType(inType, uri, features)
       window.open(uri, "_blank", winFeatures);
 }
 
+// From browser.js
+function BrowserForward(aEvent, aIgnoreAlt)
+{
+  var where = whereToOpenLink(aEvent, false, aIgnoreAlt);
 
+  if (where == "current") {
+    try {
+      getWebNavigation().goForward();
+    }
+    catch(ex) {
+    }
+  }
+  else {
+    var sessionHistory = getWebNavigation().sessionHistory;
+    var currentIndex = sessionHistory.index;
+    var entry = sessionHistory.getEntryAtIndex(currentIndex + 1, false);
+    var url = entry.URI.spec;
+    openUILinkIn(url, where);
+  }
+}
 
+// From browser.js
+function BrowserBack(aEvent, aIgnoreAlt)
+{
+  var where = whereToOpenLink(aEvent, false, aIgnoreAlt);
 
+  if (where == "current") {
+    try {
+      getWebNavigation().goBack();
+    }
+    catch(ex) {
+    }
+  }
+  else {
+    var sessionHistory = getWebNavigation().sessionHistory;
+    var currentIndex = sessionHistory.index;
+    var entry = sessionHistory.getEntryAtIndex(currentIndex - 1, false);
+    var url = entry.URI.spec;
+    openUILinkIn(url, where);
+  }
+} 
 
 /**
  * This is a hacked version of nsBrowserStatusHandler

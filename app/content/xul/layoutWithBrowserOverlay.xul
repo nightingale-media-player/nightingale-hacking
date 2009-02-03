@@ -577,13 +577,19 @@
       <toolbaritem id="back-forward-buttons">
         <toolbarbutton id="back-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
                        label="&tooltip.browser.back;"
-                       command="Browser:Back"
-                       tooltiptext="&tooltip.browser.back;"/>
-                      
+                       oncommand="BrowserBack(event)"
+                       onclick="checkForMiddleClick(this, event);"
+                       tooltiptext="&tooltip.browser.back;">
+          <observes element="Browser:Back" attribute="disabled"/>
+        </toolbarbutton>
+            
         <toolbarbutton id="forward-button"  class="toolbarbutton-1 chromeclass-toolbar-additional"
                        label="&tooltip.browser.fwd;"
-                       command="Browser:Forward"
-                       tooltiptext="&tooltip.browser.fwd;"/>
+                       oncommand="BrowserForward(event)"
+                       onclick="checkForMiddleClick(this, event);"
+                       tooltiptext="&tooltip.browser.fwd;">
+          <observes element="Browser:Forward" attribute="disabled"/>
+        </toolbarbutton>
       </toolbaritem>
                       
       <toolbarbutton id="reload-button" class="toolbarbutton-1 chromeclass-toolbar-additional"
