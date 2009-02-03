@@ -597,7 +597,7 @@ function BrowserHomeClick(aEvent)
     return;
 
   var homePage = gBrowser.homePage;
-  var where = whereToOpenLink(aEvent);
+  var where = whereToOpenLink(aEvent, false, true);
   var urls;
 
   // openUILinkIn in utilityOverlay.js doesn't handle loading multiple pages
