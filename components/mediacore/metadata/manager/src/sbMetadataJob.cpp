@@ -96,14 +96,16 @@ extern PRLogModuleInfo* gMetadataLog;
 
 // CLASSES ====================================================================
 
-NS_IMPL_THREADSAFE_ISUPPORTS3(sbMetadataJob,
+NS_IMPL_THREADSAFE_ISUPPORTS4(sbMetadataJob,
                               nsIClassInfo,
                               sbIJobProgress,
+                              sbIJobProgressUI,
                               sbIJobCancelable);
 
-NS_IMPL_CI_INTERFACE_GETTER3(sbMetadataJob,
+NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob,
                              nsIClassInfo,
                              sbIJobProgress,
+                             sbIJobProgressUI,
                              sbIJobCancelable)
 
 NS_DECL_CLASSINFO(sbMetadataJob)
@@ -978,12 +980,6 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
     if (mediaItem) {
       // Get the unescaped file name
       CreateDefaultItemName(mediaItem, aText);
-
-      // Force the filename to be one line in order to
-      // avoid sizeToContent pain
-      if (aText.Length() > 45) {
-        aText.Replace(20, aText.Length() - 40, NS_LITERAL_STRING("..."));
-      }
     } else {
       aText = mStatusText;
     }
@@ -1141,6 +1137,16 @@ sbMetadataJob::RemoveJobProgressListener(sbIJobProgressListener* aListener)
   return NS_OK;
 }
 
+// =======================================
+// ==  sbIJobProgressUI Implementation  ==
+// =======================================
+
+/* readonly attribute DOMString crop; */
+NS_IMETHODIMP sbMetadataJob::GetCrop(nsAString & aCrop)
+{
+  aCrop.AssignLiteral("center");
+  return NS_OK;
+}
 
 // =======================================
 // ==  sbIJobCancelable Implementation  ==

@@ -46,6 +46,7 @@
 
 #include <sbIMediaItem.h>
 #include <sbIJobProgress.h>
+#include <sbIJobProgressUI.h>
 #include <sbIJobCancelable.h>
 #include <sbIPropertyManager.h>
 
@@ -71,7 +72,7 @@ class sbIMutablePropertyArray;
  * be performed on the main thread.
  */
 class sbMetadataJob : public nsIClassInfo,
-                      public sbIJobProgress,  
+                      public sbIJobProgressUI,
                       public sbIJobCancelable
 {
   friend class sbMediaListBatchCallback;
@@ -80,6 +81,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIJOBPROGRESS
+  NS_DECL_SBIJOBPROGRESSUI
   NS_DECL_SBIJOBCANCELABLE
   
   enum JobType 

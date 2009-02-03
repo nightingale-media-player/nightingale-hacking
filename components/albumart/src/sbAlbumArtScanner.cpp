@@ -91,8 +91,6 @@ static PRLogModuleInfo* gAlbumArtScannerLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
-#define MAX_SCANNER_MESSAGE_TEXT_LENGTH 45
-
 //------------------------------------------------------------------------------
 //
 // nsISupports implementation.
@@ -100,16 +98,18 @@ static PRLogModuleInfo* gAlbumArtScannerLog = nsnull;
 //------------------------------------------------------------------------------
 NS_IMPL_THREADSAFE_ADDREF(sbAlbumArtScanner)
 NS_IMPL_THREADSAFE_RELEASE(sbAlbumArtScanner)
-NS_IMPL_QUERY_INTERFACE6_CI(sbAlbumArtScanner,
+NS_IMPL_QUERY_INTERFACE7_CI(sbAlbumArtScanner,
                             sbIAlbumArtScanner,
                             nsIClassInfo,
                             sbIJobProgress,
+                            sbIJobProgressUI,
                             sbIJobCancelable,
                             nsITimerCallback,
                             sbIAlbumArtListener)
-NS_IMPL_CI_INTERFACE_GETTER5(sbAlbumArtScanner,
+NS_IMPL_CI_INTERFACE_GETTER6(sbAlbumArtScanner,
                              sbIAlbumArtScanner,
                              sbIJobProgress,
+                             sbIJobProgressUI,
                              sbIJobCancelable,
                              nsITimerCallback,
                              sbIAlbumArtListener)
@@ -318,14 +318,6 @@ NS_IMETHODIMP sbAlbumArtScanner::GetStatusText(nsAString& aText)
     } else {
       aText.Assign(outMessage);
     }
-
-    // Force the filename to be one line in order to
-    // avoid sizeToContent pain (This is from the sbMetadataJob.cpp:1070)
-    if (aText.Length() > MAX_SCANNER_MESSAGE_TEXT_LENGTH) {
-      // Do a crop at the end
-      PRUint32 sectionSize = (MAX_SCANNER_MESSAGE_TEXT_LENGTH -5);
-      aText.Replace(sectionSize, aText.Length(), NS_LITERAL_STRING("..."));
-    }
   } else {
     rv = mStringBundle->GetStringFromName(
                   NS_LITERAL_STRING("albumart.scanning.completed").get(),
@@ -379,7 +371,11 @@ NS_IMETHODIMP sbAlbumArtScanner::GetTotal(PRUint32* aTotal)
   NS_ASSERTION(NS_IsMainThread(), \
     "sbAlbumArtScanner::GetTotal is main thread only!");
 
-  *aTotal = mTotalItemCount;
+  if (mTotalItemCount > 1) {
+    *aTotal = mTotalItemCount;
+  } else {
+    *aTotal = 0; // indeterminate
+  }
   return NS_OK;
 }
 
@@ -453,6 +449,18 @@ sbAlbumArtScanner::RemoveJobProgressListener(sbIJobProgressListener* aListener)
   return NS_OK;
 }
 
+//------------------------------------------------------------------------------
+//
+// sbIJobProgressUI Implementation.
+//
+//------------------------------------------------------------------------------
+
+/* attribute DOMString crop; */
+NS_IMETHODIMP sbAlbumArtScanner::GetCrop(nsAString & aCrop)
+{
+  aCrop.AssignLiteral("end");
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //

@@ -119,7 +119,7 @@ var JobProgressDialog = {
    * Update the UI elements with the state of the job
    */
   _updateProgressUI: function JobProgressDialog__updateUI() {
-    this._formatDescription(this._description, this._job.statusText);
+    this._formatDescription(this._description, this._job);
     this._setTitle(this._job.titleText);
     
     if (this._cancelButton) {
@@ -216,8 +216,17 @@ var JobProgressDialog = {
    * Localized strings cannot have line breaks. As a result, we have to 
    * jump through hoops and convert \n to <br/>.  Bleh.
    */
-  _formatDescription: function(aDescription, aMessage) {  
-    var lines = aMessage.split("\n");
+  _formatDescription: function(aDescription, aJob) {
+    var crop = false;
+    if (aJob instanceof Components.interfaces.sbIJobProgressUI) {
+      if (aJob.crop) {
+        aDescription.setAttribute("crop", aJob.crop);
+        crop = true;
+      } else {
+        aDescription.removeAttribute("crop");
+      }
+    }
+    var lines = aJob.statusText.split("\n");
     if (lines.length > 1) {
       aDescription.textContent = "";
       for (var i = 0; i < lines.length; i++) {
@@ -225,7 +234,11 @@ var JobProgressDialog = {
         aDescription.appendChild(document.createElementNS("http://www.w3.org/1999/xhtml","html:br"));
       }
     } else {
-      aDescription.textContent = lines[0];
+      if (crop) {
+        aDescription.value = lines[0];
+      } else {
+        aDescription.textContent = lines[0];
+      }
     }
   }
 }

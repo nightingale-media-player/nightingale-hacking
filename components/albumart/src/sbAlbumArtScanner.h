@@ -55,6 +55,7 @@
 #include <sbIAlbumArtService.h>
 #include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
+#include <sbIJobProgressUI.h>
 #include <sbILibrary.h>
 
 // Mozilla imports.
@@ -109,7 +110,7 @@
 
 class sbAlbumArtScanner : public sbIAlbumArtScanner,
                           public nsIClassInfo,
-                          public sbIJobProgress,
+                          public sbIJobProgressUI,
                           public sbIJobCancelable,
                           public nsITimerCallback,
                           public sbIAlbumArtListener
@@ -119,6 +120,7 @@ public:
   NS_DECL_SBIALBUMARTSCANNER
   NS_DECL_NSICLASSINFO
   NS_DECL_SBIJOBPROGRESS
+  NS_DECL_SBIJOBPROGRESSUI
   NS_DECL_SBIJOBCANCELABLE
   NS_DECL_NSITIMERCALLBACK
   NS_DECL_SBIALBUMARTLISTENER
