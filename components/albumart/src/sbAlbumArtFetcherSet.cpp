@@ -570,13 +570,12 @@ sbAlbumArtFetcherSet::TryNextFetcher()
   // While we still have fetchers and the fetcher fails to find artwork keep
   // looping
   rv = NS_OK;
-  while (mFetcherIndex < fetcherListCount) {
+  while ( (mFetcherIndex <= fetcherListCount) &&
+          (!mShutdown)) {
     rv = NextFetcher();
     if (NS_SUCCEEDED(rv)) {
       // This fetcher succeeded so return
       break;
-    } else {
-      mTimeoutTimer->Cancel();
     }
   };
 
@@ -590,6 +589,9 @@ sbAlbumArtFetcherSet::NextFetcher()
   NS_ASSERTION(NS_IsMainThread(), \
     "sbAlbumArtFetcherSet::NextFetcher is main thread only!");
   nsresult rv;
+  PRUint32 currentFetcherIndex = mFetcherIndex;
+  // Increment now so that we don't end up in an endless loop if anything fails
+  mFetcherIndex++;
   
   // Shutdown the existing fetcher
   if (mFetcher) {
@@ -607,28 +609,27 @@ sbAlbumArtFetcherSet::NextFetcher()
   rv = mFetcherList->GetLength(&fetcherListCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mFetcherIndex >= fetcherListCount) {
+  if (currentFetcherIndex >= fetcherListCount) {
     TRACE(("sbAlbumArtFetcherSet::NextFetcher - No more fetchers"));
     if (mListener) {
       mListener->OnAlbumComplete(mMediaItems);
     }
+    // Shutdown since we are done.
+    mShutdown = PR_TRUE;
     return NS_OK;
   }
 
   TRACE(("sbAlbumArtFetcherSet::NextFetcher - Querying fetcher at index %d of %d",
-          mFetcherIndex,
+          (currentFetcherIndex + 1),
           fetcherListCount));
 
   // Get the next fetcher
   nsCAutoString fetcherContractID;
   nsCOMPtr<nsIVariant>
     fetcherContractIDVariant = do_QueryElementAt(mFetcherList,
-                                                 mFetcherIndex,
+                                                 currentFetcherIndex,
                                                  &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  // Increment the fetcherIndex for our next attempt if this fails.
-  mFetcherIndex++;
 
   rv = fetcherContractIDVariant->GetAsACString(fetcherContractID);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -654,7 +655,10 @@ sbAlbumArtFetcherSet::NextFetcher()
   // Try fetching album art using the fetcher.
   mFoundAllArtwork = PR_TRUE;
   rv = mFetcher->FetchAlbumArtForAlbum(mMediaItems, this);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    mTimeoutTimer->Cancel();
+    return rv;
+  }
 
   return NS_OK;
 }
