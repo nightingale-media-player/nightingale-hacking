@@ -159,47 +159,50 @@ SVN ?= svn
 
 SONGBIRD_MESSAGE = Songbird Build System
 
-RUN_AUTOCONF_CMD = cd $(TOPSRCDIR) && \
-                   $(AUTOCONF) && \
-                   rm -rf $(TOPSRCDIR)/autom4te.cache/ \
-                   $(NULL)
-
-CREATE_OBJ_DIR_CMD = $(MKDIR) $(OBJDIR) $(DISTDIR) \
-                     $(NULL)
-
 # When calling configure we need to use a relative path so that it will spit
 # out relative paths for our makefiles.
-RUN_CONFIGURE_CMD = cd $(OBJDIR) && \
-                    $(CONFIGURE) $(CONFIGURE_ARGS) \
-                    $(NULL)
-
-CLEAN_CMD = $(MAKE) -C $(OBJDIR) clean \
-            $(NULL)
-
-BUILD_CMD = $(MAKE) -C $(OBJDIR) \
-            $(NULL)
 
 CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
+# Dependency detection stuff
+
 MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
 MOZBROWSER_UPDATE ?= $(SVN) up $(MOZBROWSER_DIR)
-MOZBROWSER_CHECKOUT ?= $(SVN) co $(SVN_MOZBROWSER_URL) $(MOZBROWSER_DIR)
+MOZBROWSER_CHECKOUT ?= $(SVN) co $(MOZBROWSER_SVN_URL) $(MOZBROWSER_DIR)
 
-all : songbird_output build
+# Used in build/config.mk; the build will likely fail if it's not in the
+# default location, but we give devs the bullets to shoot themselves in the 
+# foot 
+export MOZBROWSER_DIR
 
-debug : all
-
-ifeq (,$(wildcard $(MOZBROWSER_DIR)))
-   SVNBASE := $(shell $(SVN) info --xml $(TOPSRCDIR) | $(GREP) '^<url>' | $(SED) -e 's;</*url>;;g')
-   ifneq (,$(SVNBASE))
-      SVN_MOZBROWSER_URL := $(shell echo $(SVNBASE) | $(PERL) -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
+ifndef SB_DISABLE_DEPENDENT_PKG_MGMT
+   ifeq (,$(wildcard $(MOZBROWSER_DIR)))
       SB_MOZBROWSER_DEP = mozbrowser_checkout
+
+      # Allow users to override
+      ifeq (,$(MOZBROWSER_SVN_URL))
+         ifneq (,$(filter $(SVN), $(MOZBROWSER_CHECKOUT)))
+            SVNBASE := $(shell $(SVN) info --xml $(TOPSRCDIR) | $(GREP) '^<url>' | $(SED) -e 's;</*url>;;g')
+            ifneq (,$(SVNBASE))
+               MOZBROWSER_SVN_URL := $(shell echo $(SVNBASE) | $(PERL) -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
+            endif
+            ifeq (,$(MOZBROWSER_SVN_URL))
+               $(error Failed to detect Subversion base URL... bailing.) 
+            endif
+         else
+            $(info Using user-defined method to pull mozbrowser) 
+         endif
+      endif
+   else
+      SB_MOZBROWSER_DEP = mozbrowser_update
    endif
-else
-   SB_MOZBROWSER_DEP = mozbrowser_update
 endif
+
+all: songbird_output build
+
+debug: all
 
 mozbrowser_update:
 	$(MOZBROWSER_UPDATE)
@@ -207,31 +210,37 @@ mozbrowser_update:
 mozbrowser_checkout:
 	$(MOZBROWSER_CHECKOUT)
 
-$(CONFIGSTATUS) : $(CONFIGURE) $(SB_MOZBROWSER_DEP)
-	$(CREATE_OBJ_DIR_CMD)
-	$(RUN_CONFIGURE_CMD)
+$(CONFIGSTATUS): $(CONFIGURE) $(SB_MOZBROWSER_DEP) $(OBJDIR) $(DISTDIR)
+	cd $(OBJDIR) && \
+   $(CONFIGURE) $(CONFIGURE_ARGS)
 
-$(CONFIGURE) : $(CONFIGURE_PREREQS)
-	$(RUN_AUTOCONF_CMD)
+$(CONFIGURE): $(CONFIGURE_PREREQS)
+	cd $(TOPSRCDIR) && \
+   $(AUTOCONF) && \
+   $(RM) -rf $(TOPSRCDIR)/autom4te.cache/ 
 
 songbird_output:
 	@echo $(SONGBIRD_MESSAGE)
 
-run_autoconf :
-	$(RUN_AUTOCONF_CMD)
+run_autoconf:
+	cd $(TOPSRCDIR) && \
+    $(AUTOCONF) && \
+    $(RM) -rf $(TOPSRCDIR)/autom4te.cache/ 
 
-create_obj_dir :
-	$(CREATE_OBJ_DIR_CMD)
+$(OBJDIR) $(DISTDIR):
+	$(MKDIR) $(OBJDIR) $(DISTDIR)
 
-makefiles:
+makefiles: $(OBJDIR) $(DISTDIR)
 	@touch configure
-	$(CREATE_OBJ_DIR_CMD)
-	$(RUN_CONFIGURE_CMD)
+	cd $(OBJDIR) && \
+   $(CONFIGURE) $(CONFIGURE_ARGS)
 
-run_configure : $(CONFIGSTATUS)
+run_configure: $(CONFIGSTATUS)
+	cd $(OBJDIR) && \
+   $(CONFIGURE) $(CONFIGURE_ARGS)
 
-clean :
-	$(CLEAN_CMD)
+clean:
+	$(MAKE) -C $(OBJDIR) clean
 
 clobber:
 	$(RM) -f $(CONFIGURE)
@@ -241,8 +250,6 @@ depclobber:
 	$(RM) -rf $(MOZBROWSER_DIR)
 
 build : $(CONFIGSTATUS)
-	$(BUILD_CMD)
+	$(MAKE) -C $(OBJDIR)
 
-.PHONY : all debug songbird_output run_autoconf create_dist_dir run_configure clean clobber depclobber build mozbrowser_checkout mozbrowser_update
-
-#end
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build mozbrowser_checkout mozbrowser_update
