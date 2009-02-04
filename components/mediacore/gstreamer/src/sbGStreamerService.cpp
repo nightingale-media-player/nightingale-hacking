@@ -41,6 +41,10 @@
 #include <nsXULAppAPI.h>
 #include <nsISimpleEnumerator.h>
 
+#if XP_WIN
+#include <windows.h>
+#endif
+
 /**
  * To log this class, set the following environment variable in a debug build:
  *
@@ -103,20 +107,33 @@ sbGStreamerService::~sbGStreamerService()
  */
 nsresult SetEnvVar(const nsAString& aName, const nsAString& aValue)
 {
-  nsCString env;
-  CopyUTF16toUTF8(aName, env);
-  env.AppendLiteral("=");
-  env.Append(NS_ConvertUTF16toUTF8(aValue));
-  PRInt32 length = env.Length();
-  char* buf = (char*)NS_Alloc(length + 1);
-  if (!buf) {
-    return NS_ERROR_OUT_OF_MEMORY;
-  }
-  memcpy(buf, env.get(), length);
-  buf[length] = '\0';
-  PRStatus status = PR_SetEnv(buf);
-  // intentionally leak buf
-  return (PR_SUCCESS == status) ? NS_OK : NS_ERROR_FAILURE;
+  #if XP_WIN
+    // on Windows, we need to go through the OS APIs to be able to set Unicode
+    // environment variables.  See bmo bug 476739.
+    BOOL result;
+    if (aValue.IsVoid()) {
+      result = ::SetEnvironmentVariableW(PromiseFlatString(aName).get(), NULL);
+    } else {
+      result = ::SetEnvironmentVariableW(PromiseFlatString(aName).get(),
+                                         PromiseFlatString(aValue).get());
+    }
+    return (result != 0) ? NS_OK : NS_ERROR_FAILURE;
+  #else
+    nsCString env;
+    CopyUTF16toUTF8(aName, env);
+    env.AppendLiteral("=");
+    env.Append(NS_ConvertUTF16toUTF8(aValue));
+    PRInt32 length = env.Length();
+    char* buf = (char*)NS_Alloc(length + 1);
+    if (!buf) {
+      return NS_ERROR_OUT_OF_MEMORY;
+    }
+    memcpy(buf, env.get(), length);
+    buf[length] = '\0';
+    PRStatus status = PR_SetEnv(buf);
+    // intentionally leak buf
+    return (PR_SUCCESS == status) ? NS_OK : NS_ERROR_FAILURE;
+  #endif
 }
 
 // sbIGStreamerService
