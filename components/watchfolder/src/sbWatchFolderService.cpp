@@ -47,7 +47,6 @@
 #define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
 #define PREF_WATCHFOLDER_PATH        "songbird.watch_folder.path"
 #define PREF_WATCHFOLDER_SESSIONGUID "songbird.watch_folder.sessionguid"
-#define PREF_FIRSTRUN_CHECK          "songbird.firstrun.check.0.3"
 
 #define STARTUP_TIMER_DELAY      2000
 #define FLUSH_FS_WATCHER_DELAY   1000
@@ -115,27 +114,9 @@ sbWatchFolderService::Init()
   rv = observerService->AddObserver(this, "quit-application", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-    // songbird.firstrun.check.0.3
-  nsCOMPtr<nsIPrefBranch2> prefBranch =
-    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  // Delay starting up until "final-ui-startup"
+  rv = observerService->AddObserver(this, "final-ui-startup", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool hasFirstRunCheck = PR_FALSE;
-  rv = prefBranch->PrefHasUserValue(PREF_FIRSTRUN_CHECK, &hasFirstRunCheck);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // First run dialog has run - go ahead and start the delayed init on 
-  // "final-ui-startup".
-  if (hasFirstRunCheck) {
-    rv = observerService->AddObserver(this, "final-ui-startup", PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  // If the first run pref does not exist, wait until after the first run
-  // dialog has been completed before delay starting the service.
-  else {
-    prefBranch->AddObserver(PREF_FIRSTRUN_CHECK, this, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv); 
-  }
 
   return NS_OK;
 }
@@ -187,12 +168,7 @@ sbWatchFolderService::InitInternal()
   // saved session or there is not.
   prefBranch->GetCharPref(PREF_WATCHFOLDER_SESSIONGUID,
                           getter_Copies(mFileSystemWatcherGUID));
-
-  // Setup listeners for the pref branch so the service can update itself
-  // when they change.
-  rv = prefBranch->AddObserver(PREF_WATCHFOLDER_ROOT, this, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  
   mLibraryUtils =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -301,6 +277,20 @@ sbWatchFolderService::SetEventPumpTimer()
 
   mEventPumpTimerIsSet = PR_TRUE;
   return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::SetStartupDelayTimer()
+{
+  nsresult rv;
+  if (!mStartupDelayTimer) {
+    mStartupDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return mStartupDelayTimer->InitWithCallback(this,
+                                              STARTUP_TIMER_DELAY,
+                                              nsITimer::TYPE_ONE_SHOT);
 }
 
 nsresult
@@ -813,14 +803,17 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
 
   nsresult rv;
   if (strcmp("final-ui-startup", aTopic) == 0) {
-    // Now that the UI has finally started up, pause shortly before 
-    // internally setting up the component.
-    mStartupDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    // Now is the time to start listening to the pref branch.
+    nsCOMPtr<nsIPrefBranch2> prefBranch = 
+      do_GetService("@mozilla.org/preferences-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = mStartupDelayTimer->InitWithCallback(this,
-                                              STARTUP_TIMER_DELAY,
-                                              nsITimer::TYPE_ONE_SHOT);
+    rv = prefBranch->AddObserver(PREF_WATCHFOLDER_ROOT, this, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Now that the UI has finally started up, pause shortly before 
+    // internally setting up the component.
+    rv = SetStartupDelayTimer();
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else if (strcmp("quit-application", aTopic) == 0) {
@@ -869,6 +862,17 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
         rv = StartWatchingFolder();
         NS_ENSURE_SUCCESS(rv, rv);
       }
+
+      // The service has not yet attempted to start up and was just turned on.
+      // Start the timer if the service is in a disabled state, the watch path
+      // has been defined, and the service should enable.
+      else if (mServiceState == eDisabled &&
+               !mWatchPath.IsEmpty() &&
+               shouldEnable) 
+      {
+        rv = SetStartupDelayTimer();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
     else if (changedPrefName.Equals(NS_LITERAL_STRING(PREF_WATCHFOLDER_PATH))) {
       nsCOMPtr<nsISupportsString> supportsString;
@@ -900,7 +904,7 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
               NS_ENSURE_SUCCESS(rv, rv);
             }
            
-            if (!mFileSystemWatcherGUID.Equals(EmptyCString())) {
+            if (!mFileSystemWatcherGUID.IsEmpty()) {
               // Clear any previously stored data from the session that might
               // be stored in the users profile.
               rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
@@ -926,21 +930,26 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
             rv = mFileSystemWatcher->StopWatching(PR_FALSE);
             NS_ENSURE_SUCCESS(rv, rv);
           }
+
+          else if (mServiceState == eDisabled && 
+                   !mWatchPath.IsEmpty()) 
+          {
+            // The service has not started up internally, but the watch path
+            // has changed. If the service has been set to be enabled, start
+            // the delayed internal startup.
+            PRBool shouldEnable = PR_FALSE;
+            rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE, 
+                                         &shouldEnable);
+            if (NS_SUCCEEDED(rv) && shouldEnable) {
+              // Now that the service state is disabled, the watch path has
+              // been set, and the service should enable - it is time to 
+              // start the delayed internal init.
+              rv = SetStartupDelayTimer();
+              NS_ENSURE_SUCCESS(rv, rv); 
+            }
+          }
         }
       }
-    }
-    else if (changedPrefName.Equals(NS_LITERAL_STRING(PREF_FIRSTRUN_CHECK))) {
-      // The first run dialog has just closed, start the delayed timer.
-      rv = prefBranch->RemoveObserver(PREF_FIRSTRUN_CHECK, this);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mStartupDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mStartupDelayTimer->InitWithCallback(this,
-                                                STARTUP_TIMER_DELAY,
-                                                nsITimer::TYPE_ONE_SHOT);
-      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
  

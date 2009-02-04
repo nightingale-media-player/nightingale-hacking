@@ -93,6 +93,7 @@ protected:
   nsresult StartWatchingFolder();
   nsresult StopWatchingFolder();
   nsresult SetEventPumpTimer();
+  nsresult SetStartupDelayTimer();
   nsresult ProcessEventPaths(sbStringVector & aEventPathVector,
                              EProcessType aProcessType);
   nsresult ProcessAddedPaths();
