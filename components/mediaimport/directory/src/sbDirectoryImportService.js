@@ -77,6 +77,9 @@ function DirectoryImportJob(aInputArray,
   // Initially cancelable
   this._canCancel = true;
   
+  // initialize with an empty array
+  this._itemURIStrings = [];
+  
   if ("@songbirdnest.com/Songbird/TimingService;1" in Cc) {
     this._timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
                             .getService(Ci.sbITimingService);
@@ -313,9 +316,6 @@ DirectoryImportJob.prototype = {
       this._fileScanQuery.setRecurse(true);
       this._fileScanner.submitQuery(this._fileScanQuery);
     } else {
-      if (!this._itemURIStrings) {
-        this._itemURIStrings = [];
-      }
       var urispec = gIOService.newFileURI(file).spec;
       var supportsString = Cc["@mozilla.org/supports-string;1"]
                              .createInstance(Ci.nsISupportsString);
@@ -342,11 +342,7 @@ DirectoryImportJob.prototype = {
         var fileCount = this._fileScanQuery.getFileCount();
         if (fileCount > 0 ) {
           var strings = this._fileScanQuery.getResultRangeAsURIStrings(0, fileCount - 1);
-          if (!this._itemURIStrings) {
-            this._itemURIStrings = ArrayConverter.JSArray(strings);
-          } else {
-            Array.prototype.push.apply(this._itemURIStrings, ArrayConverter.JSArray(strings));
-          }
+          Array.prototype.push.apply(this._itemURIStrings, ArrayConverter.JSArray(strings));
         }
         this._finishFileScan();
         this._startMediaItemCreation();
@@ -386,7 +382,7 @@ DirectoryImportJob.prototype = {
    */
   _startMediaItemCreation: 
   function DirectoryImportJob__startMediaItemCreation() {
-    if (!this._itemURIStrings || !this._fileScanQuery) {
+    if (!this._fileScanQuery) {
       Cu.reportError(
         "DirectoryImportJob__startMediaItemCreation called with invalid state");
       this.complete();
