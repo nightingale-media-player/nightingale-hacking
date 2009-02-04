@@ -3154,6 +3154,8 @@ sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
+  
+  mNeedsRecalculate = PR_TRUE;
 
   nsresult rv = UpdateItemUIDIndex();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3167,6 +3169,8 @@ sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
+  
+  mNeedsRecalculate = PR_TRUE;
 
   nsresult rv = UpdateItemUIDIndex();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3180,6 +3184,8 @@ sbMediacoreSequencer::OnSortChanged(sbIMediaListView *aChangedView)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
+  
+  mNeedsRecalculate = PR_TRUE;
 
   nsresult rv = UpdateItemUIDIndex();
   NS_ENSURE_SUCCESS(rv, rv);
