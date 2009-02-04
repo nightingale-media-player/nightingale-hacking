@@ -180,6 +180,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mLibraryBatchCount(0)
 , mSmartRebuildDetectBatchCount(0)
 , mNeedCheck(PR_FALSE)
+, mNoRecalculate(PR_FALSE)
 , mViewIsLibrary(PR_FALSE)
 , mNeedSearchPlayingItem(PR_FALSE)
 , mNeedsRecalculate(PR_FALSE)
@@ -977,7 +978,8 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
 
     itemDuration /= PR_USEC_PER_MSEC;
 
-    if(itemDuration != aDuration) {
+    if(aDuration && itemDuration != aDuration) {
+      sbScopedBoolToggle doNotRecalculate(&mNoRecalculate);
       sbAutoString strNewDuration(aDuration * PR_USEC_PER_MSEC);
       rv = mCurrentItem->SetProperty(PROPERTY_DURATION, strNewDuration);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1808,6 +1810,11 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   
   nsAutoMonitor mon(mMonitor);
   
+  if(mNoRecalculate) {
+    mNeedsRecalculate = PR_FALSE;
+    return NS_OK;
+  }
+
   nsString previousItemUID = mCurrentItemUID;
   PRUint32 previousItemIndex = mCurrentItemIndex;
 
@@ -2106,7 +2113,8 @@ sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem)
   // null item instead.
   *aItem = nsnull;
 
-  PRUint32 nextPosition = mPosition + 1;
+  PRUint32 nextPosition = mPositionInvalidated ? mPosition : mPosition + 1;
+
   if(!mView ||
      nextPosition >= mSequence.size()) {
     return NS_OK;
