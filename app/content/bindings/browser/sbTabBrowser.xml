@@ -333,10 +333,15 @@
               //
               var isMac = window.navigator.platform.match(/^Mac/) == 'Mac';
               var middleButton = aEvent?(aEvent.button == 1):false;
-              var modifierKey = aEvent?(isMac?aEvent.metaKey:aEvent.ctrlKey):false;
-
-              if (middleButton || modifierKey) {
+              var newTabKey = aEvent ?
+                               ((isMac?aEvent.metaKey:aEvent.ctrlKey) ||
+                                aEvent.shiftKey)
+                               : false;
+              var saveKey = aEvent ? aEvent.altKey : false;
+              if (middleButton || newTabKey) {
                 returnValue = "_blank";
+              } else if (saveKey) {
+                returnValue = "_save";
               }
             }
 
@@ -435,6 +440,8 @@
                                                        aReferrerURI,
                                                        aCharset,
                                                        aMediaListView);
+            } else if (where == "_save") {
+              saveURL(aURI, null, null, true, null, aReferrerURI);
             } else {
               // eek! unknown target
             }
