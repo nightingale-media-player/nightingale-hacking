@@ -371,6 +371,9 @@
                     p.onLocationChange(aWebProgress, aRequest, aLocation);
                 }
               }
+              
+              // restore the site-specific zoom value
+              FullZoom.onLocationChange(aLocation);
             },
 
             onStatusChange : function(aWebProgress, aRequest, aStatus, aMessage)

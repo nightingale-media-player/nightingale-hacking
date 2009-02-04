@@ -100,6 +100,10 @@
             if (event.target != this.document) {
               return;
             }
+            
+            // Initialize the zoom manager
+            FullZoom.init();
+            
             this.tabbrowser._sessionStore.restoreTabState(this.tabbrowser);
             
             // *****************************
@@ -135,7 +139,10 @@
             if (event.target != this.document) {
               return;
             }
-
+            
+            // Shutdown the zoom manager
+            FullZoom.destroy();
+            
             // If we're stopped, then we need to stash whatever the user is looking at
             // so that the next view to load will use the same thing.
             if (this.tabbrowser.mm.status.state == 
