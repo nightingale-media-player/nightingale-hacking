@@ -172,11 +172,6 @@ MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
 MOZBROWSER_UPDATE ?= $(SVN) up $(MOZBROWSER_DIR)
 MOZBROWSER_CHECKOUT ?= $(SVN) co $(MOZBROWSER_SVN_URL) $(MOZBROWSER_DIR)
 
-# Used in build/config.mk; the build will likely fail if it's not in the
-# default location, but we give devs the bullets to shoot themselves in the 
-# foot 
-export MOZBROWSER_DIR
-
 ifndef SB_DISABLE_DEPENDENT_PKG_MGMT
    ifeq (,$(wildcard $(MOZBROWSER_DIR)))
       SB_MOZBROWSER_DEP = mozbrowser_checkout

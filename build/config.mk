@@ -61,11 +61,12 @@ ifneq (,$(wildcard $(BUILDINFO_FILE)))
 ####
 # check for missing vendor-binaries and mozbrowser dir (common errors)
 ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
-  $(error Please check out or build vendor-binaries - \
-     see https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
+   $(error Please check out or build vendor-binaries - \
+      see https://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Core_Player_Development/Checkout_the_Code#Get_the_Dependencies)
 endif
+
 ifeq (,$(wildcard $(MOZBROWSER_DIR)))
-  $(error Missing mozbrowser directory ($(MOZBROWSER_DIR)). Bailing...)
+   $(error Missing mozbrowser directory ($(MOZBROWSER_DIR)). Bailing...)
 endif
 
 CMD := $(PYTHON) $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py $(BUILDINFO_FILE) Build
