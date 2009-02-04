@@ -625,7 +625,6 @@ function BrowserHomeClick(aEvent)
 // From browser.js
 function loadOneOrMoreURIs(aURIString)
 {
-//@line 1651 "/cygdrive/c/builds/tinderbox/Fx-Mozilla1.8-Release/WINNT_5.2_Depend/mozilla/browser/base/content/browser.js"
   // This function throws for certain malformed URIs, so use exception handling
   // so that we don't disrupt startup
   try {
