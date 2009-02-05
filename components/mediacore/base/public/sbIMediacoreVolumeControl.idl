@@ -32,6 +32,9 @@ interface sbIMediacoreVolumeControl : nsISupports
   // true = muted
   attribute boolean mute;
 
-  // between 0 and 1 typically.
+  /**
+   * The current volume, in the range [0..1] inclusive.
+   * Behaviour for any values outside that range is undefined.
+   */
   attribute double volume;
 };

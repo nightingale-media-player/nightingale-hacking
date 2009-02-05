@@ -45,8 +45,10 @@
 #include <sbILibrary.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreEventTarget.h>
+#include <sbIMediacoreManager.h>
 #include <sbIMediacorePlaybackControl.h>
 #include <sbIMediacoreSequencer.h>
+#include <sbIMediacoreVolumeControl.h>
 #include <sbIMediaList.h>
 #include <sbIMediaListView.h>
 #include <sbIMetrics.h>
@@ -1112,16 +1114,29 @@ sbRemotePlayer::GetVolume( PRInt64 *aVolume )
 {
   LOG(("sbRemotePlayer::GetVolume()"));
   NS_ENSURE_ARG_POINTER(aVolume);
-  if (!mdrVolume) {
-    nsresult rv;
-    mdrVolume = do_CreateInstance( "@songbirdnest.com/Songbird/DataRemote;1",
-                                   &rv );
-    NS_ENSURE_SUCCESS( rv, rv );
-    rv = mdrVolume->Init( NS_LITERAL_STRING("faceplate.volume"),
-                          SB_PREFS_ROOT );
-    NS_ENSURE_SUCCESS( rv, rv );
+  
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreManager> mediaCoreMgr =
+    do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIMediacoreVolumeControl> volumeControl;
+  rv = mediaCoreMgr->GetVolumeControl(getter_AddRefs(volumeControl));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  double volume;
+  rv = volumeControl->GetVolume(&volume);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  *aVolume = volume * 255; /* normalize to 0..255 */
+  // constrain things, because the mediacore API says they can be out of range...
+  if (NS_UNLIKELY(*aVolume < 0)) {
+    *aVolume = 0;
   }
-  return mdrVolume->GetIntValue(aVolume);
+  if (NS_UNLIKELY(*aVolume > 255)) {
+    *aVolume = 255;
+  }
+  return NS_OK;
 }
 
 NS_IMETHODIMP
