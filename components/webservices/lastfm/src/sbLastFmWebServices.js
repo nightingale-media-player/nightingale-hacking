@@ -103,11 +103,11 @@ function POST(url, params, onload, onerror) {
     xhr = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"].createInstance();
     // don't tie it to a XUL window
     xhr.mozBackgroundRequest = true;
+    // open the connection to the url
+    xhr.open('POST', url, true);
     // set up event handlers
     xhr.onload = function(event) { onload(xhr); }
     xhr.onerror = function(event) { onerror(xhr); }
-    // open the connection to the url
-    xhr.open('POST', url, true);
     // we're always sending url encoded parameters
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     // send url encoded parameters
