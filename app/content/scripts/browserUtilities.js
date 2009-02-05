@@ -710,18 +710,21 @@ nsBrowserStatusHandler.prototype =
     // and cause needless (slow!) UI updates
     if (this.statusText != text) {
       SBDataSetStringValue( "faceplate.status.text", text);
-    
-      if (!this.overLink)
-        return;
 
-      var uri = this.ios.newURI(this.overLink, null, null);
-      
-      if (uri && (this.typeSniffer.isValidMediaURL(uri) || 
-                  this.typeSniffer.isValidPlaylistURL(uri))) {
-        SBDataSetStringValue( "faceplate.status.type", "playable");
-      } else {
-        SBDataSetStringValue( "faceplate.status.type", "normal");
+      if (this.overLink) {
+        var uri = null;
+        try {
+          uri = this.ios.newURI(this.overLink, null, null);
+        } catch (ex) {}
+
+        if (uri && (this.typeSniffer.isValidMediaURL(uri) ||
+                    this.typeSniffer.isValidPlaylistURL(uri))) {
+          SBDataSetStringValue( "faceplate.status.type", "playable");
+        } else {
+          SBDataSetStringValue( "faceplate.status.type", "normal");
+        }
       }
+
       this.statusText = text;
     }
   }

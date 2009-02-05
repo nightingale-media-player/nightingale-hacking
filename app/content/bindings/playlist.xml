@@ -426,6 +426,7 @@
       <field name="_isHandlingClickableContent">false</field>
       <field name="_lastMouseOverRow">-1</field>
       <field name="_lastMouseOverColumn">null</field>
+      <field name="_lastPlaylistCellMouseOverState">null</field>
 
       <!-- Drag and Drop flavors -->
       <field name="_TYPE_X_SB_TRANSFER_MEDIA_ITEM" readonly="true">
@@ -1968,23 +1969,10 @@
     this._lastMouseOverColumn = null;
   }
 
-  // If the mouse moved out of a cell, dispatch a mouse out event.
-  if (lastCell && !sameCell) {
-    var property = lastCell.col.element.getAttribute("bind");
-    
-    var item = null;
-    try {
-      item = this.mediaListView.getItemByIndex(lastCell.row);
-    }
-    catch(e) { item = null; /* let item be null */ }
-
-    var event = document.createEvent("datacontainerevent");
-    event.initEvent("PlaylistCellMouseOut", true, true);
-    event.setData("property", property);
-    event.setData("item", item);
-    event.setData("row", lastCell.row);
-    event.setData("column", lastCell.col);
-    this.dispatchEvent(event);
+  // If the mouse moved out of a cell, update the playlist cell mouse over state
+  // to mouse out.
+  if (!sameCell) {
+    this._playlistCellMouseOut();
   }
 
   // If the mouse is not over any cell, set mouse state to none and do nothing
@@ -2039,19 +2027,8 @@
                        col.value,
                        this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_HOVER);
 
-    // If mouse has moved into a different cell, dispatch a mouse over event.
-    if (!sameCell) {
-      var property = col.value.element.getAttribute("bind");
-      var item = this.mediaListView.getItemByIndex(row.value);
-
-      var event = document.createEvent("datacontainerevent");
-      event.initEvent("PlaylistCellMouseOver", true, true);
-      event.setData("property", property);
-      event.setData("item", item);
-      event.setData("row", row.value);
-      event.setData("column", col.value);
-      this.dispatchEvent(event);
-    }
+    // Update the playlist cell mouse over state.
+    this._playlistCellMouseOver(row.value, col.value);
   } else if (this._mouseIsDown &&
              overCellContent &&
              (row.value == this._onMouseDownRow) &&
@@ -2061,10 +2038,82 @@
                        col.value,
                        this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_DOWN);
   } else {
+    // Update the playlist cell mouse over state to mouse out.
+    this._playlistCellMouseOut();
+
     view.setMouseState(-1,
                        null,
                        this._Ci.sbILocalDatabaseTreeView.MOUSE_STATE_NONE);
   }
+]]>
+      </body>
+    </method>
+
+    <method name="_playlistCellMouseOver">
+      <parameter name="row"/>
+      <parameter name="col"/>
+      <body>
+<![CDATA[
+  // Don't update playlist cell mouse over state while the mouse is down.
+  if (this._mouseIsDown)
+    return;
+
+  // Don't update playlist cell mouse over state if mouse is already over a
+  // playlist cell.  When moving to a different cell, the state should change to
+  // mouse out first.
+  if (this._lastPlaylistCellMouseOverState)
+    return;
+
+  // Update the playlist cell mouse over state.
+  var property = col.element.getAttribute("bind");
+  var item = this.mediaListView.getItemByIndex(row);
+  this._lastPlaylistCellMouseOverState = {
+    property: property,
+    item:     item,
+    row:      row,
+    col:      col
+  };
+
+  // Dispatch a playlist cell mouse over event.
+  var event = document.createEvent("datacontainerevent");
+  event.initEvent("PlaylistCellMouseOver", true, true);
+  event.setData("property", property);
+  event.setData("item", item);
+  event.setData("row", row);
+  event.setData("column", col);
+  this.dispatchEvent(event);
+]]>
+      </body>
+    </method>
+
+    <method name="_playlistCellMouseOut">
+      <body>
+<![CDATA[
+  // Don't update playlist cell mouse over state while the mouse is down.
+  if (this._mouseIsDown)
+    return;
+
+  // Don't update playlist cell mouse over state if mouse is not over a playlist
+  // cell.
+  if (!this._lastPlaylistCellMouseOverState)
+    return;
+
+  // Get the playlist cell mouse over state data and then clear it, setting the
+  // state to mouse out.
+  var property = this._lastPlaylistCellMouseOverState.property;
+  var item = this._lastPlaylistCellMouseOverState.item;
+  var row = this._lastPlaylistCellMouseOverState.row;
+  var col = this._lastPlaylistCellMouseOverState.col;
+  this._lastPlaylistCellMouseOverState = null;
+
+  // Dispatch a playlist cell mouse out event.
+  var event = document.createEvent("datacontainerevent");
+  event.initEvent("PlaylistCellMouseOut", true, true);
+  event.setData("property", property);
+  event.setData("item", item);
+  event.setData("row", row);
+  event.setData("column", col);
+  this.dispatchEvent(event);
 ]]>
       </body>
     </method>
