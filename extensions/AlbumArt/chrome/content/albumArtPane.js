@@ -906,6 +906,7 @@ var AlbumArt = {
     var copyElem = document.getElementById("copyMenuItem");
     var clearElem = document.getElementById("clearMenuItem");
     var pasteElem = document.getElementById("pasteMenuItem");
+    var getArtworkElem = document.getElementById("getArtworkMenuItem");
 
     // Update the menu based on if the items are editable.
     var itemArray;
@@ -921,6 +922,7 @@ var AlbumArt = {
       copyElem.disabled = (curImageUrl == DROP_TARGET_IMAGE);
       pasteElem.disabled = true;
       clearElem.disabled = true;
+      getArtworkElem.disabled = true;
       return;
     }
     
@@ -943,6 +945,9 @@ var AlbumArt = {
 
     // Enable the paste if a valid image is on the clipboard
     pasteElem.disabled = !validAlbumArt;
+
+    // Always enable get artwork
+    getArtworkElem.disabled = false;
   },
 
   /*********************************
