@@ -110,8 +110,6 @@
 	  <article pattern="*, Il"/>
 	  <article pattern="Lo *"/>
 	  <article pattern="*, Lo"/>
-	  <article pattern="I *"/>
-	  <article pattern="*, I"/>
 	  <article pattern="Gli *"/>
 	  <article pattern="*, Gli"/>
 	  <article pattern="L'*"/>
