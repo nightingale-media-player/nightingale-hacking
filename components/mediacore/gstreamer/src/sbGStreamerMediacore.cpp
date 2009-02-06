@@ -701,11 +701,11 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   nsresult rv;
   gint flags;
 
-  nsAutoMonitor lock(mMonitor);
-
+  // destroy pipeline will acquire the monitor.
   rv = DestroyPipeline();
   NS_ENSURE_SUCCESS (rv, rv);
 
+  nsAutoMonitor lock(mMonitor);
   mPipeline = gst_element_factory_make ("playbin2", "player");
 
   if (!mPipeline)
@@ -1367,10 +1367,12 @@ sbGStreamerMediacore::OnSetUri(nsIURI *aURI)
 {
   nsCAutoString spec;
   nsresult rv;
-  nsAutoMonitor lock(mMonitor);
 
+  // createplaybackpipeline will acquire the monitor.
   rv = CreatePlaybackPipeline();
   NS_ENSURE_SUCCESS (rv,rv);
+
+  nsAutoMonitor lock(mMonitor);
 
   rv = aURI->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
