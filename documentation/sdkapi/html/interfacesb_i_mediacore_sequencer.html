@@ -103,6 +103,9 @@ void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#f8e70dc8b402ed7e004e91be319fa8c3">requestHandleNextItem</a> (in <a class="el" href="interfacesb_i_mediacore.html">sbIMediacore</a> aMediacore)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Indicate that the current core will handle the next item in the sequence when the stream ends. <br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#16b08698d074e8cce9140d68c8457243">abort</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Abort the current item playback attempt.  <a href="#16b08698d074e8cce9140d68c8457243"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="ee6f8e965e48cd93230265df13cb457b"></a><!-- doxytag: member="sbIMediacoreSequencer::MODE_FORWARD" ref="ee6f8e965e48cd93230265df13cb457b" args="" -->
 const unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#ee6f8e965e48cd93230265df13cb457b">MODE_FORWARD</a> = 0</td></tr>
@@ -135,11 +138,10 @@ attribute unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a cl
 attribute <a class="el" href="interfacesb_i_media_list_view.html">sbIMediaListView</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#c985ee0b93321e4292132ba9e9f14f14">view</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The view that was used to generate the current sequence. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fbc99c3ef09d8455f0fa754974aa2bd6"></a><!-- doxytag: member="sbIMediacoreSequencer::viewPosition" ref="fbc99c3ef09d8455f0fa754974aa2bd6" args="" -->
-readonly attribute unsigned <br>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute unsigned <br>
 long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#fbc99c3ef09d8455f0fa754974aa2bd6">viewPosition</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current position in the view. This position is tied to the sequencePosition. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current position in the view. This position is tied to the sequencePosition.  <a href="#fbc99c3ef09d8455f0fa754974aa2bd6"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">readonly attribute <a class="el" href="interfacesb_i_media_item.html">sbIMediaItem</a>&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#204877665fb8bfdec3937391cc0ef18e">currentItem</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current item in the view.  <a href="#204877665fb8bfdec3937391cc0ef18e"></a><br></td></tr>
@@ -150,10 +152,9 @@ long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="inte
 readonly attribute nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#d5ad845c004121ab4db97e13a42c9a27">currentSequence</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current sequence. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7db9ea823f7b9ebbab7c25a722949325"></a><!-- doxytag: member="sbIMediacoreSequencer::sequencePosition" ref="7db9ea823f7b9ebbab7c25a722949325" args="" -->
-attribute unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#7db9ea823f7b9ebbab7c25a722949325">sequencePosition</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">attribute unsigned long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#7db9ea823f7b9ebbab7c25a722949325">sequencePosition</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current position in the sequence. This position is tied to the viewPosition. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">The current position in the sequence. This position is tied to the viewPosition.  <a href="#7db9ea823f7b9ebbab7c25a722949325"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">const long&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_mediacore_sequencer.html#e2dfae1af957165a52c0aa5ed9a1d85f">AUTO_PICK_INDEX</a> = -1</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Allow the sequencer to pick the most appropriate start index for a sequence.  <a href="#e2dfae1af957165a52c0aa5ed9a1d85f"></a><br></td></tr>
@@ -205,7 +206,53 @@ Play a media list view as a sequence. Optionally provide the index of the item i
 
 </div>
 </div><p>
+<a class="anchor" name="16b08698d074e8cce9140d68c8457243"></a><!-- doxytag: member="sbIMediacoreSequencer::abort" ref="16b08698d074e8cce9140d68c8457243" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIMediacoreSequencer::abort           </td>
+          <td>(</td>
+          <td class="paramname">          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Abort the current item playback attempt. 
+<p>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>This method may only be called from BEFORE_TRACK_CHANGE. If you attempt to call it from another context, it will silently fail. </dd></dl>
+
+</div>
+</div><p>
 <hr><h2>Member Data Documentation</h2>
+<a class="anchor" name="fbc99c3ef09d8455f0fa754974aa2bd6"></a><!-- doxytag: member="sbIMediacoreSequencer::viewPosition" ref="fbc99c3ef09d8455f0fa754974aa2bd6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">readonly attribute unsigned long <a class="el" href="interfacesb_i_mediacore_sequencer.html#fbc99c3ef09d8455f0fa754974aa2bd6">sbIMediacoreSequencer::viewPosition</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The current position in the view. This position is tied to the sequencePosition. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_AVAILABLE</em>&nbsp;</td><td>when the sequence position is invalid. </td></tr>
+  </table>
+</dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00065">65</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
+</div>
+</div><p>
 <a class="anchor" name="204877665fb8bfdec3937391cc0ef18e"></a><!-- doxytag: member="sbIMediacoreSequencer::currentItem" ref="204877665fb8bfdec3937391cc0ef18e" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -224,7 +271,7 @@ The current item in the view.
 This may be null if there is no currentItem. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00072">72</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00073">73</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="6f688adf2d91ff9a4b59262a7b7d0928"></a><!-- doxytag: member="sbIMediacoreSequencer::nextItem" ref="6f688adf2d91ff9a4b59262a7b7d0928" args="" -->
@@ -245,7 +292,31 @@ The next item in the sequence.
 This may be null if there is no next item. </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00080">80</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00081">81</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
+</div>
+</div><p>
+<a class="anchor" name="7db9ea823f7b9ebbab7c25a722949325"></a><!-- doxytag: member="sbIMediacoreSequencer::sequencePosition" ref="7db9ea823f7b9ebbab7c25a722949325" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">attribute unsigned long <a class="el" href="interfacesb_i_mediacore_sequencer.html#7db9ea823f7b9ebbab7c25a722949325">sbIMediacoreSequencer::sequencePosition</a>          </td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+The current position in the sequence. This position is tied to the viewPosition. 
+<p>
+<dl compact><dt><b>Exceptions:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>NS_ERROR_NOT_AVAILABLE</em>&nbsp;</td><td>when the sequence position is invalid. </td></tr>
+  </table>
+</dl>
+
+<p>
+Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00093">93</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
 </div>
 </div><p>
 <a class="anchor" name="e2dfae1af957165a52c0aa5ed9a1d85f"></a><!-- doxytag: member="sbIMediacoreSequencer::AUTO_PICK_INDEX" ref="e2dfae1af957165a52c0aa5ed9a1d85f" args="" -->
@@ -266,12 +337,12 @@ The sequencer will pick a random index for the start of the sequence if shuffle 
 <dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_mediacore_sequencer.html#243ba201cfe52ccee5989b1d3274e636" title="Play a media list view as a sequence. Optionally provide the index of the item in...">playView</a> </dd></dl>
 
 <p>
-Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00116">116</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
+Definition at line <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html#l00118">118</a> of file <a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a>.
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/mediacore/base/public/<a class="el" href="sb_i_mediacore_sequencer_8idl-source.html">sbIMediacoreSequencer.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:34 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:44 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

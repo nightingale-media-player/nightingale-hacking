@@ -107,7 +107,10 @@
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Formats the value for display.  <a href="#c24f85c37eb536c3a56af365b6c644c9"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#4dc32f906933d227198c087cb977263c">makeSortable</a> (in AString aValue)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Formats the value to enable proper sorting.  <a href="#4dc32f906933d227198c087cb977263c"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Transforms the string into its sortable collation data equivalent.  <a href="#4dc32f906933d227198c087cb977263c"></a><br></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#a765101498fec9f1b83ca8371c7b6125">makeSearchable</a> (in AString aValue)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Formats the value to enable proper search.  <a href="#a765101498fec9f1b83ca8371c7b6125"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="afe9f89f31df1de16ca3b9ab5b7682de"></a><!-- doxytag: member="sbIPropertyInfo::OPERATOR_EQUALS" ref="afe9f89f31df1de16ca3b9ab5b7682de" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_property_info.html#afe9f89f31df1de16ca3b9ab5b7682de">OPERATOR_EQUALS</a></td></tr>
@@ -347,14 +350,42 @@ Formats the value for display.
 <div class="memdoc">
 
 <p>
-Formats the value to enable proper sorting. 
+Transforms the string into its sortable collation data equivalent. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aValue</em>&nbsp;</td><td>Value to transform. </td></tr>
+  </table>
+</dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The collation data used for sorting the value. </dd></dl>
+
+</div>
+</div><p>
+<a class="anchor" name="a765101498fec9f1b83ca8371c7b6125"></a><!-- doxytag: member="sbIPropertyInfo::makeSearchable" ref="a765101498fec9f1b83ca8371c7b6125" args="(in AString aValue)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">AString sbIPropertyInfo::makeSearchable           </td>
+          <td>(</td>
+          <td class="paramtype">in AString&nbsp;</td>
+          <td class="paramname"> <em>aValue</em>          </td>
+          <td>&nbsp;)&nbsp;</td>
+          <td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Formats the value to enable proper search. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>aValue</em>&nbsp;</td><td>Value to format. </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>The formatted sorting value. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>The formatted search value. </dd></dl>
 
 </div>
 </div><p>
@@ -382,7 +413,7 @@ Definition at line <a class="el" href="sb_i_property_manager_8idl-source.html#l0
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/property/public/<a class="el" href="sb_i_property_manager_8idl-source.html">sbIPropertyManager.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:38 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:45 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

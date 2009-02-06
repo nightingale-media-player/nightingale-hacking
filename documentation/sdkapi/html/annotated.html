@@ -82,6 +82,8 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_album_art_fetcher.html">sbIAlbumArtFetcher</a></td><td class="indexvalue">Interface for an album art fetcher. Instantiate as a component instance </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_album_art_fetcher_set.html">sbIAlbumArtFetcherSet</a></td><td class="indexvalue">Interface for an album art fetcher set. Instantiate as a component instance </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_album_art_listener.html">sbIAlbumArtListener</a></td><td class="indexvalue">A component which is interested in the result of an album art fetch request </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_album_art_scanner.html">sbIAlbumArtScanner</a></td><td class="indexvalue">Interface for an album art scanner. Instantiate as a component instance. It also implements the <a class="el" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> so the progress can be monitored externally </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_album_art_scanner_listener.html">sbIAlbumArtScannerListener</a></td><td class="indexvalue">Interface for an album art scanner listener. This is used for callbacks for progress of the scanning </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_album_art_service.html">sbIAlbumArtService</a></td><td class="indexvalue">Interface for the album art service. Instantiate as a component service </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_application_controller.html">sbIApplicationController</a></td><td class="indexvalue">Global root controller for the Songbird application </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_batch_create_media_items_listener.html">sbIBatchCreateMediaItemsListener</a></td><td class="indexvalue">Callback for batch media create items </td></tr>
@@ -101,7 +103,6 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_command_line_item_handler.html">sbICommandLineItemHandler</a></td><td class="indexvalue">Songbird Command line item handler Interface </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_command_line_manager.html">sbICommandLineManager</a></td><td class="indexvalue">Songbird Command line manager interface </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_content_type_format.html">sbIContentTypeFormat</a></td><td class="indexvalue"></td></tr>
-  <tr><td class="indexkey"><a class="el" href="interfacesb_i_core_wrapper.html">sbICoreWrapper</a></td><td class="indexvalue">A wrapper for various media cores Defines the inteface for objects that will provide playback functionality </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_create_media_list_callback.html">sbICreateMediaListCallback</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_database_engine.html">sbIDatabaseEngine</a></td><td class="indexvalue">[USER CODE SHOULD NOT REFERENCE THIS CLASS] </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_database_prepared_statement.html">sbIDatabasePreparedStatement</a></td><td class="indexvalue">A prepared database statement </td></tr>
@@ -160,6 +161,8 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_file_scan.html">sbIFileScan</a></td><td class="indexvalue">The engine in which to execute <a class="el" href="interfacesb_i_file_scan_query.html" title="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</a> objects </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_file_scan_callback.html">sbIFileScanCallback</a></td><td class="indexvalue">The callback to the <a class="el" href="interfacesb_i_file_scan_query.html" title="An object to scan through the files of a folder (and optionally subfolders).">sbIFileScanQuery</a> interface </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_file_scan_query.html">sbIFileScanQuery</a></td><td class="indexvalue">An object to scan through the files of a folder (and optionally subfolders) </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_file_system_listener.html">sbIFileSystemListener</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_file_system_watcher.html">sbIFileSystemWatcher</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_filterable_media_list_view.html">sbIFilterableMediaListView</a></td><td class="indexvalue">Control the filter settings on a media list </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_global_hotkey_callback.html">sbIGlobalHotkeyCallback</a></td><td class="indexvalue">Global hotkeys callback interface This interface is used by callback objects to receive a notification when a registered hotkey is pressed anywhere in the system (not just when the application is focused) </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_global_hotkeys.html">sbIGlobalHotkeys</a></td><td class="indexvalue">Global hotkey registration/unregistration interface This interface is used to register or unregister hotkey callbacks </td></tr>
@@ -175,6 +178,9 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_job_progress.html">sbIJobProgress</a></td><td class="indexvalue">Generic interface for exposing long running jobs to the UI </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_job_progress_listener.html">sbIJobProgressListener</a></td><td class="indexvalue">Implemented to receive notifications from <a class="el" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> interfaces </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_job_progress_service.html">sbIJobProgressService</a></td><td class="indexvalue">The beginnings of a service to track all background tasks </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_job_progress_u_i.html">sbIJobProgressUI</a></td><td class="indexvalue">Interface to control UI aspects of <a class="el" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a> </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_last_fm_web_services.html">sbILastFmWebServices</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_last_fm_web_services_response.html">sbILastFmWebServicesResponse</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_layout_description.html">sbILayoutDescription</a></td><td class="indexvalue">Struct describing the properties of a XUL window layout </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_leak_canary.html">sbILeakCanary</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_library.html">sbILibrary</a></td><td class="indexvalue">Media library abstraction </td></tr>
@@ -197,6 +203,7 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_library_sort.html">sbILibrarySort</a></td><td class="indexvalue">A sort that can be applied to a media list view </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_library_statistics.html">sbILibraryStatistics</a></td><td class="indexvalue">Extract statistics from a media library </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_library_transfer_context.html">sbILibraryTransferContext</a></td><td class="indexvalue">A base interface for the various library transfer contexts </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_library_utils.html">sbILibraryUtils</a></td><td class="indexvalue">Set of library utilities </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_local_database_async_g_u_i_d_array.html">sbILocalDatabaseAsyncGUIDArray</a></td><td class="indexvalue">[USER CODE SHOULD NOT REFERENCE THIS CLASS] </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_local_database_async_g_u_i_d_array_listener.html">sbILocalDatabaseAsyncGUIDArrayListener</a></td><td class="indexvalue">[USER CODE SHOULD NOT REFERENCE THIS CLASS] </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_local_database_dynamic_playlist_service.html">sbILocalDatabaseDynamicPlaylistService</a></td><td class="indexvalue"></td></tr>
@@ -287,8 +294,6 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_commands_builder_simple_callback.html">sbIPlaylistCommandsBuilderSimpleCallback</a></td><td class="indexvalue">An interface used to receive generic callbacks from an <a class="el" href="interfacesb_i_playlist_commands_builder.html" title="A helper used to construct sbIPlaylistCommands interfaces.">sbIPlaylistCommandsBuilder</a> object </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_commands_context.html">sbIPlaylistCommandsContext</a></td><td class="indexvalue">The interface for giving context to a playlistcommands object </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_commands_manager.html">sbIPlaylistCommandsManager</a></td><td class="indexvalue">The service used to register, unregister, and list playlist commands for a particular playlist guid or type </td></tr>
-  <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_playback.html">sbIPlaylistPlayback</a></td><td class="indexvalue">Defines standard media player playback functionality. This interface defines the interface for managing playback cores (adding selecting and removing) and for controlling the playback of media in the cores (play, stop, pause, etc). Objects wishing to control playback should get an instance of this class via Components.Classes() and call these methods on that object </td></tr>
-  <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_playback_listener.html">sbIPlaylistPlaybackListener</a></td><td class="indexvalue">Interface that handles the tracking of playback changes </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_reader.html">sbIPlaylistReader</a></td><td class="indexvalue">A subclass from which one may derive instances to read specific playlist types </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_reader_listener.html">sbIPlaylistReaderListener</a></td><td class="indexvalue">A listener interface for use with <a class="el" href="interfacesb_i_playlist_reader.html" title="A subclass from which one may derive instances to read specific playlist types.">sbIPlaylistReader</a> interfaces </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_playlist_reader_manager.html">sbIPlaylistReaderManager</a></td><td class="indexvalue">An interface to be used to read playlists. It will try to find the proper <a class="el" href="interfacesb_i_playlist_reader.html" title="A subclass from which one may derive instances to read specific playlist types.">sbIPlaylistReader</a> subclass and use it </td></tr>
@@ -319,6 +324,7 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_remote_security_event.html">sbIRemoteSecurityEvent</a></td><td class="indexvalue">An interface to maintain information about the last security event that occurred </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_remote_site_library.html">sbIRemoteSiteLibrary</a></td><td class="indexvalue">An interface for a sandbox library created by the website </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_remote_web_playlist.html">sbIRemoteWebPlaylist</a></td><td class="indexvalue">An interface to control a media list from remote web pages </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_r_u_i_import_listener.html">sbIRUIImportListener</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_scriptable_filter_result.html">sbIScriptableFilterResult</a></td><td class="indexvalue">The result of a filtering expression in a library </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_searchable_media_list_view.html">sbISearchableMediaListView</a></td><td class="indexvalue">Control the search settings on a media list </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_security_aggregator.html">sbISecurityAggregator</a></td><td class="indexvalue">A marker interface for objects that aggregate the security mixin </td></tr>
@@ -343,6 +349,7 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_s_q_l_select_builder.html">sbISQLSelectBuilder</a></td><td class="indexvalue">Interface for building SELECT statements </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_s_q_l_update_builder.html">sbISQLUpdateBuilder</a></td><td class="indexvalue">Interface for building UPDATE statements </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_s_q_l_where_builder.html">sbISQLWhereBuilder</a></td><td class="indexvalue">Interface for building WHERE expressions </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_string_bundle_service.html">sbIStringBundleService</a></td><td class="indexvalue">Interface for the Songbird string bundle service. Instantiate as a component service </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_string_transform.html">sbIStringTransform</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_tab_browser.html">sbITabBrowser</a></td><td class="indexvalue"><dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_tab_browser_tab.html" title="sbITabBrowser">sbITabBrowserTab</a> </dd></dl>
 </td></tr>
@@ -356,11 +363,11 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_timing_service.html">sbITimingService</a></td><td class="indexvalue">An interface for running simple, time based, profiling </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_timing_service_timer.html">sbITimingServiceTimer</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_tree_view_property_info.html">sbITreeViewPropertyInfo</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_u_r_i_import_service.html">sbIURIImportService</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_u_r_i_property_info.html">sbIURIPropertyInfo</a></td><td class="indexvalue">The property information specific to URL/URI fields </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_u_r_l_formatter.html">sbIURLFormatter</a></td><td class="indexvalue"></td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_i_watch_folder_service.html">sbIWatchFolderService</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_cloak.html">sbIWindowCloak</a></td><td class="indexvalue">Window cloaking service interface This is an interface to the window cloaking service, used to hide a xul window without closing it, and to unhide it at a later time </td></tr>
-  <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_dragger.html">sbIWindowDragger</a></td><td class="indexvalue">Window dragging service interface This is an interface to the window dragging service, used to drag a window without losing mousemove messages when the mouse moves outside the rect of the window being dragged </td></tr>
-  <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_dragger_callback.html">sbIWindowDraggerCallback</a></td><td class="indexvalue">Window dragging callback interface This is an interface to a callback method used to detect the end of a window drag operation </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_layer.html">sbIWindowLayer</a></td><td class="indexvalue">Window layering service interface This is an interface to the window layering service, used to set the opacity of an entire window </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_min_max.html">sbIWindowMinMax</a></td><td class="indexvalue">WindowMinMax service interface This is an interface to the WindowMinMax service, used to set and reset callbacks for querying the application for minimum and maximum dimensions </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_min_max_callback.html">sbIWindowMinMaxCallback</a></td><td class="indexvalue">WindowMinMax callback interface This interface describes a callback for the WindowMinMax service, used to query the application for minimum and maximum dimensions. The callback is also used to trap the closing of the window </td></tr>
@@ -370,9 +377,11 @@
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_window_watcher.html">sbIWindowWatcher</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_i_w_m_device.html">sbIWMDevice</a></td><td class="indexvalue">Songbird WMDevice Interface </td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_p_i_bundle.html">sbPIBundle</a></td><td class="indexvalue">Songbird Private Bundle Interface This is a private interface for bundle management, used by the bundle download user interface </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_p_i_data_remote2.html">sbPIDataRemote2</a></td><td class="indexvalue">An additional interface for accessing dataremote values. Adds the ability to access values via methods rather than attributes. This is needed by the Remote API, which cannot access attributes on JavaScript XPCOM components due to Mozilla Bug 304048. In order to work around this problem we've replaced the old DataRemote class with a C++ wrapper that delegates to the old implementation using this interface </td></tr>
+  <tr><td class="indexkey"><a class="el" href="interfacesb_p_i_file_system_tree.html">sbPIFileSystemTree</a></td><td class="indexvalue"></td></tr>
   <tr><td class="indexkey"><a class="el" href="interfacesb_p_i_mediacore_manager.html">sbPIMediacoreManager</a></td><td class="indexvalue"></td></tr>
 </table>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:25 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:40 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

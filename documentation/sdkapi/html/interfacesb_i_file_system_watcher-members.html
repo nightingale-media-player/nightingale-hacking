@@ -60,15 +60,25 @@
   <ul>
     <li><a href="main.html"><span>Main&nbsp;Page</span></a></li>
     <li><a href="modules.html"><span>Modules</span></a></li>
-    <li><a href="annotated.html"><span>Classes</span></a></li>
+    <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
     <li><a href="files.html"><span>Files</span></a></li>
     <li><a href="pages.html"><span>Related&nbsp;Pages</span></a></li>
     <li><a href="examples.html"><span>Examples</span></a></li>
   </ul>
 </div>
-<h1>C:/builds/songbird/trunk/components/mediacore/metadata/manager/public/sbIFileMetadataService.idl</h1>Manages reading and writing metadata to and from <a class="el" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> objects and media files Supports the creation of threaded read/write jobs for local media (URIs beginning with <a href="file://">file://</a>), and timer driven read jobs for remote media.<p>
-var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"] .createInstance(Ci.nsIMutableArray); mediaItemArray.appendElement(aItem, false); var metadataService = Cc["@songbirdnest.com/Songbird/FileMetadataService;1"] .getService(Ci.sbIFileMetadataService); var job = metadataService.read(mediaItemArray);<p>
-<div class="fragment"><pre class="fragment"></pre></div> <hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:20 2008 for Songbird by&nbsp;
+<div class="tabs">
+  <ul>
+    <li><a href="annotated.html"><span>Class&nbsp;List</span></a></li>
+    <li><a href="hierarchy.html"><span>Class&nbsp;Hierarchy</span></a></li>
+    <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
+  </ul>
+</div>
+<h1>sbIFileSystemWatcher Member List</h1>This is the complete list of members for <a class="el" href="interfacesb_i_file_system_watcher.html">sbIFileSystemWatcher</a>, including all inherited members.<p><table>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_file_system_watcher.html#ec98f91f20845e7a6dacc893ab94845c">isSupported</a></td><td><a class="el" href="interfacesb_i_file_system_watcher.html">sbIFileSystemWatcher</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_file_system_watcher.html#ecc94c2b3916349dfbbfbd3843b95378">isWatching</a></td><td><a class="el" href="interfacesb_i_file_system_watcher.html">sbIFileSystemWatcher</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_file_system_watcher.html#35a4ef55061ad02dcb58a8f6306cf76c">sessionGuid</a></td><td><a class="el" href="interfacesb_i_file_system_watcher.html">sbIFileSystemWatcher</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="interfacesb_i_file_system_watcher.html#219f90cab42f255f6d478db3763cc7b9">watchPath</a></td><td><a class="el" href="interfacesb_i_file_system_watcher.html">sbIFileSystemWatcher</a></td><td></td></tr>
+</table><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:42 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

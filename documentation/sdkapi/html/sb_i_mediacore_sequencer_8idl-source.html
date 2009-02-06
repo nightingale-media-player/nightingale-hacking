@@ -122,37 +122,39 @@
 <a name="l00054"></a>00054 
 <a name="l00058"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#c985ee0b93321e4292132ba9e9f14f14">00058</a>   attribute <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> view;
 <a name="l00059"></a>00059 
-<a name="l00064"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#fbc99c3ef09d8455f0fa754974aa2bd6">00064</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> viewPosition;
-<a name="l00065"></a>00065 
-<a name="l00072"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#204877665fb8bfdec3937391cc0ef18e">00072</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> currentItem;
-<a name="l00073"></a>00073 
-<a name="l00080"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#6f688adf2d91ff9a4b59262a7b7d0928">00080</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> nextItem;
-<a name="l00081"></a>00081 
-<a name="l00085"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#d5ad845c004121ab4db97e13a42c9a27">00085</a>   readonly attribute nsIArray currentSequence;
-<a name="l00086"></a>00086 
-<a name="l00091"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#7db9ea823f7b9ebbab7c25a722949325">00091</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> sequencePosition;
-<a name="l00092"></a>00092 
-<a name="l00103"></a>00103   <span class="keywordtype">void</span> playView(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView, 
-<a name="l00104"></a>00104                 [optional] in <span class="keywordtype">long</span> <span class="keywordtype">long</span> aItemIndex);
-<a name="l00105"></a>00105 
-<a name="l00116"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#e2dfae1af957165a52c0aa5ed9a1d85f">00116</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> AUTO_PICK_INDEX = -1;
-<a name="l00117"></a>00117 
-<a name="l00121"></a>00121   <span class="keywordtype">void</span> playURL(in nsIURI aURI);
-<a name="l00122"></a>00122 
-<a name="l00126"></a>00126   <span class="keywordtype">void</span> play();
-<a name="l00127"></a>00127   
-<a name="l00131"></a>00131   <span class="keywordtype">void</span> stop();
-<a name="l00132"></a>00132 
-<a name="l00136"></a>00136   <span class="keywordtype">void</span> next();
-<a name="l00137"></a>00137 
-<a name="l00141"></a>00141   <span class="keywordtype">void</span> previous();
-<a name="l00142"></a>00142 
-<a name="l00147"></a>00147   <span class="keywordtype">void</span> requestHandleNextItem(in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aMediacore);
-<a name="l00148"></a>00148 
-<a name="l00149"></a>00149   <span class="comment">// When in custom mode, this generator is used to generate the sequence.</span>
-<a name="l00150"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#b9c4f16af056b8d53ccc1b35ed77a3e2">00150</a>   attribute <a class="code" href="interfacesb_i_mediacore_sequence_generator.html">sbIMediacoreSequenceGenerator</a> customGenerator;
-<a name="l00151"></a>00151 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
+<a name="l00065"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#fbc99c3ef09d8455f0fa754974aa2bd6">00065</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> viewPosition;
+<a name="l00066"></a>00066 
+<a name="l00073"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#204877665fb8bfdec3937391cc0ef18e">00073</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> currentItem;
+<a name="l00074"></a>00074 
+<a name="l00081"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#6f688adf2d91ff9a4b59262a7b7d0928">00081</a>   readonly attribute <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> nextItem;
+<a name="l00082"></a>00082 
+<a name="l00086"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#d5ad845c004121ab4db97e13a42c9a27">00086</a>   readonly attribute nsIArray currentSequence;
+<a name="l00087"></a>00087 
+<a name="l00093"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#7db9ea823f7b9ebbab7c25a722949325">00093</a>   attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> sequencePosition;
+<a name="l00094"></a>00094 
+<a name="l00105"></a>00105   <span class="keywordtype">void</span> playView(in <a class="code" href="interfacesb_i_media_list_view.html" title="A distinct view on a given media list.">sbIMediaListView</a> aView, 
+<a name="l00106"></a>00106                 [optional] in <span class="keywordtype">long</span> <span class="keywordtype">long</span> aItemIndex);
+<a name="l00107"></a>00107 
+<a name="l00118"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#e2dfae1af957165a52c0aa5ed9a1d85f">00118</a>   <span class="keyword">const</span> <span class="keywordtype">long</span> AUTO_PICK_INDEX = -1;
+<a name="l00119"></a>00119 
+<a name="l00123"></a>00123   <span class="keywordtype">void</span> playURL(in nsIURI aURI);
+<a name="l00124"></a>00124 
+<a name="l00128"></a>00128   <span class="keywordtype">void</span> play();
+<a name="l00129"></a>00129   
+<a name="l00133"></a>00133   <span class="keywordtype">void</span> stop();
+<a name="l00134"></a>00134 
+<a name="l00138"></a>00138   <span class="keywordtype">void</span> next();
+<a name="l00139"></a>00139 
+<a name="l00143"></a>00143   <span class="keywordtype">void</span> previous();
+<a name="l00144"></a>00144 
+<a name="l00149"></a>00149   <span class="keywordtype">void</span> requestHandleNextItem(in <a class="code" href="interfacesb_i_mediacore.html">sbIMediacore</a> aMediacore);
+<a name="l00150"></a>00150 
+<a name="l00157"></a>00157   <span class="keywordtype">void</span> abort();
+<a name="l00158"></a>00158 
+<a name="l00159"></a>00159   <span class="comment">// When in custom mode, this generator is used to generate the sequence.</span>
+<a name="l00160"></a><a class="code" href="interfacesb_i_mediacore_sequencer.html#b9c4f16af056b8d53ccc1b35ed77a3e2">00160</a>   attribute <a class="code" href="interfacesb_i_mediacore_sequence_generator.html">sbIMediacoreSequenceGenerator</a> customGenerator;
+<a name="l00161"></a>00161 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

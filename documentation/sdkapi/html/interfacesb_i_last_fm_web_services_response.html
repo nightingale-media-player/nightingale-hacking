@@ -73,37 +73,34 @@
     <li><a href="functions.html"><span>Class&nbsp;Members</span></a></li>
   </ul>
 </div>
-<h1>sbIWindowDragger Interface Reference</h1><!-- doxytag: class="sbIWindowDragger" -->Window dragging service interface This is an interface to the window dragging service, used to drag a window without losing mousemove messages when the mouse moves outside the rect of the window being dragged.  
-<a href="#_details">More...</a>
-<p>
-<a href="interfacesb_i_window_dragger-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
+<h1>sbILastFmWebServicesResponse Interface Reference</h1><!-- doxytag: class="sbILastFmWebServicesResponse" --><a href="interfacesb_i_last_fm_web_services_response-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_window_dragger.html#18d95b32907e262ff464c47e2098a681">beginWindowDrag</a> (in PRInt32 dockDistance, in <a class="el" href="interfacesb_i_window_dragger_callback.html">sbIWindowDraggerCallback</a> cb)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_last_fm_web_services_response.html#3900a8511ee2c2af937aa089caa3e962">responseReceived</a> (in boolean aSucceeded, in nsIDOMDocument aResponse)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Begin dragging This method takes over window dragging and returns once the mouse button has been released.  <a href="#18d95b32907e262ff464c47e2098a681"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">ResonseRecievied - An API response has been recieved from Last.FM.  <a href="#3900a8511ee2c2af937aa089caa3e962"></a><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Window dragging service interface This is an interface to the window dragging service, used to drag a window without losing mousemove messages when the mouse moves outside the rect of the window being dragged. 
+
 <p>
 
 <p>
-Definition at line <a class="el" href="_i_window_dragger_8idl-source.html#l00060">60</a> of file <a class="el" href="_i_window_dragger_8idl-source.html">IWindowDragger.idl</a>.<hr><h2>Member Function Documentation</h2>
-<a class="anchor" name="18d95b32907e262ff464c47e2098a681"></a><!-- doxytag: member="sbIWindowDragger::beginWindowDrag" ref="18d95b32907e262ff464c47e2098a681" args="(in PRInt32 dockDistance, in sbIWindowDraggerCallback cb)" -->
+Definition at line <a class="el" href="sb_i_last_fm_web_services_8idl-source.html#l00035">35</a> of file <a class="el" href="sb_i_last_fm_web_services_8idl-source.html">sbILastFmWebServices.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="3900a8511ee2c2af937aa089caa3e962"></a><!-- doxytag: member="sbILastFmWebServicesResponse::responseReceived" ref="3900a8511ee2c2af937aa089caa3e962" args="(in boolean aSucceeded, in nsIDOMDocument aResponse)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void sbIWindowDragger::beginWindowDrag           </td>
+          <td class="memname">void sbILastFmWebServicesResponse::responseReceived           </td>
           <td>(</td>
-          <td class="paramtype">in PRInt32&nbsp;</td>
-          <td class="paramname"> <em>dockDistance</em>, </td>
+          <td class="paramtype">in boolean&nbsp;</td>
+          <td class="paramname"> <em>aSucceeded</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">in <a class="el" href="interfacesb_i_window_dragger_callback.html">sbIWindowDraggerCallback</a>&nbsp;</td>
-          <td class="paramname"> <em>cb</em></td><td>&nbsp;</td>
+          <td class="paramtype">in nsIDOMDocument&nbsp;</td>
+          <td class="paramname"> <em>aResponse</em></td><td>&nbsp;</td>
         </tr>
         <tr>
           <td></td>
@@ -115,21 +112,20 @@ Definition at line <a class="el" href="_i_window_dragger_8idl-source.html#l00060
 <div class="memdoc">
 
 <p>
-Begin dragging This method takes over window dragging and returns once the mouse button has been released. 
+ResonseRecievied - An API response has been recieved from Last.FM. 
 <p>
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>dockDistance</em>&nbsp;</td><td>The minimum distance between the edge of the window and the edge of the desktop area before automatic docking is triggered (use 0 to disable docking) </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>cb</em>&nbsp;</td><td>The callback object to use </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aSucceeded</em>&nbsp;</td><td>Indicates if the call was succesful or not. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aResponse</em>&nbsp;</td><td>Contains the XML response - for successful calls and for calls that return an API error See the Last.fm API documentation for the DOM structures to expect. </td></tr>
   </table>
 </dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="interfacesb_i_window_dragger_callback.html" title="Window dragging callback interface This is an interface to a callback method used...">sbIWindowDraggerCallback</a> </dd></dl>
 
 </div>
 </div><p>
 <hr>The documentation for this interface was generated from the following file:<ul>
-<li>components/integration/public/<a class="el" href="_i_window_dragger_8idl-source.html">IWindowDragger.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:40 2008 for Songbird by&nbsp;
+<li>components/webservices/lastfm/public/<a class="el" href="sb_i_last_fm_web_services_8idl-source.html">sbILastFmWebServices.idl</a></ul>
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:43 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

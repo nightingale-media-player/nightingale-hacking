@@ -100,7 +100,7 @@
 <a name="l00038"></a>00038 [ptr] native CDatabaseQueryPtr(CDatabaseQuery);
 <a name="l00039"></a>00039 [ref] native stlCStringRef(std::string);
 <a name="l00040"></a>00040 
-<a name="l00049"></a>00049 [scriptable, uuid(35e0ae00-ac6e-11dd-ad8b-0800200c9a66)]
+<a name="l00049"></a>00049 [scriptable, uuid(4661378b-addc-4d1e-aece-0a49cd169b8d)]
 <a name="l00050"></a><a class="code" href="interfacesb_i_database_engine.html">00050</a> interface <a class="code" href="interfacesb_i_database_engine.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</a> : nsISupports
 <a name="l00051"></a>00051 {
 <a name="l00058"></a>00058   [noscript] PRInt32 SubmitQuery(in CDatabaseQueryPtr aDBQuery);
@@ -112,8 +112,13 @@
 <a name="l00078"></a>00078   <span class="keywordtype">void</span> dumpMemoryStatistics();
 <a name="l00079"></a>00079 
 <a name="l00086"></a>00086   <span class="keywordtype">void</span> releaseMemory();
-<a name="l00087"></a>00087 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:20 2008 for Songbird by&nbsp;
+<a name="l00087"></a>00087   
+<a name="l00093"></a><a class="code" href="interfacesb_i_database_engine.html#d862fd8232fa8e6b0bfa1606a0744d01">00093</a>   attribute <span class="keywordtype">boolean</span> localeCollationEnabled;
+<a name="l00094"></a>00094   
+<a name="l00098"></a><a class="code" href="interfacesb_i_database_engine.html#bc24b94b63b9ebd163bafc1fe4d3c45f">00098</a>   readonly attribute AString localeCollationID;
+<a name="l00099"></a>00099    
+<a name="l00100"></a>00100 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:38 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

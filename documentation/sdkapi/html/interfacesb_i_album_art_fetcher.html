@@ -85,6 +85,10 @@
 </map>
 <a href="interfacesb_i_album_art_fetcher-members.html">List of all members.</a><table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
+<tr><td colspan="2"><br><h2>Public Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">void&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#e473a55326d08aea0533d88124dae70f">fetchAlbumArtForAlbum</a> (in nsIArray aMediaItems, in <a class="el" href="interfacesb_i_album_art_listener.html">sbIAlbumArtListener</a> aListener)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Try to fetch album art for a list of items that belong to the same album. This function infers that all items in the list are from the same album.  <a href="#e473a55326d08aea0533d88124dae70f"></a><br></td></tr>
 <tr><td colspan="2"><br><h2>Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="1746f3709c9cac9c1f49e9d7f1c1cf71"></a><!-- doxytag: member="sbIAlbumArtFetcher::shortName" ref="1746f3709c9cac9c1f49e9d7f1c1cf71" args="" -->
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#1746f3709c9cac9c1f49e9d7f1c1cf71">shortName</a></td></tr>
@@ -98,10 +102,6 @@ readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a
 readonly attribute AString&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#af76c37775392e96621dd55dde3c00e2">description</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Description of the AlbumArtFetcher to display to the user. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="fb3ca755a9dd6cd43b18750036cdd431"></a><!-- doxytag: member="sbIAlbumArtFetcher::userFetcher" ref="fb3ca755a9dd6cd43b18750036cdd431" args="" -->
-readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#fb3ca755a9dd6cd43b18750036cdd431">userFetcher</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Flag to indicate if this Fetcher can be used as a fetcher from a user menu. <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f0e116558c99df98213df5925fabddf7"></a><!-- doxytag: member="sbIAlbumArtFetcher::isLocal" ref="f0e116558c99df98213df5925fabddf7" args="" -->
 readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#f0e116558c99df98213df5925fabddf7">isLocal</a></td></tr>
 
@@ -110,14 +110,10 @@ readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a
 attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#c9205bd18be39e369a6563873b41ef80">isEnabled</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Flag to indicate if this Fetcher is enabled or not. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="6ec581c5a2dcd41949160e1325b183d0"></a><!-- doxytag: member="sbIAlbumArtFetcher::isComplete" ref="6ec581c5a2dcd41949160e1325b183d0" args="" -->
-readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#6ec581c5a2dcd41949160e1325b183d0">isComplete</a></td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="f0fb64cdfe322e7bee03ce72215e7085"></a><!-- doxytag: member="sbIAlbumArtFetcher::priority" ref="f0fb64cdfe322e7bee03ce72215e7085" args="" -->
+attribute PRInt32&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#f0fb64cdfe322e7bee03ce72215e7085">priority</a></td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Flag to indicate if fetching is complete. <br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="7328df8e1412555d73b98707ea6d25a7"></a><!-- doxytag: member="sbIAlbumArtFetcher::foundAlbumArt" ref="7328df8e1412555d73b98707ea6d25a7" args="" -->
-readonly attribute boolean&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#7328df8e1412555d73b98707ea6d25a7">foundAlbumArt</a></td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Flag to indicate whether album art was found. <br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Priority of this fetcher, a lower number represents a higher priority (so 0 is higher than 10). If multiple fetchers have the same priority then it is first come first serve at that priority. The priorities should not fall below 0 except where a priority of -1 will mean to append to end of list (so it will be the lowest priority). <br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="anchor" name="2e7aa9a9a21e080e84ee372a384ff3a1"></a><!-- doxytag: member="sbIAlbumArtFetcher::albumArtSourceList" ref="2e7aa9a9a21e080e84ee372a384ff3a1" args="" -->
 attribute nsIArray&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="interfacesb_i_album_art_fetcher.html#2e7aa9a9a21e080e84ee372a384ff3a1">albumArtSourceList</a></td></tr>
 
@@ -131,9 +127,48 @@ Interface for an album art fetcher. Instantiate as a component instance.
 <p>
 
 <p>
-Definition at line <a class="el" href="sb_i_album_art_fetcher_8idl-source.html#l00053">53</a> of file <a class="el" href="sb_i_album_art_fetcher_8idl-source.html">sbIAlbumArtFetcher.idl</a>.<hr>The documentation for this interface was generated from the following file:<ul>
+Definition at line <a class="el" href="sb_i_album_art_fetcher_8idl-source.html#l00053">53</a> of file <a class="el" href="sb_i_album_art_fetcher_8idl-source.html">sbIAlbumArtFetcher.idl</a>.<hr><h2>Member Function Documentation</h2>
+<a class="anchor" name="e473a55326d08aea0533d88124dae70f"></a><!-- doxytag: member="sbIAlbumArtFetcher::fetchAlbumArtForAlbum" ref="e473a55326d08aea0533d88124dae70f" args="(in nsIArray aMediaItems, in sbIAlbumArtListener aListener)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sbIAlbumArtFetcher::fetchAlbumArtForAlbum           </td>
+          <td>(</td>
+          <td class="paramtype">in nsIArray&nbsp;</td>
+          <td class="paramname"> <em>aMediaItems</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">in <a class="el" href="interfacesb_i_album_art_listener.html">sbIAlbumArtListener</a>&nbsp;</td>
+          <td class="paramname"> <em>aListener</em></td><td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td><td width="100%"></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>
+Try to fetch album art for a list of items that belong to the same album. This function infers that all items in the list are from the same album. 
+<p>
+<dl compact><dt><b>Parameters:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td valign="top"></td><td valign="top"><em>aMediaItems</em>&nbsp;</td><td>is an array of sbIMediaItems from the same album </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>aListener</em>&nbsp;</td><td>the listener to inform of success or failure</td></tr>
+  </table>
+</dl>
+<dl class="note" compact><dt><b>Note:</b></dt><dd>A call to aListener will be done for each item in the list. </dd></dl>
+
+</div>
+</div><p>
+<hr>The documentation for this interface was generated from the following file:<ul>
 <li>components/albumart/public/<a class="el" href="sb_i_album_art_fetcher_8idl-source.html">sbIAlbumArtFetcher.idl</a></ul>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:26 2008 for Songbird by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:40 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

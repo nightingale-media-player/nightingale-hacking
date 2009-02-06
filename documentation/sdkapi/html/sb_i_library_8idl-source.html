@@ -113,7 +113,7 @@
 <a name="l00068"></a>00068                   in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aResult);
 <a name="l00069"></a>00069 };
 <a name="l00070"></a>00070 
-<a name="l00081"></a>00081 [scriptable, uuid(a297421b-1986-46ff-8d03-96c310a0125b)]
+<a name="l00081"></a>00081 [scriptable, uuid(9153d1d0-ed79-4bc2-a3a6-259cf13781c4)]
 <a name="l00082"></a><a class="code" href="interfacesb_i_library.html">00082</a> interface <a class="code" href="interfacesb_i_library.html" title="Media library abstraction.">sbILibrary</a> : <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a>
 <a name="l00083"></a>00083 {
 <a name="l00087"></a><a class="code" href="interfacesb_i_library.html#219c7f4ce3a62c36c374df24cb267d61">00087</a>   readonly attribute <a class="code" href="interfacesb_i_device.html">sbIDevice</a> device;
@@ -126,45 +126,47 @@
 <a name="l00103"></a>00103 
 <a name="l00110"></a>00110   nsIChannel resolve(in nsIURI aUri);
 <a name="l00111"></a>00111 
-<a name="l00123"></a>00123   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in nsIURI aContentUri,
-<a name="l00124"></a>00124                                [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties,
-<a name="l00125"></a>00125                                [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
-<a name="l00126"></a>00126   
-<a name="l00133"></a>00133   <span class="keywordtype">boolean</span> createMediaItemIfNotExist(in nsIURI aContentUri,
-<a name="l00134"></a>00134                                     [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties,
-<a name="l00135"></a>00135                                     [optional] out <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aResultItem);
-<a name="l00136"></a>00136 
-<a name="l00145"></a>00145   <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> createMediaList(in AString aType,
-<a name="l00146"></a>00146                                [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties);
-<a name="l00147"></a>00147 
-<a name="l00156"></a>00156   <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> copyMediaList(in AString aType,
-<a name="l00157"></a>00157                              in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aSource);
-<a name="l00158"></a>00158 
-<a name="l00164"></a>00164   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> getMediaItem(in AString aGuid);
-<a name="l00165"></a>00165 
-<a name="l00169"></a><a class="code" href="interfacesb_i_library.html#7554ccb1c5ea11775ce4d38160492041">00169</a>   readonly attribute nsIStringEnumerator mediaListTypes;
-<a name="l00170"></a>00170 
-<a name="l00176"></a>00176   <span class="keywordtype">void</span> registerMediaListFactory(in <a class="code" href="interfacesb_i_media_list_factory.html" title="Factory for new media list instances.">sbIMediaListFactory</a> aFactory);
-<a name="l00177"></a>00177 
-<a name="l00181"></a>00181 <span class="comment">/*</span>
-<a name="l00182"></a>00182 <span class="comment">  AString getPreferedAudioMimeType();</span>
-<a name="l00183"></a>00183 <span class="comment">  AString getPreferedVideoMimeType();</span>
-<a name="l00184"></a>00184 <span class="comment">*/</span>
-<a name="l00185"></a>00185 
-<a name="l00191"></a>00191   <span class="keywordtype">void</span> optimize();
-<a name="l00192"></a>00192 
-<a name="l00196"></a>00196   <span class="keywordtype">void</span> flush();
-<a name="l00197"></a>00197 
-<a name="l00211"></a>00211   nsIArray batchCreateMediaItems(in nsIArray aURIArray,
-<a name="l00212"></a>00212                                  [optional] in nsIArray aPropertyArrayArray,
-<a name="l00213"></a>00213                                  [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
-<a name="l00214"></a>00214 
-<a name="l00227"></a>00227   <span class="keywordtype">void</span> batchCreateMediaItemsAsync(in <a class="code" href="interfacesb_i_batch_create_media_items_listener.html" title="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</a> aListener,
-<a name="l00228"></a>00228                                   in nsIArray aURIArray,
-<a name="l00229"></a>00229                                   [optional] in nsIArray aPropertyArrayArray,
-<a name="l00230"></a>00230                                   [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
-<a name="l00231"></a>00231 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:21 2008 for Songbird by&nbsp;
+<a name="l00125"></a>00125   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> createMediaItem(in nsIURI aContentUri,
+<a name="l00126"></a>00126                                [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties,
+<a name="l00127"></a>00127                                [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
+<a name="l00128"></a>00128   
+<a name="l00135"></a>00135   <span class="keywordtype">boolean</span> createMediaItemIfNotExist(in nsIURI aContentUri,
+<a name="l00136"></a>00136                                     [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties,
+<a name="l00137"></a>00137                                     [optional] out <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aResultItem);
+<a name="l00138"></a>00138 
+<a name="l00147"></a>00147   <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> createMediaList(in AString aType,
+<a name="l00148"></a>00148                                [optional] in <a class="code" href="interfacesb_i_property_array.html" title="An interface to carry around arrays of nsIProperty instances. Users of this interface...">sbIPropertyArray</a> aProperties);
+<a name="l00149"></a>00149 
+<a name="l00158"></a>00158   <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> copyMediaList(in AString aType,
+<a name="l00159"></a>00159                              in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aSource);
+<a name="l00160"></a>00160 
+<a name="l00166"></a>00166   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> getMediaItem(in AString aGuid);
+<a name="l00167"></a>00167 
+<a name="l00175"></a>00175   <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> getDuplicate(in <a class="code" href="interfacesb_i_media_item.html" title="Interface that defines a single item of media in the system.">sbIMediaItem</a> aMediaItem);
+<a name="l00176"></a>00176 
+<a name="l00180"></a><a class="code" href="interfacesb_i_library.html#7554ccb1c5ea11775ce4d38160492041">00180</a>   readonly attribute nsIStringEnumerator mediaListTypes;
+<a name="l00181"></a>00181 
+<a name="l00187"></a>00187   <span class="keywordtype">void</span> registerMediaListFactory(in <a class="code" href="interfacesb_i_media_list_factory.html" title="Factory for new media list instances.">sbIMediaListFactory</a> aFactory);
+<a name="l00188"></a>00188 
+<a name="l00192"></a>00192 <span class="comment">/*</span>
+<a name="l00193"></a>00193 <span class="comment">  AString getPreferedAudioMimeType();</span>
+<a name="l00194"></a>00194 <span class="comment">  AString getPreferedVideoMimeType();</span>
+<a name="l00195"></a>00195 <span class="comment">*/</span>
+<a name="l00196"></a>00196 
+<a name="l00202"></a>00202   <span class="keywordtype">void</span> optimize();
+<a name="l00203"></a>00203 
+<a name="l00207"></a>00207   <span class="keywordtype">void</span> flush();
+<a name="l00208"></a>00208 
+<a name="l00222"></a>00222   nsIArray batchCreateMediaItems(in nsIArray aURIArray,
+<a name="l00223"></a>00223                                  [optional] in nsIArray aPropertyArrayArray,
+<a name="l00224"></a>00224                                  [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
+<a name="l00225"></a>00225 
+<a name="l00238"></a>00238   <span class="keywordtype">void</span> batchCreateMediaItemsAsync(in <a class="code" href="interfacesb_i_batch_create_media_items_listener.html" title="Callback for batch media create items.">sbIBatchCreateMediaItemsListener</a> aListener,
+<a name="l00239"></a>00239                                   in nsIArray aURIArray,
+<a name="l00240"></a>00240                                   [optional] in nsIArray aPropertyArrayArray,
+<a name="l00241"></a>00241                                   [optional] in <span class="keywordtype">boolean</span> aAllowDuplicates);
+<a name="l00242"></a>00242 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

@@ -97,10 +97,10 @@
 <a name="l00034"></a>00034 
 <a name="l00035"></a>00035 interface <a class="code" href="interfacesb_i_local_database_library.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</a>;
 <a name="l00036"></a>00036 
-<a name="l00037"></a>00037 [scriptable, uuid(0b42f045-604e-4f7f-8db4-5bcdec0af4e7)]
+<a name="l00037"></a>00037 [scriptable, uuid(a8a30690-e9bd-11dd-ba2f-0800200c9a66)]
 <a name="l00038"></a><a class="code" href="interfacesb_i_local_database_migration_helper.html">00038</a> interface <a class="code" href="interfacesb_i_local_database_migration_helper.html">sbILocalDatabaseMigrationHelper</a> : nsISupports
 <a name="l00039"></a>00039 {
-<a name="l00043"></a><a class="code" href="interfacesb_i_local_database_migration_helper.html#7138f38de856fe13a7275d03b9658d5f">00043</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> latestSchemaVersion;
+<a name="l00043"></a>00043   <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> getLatestSchemaVersion();
 <a name="l00044"></a>00044 
 <a name="l00049"></a>00049   <span class="keywordtype">boolean</span> canMigrate(in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aFromVersion, 
 <a name="l00050"></a>00050                      in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToVersion);
@@ -109,7 +109,7 @@
 <a name="l00056"></a>00056                in <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> aToVersion, 
 <a name="l00057"></a>00057                in <a class="code" href="interfacesb_i_local_database_library.html" title="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbILocalDatabaseLibrary</a> aLibrary);
 <a name="l00058"></a>00058 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:22 2008 for Songbird by&nbsp;
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

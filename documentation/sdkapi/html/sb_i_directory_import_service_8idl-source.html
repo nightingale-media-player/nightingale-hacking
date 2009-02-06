@@ -100,7 +100,7 @@
 <a name="l00032"></a>00032 interface nsISimpleEnumerator;
 <a name="l00033"></a>00033 interface <a class="code" href="interfacesb_i_job_progress.html" title="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</a>;
 <a name="l00034"></a>00034 
-<a name="l00042"></a>00042 [scriptable, uuid(ca3d4300-4c75-11dd-ae16-0800200c9a66)]
+<a name="l00042"></a>00042 [scriptable, uuid(6b029f20-cadd-11dd-ad8b-0800200c9a66)]
 <a name="l00043"></a><a class="code" href="interfacesb_i_directory_import_job.html">00043</a> interface <a class="code" href="interfacesb_i_directory_import_job.html" title="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</a> : nsISupports
 <a name="l00044"></a>00044 {
 <a name="l00050"></a><a class="code" href="interfacesb_i_directory_import_job.html#24d3dac3243f040987693f124a935f50">00050</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> totalAddedToMediaList;
@@ -109,27 +109,25 @@
 <a name="l00056"></a>00056 
 <a name="l00060"></a><a class="code" href="interfacesb_i_directory_import_job.html#2c0cbb951b0434c07aa11e311627284f">00060</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> totalDuplicates;
 <a name="l00061"></a>00061 
-<a name="l00066"></a>00066   nsISimpleEnumerator enumerateNewItemsOnly();
+<a name="l00066"></a>00066   nsISimpleEnumerator enumerateAllItems();
 <a name="l00067"></a>00067 
-<a name="l00072"></a>00072   nsISimpleEnumerator enumerateAllItems();
-<a name="l00073"></a>00073 
-<a name="l00077"></a><a class="code" href="interfacesb_i_directory_import_job.html#a344ab7c03dacf39e04b3a2c87530b83">00077</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> targetMediaList;
+<a name="l00071"></a><a class="code" href="interfacesb_i_directory_import_job.html#a344ab7c03dacf39e04b3a2c87530b83">00071</a>   readonly attribute <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> targetMediaList;
+<a name="l00072"></a>00072 
+<a name="l00076"></a><a class="code" href="interfacesb_i_directory_import_job.html#8e0338ccb56be9461ef9665e305bfa02">00076</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> targetIndex;
+<a name="l00077"></a>00077 };
 <a name="l00078"></a>00078 
-<a name="l00082"></a><a class="code" href="interfacesb_i_directory_import_job.html#8e0338ccb56be9461ef9665e305bfa02">00082</a>   readonly attribute <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> targetIndex;
-<a name="l00083"></a>00083 };
-<a name="l00084"></a>00084 
-<a name="l00085"></a>00085 
-<a name="l00091"></a>00091 [scriptable, uuid(13ab5520-449e-11dd-ae16-0800200c9a66)]
-<a name="l00092"></a><a class="code" href="interfacesb_i_directory_import_service.html">00092</a> interface <a class="code" href="interfacesb_i_directory_import_service.html" title="Handles finding media files in directories and adding them to a library or list.">sbIDirectoryImportService</a> : nsISupports
-<a name="l00093"></a>00093 {
-<a name="l00094"></a>00094 
-<a name="l00105"></a>00105   <a class="code" href="interfacesb_i_directory_import_job.html" title="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</a> <span class="keyword">import</span>(in nsIArray aDirectories,
-<a name="l00106"></a>00106                                [optional] in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aTargetMediaList,
-<a name="l00107"></a><a class="code" href="interfacesb_i_directory_import_service.html#8f8fa3aa3bedee13900754c4cdce49fa">00107</a>                                [optional] in PRInt32 aTargetIndex);
-<a name="l00108"></a>00108 };
-<a name="l00109"></a>00109 
-<a name="l00110"></a>00110 
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:23 2008 for Songbird by&nbsp;
+<a name="l00079"></a>00079 
+<a name="l00085"></a>00085 [scriptable, uuid(13ab5520-449e-11dd-ae16-0800200c9a66)]
+<a name="l00086"></a><a class="code" href="interfacesb_i_directory_import_service.html">00086</a> interface <a class="code" href="interfacesb_i_directory_import_service.html" title="Handles finding media files in directories and adding them to a library or list.">sbIDirectoryImportService</a> : nsISupports
+<a name="l00087"></a>00087 {
+<a name="l00088"></a>00088 
+<a name="l00099"></a>00099   <a class="code" href="interfacesb_i_directory_import_job.html" title="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</a> <span class="keyword">import</span>(in nsIArray aDirectories,
+<a name="l00100"></a>00100                                [optional] in <a class="code" href="interfacesb_i_media_list.html" title="A brief description of the contents of this interface.">sbIMediaList</a> aTargetMediaList,
+<a name="l00101"></a><a class="code" href="interfacesb_i_directory_import_service.html#8f8fa3aa3bedee13900754c4cdce49fa">00101</a>                                [optional] in PRInt32 aTargetIndex);
+<a name="l00102"></a>00102 };
+<a name="l00103"></a>00103 
+<a name="l00104"></a>00104 
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>

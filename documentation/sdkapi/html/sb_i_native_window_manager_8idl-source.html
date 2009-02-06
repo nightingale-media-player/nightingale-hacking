@@ -135,10 +135,16 @@
 <a name="l00081"></a>00081   <span class="comment">/* \brief asks the window manager to keep @aWindow above all other windows */</span>
 <a name="l00082"></a>00082   <span class="keywordtype">void</span> setOnTop(in nsISupports aWindow, in <span class="keywordtype">boolean</span> aOnTop);
 <a name="l00083"></a>00083 
-<a name="l00084"></a>00084   <span class="comment">/* \brief is setOnTop() supported by this implementation? */</span>
-<a name="l00085"></a><a class="code" href="interfacesb_i_native_window_manager.html#892988330b4849e9b8ecfb51f2680818">00085</a>   readonly attribute <span class="keywordtype">boolean</span> supportsOnTop;
-<a name="l00086"></a>00086 };
-</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Nov 7 11:23:21 2008 for Songbird by&nbsp;
+<a name="l00084"></a>00084   <span class="comment">/* \brief asks the window manager to enable shadowing on the window */</span>
+<a name="l00085"></a>00085   <span class="keywordtype">void</span> setShadowing(in nsISupports aWindow, in <span class="keywordtype">boolean</span> aShadowing);
+<a name="l00086"></a>00086 
+<a name="l00087"></a>00087   <span class="comment">/* \brief is setOnTop() supported by this implementation? */</span>
+<a name="l00088"></a><a class="code" href="interfacesb_i_native_window_manager.html#892988330b4849e9b8ecfb51f2680818">00088</a>   readonly attribute <span class="keywordtype">boolean</span> supportsOnTop;
+<a name="l00089"></a>00089 
+<a name="l00090"></a>00090   <span class="comment">/* \brief is setShadowing() supported by this implementation? */</span>
+<a name="l00091"></a><a class="code" href="interfacesb_i_native_window_manager.html#1f78e28fdd9bac00a2edec5ef31be173">00091</a>   readonly attribute <span class="keywordtype">boolean</span> supportsShadowing;
+<a name="l00092"></a>00092 };
+</pre></div><hr size="1"><address style="text-align: right;"><small>Generated on Fri Feb 6 15:18:39 2009 for Songbird by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.2 </small></address>
 </body>
