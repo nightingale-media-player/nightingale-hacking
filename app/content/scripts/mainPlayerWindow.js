@@ -308,8 +308,7 @@ var gSongbirdPlayerWindow = {
         this._onUnloadCallback, false);
 
     this._onPlayCallback = function(e) { gSongbirdPlayerWindow.onPlay(e); };    
-    window.addEventListener("Play", 
-        this._onPlayCallback, true);
+    window.addEventListener("Play", this._onPlayCallback, false);
 
     window.addEventListener("keypress", this.onMainWindowKeyPress, false);
     
@@ -349,7 +348,7 @@ var gSongbirdPlayerWindow = {
     window.removeEventListener("unload", this._onUnloadCallback, false);
     this._onUnloadCallback = null;
    
-    window.removeEventListener("Play",  this._onPlayCallback, true);
+    window.removeEventListener("Play",  this._onPlayCallback, false);
     this._onPlayCallback = null;
 
     window.removeEventListener("keypress", this.onMainWindowKeyPress, false);
