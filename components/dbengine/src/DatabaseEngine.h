@@ -147,8 +147,8 @@ private:
   nsresult GetCurrentCollationLocale(nsCString &aCollationLocale);
   PRInt32 CollateWithLeadingNumbers_UTF8(const char *aStr1, 
                                          const char *aStr2,
-                                         nsCString &strippedA,
-                                         nsCString &strippedB);
+                                         nsCString *strippedA = NULL,
+                                         nsCString *strippedB = NULL);
   PRInt32 CollateForCurrentLocale_UTF8(const char *aStr1, const char *aStr2);
 
 private:

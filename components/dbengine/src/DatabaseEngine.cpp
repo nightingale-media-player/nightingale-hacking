@@ -291,7 +291,7 @@ PRInt32 getCharType(const char *p) {
 void extractLeadingNumber(const char *str,
                           PRBool *hasLeadingNumber,
                           PRFloat64 *leadingNumber,
-                          nsCString &strippedString) {
+                          nsCString *strippedString) {
 
   // it would be nice to be able to do all of this with just sscanf, but 
   // unfortunately that function does not tell us where the parsed number ended,
@@ -397,7 +397,8 @@ void extractLeadingNumber(const char *str,
   
   // p now points at the first character that isn't part of a valid number.
   // copy the string, without the number.
-  strippedString = p;
+  if (strippedString) 
+    *strippedString = p;
   
   if (p == str) {
     // no number found
@@ -419,7 +420,8 @@ void extractLeadingNumber(const char *str,
       // number... handle it anyway.
       *hasLeadingNumber = PR_FALSE;
       *leadingNumber = 0;
-      strippedString = str;
+      if (strippedString)
+        *strippedString = str;
       LOG(("Failed to PR_sscanf a number in string '%s', this should not happen", str));
     } else {
       *hasLeadingNumber = PR_TRUE;
@@ -2199,8 +2201,8 @@ PRInt32 CDatabaseEngine::CollateForCurrentLocale_UTF8(const char *aStr1,
 
 PRInt32 CDatabaseEngine::CollateWithLeadingNumbers_UTF8(const char *aStr1, 
                                                         const char *aStr2,
-                                                        nsCString &strippedA,
-                                                        nsCString &strippedB) {
+                                                        nsCString *strippedA,
+                                                        nsCString *strippedB) {
   PRBool hasLeadingNumberA = PR_FALSE;
   PRBool hasLeadingNumberB = PR_FALSE;
   
@@ -2291,8 +2293,8 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
       PRInt32 leadingNumbersCollate = 
         CollateWithLeadingNumbers_UTF8(remainderA.get(),
                                        remainderB.get(),
-                                       strippedA,
-                                       strippedB);
+                                       &strippedA,
+                                       &strippedB);
       
       // if the numbers were not equivalent, return the result of the number
       // collation
@@ -2321,9 +2323,7 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
   // strings without leading numbers
   
   return CollateWithLeadingNumbers_UTF8(remainderA.get(),
-                                        remainderB.get(),
-                                        nsCString(),
-                                        nsCString());
+                                        remainderB.get());
 }
 
 nsresult
