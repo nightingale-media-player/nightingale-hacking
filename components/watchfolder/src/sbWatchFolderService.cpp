@@ -35,6 +35,8 @@
 #include <sbIJobProgressService.h>
 #include <sbILibraryManager.h>
 #include <sbIPropertyArray.h>
+#include <sbStringBundle.h>
+#include <sbIDirectoryImportService.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
@@ -42,13 +44,15 @@
 #include <nsIPrefBranch2.h>
 #include <nsIObserverService.h>
 #include <nsIURI.h>
+#include <nsIPromptService.h>
+#include <nsTArray.h>
 
 #define PREF_WATCHFOLDER_ROOT        "songbird.watch_folder."
 #define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
 #define PREF_WATCHFOLDER_PATH        "songbird.watch_folder.path"
 #define PREF_WATCHFOLDER_SESSIONGUID "songbird.watch_folder.sessionguid"
 
-#define STARTUP_TIMER_DELAY      2000
+#define STARTUP_TIMER_DELAY      3000
 #define FLUSH_FS_WATCHER_DELAY   1000
 #define ADD_DELAY_TIMER_DELAY    1500
 #define CHANGE_DELAY_TIMER_DELAY 30000
@@ -558,11 +562,78 @@ sbWatchFolderService::OnSessionLoadError()
   rv = mFileSystemWatcher->StartWatching();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //
-  // TODO: Inform the user that the session could not be loaded and that their
-  //       watch directory should be rescanned.
-  // SEE: bug 15089.
-  //
+  nsCOMPtr<nsIPromptService> promptService =
+    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 buttons =
+    nsIPromptService::STD_YES_NO_BUTTONS +
+    nsIPromptService::BUTTON_POS_1_DEFAULT;
+
+  sbStringBundle bundle;
+  nsString dialogTitle = 
+    bundle.Get("watch_folder.session_load_error.rescan_title");
+
+  nsTArray<nsString> params;
+  params.AppendElement(mWatchPath);
+  nsString dialogText = 
+    bundle.Format("watch_folder.session_load_error.rescan_text", params);
+
+  nsCOMPtr<nsIDOMWindow> songbirdWindow;
+  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 promptResult;
+  rv = promptService->ConfirmEx(songbirdWindow,
+                                dialogTitle.BeginReading(),
+                                dialogText.BeginReading(),
+                                buttons,
+                                nsnull,
+                                nsnull,
+                                nsnull,
+                                nsnull,
+                                nsnull,
+                                &promptResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (promptResult == 0) {
+    // The user elected to rescan their watched directory. Setup the directory
+    // scan service.
+    nsCOMPtr<sbIDirectoryImportService> dirImportService =
+      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // The directory import service wants the paths as an array.
+    nsCOMPtr<nsILocalFile> watchPathFile = 
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = watchPathFile->InitWithPath(mWatchPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIMutableArray> dirArray = 
+      do_CreateInstance("@mozilla.org/array;1", &rv);
+
+    rv = dirArray->AppendElement(watchPathFile, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDirectoryImportJob> importJob;
+    rv = dirImportService->Import(dirArray,
+                                  nsnull,  // defaults to main library
+                                  -1,
+                                  getter_AddRefs(importJob));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIJobProgressService> progressService =
+      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+    if (NS_SUCCEEDED(rv) && progressService) {
+      nsCOMPtr<sbIJobProgress> job = do_QueryInterface(importJob, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = progressService->ShowProgressDialog(job, nsnull, 1);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   return NS_OK;
 }
