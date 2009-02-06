@@ -4,13 +4,13 @@
     <compoundname>sbIRemotePlayerFactory.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="640">
+      <node id="663">
         <label>components/remoteapi/public/sbIRemotePlayerFactory.idl</label>
         <link refid="sbIRemotePlayerFactory.idl"/>
-        <childnode refid="641" relation="include">
+        <childnode refid="664" relation="include">
         </childnode>
       </node>
-      <node id="641">
+      <node id="664">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

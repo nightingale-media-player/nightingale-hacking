@@ -5,22 +5,22 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_library_resource_8idl" local="yes">sbILibraryResource.idl</includes>
     <incdepgraph>
-      <node id="373">
-        <label>sbILibraryResource.idl</label>
-        <link refid="sb_i_library_resource_8idl"/>
-        <childnode refid="372" relation="include">
-        </childnode>
-      </node>
-      <node id="371">
+      <node id="396">
         <label>components/library/localdatabase/public/sbILocalDatabaseResourceProperty.idl</label>
         <link refid="sbILocalDatabaseResourceProperty.idl"/>
-        <childnode refid="372" relation="include">
+        <childnode refid="397" relation="include">
         </childnode>
-        <childnode refid="373" relation="include">
+        <childnode refid="398" relation="include">
         </childnode>
       </node>
-      <node id="372">
+      <node id="397">
         <label>nsISupports.idl</label>
+      </node>
+      <node id="398">
+        <label>sbILibraryResource.idl</label>
+        <link refid="sb_i_library_resource_8idl"/>
+        <childnode refid="397" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_local_database_resource_property" prot="public">sbILocalDatabaseResourceProperty</innerclass>

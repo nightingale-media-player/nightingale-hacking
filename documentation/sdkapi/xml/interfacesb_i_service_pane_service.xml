@@ -391,17 +391,17 @@
     <detaileddescription>
 <para>This allows clients of the the service pane service to interact with it through a JavaScript object interface while it&apos;s internally RDF.</para>    </detaileddescription>
     <collaborationgraph>
-      <node id="1042">
+      <node id="1044">
         <label>sbIServicePaneService</label>
         <link refid="interfacesb_i_service_pane_service"/>
-        <childnode refid="1043" relation="usage">
+        <childnode refid="1045" relation="usage">
           <edgelabel>root</edgelabel>
         </childnode>
       </node>
-      <node id="1043">
+      <node id="1045">
         <label>sbIServicePaneNode</label>
         <link refid="interfacesb_i_service_pane_node"/>
-        <childnode refid="1043" relation="usage">
+        <childnode refid="1045" relation="usage">
           <edgelabel>previousSibling
 parentNode
 firstChild

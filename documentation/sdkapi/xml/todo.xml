@@ -17,26 +17,6 @@
 <listitem><para>The tooltip functionality is disabled because mozilla will crash if you delete an element currently displaying a tooltip. </para></listitem>
 </variablelist>
 </para><para><anchor id="todo_1_todo000004"/> <variablelist>
-<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_1d21cb95118038ef1c3f51be7d6fbf6e4" kindref="member">sbIPlaylistPlayback::getMetadataFields</ref> (out PRUint32 aFieldCount,[array, size_is(aFieldCount), retval] out wstring aMetaFields) </term></varlistentry>
-<listitem><para>- implement getMetadataFields, currently sets out params to 0 and &quot;&quot;</para><para></para></listitem>
-</variablelist>
-</para><para><anchor id="todo_1_todo000005"/> <variablelist>
-<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_10876200cb49aa473e345cddf07ca3d24" kindref="member">sbIPlaylistPlayback::getCurrentValue</ref> (in AString aField) </term></varlistentry>
-<listitem><para>- implement getCurrentValue - currently returns &quot;&quot;</para><para></para></listitem>
-</variablelist>
-</para><para><anchor id="todo_1_todo000006"/> <variablelist>
-<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_1fe49d1a9aeafe4a6c697ed4e395a8eb0" kindref="member">sbIPlaylistPlayback::setCurrentValue</ref> (in AString aField, in AString aValue) </term></varlistentry>
-<listitem><para>- implement setCurrentValue - current does nothing.</para><para></para></listitem>
-</variablelist>
-</para><para><anchor id="todo_1_todo000007"/> <variablelist>
-<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_152034b678ca53a540bea83645997fea2" kindref="member">sbIPlaylistPlayback::getCurrentValues</ref> (in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, out PRUint32 aValueCount,[array, size_is(aValueCount), retval] out wstring aMetaValues) </term></varlistentry>
-<listitem><para>implement getCurrentValues - currently sets out paramst to 0 and &quot;&quot;</para><para></para></listitem>
-</variablelist>
-</para><para><anchor id="todo_1_todo000008"/> <variablelist>
-<varlistentry><term>Member <ref refid="interfacesb_i_playlist_playback_1c54bd378b48598fe690ced4a7c44626f" kindref="member">sbIPlaylistPlayback::setCurrentValues</ref> (in PRUint32 aFieldCount,[array, size_is(aFieldCount)] in wstring aMetaFields, in PRUint32 aValueCount,[array, size_is(aValueCount)] in wstring aMetaValues) </term></varlistentry>
-<listitem><para>implement setCurrentValues - currently does nothing.</para><para></para></listitem>
-</variablelist>
-</para><para><anchor id="todo_1_todo000009"/> <variablelist>
 <varlistentry><term>Class <ref refid="interfacesb_i_remote_media_list" kindref="compound">sbIRemoteMediaList</ref>  </term></varlistentry>
 <listitem><para>Write this documentation</para><para></para></listitem>
 </variablelist>

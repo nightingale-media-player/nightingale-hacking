@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_album_art_fetcher_8idl" local="yes">sbIAlbumArtFetcher.idl</includes>
     <incdepgraph>
+      <node id="18">
+        <label>sbIAlbumArtFetcher.idl</label>
+        <link refid="sb_i_album_art_fetcher_8idl-source"/>
+        <childnode refid="17" relation="include">
+        </childnode>
+      </node>
       <node id="16">
         <label>components/albumart/public/sbIAlbumArtFetcherSet.idl</label>
         <link refid="sbIAlbumArtFetcherSet.idl"/>
         <childnode refid="17" relation="include">
         </childnode>
         <childnode refid="18" relation="include">
-        </childnode>
-      </node>
-      <node id="18">
-        <label>sbIAlbumArtFetcher.idl</label>
-        <link refid="sb_i_album_art_fetcher_8idl-source"/>
-        <childnode refid="17" relation="include">
         </childnode>
       </node>
       <node id="17">

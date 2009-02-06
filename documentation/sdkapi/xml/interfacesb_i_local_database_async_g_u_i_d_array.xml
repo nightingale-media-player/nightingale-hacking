@@ -122,47 +122,47 @@
     <detaileddescription>
 <para>An asynchronous wrapper around an existing GUID array. </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="421">
+      <node id="439">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
       </node>
-      <node id="420">
+      <node id="438">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="421" relation="public-inheritance">
+        <childnode refid="439" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="423">
+      <node id="441">
         <label>sbILocalDatabaseGUIDArray</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array"/>
-        <childnode refid="424" relation="usage">
+        <childnode refid="442" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
-        <childnode refid="425" relation="usage">
+        <childnode refid="443" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
-        <childnode refid="426" relation="usage">
+        <childnode refid="444" relation="usage">
           <edgelabel>currentSort</edgelabel>
         </childnode>
       </node>
-      <node id="426">
+      <node id="444">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="425">
+      <node id="443">
         <label>sbILocalDatabaseGUIDArrayListener</label>
         <link refid="interfacesb_i_local_database_g_u_i_d_array_listener"/>
       </node>
-      <node id="424">
+      <node id="442">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="422">
+      <node id="440">
         <label>sbILocalDatabaseAsyncGUIDArray</label>
         <link refid="interfacesb_i_local_database_async_g_u_i_d_array"/>
-        <childnode refid="423" relation="public-inheritance">
+        <childnode refid="441" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

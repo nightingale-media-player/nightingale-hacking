@@ -62,18 +62,6 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1037">
-        <label>sbIServicePaneNodeInternal</label>
-        <link refid="interfacesb_i_service_pane_node_internal"/>
-        <childnode refid="1038" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="1038">
-        <label>sbIServicePaneNode</label>
-        <link refid="interfacesb_i_service_pane_node"/>
-      </node>
-    </inheritancegraph>
-    <collaborationgraph>
       <node id="1039">
         <label>sbIServicePaneNodeInternal</label>
         <link refid="interfacesb_i_service_pane_node_internal"/>
@@ -83,7 +71,19 @@
       <node id="1040">
         <label>sbIServicePaneNode</label>
         <link refid="interfacesb_i_service_pane_node"/>
-        <childnode refid="1040" relation="usage">
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1041">
+        <label>sbIServicePaneNodeInternal</label>
+        <link refid="interfacesb_i_service_pane_node_internal"/>
+        <childnode refid="1042" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1042">
+        <label>sbIServicePaneNode</label>
+        <link refid="interfacesb_i_service_pane_node"/>
+        <childnode refid="1042" relation="usage">
           <edgelabel>previousSibling
 parentNode
 firstChild

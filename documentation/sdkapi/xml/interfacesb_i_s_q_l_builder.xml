@@ -618,38 +618,38 @@
     <detaileddescription>
 <para>Components implementing this interface are used to build SQL string. The interface is inspired by Squiggle: <ulink url="http://joe.truemesh.com/squiggle/javadoc/index.html">http://joe.truemesh.com/squiggle/javadoc/index.html</ulink> </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="1059">
+      <node id="1061">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="1057" relation="public-inheritance">
+        <childnode refid="1059" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1064">
+        <label>sbISQLUpdateBuilder</label>
+        <link refid="interfacesb_i_s_q_l_update_builder"/>
+        <childnode refid="1061" relation="public-inheritance">
         </childnode>
       </node>
       <node id="1062">
-        <label>sbISQLUpdateBuilder</label>
-        <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="1059" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="1060">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="1059" relation="public-inheritance">
+        <childnode refid="1061" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1057">
+      <node id="1059">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="1061">
+      <node id="1063">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="1059" relation="public-inheritance">
+        <childnode refid="1061" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1058">
+      <node id="1060">
         <label>sbISQLInsertBuilder</label>
         <link refid="interfacesb_i_s_q_l_insert_builder"/>
-        <childnode refid="1057" relation="public-inheritance">
+        <childnode refid="1059" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>

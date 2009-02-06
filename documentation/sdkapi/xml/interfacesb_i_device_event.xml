@@ -693,14 +693,14 @@
 <para><simplesect kind="note"><para>Implementations of this interface must be threadsafe. </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="135">
+      <node id="138">
         <label>sbIDeviceEvent</label>
         <link refid="interfacesb_i_device_event"/>
-        <childnode refid="136" relation="usage">
+        <childnode refid="139" relation="usage">
           <edgelabel>target</edgelabel>
         </childnode>
       </node>
-      <node id="136">
+      <node id="139">
         <label>sbIDeviceEventTarget</label>
         <link refid="interfacesb_i_device_event_target"/>
       </node>

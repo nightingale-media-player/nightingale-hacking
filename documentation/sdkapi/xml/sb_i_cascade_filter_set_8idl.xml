@@ -4,13 +4,13 @@
     <compoundname>sbICascadeFilterSet.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="231">
+      <node id="253">
         <label>components/library/base/public/sbICascadeFilterSet.idl</label>
         <link refid="sbICascadeFilterSet.idl"/>
-        <childnode refid="232" relation="include">
+        <childnode refid="254" relation="include">
         </childnode>
       </node>
-      <node id="232">
+      <node id="254">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

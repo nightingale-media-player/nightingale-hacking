@@ -4,14 +4,14 @@
     <compoundname>sbIDatabaseQuery.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="61">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="60">
+      <node id="69">
         <label>components/dbengine/public/sbIDatabaseQuery.idl</label>
         <link refid="sbIDatabaseQuery.idl"/>
-        <childnode refid="61" relation="include">
+        <childnode refid="70" relation="include">
         </childnode>
+      </node>
+      <node id="70">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_database_simple_query_callback" prot="public">sbIDatabaseSimpleQueryCallback</innerclass>

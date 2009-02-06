@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVotingChain.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="458">
+      <node id="483">
         <label>components/mediacore/base/public/sbIMediacoreVotingChain.idl</label>
         <link refid="sbIMediacoreVotingChain.idl"/>
-        <childnode refid="459" relation="include">
+        <childnode refid="484" relation="include">
         </childnode>
       </node>
-      <node id="459">
+      <node id="484">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

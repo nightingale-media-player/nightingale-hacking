@@ -213,14 +213,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="441">
+      <node id="459">
         <label>sbILocalDatabasePropertyCache</label>
         <link refid="interfacesb_i_local_database_property_cache"/>
       </node>
-      <node id="440">
+      <node id="458">
         <label>sbILocalDatabaseLibrary</label>
         <link refid="interfacesb_i_local_database_library"/>
-        <childnode refid="441" relation="usage">
+        <childnode refid="459" relation="usage">
           <edgelabel>propertyCache</edgelabel>
         </childnode>
       </node>

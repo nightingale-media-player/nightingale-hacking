@@ -4,13 +4,13 @@
     <compoundname>sbIBundle.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="26">
+      <node id="29">
         <label>components/bundle/public/sbIBundle.idl</label>
         <link refid="sbIBundle.idl"/>
-        <childnode refid="27" relation="include">
+        <childnode refid="30" relation="include">
         </childnode>
       </node>
-      <node id="27">
+      <node id="30">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

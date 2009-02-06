@@ -4,13 +4,13 @@
     <compoundname>sbIJobProgressService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="228">
+      <node id="246">
         <label>components/job/public/sbIJobProgressService.idl</label>
         <link refid="sbIJobProgressService.idl"/>
-        <childnode refid="229" relation="include">
+        <childnode refid="247" relation="include">
         </childnode>
       </node>
-      <node id="229">
+      <node id="247">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

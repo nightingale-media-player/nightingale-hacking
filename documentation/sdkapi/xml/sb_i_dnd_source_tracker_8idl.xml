@@ -4,13 +4,13 @@
     <compoundname>sbIDndSourceTracker.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="165">
+      <node id="174">
         <label>components/draganddrop/public/sbIDndSourceTracker.idl</label>
         <link refid="sbIDndSourceTracker.idl"/>
-        <childnode refid="166" relation="include">
+        <childnode refid="175" relation="include">
         </childnode>
       </node>
-      <node id="166">
+      <node id="175">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

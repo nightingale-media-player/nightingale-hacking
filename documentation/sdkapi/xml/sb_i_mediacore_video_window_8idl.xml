@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVideoWindow.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="449">
+      <node id="474">
         <label>components/mediacore/base/public/sbIMediacoreVideoWindow.idl</label>
         <link refid="sbIMediacoreVideoWindow.idl"/>
-        <childnode refid="450" relation="include">
+        <childnode refid="475" relation="include">
         </childnode>
       </node>
-      <node id="450">
+      <node id="475">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

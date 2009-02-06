@@ -4,14 +4,14 @@
     <compoundname>sbIRemoteAPIService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="623">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="622">
+      <node id="645">
         <label>components/remoteapi/public/sbIRemoteAPIService.idl</label>
         <link refid="sbIRemoteAPIService.idl"/>
-        <childnode refid="623" relation="include">
+        <childnode refid="646" relation="include">
         </childnode>
+      </node>
+      <node id="646">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_remote_a_p_i_service" prot="public">sbIRemoteAPIService</innerclass>

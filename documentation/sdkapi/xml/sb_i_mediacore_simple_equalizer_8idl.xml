@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreSimpleEqualizer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="437">
+      <node id="462">
         <label>components/mediacore/base/public/sbIMediacoreSimpleEqualizer.idl</label>
         <link refid="sbIMediacoreSimpleEqualizer.idl"/>
-        <childnode refid="438" relation="include">
+        <childnode refid="463" relation="include">
         </childnode>
       </node>
-      <node id="438">
+      <node id="463">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

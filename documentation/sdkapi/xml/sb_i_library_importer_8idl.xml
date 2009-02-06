@@ -4,14 +4,14 @@
     <compoundname>sbILibraryImporter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="526">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="525">
+      <node id="550">
         <label>components/mediaimport/library/base/public/sbILibraryImporter.idl</label>
         <link refid="sbILibraryImporter.idl"/>
-        <childnode refid="526" relation="include">
+        <childnode refid="551" relation="include">
         </childnode>
+      </node>
+      <node id="551">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_library_importer_listener" prot="public">sbILibraryImporterListener</innerclass>

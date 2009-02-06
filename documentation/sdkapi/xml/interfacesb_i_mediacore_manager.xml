@@ -189,193 +189,193 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="557">
+      <node id="575">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="554" relation="public-inheritance">
+        <childnode refid="572" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="565">
+      <node id="583">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="557" relation="usage">
+        <childnode refid="575" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="566" relation="usage">
+        <childnode refid="584" relation="usage">
           <edgelabel>selection</edgelabel>
         </childnode>
-        <childnode refid="567" relation="usage">
+        <childnode refid="585" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="552">
+      <node id="570">
         <label>sbIMediacoreCapabilities</label>
         <link refid="interfacesb_i_mediacore_capabilities"/>
       </node>
-      <node id="568">
+      <node id="586">
         <label>sbIMediacoreBalanceControl</label>
         <link refid="interfacesb_i_mediacore_balance_control"/>
       </node>
-      <node id="566">
+      <node id="584">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="554" relation="usage">
+        <childnode refid="572" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="561">
+      <node id="579">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="554" relation="usage">
+        <childnode refid="572" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="557" relation="usage">
+        <childnode refid="575" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="562">
+      <node id="580">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="553">
+      <node id="571">
         <label>sbIMediacoreSequencer</label>
         <link refid="interfacesb_i_mediacore_sequencer"/>
-        <childnode refid="554" relation="usage">
+        <childnode refid="572" relation="usage">
           <edgelabel>nextItem
 currentItem</edgelabel>
         </childnode>
-        <childnode refid="564" relation="usage">
+        <childnode refid="582" relation="usage">
           <edgelabel>customGenerator</edgelabel>
         </childnode>
-        <childnode refid="565" relation="usage">
+        <childnode refid="583" relation="usage">
           <edgelabel>view</edgelabel>
         </childnode>
       </node>
-      <node id="558">
+      <node id="576">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="559" relation="usage">
+        <childnode refid="577" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="561" relation="usage">
+        <childnode refid="579" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="562" relation="usage">
+        <childnode refid="580" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="563" relation="usage">
+        <childnode refid="581" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="550">
+      <node id="568">
         <label>sbIMediacore</label>
         <link refid="interfacesb_i_mediacore"/>
-        <childnode refid="551" relation="usage">
+        <childnode refid="569" relation="usage">
           <edgelabel>status</edgelabel>
         </childnode>
-        <childnode refid="552" relation="usage">
+        <childnode refid="570" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="553" relation="usage">
+        <childnode refid="571" relation="usage">
           <edgelabel>sequencer</edgelabel>
         </childnode>
       </node>
-      <node id="548">
+      <node id="566">
         <label>sbIMediacoreSimpleEqualizer</label>
         <link refid="interfacesb_i_mediacore_simple_equalizer"/>
       </node>
-      <node id="556">
+      <node id="574">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="557" relation="public-inheritance">
+        <childnode refid="575" relation="public-inheritance">
         </childnode>
-        <childnode refid="558" relation="usage">
+        <childnode refid="576" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="560" relation="usage">
+        <childnode refid="578" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="567">
+      <node id="585">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="547">
+      <node id="565">
         <label>sbIMediacorePlaybackControl</label>
         <link refid="interfacesb_i_mediacore_playback_control"/>
       </node>
-      <node id="545">
+      <node id="563">
         <label>sbIMediacoreManager</label>
         <link refid="interfacesb_i_mediacore_manager"/>
-        <childnode refid="546" relation="usage">
+        <childnode refid="564" relation="usage">
           <edgelabel>video</edgelabel>
         </childnode>
-        <childnode refid="547" relation="usage">
+        <childnode refid="565" relation="usage">
           <edgelabel>playbackControl</edgelabel>
         </childnode>
-        <childnode refid="548" relation="usage">
+        <childnode refid="566" relation="usage">
           <edgelabel>equalizer</edgelabel>
         </childnode>
-        <childnode refid="549" relation="usage">
+        <childnode refid="567" relation="usage">
           <edgelabel>volumeControl</edgelabel>
         </childnode>
-        <childnode refid="550" relation="usage">
+        <childnode refid="568" relation="usage">
           <edgelabel>primaryCore</edgelabel>
         </childnode>
-        <childnode refid="551" relation="usage">
+        <childnode refid="569" relation="usage">
           <edgelabel>status</edgelabel>
         </childnode>
-        <childnode refid="552" relation="usage">
+        <childnode refid="570" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="553" relation="usage">
+        <childnode refid="571" relation="usage">
           <edgelabel>sequencer</edgelabel>
         </childnode>
-        <childnode refid="568" relation="usage">
+        <childnode refid="586" relation="usage">
           <edgelabel>balanceControl</edgelabel>
         </childnode>
       </node>
-      <node id="555">
+      <node id="573">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="554">
+      <node id="572">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="555" relation="public-inheritance">
+        <childnode refid="573" relation="public-inheritance">
         </childnode>
-        <childnode refid="556" relation="usage">
+        <childnode refid="574" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="564">
+      <node id="582">
         <label>sbIMediacoreSequenceGenerator</label>
         <link refid="interfacesb_i_mediacore_sequence_generator"/>
       </node>
-      <node id="559">
+      <node id="577">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="560" relation="usage">
+        <childnode refid="578" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="560">
+      <node id="578">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="551">
+      <node id="569">
         <label>sbIMediacoreStatus</label>
         <link refid="interfacesb_i_mediacore_status"/>
       </node>
-      <node id="546">
+      <node id="564">
         <label>sbIMediacoreVideoWindow</label>
         <link refid="interfacesb_i_mediacore_video_window"/>
       </node>
-      <node id="549">
+      <node id="567">
         <label>sbIMediacoreVolumeControl</label>
         <link refid="interfacesb_i_mediacore_volume_control"/>
       </node>
-      <node id="563">
+      <node id="581">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>

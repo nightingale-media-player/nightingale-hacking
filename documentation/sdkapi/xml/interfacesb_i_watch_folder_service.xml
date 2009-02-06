@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.2">
+  <compounddef id="interfacesb_i_watch_folder_service" kind="interface" prot="public">
+    <compoundname>sbIWatchFolderService</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="interfacesb_i_watch_folder_service_1d89d29b1f806e0d5a90db9f2e6cc8da4" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbIWatchFolderService::isSupported</definition>
+        <argsstring></argsstring>
+        <name>isSupported</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/watchfolder/public/sbIWatchFolderService.idl" line="37" bodyfile="c:/builds/songbird/trunk/components/watchfolder/public/sbIWatchFolderService.idl" bodystart="37" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="c:/builds/songbird/trunk/components/watchfolder/public/sbIWatchFolderService.idl" line="31" bodyfile="c:/builds/songbird/trunk/components/watchfolder/public/sbIWatchFolderService.idl" bodystart="30" bodyend="38"/>
+    <listofallmembers>
+      <member refid="interfacesb_i_watch_folder_service_1d89d29b1f806e0d5a90db9f2e6cc8da4" prot="public" virt="non-virtual"><scope>sbIWatchFolderService</scope><name>isSupported</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

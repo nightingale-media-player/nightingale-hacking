@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreEvent.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="402">
+      <node id="427">
         <label>components/mediacore/base/public/sbIMediacoreEvent.idl</label>
         <link refid="sbIMediacoreEvent.idl"/>
-        <childnode refid="403" relation="include">
+        <childnode refid="428" relation="include">
         </childnode>
       </node>
-      <node id="403">
+      <node id="428">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

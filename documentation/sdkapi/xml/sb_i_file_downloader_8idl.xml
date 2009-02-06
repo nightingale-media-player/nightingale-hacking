@@ -4,13 +4,13 @@
     <compoundname>sbIFileDownloader.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="556">
+      <node id="584">
         <label>components/moz/filedownloader/public/sbIFileDownloader.idl</label>
         <link refid="sbIFileDownloader.idl"/>
-        <childnode refid="557" relation="include">
+        <childnode refid="585" relation="include">
         </childnode>
       </node>
-      <node id="557">
+      <node id="585">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

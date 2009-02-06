@@ -4,13 +4,13 @@
     <compoundname>sbIFileScan.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="522">
+      <node id="547">
         <label>components/mediaimport/filescan/public/sbIFileScan.idl</label>
         <link refid="sbIFileScan.idl"/>
-        <childnode refid="523" relation="include">
+        <childnode refid="548" relation="include">
         </childnode>
       </node>
-      <node id="523">
+      <node id="548">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

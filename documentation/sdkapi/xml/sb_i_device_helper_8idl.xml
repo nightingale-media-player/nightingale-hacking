@@ -4,13 +4,13 @@
     <compoundname>sbIDeviceHelper.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="129">
+      <node id="138">
         <label>components/devices/device/public/sbIDeviceHelper.idl</label>
         <link refid="sbIDeviceHelper.idl"/>
-        <childnode refid="130" relation="include">
+        <childnode refid="139" relation="include">
         </childnode>
       </node>
-      <node id="130">
+      <node id="139">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

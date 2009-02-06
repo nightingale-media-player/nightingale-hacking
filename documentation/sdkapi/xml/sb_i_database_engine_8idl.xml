@@ -4,13 +4,13 @@
     <compoundname>sbIDatabaseEngine.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="54">
+      <node id="63">
         <label>components/dbengine/public/sbIDatabaseEngine.idl</label>
         <link refid="sbIDatabaseEngine.idl"/>
-        <childnode refid="55" relation="include">
+        <childnode refid="64" relation="include">
         </childnode>
       </node>
-      <node id="55">
+      <node id="64">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -89,7 +89,7 @@
 <codeline lineno="38"><highlight class="normal">[ptr]<sp/>native<sp/>CDatabaseQueryPtr(CDatabaseQuery);</highlight></codeline>
 <codeline lineno="39"><highlight class="normal">[ref]<sp/>native<sp/>stlCStringRef(std::string);</highlight></codeline>
 <codeline lineno="40"><highlight class="normal"></highlight></codeline>
-<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(35e0ae00-ac6e-11dd-ad8b-0800200c9a66)]</highlight></codeline>
+<codeline lineno="49"><highlight class="normal">[scriptable,<sp/>uuid(4661378b-addc-4d1e-aece-0a49cd169b8d)]</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_database_engine" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_database_engine" kindref="compound" tooltip="[USER CODE SHOULD NOT REFERENCE THIS CLASS]">sbIDatabaseEngine</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="51"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="58"><highlight class="normal"><sp/><sp/>[noscript]<sp/>PRInt32<sp/>SubmitQuery(in<sp/>CDatabaseQueryPtr<sp/>aDBQuery);</highlight></codeline>
@@ -101,7 +101,12 @@
 <codeline lineno="78"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>dumpMemoryStatistics();</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"></highlight></codeline>
 <codeline lineno="86"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>releaseMemory();</highlight></codeline>
-<codeline lineno="87"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="93" refid="interfacesb_i_database_engine_1d862fd8232fa8e6b0bfa1606a0744d01" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>localeCollationEnabled;</highlight></codeline>
+<codeline lineno="94"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="98" refid="interfacesb_i_database_engine_1bc24b94b63b9ebd163bafc1fe4d3c45f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/>AString<sp/>localeCollationID;</highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><sp/></highlight></codeline>
+<codeline lineno="100"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/dbengine/public/sbIDatabaseEngine.idl"/>
   </compounddef>

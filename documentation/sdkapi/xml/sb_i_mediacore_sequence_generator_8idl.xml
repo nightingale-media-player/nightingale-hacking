@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreSequenceGenerator.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="431">
+      <node id="456">
         <label>components/mediacore/base/public/sbIMediacoreSequenceGenerator.idl</label>
         <link refid="sbIMediacoreSequenceGenerator.idl"/>
-        <childnode refid="432" relation="include">
+        <childnode refid="457" relation="include">
         </childnode>
       </node>
-      <node id="432">
+      <node id="457">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

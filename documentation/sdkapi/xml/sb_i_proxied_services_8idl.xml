@@ -4,13 +4,13 @@
     <compoundname>sbIProxiedServices.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="563">
+      <node id="591">
         <label>components/moz/proxy/public/sbIProxiedServices.idl</label>
         <link refid="sbIProxiedServices.idl"/>
-        <childnode refid="564" relation="include">
+        <childnode refid="592" relation="include">
         </childnode>
       </node>
-      <node id="564">
+      <node id="592">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

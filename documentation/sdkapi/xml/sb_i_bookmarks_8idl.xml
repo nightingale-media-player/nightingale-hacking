@@ -4,13 +4,13 @@
     <compoundname>sbIBookmarks.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="661">
+      <node id="684">
         <label>components/servicepane/public/sbIBookmarks.idl</label>
         <link refid="sbIBookmarks.idl"/>
-        <childnode refid="662" relation="include">
+        <childnode refid="685" relation="include">
         </childnode>
       </node>
-      <node id="662">
+      <node id="685">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

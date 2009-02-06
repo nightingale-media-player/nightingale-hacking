@@ -4,14 +4,14 @@
     <compoundname>sbIDatabasePreparedStatement.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="58">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="57">
+      <node id="66">
         <label>components/dbengine/public/sbIDatabasePreparedStatement.idl</label>
         <link refid="sbIDatabasePreparedStatement.idl"/>
-        <childnode refid="58" relation="include">
+        <childnode refid="67" relation="include">
         </childnode>
+      </node>
+      <node id="67">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_database_prepared_statement" prot="public">sbIDatabasePreparedStatement</innerclass>

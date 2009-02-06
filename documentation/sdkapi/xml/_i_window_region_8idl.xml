@@ -4,13 +4,13 @@
     <compoundname>IWindowRegion.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="204">
+      <node id="221">
         <label>components/integration/public/IWindowRegion.idl</label>
         <link refid="IWindowRegion.idl"/>
-        <childnode refid="205" relation="include">
+        <childnode refid="222" relation="include">
         </childnode>
       </node>
-      <node id="205">
+      <node id="222">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>IWindowMinMax.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="201">
+      <node id="218">
         <label>components/integration/public/IWindowMinMax.idl</label>
         <link refid="IWindowMinMax.idl"/>
-        <childnode refid="202" relation="include">
+        <childnode refid="219" relation="include">
         </childnode>
       </node>
-      <node id="202">
+      <node id="219">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

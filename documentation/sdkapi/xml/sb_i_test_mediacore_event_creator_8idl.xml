@@ -4,13 +4,13 @@
     <compoundname>sbITestMediacoreEventCreator.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="464">
+      <node id="489">
         <label>components/mediacore/base/test/sbITestMediacoreEventCreator.idl</label>
         <link refid="sbITestMediacoreEventCreator.idl"/>
-        <childnode refid="465" relation="include">
+        <childnode refid="490" relation="include">
         </childnode>
       </node>
-      <node id="465">
+      <node id="490">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

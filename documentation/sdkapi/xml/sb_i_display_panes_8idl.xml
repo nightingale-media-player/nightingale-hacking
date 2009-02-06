@@ -4,13 +4,13 @@
     <compoundname>sbIDisplayPanes.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="162">
+      <node id="171">
         <label>components/displaypanes/public/sbIDisplayPanes.idl</label>
         <link refid="sbIDisplayPanes.idl"/>
-        <childnode refid="163" relation="include">
+        <childnode refid="172" relation="include">
         </childnode>
       </node>
-      <node id="163">
+      <node id="172">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

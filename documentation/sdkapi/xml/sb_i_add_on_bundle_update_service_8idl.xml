@@ -4,13 +4,13 @@
     <compoundname>sbIAddOnBundleUpdateService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="690">
+      <node id="713">
         <label>components/update/public/sbIAddOnBundleUpdateService.idl</label>
         <link refid="sbIAddOnBundleUpdateService.idl"/>
-        <childnode refid="691" relation="include">
+        <childnode refid="714" relation="include">
         </childnode>
       </node>
-      <node id="691">
+      <node id="714">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

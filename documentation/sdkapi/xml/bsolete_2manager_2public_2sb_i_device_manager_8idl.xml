@@ -4,14 +4,14 @@
     <compoundname>sbIDeviceManager.idl</compoundname>
     <includes local="yes">nsIObserver.idl</includes>
     <incdepgraph>
-      <node id="106">
-        <label>nsIObserver.idl</label>
-      </node>
-      <node id="105">
+      <node id="114">
         <label>components/devicesobsolete/manager/public/sbIDeviceManager.idl</label>
         <link refid="bsolete/manager/public/sbIDeviceManager.idl"/>
-        <childnode refid="106" relation="include">
+        <childnode refid="115" relation="include">
         </childnode>
+      </node>
+      <node id="115">
+        <label>nsIObserver.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_device_manager" prot="public">sbIDeviceManager</innerclass>

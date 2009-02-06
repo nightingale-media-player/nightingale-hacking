@@ -148,10 +148,18 @@
         <briefdescription>
 <para>The current position in the view. This position is tied to the sequencePosition. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_AVAILABLE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when the sequence position is invalid. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="64" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="64" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="65" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="65" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_sequencer_1204877665fb8bfdec3937391cc0ef18e" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -165,7 +173,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="72" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="72" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="73" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="73" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_sequencer_16f688adf2d91ff9a4b59262a7b7d0928" prot="public" static="no" mutable="no">
         <type>readonly attribute <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
@@ -179,7 +187,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="80" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="80" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="81" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_sequencer_1d5ad845c004121ab4db97e13a42c9a27" prot="public" static="no" mutable="no">
         <type>readonly attribute nsIArray</type>
@@ -192,7 +200,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="85" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="85" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="86" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="86" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_sequencer_17db9ea823f7b9ebbab7c25a722949325" prot="public" static="no" mutable="no">
         <type>attribute unsigned long</type>
@@ -202,10 +210,18 @@
         <briefdescription>
 <para>The current position in the sequence. This position is tied to the viewPosition. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>NS_ERROR_NOT_AVAILABLE</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>when the sequence position is invalid. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="91" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="93" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_sequencer_1e2dfae1af957165a52c0aa5ed9a1d85f" prot="public" static="no" mutable="no">
         <type>const long</type>
@@ -220,7 +236,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="116" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="116" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="118" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="118" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_mediacore_sequencer_1b9c4f16af056b8d53ccc1b35ed77a3e2" prot="public" static="no" mutable="no">
         <type>attribute <ref refid="interfacesb_i_mediacore_sequence_generator" kindref="compound">sbIMediacoreSequenceGenerator</ref></type>
@@ -233,7 +249,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="150" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="150" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="160" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="160" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -273,7 +289,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="104"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="106"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_1789c5607a5a6f7a0ec2d869fbf7105a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -290,7 +306,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="121"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="123"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_19c0ff429f1dfee1f8fca430b4e61fa42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -303,7 +319,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="126"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="128"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_1a25fbe2a1312bfe435247bdfe3758820" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -316,7 +332,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="131"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="133"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_15484b1485cf1fb4fa24710407f8d2d61" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -329,7 +345,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="136"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="138"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_18195b091dc8f8d313c54beb6ba3ca1c6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -342,7 +358,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="141"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="143"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_1f8e70dc8b402ed7e004e91be319fa8c3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -359,7 +375,21 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="147"/>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="149"/>
+      </memberdef>
+      <memberdef kind="function" id="interfacesb_i_mediacore_sequencer_116b08698d074e8cce9140d68c8457243" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbIMediacoreSequencer::abort</definition>
+        <argsstring>()</argsstring>
+        <name>abort</name>
+        <briefdescription>
+<para>Abort the current item playback attempt. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="note"><para>This method may only be called from BEFORE_TRACK_CHANGE. If you attempt to call it from another context, it will silently fail. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="157"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -367,127 +397,128 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="578">
+      <node id="596">
         <label>sbIMediaList</label>
         <link refid="interfacesb_i_media_list"/>
-        <childnode refid="575" relation="public-inheritance">
+        <childnode refid="593" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="586">
+      <node id="604">
         <label>sbIMediaListView</label>
         <link refid="interfacesb_i_media_list_view"/>
-        <childnode refid="578" relation="usage">
+        <childnode refid="596" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
-        <childnode refid="587" relation="usage">
+        <childnode refid="605" relation="usage">
           <edgelabel>selection</edgelabel>
         </childnode>
-        <childnode refid="588" relation="usage">
+        <childnode refid="606" relation="usage">
           <edgelabel>cascadeFilterSet</edgelabel>
         </childnode>
       </node>
-      <node id="587">
+      <node id="605">
         <label>sbIMediaListViewSelection</label>
         <link refid="interfacesb_i_media_list_view_selection"/>
-        <childnode refid="575" relation="usage">
+        <childnode refid="593" relation="usage">
           <edgelabel>currentMediaItem</edgelabel>
         </childnode>
       </node>
-      <node id="582">
+      <node id="600">
         <label>sbIDeviceStatus</label>
         <link refid="interfacesb_i_device_status"/>
-        <childnode refid="575" relation="usage">
+        <childnode refid="593" relation="usage">
           <edgelabel>mediaItem</edgelabel>
         </childnode>
-        <childnode refid="578" relation="usage">
+        <childnode refid="596" relation="usage">
           <edgelabel>mediaList</edgelabel>
         </childnode>
       </node>
-      <node id="583">
+      <node id="601">
         <label>sbIDeviceCapabilities</label>
         <link refid="interfacesb_i_device_capabilities"/>
       </node>
-      <node id="574">
+      <node id="592">
         <label>sbIMediacoreSequencer</label>
         <link refid="interfacesb_i_mediacore_sequencer"/>
-        <childnode refid="575" relation="usage">
+        <childnode refid="593" relation="usage">
           <edgelabel>nextItem
 currentItem</edgelabel>
         </childnode>
-        <childnode refid="585" relation="usage">
+        <childnode refid="603" relation="usage">
           <edgelabel>customGenerator</edgelabel>
         </childnode>
-        <childnode refid="586" relation="usage">
+        <childnode refid="604" relation="usage">
           <edgelabel>view</edgelabel>
         </childnode>
       </node>
-      <node id="579">
+      <node id="597">
         <label>sbIDevice</label>
         <link refid="interfacesb_i_device"/>
-        <childnode refid="580" relation="usage">
+        <childnode refid="598" relation="usage">
           <edgelabel>content</edgelabel>
         </childnode>
-        <childnode refid="582" relation="usage">
+        <childnode refid="600" relation="usage">
           <edgelabel>currentStatus</edgelabel>
         </childnode>
-        <childnode refid="583" relation="usage">
+        <childnode refid="601" relation="usage">
           <edgelabel>capabilities</edgelabel>
         </childnode>
-        <childnode refid="584" relation="usage">
+        <childnode refid="602" relation="usage">
           <edgelabel>properties</edgelabel>
         </childnode>
       </node>
-      <node id="577">
+      <node id="595">
         <label>sbILibrary</label>
         <link refid="interfacesb_i_library"/>
-        <childnode refid="578" relation="public-inheritance">
+        <childnode refid="596" relation="public-inheritance">
         </childnode>
-        <childnode refid="579" relation="usage">
+        <childnode refid="597" relation="usage">
           <edgelabel>device</edgelabel>
         </childnode>
-        <childnode refid="581" relation="usage">
+        <childnode refid="599" relation="usage">
           <edgelabel>factory</edgelabel>
         </childnode>
       </node>
-      <node id="588">
+      <node id="606">
         <label>sbICascadeFilterSet</label>
         <link refid="interfacesb_i_cascade_filter_set"/>
       </node>
-      <node id="576">
+      <node id="594">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
-      <node id="575">
+      <node id="593">
         <label>sbIMediaItem</label>
         <link refid="interfacesb_i_media_item"/>
-        <childnode refid="576" relation="public-inheritance">
+        <childnode refid="594" relation="public-inheritance">
         </childnode>
-        <childnode refid="577" relation="usage">
+        <childnode refid="595" relation="usage">
           <edgelabel>library</edgelabel>
         </childnode>
       </node>
-      <node id="585">
+      <node id="603">
         <label>sbIMediacoreSequenceGenerator</label>
         <link refid="interfacesb_i_mediacore_sequence_generator"/>
       </node>
-      <node id="580">
+      <node id="598">
         <label>sbIDeviceContent</label>
         <link refid="interfacesb_i_device_content"/>
-        <childnode refid="581" relation="usage">
+        <childnode refid="599" relation="usage">
           <edgelabel>libraryFactory</edgelabel>
         </childnode>
       </node>
-      <node id="581">
+      <node id="599">
         <label>sbILibraryFactory</label>
         <link refid="interfacesb_i_library_factory"/>
       </node>
-      <node id="584">
+      <node id="602">
         <label>sbIDeviceProperties</label>
         <link refid="interfacesb_i_device_properties"/>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="39" bodyend="151"/>
+    <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" line="40" bodyfile="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreSequencer.idl" bodystart="39" bodyend="161"/>
     <listofallmembers>
+      <member refid="interfacesb_i_mediacore_sequencer_116b08698d074e8cce9140d68c8457243" prot="public" virt="non-virtual"><scope>sbIMediacoreSequencer</scope><name>abort</name></member>
       <member refid="interfacesb_i_mediacore_sequencer_1e2dfae1af957165a52c0aa5ed9a1d85f" prot="public" virt="non-virtual"><scope>sbIMediacoreSequencer</scope><name>AUTO_PICK_INDEX</name></member>
       <member refid="interfacesb_i_mediacore_sequencer_1204877665fb8bfdec3937391cc0ef18e" prot="public" virt="non-virtual"><scope>sbIMediacoreSequencer</scope><name>currentItem</name></member>
       <member refid="interfacesb_i_mediacore_sequencer_1d5ad845c004121ab4db97e13a42c9a27" prot="public" virt="non-virtual"><scope>sbIMediacoreSequencer</scope><name>currentSequence</name></member>

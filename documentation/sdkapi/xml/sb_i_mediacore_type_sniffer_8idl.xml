@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreTypeSniffer.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="446">
+      <node id="471">
         <label>components/mediacore/base/public/sbIMediacoreTypeSniffer.idl</label>
         <link refid="sbIMediacoreTypeSniffer.idl"/>
-        <childnode refid="447" relation="include">
+        <childnode refid="472" relation="include">
         </childnode>
       </node>
-      <node id="447">
+      <node id="472">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

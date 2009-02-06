@@ -4,13 +4,13 @@
     <compoundname>sbIPropertyUnitConverter.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="613">
+      <node id="636">
         <label>components/property/public/sbIPropertyUnitConverter.idl</label>
         <link refid="sbIPropertyUnitConverter.idl"/>
-        <childnode refid="614" relation="include">
+        <childnode refid="637" relation="include">
         </childnode>
       </node>
-      <node id="614">
+      <node id="637">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

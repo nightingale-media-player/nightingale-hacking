@@ -28,7 +28,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="64"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="63"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1c02f281e797186164ea83102027c90d6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>boolean</type>
@@ -77,7 +77,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="82"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="81"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1debef4d7ec6f68c9d80f671d8c8f1102" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsIFileURL</type>
@@ -126,7 +126,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="99"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="98"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1800472d94058acada677926a67685d92" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -162,7 +162,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="115"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="114"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_service_1ebaa57739ba74a2d1afee4dadb08d232" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>nsISupports</type>
@@ -196,14 +196,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="126"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="125"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Interface for the album art service. Instantiate as a component service. </para>    </briefdescription>
     <detaileddescription>
 <para>&quot;@songbirdnest.com/Songbird/album-art-service;1&quot; </para>    </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="53" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" bodystart="52" bodyend="128"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" line="52" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtService.idl" bodystart="51" bodyend="126"/>
     <listofallmembers>
       <member refid="interfacesb_i_album_art_service_1debef4d7ec6f68c9d80f671d8c8f1102" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>cacheImage</name></member>
       <member refid="interfacesb_i_album_art_service_1800472d94058acada677926a67685d92" prot="public" virt="non-virtual"><scope>sbIAlbumArtService</scope><name>cacheTemporaryData</name></member>

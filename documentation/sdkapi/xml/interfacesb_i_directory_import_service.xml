@@ -37,14 +37,14 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" line="107" bodyfile="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" bodystart="107" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" line="101" bodyfile="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" bodystart="101" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Handles finding media files in directories and adding them to a library or list. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" line="93" bodyfile="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" bodystart="92" bodyend="108"/>
+    <location file="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" line="87" bodyfile="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl" bodystart="86" bodyend="102"/>
     <listofallmembers>
       <member refid="interfacesb_i_directory_import_service_18f8fa3aa3bedee13900754c4cdce49fa" prot="public" virt="non-virtual"><scope>sbIDirectoryImportService</scope><name>sbIDirectoryImportJob</name></member>
     </listofallmembers>

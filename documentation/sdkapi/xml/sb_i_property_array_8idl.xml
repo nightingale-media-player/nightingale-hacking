@@ -6,42 +6,42 @@
     <includes local="yes">nsIMutableArray.idl</includes>
     <includedby refid="sb_i_metadata_handler_8idl" local="yes">components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</includedby>
     <incdepgraph>
-      <node id="598">
+      <node id="621">
         <label>nsIArray.idl</label>
       </node>
-      <node id="599">
+      <node id="622">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="597">
+      <node id="620">
         <label>components/property/public/sbIPropertyArray.idl</label>
         <link refid="sbIPropertyArray.idl"/>
-        <childnode refid="598" relation="include">
+        <childnode refid="621" relation="include">
         </childnode>
-        <childnode refid="599" relation="include">
+        <childnode refid="622" relation="include">
         </childnode>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="601">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
-        <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="602" relation="include">
-        </childnode>
-        <childnode refid="603" relation="include">
-        </childnode>
-      </node>
-      <node id="603">
-        <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
-        <link refid="sb_i_metadata_manager_8idl"/>
-      </node>
-      <node id="602">
+      <node id="625">
         <label>components/mediacore/metadata/manager/public/sbIMetadataChannel.idl</label>
         <link refid="sb_i_metadata_channel_8idl"/>
       </node>
-      <node id="600">
+      <node id="626">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
+        <link refid="sb_i_metadata_manager_8idl"/>
+      </node>
+      <node id="623">
         <label>components/property/public/sbIPropertyArray.idl</label>
         <link refid="sbIPropertyArray.idl"/>
-        <childnode refid="601" relation="include">
+        <childnode refid="624" relation="include">
+        </childnode>
+      </node>
+      <node id="624">
+        <label>components/mediacore/metadata/manager/public/sbIMetadataHandler.idl</label>
+        <link refid="sb_i_metadata_handler_8idl"/>
+        <childnode refid="625" relation="include">
+        </childnode>
+        <childnode refid="626" relation="include">
         </childnode>
       </node>
     </invincdepgraph>

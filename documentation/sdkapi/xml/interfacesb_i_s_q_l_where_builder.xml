@@ -509,43 +509,43 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="1095">
+      <node id="1097">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="1096" relation="public-inheritance">
+        <childnode refid="1098" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1101">
+        <label>sbISQLUpdateBuilder</label>
+        <link refid="interfacesb_i_s_q_l_update_builder"/>
+        <childnode refid="1097" relation="public-inheritance">
         </childnode>
       </node>
       <node id="1099">
-        <label>sbISQLUpdateBuilder</label>
-        <link refid="interfacesb_i_s_q_l_update_builder"/>
-        <childnode refid="1095" relation="public-inheritance">
-        </childnode>
-      </node>
-      <node id="1097">
         <label>sbISQLDeleteBuilder</label>
         <link refid="interfacesb_i_s_q_l_delete_builder"/>
-        <childnode refid="1095" relation="public-inheritance">
+        <childnode refid="1097" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1096">
+      <node id="1098">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>
-      <node id="1098">
+      <node id="1100">
         <label>sbISQLSelectBuilder</label>
         <link refid="interfacesb_i_s_q_l_select_builder"/>
-        <childnode refid="1095" relation="public-inheritance">
+        <childnode refid="1097" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="1100">
+      <node id="1102">
         <label>sbISQLWhereBuilder</label>
         <link refid="interfacesb_i_s_q_l_where_builder"/>
-        <childnode refid="1101" relation="public-inheritance">
+        <childnode refid="1103" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="1101">
+      <node id="1103">
         <label>sbISQLBuilder</label>
         <link refid="interfacesb_i_s_q_l_builder"/>
       </node>

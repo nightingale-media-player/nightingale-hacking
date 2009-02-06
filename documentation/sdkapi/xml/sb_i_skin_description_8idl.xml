@@ -4,13 +4,13 @@
     <compoundname>sbISkinDescription.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="186">
+      <node id="195">
         <label>components/feathers/public/sbISkinDescription.idl</label>
         <link refid="sbISkinDescription.idl"/>
-        <childnode refid="187" relation="include">
+        <childnode refid="196" relation="include">
         </childnode>
       </node>
-      <node id="187">
+      <node id="196">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

@@ -4,13 +4,13 @@
     <compoundname>sbIMediacoreVolumeControl.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="452">
+      <node id="477">
         <label>components/mediacore/base/public/sbIMediacoreVolumeControl.idl</label>
         <link refid="sbIMediacoreVolumeControl.idl"/>
-        <childnode refid="453" relation="include">
+        <childnode refid="478" relation="include">
         </childnode>
       </node>
-      <node id="453">
+      <node id="478">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -54,9 +54,8 @@
 <codeline lineno="32"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>true<sp/>=<sp/>muted</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="33" refid="interfacesb_i_mediacore_volume_control_1ab2303a4458cbf4ca308ec682c5fad04" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>mute;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="35"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">//<sp/>between<sp/>0<sp/>and<sp/>1<sp/>typically.</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="36" refid="interfacesb_i_mediacore_volume_control_19ce35865a10ca358d07c04ac21595b48" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>volume;</highlight></codeline>
-<codeline lineno="37"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="39" refid="interfacesb_i_mediacore_volume_control_19ce35865a10ca358d07c04ac21595b48" refkind="member"><highlight class="normal"><sp/><sp/>attribute<sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>volume;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediacore/base/public/sbIMediacoreVolumeControl.idl"/>
   </compounddef>

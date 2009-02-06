@@ -32,25 +32,25 @@
     <detaileddescription>
     </detaileddescription>
     <inheritancegraph>
-      <node id="457">
+      <node id="475">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="458" relation="public-inheritance">
+        <childnode refid="476" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="458">
+      <node id="476">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="459">
+      <node id="477">
         <label>sbILocalDatabaseResourceProperty</label>
         <link refid="interfacesb_i_local_database_resource_property"/>
-        <childnode refid="460" relation="public-inheritance">
+        <childnode refid="478" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="460">
+      <node id="478">
         <label>sbILibraryResource</label>
         <link refid="interfacesb_i_library_resource"/>
       </node>

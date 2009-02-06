@@ -5,42 +5,42 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_metadata_handler_8idl" local="yes">sbIMetadataHandler.idl</includes>
     <incdepgraph>
-      <node id="504">
-        <label>sbIMetadataHandler.idl</label>
-        <link refid="sb_i_metadata_handler_8idl"/>
-        <childnode refid="503" relation="include">
-        </childnode>
-        <childnode refid="505" relation="include">
-        </childnode>
-        <childnode refid="506" relation="include">
-        </childnode>
-      </node>
-      <node id="507">
+      <node id="532">
         <label>nsIArray.idl</label>
       </node>
-      <node id="508">
+      <node id="533">
         <label>nsIMutableArray.idl</label>
       </node>
-      <node id="502">
+      <node id="527">
         <label>components/mediacore/metadata/manager/public/sbIMetadataManager.idl</label>
         <link refid="sbIMetadataManager.idl"/>
-        <childnode refid="503" relation="include">
+        <childnode refid="528" relation="include">
         </childnode>
-        <childnode refid="504" relation="include">
+        <childnode refid="529" relation="include">
         </childnode>
       </node>
-      <node id="506">
+      <node id="531">
         <label>sbIPropertyArray.idl</label>
         <link refid="sb_i_property_array_8idl"/>
-        <childnode refid="507" relation="include">
+        <childnode refid="532" relation="include">
         </childnode>
-        <childnode refid="508" relation="include">
+        <childnode refid="533" relation="include">
         </childnode>
       </node>
-      <node id="503">
+      <node id="529">
+        <label>sbIMetadataHandler.idl</label>
+        <link refid="sb_i_metadata_handler_8idl"/>
+        <childnode refid="528" relation="include">
+        </childnode>
+        <childnode refid="530" relation="include">
+        </childnode>
+        <childnode refid="531" relation="include">
+        </childnode>
+      </node>
+      <node id="528">
         <label>nsISupports.idl</label>
       </node>
-      <node id="505">
+      <node id="530">
         <label>nsIChannel.idl</label>
       </node>
     </incdepgraph>

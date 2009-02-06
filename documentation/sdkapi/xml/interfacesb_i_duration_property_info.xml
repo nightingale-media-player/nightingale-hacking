@@ -16,7 +16,7 @@
 <para>You must set this attribute in order for this object to function properly. If you do not, all methods on this object will return NS_ERROR_NOT_INITIALIZED. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="480" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="480" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="487" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="487" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_duration_property_info_13c6a2993ad4229c4982996d30fb14c7c" prot="public" static="no" mutable="no">
         <type>attribute long long</type>
@@ -29,7 +29,7 @@
 <para>You must set this attribute in order for this object to function properly. If you do not, all methods on this object will return NS_ERROR_NOT_INITIALIZED. </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="490" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="490" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="497" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="497" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_duration_property_info_15519a4049a4b780c68a1223d7a70cbcf" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="496" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="496" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="503" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="503" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_duration_property_info_1e2da45fda8285ec5738b81612fa3603e" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="501" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="501" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="508" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="508" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -64,47 +64,47 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_info" kindref="compound">sbIPropertyInfo</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="240">
+      <node id="243">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
       </node>
-      <node id="239">
+      <node id="242">
         <label>sbIDurationPropertyInfo</label>
         <link refid="interfacesb_i_duration_property_info"/>
-        <childnode refid="240" relation="public-inheritance">
+        <childnode refid="243" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="242">
+      <node id="245">
         <label>sbIPropertyInfo</label>
         <link refid="interfacesb_i_property_info"/>
-        <childnode refid="243" relation="usage">
+        <childnode refid="246" relation="usage">
           <edgelabel>secondarySort</edgelabel>
         </childnode>
-        <childnode refid="244" relation="usage">
+        <childnode refid="247" relation="usage">
           <edgelabel>unitConverter</edgelabel>
         </childnode>
       </node>
-      <node id="244">
+      <node id="247">
         <label>sbIPropertyUnitConverter</label>
         <link refid="interfacesb_i_property_unit_converter"/>
-        <childnode refid="242" relation="usage">
+        <childnode refid="245" relation="usage">
           <edgelabel>propertyInfo</edgelabel>
         </childnode>
       </node>
-      <node id="243">
+      <node id="246">
         <label>sbIPropertyArray</label>
         <link refid="interfacesb_i_property_array"/>
       </node>
-      <node id="241">
+      <node id="244">
         <label>sbIDurationPropertyInfo</label>
         <link refid="interfacesb_i_duration_property_info"/>
-        <childnode refid="242" relation="public-inheritance">
+        <childnode refid="245" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="471" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="470" bodyend="502"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="478" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="477" bodyend="509"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_duration_property_info_15519a4049a4b780c68a1223d7a70cbcf" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>durationInverse</name></member>
@@ -112,6 +112,7 @@
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>format</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>getOperator</name></member>
       <member refid="interfacesb_i_property_info_161817d7ea202ecab4269758576035d40" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>id</name></member>
+      <member refid="interfacesb_i_property_info_1a765101498fec9f1b83ca8371c7b6125" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>makeSearchable</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_duration_property_info_13c6a2993ad4229c4982996d30fb14c7c" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>maxDuration</name></member>
       <member refid="interfacesb_i_duration_property_info_11c1a23ad545e271f4ddf31cea0c0b3b8" prot="public" virt="non-virtual"><scope>sbIDurationPropertyInfo</scope><name>minDuration</name></member>

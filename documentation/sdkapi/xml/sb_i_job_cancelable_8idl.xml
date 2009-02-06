@@ -4,13 +4,13 @@
     <compoundname>sbIJobCancelable.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="220">
+      <node id="237">
         <label>components/job/public/sbIJobCancelable.idl</label>
         <link refid="sbIJobCancelable.idl"/>
-        <childnode refid="221" relation="include">
+        <childnode refid="238" relation="include">
         </childnode>
       </node>
-      <node id="221">
+      <node id="238">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

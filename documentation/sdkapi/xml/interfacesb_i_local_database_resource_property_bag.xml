@@ -96,6 +96,23 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="65"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_19eece8daccfcf70bd52faf5e6e7011ea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>AString</type>
+        <definition>AString sbILocalDatabaseResourcePropertyBag::getSearchablePropertyByID</definition>
+        <argsstring>(in unsigned long aPropertyDBID)</argsstring>
+        <name>getSearchablePropertyByID</name>
+        <param>
+          <type>in unsigned long</type>
+          <declname>aPropertyDBID</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="67"/>
+      </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_1141313924ca7a6d0750f0fc56fc91208" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void sbILocalDatabaseResourcePropertyBag::setProperty</definition>
@@ -115,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="67"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="69"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_local_database_resource_property_bag_1b50ee7117f28689f25ff63c63738790f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -128,17 +145,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="69"/>
+        <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="71"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>[USER CODE SHOULD NOT REFERENCE THIS CLASS] </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" bodystart="41" bodyend="70"/>
+    <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" line="42" bodyfile="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl" bodystart="41" bodyend="72"/>
     <listofallmembers>
       <member refid="interfacesb_i_local_database_resource_property_bag_187e6231d64745bc6c6181a2291aa11e0" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>getProperty</name></member>
       <member refid="interfacesb_i_local_database_resource_property_bag_11c73e40dfe593bac4921653772991bcc" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>getPropertyByID</name></member>
+      <member refid="interfacesb_i_local_database_resource_property_bag_19eece8daccfcf70bd52faf5e6e7011ea" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>getSearchablePropertyByID</name></member>
       <member refid="interfacesb_i_local_database_resource_property_bag_11d742e9d860c3ed0f5caaeafeb805942" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>getSortablePropertyByID</name></member>
       <member refid="interfacesb_i_local_database_resource_property_bag_133793561e76ad9d5c9b03b514e454f14" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>guid</name></member>
       <member refid="interfacesb_i_local_database_resource_property_bag_12df5fedc711da4891e1b905704029c17" prot="public" virt="non-virtual"><scope>sbILocalDatabaseResourcePropertyBag</scope><name>ids</name></member>

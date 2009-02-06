@@ -166,7 +166,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="85" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="85" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="88" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="88" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="interfacesb_i_native_window_manager_11f78e28fdd9bac00a2edec5ef31be173" prot="public" static="no" mutable="no">
+        <type>readonly attribute boolean</type>
+        <definition>readonly attribute boolean sbINativeWindowManager::supportsShadowing</definition>
+        <argsstring></argsstring>
+        <name>supportsShadowing</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="91" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -266,12 +279,33 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="82"/>
       </memberdef>
+      <memberdef kind="function" id="interfacesb_i_native_window_manager_10d707137c849b3c4ebe852eec4143cea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void sbINativeWindowManager::setShadowing</definition>
+        <argsstring>(in nsISupports aWindow, in boolean aShadowing)</argsstring>
+        <name>setShadowing</name>
+        <param>
+          <type>in nsISupports</type>
+          <declname>aWindow</declname>
+        </param>
+        <param>
+          <type>in boolean</type>
+          <declname>aShadowing</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="85"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>interface to the operating system&apos;s window manager This Interfaces to allows JavaScript to talk to the native operating system window manager in a somewhat cross-platform way. This interface is inspired by some of the GtkWindow interface. </para>    </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="44" bodyend="86"/>
+    <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" line="45" bodyfile="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl" bodystart="44" bodyend="92"/>
     <listofallmembers>
       <member refid="interfacesb_i_native_window_manager_10ac3b54f1f6e0346809237263e1c8676" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>beginResizeDrag</name></member>
       <member refid="interfacesb_i_native_window_manager_1806487be920a2036e43fd61604df0cfa" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>DIRECTION_EAST</name></member>
@@ -285,10 +319,12 @@
       <member refid="interfacesb_i_native_window_manager_1787ae0677c5ea4139108f8adf5e0cf66" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>setMaximumWindowSize</name></member>
       <member refid="interfacesb_i_native_window_manager_12e3190de8684c58fd18d3e4b56065eb9" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>setMinimumWindowSize</name></member>
       <member refid="interfacesb_i_native_window_manager_19481282cd8939eae22e623627d1512a5" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>setOnTop</name></member>
+      <member refid="interfacesb_i_native_window_manager_10d707137c849b3c4ebe852eec4143cea" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>setShadowing</name></member>
       <member refid="interfacesb_i_native_window_manager_181d7fdd63e8802f99838a89b7812dee8" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsMaximumWindowSize</name></member>
       <member refid="interfacesb_i_native_window_manager_10ee6ef396878a367f9e6dc68dc218c18" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsMinimumWindowSize</name></member>
       <member refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsOnTop</name></member>
       <member refid="interfacesb_i_native_window_manager_1b9c604d877ffaadd5e138334b12e6524" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsResizeDrag</name></member>
+      <member refid="interfacesb_i_native_window_manager_11f78e28fdd9bac00a2edec5ef31be173" prot="public" virt="non-virtual"><scope>sbINativeWindowManager</scope><name>supportsShadowing</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

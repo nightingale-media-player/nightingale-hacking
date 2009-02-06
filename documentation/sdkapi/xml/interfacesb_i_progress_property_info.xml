@@ -16,7 +16,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="516" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="516" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="523" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="523" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -77,13 +77,14 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="512" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="511" bodyend="517"/>
+    <location file="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" line="519" bodyfile="c:/builds/songbird/trunk/components/property/public/sbIPropertyManager.idl" bodystart="518" bodyend="524"/>
     <listofallmembers>
       <member refid="interfacesb_i_property_info_1a21698c5223efc9ab97e4b0f1070d7ef" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>displayName</name></member>
       <member refid="interfacesb_i_text_property_info_181f045c485d9e68758526a32d239c282" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>enforceLowercase</name></member>
       <member refid="interfacesb_i_property_info_1c24f85c37eb536c3a56af365b6c644c9" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>format</name></member>
       <member refid="interfacesb_i_property_info_1e378efd2a890dd145ce3140313969b78" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>getOperator</name></member>
       <member refid="interfacesb_i_property_info_161817d7ea202ecab4269758576035d40" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>id</name></member>
+      <member refid="interfacesb_i_property_info_1a765101498fec9f1b83ca8371c7b6125" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>makeSearchable</name></member>
       <member refid="interfacesb_i_property_info_14dc32f906933d227198c087cb977263c" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>makeSortable</name></member>
       <member refid="interfacesb_i_text_property_info_1a8d381037c32b9ea8dcd0e298c821d3b" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>maxLength</name></member>
       <member refid="interfacesb_i_text_property_info_12486d1062478616860e797aa705863e9" prot="public" virt="non-virtual"><scope>sbIProgressPropertyInfo</scope><name>minLength</name></member>

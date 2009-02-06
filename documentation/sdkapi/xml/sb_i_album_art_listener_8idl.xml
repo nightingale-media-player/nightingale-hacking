@@ -58,12 +58,25 @@
 <codeline lineno="36"><highlight class="normal"></highlight></codeline>
 <codeline lineno="37"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&quot;nsISupports.idl&quot;</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="38"><highlight class="normal"></highlight></codeline>
-<codeline lineno="39"><highlight class="normal"></highlight></codeline>
-<codeline lineno="48"><highlight class="normal">[scriptable,<sp/>uuid(64449da9-ce24-4d5f-b028-5d28f8ee77f9)]</highlight></codeline>
-<codeline lineno="49" refid="interfacesb_i_album_art_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_album_art_listener" kindref="compound" tooltip="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="50"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="51"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="52"><highlight class="normal"></highlight></codeline>
+<codeline lineno="39"><highlight class="normal">interface<sp/>nsIURI;</highlight></codeline>
+<codeline lineno="40"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_album_art_fetcher" kindref="compound" tooltip="Interface for an album art fetcher. Instantiate as a component instance.">sbIAlbumArtFetcher</ref>;</highlight></codeline>
+<codeline lineno="41"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref>;</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">interface<sp/>nsIArray;</highlight></codeline>
+<codeline lineno="43"><highlight class="normal"></highlight></codeline>
+<codeline lineno="52"><highlight class="normal">[scriptable,<sp/>uuid(1337cbf6-0e46-49b9-89ce-8e9207b92511)]</highlight></codeline>
+<codeline lineno="53" refid="interfacesb_i_album_art_listener" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_album_art_listener" kindref="compound" tooltip="A component which is interested in the result of an album art fetch request.">sbIAlbumArtListener</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="54"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="61"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onChangeFetcher(in<sp/><ref refid="interfacesb_i_album_art_fetcher" kindref="compound" tooltip="Interface for an album art fetcher. Instantiate as a component instance.">sbIAlbumArtFetcher</ref><sp/>aFetcher);</highlight></codeline>
+<codeline lineno="62"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onResult(in<sp/>nsIURI<sp/>aImageLocation,</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/><ref refid="interfacesb_i_media_item" kindref="compound" tooltip="Interface that defines a single item of media in the system.">sbIMediaItem</ref><sp/>aMediaItem);</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onAlbumResult(in<sp/>nsIURI<sp/>aImageLocation,</highlight></codeline>
+<codeline lineno="83"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight></codeline>
+<codeline lineno="91"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>onAlbumComplete(in<sp/>nsIArray<sp/>aMediaItems);</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="93"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtListener.idl"/>
   </compounddef>

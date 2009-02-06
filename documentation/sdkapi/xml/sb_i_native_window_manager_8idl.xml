@@ -5,18 +5,18 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIDOMMouseEvent.idl</includes>
     <incdepgraph>
-      <node id="213">
-        <label>components/integration/public/sbINativeWindowManager.idl</label>
-        <link refid="sbINativeWindowManager.idl"/>
-        <childnode refid="214" relation="include">
-        </childnode>
-        <childnode refid="215" relation="include">
-        </childnode>
-      </node>
-      <node id="215">
+      <node id="232">
         <label>nsIDOMMouseEvent.idl</label>
       </node>
-      <node id="214">
+      <node id="230">
+        <label>components/integration/public/sbINativeWindowManager.idl</label>
+        <link refid="sbINativeWindowManager.idl"/>
+        <childnode refid="231" relation="include">
+        </childnode>
+        <childnode refid="232" relation="include">
+        </childnode>
+      </node>
+      <node id="231">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -95,9 +95,15 @@
 <codeline lineno="81"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>asks<sp/>the<sp/>window<sp/>manager<sp/>to<sp/>keep<sp/>@aWindow<sp/>above<sp/>all<sp/>other<sp/>windows<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="82"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setOnTop(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aOnTop);</highlight></codeline>
 <codeline lineno="83"><highlight class="normal"></highlight></codeline>
-<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setOnTop()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="85" refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsOnTop;</highlight></codeline>
-<codeline lineno="86"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="84"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>asks<sp/>the<sp/>window<sp/>manager<sp/>to<sp/>enable<sp/>shadowing<sp/>on<sp/>the<sp/>window<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setShadowing(in<sp/>nsISupports<sp/>aWindow,<sp/>in<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>aShadowing);</highlight></codeline>
+<codeline lineno="86"><highlight class="normal"></highlight></codeline>
+<codeline lineno="87"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setOnTop()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="88" refid="interfacesb_i_native_window_manager_1892988330b4849e9b8ecfb51f2680818" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsOnTop;</highlight></codeline>
+<codeline lineno="89"><highlight class="normal"></highlight></codeline>
+<codeline lineno="90"><highlight class="normal"><sp/><sp/></highlight><highlight class="comment">/*<sp/>\brief<sp/>is<sp/>setShadowing()<sp/>supported<sp/>by<sp/>this<sp/>implementation?<sp/>*/</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="91" refid="interfacesb_i_native_window_manager_11f78e28fdd9bac00a2edec5ef31be173" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">boolean</highlight><highlight class="normal"><sp/>supportsShadowing;</highlight></codeline>
+<codeline lineno="92"><highlight class="normal">};</highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/integration/public/sbINativeWindowManager.idl"/>
   </compounddef>

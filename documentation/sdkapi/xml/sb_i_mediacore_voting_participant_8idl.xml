@@ -4,14 +4,14 @@
     <compoundname>sbIMediacoreVotingParticipant.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="462">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="461">
+      <node id="486">
         <label>components/mediacore/base/public/sbIMediacoreVotingParticipant.idl</label>
         <link refid="sbIMediacoreVotingParticipant.idl"/>
-        <childnode refid="462" relation="include">
+        <childnode refid="487" relation="include">
         </childnode>
+      </node>
+      <node id="487">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_mediacore_voting_participant" prot="public">sbIMediacoreVotingParticipant</innerclass>

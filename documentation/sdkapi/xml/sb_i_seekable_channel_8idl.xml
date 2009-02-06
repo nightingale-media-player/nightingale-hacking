@@ -4,13 +4,13 @@
     <compoundname>sbISeekableChannel.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="473">
+      <node id="498">
         <label>components/mediacore/metadata/handler/taglib/public/sbISeekableChannel.idl</label>
         <link refid="sbISeekableChannel.idl"/>
-        <childnode refid="474" relation="include">
+        <childnode refid="499" relation="include">
         </childnode>
       </node>
-      <node id="474">
+      <node id="499">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

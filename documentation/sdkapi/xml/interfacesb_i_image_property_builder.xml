@@ -10,26 +10,26 @@
 <para><simplesect kind="see"><para><ref refid="interfacesb_i_property_builder" kindref="compound">sbIPropertyBuilder</ref> </para></simplesect>
 </para>    </detaileddescription>
     <inheritancegraph>
-      <node id="288">
+      <node id="295">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="287">
+      <node id="294">
         <label>sbIImagePropertyBuilder</label>
         <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="288" relation="public-inheritance">
+        <childnode refid="295" relation="public-inheritance">
         </childnode>
       </node>
     </inheritancegraph>
     <collaborationgraph>
-      <node id="290">
+      <node id="297">
         <label>sbIPropertyBuilder</label>
         <link refid="interfacesb_i_property_builder"/>
       </node>
-      <node id="289">
+      <node id="296">
         <label>sbIImagePropertyBuilder</label>
         <link refid="interfacesb_i_image_property_builder"/>
-        <childnode refid="290" relation="public-inheritance">
+        <childnode refid="297" relation="public-inheritance">
         </childnode>
       </node>
     </collaborationgraph>

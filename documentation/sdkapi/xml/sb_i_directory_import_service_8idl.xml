@@ -4,13 +4,13 @@
     <compoundname>sbIDirectoryImportService.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="519">
+      <node id="544">
         <label>components/mediaimport/directory/public/sbIDirectoryImportService.idl</label>
         <link refid="sbIDirectoryImportService.idl"/>
-        <childnode refid="520" relation="include">
+        <childnode refid="545" relation="include">
         </childnode>
       </node>
-      <node id="520">
+      <node id="545">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -55,7 +55,7 @@
 <codeline lineno="32"><highlight class="normal">interface<sp/>nsISimpleEnumerator;</highlight></codeline>
 <codeline lineno="33"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_job_progress" kindref="compound" tooltip="Generic interface for exposing long running jobs to the UI.">sbIJobProgress</ref>;</highlight></codeline>
 <codeline lineno="34"><highlight class="normal"></highlight></codeline>
-<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(ca3d4300-4c75-11dd-ae16-0800200c9a66)]</highlight></codeline>
+<codeline lineno="42"><highlight class="normal">[scriptable,<sp/>uuid(6b029f20-cadd-11dd-ad8b-0800200c9a66)]</highlight></codeline>
 <codeline lineno="43" refid="interfacesb_i_directory_import_job" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_directory_import_job" kindref="compound" tooltip="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</ref><sp/>:<sp/>nsISupports</highlight></codeline>
 <codeline lineno="44"><highlight class="normal">{</highlight></codeline>
 <codeline lineno="50" refid="interfacesb_i_directory_import_job_124d3dac3243f040987693f124a935f50" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>totalAddedToMediaList;</highlight></codeline>
@@ -64,26 +64,24 @@
 <codeline lineno="56"><highlight class="normal"></highlight></codeline>
 <codeline lineno="60" refid="interfacesb_i_directory_import_job_12c0cbb951b0434c07aa11e311627284f" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>totalDuplicates;</highlight></codeline>
 <codeline lineno="61"><highlight class="normal"></highlight></codeline>
-<codeline lineno="66"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>enumerateNewItemsOnly();</highlight></codeline>
+<codeline lineno="66"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>enumerateAllItems();</highlight></codeline>
 <codeline lineno="67"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"><sp/><sp/>nsISimpleEnumerator<sp/>enumerateAllItems();</highlight></codeline>
-<codeline lineno="73"><highlight class="normal"></highlight></codeline>
-<codeline lineno="77" refid="interfacesb_i_directory_import_job_1a344ab7c03dacf39e04b3a2c87530b83" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>targetMediaList;</highlight></codeline>
+<codeline lineno="71" refid="interfacesb_i_directory_import_job_1a344ab7c03dacf39e04b3a2c87530b83" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>targetMediaList;</highlight></codeline>
+<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="76" refid="interfacesb_i_directory_import_job_18e0338ccb56be9461ef9665e305bfa02" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>targetIndex;</highlight></codeline>
+<codeline lineno="77"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="78"><highlight class="normal"></highlight></codeline>
-<codeline lineno="82" refid="interfacesb_i_directory_import_job_18e0338ccb56be9461ef9665e305bfa02" refkind="member"><highlight class="normal"><sp/><sp/>readonly<sp/>attribute<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>targetIndex;</highlight></codeline>
-<codeline lineno="83"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="84"><highlight class="normal"></highlight></codeline>
-<codeline lineno="85"><highlight class="normal"></highlight></codeline>
-<codeline lineno="91"><highlight class="normal">[scriptable,<sp/>uuid(13ab5520-449e-11dd-ae16-0800200c9a66)]</highlight></codeline>
-<codeline lineno="92" refid="interfacesb_i_directory_import_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_directory_import_service" kindref="compound" tooltip="Handles finding media files in directories and adding them to a library or list.">sbIDirectoryImportService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
-<codeline lineno="93"><highlight class="normal">{</highlight></codeline>
-<codeline lineno="94"><highlight class="normal"></highlight></codeline>
-<codeline lineno="105"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_directory_import_job" kindref="compound" tooltip="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</ref><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal">(in<sp/>nsIArray<sp/>aDirectories,</highlight></codeline>
-<codeline lineno="106"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aTargetMediaList,</highlight></codeline>
-<codeline lineno="107" refid="interfacesb_i_directory_import_service_18f8fa3aa3bedee13900754c4cdce49fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>PRInt32<sp/>aTargetIndex);</highlight></codeline>
-<codeline lineno="108"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="109"><highlight class="normal"></highlight></codeline>
-<codeline lineno="110"><highlight class="normal"></highlight></codeline>
+<codeline lineno="79"><highlight class="normal"></highlight></codeline>
+<codeline lineno="85"><highlight class="normal">[scriptable,<sp/>uuid(13ab5520-449e-11dd-ae16-0800200c9a66)]</highlight></codeline>
+<codeline lineno="86" refid="interfacesb_i_directory_import_service" refkind="compound"><highlight class="normal">interface<sp/><ref refid="interfacesb_i_directory_import_service" kindref="compound" tooltip="Handles finding media files in directories and adding them to a library or list.">sbIDirectoryImportService</ref><sp/>:<sp/>nsISupports</highlight></codeline>
+<codeline lineno="87"><highlight class="normal">{</highlight></codeline>
+<codeline lineno="88"><highlight class="normal"></highlight></codeline>
+<codeline lineno="99"><highlight class="normal"><sp/><sp/><ref refid="interfacesb_i_directory_import_job" kindref="compound" tooltip="Represents a recursive directory import operation. Use sbIDirectoryImportService...">sbIDirectoryImportJob</ref><sp/></highlight><highlight class="keyword">import</highlight><highlight class="normal">(in<sp/>nsIArray<sp/>aDirectories,</highlight></codeline>
+<codeline lineno="100"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/><ref refid="interfacesb_i_media_list" kindref="compound" tooltip="A brief description of the contents of this interface.">sbIMediaList</ref><sp/>aTargetMediaList,</highlight></codeline>
+<codeline lineno="101" refid="interfacesb_i_directory_import_service_18f8fa3aa3bedee13900754c4cdce49fa" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>[optional]<sp/>in<sp/>PRInt32<sp/>aTargetIndex);</highlight></codeline>
+<codeline lineno="102"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="103"><highlight class="normal"></highlight></codeline>
+<codeline lineno="104"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/mediaimport/directory/public/sbIDirectoryImportService.idl"/>
   </compounddef>

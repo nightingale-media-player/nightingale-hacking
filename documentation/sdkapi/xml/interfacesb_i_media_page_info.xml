@@ -48,14 +48,14 @@
     <detaileddescription>
     </detaileddescription>
     <collaborationgraph>
-      <node id="748">
+      <node id="766">
         <label>sbIMediaPageInfo</label>
         <link refid="interfacesb_i_media_page_info"/>
-        <childnode refid="749" relation="usage">
+        <childnode refid="767" relation="usage">
           <edgelabel>matchInterface</edgelabel>
         </childnode>
       </node>
-      <node id="749">
+      <node id="767">
         <label>sbIMediaListMatch</label>
         <link refid="interfacesb_i_media_list_match"/>
       </node>

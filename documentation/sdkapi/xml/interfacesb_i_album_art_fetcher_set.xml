@@ -52,16 +52,14 @@
     <listofallmembers>
       <member refid="interfacesb_i_album_art_fetcher_12e7aa9a9a21e080e84ee372a384ff3a1" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>albumArtSourceList</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1af76c37775392e96621dd55dde3c00e2" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>description</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_150f7a91b92fc302323ce75e2c1fcdf81" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>fetchAlbumArtForMediaItem</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_17328df8e1412555d73b98707ea6d25a7" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>foundAlbumArt</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_16ec581c5a2dcd41949160e1325b183d0" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>isComplete</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_1e473a55326d08aea0533d88124dae70f" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>fetchAlbumArtForAlbum</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1c9205bd18be39e369a6563873b41ef80" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>isEnabled</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1f0e116558c99df98213df5925fabddf7" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>isLocal</name></member>
       <member refid="interfacesb_i_album_art_fetcher_set_1d6272d19a9919d7f3eb1b9681668d4d1" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>localOnly</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a7de9e782a7485aa19f4689d86b8e1cb" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>name</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_1f0fb64cdfe322e7bee03ce72215e7085" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>priority</name></member>
       <member refid="interfacesb_i_album_art_fetcher_11746f3709c9cac9c1f49e9d7f1c1cf71" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>shortName</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a891fa93236b58c6b9eded65572bb877" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>shutdown</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_1fb3ca755a9dd6cd43b18750036cdd431" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcherSet</scope><name>userFetcher</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

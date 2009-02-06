@@ -44,19 +44,6 @@
         </inbodydescription>
         <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="69" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="69" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_1fb3ca755a9dd6cd43b18750036cdd431" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbIAlbumArtFetcher::userFetcher</definition>
-        <argsstring></argsstring>
-        <name>userFetcher</name>
-        <briefdescription>
-<para>Flag to indicate if this Fetcher can be used as a fetcher from a user menu. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="75" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="75" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_1f0e116558c99df98213df5925fabddf7" prot="public" static="no" mutable="no">
         <type>readonly attribute boolean</type>
         <definition>readonly attribute boolean sbIAlbumArtFetcher::isLocal</definition>
@@ -68,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="81" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="81" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="74" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="74" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_1c9205bd18be39e369a6563873b41ef80" prot="public" static="no" mutable="no">
         <type>attribute boolean</type>
@@ -81,33 +68,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="86" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="86" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="79" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="79" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_16ec581c5a2dcd41949160e1325b183d0" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbIAlbumArtFetcher::isComplete</definition>
+      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_1f0fb64cdfe322e7bee03ce72215e7085" prot="public" static="no" mutable="no">
+        <type>attribute PRInt32</type>
+        <definition>attribute PRInt32 sbIAlbumArtFetcher::priority</definition>
         <argsstring></argsstring>
-        <name>isComplete</name>
+        <name>priority</name>
         <briefdescription>
-<para>Flag to indicate if fetching is complete. </para>        </briefdescription>
+<para>Priority of this fetcher, a lower number represents a higher priority (so 0 is higher than 10). If multiple fetchers have the same priority then it is first come first serve at that priority. The priorities should not fall below 0 except where a priority of -1 will mean to append to end of list (so it will be the lowest priority). </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="91" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="91" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_17328df8e1412555d73b98707ea6d25a7" prot="public" static="no" mutable="no">
-        <type>readonly attribute boolean</type>
-        <definition>readonly attribute boolean sbIAlbumArtFetcher::foundAlbumArt</definition>
-        <argsstring></argsstring>
-        <name>foundAlbumArt</name>
-        <briefdescription>
-<para>Flag to indicate whether album art was found. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="96" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="96" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="89" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="89" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="interfacesb_i_album_art_fetcher_12e7aa9a9a21e080e84ee372a384ff3a1" prot="public" static="no" mutable="no">
         <type>attribute nsIArray</type>
@@ -120,34 +94,46 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="101" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="101" bodyend="-1"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="94" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="94" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
-      <memberdef kind="function" id="interfacesb_i_album_art_fetcher_150f7a91b92fc302323ce75e2c1fcdf81" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="interfacesb_i_album_art_fetcher_1e473a55326d08aea0533d88124dae70f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
-        <definition>void sbIAlbumArtFetcher::fetchAlbumArtForMediaItem</definition>
-        <argsstring>(in sbIMediaItem aMediaItem, in sbIAlbumArtListener aListener, in nsIDOMWindow aWindow)</argsstring>
-        <name>fetchAlbumArtForMediaItem</name>
+        <definition>void sbIAlbumArtFetcher::fetchAlbumArtForAlbum</definition>
+        <argsstring>(in nsIArray aMediaItems, in sbIAlbumArtListener aListener)</argsstring>
+        <name>fetchAlbumArtForAlbum</name>
         <param>
-          <type>in <ref refid="interfacesb_i_media_item" kindref="compound">sbIMediaItem</ref></type>
-          <declname>aMediaItem</declname>
+          <type>in nsIArray</type>
+          <declname>aMediaItems</declname>
         </param>
         <param>
           <type>in <ref refid="interfacesb_i_album_art_listener" kindref="compound">sbIAlbumArtListener</ref></type>
           <declname>aListener</declname>
         </param>
-        <param>
-          <type>in nsIDOMWindow</type>
-          <declname>aWindow</declname>
-        </param>
         <briefdescription>
-        </briefdescription>
+<para>Try to fetch album art for a list of items that belong to the same album. This function infers that all items in the list are from the same album. </para>        </briefdescription>
         <detaileddescription>
-        </detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>aMediaItems</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>is an array of sbIMediaItems from the same album </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>aListener</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>the listener to inform of success or failure</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>A call to aListener will be done for each item in the list. </para></simplesect>
+</para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="110"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="106"/>
       </memberdef>
       <memberdef kind="function" id="interfacesb_i_album_art_fetcher_1a891fa93236b58c6b9eded65572bb877" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -160,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="114"/>
+        <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="110"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -180,19 +166,17 @@
         </childnode>
       </node>
     </inheritancegraph>
-    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="53" bodyend="115"/>
+    <location file="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" line="54" bodyfile="c:/builds/songbird/trunk/components/albumart/public/sbIAlbumArtFetcher.idl" bodystart="53" bodyend="111"/>
     <listofallmembers>
       <member refid="interfacesb_i_album_art_fetcher_12e7aa9a9a21e080e84ee372a384ff3a1" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>albumArtSourceList</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1af76c37775392e96621dd55dde3c00e2" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>description</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_150f7a91b92fc302323ce75e2c1fcdf81" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>fetchAlbumArtForMediaItem</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_17328df8e1412555d73b98707ea6d25a7" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>foundAlbumArt</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_16ec581c5a2dcd41949160e1325b183d0" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>isComplete</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_1e473a55326d08aea0533d88124dae70f" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>fetchAlbumArtForAlbum</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1c9205bd18be39e369a6563873b41ef80" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>isEnabled</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1f0e116558c99df98213df5925fabddf7" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>isLocal</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a7de9e782a7485aa19f4689d86b8e1cb" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>name</name></member>
+      <member refid="interfacesb_i_album_art_fetcher_1f0fb64cdfe322e7bee03ce72215e7085" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>priority</name></member>
       <member refid="interfacesb_i_album_art_fetcher_11746f3709c9cac9c1f49e9d7f1c1cf71" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>shortName</name></member>
       <member refid="interfacesb_i_album_art_fetcher_1a891fa93236b58c6b9eded65572bb877" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>shutdown</name></member>
-      <member refid="interfacesb_i_album_art_fetcher_1fb3ca755a9dd6cd43b18750036cdd431" prot="public" virt="non-virtual"><scope>sbIAlbumArtFetcher</scope><name>userFetcher</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

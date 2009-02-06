@@ -5,22 +5,22 @@
     <includes local="yes">nsISupports.idl</includes>
     <includes refid="sb_i_remote_media_list_8idl" local="yes">sbIRemoteMediaList.idl</includes>
     <incdepgraph>
-      <node id="628">
-        <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
-        <link refid="sbIRemoteLibrary.idl"/>
-        <childnode refid="629" relation="include">
-        </childnode>
-        <childnode refid="630" relation="include">
-        </childnode>
-      </node>
-      <node id="629">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="630">
+      <node id="653">
         <label>sbIRemoteMediaList.idl</label>
         <link refid="sb_i_remote_media_list_8idl"/>
-        <childnode refid="629" relation="include">
+        <childnode refid="652" relation="include">
         </childnode>
+      </node>
+      <node id="651">
+        <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
+        <link refid="sbIRemoteLibrary.idl"/>
+        <childnode refid="652" relation="include">
+        </childnode>
+        <childnode refid="653" relation="include">
+        </childnode>
+      </node>
+      <node id="652">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <innerclass refid="interfacesb_i_create_media_list_callback" prot="public">sbICreateMediaListCallback</innerclass>

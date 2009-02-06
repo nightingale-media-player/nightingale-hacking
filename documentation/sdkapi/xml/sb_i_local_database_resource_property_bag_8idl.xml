@@ -4,13 +4,13 @@
     <compoundname>sbILocalDatabaseResourcePropertyBag.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="375">
+      <node id="400">
         <label>components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl</label>
         <link refid="sbILocalDatabaseResourcePropertyBag.idl"/>
-        <childnode refid="376" relation="include">
+        <childnode refid="401" relation="include">
         </childnode>
       </node>
-      <node id="376">
+      <node id="401">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
@@ -63,12 +63,14 @@
 <codeline lineno="64"><highlight class="normal"></highlight></codeline>
 <codeline lineno="65"><highlight class="normal"><sp/><sp/>AString<sp/>getSortablePropertyByID(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aPropertyDBID);</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="67"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperty(in<sp/>AString<sp/>aPropertyID,<sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="67"><highlight class="normal"><sp/><sp/>AString<sp/>getSearchablePropertyByID(in<sp/></highlight><highlight class="keywordtype">unsigned</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">long</highlight><highlight class="normal"><sp/>aPropertyDBID);</highlight></codeline>
 <codeline lineno="68"><highlight class="normal"></highlight></codeline>
-<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write();</highlight></codeline>
-<codeline lineno="70"><highlight class="normal">};</highlight></codeline>
-<codeline lineno="71"><highlight class="normal"></highlight></codeline>
-<codeline lineno="72"><highlight class="normal"></highlight></codeline>
+<codeline lineno="69"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>setProperty(in<sp/>AString<sp/>aPropertyID,<sp/>in<sp/>AString<sp/>aValue);</highlight></codeline>
+<codeline lineno="70"><highlight class="normal"></highlight></codeline>
+<codeline lineno="71"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>write();</highlight></codeline>
+<codeline lineno="72"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="73"><highlight class="normal"></highlight></codeline>
+<codeline lineno="74"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/library/localdatabase/public/sbILocalDatabaseResourcePropertyBag.idl"/>
   </compounddef>

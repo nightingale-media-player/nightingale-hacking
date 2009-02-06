@@ -6,32 +6,32 @@
     <includedby refid="sb_i_remote_library_8idl" local="yes">components/remoteapi/public/sbIRemoteLibrary.idl</includedby>
     <includedby refid="sb_i_scriptable_filter_result_8idl" local="yes">components/remoteapi/public/sbIScriptableFilterResult.idl</includedby>
     <incdepgraph>
-      <node id="633">
-        <label>nsISupports.idl</label>
-      </node>
-      <node id="632">
+      <node id="655">
         <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
         <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="633" relation="include">
+        <childnode refid="656" relation="include">
         </childnode>
+      </node>
+      <node id="656">
+        <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="635">
-        <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
-        <link refid="sb_i_remote_library_8idl-source"/>
+      <node id="657">
+        <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
+        <link refid="sbIRemoteMediaList.idl"/>
+        <childnode refid="658" relation="include">
+        </childnode>
+        <childnode refid="659" relation="include">
+        </childnode>
       </node>
-      <node id="636">
+      <node id="659">
         <label>components/remoteapi/public/sbIScriptableFilterResult.idl</label>
         <link refid="sb_i_scriptable_filter_result_8idl"/>
       </node>
-      <node id="634">
-        <label>components/remoteapi/public/sbIRemoteMediaList.idl</label>
-        <link refid="sbIRemoteMediaList.idl"/>
-        <childnode refid="635" relation="include">
-        </childnode>
-        <childnode refid="636" relation="include">
-        </childnode>
+      <node id="658">
+        <label>components/remoteapi/public/sbIRemoteLibrary.idl</label>
+        <link refid="sb_i_remote_library_8idl-source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="interfacesb_i_remote_media_list" prot="public">sbIRemoteMediaList</innerclass>

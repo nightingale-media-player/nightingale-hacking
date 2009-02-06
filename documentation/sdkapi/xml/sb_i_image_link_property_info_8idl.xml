@@ -4,13 +4,13 @@
     <compoundname>sbIImageLinkPropertyInfo.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <incdepgraph>
-      <node id="594">
+      <node id="617">
         <label>components/property/public/sbIImageLinkPropertyInfo.idl</label>
         <link refid="sbIImageLinkPropertyInfo.idl"/>
-        <childnode refid="595" relation="include">
+        <childnode refid="618" relation="include">
         </childnode>
       </node>
-      <node id="595">
+      <node id="618">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>

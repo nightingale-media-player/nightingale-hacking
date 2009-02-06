@@ -168,14 +168,14 @@
     <detaileddescription>
 <para>This interface provides support for downloading files.</para><para>&quot;@songbirdnest.com/Songbird/FileDownloader;1&quot; Use create instance with this component. </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="256">
+      <node id="259">
         <label>sbIFileDownloader</label>
         <link refid="interfacesb_i_file_downloader"/>
-        <childnode refid="257" relation="usage">
+        <childnode refid="260" relation="usage">
           <edgelabel>listener</edgelabel>
         </childnode>
       </node>
-      <node id="257">
+      <node id="260">
         <label>sbIFileDownloaderListener</label>
         <link refid="interfacesb_i_file_downloader_listener"/>
       </node>

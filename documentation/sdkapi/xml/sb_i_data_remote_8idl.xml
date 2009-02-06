@@ -4,22 +4,35 @@
     <compoundname>sbIDataRemote.idl</compoundname>
     <includes local="yes">nsISupports.idl</includes>
     <includes local="yes">nsIObserver.idl</includes>
+    <includedby refid="sb_p_i_data_remote2_8idl" local="yes">components/dataremote/public/sbPIDataRemote2.idl</includedby>
     <incdepgraph>
-      <node id="50">
-        <label>components/dataremote/public/sbIDataRemote.idl</label>
-        <link refid="sbIDataRemote.idl"/>
-        <childnode refid="51" relation="include">
-        </childnode>
-        <childnode refid="52" relation="include">
-        </childnode>
-      </node>
-      <node id="52">
+      <node id="55">
         <label>nsIObserver.idl</label>
       </node>
-      <node id="51">
+      <node id="53">
+        <label>components/dataremote/public/sbIDataRemote.idl</label>
+        <link refid="sbIDataRemote.idl"/>
+        <childnode refid="54" relation="include">
+        </childnode>
+        <childnode refid="55" relation="include">
+        </childnode>
+      </node>
+      <node id="54">
         <label>nsISupports.idl</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="57">
+        <label>components/dataremote/public/sbPIDataRemote2.idl</label>
+        <link refid="sb_p_i_data_remote2_8idl-source"/>
+      </node>
+      <node id="56">
+        <label>components/dataremote/public/sbIDataRemote.idl</label>
+        <link refid="sbIDataRemote.idl"/>
+        <childnode refid="57" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="interfacesb_i_data_remote" prot="public">sbIDataRemote</innerclass>
     <briefdescription>
 <para>Definition of the <ref refid="interfacesb_i_data_remote" kindref="compound">sbIDataRemote</ref> Interface. </para>    </briefdescription>
@@ -89,6 +102,9 @@
 <codeline lineno="168"><highlight class="normal"></highlight></codeline>
 <codeline lineno="169"><highlight class="normal">};</highlight></codeline>
 <codeline lineno="170"><highlight class="normal"></highlight></codeline>
+<codeline lineno="171"><highlight class="normal"></highlight></codeline>
+<codeline lineno="172"><highlight class="normal"></highlight></codeline>
+<codeline lineno="173"><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="c:/builds/songbird/trunk/components/dataremote/public/sbIDataRemote.idl"/>
   </compounddef>
