@@ -145,6 +145,11 @@ private:
   nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);
 
   nsresult GetCurrentCollationLocale(nsCString &aCollationLocale);
+  PRInt32 CollateWithLeadingNumbers_UTF8(const char *aStr1, 
+                                         const char *aStr2,
+                                         nsCString &strippedA,
+                                         nsCString &strippedB);
+  PRInt32 CollateForCurrentLocale_UTF8(const char *aStr1, const char *aStr2);
 
 private:
   PRLock * m_pDBStorePathLock;
@@ -350,6 +355,16 @@ protected:
 
   PRMonitor *   m_pQueueMonitor;
   threadqueue_t m_Queue;
+};
+
+class LoadDatabaseLocaleCollate {
+public:
+  LoadDatabaseLocaleCollate(const char *aCollationLocale);
+  virtual ~LoadDatabaseLocaleCollate();
+private:
+  CDatabaseEngine *m_Engine;
+  nsCString        m_oldCollationLocale;
+  nsCString        m_collationLocale;
 };
 
 #ifdef PR_LOGGING

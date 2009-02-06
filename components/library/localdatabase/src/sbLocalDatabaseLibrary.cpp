@@ -102,6 +102,8 @@
 
 #define DEFAULT_ANALYZE_COUNT_LIMIT 1000
 #define ANALYZE_COUNT_PREF "songbird.library.localdatabase.analyzeCountLimit"
+#define INVALID_COLLATION_INDEX_PREF_PREFIX "songbird.databaseengine."
+#define INVALID_COLLATION_INDEX_PREF_SUFFIX ".invalidCollationIndex"
 
 #define DEFAULT_MEDIAITEM_CACHE_SIZE 2500
 #define DEFAULT_MEDIALIST_CACHE_SIZE 25
@@ -4252,9 +4254,28 @@ sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty,
 nsresult
 sbLocalDatabaseLibrary::NeedsReindexCollations(PRBool *aNeedsReindexCollations) {
 
+  nsresult rv;
+  
+  // See if we've specifically been asked to reindex the collations
+  nsCOMPtr<nsIPrefBranch> prefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    PRBool prefValue;
+    nsCString key(INVALID_COLLATION_INDEX_PREF_PREFIX);
+    key.Append(NS_ConvertUTF16toUTF8(mDatabaseGuid));
+    key.Append(INVALID_COLLATION_INDEX_PREF_SUFFIX);
+    rv = prefBranch->GetBoolPref(key.get(), &prefValue);
+    if (NS_SUCCEEDED(rv)) {
+      if (prefValue) {
+        *aNeedsReindexCollations = PR_TRUE;
+        return NS_OK;
+      }
+    }
+  }
+
   // Read the identifier for the collation locale
   nsCOMPtr<sbIDatabaseQuery> query;
-  nsresult rv = MakeStandardQuery(getter_AddRefs(query));
+  rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->AddQuery(NS_LITERAL_STRING("SELECT value FROM library_metadata WHERE name = 'collation-locale'"));
@@ -4312,6 +4333,23 @@ sbLocalDatabaseLibrary::ReindexCollations() {
 
   rv = query->AddQuery(queryStr);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Remove the flag that forces reindexing for this library
+  
+  nsCOMPtr<nsIPrefBranch> prefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    PRBool prefValue;
+    nsCString key(INVALID_COLLATION_INDEX_PREF_PREFIX);
+    key.Append(NS_ConvertUTF16toUTF8(mDatabaseGuid));
+    key.Append(INVALID_COLLATION_INDEX_PREF_SUFFIX);
+    rv = prefBranch->PrefHasUserValue(key.get(), &prefValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (prefValue) {
+      rv = prefBranch->ClearUserPref(key.get());
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   // Write the new collation locale identifier in the db
 

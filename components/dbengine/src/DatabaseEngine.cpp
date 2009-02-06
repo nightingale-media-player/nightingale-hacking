@@ -382,7 +382,7 @@ void extractLeadingNumber(const char *str,
         break;
       case CHARTYPE_OTHER:
         // anything else is a character or symbol that isn't part of a valid
-        // number, so abort parsing.
+        // number, so abort parsing (this includes utf8 extended characters).
         abortParsing = PR_TRUE;
         break;
     }
@@ -427,7 +427,41 @@ void extractLeadingNumber(const char *str,
     }
   }
 }
- 
+
+// anything that has the 8th bit on is part of a multibyte sequence
+#define UTF8_ISASCII7(c) (!(c & 0x80))
+
+PRInt32 findNextNumber_utf8(const char *aStr) {
+  if (!aStr) 
+    return -1;
+  
+  const char *p = aStr;
+  const char *beginning = NULL;
+  while (*p) {
+    // skip utf8 extended chars, because 7 bit ASCII is all we
+    // need to find numbers
+    if (UTF8_ISASCII7(*p)) {
+      PRInt32 c = getCharType(p);
+      if (c == CHARTYPE_DIGIT) {
+        if (!beginning)
+          beginning = p;
+        return beginning-aStr;
+      }
+      if (c == CHARTYPE_SIGN ||
+          c == CHARTYPE_DECIMALPOINT) {
+        if (!beginning) {
+          beginning = p;
+        }
+      } else {
+        beginning = NULL;
+      }
+    }
+    p++;
+  }
+  
+  return -1;
+}
+
 static PRInt32 gLocaleCollationEnabled = PR_TRUE;
 
 /*
@@ -2077,93 +2111,36 @@ NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(PRBool aEnabled)
   return NS_OK;
 }
 
-PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
+PRInt32 CDatabaseEngine::CollateForCurrentLocale_UTF8(const char *aStr1, 
+                                                      const char *aStr2) {
+  // shortcut when both strings are empty
+  if (!aStr1 && !aStr2) 
+    return 0;
 
   PRInt32 retval;
-
-  // extract leading numbers
-  
-  PRBool hasLeadingNumberA = PR_FALSE;
-  PRBool hasLeadingNumberB = PR_FALSE;
-  
-  PRFloat64 leadingNumberA;
-  PRFloat64 leadingNumberB;
-  
-  nsCString strippedA;
-  nsCString strippedB;
-  
-  extractLeadingNumber(aStr1, &hasLeadingNumberA, &leadingNumberA, strippedA);
-  extractLeadingNumber(aStr2, &hasLeadingNumberB, &leadingNumberB, strippedB);
-  
-  // we want strings with leading numbers to always sort at the end
-  if (hasLeadingNumberA && !hasLeadingNumberB) {
-    return 1;
-  } else if (!hasLeadingNumberA && hasLeadingNumberB) {
-    return -1;
-  } else if (hasLeadingNumberA && hasLeadingNumberB) {
-    if (leadingNumberA > leadingNumberB) 
-      return 1;
-    else if (leadingNumberA < leadingNumberB)
-      return -1;
-  }
-  
-  // either both numbers are equal, or neither string had a leading number,
-  // use the (possibly) stripped down strings to collate.
-  
-#ifndef XP_MACOSX
-
-  // unless we are on osx, we rely on the CRT's locale settings, so read the
-  // current locale for collate so we can restore it later
-  nsCString oldlocale_collate(setlocale(LC_COLLATE, NULL));
-
-  setlocale(LC_COLLATE, mCollationLocale.get());
-
-#ifdef XP_UNIX
-
-  // on linux, use glib's utf8 collate function, so we don't have to care about
-  // the whole wchar_t size mess
-
-  retval = g_utf8_collate(strippedA.get(), strippedB.get());
-  
-#endif
-
-#ifdef XP_WIN
-
-  // on windows, use wcscoll with wchar_t strings
-
-  // convert to utf16
-  nsString input_a_utf16 = NS_ConvertUTF8toUTF16(strippedA);
-  nsString input_b_utf16 = NS_ConvertUTF8toUTF16(strippedB);
 
   // apply the proper collation algorithm, depending on the user's locale.
   
   // note that it is impossible to use the proper sort for *all* languages at
   // the same time, because what is proper depends on the original language from
-  // which the string came. for instance, hungarian artists should have their
-  // accented vowels sorted the same as non-accented ones, but a french artist 
+  // which the string came. for instance, Hungarian artists should have their
+  // accented vowels sorted the same as non-accented ones, but a French artist 
   // should have the last accent determine that order. because we cannot
   // possibly guess the origin locale for the string, the only thing we can do
   // is use the user's current locale on all strings.
   
-  // that being said, many language-specific letters (such as the german eszett)
+  // that being said, many language-specific letters (such as the German Eszett)
   // have one one way of being properly sorted (in this instance, it must sort
   // with the same weight as 'ss', and are collated that way no matter what
   // locale is being used.
-  retval = wcscoll((wchar_t *)input_a_utf16.BeginReading(), 
-                   (wchar_t *)input_b_utf16.BeginReading());
 
-#endif
-
-  // restore the previous collate setting
-  setlocale(LC_COLLATE, oldlocale_collate.get());
-  
-#else
+#ifdef XP_MACOSX
 
   // on osx, use carbon collate functions because the CRT functions do not
   // have access to carbon's collation setting.
 
-  NS_ConvertUTF8toUTF16 _zA16(strippedA);
-  NS_ConvertUTF8toUTF16 _zB16(strippedB);
+  NS_ConvertUTF8toUTF16 _zA16(aStr1);
+  NS_ConvertUTF8toUTF16 _zB16(aStr2);
   
   // we should always have a collator, but just in case we don't,
   // use the default collation algorithm.
@@ -2184,10 +2161,169 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
                     NULL,
                     (SInt32 *)&retval);
   }
-  
-#endif
+
+#else
+
+#ifdef XP_UNIX
+
+  // on linux, use glib's utf8 collate function, so we don't have to care about
+  // the whole wchar_t size mess
+
+  retval = g_utf8_collate(aStr1, aStr2);
+
+#else
+
+#ifdef XP_WIN
+
+  // on windows, use wcscoll with wchar_t strings
+
+  // convert to utf16
+  nsString input_a_utf16 = NS_ConvertUTF8toUTF16(aStr1);
+  nsString input_b_utf16 = NS_ConvertUTF8toUTF16(aStr2);
+
+  retval = wcscoll((wchar_t *)input_a_utf16.BeginReading(), 
+                   (wchar_t *)input_b_utf16.BeginReading());
+
+#endif // XP_WIN
+
+#endif // XP_UNIX
+
+#endif // XP_MACOSX
 
   return retval;
+}
+
+// This defines where to sort strings with leading numbers relative to strings
+// without leading numbers. (-1 = top, 1 = bottom)
+#define LEADING_NUMBERS_SORTPOSITION -1
+
+PRInt32 CDatabaseEngine::CollateWithLeadingNumbers_UTF8(const char *aStr1, 
+                                                        const char *aStr2,
+                                                        nsCString &strippedA,
+                                                        nsCString &strippedB) {
+  PRBool hasLeadingNumberA = PR_FALSE;
+  PRBool hasLeadingNumberB = PR_FALSE;
+  
+  PRFloat64 leadingNumberA;
+  PRFloat64 leadingNumberB;
+  
+  extractLeadingNumber(aStr1, &hasLeadingNumberA, &leadingNumberA, strippedA);
+  extractLeadingNumber(aStr2, &hasLeadingNumberB, &leadingNumberB, strippedB);
+  
+  // we want strings with leading numbers to always sort the same way relative
+  // to those without leading numbers
+  if (hasLeadingNumberA && !hasLeadingNumberB) {
+    return LEADING_NUMBERS_SORTPOSITION;
+  } else if (!hasLeadingNumberA && hasLeadingNumberB) {
+    return -LEADING_NUMBERS_SORTPOSITION;
+  } else if (hasLeadingNumberA && hasLeadingNumberB) {
+    if (leadingNumberA > leadingNumberB) 
+      return 1;
+    else if (leadingNumberA < leadingNumberB)
+      return -1;
+  }
+  
+  // either both numbers are equal, or neither string had a leading number,
+  // use the (possibly) stripped down strings to collate.
+
+  return CollateForCurrentLocale_UTF8(aStr1, aStr2);
+}
+
+PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
+
+  LoadDatabaseLocaleCollate locale(mCollationLocale.get());
+    
+  nsCString remainderA(aStr1);
+  nsCString remainderB(aStr2);
+  
+  while (1) {
+    
+    // if either string is empty, break the loop
+    if (remainderA.Length() == 0 ||
+        remainderB.Length() == 0)
+      break;
+      
+    // find the next number in each string, if any
+    PRInt32 nextNumberPosA = findNextNumber_utf8(remainderA.get());
+    PRInt32 nextNumberPosB = findNextNumber_utf8(remainderB.get());
+    
+    if (nextNumberPosA == -1 || 
+        nextNumberPosB == -1) {
+      // if either string does not have anymore number, break the loop
+      // so we do a final collate on the remainder of the strings
+      break;
+    } else {
+      // both strings still have more number(s)
+
+      // if one of the strings begins with a number and the other does not,
+      // enforce leading number sort position
+      if (nextNumberPosA == 0 && nextNumberPosB != 0) {
+        return LEADING_NUMBERS_SORTPOSITION;
+      } else if (nextNumberPosA != 0 && nextNumberPosB == 0) {
+        return -LEADING_NUMBERS_SORTPOSITION;
+      }
+
+      // extract the substrings that precede the numbers, then collate these 
+      // if they are not equivalent, then return the result of that collation.
+      
+      nsCString leadingSubstringA(remainderA.get(), nextNumberPosA);
+      nsCString leadingSubstringB(remainderB.get(), nextNumberPosB);
+      
+      PRInt32 substringCollate = 
+        CollateForCurrentLocale_UTF8(leadingSubstringA.get(),
+                                     leadingSubstringB.get());
+      
+      if (substringCollate != 0) {
+        return substringCollate;
+      }
+      
+      // the leading substrings are equivalent, so parse the numbers and
+      // see if they are equivalent too
+
+      // remove the leading substrings from the remainder strings, so that
+      // they now begin with the next numbers
+      remainderA = remainderA.get() + nextNumberPosA;
+      remainderB = remainderB.get() + nextNumberPosB;
+      
+      nsCString strippedA;
+      nsCString strippedB;
+      
+      PRInt32 leadingNumbersCollate = 
+        CollateWithLeadingNumbers_UTF8(remainderA.get(),
+                                       remainderB.get(),
+                                       strippedA,
+                                       strippedB);
+      
+      // if the numbers were not equivalent, return the result of the number
+      // collation
+      if (leadingNumbersCollate != 0) {
+        return leadingNumbersCollate;
+      }
+      
+      // discard the numbers
+      remainderA = strippedA;
+      remainderB = strippedB;
+    
+      // and loop ...
+    }
+    
+  }
+  
+  // if both strings are now empty, the original strings were equivalent
+  if (remainderA.Length() == 0 &&
+      remainderB.Length() == 0) {
+    return 0;
+  }
+  
+  // collate what we have left. although at most one string may have a leading
+  // number, we want to go through CollateWithLeadingNumbers_UTF8 anyway in
+  // order to enforce the position of strings with leading numbers relative to
+  // strings without leading numbers
+  
+  return CollateWithLeadingNumbers_UTF8(remainderA.get(),
+                                        remainderB.get(),
+                                        nsCString(),
+                                        nsCString());
 }
 
 nsresult
@@ -2273,6 +2409,33 @@ NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationID(nsAString &aID) {
   return NS_OK;
 }
 
+LoadDatabaseLocaleCollate::
+  LoadDatabaseLocaleCollate(const char *aCollationLocale) :
+  m_collationLocale(aCollationLocale) {
+
+#ifndef XP_MACOSX
+
+  // unless we are on osx, we rely on the CRT's locale settings, so read the
+  // current locale for collate so we can restore it later
+  m_oldCollationLocale = setlocale(LC_COLLATE, NULL);
+
+  setlocale(LC_COLLATE, m_collationLocale.get());
+
+#endif
+
+}
+
+LoadDatabaseLocaleCollate::~LoadDatabaseLocaleCollate() {
+
+#ifndef XP_MACOSX
+
+  // restore the previous collate setting
+  setlocale(LC_COLLATE, m_oldCollationLocale.get());
+
+#endif  
+
+}
+
 #ifdef PR_LOGGING
 sbDatabaseEnginePerformanceLogger::sbDatabaseEnginePerformanceLogger(const nsAString& aQuery,
                                                                      const nsAString& aGuid) :
@@ -2303,5 +2466,6 @@ sbDatabaseEnginePerformanceLogger::~sbDatabaseEnginePerformanceLogger()
     }
   }
 }
+
 #endif
 
