@@ -88,8 +88,8 @@ sbLastFMAlbumArtFetcher.prototype = {
     
     var arguments = Cc["@mozilla.org/hash-property-bag;1"]
                     .createInstance(Ci.nsIWritablePropertyBag2);
-    arguments.setPropertyAsACString("album", albumName);
-    arguments.setPropertyAsACString("artist", artistName);
+    arguments.setPropertyAsAString("album", albumName);
+    arguments.setPropertyAsAString("artist", artistName);
     
     var self = this;
     var apiResponse = function response(success, xml) {
