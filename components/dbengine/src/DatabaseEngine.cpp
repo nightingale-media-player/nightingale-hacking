@@ -1056,7 +1056,8 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   
   ::UCCreateCollator(l,
                      kUnicodeCollationClass, 
-                     kUCCollateStandardOptions,
+                     kUCCollateStandardOptions |
+                       kUCCollatePunctuationSignificantMask,
                      &m_Collator);
 #endif
 
