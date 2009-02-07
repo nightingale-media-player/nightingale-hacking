@@ -2400,8 +2400,12 @@ sbMediacoreSequencer::Next()
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
        mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
-      rv = mPlaybackControl->Stop();
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      mon.Exit();
+      rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+      mon.Enter();
     }
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -2487,8 +2491,12 @@ sbMediacoreSequencer::Previous()
     if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
        mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
        mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
-      rv = mPlaybackControl->Stop();
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      mon.Exit();
+      rv = playbackControl->Stop();
       NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+      mon.Enter();
     }
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -2964,9 +2972,15 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
       *_retval = PR_FALSE;
       return NS_OK;
     } else {
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      mon.Exit();
+
       // if the item is our list, stop playback now and shutdown watcher
-      rv = mPlaybackControl->Stop();
+      rv = playbackControl->Stop();
       NS_ENSURE_SUCCESS(rv, rv);
+      
+      mon.Enter();
 
       mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
@@ -3282,8 +3296,14 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
   if(NS_FAILED(rv)) {
     // if the item is our list, stop playback now and shutdown watcher
     if (mPlaybackControl) {
-      rv = mPlaybackControl->Stop();
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      mon.Exit();
+
+      rv = playbackControl->Stop();
       NS_ENSURE_SUCCESS(rv, rv);
+
+      mon.Enter();
     }
 
     mStatus = sbIMediacoreStatus::STATUS_STOPPED;
