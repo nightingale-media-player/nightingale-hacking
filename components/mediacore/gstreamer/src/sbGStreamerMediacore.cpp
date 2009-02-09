@@ -169,7 +169,8 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mPlayingGaplessly(PR_FALSE),
     mAbortingPlayback(PR_FALSE),
     mHasReachedPlaying(PR_FALSE),
-    mCurrentAudioCaps(NULL)
+    mCurrentAudioCaps(NULL),
+    mAudioBinGhostPad(NULL)
 {
   NS_WARN_IF_FALSE(mBaseEventTarget, 
           "mBaseEventTarget is null, may be out of memory");
@@ -482,6 +483,8 @@ sbGStreamerMediacore::CreateAudioSink()
   ghostpad = gst_ghost_pad_new ("sink", targetpad);
   gst_element_add_pad (sinkbin, ghostpad);
 
+  mAudioBinGhostPad = GST_GHOST_PAD (gst_object_ref (ghostpad));
+
   gst_object_unref (targetpad);
 
   return sinkbin;
@@ -602,6 +605,14 @@ sbGStreamerMediacore::DestroyPipeline()
         gst_bin_remove ((GstBin *)parent, filter);
         gst_object_unref (parent);
       }
+    }
+
+    /* Work around bug in ghostpads (upstream #570910) by explicitly
+     * untargetting this ghostpad */
+    if (mAudioBinGhostPad) {
+      gst_ghost_pad_set_target (mAudioBinGhostPad, NULL);
+      gst_object_unref (mAudioBinGhostPad);
+      mAudioBinGhostPad = NULL;
     }
 
     gst_object_unref (mPipeline);
@@ -1773,16 +1784,7 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
   target->AddEventListener(NS_LITERAL_STRING("unload"), this, PR_FALSE);
   target->AddEventListener(NS_LITERAL_STRING("hide"), this, PR_FALSE);
 
-  nsCOMPtr<nsIThread> eventTarget;
-  rv = NS_GetMainThread(getter_AddRefs(eventTarget));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIBoxObject> proxiedBoxObject;
-  rv = do_GetProxyForObject(eventTarget,
-                            NS_GET_IID(nsIBoxObject),
-                            boxObject,
-                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(proxiedBoxObject));
+  NS_WARN_IF_FALSE(NS_IsMainThread(), "Wrong Thread!");
 
   mHaveVideoWindow = PR_TRUE;
   mVideoWindow = aVideoWindow;
@@ -1790,15 +1792,15 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 #if defined (MOZ_WIDGET_GTK2)
   GdkWindow *native = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
   LOG(("Found native window %x", native));
-  mPlatformInterface = new GDKPlatformInterface(proxiedBoxObject, native);
+  mPlatformInterface = new GDKPlatformInterface(boxObject, native);
 #elif defined (XP_WIN)
   HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
   LOG(("Found native window %x", native));
-  mPlatformInterface = new Win32PlatformInterface(proxiedBoxObject, native);
+  mPlatformInterface = new Win32PlatformInterface(boxObject, native);
 #elif defined (XP_MACOSX)
   void * native = (void *)widget->GetNativeData(NS_NATIVE_WIDGET);
   LOG(("Found native window %x", native));
-  mPlatformInterface = new OSXPlatformInterface(proxiedBoxObject, native);
+  mPlatformInterface = new OSXPlatformInterface(boxObject, native);
 #else
   LOG(("No video backend available for this platform"));
   mHaveVideoWindow = PR_FALSE;

@@ -239,6 +239,8 @@ protected:
                              // the currently-playing URI.
 
   GstCaps *mCurrentAudioCaps; // Caps of currently playing audio, or NULL
+
+  GstGhostPad *mAudioBinGhostPad;
 };
 
 #endif /* __SB_GSTREAMERMEDIACORE_H__ */
