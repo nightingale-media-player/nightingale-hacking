@@ -43,6 +43,8 @@
 <!ENTITY help.keyboard.key.f14            "F14" >
 <!ENTITY help.keyboard.key.f15            "F15" >
 
+<!ENTITY help.keyboard.mouse.click.primary "Click" >
+<!ENTITY help.keyboard.mouse.click.middle "Middle-Click" >
 <!ENTITY help.keyboard.key.meta           "Win" >
 <!ENTITY help.keyboard.key.ctrl           "Ctrl" >
 <!ENTITY help.keyboard.key.cmd            "Cmd" >
@@ -80,6 +82,8 @@
 <!ENTITY help.keyboard.name.browser.stop        "Stop Loading" >
 <!ENTITY help.keyboard.name.open.file           "Open File" >
 <!ENTITY help.keyboard.name.open.url            "Open URL Location" >
+<!ENTITY help.keyboard.name.tab.open.link       "Open Link in New Tab" >
+<!ENTITY help.keyboard.name.save.link           "Save Link" >
 <!ENTITY help.keyboard.name.file.print          "Print" >
 <!ENTITY help.keyboard.name.view.source         "View Source" >
 <!ENTITY help.keyboard.name.view.zoomin         "Zoom In" >
