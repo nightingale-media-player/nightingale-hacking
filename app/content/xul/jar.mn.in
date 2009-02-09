@@ -33,3 +33,5 @@ songbird.jar:
 #ifdef MEDIA_CORE_GST_SYSTEM
 % overlay chrome://songbird/content/xul/songbird.xul                         chrome://songbird/content/xul/coreGStreamerOverlay.xul
 #endif
+# Profile overlays
+% overlay chrome://mozapps/content/profile/profileSelection.xul              chrome://songbird/content/xul/profileSelectionOverlay.xul
