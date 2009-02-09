@@ -1558,6 +1558,22 @@ NS_IMETHODIMP CDatabaseEngine::DumpMemoryStatistics()
 }
 
 //-----------------------------------------------------------------------------
+NS_IMETHODIMP CDatabaseEngine::GetCurrentMemoryUsage(PRInt32 flag, PRInt32 *_retval)
+{
+  int disused  = -1;
+  sqlite3_status((int)flag, (int*)_retval, &disused, 0);
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
+NS_IMETHODIMP CDatabaseEngine::GetHighWaterMemoryUsage(PRInt32 flag, PRInt32 *_retval)
+{
+  int disused  = -1;
+  sqlite3_status((int)flag, &disused, (int*)_retval, 0);
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
 {
   // Attempt to free a large amount of memory.

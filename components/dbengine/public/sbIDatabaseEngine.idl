@@ -46,7 +46,7 @@ interface nsIFile;
 *
 * \sa sbIDatabaseQuery, sbIDatabaseResult
 */
-[scriptable, uuid(4661378b-addc-4d1e-aece-0a49cd169b8d)]
+[scriptable, uuid(2fbdee94-afa1-4fd3-abec-c87e5c340681)]
 interface sbIDatabaseEngine : nsISupports
 {
   /**
@@ -76,6 +76,29 @@ interface sbIDatabaseEngine : nsISupports
    * See components/dbengine/src/sqlite3.c#6625 for details.
    */
   void dumpMemoryStatistics();
+
+  /**
+   * \brief Get the current amount of memory in use for a given sqlite3 flag.
+   */
+  long getCurrentMemoryUsage(in long flag);
+
+  /**
+   * \brief Get the high water mark memory in use for a given SQLite3 flag.
+   */
+  long getHighWaterMemoryUsage(in long flag);
+
+  /**
+   * SQLITE memory usage flags:
+   *
+   * \brief MEMORYUSED: total dynamically alocated memory use.
+   * \brief PAGECACHEUSED: total used pre-allocated page cache.
+   * \brief PAGECACHEOVERFLOW: dynamically allocated page-cache use.
+   * There are other allowable flags but the rest are usually not useful.
+   * see: http://www.sqlite.org/c3ref/c_status_malloc_size.html
+   */
+  const long DATABASE_MEMORYUSED = 0;
+  const long DATABASE_PAGECACHEUSED = 1;
+  const long DATABASE_PAGECACHEOVERFLOW = 2;
 
   /**
    * \brief Release all non-essential memory.
