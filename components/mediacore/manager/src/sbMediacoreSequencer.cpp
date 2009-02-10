@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -93,22 +93,22 @@
 #define MEDIACORE_CHECK_DELAY 100
 
 
-inline nsresult 
-EmitMillisecondsToTimeString(PRUint64 aValue, 
-                             nsAString &aString, 
+inline nsresult
+EmitMillisecondsToTimeString(PRUint64 aValue,
+                             nsAString &aString,
                              PRBool aRemainingTime = PR_FALSE)
 {
   PRUint64 seconds = aValue / 1000;
   PRUint64 minutes = seconds / 60;
   PRUint64 hours = minutes / 60;
-  
+
   seconds = seconds %60;
   minutes = minutes % 60;
 
   NS_NAMED_LITERAL_STRING(strZero, "0");
   NS_NAMED_LITERAL_STRING(strCol, ":");
   nsString stringValue;
-  
+
   if(hours > 0) {
     AppendInt(stringValue, hours);
     stringValue += strCol;
@@ -145,7 +145,7 @@ EmitMillisecondsToTimeString(PRUint64 aValue,
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreSequencer)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreSequencer)
 
-NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreSequencer, 
+NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreSequencer,
                             sbIMediacoreSequencer,
                             sbIMediacoreStatus,
                             sbIMediaListListener,
@@ -153,7 +153,7 @@ NS_IMPL_QUERY_INTERFACE6_CI(sbMediacoreSequencer,
                             nsIClassInfo,
                             nsITimerCallback)
 
-NS_IMPL_CI_INTERFACE_GETTER2(sbMediacoreSequencer, 
+NS_IMPL_CI_INTERFACE_GETTER2(sbMediacoreSequencer,
                              sbIMediacoreSequencer,
                              sbIMediacoreStatus)
 
@@ -198,21 +198,21 @@ sbMediacoreSequencer::~sbMediacoreSequencer()
 }
 
 nsresult
-sbMediacoreSequencer::Init() 
+sbMediacoreSequencer::Init()
 {
   mMonitor = nsAutoMonitor::NewMonitor("sbMediacoreSequencer::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  
-  nsCOMPtr<nsISupportsWeakReference> weakRef = 
+
+  nsCOMPtr<nsISupportsWeakReference> weakRef =
     do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = weakRef->GetWeakReference(getter_AddRefs(mMediacoreManager));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mSequenceProcessorTimer = 
+  mSequenceProcessorTimer =
     do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -247,15 +247,15 @@ sbMediacoreSequencer::Init()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::StartSequenceProcessor()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mSequenceProcessorTimer, NS_ERROR_NOT_INITIALIZED);
 
-  nsresult rv = 
-    mSequenceProcessorTimer->InitWithCallback(this, 
-                                              MEDIACORE_UPDATE_NOTIFICATION_DELAY, 
+  nsresult rv =
+    mSequenceProcessorTimer->InitWithCallback(this,
+                                              MEDIACORE_UPDATE_NOTIFICATION_DELAY,
                                               nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -265,7 +265,7 @@ sbMediacoreSequencer::StartSequenceProcessor()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::StopSequenceProcessor()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -286,7 +286,7 @@ sbMediacoreSequencer::StopSequenceProcessor()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::BindDataRemotes()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
@@ -299,7 +299,7 @@ sbMediacoreSequencer::BindDataRemotes()
   nullString.SetIsVoid(PR_TRUE);
 
   // Faceplate Buffering
-  mDataRemoteFaceplateBuffering = 
+  mDataRemoteFaceplateBuffering =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -312,7 +312,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate Paused
-  mDataRemoteFaceplatePaused = 
+  mDataRemoteFaceplatePaused =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -325,7 +325,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate Playing
-  mDataRemoteFaceplatePlaying = 
+  mDataRemoteFaceplatePlaying =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -338,7 +338,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate Playing Video
-  mDataRemoteFaceplatePlayingVideo = 
+  mDataRemoteFaceplatePlayingVideo =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -351,7 +351,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate Seen Playing
-  mDataRemoteFaceplateSeenPlaying = 
+  mDataRemoteFaceplateSeenPlaying =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -364,7 +364,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Faceplate Play URL
-  mDataRemoteFaceplateURL = 
+  mDataRemoteFaceplateURL =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -377,7 +377,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Faceplate show remaining time
-  mDataRemoteFaceplateRemainingTime = 
+  mDataRemoteFaceplateRemainingTime =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -400,7 +400,7 @@ sbMediacoreSequencer::BindDataRemotes()
   //
 
   // Metadata Album
-  mDataRemoteMetadataAlbum = 
+  mDataRemoteMetadataAlbum =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -413,20 +413,20 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Artist
-  mDataRemoteMetadataArtist = 
+  mDataRemoteMetadataArtist =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteMetadataArtist->Init(
     NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_METADATA_ARTIST),
     nullString);
-  NS_ENSURE_SUCCESS(rv, rv);    
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mDataRemoteMetadataArtist->SetStringValue(EmptyString());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Genre
-  mDataRemoteMetadataGenre = 
+  mDataRemoteMetadataGenre =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -440,7 +440,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Title
-  mDataRemoteMetadataTitle = 
+  mDataRemoteMetadataTitle =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -453,7 +453,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Duration
-  mDataRemoteMetadataDuration = 
+  mDataRemoteMetadataDuration =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -466,7 +466,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Duration Str
-  mDataRemoteMetadataDurationStr = 
+  mDataRemoteMetadataDurationStr =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -479,7 +479,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Position
-  mDataRemoteMetadataPosition = 
+  mDataRemoteMetadataPosition =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -492,7 +492,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata Position Str
-  mDataRemoteMetadataPositionStr = 
+  mDataRemoteMetadataPositionStr =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -501,12 +501,12 @@ sbMediacoreSequencer::BindDataRemotes()
     nullString);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = 
+  rv =
     mDataRemoteMetadataPositionStr->SetStringValue(NS_LITERAL_STRING("0:00"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Metadata URL
-  mDataRemoteMetadataURL = 
+  mDataRemoteMetadataURL =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -532,7 +532,7 @@ sbMediacoreSequencer::BindDataRemotes()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Playlist Shuffle
-  mDataRemotePlaylistShuffle = 
+  mDataRemotePlaylistShuffle =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -552,7 +552,7 @@ sbMediacoreSequencer::BindDataRemotes()
 
 
   // Playlist Repeat
-  mDataRemotePlaylistRepeat = 
+  mDataRemotePlaylistRepeat =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -560,7 +560,7 @@ sbMediacoreSequencer::BindDataRemotes()
     NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_PLAYLIST_REPEAT),
     nullString);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsString repeat;
   rv = mDataRemotePlaylistRepeat->GetStringValue(repeat);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -574,7 +574,7 @@ sbMediacoreSequencer::BindDataRemotes()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UnbindDataRemotes()
 {
   //
@@ -639,7 +639,7 @@ sbMediacoreSequencer::UnbindDataRemotes()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdatePlayStateDataRemotes()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -659,14 +659,14 @@ sbMediacoreSequencer::UpdatePlayStateDataRemotes()
 
   nsresult rv = mDataRemoteFaceplatePaused->SetBoolValue(paused);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = mDataRemoteFaceplatePlaying->SetBoolValue(playing);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdatePositionDataRemotes(PRUint64 aPosition)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -686,7 +686,7 @@ sbMediacoreSequencer::UpdatePositionDataRemotes(PRUint64 aPosition)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -706,7 +706,7 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
 
   if(showRemainingTime) {
     PRUint64 position = 0;
-    
+
     rv = mPlaybackControl->GetPosition(&position);
     if(NS_FAILED(rv)) {
       position = 0;
@@ -727,7 +727,7 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateURLDataRemotes(nsIURI *aURI)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -767,20 +767,20 @@ sbMediacoreSequencer::UpdateShuffleDataRemote(PRUint32 aMode)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateRepeatDataRemote(PRUint32 aRepeatMode)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   nsresult rv = mDataRemotePlaylistRepeat->SetIntValue(aRepeatMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::HandleMetadataEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -794,7 +794,7 @@ sbMediacoreSequencer::HandleMetadataEvent(sbIMediacoreEvent *aEvent)
   rv = variant->GetAsISupports(getter_AddRefs(supports));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIPropertyArray> propertyArray = 
+  nsCOMPtr<sbIPropertyArray> propertyArray =
     do_QueryInterface(supports, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -821,8 +821,8 @@ sbMediacoreSequencer::HandleMetadataEvent(sbIMediacoreEvent *aEvent)
   return NS_OK;
 }
 
-nsresult 
-sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId, 
+nsresult
+sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
                                             const nsAString &aValue)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -843,7 +843,7 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   }
 
   //
-  // For local files,  we want to keep the existing property rather than 
+  // For local files,  we want to keep the existing property rather than
   // overriding it here if we successfully imported metadata in the first
   // place. As a proxy for "successfully imported metadata", we check if
   // the artist is non-empty.
@@ -875,15 +875,15 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
     remote = mDataRemoteMetadataArtist;
   }
   else if(aId.EqualsLiteral(SB_PROPERTY_GENRE)) {
-    remote = mDataRemoteMetadataGenre;  
+    remote = mDataRemoteMetadataGenre;
   }
   else if(aId.EqualsLiteral(SB_PROPERTY_TRACKNAME)) {
-    remote = mDataRemoteMetadataTitle;  
+    remote = mDataRemoteMetadataTitle;
   }
   else if(aId.EqualsLiteral(SB_PROPERTY_PRIMARYIMAGEURL)) {
     remote = mDataRemoteMetadataImageURL;
   }
-  
+
   if(remote) {
     nsresult rv = remote->SetStringValue(aValue);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -892,18 +892,18 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::SetMetadataDataRemotesFromItem(sbIMediaItem *aItem)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
 
   nsString albumName, artistName, genre, trackName, imageURL;
-  nsresult rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), 
+  nsresult rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                                    albumName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME), 
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
                           artistName);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -963,7 +963,7 @@ sbMediacoreSequencer::ResetMetadataDataRemotes() {
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
 {
   if(mCurrentItem) {
@@ -973,8 +973,13 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
                                             strDuration);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint64 itemDuration = nsString_ToUint64(strDuration, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    PRUint64 itemDuration = 0;
+
+    // if there was a duration set, convert it.
+    if (!strDuration.IsEmpty()) {
+      nsString_ToUint64(strDuration, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     itemDuration /= PR_USEC_PER_MSEC;
 
@@ -988,7 +993,7 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1004,7 +1009,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
   nsresult rv = aEvent->GetError(getter_AddRefs(error));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If there's an error object, we'll show the contents of it to the user 
+  // If there's an error object, we'll show the contents of it to the user
   if(error) {
     nsCOMPtr<nsIPrefBranch> prefBranch =
       do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
@@ -1023,7 +1028,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
       nsCOMPtr<nsIDOMWindow> parentWindow;
 
       // Get the window watcher service.
-      nsCOMPtr<nsIWindowWatcher> windowWatcher = 
+      nsCOMPtr<nsIWindowWatcher> windowWatcher =
         do_GetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1031,8 +1036,8 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIDOMWindow> domWindow;
-      rv = windowWatcher->OpenWindow(parentWindow, 
-        MEDIACORE_ERROR_DIALOG_URI, 
+      rv = windowWatcher->OpenWindow(parentWindow,
+        MEDIACORE_ERROR_DIALOG_URI,
         nsnull,
         "centerscreen,chrome,modal,titlebar",
         error,
@@ -1048,7 +1053,7 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
 {
   nsAutoMonitor mon(mMonitor);
@@ -1063,13 +1068,13 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
   PRUint32 length = 0;
   nsresult rv = mView->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   mPosition = 0;
   mSequence.reserve(length);
-  
+
   // ensure view position is inside the bounds of the view.
-  if(aViewPosition && 
-     ((*aViewPosition >= length) || 
+  if(aViewPosition &&
+     ((*aViewPosition >= length) ||
       (*aViewPosition < sbIMediacoreSequencer::AUTO_PICK_INDEX))) {
     *aViewPosition = 0;
   }
@@ -1083,7 +1088,7 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
         mViewIndexToSequenceIndex[i] = i;
       }
 
-      if(aViewPosition && 
+      if(aViewPosition &&
          *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX) {
         mPosition = *aViewPosition;
       }
@@ -1098,7 +1103,7 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
         mViewIndexToSequenceIndex[j] = j;
       }
 
-      if(aViewPosition && 
+      if(aViewPosition &&
          *aViewPosition != sbIMediacoreSequencer::AUTO_PICK_INDEX) {
         mPosition = length - *aViewPosition;
       }
@@ -1107,12 +1112,12 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
     case sbIMediacoreSequencer::MODE_SHUFFLE:
     {
       NS_ENSURE_TRUE(mShuffleGenerator, NS_ERROR_UNEXPECTED);
-      
+
       PRUint32 sequenceLength = 0;
       PRUint32 *sequence = nsnull;
-      
-      rv = mShuffleGenerator->OnGenerateSequence(mView, 
-                                                 &sequenceLength, 
+
+      rv = mShuffleGenerator->OnGenerateSequence(mView,
+                                                 &sequenceLength,
                                                  &sequence);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1141,12 +1146,12 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
     case sbIMediacoreSequencer::MODE_CUSTOM:
     {
       NS_ENSURE_TRUE(mCustomGenerator, NS_ERROR_UNEXPECTED);
-      
+
       PRUint32 sequenceLength = 0;
       PRUint32 *sequence = nsnull;
-      
-      rv = mCustomGenerator->OnGenerateSequence(mView, 
-                                                &sequenceLength, 
+
+      rv = mCustomGenerator->OnGenerateSequence(mView,
+                                                &sequenceLength,
                                                 &sequence);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1183,10 +1188,10 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
   NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbIMediacoreEvent> event;
-  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::SEQUENCE_CHANGE, 
-                                     nsnull, 
-                                     variant, 
-                                     mCore, 
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::SEQUENCE_CHANGE,
+                                     nsnull,
+                                     variant,
+                                     mCore,
                                      getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1196,8 +1201,8 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
   return NS_OK;
 }
 
-nsresult 
-sbMediacoreSequencer::GetItem(const sequence_t &aSequence, 
+nsresult
+sbMediacoreSequencer::GetItem(const sequence_t &aSequence,
                               PRUint32 aPosition,
                               sbIMediaItem **aItem)
 {
@@ -1210,7 +1215,7 @@ sbMediacoreSequencer::GetItem(const sequence_t &aSequence,
   NS_ENSURE_TRUE(aPosition < length, NS_ERROR_INVALID_ARG);
 
   nsCOMPtr<sbIMediaItem> item;
-  nsresult rv = mView->GetItemByIndex(aSequence[aPosition], 
+  nsresult rv = mView->GetItemByIndex(aSequence[aPosition],
                                       getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1220,7 +1225,7 @@ sbMediacoreSequencer::GetItem(const sequence_t &aSequence,
 }
 
 nsresult
-sbMediacoreSequencer::ProcessNewPosition() 
+sbMediacoreSequencer::ProcessNewPosition()
 {
   nsAutoMonitor mon(mMonitor);
 
@@ -1277,7 +1282,7 @@ sbMediacoreSequencer::ProcessNewPosition()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 {
   nsAutoMonitor mon(mMonitor);
@@ -1303,12 +1308,12 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   }
   else {
     uri = aURI;
-    
+
     mCurrentItem = nsnull;
     mCurrentItemIndex = 0;
   }
 
-  nsCOMPtr<sbIMediacoreVoting> voting = 
+  nsCOMPtr<sbIMediacoreVoting> voting =
     do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1339,12 +1344,12 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   if(mCore) {
     // But only remove it if we're not going to use the same core
     // to play again.
-    nsCOMPtr<sbIMediacore> nextCore = 
+    nsCOMPtr<sbIMediacore> nextCore =
       do_QueryElementAt(chain, mChainIndex, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if(mCore != nextCore) {
-      nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
+      nsCOMPtr<sbIMediacoreEventTarget> eventTarget =
         do_QueryInterface(mCore, &rv);
 
       rv = eventTarget->RemoveListener(this);
@@ -1356,7 +1361,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
        mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
 
       if(mCore == nextCore) {
-        // Remember the fact that we called stop so we ignore the stop 
+        // Remember the fact that we called stop so we ignore the stop
         // event coming from the core.
         mStopTriggeredBySequencer = PR_TRUE;
       }
@@ -1364,16 +1369,16 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
       // Grip.
       nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
       mon.Exit();
-      
+
       rv = playbackControl->Stop();
-      NS_ASSERTION(NS_SUCCEEDED(rv), 
+      NS_ASSERTION(NS_SUCCEEDED(rv),
         "Stop returned failure. Attempting to recover.");
 
       mon.Enter();
     }
   }
 
-  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = 
+  nsCOMPtr<sbIMediacorePlaybackControl> playbackControl =
     do_QueryElementAt(chain, mChainIndex, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   mPlaybackControl = playbackControl;
@@ -1382,11 +1387,11 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set Video Window if core supports it.
-  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow = 
+  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
     do_QueryInterface(mCore, &rv);
-  
+
   if(NS_SUCCEEDED(rv) && videoWindow) {
-    nsCOMPtr<sbIMediacoreManager> mediacoreManager = 
+    nsCOMPtr<sbIMediacoreManager> mediacoreManager =
       do_QueryReferent(mMediacoreManager, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1422,7 +1427,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    // XXXAus: Set Fullscreen here to maintain fullscreen state across 
+    // XXXAus: Set Fullscreen here to maintain fullscreen state across
     //         items being played?
   }
 
@@ -1432,10 +1437,10 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIMediacoreEvent> event;
-    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE, 
-                                       nsnull, 
-                                       variant, 
-                                       mCore, 
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE,
+                                       nsnull,
+                                       variant,
+                                       mCore,
                                        getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1455,7 +1460,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   }
 
   // Add listener to new core.
-  nsCOMPtr<sbIMediacoreEventTarget> eventTarget = 
+  nsCOMPtr<sbIMediacoreEventTarget> eventTarget =
     do_QueryInterface(mCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1470,14 +1475,14 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     nsCString spec;
     rv = uri->GetSpec(spec);
     if(NS_SUCCEEDED(rv)) {
-      printf("[sbMediacoreSequencer] -- Attempting to play %s\n", 
+      printf("[sbMediacoreSequencer] -- Attempting to play %s\n",
         spec.BeginReading());
 
     }
   }
 #endif
 
-  nsCOMPtr<sbPIMediacoreManager> privateMediacoreManager = 
+  nsCOMPtr<sbPIMediacoreManager> privateMediacoreManager =
     do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1502,10 +1507,10 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIMediacoreEvent> event;
-    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE, 
-                                       nsnull, 
-                                       variant, 
-                                       mCore, 
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE,
+                                       nsnull,
+                                       variant,
+                                       mCore,
                                        getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1516,7 +1521,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::CoreHandleNextSetup()
 {
   nsAutoMonitor mon(mMonitor);
@@ -1542,10 +1547,10 @@ sbMediacoreSequencer::CoreHandleNextSetup()
   NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<sbIMediacoreEvent> event;
-  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE, 
-                                     nsnull, 
-                                     variant, 
-                                     mCore, 
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_TRACK_CHANGE,
+                                     nsnull,
+                                     variant,
+                                     mCore,
                                      getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1572,10 +1577,10 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 
   // Fire track change event
   variant = sbNewVariant(item).get();
-  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE, 
-                                     nsnull, 
-                                     variant, 
-                                     mCore, 
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_CHANGE,
+                                     nsnull,
+                                     variant,
+                                     mCore,
                                      getter_AddRefs(event));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1604,8 +1609,8 @@ sbMediacoreSequencer::HandleAbort()
   return PR_FALSE;
 }
 
-nsresult 
-sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView, 
+nsresult
+sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
                                               PRInt64 *aViewPosition /* = nsnull */)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1621,19 +1626,19 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
   nsresult rv = aView->GetLength(&viewLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(mView != aView || 
+  if(mView != aView ||
      mSequence.size() != viewLength) {
 
-    // Fire before view change event 
+    // Fire before view change event
     nsCOMPtr<nsIVariant> variant = sbNewVariant(aView).get();
     NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<sbIMediacoreEvent> event;
-    rv = 
-      sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_VIEW_CHANGE, 
-                                    nsnull, 
-                                    variant, 
-                                    mCore, 
+    rv =
+      sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::BEFORE_VIEW_CHANGE,
+                                    nsnull,
+                                    variant,
+                                    mCore,
                                     getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1651,11 +1656,11 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
     rv = RecalculateSequence(aViewPosition);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Fire view change event 
-    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::VIEW_CHANGE, 
-                                       nsnull, 
-                                       variant, 
-                                       mCore, 
+    // Fire view change event
+    rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::VIEW_CHANGE,
+                                       nsnull,
+                                       variant,
+                                       mCore,
                                        getter_AddRefs(event));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1675,7 +1680,7 @@ sbMediacoreSequencer::SetViewWithViewPosition(sbIMediaListView *aView,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::StartWatchingView()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1700,8 +1705,8 @@ sbMediacoreSequencer::StartWatchingView()
   nsCOMPtr<sbILibrary> library = do_QueryInterface(mViewList, &rv);
   mViewIsLibrary = NS_SUCCEEDED(rv) ? PR_TRUE : PR_FALSE;
 
-  rv = mViewList->AddListener(this, 
-                              PR_FALSE, 
+  rv = mViewList->AddListener(this,
+                              PR_FALSE,
                               sbIMediaList::LISTENER_FLAGS_ITEMADDED |
                               sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
                               sbIMediaList::LISTENER_FLAGS_ITEMMOVED |
@@ -1738,7 +1743,7 @@ sbMediacoreSequencer::StartWatchingView()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::StopWatchingView()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1790,7 +1795,7 @@ sbMediacoreSequencer::StopWatchingView()
   }
 
   mWatchingView = PR_FALSE;
-  
+
   mListBatchCount = 0;
   mLibraryBatchCount = 0;
   mSmartRebuildDetectBatchCount = 0;
@@ -1802,13 +1807,13 @@ sbMediacoreSequencer::StopWatchingView()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::DelayedCheck()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   nsresult rv = NS_ERROR_UNEXPECTED;
   if(mDelayedCheckTimer) {
     rv = mDelayedCheckTimer->Cancel();
@@ -1826,15 +1831,15 @@ sbMediacoreSequencer::DelayedCheck()
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateItemUIDIndex()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mView);
   NS_ENSURE_STATE(mCurrentItem);
-  
+
   nsAutoMonitor mon(mMonitor);
-  
+
   if(mNoRecalculate) {
     mNeedsRecalculate = PR_FALSE;
     return NS_OK;
@@ -1846,17 +1851,17 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   if(!mNeedSearchPlayingItem) {
-    rv = mView->GetIndexForViewItemUID(mCurrentItemUID, 
+    rv = mView->GetIndexForViewItemUID(mCurrentItemUID,
                                        &mCurrentItemIndex);
   }
   else {
-    // Item not there anymore (by UID), just try and get 
-    // the item index by current item. We have to do this 
+    // Item not there anymore (by UID), just try and get
+    // the item index by current item. We have to do this
     // for smart playlists.
     rv = mView->GetIndexForItem(mCurrentItem, &mCurrentItemIndex);
 
     if(NS_SUCCEEDED(rv)) {
-      
+
       // Grab the new item uid.
       rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1867,14 +1872,14 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   // from the new sequence only after the current item is done playing.
   mPositionInvalidated = NS_FAILED(rv) ? PR_TRUE: PR_FALSE;
 
-  // If we should reset the position when the position is invalid, 
+  // If we should reset the position when the position is invalid,
   // do so now. Resetting the position is only necessary for filter,
   // search and xxx changes.
   if(mPositionInvalidated && mResetPosition) {
     mCurrentItemIndex = 0;
   }
 
-  if(mCurrentItemIndex != previousItemIndex || 
+  if(mCurrentItemIndex != previousItemIndex ||
      mCurrentItemUID != previousItemUID ||
      mNeedsRecalculate) {
 
@@ -1889,10 +1894,10 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
       NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
 
       nsCOMPtr<sbIMediacoreEvent> event;
-      rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_INDEX_CHANGE, 
-        nsnull, 
-        variant, 
-        mCore, 
+      rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::TRACK_INDEX_CHANGE,
+        nsnull,
+        variant,
+        mCore,
         getter_AddRefs(event));
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1905,15 +1910,15 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
 }
 
 
-nsresult 
-sbMediacoreSequencer::DispatchMediacoreEvent(sbIMediacoreEvent *aEvent, 
+nsresult
+sbMediacoreSequencer::DispatchMediacoreEvent(sbIMediacoreEvent *aEvent,
                                              PRBool aAsync /*= PR_FALSE*/)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aEvent);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreEventTarget> target = 
+  nsCOMPtr<sbIMediacoreEventTarget> target =
     do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1981,7 +1986,7 @@ sbMediacoreSequencer::StartPlayback()
 //  sbIMediacoreSequencer
 //------------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::GetMode(PRUint32 *aMode)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -1993,7 +1998,7 @@ sbMediacoreSequencer::GetMode(PRUint32 *aMode)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::SetMode(PRUint32 aMode)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2041,7 +2046,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::SetRepeatMode(PRUint32 aRepeatMode)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   PRBool validMode = PR_FALSE;
   switch(aRepeatMode) {
     case sbIMediacoreSequencer::MODE_REPEAT_NONE:
@@ -2058,10 +2063,10 @@ sbMediacoreSequencer::SetRepeatMode(PRUint32 aRepeatMode)
   nsresult rv = UpdateRepeatDataRemote(aRepeatMode);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_OK;  
+  return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::GetView(sbIMediaListView * *aView)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2073,7 +2078,7 @@ sbMediacoreSequencer::GetView(sbIMediaListView * *aView)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::SetView(sbIMediaListView * aView)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2082,7 +2087,7 @@ sbMediacoreSequencer::SetView(sbIMediaListView * aView)
   return SetViewWithViewPosition(aView);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::GetViewPosition(PRUint32 *aViewPosition)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2101,7 +2106,7 @@ sbMediacoreSequencer::GetViewPosition(PRUint32 *aViewPosition)
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem) 
+sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
@@ -2117,7 +2122,7 @@ sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
   PRUint32 index = 0;
   nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
   NS_ENSURE_SUCCESS(rv, NS_OK);
-  
+
   rv = mView->GetItemByIndex(index, aItem);
   NS_ENSURE_SUCCESS(rv, NS_OK);
 
@@ -2125,13 +2130,13 @@ sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem) 
+sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
-  
+
   nsAutoMonitor mon(mMonitor);
-  
+
   if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
     NS_IF_ADDREF(*aItem = mCurrentItem);
     return NS_OK;
@@ -2154,20 +2159,20 @@ sbMediacoreSequencer::GetNextItem(sbIMediaItem **aItem)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::GetCurrentSequence(nsIArray * *aCurrentSequence)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aCurrentSequence);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsIMutableArray> array = 
+  nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sequence_t::const_iterator it = mSequence.begin();
   for(; it != mSequence.end(); ++it) {
-    nsCOMPtr<nsISupportsPRUint32> index = 
+    nsCOMPtr<nsISupportsPRUint32> index =
       do_CreateInstance("@mozilla.org/supports-PRUint32;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2183,7 +2188,7 @@ sbMediacoreSequencer::GetCurrentSequence(nsIArray * *aCurrentSequence)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::GetSequencePosition(PRUint32 *aSequencePosition)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2201,15 +2206,15 @@ sbMediacoreSequencer::GetSequencePosition(PRUint32 *aSequencePosition)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::SetSequencePosition(PRUint32 aSequencePosition)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP 
-sbMediacoreSequencer::PlayView(sbIMediaListView *aView, 
+NS_IMETHODIMP
+sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
                                PRInt64 aItemIndex)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2220,12 +2225,12 @@ sbMediacoreSequencer::PlayView(sbIMediaListView *aView,
 
   rv = Play();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbMediacoreSequencer::PlayURL(nsIURI *aURI) 
+sbMediacoreSequencer::PlayURL(nsIURI *aURI)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aURI);
@@ -2268,7 +2273,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::Play()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2298,7 +2303,7 @@ sbMediacoreSequencer::Play()
   NS_ENSURE_SUCCESS(rv, rv);
 
   mon.Enter();
-  
+
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2324,17 +2329,17 @@ sbMediacoreSequencer::Play()
 NS_IMETHODIMP
 sbMediacoreSequencer::Stop() {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsAutoMonitor mon(mMonitor);
 
   mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-  
+
   nsresult rv = StopSequenceProcessor();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = UpdatePlayStateDataRemotes();
   NS_ENSURE_SUCCESS(rv, rv);
- 
+
   if(mPlaybackControl) {
     // Grip.
     nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
@@ -2345,18 +2350,18 @@ sbMediacoreSequencer::Stop() {
 
     mon.Enter();
   }
-  
+
   if(mSeenPlaying) {
     rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
   mSeenPlaying = PR_FALSE;
-  
+
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::Next()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2367,7 +2372,7 @@ sbMediacoreSequencer::Next()
   if(!mSequence.size()) {
     return NS_OK;
   }
-  
+
   PRBool hasNext = PR_FALSE;
   PRUint32 length = mSequence.size();
 
@@ -2397,11 +2402,11 @@ sbMediacoreSequencer::Next()
     }
   }
   else if(mPosition + 1 < length) {
-    // Our current position may be invalid because we had to regenerate a 
+    // Our current position may be invalid because we had to regenerate a
     // sequence that didn't include the item that is currently playing.
     if(!mPositionInvalidated) {
       // This is not the case, increment the position.
-      ++mPosition;      
+      ++mPosition;
     }
 
     mViewPosition = mSequence[mPosition];
@@ -2454,7 +2459,7 @@ sbMediacoreSequencer::Next()
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::Previous()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2564,7 +2569,7 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
   nsAutoMonitor mon(mMonitor);
   NS_ENSURE_TRUE(mCore == aMediacore, NS_ERROR_INVALID_ARG);
 
-  nsCOMPtr<sbIMediacoreVoting> voting = 
+  nsCOMPtr<sbIMediacoreVoting> voting =
     do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2601,7 +2606,7 @@ NS_IMETHODIMP
 sbMediacoreSequencer::Abort()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsAutoMonitor mon(mMonitor);
 
   // If we can't abort right now, just return NS_OK.
@@ -2612,7 +2617,7 @@ sbMediacoreSequencer::Abort()
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::GetCustomGenerator(
                         sbIMediacoreSequenceGenerator * *aCustomGenerator)
 {
@@ -2625,7 +2630,7 @@ sbMediacoreSequencer::GetCustomGenerator(
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::SetCustomGenerator(
                         sbIMediacoreSequenceGenerator * aCustomGenerator)
 {
@@ -2635,7 +2640,7 @@ sbMediacoreSequencer::SetCustomGenerator(
   nsAutoMonitor mon(mMonitor);
   if(mCustomGenerator != aCustomGenerator) {
     mCustomGenerator = aCustomGenerator;
-    
+
     // Custom generator changed and mode is custom, recalculate sequence
     if(mMode == sbIMediacoreSequencer::MODE_CUSTOM) {
       nsresult rv = RecalculateSequence();
@@ -2651,7 +2656,7 @@ sbMediacoreSequencer::SetCustomGenerator(
 //------------------------------------------------------------------------------
 
 /* void onMediacoreEvent (in sbIMediacoreEvent aEvent); */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2669,7 +2674,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   nsString eventInstanceName;
   rv = core->GetInstanceName(eventInstanceName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   NS_ConvertUTF16toUTF8 name(eventInstanceName);
   printf("\n[sbMediacoreSequencer] - Event - BEGIN\n");
   printf("[sbMediacoreSequencer] - Instance: %s\n", name.BeginReading());
@@ -2683,7 +2688,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
   if(!(eventType == sbIMediacoreEvent::STREAM_STOP &&
        mStopTriggeredBySequencer)) {
-    nsCOMPtr<sbIMediacoreEventTarget> target = 
+    nsCOMPtr<sbIMediacoreEventTarget> target =
       do_QueryReferent(mMediacoreManager, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2757,7 +2762,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       /* Track done, continue on to the next, if possible. */
       if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
          !mIsWaitingForPlayback) {
-        
+
         mCoreWillHandleNext = PR_FALSE;
 
         sbScopedBoolToggle toggle(&mNextTriggeredByStreamEnd);
@@ -2789,7 +2794,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     case sbIMediacoreEvent::STREAM_STOP: {
       mon.Enter();
-     
+
       if(!mStopTriggeredBySequencer) {
 #if defined(DEBUG)
         printf("[sbMediacoreSequencer] - Hard stop requested.\n");
@@ -2836,7 +2841,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
     case sbIMediacoreEvent::BUFFERING: {
       PRBool buffering = PR_FALSE;
-      
+
       rv = mDataRemoteFaceplateBuffering->GetBoolValue(&buffering);
       NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2896,10 +2901,10 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 // sbIMediacoreStatus
 // -----------------------------------------------------------------------------
 NS_IMETHODIMP
-sbMediacoreSequencer::GetState(PRUint32 *aState) 
+sbMediacoreSequencer::GetState(PRUint32 *aState)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsAutoMonitor mon(mMonitor);
   *aState = mStatus;
 
@@ -2909,10 +2914,10 @@ sbMediacoreSequencer::GetState(PRUint32 *aState)
 // -----------------------------------------------------------------------------
 // sbIMediaListListener
 // -----------------------------------------------------------------------------
-NS_IMETHODIMP 
-sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList, 
-                                  sbIMediaItem *aMediaItem, 
-                                  PRUint32 aIndex, 
+NS_IMETHODIMP
+sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
+                                  sbIMediaItem *aMediaItem,
+                                  PRUint32 aIndex,
                                   PRBool *_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2927,7 +2932,7 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
     if (mSmartRebuildDetectBatchCount == mListBatchCount) {
       // Our playing list is a smart playlist, and it is being rebuilt,
       // so make a note that we need to try to find the old playitem in
-      // the new list (this will update the now playing icon in 
+      // the new list (this will update the now playing icon in
       // tree views, and ensure that currentIndex returns the new index).
       // The 1st part of the detection has already scheduled a check, but
       // our search will occur before the check happens, so if the old
@@ -2940,7 +2945,7 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
   }
   else {
     mNeedsRecalculate = PR_TRUE;
-    
+
     nsresult rv = UpdateItemUIDIndex();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -2948,19 +2953,19 @@ sbMediacoreSequencer::OnItemAdded(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreSequencer::OnBeforeItemRemoved(sbIMediaList *aMediaList, 
-                                          sbIMediaItem *aMediaItem, 
-                                          PRUint32 aIndex, 
+NS_IMETHODIMP
+sbMediacoreSequencer::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                          sbIMediaItem *aMediaItem,
+                                          PRUint32 aIndex,
                                           PRBool *_retval)
 {
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList, 
-                                         sbIMediaItem *aMediaItem, 
-                                         PRUint32 aIndex, 
+NS_IMETHODIMP
+sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                         sbIMediaItem *aMediaItem,
+                                         PRUint32 aIndex,
                                          PRBool *_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -2980,7 +2985,7 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
 
   // if this is an event on the library...
   if (libraryEvent) {
-  
+
     // and the item is not our list, get more events if in a batch, or
     // just discard event if not in a batch.
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mViewList, &rv);
@@ -2997,7 +3002,7 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
       // if the item is our list, stop playback now and shutdown watcher
       rv = playbackControl->Stop();
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       mon.Enter();
 
       mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -3024,7 +3029,7 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
     // remember that we need to do a check when batch ends
     mNeedSearchPlayingItem = PR_TRUE;
     *_retval = PR_TRUE;
-    
+
     return NS_OK;
   }
 
@@ -3039,10 +3044,10 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList, 
-                                    sbIMediaItem *aMediaItem, 
-                                    sbIPropertyArray *aProperties, 
+NS_IMETHODIMP
+sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
+                                    sbIMediaItem *aMediaItem,
+                                    sbIPropertyArray *aProperties,
                                     PRBool *_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -3068,10 +3073,10 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList, 
-                                  PRUint32 aFromIndex, 
-                                  PRUint32 aToIndex, 
+NS_IMETHODIMP
+sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList,
+                                  PRUint32 aFromIndex,
+                                  PRUint32 aToIndex,
                                   PRBool *_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -3097,8 +3102,8 @@ sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbMediacoreSequencer::OnListCleared(sbIMediaList *aMediaList, 
+NS_IMETHODIMP
+sbMediacoreSequencer::OnListCleared(sbIMediaList *aMediaList,
                                     PRBool *_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -3126,14 +3131,14 @@ sbMediacoreSequencer::OnListCleared(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::OnBatchBegin(sbIMediaList *aMediaList)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   if(aMediaList == mViewList) {
     mListBatchCount++;
   }
@@ -3144,7 +3149,7 @@ sbMediacoreSequencer::OnBatchBegin(sbIMediaList *aMediaList)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -3154,7 +3159,7 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
   nsAutoMonitor mon(mMonitor);
 
   PRUint32 listBatchCount = mListBatchCount;
-    
+
   if(aMediaList == mViewList && mListBatchCount > 0) {
     mListBatchCount--;
   }
@@ -3166,7 +3171,7 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
   }
 
   if(mListBatchCount == 0 || mLibraryBatchCount == 0) {
-    
+
     if(mNeedSearchPlayingItem) {
       rv = DelayedCheck();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -3188,13 +3193,13 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
 // -----------------------------------------------------------------------------
 // sbIMediaListViewListener
 // -----------------------------------------------------------------------------
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   sbScopedBoolToggle reset(&mResetPosition);
   mNeedsRecalculate = PR_TRUE;
 
@@ -3204,13 +3209,13 @@ sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   sbScopedBoolToggle reset(&mResetPosition);
   mNeedsRecalculate = PR_TRUE;
 
@@ -3220,13 +3225,13 @@ sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::OnSortChanged(sbIMediaListView *aChangedView)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   mNeedsRecalculate = PR_TRUE;
 
   nsresult rv = UpdateItemUIDIndex();
@@ -3240,7 +3245,7 @@ sbMediacoreSequencer::OnSortChanged(sbIMediaListView *aChangedView)
 // nsITimerCallback
 // -----------------------------------------------------------------------------
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbMediacoreSequencer::Notify(nsITimer *timer)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -3261,7 +3266,7 @@ sbMediacoreSequencer::Notify(nsITimer *timer)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -3290,7 +3295,7 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
     if(NS_SUCCEEDED(rv)) {
       rv = UpdateDurationDataRemotes(duration);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // only updates if there is a current item and the duration
       // reported by the core is different than the one the item
       // currently has.
@@ -3302,7 +3307,7 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
