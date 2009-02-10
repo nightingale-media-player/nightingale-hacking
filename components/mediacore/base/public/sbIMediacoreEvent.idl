@@ -36,7 +36,7 @@ interface sbIMediacoreEventTarget;
  * \interface sbIMediacoreEvent
  * \brief Definition of the sbIMediacoreEvent interface.
  */
-[scriptable, uuid(95a9e6da-bd93-4b16-beb4-5f95d16e3b3e)]
+[scriptable, uuid(d9d03746-6990-497c-85a9-718af44c2dac)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -97,6 +97,12 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is the new sbIMediaListView.
    */
   const unsigned long VIEW_CHANGE         = 0x00001504;
+  /**
+   * \brief Sequence recalculated.
+   * \note This event should only be fired by the sequencer.
+   * \note data is the new sequence.
+   */
+  const unsigned long SEQUENCE_CHANGE     = 0x00001505;
 
   // End Sequencer Events
 

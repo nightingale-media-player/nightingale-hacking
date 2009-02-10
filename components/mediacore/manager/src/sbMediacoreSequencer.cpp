@@ -1174,6 +1174,25 @@ sbMediacoreSequencer::RecalculateSequence(PRInt64 *aViewPosition /*= nsnull*/)
     mViewPosition = 0;
   }
 
+  // Fire sequence changed event
+  nsCOMPtr<nsIArray> newSequence;
+  rv = GetCurrentSequence(getter_AddRefs(newSequence));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> variant = sbNewVariant(newSequence).get();
+  NS_ENSURE_TRUE(variant, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::SEQUENCE_CHANGE, 
+                                     nsnull, 
+                                     variant, 
+                                     mCore, 
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchMediacoreEvent(event);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
