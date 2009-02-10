@@ -580,61 +580,95 @@ sbMediacoreSequencer::UnbindDataRemotes()
   //
   // Faceplate DataRemotes
   //
-  nsresult rv = mDataRemoteFaceplateBuffering->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv;
+  
+  if (mDataRemoteFaceplateBuffering) {
+    rv = mDataRemoteFaceplateBuffering->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteFaceplatePlaying->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteFaceplatePlaying) {
+    rv = mDataRemoteFaceplatePlaying->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteFaceplatePaused->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteFaceplatePaused) {
+    rv = mDataRemoteFaceplatePaused->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteFaceplateSeenPlaying->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteFaceplateSeenPlaying) {
+    rv = mDataRemoteFaceplateSeenPlaying->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteFaceplateURL->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteFaceplateURL) {
+    rv = mDataRemoteFaceplateURL->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   //
   // Metadata DataRemotes
   //
 
-  rv = mDataRemoteMetadataAlbum->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataAlbum) {
+    rv = mDataRemoteMetadataAlbum->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataArtist->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataArtist) {
+    rv = mDataRemoteMetadataArtist->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataGenre->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataGenre) {
+    rv = mDataRemoteMetadataGenre->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataTitle->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataTitle) {
+    rv = mDataRemoteMetadataTitle->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataDuration->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataDuration) {
+    rv = mDataRemoteMetadataDuration->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataPosition->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataPosition) {
+    rv = mDataRemoteMetadataPosition->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataPositionStr->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataPositionStr) {
+    rv = mDataRemoteMetadataPositionStr->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataURL->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataURL) {
+    rv = mDataRemoteMetadataURL->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemoteMetadataImageURL->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemoteMetadataImageURL) {
+    rv = mDataRemoteMetadataImageURL->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   //
   // Playlist DataRemotes
   //
 
-  rv = mDataRemotePlaylistShuffle->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemotePlaylistShuffle) {
+    rv = mDataRemotePlaylistShuffle->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = mDataRemotePlaylistRepeat->Unbind();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mDataRemotePlaylistRepeat) {
+    rv = mDataRemotePlaylistRepeat->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
