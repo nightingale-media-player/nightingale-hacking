@@ -179,6 +179,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mListBatchCount(0)
 , mLibraryBatchCount(0)
 , mSmartRebuildDetectBatchCount(0)
+, mResetPosition(PR_FALSE)
 , mNoRecalculate(PR_FALSE)
 , mViewIsLibrary(PR_FALSE)
 , mNeedSearchPlayingItem(PR_FALSE)
@@ -1847,6 +1848,13 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
   // from the new sequence only after the current item is done playing.
   mPositionInvalidated = NS_FAILED(rv) ? PR_TRUE: PR_FALSE;
 
+  // If we should reset the position when the position is invalid, 
+  // do so now. Resetting the position is only necessary for filter,
+  // search and xxx changes.
+  if(mPositionInvalidated && mResetPosition) {
+    mCurrentItemIndex = 0;
+  }
+
   if(mCurrentItemIndex != previousItemIndex || 
      mCurrentItemUID != previousItemUID ||
      mNeedsRecalculate) {
@@ -3168,6 +3176,7 @@ sbMediacoreSequencer::OnFilterChanged(sbIMediaListView *aChangedView)
 
   nsAutoMonitor mon(mMonitor);
   
+  sbScopedBoolToggle reset(&mResetPosition);
   mNeedsRecalculate = PR_TRUE;
 
   nsresult rv = UpdateItemUIDIndex();
@@ -3183,6 +3192,7 @@ sbMediacoreSequencer::OnSearchChanged(sbIMediaListView *aChangedView)
 
   nsAutoMonitor mon(mMonitor);
   
+  sbScopedBoolToggle reset(&mResetPosition);
   mNeedsRecalculate = PR_TRUE;
 
   nsresult rv = UpdateItemUIDIndex();
@@ -3282,44 +3292,6 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
   nsAutoMonitor mon(mMonitor);
   mDelayedCheckTimer = nsnull;
 
-  //// Position already invalidated, even though the item
-  //// is not present anymore, we'll continue playback 
-  //// using a new sequence when it's done playing.
-  //if(mPositionInvalidated) {
-  //  // We do not need to reset mPositionInvalidated here. 
-  //  // It will be reset automatically when playback of the
-  //  // new sequence begins.
-  //  return NS_OK;
-  //}
-
-  //PRUint32 index = 0;
-  //nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
-
-  //if(NS_FAILED(rv)) {
-  //  // if the item is our list, stop playback now and shutdown watcher
-  //  if (mPlaybackControl) {
-  //    // Grip.
-  //    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-  //    mon.Exit();
-
-  //    rv = playbackControl->Stop();
-  //    NS_ENSURE_SUCCESS(rv, rv);
-
-  //    mon.Enter();
-  //  }
-
-  //  mStatus = sbIMediacoreStatus::STATUS_STOPPED;
-
-  //  rv = StopSequenceProcessor();
-  //  NS_ENSURE_SUCCESS(rv, rv);
-
-  //  rv = UpdatePlayStateDataRemotes();
-  //  NS_ENSURE_SUCCESS(rv, rv);
-
-  //  rv = StopWatchingView();
-  //  NS_ENSURE_SUCCESS(rv, rv);
-  //}
-  //else {
   PRUint32 viewLength = 0;
   nsresult rv = mView->GetLength(&viewLength);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3332,7 +3304,6 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mNeedSearchPlayingItem = PR_FALSE;
-  //}
 
   return NS_OK;
 }
