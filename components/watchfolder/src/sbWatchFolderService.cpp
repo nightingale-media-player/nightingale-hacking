@@ -46,6 +46,7 @@
 #include <nsIURI.h>
 #include <nsIPromptService.h>
 #include <nsTArray.h>
+#include <sbIMediacoreTypeSniffer.h>
 
 #define PREF_WATCHFOLDER_ROOT        "songbird.watch_folder."
 #define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
@@ -326,6 +327,10 @@ sbWatchFolderService::ProcessAddedPaths()
     do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
+    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   sbStringVectorIter begin = mAddedPaths.begin();
   sbStringVectorIter end = mAddedPaths.end();
   sbStringVectorIter next;
@@ -337,34 +342,46 @@ sbWatchFolderService::ProcessAddedPaths()
       continue;
     }
 
-    rv = uriArray->AppendElement(fileURI, PR_FALSE);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not append the URI to the mutable array!");
+    // Don't add every type of file, have the mediacore sniffer validate this
+    // is a URI that we can handle.
+    PRBool isValid = PR_FALSE;
+    rv = typeSniffer->IsValidMediaURL(fileURI, &isValid);
+    if (NS_SUCCEEDED(rv) && isValid) {
+      rv = uriArray->AppendElement(fileURI, PR_FALSE);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Could not append the URI to the mutable array!");
+      }
     }
   }
 
   mAddedPaths.clear();
-  
-  nsCOMPtr<sbIDirectoryImportService> importService =
-    do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+
+  PRUint32 uriArrayLength = 0;
+  rv = uriArray->GetLength(&uriArrayLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //
-  // XXX todo This can cause problems if this fires when the user is dragging
-  //          and dropping into a playlist. This will need to be fixed.
-  //
-  nsCOMPtr<sbIDirectoryImportJob> job;
-  rv = importService->Import(uriArray, mMainLibrary, -1, getter_AddRefs(job));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<sbIJobProgressService> progressService =
-    do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
-  if (NS_SUCCEEDED(rv) && progressService) {
-    nsCOMPtr<sbIJobProgress> jobProgress = do_QueryInterface(job, &rv);
+  if (uriArrayLength > 0) {
+    nsCOMPtr<sbIDirectoryImportService> importService =
+      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    //
+    // XXX todo This can cause problems if this fires when the user is dragging
+    //          and dropping into a playlist. This will need to be fixed.
+    //
+    nsCOMPtr<sbIDirectoryImportJob> job;
+    rv = importService->Import(uriArray, mMainLibrary, -1, getter_AddRefs(job));
     NS_ENSURE_SUCCESS(rv, rv);
     
-    rv = progressService->ShowProgressDialog(jobProgress, nsnull, 1);
-    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<sbIJobProgressService> progressService =
+      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+    if (NS_SUCCEEDED(rv) && progressService) {
+      nsCOMPtr<sbIJobProgress> jobProgress = do_QueryInterface(job, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = progressService->ShowProgressDialog(jobProgress, nsnull, 1);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   
   return NS_OK;
@@ -554,7 +571,8 @@ sbWatchFolderService::OnSessionLoadError()
     }
     
     mFileSystemWatcherGUID.Assign(EmptyCString());
-  }
+  }nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
+      do_GetService("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
   
   rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
