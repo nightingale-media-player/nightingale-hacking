@@ -67,6 +67,7 @@ public:
     nsString property;
     PRUint32 propertyId;
     PRBool ascending;
+    PRBool secondary;
   };
 
 private:
@@ -160,6 +161,11 @@ private:
 
   static int SortBags(const void* a, const void* b, void* closure);
 
+  nsresult AddSortInternal(const nsAString& aProperty, 
+                           PRBool aAscending, 
+                           PRBool aSecondary);
+  nsresult ClearSecondarySorts();
+  
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
@@ -189,6 +195,9 @@ private:
 
   // Current sort configuration
   nsTArray<SortSpec> mSorts;
+
+  // Number of primary sorts
+  PRInt32 mPrimarySortsCount;
 
   // Current filter configuration
   nsTArray<FilterSpec> mFilters;

@@ -79,7 +79,8 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mLength(0),
   mIsDistinct(PR_FALSE),
   mValid(PR_FALSE),
-  mNullsFirst(PR_FALSE)
+  mNullsFirst(PR_FALSE),
+  mPrimarySortsCount(0)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseGUIDArrayLog) {
@@ -269,10 +270,10 @@ sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
-                                  PRBool aAscending)
-{
+nsresult sbLocalDatabaseGUIDArray::AddSortInternal(const nsAString& aProperty,
+                                                   PRBool aAscending,
+                                                   PRBool aSecondary) {
+
   // TODO: Check for valid properties
   SortSpec* ss = mSorts.AppendElement();
   NS_ENSURE_TRUE(ss, NS_ERROR_OUT_OF_MEMORY);
@@ -287,11 +288,97 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
     ss->property   = aProperty;
   }
   ss->ascending  = aAscending;
+  ss->secondary = aSecondary;
 
   if (mPropertyCache) {
     nsresult rv = mPropertyCache->GetPropertyDBID(aProperty, &ss->propertyId);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  
+  return NS_OK;
+}
+
+nsresult sbLocalDatabaseGUIDArray::ClearSecondarySorts() {
+  for (PRUint32 i = 0; i < mSorts.Length(); i++) {
+    const SortSpec& ss = mSorts[i];
+    if (ss.secondary) {
+      mSorts.RemoveElementAt(i);
+      i--;
+    }
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
+                                  PRBool aAscending)
+{
+  nsresult rv;
+
+  // clear any existing secondary sort, appending this primary sort
+  // will add its own secondary sorts.
+  rv = ClearSecondarySorts();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // add the primary sort
+  rv = AddSortInternal(aProperty, aAscending, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mPrimarySortsCount++;
+  
+  if (!mIsDistinct) {
+
+    if (!mPropMan) {
+      mPropMan = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // read the list of secondary sort properties for this primary sort
+    nsCOMPtr<sbIPropertyInfo> propertyInfo;
+    rv = mPropMan->GetPropertyInfo(aProperty,
+                                   getter_AddRefs(propertyInfo));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<sbIPropertyArray> secondarySortProperties;
+    rv =
+      propertyInfo->GetSecondarySort(getter_AddRefs(secondarySortProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (secondarySortProperties) {
+      PRUint32 secondarySortPropertyCount;
+      rv = secondarySortProperties->GetLength(&secondarySortPropertyCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // for all secondary sort properties, add the sort to mSorts
+      for (PRInt32 i=0; i<secondarySortPropertyCount; i++) {
+        nsCOMPtr<sbIProperty> property;
+        rv = secondarySortProperties->GetPropertyAt(i, getter_AddRefs(property));
+        // we cannot support secondary sort on toplevel properties, so skip them
+        if (!SB_IsTopLevelProperty(aProperty)) {
+          // don't completely fail AddSort when a dependent property is not found, 
+          // just don't add that secondary sort
+          NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get dependent property!");
+          if (NS_SUCCEEDED(rv)) {
+            nsString propertyID;
+            rv = property->GetId(propertyID);
+            NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get dependent property ID!");
+            if (NS_SUCCEEDED(rv)) {
+              nsString propertyValue;
+              rv = property->GetValue(propertyValue);
+              NS_ASSERTION(NS_SUCCEEDED(rv), 
+                           "Failed to get dependent property value!");
+              if (NS_SUCCEEDED(rv)) {
+                AddSortInternal(propertyID, 
+                                propertyValue.EqualsLiteral("a"), 
+                                PR_TRUE);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
   return Invalidate();
 }
 
@@ -299,6 +386,8 @@ NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::ClearSorts()
 {
   mSorts.Clear();
+  
+  mPrimarySortsCount = 0;
 
   return Invalidate();
 }
@@ -319,10 +408,12 @@ sbLocalDatabaseGUIDArray::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 
   for (PRUint32 i = 0; i < mSorts.Length(); i++) {
     const SortSpec& ss = mSorts[i];
-    rv = sort->AppendProperty(ss.property,
-                              ss.ascending ? NS_LITERAL_STRING("a") :
-                              NS_LITERAL_STRING("d"));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (!ss.secondary) {
+      rv = sort->AppendProperty(ss.property,
+                                ss.ascending ? NS_LITERAL_STRING("a") :
+                                NS_LITERAL_STRING("d"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   NS_ADDREF(*aCurrentSort = sort);
@@ -560,8 +651,10 @@ sbLocalDatabaseGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
   PRUint32 sortCount = mSorts.Length();
   for (PRUint32 index = 0; index < sortCount; index++) {
     const SortSpec refSpec = mSorts.ElementAt(index);
-    rv = aDest->AddSort(refSpec.property, refSpec.ascending);
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (!refSpec.secondary) {
+      rv = aDest->AddSort(refSpec.property, refSpec.ascending);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   PRUint32 filterCount = mFilters.Length();
@@ -1350,10 +1443,15 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
   }
 
   /*
-   * If there is a multi-level sort in effect, we need to apply the additional
-   * level of sorts to this result
+   * We need to apply additional levels of sorts if either of the following
+   * conditions is true:
+   * - Multiple sorts have been added via AddSort
+   * - A single primary sort is active but it has secondary sorts and we are
+   *   processing the null values: null values mean there was no row to hold
+   *   the secondary sort data
    */
-  PRBool needsSorting = mSorts.Length() > 1;
+  PRBool needsSorting = (mPrimarySortsCount > 1) ||
+                        (mSorts.Length() > 1 && aIsNull);
 
   /*
    * Resize the cache so we can fit the new data
