@@ -42,9 +42,9 @@ EXTENSION_DIR  = .
 EXTENSION_STAGE_DIR = ./.xpistage
 XPI_NAME = $(EXTENSION_NAME)
 
-EXTENSION_VER := 2.2.0
-EXTENSION_MIN_VER := 1.1.1a
-EXTENSION_MAX_VER := 1.1.1b1
+EXTENSION_VER := 2.2.2pre
+EXTENSION_MIN_VER := 1.2.0a
+EXTENSION_MAX_VER := 1.2.0b1
 
 # We build rubberducky but do not install it.
 # It will be available on the addon site
