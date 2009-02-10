@@ -28,6 +28,12 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_PP_DIR = $(CURDIR)/..
+SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
+                        $(NULL)
+
+PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
+
 SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
 ifdef SONGBIRD_OFFICIAL
@@ -45,6 +51,7 @@ SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
 SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
                   $(SB_PLATFORM)-$(SB_ARCH) \
                   $(SB_MILESTONE) \
+                  $(SB_BUILD_NUMBER) \
                   $(readme)
 
 include $(topsrcdir)/build/rules.mk
