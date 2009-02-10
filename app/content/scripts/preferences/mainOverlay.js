@@ -44,7 +44,12 @@ addEventListener("load", function() {
 
   // making the menus in the preference pane selector stack vertically to avoid multi-level tabs
   var browserPreferences = document.getElementById("BrowserPreferences");
-  document.getAnonymousElementByAttribute(browserPreferences, 'anonid', 'selector').removeAttribute("orient");
+  var selector = document.getAnonymousElementByAttribute(browserPreferences, 'anonid', 'selector');
+  selector.removeAttribute("orient");
+  if (getComputedStyle(selector, "").getPropertyPriority("visibility") == "") {
+    // reset the visibility style, _unless_ it was !important
+    selector.style.visibility = "visible";
+  }
   
 }, false);
 

@@ -36,6 +36,11 @@ Extra styles for Songbird additions to the Firefox preferences dialog
 */ 
 
 
+/* make the dialog size correctly, see bug 14274 */
+.paneSelector {
+  visibility: collapse; /* will get reset by JS to visible */
+}
+
 radio[pane=paneHotkeys] 
 {
   list-style-image: url("chrome://songbird/skin/preferences/options.png") !important; 
