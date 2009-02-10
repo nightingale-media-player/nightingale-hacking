@@ -375,7 +375,7 @@ sbLocalDatabaseQuery::GetResortQuery(nsAString& aQuery)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionParameter(CONPROP_ALIAS,
-                                                 OBJSEARCHABLE_COLUMN,
+                                                 OBJSORTABLE_COLUMN,
                                                  sbISQLSelectBuilder::MATCH_EQUALS,
                                                  getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);
