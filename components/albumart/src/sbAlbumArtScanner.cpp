@@ -91,6 +91,10 @@ static PRLogModuleInfo* gAlbumArtScannerLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
+#ifndef kNotFound
+#define kNotFound -1
+#endif
+
 //------------------------------------------------------------------------------
 //
 // nsISupports implementation.
@@ -218,12 +222,6 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
                                NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /**
-   * We would like to add these to the sort however doing this in C+ seems to
-   * cause errors when attempting to retrieve the items from the view.
-   * See Bug 15021. (Commenting out for now)
-   */
-/*
   // AlbumArtistName
   rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
                                NS_LITERAL_STRING("a"));
@@ -243,7 +241,7 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
   rv = newSort->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                                NS_LITERAL_STRING("a"));
   NS_ENSURE_SUCCESS(rv, rv);
-*/
+
   // Now set the sort on this list
   nsCOMPtr<sbISortableMediaListView> sortable =
     do_QueryInterface(mMediaListView, &rv);
@@ -573,15 +571,15 @@ NS_IMETHODIMP
 sbAlbumArtScanner::OnAlbumComplete(nsIArray* aMediaItems)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnAlbumComplete", this));
-  NS_ENSURE_ARG_POINTER(aMediaItems);
   nsresult rv;
+
+  // Now that we are done this item move on to the next
+  mProcessNextAlbum = PR_TRUE;
 
   // Write the images to metadata
   rv = WriteImageMetadata(aMediaItems);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Now that we are done this item move on to the next
-  mProcessNextAlbum = PR_TRUE;
   return NS_OK;
 }
 
@@ -707,6 +705,10 @@ sbAlbumArtScanner::UpdateProgress()
 nsresult
 sbAlbumArtScanner::GetNextAlbumItems()
 {
+  TRACE(("sbAlbumArtScanner[0x%.8x] - GetNextAlbumItems [%d/%d]",
+         this,
+         mCompletedItemCount,
+         mTotalItemCount));
   nsresult rv;
 
   nsString mLastAlbumName;
@@ -722,18 +724,22 @@ sbAlbumArtScanner::GetNextAlbumItems()
   // to see if the image has already been found or not (since we can not filter
   // out non-null properties).
   while (mCompletedItemCount < mTotalItemCount) {
-    TRACE(("Processing %d of %d", mCompletedItemCount, mTotalItemCount));
+    TRACE(("sbAlbumArtScanner - Processing %d of %d",
+           mCompletedItemCount,
+           mTotalItemCount));
 
     nsCOMPtr<sbIMediaItem> item;
     rv = mMediaListView->GetItemByIndex(mCompletedItemCount,
                                         getter_AddRefs(item));
     if (NS_FAILED(rv)) {
       // Move on to the next item
-      TRACE(("Processing : Item %d failed with %08X", mCompletedItemCount,rv));
+      TRACE(("sbAlbumArtScanner - Processing : Item %d failed with %08X",
+             mCompletedItemCount,
+             rv));
       mCompletedItemCount++;
       continue;
     }
-    TRACE(("Found Item %d", mCompletedItemCount));
+    TRACE(("sbAlbumArtScanner - Found Item %d", mCompletedItemCount));
 
     // We need an album name or this is completely pointless.
     nsString albumName;
@@ -745,26 +751,26 @@ sbAlbumArtScanner::GetNextAlbumItems()
     }
 
     // Next we use either the albumArtistName (preferred) or artistName
-    nsString artistName;
-    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
-                           artistName);
-    if (NS_FAILED(rv)) {
-      // Move on to the next item
-      mCompletedItemCount++;
-      continue;
-    }
     nsString albumArtistName;
     item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMARTISTNAME),
                       albumArtistName);
     // If the albumArtistName fails we will fall back to the artist name
-    
+
+    nsString artistName;
     if (!albumArtistName.IsEmpty()) {
       // Try to use the album artist name if possible
       artistName = albumArtistName;
+    } else {
+      rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME),
+                             artistName);
+      if (NS_FAILED(rv)) {
+        mCompletedItemCount++;
+        continue;
+      }
     }
     
     if (artistName.IsEmpty()) {
-      // No artist then how are we going to know what album this belongs to?
+      // No artist then how are we going to know who this album belongs to?
       mCompletedItemCount++;
       continue;
     }
@@ -776,7 +782,7 @@ sbAlbumArtScanner::GetNextAlbumItems()
       mCurrentAlbumName.Assign(albumName);
       mLastArtistName.Assign(artistName);
   
-      TRACE(("Processing Album %s by %s",
+      TRACE(("sbAlbumArtScanner - Processing Album %s by %s",
              NS_ConvertUTF16toUTF8(albumName).get(),
              NS_ConvertUTF16toUTF8(artistName).get()
            ));
@@ -784,19 +790,19 @@ sbAlbumArtScanner::GetNextAlbumItems()
       // if the album names are different then we definitly have a new album
       // so don't add this track or increment the index, just break out of the
       // loop.
-      TRACE(("Sending album to be processed for album art."));
+      TRACE(("sbAlbumArtScanner - Sending album to be processed for album art."));
       break;
     } else {
       // Check if the artist is the same as the previous artist
-      TRACE(("Checking artist: prev %s, current %s",
+      TRACE(("sbAlbumArtScanner - Checking artist: prev %s, current %s",
              NS_ConvertUTF16toUTF8(mLastArtistName).get(),
              NS_ConvertUTF16toUTF8(artistName).get()
              ));
       if (!mLastArtistName.Equals(artistName) &&
-          !artistName.Find(mLastArtistName, PR_TRUE) &&
-          !mLastArtistName.Find(artistName, PR_TRUE)) {
+          (artistName.Find(mLastArtistName, PR_TRUE) == kNotFound) &&
+          (mLastArtistName.Find(artistName, PR_TRUE) == kNotFound)) {
           // No substring so this must not be the same artist
-          TRACE(("Sending album to be processed for album art."));
+          TRACE(("sbAlbumArtScanner - Sending album to be processed for album art."));
           break;
       }
     }
@@ -811,12 +817,6 @@ sbAlbumArtScanner::GetNextAlbumItems()
       continue;
     }
   
-    nsString trackName;
-    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
-                           trackName);
-    if (NS_SUCCEEDED(rv)) {
-      TRACE(("  Adding track to album: %s", NS_ConvertUTF16toUTF8(trackName).get()));
-    }
     rv = mCurrentAlbumItemList->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem *,
                                                                 item),
                                               PR_FALSE);
