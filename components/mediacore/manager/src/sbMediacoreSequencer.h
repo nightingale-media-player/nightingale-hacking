@@ -213,7 +213,6 @@ protected:
   PRUint32 mLibraryBatchCount;
   PRInt32  mSmartRebuildDetectBatchCount;
 
-  PRPackedBool mNeedCheck;
   PRPackedBool mNoRecalculate;
   PRPackedBool mViewIsLibrary;
   PRPackedBool mNeedSearchPlayingItem;

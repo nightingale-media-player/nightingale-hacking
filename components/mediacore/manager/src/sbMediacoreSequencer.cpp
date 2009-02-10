@@ -179,7 +179,6 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mListBatchCount(0)
 , mLibraryBatchCount(0)
 , mSmartRebuildDetectBatchCount(0)
-, mNeedCheck(PR_FALSE)
 , mNoRecalculate(PR_FALSE)
 , mViewIsLibrary(PR_FALSE)
 , mNeedSearchPlayingItem(PR_FALSE)
@@ -1776,7 +1775,6 @@ sbMediacoreSequencer::StopWatchingView()
   mLibraryBatchCount = 0;
   mSmartRebuildDetectBatchCount = 0;
 
-  mNeedCheck = PR_FALSE;
   mViewIsLibrary = PR_FALSE;
   mNeedSearchPlayingItem = PR_FALSE;
   mNeedsRecalculate = PR_FALSE;
@@ -1838,6 +1836,7 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
     rv = mView->GetIndexForItem(mCurrentItem, &mCurrentItemIndex);
 
     if(NS_SUCCEEDED(rv)) {
+      
       // Grab the new item uid.
       rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1846,13 +1845,7 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
 
   // Ok, looks like we'll have to regenerate the sequence and start playing
   // from the new sequence only after the current item is done playing.
-  if(NS_FAILED(rv)) {
-    mCurrentItemIndex = 0;
-    mPositionInvalidated = PR_TRUE;
-  }
-  else {
-    mPositionInvalidated = PR_FALSE;
-  }
+  mPositionInvalidated = NS_FAILED(rv) ? PR_TRUE: PR_FALSE;
 
   if(mCurrentItemIndex != previousItemIndex || 
      mCurrentItemUID != previousItemUID ||
@@ -2096,9 +2089,10 @@ sbMediacoreSequencer::GetCurrentItem(sbIMediaItem **aItem)
 
   PRUint32 index = 0;
   nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, NS_OK);
+  
   rv = mView->GetItemByIndex(index, aItem);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, NS_OK);
 
   return NS_OK;
 }
@@ -2375,22 +2369,19 @@ sbMediacoreSequencer::Next()
       mViewPosition = mSequence[mPosition];
     }
   }
-  else if(mPosition + 1 < length || mPositionInvalidated) {
+  else if(mPosition + 1 < length) {
     // Our current position may be invalid because we had to regenerate a 
     // sequence that didn't include the item that is currently playing.
     if(!mPositionInvalidated) {
       // This is not the case, increment the position.
       ++mPosition;      
     }
-    else {
-      // Looks like it was invalid, skip incrementing this time since we're now
-      // really playing index '0'.
-      mPositionInvalidated = PR_FALSE;
-    }
 
     mViewPosition = mSequence[mPosition];
     hasNext = PR_TRUE;
   }
+
+  mPositionInvalidated = PR_FALSE;
 
   // No next track, not an error.
   if(!hasNext) {
@@ -3004,7 +2995,7 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
   // ends
   if (listEvent && mListBatchCount > 0) {
     // remember that we need to do a check when batch ends
-    mNeedCheck = PR_TRUE;
+    mNeedSearchPlayingItem = PR_TRUE;
     *_retval = PR_TRUE;
     
     return NS_OK;
@@ -3135,6 +3126,8 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
 
+  PRUint32 listBatchCount = mListBatchCount;
+    
   if(aMediaList == mViewList && mListBatchCount > 0) {
     mListBatchCount--;
   }
@@ -3147,19 +3140,18 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
 
   if(mListBatchCount == 0 || mLibraryBatchCount == 0) {
     
-    if(mNeedCheck) {
+    if(mNeedSearchPlayingItem) {
       rv = DelayedCheck();
       NS_ENSURE_SUCCESS(rv, rv);
-      
-      mNeedCheck = PR_FALSE;
     }
-
-    if(mNeedSearchPlayingItem || mNeedsRecalculate) {
+    else if(mNeedsRecalculate) {
       rv = UpdateItemUIDIndex();
       NS_ENSURE_SUCCESS(rv, rv);
-
-      mNeedSearchPlayingItem = PR_FALSE;
     }
+  }
+
+  if(mSmartRebuildDetectBatchCount == listBatchCount) {
+    mSmartRebuildDetectBatchCount = 0;
   }
 
   return NS_OK;
@@ -3290,45 +3282,57 @@ sbMediacoreSequencer::HandleDelayedCheckTimer(nsITimer *aTimer)
   nsAutoMonitor mon(mMonitor);
   mDelayedCheckTimer = nsnull;
 
-  PRUint32 index = 0;
-  nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
+  //// Position already invalidated, even though the item
+  //// is not present anymore, we'll continue playback 
+  //// using a new sequence when it's done playing.
+  //if(mPositionInvalidated) {
+  //  // We do not need to reset mPositionInvalidated here. 
+  //  // It will be reset automatically when playback of the
+  //  // new sequence begins.
+  //  return NS_OK;
+  //}
 
-  if(NS_FAILED(rv)) {
-    // if the item is our list, stop playback now and shutdown watcher
-    if (mPlaybackControl) {
-      // Grip.
-      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-      mon.Exit();
+  //PRUint32 index = 0;
+  //nsresult rv = mView->GetIndexForViewItemUID(mCurrentItemUID, &index);
 
-      rv = playbackControl->Stop();
-      NS_ENSURE_SUCCESS(rv, rv);
+  //if(NS_FAILED(rv)) {
+  //  // if the item is our list, stop playback now and shutdown watcher
+  //  if (mPlaybackControl) {
+  //    // Grip.
+  //    nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+  //    mon.Exit();
 
-      mon.Enter();
-    }
+  //    rv = playbackControl->Stop();
+  //    NS_ENSURE_SUCCESS(rv, rv);
 
-    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+  //    mon.Enter();
+  //  }
 
-    rv = StopSequenceProcessor();
-    NS_ENSURE_SUCCESS(rv, rv);
+  //  mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
-    rv = UpdatePlayStateDataRemotes();
-    NS_ENSURE_SUCCESS(rv, rv);
+  //  rv = StopSequenceProcessor();
+  //  NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = StopWatchingView();
-    NS_ENSURE_SUCCESS(rv, rv);
+  //  rv = UpdatePlayStateDataRemotes();
+  //  NS_ENSURE_SUCCESS(rv, rv);
+
+  //  rv = StopWatchingView();
+  //  NS_ENSURE_SUCCESS(rv, rv);
+  //}
+  //else {
+  PRUint32 viewLength = 0;
+  nsresult rv = mView->GetLength(&viewLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(mSequence.size() != viewLength) {
+    mNeedsRecalculate = PR_TRUE;
   }
-  else {
-    PRUint32 viewLength = 0;
-    nsresult rv = mView->GetLength(&viewLength);
-    NS_ENSURE_SUCCESS(rv, rv);
 
-    if(mSequence.size() != viewLength) {
-      mNeedsRecalculate = PR_TRUE;
-    }
+  rv = UpdateItemUIDIndex();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = UpdateItemUIDIndex();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  mNeedSearchPlayingItem = PR_FALSE;
+  //}
 
   return NS_OK;
 }
