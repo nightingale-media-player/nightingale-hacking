@@ -546,45 +546,12 @@ sb-sys-titlebar {
 }
 
 
-
-
-
-
-
-
-
-
-
 .closable-box-image,
 treechildren::-moz-tree-twisty(closed),
 .closable-box-image[open="true"],
 treechildren::-moz-tree-twisty(open) {
   width: 9px;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-treechildren#trDOMTreeBody::-moz-tree-row( selected ) {
-  background-color:;
-}
-
 
 
 #faceplate_box {
@@ -622,13 +589,6 @@ treechildren#trDOMTreeBody::-moz-tree-row( selected ) {
   min-height:44px;
   padding:4px 2px;
 }
-
-
-
-
-
-
-
 
 
 .tab-icon-image {

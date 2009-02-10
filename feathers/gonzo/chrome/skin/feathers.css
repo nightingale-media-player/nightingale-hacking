@@ -168,11 +168,11 @@ treecol > label {
 
 treecol[insertafter="true"],
 treechildren::-moz-tree-cell( insertafter ) {
-  border-right: 1px solid rgb(131,131,131); !important;
+  border-right: 1px solid rgb(131,131,131);
 }
 treecol[insertbefore="true"],
 treechildren::-moz-tree-cell( insertbefore ) {
-  border-left: 1px solid rgb(131,131,131); !important;
+  border-left: 1px solid rgb(131,131,131);
 }
 richlistitem {
   border-bottom: 1px solid rgb(131,131,131);
@@ -586,18 +586,19 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 }
 
 .servicepane-tree > treechildren::-moz-tree-row( dropBefore ) {
-  border-top:1px solid rgb(131,131,131); !important;
+  border-top:1px solid rgb(131,131,131);
 }
 .servicepane-tree > treechildren::-moz-tree-row( dropAfter ) {
-  border-bottom:1px solid rgb(131,131,131); !important;
+  border-bottom:1px solid rgb(131,131,131);
 }
 
 /* this is th style used when items are dragged over applicable rows */
 .servicepane-tree > treechildren::-moz-tree-row( dropOn ) {
   background-color:rgb(200,200,200);
-  border:2px solid rgb(131,131,131); !important;
+  border:2px solid rgb(131,131,131);
   -moz-border-radius:6px;
 }
+
 
 
 
@@ -982,7 +983,7 @@ scrollbar > slider > thumb {
 /* make the radio button look like a tab */
 #viewGroup > radio {
   background-color:rgb(200,200,200) !important;
-  border:1px solid rgb(131,131,131); !important;
+  border:1px solid rgb(131,131,131);
   -moz-border-radius-topleft:3px;
   -moz-border-radius-topright:3px;
 }

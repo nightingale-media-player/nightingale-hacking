@@ -78,7 +78,7 @@ groupbox caption {
 
 treechildren::-moz-tree-progressmeter {
   background-image: url('chrome://songbird/skin/playlist/bg-progress.png') !important;
-  background-repeat:left top;
+  background-repeat:top left;
   background-position:left center;
 }
 
