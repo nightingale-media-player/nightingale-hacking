@@ -39,13 +39,6 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 // used to identify directory import profiling runs
 var gCounter = 0;
 
-__defineGetter__("gIOService", function(){
-  delete gIOService;
-  gIOService = Cc["@mozilla.org/network/io-service;1"]
-                 .getService(Ci.nsIIOService);
-  return gIOService;
-});
-
 /******************************************************************************
  * Object implementing sbIDirectoryImportJob, responsible for finding media
  * items on disk, adding them to the library and performing a metadata scan.
@@ -80,6 +73,9 @@ function DirectoryImportJob(aInputArray,
   // initialize with an empty array
   this._itemURIStrings = [];
   
+  this._libraryUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryUtils);
+
   if ("@songbirdnest.com/Songbird/TimingService;1" in Cc) {
     this._timingService = Cc["@songbirdnest.com/Songbird/TimingService;1"]
                             .getService(Ci.sbITimingService);
@@ -145,6 +141,9 @@ DirectoryImportJob.prototype = {
   // True if we've forced the library into a batch state for
   // performance reasons
   _inLibraryBatch           : false,
+
+  // sbILibraryUtils used to produce content URI's
+  _libraryUtils             : null,
   
   // Used to track performance
   _timingService            : null,
@@ -316,7 +315,7 @@ DirectoryImportJob.prototype = {
       this._fileScanQuery.setRecurse(true);
       this._fileScanner.submitQuery(this._fileScanQuery);
     } else {
-      var urispec = gIOService.newFileURI(file).spec;
+      var urispec = this._libraryUtils.getFileContentURI(file).spec;
       var supportsString = Cc["@mozilla.org/supports-string;1"]
                              .createInstance(Ci.nsISupportsString);
       supportsString.data = urispec;
