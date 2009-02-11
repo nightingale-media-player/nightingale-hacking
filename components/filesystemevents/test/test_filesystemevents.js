@@ -149,6 +149,7 @@ sbFSListener.prototype =
     assertTrue(this._receivedChangedEvent);
     assertTrue(this._receivedRemovedEvent);
 
+    this._fsWatcher = null;
     testFinished();    
   },
 
