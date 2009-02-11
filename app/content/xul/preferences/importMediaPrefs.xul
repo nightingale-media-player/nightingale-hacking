@@ -64,7 +64,7 @@
     <commandset id="import_media_commandset"/>
 
     <!-- Import media preference tab box. -->
-    <tabbox id="import_media_tabbox">
+    <tabbox id="import_media_tabbox" selectedIndex="0" persist="selectedIndex">
 
       <!-- Import media preference tabs. -->
       <tabs id="import_media_tabs"/>

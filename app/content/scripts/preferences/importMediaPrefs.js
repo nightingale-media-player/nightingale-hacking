@@ -81,6 +81,10 @@ var importMediaPrefsPane = {
       var tabPanel = tabPanelList[i];
       this._fireEvent(tabPanel, aEvent.type, aEvent.bubbles, aEvent.cancelable);
     }
+    var tabBox = document.getElementById("import_media_tabbox");
+    if (tabBox.hasAttribute("selectedIndex")) {
+      tabBox.selectedIndex = tabBox.getAttribute("selectedIndex");
+    }
   },
 
 
