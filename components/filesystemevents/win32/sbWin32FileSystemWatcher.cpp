@@ -184,6 +184,9 @@ sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 
   Cleanup();
 
+  // Don't worry about checking the result from the listener.
+  mListener->OnWatcherStopped();
+
   if (aShouldSaveSession) {
     nsresult rv = mTree->SaveTreeSession(mSessionID);
     NS_ENSURE_SUCCESS(rv, rv);

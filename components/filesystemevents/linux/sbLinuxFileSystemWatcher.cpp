@@ -143,6 +143,9 @@ sbLinuxFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
   rv = Cleanup();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Don't worry about checking the result from the listener.
+  mListener->OnWatcherStopped();
+
   if (aShouldSaveSession) {
     rv = mTree->SaveTreeSession(mSessionID);
     NS_ENSURE_SUCCESS(rv, rv);

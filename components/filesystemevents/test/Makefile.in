@@ -7,10 +7,10 @@
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the "GPL").
+# GNU General Public License Version 2 (the GPL).
 # 
 # Software distributed under the License is distributed 
-# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -22,29 +22,17 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SONGBIRD_TEST_COMPONENT = filesystemevents 
 
-SUBDIRS += base     \
-           test     \
-           $(NULL)
-
-ifeq ($(SB_PLATFORM), windows)
-SUBDIRS += win32
-else
-ifeq ($(SB_PLATFORM), macosx)
-# Only build the mac component if the build enviroment has the 10.5 SDK
-ifneq (macosx_,$(SB_PLATFORM)_$(SB_MACOSX_SDK_10_5))
-SUBDIRS += macosx
-endif
-else
-SUBDIRS += linux
-endif
-endif
+SONGBIRD_TESTS = $(srcdir)/test_filesystemevents.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
+
