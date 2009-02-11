@@ -704,7 +704,7 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
 
         for(PRUint32 k = 0; k < valuesLength; k++) {
           nsString sortableValue;
-          rv = info->MakeSearchable(filter.values[k], sortableValue);
+          rv = info->MakeSortable(filter.values[k], sortableValue);
           NS_ENSURE_SUCCESS(rv, rv);
           nsString* successString = valueArray.AppendElement(sortableValue);
           NS_ENSURE_TRUE(successString, NS_ERROR_OUT_OF_MEMORY);
@@ -731,7 +731,7 @@ sbLocalDatabaseCascadeFilterSet::AddConfiguration(sbILocalDatabaseGUIDArray* mAr
           sortableValue = filter.values[i];
         }
         else {
-          rv = info->MakeSearchable(filter.values[i], sortableValue);
+          rv = info->MakeSortable(filter.values[i], sortableValue);
           NS_ENSURE_SUCCESS(rv, rv);
         }
         nsString* appended = sortableValueArray.AppendElement(sortableValue);
@@ -959,7 +959,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
           sbStringArray sortableValues;
           for (PRUint32 k = 0; k < upstream.values.Length(); k++) {
             nsAutoString sortableValue;
-            rv = info->MakeSearchable(upstream.values[k], sortableValue);
+            rv = info->MakeSortable(upstream.values[k], sortableValue);
             NS_ENSURE_SUCCESS(rv, rv);
 
             nsString* success = sortableValues.AppendElement(sortableValue);
@@ -987,7 +987,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
         sbStringArray sortableValues;
         for (PRUint32 k = 0; k < upstream.values.Length(); k++) {
           nsAutoString sortableValue;
-          rv = info->MakeSearchable(upstream.values[k], sortableValue);
+          rv = info->MakeSortable(upstream.values[k], sortableValue);
           NS_ENSURE_SUCCESS(rv, rv);
 
           nsString* success = sortableValues.AppendElement(sortableValue);
@@ -1138,7 +1138,7 @@ sbLocalDatabaseCascadeFilterSet::AppendDefaultFilters(sbILocalDatabaseGUIDArray*
                          valuesEnum,
                          PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   return NS_OK;
 }
 

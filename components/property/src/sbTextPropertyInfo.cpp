@@ -246,18 +246,6 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
   return rv;
 }
 
-// XXXlone> jemalloc is missing _realloc_dbg (http://bugzilla.songbirdnest.com/show_bug.cgi?id=14615)
-// respin is coming, but until then, you can uncomment these lines to succesfuly
-// build in debug mode
-
-#ifdef DEBUG
-void *
-_realloc_dbg(void *userdata, size_t s, int blocktype, const char* r1, int r2)
-{
-        return realloc(userdata, s);
-} 
-#endif 
-
 // text property info needs to compute local-specific collation data instead
 // of relying on the ancestor's default implementation (which just calls
 // MakeSearchable), so that proper sort order are achieved.
@@ -267,6 +255,7 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   nsAutoString val;
   val = aValue;
   CompressWhitespace(val);
+  ToLowerCase(val);
 
   nsresult rv;
   

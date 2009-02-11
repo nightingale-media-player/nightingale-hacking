@@ -230,13 +230,13 @@ private:
   nsStringArray mIgnoreSystemProperties;
 };
 
-class sbMakeSearchableStringEnumerator : public nsIStringEnumerator
+class sbMakeSortableStringEnumerator : public nsIStringEnumerator
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISTRINGENUMERATOR
 
-  sbMakeSearchableStringEnumerator(sbIPropertyInfo* aPropertyInfo,
+  sbMakeSortableStringEnumerator(sbIPropertyInfo* aPropertyInfo,
                                  nsIStringEnumerator* aValues);
 
 private:

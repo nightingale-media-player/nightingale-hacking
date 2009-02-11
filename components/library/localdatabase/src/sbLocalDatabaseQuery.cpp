@@ -42,7 +42,6 @@
 #define CREATED_COLUMN              NS_LITERAL_STRING("created")
 #define GUID_COLUMN                 NS_LITERAL_STRING("guid")
 #define OBJ_COLUMN                  NS_LITERAL_STRING("obj")
-#define OBJSEARCHABLE_COLUMN        NS_LITERAL_STRING("obj_searchable")
 #define OBJSORTABLE_COLUMN          NS_LITERAL_STRING("obj_sortable")
 #define OBJSECONDARYSORTABLE_COLUMN NS_LITERAL_STRING("obj_secondary_sortable")
 #define MEDIAITEMID_COLUMN          NS_LITERAL_STRING("media_item_id")
@@ -305,7 +304,7 @@ sbLocalDatabaseQuery::GetPrefixSearchQuery(nsAString& aQuery)
   }
   else {
     rv = mBuilder->CreateMatchCriterionParameter(SORT_ALIAS,
-                                                 OBJSEARCHABLE_COLUMN,
+                                                 OBJSORTABLE_COLUMN,
                                                  sbISQLSelectBuilder::MATCH_LESS,
                                                  getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -448,7 +447,7 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mBuilder->CreateMatchCriterionNull(NS_LITERAL_STRING("_p0"),
-                                          OBJSEARCHABLE_COLUMN,
+                                          OBJSORTABLE_COLUMN,
                                           sbISQLSelectBuilder::MATCH_EQUALS,
                                           getter_AddRefs(criterion));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -490,7 +489,7 @@ sbLocalDatabaseQuery::AddCountColumns()
     }
     else {
       rv = mBuilder->AddColumn(EmptyString(),
-                               NS_LITERAL_STRING("count(distinct _d.obj_searchable)"));
+                               NS_LITERAL_STRING("count(distinct _d.obj_sortable)"));
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -507,23 +506,11 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
 {
   nsresult rv;
 
-  if (mIsDistinct) {
-    nsAutoString buff;
-    MaxExpr(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN, buff);
-    rv = mBuilder->AddColumn(EmptyString(), buff);
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    MaxExpr(MEDIAITEMS_ALIAS, GUID_COLUMN, buff);
-    rv = mBuilder->AddColumn(EmptyString(), buff);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, MEDIAITEMID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = mBuilder->AddColumn(MEDIAITEMS_ALIAS, GUID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (aIsNull) {
     rv = mBuilder->AddColumn(EmptyString(), NS_LITERAL_STRING("''"));
@@ -582,16 +569,8 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
     base = CONSTRAINT_ALIAS;
   }
 
-  if (mIsDistinct) {
-    nsString buff;
-    MaxExpr(base, ROWID_COLUMN, buff);
-    rv = mBuilder->AddColumn(EmptyString(), buff);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    rv = mBuilder->AddColumn(base, ROWID_COLUMN);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = mBuilder->AddColumn(base, ROWID_COLUMN);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -673,7 +652,7 @@ sbLocalDatabaseQuery::AddFilters()
         else {
           matchType = sbISQLSelectBuilder::MATCH_NOTEQUALS;
         }
-
+        
         // XXX HACK XXX HACK XXX HACK UGH
         // The |media_list_type_id is null| constraint will cause sqlite to
         // access the data using the idx_media_items_media_list_type_id index
@@ -738,7 +717,7 @@ sbLocalDatabaseQuery::AddFilters()
           NS_ENSURE_SUCCESS(rv, rv);
 
           rv = mBuilder->CreateMatchCriterionIn(tableAlias,
-                                                OBJSEARCHABLE_COLUMN,
+                                                OBJSORTABLE_COLUMN,
                                                 getter_AddRefs(inCriterion));
           NS_ENSURE_SUCCESS(rv, rv);
         }
@@ -862,7 +841,7 @@ sbLocalDatabaseQuery::AddFilters()
     rv = mBuilder->CreateMatchCriterionString(NS_LITERAL_STRING("_fts"),
                                               isEverythingSearch ?
                                                 NS_LITERAL_STRING("alldata") :
-                                                OBJSEARCHABLE_COLUMN,
+                                                NS_LITERAL_STRING("obj_searchable"),
                                               sbISQLSelectBuilder::MATCH_MATCH,
                                               match,
                                               getter_AddRefs(criterion));
@@ -1017,22 +996,25 @@ sbLocalDatabaseQuery::AddPrimarySort()
    * sort will make no difference.
    */
   if (!mIsDistinct) {
+    
     rv = mBuilder->AddOrder(SORT_ALIAS,
                             OBJSECONDARYSORTABLE_COLUMN,
                             mSorts->ElementAt(0).ascending);
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    /*
+     * Sort on media_item_id to make the order of the rows always the same.  Make
+     * sure we sort on the same direction as the primary sort so reversing the
+     * primary sort will reverse the ordering when the primary sort values are
+     * the same.
+     */
+    rv = mBuilder->AddOrder(SORT_ALIAS,
+                            MEDIAITEMID_COLUMN,
+                            mSorts->ElementAt(0).ascending);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  /*
-   * Sort on media_item_id to make the order of the rows always the same.  Make
-   * sure we sort on the same direction as the primary sort so reversing the
-   * primary sort will reverse the ordering when the primary sort values are
-   * the same.
-   */
-  rv = mBuilder->AddOrder(SORT_ALIAS,
-                          MEDIAITEMID_COLUMN,
-                          mSorts->ElementAt(0).ascending);
-  NS_ENSURE_SUCCESS(rv, rv);
+
 
   return NS_OK;
 
@@ -1152,7 +1134,7 @@ sbLocalDatabaseQuery::AddDistinctConstraint()
 
     nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
     rv = mBuilder->CreateMatchCriterionString(DISTINCT_ALIAS,
-                                              OBJSEARCHABLE_COLUMN,
+                                              OBJSORTABLE_COLUMN,
                                               sbISQLSelectBuilder::MATCH_NOTEQUALS,
                                               EmptyString(),
                                               getter_AddRefs(notEmptyString));
@@ -1209,7 +1191,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
     else {
       nsCOMPtr<sbISQLBuilderCriterion> notEmptyString;
       rv = mBuilder->CreateMatchCriterionString(SORT_ALIAS,
-                                                OBJSEARCHABLE_COLUMN,
+                                                OBJSORTABLE_COLUMN,
                                                 sbISQLSelectBuilder::MATCH_NOTEQUALS,
                                                 EmptyString(),
                                                 getter_AddRefs(notEmptyString));
@@ -1218,7 +1200,7 @@ sbLocalDatabaseQuery::AddDistinctGroupBy()
       rv = mBuilder->AddCriterion(notEmptyString);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJSEARCHABLE_COLUMN);
+      rv = mBuilder->AddGroupBy(SORT_ALIAS, OBJSORTABLE_COLUMN);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
@@ -1277,7 +1259,7 @@ sbLocalDatabaseQuery::AddJoinToGetNulls()
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mBuilder->CreateMatchCriterionNull(GETNULL_ALIAS,
-                                            OBJSEARCHABLE_COLUMN,
+                                            OBJSORTABLE_COLUMN,
                                             sbISQLSelectBuilder::MATCH_EQUALS,
                                             getter_AddRefs(criterion));
     NS_ENSURE_SUCCESS(rv, rv);

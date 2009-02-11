@@ -117,7 +117,7 @@ insert into properties (property_name) values ('http://songbirdnest.com/data/1.0
 insert into media_list_types (type, factory_contractid) values ('simple', '@songbirdnest.com/Songbird/Library/LocalDatabase/SimpleMediaListFactory;1');
 
 /* XXXAus: !!!WARNING!!! When changing this value, you _MUST_ update sbLocalDatabaseMigration._latestSchemaVersion and testMigration.latestSchemaVersion to match this value */
-insert into library_metadata (name, value) values ('version', '16');
+insert into library_metadata (name, value) values ('version', '17');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */

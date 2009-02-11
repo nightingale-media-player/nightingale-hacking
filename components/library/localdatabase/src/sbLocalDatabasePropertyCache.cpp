@@ -82,7 +82,7 @@ PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
  */
 #define SB_LOCALDATABASE_CACHE_FLUSH_DELAY (1000)
 
-#define CACHE_HASHTABLE_SIZE 1000
+#define CACHE_HASHTABLE_SIZE 500
 
 
 /**
@@ -386,7 +386,7 @@ sbLocalDatabasePropertyCache::RetrievePrimaryProperties(sbIDatabaseQuery* query,
 
       if (!value.IsVoid()) {
 
-        rv = bag->PutValue(sStaticProperties[i].mDBID, value, value, value);
+        rv = bag->PutValue(sStaticProperties[i].mDBID, value);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
@@ -466,13 +466,7 @@ sbLocalDatabasePropertyCache::RetrieveSecondaryProperties(sbIDatabaseQuery* quer
     rv = result->GetRowCell(row, 2, obj);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = result->GetRowCell(row, 3, objSearchable);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = result->GetRowCell(row, 4, objSortable);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = bag->PutValue(propertyID, obj, objSearchable, objSortable);
+    rv = bag->PutValue(propertyID, obj);
 
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -517,15 +511,7 @@ sbLocalDatabasePropertyCache::RetrieveLibraryProperties(sbLocalDatabaseResourceP
     rv = result->GetRowCell(row, 1, obj);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString objSearchable;
-    rv = result->GetRowCell(row, 2, objSearchable);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString objSortable;
-    rv = result->GetRowCell(row, 3, objSortable);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = aBag->PutValue(propertyID, obj, objSearchable, objSortable);
+    rv = aBag->PutValue(propertyID, obj);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -554,7 +540,7 @@ sbLocalDatabasePropertyCache::RetrieveLibraryProperties(sbLocalDatabaseResourceP
 
     if (!value.IsVoid()) {
 
-      rv = aBag->PutValue(sStaticProperties[i].mDBID, value, value, value);
+      rv = aBag->PutValue(sStaticProperties[i].mDBID, value);
 
       NS_ENSURE_SUCCESS(rv, rv);
     }

@@ -112,6 +112,18 @@ sbLibraryMigration.prototype = {
       var retval;
       query.setAsyncQuery(true);
       query.execute(retval);
+      
+      this._titleText = "Library Migration Helper";
+      this._statusText = "Improving sorting data...";
+      this.migrationQuery = query;
+      
+      var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
+                   .createInstance(Ci.nsISupportsInterfacePointer);
+      sip.data = this;
+
+      this.startNotificationTimer();
+      SBJobUtils.showProgressDialog(sip.data, null, 0);
+      this.stopNotificationTimer();
 
       // Raise a flag indicating that this library will need all 
       // sort info to be recomputed.

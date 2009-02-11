@@ -40,6 +40,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
                       $(srcdir)/sbMigrate11pre1To11pre1b.js \
                       $(srcdir)/sbMigrate11pre1bTo11pre1c.js \
                       $(srcdir)/sbMigrate11pre1cTo11pre1d.js \
+                      $(srcdir)/sbMigrate11pre1dTo11pre1e.js \
                       $(NULL)
                       
 include $(topsrcdir)/build/rules.mk

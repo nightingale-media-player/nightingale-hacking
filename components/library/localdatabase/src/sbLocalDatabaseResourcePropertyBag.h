@@ -56,9 +56,7 @@ public:
 
   nsresult Init();
   nsresult PutValue(PRUint32 aPropertyID,
-                    const nsAString& aValue,
-                    const nsAString& aSearchable,
-                    const nsAString& aSortable);
+                    const nsAString& aValue);
 
   nsresult EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc, void *aClosure, PRUint32 *aDirtyCount);
   nsresult ClearDirty();
@@ -87,19 +85,15 @@ private:
  * values: the actual property value, the sortable value (eg, collation data
  * for strings), and the searchable value (eg, lowercased strings)
  */
-class sbPropertyData
+struct sbPropertyData
 {
-public:
   sbPropertyData(const nsAString &aValue,
                  const nsAString &aSearchableValue,
-                 const nsAString &aSortableValue);
-  virtual ~sbPropertyData() {}
-
-  nsresult GetValue(nsAString &aValue);
-  nsresult GetSortableValue(nsAString &aSortableValue);
-  nsresult GetSearchableValue(nsAString &aSearchableValue);
-  
-private:
+                 const nsAString &aSortableValue) :
+    value(aValue),
+    searchableValue(aSearchableValue),
+    sortableValue(aSortableValue)
+  {};
   nsString value;
   nsString searchableValue;
   nsString sortableValue;

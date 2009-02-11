@@ -635,7 +635,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
   nsresult rv;
 
-  // Get the searchable format of the value
+  // Get the sortable format of the value
   nsCOMPtr<sbIPropertyManager> propMan =
     do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -644,8 +644,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
   rv = propMan->GetPropertyInfo(aID, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString searchableValue;
-  rv = info->MakeSearchable(aValue, searchableValue);
+  nsAutoString sortableValue;
+  rv = info->MakeSortable(aValue, sortableValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Make a single-item string array to hold our property value.
@@ -653,7 +653,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
   nsString* value = valueArray.AppendElement();
   NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
 
-  value->Assign(searchableValue);
+  value->Assign(sortableValue);
 
   // Make a string enumerator for it.
   nsCOMPtr<nsIStringEnumerator> valueEnum =
@@ -796,7 +796,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     nsString* valueString = stringArray->AppendElement();
     SB_CONTINUE_IF_FALSE(valueString);
 
-    // Make the value searchable and assign it
+    // Make the value sortable and assign it
     nsCOMPtr<sbIPropertyInfo> info;
     rv = propMan->GetPropertyInfo(propertyID, getter_AddRefs(info));
     SB_CONTINUE_IF_FAILED(rv);
@@ -805,7 +805,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperties(sbIPropertyArray* aProp
     rv = property->GetValue(value);
     SB_CONTINUE_IF_FAILED(rv);
 
-    rv = info->MakeSearchable(value, *valueString);
+    nsAutoString sortableValue;
+    rv = info->MakeSortable(value, *valueString);
     SB_CONTINUE_IF_FAILED(rv);
   }
 

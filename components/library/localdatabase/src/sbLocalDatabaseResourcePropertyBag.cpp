@@ -174,7 +174,8 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      return data->GetValue(_retval);
+      _retval.Assign(data->value);
+      return NS_OK;
     }
   }
 
@@ -192,7 +193,23 @@ sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDB
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      return data->GetSortableValue(_retval);
+      
+      // Generate and cache the sortable value
+      // only when needed
+      if (data->sortableValue.IsEmpty()) {
+        nsString propertyID;
+        PRBool success = mCache->GetPropertyID(aPropertyDBID, propertyID);
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);          
+        nsCOMPtr<sbIPropertyInfo> propertyInfo;
+        nsresult rv = mPropertyManager->GetPropertyInfo(propertyID,
+                                                 getter_AddRefs(propertyInfo));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = propertyInfo->MakeSortable(data->value, data->sortableValue);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      _retval.Assign(data->sortableValue);
+      return NS_OK;
     }
   }
 
@@ -211,7 +228,23 @@ sbLocalDatabaseResourcePropertyBag::
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
-      return data->GetSearchableValue(_retval);
+      
+      // Generate and cache the searchable value
+      // only when needed
+      if (data->searchableValue.IsEmpty()) {
+        nsString propertyID;
+        PRBool success = mCache->GetPropertyID(aPropertyDBID, propertyID);
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);          
+        nsCOMPtr<sbIPropertyInfo> propertyInfo;
+        nsresult rv = mPropertyManager->GetPropertyInfo(propertyID,
+                                                 getter_AddRefs(propertyInfo));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = propertyInfo->MakeSearchable(data->value, data->searchableValue);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      _retval.Assign(data->searchableValue);
+      return NS_OK;
     }
   }
 
@@ -250,14 +283,6 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
 #endif
 
   NS_ENSURE_TRUE(valid, NS_ERROR_ILLEGAL_VALUE);
-
-  nsString sortable;
-  rv = propertyInfo->MakeSortable(aValue, sortable);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString searchable;
-  rv = propertyInfo->MakeSearchable(aValue, searchable);
-  NS_ENSURE_SUCCESS(rv, rv);
   
   // Find all properties whose secondary sort depends on this
   // property
@@ -269,7 +294,7 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
   rv = dependentProperties->GetLength(&dependentPropertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = PutValue(propertyDBID, aValue, searchable, sortable);
+  rv = PutValue(propertyDBID, aValue);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PR_Lock(mDirtyLock);
@@ -346,13 +371,11 @@ NS_IMETHODIMP sbLocalDatabaseResourcePropertyBag::Write()
 
 nsresult
 sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
-                                             const nsAString& aValue,
-                                             const nsAString& aSearchable,
-                                             const nsAString& aSortable)
+                                             const nsAString& aValue)
 {
   nsAutoPtr<sbPropertyData> data(new sbPropertyData(aValue, 
-                                                    aSearchable, 
-                                                    aSortable));
+                                                    EmptyString(), 
+                                                    EmptyString()));
   PRBool success = mValueMap.Put(aPropertyID, data);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   data.forget();
@@ -382,27 +405,3 @@ sbLocalDatabaseResourcePropertyBag::ClearDirty()
   return NS_OK;
 }
 
-
-sbPropertyData::sbPropertyData(const nsAString& aValue, 
-                               const nsAString& aSearchable, 
-                               const nsAString& aSortable) :
-  value(aValue),
-  sortableValue(aSortable),
-  searchableValue(aSearchable)                              
-{
-}
-
-nsresult sbPropertyData::GetValue(nsAString &aValue) {
-  aValue = value;
-  return NS_OK;
-}
-
-nsresult sbPropertyData::GetSortableValue(nsAString &aSortableValue) {
-  aSortableValue = sortableValue;
-  return NS_OK;
-}
-
-nsresult sbPropertyData::GetSearchableValue(nsAString &aSearchableValue) {
-  aSearchableValue = searchableValue;
-  return NS_OK;
-}

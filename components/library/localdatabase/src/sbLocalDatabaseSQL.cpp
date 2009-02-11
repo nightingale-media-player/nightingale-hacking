@@ -80,7 +80,7 @@ nsString sbLocalDatabaseSQL::MediaItemColumns(PRBool aIncludeMediaItem)
 nsString sbLocalDatabaseSQL::SecondaryPropertySelect()
 {
   nsString sql =
-    NS_LITERAL_STRING("SELECT media_item_id, property_id, obj, obj_searchable, obj_sortable \
+    NS_LITERAL_STRING("SELECT media_item_id, property_id, obj \
                       FROM resource_properties \
                       WHERE media_item_id IN (");
   for (int i = 0; i < sbLocalDatabaseSQL::SecondaryPropertyBindCount-1; i++) {
