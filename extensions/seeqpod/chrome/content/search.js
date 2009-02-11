@@ -57,6 +57,8 @@ Search = {
   playlist : null,
   progress_label: null,
   progress: null,
+  _mediaListView: null,
+  filterIndex: -1,
 
   /**
    * Initialize our playlist, etc.
@@ -72,6 +74,13 @@ Search = {
 
     // Setup our library
     Library.init();
+
+    // Create a filtered view of the web library
+    this._mediaListView = Library.library.createView();
+
+    // Add a filter for our seeqpod query filter
+    this.filterIndex =
+      this._mediaListView.cascadeFilterSet.appendFilter(Library.seeqpodQuery);
 
     // evil hacks from matt
     this.playlist._setupColumnSpec = function() {
@@ -136,18 +145,31 @@ Search = {
       });
       SBDataSetBoolValue('seeqpod.searchnow', false);
     }
+
+    //
+    // Media Page Controller
+    //
+    // In order to display the contents of a library or list, pages
+    // must provide a "window.mediaPage" object implementing
+    // the Songbird sbIMediaPage interface. This interface allows
+    // the rest of Songbird to talk to the page without knowledge
+    // of what the page looks like.
+    //
+    // In this particular page most functionality is simply
+    // delegated to the sb-playlist widget.
+    //
+    // Wait until after initializing the media page before providing it to the
+    // window.
+    //
+    window.mediaPage = this;
   },
 
   /**
    * filter the library to show only @aQuery
    */
   filter: function(aQuery) {
-    // Create a filtered view of the web library
-    var view = Library.library.createView();
-    // Add a filter for our seeqpod query filter
-    var filterIndex = view.cascadeFilterSet.appendFilter(Library.seeqpodQuery);
     // Filter our view of web library based on the term
-    view.cascadeFilterSet.set(this.filterIndex, [aQuery], 1);
+    this._mediaListView.cascadeFilterSet.set(this.filterIndex, [aQuery], 1);
 
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
@@ -156,7 +178,7 @@ Search = {
                 .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
     var cmds = mgr.request(kPlaylistCommands.MEDIAITEM_DEFAULT);
     // Set up the playlist widget
-    this.playlist.bind(view, cmds);
+    this.playlist.bind(this._mediaListView, cmds);
   },
 
   /**
@@ -324,6 +346,38 @@ Search = {
       Search.filter('');
     }
     document.getElementById('seeqpod-window').className = '';
+  },
+
+  /**
+   * Gets the sbIMediaListView that this page is displaying
+   */
+  get mediaListView()  {
+    return this._mediaListView;
+  },
+
+  /**
+   * Set the sbIMediaListView that this page is to display.
+   * Called in the capturing phase of window load by the Songbird browser.
+   * Note that to simplify page creation mediaListView may only be set once.
+   */
+  set mediaListView(value)  {
+    // Since the view is managed internally, don't allow it to be set
+    // externally.
+  },
+
+  highlightItem: function(aViewIndex) {
+    this.playlist.highlightItem(aIndex);
+  },
+
+  canDrop: function(aEvent, aSession) {
+    return this.playlist.nsDragAndDropObserver.canDrop(aEvent, aSession);
+  },
+
+  onDrop: function(aEvent, aSession) {
+    return this.playlist.
+        _dropOnTree(this._playlist.mediaListView.length,
+                    Ci.sbIMediaListViewTreeViewObserver.DROP_AFTER,
+                    aSession);
   }
 }
 
@@ -578,3 +632,4 @@ ResultsManager = {
     }
   }
 }
+
