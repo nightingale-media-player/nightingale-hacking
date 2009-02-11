@@ -117,9 +117,6 @@ sbMacFileSystemWatcher::StartWatching()
   // Build the tree snapshot now, FSEvent stream will start once the tree
   // has been built.
   if (mShouldLoadSession) {
-#if DEBUG
-    printf("\n\n  InitWithTreeSession( %s )\n\n", mSessionID.ToString());
-#endif
     rv = mTree->InitWithTreeSession(mSessionID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
