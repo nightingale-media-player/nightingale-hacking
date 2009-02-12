@@ -1224,8 +1224,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   /*
    * Generate the resort query, if needed
    */
-  PRUint32 numSorts = mSorts.Length();
-  if (numSorts > 1) {
+  if (mPrimarySortsCount > 1) {
     rv = ldq->GetResortQuery(mResortQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
