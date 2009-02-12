@@ -1215,16 +1215,11 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   rv = ldq->GetPrefixSearchQuery(mPrefixSearchQuery);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoString sql;
-
-  nsCOMPtr<sbISQLSelectBuilder> builder =
-    do_CreateInstance(SB_SQLBUILDER_SELECT_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   /*
    * Generate the resort query, if needed
    */
-  if (mPrimarySortsCount > 1) {
+  PRUint32 numSorts = mSorts.Length();
+  if (numSorts > 1 && !mIsDistinct) {
     rv = ldq->GetResortQuery(mResortQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
