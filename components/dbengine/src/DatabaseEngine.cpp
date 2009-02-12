@@ -267,6 +267,22 @@ static int tree_collate_func_utf8(void *pCtx,
   return tree_collate_func(pCtx, nA, zA, nB, zB, SQLITE_UTF8);
 }
 
+// these functions are necessary because we cannot rely on the libc versions on
+// unix or mac due to the discrepency between moz and libc's wchar_t sizes
+
+int native_wcslen(const NATIVE_CHAR_TYPE *s) {
+  const NATIVE_CHAR_TYPE *p = s;
+  while (*p) p++;
+  return p-s;
+}
+
+int native_wcscmp(const NATIVE_CHAR_TYPE *s1, const NATIVE_CHAR_TYPE *s2) {
+  while (*s1 == *s2++)
+    if (*s1++ == 0)
+      return (0);
+  return (*s1 - *(s2 - 1));
+}
+
 #define CHARTYPE_OTHER 0
 #define CHARTYPE_DIGIT 1
 #define CHARTYPE_DECIMALPOINT 2
@@ -515,7 +531,7 @@ static int library_collate_func(collationBuffers *cBuffers,
   CDatabaseEngine *db = gLocaleCollationEnabled ? gEngine : nsnull;
   
   if (!db) {
-    return wcscmp((const wchar_t *)zA, (const wchar_t *)zB);
+    return native_wcscmp(zA, zB);
   }
 
   return db->Collate(cBuffers, zA, zB);
@@ -2320,14 +2336,6 @@ NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(PRBool aEnabled)
 {
   PR_AtomicSet(&gLocaleCollationEnabled, (PRInt32)aEnabled);
   return NS_OK;
-}
-
-// this is necessary because we cannot rely on wcslen on unix or mac due to the
-// discrepency between moz and libc's wchar_t sizes
-int native_wcslen(const NATIVE_CHAR_TYPE *s) {
-  const NATIVE_CHAR_TYPE *p = s;
-  while (*p) p++;
-  return p-s;
 }
 
 PRInt32 CDatabaseEngine::CollateForCurrentLocale(collationBuffers *aCollationBuffers, 
