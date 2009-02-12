@@ -1,4 +1,4 @@
-/*
+ /*
 //
 // BEGIN SONGBIRD GPL
 //
@@ -61,6 +61,8 @@
 #include <nsIConsoleService.h>
 
 #include <nsCOMArray.h>
+
+#include <math.h>
 
 // The maximum characters to output in a single PR_LOG call
 #define MAX_PRLOG 400
@@ -270,7 +272,7 @@ static int tree_collate_func_utf8(void *pCtx,
 #define CHARTYPE_SIGN 3
 #define CHARTYPE_EXPONENT 4
 
-PRInt32 getCharType(const char *p) {
+inline PRInt32 getCharType(const NATIVE_CHAR_TYPE *p) {
   switch (*p) {
     case '.': 
     case ',': 
@@ -287,11 +289,11 @@ PRInt32 getCharType(const char *p) {
   return CHARTYPE_OTHER;
 }
 
-// extract a leading number from a C or UTF8 string.
-void extractLeadingNumber(const char *str,
+// extract a leading number from a string.
+inline void extractLeadingNumber(const NATIVE_CHAR_TYPE *str,
                           PRBool *hasLeadingNumber,
                           PRFloat64 *leadingNumber,
-                          nsCString *strippedString) {
+                          PRInt32 *numberLength) {
 
   // it would be nice to be able to do all of this with just sscanf, but 
   // unfortunately that function does not tell us where the parsed number ended,
@@ -306,8 +308,13 @@ void extractLeadingNumber(const char *str,
   PRBool gotDigit = PR_FALSE;
   PRBool gotExponentDigit = PR_FALSE;
   PRBool abortParsing = PR_FALSE;
+  PRFloat64 value = 0;
+  PRInt32 expValue = 0;
+  PRFloat64 decimalMul = 1;
+  PRInt32 sign = 1;
+  PRInt32 expSign = 1;
   
-  const char *p = str;
+  const NATIVE_CHAR_TYPE *p = str;
   
   while (!abortParsing && *p) {
     switch (getCharType(p)) {
@@ -322,6 +329,14 @@ void extractLeadingNumber(const char *str,
           }
           // remember that we got a sign for the number part
           gotSign = PR_TRUE;
+          switch (*p) {
+            case '+': 
+              sign = 1;
+              break;
+            case '-':
+              sign = -1;
+              break;
+          }
         } else {
           // if we already had a sign for this exponent, or if the number part
           // of the exponent has already started (already had a digit in the
@@ -332,14 +347,32 @@ void extractLeadingNumber(const char *str,
           }
           // remember that we got a sign for the exponent part
           gotExponentSign = PR_TRUE;
+          switch (*p) {
+            case '+': 
+              expSign = 1;
+              break;
+            case '-':
+              expSign = -1;
+              break;
+          }
         }
         break;
       case CHARTYPE_DIGIT:
         // remember that the number part has started
-        if (!gotExponent)
+        if (!gotExponent) {
           gotDigit = PR_TRUE;
-        else
+          if (!gotDecimalPoint) {
+            value *= 10;
+            value += *p - '0';
+          } else {
+            decimalMul *= .1;
+            value += (*p - '0') * decimalMul;
+          }
+        } else {
           gotExponentDigit = PR_TRUE;
+          expValue *= 10;
+          expValue += *p - '0';
+        }
         break;
       case CHARTYPE_DECIMALPOINT:
         if (!gotExponent) {
@@ -397,66 +430,55 @@ void extractLeadingNumber(const char *str,
   
   // p now points at the first character that isn't part of a valid number.
   // copy the string, without the number.
-  if (strippedString) 
-    *strippedString = p;
+  if (numberLength) 
+    *numberLength = p-str;
   
-  if (p == str) {
+  // we may mistakenly think there is a number if we only got an exponent, or
+  // just a sign, or just a decimal point, so in addition to checking that we
+  // parsed at least one character, also make sure we did get digits
+  if (p == str || 
+      !gotDigit) {
     // no number found
     *hasLeadingNumber = PR_FALSE;
     *leadingNumber = 0;
+    if (numberLength) 
+      *numberLength = 0;
   } else {
-    // copy the number
-    nsCString number(str, p-str);
     
-    // if the number contains a ',', change it to '.'
-    PRInt32 pos = number.FindChar(',');
-    if (pos != -1) number.Replace(pos, 1, '.');
-    
-    // read the number
-    PRFloat64 value;
-    
-    if(PR_sscanf(number.get(), "%lf", &value) != 1) {
-      // this should not happen, we just parsed and we know there is a valid
-      // number... handle it anyway.
-      *hasLeadingNumber = PR_FALSE;
-      *leadingNumber = 0;
-      if (strippedString)
-        *strippedString = str;
-      LOG(("Failed to PR_sscanf a number in string '%s', this should not happen", str));
-    } else {
-      *hasLeadingNumber = PR_TRUE;
-      *leadingNumber = value;
+    // factor in the exponent
+    if (expValue != 0) {
+      PRFloat64 mul = pow((PRFloat64)10, (PRFloat64)(expValue * expSign));
+      value *= mul;
     }
+    
+    // factor in the sign
+    value *= sign;
+
+    *hasLeadingNumber = PR_TRUE;
+    *leadingNumber = value;
   }
 }
 
-// anything that has the 8th bit on is part of a multibyte sequence
-#define UTF8_ISASCII7(c) (!(c & 0x80))
-
-PRInt32 findNextNumber_utf8(const char *aStr) {
+inline PRInt32 findNextNumber(const NATIVE_CHAR_TYPE *aStr) {
   if (!aStr) 
     return -1;
   
-  const char *p = aStr;
-  const char *beginning = NULL;
+  const NATIVE_CHAR_TYPE *p = aStr;
+  const NATIVE_CHAR_TYPE *beginning = NULL;
   while (*p) {
-    // skip utf8 extended chars, because 7 bit ASCII is all we
-    // need to find numbers
-    if (UTF8_ISASCII7(*p)) {
-      PRInt32 c = getCharType(p);
-      if (c == CHARTYPE_DIGIT) {
-        if (!beginning)
-          beginning = p;
-        return beginning-aStr;
+    PRInt32 c = getCharType(p);
+    if (c == CHARTYPE_DIGIT) {
+      if (!beginning)
+        beginning = p;
+      return beginning-aStr;
+    }
+    if (c == CHARTYPE_SIGN ||
+        c == CHARTYPE_DECIMALPOINT) {
+      if (!beginning) {
+        beginning = p;
       }
-      if (c == CHARTYPE_SIGN ||
-          c == CHARTYPE_DECIMALPOINT) {
-        if (!beginning) {
-          beginning = p;
-        }
-      } else {
-        beginning = NULL;
-      }
+    } else {
+      beginning = NULL;
     }
     p++;
   }
@@ -467,7 +489,9 @@ PRInt32 findNextNumber_utf8(const char *aStr) {
 static PRInt32 gLocaleCollationEnabled = PR_TRUE;
 
 /*
- * Perform collation for current locale (data always comes in as UTF8)
+ * Perform collation for current locale. Data always comes in as native wide
+ * chars, ie: utf16 on windows and mac, ucs4 on linux (note that on linux
+ * and mac, sizeof(wchar_t)=2 eventhough the libc's native encoding is ucs4)
  *
  * IMPORTANT NOTE: Whenever the algorithm for library_collate is changed and
  * yields a different sort order than before for *any* set of arbitrary strings,
@@ -476,49 +500,37 @@ static PRInt32 gLocaleCollationEnabled = PR_TRUE;
  * index can become entirely trashed!
  *
  */
-static int library_collate_func(int nA,
-                                const char *zA,
-                                int nB,
-                                const char *zB)
+static int library_collate_func(collationBuffers *cBuffers,
+                                const NATIVE_CHAR_TYPE *zA,
+                                const NATIVE_CHAR_TYPE *zB)
 {
   // shortcut when both strings are empty
-  if (nA == 0 && nB == 0) 
+  if ((zA && !*zA) &&
+      (zB && !*zB))
     return 0;
 
-  nsCString _zA(zA, nA);
-  nsCString _zB(zB, nB);
-  
   // if no dbengine service or if collation is disabled, just do a C compare
-  // (note that GetSingleton adds a ref to the db object)
 
-  CDatabaseEngine *db = gLocaleCollationEnabled ? 
-                          CDatabaseEngine::GetSingleton() : nsnull;
+  CDatabaseEngine *db = gLocaleCollationEnabled ? gEngine : nsnull;
   
   if (!db) {
-    return strcmp(_zA.get(), _zB.get());
+    return wcscmp((const wchar_t *)zA, (const wchar_t *)zB);
   }
 
-  PRInt32 retval = db->CollateUTF8(_zA.get(), _zB.get());
-  
-  // release the ref
-  NS_RELEASE(db);
-  
-  return retval;
+  return db->Collate(cBuffers, zA, zB);
 }
 
-void swap_string(const void *aDest,
-                 const void *aSrc,
-                 int len) {
-                        
-  char *d = (char *)aDest;
-  char *s = (char *)aSrc;
+inline void swap_utf16_bytes(const void *aStr,
+                             int len) {
+  char *d = (char *)aStr;
+  char t;
   for (int i=0;i<len;i++) {
-    *d++ = *(s+1);
-    *d++ = *s++;
-    s++;
+    t = *d;
+    *d = *(d+1);
+    d++;
+    *d = t;
+    d++;
   }
-  *s++ = 0;
-  *s++ = 0;
 }
 
 static int library_collate_func_utf16be(void *pCtx,
@@ -527,33 +539,64 @@ static int library_collate_func_utf16be(void *pCtx,
                                         int nB,
                                         const void *zB)
 {
-  #ifdef BIGENDIAN
+  collationBuffers *cBuffers = reinterpret_cast<collationBuffers *>(pCtx);
+  if (!cBuffers) 
+    return 0;
+  
+  // copy to our own string in order to zero terminate and being able to swap
+  // the utf16 bytes if needed. note that we copy a utf16 string here regardless
+  // of the native encoding.
+  cBuffers->encodingConversionBuffer1.copy_utf16((const UTF16_CHARTYPE *)zA, nA);
+  cBuffers->encodingConversionBuffer2.copy_utf16((const UTF16_CHARTYPE *)zB, nB);
 
-  const wchar_t *_zA = (const wchar_t *)PR_Malloc((nA+1)*2);
-  const wchar_t *_zB = (const wchar_t *)PR_Malloc((nB+1)*2);
+  #ifdef LITTLEENDIAN
 
-  swap_string(_zA, zA, nA);
-  swap_string(_zB, zB, nB);
+  // utf16 came as big endian, swap bytes
+  swap_utf16_bytes(staticbuffer1a, nA);
+  swap_utf16_bytes(staticbuffer1b, nB);
 
-  #else
+  #endif // ifdef LITTLEENDIAN
 
-  const wchar_t *_zA = (const wchar_t *)zA;
-  const wchar_t *_zB = (const wchar_t *)zB;
+  #if defined(XP_UNIX) && !defined(XP_MACOSX)
+  
+  // on linux, native char is not utf16, we need to convert to ucs4
+  
+  glong size;
+  NATIVE_CHAR_TYPE *a = 
+    (NATIVE_CHAR_TYPE *)g_utf16_to_ucs4(
+      (gunichar2 *)cBuffers->encodingConversionBuffer1.buffer(),
+      (glong)nA,
+      NULL,
+      &size,
+      NULL);
+  a[size] = 0;
 
+  NATIVE_CHAR_TYPE *b = 
+    (NATIVE_CHAR_TYPE *)g_utf16_to_ucs4(
+      (gunichar2 *)cBuffers->encodingConversionBuffer2.buffer(),
+      (glong)nB,
+      NULL,
+      &size,
+      NULL);
+  b[size] = 0;
+  
+  #else // XP_UNIX && !XP_MACOSX
+
+  // on mac and windows, utf16 is native, so we just use the buffer as is
+  
+  const NATIVE_CHAR_TYPE *a = cBuffers->encodingConversionBuffer1.buffer();
+  const NATIVE_CHAR_TYPE *b = cBuffers->encodingConversionBuffer1.buffer();
+  
   #endif
   
-  NS_ConvertUTF16toUTF8 _zA8((const PRUnichar *)_zA, nA);
-  NS_ConvertUTF16toUTF8 _zB8((const PRUnichar *)_zB, nB);
+  int r = library_collate_func(cBuffers, a, b);
   
-  int r = library_collate_func(_zA8.Length(), 
-                               _zA8.BeginReading(), 
-                               _zB8.Length(), 
-                               _zB8.BeginReading());
-
-  #ifdef BIGENDIAN
+  #if defined(XP_UNIX) && !defined(XP_MACOSX)
   
-  PR_Free(_zA);
-  PR_Free(_zB);
+  // free the temporary strings allocated by the utf16 to ucs4 conversion
+  
+  g_free(a);
+  g_free(b);
   
   #endif
   
@@ -566,33 +609,64 @@ static int library_collate_func_utf16le(void *pCtx,
                                         int nB,
                                         const void *zB)
 {
-  #ifdef LITTLEENDIAN
+  collationBuffers *cBuffers = reinterpret_cast<collationBuffers *>(pCtx);
+  if (!cBuffers) 
+    return 0;
+  
+  // copy to our own string in order to zero terminate and being able to swap
+  // the utf16 bytes if needed. note that we copy a utf16 string here regardless
+  // of the native encoding.
+  cBuffers->encodingConversionBuffer1.copy_utf16((const UTF16_CHARTYPE *)zA, nA);
+  cBuffers->encodingConversionBuffer2.copy_utf16((const UTF16_CHARTYPE *)zB, nB);
 
-  const wchar_t *_zA = (const wchar_t *)PR_Malloc((nA+1)*2);
-  const wchar_t *_zB = (const wchar_t *)PR_Malloc((nB+1)*2);
+  #ifdef BIGENDIAN
 
-  swap_string(_zA, zA, nA);
-  swap_string(_zB, zB, nB);
+  // utf16 came as little endian, swap bytes
+  swap_utf16_bytes(staticbuffer1a, nA);
+  swap_utf16_bytes(staticbuffer1b, nB);
 
-  #else
+  #endif // ifdef LITTLEENDIAN
 
-  const wchar_t *_zA = (const wchar_t *)zA;
-  const wchar_t *_zB = (const wchar_t *)zB;
+  #if defined(XP_UNIX) && !defined(XP_MACOSX)
+  
+  // on linux, native char is not utf16, we need to convert to ucs4
+  
+  glong size;
+  NATIVE_CHAR_TYPE *a = 
+    (NATIVE_CHAR_TYPE *)g_utf16_to_ucs4(
+      (gunichar2 *)cBuffers->encodingConversionBuffer1.buffer(),
+      (glong)nA,
+      NULL,
+      &size,
+      NULL);
+  a[size] = 0;
 
+  NATIVE_CHAR_TYPE *b = 
+    (NATIVE_CHAR_TYPE *)g_utf16_to_ucs4(
+      (gunichar2 *)cBuffers->encodingConversionBuffer2.buffer(),
+      (glong)nB,
+      NULL,
+      &size,
+      NULL);
+  b[size] = 0;
+  
+  #else // XP_UNIX && !XP_MACOSX
+  
+  // on mac and windows, utf16 is native, so we just use the buffer as is
+  
+  const NATIVE_CHAR_TYPE *a = cBuffers->encodingConversionBuffer1.buffer();
+  const NATIVE_CHAR_TYPE *b = cBuffers->encodingConversionBuffer1.buffer();
+  
   #endif
   
-  NS_ConvertUTF16toUTF8 _zA8((const PRUnichar *)_zA, nA);
-  NS_ConvertUTF16toUTF8 _zB8((const PRUnichar *)_zB, nB);
+  int r = library_collate_func(cBuffers, a, b);
   
-  int r = library_collate_func(_zA8.Length(), 
-                               _zA8.BeginReading(), 
-                               _zB8.Length(), 
-                               _zB8.BeginReading());
-
-  #ifdef LITTLEENDIAN
+  #if defined(XP_UNIX) && !defined(XP_MACOSX)
   
-  PR_Free(_zA);
-  PR_Free(_zB);
+  // free the temporary strings allocated by the utf16 to ucs4 conversion
+  
+  g_free(a);
+  g_free(b);
   
   #endif
   
@@ -605,7 +679,99 @@ static int library_collate_func_utf8(void *pCtx,
                                      int nB,
                                      const void *zB)
 {
-  return library_collate_func(nA, (const char *)zA, nB, (const char *)zB);
+  collationBuffers *cBuffers = reinterpret_cast<collationBuffers *>(pCtx);
+  if (!cBuffers) 
+    return 0;
+
+  // we first convert to the native character encoding so that we can perform
+  // the entire collation algorithm (which requires splitting the strings into
+  // substrings) without doing anymore conversions.
+
+  // strlen(utf8) * sizeof(NATIVE_CHAR_TYPE) is always large enough to hold
+  // the result of the utf8 to utf16/ucs4 conversion, so no need to call the OS
+  // for the desired size first.
+
+  cBuffers->encodingConversionBuffer1.grow_native(nA);
+  cBuffers->encodingConversionBuffer2.grow_native(nB);
+  
+  NATIVE_CHAR_TYPE *a;
+  NATIVE_CHAR_TYPE *b;
+
+#ifdef XP_MACOSX
+
+  a = cBuffers->encodingConversionBuffer1.buffer();
+  b = cBuffers->encodingConversionBuffer2.buffer();
+
+  CFStringRef cA = CFStringCreateWithBytes(NULL, 
+                                           (const UInt8*)zA, 
+                                           nA, 
+                                           kCFStringEncodingUTF8, 
+                                           false);
+  CFStringRef cB = CFStringCreateWithBytes(NULL, 
+                                           (const UInt8*)zB, 
+                                           nB, 
+                                           kCFStringEncodingUTF8, 
+                                           false);
+
+  CFStringGetCharacters(cA, CFRangeMake(0, CFStringGetLength(cA)), a);
+  CFStringGetCharacters(cB, CFRangeMake(0, CFStringGetLength(cB)), b);
+  
+  a[CFStringGetLength(cA)] = 0;
+  b[CFStringGetLength(cB)] = 0;
+  
+  CFRelease(cA);
+  CFRelease(cB);
+  
+#elif XP_UNIX
+
+  a = (NATIVE_CHAR_TYPE *)g_utf8_to_utf16((const gchar *)zA, 
+                                          nA, 
+                                          NULL, 
+                                          NULL, 
+                                          NULL);
+  b = (NATIVE_CHAR_TYPE *)g_utf8_to_utf16((const gchar *)zB, 
+                                          nB, 
+                                          NULL, 
+                                          NULL, 
+                                          NULL);
+  
+#elif XP_WIN
+
+  a = cBuffers->encodingConversionBuffer1.buffer();
+  b = cBuffers->encodingConversionBuffer2.buffer();
+
+  PRInt32 cnA = MultiByteToWideChar(CP_UTF8, 
+                                    0, 
+                                    (LPCSTR)zA, 
+                                    nA, 
+                                    a, 
+                                    cBuffers->encodingConversionBuffer1
+                                             .bufferLength());
+
+  PRInt32 cnB = MultiByteToWideChar(CP_UTF8, 
+                                    0, 
+                                    (LPCSTR)zB, 
+                                    nB, 
+                                    b, 
+                                    cBuffers->encodingConversionBuffer2
+                                             .bufferLength());
+  a[cnA] = 0;
+  b[cnB] = 0;
+  
+#endif
+
+  int r = library_collate_func(cBuffers,
+                               (const NATIVE_CHAR_TYPE *)a, 
+                               (const NATIVE_CHAR_TYPE *)b);
+
+#if defined(XP_UNIX) && !defined(XP_MACOSX)
+
+  g_free(a);
+  g_free(b);
+
+#endif
+
+  return r;
 }
 
 //-----------------------------------------------------------------------------
@@ -943,6 +1109,7 @@ CDatabaseEngine::CDatabaseEngine()
 : m_pDBStorePathLock(nsnull)
 , m_pDatabasesGUIDListLock(nsnull)
 , m_pThreadMonitor(nsnull)
+, m_CollationBuffersMapMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 , m_IsShutDown(PR_FALSE)
 , m_MemoryConstraintsSet(PR_FALSE)
@@ -969,7 +1136,9 @@ CDatabaseEngine::CDatabaseEngine()
     PR_DestroyLock(m_pDBStorePathLock);
   if (m_pThreadMonitor)
     nsAutoMonitor::DestroyMonitor(m_pThreadMonitor);
-    
+  if (m_CollationBuffersMapMonitor)  
+    nsAutoMonitor::DestroyMonitor(m_CollationBuffersMapMonitor);
+  
   if (m_MemoryConstraintsSet) {
     if (m_pPageSpace) {
       NS_Free(m_pPageSpace);
@@ -1021,6 +1190,11 @@ NS_IMETHODIMP CDatabaseEngine::Init()
 
   NS_ENSURE_TRUE(m_pThreadMonitor, NS_ERROR_OUT_OF_MEMORY);
 
+  m_CollationBuffersMapMonitor =
+    nsAutoMonitor::NewMonitor("CDatabaseEngine.m_CollationBuffersMapMonitor");
+
+  NS_ENSURE_TRUE(m_CollationBuffersMapMonitor, NS_ERROR_OUT_OF_MEMORY);
+
   m_pDBStorePathLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDBStorePathLock, NS_ERROR_OUT_OF_MEMORY);
 
@@ -1059,11 +1233,12 @@ NS_IMETHODIMP CDatabaseEngine::Init()
                      kUCCollateStandardOptions |
                        kUCCollatePunctuationSignificantMask,
                      &m_Collator);
+#else
+  setlocale(LC_COLLATE, mCollationLocale.get());
 #endif
 
   return NS_OK;
 }
-
 
 //-----------------------------------------------------------------------------
 PR_STATIC_CALLBACK(PLDHashOperator)
@@ -1284,7 +1459,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   PRInt32 ret = sqlite3_open(NS_ConvertUTF16toUTF8(strFilename).get(), &pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to open database: sqlite_open failed!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
-
+  
   ret  = sqlite3_create_collation(pHandle,
                                   "tree",
                                   SQLITE_UTF16BE,
@@ -1309,10 +1484,17 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set tree collate function: utf8!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
+  collationBuffers *collationBuffersEntry = new collationBuffers();
+
+  {
+    nsAutoMonitor mon(m_CollationBuffersMapMonitor);
+    m_CollationBuffersMap[pHandle] = collationBuffersEntry;
+  }
+
   ret = sqlite3_create_collation(pHandle,
                                  "library_collate",
                                  SQLITE_UTF8,
-                                 NULL,
+                                 collationBuffersEntry,
                                  library_collate_func_utf8);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf8!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
@@ -1320,7 +1502,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   ret = sqlite3_create_collation(pHandle,
                                  "library_collate",
                                  SQLITE_UTF16LE,
-                                 NULL,
+                                 collationBuffersEntry,
                                  library_collate_func_utf16le);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf16le!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
@@ -1328,7 +1510,7 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
   ret = sqlite3_create_collation(pHandle,
                                  "library_collate",
                                  SQLITE_UTF16BE,
-                                 NULL,
+                                 collationBuffersEntry,
                                  library_collate_func_utf16be);
   NS_ASSERTION(ret == SQLITE_OK, "Failed to set library collate function: utf16be!");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
@@ -1411,6 +1593,15 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
 {
   sqlite3_interrupt(pHandle);
+
+  {
+    nsAutoMonitor mon(m_CollationBuffersMapMonitor);
+    collationMap_t::const_iterator found = m_CollationBuffersMap.find(pHandle);
+    if (found != m_CollationBuffersMap.end()) {
+      delete found->second;
+      m_CollationBuffersMap.erase(pHandle);
+    }
+  }
 
   PRInt32 ret = sqlite3_close(pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "");
@@ -2130,8 +2321,17 @@ NS_IMETHODIMP CDatabaseEngine::SetLocaleCollationEnabled(PRBool aEnabled)
   return NS_OK;
 }
 
-PRInt32 CDatabaseEngine::CollateForCurrentLocale_UTF8(const char *aStr1, 
-                                                      const char *aStr2) {
+// this is necessary because we cannot rely on wcslen on unix or mac due to the
+// discrepency between moz and libc's wchar_t sizes
+int native_wcslen(const NATIVE_CHAR_TYPE *s) {
+  const NATIVE_CHAR_TYPE *p = s;
+  while (*p) p++;
+  return p-s;
+}
+
+PRInt32 CDatabaseEngine::CollateForCurrentLocale(collationBuffers *aCollationBuffers, 
+                                                 const NATIVE_CHAR_TYPE *aStr1, 
+                                                 const NATIVE_CHAR_TYPE *aStr2) {
   // shortcut when both strings are empty
   if (!aStr1 && !aStr2) 
     return 0;
@@ -2158,56 +2358,34 @@ PRInt32 CDatabaseEngine::CollateForCurrentLocale_UTF8(const char *aStr1,
   // on osx, use carbon collate functions because the CRT functions do not
   // have access to carbon's collation setting.
 
-  NS_ConvertUTF8toUTF16 _zA16(aStr1);
-  NS_ConvertUTF8toUTF16 _zB16(aStr2);
-  
+  PRInt32 nA = native_wcslen(aStr1);
+  PRInt32 nB = native_wcslen(aStr2); 
+
   // we should always have a collator, but just in case we don't,
   // use the default collation algorithm.
   if (!m_Collator) {
     ::UCCompareTextDefault(kUCCollateStandardOptions, 
-                           (const UniChar *)_zA16.BeginReading(),
-                           _zA16.Length(),
-                           (const UniChar *)_zB16.BeginReading(),
-                           _zB16.Length(), 
+                           aStr1,
+                           nA,
+                           aStr2,
+                           nB, 
                            NULL,
                            (SInt32 *)&retval);
   } else {
     ::UCCompareText(m_Collator,
-                    (const UniChar *)_zA16.BeginReading(),
-                    _zA16.Length(),
-                    (const UniChar *)_zB16.BeginReading(),
-                    _zB16.Length(), 
+                    aStr1,
+                    nA,
+                    aStr2,
+                    nB,
                     NULL,
                     (SInt32 *)&retval);
   }
 
 #else
 
-#ifdef XP_UNIX
+  retval = wcscoll((const wchar_t *)aStr1, (const wchar_t *)aStr2);
 
-  // on linux, use glib's utf8 collate function, so we don't have to care about
-  // the whole wchar_t size mess
-
-  retval = g_utf8_collate(aStr1, aStr2);
-
-#else
-
-#ifdef XP_WIN
-
-  // on windows, use wcscoll with wchar_t strings
-
-  // convert to utf16
-  nsString input_a_utf16 = NS_ConvertUTF8toUTF16(aStr1);
-  nsString input_b_utf16 = NS_ConvertUTF8toUTF16(aStr2);
-
-  retval = wcscoll((wchar_t *)input_a_utf16.BeginReading(), 
-                   (wchar_t *)input_b_utf16.BeginReading());
-
-#endif // XP_WIN
-
-#endif // XP_UNIX
-
-#endif // XP_MACOSX
+#endif // ifdef XP_MACOSX
 
   return retval;
 }
@@ -2216,18 +2394,25 @@ PRInt32 CDatabaseEngine::CollateForCurrentLocale_UTF8(const char *aStr1,
 // without leading numbers. (-1 = top, 1 = bottom)
 #define LEADING_NUMBERS_SORTPOSITION -1
 
-PRInt32 CDatabaseEngine::CollateWithLeadingNumbers_UTF8(const char *aStr1, 
-                                                        const char *aStr2,
-                                                        nsCString *strippedA,
-                                                        nsCString *strippedB) {
+PRInt32 CDatabaseEngine::CollateWithLeadingNumbers(collationBuffers *aCollationBuffers, 
+                                                   const NATIVE_CHAR_TYPE *aStr1, 
+                                                   PRInt32 *number1Length,
+                                                   const NATIVE_CHAR_TYPE *aStr2,
+                                                   PRInt32 *number2Length) {
   PRBool hasLeadingNumberA = PR_FALSE;
   PRBool hasLeadingNumberB = PR_FALSE;
   
   PRFloat64 leadingNumberA;
   PRFloat64 leadingNumberB;
   
-  extractLeadingNumber(aStr1, &hasLeadingNumberA, &leadingNumberA, strippedA);
-  extractLeadingNumber(aStr2, &hasLeadingNumberB, &leadingNumberB, strippedB);
+  extractLeadingNumber(aStr1, 
+                       &hasLeadingNumberA, 
+                       &leadingNumberA, 
+                       number1Length);
+  extractLeadingNumber(aStr2, 
+                       &hasLeadingNumberB, 
+                       &leadingNumberB, 
+                       number2Length);
   
   // we want strings with leading numbers to always sort the same way relative
   // to those without leading numbers
@@ -2245,26 +2430,29 @@ PRInt32 CDatabaseEngine::CollateWithLeadingNumbers_UTF8(const char *aStr1,
   // either both numbers are equal, or neither string had a leading number,
   // use the (possibly) stripped down strings to collate.
 
-  return CollateForCurrentLocale_UTF8(aStr1, aStr2);
+  aStr1 += *number1Length;
+  aStr2 += *number2Length;
+  
+  return CollateForCurrentLocale(aCollationBuffers, aStr1, aStr2);
 }
 
-PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
+PRInt32 CDatabaseEngine::Collate(collationBuffers *aCollationBuffers,
+                                 const NATIVE_CHAR_TYPE *aStr1,
+                                 const NATIVE_CHAR_TYPE *aStr2) {
 
-  LoadDatabaseLocaleCollate locale(mCollationLocale.get());
-    
-  nsCString remainderA(aStr1);
-  nsCString remainderB(aStr2);
-  
+  const NATIVE_CHAR_TYPE *remainderA = aStr1;
+  const NATIVE_CHAR_TYPE *remainderB = aStr2;
+
   while (1) {
     
     // if either string is empty, break the loop
-    if (remainderA.Length() == 0 ||
-        remainderB.Length() == 0)
+    if (!*remainderA ||
+        !*remainderB)
       break;
       
     // find the next number in each string, if any
-    PRInt32 nextNumberPosA = findNextNumber_utf8(remainderA.get());
-    PRInt32 nextNumberPosB = findNextNumber_utf8(remainderB.get());
+    PRInt32 nextNumberPosA = findNextNumber(remainderA);
+    PRInt32 nextNumberPosB = findNextNumber(remainderB);
     
     if (nextNumberPosA == -1 || 
         nextNumberPosB == -1) {
@@ -2282,16 +2470,19 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
         return -LEADING_NUMBERS_SORTPOSITION;
       }
 
-      // extract the substrings that precede the numbers, then collate these 
+      // extract the substrings that precede the numbers, then collate these. 
       // if they are not equivalent, then return the result of that collation.
       
-      nsCString leadingSubstringA(remainderA.get(), nextNumberPosA);
-      nsCString leadingSubstringB(remainderB.get(), nextNumberPosB);
+      aCollationBuffers->substringExtractionBuffer1
+                        .copy_native(remainderA, nextNumberPosA);
+      aCollationBuffers->substringExtractionBuffer2
+                        .copy_native(remainderB, nextNumberPosB);
       
-      PRInt32 substringCollate = 
-        CollateForCurrentLocale_UTF8(leadingSubstringA.get(),
-                                     leadingSubstringB.get());
-      
+      PRInt32 substringCollate =
+        CollateForCurrentLocale(aCollationBuffers, 
+                                aCollationBuffers->substringExtractionBuffer1.buffer(),
+                                aCollationBuffers->substringExtractionBuffer2.buffer());
+
       if (substringCollate != 0) {
         return substringCollate;
       }
@@ -2301,17 +2492,18 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
 
       // remove the leading substrings from the remainder strings, so that
       // they now begin with the next numbers
-      remainderA = remainderA.get() + nextNumberPosA;
-      remainderB = remainderB.get() + nextNumberPosB;
+      remainderA += nextNumberPosA;
+      remainderB += nextNumberPosB;
       
-      nsCString strippedA;
-      nsCString strippedB;
+      PRInt32 numberALength;
+      PRInt32 numberBLength;
       
       PRInt32 leadingNumbersCollate = 
-        CollateWithLeadingNumbers_UTF8(remainderA.get(),
-                                       remainderB.get(),
-                                       &strippedA,
-                                       &strippedB);
+        CollateWithLeadingNumbers(aCollationBuffers,
+                                  remainderA,
+                                  &numberALength,
+                                  remainderB,
+                                  &numberBLength);
       
       // if the numbers were not equivalent, return the result of the number
       // collation
@@ -2320,8 +2512,8 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
       }
       
       // discard the numbers
-      remainderA = strippedA;
-      remainderB = strippedB;
+      remainderA += numberALength;
+      remainderB += numberBLength;;
     
       // and loop ...
     }
@@ -2329,8 +2521,8 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
   }
   
   // if both strings are now empty, the original strings were equivalent
-  if (remainderA.Length() == 0 &&
-      remainderB.Length() == 0) {
+  if (!*remainderA &&
+      !*remainderB) {
     return 0;
   }
   
@@ -2339,8 +2531,14 @@ PRInt32 CDatabaseEngine::CollateUTF8(const char *aStr1, const char *aStr2) {
   // order to enforce the position of strings with leading numbers relative to
   // strings without leading numbers
   
-  return CollateWithLeadingNumbers_UTF8(remainderA.get(),
-                                        remainderB.get());
+  PRInt32 numberALength;
+  PRInt32 numberBLength;
+
+  return CollateWithLeadingNumbers(aCollationBuffers,
+                                   remainderA,
+                                   &numberALength,
+                                   remainderB,
+                                   &numberBLength);
 }
 
 nsresult
@@ -2424,33 +2622,6 @@ CDatabaseEngine::GetCurrentCollationLocale(nsCString &aCollationLocale) {
 NS_IMETHODIMP CDatabaseEngine::GetLocaleCollationID(nsAString &aID) {
   aID = NS_ConvertASCIItoUTF16(mCollationLocale);
   return NS_OK;
-}
-
-LoadDatabaseLocaleCollate::
-  LoadDatabaseLocaleCollate(const char *aCollationLocale) :
-  m_collationLocale(aCollationLocale) {
-
-#ifndef XP_MACOSX
-
-  // unless we are on osx, we rely on the CRT's locale settings, so read the
-  // current locale for collate so we can restore it later
-  m_oldCollationLocale = setlocale(LC_COLLATE, NULL);
-
-  setlocale(LC_COLLATE, m_collationLocale.get());
-
-#endif
-
-}
-
-LoadDatabaseLocaleCollate::~LoadDatabaseLocaleCollate() {
-
-#ifndef XP_MACOSX
-
-  // restore the previous collate setting
-  setlocale(LC_COLLATE, m_oldCollationLocale.get());
-
-#endif  
-
 }
 
 #ifdef PR_LOGGING

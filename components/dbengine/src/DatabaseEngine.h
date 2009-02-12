@@ -66,6 +66,17 @@
 #endif
 #endif
 
+#if defined(XP_MACOSX)
+#define UTF16_CHARTYPE UniChar
+#define NATIVE_CHAR_TYPE UniChar
+#elif defined(XP_UNIX)
+#define UTF16_CHARTYPE gunichar2
+#define NATIVE_CHAR_TYPE gunichar
+#elif defined(XP_WIN)
+#define UTF16_CHARTYPE wchar_t
+#define NATIVE_CHAR_TYPE wchar_t
+#endif
+
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
   "@songbirdnest.com/Songbird/DatabaseEngine;1"
@@ -88,6 +99,8 @@ void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB
 class QueryProcessorThread;
 class CDatabaseDumpProcessor;
 
+class collationBuffers;
+
 class CDatabaseEngine : public sbIDatabaseEngine,
                         public nsIObserver
 {
@@ -103,7 +116,9 @@ public:
 
   static CDatabaseEngine* GetSingleton();
   
-  PRInt32 CollateUTF8(const char *aStr1, const char *aStr2);
+  PRInt32 Collate(collationBuffers *aCollationBuffers, 
+                  const NATIVE_CHAR_TYPE *aStr1, 
+                  const NATIVE_CHAR_TYPE *aStr2);
 
   typedef enum {
     dbEnginePreShutdown = 0,
@@ -145,13 +160,19 @@ private:
   nsresult GetDBStorePath(const nsAString &dbGUID, CDatabaseQuery *pQuery, nsAString &strPath);
 
   nsresult GetCurrentCollationLocale(nsCString &aCollationLocale);
-  PRInt32 CollateWithLeadingNumbers_UTF8(const char *aStr1, 
-                                         const char *aStr2,
-                                         nsCString *strippedA = NULL,
-                                         nsCString *strippedB = NULL);
-  PRInt32 CollateForCurrentLocale_UTF8(const char *aStr1, const char *aStr2);
+  PRInt32 CollateWithLeadingNumbers(collationBuffers *aCollationBuffers,
+                                    const NATIVE_CHAR_TYPE *aStr1, 
+                                    PRInt32 *number1Length,
+                                    const NATIVE_CHAR_TYPE *aStr2,
+                                    PRInt32 *number2Length);
+  PRInt32 CollateForCurrentLocale(collationBuffers *aCollationBuffers,
+                                  const NATIVE_CHAR_TYPE *aStr1,
+                                  const NATIVE_CHAR_TYPE *aStr2);
 
 private:
+  typedef std::map<sqlite3 *, collationBuffers *> collationMap_t;
+  collationMap_t m_CollationBuffersMap;
+
   PRLock * m_pDBStorePathLock;
   nsString m_DBStorePath;
 
@@ -162,6 +183,7 @@ private:
   nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorThread> m_ThreadPool;
 
   PRMonitor* m_pThreadMonitor;
+  PRMonitor* m_CollationBuffersMapMonitor;
 
   PRBool m_AttemptShutdownOnDestruction;
   PRBool m_IsShutDown;
@@ -357,15 +379,70 @@ protected:
   threadqueue_t m_Queue;
 };
 
-class LoadDatabaseLocaleCollate {
+// These classes are used for time-critical string copy during the collation
+// algorithm and replace usage of nsString/nsCString in order to eliminate
+// repeated allocations. The idea is just to hold on to a buffer which
+// can grow in size but never reduce: as more strings get collated, the buffers
+// quickly reach the maximum size needed and the only subsequent operations
+// are memcopys. This is fine because the strings that are collated are never
+// megabytes or even kilobytes of data, the largest ones will rarely exceed
+// a few hundreds of bytes.
+class fastString {
 public:
-  LoadDatabaseLocaleCollate(const char *aCollationLocale);
-  virtual ~LoadDatabaseLocaleCollate();
+  fastString() : 
+    mBuffer(nsnull),
+    mBufferLen(0) {}
+  virtual ~fastString() {
+    if (mBuffer)
+      free(mBuffer);
+  }
+  inline void grow_native(PRInt32 aLength) {
+    grow(aLength, sizeof(NATIVE_CHAR_TYPE));
+  }
+  inline void grow_utf16(PRInt32 aLength) {
+    grow(aLength, sizeof(UTF16_CHARTYPE));
+  }
+  inline void copy_native(const NATIVE_CHAR_TYPE *aFrom, PRInt32 aSize) {
+    grow_native(aSize);
+    copy(aFrom, aSize, sizeof(NATIVE_CHAR_TYPE));
+    mBuffer[aSize] = 0;
+  }
+  inline void copy_utf16(const UTF16_CHARTYPE *aFrom, PRInt32 aSize) {
+    grow_utf16(aSize);
+    copy(aFrom, aSize, sizeof(UTF16_CHARTYPE));
+    ((UTF16_CHARTYPE*)mBuffer)[aSize] = 0;
+  }
+  inline NATIVE_CHAR_TYPE *buffer(){
+    return mBuffer;
+  }
+  inline PRInt32 bufferLength() {
+    return mBufferLen;
+  }
 private:
-  CDatabaseEngine *m_Engine;
-  nsCString        m_oldCollationLocale;
-  nsCString        m_collationLocale;
+  inline void grow(PRInt32 aLength, PRInt32 aCharSize) {
+    int s = ((aLength)+1)*aCharSize;
+    if (mBufferLen < s) {
+      if (mBuffer)
+        free(mBuffer);
+      mBuffer = (NATIVE_CHAR_TYPE *)malloc(s);
+      mBufferLen = s;
+    }
+  }
+  inline void copy(const void *aFrom, PRInt32 aSize, PRInt32 aCharSize) {
+    memcpy(mBuffer, aFrom, aSize * aCharSize);
+  }
+  NATIVE_CHAR_TYPE *mBuffer;
+  PRInt32 mBufferLen;
 };
+
+class collationBuffers {
+public:
+  fastString encodingConversionBuffer1;
+  fastString encodingConversionBuffer2;
+  fastString substringExtractionBuffer1;
+  fastString substringExtractionBuffer2;
+};
+
 
 #ifdef PR_LOGGING
 class sbDatabaseEnginePerformanceLogger
