@@ -46,7 +46,9 @@ CPP_SRCS = sbMetadataManager.cpp \
            sbMetadataModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
+CPP_INCLUDES = $(DEPTH)/components/albumart/public \
+               $(topsrcdir)/components/albumart/src \
+               $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/mediacore/metadata/manager/src \
                $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \

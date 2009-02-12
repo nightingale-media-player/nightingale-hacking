@@ -530,10 +530,10 @@ sbAlbumArtScanner::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
   return NS_OK;
 }
 
-/* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
+/* onTrackResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
 NS_IMETHODIMP
-sbAlbumArtScanner::OnResult(nsIURI*       aImageLocation,
-                            sbIMediaItem* aMediaItem)
+sbAlbumArtScanner::OnTrackResult(nsIURI*       aImageLocation,
+                                 sbIMediaItem* aMediaItem)
 {
   TRACE(("sbAlbumArtScanner[0x%8.x] - OnResult", this));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -566,19 +566,21 @@ sbAlbumArtScanner::OnAlbumResult(nsIURI*    aImageLocation,
   return NS_OK;
 }
 
-/* onComplete(in nsIArray aMediaItems); */
+/* onSearchComplete(in nsIArray aMediaItems); */
 NS_IMETHODIMP
-sbAlbumArtScanner::OnAlbumComplete(nsIArray* aMediaItems)
+sbAlbumArtScanner::OnSearchComplete(nsIArray* aMediaItems)
 {
-  TRACE(("sbAlbumArtScanner[0x%8.x] - OnAlbumComplete", this));
+  TRACE(("sbAlbumArtScanner[0x%8.x] - OnSearchComplete", this));
   nsresult rv;
 
-  // Now that we are done this item move on to the next
+  // Now that we are done this album move on to the next
   mProcessNextAlbum = PR_TRUE;
 
   // Write the images to metadata
-  rv = WriteImageMetadata(aMediaItems);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aMediaItems) {
+    rv = WriteImageMetadata(aMediaItems);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -619,6 +621,13 @@ sbAlbumArtScanner::~sbAlbumArtScanner()
 {
   TRACE(("sbAlbumArtScanner[0x%.8x] - dtor", this));
   MOZ_COUNT_DTOR(sbAlbumArtScanner);
+  if (mIntervalTimer) {
+    mIntervalTimer->Cancel();
+    mIntervalTimer = nsnull;
+  }
+  mFetcherSet = nsnull;
+  mCurrentAlbumItemList = nsnull;
+  mStringBundle = nsnull;
 }
 
 /**

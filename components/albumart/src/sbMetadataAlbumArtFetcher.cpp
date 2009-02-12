@@ -55,6 +55,7 @@
 #include <sbStandardProperties.h>
 
 // Mozilla imports.
+#include <nsComponentManagerUtils.h>
 #include <nsArrayUtils.h>
 #include <nsIFileURL.h>
 #include <nsISimpleEnumerator.h>
@@ -108,16 +109,41 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItem
       if (NS_SUCCEEDED(rv) && mediaItem) {
         rv = GetImageForItem(mediaItem, aListener);
         if (NS_FAILED(rv) && aListener) {
-          aListener->OnResult(nsnull, mediaItem);
+          aListener->OnTrackResult(nsnull, mediaItem);
         }
       }
+    } else {
+      // Something bad happened that has more returned yes but we could not
+      // get the next item.
+      break;
     }
   }
 
   if (aListener) {
-    aListener->OnAlbumComplete(aMediaItems);
+    aListener->OnSearchComplete(aMediaItems);
   }
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMetadataAlbumArtFetcher::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
+                                                 sbIAlbumArtListener* aListener)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  // Throw this item into an array and call the Album version so we don't
+  // duplicate code. We can do this since we always go through each item
+  // anyways.
+  nsCOMPtr<nsIMutableArray> items =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = items->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
+                            PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return FetchAlbumArtForAlbum(items, aListener);
 }
 
 /* \brief shut down the fetcher
@@ -440,7 +466,7 @@ sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
 
   if (aListener) {
     // Notify caller we found an image for this item
-    aListener->OnResult(cacheFileURL, aMediaItem);
+    aListener->OnTrackResult(cacheFileURL, aMediaItem);
   }
 
   return NS_OK;

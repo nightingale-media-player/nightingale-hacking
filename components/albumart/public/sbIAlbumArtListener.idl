@@ -49,7 +49,7 @@ interface nsIArray;
  * \sa sbIAlbumArtFetcherSet
  */
 
-[scriptable, uuid(1337cbf6-0e46-49b9-89ce-8e9207b92511)]
+[scriptable, uuid(3683db2c-1796-4fe5-b2c2-a9b8466a4a47)]
 interface sbIAlbumArtListener : nsISupports
 {
   /**
@@ -61,15 +61,15 @@ interface sbIAlbumArtListener : nsISupports
   void onChangeFetcher(in sbIAlbumArtFetcher aFetcher);
 
   /**
-   * \brief onResult - Notifies the listener when either an image has
+   * \brief onTrackResult - Notifies the listener when either an image has
    *          or has not been found. aImageLocation will be null if
    *          the operation failed to get artwork.
    * \param aImageLocation - uri of the image location, this can be
    *          a file, http, or other.
    * \param aMediaItem - The media item that the result is for.
    */
-  void onResult(in nsIURI aImageLocation,
-                in sbIMediaItem aMediaItem);
+  void onTrackResult(in nsIURI aImageLocation,
+                     in sbIMediaItem aMediaItem);
 
   /**
    * \brief onAlbumResult - Notifies the listener when either an image has
@@ -83,11 +83,10 @@ interface sbIAlbumArtListener : nsISupports
                      in nsIArray aMediaItems);
   
   /**
-   * \brief onAlbumComplete - Notifies the listener that the search for artwork
-   *          for an album has been completed. This is fired even if there is
-   *          only one item in the list.
+   * \brief onSearchComplete - Notifies the listener that the search for artwork
+   *          has been completed.
    * \param aMediaItems - A list of the media items that the result is for.
    */
-  void onAlbumComplete(in nsIArray aMediaItems);
+  void onSearchComplete(in nsIArray aMediaItems);
 };
 

@@ -9,6 +9,8 @@
 #include <sbIFileMetadataService.h>
 #include <nsServiceManagerUtils.h>
 #include <sbIJobProgress.h>
+#include <nsIMutableArray.h>
+#include <nsComponentManagerUtils.h>
 
 nsresult SetItemArtwork(nsIURI* aImageLocation, sbIMediaItem* aMediaItem) {
   NS_ENSURE_ARG_POINTER(aImageLocation);

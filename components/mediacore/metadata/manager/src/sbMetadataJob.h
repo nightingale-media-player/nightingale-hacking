@@ -44,6 +44,7 @@
 #include <nsAutoPtr.h>
 #include <nsIClassInfo.h>
 
+#include <sbIAlbumArtListener.h>
 #include <sbIMediaItem.h>
 #include <sbIJobProgress.h>
 #include <sbIJobProgressUI.h>
@@ -73,7 +74,8 @@ class sbIMutablePropertyArray;
  */
 class sbMetadataJob : public nsIClassInfo,
                       public sbIJobProgressUI,
-                      public sbIJobCancelable
+                      public sbIJobCancelable,
+                      public sbIAlbumArtListener
 {
   friend class sbMediaListBatchCallback;
   
@@ -83,6 +85,7 @@ public:
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBIJOBPROGRESSUI
   NS_DECL_SBIJOBCANCELABLE
+  NS_DECL_SBIALBUMARTLISTENER
   
   enum JobType 
   {
@@ -197,6 +200,13 @@ private:
    */
   nsresult CopyPropertiesToMediaItem(sbMetadataJobItem* aJobItem);
   
+  /**
+   * Trigger an album art scan for the given job item.
+   * Assumes that the sbIMetadataHandler for the item
+   * is still open
+   */
+  nsresult ReadAlbumArtwork(sbMetadataJobItem* aJobItem);
+
   /**
    * Add the given job item to mErrorMessages.
    * Must be called on the main thread, since it uses 

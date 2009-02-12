@@ -58,6 +58,7 @@
 #include <nsCOMPtr.h>
 #include <nsIConsoleService.h>
 #include <nsIArray.h>
+#include <nsIMutableArray.h>
 #include <nsITimer.h>
 
 
@@ -171,7 +172,7 @@ private:
   PRUint32                      mFetcherIndex;
   nsCOMPtr<sbIAlbumArtFetcher>  mFetcher;
   nsCOMPtr<nsIArray>            mMediaItems;
-
+  
   //
   // mTimeoutTimer              Time out timer for fetch opertaions
   // mTimeoutTimerValue         Max time a fetch operation is allowed.

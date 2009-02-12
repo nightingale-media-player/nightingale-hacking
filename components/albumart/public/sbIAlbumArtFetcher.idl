@@ -49,7 +49,7 @@ interface nsIDOMWindow;
 interface sbIAlbumArtListener;
 interface sbIMediaItem;
 
-[scriptable, uuid(55cf9123-343b-4012-9f99-11f114bc2f1b)]
+[scriptable, uuid(cb90f244-e008-47c5-a3a1-519e01eb91a7)]
 interface sbIAlbumArtFetcher : nsISupports
 {
   /**
@@ -99,12 +99,19 @@ interface sbIAlbumArtFetcher : nsISupports
    *        the same album.
    * \param aMediaItems is an array of sbIMediaItems from the same album
    * \param aListener the listener to inform of success or failure
-   *
-   * \note A call to aListener will be done for each item in the list.
    */
   void fetchAlbumArtForAlbum(in nsIArray            aMediaItems,
                              in sbIAlbumArtListener aListener);
 
+
+  /**
+   * \brief Try to fetch album art for a single track.
+   * \param aMediaItem is an sbIMediaItem to scan for artwork.
+   * \param aListener the listener to inform of success or failure
+   */
+  void fetchAlbumArtForTrack(in sbIMediaItem         aMediaItem,
+                             in sbIAlbumArtListener  aListener);
+  
   /* \brief shut down the fetcher
    */
   void shutdown();

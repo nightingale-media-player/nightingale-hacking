@@ -166,7 +166,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
   if (fetcherListCount <= 0) {
     // No fetchers so abort
     aListener->OnAlbumResult(nsnull, aMediaItems);
-    aListener->OnAlbumComplete(aMediaItems);
+    aListener->OnSearchComplete(aMediaItems);
     return NS_OK;
   }
 
@@ -180,6 +180,44 @@ sbAlbumArtFetcherSet::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
   // This will change to false if any fetch fails
   mFoundAllArtwork = PR_TRUE;
 
+  return TryNextFetcher();
+}
+
+/* \brief try to fetch album art for the given media item
+ * \param aMediaItem  a media item that we're looking for album art for
+ * \param aListener the listener to inform of success or failure
+ */
+
+NS_IMETHODIMP
+sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
+                                            sbIAlbumArtListener* aListener)
+{
+  TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForTrack"));
+  NS_ASSERTION(NS_IsMainThread(), \
+    "sbAlbumArtFetcherSet::FetchAlbumArtForTrack is main thread only!");
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aListener);
+  nsresult rv;
+  
+  // Save the listener and list of items, this makes it easier later on
+  mListener = aListener;
+  nsCOMPtr<nsIMutableArray> itemArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = itemArray->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
+                                PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mMediaItems = do_QueryInterface(itemArray, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+
+  // Start with the first fetcher
+  mFetcherIndex = 0;
+  mShutdown = PR_FALSE;
+  // This will change to false if any fetch fails
+  mFoundAllArtwork = PR_TRUE;
+  
   return TryNextFetcher();
 }
 
@@ -198,6 +236,8 @@ sbAlbumArtFetcherSet::Shutdown()
     mFetcher = nsnull;
   }
   mShutdown = PR_TRUE;
+  mListener = nsnull;
+  mMediaItems = nsnull;
   return NS_OK;
 }
 
@@ -442,10 +482,10 @@ sbAlbumArtFetcherSet::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
   return NS_OK;
 }
 
-/* onResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
+/* onTrackResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::OnResult(nsIURI*        aImageLocation,
-                               sbIMediaItem*  aMediaItem)
+sbAlbumArtFetcherSet::OnTrackResult(nsIURI*        aImageLocation,
+                                    sbIMediaItem*  aMediaItem)
 {
   TRACE(("sbAlbumArtFetcherSet::OnResult"));
   // Validate arguments.
@@ -463,7 +503,7 @@ sbAlbumArtFetcherSet::OnResult(nsIURI*        aImageLocation,
   }
 
   if (mListener) {
-    mListener->OnResult(aImageLocation, aMediaItem);
+    mListener->OnTrackResult(aImageLocation, aMediaItem);
   }
 
   return NS_OK;
@@ -495,12 +535,11 @@ sbAlbumArtFetcherSet::OnAlbumResult(nsIURI*   aImageLocation,
   return NS_OK;
 }
 
-/* onComplete(aMediaItems); */
+/* onSearchComplete(aMediaItems, aMediaItem); */
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::OnAlbumComplete(nsIArray* aMediaItems)
+sbAlbumArtFetcherSet::OnSearchComplete(nsIArray* aMediaItems)
 {
-  TRACE(("sbAlbumArtFetcherSet::OnAlbumComplete"));
-  NS_ENSURE_ARG_POINTER(aMediaItems);
+  TRACE(("sbAlbumArtFetcherSet::OnSearchComplete"));
   nsresult rv;
 
   // Cancel the timer since we have a response.
@@ -518,7 +557,7 @@ sbAlbumArtFetcherSet::OnAlbumComplete(nsIArray* aMediaItems)
     }
 
     if (mListener) {
-      mListener->OnAlbumComplete(aMediaItems);
+      mListener->OnSearchComplete(aMediaItems);
     }
   } else {
     // Missing images so try next fetcher for items that failed
@@ -608,11 +647,16 @@ sbAlbumArtFetcherSet::NextFetcher()
   PRUint32 fetcherListCount;
   rv = mFetcherList->GetLength(&fetcherListCount);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Get how many items we are scanning
+  PRUint32 itemListLength;
+  rv = mMediaItems->GetLength(&itemListLength);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (currentFetcherIndex >= fetcherListCount) {
     TRACE(("sbAlbumArtFetcherSet::NextFetcher - No more fetchers"));
     if (mListener) {
-      mListener->OnAlbumComplete(mMediaItems);
+      mListener->OnSearchComplete(mMediaItems);
     }
     // Shutdown since we are done.
     mShutdown = PR_TRUE;
@@ -653,13 +697,29 @@ sbAlbumArtFetcherSet::NextFetcher()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Try fetching album art using the fetcher.
-  mFoundAllArtwork = PR_TRUE;
-  rv = mFetcher->FetchAlbumArtForAlbum(mMediaItems, this);
+  
+  // If there is only one media item in the list then use the single fetch,
+  // otherwise use the album fetch.
+  if (itemListLength == 1) {
+    // Grab the first item 
+    nsCOMPtr<sbIMediaItem> firstMediaItem;
+    rv = mMediaItems->QueryElementAt(0,
+                                     NS_GET_IID(sbIMediaItem),
+                                     getter_AddRefs(firstMediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+    mFoundAllArtwork = PR_TRUE;
+    rv = mFetcher->FetchAlbumArtForTrack(firstMediaItem, this);
+  } else {
+    mFoundAllArtwork = PR_TRUE;
+    rv = mFetcher->FetchAlbumArtForAlbum(mMediaItems, this);
+  }
+
+  // Check if it failed
   if (NS_FAILED(rv)) {
     mTimeoutTimer->Cancel();
     return rv;
   }
-
+  
   return NS_OK;
 }
 

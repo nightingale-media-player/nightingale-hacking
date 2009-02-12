@@ -180,7 +180,7 @@ sbLastFMAlbumArtFetcher.prototype = {
       Cu.reportError("No media items passed to fetchAlbumArtForAlbum.");
       if (aListener) {
         aListener.onAlbumResult(null, aMediaItems);
-        aListener.onAlbumComplete(aMediaItems);
+        aListener.onSearchComplete(aMediaItems, null);
       }
       return;
     }
@@ -212,7 +212,7 @@ sbLastFMAlbumArtFetcher.prototype = {
         aImageLocation = uri;
       }
       aListener.onAlbumResult(aImageLocation, aMediaItems);
-      aListener.onAlbumComplete(aMediaItems);
+      aListener.onSearchComplete(aMediaItems);
     };
     var downloadCover = function (aFoundCover) {
       if (aFoundCover) {
@@ -224,6 +224,39 @@ sbLastFMAlbumArtFetcher.prototype = {
     this._findImageForItem(firstMediaItem, downloadCover);
   },
   
+  fetchAlbumArtForTrack: function (aMediaItem, aListener) {
+    var returnResult = function (aImageLocation) {
+      if (aImageLocation) {
+        // Convert to an nsIURI
+        var ioService = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService);
+        var uri = null;
+        try {
+          uri = ioService.newURI(aImageLocation, null, null);
+        } catch (err) {
+          Cu.reportError("lastFM: Unable to convert to URI: [" + aImageLocation +
+                         "] " + err);
+          uri = null;
+        }
+        aImageLocation = uri;
+      }
+      aListener.onResult(aImageLocation, aMediaItem);
+      // We need to wrap the item in an nsIArray
+      var items = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                    .createInstance(Ci.nsIMutableArray);
+      items.appendElement(aMediaItem, false);
+      aListener.onSearchComplete(items);
+    };
+    var downloadCover = function (aFoundCover) {
+      if (aFoundCover) {
+        sbCoverHelper.downloadFile(aFoundCover, returnResult);
+      } else {
+        returnResult(null);
+      }
+    };
+    this._findImageForItem(aMediaItem, downloadCover);
+  },
+
   shutdown: function () {
     this._shutdown = true;
   },

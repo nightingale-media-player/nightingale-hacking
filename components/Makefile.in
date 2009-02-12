@@ -30,6 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = addonmetadata \
+          albumart/public \
           albumart \
           bundle \
           commandline \
@@ -48,6 +49,7 @@ SUBDIRS = addonmetadata \
           library \
           jscodelib \
           mediacore \
+          mediacore/metadata/manager/public \
           mediaimport \
           mediapages \
           metrics \
@@ -75,13 +77,13 @@ SUBDIRDEPS = library : sqlbuilder moz intl property metrics job dbengine
 SUBDIRDEPS2 = playlistreader : library
 SUBDIRDEPS3 = devicesobsolete : library mediacore
 SUBDIRDEPS4 = integration : devicesobsolete controller
-SUBDIRDEPS5  = mediacore : dataremote job moz mediaimport property library
+SUBDIRDEPS5  = mediacore : dataremote job moz mediaimport property library albumart/public
 SUBDIRDEPS6 = remoteapi : library mediacore moz
 SUBDIRDEPS7 = contenthandling : mediacore library
 SUBDIRDEPS8 = devices : library property mediacore
 SUBDIRDEPS9 = testharness : moz
 SUBDIRDEPS10 = property : intl
-SUBDIRDEPS11 = albumart : library moz property mediacore
+SUBDIRDEPS11 = albumart : library moz property mediacore/metadata/manager/public
 
 ifdef SB_ENABLE_STATIC
 SUBDIRS += static

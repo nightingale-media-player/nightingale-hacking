@@ -93,8 +93,8 @@ sbFileAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
 
   // Function variables.
   nsresult rv;
-  nsCOMPtr<nsIFile> albumArtFile = nsnull;
-  nsCOMPtr<nsIURI> albumArtURI = nsnull;
+  nsCOMPtr<nsIFile> albumArtFile;
+  nsCOMPtr<nsIURI> albumArtURI;
 
   // Get the first item to search for artwork
   // We assume that all the items for this album are in the same folder and have
@@ -120,9 +120,50 @@ sbFileAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
 
   if (aListener) {
     aListener->OnAlbumResult(albumArtURI, aMediaItems);
-    aListener->OnAlbumComplete(aMediaItems);
+    aListener->OnSearchComplete(aMediaItems);
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbFileAlbumArtFetcher::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
+                                             sbIAlbumArtListener* aListener)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  // Function variables.
+  nsresult rv;
+  nsCOMPtr<nsIFile> albumArtFile;
+  nsCOMPtr<nsIURI> albumArtURI;
+
+  // Search the media item content source directory entries for an 
+  // album art file.
+  rv = FindAlbumArtFile(aMediaItem,
+                        getter_AddRefs(albumArtFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Indicate if an album art file was found or not.
+  if (albumArtFile) {
+    // Create an album art file URI.
+    rv = mIOService->NewFileURI(albumArtFile, getter_AddRefs(albumArtURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (aListener) {
+    aListener->OnTrackResult(albumArtURI, aMediaItem);
+    // We need to wrap this item in an array since the OnSearchComplete
+    // expects it.
+    nsCOMPtr<nsIMutableArray> items =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = items->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem*, aMediaItem),
+                              PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    aListener->OnSearchComplete(items);
+  }
+  
   return NS_OK;
 }
 

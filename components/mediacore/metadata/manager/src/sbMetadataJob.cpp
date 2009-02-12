@@ -67,6 +67,7 @@
 #include <sbIMediaList.h>
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
+#include <sbIAlbumArtFetcherSet.h>
 
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -96,17 +97,19 @@ extern PRLogModuleInfo* gMetadataLog;
 
 // CLASSES ====================================================================
 
-NS_IMPL_THREADSAFE_ISUPPORTS4(sbMetadataJob,
+NS_IMPL_THREADSAFE_ISUPPORTS5(sbMetadataJob,
                               nsIClassInfo,
                               sbIJobProgress,
                               sbIJobProgressUI,
-                              sbIJobCancelable);
+                              sbIJobCancelable,
+                              sbIAlbumArtListener);
 
-NS_IMPL_CI_INTERFACE_GETTER4(sbMetadataJob,
+NS_IMPL_CI_INTERFACE_GETTER5(sbMetadataJob,
                              nsIClassInfo,
                              sbIJobProgress,
                              sbIJobProgressUI,
-                             sbIJobCancelable)
+                             sbIJobCancelable,
+                             sbIAlbumArtListener)
 
 NS_DECL_CLASSINFO(sbMetadataJob)
 NS_IMPL_THREADSAFE_CI(sbMetadataJob)
@@ -674,6 +677,8 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
     }
   }
 
+  PRBool isLocalFile = PR_FALSE;
+
   PRInt64 fileSize = 0;
   rv = GetFileSize(item, &fileSize);
   if (NS_SUCCEEDED(rv)) {
@@ -684,13 +689,116 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
                                    NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
                                    contentLength);
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    isLocalFile = PR_TRUE;
   }
 
   rv = item->SetProperties(newProps);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (isLocalFile){
+    // For local files we want to trigger an album art lookup.
+    // Do this AFTER setting properties, since the fetchers
+    // may make use of the metadata.
+    rv = ReadAlbumArtwork(aJobItem);
+    NS_ASSERTION(NS_SUCCEEDED(rv), 
+        "Metadata job failed to run album art fetcher");
+  }
+
   return NS_OK;
 }
+
+//------------------------------------------------------------------------------
+//
+// sbIAlbumArtListner Implementation.
+//
+//------------------------------------------------------------------------------
+
+/* onChangeFetcher(in sbIAlbumArtFetcher aFetcher); */
+NS_IMETHODIMP sbMetadataJob::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
+{
+  TRACE(("sbMetadataJob::OnChangeFetcher"));
+  // Ignoring this, it should only be metadata fetching by default
+  return NS_OK;
+}
+
+/* onTrackResult(in nsIURI aImageLocation, in sbIMediaItem aMediaItem); */
+NS_IMETHODIMP sbMetadataJob::OnTrackResult(nsIURI*       aImageLocation,
+                                           sbIMediaItem* aMediaItem)
+{
+  TRACE(("sbMetadataJob::OnTrackResult"));
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  if (aImageLocation) {
+    nsresult rv;
+    nsCAutoString imageFileURISpec;
+    rv = aImageLocation->GetSpec(imageFileURISpec);
+    if (NS_SUCCEEDED(rv)) {
+      rv = aMediaItem->SetProperty(
+              NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+              NS_ConvertUTF8toUTF16(imageFileURISpec));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+/* onAlbumResult(in nsIURI aImageLocation, in nsIArray aMediaItems); */
+NS_IMETHODIMP sbMetadataJob::OnAlbumResult(nsIURI*    aImageLocation,
+                                           nsIArray*  aMediaItems)
+{
+  TRACE(("sbMetadataJob::OnAlbumResult"));
+  // We only called FetchAlbumArtForTrack so we should not get this.
+  return NS_OK;
+}
+
+/* onSearchComplete(in nsIArray aMediaItems); */
+NS_IMETHODIMP sbMetadataJob::OnSearchComplete(nsIArray* aMediaItems)
+{
+  // We don't write back here since we are in the import and don't want to take
+  // to much time.
+  return NS_OK;
+}
+
+nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
+{
+  NS_ENSURE_ARG_POINTER(aJobItem);
+  TRACE(("sbMetadataJob::ReadAlbumArtwork - starting\n"));
+  nsresult rv;
+
+  nsCOMPtr<sbIAlbumArtFetcherSet> artFetcher =
+    do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = artFetcher->SetLocalOnly(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Recycle the existing handler to avoid re-reading the file
+  nsCOMPtr<nsIMutableArray> sources =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMetadataHandler> handler;
+  rv = aJobItem->GetHandler(getter_AddRefs(handler));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = sources->AppendElement(handler, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = artFetcher->SetAlbumArtSourceList(sources);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Attempt to fetch some art
+  nsCOMPtr<sbIMediaItem> item;
+  rv = aJobItem->GetMediaItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = artFetcher->FetchAlbumArtForTrack(item, this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  TRACE(("sbMetadataJob::ReadAlbumArtwork - finished rv %08x\n",
+        rv));
+
+  return NS_OK;
+}
+
 
 nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
 {
