@@ -366,10 +366,7 @@ sbFileSystemTreeState::AssignRelationships(sbFileSystemNode *aChildNode,
 
   nsRefPtr<sbFileSystemNode> parentNode(found->second);
   NS_ENSURE_TRUE(parentNode, NS_ERROR_UNEXPECTED);
-
-  rv = aChildNode->SetParentNode(parentNode);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  
   rv = parentNode->AddChild(aChildNode);
   NS_ENSURE_SUCCESS(rv, rv);
   

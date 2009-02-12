@@ -651,7 +651,7 @@ sbFileSystemTree::CreateNode(nsIFile *aFile,
   nsRefPtr<sbFileSystemNode> node = new sbFileSystemNode();
   NS_ENSURE_TRUE(node, NS_ERROR_OUT_OF_MEMORY);
   
-  rv = node->Init(leafName, isDir, lastModify, aParentNode);
+  rv = node->Init(leafName, isDir, lastModify);
   NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ADDREF(*aNodeRetVal = node);

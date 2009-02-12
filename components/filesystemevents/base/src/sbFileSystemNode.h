@@ -67,15 +67,8 @@ public:
   //
   nsresult Init(const nsAString & aLeafName,
                 PRBool aIsDir,
-                PRUint64 aLastModify,
-                sbFileSystemNode *aParentNode);
+                PRUint64 aLastModify);
  
-  //
-  // \brief Setters and getters for the parent node of this node.
-  //
-  nsresult SetParentNode(sbFileSystemNode *aParentNode);
-  nsresult GetParentNode(sbFileSystemNode **aRetVal);
-  
   //
   // \brief Setters and getters for the child array of this node.
   //
@@ -138,7 +131,6 @@ public:
   nsresult GetParentID(PRUint32 *aOutID);
 
 private:
-  nsRefPtr<sbFileSystemNode> mParentNode;
   sbNodeMap                  mChildMap;
   nsString                   mLeafName;
   PRUint32                   mID;

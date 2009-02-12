@@ -69,36 +69,13 @@ sbFileSystemNode::~sbFileSystemNode()
 nsresult 
 sbFileSystemNode::Init(const nsAString & aLeafName,
                        PRBool aIsDir,
-                       PRUint64 aLastModify,
-                       sbFileSystemNode *aParentNode)
+                       PRUint64 aLastModify)
 {
   NS_ASSERTION(!aLeafName.IsEmpty(), "Error: Leaf name is empty!");
 
   mLeafName.Assign(aLeafName);
   mIsDir = aIsDir;
   mLastModify = aLastModify;
-  mParentNode = aParentNode;
-  return NS_OK;
-}
-
-nsresult
-sbFileSystemNode::SetParentNode(sbFileSystemNode *aParentNode)
-{
-  NS_ENSURE_ARG_POINTER(aParentNode);
-  mParentNode = aParentNode;
-  return NS_OK;
-}
-
-nsresult
-sbFileSystemNode::GetParentNode(sbFileSystemNode **aRetVal)
-{
-  NS_ENSURE_ARG_POINTER(aRetVal);
-  if (mParentNode) {
-    NS_ADDREF(*aRetVal = mParentNode);
-  }
-  else {
-    *aRetVal = nsnull;
-  }
   return NS_OK;
 }
 
