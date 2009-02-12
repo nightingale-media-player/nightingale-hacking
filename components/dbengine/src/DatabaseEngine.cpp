@@ -725,12 +725,12 @@ static int library_collate_func_utf8(void *pCtx,
   
 #elif XP_UNIX
 
-  a = (NATIVE_CHAR_TYPE *)g_utf8_to_utf16((const gchar *)zA, 
+  a = (NATIVE_CHAR_TYPE *)g_utf8_to_ucs4((const gchar *)zA, 
                                           nA, 
                                           NULL, 
                                           NULL, 
                                           NULL);
-  b = (NATIVE_CHAR_TYPE *)g_utf8_to_utf16((const gchar *)zB, 
+  b = (NATIVE_CHAR_TYPE *)g_utf8_to_ucs4((const gchar *)zB, 
                                           nB, 
                                           NULL, 
                                           NULL, 
