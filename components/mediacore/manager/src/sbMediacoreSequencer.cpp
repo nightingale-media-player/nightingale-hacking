@@ -2592,6 +2592,12 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
 
   nsresult rv = NS_ERROR_UNEXPECTED;
 
+  nsAutoMonitor mon(mMonitor);
+  if(mIsWaitingForPlayback) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  mon.Exit();
+
   nsCOMPtr<sbIMediaItem> item;
   rv = GetNextItem(getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2600,7 +2606,7 @@ sbMediacoreSequencer::RequestHandleNextItem(sbIMediacore *aMediacore)
   rv = item->GetContentSrc(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor mon(mMonitor);
+  mon.Enter();
   NS_ENSURE_TRUE(mCore == aMediacore, NS_ERROR_INVALID_ARG);
 
   nsCOMPtr<sbIMediacoreVoting> voting =
@@ -3307,12 +3313,11 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
   NS_ENSURE_ARG_POINTER(aTimer);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
+  PRUint64 position = 0;
 
   // Update the position in the position data remote.
   if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
      mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
-
-    PRUint64 position = 0;
     rv = mPlaybackControl->GetPosition(&position);
     if(NS_SUCCEEDED(rv)) {
       rv = UpdatePositionDataRemotes(position);
@@ -3330,11 +3335,16 @@ sbMediacoreSequencer::HandleSequencerTimer(nsITimer *aTimer)
       rv = UpdateDurationDataRemotes(duration);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // only updates if there is a current item and the duration
-      // reported by the core is different than the one the item
-      // currently has.
-      rv = UpdateCurrentItemDuration(duration);
-      NS_ENSURE_SUCCESS(rv, rv);
+      // only update the duration if we've played at least 5% of the
+      // the track. This is to allow the duration to stabilize for
+      // vbr files without proper headers.
+      if((position > 0) && position > ((duration * 5) / 100)) {
+        // only updates if there is a current item and the duration
+        // reported by the core is different than the one the item
+        // currently has.
+        rv = UpdateCurrentItemDuration(duration);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
