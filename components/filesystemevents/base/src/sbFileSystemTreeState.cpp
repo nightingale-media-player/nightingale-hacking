@@ -247,28 +247,20 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
   // 5.) Node data
   // Use the map to store guids to help rebuild the parent/child relationship.
   nsRefPtr<sbFileSystemNode> savedRootNode;
-  PRBool readWasSuccess = PR_TRUE;
   sbNodeIDMap nodeIDMap;
-  for (PRUint32 i = 0; i < nodeCount && readWasSuccess; i++) {
+  for (PRUint32 i = 0; i < nodeCount; i++) {
     nsRefPtr<sbFileSystemNode> curNode;
     rv = ReadNode(fileObjectStream, getter_AddRefs(curNode));
-    if (NS_FAILED(rv) || !curNode) {
-      // If one of the nodes is missing, it could corrupt the entire tree.
-      // Update the success flag and break out of the loop.
-      NS_WARNING("ERROR: Could not read node from session file!");
-      readWasSuccess = PR_FALSE;
-    }
+    // If one of the nodes is missing, it could corrupt the entire tree.
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(curNode, NS_ERROR_UNEXPECTED);
 
     // Assign this node into the node ID map.
     PRUint32 curNodeID;
     rv = curNode->GetNodeID(&curNodeID);
-    if (NS_FAILED(rv)) {
-      // Once again, this will corrupt the entire tree.
-      // Update the success flag and break out of the loop.
-      NS_WARNING("ERROR: Could not get the node ID!");
-      readWasSuccess = PR_FALSE;
-    }
-
+    // Once again, this will corrupt the entire tree if it fails.
+    NS_ENSURE_SUCCESS(rv, rv);
+    
     nodeIDMap.insert(sbNodeIDMapPair(curNodeID, curNode));
 
     // If this is the first node read, it is the root node. Simply stash the
@@ -280,15 +272,11 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
 
     // Setup the relationship between parent and child.
     rv = AssignRelationships(curNode, nodeIDMap);
-    if (NS_FAILED(rv)) {
-      // If this fails, it will also corrupt the entire tree. 
-      // Update the success flag and break out of the loop.
-      NS_WARNING("ERROR: Could not set teh parent/child relationship!");
-      readWasSuccess = PR_FALSE;
-    }
+    // If this fails, it will also corrupt the entire tree. 
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  savedRootNode.swap(*aOutRootNode);
+  savedRootNode.forget(aOutRootNode);
   return NS_OK;
 }
 
