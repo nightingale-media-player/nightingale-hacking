@@ -26,7 +26,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-const SEEQPOD_PROFILE_VERSION = 1
+const SEEQPOD_PROFILE_VERSION = 2;
 
 if (typeof Seeqpod == 'undefined') {
   var Seeqpod = {};
@@ -79,7 +79,7 @@ Seeqpod.Controller = {
       // if it's our handler that's being called, then load our search ui
       var widget = this._getSearchEventTarget(event);
       if (widget && widget.currentEngine &&
-          widget.currentEngine.name == 'SeeqPod') {
+          widget.currentEngine.alias == 'songbird-seeqpod-search') {
         metrics.metricsInc('seeqpod', 'searchbox', '');
         Seeqpod.search(widget.value);
         return;

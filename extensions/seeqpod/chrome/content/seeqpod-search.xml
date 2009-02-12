@@ -20,4 +20,6 @@
 <Url type="text/html" method="GET" template="http://www.seeqpod.com/"/>
 <!-- Engines tagged with songbird:internal are not sent to the web browser. -->
 <Tags>songbird:internal</Tags>
+<!-- This alias allows gSearchHandler to indentify the Songbird engine -->
+<Alias>songbird-seeqpod-search</Alias>
 </SearchPlugin>
