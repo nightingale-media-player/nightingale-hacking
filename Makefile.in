@@ -165,10 +165,15 @@ ifdef SB_ENABLE_BREAKPAD
     $(BREAKPAD_ARCHIVE_PATH)
 endif # SB_ENABLE_BREAKPAD
 
+# For the same reason as stripsymbols/do_stripsymbols; explanation up there
 uploadsymbols:
+	$(MAKE) -f $(THISMAKEFILE) do_uploadsymbols
+
+do_uploadsymbols:
 ifdef SB_ENABLE_BREAKPAD
 	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh \
-    $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME)
+    $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) \
+    $(SYMBOLS_SERVER_PATH)/$(SB_MILESTONE)/$(SB_BUILD_NUMBER)/$(SB_PLATFORM)-$(SB_ARCH)
 endif
 
 .PHONY: uploadsymbols buildsymbols stripsymbols do_stripsymbols
