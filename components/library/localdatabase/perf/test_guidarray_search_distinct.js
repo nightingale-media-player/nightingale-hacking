@@ -44,7 +44,7 @@ function perfTest(library, timer) {
   array.isDistinct = true;
   
   // Search for something that will match every track
-  array.addFilter(SBProperties.artistName, new StringArrayEnumerator(["file*"]), true);
+  array.addFilter(SBProperties.artistName, new StringArrayEnumerator(["a*"]), true);
 
   timer.start();
 

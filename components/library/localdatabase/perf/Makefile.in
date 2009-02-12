@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = localdatabaselibraryperf
 
 SONGBIRD_TESTS = $(srcdir)/head_localdatabaselibraryperf.js \
+                 $(srcdir)/tail_localdatabaselibraryperf.js \
                  $(srcdir)/test_guidarray.js \
                  $(srcdir)/test_guidarray_multisort.js \
                  $(srcdir)/test_guidarray_distinct.js \

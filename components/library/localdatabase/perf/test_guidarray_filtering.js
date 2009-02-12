@@ -45,7 +45,7 @@ function perfTest(library, timer) {
   filterArray1.addFilter(SBProperties.isList, new StringArrayEnumerator(["0"]), false);
   filterArray1.fetchSize = 0; // Fetch all
   filterArray1.isDistinct = true;  
-  filterArray1.addFilter(SBProperties.artistName, new StringArrayEnumerator(["file*"]), true);  
+  filterArray1.addFilter(SBProperties.artistName, new StringArrayEnumerator(["a*"]), true);  
   filterArray1.addFilter(SBProperties.genre, new StringArrayEnumerator(["rock","folk"]), false);
 
   var filterArray2 = filterArray1.clone();

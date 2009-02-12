@@ -30,6 +30,13 @@
 
 var SB_NS = "http://songbirdnest.com/data/1.0#";
 
+// Make sure the db engine isn't taking any shortcuts
+var dbe = Cc["@songbirdnest.com/Songbird/DatabaseEngine;1"]
+            .getService(Ci.sbIDatabaseEngine)
+var localeCollationPreviouslyEnabled = dbe.localeCollationEnabled;
+dbe.localeCollationEnabled = true;
+
+
 function runPerfTest(aName, aTestFunc) {
 
   var environment = Cc["@mozilla.org/process/environment;1"]
