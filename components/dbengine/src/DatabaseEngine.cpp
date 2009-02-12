@@ -68,6 +68,7 @@
 #define MAX_PRLOG 400
 
 #if defined(_WIN32)
+  #include <windows.h>
   #include <direct.h>
 #else
 // on UNIX, strnicmp is called strncasecmp
