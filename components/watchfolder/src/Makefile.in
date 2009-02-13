@@ -61,6 +61,7 @@ CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(MOZSDK_INCLUDE_DIR)/appshell \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/xulapp \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
