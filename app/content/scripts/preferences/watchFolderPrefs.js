@@ -38,8 +38,9 @@
 //------------------------------------------------------------------------------
 
 // Songbird imports.
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
-
 
 //------------------------------------------------------------------------------
 //
@@ -135,7 +136,13 @@ var watchFolderPrefsPane = {
     // Update the watch folder path.
     if ((result == Ci.nsIFilePicker.returnOK) &&
         (filePicker.file.isDirectory())) {
+      var shouldAskForImport = 
+        filePicker.file.path != watchFolderPathPrefElem.value;
       watchFolderPathPrefElem.value = filePicker.file.path;
+      
+      if (shouldAskForImport) {
+        this._rescan(filePicker.file);
+      }
     }
   },
 
@@ -145,7 +152,40 @@ var watchFolderPrefsPane = {
   // Internal services.
   //
   //----------------------------------------------------------------------------
-
+  /**
+   * Offer import of items in new watch folder
+   */
+  _rescan: function watchFolderPrefsPane__rescan(aFile) {
+    var shouldImportTitle = 
+      SBString("watch_folder.new_folder.scan_title");
+    var shouldImportMsg = 
+      SBFormattedString("watch_folder.new_folder.scan_text", [aFile.path]);
+    
+    var promptService = Cc['@mozilla.org/embedcomp/prompt-service;1']
+                          .getService(Ci.nsIPromptService);
+    var promptButtons = 
+      promptService.STD_YES_NO_BUTTONS + promptService.BUTTON_POS_1_DEFAULT;
+                            
+    var checkState = {};       
+    var result = promptService.confirmEx(window, 
+                                         shouldImportTitle, 
+                                         shouldImportMsg, 
+                                         promptButtons, 
+                                         null, 
+                                         null, 
+                                         null, 
+                                         null, 
+                                         checkState);
+    if(result == 0) {
+      var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
+                       .getService(Ci.sbIDirectoryImportService);
+      var directoryArray = ArrayConverter.nsIArray([aFile]);
+      
+      var job = importer.import(directoryArray);
+      SBJobUtils.showProgressDialog(job, window, 0);
+    }
+  },
+   
   /**
    * Update the UI.
    */
