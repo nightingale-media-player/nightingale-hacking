@@ -2523,6 +2523,21 @@ PRInt32 CDatabaseEngine::Collate(collationBuffers *aCollationBuffers,
       // discard the numbers
       remainderA += numberALength;
       remainderB += numberBLength;;
+      
+      // if we failed to actually parse a number on both strings (ie, there was
+      // a number char that was detected but it did not parse to a valid number)
+      // then we need to advance both strings by one character, otherwise we can
+      // run into an infinite loop trying to parse those two numbers if the two
+      // remainders are also equal. If the remainders are not equal, then
+      // leadingNumbersCollate was != 0 and we've exited already. If only one of
+      // the two strings failed to parse to a number, but the remainders are
+      // still equal, we've advanced on one of the strings, and we're not going
+      // to infinitely loop.
+      if (numberALength == 0 &&
+          numberBLength == 0) {
+        remainderA++;
+        remainderB++;
+      }
     
       // and loop ...
     }
