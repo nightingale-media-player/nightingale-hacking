@@ -385,12 +385,13 @@ sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
   {
     nsAutoLock lock(mEventPathsSetLock);
 
+    sbStringSet folderEventPaths;
+
     // Read the event paths out of the set.
+    // The event paths in |mEventPathsSet| contain the full absolute path 
+    // (including leaf name) of each event. Clear out the set and build a new
+    // set of unique folder paths.
     while (!mEventPathsSet.empty()) {
-      // The event paths that are in the queue are relative to the root folder.
-      // These paths also contain both paths for folders and files. Since the
-      // tree only wants to be informed about changes at the directory level, 
-      // convert file paths to their parent folder.
       sbStringSetIter begin = mEventPathsSet.begin();
 
       nsString curEventPath(mTree->EnsureTrailingPath(mWatchPath));
@@ -422,7 +423,14 @@ sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
 
       curEventPath.Cut(curEventPath.Length() - curEventFileLeafName.Length(),
                        curEventFileLeafName.Length());
-      mTree->Update(curEventPath);
+      folderEventPaths.insert(curEventPath);
+    }
+
+    // Now update the tree with the unique folder event paths.
+    while (!folderEventPaths.empty()) {
+      sbStringSetIter begin = folderEventPaths.begin();
+      mTree->Update(*begin);
+      folderEventPaths.erase(begin);
     }
   }
 
