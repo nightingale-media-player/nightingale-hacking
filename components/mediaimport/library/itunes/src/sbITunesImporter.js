@@ -2212,12 +2212,24 @@ sbITunesImporter.prototype =
       onChangeFetcher: function (aFetcher) {
         // We ignore this one since we don't need to update the user
       },
-      onResult: function (aImageLocation, aMediaItem) {
+      onTrackResult: function (aImageLocation, aMediaItem) {
         if (aImageLocation) {
           aMediaItem.setProperty(SBProperties.primaryImageURL,
                                  aImageLocation.spec);
         }
       },
+      onAlbumResult: function (aImageLocation, aMediaItemArray) {
+        // null imageLocation indicates failure
+        if (aImageLocation) {
+          for (var i = 0; i < aMediaItemArray.length; i++) {
+            aMediaItemArray[i].setProperty(SBProperties.primaryImageURL,
+                                           aImageLocation.spec);
+          }
+        }
+      },
+      onSearchComplete: function (aMediaItemArray) {
+        // not impl'd
+      }
     };
 
     // Post-process created media items.
@@ -2233,8 +2245,8 @@ sbITunesImporter.prototype =
               Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
                 .createInstance(Ci.sbIAlbumArtFetcherSet);
         fileAlbumArtFetcherSet.localOnly = true;
-        fileAlbumArtFetcherSet.fetchAlbumArtForMediaItem(mediaItem,
-                                                         albumArtListener);
+        fileAlbumArtFetcherSet.fetchAlbumArtForTrack(mediaItem,
+                                                     albumArtListener);
       } catch (ex) {
         Cu.reportError(ex);
       }

@@ -240,7 +240,7 @@ sbLastFMAlbumArtFetcher.prototype = {
         }
         aImageLocation = uri;
       }
-      aListener.onResult(aImageLocation, aMediaItem);
+      aListener.onTrackResult(aImageLocation, aMediaItem);
       // We need to wrap the item in an nsIArray
       var items = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                     .createInstance(Ci.nsIMutableArray);
