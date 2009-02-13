@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = filesystemevents 
 
 SONGBIRD_TESTS = $(srcdir)/test_filesystemevents.js \
+                 $(srcdir)/test_filesystemsession.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
