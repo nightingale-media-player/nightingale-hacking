@@ -56,7 +56,7 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
     (FILE_NOTIFY_INFORMATION *)watcher->GetBuffer();
   if (fileInfo) {
     {
-      nsAutoLock lock(watcher->GetEventPathsQueueLock());
+      nsAutoLock lock(watcher->GetEventPathsSetLock());
 
       while (PR_TRUE) {
         // Push in the event path into the queue
@@ -64,7 +64,7 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
         curEventPath.Assign(fileInfo->FileName,
                             (fileInfo->FileNameLength / sizeof(WCHAR)));
         
-        watcher->GetEventPathsQueue()->push(curEventPath);
+        watcher->GetEventPathsSet()->insert(curEventPath);
 
         if (fileInfo->NextEntryOffset == 0) {
           break;
@@ -118,13 +118,13 @@ sbWin32FileSystemWatcher::sbWin32FileSystemWatcher()
   mBuffer = NULL;
   mIsThreadRunning = PR_FALSE;
   mShouldRunThread = PR_FALSE;
-  mEventPathsQueueLock = 
-    nsAutoLock::NewLock("sbWin32FileSystemWatcher::mEventPathsQueueLock");
+  mEventPathsSetLock = 
+    nsAutoLock::NewLock("sbWin32FileSystemWatcher::mEventPathsSetLock");
 }
 
 sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
 {
-  nsAutoLock::DestroyLock(mEventPathsQueueLock);
+  nsAutoLock::DestroyLock(mEventPathsSetLock);
 
   // The thread was asked to terminate in the "quit-application" notification.
   // If it is still running, force kill it now.
@@ -276,16 +276,16 @@ sbWin32FileSystemWatcher::GetBuffer()
   return mBuffer;
 }
 
-std::queue<nsString>* 
-sbWin32FileSystemWatcher::GetEventPathsQueue()
+sbStringSet* 
+sbWin32FileSystemWatcher::GetEventPathsSet()
 {
-  return &mEventPathsQueue;
+  return &mEventPathsSet;
 }
 
 PRLock* 
-sbWin32FileSystemWatcher::GetEventPathsQueueLock()
+sbWin32FileSystemWatcher::GetEventPathsSetLock()
 {
-  return mEventPathsQueueLock;
+  return mEventPathsSetLock;
 }
 
 //------------------------------------------------------------------------------
@@ -383,16 +383,21 @@ NS_IMETHODIMP
 sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
 {
   {
-    nsAutoLock lock(mEventPathsQueueLock);
+    nsAutoLock lock(mEventPathsSetLock);
 
-    // Read the event paths out of the queue.
-    while (mEventPathsQueue.size() > 0) {
+    // Read the event paths out of the set.
+    while (!mEventPathsSet.empty()) {
       // The event paths that are in the queue are relative to the root folder.
       // These paths also contain both paths for folders and files. Since the
       // tree only wants to be informed about changes at the directory level, 
       // convert file paths to their parent folder.
+      sbStringSetIter begin = mEventPathsSet.begin();
+
       nsString curEventPath(mTree->EnsureTrailingPath(mWatchPath));
-      curEventPath.Append(mEventPathsQueue.front());
+      curEventPath.Append(*begin);
+
+      // Remove the string and bump the iterator.
+      mEventPathsSet.erase(begin);
 
       nsresult rv;
       nsCOMPtr<nsILocalFile> curEventFile = 
@@ -418,8 +423,6 @@ sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
       curEventPath.Cut(curEventPath.Length() - curEventFileLeafName.Length(),
                        curEventFileLeafName.Length());
       mTree->Update(curEventPath);
-
-      mEventPathsQueue.pop();
     }
   }
 

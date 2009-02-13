@@ -34,7 +34,10 @@
 #include <nsCOMPtr.h>
 #include <nsITimer.h>
 #include <windows.h>
-#include <queue>
+#include <set>
+
+typedef std::set<nsString>          sbStringSet;
+typedef sbStringSet::iterator sbStringSetIter; 
 
 
 class sbWin32FileSystemWatcher : public sbBaseFileSystemWatcher,
@@ -86,14 +89,14 @@ public:
   void* GetBuffer();
 
   //
-  // \brief Accessor for the event paths queue.
+  // \brief Accessor for the event paths set.
   //
-  std::queue<nsString>* GetEventPathsQueue();
+  sbStringSet* GetEventPathsSet();
 
   //
-  // \brief Accessor for the event paths queue lock.
+  // \brief Accessor for the event paths set lock.
   //
-  PRLock* GetEventPathsQueueLock();
+  PRLock* GetEventPathsSetLock();
 
   //
   // \brief Method to setup the chained call to |ReadDirectoryChangesW|.
@@ -114,8 +117,8 @@ private:
   OVERLAPPED           mOverlapped;
   PRBool               mShouldRunThread;
   PRBool               mIsThreadRunning;
-  std::queue<nsString> mEventPathsQueue;
-  PRLock               *mEventPathsQueueLock;
+  sbStringSet          mEventPathsSet;
+  PRLock               *mEventPathsSetLock;
 };
 
 #endif  // sbWin32FileSystemWatcher_h_
