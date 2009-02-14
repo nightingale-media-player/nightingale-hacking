@@ -90,6 +90,7 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
           break;
         }
       }
+      [strCopy release];
     }
     else {
       // Just transform the whole string
