@@ -214,8 +214,10 @@ sbWin32FileSystemWatcher::WatchNextChange()
                           ReadDirectoryChangesWCallbackRoutine);
   if (!result) {
     NS_WARNING("ERROR: Could not ReadDirectoryChangesW()");
-    CloseHandle(mRootDirHandle);
-    mRootDirHandle = INVALID_HANDLE_VALUE;
+    if (mRootDirHandle != INVALID_HANDLE_VALUE) {
+      CloseHandle(mRootDirHandle);
+      mRootDirHandle = INVALID_HANDLE_VALUE;
+    }
   }
 }
 
