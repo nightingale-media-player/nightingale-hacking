@@ -2683,7 +2683,8 @@ sbMediacoreSequencer::SetCustomGenerator(
 
     // Custom generator changed and mode is custom, recalculate sequence
     if(mMode == sbIMediacoreSequencer::MODE_CUSTOM) {
-      nsresult rv = RecalculateSequence();
+      PRInt64 viewPosition = mViewPosition;
+      nsresult rv = RecalculateSequence(&viewPosition);
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
