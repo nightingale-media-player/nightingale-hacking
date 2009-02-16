@@ -96,38 +96,6 @@ sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
 }
 
 NS_IMETHODIMP 
-sbMacFileSystemWatcher::StartWatching()
-{
-  if (!mIsSupported) {
-    return NS_ERROR_NOT_IMPLEMENTED;
-  }
-
-  if (mIsWatching) {
-    return NS_OK;
-  }
-
-  // Init the tree
-  mTree = new sbFileSystemTree();
-  NS_ENSURE_TRUE(mTree, NS_ERROR_OUT_OF_MEMORY);
-
-  // Add ourselves as a tree listener
-  nsresult rv = mTree->AddListener(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Build the tree snapshot now, FSEvent stream will start once the tree
-  // has been built.
-  if (mShouldLoadSession) {
-    rv = mTree->InitWithTreeSession(mSessionID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    rv = mTree->Init(mWatchPath, mIsRecursive);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  return NS_OK;
-}
-
-NS_IMETHODIMP 
 sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
   if (!mIsSupported) {
@@ -144,19 +112,11 @@ sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 
   FSEventStreamStop(mStream);
   FSEventStreamInvalidate(mStream);
-  FSEventStreamRelease(mStream);
- 
-  mIsWatching = PR_FALSE;
-  
-  // Don't worry about checking the result from the listener.
-  mListener->OnWatcherStopped();
+  FSEventStreamRelease(mStream); 
 
-  if (aShouldSaveSession) {
-    nsresult rv = mTree->SaveTreeSession(mSessionID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  
-  return NS_OK;
+  // The base class takes care of cleaning up the tree and notifying the
+  // listener.
+  return sbBaseFileSystemWatcher::StopWatching(aShouldSaveSession);
 }
 
 void 

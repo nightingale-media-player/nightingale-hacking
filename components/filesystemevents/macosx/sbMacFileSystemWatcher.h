@@ -50,7 +50,6 @@ public:
                   PRBool aIsRecursive);
   NS_IMETHOD InitWithSession(const nsACString & aSessionGuid,
                              sbIFileSystemListener *aListener);
-  NS_IMETHOD StartWatching();
   NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbFileSystemTreeListener

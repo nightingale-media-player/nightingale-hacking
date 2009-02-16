@@ -94,15 +94,50 @@ sbBaseFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
 NS_IMETHODIMP 
 sbBaseFileSystemWatcher::StartWatching()
 {
-  // This function is defined by the inherited class
-  return NS_ERROR_NOT_IMPLEMENTED;
+  if (!mIsSupported) {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  if (mIsWatching) {
+    return NS_OK;
+  }
+
+  // Init the tree
+  mTree = new sbFileSystemTree();
+  NS_ENSURE_TRUE(mTree, NS_ERROR_OUT_OF_MEMORY);
+
+  // Add ourselves as a tree listener
+  nsresult rv = mTree->AddListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Build the tree snapshot now, the native file system hooks will be setup
+  // once the tree has been built.
+  if (mShouldLoadSession) {
+    rv = mTree->InitWithTreeSession(mSessionID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mTree->Init(mWatchPath, mIsRecursive);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
 sbBaseFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
-  // This function is defined by the inherited class
-  return NS_ERROR_NOT_IMPLEMENTED;
+  mIsWatching = PR_FALSE;
+  
+  // Don't worry about checking the result from the listener.
+  mListener->OnWatcherStopped();
+
+  if (aShouldSaveSession) {
+    nsresult rv = mTree->SaveTreeSession(mSessionID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  return NS_OK;
 }
 
 NS_IMETHODIMP

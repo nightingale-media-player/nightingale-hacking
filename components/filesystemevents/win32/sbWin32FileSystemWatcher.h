@@ -56,7 +56,6 @@ public:
   NS_IMETHOD Init(sbIFileSystemListener *aListener,
                   const nsAString & aRootPath,
                   PRBool aIsRecursive);
-  NS_IMETHOD StartWatching();
   NS_IMETHOD StopWatching(PRBool aShouldSaveSession);
 
   // sbIFileSystemTreeListener

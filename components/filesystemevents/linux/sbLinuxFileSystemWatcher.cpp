@@ -107,31 +107,6 @@ sbLinuxFileSystemWatcher::AddInotifyHook(nsAString & aDirPath)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbLinuxFileSystemWatcher::StartWatching()
-{
-  if (mIsWatching) {
-    return NS_OK;
-  }
-
-  mTree = new sbFileSystemTree();
-  NS_ENSURE_TRUE(mTree, NS_ERROR_OUT_OF_MEMORY);
-
-  nsresult rv = mTree->AddListener(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (mShouldLoadSession) {
-    rv = mTree->InitWithTreeSession(mSessionID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    rv = mTree->Init(mWatchPath, mIsRecursive);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
 NS_IMETHODIMP 
 sbLinuxFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
@@ -139,19 +114,10 @@ sbLinuxFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
     return NS_OK;
   }
 
-  nsresult rv;
-  rv = Cleanup();
+  nsresult rv = Cleanup();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Don't worry about checking the result from the listener.
-  mListener->OnWatcherStopped();
-
-  if (aShouldSaveSession) {
-    rv = mTree->SaveTreeSession(mSessionID);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
+  return sbBaseFileSystemWatcher::StopWatching(aShouldSaveSession);
 }
 
 nsresult
