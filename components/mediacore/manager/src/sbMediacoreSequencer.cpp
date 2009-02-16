@@ -746,7 +746,7 @@ sbMediacoreSequencer::UpdateDurationDataRemotes(PRUint64 aDuration)
       position = 0;
     }
 
-    duration -= position;
+    duration = duration > position ? duration - position : 0;
   }
 
   nsString str;
