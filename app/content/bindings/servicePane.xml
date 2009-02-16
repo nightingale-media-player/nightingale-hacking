@@ -942,6 +942,11 @@
         this._onContextMenu(event);
       ]]></handler>
       <handler event="select"><![CDATA[
+        // don't handle select events for elements other than the tree (e.g.,
+        // not for the cell edit textbox)
+        if (event.originalTarget != this.mTree)
+          return;
+
         // don't handle selection changes when the popup menu is open.
         if(this.mPopup.state != "closed") {
           return;
