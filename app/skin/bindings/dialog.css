@@ -89,8 +89,10 @@ dialog[type="songbird"]
   min-width: 8em;
   min-height: 6.5em;
 }
-dialog[type="songbird"] .dialog-content-box
+
+dialog[type="songbird"][resizers="all"] .dialog-content-box
 {
   overflow: auto;
 }
+
 /* end Contents Preservation */
