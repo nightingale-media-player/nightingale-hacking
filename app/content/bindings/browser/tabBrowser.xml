@@ -1948,7 +1948,12 @@
             // Don't let untrusted events mess with tabs.
             return;
           }
-
+          
+          if (aEvent.originalTarget.localName == "input") {
+            // Don't process keys for input elements!
+            return;
+          }
+          
           if ('altKey' in aEvent && aEvent.altKey)
             return;
 
@@ -2011,7 +2016,7 @@
                   }
                 }
                 
-				aEvent.stopPropagation();
+                aEvent.stopPropagation();
                 aEvent.preventDefault();
                 return;
               }
@@ -2091,7 +2096,7 @@
             this.mTabListeners[i] = null;
             this.getBrowserAtIndex(i).removeEventListener("DOMTitleChanged", this.onTitleChanged, true);
           }
-          document.removeEventListener("keypress", this._keyEventHandler, false);
+          document.removeEventListener("keypress", this._keyEventHandler, true);
         ]]>
       </destructor>
     </implementation>
