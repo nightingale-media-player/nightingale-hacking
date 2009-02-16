@@ -276,8 +276,7 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           gstdirectsoundsink \
                           $(NULL)
 
-GST_PLUGINS_BAD_NAMES += gstacmenc \
-                         gstacmmp3dec \
+GST_PLUGINS_BAD_NAMES += gstacmmp3dec \
                          gstqtaudiowrapper \
                          gstqtvideowrapper \
                          gstdshowdecwrapper \
