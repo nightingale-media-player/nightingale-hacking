@@ -89,6 +89,13 @@ sbSongbirdDispatch.prototype = {
     var url = Cc["@mozilla.org/network/standard-url;1"]
                 .createInstance(Ci.nsIURL);
     url.spec = spec;
+    if (!url.host) {
+      // Returning a URL from newURI with no host causes XULRunner to crash.
+      // mozbug 478478
+      Components.utils.reportError("sbSongbirdProtocol::newURI: no command provided.\n"+
+                                   "Syntax is in the form: songbird:<command>?p1=a&p2=b");
+      throw Components.results.NS_ERROR_UNEXPECTED;
+    }
     return url;
   },
   
