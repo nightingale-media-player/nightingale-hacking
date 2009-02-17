@@ -26,9 +26,9 @@
 
 Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
 
-const STATE_PHASE1 = 0;
-const STATE_PHASE2 = 1;
-const STATE_PHASE3 = 2;
+const STATE_PHASE1 = "PHASE 1";
+const STATE_PHASE2 = "PHASE 2";
+const STATE_PHASE3 = "PHASE 3";
 
 
 //
@@ -70,7 +70,7 @@ function sbFSListener(aWatchDir, aFSWatcher)
 
 sbFSListener.prototype =
 {
-  _state:                0,
+  _state:                "",
   _savedSessionID:       null, 
   _addedFile:            null,
   _changeFile:           null,
@@ -144,7 +144,7 @@ sbFSListener.prototype =
 
     // Set the state to phase 1.
     this._state = STATE_PHASE1;
-    this._log("PHASE 1: Starting");
+    this._log(this._state + ": Starting");
 
     this._fsWatcher.init(this, this._watchDir.path, true);
     this._fsWatcher.startWatching();
@@ -156,13 +156,13 @@ sbFSListener.prototype =
     switch (this._state) {
       case STATE_PHASE1: 
       {
-        this._log("PHASE 1: Watcher has started");
+        this._log(this._state + ": Watcher has started");
         // In this phase, we just want to shut the watcher back down to get
         // a saved session GUID and create some serialized data on disk.
         
         // In this phase, just save the session ID and shutdown the watcher
         // with the flag to save the session.
-        this._log("PHASE 1: Stopping watcher, saving session.");
+        this._log(this._state + ": Stopping watcher, saving session.");
         this._savedSessionID = this._fsWatcher.sessionGuid;
         this._shutdownTimer.initWithCallback(this,
                                              1000,
@@ -172,7 +172,7 @@ sbFSListener.prototype =
 
       case STATE_PHASE2:
       {
-        this._log("PHASE 2: Watcher has started");
+        this._log(this._state + ": Watcher has started");
         // Ensure that the file system events where received. All events that
         // have been discovered between application sessions get reported 
         // before |onWatcherStarted()|.
@@ -183,7 +183,7 @@ sbFSListener.prototype =
         // Now that the events have been received, it's time to shutdown the
         // watcher and begin phase 3.
         this._state = STATE_PHASE3;
-        this._log("PHASE 3: Starting");
+        this._log(this._state + ": Starting");
         this._fsWatcher.stopWatching(true);
         break;
       }
@@ -193,7 +193,8 @@ sbFSListener.prototype =
         // If this block is executed, something is wrong. The watcher should
         // have reported an error during startup since the saved application
         // data has been removed.
-        this._log("PHASE 3: ERROR: The session was not reported as an error!");
+        this._log(this._state + 
+                  ": ERROR: The session was not reported as an error!");
         assertTrue(false);
         this._cleanup();
       }
@@ -205,12 +206,12 @@ sbFSListener.prototype =
     switch (this._state) {
       case STATE_PHASE1:
       {
-        this._log("PHASE 1: Watcher has stopped");
+        this._log(this._state + ": Watcher has stopped");
         // Now that the watcher has stopped in phase 1, it is now time to start
         // phase 2. In phase 2, we want to create some events in the directory 
         // to ensure that they are reported once the watcher is re-initialized.
         this._state = STATE_PHASE2;
-        this._log("PHASE 2: Starting");
+        this._log(this._state + ": Starting");
 
         // Add event:
         this._addedFile.create(Ci.nsIFile.NORMAL_FILE_TYPE, 0755);
@@ -226,7 +227,7 @@ sbFSListener.prototype =
         foStream.write(junk, junk.length);
         foStream.close();
 
-        this._log("PHASE 2: File system events created.");
+        this._log(this._state + ": File system events created.");
 
         // Now set the startup timer to fire in one second to re-initialize the
         // watcher.
@@ -238,7 +239,7 @@ sbFSListener.prototype =
 
       case STATE_PHASE3:
       {
-        this._log("PHASE 3: Watcher has stopped");
+        this._log(this._state + ": Watcher has stopped");
         this._state = STATE_PHASE3;
         
         // Now set the restart timer back up
@@ -285,8 +286,7 @@ sbFSListener.prototype =
   notify: function(aTimer)
   {
     if (aTimer == this._restartTimer) {
-      this._log("PHASE " + this._state +
-                ": Re-starting the watcher with session " +
+      this._log(this._state + ": Re-starting the watcher with session " +
                 this._savedSessionID);
 
       this._fsWatcher = null;
@@ -297,7 +297,7 @@ sbFSListener.prototype =
       // the error reporting API on the filesystem watcher API.
       if (this._state == STATE_PHASE3) {
         this._fsWatcher.deleteSession(this._savedSessionID);
-        this._log("PHASE 3: Session " + this._savedSessionID + 
+        this._log(this._state + ": Session " + this._savedSessionID + 
                   " has been deleted");
         
       }
@@ -306,7 +306,7 @@ sbFSListener.prototype =
       this._fsWatcher.startWatching();
     }
     else {
-      this._log("PHASE " + this._state + ": Watcher has stopped.");
+      this._log(this._state + ": Stopping watcher.");
       this._fsWatcher.stopWatching(true);
     }
   },
