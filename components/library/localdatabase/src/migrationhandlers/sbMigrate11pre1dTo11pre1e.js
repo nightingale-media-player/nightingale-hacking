@@ -63,6 +63,16 @@ sbLibraryMigration.prototype = {
   migrate: function sbLibraryMigration_migrate(aLibrary) {
     try{
 
+      this._databaseGUID = aLibrary.databaseGuid;
+      this._databaseLocation = aLibrary.databaseLocation;
+
+      // Run a query that will mark the library as migrated
+      var query = this.createMigrationQuery(aLibrary);
+      query.addQuery("commit");
+      var retval;
+      query.setAsyncQuery(false);
+      query.execute(retval);
+
       // Raise a flag indicating that this library will need all 
       // sort info to be recomputed.
       // Normally we'd call propertyCache.invalidateSortData(), but 

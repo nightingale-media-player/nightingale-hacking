@@ -165,6 +165,23 @@ SBLocalDatabaseMigrationUtils.BaseMigrationHandler.prototype = {
     
     return;
   },
+
+  // Create a query including an open transaction that
+  // will start by setting the new library version  
+  createMigrationQuery: function sbLibraryMigration_createMigrationQuery(aLibrary) {
+    var query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                  .createInstance(Ci.sbIDatabaseQuery);
+    query.databaseLocation = aLibrary.databaseLocation;
+    query.setDatabaseGUID(aLibrary.databaseGuid);
+
+    query.addQuery("begin");
+    
+    // Update the schema version to the destination version.
+    query.addQuery("update library_metadata set value = '" 
+                   + this.toVersion + "' where name = 'version'");
+
+    return query;
+  },
   
   //
   // sbILocalDatabaseMigrationHandler

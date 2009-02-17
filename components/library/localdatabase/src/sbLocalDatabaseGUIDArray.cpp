@@ -1216,7 +1216,10 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
   NS_ENSURE_SUCCESS(rv, rv);
 
   /*
-   * Generate the resort query, if needed
+   * Generate the resort query, if needed.
+   * Only multiple primary sorts need a resort query, since any number of
+   * secondary sorts are otherwise handled by the main query via
+   * obj_secondary_sortable
    */
   PRUint32 numSorts = mSorts.Length();
   if (numSorts > 1 && !mIsDistinct) {

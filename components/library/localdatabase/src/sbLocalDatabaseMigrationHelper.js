@@ -36,13 +36,6 @@ const Cr = Components.results;
 
 const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
 
-function d(s) {
-  //dump("------------------> sbLocalDatabaseMigration " + s + "\n");
-}
-
-function TRACE(s) {
-  //dump("------------------> sbLocalDatabaseMigration " + s + "\n");
-}
 
 function sbLocalDatabaseMigrationHelper()
 {
@@ -164,7 +157,8 @@ sbLocalDatabaseMigrationHelper.prototype = {
       if(!(key in this._migrationHandlers)) {
         throw Cr.NS_ERROR_UNEXPECTED;
       }
-
+      dump("\nLOCALDATABASEMIGRATION: Attempting to migrate from " 
+            + oldVersion + " to " + newVersion + "\n");
       this._migrationHandlers[key].migrate(aLibrary);
       
       oldVersion = newVersion;
