@@ -251,14 +251,27 @@ sbFSListener.prototype =
     }
   },
 
-  onSessionLoadError: function()
+  onWatcherError: function(aErrorType, aDescription)
   {
-    if (this._state != STATE_PHASE3) {
-      this._log("ERROR: received session load error, unexpected!");
-      assertTrue(false);
-    }
-    else {
-       this._log("PHASE 3: Got the session load error.");
+    switch (aErrorType) {
+      case Ci.sbIFileSystemListener.SESSION_LOAD_ERROR:
+        if (this._state != STATE_PHASE3) {
+          this._log(this._state + 
+                    ": ERROR: received session load error, unexpected!");
+          assertTrue(false);
+        }
+        else {
+           this._log("PHASE 3: Got the session load error.");
+        }
+        break;
+
+      case Ci.sbIFileSystemListener.ROOT_PATH_MISSING:
+        doFail("ERROR: The root watch path is missing!!");
+        break;
+
+      case Ci.sbIFileSystemListener.INVALID_DIRECTORY:
+        doFail("ERROR: Invalid directory was passed to watcher!");
+        break;
     }
 
     this._cleanup();

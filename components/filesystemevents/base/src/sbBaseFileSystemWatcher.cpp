@@ -224,6 +224,7 @@ sbBaseFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
 NS_IMETHODIMP
 sbBaseFileSystemWatcher::OnTreeSessionLoadError()
 {
-  return mListener->OnSessionLoadError();
+  return mListener->OnWatcherError(sbIFileSystemListener::SESSION_LOAD_ERROR,
+                                   mWatchPath);
 }
 

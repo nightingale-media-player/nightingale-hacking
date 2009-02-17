@@ -100,6 +100,7 @@ protected:
   nsresult EnumerateItemsByPaths(sbStringVector & aPathVector);
   nsresult GetFilePathURI(const nsAString & aFilePath, nsIURI **aURIRetVal);
   nsresult GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow);
+  nsresult HandleSessionLoadError();
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;

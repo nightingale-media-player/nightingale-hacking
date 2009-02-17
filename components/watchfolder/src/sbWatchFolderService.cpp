@@ -47,7 +47,7 @@
 #include <nsIPromptService.h>
 #include <nsTArray.h>
 #include <sbIMediacoreTypeSniffer.h>
-
+#include <nsThreadUtils.h>
 #include <nsXULAppAPI.h>
 #include <nsIXULRuntime.h>
 
@@ -477,6 +477,110 @@ sbWatchFolderService::GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow)
   return appController->GetActiveMainWindow(aSongbirdWindow);
 }
 
+nsresult
+sbWatchFolderService::HandleSessionLoadError()
+{
+  NS_ASSERTION(NS_IsMainThread(),
+      "HandleSessionLoadError() not called on main thread!");
+
+  // If this method gets called, than the watcher could not load the stored
+  // session. The tree will need to be re-initialized, this time without
+  // loading a session.
+  nsresult rv;
+  if (!mFileSystemWatcherGUID.IsEmpty()) {
+    // Attempt the remove the session data. Don't bother returning the result
+    // if it fails, just warn about it.
+    rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not delete the bad session data file!");
+    }
+
+    mFileSystemWatcherGUID.Truncate();
+  }
+  
+  rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mFileSystemWatcher->StartWatching();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIPromptService> promptService =
+    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 buttons =
+    nsIPromptService::STD_YES_NO_BUTTONS +
+    nsIPromptService::BUTTON_POS_1_DEFAULT;
+
+  sbStringBundle bundle;
+  nsString dialogTitle =
+    bundle.Get("watch_folder.session_load_error.rescan_title");
+
+  nsTArray<nsString> params;
+  params.AppendElement(mWatchPath);
+  nsString dialogText =
+    bundle.Format("watch_folder.session_load_error.rescan_text", params);
+
+  nsCOMPtr<nsIDOMWindow> songbirdWindow;
+  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt32 promptResult;
+  rv = promptService->ConfirmEx(songbirdWindow,
+                                dialogTitle.BeginReading(),
+                                dialogText.BeginReading(),
+                                buttons,
+                                nsnull,
+                                nsnull,
+                                nsnull,
+                                nsnull,
+                                nsnull,
+                                &promptResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only start the scan if the user picked the YES button (option 0).
+  if (promptResult == 0) {
+    // The user elected to rescan their watched directory. Setup the directory
+    // scan service.
+    nsCOMPtr<sbIDirectoryImportService> dirImportService =
+      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // The directory import service wants the paths as an array.
+    nsCOMPtr<nsILocalFile> watchPathFile =
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = watchPathFile->InitWithPath(mWatchPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIMutableArray> dirArray =
+      do_CreateInstance("@mozilla.org/array;1", &rv);
+
+    rv = dirArray->AppendElement(watchPathFile, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDirectoryImportJob> importJob;
+    rv = dirImportService->Import(dirArray,
+                                  nsnull,  // defaults to main library
+                                  -1,
+                                  getter_AddRefs(importJob));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIJobProgressService> progressService =
+      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+    if (NS_SUCCEEDED(rv) && progressService) {
+      nsCOMPtr<sbIJobProgress> job = do_QueryInterface(importJob, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = progressService->ShowProgressDialog(job, nsnull, 1);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbWatchFolderService
 
@@ -573,101 +677,23 @@ sbWatchFolderService::OnWatcherStopped()
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::OnSessionLoadError()
+sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
+                                     const nsAString & aDescription)
 {
-  // If this method gets called, than the watcher could not load the stored
-  // session. The tree will need to be re-initialized, this time without
-  // loading a session.
-  nsresult rv;
-  if (!mFileSystemWatcherGUID.Equals(EmptyCString())) {
-    // Attempt the remove the session data. Don't bother returning the result
-    // if it fails, just warn about it.
-    rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not delete the bad session data file!");
-    }
+  switch (aErrorType) {
+    case sbIFileSystemListener::ROOT_PATH_MISSING:
+      NS_WARNING("WARNING: Root path is missing!");
+      return NS_ERROR_NOT_IMPLEMENTED;
+      break;
 
-    mFileSystemWatcherGUID.Assign(EmptyCString());
-  }nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
-      do_GetService("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+    case sbIFileSystemListener::INVALID_DIRECTORY:
+      NS_WARNING("WARNING: Invalid directory!");
+      break;
 
-  rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mFileSystemWatcher->StartWatching();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIPromptService> promptService =
-    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 buttons =
-    nsIPromptService::STD_YES_NO_BUTTONS +
-    nsIPromptService::BUTTON_POS_1_DEFAULT;
-
-  sbStringBundle bundle;
-  nsString dialogTitle =
-    bundle.Get("watch_folder.session_load_error.rescan_title");
-
-  nsTArray<nsString> params;
-  params.AppendElement(mWatchPath);
-  nsString dialogText =
-    bundle.Format("watch_folder.session_load_error.rescan_text", params);
-
-  nsCOMPtr<nsIDOMWindow> songbirdWindow;
-  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 promptResult;
-  rv = promptService->ConfirmEx(songbirdWindow,
-                                dialogTitle.BeginReading(),
-                                dialogText.BeginReading(),
-                                buttons,
-                                nsnull,
-                                nsnull,
-                                nsnull,
-                                nsnull,
-                                nsnull,
-                                &promptResult);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (promptResult == 0) {
-    // The user elected to rescan their watched directory. Setup the directory
-    // scan service.
-    nsCOMPtr<sbIDirectoryImportService> dirImportService =
-      do_GetService("@songbirdnest.com/Songbird/DirectoryImportService;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // The directory import service wants the paths as an array.
-    nsCOMPtr<nsILocalFile> watchPathFile =
-      do_CreateInstance("@mozilla.org/file/local;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = watchPathFile->InitWithPath(mWatchPath);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIMutableArray> dirArray =
-      do_CreateInstance("@mozilla.org/array;1", &rv);
-
-    rv = dirArray->AppendElement(watchPathFile, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIDirectoryImportJob> importJob;
-    rv = dirImportService->Import(dirArray,
-                                  nsnull,  // defaults to main library
-                                  -1,
-                                  getter_AddRefs(importJob));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIJobProgressService> progressService =
-      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
-    if (NS_SUCCEEDED(rv) && progressService) {
-      nsCOMPtr<sbIJobProgress> job = do_QueryInterface(importJob, &rv);
+    case sbIFileSystemListener::SESSION_LOAD_ERROR:
+      nsresult rv = HandleSessionLoadError();
       NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = progressService->ShowProgressDialog(job, nsnull, 1);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+      break;
   }
 
   return NS_OK;

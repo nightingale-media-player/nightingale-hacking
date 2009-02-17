@@ -153,9 +153,10 @@ sbFSListener.prototype =
     testFinished();    
   },
 
-  onSessionLoadError: function()
+  onWatcherError: function(aErrorType, aDescription)
   {
-    // not used.
+    // Not used, but logging might be useful.
+    this._log("ERROR: [" + aErrorType + "] = " + aDescription + " !!!!!!!");
   },
 
   onFileSystemChanged: function(aFilePath)

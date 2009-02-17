@@ -31,9 +31,32 @@
 //        events. Pass in an instance of this interface when creating a 
 //        |sbIFileSystemWatcher| instance.
 //
-[scriptable, uuid(9629A5A4-82E7-434F-9684-043A778695AF)]
+[scriptable, uuid(44cec493-c59e-45ca-bc9f-b053e17a519f)]
 interface sbIFileSystemListener : nsISupports
 {
+  //
+  // \brief Watcher Error Types
+  //
+  // ROOT_PATH_MISSING - The root watch path is missing
+  //   NOTE: This event is posted when the root watch path is missing. Posting
+  //         can happen before startup or after. Once the watcher notices
+  //         that the root watch path is missing, it will automatically stop
+  //         watching and notify via |onWatcherStopped()|.
+  //
+  // INVALID_DIRECTORY - A directory was encountered that could not be watched.
+  //   NOTE: This event is posted when the native file-system event hooks
+  //         cannot add a hook for a specified directory. Check the
+  //         |aDescription| field to find what the invalid directory is.
+  //
+  // SESSION_LOAD_ERROR - The watcher could not load a saved session.
+  //   NOTE: If a listener receives this callback, the watcher should be
+  //         re-initialized via |init()| in order to receive callbacks 
+  //         about changes to the watched path.
+  //
+  const unsigned long ROOT_PATH_MISSING  = 0;
+  const unsigned long INVALID_DIRECTORY  = 1;
+  const unsigned long SESSION_LOAD_ERROR = 2;
+
   //
   // \brief Callback when the |sbIFileSystemWatcher| has initialized and has
   //        started listening to events.
@@ -47,12 +70,13 @@ interface sbIFileSystemListener : nsISupports
   void onWatcherStopped();
 
   //
-  // \brief Callback when the |sbIFileSystemWatcher| could not load a session.
-  //        NOTE: If a listener receives this callback, the watcher should be
-  //              re-initialized via |init()| in order to receive callbacks 
-  //              about changes to the watched path.
+  // \brief Callback when the watcher has encountered an error.
+  // \param aErrorType The error type the watcher encountered.
+  //                   SEE: The constants defined above.
+  // \param aDescription Additional information about the received error.
   //
-  void onSessionLoadError();
+  void onWatcherError(in unsigned long aErrorType,
+                      in AString aDescription);
 
   //
   // \brief Callback when something has change in the filesystem.
