@@ -166,7 +166,10 @@ void
 sbWin32FileSystemWatcher::Cleanup()
 {
   mShouldRunThread = PR_FALSE;
-  mTimer->Cancel();
+
+  if (mTimer) {
+    mTimer->Cancel();
+  }
 
   if (mBuffer) {
     nsMemory::Free(mBuffer);
