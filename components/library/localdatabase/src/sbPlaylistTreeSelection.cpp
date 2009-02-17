@@ -108,6 +108,8 @@ sbPlaylistTreeSelection::RangedSelect(PRInt32 startIndex,
   if (!augment) {
     rv = mViewSelection->SelectNone();
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTreeSelection->ClearSelection();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   if (startIndex == -1) {
@@ -126,7 +128,9 @@ sbPlaylistTreeSelection::RangedSelect(PRInt32 startIndex,
 
   mShiftSelectPivot = startIndex;
 
-  return mViewSelection->SelectRange(startIndex, endIndex);
+  rv = mViewSelection->SelectRange(startIndex, endIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return mTreeSelection->RangedSelect(startIndex, endIndex, PR_TRUE);
 }
 
 NS_IMETHODIMP
