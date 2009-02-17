@@ -65,6 +65,12 @@ public:
                          sbStringArray & aDirPathArray) = 0;
 
   //
+  // \brief Callback method when the tree can not build itself at the 
+  //        specified root path.
+  //
+  NS_IMETHOD OnRootPathMissing() = 0;
+
+  //
   // \brief Callback function for when a tree failed to de-serialize. When 
   //        this method is sent, the tree is in a non-initialized state and
   //        will need to be re-initialized in order to become active. 

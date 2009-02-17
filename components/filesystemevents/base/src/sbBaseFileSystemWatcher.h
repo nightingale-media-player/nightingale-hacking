@@ -54,6 +54,7 @@ public:
                            EChangeType aChangeType);
   NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
                          sbStringArray & aDirPathArray);
+  NS_IMETHOD OnRootPathMissing();
   NS_IMETHOD OnTreeSessionLoadError();
 
 protected:

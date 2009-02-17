@@ -581,6 +581,12 @@ sbWatchFolderService::HandleSessionLoadError()
   return NS_OK;
 }
 
+nsresult
+sbWatchFolderService::HandleRootPathMissing()
+{
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbWatchFolderService
 
@@ -680,10 +686,12 @@ NS_IMETHODIMP
 sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
                                      const nsAString & aDescription)
 {
+  nsresult rv;
   switch (aErrorType) {
     case sbIFileSystemListener::ROOT_PATH_MISSING:
       NS_WARNING("WARNING: Root path is missing!");
-      return NS_ERROR_NOT_IMPLEMENTED;
+      rv = HandleRootPathMissing();
+      NS_ENSURE_SUCCESS(rv, rv);
       break;
 
     case sbIFileSystemListener::INVALID_DIRECTORY:
@@ -691,7 +699,7 @@ sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
       break;
 
     case sbIFileSystemListener::SESSION_LOAD_ERROR:
-      nsresult rv = HandleSessionLoadError();
+      rv = HandleSessionLoadError();
       NS_ENSURE_SUCCESS(rv, rv);
       break;
   }

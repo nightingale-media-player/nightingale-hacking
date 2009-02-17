@@ -222,9 +222,28 @@ sbBaseFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
 }
 
 NS_IMETHODIMP
+sbBaseFileSystemWatcher::OnRootPathMissing()
+{
+  // This callback will be notified before the tree is ready if the event
+  // occurs. When this event is received, notify the listener of the error
+  // and stop the tree (as per documentation in sbIFileSystemListener.idl).
+  nsresult rv;
+  rv = mListener->OnWatcherError(sbIFileSystemListener::ROOT_PATH_MISSING,
+                                 mWatchPath);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                   "Could not notify listener of OnWatcherError()!");
+
+  return StopWatching(PR_FALSE);  // do not save the session. 
+}
+
+NS_IMETHODIMP
 sbBaseFileSystemWatcher::OnTreeSessionLoadError()
 {
+  char idChars[NSID_LENGTH];
+  mSessionID.ToProvidedString(idChars);
+  nsString sessionString;
+  sessionString.Append(NS_ConvertASCIItoUTF16(idChars));
   return mListener->OnWatcherError(sbIFileSystemListener::SESSION_LOAD_ERROR,
-                                   mWatchPath);
+                                   sessionString);
 }
 

@@ -101,6 +101,7 @@ protected:
   nsresult GetFilePathURI(const nsAString & aFilePath, nsIURI **aURIRetVal);
   nsresult GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow);
   nsresult HandleSessionLoadError();
+  nsresult HandleRootPathMissing();
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;

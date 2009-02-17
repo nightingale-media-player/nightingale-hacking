@@ -124,7 +124,6 @@ sbFileSystemTree::InitTree()
   rv = threadMgr->GetCurrentThread(getter_AddRefs(mOwnerContextThread));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Does this need to be a member?
   nsCOMPtr<nsIThread> treeThread;
   rv = threadMgr->NewThread(0, getter_AddRefs(treeThread));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -181,6 +180,22 @@ sbFileSystemTree::RunBuildThread()
 
   rv = mRootFile->InitWithPath(mRootPath);
   NS_ASSERTION(NS_SUCCEEDED(rv), "Could not InitWithPath a nsILocalFile!");
+
+  // Before building the tree, ensure that root file does exist.
+  PRBool exists = PR_FALSE;
+  if ((NS_FAILED(mRootFile->Exists(&exists))) || !exists) {
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbFileSystemTree, this, NotifyRootPathIsMissing);
+    NS_ASSERTION(runnable,
+                 "Could not create a runnable for NotifyRootPathIsMissing()!");
+
+    rv = mOwnerContextThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ASSERTION(NS_SUCCEEDED(rv), 
+                 "Could not Dispatch NotifyRootPathIsMissing()!");
+
+    // Don't bother trying to build the rest of the tree
+    return;
+  }
 
   {
     // Don't allow any changes to structure
@@ -263,6 +278,17 @@ sbFileSystemTree::NotifyBuildComplete()
 
   // Don't hang on to the values in |mDiscoveredDirs|.
   mDiscoveredDirs.Clear();
+}
+
+void
+sbFileSystemTree::NotifyRootPathIsMissing()
+{
+  nsAutoLock listenerLock(mListenersLock);
+
+  PRUint32 count = mListeners.Length();
+  for (PRUint32 i = 0; i < count; i++) {
+    mListeners[i]->OnRootPathMissing();
+  }
 }
 
 void 

@@ -284,6 +284,12 @@ protected:
 
   //
   // \brief Internal method for informing tree listeners that the tree could
+  //        not start up because the root watch path is not available.
+  //
+  void NotifyRootPathIsMissing();
+
+  //
+  // \brief Internal method for informing tree listeners that the tree could
   //        not be restored from a previous session on the main thread.
   //
   void NotifySessionLoadError();
