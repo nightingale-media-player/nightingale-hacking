@@ -11,8 +11,10 @@
 ./xulrunner/libtag.so
 ./songbird.desktop
 ./searchplugins/yahoo-lyrics.xml
+./searchplugins/skreemr.xml
 ./searchplugins/google-lyrics.xml
 ./lib/sbGStreamer.so
+./lib/liboil-0.3.so
 ./gst-plugins/libgstnavigationtest.so
 ./gst-plugins/libgstdebug.so
 ./extensions/rubberducky@songbirdnest.com/install.rdf
@@ -29,6 +31,7 @@
 ./components/sbMetadataManager.xpt
 ./components/sbMetadataManager.so
 ./components/sbMetadataImageScanner.js
+./components/sbMetadataAlbumArtFetcher.so
 ./components/sbGStreamer.xpt
 ./components/sbGStreamer.so
 ./components/XPCOMUtils.jsm

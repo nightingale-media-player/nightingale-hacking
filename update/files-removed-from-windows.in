@@ -11,6 +11,7 @@
 ./tag_c.dll
 ./tag.dll
 ./searchplugins/yahoo-lyrics.xml
+./searchplugins/skreemr.xml
 ./searchplugins/google-lyrics.xml
 ./plugins/vlcmodules/libxtag_plugin.dll
 ./plugins/vlcmodules/libxml_plugin.dll
@@ -214,10 +215,12 @@
 ./plugins/vlcmodules/
 ./plugins/npvlc.dll
 ./lib/sbGStreamer.dll
+./lib/oil-0.3-0.dll
 ./lib/ogg.dll
 ./lib/libvorbisfile-3.dll
 ./lib/libvorbisenc-2.dll
 ./lib/libvorbis-0.dll
+./gst-plugins/gstqtwrapper.dll
 ./gst-plugins/gstnavigationtest.dll
 ./gst-plugins/gstdebug.dll
 ./gst-plugins/dshowdecwrapper.dll
@@ -235,6 +238,7 @@
 ./components/sbMetadataManager.xpt
 ./components/sbMetadataManager.dll
 ./components/sbMetadataImageScanner.js
+./components/sbMetadataAlbumArtFetcher.dll
 ./components/sbGStreamer.xpt
 ./components/XPCOMUtils.jsm
 ./components/WindowUtils.jsm

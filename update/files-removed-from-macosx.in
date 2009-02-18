@@ -1,4 +1,5 @@
 ./Contents/Resources/searchplugins/yahoo-lyrics.xml
+./Contents/Resources/searchplugins/skreemr.xml
 ./Contents/Resources/searchplugins/google-lyrics.xml
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/VLC Plugin.rsrc
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj/InfoPlist.strings
@@ -225,8 +226,10 @@
 ./Contents/Resources/plugins/VLC.plugin/Contents/
 ./Contents/Resources/plugins/VLC.plugin/
 ./Contents/Resources/lib/sbGStreamer.dylib
+./Contents/Resources/lib/liboil-0.3.dylib
 ./Contents/Resources/lib/libiconv.dylib
 ./Contents/Resources/lib/libcharset.dylib
+./Contents/Resources/gst-plugins/libgstqtwrapper.so
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf
@@ -252,6 +255,7 @@
 ./Contents/Resources/components/sbMetadataManager.xpt
 ./Contents/Resources/components/sbMetadataManager.dylib
 ./Contents/Resources/components/sbMetadataImageScanner.js
+./Contents/Resources/components/sbMetadataAlbumArtFetcher.dylib
 ./Contents/Resources/components/sbGStreamer.xpt
 ./Contents/Resources/components/XPCOMUtils.jsm
 ./Contents/Resources/components/WindowUtils.jsm
