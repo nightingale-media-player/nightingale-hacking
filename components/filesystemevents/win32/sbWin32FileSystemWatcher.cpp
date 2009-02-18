@@ -99,6 +99,7 @@ DWORD WINAPI BackgroundThreadProc(void *p)
     
     SleepEx(100, TRUE);
   }
+  watcher->Cleanup();
 
   watcher->SetIsThreadRunning(PR_FALSE);
   return 0;
@@ -157,7 +158,15 @@ sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
     return NS_OK;
   }
 
-  Cleanup();
+  mShouldRunThread = PR_FALSE;
+
+  if (mTimer) {
+    mTimer->Cancel();
+  }
+
+  if (mRebuildThread) {
+    mRebuildThread->Shutdown();
+  }
 
   return sbBaseFileSystemWatcher::StopWatching(aShouldSaveSession);
 }
@@ -165,12 +174,6 @@ sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 void
 sbWin32FileSystemWatcher::Cleanup()
 {
-  mShouldRunThread = PR_FALSE;
-
-  if (mTimer) {
-    mTimer->Cancel();
-  }
-
   if (mBuffer) {
     nsMemory::Free(mBuffer);
     mBuffer = NULL;
@@ -180,10 +183,7 @@ sbWin32FileSystemWatcher::Cleanup()
     CloseHandle(mRootDirHandle);
     mRootDirHandle = INVALID_HANDLE_VALUE;
   }
-  
-  if (mRebuildThread) {
-    mRebuildThread->Shutdown();
-  }
+
 }
 
 void
@@ -200,26 +200,28 @@ sbWin32FileSystemWatcher::InitRebuildThread()
 void
 sbWin32FileSystemWatcher::WatchNextChange()
 {
-  DWORD flags =
+  DWORD const flags =
     FILE_NOTIFY_CHANGE_FILE_NAME |
     FILE_NOTIFY_CHANGE_DIR_NAME |
     FILE_NOTIFY_CHANGE_LAST_WRITE |
     FILE_NOTIFY_CHANGE_CREATION;
-  
-  BOOL result =
-    ReadDirectoryChangesW(mRootDirHandle,
-                          mBuffer,
-                          BUFFER_LEN,
-                          TRUE,  // watch subdirs
-                          flags,
-                          NULL,
-                          &mOverlapped,
-                          ReadDirectoryChangesWCallbackRoutine);
-  if (!result) {
-    NS_WARNING("ERROR: Could not ReadDirectoryChangesW()");
-    if (mRootDirHandle != INVALID_HANDLE_VALUE) {
-      CloseHandle(mRootDirHandle);
-      mRootDirHandle = INVALID_HANDLE_VALUE;
+
+  if (mRootDirHandle != INVALID_HANDLE_VALUE) {
+    BOOL result =
+      ReadDirectoryChangesW(mRootDirHandle,
+                            mBuffer,
+                            BUFFER_LEN,
+                            TRUE,  // watch subdirs
+                            flags,
+                            NULL,
+                            &mOverlapped,
+                            ReadDirectoryChangesWCallbackRoutine);
+    if (!result) {
+      NS_WARNING("ERROR: Could not ReadDirectoryChangesW()");
+      if (mRootDirHandle != INVALID_HANDLE_VALUE) {
+        CloseHandle(mRootDirHandle);
+        mRootDirHandle = INVALID_HANDLE_VALUE;
+      }
     }
   }
 }

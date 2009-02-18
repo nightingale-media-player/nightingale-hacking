@@ -104,6 +104,7 @@ public:
   void WatchNextChange();
 
 protected:
+  friend DWORD WINAPI BackgroundThreadProc(void *p);
   void Cleanup();
   void InitRebuildThread();
 

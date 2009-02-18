@@ -139,9 +139,18 @@ sbFSListener.prototype =
     this._changeFile.remove(false);
     this._changeFile = null;
 
-    this._watchDir.remove(true);
-    this._watchDir = null;
-
+    var retry = 5;
+    while (retry) {
+      try {
+       this._watchDir.remove(true);
+       this._watchDir = null;
+       retry = 0;
+      } catch (e) {
+        // Try a few more times, sometimes the watche doesn't clean up in time
+        --retry;
+        sleep(1000);
+      }
+    }
     this._log("... ensuring events were received");
 
     // Ensure that all three of the events have been received.
