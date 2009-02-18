@@ -529,6 +529,14 @@ sbWatchFolderService::HandleSessionLoadError()
     }
 
     mFileSystemWatcherGUID.Truncate();
+
+    // Clear the GUID preference.
+    nsCOMPtr<nsIPrefBranch2> prefBranch =
+      do_GetService("@mozilla.org/preferences-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   
   rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
