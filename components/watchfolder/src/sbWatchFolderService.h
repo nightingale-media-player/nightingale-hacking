@@ -89,18 +89,80 @@ public:
                                 const nsModuleComponentInfo *aInfo);
 
 protected:
+  //
+  // \brief Internal delayed startup handling method. 
+  //
   nsresult InitInternal();
+
+  //
+  // \brief Handles starting up the file system watcher, timers, and other
+  //        member resources used to track changes.
+  //
   nsresult StartWatchingFolder();
+
+  //
+  // \brief Handle shutting down the file system watcher, timer, and other
+  //        member resources that are being used to track changes.
+  //
   nsresult StopWatchingFolder();
-  nsresult SetEventPumpTimer();
+  
+  //
+  // \brief Set the startup delay timer. This method is used to postpone 
+  //        watchfolder bootstrapping.
+  //
   nsresult SetStartupDelayTimer();
-  nsresult ProcessEventPaths(sbStringVector & aEventPathVector,
-                             EProcessType aProcessType);
+
+  //
+  // \brief Set the standard event pump timer. This method should be called
+  //        everytime a event is received.
+  //        NOTE: This method will not init the event pump timer if the 
+  //              |sbIFileSystemWatcher| has not started watching.
+  //
+  nsresult SetEventPumpTimer();
+
+  //
+  // \brief This method will handle processing all the normal events (i.e. not
+  //        delayed events). 
+  //
+  nsresult ProcessEventPaths();
+
+  //
+  // \brief Handle a set of changed paths for changed and removed items. This
+  //        method will look up media items by contentURL.
+  //
+  nsresult HandleEventPathList(sbStringVector & aEventPathVector,
+                               EProcessType aProcessType);
+  
+  //
+  // \brief Handle the set of added paths to the library.
+  //
   nsresult ProcessAddedPaths();
+
+  //
+  // \brief Enumerate media items in the library with the given paths.
+  //
   nsresult EnumerateItemsByPaths(sbStringVector & aPathVector);
+
+  //
+  // \brief Get a |nsIURI| instance for a given absolute path.
+  //
   nsresult GetFilePathURI(const nsAString & aFilePath, nsIURI **aURIRetVal);
+  
+  //
+  // \brief Get the main Songbird window.
+  //
   nsresult GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow);
+  
+  //
+  // \brief Handle the situation where the watcher fails to load a saved
+  //        session.
+  //
   nsresult HandleSessionLoadError();
+  
+  //
+  // \brief Handle the situation where the watcher reports that the root watch
+  //        folder path is missing.
+  //
   nsresult HandleRootPathMissing();
 
 private:
@@ -108,7 +170,6 @@ private:
   nsCOMPtr<sbILibrary>           mMainLibrary;
   nsCOMPtr<sbILibraryUtils>      mLibraryUtils;
   nsCOMPtr<nsITimer>             mEventPumpTimer;
-  nsCOMPtr<nsITimer>             mAddDelayTimer;
   nsCOMPtr<nsITimer>             mChangeDelayTimer;
   nsCOMPtr<nsITimer>             mStartupDelayTimer;
   nsCOMPtr<nsITimer>             mFlushFSWatcherTimer;
@@ -123,12 +184,10 @@ private:
   PRBool                         mHasWatcherStarted;
   PRBool                         mShouldReinitWatcher;
   PRBool                         mEventPumpTimerIsSet;
-  PRBool                         mAddDelayTimerIsSet;
+  PRBool                         mShouldProcessEvents;
   PRBool                         mChangeDelayTimerIsSet;
-  PRBool                         mShouldProcessAddedPaths;
   EProcessType                   mCurrentProcessType;
 };
-
 
 #endif  // sbWatchFolderService_h_
 

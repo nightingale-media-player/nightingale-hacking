@@ -58,12 +58,13 @@
 
 #define STARTUP_TIMER_DELAY      3000
 #define FLUSH_FS_WATCHER_DELAY   1000
-#define ADD_DELAY_TIMER_DELAY    1500
 #define CHANGE_DELAY_TIMER_DELAY 30000
 #define EVENT_PUMP_TIMER_DELAY   1000
 
 typedef sbStringVector::const_iterator sbStringVectorIter;
 
+
+//------------------------------------------------------------------------------
 
 NS_IMPL_ISUPPORTS5(sbWatchFolderService,
                    sbIWatchFolderService,
@@ -77,10 +78,8 @@ sbWatchFolderService::sbWatchFolderService()
   mHasWatcherStarted = PR_FALSE;
   mShouldReinitWatcher = PR_FALSE;
   mEventPumpTimerIsSet = PR_FALSE;
-  mAddDelayTimerIsSet = PR_FALSE;
   mChangeDelayTimerIsSet = PR_FALSE;
-  mShouldProcessAddedPaths = PR_FALSE;
-
+  mShouldProcessEvents = PR_FALSE;
   mCurrentProcessType = eNone;
 }
 
@@ -285,23 +284,6 @@ sbWatchFolderService::StopWatchingFolder()
 }
 
 nsresult
-sbWatchFolderService::SetEventPumpTimer()
-{
-  if (mEventPumpTimerIsSet) {
-    return NS_OK;
-  }
-
-  nsresult rv;
-  rv = mEventPumpTimer->InitWithCallback(this,
-                                         EVENT_PUMP_TIMER_DELAY,
-                                         nsITimer::TYPE_ONE_SHOT);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  mEventPumpTimerIsSet = PR_TRUE;
-  return NS_OK;
-}
-
-nsresult
 sbWatchFolderService::SetStartupDelayTimer()
 {
   nsresult rv;
@@ -316,8 +298,59 @@ sbWatchFolderService::SetStartupDelayTimer()
 }
 
 nsresult
-sbWatchFolderService::ProcessEventPaths(sbStringVector & aEventPathVector,
-                                        EProcessType aProcessType)
+sbWatchFolderService::SetEventPumpTimer()
+{
+  if (mHasWatcherStarted) {
+    if (mEventPumpTimerIsSet) {
+      // The event pump timer is already set, but more events have been 
+      // received. Set this flags so that the timer will re-arm itself
+      // when it is fired.
+      mShouldProcessEvents = PR_FALSE;
+    }
+    else {
+      nsresult rv = 
+        mEventPumpTimer->InitWithCallback(this,
+                                          EVENT_PUMP_TIMER_DELAY,
+                                          nsITimer::TYPE_ONE_SHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mEventPumpTimerIsSet = PR_TRUE;
+      mShouldProcessEvents = PR_TRUE;
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::ProcessEventPaths()
+{
+  // For now, just process remove, added, and changed paths.
+  nsresult rv;
+
+  //
+  // NOTE: Once bug 15367 has been finished, this method will short-circuit
+  //       this case to try and detect moves/renames.
+  //
+  if (mRemovedPaths.size() == mAddedPaths.size()) {
+    NS_WARNING("POSSIBLE MOVE DETECTED... SEE BUG 15367!");
+  }
+
+  rv = HandleEventPathList(mRemovedPaths, eRemoval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = ProcessAddedPaths();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = HandleEventPathList(mChangedPaths, eChanged);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::HandleEventPathList(sbStringVector & aEventPathVector,
+                                          EProcessType aProcessType)
 {
   if (aEventPathVector.empty()) {
     return NS_OK;
@@ -612,11 +645,6 @@ sbWatchFolderService::OnWatcherStarted()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  if (!mAddDelayTimer) {
-    mAddDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   if (!mChangeDelayTimer) {
     mChangeDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -625,24 +653,13 @@ sbWatchFolderService::OnWatcherStarted()
   // Process any event received before the watcher has started. These will
   // be all the events from comparing the de-serialized session to the current
   // filesystem state.
-  if (mChangedPaths.size() > 0) {
-    rv = SetEventPumpTimer();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  if (mAddedPaths.size() > 0) {
-    rv = mAddDelayTimer->InitWithCallback(this,
-                                          ADD_DELAY_TIMER_DELAY,
-                                          nsITimer::TYPE_ONE_SHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
+  rv = mEventPumpTimer->InitWithCallback(this,
+                                        EVENT_PUMP_TIMER_DELAY,
+                                        nsITimer::TYPE_ONE_SHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-    mAddDelayTimerIsSet = PR_TRUE;
-    mShouldProcessAddedPaths = PR_TRUE;
-  }
-  if (mRemovedPaths.size() > 0) {
-    rv = SetEventPumpTimer();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
+  mEventPumpTimerIsSet = PR_TRUE;
+  mShouldProcessEvents = PR_TRUE;
   mHasWatcherStarted = PR_TRUE;
 
   return NS_OK;
@@ -653,9 +670,6 @@ sbWatchFolderService::OnWatcherStopped()
 {
   if (mEventPumpTimer) {
     mEventPumpTimer->Cancel();
-  }
-  if (mAddDelayTimer) {
-    mAddDelayTimer->Cancel();
   }
   if (mChangeDelayTimer) {
     mChangeDelayTimer->Cancel();
@@ -714,7 +728,6 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
   // watcher has started. Don't set the timer until then.
   if (mHasWatcherStarted) {
     // See if the changed path queue already has this path inside of it.
-
     PRBool foundMatchingPath = PR_FALSE;
     sbStringVectorIter begin = mChangedPaths.begin();
     sbStringVectorIter end = mChangedPaths.end();
@@ -759,12 +772,10 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
   mRemovedPaths.push_back(nsString(aFilePath));
 
-  // The watcher will report all changes from the previous session before the
-  // watcher has started. Don't set the timer until then.
-  if (mHasWatcherStarted) {
-    nsresult rv = SetEventPumpTimer();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // The method will guard against |mHasWatcherStarted|
+  nsresult rv = SetEventPumpTimer();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
@@ -773,26 +784,9 @@ sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
   mAddedPaths.push_back(nsString(aFilePath));
 
-  // The watcher will report all changes from the previous session before the
-  // watcher has started. Don't set the timer until then.
-  if (mHasWatcherStarted) {
-    if (mAddDelayTimerIsSet) {
-      // The timer is currently set, and more added events have been received.
-      // Toggle || so that the timer will reset itself instead of processing
-      // the added event paths when it fires.
-      mShouldProcessAddedPaths = PR_FALSE;
-    }
-    else {
-      nsresult rv;
-      rv = mAddDelayTimer->InitWithCallback(this,
-                                            ADD_DELAY_TIMER_DELAY,
-                                            nsITimer::TYPE_ONE_SHOT);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      mAddDelayTimerIsSet = PR_TRUE;
-      mShouldProcessAddedPaths = PR_TRUE;
-    }
-  }
+  // The method will guard against |mHasWatcherStarted|
+  nsresult rv = SetEventPumpTimer();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -889,40 +883,27 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
 
   // Standard processing of removed and non-queued changed paths.
   else if (aTimer == mEventPumpTimer) {
-    rv = ProcessEventPaths(mChangedPaths, eChanged);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = ProcessEventPaths(mRemovedPaths, eRemoval);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    mEventPumpTimerIsSet = PR_FALSE;
-  }
-
-  // Check to see if added paths should be processed.
-  else if (aTimer == mAddDelayTimer) {
-    // If there has been no further add events for a second, begin to process
-    // the added path queue.
-    if (mShouldProcessAddedPaths) {
-      rv = ProcessAddedPaths();
+    // If no events have been received since the timer was armed, go ahead
+    // and process the events. If not, re-arm the timer.
+    if (mShouldProcessEvents) {
+      rv = ProcessEventPaths();
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mAddDelayTimerIsSet = PR_FALSE;
+      mEventPumpTimerIsSet = PR_FALSE;
     }
     else {
-      // More added events were received while the timer was set. Try and
-      // wait another timer session before processing events.
-      rv = mAddDelayTimer->InitWithCallback(this,
-                                            ADD_DELAY_TIMER_DELAY,
-                                            nsITimer::TYPE_ONE_SHOT);
+      rv = mEventPumpTimer->InitWithCallback(this,
+                                             EVENT_PUMP_TIMER_DELAY,
+                                             nsITimer::TYPE_ONE_SHOT);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      mShouldProcessAddedPaths = PR_TRUE;
+      mShouldProcessEvents = PR_TRUE;
     }
   }
 
   // Process queued changed event paths.
   else if (aTimer == mChangeDelayTimer) {
-    rv = ProcessEventPaths(mDelayedChangedPaths, eChanged);
+    rv = HandleEventPathList(mDelayedChangedPaths, eChanged);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mChangeDelayTimerIsSet = PR_FALSE;
