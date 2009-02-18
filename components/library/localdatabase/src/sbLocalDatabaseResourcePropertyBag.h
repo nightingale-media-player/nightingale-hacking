@@ -75,8 +75,8 @@ private:
 
   nsString  mGuid;
   PRUint32  mMediaItemId;
+  
   // Dirty Property ID's
-  PRLock* mDirtyLock;
   nsTHashtable<nsUint32HashKey> mDirty;
 };
 

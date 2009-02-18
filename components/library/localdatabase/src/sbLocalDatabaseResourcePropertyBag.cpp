@@ -69,15 +69,11 @@ sbLocalDatabaseResourcePropertyBag::sbLocalDatabaseResourcePropertyBag(sbLocalDa
 : mCache(aCache)
 , mGuid(aGuid)
 , mMediaItemId(aMediaItemId)
-, mDirtyLock(nsnull)
 {
 }
 
 sbLocalDatabaseResourcePropertyBag::~sbLocalDatabaseResourcePropertyBag()
 {
-  if(mDirtyLock) {
-    nsAutoLock::DestroyLock(mDirtyLock);
-  }
 }
 
 nsresult
@@ -93,9 +89,6 @@ sbLocalDatabaseResourcePropertyBag::Init()
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  mDirtyLock = nsAutoLock::NewLock("sbLocalDatabaseResourcePropertyBag::mDirtyLock");
-  NS_ENSURE_TRUE(mDirtyLock, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -170,7 +163,8 @@ sbLocalDatabaseResourcePropertyBag::GetPropertyByID(PRUint32 aPropertyDBID,
                                                     nsAString& _retval)
 {
   if(aPropertyDBID > 0) {
-    nsAutoLock lock(mDirtyLock);
+    nsAutoMonitor mon(mCache->mMonitor);
+    
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
@@ -189,7 +183,7 @@ sbLocalDatabaseResourcePropertyBag::GetSortablePropertyByID(PRUint32 aPropertyDB
                                                             nsAString& _retval)
 {
   if(aPropertyDBID > 0) {
-    nsAutoLock lock(mDirtyLock);
+    nsAutoMonitor mon(mCache->mMonitor);
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
@@ -224,7 +218,7 @@ sbLocalDatabaseResourcePropertyBag::
                             nsAString& _retval)
 {
   if(aPropertyDBID > 0) {
-    nsAutoLock lock(mDirtyLock);
+    nsAutoMonitor mon(mCache->mMonitor);
     sbPropertyData* data;
 
     if (mValueMap.Get(aPropertyDBID, &data)) {
@@ -294,10 +288,10 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
   rv = dependentProperties->GetLength(&dependentPropertyCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsAutoMonitor mon(mCache->mMonitor);
+
   rv = PutValue(propertyDBID, aValue);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  PR_Lock(mDirtyLock);
 
   PRUint32 previousDirtyCount = mDirty.Count();
   
@@ -323,8 +317,6 @@ sbLocalDatabaseResourcePropertyBag::SetProperty(const nsAString & aPropertyID,
       }
     }
   }
-  
-  PR_Unlock(mDirtyLock);
 
   // If this bag just became dirty, then let the property cache know.
   // Only notify once in order to avoid unnecessarily locking the 
@@ -376,6 +368,7 @@ sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
   nsAutoPtr<sbPropertyData> data(new sbPropertyData(aValue, 
                                                     EmptyString(), 
                                                     EmptyString()));
+  nsAutoMonitor mon(mCache->mMonitor);
   PRBool success = mValueMap.Put(aPropertyID, data);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   data.forget();
@@ -398,10 +391,8 @@ sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>
 nsresult
 sbLocalDatabaseResourcePropertyBag::ClearDirty()
 {
-  nsAutoLock lockDirty(mDirtyLock);
-
+  nsAutoMonitor mon(mCache->mMonitor);
   mDirty.Clear();
-
   return NS_OK;
 }
 

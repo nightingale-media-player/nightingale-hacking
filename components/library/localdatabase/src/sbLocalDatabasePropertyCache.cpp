@@ -104,7 +104,7 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
   mCache(sbLocalDatabasePropertyCache::CACHE_SIZE),
   mIsShuttingDown(PR_FALSE),
   mFlushThreadMonitor(nsnull),
-  mCacheMonitor(nsnull),
+  mMonitor(nsnull),
   mLibrary(nsnull),
   mSortInvalidateJob(nsnull)
 {
@@ -118,8 +118,8 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
-  if (mCacheMonitor) {
-    nsAutoMonitor::DestroyMonitor(mCacheMonitor);
+  if (mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
   }
   if (mFlushThreadMonitor) {
     nsAutoMonitor::DestroyMonitor(mFlushThreadMonitor);
@@ -156,8 +156,8 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mCacheMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mCacheMonitor");
-  NS_ENSURE_TRUE(mCacheMonitor, NS_ERROR_OUT_OF_MEMORY);
+  mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   rv = LoadProperties();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -692,7 +692,7 @@ sbLocalDatabasePropertyCache::CacheProperties(const PRUnichar **aGUIDArray,
   // thread coming in behind us and thinking there's misses when they're
   // going to be loaded.
   {
-    nsAutoMonitor mon(mCacheMonitor);
+    nsAutoMonitor mon(mMonitor);
 
     for (PRUint32 i = 0; i < aGUIDArrayCount; i++) {
 
@@ -776,7 +776,7 @@ sbLocalDatabasePropertyCache::GetProperties(const PRUnichar **aGUIDArray,
   PRUint32 i;
   PRBool cacheUpdated = PR_FALSE;
 
-  nsAutoMonitor mon(mCacheMonitor);
+  nsAutoMonitor mon(mMonitor);
 
   for (i = 0; i < aGUIDArrayCount; i++) {
 
@@ -880,7 +880,7 @@ sbLocalDatabasePropertyCache::SetProperties(const PRUnichar **aGUIDArray,
 
   sbAutoBatchHelper batchHelper(*mLibrary);
 
-  nsAutoMonitor mon(mCacheMonitor);
+  nsAutoMonitor mon(mMonitor);
 
   for(PRUint32 i = 0; i < aGUIDArrayCount; i++) {
     nsDependentString const guid(aGUIDArray[i]);
@@ -1115,7 +1115,7 @@ sbLocalDatabasePropertyCache::Write()
     DirtyItems dirtyItems;
 
     //Lock it.
-    nsAutoMonitor mon(mCacheMonitor);
+    nsAutoMonitor mon(mMonitor);
 
     if (!mDirty.Count()) {
       return NS_OK;
@@ -1460,7 +1460,7 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   NS_ENSURE_ARG_POINTER(aBag);
   nsAutoString guid(aGuid);
 
-  nsAutoMonitor mon(mCacheMonitor);
+  nsAutoMonitor mon(mMonitor);
 
   // If another bag for the same guid is already in the dirty list, then we
   // risk losing information if we don't write out immediately.

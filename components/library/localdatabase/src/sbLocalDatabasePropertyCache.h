@@ -177,8 +177,8 @@ private:
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
-  // Used to protect mCache and mDirty
-  PRMonitor* mCacheMonitor;
+  // Used to protect the cache and all of the resource property bags
+  PRMonitor* mMonitor;
 
   // Cache for GUID -> property bag
   InterfaceCache mCache;
