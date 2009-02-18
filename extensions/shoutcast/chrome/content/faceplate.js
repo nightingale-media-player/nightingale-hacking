@@ -21,33 +21,36 @@ var sbShoutcastFaceplate = {
       'sb-player-repeat-button', 'sb-player-forward-button'],
 };
 
+sbShoutcastFaceplate.setFaceplateIcon = function() {
+	if (gMM.sequencer.view == null)
+		return;
+	var list = gMM.sequencer.view.mediaList;
+	var stationIcon = document.getElementById("shoutcast-station-icon");
+	var stopButton = document.getElementById("play_stop_button");
+	var playButton = document.getElementById("play_pause_button");
+	if (list.getProperty(SBProperties.customType) ==
+			"radio_tempStreamList")
+	{
+		// we're playing a SHOUTcast station
+		stationIcon.style.visibility = "visible";
+		for (var i in sbShoutcastFaceplate.disableTags) {
+			var elements = document.getElementsByTagName(
+								sbShoutcastFaceplate.disableTags[i]);
+			for (var j=0; j<elements.length; j++) {
+				elements[j].setAttribute('disabled', 'true');
+			}
+		}
+		playButton.setAttribute("hidden", "true");
+		stopButton.removeAttribute("hidden");
+	} else {
+		sbShoutcastFaceplate.resetButtons();
+	}
+}
 sbShoutcastFaceplate.onMediacoreEvent = function(e) {
 	var item = e.data;
 	switch (e.type) {
 		case Ci.sbIMediacoreEvent.VIEW_CHANGE:
-			if (gMM.sequencer.view == null)
-				return;
-			var list = gMM.sequencer.view.mediaList;
-			var stationIcon = document.getElementById("shoutcast-station-icon");
-			var stopButton = document.getElementById("play_stop_button");
-			var playButton = document.getElementById("play_pause_button");
-			if (list.getProperty(SBProperties.customType) ==
-					"radio_tempStreamList")
-			{
-				// we're playing a SHOUTcast station
-				stationIcon.style.visibility = "visible";
-				for (var i in sbShoutcastFaceplate.disableTags) {
-					var elements = document.getElementsByTagName(
-										sbShoutcastFaceplate.disableTags[i]);
-					for (var j=0; j<elements.length; j++) {
-						elements[j].setAttribute('disabled', 'true');
-					}
-				}
-				playButton.setAttribute("hidden", "true");
-				stopButton.removeAttribute("hidden");
-			} else {
-				sbShoutcastFaceplate.resetButtons();
-			}
+			sbShoutcastFaceplate.setFaceplateIcon();
 			break;
 		case Ci.sbIMediacoreEvent.STREAM_END:
 		case Ci.sbIMediacoreEvent.STREAM_STOP:
@@ -75,6 +78,7 @@ sbShoutcastFaceplate.resetButtons = function(e) {
 }
 
 window.addEventListener('load', function () {
+	sbShoutcastFaceplate.setFaceplateIcon();
 	gMM.addListener(sbShoutcastFaceplate);
 }, false);
 
