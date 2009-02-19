@@ -97,7 +97,15 @@ sbLinuxFileSystemWatcher::AddInotifyHook(nsAString & aDirPath)
                                        NS_ConvertUTF16toUTF8(aDirPath).get(),
                                        watchFlags);
   if (pathFileDesc == -1) {
-    NS_ASSERTION(pathFileDesc, "Could not add a inotify watch path!!");
+    NS_WARNING("Could not add a inotify watch path!!");
+    
+    // Notify the listener of an invalid path error.
+    nsresult rv = 
+      mListener->OnWatcherError(sbIFileSystemListener::INVALID_DIRECTORY,
+                                aDirPath);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Could not notify listener of INVALID_DIRECTORY!");
+    
     return NS_ERROR_UNEXPECTED;
   }
 
@@ -200,7 +208,7 @@ sbLinuxFileSystemWatcher::OnChangeFound(nsAString & aChangePath,
 
     if (isDir) {
       rv = AddInotifyHook(aChangePath);
-      NS_ENSURE_SUCCESS(rv, rv);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a inotify hook!");
     }
   }
 
@@ -233,14 +241,19 @@ sbLinuxFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
   g_io_channel_unref(ioc);
 
   // Add the root path, it will not be included in the passed in array.
-  nsresult rv = AddInotifyHook(mWatchPath);
-  NS_ENSURE_SUCCESS(rv, rv);
   
+  // The tree gurantess that |mWatchPath| exists when this method is called.
+  // However, if inotify fails to set itself up, report an invalid dir error.
+  nsresult rv = AddInotifyHook(mWatchPath);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+                   "Could not add inotify hook for the root watch path!");
+
   // Add the other directories that were discovered in the tree build.
   PRUint32 pathCount = aDirPathArray.Length();
   for (PRUint32 i = 0; i < pathCount; i++) {
     rv = AddInotifyHook(aDirPathArray[i]);
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Could not add inotify hook for a directory path!");
   }
 
   mIsWatching = PR_TRUE;
