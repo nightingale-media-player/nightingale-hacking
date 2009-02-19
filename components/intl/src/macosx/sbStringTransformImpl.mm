@@ -155,7 +155,11 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
         }
       }
       
+      // make sure we're still in sync
       NS_ASSERTION(original[optr] != 0, "error with optr position tracking");
+      // but just in case...
+      if (!original[optr])
+        optr--;
     }
     
   }
