@@ -1,4 +1,4 @@
-/*
+ /*
 //
 // BEGIN SONGBIRD GPL
 //
@@ -33,6 +33,8 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <Foundation/Foundation.h>
+
+#include "sbLeadingNumbers.h"
 
 sbStringTransformImpl::sbStringTransformImpl()
 {
@@ -101,34 +103,61 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
     }
   }
   
-  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) {
+  const PRUnichar *original = (const PRUnichar *)aInput.BeginReading();
+  if ((aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS) ||
+      (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) ||
+      (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE)) {
     NSCharacterSet *symbols = [NSCharacterSet symbolCharacterSet];
-    
-    for(int current = 0; current < [str length]; ++current) {
-      unichar c = [str characterAtIndex:current];
-      if([symbols characterIsMember:c]) {
-        [str replaceCharactersInRange:NSMakeRange(current--, 1) withString:@""];
-      } else {
-        if (leadingOnly) {
-          break;
-        }
-      }
-    }
-  }
-
-  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
     NSCharacterSet *alphaNumSet = [NSCharacterSet alphanumericCharacterSet];
+    PRBool bypassSymbolFiltering = false;
+    PRBool bypassNonalnumFiltering = false;
     
-    for(int current = 0; current < [str length]; ++current) {
+    for(int current = 0, optr = 0; current < [str length]; ++current, ++optr) {
+      if (bypassSymbolFiltering &&
+          bypassNonalnumFiltering) 
+        break;
+      
       unichar c = [str characterAtIndex:current];
-      if(![alphaNumSet characterIsMember:c]) {
-        [str replaceCharactersInRange:NSMakeRange(current--, 1) withString:@""];
-      } else {
-        if (leadingOnly) {
-          break;
+
+      if (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS) {
+        PRInt32 numberLength;
+        SB_ExtractLeadingNumber(original + optr, NULL, NULL, &numberLength);
+        if (numberLength > 0) {
+          current += numberLength-1;
+          optr += numberLength-1;
+          if (leadingOnly) {
+            break;
+          }
+          continue;
         }
       }
+    
+      if (!bypassSymbolFiltering && (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS)) {
+        if([symbols characterIsMember:c]) {
+          [str replaceCharactersInRange:NSMakeRange(current--, 1) withString:@""];
+        } else {
+          if (leadingOnly) {
+            bypassSymbolFiltering = true;
+          }
+        }
+      }
+
+      if (!bypassNonalnumFiltering && 
+          ((aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) ||
+           (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE))) {
+        if(![alphaNumSet characterIsMember:c] &&
+          ((c != ' ') || (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE))) {
+          [str replaceCharactersInRange:NSMakeRange(current--, 1) withString:@""];
+        } else {
+          if (leadingOnly) {
+            bypassNonalnumFiltering = true;
+          }
+        }
+      }
+      
+      NS_ASSERTION(original[optr] != 0, "error with optr position tracking");
     }
+    
   }
   
   unichar *buf = (unichar *) malloc(sizeof(unichar) * [str length]);

@@ -273,8 +273,9 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
   // be recognized by the articles removal code since the pattern is "*, The".
   rv = stringTransform->
          NormalizeString(EmptyString(), 
-                         sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM |
-                         sbIStringTransform::TRANSFORM_IGNORE_LEADING, 
+                         sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                         sbIStringTransform::TRANSFORM_IGNORE_LEADING |
+                         sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS, 
                          val,
                          outVal);
   NS_ENSURE_SUCCESS(rv, rv);

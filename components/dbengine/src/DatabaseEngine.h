@@ -58,24 +58,7 @@
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 
-#ifdef XP_MACOSX
-#include <Carbon/Carbon.h>
-#else
-#ifdef XP_UNIX
-#include <glib.h>
-#endif
-#endif
-
-#if defined(XP_MACOSX)
-#define UTF16_CHARTYPE UniChar
-#define NATIVE_CHAR_TYPE UniChar
-#elif defined(XP_UNIX)
-#define UTF16_CHARTYPE gunichar2
-#define NATIVE_CHAR_TYPE gunichar
-#elif defined(XP_WIN)
-#define UTF16_CHARTYPE wchar_t
-#define NATIVE_CHAR_TYPE wchar_t
-#endif
+#include "sbLeadingNumbers.h"
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \

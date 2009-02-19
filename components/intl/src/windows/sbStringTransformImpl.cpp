@@ -30,6 +30,7 @@
 #include <nsStringGlue.h>
 
 #include <prmem.h>
+#include "sbLeadingNumbers.h"
 
 sbStringTransformImpl::sbStringTransformImpl()
 {
@@ -45,7 +46,7 @@ sbStringTransformImpl::Init() {
 }
 
 unsigned long 
-sbStringTransformImpl::MakeFlags(PRUint32 aFlags, 
+sbStringTransformImpl::MakeFlags(PRUint32 aFlags,
                                  nsTArray<WORD> aExcludeChars[NTYPES],
                                  nsTArray<WORD> aIncludeChars[NTYPES])
 {
@@ -69,14 +70,17 @@ sbStringTransformImpl::MakeFlags(PRUint32 aFlags,
     aExcludeChars[C3].AppendElement(C3_VOWELMARK);
   }
 
-  if(aFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
+  if((aFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) ||
+     (aFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE)) {
     aExcludeChars[C3].AppendElement(C3_LEXICAL);
     aExcludeChars[C1].AppendElement(C1_PUNCT);
     aIncludeChars[C3].AppendElement(C3_ALPHA);
     aIncludeChars[C2].AppendElement(C2_EUROPENUMBER);
     aIncludeChars[C1].AppendElement(C1_DIGIT);
-    aIncludeChars[C1].AppendElement(C1_BLANK);
     aIncludeChars[C1].AppendElement(C1_ALPHA);
+    if (aFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE) {
+      aExcludeChars[C1].AppendElement(C1_SPACE);
+    }
   }
 
   return actualFlags;
@@ -131,7 +135,8 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 
   if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONSPACE ||
      aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_SYMBOLS ||
-     aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
+     aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM ||
+     aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE) {
     PRBool leadingOnly = aTransformFlags & 
                          sbIStringTransform::TRANSFORM_IGNORE_LEADING;
     PRBool bypassTest = PR_FALSE;
@@ -196,8 +201,22 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
 
     for(int current = 0; current < requiredBufferSize; ++current) {
       PRBool validChar = PR_TRUE;
+      PRInt32 skipChars = 0;
 
       if (!bypassTest) {
+        if (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS) {
+          PRInt32 numberLength;
+          SB_ExtractLeadingNumber(bufferStr.BeginReading() + current, NULL, NULL, &numberLength);
+          if (numberLength > 0) {
+            finalStr.Append(bufferStr.BeginReading() + current, numberLength);
+            current += numberLength-1;
+            if (leadingOnly) {
+              bypassTest = PR_TRUE;
+            }
+            continue;
+          }
+        }
+        
         // first check if the char is excluded by any of its type flags
         for (int type = FIRSTTYPE; type <= LASTTYPE && validChar; type++) {
           PRUint32 excludeCharsLength = excludeChars[type].Length();
@@ -229,13 +248,14 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
           validChar = PR_FALSE;    
         }
       }
-      
+            
       if(validChar) {
         if (leadingOnly) {
           bypassTest = PR_TRUE;
         }
         finalStr.Append(bufferStr.CharAt(current));
       }
+      current += skipChars;
     }
 
     delete [] ct1;

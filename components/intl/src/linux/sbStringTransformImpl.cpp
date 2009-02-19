@@ -32,6 +32,7 @@
 #include <prmem.h>
 
 #include <glib.h>
+#include "sbLeadingNumbers.h"
 
 sbStringTransformImpl::sbStringTransformImpl()
 {
@@ -118,10 +119,25 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
     glong strLen = g_utf8_strlen(nosymbolsStr, -1);
     
     for(glong currentChar = 0; currentChar < strLen; ++currentChar) {
-
       gchar* offset = g_utf8_offset_to_pointer(nosymbolsStr, currentChar);
       gunichar unichar = g_utf8_get_char(offset);
       GUnicodeType unicharType = g_unichar_type(unichar);
+
+      if (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS) {
+        PRInt32 numberLength;
+        SB_ExtractLeadingNumber((const gchar *)offset, NULL, NULL, &numberLength);
+        if (numberLength > 0) {
+          for (glong copychar=0;copychar < numberLength;copychar++) {
+            gchar* copyoffset = g_utf8_offset_to_pointer(nosymbolsStr, currentChar+copychar);
+            gunichar unichar = g_utf8_get_char(copyoffset);
+            workingStr += unichar;
+          }
+          currentChar += numberLength-1;
+          if(leadingOnly)
+            bypassTest = PR_TRUE;
+          continue;
+        }
+      }
 
       if(bypassTest ||
          (unicharType != G_UNICODE_CURRENCY_SYMBOL &&
@@ -138,7 +154,8 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
     CopyUTF16toUTF8(workingStr, str); 
   }
 
-  if(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) {
+  if((aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM) ||
+     (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE)) {
     nsString workingStr;
 
     PRBool leadingOnly = aTransformFlags & 
@@ -158,6 +175,22 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
       gunichar unichar = g_utf8_get_char(offset);
       GUnicodeType unicharType = g_unichar_type(unichar);
 
+      if (aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS) {
+        PRInt32 numberLength;
+        SB_ExtractLeadingNumber((const gchar *)offset, NULL, NULL, &numberLength);
+        if (numberLength > 0) {
+          for (glong copychar=0;copychar < numberLength;copychar++) {
+            gchar* copyoffset = g_utf8_offset_to_pointer(nosymbolsStr, currentChar+copychar);
+            gunichar unichar = g_utf8_get_char(copyoffset);
+            workingStr += unichar;
+          }
+          currentChar += numberLength-1;
+          if(leadingOnly)
+            bypassTest = PR_TRUE;
+          continue;
+        }
+      }
+
       if(bypassTest ||
          (unicharType == G_UNICODE_LOWERCASE_LETTER ||
           unicharType == G_UNICODE_MODIFIER_LETTER ||
@@ -166,8 +199,9 @@ sbStringTransformImpl::NormalizeString(const nsAString & aCharset,
           unicharType == G_UNICODE_UPPERCASE_LETTER ||
           unicharType == G_UNICODE_DECIMAL_NUMBER ||
           unicharType == G_UNICODE_LETTER_NUMBER ||
-          unicharType == G_UNICODE_OTHER_NUMBER ||
-          unicharType == G_UNICODE_SPACE_SEPARATOR)) {
+          unicharType == G_UNICODE_OTHER_NUMBER) ||
+          (!(aTransformFlags & sbIStringTransform::TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE) && 
+            unichar == ' ')) {
         workingStr += unichar;
         if(leadingOnly)
           bypassTest = PR_TRUE;

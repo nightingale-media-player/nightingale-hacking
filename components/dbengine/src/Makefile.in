@@ -131,6 +131,7 @@ CPP_SRCS = DatabaseEngineComponent.cpp \
 CPP_INCLUDES = $(srcdir) \
                $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/include \
+               $(topsrcdir)/components/intl/src/ \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/necko \

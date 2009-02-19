@@ -24,44 +24,148 @@
 //
 */
 
-function runTest() {
+function testTransform(aTestIn, aTestExpectedOut, aFlag) {
   var stringTransform = Cc["@songbirdnest.com/Songbird/Intl/StringTransform;1"]
                           .createInstance(Ci.sbIStringTransform);
-                          
-  var normalizeTestIn = "àäâéçîïë l'été est génial";
-  var normalizeTestExpectedOut = "aaaeciie l'ete est genial";
-  
-  var normalizeTestOut = stringTransform.normalizeString("", 
-                                  Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE,
-                                  normalizeTestIn);
-                                  
-  log("Pre-normalized string: " + normalizeTestIn);
-  log("Normalized string: " + normalizeTestOut);
-  assertEqual(normalizeTestOut, normalizeTestExpectedOut);
+  var testOut = stringTransform.normalizeString("", 
+                                  aFlag,
+                                  aTestIn);
+  log("Pre-normalized string: '" + aTestIn + "'");
+  log("Expected normalized string: '" + aTestExpectedOut + "'");
+  log("Normalized string: '" + testOut + "'");
+  assertEqual(testOut, aTestExpectedOut);
+}
 
-  normalizeTestIn = "DP-6";
-  normalizeTestExpectedOut = "DP-6";
-  
-  normalizeTestOut = stringTransform.normalizeString("", 
-                                  Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE,
-                                  normalizeTestIn);
-                                  
-  log("Pre-normalized string: " + normalizeTestIn);
-  log("Normalized string: " + normalizeTestOut);
-  assertEqual(normalizeTestOut, normalizeTestExpectedOut);
+function runTest() {
+                          
+  testTransform("àäâéçîïë l'été est génial", "aaaeciie l'ete est genial", 
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE);
+
+  testTransform("DP-6", "DP-6", 
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE);
 
   // Sadly, the implementation of IGNORE SYMBOLS on Windows is not consistent
   // with Linux and Mac OS X :(	
-  var symbolsTestIn = "I have $5";
-  var symbolsTestExpectedOut = "I have 5";
 
-  var symbolsTestOut = stringTransform.normalizeString("",
-															    Ci.sbIStringTransform.TRANSFORM_IGNORE_SYMBOLS,
-														      symbolsTestIn);
+  testTransform("I have $5", "I have 5",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_SYMBOLS);
 
-  log("Pre-normalized string: " + symbolsTestIn);
-  log("Normalized string: " + symbolsTestOut);
-  assertEqual(symbolsTestOut, symbolsTestExpectedOut);
+  testTransform("$5 ! I have $5 !!", "5 ! I have $5 !!",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_SYMBOLS |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform("$5 ! I have $5 !!", "5  I have 5 ",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM);
+
+  testTransform("$5 ! I have $5 !!", "5 ! I have $5 !!",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" $5 ! I have $5 !!", " 5  I have 5 ",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM);
+
+  testTransform(" $5 ! I have $5 !!", " $5 ! I have $5 !!",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+                
+  testTransform(" $5 ! I have $5 !!", "5Ihave5",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE);
+
+  testTransform(" $5 ! I have $5 !!", "5 ! I have $5 !!",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" +250 -25 Hello", "250 -25 Hello",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+  
+
+  testTransform(" +250 -25 Hello", "+250 -25 Hello",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" -45.3 Hi", "-45.3 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" -45.3 Hi", "45.3 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" -.025 Hi", "-.025 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" -.025 Hi", "025 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" .999 Hi", ".999 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" .999 Hi", "999 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" 1e10 Hi", "1e10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" 1e10 Hi", "1e10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" 1e-10 Hi", "1e-10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" 1e-10 Hi", "1e-10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" -1e10 Hi", "-1e10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" -1e10 Hi", "1e10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" +1e-10 Hi", "+1e-10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" +1e-10 Hi", "1e-10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform(" +.21e-10 Hi", "+.21e-10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform(" +.21e-10 Hi", "21e-10 Hi",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_LEADING);
+
+  testTransform("I have àäâéçîïë $+5! How about that?! heh!", "I have aaaeciie +5 How about that heh",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
+
+  testTransform("I have àäâéçîïë $+5! How about that?! heh!", "Ihaveaaaeciie+5Howaboutthatheh",
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONSPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_NONALPHANUM_IGNORE_SPACE |
+                Ci.sbIStringTransform.TRANSFORM_IGNORE_KEEPNUMBERSYMBOLS);
 
   return;
 }
