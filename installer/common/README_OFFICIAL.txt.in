@@ -1,10 +1,34 @@
+#filter substitution
+SONGBIRD @SB_MILESTONE@ README
+-----------------------------------------------------------------------------
+                                 
+RELEASE NOTES
+Information regarding new features, functionality improvements, and known 
+issues for this release can be found at:
 
-SONGBIRD DUMMY RELEASE README
-------------------------------------------------------------------------------
+http://wiki.songbirdnest.com/Release_Notes/@SB_MILESTONE@
 
-Fill me in, Charlie... magical Songbird README mountain... Charlie...
-CHAAAAAAAAAAARLIEEEEEEEE...
+ADDITIONAL DOCUMENTATION AVAILABLE
 
-------------------------------------------------------------------------------
+* Updating Feathers for Songbird 1.0
+http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/Updating_Feathers_for_Songbird_1.0
 
-For more details, visit Magical Candy Mountain at: http://www.youtube.com/watch?v=Q5im0Ssyyus
+* Updating Extensions for Songbird 1.0
+http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/Updating_Extensions_for_Songbird_1.0
+
+* Updated the Media Core APIs to take advantage of GStreamer.
+http://wiki.songbirdnest.com/Developer/Articles/Maintaining_Add-Ons/Updating_Extensions_for_Songbird_1.0#Media_Core_API_Changes
+
+* Display Panes Documentation
+http://wiki.songbirdnest.com/Developer/Articles/Getting_Started/Display_Panes
+
+* Webpage API Documentation
+http://wiki.songbirdnest.com/Developer/Developer_Intro/Webpage_API
+
+* Add-on API Documentation
+http://wiki.songbirdnest.com/Developer/Developer_Intro/Extensions
+
+-----------------------------------------------------------------------------
+
+For more details, visit Songbird's Bugzilla at:
+http://bugzilla.songbirdnest.com

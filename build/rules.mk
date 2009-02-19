@@ -138,10 +138,6 @@ ifdef CLONEDIR
 targets += clone_dir
 endif
 
-ifdef SONGBIRD_DIST
-targets += copy_sb_dist
-endif
-
 ifdef SONGBIRD_COMPONENTS
 targets += copy_sb_components
 endif
@@ -152,6 +148,10 @@ endif
 
 ifdef SONGBIRD_PP_RESOURCES
 targets += sb_resources_preprocess
+endif
+
+ifdef SONGBIRD_DIST
+targets += copy_sb_dist
 endif
 
 ifdef SONGBIRD_LIB

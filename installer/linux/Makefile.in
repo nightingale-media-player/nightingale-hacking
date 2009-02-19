@@ -52,7 +52,7 @@ SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
                   $(SB_PLATFORM)-$(SB_ARCH) \
                   $(SB_MILESTONE) \
                   $(SB_BUILD_NUMBER) \
-                  $(SONGBIRD_PP_DIR)/$(INSTALLER_README)
+                  $(INSTALLER_README)
 
 include $(topsrcdir)/build/rules.mk
 

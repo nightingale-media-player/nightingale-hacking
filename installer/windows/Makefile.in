@@ -68,7 +68,7 @@ SONGBIRD_INSTALLER = common.nsh \
 INSTALLER_PREPROCESS = defines.nsi \
                        $(NULL)
 
-SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(SONGBIRD_PP_DIR)/$(INSTALLER_README) $(SB_BUILD_NUMBER)
+SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(INSTALLER_README) $(SB_BUILD_NUMBER)
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
