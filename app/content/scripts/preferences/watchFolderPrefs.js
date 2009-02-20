@@ -80,7 +80,21 @@ var watchFolderPrefsPane = {
 
   doPaneLoad: function watchFolderPrefsPane_doPaneLoad() {
     // Update the UI.
-    this._update();
+    this._checkForValidPref(true);
+    var self = this;
+    function forceCheck(event) {
+      if (event.type == "dialogcancel" &&
+          !Application.prefs.getValue("browser.preferences.instantApply", true))
+      {
+        return;
+      }
+      if (!self._checkForValidPref(false)) {
+        event.preventDefault();
+        return false;
+      }
+    }
+    window.addEventListener('dialogaccept', forceCheck, false);
+    window.addEventListener('dialogcancel', forceCheck, false);
   },
 
 
@@ -93,7 +107,7 @@ var watchFolderPrefsPane = {
   doImportOptionsChange:
     function watchFolderPrefsPane_doImportOptionsChange(aEvent) {
     // Update the UI.
-    this._update();
+    this._checkForValidPref(true);
   },
 
 
@@ -139,11 +153,39 @@ var watchFolderPrefsPane = {
       var shouldAskForImport = 
         filePicker.file.path != watchFolderPathPrefElem.value;
       watchFolderPathPrefElem.value = filePicker.file.path;
+      this.doCommand(aEvent);
       
       if (shouldAskForImport) {
         this._rescan(filePicker.file);
       }
     }
+  },
+  
+  /**
+   * Handle the command event specified by aEvent
+   */
+  doCommand: function watchFolderPrefsPane_doCommand(aEvent) {
+    if (!this._checkForValidPref(true)) {
+      // disable the _pref_, not the checkbox
+      var watchFolderEnablePrefElem =
+            document.getElementById("watch_folder_enable_pref");
+      watchFolderEnablePrefElem.value = false;
+      var watchFolderEnableCheckboxElem =
+            document.getElementById("watch_folder_enable_checkbox");
+      watchFolderEnableCheckboxElem.checked = true;
+
+      aEvent.stopPropagation();
+      aEvent.preventDefault();
+      return false;
+    }
+    // everything's good, remember to apply the enabled pref if it was
+    // originally checked but not saved
+    var watchFolderEnableCheckboxElem =
+          document.getElementById("watch_folder_enable_checkbox");
+    if (aEvent.target != watchFolderEnableCheckboxElem) {
+      watchFolderEnableCheckboxElem.doCommand();
+    }
+    return true;
   },
 
 
@@ -152,6 +194,109 @@ var watchFolderPrefsPane = {
   // Internal services.
   //
   //----------------------------------------------------------------------------
+  
+  /**
+   * Check if the current value of the preference is valid; pops up a
+   * notification if it is not.
+   * @return true if valid, false if not.
+   */
+  _checkForValidPref: function watchFolderPrefsPane__checkForValidPref(aSilent) {
+    var notifBox = document.getElementById("watch_folder_notification_box");
+    function showErrorNotification(aMsg) {
+      if (aSilent) {
+        return;
+      }
+      
+      // focus this pref pane and this tab
+      var pane = document.getElementById("paneImportMedia");
+      document.documentElement.showPane(pane);
+      document.getElementById("import_media_tabs").selectedItem =
+        document.getElementById("watch_folder_tab");
+      
+      // show the notification, hiding any other ones of this class
+      var oldNotif;
+      while ((oldNotif = notifBox.getNotificationWithValue("watch_folder_error"))) {
+        notifBox.removeNotification(oldNotif);
+      }
+      notifBox.appendNotification(aMsg, "watch_folder_error", null,
+                                  notifBox.PRIORITY_CRITICAL_LOW, []);
+    }
+
+    // Set the watch folder hidden if the watch folder services are not
+    // available.
+    var watchFolderSupported = ("@songbirdnest.com/watch-folder-service;1" in Cc);
+    if (watchFolderSupported) {
+      watchFolderSupported = Cc["@songbirdnest.com/watch-folder-service;1"]
+                               .getService(Ci.sbIWatchFolderService)
+                               .isSupported;
+    }
+    var watchFolderHiddenElem =
+          document.getElementById("watch_folder_hidden_broadcaster");
+    if (watchFolderSupported) {
+        watchFolderHiddenElem.removeAttribute("hidden");
+    } else {
+        watchFolderHiddenElem.setAttribute("hidden", "true");
+    }
+
+    var watchFolderEnablePrefElem =
+          document.getElementById("watch_folder_enable_pref");
+    var watchFolderEnableCheckboxElem =
+          document.getElementById("watch_folder_enable_checkbox");
+
+    var watchFolderEnabled =
+      watchFolderEnablePrefElem.getElementValue(watchFolderEnableCheckboxElem);
+
+    // Disable the watch folder path preference if watch folder is disabled.
+    var watchFolderDisabledElem =
+          document.getElementById("watch_folder_disabled_broadcaster");
+    if (watchFolderEnabled) {
+      watchFolderDisabledElem.removeAttribute("disabled");
+    } else {
+      watchFolderDisabledElem.setAttribute("disabled", "true");
+    }
+
+    if (!watchFolderEnabled) {
+      // if it's not enabled, we allow whatever.
+      return true;
+    }
+
+    var watchFolderPathPrefElem =
+          document.getElementById("watch_folder_path_pref");
+    var watchFolderPathTextboxElem =
+          document.getElementById("watch_folder_path_textbox");
+
+    var path = watchFolderPathPrefElem.getElementValue(watchFolderPathTextboxElem);
+    if (!path) {
+      // there is no pref set, but watch folder is enabled. Complain.
+      showErrorNotification(SBString("prefs.watch_folder.error.no_path"));
+      return false;
+    }
+    
+    var file = null;
+    try {
+      file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+      file.initWithPath(path);
+      if (!file.exists()) {
+        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_exist", [file.path]));
+        return false;
+      }
+      if (!file.isDirectory()) {
+        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_directory", [file.path]));
+        return false;
+      }
+      if (!file.isReadable()) {
+        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_readable", [file.path]));
+        return false;
+      }
+    } catch (e) {
+      // failed to create the file (e.g. invalid path?)
+      Components.utils.reportError(e);
+      showErrorNotification(SBFormattedString("prefs.watch_folder.error.generic", [path]));
+      return false;
+    }
+    return true;
+  },
+  
   /**
    * Offer import of items in new watch folder
    */
@@ -184,37 +329,6 @@ var watchFolderPrefsPane = {
       var job = importer.import(directoryArray);
       SBJobUtils.showProgressDialog(job, window, 0);
     }
-  },
-   
-  /**
-   * Update the UI.
-   */
-
-  _update: function watchFolderPrefsPane__update() {
-    // Get the watch folder enable preference value.
-    var watchFolderEnablePrefElem =
-          document.getElementById("watch_folder_enable_pref");
-    var watchFolderEnabled = watchFolderEnablePrefElem.value;
-
-    // Disable the watch folder path preference if watch folder is disabled.
-    var watchFolderDisabledElem =
-          document.getElementById("watch_folder_disabled_broadcaster");
-    if (watchFolderEnabled)
-      watchFolderDisabledElem.removeAttribute("disabled");
-    else
-      watchFolderDisabledElem.setAttribute("disabled", "true");
-
-    // Set the watch folder hidden if the watch folder services are not
-    // available.
-    var watchFolderService = Cc["@songbirdnest.com/watch-folder-service;1"]
-                               .getService(Ci.sbIWatchFolderService);
-    var watchFolderHiddenElem =
-          document.getElementById("watch_folder_hidden_broadcaster");
-    if (watchFolderService.isSupported) {
-        watchFolderHiddenElem.removeAttribute("hidden");
-    } else {
-        watchFolderHiddenElem.setAttribute("hidden", "true");
-    }
-  },
-}
+  }
+};
 

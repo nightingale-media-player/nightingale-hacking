@@ -91,6 +91,19 @@ listheader
  * Watch folder prefs styles.
  */
 
+/* import media preference panel */
+#paneImportMedia {
+  -moz-box-flex: 1;
+}
+#import_media_tabpanels {
+  -moz-box-flex: 1;
+}
+
+/* watch folders */
+#watch_folder_notification_box {
+  -moz-box-flex: 1;
+}
+
 /* Watch folder prefs path box style. */
 #watch_folder_path_box {
   -moz-box-align: center;

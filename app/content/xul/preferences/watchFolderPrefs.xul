@@ -52,13 +52,13 @@
     <preference id="watch_folder_enable_pref"
                 name="songbird.watch_folder.enable"
                 type="bool"
-                onchange="watchFolderPrefsPane.doImportOptionsChange(event);"/>
+                onchange="return watchFolderPrefsPane.doImportOptionsChange(event);"/>
 
     <!-- Watch folder path preference. -->
     <preference id="watch_folder_path_pref"
                 name="songbird.watch_folder.path"
                 type="unichar"
-                onchange="watchFolderPrefsPane.doImportOptionsChange(event);"/>
+                onchange="return watchFolderPrefsPane.doImportOptionsChange(event);"/>
 
   </preferences>
 
@@ -91,38 +91,42 @@
       </broadcasterset>
 
       <!-- Watch folder settings preference controls. -->
-      <groupbox>
-
-        <!-- Watch folder settings preference group caption. -->
-        <caption label="&watch_folder.prefs.settings_group_caption;"/>
-
-        <!-- Watch folder description. -->
-        <description>
-          &watch_folder.prefs.description;
-        </description>
-
-        <!-- Watch folder enable checkbox. -->
-        <checkbox id="watch_folder_enable_checkbox"
-                  preference="watch_folder_enable_pref"
-                  label="&watch_folder.prefs.enable_checkbox;"/>
-
-        <!-- Watch folder path box. -->
-        <hbox id="watch_folder_path_box"
-              observes="watch_folder_disabled_broadcaster">
-
-          <!-- Watch folder path text box. -->
-          <label value="&watch_folder.prefs.watch_folder_label;"/>
-          <textbox id="watch_folder_path_textbox"
-                   preference="watch_folder_path_pref"
-                   observes="watch_folder_disabled_broadcaster"/>
-
-          <!-- Browse button. -->
-          <button id="watch_folder_browse_button"
-                  command="watch_folder_browse_command"/>
-
-        </hbox>
-
-      </groupbox>
+      <notificationbox id="watch_folder_notification_box">
+        <groupbox>
+  
+          <!-- Watch folder settings preference group caption. -->
+          <caption label="&watch_folder.prefs.settings_group_caption;"/>
+  
+          <!-- Watch folder description. -->
+          <description>
+            &watch_folder.prefs.description;
+          </description>
+  
+          <!-- Watch folder enable checkbox. -->
+          <checkbox id="watch_folder_enable_checkbox"
+                    preference="watch_folder_enable_pref"
+                    oncommand="return watchFolderPrefsPane.doCommand(event)"
+                    label="&watch_folder.prefs.enable_checkbox;"/>
+  
+          <!-- Watch folder path box. -->
+          <hbox id="watch_folder_path_box"
+                observes="watch_folder_disabled_broadcaster">
+  
+            <!-- Watch folder path text box. -->
+            <label value="&watch_folder.prefs.watch_folder_label;"/>
+            <textbox id="watch_folder_path_textbox"
+                     preference="watch_folder_path_pref"
+                     onchange="return watchFolderPrefsPane.doCommand(event)"
+                     observes="watch_folder_disabled_broadcaster"/>
+  
+            <!-- Browse button. -->
+            <button id="watch_folder_browse_button"
+                    command="watch_folder_browse_command"/>
+  
+          </hbox>
+  
+        </groupbox>
+      </notificationbox>
 
     </tabpanel> <!-- watch_folder_tabpanel -->
   </tabpanels> <!-- import_media_tabpanels -->
