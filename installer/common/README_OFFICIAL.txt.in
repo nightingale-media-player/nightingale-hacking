@@ -1,5 +1,5 @@
 #filter substitution
-SONGBIRD @SB_MILESTONE@ README
+SONGBIRD @SB_MILESTONE@ BUILD @SB_BUILD_NUMBER@ README
 -----------------------------------------------------------------------------
                                  
 RELEASE NOTES
