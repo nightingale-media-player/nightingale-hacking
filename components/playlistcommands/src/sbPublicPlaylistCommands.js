@@ -607,8 +607,7 @@ PublicPlaylistCommands.prototype = {
                                                       "library_cmd_getartwork",
                                                       plCmd_AND(
                                                         plCmd_IsAnyTrackSelected,
-                                                        plCmd_CanModifyPlaylistContent,
-                                                        plCmd_CanEditTracks));
+                                                        plCmd_CanModifyPlaylistContent));
     
       // --------------------------------------------------------------------------
 
@@ -1590,32 +1589,6 @@ function plCmd_isLiveUpdateSmartPlaylist(aContext, aSubMenuId, aCommandId, aHost
     return medialist.autoUpdate;
   return false;
 } 
- 
-// Returns true when at least one track is selected in the playlist and all of
-// the selected tracks can have their metadata edited.
-function plCmd_CanEditTracks(aContext, aSubMenuId, aCommandId, aHost) {
-  if (!plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost)) {
-    return false;
-  }
-  try {
-    var playlist = unwrap(aContext.playlist);
-    var enumerator = playlist.mediaListView.selection.selectedMediaItems;
-    while (enumerator.hasMoreElements()) {
-      var item = enumerator.getNext().QueryInterface(Ci.sbIMediaItem);
-      if (!item) continue; // WTF?
-      if (!LibraryUtils.canEditMetadata(item)) {
-        // one of the items cannot edit metadata, we need to disable the command
-        return false;
-      }
-    }
-    // all of the items are editable, enable the command
-    return true;
-  } catch (e) {
-    Cu.reportError(e);
-    // something bad happened - I say no.
-    return false;
-  }
-}
 
 // Returns a function that will return the conjunction of the result of the inputs
 function plCmd_AND( /* comma separated list (not array) of functions */ ) {

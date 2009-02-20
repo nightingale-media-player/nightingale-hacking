@@ -348,14 +348,8 @@ var AlbumArt = {
     } else if (!aNewURL) {
       // We are playing or have selected items, but the image is not available
 
-      // Show the drag here box, if we can edit these items
-      if (this.canEditItems(aItemList)) {
-        // Show the Drag Here box
-        aDragBox.hidden = false;
-      } else {
-        // Not able to edit so hide the Drag Here box
-        aDragBox.hidden = true;
-      }
+      // Show the Drag Here box
+      aDragBox.hidden = false;
 
       // Hide the not selected message.
       aNotBox.hidden = true;
@@ -663,11 +657,6 @@ var AlbumArt = {
     if (!aMediaItem)
       return;
      
-    // Only change if we can edit the playing item
-    if (!this.canEditItems([aMediaItem])) {
-      return;
-    }
-
     aMediaItem.setProperty(SBProperties.primaryImageURL, aNewImageUrl);
     AlbumArt.changeNowPlaying(aNewImageUrl);
     
@@ -696,11 +685,6 @@ var AlbumArt = {
     var selection = AlbumArt._mediaListView.selection;
     var multipleItems = false;
     
-    // Only change if we can edit all the selected items.
-    if (!this.canEditItems(ArrayConverter.JSArray(selection.selectedMediaItems))) {
-      return;
-    }
-
     // First check through all the items to see if they are the same or not
     // We determine that items are the same if they belong to the same album
     // and have the same AlbumArtist or ArtistName.
@@ -908,24 +892,9 @@ var AlbumArt = {
     var pasteElem = document.getElementById("pasteMenuItem");
     var getArtworkElem = document.getElementById("getArtworkMenuItem");
 
-    // Update the menu based on if the items are editable.
-    var itemArray;
-    if (AlbumArt._currentState == STATE_SELECTED) {
-      var selection = AlbumArt._mediaListView.selection;
-      itemArray = ArrayConverter.JSArray(selection.selectedMediaItems);
-    } else {
-      itemArray = [AlbumArt.getNowPlayingItem()];
-    }
-    
-    if (!this.canEditItems(itemArray)) {
-      cutElem.disabled = true;
-      copyElem.disabled = (curImageUrl == DROP_TARGET_IMAGE);
-      pasteElem.disabled = true;
-      clearElem.disabled = true;
-      getArtworkElem.disabled = true;
-      return;
-    }
-    
+    // Always enable get artwork
+    getArtworkElem.disabled = false;
+
     // Check if the clipboard contains valid album art.
     var validAlbumArt = {};
     AlbumArt.getClipboardAlbumArt({}, {}, validAlbumArt);
@@ -946,8 +915,6 @@ var AlbumArt = {
     // Enable the paste if a valid image is on the clipboard
     pasteElem.disabled = !validAlbumArt;
 
-    // Always enable get artwork
-    getArtworkElem.disabled = false;
   },
 
   /*********************************

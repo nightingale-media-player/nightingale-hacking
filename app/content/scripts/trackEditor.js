@@ -1890,19 +1890,6 @@ TrackEditorArtwork.prototype = {
   onPopupShowing: function TrackEditorArtwork_onPopupShowing(aEvent) {
     var curImageUrl = TrackEditor.state.getPropertyValue(this.property);
 
-    // Check if we can edit all the items in the list
-    var canEdit = (TrackEditor.state.writableItemCount ==
-                   TrackEditor.state.selectedItems.length);
-    // Update the menu items depending on the state of things. 
-    if (!canEdit) {
-      this._menuCut.setAttribute("disabled", true);
-      this._menuCopy.setAttribute("disabled", true);
-      this._menuClear.setAttribute("disabled", true);
-      this._menuPaste.setAttribute("disabled", true);
-      this._menuGetArtwork.setAttribute("disabled", true);
-      return;
-    }
-    
     // Get the clipboard image.
     var sbClipboard = Cc["@songbirdnest.com/moz/clipboard/helper;1"]
                         .createInstance(Ci.sbIClipboardHelper);
@@ -1920,7 +1907,7 @@ TrackEditorArtwork.prototype = {
                                                         imageData.length);
     }
     
-    if (!curImageUrl) {
+    if (!curImageUrl || curImageUrl == ARTWORK_NO_COVER) {
       this._menuCut.setAttribute("disabled", true);
       this._menuCopy.setAttribute("disabled", true);
       this._menuClear.setAttribute("disabled", true);
@@ -2154,9 +2141,6 @@ TrackEditorArtwork.prototype = {
       this._dragoverlay.hidden = true;
     } else {
       this._dragoverlay.hidden = false;
-      // If we can not edit these items then we need to remove the drag here text
-      var dragLabel = this._dragoverlay.getElementsByTagName("label")[0];
-      dragLabel.hidden = !canEdit;
     }
     
     // Lets check if this item is missing a cover
@@ -2165,7 +2149,6 @@ TrackEditorArtwork.prototype = {
     }
 
     // Update the button to the correct text
-    this._button.hidden = !canEdit;
     this._button.label = (value == ARTWORK_NO_COVER ? this._addLabel : this._replaceLabel);
     
     // Update the image depending on if we have multiple items or not.
