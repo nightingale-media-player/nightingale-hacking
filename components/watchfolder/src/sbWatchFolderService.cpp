@@ -132,7 +132,7 @@ sbWatchFolderService::Init()
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = observerService->AddObserver(this, "quit-application", PR_FALSE);
+  rv = observerService->AddObserver(this, "quit-application-granted", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Delay starting up until "final-ui-startup"
@@ -302,13 +302,13 @@ sbWatchFolderService::SetEventPumpTimer()
 {
   if (mHasWatcherStarted) {
     if (mEventPumpTimerIsSet) {
-      // The event pump timer is already set, but more events have been 
+      // The event pump timer is already set, but more events have been
       // received. Set this flags so that the timer will re-arm itself
       // when it is fired.
       mShouldProcessEvents = PR_FALSE;
     }
     else {
-      nsresult rv = 
+      nsresult rv =
         mEventPumpTimer->InitWithCallback(this,
                                           EVENT_PUMP_TIMER_DELAY,
                                           nsITimer::TYPE_ONE_SHOT);
@@ -538,7 +538,7 @@ sbWatchFolderService::HandleSessionLoadError()
     rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -800,7 +800,7 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
   // The method will guard against |mHasWatcherStarted|
   nsresult rv = SetEventPumpTimer();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -962,7 +962,7 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
     rv = SetStartupDelayTimer();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else if (strcmp("quit-application", aTopic) == 0) {
+  else if (strcmp("quit-application-granted", aTopic) == 0) {
     if (mServiceState == eWatching) {
       rv = StopWatchingFolder();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -975,7 +975,7 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
     rv = observerService->RemoveObserver(this, "final-ui-startup");
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = observerService->RemoveObserver(this, "quit-application");
+    rv = observerService->RemoveObserver(this, "quit-application-granted");
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIPrefBranch2> prefBranch =

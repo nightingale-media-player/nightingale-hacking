@@ -45,14 +45,14 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
                                      __in DWORD dwNumberOfBytesTransfered,
                                      __in LPOVERLAPPED lpOverlapped)
 {
-  sbWin32FileSystemWatcher *watcher = 
+  sbWin32FileSystemWatcher *watcher =
     (sbWin32FileSystemWatcher *)lpOverlapped->hEvent;
   if (!watcher) {
     return;
   }
 
   // Extract the event paths
-  FILE_NOTIFY_INFORMATION *fileInfo = 
+  FILE_NOTIFY_INFORMATION *fileInfo =
     (FILE_NOTIFY_INFORMATION *)watcher->GetBuffer();
   if (fileInfo) {
     {
@@ -63,13 +63,13 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
         nsString curEventPath;
         curEventPath.Assign(fileInfo->FileName,
                             (fileInfo->FileNameLength / sizeof(WCHAR)));
-        
+
         watcher->GetEventPathsSet()->insert(curEventPath);
 
         if (fileInfo->NextEntryOffset == 0) {
           break;
         }
-        fileInfo = 
+        fileInfo =
           (FILE_NOTIFY_INFORMATION *)((char *)fileInfo + fileInfo->NextEntryOffset);
       }
     }
@@ -79,7 +79,7 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
 }
 
 //------------------------------------------------------------------------------
-// Background win32 thread to toggle the event chain 
+// Background win32 thread to toggle the event chain
 
 DWORD WINAPI BackgroundThreadProc(void *p)
 {
@@ -96,7 +96,7 @@ DWORD WINAPI BackgroundThreadProc(void *p)
       watcher->WatchNextChange();
       watcher->SetIsThreadRunning(PR_TRUE);
     }
-    
+
     SleepEx(100, TRUE);
   }
   watcher->Cleanup();
@@ -119,7 +119,7 @@ sbWin32FileSystemWatcher::sbWin32FileSystemWatcher()
   mBuffer = NULL;
   mIsThreadRunning = PR_FALSE;
   mShouldRunThread = PR_FALSE;
-  mEventPathsSetLock = 
+  mEventPathsSetLock =
     nsAutoLock::NewLock("sbWin32FileSystemWatcher::mEventPathsSetLock");
 }
 
@@ -136,16 +136,16 @@ sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
 }
 
 NS_IMETHODIMP
-sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener, 
-                               const nsAString & aRootPath, 
+sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener,
+                               const nsAString & aRootPath,
                                PRBool aIsRecursive)
 {
   nsresult rv;
-  nsCOMPtr<nsIObserverService> obsService = 
+  nsCOMPtr<nsIObserverService> obsService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = obsService->AddObserver(this, "quit-application-granted", PR_FALSE);
+  rv = obsService->AddObserver(this, "quit-application", PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return sbBaseFileSystemWatcher::Init(aListener, aRootPath, aIsRecursive);
@@ -226,19 +226,19 @@ sbWin32FileSystemWatcher::WatchNextChange()
   }
 }
 
-PRBool 
+PRBool
 sbWin32FileSystemWatcher::GetShouldRunThread()
 {
   return mShouldRunThread;
 }
 
-PRBool 
+PRBool
 sbWin32FileSystemWatcher::GetIsThreadRunning()
 {
   return mIsThreadRunning;
 }
 
-void 
+void
 sbWin32FileSystemWatcher::SetIsThreadRunning(PRBool aIsThreadRunning)
 {
   mIsThreadRunning = aIsThreadRunning;
@@ -250,13 +250,13 @@ sbWin32FileSystemWatcher::GetBuffer()
   return mBuffer;
 }
 
-sbStringSet* 
+sbStringSet*
 sbWin32FileSystemWatcher::GetEventPathsSet()
 {
   return &mEventPathsSet;
 }
 
-PRLock* 
+PRLock*
 sbWin32FileSystemWatcher::GetEventPathsSetLock()
 {
   return mEventPathsSetLock;
@@ -286,13 +286,13 @@ sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
 
   rv = NS_NewThread(getter_AddRefs(mRebuildThread), initRebuildEvent);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get a handle to the root directory.
   mRootDirHandle =
     CreateFileW(mWatchPath.get(),            // path
                 GENERIC_READ,                // desired access
                 FILE_SHARE_READ |            // shared mode
-                FILE_SHARE_WRITE,           
+                FILE_SHARE_WRITE,
                 NULL,                        // security attributes
                 OPEN_EXISTING,               // creation disposition
                 FILE_FLAG_BACKUP_SEMANTICS | // flags and attributes
@@ -318,7 +318,7 @@ sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
 
   rv = mListener->OnWatcherStarted();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -330,7 +330,7 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
                                   const char *aTopic,
                                   const PRUnichar *aData)
 {
-  if (strcmp(aTopic, "quit-application-granted") == 0) {
+  if (strcmp(aTopic, "quit-application") == 0) {
     if (mIsWatching) {
       // Pass in PR_FALSE - the owner of the file system watcher should stop
       // the class themselves in order to save the current tree to disk.
@@ -339,11 +339,11 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
 
     // Remove observer hook
     nsresult rv;
-    nsCOMPtr<nsIObserverService> obsService = 
+    nsCOMPtr<nsIObserverService> obsService =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    obsService->RemoveObserver(this, "quit-application-granted");
+    obsService->RemoveObserver(this, "quit-application");
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -362,7 +362,7 @@ sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
     sbStringSet folderEventPaths;
 
     // Read the event paths out of the set.
-    // The event paths in |mEventPathsSet| contain the full absolute path 
+    // The event paths in |mEventPathsSet| contain the full absolute path
     // (including leaf name) of each event. Clear out the set and build a new
     // set of unique folder paths.
     while (!mEventPathsSet.empty()) {
@@ -375,7 +375,7 @@ sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
       mEventPathsSet.erase(begin);
 
       nsresult rv;
-      nsCOMPtr<nsILocalFile> curEventFile = 
+      nsCOMPtr<nsILocalFile> curEventFile =
         do_CreateInstance("@mozilla.org/file/local;1", &rv);
       if (NS_FAILED(rv)) {
         continue;
