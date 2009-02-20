@@ -86,8 +86,9 @@ DirectoryImportJob.prototype = {
   __proto__: SBJobUtils.JobBase.prototype,
   
   QueryInterface: XPCOMUtils.generateQI(
-    [Ci.sbIDirectoryImportJob, Ci.sbIJobProgress, Ci.sbIJobProgressListener,
-     Ci.sbIJobCancelable, Ci.nsIObserver, Ci.nsIClassInfo]),
+    [Ci.sbIDirectoryImportJob, Ci.sbIJobProgress, Ci.sbIJobProgressUI,
+     Ci.sbIJobProgressListener, Ci.sbIJobCancelable, Ci.nsIObserver,
+     Ci.nsIClassInfo]),
   
   /** For nsIClassInfo **/
   getInterfaces: function(count) {
@@ -616,7 +617,12 @@ DirectoryImportJob.prototype = {
    */
   observe: function DirectoryImportJob_observe(aSubject, aTopic, aData) {
     this._onPollFileScan();
-  }
+  },
+  
+  /**
+   * sbIJobProgressUI
+   */
+  crop: "center"
 }
 
 
