@@ -1011,7 +1011,7 @@ sbMediacoreSequencer::UpdateCurrentItemDuration(PRUint64 aDuration)
 
     // if there was a duration set, convert it.
     if (!strDuration.IsEmpty()) {
-      nsString_ToUint64(strDuration, &rv);
+      itemDuration = nsString_ToUint64(strDuration, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
@@ -1895,7 +1895,6 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
     rv = mView->GetIndexForItem(mCurrentItem, &mCurrentItemIndex);
 
     if(NS_SUCCEEDED(rv)) {
-
       // Grab the new item uid.
       rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -3103,10 +3102,19 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
   if(aMediaItem == item) {
     rv = SetMetadataDataRemotesFromItem(item);
     NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-    if(!mSmartRebuildDetectBatchCount) {
-      mNeedsRecalculate = PR_TRUE;
-      rv = UpdateItemUIDIndex();
+  if(!mSmartRebuildDetectBatchCount) {
+    // Not only do we need to recalculate the sequence but we
+    // also have to search for the playing item after a delay
+    // to allow the metadata batch editor to settle down. UGH!
+    mNeedsRecalculate = PR_TRUE;
+    mNeedSearchPlayingItem = PR_TRUE;
+
+    // We must wait if there is a batch because rebuilding would
+    // end up picking the wrong item.
+    if(!mListBatchCount && !mLibraryBatchCount) {
+      rv = DelayedCheck();
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
