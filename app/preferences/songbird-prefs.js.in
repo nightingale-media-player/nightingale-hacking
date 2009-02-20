@@ -287,7 +287,7 @@ pref("songbird.mediacore.normalization.preferredGain", "album");
 // Playback History
 pref("songbird.mediacore.playback.history.enabled", true);
 
-pref("songbird.mediascan.enableVideoImporting", true);
+pref("songbird.mediascan.enableVideoImporting", false);
 
 //
 // Metadata prefs
