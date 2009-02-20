@@ -145,21 +145,20 @@ insert into library_metadata (name, value) values ('version', '18');
 
 /* Insert static |ANALYZE| results */
 ANALYZE;
-INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_ordinal','10003 5002 1');
-INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_member_media_item_id','10003 2');
-INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_member_media_item_id','10003 5002 1 1');
-INSERT INTO "sqlite_stat1" VALUES('resource_properties','idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id','133429 3707 6 4 1');
-INSERT INTO "sqlite_stat1" VALUES('resource_properties','sqlite_autoindex_resource_properties_1','133429 14 1');
-INSERT INTO "sqlite_stat1" VALUES('properties','sqlite_autoindex_properties_1','89 1');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_ordinal','20614 3436 1');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_member_media_item_id','20614 3');
+INSERT INTO "sqlite_stat1" VALUES('simple_media_lists','idx_simple_media_lists_media_item_id_member_media_item_id','20614 3436 1 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties','idx_resource_properties_property_id_obj_sortable_obj_secondary_sortable_media_item_id','56414 1946 77 29 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties','sqlite_autoindex_resource_properties_1','56414 6 1');
+INSERT INTO "sqlite_stat1" VALUES('properties','sqlite_autoindex_properties_1','82 1');
 INSERT INTO "sqlite_stat1" VALUES('library_media_item','sqlite_autoindex_library_media_item_1','1 1');
-INSERT INTO "sqlite_stat1" VALUES('resource_properties_fts_all_segdir','sqlite_autoindex_resource_properties_fts_all_segdir_1','18 6 1');
+INSERT INTO "sqlite_stat1" VALUES('resource_properties_fts_all_segdir','sqlite_autoindex_resource_properties_fts_all_segdir_1','25 7 1');
 INSERT INTO "sqlite_stat1" VALUES('media_list_types','sqlite_autoindex_media_list_types_1','3 1');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden_media_list_type_id','10009 5005 2');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_is_list','10009 5005');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_media_list_type_id','10009 2');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_content_url','10009 1');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_created','10009 12');
-INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden','10009 5005');
-INSERT INTO "sqlite_stat1" VALUES('media_items','sqlite_autoindex_media_items_1','10009 1');
-INSERT INTO "sqlite_stat1" VALUES('library_metadata','sqlite_autoindex_library_metadata_1','2 1');
-
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden_media_list_type_id','10040 5020 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_is_list','10040 5020');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_media_list_type_id','10040 2');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_content_url','10040 1');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_created','10040 9');
+INSERT INTO "sqlite_stat1" VALUES('media_items','idx_media_items_hidden','10040 5020');
+INSERT INTO "sqlite_stat1" VALUES('media_items','sqlite_autoindex_media_items_1','10040 1');
+INSERT INTO "sqlite_stat1" VALUES('library_metadata','sqlite_autoindex_library_metadata_1','3 1');
