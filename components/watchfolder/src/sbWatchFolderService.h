@@ -152,7 +152,7 @@ protected:
   // \brief Get the main Songbird window.
   //
   nsresult GetSongbirdWindow(nsIDOMWindow **aSongbirdWindow);
-  
+
   //
   // \brief Handle the situation where the watcher fails to load a saved
   //        session.

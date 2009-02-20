@@ -36,6 +36,7 @@
 #include <sbILibraryManager.h>
 #include <sbIPropertyArray.h>
 #include <sbStringBundle.h>
+#include <sbIPrompter.h>
 #include <sbIDirectoryImportService.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
@@ -44,7 +45,6 @@
 #include <nsIPrefBranch2.h>
 #include <nsIObserverService.h>
 #include <nsIURI.h>
-#include <nsIPromptService.h>
 #include <nsTArray.h>
 #include <sbIMediacoreTypeSniffer.h>
 #include <nsThreadUtils.h>
@@ -545,14 +545,6 @@ sbWatchFolderService::HandleSessionLoadError()
   rv = mFileSystemWatcher->StartWatching();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIPromptService> promptService =
-    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 buttons =
-    nsIPromptService::STD_YES_NO_BUTTONS +
-    nsIPromptService::BUTTON_POS_1_DEFAULT;
-
   sbStringBundle bundle;
   nsString dialogTitle =
     bundle.Get("watch_folder.session_load_error.rescan_title");
@@ -566,21 +558,21 @@ sbWatchFolderService::HandleSessionLoadError()
   rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 promptResult;
-  rv = promptService->ConfirmEx(songbirdWindow,
-                                dialogTitle.BeginReading(),
-                                dialogText.BeginReading(),
-                                buttons,
-                                nsnull,
-                                nsnull,
-                                nsnull,
-                                nsnull,
-                                nsnull,
-                                &promptResult);
+  nsCOMPtr<sbIPrompter> prompter =
+    do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool shouldRescan = PR_FALSE;
+  prompter->Confirm(songbirdWindow, 
+                    dialogTitle.BeginReading(),
+                    dialogText.BeginReading(),
+                    &shouldRescan);
+
   // Only start the scan if the user picked the YES button (option 0).
-  if (promptResult == 0) {
+  if (shouldRescan) {
     // The user elected to rescan their watched directory. Setup the directory
     // scan service.
     nsCOMPtr<sbIDirectoryImportService> dirImportService =
@@ -625,6 +617,31 @@ sbWatchFolderService::HandleSessionLoadError()
 nsresult
 sbWatchFolderService::HandleRootPathMissing()
 {
+  sbStringBundle bundle;
+  nsString dialogTitle = bundle.Get("watch_folder.root_path_missing.title");
+
+  nsTArray<nsString> params;
+  params.AppendElement(mWatchPath);
+  nsString dialogText = 
+    bundle.Format("watch_folder.root_path_missing.text", params);
+
+  nsresult rv;
+  nsCOMPtr<nsIDOMWindow> songbirdWindow;
+  rv = GetSongbirdWindow(getter_AddRefs(songbirdWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPrompter> prompter =
+    do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prompter->Alert(songbirdWindow,
+                       dialogTitle.BeginReading(),
+                       dialogText.BeginReading());
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
