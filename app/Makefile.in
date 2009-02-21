@@ -38,7 +38,10 @@ SONGBIRD_DIST = $(srcdir)/blocklist.xml \
                 $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-SONGBIRD_CONTENTS += $(srcdir)/Info.plist
+   SONGBIRD_CONTENTS += $(CURDIR)/Info.plist
+
+   SONGBIRD_PP_DIR = $(CURDIR)
+   SONGBIRD_PP_RESOURCES = $(srcdir)/Info.plist.in
 endif
 
 SUBDIRS = branding \

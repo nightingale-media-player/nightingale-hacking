@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+#filter substitution
 <plist version="1.0">
 <dict>
   <key>CFBundleDevelopmentRegion</key>
@@ -677,7 +678,7 @@
   <key>CFBundleExecutable</key>
   <string>songbird</string>
   <key>CFBundleGetInfoString</key>
-  <string>Songbird 1.2.0a For Mac, © 2005-2009 Pioneers of the Inevitable</string>
+  <string>@SB_APPNAME@ @SB_MILESTONE@ (build @SB_BUILD_NUMBER@) For Mac, © 2005-2009 Pioneers of the Inevitable</string>
   <key>CFBundleIconFile</key>
   <string>songbird.icns</string>
   <key>CFBundleIdentifier</key>
@@ -685,11 +686,11 @@
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>Songbird</string>
+  <string>@SB_APPNAME@</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>CFBundleShortVersionString</key>
-  <string>1.2.0a</string>
+  <string>@SB_MILESTONE@</string>
   <key>CFBundleSignature</key>
   <string>POTI</string>
   <key>CFBundleURLTypes</key>
@@ -732,7 +733,7 @@
     </dict>
   </array>
   <key>CFBundleVersion</key>
-  <string>1.2.0a</string>
+  <string>@SB_MILESTONE@</string>
   <key>NSAppleScriptEnabled</key>
   <true/>
   <key>CGDisableCoalescedUpdates</key>
