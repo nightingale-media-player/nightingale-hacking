@@ -46,7 +46,7 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
  * Call begin() to start the job.
  *****************************************************************************/
 function MoveRenameJob(aRemovedPaths, 
-                       aAddedPaths 
+                       aAddedPaths,
                        aService) {
   // TODO verify inputs
 
