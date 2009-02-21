@@ -63,8 +63,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileSystemTree, sbPIFileSystemTree)
 sbFileSystemTree::sbFileSystemTree()
   : mShouldLoadSession(PR_FALSE)
   , mIsIntialized(PR_FALSE)
-  , mRootNodeLock(PR_NewLock())
-  , mListenersLock(PR_NewLock())
+  , mRootNodeLock(nsAutoLock::NewLock("sbFileSystemTree::mRootNodeLock"))
+  , mListenersLock(nsAutoLock::NewLock("sbFileSystemTree::mListenersLock"))
 {
   NS_ASSERTION(mRootNodeLock, "Failed to create mRootNodeLock!");
   NS_ASSERTION(mListenersLock, "Failed to create mListenersLock!");
@@ -73,10 +73,10 @@ sbFileSystemTree::sbFileSystemTree()
 sbFileSystemTree::~sbFileSystemTree()
 {
   if (mRootNodeLock) {
-    PR_DestroyLock(mRootNodeLock);
+    nsAutoLock::DestroyLock(mRootNodeLock);
   }
   if (mListenersLock) {
-    PR_DestroyLock(mListenersLock);
+    nsAutoLock::DestroyLock(mListenersLock);
   }
 }
 
