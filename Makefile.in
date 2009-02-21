@@ -165,10 +165,25 @@ ifdef SB_ENABLE_BREAKPAD
     $(BREAKPAD_ARCHIVE_PATH)
 endif # SB_ENABLE_BREAKPAD
 
+# For the same reason as stripsymbols/do_stripsymbols; explanation up there
 uploadsymbols:
-ifdef SB_ENABLE_BREAKPAD
-	$(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh \
-    $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME)
+	$(MAKE) -f $(THISMAKEFILE) do_uploadsymbols
+
+do_uploadsymbols:
+ifneq (,$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
+   ifdef SB_ENABLE_BREAKPAD
+	   $(MOZSDK_SCRIPTS_DIR)/upload_symbols.sh \
+      $(BREAKPAD_ARCHIVE_PATH)/$(BREAKPAD_ARCHIVE_FILENAME) \
+      $(SYMBOL_SERVER_PATH)/$(SB_MILESTONE)/$(SB_BUILD_NUMBER)/$(SB_PLATFORM)-$(SB_ARCH)
+      # Kinda hacky, but we can't put this in upload_symbols.sh because it
+		# doens't have enough information to pass to the command (root symbol
+		# store, etc.) We take the extra step of protecting this in a
+		# nightly/official build check
+	   ssh -2 -p $(SYMBOL_SERVER_PORT) \
+       -i $(SYMBOL_SERVER_SSH_KEY) \
+       -l $(SYMBOL_SERVER_USER) $(SYMBOL_SERVER_HOST) \
+       "set -e; breakpad-symlinkify.pl $(SYMBOL_SERVER_PATH) $(SYMBOL_SERVER_PATH)/$(SB_MILESTONE)/$(SB_BUILD_NUMBER)/$(SB_PLATFORM)-$(SB_ARCH)"
+   endif
 endif
 
-.PHONY: uploadsymbols buildsymbols stripsymbols do_stripsymbols
+.PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols
