@@ -74,21 +74,33 @@ NS_IMETHODIMP
 sbPlaylistTreeSelection::Select(PRInt32 index)
 {
   mShiftSelectPivot = -1;
-  return mViewSelection->SelectOnly(index);
+  nsresult rv = mViewSelection->SelectOnly(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->Select(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
 {
   mShiftSelectPivot = -1;
-  return mViewSelection->SelectOnly(index);
+  nsresult rv = mViewSelection->SelectOnly(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->TimedSelect(index, delay);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::ToggleSelect(PRInt32 index)
 {
   mShiftSelectPivot = -1;
-  return mViewSelection->Toggle(index);
+  nsresult rv = mViewSelection->Toggle(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->ToggleSelect(index);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -130,7 +142,9 @@ sbPlaylistTreeSelection::RangedSelect(PRInt32 startIndex,
 
   rv = mViewSelection->SelectRange(startIndex, endIndex);
   NS_ENSURE_SUCCESS(rv, rv);
-  return mTreeSelection->RangedSelect(startIndex, endIndex, PR_TRUE);
+  rv = mTreeSelection->RangedSelect(startIndex, endIndex, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -138,14 +152,22 @@ sbPlaylistTreeSelection::ClearRange(PRInt32 startIndex,
                                     PRInt32 endIndex)
 {
   mShiftSelectPivot = -1;
-  return mViewSelection->ClearRange(startIndex, endIndex);
+  nsresult rv = mViewSelection->ClearRange(startIndex, endIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->ClearRange(startIndex, endIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
 sbPlaylistTreeSelection::ClearSelection()
 {
   mShiftSelectPivot = -1;
-  return mViewSelection->SelectNone();
+  nsresult rv = mViewSelection->SelectNone();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->ClearSelection();
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -159,7 +181,11 @@ NS_IMETHODIMP
 sbPlaylistTreeSelection::SelectAll()
 {
   mShiftSelectPivot = -1;
-  return mViewSelection->SelectAll();
+  nsresult rv = mViewSelection->SelectAll();
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->SelectAll();
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -202,6 +228,8 @@ sbPlaylistTreeSelection::AdjustSelection(PRInt32 index, PRInt32 count)
 
     rv = mViewSelection->SetCurrentIndex(currentIndex);
     NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTreeSelection->SetCurrentIndex(currentIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // adjust mShiftSelectPivot, if necessary
@@ -237,7 +265,11 @@ sbPlaylistTreeSelection::GetCurrentIndex(PRInt32* aCurrentIndex)
 NS_IMETHODIMP
 sbPlaylistTreeSelection::SetCurrentIndex(PRInt32 aCurrentIndex)
 {
-  return mViewSelection->SetCurrentIndex(aCurrentIndex);
+  nsresult rv = mViewSelection->SetCurrentIndex(aCurrentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mTreeSelection->SetCurrentIndex(aCurrentIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
 }
 
 NS_IMETHODIMP

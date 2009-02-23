@@ -55,7 +55,10 @@ interface sbIMediaListViewSelectionListener : nsISupports
 /**
  * \interface sbIMediaListViewSelection
  * \brief Manage the selection of items within a view.  This interface is a
- *        subset of nsITreeView.
+ *        subset of nsITreeViewSelection.
+ *        Note that if you are part of the user interface, you probably want
+ *        to be calling nsITreeView.selection instead - otherwise things can
+ *        get subtly out of sync.
  */
 [scriptable, uuid(ea5d0e88-6b5b-4c22-a753-7274ab774d8a)]
 interface sbIMediaListViewSelection : nsISupports

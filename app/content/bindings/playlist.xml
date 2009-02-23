@@ -1624,7 +1624,7 @@
                   .copyString(val);
                 break;
               case "cmd_selectAll":
-                listView.selection.selectAll();
+                this._self.treeView.selection.selectAll();
                 break;
               case "cmd_delete":
                 var list = this._self._getOuterList();
