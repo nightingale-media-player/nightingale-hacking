@@ -31,13 +31,18 @@ if (typeof LastFm == 'undefined') {
   var LastFm = {};
 }
 
+if (typeof(gBrowser) == "undefined")
+	var gBrowser = Cc['@mozilla.org/appshell/window-mediator;1']
+        .getService(Ci.nsIWindowMediator).getMostRecentWindow('Songbird:Main')
+        .window.gBrowser;
+
 LastFm.Icons = {
-  busy: 'chrome://lastfm/skin/busy.png',
-  disabled: 'chrome://lastfm/skin/disabled.png',
-  logged_in: 'chrome://lastfm/skin/as.png',
-  logged_out: 'chrome://lastfm/skin/disabled.png',
-  error: 'chrome://lastfm/skin/error.png',
-  login_error: 'chrome://lastfm/skin/error.png'
+  busy: 'chrome://sb-lastfm/skin/busy.png',
+  disabled: 'chrome://sb-lastfm/skin/disabled.png',
+  logged_in: 'chrome://sb-lastfm/skin/as.png',
+  logged_out: 'chrome://sb-lastfm/skin/disabled.png',
+  error: 'chrome://sb-lastfm/skin/error.png',
+  login_error: 'chrome://sb-lastfm/skin/error.png'
 };
 
 LastFm.URL_SIGNUP = 'http://www.last.fm/join/';
@@ -275,6 +280,7 @@ LastFm.onLoad = function() {
   if (this._service.shouldAutoLogin()) {
     this._service.login();
   }
+
 }
 
 
@@ -375,7 +381,7 @@ LastFm.onLoginSucceeded = function LastFm_onLoginSucceeded() {
 
 // last.fm profile changed
 LastFm.onProfileUpdated = function LastFm_onProfileUpdated() {
-  var avatar = 'chrome://lastfm/skin/default-avatar.png';
+  var avatar = 'chrome://sb-lastfm/skin/default-avatar.png';
   if (this._service.avatar) {
     avatar = this._service.avatar;
   }
@@ -484,6 +490,8 @@ LastFm.onLoveBan = function LastFm_onLoveBan() {
     this._faceplate.removeAttribute('loveban');
   }
 }
+
+LastFm.onAuthorisationSuccess = function LastFm_onAuthorisationSuccess() { }
 
 window.addEventListener("load", function(e) { LastFm.onLoad(e); }, false);
 window.addEventListener("unload", function(e) { LastFm.onUnload(e); }, false);

@@ -30,6 +30,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 interface nsIDOMDocument;
 interface nsIPropertyBag;
 
+[scriptable, uuid(1e6a1de4-8b24-459d-8122-3809db6602ac)]
+interface sbILastFm : nsISupports {
+  // the username of the currently logged-in last.fm user
+  readonly attribute string username;
+};
+
 [scriptable, function, uuid(ccc25979-fa92-444c-8656-33bad339435b)]
 interface sbILastFmWebServicesResponse : nsISupports {
   // an API response has been recieved
@@ -57,4 +63,10 @@ interface sbILastFmWebServices : nsISupports {
   void apiCall(in string aMethod,
                in nsIPropertyBag aArguments, // NOTE: values must be strings
                in sbILastFmWebServicesResponse aCallback);
+};
+
+[scriptable, uuid(b88cda15-f36e-4984-982e-160f60abca3e)]
+interface sbILastFmRadio : nsISupports {
+  // tune into a lastfm:// ratio station
+  void radioPlay(in string aStation);
 };

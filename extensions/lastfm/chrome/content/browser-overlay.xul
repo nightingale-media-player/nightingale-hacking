@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-stylesheet href="chrome://lastfm/skin/overlay.css" ?>
+<?xml-stylesheet href="chrome://sb-lastfm/skin/overlay.css" ?>
 <!--
 Copyright (c) 2008, Pioneers of the Inevitable, Inc.
 All rights reserved.
@@ -28,7 +28,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 <!DOCTYPE window [
-<!ENTITY % lastfmDTD SYSTEM "chrome://lastfm/locale/overlay.dtd">
+<!ENTITY % lastfmDTD SYSTEM "chrome://sb-lastfm/locale/overlay.dtd">
 %lastfmDTD;
 ]>
 <overlay id="lastfm-overlay"
@@ -38,10 +38,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   xmlns:xlink="http://www.w3.org/1999/xlink"
   >
 
-  <script src="main.js"/>
+  <script type="application/x-javascript" src="chrome://sb-lastfm/content/main.js"/>
 
   <stringbundleset id="stringbundleset">
-    <stringbundle id="lastfmStrings" src="chrome://lastfm/locale/overlay.properties"/>
+    <stringbundle id="lastfmStrings" src="chrome://sb-lastfm/locale/overlay.properties"/>
   </stringbundleset>
 
   <menupopup id="menu_ToolsPopup">
@@ -106,7 +106,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <groupbox orient="horizontal" pack="top" align="top">
             <caption label="&lastfm.profile.caption;" />
             <svg:svg id="lastfmImageContainer" class="empty" height="64px" width="64px">
-              <svg:image id="lastfmImage" xlink:href="chrome://lastfm/skin/default-avatar.png" height="64px" width="64px"/>
+              <svg:image id="lastfmImage" xlink:href="chrome://sb-lastfm/skin/default-avatar.png" height="64px" width="64px"/>
             </svg:svg>
             <vbox>
               <description class="text-link">
@@ -132,7 +132,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <statusbar id="status-bar">
     <statusbarpanel id="lastfmStatusIcon"
       class="statusbarpanel-iconic"
-      src="chrome://lastfm/skin/disabled.png"
+      src="chrome://sb-lastfm/skin/disabled.png"
       tooltiptext=""
     />
   </statusbar>

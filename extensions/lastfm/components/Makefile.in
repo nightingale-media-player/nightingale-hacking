@@ -5,7 +5,7 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbLastFm.js
+EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbLastFm.js $(srcdir)/sbLastFmProtocol.js
 
 TARGET_COMPONENTS_DIR = ../.xpistage/components
 
