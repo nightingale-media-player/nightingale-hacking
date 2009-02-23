@@ -60,6 +60,7 @@ searchbar {
   padding:0 2px 0 0 !important;
   margin:0 2px 0 0;
   min-height:22px;
+  cursor: default;
 }
 
 
@@ -96,6 +97,7 @@ searchbar {
 
   min-width:20px !important;
   max-width:20px !important;
+  cursor: default;
 }
 .search-go-button {
   -moz-image-region: rect(0px 16px 16px 0px);

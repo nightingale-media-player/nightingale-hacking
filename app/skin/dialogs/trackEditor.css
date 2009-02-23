@@ -110,6 +110,10 @@ textbox.short-number-input {
 }
 
 /* genre */
+#genredropdown {
+  cursor: default;
+}
+
 #genredropdown > .autocomplete-history-dropmarker {
   -moz-binding: url("chrome://global/content/bindings/autocomplete.xml#history-dropmarker");
   display: inline;
