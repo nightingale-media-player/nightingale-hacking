@@ -336,9 +336,11 @@ var LastfmTuner = {
 						"<div class='station-web'>" +
 							"<img height='12' src='" + GLOBE_ICON + "'/>" +
 						"</div>" +
+						/*
 						"<div class='station-page'>" +
 							"<img height='12' src='" + LASTFM_ICON + "'/>" +
 						"</div>" +
+						*/
 					"</div>" +	//station-nav
 					"</div>" +  //station-info
 
@@ -372,9 +374,11 @@ var LastfmTuner = {
 						"<div class='station-web'>" +
 							"<img height='12' src='" + GLOBE_ICON + "'/>" +
 						"</div>" +
+						/*
 						"<div class='station-page'>" +
 							"<img height='12' src='" + LASTFM_ICON + "'/>" +
 						"</div>" +
+						*/
 					"</div>" +	//station-nav
 					"</div>" +  //station-info
 					
