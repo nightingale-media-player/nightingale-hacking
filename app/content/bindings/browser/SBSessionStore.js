@@ -212,6 +212,10 @@ var SBSessionStore = {
           // we don't want to restore invalid chrome URLs
           continue;
         }
+        if (url == "about:blank") {
+          // skip restoring blank tabs
+          continue;
+        }
 
         // If the tab had a media page, restore it by reloading
         // the media list
