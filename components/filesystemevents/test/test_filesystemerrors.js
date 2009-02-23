@@ -77,6 +77,9 @@ function runTest()
 
       LOG(message += aDescription);
       assertTrue(isCorrectErrorCode);
+
+      fsWatcher = null;
+      watchDir = null;
       testFinished();
     },
   };
