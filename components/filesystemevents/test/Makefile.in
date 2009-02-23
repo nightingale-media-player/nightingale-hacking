@@ -33,6 +33,7 @@ SONGBIRD_TEST_COMPONENT = filesystemevents
 
 SONGBIRD_TESTS = $(srcdir)/test_filesystemevents.js \
                  $(srcdir)/test_filesystemsession.js \
+                 $(srcdir)/test_filesystemerrors.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk
