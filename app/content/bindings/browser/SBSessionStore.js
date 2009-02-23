@@ -49,9 +49,26 @@ const JSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 const PREF_TAB_STATE = "songbird.browser.tab_state";
 const PREF_FIRSTRUN = "songbird.firstrun.tabs.restore";
 const PREF_FIRSTRUN_URL = "songbird.url.firstrunpage";
+const PLACEHOLDER_URL = "chrome://songbird/content/mediapages/firstrun.xul";
 // this pref marks the current session as being firstrun.  Used to cooperate
 // with things like file scan.
 const PREF_FIRSTRUN_SESSION = "songbird.firstrun.is_session";
+
+function LOG(str) {
+  var environment = Cc["@mozilla.org/process/environment;1"]
+                      .createInstance(Ci.nsIEnvironment);
+  var level = ("," + environment.get("NSPR_LOG_MODULES") + ",")
+              .match(/,(?:sbSessionStore|all):(\d+),/);
+  if (!level || level[1] < 3) {
+    // don't log
+    return;
+  }
+  var file = (new Error).stack.split("\n").reverse()[1];
+  dump(file + "" + str + "\n");
+  var consoleService = Cc['@mozilla.org/consoleservice;1']
+                         .getService(Ci.nsIConsoleService);
+  consoleService.logStringMessage(str);
+}
 
 __defineGetter__("_tabState", function() {
   var state = Application.prefs.getValue(PREF_TAB_STATE, null);
@@ -110,6 +127,8 @@ var SBSessionStore = {
     var tabs = [];
     var selectedIndex = 0, selectedTab;
     
+    LOG("restoring tab state");
+    
     if (Application.prefs.has(PREF_FIRSTRUN_SESSION))
       Application.prefs.get(PREF_FIRSTRUN_SESSION).reset();
     
@@ -124,11 +143,11 @@ var SBSessionStore = {
     
     if ( !tabs ) {
       if (!Application.prefs.getValue(PREF_FIRSTRUN, false)) {
+        LOG("no saved tabs, first run - using defaults");
         // First run, load the dummy page in the first tab, and the welcome
         // page in the second.  The dummy page will get replaced in mainWinInit.js
         // when media scan is done / skipped.
-        const placeholderURL = "chrome://songbird/content/mediapages/firstrun.xul";
-        aTabBrowser.loadURI(placeholderURL, null, null, null, '_media');
+        aTabBrowser.loadURI(PLACEHOLDER_URL, null, null, null, '_media');
         
         var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
         aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
@@ -136,6 +155,7 @@ var SBSessionStore = {
         Application.prefs.setValue(PREF_FIRSTRUN, true);
         Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);
       } else {
+        LOG("no saved tabs, not first run - just main library");
         // tab state pref missing/corrupt.
         // let's just go to the main library
         var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
@@ -144,6 +164,7 @@ var SBSessionStore = {
         aTabBrowser.loadMediaList(mainLib);
       }
     } else {
+      LOG("saved tabs found: " + uneval(tabs));
   
       // check if this is an invalid chrome url
       var chromeReg = Cc['@mozilla.org/chrome/chrome-registry;1']
@@ -225,17 +246,18 @@ var SBSessionStore = {
           
         // Otherwise just reload the URL
         } else {
-          
+          LOG("loading plain url: " + url);
           if (isFirstTab) {
             if (aTabBrowser.mediaTab) {
-              // let the first run URL load in the media tab (again).
-              var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, null);
-              if ((firstrunURL == url) ||
+              // let the placeholder URL load in the media tab (again).
+              if ((PLACEHOLDER_URL == url) ||
                   (gServicePane && gServicePane.mTreePane.isMediaTabURL(url)))
               {
+                LOG("this is the placeholder tab or media url");
                 // this is the first tab, and is a media-ish url
                 location = "_media";
               } else {
+                LOG(<>not a media-esque tab ({firstrunURL} vs {url}: {(firstrunURL == url)})</>);
                 // this is the first tab, but this is unsuitable for the media tab
                 location = "_top";
                 // load the library page to fill up the media tab
@@ -246,9 +268,11 @@ var SBSessionStore = {
               }
             } else {
               // no media tab, but this is the first tab
+              LOG("no media tab found, just use first tab");
               location = "_top";
             }
           } else {
+            LOG("not first tab, always _blank");
             location = "_blank";
           }
           newTab = aTabBrowser.loadURI(url, null, null, null, location);
