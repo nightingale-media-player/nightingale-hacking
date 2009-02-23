@@ -330,11 +330,15 @@ var AlbumArt = {
    * \param aImageElement - Image element we are changing.
    * \param aNotBox - the not box related to this image.
    * \param aDragBox - the drag box related to this image.
-   * \param aItemList - list of items we use to detemine how to display.
+   * \param isPlayingOrSelected - Indicates if there are items selected or one is playing.
    */
-  changeImage: function AlbumArt_changeImage(aNewURL, aImageElement, aNotBox, aDragBox, aItemList) {
+  changeImage: function AlbumArt_changeImage(aNewURL,
+                                             aImageElement,
+                                             aNotBox,
+                                             aDragBox,
+                                             isPlayingOrSelected) {
     // Determine what to display
-    if (aItemList.length == 0) {
+    if (!isPlayingOrSelected) {
       // No currently playing or selected items
 
       // Show the not selected/playing message.
@@ -385,14 +389,11 @@ var AlbumArt = {
     var albumArtNotSelectedBox = document.getElementById('sb-albumart-not-selected');
     var albumArtSelectedDragBox = document.getElementById('sb-albumart-select-drag');
     
-    var selection = AlbumArt._mediaListView.selection;
-    var selectedItems = ArrayConverter.JSArray(selection.selectedMediaItems);
-    
     this.changeImage(aNewURL,
                      albumArtSelectedImage,
                      albumArtNotSelectedBox,
                      albumArtSelectedDragBox,
-                     selectedItems);
+                     (AlbumArt._mediaListView.selection.count > 0));
   },
   
   /**
@@ -405,17 +406,11 @@ var AlbumArt = {
     var albumArtNotPlayingBox = document.getElementById('sb-albumart-not-playing');
     var albumArtPlayingDragBox = document.getElementById('sb-albumart-playing-drag');
     
-    var playingItem = this.getNowPlayingItem();
-    var playingItems = [];
-    if (playingItem) {
-      playingItems.push(playingItem);
-    }
-
     this.changeImage(aNewURL,
                      albumArtPlayingImage,
                      albumArtNotPlayingBox,
                      albumArtPlayingDragBox,
-                     playingItems);
+                     (this.getNowPlayingItem() != null));
   },
 
   /**
