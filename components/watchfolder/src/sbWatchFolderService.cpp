@@ -151,9 +151,11 @@ sbWatchFolderService::InitInternal()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // First, check to see if the service should be running.
-  PRBool shouldEnable;
+  PRBool shouldEnable = PR_FALSE;
   rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE, &shouldEnable);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv)) {
+    shouldEnable = PR_FALSE;
+  }
 
   // Set the service as disabled, if this method exits cleanly, the service
   // will be considered 'started'.
