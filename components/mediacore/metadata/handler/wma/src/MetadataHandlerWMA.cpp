@@ -500,10 +500,10 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
   }
 
   // Figure out whether it's audio or video
-  wmpKey.AssignLiteral("HasAudio");
+  wmpKey.AssignLiteral("HasVideo");
   nsString hasVideo = ReadHeaderValue(headerInfo, wmpKey);
 
-  wmpKey.AssignLiteral("HasVideo");
+  wmpKey.AssignLiteral("HasAudio");
   nsString hasAudio = ReadHeaderValue(headerInfo, wmpKey);
 
   value = EmptyString();
