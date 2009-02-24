@@ -599,7 +599,7 @@ sbGStreamerMetadataHandler::on_pad_added(GstElement *decodeBin,
   // notify::caps signal, and therefore never figure out the caps.  Get the
   // underlying pad (recusively) to work around this.  Fixed in GStreamer
   // 0.10.22.
-  pad = (GstPad*)gst_object_ref(newPad.get());
+  pad = (GstPad*)gst_object_ref(newPad);
   while (GST_IS_GHOST_PAD(pad.get())) {
     oldPad = pad.forget();
     pad = gst_ghost_pad_get_target(GST_GHOST_PAD(oldPad.get()));
