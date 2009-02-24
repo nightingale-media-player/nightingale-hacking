@@ -47,13 +47,13 @@ function runTest () {
   // Start watching the temp folder, since we are going to make 
   // changes there
   setWatchFolder(getTempFolder());
-  sleep(30000);
+  sleep(15000);
 
   // Get the test files set up
   var testFolder = getCopyOfFolder(gTestFiles, "_temp_moverename_files");
 
   // That should cause watch folders to add the files...
-  sleep(30000);
+  sleep(15000);
   
   // Mark each item with it's original url, so we
   // can tell they update correctly
@@ -104,7 +104,7 @@ function runTest () {
   newFile.copyTo(newFile.parent, "newFile.mp3");
 
   // Wait for watchfolders to kick in...
-  sleep(30000);
+  sleep(15000);
 
   // Now verify that the original media items still exist, 
   // and that the contentSrcs have been updated as expected

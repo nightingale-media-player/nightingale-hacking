@@ -134,7 +134,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_watchfolder_tests.tmp");
+  gTempFolder.append("songbird_watchfolder_tests" + Math.random() +   ".tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }
