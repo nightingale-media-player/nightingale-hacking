@@ -165,7 +165,9 @@ sbGStreamerMetadataHandler::GetRequiresMainThread(PRBool *aRequiresMainThread)
 {
   TRACE((__FUNCTION__));
   NS_ENSURE_ARG_POINTER(aRequiresMainThread);
-  *aRequiresMainThread = PR_FALSE;
+  // This handler MUST run on the main thread, since it can kick off
+  // http channels and other not-so-threadsafe async tasks.
+  *aRequiresMainThread = PR_TRUE;
   return NS_OK;
 }
 
