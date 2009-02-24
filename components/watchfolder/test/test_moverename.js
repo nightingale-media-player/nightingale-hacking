@@ -74,14 +74,14 @@ function runTest () {
   assertEqual(library.length, originalLibraryLength + 5);
 
   // Here's what we expect to happen...
-  var root = newFileURI(testFolder).spec;
+  var root = newFileURI(testFolder).spec.toLowerCase();
   var map = {};
-  map[root + "individualMovedFile.mp3"] = root + "dir3/individualMovedFile.mp3";
-  map[root + "renamedFile.mp3"] = root + "renamedFile2.mp3";
-  map[root + "dir1/dir2/movedFile1.mp3"] = root + "dir3/dir1/dir2/movedFile1.mp3";
-  map[root + "dir1/dir2/movedFile2.mp3"] = root + "dir3/dir1/dir2/movedFile2.mp3";
-  map[root + "deletedFile.mp3"] = null;
-  map["null"] = root + "dir3/newFile.mp3";
+  map[root + "individualmovedfile.mp3"] = root + "dir3/individualmovedfile.mp3";
+  map[root + "renamedfile.mp3"] = root + "renamedfile2.mp3";
+  map[root + "dir1/dir2/movedfile1.mp3"] = root + "dir3/dir1/dir2/movedfile1.mp3";
+  map[root + "dir1/dir2/movedfile2.mp3"] = root + "dir3/dir1/dir2/movedfile2.mp3";
+  map[root + "deletedfile.mp3"] = null;
+  map["null"] = root + "dir3/newfile.mp3";
   
   var dir1 = testFolder.clone();
   dir1.append("dir1");
@@ -114,8 +114,9 @@ function runTest () {
        return Ci.sbIMediaListEnumerationListener.CONTINUE;
      },
      onEnumeratedItem: function(list, item) {
-       var newSpec = item.getProperty(SBProperties.contentURL);
+       var newSpec = item.getProperty(SBProperties.contentURL).toLowerCase();
        var oldSpec = item.getProperty(SBProperties.originURL);
+       if (oldSpec) oldSpec = oldSpec.toLowerCase()
        dump("Change: '" + oldSpec + "' -> '" + newSpec + "'\n");
        
        if (oldSpec in map) {
