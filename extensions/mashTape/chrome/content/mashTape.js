@@ -1133,6 +1133,7 @@ mashTape.updateInfo = function(provider, results, section) {
 	
 			// notify listeners
 			mashTape.mgr.updateInfo("bio", results.bioText.toString());
+			mashTape.mgr.updateInfo("biourl", results.bioUrl.toString());
 			break;
 
 		case "photo":

@@ -37,10 +37,10 @@ mashTapeManager.prototype = {
 			this._listeners.splice(idx, 1);
 	},
 
-	updateInfo : function(imageUrl, bioText) {
+	updateInfo : function(section, data) {
 		try {
 			this._listeners.forEach( function (listener) {
-				listener.onInfoUpdated(imageUrl, bioText);
+				listener.onInfoUpdated(section, data);
 			});
 		} catch (e) {
 			dump("Error calling listener.onInfoUpdated: " + e + "\n");
