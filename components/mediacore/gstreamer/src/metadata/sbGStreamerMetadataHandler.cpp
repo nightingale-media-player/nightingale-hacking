@@ -88,7 +88,9 @@ SB_AUTO_CLASS(sbGstCaps,
               gst_caps_unref(mValue),
               mValue = NULL);
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbGStreamerMetadataHandler, sbIMetadataHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbGStreamerMetadataHandler,
+                              sbIMetadataHandler,
+                              nsITimerCallback)
 
 sbGStreamerMetadataHandler::sbGStreamerMetadataHandler()
   : mLock(nsnull),
@@ -597,10 +599,9 @@ sbGStreamerMetadataHandler::on_pad_added(GstElement *decodeBin,
   // notify::caps signal, and therefore never figure out the caps.  Get the
   // underlying pad (recusively) to work around this.  Fixed in GStreamer
   // 0.10.22.
-  pad = newPad;
-  gst_object_ref(pad.get());
+  pad = (GstPad*)gst_object_ref(newPad.get());
   while (GST_IS_GHOST_PAD(pad.get())) {
-    oldPad = pad;
+    oldPad = pad.forget();
     pad = gst_ghost_pad_get_target(GST_GHOST_PAD(oldPad.get()));
   }
 

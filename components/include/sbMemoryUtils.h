@@ -138,7 +138,7 @@ public:                                                                        \
   {                                                                            \
     return mValue;                                                             \
   }                                                                            \
-  aType& operator=(aType& aValue)                                              \
+  aType& operator=(aType aValue)                                               \
   {                                                                            \
     if (aIsValid) {                                                            \
       aDispose;                                                                \
@@ -156,6 +156,7 @@ private:                                                                       \
   aType2 mValue2;                                                              \
                                                                                \
   void Invalidate() { aInvalidate; }                                           \
+  aName& operator=(const aName aValue) { /* compile error, didn't addref */ }  \
 }
 
 #define SB_AUTO_CLASS(aName, aType, aIsValid, aDispose, aInvalidate)           \
