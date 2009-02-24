@@ -24,17 +24,21 @@ if (typeof(FAVICON_PATH) == "undefined")
 
 const shoutcastTempLibGuid = "extensions.shoutcast-radio.templib.guid";
 
-function findRadioNode(node) {
+function findRadioNode(node, radioString) {
 	if (node.isContainer && node.name != null &&
-			node.getAttributeNS(SC_NS, "radioFolder") == 1)
+		((node.name == radioString)
+		 || (node.getAttributeNS(SC_NS, "radioFolder") == 1)))
+	{
+		node.setAttributeNS(SC_NS, "radioFolder", 1);
 		return node;
+	}
 
 	if (node.isContainer) {
 		var children = node.childNodes;
 		while (children.hasMoreElements()) {
 			var child =
 					children.getNext().QueryInterface(Ci.sbIServicePaneNode);
-			var result = findRadioNode(child);
+			var result = findRadioNode(child, radioString);
 			if (result != null)
 				return result;
 		}
@@ -141,15 +145,15 @@ ShoutcastRadio.Controller = {
 				getService(Ci.sbIBookmarks);
 		
 		// Walk nodes to see if a "Radio" folder already exists
-		var radioFolder = findRadioNode(SPS.root);
+		var radioString = this._strings.getString("radioFolderLabel");
+		var radioFolder = findRadioNode(SPS.root, radioString);
 		if (radioFolder == null) {
-			radioFolder = BMS.addFolder(
-					this._strings.getString("radioFolderLabel"));
+			radioFolder = BMS.addFolder(radioString);
 			radioFolder.editable = false;
 			radioFolder.setAttributeNS(SC_NS, "radioFolder", 1);
 		} else {
 			// Relocalise the name on startup
-			radioFolder.name = this._strings.getString("radioFolderLabel");
+			radioFolder.name = radioString;
 		}
 		radioFolder.hidden = false;
 	
@@ -407,13 +411,15 @@ var shoutcastUninstallObserver = {
 	_tabs : null,
 
 	observe : function(subject, topic, data) {
+		var radioString =
+			ShoutcastRadio.Controller._strings.getString("radioFolderLabel");
 		if (topic == "em-action-requested") {
 			// Extension has been flagged to be uninstalled
 			subject.QueryInterface(Ci.nsIUpdateItem);
 			
 			var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 					getService(Ci.sbIServicePaneService);
-			var radioNode = findRadioNode(SPS.root);
+			var radioNode = findRadioNode(SPS.root, radioString);
 
 			if (subject.id == "shoutcast-radio@songbirdnest.com") {
 				if (data == "item-uninstalled") {
@@ -437,22 +443,60 @@ var shoutcastUninstallObserver = {
 				var SPS = Cc['@songbirdnest.com/servicepane/service;1'].
 						getService(Ci.sbIServicePaneService);
 
-				/* Remove only the Shoutcast node 
+				// Remove only the Shoutcast node 
 				var shoutcastNode = SPS.getNodeForURL(
 						"chrome://shoutcast-radio/content/directory.xul");
 				SPS.removeNode(shoutcastNode);
-				*/
 
-				// Remove the entire Radio node & its children
-				var radioFolder = findRadioNode(SPS.root);
-				SPS.removeNode(radioFolder);
-
-				// Remove preferences
 				var tempLibGuid;
 				var radioLibGuid;
 				var prefs = Cc["@mozilla.org/preferences-service;1"].
 						getService(Components.interfaces.nsIPrefService);
 				var scPrefs = prefs.getBranch("extensions.shoutcast-radio.");
+				var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
+					.getService(Ci.sbILibraryServicePaneService);
+				if (scPrefs.prefHasUserValue("templib.guid")) {
+					var libGuid = scPrefs.getCharPref("templib.guid");
+					var libraryManager =
+							Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+							.getService(Ci.sbILibraryManager);
+					var tempLib = libraryManager.getLibrary(libGuid);
+
+					// Get our favourites list
+					var a = tempLib.getItemsByProperty(
+							SBProperties.customType, "radio_favouritesList");
+					var favesList = a.queryElementAt(0, Ci.sbIMediaList);
+		
+					// Remove the actual favourites node now
+					var favouritesNode = librarySPS.getNodeForLibraryResource(
+							favesList);
+					SPS.removeNode(favouritesNode);
+				}
+
+				// Remove the "Radio" node if it's empty
+				// XXX stevel - in a loop due to bugs with multiple Radio
+				// nodes having been created
+				var radioFolder = findRadioNode(SPS.root, radioString);
+				dump("FIRST CHILD: " + typeof(radioFolder.firstChild)+"\n");
+				dump("FIRST CHILD: " + radioFolder.childNodes.hasMoreElements()+"\n");
+				var enum = radioFolder.childNodes;
+				while (enum.hasMoreElements()) {
+					var node = enum.getNext();
+					dump(node.name + "--" + node.url + "--" + node.id + "\n");
+					var item = librarySPS.getLibraryResourceForNode(node);
+					if (!item || (item.getProperty(SBProperties.customType) ==
+							"radio_favouritesList"))
+					{
+						dump("OMG\n");
+						SPS.removeNode(node);
+					}
+				}
+				while (radioFolder != null && !radioFolder.firstChild) {
+					SPS.removeNode(radioFolder);
+					radioFolder = findRadioNode(SPS.root, radioString);
+				}
+
+				// Remove preferences
 				if (scPrefs.prefHasUserValue("plsinit"))
 					scPrefs.clearUserPref("plsinit");
 				if (scPrefs.prefHasUserValue("filter"))

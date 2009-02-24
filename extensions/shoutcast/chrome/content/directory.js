@@ -564,8 +564,12 @@ var libListener = {
 
 function findRadioNode(node) {
 	if (node.isContainer && node.name != null &&
-			node.name == RadioDirectory._strings.getString("radioFolderLabel"))
+		((node.name == RadioDirectory._strings.getString("radioFolderLabel"))
+		 || (node.getAttributeNS(SC_NS, "radioFolder") == 1)))
+	{
+		node.setAttributeNS(SC_NS, "radioFolder", 1);
 		return node;
+	}
 
 	if (node.isContainer) {
 		var children = node.childNodes;
