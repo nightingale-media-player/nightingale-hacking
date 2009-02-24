@@ -49,7 +49,7 @@ public:
   nsresult OnInotifyEvent();
   
   // |sbFileSystemTreeListener|
-  NS_IMETHOD OnChangeFound(nsAString & aChangePath,
+  NS_IMETHOD OnChangeFound(const nsAString & aChangePath,
                            EChangeType aChangeType);
   NS_IMETHOD OnTreeReady(const nsAString & aTreeRootPath,
                          sbStringArray & aDirPathArray);
@@ -65,7 +65,7 @@ protected:
   //        necessary entry to the file descriptor map.
   // \param aDirPath The absolute path of the directory to watch.
   //
-  nsresult AddInotifyHook(nsAString & aDirPath);
+  nsresult AddInotifyHook(const nsAString & aDirPath);
 
 private:
   int            mInotifyFileDesc;

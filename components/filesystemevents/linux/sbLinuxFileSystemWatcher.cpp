@@ -87,7 +87,7 @@ sbLinuxFileSystemWatcher::Cleanup()
 }
 
 nsresult
-sbLinuxFileSystemWatcher::AddInotifyHook(nsAString & aDirPath)
+sbLinuxFileSystemWatcher::AddInotifyHook(const nsAString & aDirPath)
 {
   PRUint32 watchFlags = 
     IN_MODIFY | IN_CREATE | IN_DELETE | IN_DELETE_SELF | 
@@ -183,7 +183,7 @@ sbLinuxFileSystemWatcher::OnInotifyEvent()
 // sbFileSystemTreeListener
 
 NS_IMETHODIMP
-sbLinuxFileSystemWatcher::OnChangeFound(nsAString & aChangePath,
+sbLinuxFileSystemWatcher::OnChangeFound(const nsAString & aChangePath,
                                         EChangeType aChangeType)
 {
   // Check to see if |aChangePath| represents a directory. If it does, add
