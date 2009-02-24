@@ -105,7 +105,7 @@ sbLinuxFileSystemWatcher::AddInotifyHook(const nsAString & aDirPath)
                                 aDirPath);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                      "Could not notify listener of INVALID_DIRECTORY!");
-    
+
     return NS_ERROR_UNEXPECTED;
   }
 
@@ -186,29 +186,34 @@ NS_IMETHODIMP
 sbLinuxFileSystemWatcher::OnChangeFound(const nsAString & aChangePath,
                                         EChangeType aChangeType)
 {
-  // Check to see if |aChangePath| represents a directory. If it does, add
-  // a new inotify hook.
-  nsresult rv;
-  nsCOMPtr<nsILocalFile> curPathFile = 
-    do_CreateInstance("@mozilla.org/file/local;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = curPathFile->InitWithPath(aChangePath);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRBool exists;
-  rv = curPathFile->Exists(&exists);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (exists) {
-    PRBool isDir;
-    rv = curPathFile->IsDirectory(&isDir);
-
+  // Only setup the inotify hooks if this class is currently watching.
+  // Events that were received from a previous session will be called
+  // before |OnTreeReady()|.
+  if (mIsWatching) {
+    // Check to see if |aChangePath| represents a directory. If it does, add
+    // a new inotify hook.
+    nsresult rv;
+    nsCOMPtr<nsILocalFile> curPathFile = 
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (isDir) {
-      rv = AddInotifyHook(aChangePath);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a inotify hook!");
+    rv = curPathFile->InitWithPath(aChangePath);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool exists;
+    rv = curPathFile->Exists(&exists);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (exists) {
+      PRBool isDir;
+      rv = curPathFile->IsDirectory(&isDir);
+
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (isDir) {
+        rv = AddInotifyHook(aChangePath);
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a inotify hook!");
+      }
     }
   }
 
