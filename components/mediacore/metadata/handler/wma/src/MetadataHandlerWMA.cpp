@@ -37,6 +37,7 @@
 #include "sbIPropertyArray.h"
 #include "sbPropertiesCID.h"
 #include "sbMemoryUtils.h"
+#include <sbStringUtils.h>
 
 #include <nsIChannel.h>
 #include <nsIFileStreams.h>
@@ -613,7 +614,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
       PRUint64 result;
       LL_MUL(result, duration, PR_USEC_PER_SEC);
 
-      metadataValue.AppendInt((PRInt64)result);
+      AppendInt(metadataValue, result);
       metadataValueType = 1;
     }
     else {
