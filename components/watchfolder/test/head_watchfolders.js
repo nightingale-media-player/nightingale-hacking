@@ -28,8 +28,14 @@
  * \brief Generic support functions for watchfolder tests
  */
 
+
+
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+
+var Application = Cc["@mozilla.org/fuel/application;1"]
+                     .getService(Ci.fuelIApplication);
+
 
 function newFileURI(file) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
@@ -57,6 +63,18 @@ function newAppRelativeFile( path ) {
   }
 
   return file;
+}
+
+/**
+ * Start watching the given nsIFile path, 
+ * or pass null to disable
+ */
+function setWatchFolder(file) {
+  if (file) {
+    dump("WF is watching " + file.path + "\n");
+    Application.prefs.setValue("songbird.watch_folder.path", file.path);
+  } 
+  Application.prefs.setValue("songbird.watch_folder.enable", !!file);
 }
 
 /**
@@ -116,7 +134,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_metadata_tests.tmp");
+  gTempFolder.append("songbird_watchfolder_tests.tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }

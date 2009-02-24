@@ -53,6 +53,7 @@ typedef enum {
   eNone  = 0,
   eRemoval = 1,
   eChanged = 2,
+  eMoveOrRename = 3,
 } EProcessType;
 
 typedef enum {
@@ -142,6 +143,11 @@ protected:
   // \brief Enumerate media items in the library with the given paths.
   //
   nsresult EnumerateItemsByPaths(sbStringVector & aPathVector);
+
+  //
+  // \brief Get an array of media item URIs from a list of string paths
+  //
+  nsresult GetURIArrayForStringPaths(sbStringVector* aPaths, nsIArray** aURIs);
 
   //
   // \brief Get a |nsIURI| instance for a given absolute path.

@@ -50,12 +50,14 @@ interface sbIWFMoveRenameHelper9000 : nsISupports
   /**
    * \brief Infer moved/renamed media items based on changes
    *        to the file system. 
-   * \param aRemovedPaths an array of nsIFile paths that were added
-   * \param aAddedPaths an array of nsIFile paths that were removed
-
+   * This method will block, processing events until all
+   * updates are complete.
+   * \param aMediaItems an array media items that may have
+   *        been moved or renamed
+   * \param aAddedPaths an array of candidate nsIFile paths
    */
-  sbIJobProgress processPaths(in nsIArray aRemovedPaths,
-                              in nsIArray aAddedPaths);
+  void process(in nsIArray aMediaItems,
+               in nsIArray aNewPaths);
 };
 
 

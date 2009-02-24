@@ -22,22 +22,19 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = watchfolders
+tasks: prepare all
 
-SONGBIRD_TESTS = $(srcdir)/head_watchfolders.js \
-                 $(srcdir)/tail_watchfolders.js \
-                 $(srcdir)/test_moverename.js \
-                 $(NULL)
+prepare:: 
+	$(MKDIR) -p $(SONGBIRD_TESTSDIR)/watchfolders/files
 
-SUBDIRS = files \
-          $(NULL)
+CLONEDIR = $(SONGBIRD_TESTSDIR)/watchfolders/files
 
 include $(topsrcdir)/build/rules.mk
 

@@ -24,10 +24,6 @@
 //
 */
 
-/**
- * \brief Test the directory importer service
- */
-
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
@@ -36,28 +32,109 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 var gTestFiles = newAppRelativeFile("testharness/watchfolders/files/moverename");
 
 /**
- * TODO
+ * Test WatchFolder's ability to correctly handle
+ * moved and renamed files without deleting and re-adding.
  */
 function runTest () {
-  /*
-  Unit Test:
-
-  Clear library
-  Create temp folder
-  Set watch folder on temp
-  Copy test tree into watch folder
-  Wait 5 seconds
-  Assert library contains the expected files
-  Copy all items into a media list
-  Now transform the tree
-  Wait 5 seconds
-  Assert all items in the media list still point to files that exist
-  Assert GUIDs are associated with the expected paths
-  Shutdown watchfolders
   
   // Start with an empty library
   var library = LibraryUtils.mainLibrary;
   library.clear();
+  // The library wont actually be empty, since 
+  // the download list and stuff like that come back
+  var originalLibraryLength = library.length;
   
-  */  
+  // Start watching the temp folder, since we are going to make 
+  // changes there
+  setWatchFolder(getTempFolder());
+  sleep(10000);
+
+  // Get the test files set up
+  var testFolder = getCopyOfFolder(gTestFiles, "_temp_moverename_files");
+
+  // That should cause watch folders to add the files...
+  sleep(10000);
+  
+  // Mark each item with it's original url, so we
+  // can tell they update correctly
+  library.enumerateAllItems({
+     onEnumerationBegin: function(list) {
+       return Ci.sbIMediaListEnumerationListener.CONTINUE;
+     },
+     onEnumeratedItem: function(list, item) {
+       dump("Found media item:" + item.contentSrc.spec + "\n");
+       // Remember the old path so we can verify things changed ok
+       item.setProperty(SBProperties.originURL, item.contentSrc.spec);
+       return Ci.sbIMediaListEnumerationListener.CONTINUE;
+     },
+     onEnumerationEnd: function(list, status) {
+     }
+  });
+
+  assertEqual(library.length, originalLibraryLength + 5);
+
+  // Here's what we expect to happen...
+  var root = newFileURI(testFolder).spec;
+  var map = {};
+  map[root + "individualMovedFile.mp3"] = root + "dir3/individualMovedFile.mp3";
+  map[root + "renamedFile.mp3"] = root + "renamedFile2.mp3";
+  map[root + "dir1/dir2/movedFile1.mp3"] = root + "dir3/dir1/dir2/movedFile1.mp3";
+  map[root + "dir1/dir2/movedFile2.mp3"] = root + "dir3/dir1/dir2/movedFile2.mp3";
+  map[root + "deletedFile.mp3"] = null;
+  map["null"] = root + "dir3/newFile.mp3";
+  
+  var dir1 = testFolder.clone();
+  dir1.append("dir1");
+  var dir3 = testFolder.clone();
+  dir3.append("dir3");
+  var individualMovedFile = testFolder.clone();
+  individualMovedFile.append("individualMovedFile.mp3");
+  var renamedFile = testFolder.clone();
+  renamedFile.append("renamedFile.mp3");
+  var deletedFile = testFolder.clone();
+  deletedFile.append("deletedFile.mp3");
+  var newFile = dir3.clone();
+  newFile.append("random.txt");
+  
+  // Perform the move/renames
+  dir1.moveTo(dir3, null);
+  individualMovedFile.moveTo(dir3, null);
+  renamedFile.moveTo(renamedFile.parent, "renamedFile2.mp3");
+  deletedFile.remove(false);
+  newFile.copyTo(newFile.parent, "newFile.mp3");
+
+  // Wait for watchfolders to kick in...
+  sleep(10000);
+
+  // Now verify that the original media items still exist, 
+  // and that the contentSrcs have been updated as expected
+  var count = 0;
+  library.enumerateAllItems({
+     onEnumerationBegin: function(list) {
+       return Ci.sbIMediaListEnumerationListener.CONTINUE;
+     },
+     onEnumeratedItem: function(list, item) {
+       var newSpec = item.getProperty(SBProperties.contentURL);
+       var oldSpec = item.getProperty(SBProperties.originURL);
+       dump("Change: '" + oldSpec + "' -> '" + newSpec + "'\n");
+       
+       if (oldSpec in map) {
+         if (newSpec == map[oldSpec]) {
+           count++;
+         } else {
+           dump("FAIL: Expected '" + map[oldSpec] + 
+                "' but got '" + newSpec + "'\n");
+         }
+         delete map[oldSpec]; // Delete, so we can't double count
+       }
+       return Ci.sbIMediaListEnumerationListener.CONTINUE;
+     },
+     onEnumerationEnd: function(list, status) {
+     }
+  });
+  assertEqual(count, 5);
+  
+  // Shut down watch folders
+  setWatchFolder(null);
+  library.clear();
 }

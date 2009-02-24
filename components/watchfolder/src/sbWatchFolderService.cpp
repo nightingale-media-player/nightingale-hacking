@@ -26,6 +26,7 @@
 
 #include "sbWatchFolderService.h"
 #include "sbWatchFolderServiceCID.h"
+#include <sbIWFMoveRenameHelper9000.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbIApplicationController.h>
@@ -50,6 +51,7 @@
 #include <nsThreadUtils.h>
 #include <nsXULAppAPI.h>
 #include <nsIXULRuntime.h>
+#include <prlog.h>
 
 #define PREF_WATCHFOLDER_ROOT        "songbird.watch_folder."
 #define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
@@ -59,7 +61,20 @@
 #define STARTUP_TIMER_DELAY      3000
 #define FLUSH_FS_WATCHER_DELAY   1000
 #define CHANGE_DELAY_TIMER_DELAY 30000
-#define EVENT_PUMP_TIMER_DELAY   1000
+#define EVENT_PUMP_TIMER_DELAY   500
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbWatchFolderService:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gWatchFoldersLog = nsnull;
+#define TRACE(args) PR_LOG(gWatchFoldersLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gWatchFoldersLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 typedef sbStringVector::const_iterator sbStringVectorIter;
 
@@ -81,6 +96,12 @@ sbWatchFolderService::sbWatchFolderService()
   mChangeDelayTimerIsSet = PR_FALSE;
   mShouldProcessEvents = PR_FALSE;
   mCurrentProcessType = eNone;
+  
+  #ifdef PR_LOGGING
+   if (!gWatchFoldersLog) {
+     gWatchFoldersLog = PR_NewLogModule("sbWatchFolderService");
+   }
+  #endif
 }
 
 sbWatchFolderService::~sbWatchFolderService()
@@ -330,19 +351,20 @@ sbWatchFolderService::ProcessEventPaths()
   // For now, just process remove, added, and changed paths.
   nsresult rv;
 
-  //
-  // NOTE: Once bug 15367 has been finished, this method will short-circuit
-  //       this case to try and detect moves/renames.
-  //
-  if (mRemovedPaths.size() == mAddedPaths.size()) {
-    NS_WARNING("POSSIBLE MOVE DETECTED... SEE BUG 15367!");
+  // If possible, try to guess moves and renames and avoid
+  // just removing and re-adding
+  if (mRemovedPaths.size() > 0 && mAddedPaths.size() > 0) {
+    LOG(("sbWatchFolderService: possible move/rename detected"));
+    rv = HandleEventPathList(mRemovedPaths, eMoveOrRename);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } 
+  else {
+    rv = HandleEventPathList(mRemovedPaths, eRemoval);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = ProcessAddedPaths();
+    NS_ENSURE_SUCCESS(rv, rv); 
   }
-
-  rv = HandleEventPathList(mRemovedPaths, eRemoval);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = ProcessAddedPaths();
-  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = HandleEventPathList(mChangedPaths, eChanged);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -375,36 +397,9 @@ sbWatchFolderService::ProcessAddedPaths()
   }
 
   nsresult rv;
-  nsCOMPtr<nsIMutableArray> uriArray =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+  nsCOMPtr<nsIArray> uriArray;
+  GetURIArrayForStringPaths(&mAddedPaths, getter_AddRefs(uriArray));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
-    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbStringVectorIter begin = mAddedPaths.begin();
-  sbStringVectorIter end = mAddedPaths.end();
-  sbStringVectorIter next;
-  for (next = begin; next != end; ++next) {
-    nsCOMPtr<nsIURI> fileURI;
-    rv = GetFilePathURI(*next, getter_AddRefs(fileURI));
-    if (NS_FAILED(rv)) {
-      NS_WARNING("Could not get a URI for a file!");
-      continue;
-    }
-
-    // Don't add every type of file, have the mediacore sniffer validate this
-    // is a URI that we can handle.
-    PRBool isValid = PR_FALSE;
-    rv = typeSniffer->IsValidMediaURL(fileURI, &isValid);
-    if (NS_SUCCEEDED(rv) && isValid) {
-      rv = uriArray->AppendElement(fileURI, PR_FALSE);
-      if (NS_FAILED(rv)) {
-        NS_WARNING("Could not append the URI to the mutable array!");
-      }
-    }
-  }
 
   mAddedPaths.clear();
 
@@ -437,6 +432,51 @@ sbWatchFolderService::ProcessAddedPaths()
   }
 
   return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::GetURIArrayForStringPaths(sbStringVector *aPaths, 
+                                                nsIArray **aURIs)
+{
+  NS_ENSURE_ARG_POINTER(aPaths);
+  NS_ENSURE_ARG_POINTER(aURIs);
+  nsresult rv; 
+  
+  nsCOMPtr<nsIMutableArray> uriArray =
+    do_CreateInstance("@mozilla.org/array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
+    do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbStringVectorIter begin = aPaths->begin();
+  sbStringVectorIter end = aPaths->end();
+  sbStringVectorIter next;
+  for (next = begin; next != end; ++next) {
+    nsCOMPtr<nsIURI> fileURI;
+    rv = GetFilePathURI(*next, getter_AddRefs(fileURI));
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Could not get a URI for a file!");
+      continue;
+    }
+
+    // Don't add every type of file, have the mediacore sniffer validate this
+    // is a URI that we can handle.
+    PRBool isValid = PR_FALSE;
+    rv = typeSniffer->IsValidMediaURL(fileURI, &isValid);
+    if (NS_SUCCEEDED(rv) && isValid) {
+      rv = uriArray->AppendElement(fileURI, PR_FALSE);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("Could not append the URI to the mutable array!");
+      }
+    }
+  }
+  
+  nsCOMPtr<nsIArray> array = do_QueryInterface(uriArray, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  array.forget(aURIs);
+  return rv;
 }
 
 nsresult
@@ -689,6 +729,7 @@ sbWatchFolderService::OnWatcherStarted()
   mShouldProcessEvents = PR_TRUE;
   mHasWatcherStarted = PR_TRUE;
 
+  TRACE(("sbWatchFolderService::OnWatcherStarted"));
   return NS_OK;
 }
 
@@ -720,6 +761,7 @@ sbWatchFolderService::OnWatcherStopped()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  TRACE(("sbWatchFolderService::OnWatcherStopped"));
   return NS_OK;
 }
 
@@ -751,6 +793,9 @@ sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
 NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
+  LOG(("sbWatchFolderService::OnFileSystemChanged %s", 
+    NS_LossyConvertUTF16toASCII(aFilePath).get()));
+  
   // The watcher will report all changes from the previous session before the
   // watcher has started. Don't set the timer until then.
   if (mHasWatcherStarted) {
@@ -797,6 +842,9 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
+  LOG(("sbWatchFolderService::OnFileSystemRemoved %s", 
+    NS_LossyConvertUTF16toASCII(aFilePath).get()));
+  
   mRemovedPaths.push_back(nsString(aFilePath));
 
   // The method will guard against |mHasWatcherStarted|
@@ -809,6 +857,9 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
+  LOG(("sbWatchFolderService::OnFileSystemAdded %s", 
+    NS_LossyConvertUTF16toASCII(aFilePath).get()));
+    
   mAddedPaths.push_back(nsString(aFilePath));
 
   // The method will guard against |mHasWatcherStarted|
@@ -850,22 +901,21 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
                                        nsresult aStatusCode)
 {
   nsresult rv;
+  PRUint32 length;
+  rv = mEnumeratedMediaItems->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (length > 0) {
+    if (mCurrentProcessType == eRemoval) {
+      // Remove the found items from the library.
+      nsCOMPtr<nsISimpleEnumerator> mediaItemEnum;
+      rv = mEnumeratedMediaItems->Enumerate(getter_AddRefs(mediaItemEnum));
+      NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mCurrentProcessType == eRemoval) {
-    // Remove the found items from the library.
-    nsCOMPtr<nsISimpleEnumerator> mediaItemEnum;
-    rv = mEnumeratedMediaItems->Enumerate(getter_AddRefs(mediaItemEnum));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mMainLibrary->RemoveSome(mediaItemEnum);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else if (mCurrentProcessType == eChanged) {
-    PRUint32 length;
-    rv = mEnumeratedMediaItems->GetLength(&length);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    if (length > 0) {
+      rv = mMainLibrary->RemoveSome(mediaItemEnum);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else if (mCurrentProcessType == eChanged) {
       // Rescan the changed items.
       nsCOMPtr<sbIFileMetadataService> metadataService =
         do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
@@ -875,9 +925,25 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
       rv = metadataService->Read(mEnumeratedMediaItems,
                                  getter_AddRefs(jobProgress));
       NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
 
+    } 
+    else if (mCurrentProcessType == eMoveOrRename) {
+
+      // Try to detect move/rename
+      nsCOMPtr<sbIWFMoveRenameHelper9000> helper =
+        do_GetService("@songbirdnest.com/Songbird/MoveRenameHelper;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<nsIArray> uriArray;
+      GetURIArrayForStringPaths(&mAddedPaths, getter_AddRefs(uriArray));
+      NS_ENSURE_SUCCESS(rv, rv);
+      mAddedPaths.clear();
+
+      rv = helper->Process(mEnumeratedMediaItems, uriArray);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }  
+  }
+  
   rv = mEnumeratedMediaItems->Clear();
   NS_ENSURE_SUCCESS(rv, rv);
 
