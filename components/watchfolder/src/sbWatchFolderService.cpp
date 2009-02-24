@@ -729,7 +729,8 @@ sbWatchFolderService::OnWatcherStarted()
   mShouldProcessEvents = PR_TRUE;
   mHasWatcherStarted = PR_TRUE;
 
-  TRACE(("sbWatchFolderService::OnWatcherStarted"));
+  TRACE(("sbWatchFolderService::OnWatcherStarted (path [%s])",
+         NS_ConvertUTF16toUTF8(mWatchPath).get()));
   return NS_OK;
 }
 
@@ -761,7 +762,8 @@ sbWatchFolderService::OnWatcherStopped()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  TRACE(("sbWatchFolderService::OnWatcherStopped"));
+  TRACE(("sbWatchFolderService::OnWatcherStopped (path [%s])",
+         NS_ConvertUTF16toUTF8(mWatchPath).get()));
   return NS_OK;
 }
 
@@ -1099,6 +1101,10 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
         NS_ENSURE_SUCCESS(rv, rv);
 
         if (!newWatchPath.Equals(mWatchPath)) {
+          TRACE(("%s: changing watch path from [%s] to [%s]",
+                 __FUNCTION__,
+                 NS_ConvertUTF16toUTF8(mWatchPath).get(),
+                 NS_ConvertUTF16toUTF8(newWatchPath).get()));
           mWatchPath = newWatchPath;
 
           if (mServiceState == eWatching) {

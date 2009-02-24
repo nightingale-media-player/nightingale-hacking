@@ -26,6 +26,18 @@
 
 #include "sbMacFileSystemWatcher.h"
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbMacFSWatcher:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gMacFSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gMacFSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gMacFSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 //------------------------------------------------------------------------------
 // FSEvents Callback
@@ -58,6 +70,11 @@ sbMacFileSystemWatcher::FSEventCallback(ConstFSEventStreamRef aStreamRef,
 
 sbMacFileSystemWatcher::sbMacFileSystemWatcher()
 {
+#ifdef PR_LOGGING
+  if (!gMacFSWatcherLog) {
+    gMacFSWatcherLog = PR_NewLogModule("sbMacFSWatcher");
+  }
+#endif
   // Check to see if the current runtime is at least 10.5 or higher.
   mIsSupported = PR_FALSE;
   SInt32 macVersion;

@@ -33,6 +33,18 @@
 typedef sbFileDescMap::value_type sbFileDescPair;
 typedef sbFileDescMap::const_iterator sbFileDescIter;
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbLinuxFSWatcher:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gLinuxFSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gLinuxFSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gLinuxFSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 //------------------------------------------------------------------------------
 
@@ -53,6 +65,11 @@ Inotify_Callback(GIOChannel *source, GIOCondition condition, gpointer data)
 
 sbLinuxFileSystemWatcher::sbLinuxFileSystemWatcher()
 {
+#ifdef PR_LOGGING
+  if (!gLinuxFSWatcherLog) {
+    gLinuxFSWatcherLog = PR_NewLogModule("sbLinuxFSWatcher");
+  }
+#endif
   mIsWatching = PR_FALSE;
 }
 

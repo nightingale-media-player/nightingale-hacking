@@ -36,6 +36,19 @@
 
 #define BUFFER_LEN 1024 * 64
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbWin32FSWatcher:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gWin32FSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gWin32FSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gWin32FSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
 
 //------------------------------------------------------------------------------
 // Async callback for ReadDirectoryChangesW()
@@ -114,6 +127,11 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbWin32FileSystemWatcher,
 
 sbWin32FileSystemWatcher::sbWin32FileSystemWatcher()
 {
+#ifdef PR_LOGGING
+  if (!gWin32FSWatcherLog) {
+    gWin32FSWatcherLog = PR_NewLogModule("sbWin32FSWatcher");
+  }
+#endif
   mRootDirHandle = INVALID_HANDLE_VALUE;
   mWatcherThread = NULL;
   mBuffer = NULL;

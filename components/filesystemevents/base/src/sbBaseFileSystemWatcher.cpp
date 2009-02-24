@@ -30,11 +30,28 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbBaseFSWatcher:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gBaseFSWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gBaseFSWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gBaseFSWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseFileSystemWatcher, sbIFileSystemWatcher)
 
 sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()
 {
+#ifdef PR_LOGGING
+  if (!gBaseFSWatcherLog) {
+    gBaseFSWatcherLog = PR_NewLogModule("sbBaseFSWatcher");
+  }
+#endif
   mIsRecursive = PR_TRUE;
   mIsWatching = PR_FALSE;
   mIsSupported = PR_TRUE;
@@ -54,6 +71,10 @@ sbBaseFileSystemWatcher::Init(sbIFileSystemListener *aListener,
                               PRBool aIsRecursive)
 {
   NS_ENSURE_ARG_POINTER(aListener);
+  
+  TRACE(("%s: initing, will watch [%s]",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(aRootPath).get()));
 
   mListener = aListener;
   mWatchPath.Assign(aRootPath);
@@ -101,6 +122,10 @@ sbBaseFileSystemWatcher::StartWatching()
   if (mIsWatching) {
     return NS_OK;
   }
+  
+  TRACE(("%s: starting to watch [%s]",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(mWatchPath).get()));
 
   // Init the tree
   mTree = new sbFileSystemTree();
@@ -195,6 +220,13 @@ sbBaseFileSystemWatcher::OnChangeFound(const nsAString & aChangePath,
 {
   nsresult rv;
   
+  TRACE(("%s: Found change in %s of type %s",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(aChangePath).get(),
+         (aChangeType == eChanged) ? "change" :
+         (aChangeType == eAdded)   ? "add" :
+         (aChangeType == eRemoved) ? "removed" :
+         "unknown"));
   switch (aChangeType) {
     case eChanged:
       rv = mListener->OnFileSystemChanged(aChangePath);
