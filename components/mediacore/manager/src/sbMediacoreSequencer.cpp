@@ -66,6 +66,7 @@
 #include <sbIPropertyArray.h>
 #include <sbIWindowWatcher.h>
 
+#include <sbBaseMediacoreVolumeControl.h>
 #include <sbMediacoreError.h>
 #include <sbMediacoreEvent.h>
 #include <sbProxiedComponentManager.h>
@@ -395,6 +396,25 @@ sbMediacoreSequencer::BindDataRemotes()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Faceplate Volume
+  mDataRemoteFaceplateVolume = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteFaceplateVolume->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_FACEPLATE_VOLUME),
+    nullString);
+
+  // Faceplate Mute
+  mDataRemoteFaceplateMute = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteFaceplateMute->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_FACEPLATE_MUTE),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   //
   // Metadata DataRemotes
   //
@@ -607,6 +627,16 @@ sbMediacoreSequencer::UnbindDataRemotes()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if (mDataRemoteFaceplateVolume) {
+    rv = mDataRemoteFaceplateVolume->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mDataRemoteFaceplateMute) {
+    rv = mDataRemoteFaceplateMute->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   //
   // Metadata DataRemotes
   //
@@ -809,6 +839,76 @@ sbMediacoreSequencer::UpdateRepeatDataRemote(PRUint32 aRepeatMode)
   nsAutoMonitor mon(mMonitor);
 
   nsresult rv = mDataRemotePlaylistRepeat->SetIntValue(aRepeatMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreSequencer::HandleVolumeChangeEvent(sbIMediacoreEvent *aEvent)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> variant;
+  nsresult rv = aEvent->GetData(getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRFloat64 volume;
+  rv = variant->GetAsDouble(&volume);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateVolumeDataRemote(volume);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::UpdateVolumeDataRemote(PRFloat64 aVolume)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsCString volume;
+  SB_ConvertFloatVolToJSStringValue(aVolume, volume);
+
+  NS_ConvertUTF8toUTF16 volumeStr(volume);
+  nsresult rv = mDataRemoteFaceplateVolume->SetStringValue(volumeStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreSequencer::HandleMuteChangeEvent(sbIMediacoreEvent *aEvent)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsCOMPtr<nsIVariant> variant;
+  nsresult rv = aEvent->GetData(getter_AddRefs(variant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool muted = PR_FALSE;
+  rv = variant->GetAsBool(&muted);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateMuteDataRemote(muted);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreSequencer::UpdateMuteDataRemote(PRBool aMuted)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = mDataRemoteFaceplateMute->SetBoolValue(aMuted);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2798,6 +2898,9 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::STREAM_END: {
+      rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       mon.Enter();
       /* Track done, continue on to the next, if possible. */
       if(mStatus == sbIMediacoreStatus::STATUS_PLAYING &&
@@ -2821,9 +2924,6 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
           NS_ENSURE_SUCCESS(rv, rv);
         }
         mon.Exit();
-
-        rv = mDataRemoteFaceplatePlayingVideo->SetBoolValue(PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
 
 #if defined(DEBUG)
         printf("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence.\n");
@@ -2922,12 +3022,14 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     break;
 
     case sbIMediacoreEvent::MUTE_CHANGE: {
-      // XXXAus: Update mute state dataremote
+      rv = HandleMuteChangeEvent(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
 
     case sbIMediacoreEvent::VOLUME_CHANGE: {
-      // XXXAus: Update volume dataremote
+      rv = HandleVolumeChangeEvent(aEvent);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
 

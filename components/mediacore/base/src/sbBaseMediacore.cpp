@@ -251,7 +251,7 @@ sbBaseMediacore::OnSetSequencer(sbIMediacoreSequencer *aSequencer)
    * by calling sbIMediacoreSequencer::requestHandleNextItem.
    *
    * The sequencer is available to you as 'mSequencer' as well if this method
-   * returns NS_OK. You should lock sbBaseMediacore::mLock when getting the
+   * returns NS_OK. You should lock sbBaseMediacore::mMonitor when getting the
    * sequencer from mSequencer and putting it in your own local nsCOMPtr. Do not
    * hold the lock longer than you have to. Get your reference, and release the
    * lock.

@@ -612,14 +612,8 @@ sbMediacoreManager::SetVolumeDataRemote(PRFloat64 aVolume)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mDataRemoteFaceplateVolume);
 
-  char volume[64] = {0};
-  PR_snprintf(volume, 64, "%lg", aVolume);
-
-  // We have to replace the decimal point character with '.' so that
-  // parseFloat in JS still understands that this number is a floating point
-  // number. The JS Standard dictates that parseFloat _ONLY_ supports '.' as
-  // it's decimal point character.
-  volume[1] = '.';
+  nsCString volume;
+  SB_ConvertFloatVolToJSStringValue(aVolume, volume);
 
   NS_ConvertUTF8toUTF16 volumeStr(volume);
   nsresult rv = mDataRemoteFaceplateVolume->SetStringValue(volumeStr);

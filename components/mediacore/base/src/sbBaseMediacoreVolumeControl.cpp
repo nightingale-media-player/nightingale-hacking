@@ -30,6 +30,9 @@
 */
 #include "sbBaseMediacoreVolumeControl.h"
 
+#include <prprf.h>
+
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbBaseMediacoreVolumeControl:5
@@ -42,6 +45,23 @@ static PRLogModuleInfo* gBaseMediacoreVolumeControl = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif
+
+void SB_ConvertFloatVolToJSStringValue(PRFloat64 aVol, 
+                                       nsACString &aStrVol)
+{
+  char volume[64] = {0};
+  PR_snprintf(volume, 64, "%lg", aVol);
+
+  // We have to replace the decimal point character with '.' so that
+  // parseFloat in JS still understands that this number is a floating point
+  // number. The JS Standard dictates that parseFloat _ONLY_ supports '.' as
+  // it's decimal point character.
+  volume[1] = '.';
+
+  aStrVol.Assign(volume);
+
+  return;
+}
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreVolumeControl, 
                               sbIMediacoreVolumeControl)

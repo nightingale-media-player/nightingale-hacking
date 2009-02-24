@@ -36,6 +36,9 @@
 
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
+#include <nsStringGlue.h>
+
+void SB_ConvertFloatVolToJSStringValue(PRFloat64 aVol, nsACString &aStrVol);
 
 class sbBaseMediacoreVolumeControl : public sbIMediacoreVolumeControl
 {

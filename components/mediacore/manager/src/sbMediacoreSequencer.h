@@ -92,6 +92,12 @@ public:
   nsresult UpdateShuffleDataRemote(PRUint32 aMode);
   nsresult UpdateRepeatDataRemote(PRUint32 aRepeatMode);
 
+  // Volume & Mute
+  nsresult HandleVolumeChangeEvent(sbIMediacoreEvent *aEvent);
+  nsresult UpdateVolumeDataRemote(PRFloat64 aVolume);
+  nsresult HandleMuteChangeEvent(sbIMediacoreEvent *aEvent);
+  nsresult UpdateMuteDataRemote(PRBool aMuted);
+
   // Metadata Event & DataRemote
   nsresult HandleMetadataEvent(sbIMediacoreEvent *aEvent);
   nsresult SetMetadataDataRemote(const nsAString &aId, 
@@ -180,6 +186,8 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplatePlayingVideo;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateSeenPlaying;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateURL;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateVolume;
+  nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;
 
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateRemainingTime;
 
