@@ -182,7 +182,7 @@ ifneq (,$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
 	   ssh -2 -p $(SYMBOL_SERVER_PORT) \
        -i $(SYMBOL_SERVER_SSH_KEY) \
        -l $(SYMBOL_SERVER_USER) $(SYMBOL_SERVER_HOST) \
-       "set -e; breakpad-symlinkify.pl $(SYMBOL_SERVER_PATH) $(SYMBOL_SERVER_PATH)/$(SB_MILESTONE)/$(SB_BUILD_NUMBER)/$(SB_PLATFORM)-$(SB_ARCH)"
+       "set -e; \$$HOME/buildbot/breakpad-symlinkify.pl $(SYMBOL_SERVER_PATH) $(SYMBOL_SERVER_PATH)/$(SB_MILESTONE)/$(SB_BUILD_NUMBER)/$(SB_PLATFORM)-$(SB_ARCH)"
    endif
 endif
 
