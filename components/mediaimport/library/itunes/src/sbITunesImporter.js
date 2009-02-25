@@ -2012,12 +2012,12 @@ sbITunesImporter.prototype =
     var value = "";
     
     if(aITunesMetaValue.indexOf("video") != -1) {
-      value = "video;";
+      value = "video";
     }
     else if(aITunesMetaValue.indexOf("audio") != -1) {
       value = "audio";
     }
-    else if(aITunesMetaValue === true) {
+    else if(aITunesMetaValue == "true") {
       value = "podcast";
     }
    
