@@ -63,6 +63,9 @@ interface sbIMediacoreVideoWindow : nsISupports
    * mm.video.videoWindow.hidden = false;
    * mm.video.videoWindow.dispatchEvent(resizeEvent);
    * \endcode
+   *
+   * Implementors of the video window must respond to the following DOM events:
+   * 'unload', 'hide', 'resize'
    */
   attribute nsIDOMXULElement videoWindow;
 };
