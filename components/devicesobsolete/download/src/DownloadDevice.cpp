@@ -3029,7 +3029,7 @@ NS_IMETHODIMP sbDownloadSession::OnStateChange(
             if (NS_SUCCEEDED(result) && !requestSucceeded)
                 status = NS_ERROR_UNEXPECTED;
 
-            /* Don't propagate errors from here. */
+	    /* Don't propagate errors from here. */
             result = NS_OK;
         }
 
@@ -3309,7 +3309,7 @@ nsresult sbDownloadSession::CompleteTransfer(nsIRequest* aRequest)
     /* Check if the destination is a directory.  If the destination */
     /* does not exist, assume it's a file about to be created.      */
     result = mpDstFile->IsDirectory(&bIsDirectory);
-    if (result == NS_ERROR_FILE_NOT_FOUND)
+    if (result == NS_ERROR_FILE_NOT_FOUND || result == NS_ERROR_FILE_TARGET_DOES_NOT_EXIST)
     {
         bIsDirectory = PR_FALSE;
         result = NS_OK;
