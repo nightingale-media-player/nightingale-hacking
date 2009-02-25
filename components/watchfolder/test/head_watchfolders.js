@@ -75,6 +75,9 @@ function setWatchFolder(file) {
     Application.prefs.setValue("songbird.watch_folder.path", file.path);
   } 
   Application.prefs.setValue("songbird.watch_folder.enable", !!file);
+  if (!file) {
+    Application.prefs.get("songbird.watch_folder.sessionguid").reset();    
+  }
 }
 
 /**
@@ -134,7 +137,7 @@ function getTempFolder() {
   gTempFolder = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("TmpD", Components.interfaces.nsIFile);
-  gTempFolder.append("songbird_watchfolder_tests" + Math.random() +   ".tmp");
+  gTempFolder.append("songbird_watchfolder_tests" + Math.random() + ".tmp");
   gTempFolder.createUnique(Components.interfaces.nsIFile.DIRECTORY_TYPE, 0777);
   return gTempFolder;
 }
