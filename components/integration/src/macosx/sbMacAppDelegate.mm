@@ -45,6 +45,8 @@
 #include <sbIMediacoreSequencer.h>
 #include <sbIMediacoreVolumeControl.h>
 #include <sbIMediacoreStatus.h>
+#include <sbStandardProperties.h>
+#include <sbIMediaItem.h>
 
 #import <AppKit/AppKit.h>
 
@@ -219,11 +221,83 @@
     [menuItem release];
   }
 
+  [self _addNowPlayingControls:menu];
   [self _addPlayerControlMenuItems:menu];
 
   return menu;
 
   NS_OBJC_END_TRY_ABORT_BLOCK_NIL;
+}
+
+- (void)_addNowPlayingControls:(NSMenu *)aMenu
+{
+  NS_OBJC_BEGIN_TRY_ABORT_BLOCK;
+
+  nsresult rv;
+  nsCOMPtr<sbIMediacoreManager> manager =
+    do_GetService("@songbirdnest.com/Songbird/Mediacore/Manager;1", &rv);
+  if (NS_FAILED(rv)) {
+    return;
+  }
+
+  nsCOMPtr<sbIMediacoreSequencer> sequencer;
+  rv = manager->GetSequencer(getter_AddRefs(sequencer));
+  if (NS_FAILED(rv)) {
+    return;
+  }
+
+  nsCOMPtr<sbIMediaItem> curMediaItem;
+  rv = sequencer->GetCurrentItem(getter_AddRefs(curMediaItem));
+  if (NS_FAILED(rv) || !curMediaItem) {
+    return;
+  }
+
+  nsString trackProp(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME));
+  nsString artistProp(NS_LITERAL_STRING(SB_PROPERTY_ARTISTNAME));
+
+  nsString trackName;
+  rv = curMediaItem->GetProperty(trackProp, trackName);
+  if (NS_FAILED(rv)) {
+    return;
+  }
+
+  nsString artistName;
+  rv = curMediaItem->GetProperty(artistProp, artistName);
+  if (NS_FAILED(rv)) {
+    return;
+  }
+
+  // Apppend three spaces before the track and artist name
+  trackName.Insert(NS_LITERAL_STRING("   "), 0);
+  artistName.Insert(NS_LITERAL_STRING("   "), 0);
+
+  NSString *trackStr = 
+    [NSString stringWithCharacters:(unichar *)trackName.get()
+                            length:trackName.Length()];
+
+  // Now add the menu items
+  [aMenu addItem:[NSMenuItem separatorItem]];
+
+  // Now playing item
+  nsString nowPlaying(NS_LITERAL_STRING("albumart.displaypane.title.playing"));
+  [self _appendMenuItem:[self _stringForLocalizedKey:nowPlaying.get()]
+                 action:nil
+                   menu:aMenu];
+
+  // Track name
+  NSMenuItem *trackNameItem = 
+    [[NSMenuItem alloc] initWithTitle:trackStr
+                               action:nil
+                        keyEquivalent:@""];
+  [self _appendMenuItem:trackStr action:nil menu:aMenu];
+  
+  // Artist name
+  NSString *artistStr =
+    [NSString stringWithCharacters:(unichar *)artistName.get()
+                            length:artistName.Length()];
+  [self _appendMenuItem:artistStr action:nil menu:aMenu];
+
+  NS_OBJC_END_TRY_ABORT_BLOCK;
 }
 
 - (void)_addPlayerControlMenuItems:(NSMenu *)aMenu

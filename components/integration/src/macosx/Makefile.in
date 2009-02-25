@@ -35,7 +35,6 @@ else
 target_name = sbIntegration$(DLL_SUFFIX)
 endif
 
-
 CMM_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/controller/public \
@@ -44,6 +43,8 @@ CMM_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/devicesobsolete/cd/public \
                $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
                $(DEPTH)/components/mediacore/base/public \
+               $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/property/src \
                $(COMPONENTS_DIR)/integration/src/win32 \
                $(COMPONENTS_DIR)/devicesobsolete/base/src \
                $(COMPONENTS_DIR)/devicesobsolete/cd/src \
