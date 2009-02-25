@@ -32,6 +32,37 @@ interface sbIMediacoreChain;
 [scriptable, uuid(970e737c-fc22-4fb4-be64-42ac2db36d30)]
 interface sbIMediacoreVideoWindow : nsISupports
 {
+  /**
+   * \brief Video window fullscreen attribute
+   * 
+   * This attribute can be used to determine if the video window is
+   * currently in fullscreen mode. It can also be used to set the video
+   * window to fullscreen mode.
+   */
   attribute boolean fullscreen;
+
+  /**
+   * \brief DOM XUL Element used as the video box.
+   *
+   * Setting this attribute will bind the video window to the box
+   * for the element. This means that the size of the actual video window
+   * will be determined by the size of the box of the element.
+   *
+   * If you ever hide or set the visibility on this element to false, you
+   * must send a resize event to it so that the underlying video window will
+   * redraw correctly. Otherwise, the behavior of the video is undefined.
+   *
+   * You can send this event from JavaScript using the following code:
+   *
+   * \code
+   * var resizeEvent = document.createEvent("UIEvents");
+   * resizeEvent.initUIEvent("resize", true, true, window, 1);
+   *
+   * var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+   *                    .getService(Components.interfaces.sbIMediacoreManager);
+   * mm.video.videoWindow.hidden = false;
+   * mm.video.videoWindow.dispatchEvent(resizeEvent);
+   * \endcode
+   */
   attribute nsIDOMXULElement videoWindow;
 };
