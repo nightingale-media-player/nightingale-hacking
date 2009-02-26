@@ -605,9 +605,7 @@ PublicPlaylistCommands.prototype = {
 
       this.m_cmd_GetArtwork.setCommandEnabledCallback(null,
                                                       "library_cmd_getartwork",
-                                                      plCmd_AND(
-                                                        plCmd_IsAnyTrackSelected,
-                                                        plCmd_CanModifyPlaylistContent));
+                                                      plCmd_IsAnyTrackSelected);
     
       // --------------------------------------------------------------------------
 
