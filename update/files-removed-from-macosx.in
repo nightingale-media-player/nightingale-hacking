@@ -1,3 +1,17 @@
+./Contents/Resources/testharness/watchfolders/files/moverename/dir3/random.txt
+./Contents/Resources/testharness/watchfolders/files/moverename/dir3/
+./Contents/Resources/testharness/watchfolders/files/moverename/renamedFile.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/randomfile.txt
+./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/movedFile1.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/movedFile2.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/
+./Contents/Resources/testharness/watchfolders/files/moverename/dir1/
+./Contents/Resources/testharness/watchfolders/files/moverename/individualMovedFile.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/deletedFile.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/
+./Contents/Resources/testharness/watchfolders/files/
+./Contents/Resources/testharness/watchfolders/
+./Contents/Resources/testharness/
 ./Contents/Resources/searchplugins/yahoo-lyrics.xml
 ./Contents/Resources/searchplugins/skreemr.xml
 ./Contents/Resources/searchplugins/google-lyrics.xml
