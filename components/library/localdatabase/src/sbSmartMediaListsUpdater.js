@@ -189,7 +189,6 @@ SmartMediaListsUpdater.prototype = {
   // --------------------------------------------------------------------------
   shutdown: function() {
     // Clean up
-    LibraryUtils.mainLibrary.removeListener(this);
     this._timer = null;
     this._secondaryTimer = null;
     this._monitor.shutdown();
