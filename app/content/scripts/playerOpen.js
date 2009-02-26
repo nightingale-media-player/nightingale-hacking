@@ -1026,6 +1026,13 @@ function installXPI(localFilename)
   // http://developer.mozilla.org/en/docs/XPInstall_API_Reference:InstallTrigger_Object
 }
 
+// Install an array of XPI files.
+// @see extensions.js for more information
+function installXPIArray(aXPIArray)
+{
+  InstallTrigger.install(aXPIArray);
+}
+
 /**
  * \brief Import a URL into the main library.
  * \param url URL of item to import, also accepts nsIURI's.

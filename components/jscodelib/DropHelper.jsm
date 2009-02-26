@@ -56,6 +56,10 @@ const Cr = Components.results;
 const Ce = Components.Exception;
 const Cu = Components.utils;
 
+const URI_GENERIC_ICON_XPINSTALL = 
+  "chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png";
+
+
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
@@ -941,7 +945,11 @@ var ExternalDropHandler = {
     
     // remember listener
     this._listener = listener;
-    
+
+    // Install all the dropped XPI files at the same time
+    var xpiArray = {};
+    var xpiCount = 0;
+
     var uriList = this._Cc["@mozilla.org/array;1"]
                       .createInstance(this._Ci.nsIMutableArray);
 
@@ -973,10 +981,13 @@ var ExternalDropHandler = {
         rawData = fileHandler.getURLSpecFromFile(item);
 
         // Check to see that this is a xpi/jar - if so handle that event
-        if ( /\.(xpi|jar)$/i.test(rawData) ) {
-          // this._window.installXPI(aURI.spec) will not work but this will:
-          window.setTimeout(window.installXPI, 10, rawData);
-          // wicked! :D
+        if ( /\.(xpi|jar)$/i.test(rawData) && (item instanceof Ci.nsIFile) ) {
+          xpiArray[item.leafName] = {
+            URL: rawData,
+            IconURL: URI_GENERIC_ICON_XPINSTALL,
+            toString: function() { return this.URL; }
+          };
+          ++xpiCount;
         }
       } else {
         if (item instanceof this._Ci.nsISupportsString) {
@@ -1011,6 +1022,11 @@ var ExternalDropHandler = {
 
       // record this file for later processing
       uriList.appendElement(ioService.newURI(rawData, null, null), false); 
+    }
+
+    // Timeout the XPI install
+    if (xpiCount > 0) {
+      window.setTimeout(window.installXPIArray, 10, xpiArray);
     }
 
     var uriImportService = this._Cc["@songbirdnest.com/uri-import-service;1"]
