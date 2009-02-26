@@ -40,6 +40,19 @@
 #define PATH_SEPERATOR_CHAR \
   NS_LITERAL_STRING(FILE_PATH_SEPARATOR).CharAt(0)
 
+// Logging
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gFSTreeLog = nsnull;
+#define TRACE(args) PR_LOG(gFSTreeLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gFSTreeLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
 
 //------------------------------------------------------------------------------
 // Utility container, helps prevent running up the tree to find the 
@@ -66,6 +79,11 @@ sbFileSystemTree::sbFileSystemTree()
   , mRootNodeLock(nsAutoLock::NewLock("sbFileSystemTree::mRootNodeLock"))
   , mListenersLock(nsAutoLock::NewLock("sbFileSystemTree::mListenersLock"))
 {
+#ifdef PR_LOGGING
+  if (!gFSTreeLog) {
+    gFSTreeLog = PR_NewLogModule("sbFSTree");
+  }
+#endif
   NS_ASSERTION(mRootNodeLock, "Failed to create mRootNodeLock!");
   NS_ASSERTION(mListenersLock, "Failed to create mListenersLock!");
 }
@@ -232,6 +250,9 @@ sbFileSystemTree::RunBuildThread()
 void
 sbFileSystemTree::NotifyBuildComplete()
 {
+  TRACE(("%s: build for [%s] complete",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(mRootPath).get()));
   // If the tree was initialized from a previous session, inform the listener
   // of all the changes that have been detected from between sessions before
   // noitifying the tree is ready. This is the documented behavior of

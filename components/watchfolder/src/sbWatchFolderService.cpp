@@ -75,6 +75,9 @@ static PRLogModuleInfo* gWatchFoldersLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
 
 typedef sbStringVector::const_iterator sbStringVectorIter;
 
@@ -232,6 +235,10 @@ sbWatchFolderService::InitInternal()
   rv = StartWatchingFolder();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  TRACE(("%s: started watching [%s]",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(mWatchPath).get()));
+
   return NS_OK;
 }
 
@@ -252,10 +259,15 @@ sbWatchFolderService::StartWatchingFolder()
   if (mFileSystemWatcherGUID.Equals(EmptyCString())) {
     // Init a new file-system watcher. The session GUID for the new watcher
     // will be saved in StopWatching().
+    TRACE(("%s: initiating new FS watcher for [%s]",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(mWatchPath).get()));
     rv = mFileSystemWatcher->Init(this, mWatchPath, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
+    TRACE(("%s: initiating saved session %s",
+           __FUNCTION__, mFileSystemWatcherGUID.get()));
     rv = mFileSystemWatcher->InitWithSession(mFileSystemWatcherGUID, this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1108,6 +1120,7 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
           mWatchPath = newWatchPath;
 
           if (mServiceState == eWatching) {
+            TRACE(("%s: already watching, stopping...", __FUNCTION__));
             // The service is currently running with a file system watcher
             // that is currently active. The watcher needs to be stopped (
             // without saving a session) and re-started once it has
@@ -1161,6 +1174,7 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
             rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE,
                                          &shouldEnable);
             if (NS_SUCCEEDED(rv) && shouldEnable) {
+              TRACE(("%s: not watching yet, arming...", __FUNCTION__));
               // Now that the service state is disabled, the watch path has
               // been set, and the service should enable - it is time to
               // start the delayed internal init.

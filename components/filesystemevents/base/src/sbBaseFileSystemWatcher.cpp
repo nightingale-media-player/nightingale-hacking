@@ -43,6 +43,10 @@ static PRLogModuleInfo* gBaseFSWatcherLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseFileSystemWatcher, sbIFileSystemWatcher)
 
 sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()

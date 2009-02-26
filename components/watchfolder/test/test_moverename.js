@@ -51,6 +51,7 @@ function runTest () {
 
   // Get the test files set up
   var testFolder = getCopyOfFolder(gTestFiles, "_temp_moverename_files");
+  log('using test folder ' + testFolder.path);
 
   // That should cause watch folders to add the files...
   sleep(15000);
