@@ -156,6 +156,7 @@ sbBaseFileSystemWatcher::StartWatching()
 NS_IMETHODIMP 
 sbBaseFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
+  nsRefPtr<sbBaseFileSystemWatcher> kungFuDeathGrip(this);
   mIsWatching = PR_FALSE;
   
   // Don't worry about checking the result from the listener.

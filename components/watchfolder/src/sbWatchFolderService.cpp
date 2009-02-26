@@ -286,6 +286,8 @@ sbWatchFolderService::StopWatchingFolder()
   if (mServiceState != eWatching) {
     return NS_OK;
   }
+  
+  NS_ENSURE_STATE(mFileSystemWatcher);
 
   // Clear all event paths.
   mAddedPaths.clear();
@@ -573,6 +575,7 @@ sbWatchFolderService::HandleSessionLoadError()
 {
   NS_ASSERTION(NS_IsMainThread(),
       "HandleSessionLoadError() not called on main thread!");
+  NS_ENSURE_STATE(mFileSystemWatcher);
 
   // If this method gets called, than the watcher could not load the stored
   // session. The tree will need to be re-initialized, this time without
@@ -1084,6 +1087,10 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
       LOG(("%s: quit application granted, aborting startup delay timer [%08x]",
            __FUNCTION__, mStartupDelayTimer));
     }
+
+  // kill the file system watcher to prevent a reference loop
+  mFileSystemWatcher = nsnull;
+
   }
   // Handle pref changing which effects the execution of this service.
   else if (strcmp(NS_PREFBRANCH_PREFCHANGE_TOPIC_ID, aTopic) == 0) {
@@ -1139,6 +1146,7 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
 
           if (mServiceState == eWatching) {
             TRACE(("%s: already watching, stopping...", __FUNCTION__));
+            NS_ENSURE_STATE(mFileSystemWatcher);
             // The service is currently running with a file system watcher
             // that is currently active. The watcher needs to be stopped (
             // without saving a session) and re-started once it has
