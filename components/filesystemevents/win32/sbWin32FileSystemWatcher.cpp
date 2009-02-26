@@ -348,6 +348,7 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
                                   const char *aTopic,
                                   const PRUnichar *aData)
 {
+  LOG(("%s: observing %s", __FUNCTION__, aTopic));
   if (strcmp(aTopic, "quit-application") == 0) {
     if (mIsWatching) {
       // Pass in PR_FALSE - the owner of the file system watcher should stop

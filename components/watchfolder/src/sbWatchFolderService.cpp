@@ -323,10 +323,13 @@ sbWatchFolderService::SetStartupDelayTimer()
 {
   nsresult rv;
   if (!mStartupDelayTimer) {
+    LOG(("%s: creating new startup delay timer", __FUNCTION__));
     mStartupDelayTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  LOG(("%s: arming up startup delay timer [%08x]",
+       __FUNCTION__, mStartupDelayTimer));
   return mStartupDelayTimer->InitWithCallback(this,
                                               STARTUP_TIMER_DELAY,
                                               nsITimer::TYPE_ONE_SHOT);
@@ -343,6 +346,7 @@ sbWatchFolderService::SetEventPumpTimer()
       mShouldProcessEvents = PR_FALSE;
     }
     else {
+      LOG(("%s: arming event pump timer [%08x]", __FUNCTION__, mEventPumpTimer));
       nsresult rv =
         mEventPumpTimer->InitWithCallback(this,
                                           EVENT_PUMP_TIMER_DELAY,
@@ -732,6 +736,7 @@ sbWatchFolderService::OnWatcherStarted()
   // Process any event received before the watcher has started. These will
   // be all the events from comparing the de-serialized session to the current
   // filesystem state.
+  LOG(("%s: arming event pump timer [%08x]", __FUNCTION__, mEventPumpTimer));
   rv = mEventPumpTimer->InitWithCallback(this,
                                         EVENT_PUMP_TIMER_DELAY,
                                         nsITimer::TYPE_ONE_SHOT);
@@ -975,6 +980,8 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
 
   // Handle startup delay (internally init)
   if (aTimer == mStartupDelayTimer) {
+    LOG(("%s: startup delay timer [%08x] fired",
+         __FUNCTION__, mStartupDelayTimer));
     rv = InitInternal();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -999,6 +1006,7 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
       mEventPumpTimerIsSet = PR_FALSE;
     }
     else {
+      LOG(("%s: arming event pump timer [%08x]", __FUNCTION__, mEventPumpTimer));
       rv = mEventPumpTimer->InitWithCallback(this,
                                              EVENT_PUMP_TIMER_DELAY,
                                              nsITimer::TYPE_ONE_SHOT);
@@ -1028,6 +1036,8 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
                               const PRUnichar *aData)
 {
   NS_ENSURE_ARG_POINTER(aTopic);
+  
+  LOG(("%s: observing %s", __FUNCTION__, aTopic));
 
   nsresult rv;
   if (strcmp("final-ui-startup", aTopic) == 0) {
@@ -1066,6 +1076,14 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
 
     rv = prefBranch->RemoveObserver(PREF_WATCHFOLDER_ROOT, this);
     NS_ENSURE_SUCCESS(rv, rv);
+    
+    if (mStartupDelayTimer) {
+      rv = mStartupDelayTimer->Cancel();
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      LOG(("%s: quit application granted, aborting startup delay timer [%08x]",
+           __FUNCTION__, mStartupDelayTimer));
+    }
   }
   // Handle pref changing which effects the execution of this service.
   else if (strcmp(NS_PREFBRANCH_PREFCHANGE_TOPIC_ID, aTopic) == 0) {
