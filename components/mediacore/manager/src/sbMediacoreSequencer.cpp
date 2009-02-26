@@ -51,6 +51,7 @@
 
 #include <prtime.h>
 
+#include <sbICascadeFilterSet.h>
 #include <sbILibrary.h>
 #include <sbIMediacore.h>
 #include <sbIMediacoreEvent.h>
@@ -64,6 +65,7 @@
 #include <sbIMediaList.h>
 #include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
+#include <sbISortableMediaListView.h>
 #include <sbIWindowWatcher.h>
 
 #include <sbBaseMediacoreVolumeControl.h>
@@ -397,7 +399,7 @@ sbMediacoreSequencer::BindDataRemotes()
   }
 
   // Faceplate Volume
-  mDataRemoteFaceplateVolume = 
+  mDataRemoteFaceplateVolume =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -406,7 +408,7 @@ sbMediacoreSequencer::BindDataRemotes()
     nullString);
 
   // Faceplate Mute
-  mDataRemoteFaceplateMute = 
+  mDataRemoteFaceplateMute =
     do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -601,7 +603,7 @@ sbMediacoreSequencer::UnbindDataRemotes()
   // Faceplate DataRemotes
   //
   nsresult rv;
-  
+
   if (mDataRemoteFaceplateBuffering) {
     rv = mDataRemoteFaceplateBuffering->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -864,7 +866,7 @@ sbMediacoreSequencer::HandleVolumeChangeEvent(sbIMediacoreEvent *aEvent)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateVolumeDataRemote(PRFloat64 aVolume)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -901,13 +903,13 @@ sbMediacoreSequencer::HandleMuteChangeEvent(sbIMediacoreEvent *aEvent)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbMediacoreSequencer::UpdateMuteDataRemote(PRBool aMuted)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
-  
+
   nsresult rv = mDataRemoteFaceplateMute->SetBoolValue(aMuted);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3210,6 +3212,14 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
     // Not only do we need to recalculate the sequence but we
     // also have to search for the playing item after a delay
     // to allow the metadata batch editor to settle down. UGH!
+
+    // First check to see if the metadata actually has any effect on the view
+    // If the modified metadata is not present in the view's cascade filter set
+    // or sort array there is no need to recalculate the sequence
+    if (!CheckPropertiesInfluenceView(aProperties)) {
+      return NS_OK;
+    }
+
     mNeedsRecalculate = PR_TRUE;
     mNeedSearchPlayingItem = PR_TRUE;
 
@@ -3219,6 +3229,9 @@ sbMediacoreSequencer::OnItemUpdated(sbIMediaList *aMediaList,
       rv = DelayedCheck();
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    // Suppress this notification for the remainder of the batch
+    *_retval = PR_TRUE;
   }
 
   return NS_OK;
@@ -3338,6 +3351,114 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
   }
 
   return NS_OK;
+}
+
+PRBool
+sbMediacoreSequencer::CheckPropertiesInfluenceView(sbIPropertyArray *aProperties)
+{
+  PRUint32 propertyCount = 0;
+  nsresult rv = aProperties->GetLength(&propertyCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!mPropertyManager) {
+    mPropertyManager =
+      do_GetService("@songbirdnest.com/Songbird/Properties/PropertyManager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbICascadeFilterSet> cfs;
+  rv = mView->GetCascadeFilterSet(getter_AddRefs(cfs));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint16 filterCount = 0;
+  rv = cfs->GetLength(&filterCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbISortableMediaListView> sortableView;
+  sortableView = do_QueryInterface(mView, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIPropertyArray> primarySortArray;
+  rv = sortableView->GetCurrentSort(getter_AddRefs(primarySortArray));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 primarySortCount = 0;
+  rv = primarySortArray->GetLength(&primarySortCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIProperty> property;
+  for(PRUint32 propIndex = 0; propIndex < propertyCount; ++propIndex) {
+    rv = aProperties->GetPropertyAt(propIndex, getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString id;
+    rv = property->GetId(id);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Check the cascade filter set
+    for (PRUint16 filterIndex = 0; filterIndex < filterCount; ++filterIndex) {
+      nsString filter;
+      rv = cfs->GetProperty(filterIndex, filter);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (id.Equals(filter)) {
+        // The property is present in the cascade filter set
+        return PR_TRUE;
+      }
+    }
+
+    // Check the primary sort array
+    nsCOMPtr<sbIProperty> sortProperty;
+    for (PRUint32 sortIndex = 0; sortIndex < primarySortCount; ++sortIndex) {
+      rv = primarySortArray->GetPropertyAt(sortIndex, getter_AddRefs(sortProperty));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString SortId;
+      rv = sortProperty->GetId(SortId);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (id.Equals(SortId)) {
+        // The property is present in the primary sort
+        return PR_TRUE;
+      }
+    }
+
+    // Check secondary sorting
+    nsCOMPtr<sbIPropertyInfo> propertyInfo;
+    rv = mPropertyManager->GetPropertyInfo(id, getter_AddRefs(propertyInfo));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIPropertyArray> secondarySortArray;
+    rv = propertyInfo->GetSecondarySort(getter_AddRefs(secondarySortArray));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!secondarySortArray) {
+      // This property doesn't have secondary sorting
+      continue;
+    }
+
+    PRUint32 secondarySortCount = 0;
+    rv = secondarySortArray->GetLength(&secondarySortCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 sortIndex = 0; sortIndex < secondarySortCount; ++sortIndex) {
+      rv = secondarySortArray->GetPropertyAt(sortIndex, getter_AddRefs(sortProperty));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsString SortId;
+      rv = sortProperty->GetId(SortId);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (id.Equals(SortId)) {
+        // The property is present in the secondary sort
+        return PR_TRUE;
+      }
+    }
+  }
+
+  // No properties were present in the cascade filter set, primary sort array or
+  // secondary sort array
+  return PR_FALSE;
 }
 
 
