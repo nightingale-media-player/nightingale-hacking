@@ -36,8 +36,10 @@ SONGBIRD_TESTS = $(srcdir)/head_watchfolders.js \
                  $(srcdir)/test_moverename.js \
                  $(NULL)
 
-SUBDIRS = files \
-          $(NULL)
+SUBDIRS = $(NULL)
+ifdef SB_ENABLE_TESTS 
+  SUBDIRS = files
+endif
 
 include $(topsrcdir)/build/rules.mk
 
