@@ -47,20 +47,20 @@ interface nsIFileURL;
  *
  * "@songbirdnest.com/Songbird/album-art-service;1"
  */
-[scriptable, uuid(9c101073-c3a4-4c8a-a967-32ff855cd748)]
+[scriptable, uuid(f88948f8-1dd1-11b2-a38a-e6bf821b07e4)]
 interface sbIAlbumArtService : nsISupports
 {
   /**
    * Return a list of album art fetcher contract ID's as an array of
-   * nsIVariant's of type ACString.  If aLocalOnly is true, return only local
-   * album art fetchers.
+   * nsIVariant ACStrings.  Use type to specify if local, remote, 
+   * or all fetchers.
    *
-   * \param aLocalOnly          If true, only return local album art fetchers.
+   * \param type                sbIAlbumArtFetcherSet.TYPE_LOCAL, etc.
    *
    * \return                    List of album art fetcher contract ID's.
    */
 
-  nsIArray getFetcherList(in boolean aLocalOnly);
+  nsIArray getFetcherList(in unsigned long type);
 
 
   /**

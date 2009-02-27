@@ -50,14 +50,17 @@
  * \sa sbIAlbumArtFetcher
  */
 
-[scriptable, uuid(6014f2e0-2da7-460a-bd5b-7c1fda7c65cd)]
+[scriptable, uuid(f6f030ba-1dd1-11b2-8764-ad0493676ed0)]
 interface sbIAlbumArtFetcherSet : sbIAlbumArtFetcher
 {
-  /**
-   * \brief If true, only attempt to fetch album art from local sources.
-   */
+  const unsigned long TYPE_ALL              = 0x00;
+  const unsigned long TYPE_REMOTE           = 0x01;
+  const unsigned long TYPE_LOCAL            = 0x02;
 
-  attribute boolean localOnly;
+  /**
+   * \brief Type of fetchers in the set (local, remote, both)
+   */
+  attribute unsigned long fetcherType;
 };
 
 

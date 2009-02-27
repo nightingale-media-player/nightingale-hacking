@@ -105,28 +105,27 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbAlbumArtFetcherSet,
  */
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::GetLocalOnly(PRBool* aLocalOnly)
+sbAlbumArtFetcherSet::GetFetcherType(PRUint32* aType)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetLocalOnly - IsLocalOnly = %s",
-          (mLocalOnly ? "TRUE" : "FALSE")));
-  NS_ENSURE_ARG_POINTER(aLocalOnly);
-  *aLocalOnly = mLocalOnly;
+  TRACE(("sbAlbumArtFetcherSet::GetFetcherType = %d",
+          mType));
+  NS_ENSURE_ARG_POINTER(aType);
+  *aType = mType;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbAlbumArtFetcherSet::SetLocalOnly(PRBool aLocalOnly)
+sbAlbumArtFetcherSet::SetFetcherType(PRUint32 aType)
 {
-  TRACE(("sbAlbumArtFetcherSet::SetLocalOnly - IsLocalOnly = %s",
-          (aLocalOnly ? "TRUE" : "FALSE")));
-  
+  TRACE(("sbAlbumArtFetcherSet::SetFetcherType = %d",
+          aType));
   nsresult rv;
   
   // If this has changed we need to reload the fetcher list
-  if (aLocalOnly != mLocalOnly) {
-    mLocalOnly = aLocalOnly;
-    TRACE(("sbAlbumArtFetcherSet::SetLocalOnly - Reloading fetcher list."));
-    rv = mAlbumArtService->GetFetcherList(mLocalOnly,
+  if (aType != mType) {
+    mType = aType;
+    TRACE(("sbAlbumArtFetcherSet::SetFetcherType - Reloading fetcher list."));
+    rv = mAlbumArtService->GetFetcherList(mType,
                                           getter_AddRefs(mFetcherList));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -296,7 +295,7 @@ sbAlbumArtFetcherSet::GetIsLocal(PRBool* aIsLocal)
 {
   TRACE(("sbAlbumArtFetcherSet::GetIsLocal"));
   NS_ENSURE_ARG_POINTER(aIsLocal);
-  *aIsLocal = mLocalOnly;
+  *aIsLocal = mType == sbIAlbumArtFetcherSet::TYPE_LOCAL;
   return NS_OK;
 }
 
@@ -375,7 +374,7 @@ sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
  */
 
 sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
-  mLocalOnly(PR_FALSE),
+  mType(sbIAlbumArtFetcherSet::TYPE_ALL),
   mShutdown(PR_FALSE),
   mListener(nsnull),
   mFetcherList(nsnull),
@@ -428,7 +427,7 @@ sbAlbumArtFetcherSet::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the list of fetchers.
-  rv = mAlbumArtService->GetFetcherList(mLocalOnly,
+  rv = mAlbumArtService->GetFetcherList(mType,
                                         getter_AddRefs(mFetcherList));
   NS_ENSURE_SUCCESS(rv, rv);
 

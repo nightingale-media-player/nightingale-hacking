@@ -145,14 +145,14 @@ private:
   // mAlbumArtService           Album art service.
   // mConsoleService            Console service for warning messages.
   // mAlbumArtSourceList        List of album art sources.
-  // mLocalOnly                 If true, only fetch locally.
+  // mType                      sbIAlbumArtFetcherSet.TYPE_[LOCAL|REMOTE|ALL]
   // mShutdown                  Flag to indicate if we should shutdown.
   //
 
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
   nsCOMPtr<nsIConsoleService>   mConsoleService;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
-  PRBool                        mLocalOnly;
+  PRUint32                      mType;
   PRBool                        mShutdown;
 
   //

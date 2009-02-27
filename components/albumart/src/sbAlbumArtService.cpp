@@ -51,6 +51,7 @@
 // Songbird imports.
 #include <sbILibraryManager.h>
 #include <sbIMediaList.h>
+#include <sbIAlbumArtFetcherSet.h>
 #include <sbIPropertyArray.h>
 #include <sbStandardProperties.h>
 #include <sbVariantUtils.h>
@@ -128,17 +129,16 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbAlbumArtService,
 //------------------------------------------------------------------------------
 
 /**
- * Return a list of album art fetcher contract ID's as an array of
- * nsIVariant's of type ACString.  If aLocalOnly is true, return only local
- * album art fetchers.
+ * Return a list of album art fetcher contract ID's for the given type
+ * (remote, local, all) as an array of nsIVariant's of type ACString. 
  *
- * \param aLocalOnly          If true, only return local album art fetchers.
+ * \param aType               sbIAlbumArtFetcherSet.TYPE_[ALL|REMOTE|LOCAL]
  *
  * \return                    List of album art fetcher contract ID's.
  */
 
 NS_IMETHODIMP
-sbAlbumArtService::GetFetcherList(PRBool     aLocalOnly,
+sbAlbumArtService::GetFetcherList(PRUint32 aType,
                                   nsIArray** _retval)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - GetFetcherList", this));
@@ -164,8 +164,13 @@ sbAlbumArtService::GetFetcherList(PRBool     aLocalOnly,
     // Append the fetcher to the list only if it is enabled
     if (NS_SUCCEEDED(rv)) {    
       if (mFetcherInfoList[i].enabled) {
-        if (aLocalOnly && !mFetcherInfoList[i].local) {
-          // Not a local fetcher and we only want locals
+        // Make sure we only add the desired type
+        if ((sbIAlbumArtFetcherSet::TYPE_LOCAL == aType &&
+             !mFetcherInfoList[i].local) ||
+            (sbIAlbumArtFetcherSet::TYPE_REMOTE == aType &&
+             mFetcherInfoList[i].local))
+        {
+          // Not the right type, ignore
           continue;
         }
         nsCOMPtr<nsIVariant>

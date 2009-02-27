@@ -771,7 +771,7 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   nsCOMPtr<sbIAlbumArtFetcherSet> artFetcher =
     do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = artFetcher->SetLocalOnly(PR_TRUE);
+  rv = artFetcher->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_LOCAL);
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Recycle the existing handler to avoid re-reading the file

@@ -2244,7 +2244,7 @@ sbITunesImporter.prototype =
         var fileAlbumArtFetcherSet =
               Cc["@songbirdnest.com/Songbird/album-art-fetcher-set;1"]
                 .createInstance(Ci.sbIAlbumArtFetcherSet);
-        fileAlbumArtFetcherSet.localOnly = true;
+        fileAlbumArtFetcherSet.fetcherType = Ci.sbIAlbumArtFetcherSet.TYPE_LOCAL;
         fileAlbumArtFetcherSet.fetchAlbumArtForTrack(mediaItem,
                                                      albumArtListener);
       } catch (ex) {
