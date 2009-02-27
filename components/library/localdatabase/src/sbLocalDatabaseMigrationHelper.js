@@ -157,8 +157,6 @@ sbLocalDatabaseMigrationHelper.prototype = {
       if(!(key in this._migrationHandlers)) {
         throw Cr.NS_ERROR_UNEXPECTED;
       }
-      dump("\nLOCALDATABASEMIGRATION: Attempting to migrate from " 
-            + oldVersion + " to " + newVersion + "\n");
       this._migrationHandlers[key].migrate(aLibrary);
       
       oldVersion = newVersion;
