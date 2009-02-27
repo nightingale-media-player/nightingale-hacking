@@ -69,7 +69,13 @@ function logcall(parentArgs) {
   dump(")\n");
 }
 
+const DEBUG_MODE = false;
 
+function LOG(s) {
+  if(DEBUG_MODE) {
+    dump(s + "\n");
+  }
+}
 
 /**
  * /class sbLibraryServicePane
@@ -1100,16 +1106,16 @@ function sbLibraryServicePane__getItemForURN(aID) {
         var library = this._libraryManager.getLibrary(libraryGUID);
         return library.getMediaItem(guid);
       } catch (e) {
-        dump("sbLibraryServicePane__getItemForURN: error trying to get medialist " +
-             guid + " from library " + libraryGUID + "\n");
+        LOG("sbLibraryServicePane__getItemForURN: error trying to get medialist " +
+             guid + " from library " + libraryGUID);
       }
     }
 
     // URNs of visible nodes in the servicetree should always refer
     // to an existing media item...
-    dump("sbLibraryServicePane__getItemForURN: could not find a mediaItem " +
+    LOG("sbLibraryServicePane__getItemForURN: could not find a mediaItem " +
          "for URN " + aID + ". The service pane must be out of sync with " +
-         "the libraries!\n");
+         "the libraries!");
   }
   return null;
 }
@@ -1373,8 +1379,7 @@ sbLibraryServicePane.prototype._insertNodeAfter =
 function sbLibraryServicePane__insertNodeAfter(aParent, aNode, aPrecedingNode) {
   // don't be bad
   if (!aParent.isContainer) {
-    dump("sbLibraryServicePane__insertNodeAfter: ");
-    dump("cannot insert under non-container node.\n");
+    LOG("sbLibraryServicePane__insertNodeAfter: cannot insert under non-container node.");
     return;
   }
   aParent.isOpen = true;
@@ -1505,12 +1510,10 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
         this._insertAfterLastOfSameType(aNode, parentLibraryNode.parentNode);
       }
     } else {
-      dump("sbLibraryServicePane__insertMediaListNode: ");
-      dump("could not add media list to parent library ");
-      if (parentLibraryNode)
-          dump(parentLibraryNode.name + "\n");
-      else
-          dump("\n");
+      LOG("sbLibraryServicePane__insertMediaListNode: could not add media list to parent library");
+      if (parentLibraryNode) {
+        LOG(parentLibraryNode.name);
+      }
       this._servicePane.root.appendChild(aNode);
     }
   }
@@ -1590,8 +1593,7 @@ function sbLibraryServicePane__insertAfterLastOfSameType(aNode, aParent) {
   //logcall(arguments);
 
   if (!aParent.isContainer) {
-    dump("sbLibraryServicePane__insertAfterLastOfSameType: ");
-    dump("cannot insert under non-container node.\n");
+    LOG("sbLibraryServicePane__insertAfterLastOfSameType: cannot insert under non-container node.");
     return;
   }
   aParent.isOpen = true;
