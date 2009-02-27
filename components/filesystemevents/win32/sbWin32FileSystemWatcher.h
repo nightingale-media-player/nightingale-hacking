@@ -119,6 +119,7 @@ private:
   PRBool               mIsThreadRunning;
   sbStringSet          mEventPathsSet;
   PRLock               *mEventPathsSetLock;
+  PRBool               mShuttingDown;
 };
 
 #endif  // sbWin32FileSystemWatcher_h_

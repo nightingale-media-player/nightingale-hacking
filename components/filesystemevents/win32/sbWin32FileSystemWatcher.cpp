@@ -125,20 +125,22 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbWin32FileSystemWatcher,
                              nsIObserver,
                              nsITimerCallback)
 
-sbWin32FileSystemWatcher::sbWin32FileSystemWatcher()
+sbWin32FileSystemWatcher::sbWin32FileSystemWatcher() :
+  mRootDirHandle(INVALID_HANDLE_VALUE),
+  mWatcherThread(INVALID_HANDLE_VALUE),
+  mBuffer(nsnull),
+  mShouldRunThread(PR_FALSE),
+  mIsThreadRunning(PR_FALSE),
+  mShuttingDown(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gWin32FSWatcherLog) {
     gWin32FSWatcherLog = PR_NewLogModule("sbWin32FSWatcher");
   }
 #endif
-  mRootDirHandle = INVALID_HANDLE_VALUE;
-  mWatcherThread = NULL;
-  mBuffer = NULL;
-  mIsThreadRunning = PR_FALSE;
-  mShouldRunThread = PR_FALSE;
   mEventPathsSetLock =
     nsAutoLock::NewLock("sbWin32FileSystemWatcher::mEventPathsSetLock");
+  NS_ASSERTION(mEventPathsSetLock, "Failed to create lock");
 }
 
 sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
@@ -147,10 +149,10 @@ sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
 
   // The thread was asked to terminate in the "quit-application" notification.
   // If it is still running, force kill it now.
-  if (mWatcherThread && mIsThreadRunning) {
+  if ((mWatcherThread != INVALID_HANDLE_VALUE) && mIsThreadRunning) {
     TerminateThread(mWatcherThread, 0);
   }
-  mWatcherThread = NULL;
+  mWatcherThread = INVALID_HANDLE_VALUE;
 }
 
 NS_IMETHODIMP
@@ -172,6 +174,8 @@ sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener,
 NS_IMETHODIMP
 sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
+  mShuttingDown = PR_TRUE;
+
   if (!mIsWatching) {
     return NS_OK;
   }
@@ -208,6 +212,9 @@ void
 sbWin32FileSystemWatcher::InitRebuildThread()
 {
   nsresult rv;
+  
+  NS_ENSURE_TRUE(!mShuttingDown, /* void */);
+  
   mTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
@@ -330,6 +337,7 @@ sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
   if (!mIsThreadRunning) {
     mShouldRunThread = PR_TRUE;
     mWatcherThread = CreateThread(NULL, 0, BackgroundThreadProc, this, 0, NULL);
+    NS_ENSURE_TRUE(mWatcherThread != INVALID_HANDLE_VALUE, NS_ERROR_OUT_OF_MEMORY);
   }
 
   mIsWatching = PR_TRUE;
