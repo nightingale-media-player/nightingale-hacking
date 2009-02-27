@@ -261,6 +261,7 @@ Section "-Application" Section1
 
    ; List of files to install
    File ${ApplicationIni}
+   File ${UpdaterIni}
    File ${FileMainEXE}
    File ${DistHelperEXE}
    !ifndef UsingJemalloc
@@ -516,6 +517,7 @@ Section "Uninstall"
 
    ; List of files to uninstall
    Delete $INSTDIR\${ApplicationIni}
+   Delete $INSTDIR\${UpdaterIni}
    Delete $INSTDIR\${FileMainEXE}
    Delete $INSTDIR\${DistHelperEXE}
    !ifndef UsingJemalloc
