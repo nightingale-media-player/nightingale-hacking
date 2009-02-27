@@ -117,9 +117,9 @@ static PRLogModuleInfo* gAlbumArtServiceLog = nsnull;
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbAlbumArtService,
-                              sbIAlbumArtService,
-                              nsIObserver)
+NS_IMPL_ISUPPORTS2(sbAlbumArtService,
+                   sbIAlbumArtService,
+                   nsIObserver)
 
 
 //------------------------------------------------------------------------------
@@ -260,7 +260,9 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aData);
   NS_ENSURE_ARG_POINTER(_retval);
-
+  // We need to be sure that mAlbumArtCacheDir is not null.
+  NS_ENSURE_TRUE(mAlbumArtCacheDir, NS_ERROR_NOT_INITIALIZED);
+  
   // Function variables.
   nsresult rv;
 
@@ -425,7 +427,7 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
   nsresult rv;
 
   // Dispatch processing of event.
-  if (!strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC)) {
+  if (!strcmp(aTopic, "profile-after-change")) {
     // Mark preferences as available and continue with initialization.
     mPrefsAvailable = PR_TRUE;
     rv = Initialize();
@@ -504,7 +506,7 @@ sbAlbumArtService::Initialize()
 
     // Add observers.
     rv = mObserverService->AddObserver(this,
-                                       SB_LIBRARY_MANAGER_READY_TOPIC,
+                                       "profile-after-change",
                                        PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mObserverService->AddObserver(this,
@@ -574,7 +576,7 @@ sbAlbumArtService::Finalize()
   // Remove observers.
   if (mObserverService) {
     mObserverService->RemoveObserver(this,
-                                     SB_LIBRARY_MANAGER_READY_TOPIC);
+                                     "profile-after-change");
     mObserverService->RemoveObserver(this,
                                      SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     mObserverService = nsnull;
