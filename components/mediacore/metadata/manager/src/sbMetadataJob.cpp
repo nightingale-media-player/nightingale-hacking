@@ -834,7 +834,7 @@ nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
   // to tell what failed)
   if (mJobType == TYPE_READ) {
     PRInt32 slash = stringURL.RFind(NS_LITERAL_STRING("/"));
-    if (slash > 0 && slash < stringURL.Length() - 1) {
+    if (slash > 0 && slash < (PRInt32)(stringURL.Length() - 1)) {
       stringURL = nsDependentSubstring(stringURL, slash + 1,
                                        stringURL.Length() - slash - 1);
     }
@@ -1011,7 +1011,8 @@ nsresult sbMetadataJob::OnJobProgress()
   // Now figure out where we're at
   if (mCompletedItemCount == mTotalItemCount) {
     mStatus = (mErrorMessages.Length() == 0) ? 
-        sbIJobProgress::STATUS_SUCCEEDED : sbIJobProgress::STATUS_FAILED;
+        (PRInt16)sbIJobProgress::STATUS_SUCCEEDED : 
+        (PRInt16)sbIJobProgress::STATUS_FAILED;
   }
   
   // Then announce our status to the world
@@ -1099,7 +1100,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
     // Only set the status text for write jobs, since read jobs
     // are not currently reflected in the UI.
     if (mJobType == TYPE_WRITE) {
-      char* textKey;
+      const char* textKey;
 
       // Single failure in single item write job
       if (mTotalItemCount == 1) {

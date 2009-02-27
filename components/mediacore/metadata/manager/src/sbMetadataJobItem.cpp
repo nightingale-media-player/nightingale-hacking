@@ -59,9 +59,9 @@ sbMetadataJobItem::sbMetadataJobItem(sbMetadataJob::JobType aJobType,
                                      sbMetadataJob* aOwningJob) :
   mJobType(aJobType),
   mMediaItem(aMediaItem),
-  mPropertyList(aRequiredProperties),
   mHandler(nsnull),
   mOwningJob(aOwningJob),
+  mPropertyList(aRequiredProperties),
   mProcessingComplete(PR_FALSE)
 {
   MOZ_COUNT_CTOR(sbMetadataJobItem);
@@ -158,7 +158,7 @@ nsresult sbMetadataJobItem::GetProperties(sbIMutablePropertyArray** aPropertyArr
   nsCOMPtr<sbIProperty> property;
   nsString propertyId;
   nsString propertyValue;
-  for (PRUint32 current = 0; current < mPropertyList->Count(); ++current) {
+  for (PRInt32 current = 0; current < mPropertyList->Count(); ++current) {
     // Get the wanted property
     mPropertyList->StringAt(current, propertyId);
     

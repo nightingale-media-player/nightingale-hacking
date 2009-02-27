@@ -320,7 +320,7 @@ sbMetadataCrashTracker::ProcessExistingLog()
         // Handle Begin records
         case 'B': { 
           PRInt32 separatorIndex = line.FindChar(' ', 1);
-          if (separatorIndex > 0 && separatorIndex < line.Length() - 1) {
+          if (separatorIndex > 0 && separatorIndex < (PRInt32)(line.Length() - 1)) {
             // Get the URL
             url = Substring(line, separatorIndex + 1);
             // Get the index

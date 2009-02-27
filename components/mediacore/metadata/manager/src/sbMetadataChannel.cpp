@@ -24,13 +24,6 @@
 //
 */
 
-/**
-* \file sbMetadataChannel.h
-* \brief 
-*/
-
-#pragma once
-
 // INCLUDES ===================================================================
 #include <nspr.h>
 #include <nscore.h>

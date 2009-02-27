@@ -1249,6 +1249,7 @@ sbPlaybackHistoryService::GetPropertyDBID(const nsAString &aPropertyID,
 
   if (!mPropertyIDToDBID.Get(aPropertyID, aPropertyDBID)) {
     nsresult rv = InsertPropertyID(aPropertyID, aPropertyDBID);
+    NS_ENSURE_SUCCESS (rv, rv);
   }
 
   return NS_OK;
@@ -1612,7 +1613,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
   nsresult rv = mCurrentItem->GetProperty(PROPERTY_DURATION, durationStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint64 duration = nsString_ToUint64(durationStr, &rv);
+  PRInt64 duration = nsString_ToInt64(durationStr, &rv);
   duration /= PR_USEC_PER_MSEC;
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1625,7 +1626,7 @@ sbPlaybackHistoryService::VerifyDataAndCreateNewEntry()
 
   // if we played for at least 240 seconds (matching audioscrobbler)
   // or more than half the track (matching audioscrobbler)
-  if(duration && (actualPlayingTime >= (duration / 2)) ||
+  if((duration && (actualPlayingTime >= (duration / 2))) ||
      actualPlayingTime >= (240 * 1000)) {
 
     // increment play count.

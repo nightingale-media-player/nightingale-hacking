@@ -95,6 +95,18 @@
 // Time in ms to wait before deferred media list check
 #define MEDIACORE_CHECK_DELAY 100
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbMediacoreSequencer:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gMediacoreSequencerLog = nsnull;
+#define TRACE(args) PR_LOG(gMediacoreSequencerLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gMediacoreSequencerLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
 
 inline nsresult
 EmitMillisecondsToTimeString(PRUint64 aValue,
@@ -189,6 +201,11 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mNeedsRecalculate(PR_FALSE)
 , mWatchingView(PR_FALSE)
 {
+
+#ifdef PR_LOGGING
+  if (!gMediacoreSequencerLog)
+    gMediacoreSequencerLog = PR_NewLogModule("sbMediacoreSequencer");
+#endif
 }
 
 sbMediacoreSequencer::~sbMediacoreSequencer()
@@ -963,16 +980,9 @@ sbMediacoreSequencer::SetMetadataDataRemote(const nsAString &aId,
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-#if defined(DEBUG)
-  {
-    NS_ConvertUTF16toUTF8 id(aId);
-    NS_ConvertUTF16toUTF8 value(aValue);
-
-    printf("[sbMediacoreSequencer] - SetMetadataDataRemote\n\tId: %s\n\tValue: %s\n\n",
-           id.BeginReading(),
-           value.BeginReading());
-  }
-#endif
+  LOG(("[sbMediacoreSequencer] - SetMetadataDataRemote: Id '%s', Value '%s'",
+         NS_ConvertUTF16toUTF8(aId).BeginReading(),
+         NS_ConvertUTF16toUTF8(aValue).BeginReading()));
 
   if(!mCurrentItem) {
     return NS_OK;
@@ -1606,15 +1616,12 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   rv = mPlaybackControl->SetUri(uri);
   NS_ENSURE_SUCCESS(rv, rv);
 
-#if defined(DEBUG)
+#ifdef PR_LOGGING
   {
     nsCString spec;
     rv = uri->GetSpec(spec);
-    if(NS_SUCCEEDED(rv)) {
-      printf("[sbMediacoreSequencer] -- Attempting to play %s\n",
-        spec.BeginReading());
-
-    }
+    LOG(("[sbMediacoreSequencer] -- Attempting to play %s",
+          spec.BeginReading()));
   }
 #endif
 
@@ -2812,15 +2819,13 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
   rv = aEvent->GetType(&eventType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-#if defined(DEBUG)
-  nsString eventInstanceName;
-  rv = core->GetInstanceName(eventInstanceName);
+#ifdef PR_LOGGING
+  nsString coreName;
+  rv = core->GetInstanceName(coreName);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ConvertUTF16toUTF8 name(eventInstanceName);
-  printf("\n[sbMediacoreSequencer] - Event - BEGIN\n");
-  printf("[sbMediacoreSequencer] - Instance: %s\n", name.BeginReading());
-  printf("[sbMediacoreSequencer] - Event Type: %d\n\n", eventType);
+  LOG(("[sbMediacoreSequencer] - Event from core '%s', type %d", 
+        NS_ConvertUTF16toUTF8(coreName).BeginReading(), eventType));
 #endif
 
   nsAutoMonitor mon(mMonitor);
@@ -2852,9 +2857,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         mStopTriggeredBySequencer = PR_FALSE;
         mStatus = sbIMediacoreStatus::STATUS_PLAYING;
 
-#if defined(DEBUG)
-        printf("[sbMediacoreSequencer] - Was waiting for playback, playback now started.\n");
-#endif
+        LOG(("[sbMediacoreSequencer] - Was waiting for playback, playback now started."));
       }
 
       if(mStatus == sbIMediacoreStatus::STATUS_PAUSED) {
@@ -2927,9 +2930,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
         }
         mon.Exit();
 
-#if defined(DEBUG)
-        printf("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence.\n");
-#endif
+        LOG(("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence."));
       }
     }
     break;
@@ -2938,9 +2939,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
       mon.Enter();
 
       if(!mStopTriggeredBySequencer) {
-#if defined(DEBUG)
-        printf("[sbMediacoreSequencer] - Hard stop requested.\n");
-#endif
+        LOG(("[sbMediacoreSequencer] - Hard stop requested."));
         /* If we're explicitly stopped, don't continue to the next track,
         * just clean up... */
         mStatus = sbIMediacoreStatus::STATUS_STOPPED;
@@ -3322,7 +3321,7 @@ sbMediacoreSequencer::OnBatchEnd(sbIMediaList *aMediaList)
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsAutoMonitor mon(mMonitor);
 
-  PRUint32 listBatchCount = mListBatchCount;
+  PRInt32 listBatchCount = mListBatchCount;
 
   if(aMediaList == mViewList && mListBatchCount > 0) {
     mListBatchCount--;

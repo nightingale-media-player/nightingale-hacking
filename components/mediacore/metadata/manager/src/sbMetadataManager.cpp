@@ -24,13 +24,6 @@
 //
 */
 
-/**
- * \file sbMetadataManager.h
- * \brief
- */
-
-#pragma once
-
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include <nspr.h>

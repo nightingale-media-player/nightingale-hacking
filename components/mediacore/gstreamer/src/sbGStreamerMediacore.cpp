@@ -658,7 +658,7 @@ sbGStreamerMediacore::SetBufferingProperties(GstElement *aPipeline)
 // in sorted-iteration order, at minimal depth.
 bool
 sbGStreamerMediacore::SetPropertyOnChild(GstElement *aElement, 
-        char *aPropertyName, gint64 aPropertyValue)
+        const char *aPropertyName, gint64 aPropertyValue)
 {
   bool done = false;
   bool ret = false;
@@ -1424,7 +1424,7 @@ sbGStreamerMediacore::OnGetDuration(PRUint64 *aDuration)
     gint64 duration;
     gst_query_parse_duration(query, NULL, &duration);
 
-    if (duration == GST_CLOCK_TIME_NONE) {
+    if ((GstClockTime)duration == GST_CLOCK_TIME_NONE) {
       /* Something erroneously returned TRUE for this query
        * despite not giving us a duration. Treat the same as
        * a failed query */
@@ -1462,7 +1462,7 @@ sbGStreamerMediacore::OnGetPosition(PRUint64 *aPosition)
     gint64 position;
     gst_query_parse_position(query, NULL, &position);
 
-    if (position == 0 || position == GST_CLOCK_TIME_NONE) {
+    if (position == 0 || (GstClockTime)position == GST_CLOCK_TIME_NONE) {
       // GStreamer bugs can cause us to get a position of zero when we in fact
       // don't know the current position. A real position of zero is unlikely
       // and transient, so we just treat this as unknown.

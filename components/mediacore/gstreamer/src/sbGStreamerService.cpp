@@ -71,7 +71,7 @@ static PRLogModuleInfo* gGStreamerService =
 
 #endif /* PR_LOGGING */
 
-static char *
+static const char *
 get_rank_name (gint rank)
 {
   switch (rank) {

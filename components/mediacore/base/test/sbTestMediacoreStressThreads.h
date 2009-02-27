@@ -64,10 +64,10 @@ private:
   void OnEvent();
 
 protected:
-  PRMonitor* mMonitor;
-  PRInt32 mCounter;
-  nsCOMArray<nsIThread> mThreads;
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
+  PRInt32                               mCounter;
+  PRMonitor*                            mMonitor;
+  nsCOMArray<nsIThread>                 mThreads;
 };
 
 #define SB_TEST_MEDIACORE_STRESS_THREADS_DESCRIPTION              \

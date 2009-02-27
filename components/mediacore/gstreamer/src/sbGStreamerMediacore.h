@@ -151,12 +151,10 @@ protected:
   void AbortAndRestartPlayback();
 
   bool SetPropertyOnChild(GstElement *aElement, 
-          char *aPropertyName, gint64 aPropertyValue);
+          const char *aPropertyName, gint64 aPropertyValue);
 
 private:
-  // Static helper for C callback
-  static GstBusSyncReply syncHandler(GstBus *bus, GstMessage *message, 
-          gpointer data);
+  // Static helpers for C callback
   static void aboutToFinishHandler(GstElement *playbin, gpointer data);
   static void videoCapsSetHelper(GObject *obj, GParamSpec *pspec, 
           sbGStreamerMediacore *core);

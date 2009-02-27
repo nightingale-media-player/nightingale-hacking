@@ -222,9 +222,9 @@ protected:
   PRUint32 mCurrentItemIndex;
   nsCOMPtr<sbIMediaItem> mCurrentItem;
 
-  PRUint32 mListBatchCount;
-  PRUint32 mLibraryBatchCount;
-  PRInt32  mSmartRebuildDetectBatchCount;
+  PRInt32 mListBatchCount;
+  PRInt32 mLibraryBatchCount;
+  PRInt32 mSmartRebuildDetectBatchCount;
 
   PRPackedBool mResetPosition;
   PRPackedBool mNoRecalculate;

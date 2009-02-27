@@ -163,7 +163,7 @@ nsresult sbFileMetadataService::Shutdown()
   mInitialized = PR_FALSE;
 
   // Cancel the jobs.  No risk of additional jobs as mJobArray is locked.
-  for (PRInt32 i=0; i < mJobArray.Length(); i++) {
+  for (PRUint32 i=0; i < mJobArray.Length(); i++) {
     rv = mJobArray[i]->Cancel();
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a metadata job");
     mJobArray.RemoveElementAt(i); 

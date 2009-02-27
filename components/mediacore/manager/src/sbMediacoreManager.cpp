@@ -508,10 +508,8 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
 
   mVolume = volume;
 
-#if defined(DEBUG)
-    printf("[sbMediacoreManager] - Initializing volume from data remote\n\tVolume: %s\n",
-           volStr.BeginReading());
-#endif
+  LOG(("[sbMediacoreManager] - Initializing volume from data remote, volume: %s",
+         volStr.BeginReading()));
 
   rv = SetVolumeDataRemote(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -540,10 +538,8 @@ sbMediacoreManager::OnInitBaseMediacoreVolumeControl()
   rv = mDataRemoteFaceplateMute->SetBoolValue(mMute);
   NS_ENSURE_SUCCESS(rv, rv);
 
-#if defined(DEBUG)
-  printf("[sbMediacoreManager] - Initializing mute from data remote\n\tMute: %d\n",
-         mute);
-#endif
+  LOG(("[sbMediacoreManager] - Initializing mute from data remote, mute: %d",
+         mute));
 
   return NS_OK;
 }
