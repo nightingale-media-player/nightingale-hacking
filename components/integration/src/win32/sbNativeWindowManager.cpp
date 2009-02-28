@@ -104,8 +104,7 @@ NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool a
   NS_ENSURE_ARG_POINTER(aWindow);
 
   HWND window = NativeWindowFromNode::get(aWindow);
-
-  HMODULE hDll = GetModuleHandleW(L"dwmapi");
+  HMODULE hDll = LoadLibraryW(L"dwmapi");
     
   if(!hDll) {
     LONG dwStyle = GetClassLongW(window, GCL_STYLE);
@@ -144,6 +143,8 @@ NS_IMETHODIMP sbNativeWindowManager::SetShadowing(nsISupports *aWindow, PRBool a
   //extend frame 
   hr = extendFrameIntoClientArea(window, &margins);
   NS_ENSURE_TRUE(SUCCEEDED(hr), NS_ERROR_UNEXPECTED);
+
+  FreeLibrary(hDll);
 
   return NS_OK;
 }
