@@ -64,6 +64,15 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
     return;
   }
 
+  if (FAILED(HRESULT_FROM_WIN32(dwErrorCode))) {
+    return;
+  }
+
+  // Don't bother processing if no bytes were transfered.
+  if (dwNumberOfBytesTransfered == 0) {
+    return;
+  }
+
   // Extract the event paths
   FILE_NOTIFY_INFORMATION *fileInfo =
     (FILE_NOTIFY_INFORMATION *)watcher->GetBuffer();
