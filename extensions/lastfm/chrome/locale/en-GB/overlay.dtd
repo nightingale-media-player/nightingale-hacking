@@ -18,7 +18,7 @@
 <!ENTITY lastfm.radio.search "Search">
 <!ENTITY lastfm.radio.library "Library">
 <!ENTITY lastfm.radio.loved "Loved Tracks">
-<!ENTITY lastfm.radio.neighbourhood "Neighborhood">
+<!ENTITY lastfm.radio.neighbourhood "Neighbourhood">
 <!ENTITY lastfm.radio.recommended "Recommendations">
 <!ENTITY lastfm.radio.recent_stations "Recent Stations">
 <!ENTITY lastfm.radio.from.lastfm "From Last.fm">
@@ -26,7 +26,7 @@
 <!ENTITY lastfm.radio.top_artists "Your Top Artists">
 <!ENTITY lastfm.radio.top_tags "Your Top Tags">
 <!ENTITY lastfm.radio.friends "Your Friends">
-<!ENTITY lastfm.radio.neighbours "Neighbors">
+<!ENTITY lastfm.radio.neighbours "Neighbours">
 <!ENTITY lastfm.radio.from.songbird "From Songbird">
 <!ENTITY lastfm.radio.most_played_artists "Your Most Played Artists">
 <!ENTITY lastfm.radio.highest_rated_artists "Your Highest Rated Artists">

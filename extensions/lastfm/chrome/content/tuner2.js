@@ -42,6 +42,11 @@ var LastfmTuner = {
 	searchType: "artist",
 
 	init: function() {
+		// Create our string bundle
+		LastfmTuner._strings = Cc["@mozilla.org/intl/stringbundle;1"]
+			.getService(Ci.nsIStringBundleService)
+			.createBundle("chrome://sb-lastfm/locale/overlay.properties");
+
 		// Add a pointer to our service
 		LastfmTuner.svc = Cc['@songbirdnest.com/lastfm;1']
 			.getService().wrappedJSObject;
@@ -155,17 +160,6 @@ var LastfmTuner = {
 	 * Search routines
 	 */
 
-	busySearchButton: function(busy) {
-		var button = document.getElementById("search-button");
-		if (busy) {
-			button.setAttribute("label", "Searching...");
-			button.setAttribute("disabled", true);
-		} else {
-			button.setAttribute("label", "Search");
-			button.setAttribute("disabled", false);
-		}
-	},
-
 	collectResults: function(success, xml, type, limit) {
 		if (!success) {
 			dump("Failed search\n");
@@ -262,7 +256,6 @@ var LastfmTuner = {
 		var search = $('#search-box')[0].value;
 
 		// Make the search button "busy", and clear the results area
-		//LastfmTuner.busySearchButton(true);
 		var e = $('#explorer');
 		e.empty();
 
@@ -274,38 +267,48 @@ var LastfmTuner = {
 		{
 			var results = LastfmTuner.collectResults(success, xml, "artist",
 				DISPLAY_SEARCH_LIMIT);
-			//LastfmTuner.busySearchButton(false);
 
 			var ar = $("#artist-results", e);
 			if (!results) {
-				ar.append("<h2 class='title'>No matching artists found</h2>");
+				var str = LastfmTuner._strings.formatStringFromName(
+					"lastfm.radio.no_artists_found", [search], 1);
+				ar.append("<h2 class='title'>" + str + "</h2>");
+				$(window).resize();
 				return;
 			}
 
-			ar.append("<h2 class='title'>Artists</h2>");
+			var artistsHeader = LastfmTuner._strings.GetStringFromName(
+				"lastfm.radio.artists");
+			ar.append("<h2 class='title'>" + artistsHeader + "</h2>");
 			LastfmTuner.drawMultipleResults(results, "artist", "l", 9, ar,
 				function(station) {
 					LastfmTuner.drawSingleArtist(station.stationInfo);
 			});
+			$(window).resize();
 		});
 		LastfmTuner.svc.apiCall("tag.search", {tag:search},
 				function response(success, xml)
 		{
 			var results = LastfmTuner.collectResults(success, xml, "tag",
 				DISPLAY_SEARCH_LIMIT);
-			//LastfmTuner.busySearchButton(false);
 
 			var tr = $("#tag-results", e);
 			if (!results) {
-				tr.append("<h2 class='title'>No matching tags found</h2>");
+				var str = LastfmTuner._strings.formatStringFromName(
+					"lastfm.radio.no_tags_found", [search], 1);
+				tr.append("<h2 class='title'>" + str + "</h2>");
+				$(window).resize();
 				return;
 			}
 
-			tr.append("<h2 class='title'>Tags</h2>");
+			var tagsHeader = LastfmTuner._strings.GetStringFromName(
+				"lastfm.radio.tags");
+			tr.append("<h2 class='title'>" + tagsHeader + "</h2>");
 			LastfmTuner.drawMultipleResults(results, "tag", "s", 9, tr,
 				function(station) {
 					LastfmTuner.drawSingleTag(station.stationInfo);
 			});
+			$(window).resize();
 		});
 	},
 
@@ -320,6 +323,8 @@ var LastfmTuner = {
 			var singleResult;
 			var image = val[imgSize + "ImageUrl"];
 			if (type == "tag") {
+				var playStr = LastfmTuner._strings.GetStringFromName(
+					"lastfm.radio.play");
 				singleResult = $(
 					"<div class='single-result " + resultClass + "'>" +
 					
@@ -332,15 +337,10 @@ var LastfmTuner = {
 					"<div class='station-nav'>" +
 						"<div class='station-play'><a href='" + val.stationUrl +
 						"'><img src='" + RADIO_ICON_SMALL + 
-						"'/>Play</a></div>" +	//station-play
+						"'/>" + playStr + "</a></div>" +	//station-play
 						"<div class='station-web'>" +
 							"<img height='12' src='" + GLOBE_ICON + "'/>" +
 						"</div>" +
-						/*
-						"<div class='station-page'>" +
-							"<img height='12' src='" + LASTFM_ICON + "'/>" +
-						"</div>" +
-						*/
 					"</div>" +	//station-nav
 					"</div>" +  //station-info
 
@@ -358,6 +358,8 @@ var LastfmTuner = {
 						nav.hide();
 					});
 			} else {
+				var playStr = LastfmTuner._strings.GetStringFromName(
+					"lastfm.radio.play");
 				singleResult = $(
 					"<div class='single-result " + resultClass + "'>" +
 			
@@ -370,15 +372,10 @@ var LastfmTuner = {
 					"<div class='station-nav'>" +
 						"<div class='station-play'><a href='" + val.stationUrl +
 						"'><img src='" + RADIO_ICON_SMALL + 
-						"'/>Play</a></div>" +	//station-play
+						"'/>" + playStr + "</a></div>" +	//station-play
 						"<div class='station-web'>" +
 							"<img height='12' src='" + GLOBE_ICON + "'/>" +
 						"</div>" +
-						/*
-						"<div class='station-page'>" +
-							"<img height='12' src='" + LASTFM_ICON + "'/>" +
-						"</div>" +
-						*/
 					"</div>" +	//station-nav
 					"</div>" +  //station-info
 					
@@ -415,6 +412,8 @@ var LastfmTuner = {
 	},
 
 	createDetailBlock: function(info, type) {
+		var playStr = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.play");
 		var block = $("<div class='detail-view detail-view-" + type + "'>" +
 			"<img class='" + type + "-image' src='" + info.lImageUrl + "'/>" +
 			"<div class='detail-info-" + type + "'><h3>" + info.name + "</h3>" +
@@ -422,7 +421,8 @@ var LastfmTuner = {
 					"<img src='" + GLOBE_ICON + "'/>View station page" +
 					"</a></div>" +
 				"<div class='station-play-button'><a href='" + info.stationUrl +
-					"'><img src='" + RADIO_ICON_SMALL + "'/>Play</a></div>"
+					"'><img src='" + RADIO_ICON_SMALL + "'/>" +
+					playStr + "</a></div>"
 			+ "</div></div>");
 
 		$(".station-play-button", block).click(function(e) {
@@ -458,8 +458,10 @@ var LastfmTuner = {
 	},
 
 	drawSingleArtist: function(info) {
+		var artistDetail = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.artist.detail");
 		$('#explorer').empty();
-		$('#explorer').append("<h2 class='title'>Artist Detail</h2>");
+		$('#explorer').append("<h2 class='title'>" + artistDetail + "</h2>");
 
 		// we got passed a station object, wrap it into a jQuery element
 		// and render it
@@ -477,13 +479,19 @@ var LastfmTuner = {
 		var fansDiv = $('#explorer > #fans');
 		fansDiv.hide();
 
-		tagsDiv.append("<h3 class='subtitle'>Tags for this artist</h3>");
+		var tagsStr = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.artist.tags");
+		tagsDiv.append("<h3 class='subtitle'>" + tagsStr + "</h3>");
 		tagsDiv.append("<div class='results'>");
 
-		artistsDiv.append("<h3 class='subtitle'>Similar Artists</h3>");
+		var similarStr = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.similar.artists");
+		artistsDiv.append("<h3 class='subtitle'>" + similarStr + "</h3>");
 		artistsDiv.append("<div class='results'>");
 
-		fansDiv.append("<h3 class='subtitle'>Fans</h3>");
+		var fansStr = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.fans");
+		fansDiv.append("<h3 class='subtitle'>" + fansStr + "</h3>");
 		fansDiv.append("<div class='results'>");
 
 		LastfmTuner.svc.apiCall('artist.gettoptags', {
@@ -545,8 +553,10 @@ var LastfmTuner = {
 	},
 	
 	drawSingleTag: function(info) {
+		var tagDetail = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.tag.detail");
 		$('#explorer').empty();
-		$('#explorer').append("<h2 class='title'>Tag Detail</h2>");
+		$('#explorer').append("<h2 class='title'>" + tagDetail + "</h2>");
 		
 		var detailBlock = LastfmTuner.createDetailBlock(info, "tag");
 		$('#explorer').append(detailBlock);
@@ -560,10 +570,14 @@ var LastfmTuner = {
 		var artistsDiv = $('#explorer > #artists');
 		artistsDiv.hide();
 
-		tagsDiv.append("<h3 class='subtitle'>Related Tags</h3>");
+		var similarTags = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.similar.tags");
+		tagsDiv.append("<h3 class='subtitle'>" + similarTags + "</h3>");
 		tagsDiv.append("<div class='results'>");
 
-		artistsDiv.append("<h3 class='subtitle'>Artists With This Tag</h3>");
+		var tagArtists = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.tag.artists");
+		artistsDiv.append("<h3 class='subtitle'>" + tagArtists + "</h3>");
 		artistsDiv.append("<div class='results'>");
 
 		LastfmTuner.svc.apiCall('tag.getsimilar', {
@@ -608,8 +622,10 @@ var LastfmTuner = {
 	},
 
 	drawSingleUser: function(info) {
+		var userDetail = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.user.detail");
 		$('#explorer').empty();
-		$('#explorer').append("<h2 class='title'>User Detail</h2>");
+		$('#explorer').append("<h2 class='title'>" + userDetail + "</h2>");
 		
 		var info;
 		var detailBlock = LastfmTuner.createDetailBlock(info, "user");
@@ -624,10 +640,14 @@ var LastfmTuner = {
 		var artistsDiv = $('#explorer > #artists');
 		artistsDiv.hide();
 
-		tagsDiv.append("<h3 class='subtitle'>Top Tags</h3>");
+		var topTags = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.tags.top");
+		var topArtists = LastfmTuner._strings.GetStringFromName(
+			"lastfm.radio.artists.top");
+		tagsDiv.append("<h3 class='subtitle'>" + topTags + "</h3>");
 		tagsDiv.append("<div class='results'>");
 
-		artistsDiv.append("<h3 class='subtitle'>Top Artists</h3>");
+		artistsDiv.append("<h3 class='subtitle'>" + topArtists + "</h3>");
 		artistsDiv.append("<div class='results'>");
 
 		LastfmTuner.svc.apiCall('user.getTopTags', {
@@ -822,11 +842,13 @@ var LastfmTuner = {
 				var rowClass = "row-even";
 				if (i % 2)
 					rowClass = "row-odd";
+				var playStr = LastfmTuner._strings.GetStringFromName(
+					"lastfm.radio.play");
 				var stationEl = $(
 					"<div class='nav-station " + rowClass + "'>" +
 					"<div class='station-play-button'><a href='" +
 					val.stationUrl + "'><img src='" + RADIO_ICON_SMALL + 
-					"'/>Play</a></div>" +
+					"'/>" + playStr + "</a></div>" +
 					"<img src ='chrome://sb-lastfm/skin/" + val.type +
 					".png' class='icon-type' />" + val.name + "</div>");
 				$(".station-play-button", stationEl).click(function(e) {

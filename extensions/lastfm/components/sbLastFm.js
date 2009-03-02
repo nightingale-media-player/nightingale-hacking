@@ -831,9 +831,11 @@ function sbLastFm_requestMoreRadio(success, failure) {
       }
       for (var i=0; i<tracks.length; i++) {
         // create a media item from the XSPF
-		dump("URL: " + tagValue(i, 'title') + " -- " + tagValue(i, 'location') + "\n");
+		var location = tagValue(i, 'location');
+		location = location.replace(/kingpin\d\.last\.fm/, "play.last.fm");
+		dump("URL: " + tagValue(i, 'title') + " -- " + location + "\n");
         var mediaItem = self.radio_mediaList.library.createMediaItem(
-          newURI(tagValue(i, 'location')));
+          newURI(location));
         // set up standard track metadata
         mediaItem.setProperty(SBProperties.trackName, tagValue(i, 'title'));
         mediaItem.setProperty(SBProperties.artistName, tagValue(i, 'creator'));
