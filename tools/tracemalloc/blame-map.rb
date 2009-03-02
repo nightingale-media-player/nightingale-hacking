@@ -67,9 +67,9 @@ $blame_list = {
   "songbird" => :ignore,
   "XRE_main" => :ignore,
 
-  "sbDBEngine.dylib" => :breakapart,
-  "sbLocalDatabaseLibrary.dylib" => :breakapart,
-  "sbMetadataModule.dylib" => :breakapart,  
+  # "sbDBEngine.dylib" => :breakapart,
+  # "sbLocalDatabaseLibrary.dylib" => :breakapart,
+  # "sbMetadataModule.dylib" => :breakapart,  
 
   # libxul objects of interest
   "nsXBLBinding" => "XBL",
