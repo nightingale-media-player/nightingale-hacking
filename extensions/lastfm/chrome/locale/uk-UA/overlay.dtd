@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Вхід на Last.fm...">
+<!ENTITY lastfm.menu.logout "Вихід з Last.fm">
+<!ENTITY lastfm.menu.enable "">
+<!ENTITY lastfm.signup.label "">
+<!ENTITY lastfm.login.button "Вхід">
+<!ENTITY lastfm.loggingin.label "">
+<!ENTITY lastfm.cancel.button "Скасувати">
+<!ENTITY lastfm.profile.caption "Профіль">
+<!ENTITY lastfm.profile.scrobble "">
+<!ENTITY lastfm.profile.logout "Вихід">

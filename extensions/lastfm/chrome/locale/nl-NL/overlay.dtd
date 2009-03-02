@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "Inloggen in Last.fm...">
+<!ENTITY lastfm.menu.logout "Uitloggen uit Last.fm...">
+<!ENTITY lastfm.menu.enable "Scrobblen inschakelen">
+<!ENTITY lastfm.signup.label "Een account aanmaken op Last.fm">
+<!ENTITY lastfm.login.button "Inloggen">
+<!ENTITY lastfm.loggingin.label "Aan het inloggen...">
+<!ENTITY lastfm.cancel.button "Annuleren">
+<!ENTITY lastfm.profile.caption "Profiel">
+<!ENTITY lastfm.profile.scrobble "Mijn liedjes scrobblen">
+<!ENTITY lastfm.profile.logout "Uitloggen">

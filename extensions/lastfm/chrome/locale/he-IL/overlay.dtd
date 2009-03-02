@@ -1,0 +1,10 @@
+<!ENTITY lastfm.menu.login "התחבר לLast.fm...">
+<!ENTITY lastfm.menu.logout "התנתק מLast.fm">
+<!ENTITY lastfm.menu.enable "אפשר סנכרון">
+<!ENTITY lastfm.signup.label "הירשם לLast.fm">
+<!ENTITY lastfm.login.button "התחבר">
+<!ENTITY lastfm.loggingin.label "מתחבר...">
+<!ENTITY lastfm.cancel.button "בטל">
+<!ENTITY lastfm.profile.caption "פרופיל">
+<!ENTITY lastfm.profile.scrobble "סנכרן את השירים שלי">
+<!ENTITY lastfm.profile.logout "התנתק">

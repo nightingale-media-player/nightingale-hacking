@@ -18,8 +18,7 @@
     <em:id>audioscrobbler@songbirdnest.com</em:id>
     <em:name>Last.fm</em:name>
     <em:description>Publish your playback history to Last.fm and listen to Last.fm Radio</em:description>
-    <em:creator>Stephen Lau</em:creator>
-    <em:contributor>Ian McKellar</em:contributor>
+    <em:creator>Stephen Lau &amp; Ian McKeller</em:creator>
     <em:contributor>Antoine Turmel: French Translation</em:contributor>
     <em:contributor>Mobleman: Danish Translation</em:contributor>
     <em:contributor>Soham Chatterjee: Bengali (India) Translation</em:contributor>
@@ -33,6 +32,17 @@
     <em:contributor>Wacław Jacek: Polish Translation</em:contributor>
     <em:contributor>Iñigo R. (Dark-eye) http://d-eye.es: Spanish (Spain) Translation</em:contributor>
     <em:contributor>Lenny Ekberg (lennyekberg@msn.com): Swedish Translation</em:contributor>
+    <em:contributor>Quicksilver tears: Russian Translation</em:contributor>
+    <em:contributor>eKuler: Czech Translation</em:contributor>
+    <em:contributor>inorbez: Basque Translation</em:contributor>
+    <em:contributor>josesun: Chinese (Traditional) Translation</em:contributor>
+    <em:contributor>JW_00000: Dutch Translation</em:contributor>
+    <em:contributor>Mippe: Finnish Translation</em:contributor>
+    <em:contributor>yammesicka: Hebrew Translation</em:contributor>
+    <em:contributor>Murat Biskin: Turkish Translation</em:contributor>
+    <em:contributor>Sappa: Ukrainian Translation</em:contributor>
+    <em:contributor>pokorny: Cornish Translation</em:contributor>
+    <em:contributor>Brogh: Cornish Translation</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:type>2</em:type>
     <em:iconURL>chrome://sb-lastfm/content/extensionicon.png</em:iconURL>
