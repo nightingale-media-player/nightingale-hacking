@@ -78,10 +78,15 @@ ifeq (macosx, $(SB_PLATFORM))
 export MACOSX_DEPLOYMENT_TARGET=10.4
 endif
 
-ifdef SB_SQLITE_DEBUG
+#
+# XXXAus: The ifdef and endif should NOT be commented out. 
+#         It's only commented out TEMPORARLY.
+#
+
+#ifdef SB_SQLITE_DEBUG
   C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
                   $(NULL)
-endif
+#endif
 
 C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
                 -DSQLITE_OMIT_LOAD_EXTENSION=1 \

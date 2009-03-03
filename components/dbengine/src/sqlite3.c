@@ -411,6 +411,11 @@
 # define NDEBUG 1
 #endif
 
+/* XXXAus: Ensure that when SQLITE_DEBUG is defined we do _not_ define NDEBUG */
+#if defined(SQLITE_DEBUG) && defined(NDEBUG)
+# undef NDEBUG
+#endif
+
 /*
 ** The testcase() macro is used to aid in coverage testing.  When 
 ** doing coverage testing, the condition inside the argument to
