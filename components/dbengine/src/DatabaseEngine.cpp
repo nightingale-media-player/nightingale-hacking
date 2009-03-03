@@ -1764,12 +1764,11 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
             break;
           case STRING:
           {
-            nsCString cStringValue = NS_ConvertUTF16toUTF8(p.stringValue);
-            sqlite3_bind_text(pStmt, i + 1,
-              cStringValue.get(),
-              cStringValue.Length(),
+            sqlite3_bind_text16(pStmt, i + 1,
+              p.stringValue.get(),
+              p.stringValue.Length() * sizeof(PRUnichar),
               SQLITE_TRANSIENT);
-             LOG(("DBE: Parameter %d is '%s'", i, cStringValue.get()));
+             LOG(("DBE: Parameter %d is '%s'", i, NS_ConvertUTF16toUTF8(p.stringValue).get()));
             break;
           }
           case DOUBLE:

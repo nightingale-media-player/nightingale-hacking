@@ -78,20 +78,14 @@ ifeq (macosx, $(SB_PLATFORM))
 export MACOSX_DEPLOYMENT_TARGET=10.4
 endif
 
-# XXXAus: The unit tests do things that are horribly bad on purpose and they
-#         trigger assertions in SQLite 3.5.9+. To ensure that we can keep on
-#         running the unit tests we turn SQLITE_DEBUG off on all builds.
-#         If you are doing heavy duty debugging and _need_ SQLITE_DEBUG on
-#         do remember to turn it _OFF_ before you check-in. 
-
-#ifdef DEBUG
-#  C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
-#                  $(NULL)
-#endif
+ifdef SB_SQLITE_DEBUG
+  C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
+                  $(NULL)
+endif
 
 C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
                 -DSQLITE_OMIT_LOAD_EXTENSION=1 \
-                -DSQLITE_THREADSAFE=1 \
+                -DSQLITE_THREADSAFE=2 \
                 -DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 \
                 -DTEMP_STORE=2 \
                 -DNO_TCL \

@@ -78,10 +78,29 @@ typedef enum {
   DOUBLE,
   INTEGER32,
   INTEGER64
-  } ParameterType;
+} ParameterType;
 
 struct CQueryParameter
 {
+  CQueryParameter() :
+    type(ISNULL),
+    doubleValue(0),
+    int32Value(0),
+    int64Value(0) {
+  }
+
+  ~CQueryParameter() {
+  }
+
+  CQueryParameter(const CQueryParameter &queryParameter) :
+    type(queryParameter.type),
+    utf8StringValue(queryParameter.utf8StringValue),
+    stringValue(queryParameter.stringValue),
+    doubleValue(queryParameter.doubleValue),
+    int32Value(queryParameter.int32Value),
+    int64Value(queryParameter.int64Value) {
+  }
+  
   ParameterType type;
   nsCString utf8StringValue;
   nsString stringValue;
@@ -161,7 +180,6 @@ protected:
 
   PRLock* m_pBindParametersLock;
   std::deque< bindParameterArray_t > m_BindParameters;
-  bindParameterArray_t* m_LastBindParameters;
 
   PRLock* m_pRollingLimitLock;
   PRUint64 m_RollingLimit;

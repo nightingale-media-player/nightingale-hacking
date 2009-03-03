@@ -206,6 +206,19 @@ AC_SUBST(SB_EXTENSIONS)
 AC_SUBST(SB_ENABLE_LIBRARY_PERF)
 
 #
+# Check for --enable-sqlite-debug
+#
+
+SB_SQLITE_DEBUG=
+
+AC_ARG_ENABLE(sqlite-debug,
+              [  --enable-sqlite-debug   enable sqlite debug assertions (default=no)])
+if test "$enable_sqlite_debug" == "yes"; then
+  SB_SQLITE_DEBUG=1
+fi
+AC_SUBST(SB_SQLITE_DEBUG)
+
+#
 # Check platform
 #
 
