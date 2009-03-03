@@ -58,9 +58,14 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
                                      __in DWORD dwNumberOfBytesTransfered,
                                      __in LPOVERLAPPED lpOverlapped)
 {
+  
   sbWin32FileSystemWatcher *watcher =
     (sbWin32FileSystemWatcher *)lpOverlapped->hEvent;
   if (!watcher) {
+    #if PR_LOGGING
+      if (gWin32FSWatcherLog)
+        LOG(("%s: no watcher!", __FUNCTION__));
+    #endif /*(PR_LOGGING*/
     return;
   }
 
@@ -78,6 +83,11 @@ ReadDirectoryChangesWCallbackRoutine(__in DWORD dwErrorCode,
     (FILE_NOTIFY_INFORMATION *)watcher->GetBuffer();
   if (fileInfo) {
     {
+      #if PR_LOGGING
+        if (gWin32FSWatcherLog)
+          TRACE(("%s: found changes in %s",
+                 __FUNCTION__, fileInfo->FileName));
+      #endif /* PR_/LOGGING */
       nsAutoLock lock(watcher->GetEventPathsSetLock());
 
       while (PR_TRUE) {
@@ -154,6 +164,7 @@ sbWin32FileSystemWatcher::sbWin32FileSystemWatcher() :
 
 sbWin32FileSystemWatcher::~sbWin32FileSystemWatcher()
 {
+  TRACE(("%s", __FUNCTION__));
   nsAutoLock::DestroyLock(mEventPathsSetLock);
 
   // The thread was asked to terminate in the "quit-application" notification.
@@ -169,6 +180,8 @@ sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener,
                                const nsAString & aRootPath,
                                PRBool aIsRecursive)
 {
+  TRACE(("%s: root path = %s", __FUNCTION__,
+         NS_ConvertUTF16toUTF8(aRootPath).get()));
   nsresult rv;
   nsCOMPtr<nsIObserverService> obsService =
     do_GetService("@mozilla.org/observer-service;1", &rv);
@@ -183,6 +196,8 @@ sbWin32FileSystemWatcher::Init(sbIFileSystemListener *aListener,
 NS_IMETHODIMP
 sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
+  TRACE(("%s", __FUNCTION__));
+
   mShuttingDown = PR_TRUE;
 
   if (!mIsWatching) {
@@ -205,6 +220,7 @@ sbWin32FileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 void
 sbWin32FileSystemWatcher::Cleanup()
 {
+  TRACE(("%s", __FUNCTION__));
   if (mBuffer) {
     nsMemory::Free(mBuffer);
     mBuffer = NULL;
@@ -220,6 +236,7 @@ sbWin32FileSystemWatcher::Cleanup()
 void
 sbWin32FileSystemWatcher::InitRebuildThread()
 {
+  TRACE(("%s", __FUNCTION__));
   nsresult rv;
   
   NS_ENSURE_TRUE(!mShuttingDown, /* void */);
@@ -234,6 +251,7 @@ sbWin32FileSystemWatcher::InitRebuildThread()
 void
 sbWin32FileSystemWatcher::WatchNextChange()
 {
+  TRACE(("%s", __FUNCTION__));
   DWORD const flags =
     FILE_NOTIFY_CHANGE_FILE_NAME |
     FILE_NOTIFY_CHANGE_DIR_NAME |
@@ -303,6 +321,8 @@ NS_IMETHODIMP
 sbWin32FileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
                                       sbStringArray & aDirPathArray)
 {
+  TRACE(("%s: root path %s",
+         __FUNCTION__, NS_ConvertUTF16toUTF8(aTreeRootPath).get()));
   if (mWatchPath.Equals(EmptyString())) {
     // If the watch path is empty here, this means that the tree was loaded
     // from a previous session. Set the watch path now.
@@ -392,6 +412,7 @@ sbWin32FileSystemWatcher::Observe(nsISupports *aObject,
 NS_IMETHODIMP
 sbWin32FileSystemWatcher::Notify(nsITimer *aTimer)
 {
+  TRACE(("%s", __FUNCTION__));
   {
     nsAutoLock lock(mEventPathsSetLock);
 
