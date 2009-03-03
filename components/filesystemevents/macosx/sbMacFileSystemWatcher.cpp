@@ -39,6 +39,11 @@ static PRLogModuleInfo* gMacFSWatcherLog = nsnull;
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
 
+/* make GCC pretty */
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
+
 //------------------------------------------------------------------------------
 // FSEvents Callback
 
@@ -50,6 +55,7 @@ sbMacFileSystemWatcher::FSEventCallback(ConstFSEventStreamRef aStreamRef,
                                         const FSEventStreamEventFlags aEventFlags[],
                                         const FSEventStreamEventId aEventIds[])
 {
+  TRACE(("%s: %i events", __FUNCTION__, aNumEvents));
   sbMacFileSystemWatcher *watcher = 
     static_cast<sbMacFileSystemWatcher *>(aClientCallbackInfo);
   if (!watcher) {
@@ -94,6 +100,7 @@ sbMacFileSystemWatcher::Init(sbIFileSystemListener *aListener,
                              const nsAString & aRootPath, 
                              PRBool aIsRecursive)
 {
+  TRACE(("%s: path=%s", __FUNCTION__, NS_ConvertUTF16toUTF8(aRootPath).get()));
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -105,6 +112,7 @@ NS_IMETHODIMP
 sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
                                         sbIFileSystemListener *aListener)
 {
+  TRACE(("%s: session %s", __FUNCTION__, aSessionGuid.BeginReading()));
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -115,6 +123,7 @@ sbMacFileSystemWatcher::InitWithSession(const nsACString & aSessionGuid,
 NS_IMETHODIMP 
 sbMacFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
+  TRACE(("%s: save %i", __FUNCTION__, aShouldSaveSession));
   if (!mIsSupported) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
@@ -152,7 +161,9 @@ NS_IMETHODIMP
 sbMacFileSystemWatcher::OnTreeReady(const nsAString & aTreeRootPath,
                                     sbStringArray & aDirPathArray)
 {
-  if (mWatchPath.Equals(EmptyString())) {
+  TRACE(("%s: tree at %s ready", __FUNCTION__,
+         NS_ConvertUTF16toUTF8(aTreeRootPath).get()));
+  if (mWatchPath.IsEmpty()) {
     // If the watch path is empty here, this means that the tree was loaded
     // from a previous session. Set the watch path now.
     mWatchPath.Assign(aTreeRootPath);
