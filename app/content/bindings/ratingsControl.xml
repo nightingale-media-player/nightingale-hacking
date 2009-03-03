@@ -52,6 +52,7 @@
           // assign a default value
           this.oldValue = 0;
           this.lastStar = -1;
+          this.hovering = false;
         ]]>
       </constructor>
       <property name="value">
@@ -155,6 +156,7 @@
           if (!this.canEdit()) return;
           this.lastStar = -1;
           this.oldValue = this.value;
+          this.hovering = true;
         ]]>
       </handler>
       <handler event="mouseout">
@@ -163,6 +165,7 @@
           if (!this.canEdit()) return;
           this.lastStar = -1;
           this.value = this.oldValue;
+          this.hovering = false;
         ]]>
       </handler>
       <handler event="mousemove">
@@ -242,8 +245,10 @@
             _callback: this,
             
             onItemUpdated: function(aMediaList, aMediaItem, aIndex) {
-              if (aMediaItem == this._callback._curMediaItem)
-                this._callback.updateRatingsDisplay();
+              if (aMediaItem == this._callback._curMediaItem) {
+                if (!self._ratingBinding.hovering)
+                  this._callback.updateRatingsDisplay();
+              }
             },
             
             onItemAdded: function(aMediaList, aMediaItem, aIndex) {
