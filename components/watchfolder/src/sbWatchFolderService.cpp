@@ -1171,6 +1171,8 @@ sbWatchFolderService::Observe(nsISupports *aSubject,
                 // Just warn if deleting the previous session fails.
                 NS_WARNING("Could not delete old session data!");
               }
+
+              mFileSystemWatcherGUID.Truncate();
             }
 
             // Set a flag to re-setup a file system watcher once the current
