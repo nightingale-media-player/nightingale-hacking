@@ -1806,10 +1806,25 @@ void sbMetadataHandlerTaglib::GuessCharset(
     }
 
     // first, build a string consisting of some tags
-    TagLib::String tagString;
-    tagString += pTag->album();
-    tagString += pTag->artist();
-    tagString += pTag->title();
+    TagLib::String tagString, stringPiece;
+    stringPiece = pTag->album();
+    if (stringPiece.shouldGuessCharacterSet()) {
+        tagString += stringPiece;
+    }
+    stringPiece = pTag->artist();
+    if (stringPiece.shouldGuessCharacterSet()) {
+        tagString += stringPiece;
+    }
+    stringPiece = pTag->title();
+    if (stringPiece.shouldGuessCharacterSet()) {
+        tagString += stringPiece;
+    }
+    
+    if (tagString.isEmpty()) {
+        // nothing needs guessing
+        _retval.AssignLiteral("utf-8");
+        return;
+    }
 
     // comment and genre can end up confusing the detection; ignore them
     //tagString += pTag->comment();
