@@ -94982,6 +94982,10 @@ static int leavesReaderInit(fulltext_vtab *v,
   CLEAR(pReader);
   pReader->idx = idx;
 
+  if( pRootData==NULL || nRootData==0 ){
+    return SQLITE_CORRUPT;
+  }
+
   dataBufferInit(&pReader->rootData, 0);
   if( iStartBlockid==0 ){
     /* Entire leaf level fit in root data. */
@@ -95570,6 +95574,10 @@ static int loadSegment(fulltext_vtab *v, const char *pData, int nData,
                        DataBuffer *out){
   DataBuffer result;
   int rc;
+
+  if( pData==NULL || nData==0 ){
+    return SQLITE_CORRUPT;
+  }
 
   assert( nData>1 );
 
