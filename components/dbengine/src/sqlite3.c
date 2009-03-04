@@ -94982,12 +94982,13 @@ static int leavesReaderInit(fulltext_vtab *v,
   CLEAR(pReader);
   pReader->idx = idx;
 
-  if( pRootData==NULL || nRootData==0 ){
-    return SQLITE_CORRUPT;
-  }
-
   dataBufferInit(&pReader->rootData, 0);
   if( iStartBlockid==0 ){
+
+    if( pRootData==NULL || nRootData==0 ){
+      return SQLITE_CORRUPT;
+    }
+
     /* Entire leaf level fit in root data. */
     dataBufferReplace(&pReader->rootData, pRootData, nRootData);
     leafReaderInit(pReader->rootData.pData, pReader->rootData.nData,
