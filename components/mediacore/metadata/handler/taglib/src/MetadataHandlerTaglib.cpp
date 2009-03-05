@@ -1774,6 +1774,7 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
       AddMetadataValue(SB_PROPERTY_SAMPLERATE, pAudioProperties->sampleRate());
       AddMetadataValue(SB_PROPERTY_DURATION, 
               (PRUint64)pAudioProperties->length() * 1000000);
+      AddMetadataValue(SB_PROPERTY_CHANNELS, pAudioProperties->channels());
   }
   
   return true; // file was valid
