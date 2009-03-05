@@ -1813,6 +1813,10 @@ sbLocalDatabaseLibrary::Shutdown()
   // to prevent data loss.
   mPropertyCache = nsnull;
 
+  mCreateMediaItemPreparedStatement = nsnull;
+  mGetTypeForGUID = nsnull;
+  mStatisticsSumPreparedStatement = nsnull;
+
   return NS_OK;
 }
 

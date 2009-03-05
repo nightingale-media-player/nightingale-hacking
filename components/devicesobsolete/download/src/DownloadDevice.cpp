@@ -796,6 +796,9 @@ NS_IMETHODIMP sbDownloadDevice::Finalize()
         mpDeviceMonitor = nsnull;
     }
 
+    mpMainLibrary = nsnull;
+    mpWebLibrary = nsnull;
+
     return (NS_OK);
 }
 

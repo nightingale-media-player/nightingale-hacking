@@ -124,9 +124,15 @@ CPP_SRCS = DatabaseEngineComponent.cpp \
 
 CPP_INCLUDES = $(srcdir) \
                $(DEPTH)/components/dbengine/public \
+               $(DEPTH)/components/moz/strings/components/public \
+               $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/metrics/public \
                $(topsrcdir)/components/include \
-               $(topsrcdir)/components/intl/src/ \
+               $(topsrcdir)/components/intl/src \
+               $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
                $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/appcomps \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
@@ -136,6 +142,8 @@ CPP_INCLUDES = $(srcdir) \
                $(MOZSDK_INCLUDE_DIR)/locale \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -149,6 +157,8 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcom \
                             xpcomglue_s \
+                            $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+                            $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
                             $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))

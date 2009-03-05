@@ -91,6 +91,8 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define MINIMUM_LIBRARY_COUNT 2
 #define LOADERINFO_VALUE_COUNT 4
 
+// XXXAus: If you change these, you must change them in DatabaseEngine.cpp
+//         as well. Failure to do so will break corrupt database recovery!
 #define DBENGINE_GUID_MAIN_LIBRARY     "main@library.songbirdnest.com"
 #define DBENGINE_GUID_WEB_LIBRARY      "web@library.songbirdnest.com"
 

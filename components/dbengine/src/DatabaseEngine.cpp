@@ -34,6 +34,7 @@
 #include "DatabasePreparedStatement.h"
 
 #include <nsCOMPtr.h>
+#include <nsIAppStartup.h>
 #include <nsIFile.h>
 #include <nsILocalFile.h>
 #include <nsStringGlue.h>
@@ -48,6 +49,7 @@
 #include <sbLockUtils.h>
 #include <nsIPrefService.h>
 #include <nsIPrefBranch.h>
+#include <nsXPFEComponentsCID.h>
 #include <prsystem.h>
 
 #include <vector>
@@ -61,6 +63,12 @@
 #include <nsIConsoleService.h>
 
 #include <nsCOMArray.h>
+
+#include <sbIMetrics.h>
+#include <sbIPrompter.h>
+#include <sbMemoryUtils.h>
+#include <sbStringBundle.h>
+#include <sbProxiedComponentManager.h>
 
 // The maximum characters to output in a single PR_LOG call
 #define MAX_PRLOG 400
@@ -104,6 +112,22 @@
 #define PREF_DB_PREALLOCSCRATCH_SIZE          "preAllocScratchSize"
 #define PREF_DB_SOFT_LIMIT                    "softHeapLimit"
 
+// These constants come from sbLocalDatabaseLibraryLoader.cpp
+// Do not change these constants unless you are changing them in 
+// sbLocalDatabaseLibraryLoader.cpp!
+#define PREF_SCAN_COMPLETE                    "songbird.firstrun.scancomplete"
+#define PREF_BRANCH_LIBRARY_LOADER            "songbird.library.loader."
+#define PREF_MAIN_LIBRARY                     "songbird.library.main"
+#define PREF_WEB_LIBRARY                      "songbird.library.web"
+#define PREF_DOWNLOAD_LIST                    "songbird.library.download"
+
+// These are also from sbLocalDatabaseLibraryLoader.cpp.
+#define PREF_LOADER_DBGUID                    "databaseGUID"
+#define PREF_LOADER_DBLOCATION                "databaseLocation"
+
+// These are also from sbLocalDatabaseLibraryLoader.cpp.
+#define DBENGINE_GUID_MAIN_LIBRARY            "main@library.songbirdnest.com"
+#define DBENGINE_GUID_WEB_LIBRARY             "web@library.songbirdnest.com"
 
 // Unless prefs state otherwise, allow 262144000 bytes
 // of page cache.  WOW!
@@ -111,6 +135,7 @@
 #define DEFAULT_CACHE_SIZE            16000
 
 #define SQLITE_MAX_RETRIES            666
+#define MAX_BUSY_RETRY_CLOSE_DB       10
 
 #if defined(_DEBUG) || defined(DEBUG)
   #if defined(XP_WIN)
@@ -136,6 +161,8 @@ static PRLogModuleInfo* sDatabaseEnginePerformanceLog = nsnull;
 #else
 #define BEGIN_PERFORMANCE_LOG(_strQuery, _dbName) /* nothing */
 #endif
+
+#define NS_FINAL_UI_STARTUP_CATEGORY   "final-ui-startup"
 
 /*
  * Parse a path string in the form of "n1.n2.n3..." where n is an integer.
@@ -902,12 +929,13 @@ CDatabaseEngine *gEngine = nsnull;
 //-----------------------------------------------------------------------------
 CDatabaseEngine::CDatabaseEngine()
 : m_pDBStorePathLock(nsnull)
-, m_pDatabasesGUIDListLock(nsnull)
 , m_pThreadMonitor(nsnull)
 , m_CollationBuffersMapMonitor(nsnull)
 , m_AttemptShutdownOnDestruction(PR_FALSE)
 , m_IsShutDown(PR_FALSE)
 , m_MemoryConstraintsSet(PR_FALSE)
+, m_PromptForDelete(PR_FALSE)
+, m_DeleteDatabases(PR_FALSE)
 , m_pPageSpace(nsnull)
 , m_pScratchSpace(nsnull)
 #ifdef XP_MACOSX
@@ -993,9 +1021,6 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   m_pDBStorePathLock = PR_NewLock();
   NS_ENSURE_TRUE(m_pDBStorePathLock, NS_ERROR_OUT_OF_MEMORY);
 
-  m_pDatabasesGUIDListLock = PR_NewLock();
-  NS_ENSURE_TRUE(m_pDatabasesGUIDListLock, NS_ERROR_OUT_OF_MEMORY);
-
   nsresult rv = CreateDBStorePath();
   NS_ASSERTION(NS_SUCCEEDED(rv), "Unable to create db store folder in profile!");
 
@@ -1004,18 +1029,20 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   if(NS_SUCCEEDED(rv)) {
     rv = observerService->AddObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID,
                                       PR_FALSE);
+
+    rv = observerService->AddObserver(this, NS_FINAL_UI_STARTUP_CATEGORY,
+                                      PR_FALSE);
   }
 
   // This shouldn't be an 'else' case because we want to set this flag if
   // either of the above calls failed
-  if (NS_FAILED(rv)) {
+  if(NS_FAILED(rv)) {
     NS_ERROR("Unable to register xpcom-shutdown observer");
     m_AttemptShutdownOnDestruction = PR_TRUE;
   }
   
   // Select a collation locale for the entire lifetime of the app, so that
   // it cannot change on us.
-  
   rv = GetCurrentCollationLocale(mCollationLocale);
 
 #ifdef XP_MACOSX
@@ -1088,6 +1115,13 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
     ::UCDisposeCollator(&m_Collator);
 #endif
 
+  if(m_PromptForDeleteTimer) {
+    nsresult rv = m_PromptForDeleteTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    m_PromptForDeleteTimer = nsnull;
+  }
+
   return NS_OK;
 }
 
@@ -1096,19 +1130,58 @@ NS_IMETHODIMP CDatabaseEngine::Observe(nsISupports *aSubject,
                                        const char *aTopic,
                                        const PRUnichar *aData)
 {
-  // Bail if we don't care about the message
-  if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID))
-    return NS_OK;
+  nsresult rv = NS_ERROR_UNEXPECTED;
 
-  // Shutdown our threads
-  nsresult rv = Shutdown();
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
+  if(!strcmp(aTopic, NS_FINAL_UI_STARTUP_CATEGORY)) {
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // And remove ourselves from the observer service
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  return observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+    rv = observerService->RemoveObserver(this, NS_FINAL_UI_STARTUP_CATEGORY);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Remove Observer Failed!");
+
+    nsAutoMonitor mon(m_pThreadMonitor);
+    if(m_PromptForDelete) {
+      mon.Exit();
+
+      rv = PromptToDeleteDatabases();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Prompting to Delete Databases Failed!");
+
+      mon.Enter();
+    }
+
+    m_PromptForDeleteTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if(!strcmp(aTopic, NS_TIMER_CALLBACK_TOPIC)) {
+    nsAutoMonitor mon(m_pThreadMonitor);
+    if(m_PromptForDelete) {
+      mon.Exit();
+
+      rv = PromptToDeleteDatabases();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Prompting to Delete Databases Failed!");
+
+      mon.Enter();
+    }
+  }
+  else if(!strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID)) {
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = observerService->RemoveObserver(this, NS_XPCOM_SHUTDOWN_OBSERVER_ID);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Remove Observer Failed!");
+
+    // Shutdown our threads
+    rv = Shutdown();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Shutdown Failed!");
+
+    // Delete any bad databases now
+    rv = DeleteMarkedDatabases();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to delete bad databases!");
+  }
+
+  return NS_OK;
 }
 
 
@@ -1387,7 +1460,17 @@ nsresult CDatabaseEngine::OpenDB(const nsAString &dbGUID,
 //-----------------------------------------------------------------------------
 nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
 {
-  sqlite3_interrupt(pHandle);
+  PRInt32 retries = 0;
+  PRInt32 ret = SQLITE_BUSY;
+
+  do {
+    sqlite3_interrupt(pHandle);
+    if((ret = sqlite3_close(pHandle)) == SQLITE_BUSY) {
+      PR_Sleep(PR_MillisecondsToInterval(50));
+    }
+  }
+  while(ret == SQLITE_BUSY && 
+        retries++ < MAX_BUSY_RETRY_CLOSE_DB);
 
   {
     nsAutoMonitor mon(m_CollationBuffersMapMonitor);
@@ -1398,7 +1481,6 @@ nsresult CDatabaseEngine::CloseDB(sqlite3 *pHandle)
     }
   }
 
-  PRInt32 ret = sqlite3_close(pHandle);
   NS_ASSERTION(ret == SQLITE_OK, "");
   NS_ENSURE_TRUE(ret == SQLITE_OK, NS_ERROR_UNEXPECTED);
 
@@ -1565,7 +1647,8 @@ NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
   // Attempt to free a large amount of memory.
   // This will cause SQLite to free as much as it can.
   int memReleased = sqlite3_release_memory(500000000);
-  printf("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased);
+  LOG(("CDatabaseEngine::ReleaseMemory() managed to release %d bytes\n", memReleased));
+
   return NS_OK;
 }
 
@@ -1621,6 +1704,263 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
   NS_ADDREF(p);
 
   return p;
+}
+
+nsresult
+CDatabaseEngine::MarkDatabaseForPotentialDeletion(const nsAString &aDatabaseGUID,
+                                                  CDatabaseQuery *pQuery)
+{
+  nsAutoMonitor mon(m_pThreadMonitor);
+
+  m_PromptForDelete = PR_TRUE;
+  m_DatabasesToDelete.insert(std::make_pair(
+      nsString(aDatabaseGUID), nsRefPtr<CDatabaseQuery>(pQuery)));
+
+  if(m_PromptForDeleteTimer) {
+    nsresult rv = m_PromptForDeleteTimer->Init(this, nsITimer::TYPE_ONE_SHOT, 100);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+CDatabaseEngine::PromptToDeleteDatabases() 
+{
+  nsresult rv;
+
+  nsAutoMonitor mon(m_pThreadMonitor);
+  if(!m_PromptForDelete || m_DatabasesToDelete.empty()) {
+    return NS_OK;
+  }
+  mon.Exit();
+
+  nsCOMPtr<sbIPrompter> promptService =
+    do_GetService(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 buttons = nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + 
+                     nsIPromptService::BUTTON_POS_1 * nsIPromptService::BUTTON_TITLE_IS_STRING + 
+                     nsIPromptService::BUTTON_POS_1_DEFAULT;
+  PRInt32 promptResult = 0;
+
+  // get dialog strings
+  sbStringBundle bundle;
+  nsString dialogTitle = bundle.Get("corruptdatabase.dialog.title");
+  nsString dialogText = bundle.Get("corruptdatabase.dialog.text");
+  nsString deleteText = bundle.Get("corruptdatabase.dialog.buttons.delete");
+  nsString continueText = bundle.Get("corruptdatabase.dialog.buttons.cancel");
+
+
+  // prompt.
+  rv = promptService->ConfirmEx(nsnull,
+                                dialogTitle.BeginReading(),
+                                dialogText.BeginReading(),
+                                buttons,            
+                                deleteText.BeginReading(),   // button 0
+                                continueText.BeginReading(), // button 1
+                                nsnull,                      // button 2
+                                nsnull,                      // no checkbox
+                                nsnull,                      // no check value
+                                &promptResult);     
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Enter();
+  m_PromptForDelete = PR_FALSE;
+  mon.Exit();
+
+  // "Delete" means delete & restart.  "Continue" means let the app
+  // start anyway.
+  if (promptResult == 0) { 
+    // metric: user chose to delete corrupt library
+    nsCOMPtr<sbIMetrics> metrics =
+      do_CreateInstance("@songbirdnest.com/Songbird/Metrics;1", &rv);
+    
+    if(NS_SUCCEEDED(rv)) {
+      rv = metrics->MetricsInc(NS_LITERAL_STRING("app"), \
+                               NS_LITERAL_STRING("library.error.reset"), 
+                               EmptyString());
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    mon.Enter();
+    m_DeleteDatabases = PR_TRUE;
+    mon.Exit();
+
+    // now attempt to quit/restart.
+    nsCOMPtr<nsIAppStartup> appStartup = 
+      (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    rv = appStartup->Quit(nsIAppStartup::eForceQuit | nsIAppStartup::eRestart);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+CDatabaseEngine::DeleteMarkedDatabases()
+{
+  nsresult rv;
+  nsCOMPtr<nsIPrefService> prefService =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoMonitor mon(m_pThreadMonitor);
+
+  if(!m_DeleteDatabases)
+    return NS_OK;
+
+  deleteDatabaseMap_t::const_iterator cit = m_DatabasesToDelete.begin();
+  deleteDatabaseMap_t::const_iterator citEnd = m_DatabasesToDelete.end();
+
+  for(; cit != citEnd; ++cit) {
+    nsString strFilename;
+    GetDBStorePath(cit->first, cit->second, strFilename);
+
+    nsCOMPtr<nsILocalFile> databaseFile;
+    rv = NS_NewLocalFile(strFilename, 
+                         PR_FALSE, 
+                         getter_AddRefs(databaseFile));
+    if(NS_FAILED(rv)) {
+      NS_WARNING("Failed to get local file for database!");
+      continue;
+    }
+    
+    rv = databaseFile->Remove(PR_FALSE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to delete corrupted database file!");
+  }
+
+  // Go through prefs branch. If the databaseGUID pref matches
+  // the database we are deleting, delete the entire branch.
+  
+  // If the db guid is the magic main library guid, we will also
+  // reset the pref that asks the user to import media on startup.
+
+  nsCAutoString prefBranchRoot(PREF_BRANCH_LIBRARY_LOADER);
+  nsCOMPtr<nsIPrefBranch> loaderPrefBranch;
+
+  rv = prefService->GetBranch(prefBranchRoot.get(), getter_AddRefs(loaderPrefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 libraryKeysCount;
+  char** libraryKeys;
+
+  rv = loaderPrefBranch->GetChildList("", &libraryKeysCount, &libraryKeys);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoFreeXPCOMArray<char**> autoFree(libraryKeysCount, libraryKeys);
+
+  for (PRUint32 index = 0; index < libraryKeysCount; index++) {
+    nsCString pref(libraryKeys[index]);
+
+    PRInt32 firstDotIndex = pref.FindChar('.');
+    // bad pref string format, skip
+    if(firstDotIndex == -1) {
+      continue;
+    }
+
+    PRUint32 keyLength = firstDotIndex;
+    if(keyLength == 0) {
+      continue;
+    }
+
+    // Should be something like "1".
+    nsCString keyString(StringHead(pref, keyLength));
+    PRUint32 libraryKey = keyString.ToInteger(&rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Should be something like "songbird.library.loader.1.".
+    nsCString branchString(PREF_BRANCH_LIBRARY_LOADER);
+    branchString += Substring(pref, 0, keyLength + 1);
+    if(!StringEndsWith(branchString, NS_LITERAL_CSTRING("."))) {
+      continue;
+    }
+
+    nsCOMPtr<nsIPrefBranch> innerBranch;
+    rv = prefService->GetBranch(branchString.get(), getter_AddRefs(innerBranch));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 prefType = nsIPrefBranch::PREF_INVALID;
+    rv = innerBranch->GetPrefType(PREF_LOADER_DBGUID, &prefType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(prefType != nsIPrefBranch::PREF_STRING) {
+      continue;
+    }
+
+    nsCString loaderDbGuid;
+    rv = innerBranch->GetCharPref(PREF_LOADER_DBGUID, getter_Copies(loaderDbGuid));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = innerBranch->GetPrefType(PREF_LOADER_DBLOCATION, &prefType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(prefType != nsIPrefBranch::PREF_STRING) {
+      continue;
+    }
+
+    nsCString loaderDbLocation;
+    rv = innerBranch->GetCharPref(PREF_LOADER_DBLOCATION, getter_Copies(loaderDbLocation));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    deleteDatabaseMap_t::const_iterator citD = 
+      m_DatabasesToDelete.find(NS_ConvertUTF8toUTF16(loaderDbGuid));
+
+    if(citD != m_DatabasesToDelete.end()) {
+      nsString strFilename;
+      GetDBStorePath(citD->first, citD->second, strFilename);
+
+      if(strFilename.EqualsLiteral(loaderDbLocation.get())) {
+        rv = innerBranch->DeleteBranch("");
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = prefService->SavePrefFile(nsnull);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      if(loaderDbGuid.EqualsLiteral(DBENGINE_GUID_MAIN_LIBRARY)) {
+        nsCOMPtr<nsIPrefBranch> doomedBranch;
+        rv = prefService->GetBranch(PREF_SCAN_COMPLETE, getter_AddRefs(doomedBranch));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = doomedBranch->DeleteBranch("");
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = prefService->GetBranch(PREF_MAIN_LIBRARY, getter_AddRefs(doomedBranch));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = doomedBranch->DeleteBranch("");
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = prefService->GetBranch(PREF_DOWNLOAD_LIST, getter_AddRefs(doomedBranch));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = doomedBranch->DeleteBranch("");
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = prefService->SavePrefFile(nsnull);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if(loaderDbGuid.EqualsLiteral(DBENGINE_GUID_WEB_LIBRARY)) {
+        nsCOMPtr<nsIPrefBranch> doomedBranch;
+        rv = prefService->GetBranch(PREF_WEB_LIBRARY, getter_AddRefs(doomedBranch));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = doomedBranch->DeleteBranch("");
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = prefService->SavePrefFile(nsnull);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  m_DatabasesToDelete.clear();
+  m_DeleteDatabases = PR_FALSE;
+
+  return NS_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -1719,8 +2059,10 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
       preparedStatement->GetQueryString(strQuery);
       // cast the prepared statement to its C implementation. this is a really lousy thing to do to an interface pointer.
       // since it mostly prevents ever being able to provide an alternative implementation.
-      CDatabasePreparedStatement *actualPreparedStatement = static_cast<CDatabasePreparedStatement*>(preparedStatement.get());
-      sqlite3_stmt *pStmt = actualPreparedStatement->GetStatement(pThread->m_pHandle);
+      CDatabasePreparedStatement *actualPreparedStatement = 
+        static_cast<CDatabasePreparedStatement*>(preparedStatement.get());
+      sqlite3_stmt *pStmt = 
+        actualPreparedStatement->GetStatement(pThread->m_pHandle);
       
       if (!pStmt) {
         LOG(("DBE: Failed to create a prepared statement from the Query object."));
@@ -1901,6 +2243,17 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
           }
         break;
 
+        case SQLITE_CORRUPT: 
+          {
+            pEngine->ReportError(pDB, pStmt);
+
+            // Even if the following fails, this method will exit cleanly
+            // and report the error to the console
+            rv = pEngine->MarkDatabaseForPotentialDeletion(dbName, pQuery);
+            NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to mark database for deletion!");
+          }
+        break;
+
         default:
           {
             // Log all SQL errors to the error console.
@@ -1908,10 +2261,6 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
             pQuery->SetLastError(retDB);
           }
         }
-
-        // Throttle slightly.
-        // XXXAus: Not in use for the time being.
-        // PR_Sleep(PR_MillisecondsToInterval(0));
       }
       while(retDB == SQLITE_ROW &&
             !pQuery->m_IsAborting &&

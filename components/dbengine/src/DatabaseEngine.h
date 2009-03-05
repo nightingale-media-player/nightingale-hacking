@@ -54,9 +54,9 @@
 #include <nsThreadUtils.h>
 #include <nsIRunnable.h>
 #include <nsIObserver.h>
-#include <nsProxyRelease.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
+#include <nsITimer.h>
 
 #include "sbLeadingNumbers.h"
 
@@ -152,15 +152,17 @@ private:
                                   const NATIVE_CHAR_TYPE *aStr1,
                                   const NATIVE_CHAR_TYPE *aStr2);
 
+  nsresult MarkDatabaseForPotentialDeletion(const nsAString &aDatabaseGUID, 
+                                            CDatabaseQuery *pQuery);
+  nsresult PromptToDeleteDatabases();
+  nsresult DeleteMarkedDatabases();
+
 private:
   typedef std::map<sqlite3 *, collationBuffers *> collationMap_t;
   collationMap_t m_CollationBuffersMap;
 
   PRLock * m_pDBStorePathLock;
   nsString m_DBStorePath;
-
-  PRLock *m_pDatabasesGUIDListLock;
-  std::vector<nsString> m_DatabasesGUIDList;
 
   //[database guid / thread]
   nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorThread> m_ThreadPool;
@@ -172,7 +174,15 @@ private:
   PRBool m_IsShutDown;
 
   PRBool m_MemoryConstraintsSet;
-  
+
+  PRBool m_PromptForDelete;
+  PRBool m_DeleteDatabases;
+
+  typedef std::map<nsString, nsRefPtr<CDatabaseQuery> > deleteDatabaseMap_t;
+  deleteDatabaseMap_t m_DatabasesToDelete;
+
+  nsCOMPtr<nsITimer> m_PromptForDeleteTimer;
+
   // Pre-allocated memory for sqlite page cache and scratch.
   // Created in InitMemoryConstraints and destroyed in Shutdown.
   // Used to avoid fragmentation.

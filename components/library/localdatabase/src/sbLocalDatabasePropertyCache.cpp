@@ -281,6 +281,8 @@ nsresult
 sbLocalDatabasePropertyCache::Shutdown()
 {
   TRACE(("sbLocalDatabasePropertyCache[0x%.8x] - Shutdown()", this));
+  
+  nsresult rv = NS_OK;
 
   if (mFlushThread) {
     {
@@ -303,10 +305,20 @@ sbLocalDatabasePropertyCache::Shutdown()
   }
 
   if(mWritePendingCount) {
-    return Write();
+    rv =  Write();
   }
 
-  return NS_OK;
+  mItemSelectPreparedStatement = nsnull;
+  mSecondaryPropertySelectPreparedStatement = nsnull;
+  mMediaItemsFtsAllDeletePreparedStatement = nsnull;
+  mMediaItemsFtsAllInsertPreparedStatement = nsnull;
+  mPropertiesDeletePreparedStatement = nsnull;
+  mPropertiesInsertPreparedStatement = nsnull;
+
+  mMediaItemsUpdatePreparedStatements.Clear();
+  mLibraryMediaItemUpdatePreparedStatements.Clear();
+
+  return rv;
 }
 
 template <class T>
