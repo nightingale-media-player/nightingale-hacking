@@ -678,14 +678,14 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   nsRefPtr<TransferRequest> request;
   PeekRequest(getter_AddRefs(request));
 
-  rv = SetState(STATE_CANCEL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
   {
     nsAutoMonitor reqMon(mRequestMonitor);
 
     if(!mRequests.empty()) {
+      rv = SetState(STATE_CANCEL);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       // Save off the library items that are pending to avoid any
       // potential reenterancy issues when deleting them.
       TransferRequestQueueMap::const_iterator mapIt = mRequests.begin(),
