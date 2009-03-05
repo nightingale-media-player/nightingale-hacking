@@ -87,12 +87,10 @@ window.mediaPage = {
   onLoad:  function(e) {
     
     // Make sure we have the javascript modules we're going to use
-    if (!window.SBProperties) 
-      Cu.import("resource://app/jsmodules/sbProperties.jsm");
-    if (!window.LibraryUtils) 
-      Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-    if (!window.kPlaylistCommands) 
-      Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+    Cu.import("resource://app/jsmodules/sbProperties.jsm");
+    Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+    Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+    Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
     
     if (!this._mediaListView) {
       Components.utils.reportError("playlistPage.xul did not receive  " + 
