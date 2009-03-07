@@ -733,6 +733,12 @@ sbLocalDatabaseTreeView::RestoreSelection()
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
+    // Normally we have reselected everything, and therefore, mSelectionList is
+    // empty. However if an item has either disappeared or been renamed, it'll
+    // still be in the list at this point, and this will interfere with
+    // GetSelectedValues (it'll think those values are still selected). So force
+    // the array to be empty now.
+    mSelectionList.Clear();
   }
   return NS_OK;
 }
