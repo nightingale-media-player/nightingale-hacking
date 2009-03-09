@@ -80,10 +80,14 @@ ArtistInfo.prototype = {
 		// Initiate the request
 		var dbReq = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 				.createInstance(Ci.nsIXMLHttpRequest);
+		/*
 		var url = "http://dbpedia.org:8890/sparql?" +
 				"default-graph-uri=http%3A%2F%2Fdbpedia.org" +
 				"&query=DESCRIBE+%3Chttp://dbpedia.org/resource/" +
 				artist.replace(/ /g, "_") + "%3E&output=xml";
+		*/
+		var url = "view-source:http://dbpedia.org/data/" +
+			artist.replace(/ /g, "_") + ".rdf";
 		mtUtils.log("Wikipedia", "DBpedia URL:" + url);
 		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
 			.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.");
@@ -114,10 +118,10 @@ ArtistInfo.prototype = {
 				var links = new Object;
 				links.provider = "Wikipedia";
 				links.links = new Array();
-				if (x..foafNs::homepage.length() >= 1) {
+				if (x..foafNs::page.length() >= 1) {
 					links.links.push({
 						name: homepage,
-						url: x..foafNs::homepage[0].@rdfNs::resource
+						url: x..foafNs::page[0].@rdfNs::resource
 					});
 				}
 				
