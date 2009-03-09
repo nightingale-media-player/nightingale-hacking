@@ -75,7 +75,7 @@ function runTest(tester) {
       "disableDownload"             // boolean  1/0
     ];
 
-    // These we can't read from the WPAIP
+    // These we can't read from the WPAPI
     // contentURL is special cased down below.
     var nonRemoteReadableNames = [
       "rapiScopeURL",
@@ -103,7 +103,9 @@ function runTest(tester) {
       "deviceId",
       "playCount_AtLastSync",
       "skipCount_AtLastSync",
-      "smartMediaListState"
+      "smartMediaListState",
+      "createdFirstRunSmartPlaylists",
+      "downloadMediaListGUID"
     ];
 
     // These we can't modify from the WPAPI
@@ -146,7 +148,9 @@ function runTest(tester) {
       "playCount_AtLastSync",
       "skipCount_AtLastSync",
       "smartMediaListState",
-      "listType"
+      "listType",
+      "createdFirstRunSmartPlaylists",
+      "downloadMediaListGUID"
     ];
 
     var library = songbird.mainLibrary;

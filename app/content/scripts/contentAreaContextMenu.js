@@ -1231,11 +1231,11 @@ ContentAreaContextMenu.prototype = {
       _downloadListGUID: null,
       _libraryServicePane: null,
       onEnumerationBegin: function() {
-        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                              .getService(Components.interfaces.nsIPrefBranch2);
-        this._downloadListGUID =
-          prefs.getComplexValue("songbird.library.download",
-                                Components.interfaces.nsISupportsString);
+        var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                            .getService(Components.interfaces.sbIDownloadDeviceHelper);
+        var downloadMediaList = ddh.getDownloadMediaList();
+        if (downloadMediaList)
+          this._downloadListGUID = downloadMediaList.guid;
 
         this._libraryServicePane = 
           Components.classes['@songbirdnest.com/servicepane/library;1']

@@ -179,9 +179,13 @@
             var prefBranch = Components.classes["@mozilla.org/preferences-service;1"]
                           .getService(Components.interfaces.nsIPrefBranch2);
 
-            var downloadListGUID =
-              prefBranch.getComplexValue("songbird.library.download",
-                                    Components.interfaces.nsISupportsString);
+            var ddh = Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                                .getService(Components.interfaces.sbIDownloadDeviceHelper);
+            var downloadMediaList = ddh.getDownloadMediaList();
+            var downloadListGUID = null;
+            if (downloadMediaList)
+              downloadListGUID = downloadMediaList.guid;
+
             var webListGUID =
               prefBranch.getComplexValue("songbird.library.web",
                                     Components.interfaces.nsISupportsString);

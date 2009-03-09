@@ -1121,6 +1121,17 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                      stringBundle);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Created first-run smart playlists (internal use)
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_CREATED_FIRSTRUN_SMARTPLAYLISTS), EmptyString(),
+                       stringBundle, PR_FALSE, PR_FALSE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Download media list Guid (internal use only)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID), EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

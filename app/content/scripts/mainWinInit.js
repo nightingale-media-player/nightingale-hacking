@@ -329,14 +329,25 @@ function SBFirstRunImportLibrary()
 }
 
 function SBFirstRunSmartPlaylists() {
+  // Do nothing if first-run smart playlists were already created in the main
+  // library.
+  var libraryManager =
+    Components.classes["@songbirdnest.com/Songbird/library/Manager;1"]
+              .getService(Components.interfaces.sbILibraryManager);
+  var library = libraryManager.mainLibrary;
+  if (library.getProperty(SBProperties.createdFirstRunSmartPlaylists) == "1")
+    return;
+
+  // For backward compatibility, check preferences to see if the first-run smart
+  // playlists were already created.
   var defaultSmartPlaylists = SBDataGetIntValue("firstrun.smartplaylist");
-  if (defaultSmartPlaylists != 1) {
-    SBDataSetIntValue("firstrun.smartplaylist", 1)
-    var prefService = Cc["@mozilla.org/preferences-service;1"]
-                        .getService(Ci.nsIPrefService);
-    prefService.savePrefFile(null);
-    createDefaultSmartPlaylists();
+  if (defaultSmartPlaylists) {
+    library.setProperty(SBProperties.createdFirstRunSmartPlaylists, "1");
+    return;
   }
+
+  library.setProperty(SBProperties.createdFirstRunSmartPlaylists, "1");
+  createDefaultSmartPlaylists();
 }
 
 function createDefaultSmartPlaylists() {

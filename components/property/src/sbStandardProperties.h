@@ -118,4 +118,8 @@
 // Smart media list specific properties
 #define SB_PROPERTY_SMARTMEDIALIST_STATE      "http://songbirdnest.com/data/1.0#smartMediaListState"
 
+// Main library specific properties
+#define SB_PROPERTY_CREATED_FIRSTRUN_SMARTPLAYLISTS "http://songbirdnest.com/data/1.0#createdFirstRunSmartPlaylists"
+#define SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID   "http://songbirdnest.com/data/1.0#downloadMediaListGUID"
+
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

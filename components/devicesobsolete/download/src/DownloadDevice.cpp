@@ -1895,7 +1895,6 @@ void sbDownloadDevice::FinalizeDownloadMediaList()
 
 nsresult sbDownloadDevice::CreateDownloadMediaList()
 {
-    nsCOMPtr<nsISupportsString> pSupportsString;
     nsAutoString                downloadMediaListGUID;
     nsAutoString                downloadColSpec;
     nsresult                    rv;
@@ -1906,16 +1905,13 @@ nsresult sbDownloadDevice::CreateDownloadMediaList()
                                         getter_AddRefs(mpDownloadMediaList));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    /* Save the media list GUID in the prefs so others can find it. */
-    pSupportsString = do_CreateInstance(NS_SUPPORTS_STRING_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    /* Save the media list GUID in the main      */
+    /* library properties so others can find it. */
     rv = mpDownloadMediaList->GetGuid(downloadMediaListGUID);
     NS_ENSURE_SUCCESS(rv, rv);
-    rv = pSupportsString->SetData(downloadMediaListGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mpPrefBranch->SetComplexValue(SB_PREF_DOWNLOAD_MEDIALIST,
-                                       NS_GET_IID(nsISupportsString),
-                                       pSupportsString);
+    rv = mpMainLibrary->SetProperty
+             (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID),
+              downloadMediaListGUID);
     NS_ENSURE_SUCCESS(rv, rv);
 
     /* Set the download device media list name. */
@@ -1958,13 +1954,26 @@ void sbDownloadDevice::GetDownloadMediaList()
     nsAutoString                downloadMediaListGUID;
     nsresult                    rv;
 
-    /* Read the download media list GUID from the preferences. */
-    rv = mpPrefBranch->GetComplexValue(SB_PREF_DOWNLOAD_MEDIALIST,
-                                       NS_GET_IID(nsISupportsString),
-                                       getter_AddRefs(pSupportsString));
-    if (NS_FAILED(rv)) return;
-    rv = pSupportsString->GetData(downloadMediaListGUID);
-    if (NS_FAILED(rv)) return;
+    /* Read the download media list GUID. */
+    rv = mpMainLibrary->GetProperty
+             (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID),
+              downloadMediaListGUID);
+    if (NS_FAILED(rv) || downloadMediaListGUID.IsEmpty())
+    {
+        /* For backward compatibility, read the download */
+        /* media list GUID from the preferences.         */
+        rv = mpPrefBranch->GetComplexValue(SB_PREF_DOWNLOAD_MEDIALIST,
+                                           NS_GET_IID(nsISupportsString),
+                                           getter_AddRefs(pSupportsString));
+        if (NS_FAILED(rv)) return;
+        rv = pSupportsString->GetData(downloadMediaListGUID);
+        if (NS_FAILED(rv)) return;
+
+        /* Set the download media list GUID main library property. */
+        mpMainLibrary->SetProperty
+            (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID),
+             downloadMediaListGUID);
+    }
 
     /* Get the download media list from the main library. */
     rv = mpMainLibrary->GetMediaItem(downloadMediaListGUID,

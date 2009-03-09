@@ -147,6 +147,14 @@ PublicPlaylistCommands.prototype = {
       var prefs = Cc["@mozilla.org/preferences-service;1"]
                     .getService(Ci.nsIPrefBranch2);
 
+      var ddh =
+        Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                  .getService(Components.interfaces.sbIDownloadDeviceHelper);
+      var downloadMediaList = ddh.getDownloadMediaList();
+      var downloadListGUID = "";
+      if (downloadMediaList)
+        downloadListGUID = downloadMediaList.guid;
+
       // --------------------------------------------------------------------------
 
       // Build playlist command actions
@@ -834,10 +842,6 @@ PublicPlaylistCommands.prototype = {
 
       // Register these commands to the download playlist
 
-      var downloadListGUID =
-        prefs.getComplexValue("songbird.library.download",
-                              Ci.nsISupportsString);
-
       this.m_mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "", this.m_downloadCommands);
 
       // --------------------------------------------------------------------------
@@ -885,11 +889,6 @@ PublicPlaylistCommands.prototype = {
       this.m_downloadCommandsServicePane.setShutdownCallback(plCmd_DownloadShutdown);
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
-
-      // Register these commands to the download playlist
-      var downloadListGUID =
-        prefs.getComplexValue("songbird.library.download",
-                              Ci.nsISupportsString);
 
       this.m_mgr.registerPlaylistCommandsMediaList(downloadListGUID, "", this.m_downloadCommandsServicePane);
 
@@ -943,6 +942,14 @@ PublicPlaylistCommands.prototype = {
     var prefs = Cc["@mozilla.org/preferences-service;1"]
                   .getService(Ci.nsIPrefBranch2);
 
+    var ddh =
+      Components.classes["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                .getService(Components.interfaces.sbIDownloadDeviceHelper);
+    var downloadMediaList = ddh.getDownloadMediaList();
+    var downloadListGUID = "";
+    if (downloadMediaList)
+      downloadListGUID = downloadMediaList.guid;
+
     // Un-publish atomic commands
 
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PLAY, this.m_cmd_Play);
@@ -978,10 +985,6 @@ PublicPlaylistCommands.prototype = {
 
 
     // Un-register download playlist commands
-
-    var downloadListGUID =
-      prefs.getComplexValue("songbird.library.download",
-                            Ci.nsISupportsString);
 
     this.m_mgr.unregisterPlaylistCommandsMediaItem(downloadListGUID,
                                                    "",
