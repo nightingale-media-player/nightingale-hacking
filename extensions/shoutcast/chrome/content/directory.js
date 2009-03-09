@@ -324,10 +324,16 @@ var RadioDirectory = {
 	},
 
 	changeGenre : function(menulist) {
+		dump("Showing deck\n");
+		var deck = document.getElementById("loading-deck");
+		deck.selectedIndex = 0;
+
 		var genre = menulist.selectedItem.value;
 		Application.prefs.setValue(shoutcastGenre, genre);
 		this.clearFilter();
-		this.loadTable(genre);
+		setTimeout(function() {
+				RadioDirectory.loadTable(genre)
+				}, 100);
 	},
 
 	loadTable : function(genre) {
@@ -389,7 +395,7 @@ var RadioDirectory = {
 					.createInstance(Ci.sbIMutablePropertyArray);
 
 				var heartSrc;
-				if (this.favouriteIDs.indexOf(id) != -1) {
+				if (RadioDirectory.favouriteIDs.indexOf(id) != -1) {
 					heartSrc = "chrome://shoutcast-radio/skin/heart-active.png";
 				} else {
 					heartSrc = "chrome://shoutcast-radio/skin/invis-16x16.png";
@@ -441,8 +447,12 @@ var RadioDirectory = {
 					dump("exception: " + e + "\n");
 			}
 
-			this.radioLib.batchCreateMediaItemsAsync(libListener,
+			RadioDirectory.radioLib.batchCreateMediaItemsAsync(libListener,
 				trackArray, propertiesArray, false);
+			
+			var deck = document.getElementById("loading-deck");
+			deck.selectedIndex = 1;
+			dump("Showing playlist\n");
 		}
 	},
 

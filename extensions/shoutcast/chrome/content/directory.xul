@@ -12,7 +12,8 @@
 
 <page id="shoutcast-window"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="RadioDirectory.init()"
+	onload="setTimeout(function() { RadioDirectory.init().call(RadioDirectory);
+		}, 100);"
 	onunload="RadioDirectory.unload()">
 
 	<stringbundleset id="stringbundleset"> 
@@ -61,10 +62,17 @@
 		</vbox>
 	</hbox>
 
-	<sb-playlist flex="1"
-		id="shoutcast-directory"
-		enableColumnDrag="true"
-		persist="column-list column-widths"
-		hidecolumnpicker="true"
-		editable="false" />
+	<deck id="loading-deck" flex="1" selectedIndex="0">
+		<vbox pack="center" flex="1">
+			<hbox pack="center">
+				<image src="chrome://songbird/skin/base-elements/icon-loading-large.png" />
+			</hbox>
+		</vbox>
+		<sb-playlist flex="1"
+			id="shoutcast-directory"
+			enableColumnDrag="true"
+			persist="column-list column-widths"
+			hidecolumnpicker="true"
+			editable="false" />
+	</deck>
 </page>
