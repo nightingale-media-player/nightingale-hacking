@@ -31,6 +31,13 @@ SmugMug.prototype = {
 	query: function(searchTerms, updateFn) {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
+
+		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+			.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.");
+		var keywords = prefBranch.getCharPref("photo.keywords");
+		if (keywords != "")
+			searchTerms += "%20" + escape(keywords);
+
 		var url = "http://www.smugmug.com/hack/feed.mg?Type=keyword&format=rss&ImageCount=100&Data=" + escape(searchTerms);
 		req.open("GET", url, true);
 		req.provider = this;

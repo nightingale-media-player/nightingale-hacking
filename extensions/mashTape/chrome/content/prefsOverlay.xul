@@ -29,6 +29,8 @@
 		name="extensions.mashTape.flash.enabled" />
 	<preference id="photo-speed" type="int"
 		name="extensions.mashTape.photo.speed" />
+	<preference id="photo-keywords" type="string"
+		name="extensions.mashTape.photo.keywords" />
 </preferences>
 
 <command id="cmd-info" oncommand="mashTapePreferences.savePrefs('info')" />
@@ -176,21 +178,33 @@
 							id="checkbox-photo" command="cmd-toggle-photo" />
 						<label value="&mtprefs.tab.help;" />
 					</hbox>
-
-					<hbox id="hbox-photo-speed">
-						<label value="&mtprefs.tab.photo.speed;"
-							style="padding-right: 2em;" />
-						<label value="&mtprefs.tab.photo.faster;" />
-						<scale id="scale-photo-speed" min="10" max="200"
-							style="width: 10em;" preference="photo-speed" />
-						<label value="&mtprefs.tab.photo.slower;" />
-					</hbox>
 					
 					<description id="help-photo">&mtprefs.single;</description>
 					<radiogroup>
 						<richlistbox class="box-services" id="services-photo">
 						</richlistbox>
 					</radiogroup>
+				</groupbox>
+
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.photo.speed;" />
+					<hbox id="hbox-photo-speed">
+						<label value="&mtprefs.tab.photo.faster;" />
+						<scale id="scale-photo-speed" min="10" max="200"
+							style="width: 10em;" preference="photo-speed" />
+						<label value="&mtprefs.tab.photo.slower;" />
+					</hbox>
+				</groupbox>
+
+				<groupbox flex="1">
+					<caption label="&mtprefs.tab.photo.keywords.caption;" />
+					<description>&mtprefs.tab.photo.keywords.help;</description>
+					<hbox id="hbox-photo-keywords">
+						<label value="&mtprefs.tab.photo.keywords;"
+							style="padding-right: 1em;" />
+						<textbox id="textbox-photo-keywords"
+							style="width: 15em;" preference="photo-keywords" />
+					</hbox>
 				</groupbox>
 			</vbox>
 		</tabpanel>

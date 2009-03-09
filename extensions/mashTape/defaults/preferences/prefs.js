@@ -28,9 +28,10 @@ pref("extensions.mashTape.review.providers", "{96a0c280-b4d3-11dd-ad8b-0800200c9
 pref("extensions.mashTape.rss.enabled", true);
 pref("extensions.mashTape.rss.providers", "{f6256890-79d3-11dd-ad8b-0800200c9a66},{4931c3c0-64d6-11dd-ad8b-0800200c9a66},{ad43af30-7a1c-11dd-ad8b-0800200c9a66},{9a301ac0-745c-11dd-ad8b-0800200c9a66}");
 
-// Flickr
+// Flickr, SmugMug
 pref("extensions.mashTape.photo.enabled", true);
 pref("extensions.mashTape.photo.speed", 50);
+pref("extensions.mashTape.photo.keywords", "");
 pref("extensions.mashTape.photo.providers", "{a86cc290-6990-11dd-ad8b-0800200c9a66}");
 
 // YouTube & Yahoo Music Video

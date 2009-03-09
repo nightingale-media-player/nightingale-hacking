@@ -37,6 +37,13 @@ Flickr.prototype = {
 	query: function(searchTerms, updateFn) {
 		var req = Cc["@mozilla.org/xmlextras/xmlhttprequest;1"]
 			.createInstance(Ci.nsIXMLHttpRequest);
+
+		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+			.getService(Ci.nsIPrefService).getBranch("extensions.mashTape.");
+		var keywords = prefBranch.getCharPref("photo.keywords");
+		if (keywords != "")
+			searchTerms += "%20" + escape(keywords);
+
 		var query = "&per_page=" + this.limit + this.sort + this.searchType +
 			'"' + searchTerms + '"';
 		/*
