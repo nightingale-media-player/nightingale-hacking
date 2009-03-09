@@ -74,10 +74,11 @@ struct NodeContext
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbFileSystemTree, sbPIFileSystemTree)
 
 sbFileSystemTree::sbFileSystemTree()
-  : mShouldLoadSession(PR_FALSE)
+  : mListener(nsnull)
+  , mShouldLoadSession(PR_FALSE)
   , mIsIntialized(PR_FALSE)
   , mRootNodeLock(nsAutoLock::NewLock("sbFileSystemTree::mRootNodeLock"))
-  , mListenersLock(nsAutoLock::NewLock("sbFileSystemTree::mListenersLock"))
+  , mListenerLock(nsAutoLock::NewLock("sbFileSystemTree::mListenerLock"))
 {
 #ifdef PR_LOGGING
   if (!gFSTreeLog) {
@@ -85,7 +86,7 @@ sbFileSystemTree::sbFileSystemTree()
   }
 #endif
   NS_ASSERTION(mRootNodeLock, "Failed to create mRootNodeLock!");
-  NS_ASSERTION(mListenersLock, "Failed to create mListenersLock!");
+  NS_ASSERTION(mListenerLock, "Failed to create mListenerLock!");
 }
 
 sbFileSystemTree::~sbFileSystemTree()
@@ -93,8 +94,8 @@ sbFileSystemTree::~sbFileSystemTree()
   if (mRootNodeLock) {
     nsAutoLock::DestroyLock(mRootNodeLock);
   }
-  if (mListenersLock) {
-    nsAutoLock::DestroyLock(mListenersLock);
+  if (mListenerLock) {
+    nsAutoLock::DestroyLock(mListenerLock);
   }
 }
 
@@ -289,12 +290,11 @@ sbFileSystemTree::NotifyBuildComplete()
     mSessionChanges.Clear();
   }
 
-  // Now lock the changes.
-  nsAutoLock listenerLock(mListenersLock);
-
-  PRUint32 count = mListeners.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    mListeners[i]->OnTreeReady(mRootPath, mDiscoveredDirs);
+  {
+    nsAutoLock listenerLock(mListenerLock);
+    if (mListener) {
+      mListener->OnTreeReady(mRootPath, mDiscoveredDirs);
+    }
   }
 
   // Don't hang on to the values in |mDiscoveredDirs|.
@@ -304,22 +304,20 @@ sbFileSystemTree::NotifyBuildComplete()
 void
 sbFileSystemTree::NotifyRootPathIsMissing()
 {
-  nsAutoLock listenerLock(mListenersLock);
+  nsAutoLock listenerLock(mListenerLock);
 
-  PRUint32 count = mListeners.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    mListeners[i]->OnRootPathMissing();
+  if (mListener) {
+    mListener->OnRootPathMissing();
   }
 }
 
 void 
 sbFileSystemTree::NotifySessionLoadError()
 {
-  nsAutoLock listenerLock(mListenersLock);
+  nsAutoLock listenerLock(mListenerLock);
 
-  PRUint32 count = mListeners.Length();
-  for (PRUint32 i = 0; i < count; i++) {
-    mListeners[i]->OnTreeSessionLoadError();
+  if (mListener) {
+    mListener->OnTreeSessionLoadError();
   }
 }
 
@@ -421,24 +419,22 @@ sbFileSystemTree::Update(const nsAString & aPath)
 }
 
 nsresult
-sbFileSystemTree::AddListener(sbFileSystemTreeListener *aListener)
+sbFileSystemTree::SetListener(sbFileSystemTreeListener *aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   
-  nsAutoLock listenerLock(mListenersLock);
+  nsAutoLock listenerLock(mListenerLock);
 
-  NS_ENSURE_TRUE(mListeners.AppendElement(aListener), NS_ERROR_FAILURE);
+  mListener = aListener;
   return NS_OK;
 }
 
 nsresult
-sbFileSystemTree::RemoveListener(sbFileSystemTreeListener *aListener)
+sbFileSystemTree::ClearListener()
 {
-  NS_ENSURE_ARG_POINTER(aListener);
-
-  nsAutoLock listeners(mListenersLock);
-
-  NS_ENSURE_TRUE(mListeners.RemoveElement(aListener), NS_ERROR_FAILURE);
+  nsAutoLock listeners(mListenerLock);
+  
+  mListener = nsnull;
   return NS_OK;
 }
 
@@ -1044,11 +1040,9 @@ sbFileSystemTree::NotifyChanges(const nsAString & aChangePath,
     return rv;
   }
 
-  nsAutoLock listenerLock(mListenersLock);
-
-  PRUint32 listenerCount = mListeners.Length();
-  for (PRUint32 i = 0; i < listenerCount; i++) {
-    mListeners[i]->OnChangeFound(aChangePath, EChangeType(aChangeType));
+  nsAutoLock listenerLock(mListenerLock);
+  if (mListener) {
+    mListener->OnChangeFound(aChangePath, EChangeType(aChangeType));
   }
 
   return NS_OK;

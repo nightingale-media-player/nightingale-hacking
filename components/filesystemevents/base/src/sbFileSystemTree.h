@@ -83,16 +83,15 @@ public:
   nsresult Update(const nsAString & aPath);
 
   //
-  // \brief Add a tree listener.
-  // \param The listener to add.
+  // \brief Set the tree listener.
+  // \param The listener to assign for this tree.
   //
-  nsresult AddListener(sbFileSystemTreeListener *aListener);
+  nsresult SetListener(sbFileSystemTreeListener *aListener);
 
   //
-  // \brief Remove a tree listener.
-  // \param The listener to remove.
+  // \brief Clear the tree listener.
   //
-  nsresult RemoveListener(sbFileSystemTreeListener *aListener);
+  nsresult ClearListener();
 
   //
   // \brief Save the current state of a tree. The session ID passed in
@@ -296,15 +295,15 @@ protected:
 
 private:
   nsRefPtr<sbFileSystemNode>           mRootNode;
-  nsTArray<sbFileSystemTreeListener *> mListeners;
   nsCOMPtr<nsIThread>                  mOwnerContextThread;
   nsCOMPtr<nsILocalFile>               mRootFile;
+  sbFileSystemTreeListener             *mListener;
   nsString                             mRootPath;
   PRBool                               mIsRecursiveBuild;
   PRBool                               mShouldLoadSession; 
   PRBool                               mIsIntialized;
   PRLock                               *mRootNodeLock;
-  PRLock                               *mListenersLock;
+  PRLock                               *mListenerLock;
   sbStringArray                        mDiscoveredDirs;
   sbPathChangeArray                    mSessionChanges;
   nsID                                 mSavedSessionID;

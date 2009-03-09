@@ -60,10 +60,15 @@ sbBaseFileSystemWatcher::sbBaseFileSystemWatcher()
   mIsWatching = PR_FALSE;
   mIsSupported = PR_TRUE;
   mShouldLoadSession = PR_FALSE;
+  mTree = nsnull;
 }
 
 sbBaseFileSystemWatcher::~sbBaseFileSystemWatcher()
 {
+  if (mTree) {
+    nsresult rv = mTree->ClearListener();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Error could not clear tree listener!");
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -136,7 +141,7 @@ sbBaseFileSystemWatcher::StartWatching()
   NS_ENSURE_TRUE(mTree, NS_ERROR_OUT_OF_MEMORY);
 
   // Add ourselves as a tree listener
-  nsresult rv = mTree->AddListener(this);
+  nsresult rv = mTree->SetListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Build the tree snapshot now, the native file system hooks will be setup
@@ -158,7 +163,7 @@ sbBaseFileSystemWatcher::StopWatching(PRBool aShouldSaveSession)
 {
   nsRefPtr<sbBaseFileSystemWatcher> kungFuDeathGrip(this);
   mIsWatching = PR_FALSE;
-  
+
   // Don't worry about checking the result from the listener.
   mListener->OnWatcherStopped();
 
