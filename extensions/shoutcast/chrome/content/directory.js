@@ -324,7 +324,6 @@ var RadioDirectory = {
 	},
 
 	changeGenre : function(menulist) {
-		dump("Showing deck\n");
 		var deck = document.getElementById("loading-deck");
 		deck.selectedIndex = 0;
 
@@ -452,7 +451,6 @@ var RadioDirectory = {
 			
 			var deck = document.getElementById("loading-deck");
 			deck.selectedIndex = 1;
-			dump("Showing playlist\n");
 		}
 	},
 
