@@ -250,7 +250,8 @@ NS_IMPL_ISUPPORTS11( sbRemoteLibraryBase,
 sbRemoteLibraryBase::sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer) :
   mShouldScan(PR_TRUE),
   mEnumerationResult(NS_ERROR_NOT_INITIALIZED),
-  mRemotePlayer(aRemotePlayer)
+  mRemotePlayer(aRemotePlayer),
+  mIgnoreHiddenPlaylists(PR_TRUE)
 {
   NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
 #ifdef PR_LOGGING
@@ -622,6 +623,24 @@ sbRemoteLibraryBase::GetMediaListBySiteID( const nsAString &aSiteID,
   return NS_OK;
 }
 
+/**
+ * Determines if the library is the site library of the given remote player
+ */
+static PRBool IsSiteLibrary(sbILibrary * aLibrary, sbIRemotePlayer * aRemotePlayer) {
+  PRBool result = PR_FALSE;
+  nsCOMPtr<sbIRemoteLibrary> siteLibrary;
+  nsresult rv = aRemotePlayer->GetSiteLibrary(getter_AddRefs(siteLibrary));
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<sbIMediaItem> siteLibraryAsItem = do_QueryInterface(siteLibrary);
+    nsCOMPtr<sbIMediaItem> libraryAsItem = do_QueryInterface(aLibrary);
+    PRBool equal = PR_FALSE;
+    result = siteLibraryAsItem && libraryAsItem && 
+      NS_SUCCEEDED(siteLibraryAsItem->Equals(libraryAsItem, &equal)) &&
+      equal;
+  }
+  return result;
+}
+
 NS_IMETHODIMP
 sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
 {
@@ -634,6 +653,8 @@ sbRemoteLibraryBase::GetPlaylists( nsISimpleEnumerator** _retval )
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface( mLibrary, &rv );
   NS_ENSURE_SUCCESS( rv, rv );
 
+  mIgnoreHiddenPlaylists = !IsSiteLibrary(mLibrary, mRemotePlayer);
+  
   rv = mediaList->EnumerateItemsByProperty( NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
                                             NS_LITERAL_STRING("1"),
                                             this,
@@ -917,13 +938,31 @@ sbRemoteLibraryBase::OnEnumeratedItem( sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  if (mEnumerationArray.AppendObject(aMediaItem)) {
+  // If there is no outer guid then we want this. 
+  // (Avoids smart playlists dupes, see bug 14896)
+  nsString propValue;
+  PRBool const isSmartStoragePlaylist = 
+    NS_SUCCEEDED(aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID), 
+                                         propValue)) && 
+      !propValue.IsEmpty();
+
+  PRBool const isHiddenPlaylist = 
+    NS_SUCCEEDED(aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                         propValue)) &&
+      propValue.EqualsLiteral("1");
+  // Only process lists that aren't smart playlist storage lists. And if we're
+  // ignore hidden playlists then don't process hidden ones either
+  if (!isSmartStoragePlaylist && (!mIgnoreHiddenPlaylists || !isHiddenPlaylist)) {
+    if (mEnumerationArray.AppendObject(aMediaItem)) {
+      *_retval = sbIMediaListEnumerationListener::CONTINUE;
+    }
+    else {
+      *_retval = sbIMediaListEnumerationListener::CANCEL;
+    }
+  }
+  else { // If there was an outer guid, skip this one
     *_retval = sbIMediaListEnumerationListener::CONTINUE;
   }
-  else {
-    *_retval = sbIMediaListEnumerationListener::CANCEL;
-  }
-
   return NS_OK;
 }
 

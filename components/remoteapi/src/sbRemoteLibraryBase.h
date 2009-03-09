@@ -147,6 +147,8 @@ protected:
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
+  
+  PRBool mIgnoreHiddenPlaylists;
 };
 
 #endif // __SB_REMOTE_LIBRARYBASE_H__
