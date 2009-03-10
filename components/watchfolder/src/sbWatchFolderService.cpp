@@ -704,7 +704,7 @@ sbWatchFolderService::HandleRootPathMissing()
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbWatchFolderService::GetIsIgnoredPath(const nsAString & aFilePath, 
                                        PRBool *aIsIgnoredPath) 
 {
