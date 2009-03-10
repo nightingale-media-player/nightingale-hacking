@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(75BDCA4E-2F4D-4E03-9ACD-694FAB28ADF8)]
+[scriptable, uuid(437D194B-870E-4FBB-87B3-32090CDF4D26)]
 interface sbIWatchFolderService : nsISupports
 {
   //
@@ -35,5 +35,21 @@ interface sbIWatchFolderService : nsISupports
   // \return True if watch folder is supported, false if not.
   //
   readonly attribute boolean isSupported;
+
+  //
+  // \brief Add a absolute file path to be ignored by the watch folder service.
+  //        This path will be ignored until it is removed via a call to
+  //        |removeIgnorePath()|.
+  // \param aFilePath The absolute path to start ignoring.
+  //
+  void addIgnorePath(in AString aFilePath);
+
+  //
+  // \brief Remove a absolute file path from the ignored paths list of the
+  //        watch folder service. All future events at the specified path
+  //        will be processed by the watch folders service.
+  // \param aFilePath The absolute path to stop ignoring.
+  //
+  void removeIgnorePath(in AString aFilePath);
 };
 

@@ -79,8 +79,7 @@ static PRLogModuleInfo* gWatchFoldersLog = nsnull;
 #define __FUNCTION__ __PRETTY_FUNCTION__
 #endif /* __GNUC__ */
 
-typedef sbStringVector::const_iterator sbStringVectorIter;
-
+typedef sbStringSet::iterator sbStringSetIter;
 
 //------------------------------------------------------------------------------
 
@@ -368,7 +367,7 @@ sbWatchFolderService::ProcessEventPaths()
 {
   // For now, just process remove, added, and changed paths.
   nsresult rv;
-
+  
   // If possible, try to guess moves and renames and avoid
   // just removing and re-adding
   if (mRemovedPaths.size() > 0 && mAddedPaths.size() > 0) {
@@ -391,19 +390,19 @@ sbWatchFolderService::ProcessEventPaths()
 }
 
 nsresult
-sbWatchFolderService::HandleEventPathList(sbStringVector & aEventPathVector,
+sbWatchFolderService::HandleEventPathList(sbStringSet & aEventPathSet,
                                           EProcessType aProcessType)
 {
-  if (aEventPathVector.empty()) {
+  if (aEventPathSet.empty()) {
     return NS_OK;
   }
 
   mCurrentProcessType = aProcessType;
 
-  nsresult rv = EnumerateItemsByPaths(aEventPathVector);
+  nsresult rv = EnumerateItemsByPaths(aEventPathSet);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  aEventPathVector.clear();
+  aEventPathSet.clear();
   return NS_OK;
 }
 
@@ -416,7 +415,7 @@ sbWatchFolderService::ProcessAddedPaths()
 
   nsresult rv;
   nsCOMPtr<nsIArray> uriArray;
-  rv = GetURIArrayForStringPaths(&mAddedPaths, getter_AddRefs(uriArray));
+  rv = GetURIArrayForStringPaths(mAddedPaths, getter_AddRefs(uriArray));
   NS_ENSURE_SUCCESS(rv, rv);
 
   mAddedPaths.clear();
@@ -453,10 +452,9 @@ sbWatchFolderService::ProcessAddedPaths()
 }
 
 nsresult
-sbWatchFolderService::GetURIArrayForStringPaths(sbStringVector *aPaths, 
+sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet, 
                                                 nsIArray **aURIs)
 {
-  NS_ENSURE_ARG_POINTER(aPaths);
   NS_ENSURE_ARG_POINTER(aURIs);
   nsresult rv; 
   
@@ -468,9 +466,9 @@ sbWatchFolderService::GetURIArrayForStringPaths(sbStringVector *aPaths,
     do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  sbStringVectorIter begin = aPaths->begin();
-  sbStringVectorIter end = aPaths->end();
-  sbStringVectorIter next;
+  sbStringSetIter begin = aPathsSet.begin();
+  sbStringSetIter end = aPathsSet.end();
+  sbStringSetIter next;
   for (next = begin; next != end; ++next) {
     nsCOMPtr<nsIURI> fileURI;
     rv = GetFilePathURI(*next, getter_AddRefs(fileURI));
@@ -516,7 +514,7 @@ sbWatchFolderService::GetFilePathURI(const nsAString & aFilePath,
 }
 
 nsresult
-sbWatchFolderService::EnumerateItemsByPaths(sbStringVector & aPathVector)
+sbWatchFolderService::EnumerateItemsByPaths(sbStringSet & aPathSet)
 {
   nsresult rv;
   nsCOMPtr<sbIMutablePropertyArray> properties =
@@ -525,9 +523,9 @@ sbWatchFolderService::EnumerateItemsByPaths(sbStringVector & aPathVector)
 
   nsString propName(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL));
 
-  sbStringVectorIter begin = aPathVector.begin();
-  sbStringVectorIter end = aPathVector.end();
-  sbStringVectorIter next;
+  sbStringSetIter begin = aPathSet.begin();
+  sbStringSetIter end = aPathSet.end();
+  sbStringSetIter next;
   for (next = begin; next != end; ++next) {
     // Convert the current path to a URI, then get the spec.
     nsCOMPtr<nsIURI> fileURI;
@@ -706,14 +704,40 @@ sbWatchFolderService::HandleRootPathMissing()
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbWatchFolderService::GetIsIgnoredPath(const nsAString & aFilePath, 
+                                       PRBool *aIsIgnoredPath) 
+{
+  NS_ENSURE_ARG_POINTER(aIsIgnoredPath);
+
+  sbStringSetIter foundIter = mIgnorePaths.find(nsString(aFilePath));
+  *aIsIgnoredPath = (foundIter != mIgnorePaths.end());
+  
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
-// sbWatchFolderService
+// sbIWatchFolderService
 
 NS_IMETHODIMP
 sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
 {
   NS_ENSURE_ARG_POINTER(aIsSupported);
   *aIsSupported = mServiceState != eNotSupported;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
+{
+  mIgnorePaths.insert(nsString(aFilePath));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbWatchFolderService::RemoveIgnorePath(const nsAString & aFilePath)
+{
+  mIgnorePaths.erase(nsString(aFilePath));
   return NS_OK;
 }
 
@@ -817,26 +841,27 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
   LOG(("sbWatchFolderService::OnFileSystemChanged %s", 
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
+
+  PRBool isIgnoredPath = PR_FALSE;
+  nsresult rv = GetIsIgnoredPath(aFilePath, &isIgnoredPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  // Don't bother with this change if it is currently being ignored.
+  if (isIgnoredPath) {
+    return NS_OK;
+  }
+
+  nsString filePath(aFilePath);
   
   // The watcher will report all changes from the previous session before the
   // watcher has started. Don't set the timer until then.
   if (mHasWatcherStarted) {
-    // See if the changed path queue already has this path inside of it.
-    PRBool foundMatchingPath = PR_FALSE;
-    sbStringVectorIter begin = mChangedPaths.begin();
-    sbStringVectorIter end = mChangedPaths.end();
-    sbStringVectorIter next;
-    for (next = begin; next != end && !foundMatchingPath; ++next) {
-      if (aFilePath.Equals(*next)) {
-        foundMatchingPath = PR_TRUE;
-      }
-    }
-
-    nsresult rv;
-    if (foundMatchingPath) {
+    // See if the changed path set already has this path inside of it.
+    sbStringSetIter foundIter = mChangedPaths.find(filePath);
+    if (foundIter != mChangedPaths.end()) {
       // If this path is currently in the changed path vector already,
       // delay processing this path until a later time.
-      mDelayedChangedPaths.push_back(nsString(aFilePath));
+      mDelayedChangedPaths.insert(filePath);
 
       // Start the delayed timer if it isn't running already.
       if (!mChangeDelayTimerIsSet) {
@@ -849,13 +874,13 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
       }
     }
     else {
-      mChangedPaths.push_back(nsString(aFilePath));
+      mChangedPaths.insert(filePath);
       rv = SetEventPumpTimer();
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
   else {
-    mChangedPaths.push_back(nsString(aFilePath));
+    mChangedPaths.insert(filePath);
   }
 
   return NS_OK;
@@ -866,12 +891,18 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
   LOG(("sbWatchFolderService::OnFileSystemRemoved %s", 
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
-  
-  mRemovedPaths.push_back(nsString(aFilePath));
 
-  // The method will guard against |mHasWatcherStarted|
-  nsresult rv = SetEventPumpTimer();
+  PRBool isIgnoredPath = PR_FALSE;
+  nsresult rv = GetIsIgnoredPath(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!isIgnoredPath) {
+    mRemovedPaths.insert(nsString(aFilePath));
+
+    // The method will guard against |mHasWatcherStarted|
+    rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -881,12 +912,18 @@ sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
   LOG(("sbWatchFolderService::OnFileSystemAdded %s", 
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
-    
-  mAddedPaths.push_back(nsString(aFilePath));
 
-  // The method will guard against |mHasWatcherStarted|
-  nsresult rv = SetEventPumpTimer();
+  PRBool isIgnoredPath = PR_FALSE;
+  nsresult rv = GetIsIgnoredPath(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (!isIgnoredPath) {
+    mAddedPaths.insert(nsString(aFilePath));
+
+    // The method will guard against |mHasWatcherStarted|
+    rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -957,7 +994,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIArray> uriArray;
-      GetURIArrayForStringPaths(&mAddedPaths, getter_AddRefs(uriArray));
+      GetURIArrayForStringPaths(mAddedPaths, getter_AddRefs(uriArray));
       NS_ENSURE_SUCCESS(rv, rv);
       mAddedPaths.clear();
 

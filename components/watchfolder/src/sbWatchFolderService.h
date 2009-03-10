@@ -45,9 +45,9 @@
 #include <sbILibraryUtils.h>
 #include <sbIMediaListListener.h>
 #include <nsIDOMWindow.h>
-#include <vector>
+#include <set>
 
-typedef std::vector<nsString> sbStringVector;
+typedef std::set<nsString> sbStringSet;
 
 typedef enum {
   eNone  = 0,
@@ -131,7 +131,7 @@ protected:
   // \brief Handle a set of changed paths for changed and removed items. This
   //        method will look up media items by contentURL.
   //
-  nsresult HandleEventPathList(sbStringVector & aEventPathVector,
+  nsresult HandleEventPathList(sbStringSet & aEventPathSet,
                                EProcessType aProcessType);
   
   //
@@ -142,12 +142,12 @@ protected:
   //
   // \brief Enumerate media items in the library with the given paths.
   //
-  nsresult EnumerateItemsByPaths(sbStringVector & aPathVector);
+  nsresult EnumerateItemsByPaths(sbStringSet & aPathSet);
 
   //
   // \brief Get an array of media item URIs from a list of string paths
   //
-  nsresult GetURIArrayForStringPaths(sbStringVector* aPaths, nsIArray** aURIs);
+  nsresult GetURIArrayForStringPaths(sbStringSet & aPathsSet, nsIArray **aURIs);
 
   //
   // \brief Get a |nsIURI| instance for a given absolute path.
@@ -171,6 +171,12 @@ protected:
   //
   nsresult HandleRootPathMissing();
 
+  //
+  // \brief Check to see if a given file path is on the ignored paths list.
+  //
+  nsresult GetIsIgnoredPath(const nsAString & aFilePath, 
+                            PRBool *aIsIgnoredPath);
+
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
   nsCOMPtr<sbILibrary>           mMainLibrary;
@@ -180,10 +186,11 @@ private:
   nsCOMPtr<nsITimer>             mStartupDelayTimer;
   nsCOMPtr<nsITimer>             mFlushFSWatcherTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
-  sbStringVector                 mChangedPaths;
-  sbStringVector                 mDelayedChangedPaths;
-  sbStringVector                 mAddedPaths;
-  sbStringVector                 mRemovedPaths;
+  sbStringSet                    mChangedPaths;
+  sbStringSet                    mDelayedChangedPaths;
+  sbStringSet                    mAddedPaths;
+  sbStringSet                    mRemovedPaths;
+  sbStringSet                    mIgnorePaths;
   nsString                       mWatchPath;
   nsCString                      mFileSystemWatcherGUID;
   EWatchFolderState              mServiceState;
