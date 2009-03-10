@@ -120,9 +120,8 @@ protected:
   // Event Listener Handlers
   nsresult OnStop();
 
-  nsresult OnTrackChange(sbIMediacoreEvent *aEvent);
-  nsresult OnTrackChange(sbIMediaItem *aItem, 
-                         sbIMediaListView *aView, 
+  nsresult OnTrackChange();
+  nsresult OnTrackChange(sbIMediaListView *aView,
                          PRUint32 aIndex);
 
   nsresult OnTrackIndexChange(sbIMediacoreEvent *aEvent);

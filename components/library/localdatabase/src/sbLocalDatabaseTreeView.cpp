@@ -1999,47 +1999,9 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
         NS_ENSURE_SUCCESS(rv, rv);
         mIsListeningToPlayback = PR_TRUE;
 
-        nsCOMPtr<sbIMediacoreManager> manager = 
-          do_QueryReferent(mMediacoreManager, &rv);
+        // Initialize the playing indicator
+        rv = OnTrackChange();
         NS_ENSURE_SUCCESS(rv, rv);
-
-        nsCOMPtr<sbIMediacoreStatus> status;
-        rv = manager->GetStatus(getter_AddRefs(status));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRUint32 state = 0;
-        rv = status->GetState(&state);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        PRBool isPlaying = (state == sbIMediacoreStatus::STATUS_PLAYING ||
-                            state == sbIMediacoreStatus::STATUS_PAUSED ||
-                            state == sbIMediacoreStatus::STATUS_BUFFERING);
-
-        // If we are already playing, initialize the playing indicator
-        if (isPlaying) {
-          nsCOMPtr<sbIMediacoreSequencer> sequencer;
-          rv = manager->GetSequencer(getter_AddRefs(sequencer));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          nsCOMPtr<sbIMediaListView> playingView;
-          rv = sequencer->GetView(getter_AddRefs(playingView));
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          // GetView can return null without error.
-          if (playingView) {
-            PRUint32 playingIndex = 0;
-            rv = sequencer->GetViewPosition(&playingIndex);
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            nsCOMPtr<sbIMediaItem> playingItem;
-            rv = playingView->GetItemByIndex(playingIndex,
-              getter_AddRefs(playingItem));
-            NS_ENSURE_SUCCESS(rv, rv);
-
-            rv = OnTrackChange(playingItem, playingView, playingIndex);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-        }
       }
       else {
         NS_WARNING("Tree set but we're already listening to playback!");
@@ -2329,7 +2291,7 @@ sbLocalDatabaseTreeView::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     case sbIMediacoreEvent::STREAM_START:
     case sbIMediacoreEvent::TRACK_CHANGE:
     case sbIMediacoreEvent::TRACK_INDEX_CHANGE: {
-      rv = OnTrackChange(aEvent);
+      rv = OnTrackChange();
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
@@ -2364,10 +2326,8 @@ sbLocalDatabaseTreeView::OnStop()
 }
 
 nsresult
-sbLocalDatabaseTreeView::OnTrackChange(sbIMediacoreEvent *aEvent)
+sbLocalDatabaseTreeView::OnTrackChange()
 {
-  NS_ENSURE_ARG_POINTER(aEvent);
-
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIMediacoreManager> manager = 
@@ -2386,22 +2346,19 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediacoreEvent *aEvent)
   rv = sequencer->GetViewPosition(&playingViewIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = OnTrackChange(nsnull, playingView, playingViewIndex);
+  rv = OnTrackChange(playingView, playingViewIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-nsresult 
-sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem *aItem, 
-                                       sbIMediaListView *aView, 
+nsresult
+sbLocalDatabaseTreeView::OnTrackChange(sbIMediaListView *aView,
                                        PRUint32 aIndex)
 {
-  NS_ENSURE_ARG_POINTER(aView);
-
   nsresult rv;
 
-  if (mMediaListView) {
+  if (aView && mMediaListView) {
     nsCOMPtr<sbIMediaList> viewList;
     rv = mMediaListView->GetMediaList(getter_AddRefs(viewList));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2414,7 +2371,23 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem *aItem,
     rv = viewList->Equals(playingList, &equals);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (equals) {
+    nsCOMPtr<sbIMediacoreManager> manager =
+                                    do_QueryReferent(mMediacoreManager, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediacoreStatus> status;
+    rv = manager->GetStatus(getter_AddRefs(status));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 state = 0;
+    rv = status->GetState(&state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isPlaying = (state == sbIMediacoreStatus::STATUS_PLAYING ||
+                        state == sbIMediacoreStatus::STATUS_PAUSED ||
+                        state == sbIMediacoreStatus::STATUS_BUFFERING);
+
+    if (equals && isPlaying) {
       nsString uid;
       rv = aView->GetViewItemUIDForIndex(aIndex, uid);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -2432,6 +2405,9 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaItem *aItem,
     else {
       mPlayingItemUID = EmptyString();
     }
+  }
+  else {
+    mPlayingItemUID = EmptyString();
   }
 
   if (mTreeBoxObject) {
@@ -2454,7 +2430,7 @@ sbLocalDatabaseTreeView::OnTrackIndexChange(sbIMediacoreEvent *aEvent)
   // is still there) has a brand new UID. In both cases it is safe to just
   // forward the arguments to OnTrackChange in order to use the currently
   // playing item's UID.
-  nsresult rv = OnTrackChange(aEvent);
+  nsresult rv = OnTrackChange();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
