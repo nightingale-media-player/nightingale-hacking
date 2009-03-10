@@ -406,68 +406,36 @@
         }  
       ]]></handler>      
 
-    
-      <!-- Starts the idle search timer after keypress when in live search mode  -->
-      <handler event="keypress"><![CDATA[
+
+      <!-- Starts the idle search timer on input when in live search mode  -->
+      <handler event="input"><![CDATA[
 
         if (!this.liveSearchMode) {
           return;
         }
-          
-        switch ( event.keyCode )
+        if ( this._editIdleInterval )
         {
-          case 9:  // Tab
-          case 19: // Break
-          case 37: // Arrows
-          case 38:
-          case 39:
-          case 40:
-          case 35: // End
-          case 36: // Home
-          case 45: // Insert
-          case 33: // PgUp
-          case 34: // PgDn
-          case 112:// F1-F12
-          case 113:
-          case 114:
-          case 115:
-          case 116:
-          case 117:
-          case 118:
-          case 119:
-          case 120:
-          case 121:
-          case 122:
-          case 123:
-          case 27: // Esc
-          case 13: // Return
-            break;      
-          default:
-            if ( this._editIdleInterval )
-            {
-              clearInterval( this._editIdleInterval );
-            }
-            
-            var timeout = 1000;
-            var isBackspace = event.keyCode == KeyEvent.DOM_VK_BACK_SPACE;
-            var length = this._textbox.value.length;
-
-            // If a few chars have been entered, run the search sooner
-            // since it probably won't take long.             
-            if ( (length == 1 && isBackspace)  ||  // Empty search is fast 
-                 (length >= 2 && !isBackspace) ||  // Everything after three chars is fast
-                 (length > 3)) 
-            {
-              timeout = 100;
-            }             
-            
-            this._editIdleInterval = setInterval( 
-              function(o) { 
-                clearInterval( o._editIdleInterval );
-                o._onSearchEditIdle(); 
-              }, timeout, this);
-            break;      
+          clearInterval( this._editIdleInterval );
         }
+
+        var timeout = 1000;
+        var isBackspace = event.keyCode == KeyEvent.DOM_VK_BACK_SPACE;
+        var length = this._textbox.value.length;
+
+        // If a few chars have been entered, run the search sooner
+        // since it probably won't take long.
+        if ( (length == 1 && isBackspace)  ||  // Empty search is fast
+             (length >= 2 && !isBackspace) ||  // Everything after three chars is fast
+             (length > 3))
+        {
+          timeout = 100;
+        }
+        
+        this._editIdleInterval = setInterval(
+          function(o) {
+            clearInterval( o._editIdleInterval );
+            o._onSearchEditIdle();
+          }, timeout, this);
       ]]></handler>    
     </handlers>
   </binding>  
