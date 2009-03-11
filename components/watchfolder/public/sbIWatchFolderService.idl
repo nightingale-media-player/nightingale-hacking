@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(437D194B-870E-4FBB-87B3-32090CDF4D26)]
+[scriptable, uuid(F6AAA1F9-627B-4A64-9E07-0276DBFA14DF)]
 interface sbIWatchFolderService : nsISupports
 {
   //
@@ -35,6 +35,13 @@ interface sbIWatchFolderService : nsISupports
   // \return True if watch folder is supported, false if not.
   //
   readonly attribute boolean isSupported;
+
+  //
+  // \brief Find out if the watch folder services are currently running and
+  //        actively updating the users library.
+  // \return True if the watch folder is running, false if not.
+  //
+  readonly attribute boolean isRunning;
 
   //
   // \brief Add a absolute file path to be ignored by the watch folder service.

@@ -728,8 +728,19 @@ sbWatchFolderService::GetIsSupported(PRBool *aIsSupported)
 }
 
 NS_IMETHODIMP
+sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
+{
+  NS_ENSURE_ARG_POINTER(aIsRunning);
+  *aIsRunning = (mServiceState == eWatching); 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
 {
+  LOG(("sbWatchFolderService::AddIgnorePath %s",
+        NS_LossyConvertUTF16toASCII(aFilePath).get()));
+  
   mIgnorePaths.insert(nsString(aFilePath));
   return NS_OK;
 }
@@ -737,6 +748,9 @@ sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
 NS_IMETHODIMP
 sbWatchFolderService::RemoveIgnorePath(const nsAString & aFilePath)
 {
+  LOG(("sbWatchFolderService::RemoveIgnorePath %s",
+        NS_LossyConvertUTF16toASCII(aFilePath).get()));
+
   mIgnorePaths.erase(nsString(aFilePath));
   return NS_OK;
 }

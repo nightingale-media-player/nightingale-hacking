@@ -58,6 +58,7 @@ CPP_INCLUDES = $(DEPTH)/components/albumart/public \
                $(DEPTH)/components/sqlbuilder/public \
                $(DEPTH)/components/job/public \
                $(DEPTH)/components/property/public \
+               $(DEPTH)/components/watchfolder/public \
                $(topsrcdir)/components/library/base/src \
                $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/sqlbuilder/src \

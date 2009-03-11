@@ -65,6 +65,7 @@ SUBDIRS = addonmetadata \
           update \
           controller \
           filesystemevents \
+          watchfolder/public \
           watchfolder \
           webservices \
           $(NULL)
@@ -77,7 +78,7 @@ SUBDIRDEPS = library : sqlbuilder moz intl property metrics job dbengine
 SUBDIRDEPS2 = playlistreader : library
 SUBDIRDEPS3 = devicesobsolete : library mediacore
 SUBDIRDEPS4 = integration : devicesobsolete controller
-SUBDIRDEPS5  = mediacore : dataremote job moz mediaimport property library albumart/public
+SUBDIRDEPS5  = mediacore : dataremote job moz mediaimport property library albumart/public watchfolder/public
 SUBDIRDEPS6 = remoteapi : library mediacore moz
 SUBDIRDEPS7 = contenthandling : mediacore library
 SUBDIRDEPS8 = devices : library property mediacore

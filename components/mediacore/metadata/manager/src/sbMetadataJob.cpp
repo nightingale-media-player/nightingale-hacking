@@ -68,6 +68,7 @@
 #include <sbStandardProperties.h>
 #include <sbPropertiesCID.h>
 #include <sbIAlbumArtFetcherSet.h>
+#include <sbIWatchFolderService.h>
 
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -84,6 +85,8 @@
 // Queue up 50 job items in mProcessedBackgroundThreadItems
 // before calling BatchCompleteItems on the main thread
 const PRUint32 NUM_BACKGROUND_ITEMS_BEFORE_FLUSH = 50;
+
+typedef sbStringSet::iterator sbStringSetIter;
 
 #include "prlog.h"
 #ifdef PR_LOGGING
@@ -274,6 +277,20 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
     }
   }
 
+  // If this job type is a write, inform the watch folder service of the paths
+  // that are about to be written to. This prevents the watch folder service 
+  // from re-reading in the changes that this job is about to do.
+  PRBool shouldIgnorePaths = PR_FALSE;
+  nsCOMPtr<sbIWatchFolderService> wfService;
+  if (mJobType == TYPE_WRITE) {
+    wfService = do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+    if (NS_SUCCEEDED(rv) && wfService) {
+      rv = wfService->GetIsRunning(&shouldIgnorePaths);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+          "Could not determine if watchfolders is running!");
+    }
+  }
+
   // Now that we know the input is fine, add it to our 
   // list of things to be done
   
@@ -291,6 +308,25 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
   for (PRUint32 i=0; i < length; i++) {
     mediaItem = do_QueryElementAt(aMediaItemsArray, i, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // If the watch folder service is running, append this path to the ignore
+    // list on the service. The path will be removed from the ignore list after
+    // the import job has completed.
+    if (shouldIgnorePaths) {
+      nsString mediaItemPath;
+      rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
+                                  mediaItemPath);
+      if (NS_SUCCEEDED(rv)) {
+        rv = wfService->AddIgnorePath(mediaItemPath);
+        if (NS_SUCCEEDED(rv)) {
+          mIgnoredContentPaths.insert(mediaItemPath);
+        }
+        else {
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+              "Could not add a watch folder ignore path!");
+        }
+      }
+    }
 
     nsRefPtr<sbMetadataJobItem> jobItem = 
         new sbMetadataJobItem(mJobType, mediaItem, &mRequiredProperties, this);
@@ -1025,7 +1061,28 @@ nsresult sbMetadataJob::OnJobProgress()
     mListeners.Clear();
     
     EndLibraryBatch();
-    
+
+    // If there are any paths in the ignore path set, remove them from the
+    // watchfolders ignore whitelist.
+    if (mIgnoredContentPaths.size() > 0) {
+      nsCOMPtr<sbIWatchFolderService> wfService =
+        do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+      NS_ASSERTION(NS_SUCCEEDED(rv),
+          "Could not get the watch folder service!");
+      if (NS_SUCCEEDED(rv) && wfService) {
+        sbStringSetIter begin = mIgnoredContentPaths.begin();
+        sbStringSetIter end = mIgnoredContentPaths.end();
+        sbStringSetIter next;
+        for (next = begin; next != end; ++next) {
+          rv = wfService->RemoveIgnorePath(*next);
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+              "Could not remove a ignored watch folder path!");
+        }
+      }
+
+      mIgnoredContentPaths.clear();
+    }
+
     // Flush the library to ensure that search and filtering 
     // work immediately.
     rv = mLibrary->Flush();

@@ -53,7 +53,11 @@
 
 #include <sbMediaListBatchCallback.h>
 
+#include <set>
+
 // CLASSES ====================================================================
+typedef std::set<nsString> sbStringSet;
+
 class sbMetadataJobItem;
 class sbIMutablePropertyArray;
 
@@ -287,6 +291,9 @@ private:
   
   // List of properties we require for this job
   nsStringArray                            mRequiredProperties;
+
+  // List of absolute paths that the watch folder service is ignoring.
+  sbStringSet                              mIgnoredContentPaths;
   
   // List of job items that MUST be processed on the 
   // main thread due to sbIMetadataHandler limitations
