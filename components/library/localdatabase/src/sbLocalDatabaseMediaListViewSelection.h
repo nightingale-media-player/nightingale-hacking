@@ -70,7 +70,11 @@ private:
   nsresult AddToSelection(PRUint32 aIndex);
   nsresult RemoveFromSelection(PRUint32 aIndex);
   inline void CheckSelectAll() {
-    mSelectionIsAll = mSelection.Count() == mLength;
+    if (mLength > 1)
+      mSelectionIsAll = (mSelection.Count() == mLength);
+    else
+      mSelectionIsAll = PR_FALSE;
+
     if (mSelectionIsAll) {
       mSelection.Clear();
     }
