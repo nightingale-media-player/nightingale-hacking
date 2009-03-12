@@ -524,6 +524,17 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     scanDirectory = fp.file;
   }
 
+  if ( scanDirectory && !scanDirectory.exists() ) {
+    var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                          .getService(Ci.nsIPromptService);
+    var strTitle = SBString("media_scan.error.non_existent_directory.title");
+    var strMsg = SBFormattedString
+                   ("media_scan.error.non_existent_directory.msg",
+                    [scanDirectory.path]);
+    promptService.alert(window, strTitle, strMsg);
+    return null;
+  }
+
   if ( scanDirectory )
   {
     var importer = Cc['@songbirdnest.com/Songbird/DirectoryImportService;1']
