@@ -28,7 +28,7 @@ from datetime import datetime
 import sys
 import os
 
-DEFAULT_KEY = 'BuildID'
+DEFAULT_KEY = 'SB_BUILD_ID'
 
 def main(argv):                          
    o = OptionParser()
@@ -61,8 +61,7 @@ def main(argv):
          substitutions[substKey] = substValue
 
    # Make sure the BuildID gets specified
-   if (DEFAULT_KEY not in substitutions.keys()
-    and len(substitutions.keys()) == 0):
+   if (DEFAULT_KEY not in substitutions.keys()):
       substitutions[DEFAULT_KEY] = os.environ.get('SB_BUILDID_OVERRIDE',
                                                   datetime.now().strftime('%Y%m%d%H%M%S'))
 

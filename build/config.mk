@@ -36,28 +36,6 @@ ifndef CONFIG_MK_INCLUDED
 CONFIG_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
-#
-# Create a list of defines for the preprocessor. These are collected in the
-# PPDEFINES variable. You need to prefix with -D.
-#
-
-#
-# We want to pull this info out of the sbBuildInfo.ini file, but if we're just
-# starting then that file may not have been generated yet. In that case these
-# variables will be empty and the preprocessor will FAIL if one of them is
-# referenced.
-#
-# SB_APPNAME
-# SB_BRANCHNAME
-# SB_BUILD_ID
-# SB_MILESTONE
-# SB_MILESTONE_WINDOWS
-#
-
-BUILDINFO_FILE := $(DEPTH)/build/sbBuildInfo.ini
-
-ifneq (,$(wildcard $(BUILDINFO_FILE)))
-
 ####
 # check for missing vendor-binaries and mozbrowser dir (common errors)
 ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))
@@ -69,43 +47,30 @@ ifeq (,$(wildcard $(MOZBROWSER_DIR)))
    $(error Missing mozbrowser directory ($(MOZBROWSER_DIR)). Bailing...)
 endif
 
-CMD := $(PYTHON) $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py $(BUILDINFO_FILE) Build
+BUILDINFO_FILE := $(DEPTH)/build/sbBuildInfo.mk
 
-SB_APPNAME := $(shell $(CMD) AppName)
-SB_BRANCHNAME := $(shell $(CMD) Branch)
-SB_BUILD_ID := $(shell $(CMD) BuildID)
-SB_MILESTONE := $(shell $(CMD) Milestone)
-SB_MILESTONE_WINDOWS := $(shell $(CMD) MilestoneWindows)
-SB_PROFILE_VERSION := $(shell $(CMD) ProfileVersion)
+ifneq (,$(wildcard $(BUILDINFO_FILE)))
+   include $(BUILDINFO_FILE)
 
-ifeq ($(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY),_)
-  SB_BUILD_NUMBER := 0
-else
-  SB_BUILD_NUMBER := $(shell $(CMD) BuildNumber)
+   ifeq (,$(SONGBIRD_OFFICIAL)$(SONGBIRD_NIGHTLY))
+      SB_BUILD_NUMBER = 0
+   endif
+
+   ifeq (,$(SB_MOZILLA_VERSION))
+      $(error Could not derive SB_MOZILLA_VERSION)
+   endif
+
+   PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
+                -DSB_BRANCHNAME="$(SB_BRANCHNAME)" \
+                -DSB_BUILD_ID="$(SB_BUILD_ID)" \
+                -DSB_BUILD_NUMBER="$(SB_BUILD_NUMBER)" \
+                -DSB_MILESTONE="$(SB_MILESTONE)" \
+                -DSB_MILESTONE_WINDOWS="$(SB_MILESTONE_WINDOWS)" \
+                -DSB_PROFILE_VERSION="$(SB_PROFILE_VERSION)" \
+                -DSB_MOZILLA_VERSION="$(SB_MOZILLA_VERSION)" \
+                $(NULL)
+
 endif
-
-PPDEFINES += -DSB_APPNAME="$(SB_APPNAME)" \
-             -DSB_BRANCHNAME="$(SB_BRANCHNAME)" \
-             -DSB_BUILD_ID="$(SB_BUILD_ID)" \
-             -DSB_BUILD_NUMBER="$(SB_BUILD_NUMBER)" \
-             -DSB_MILESTONE="$(SB_MILESTONE)" \
-             -DSB_MILESTONE_WINDOWS="$(SB_MILESTONE_WINDOWS)" \
-             -DSB_PROFILE_VERSION="$(SB_PROFILE_VERSION)" \
-             $(NULL)
-
-endif
-
-#
-# Pull this value out of mozilla-config.h
-#
-# SB_MOZILLA_VERSION
-#
-
-AWK_CMD = $(AWK) $(AWK_EXPR) < $(MOZSDK_INCLUDE_DIR)/mozilla-config.h
-AWK_EXPR = '/\#define MOZILLA_VERSION_U/ { gsub(/"/, "", $$3); print $$3 }'
-SB_MOZILLA_VERSION := $(shell $(AWK_CMD))
-
-PPDEFINES += -DSB_MOZILLA_VERSION="$(SB_MOZILLA_VERSION)"
 
 #
 # Need some others from autodefs.mk (hence configure args)

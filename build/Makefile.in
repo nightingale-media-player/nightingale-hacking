@@ -29,12 +29,17 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-all:: sbBuildInfo.ini
+AWK_CMD = $(AWK) $(AWK_EXPR) < $(MOZSDK_INCLUDE_DIR)/mozilla-config.h
+AWK_EXPR = '/\#define MOZILLA_VERSION_U/ { gsub(/"/, "", $$3); print $$3 }'
 
-sbBuildInfo.ini: FORCE
+all:: sbBuildInfo.mk
+
+export SONGBIRD_OFFICIAL
+sbBuildInfo.mk: FORCE
 	$(RM) -f $@
-	SONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)" \
-    $(PYTHON) $(srcdir)/make-buildinfo.py -i $(srcdir)/$@.in -o $@
+	$(PYTHON) $(srcdir)/make-buildinfo.py -i $(srcdir)/$@.in -o $@ \
+    -k SB_MOZILLA_VERSION=$(shell $(AWK_CMD)) 
+	
 
 .PHONY : FORCE
 
