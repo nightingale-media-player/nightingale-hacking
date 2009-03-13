@@ -310,6 +310,7 @@ then
 	elif [ -x "$MOZ_DIST_BIN/$MOZ_APPRUNNER_NAME" ]
 	then
 		MOZ_PROGRAM=$MOZ_DIST_BIN/$MOZ_APPRUNNER_NAME
+	fi
 	##
 	## Try resolving symlinks
 	##
@@ -333,7 +334,6 @@ then
 		fi
 	done
 	cd "$here"
-	fi
 fi
 #
 #
