@@ -22,12 +22,6 @@ set DIST_DIR=%OBJ_DIR%\dist
 if exist "%DIST_DIR%\songbird.ico" set ICON_FILE=songbird.ico
 if exist "%DIST_DIR%\songbird_nightly.ico" set ICON_FILE=songbird_nightly.ico
 
-set PRINTCONF="%DEPTH%\dependencies\%ARCH%\mozilla\release\scripts\printconfigsetting.py"
-set BUILDINFO=%OBJ_DIR%\build\sbBuildInfo.ini
-for /f %%A in ('python %PRINTCONF% %BUILDINFO% Build AppName') do set BRANDSHORTNAME=%%A
-for /f %%A in ('python %PRINTCONF% %BUILDINFO% Build Milestone') do set APPVERSION=%%A
-for /f %%A in ('python %PRINTCONF% %BUILDINFO% Build BuildNumber') do set APPBUILDNUMBER=%%A
-
 if "%4"=="prepare" goto prepare
 if "%4"=="package" goto package
 
@@ -50,21 +44,21 @@ cd %DIST_DIR%
 %DIST_DEPTH%\tools\win32\nsis\makensis /NOCD /DBUILD_ID="%DATESTAMP%" /DARCH="%ARCH%" /V4 ../installer/windows/songbird.nsi
 cd %DIST_DEPTH%\installer\windows
 
-if exist "%DIST_DIR%\%BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe" goto success
+if exist "%DIST_DIR%\%SB_APPNAME%_%SB_MILESTONE%-%SB_BUILD_NUMBER%_%ARCH%.exe" goto success
 goto failure
 
 :success
 @echo.
 @echo =====================================================
-@echo Built the Songbird installer %BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe.
+@echo Built the Songbird installer %SB_APPNAME%_%SB_MILESTONE%-%SB_BUILD_NUMBER%_%ARCH%.exe.
 @echo A copy of it is in compiled\_built_installer\
 @echo =====================================================
 @echo.
 
 @mkdir %DEPTH%\compiled\_built_installer
-move /y %DIST_DIR%\%BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe %DEPTH%\compiled\_built_installer\
+move /y %DIST_DIR%\%SB_APPNAME%_%SB_MILESTONE%-%SB_BUILD_NUMBER%_%ARCH%.exe %DEPTH%\compiled\_built_installer\
 pushd %DEPTH%\compiled\_built_installer\
-md5sum ./%BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe > %BRANDSHORTNAME%_%APPVERSION%-%BUILD_NUMBER%_%ARCH%.exe.md5
+md5sum ./%SB_APPNAME%_%SB_MILESTONE%-%SB_BUILD_NUMBER%_%ARCH%.exe > %SB_APPNAME%_%SB_MILESTONE%-%SB_BUILD_NUMBER%_%ARCH%.exe.md5
 popd
 
 goto end

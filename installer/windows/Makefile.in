@@ -5,7 +5,6 @@
 #
 # Copyright(c) 2005-2008 POTI, Inc.
 # http://www.songbirdnest.com
-#
 # This file may be licensed under the terms of of the
 # GNU General Public License Version 2 (the "GPL").
 #
@@ -67,6 +66,10 @@ SONGBIRD_INSTALLER = common.nsh \
 
 INSTALLER_PREPROCESS = defines.nsi \
                        $(NULL)
+
+export SB_APPNAME
+export SB_MILESTONE
+export SB_BUILD_NUMBER
 
 SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(INSTALLER_README) $(SB_BUILD_NUMBER)
 
