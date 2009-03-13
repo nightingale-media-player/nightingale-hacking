@@ -1,4 +1,4 @@
-/**
+/*
 //
 // BEGIN SONGBIRD GPL
 // 
@@ -317,10 +317,26 @@ DirectoryImportJob.prototype = {
       this._fileScanner.submitQuery(this._fileScanQuery);
     } else {
       var urispec = this._libraryUtils.getFileContentURI(file).spec;
-      var supportsString = Cc["@mozilla.org/supports-string;1"]
-                             .createInstance(Ci.nsISupportsString);
-      supportsString.data = urispec;
-      this._itemURIStrings.push(supportsString);
+      
+      // Ensure that the file extension is not blacklisted.
+      var isValidExt = false;
+      var dotIndex = urispec.lastIndexOf(".");
+      if (dotIndex > -1) {
+        var fileExt = urispec.substr(dotIndex + 1);
+        for (var i = 0; i < this._fileExtensions.length; i++) {
+          if (this._fileExtensions[i] == fileExt) {
+            isValidExt = true;
+            break;
+          } 
+        }
+      }
+
+      if (isValidExt) {
+        var supportsString = Cc["@mozilla.org/supports-string;1"]
+          .createInstance(Ci.nsISupportsString);
+        supportsString.data = urispec;
+        this._itemURIStrings.push(supportsString);
+      }    
     }
   },
   
