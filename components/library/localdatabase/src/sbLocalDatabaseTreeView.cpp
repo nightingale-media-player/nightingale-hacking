@@ -434,20 +434,20 @@ sbLocalDatabaseTreeView::Rebuild()
   }
 
   // Update the number of rows in the tree widget
-  PRUint32 oldRowCount = mArrayLength;
+  PRInt32 oldRowCount;
+  rv = GetRowCount(&oldRowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = mArray->GetLength(&mArrayLength);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // If we're managing the selection, restore it
-  if (mManageSelection) {
-    RestoreSelection();
-  }
+  PRInt32 newRowCount;
+  rv = GetRowCount(&newRowCount);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (mTreeBoxObject) {
     // Change the number of rows in the tree by the difference between the
     // new row count and the old cached row count.  We still need to invalidate
     // the whole tree since we don't know where the row changes took place.
-    PRInt32 delta = mArrayLength - oldRowCount;
+    PRInt32 delta = newRowCount - oldRowCount;
 
     sbAutoUpdateBatch autoBatch(mTreeBoxObject);
     if (delta != 0) {
@@ -456,6 +456,12 @@ sbLocalDatabaseTreeView::Rebuild()
     }
     rv = mTreeBoxObject->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If we're managing the selection, restore it after adjusting the tree box
+  // row count
+  if (mManageSelection) {
+    RestoreSelection();
   }
 
   return NS_OK;
