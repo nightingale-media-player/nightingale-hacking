@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -79,7 +79,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.sbIJobProgress,
                        Ci.sbIJobCancelable ],
   
-  _latestSchemaVersion: 18,
+  _latestSchemaVersion: 19,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
   
   _migrationHandlers:   null,

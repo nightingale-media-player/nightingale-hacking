@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -280,7 +280,10 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSortable(const nsAString & aValue, nsAStri
                          outVal);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  val = outVal;
+  // don't allow normalization to produce an empty sortable string
+  if (!outVal.IsEmpty()) {
+    val = outVal;
+  }
 
   rv = stringTransform->RemoveArticles(val, EmptyString(), outVal);
   NS_ENSURE_SUCCESS(rv, rv);
