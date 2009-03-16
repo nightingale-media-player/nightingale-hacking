@@ -197,6 +197,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".mp3", PR_TRUE) != -1)
         || (_url.Find(".m4a", PR_TRUE) != -1)
         || (_url.Find(".m4p", PR_TRUE) != -1)
+        || (_url.Find(".mp4", PR_TRUE) != -1)
         || (_url.Find(".oga", PR_TRUE) != -1)
         || (_url.Find(".wv", PR_TRUE) != -1)
         || (_url.Find(".spx", PR_TRUE) != -1)
@@ -1655,6 +1656,8 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4a"))) {
             isValid = ReadMP4File();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("m4p"))) {
+            isValid = ReadMP4File();
+        } else if (fileExt.Equals(NS_LITERAL_CSTRING("mp4"))) {
             isValid = ReadMP4File();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg"))) {
             isValid = ReadOGGFile();
