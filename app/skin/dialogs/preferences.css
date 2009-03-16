@@ -51,11 +51,6 @@ radio[pane=paneHotkeys][selected="true"]  {
 	-moz-image-region: rect(0px, 32px,  32px, 0px)
 }
 
-#tabPrefsBox
-{
-  padding-left: 25px;
-}
-
 /* tabs in the Advanced Preferences */
 tabpanels
 {

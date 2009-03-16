@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -24,6 +24,10 @@
 //
 */
 
+// DOM defs.
+if (typeof(XUL_NS) == "undefined")
+  var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+
 var SongbirdTabPaneOverlay = {
   /**
    * This function sets up our UI in the main preferences dialog.
@@ -38,6 +42,12 @@ var SongbirdTabPaneOverlay = {
     window.removeEventListener('paneload',
                                SongbirdTabPaneOverlay.onPaneLoad,
                                false);
+
+    // Move tab preferences box into a group box.
+    var groupBoxElem = document.createElementNS(XUL_NS, "groupbox");
+    var tabPrefsBoxElem = document.getElementById("tabPrefsBox");
+    tabPrefsBoxElem.parentNode.appendChild(groupBoxElem);
+    groupBoxElem.appendChild(tabPrefsBoxElem);
 
     const warnOpenMany = document.getElementById("warnOpenMany");
     warnOpenMany.setAttribute("hidden", "true");
