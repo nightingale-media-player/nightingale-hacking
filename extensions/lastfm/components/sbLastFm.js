@@ -409,14 +409,13 @@ function sbLastFm() {
   this._servicePaneNode = BMS.addBookmarkAt(
 		  "chrome://sb-lastfm/content/tuner2.xhtml", "Last.fm",
 		  "chrome://sb-lastfm/skin/as.png", radioFolder, null);
-  if (this._servicePaneNode) {
-	  this._servicePaneNode.editable = false;
-	  this._servicePaneNode.hidden = false;
-  } else {
+  if (!this._servicePaneNode) {
 	  this._servicePaneNode = this._servicePaneService.getNodeForURL(
 		  "chrome://sb-lastfm/content/tuner2.xhtml");
   }
   this._servicePaneNode.image = 'chrome://sb-lastfm/skin/as.png';
+  this._servicePaneNode.editable = false;
+  this._servicePaneNode.hidden = false;
 
   //dump("HERE: " + this._servicePaneNode + "\n");
   //this._servicePaneService.removeNode(this._servicePaneNode);
