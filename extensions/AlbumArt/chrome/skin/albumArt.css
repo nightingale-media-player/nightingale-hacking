@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -25,14 +25,16 @@
  */
 
 
-.albumArtNotSelectedContainer,
 .albumArtNowSelectedContainer,
-.albumArtNotPlayingContainer,
 .albumArtNowPlayingContainer {
   -moz-box-flex: 1;
+  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
+}
+
+.albumArtNotSelectedContainer,
+.albumArtNotPlayingContainer {
   -moz-box-align: center;
   -moz-box-pack: center;
-  background-image: url('chrome://songbird/skin/display-pane/bg-empty.png');
 }
 
 .albumArtNowSelectedDragAndDrop,
@@ -41,3 +43,4 @@
   -moz-box-align: center;
   -moz-box-pack: center;
 }
+

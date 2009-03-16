@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -56,6 +56,10 @@ const STATE_PLAYING  = 1;
 // Preferences
 const PREF_STATE = "songbird.albumart.displaypane.view";
 
+// Namespace defs.
+if (typeof(XLINK_NS) == "undefined")
+  const XLINK_NS = "http://www.w3.org/1999/xlink";
+
 /******************************************************************************
  *
  * \class AlbumArt 
@@ -74,17 +78,11 @@ var AlbumArt = {
   // Array of state information for each display (selected/playing/etc)
   _stateInfo: [ { imageID: "sb-albumart-selected",
                   titleID: "selected",
-                  defaultTitle: "Now Selected",
-                  lastImageSrc: "",
-                  imageWidth: 0,
-                  imageHeight: 0
+                  defaultTitle: "Now Selected"
                 },
                 { imageID: "sb-albumart-playing",
                   titleID: "playing",
-                  defaultTitle: "Now Playing",
-                  lastImageSrc: "",
-                  imageWidth: 0,
-                  imageHieght: 0
+                  defaultTitle: "Now Playing"
                 }
               ],
   _currentState: STATE_SELECTED, // Default to now selected state (display)
@@ -188,87 +186,6 @@ var AlbumArt = {
   },
 
   /**
-   * \brief resizeImage - This function will take care of properly resizing an
-   *        image to keep the proper aspect ratio when our display pane resizes.
-   *        We use a cache because currently <image> tags do not hold the size
-   *        information as we need it.
-   * \param aCacheIndex - An index to which image to resize, this will generally
-   *        be linked to the deck index, 0 = Selected for example.
-   */
-  resizeImage: function AlbumArt_resizeImage(aCacheIndex) {
-    var imageCache = AlbumArt._stateInfo[aCacheIndex];
-    var mImage = document.getElementById(imageCache.imageID);
-    var currentSrc = mImage.src;
-    
-    // Do not do anything if we don't have an image to resize
-    if (currentSrc == "") {
-      imageCache.lastImageSrc = "";
-      return;
-    }
-
-    // See if we have already cached this information
-    if (currentSrc != imageCache.lastImageSrc) {
-      // We do this to get the proper height and width, since it will not be
-      // resized when loaded with the Image() object. The <image> elements
-      // change the height and width when the image is resized to fit the
-      // content.
-      var newImg = new Image();
-      newImg.src = currentSrc;
-      imageCache.imageHeight = newImg.height;
-      imageCache.imageWidth = newImg.width;
-    }
-
-    // Do not do anything with invalid images.
-    if (imageCache.imageWidth <= 0 || imageCache.imageHeight <= 0) {
-      return;
-    }
-    
-    // Window is our displaypane, so grab the size
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
-    
-    // Default to the size of the image
-    var newWidth = imageCache.imageWidth;
-    var newHeight = imageCache.imageHeight;
-    
-    // Only resize if the image is bigger than the display pane (window)
-    if ( (newWidth > windowWidth) ||
-         (newHeight > windowHeight) ) {
-      // Figure out the ratios of the image and window.
-      var windowRatio = windowWidth / windowHeight;
-      var imageRatio = imageCache.imageWidth / imageCache.imageHeight;
-      
-      // If windowRatio is greater than the imageRatio then we want to resize
-      // the height, otherwize we resize the width to keep the aspect ratio.
-      // We also do not want to make the image bigger than it actually is.
-      if (imageRatio >= windowRatio) {
-        newWidth = (windowWidth <= imageCache.imageWidth ?
-                      windowWidth : imageCache.imageWidth);
-        newHeight = (imageCache.imageHeight * newWidth / imageCache.imageWidth);
-      } else {
-        newHeight = (windowHeight <= imageCache.imageHeight ?
-                      windowHeight : imageCache.imageHeight);
-        newWidth = (imageCache.imageWidth * newHeight / imageCache.imageHeight);
-      }
-    }
-
-    mImage.style.width = newWidth + "px";
-    mImage.style.height = newHeight + "px";
-  },
-
-  /**
-   * \brief resizeImages - This function will resize all images in our pane so that they
-   *                       all maintain proper aspect ratios.
-   */
-  resizeImages: function AlbumArt_resizeImages() {
-    // Resize each image in our deck even if not shown so that we don't have
-    // to resize every time the user switches the display.
-    for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {
-      AlbumArt.resizeImage(cIndex);
-    }
-  },
-
-  /**
    * \brief isPaneSquare - This function ensures that the height of the
    *        display pane is equal to the width. This will resize the pane if
    *        it is not square.
@@ -298,13 +215,8 @@ var AlbumArt = {
    *        the display pane is resized.
    */
   onResize: function AlbumArt_onResize() {
-    if (!AlbumArt.isPaneSquare()) {
-      // Abort because this function will be called again.
-      return;
-    }
-
-    // Now that we know the pane is square resize all the images.
-    this.resizeImages();
+    // Ensure the display pane content is square.
+    AlbumArt.isPaneSquare();
   },
 
   /**
@@ -370,13 +282,11 @@ var AlbumArt = {
       aDragBox.hidden = true;
     }
 
-    // Set the source of the image
-    aImageElement.src = aNewURL;
-    
-    if (aNewURL) {
-      // Call the resizeImages so we display the image correctly.
-      AlbumArt.resizeImages();
-    }
+    /* Set the image element URL */
+    if (aNewURL)
+      aImageElement.setAttributeNS(XLINK_NS, "href", aNewURL);
+    else
+      aImageElement.removeAttributeNS(XLINK_NS, "href");
   },
 
   /**
@@ -478,25 +388,6 @@ var AlbumArt = {
     // Make sure we are square (this will resize)
     AlbumArt.isPaneSquare();
 
-    // Do an initial load of the default cover since it is a big image, and then
-    // set the width and height of the images to the width and height of the
-    // window so the image does not stretch out of bounds on the first load.
-    var newImg = new Image();
-    newImg.src = DROP_TARGET_IMAGE;
-    var windowWidth = window.innerWidth;
-    var windowHeight = window.innerHeight;
-    for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {
-      var imageCache = AlbumArt._stateInfo[cIndex];
-      
-      // Listen to when an image loads so we can keep the aspect ratio.
-      var mImage = document.getElementById(imageCache.imageID);
-      if (mImage) {
-        mImage.addEventListener("load", AlbumArt.resizeImages, false);
-        mImage.style.width = windowWidth + "px";
-        mImage.style.height = windowHeight + "px";
-      }
-    }
-
     // Setup the dataremote for the now playing image.
     var createDataRemote =  new Components.Constructor(
                                   "@songbirdnest.com/Songbird/DataRemote;1",
@@ -548,14 +439,7 @@ var AlbumArt = {
     
     AlbumArt._coverBind.unbind();
     AlbumArt._coverBind = null;
-    
-    // Remove the load listeners
-    for (var cIndex = 0; cIndex < AlbumArt._stateInfo.length; cIndex++) {
-      var imageCache = AlbumArt._stateInfo[cIndex];
-      var mImage = document.getElementById(imageCache.imageID);
-      mImage.removeEventListener("load", AlbumArt.resizeImages, false);
-    }
-    
+
     window.removeEventListener("resize",
                                AlbumArt.onResize,
                                false);
@@ -784,13 +668,13 @@ var AlbumArt = {
    * \returns imageURL for currently displayed image, or null if none.
    */
   getCurrentStateItemImage: function AlbumArt_getCurrentStateItemImage() {
+    var imageNode;
     if (AlbumArt._currentState == STATE_SELECTED) {
-      var albumArtSelectedImage = document.getElementById('sb-albumart-selected');
-      return albumArtSelectedImage.getAttribute("src");
+      imageNode = document.getElementById("sb-albumart-selected");
     } else {
-      var albumArtPlayingImage = document.getElementById('sb-albumart-playing');
-      return albumArtPlayingImage.getAttribute("src");
+      imageNode = document.getElementById("sb-albumart-playing");
     }
+    return imageNode.getAttributeNS(XLINK_NS, "href");
   },
 
   /**
