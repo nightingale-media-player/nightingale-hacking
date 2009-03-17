@@ -1309,7 +1309,25 @@ sbLastFm.prototype.showStation = function sbLastFm_showStation(e) {
 	if (this.radio_playing) {
 		var stationPage = this.radio_original_station_url
 			.replace(/^lastfm:\/\//, "http://last.fm/");
-		stationPage = stationPage.replace(/\/personal$/, "");
+		if (stationPage.match(/^http:\/\/last.fm\/user/)) {
+			// if the user is playing one of their personal stations
+			// then make the ShowCurrentTrack event trigger open up
+			// their user page
+			/*
+			if (stationPage.match(/\/personal$/)) 
+				stationPage = stationPage.replace(/\/personal$/, "");
+			else if (stationPage.match(/\/loved$/))
+				stationPage = stationPage.replace(/\/loved$/, "");
+			else if (stationPage.match(/\/neighbours$/))
+				stationPage = stationPage.replace(/\/neighbours$/, "");
+			else if (stationPage.match(/\/recommended$/))
+				stationPage = stationPage.replace(/\/recommended$/, "");
+			*/
+			stationPage = stationPage.replace(/\/[a-z]+$/, "");
+		}
+		if (stationPage.match(/\/similarartists$/)) {
+			stationPage = stationPage.replace(/\/similarartists$/, "");
+		}
 		var mainWin =
 			Components.classes['@mozilla.org/appshell/window-mediator;1']
 			.getService(Components.interfaces.nsIWindowMediator)
