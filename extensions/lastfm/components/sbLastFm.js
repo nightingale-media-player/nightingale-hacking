@@ -46,6 +46,7 @@ const ANNOTATION_BAN = NS+'ban';
 
 // our properties
 const PROPERTY_TRACKID = NS+'trackid';
+const PROPERTY_STATION = NS+'station';
 
 // their namespace
 const LASTFM_NS = 'http://www.audioscrobbler.net/dtd/xspf-lastfm'
@@ -790,6 +791,7 @@ function sbLastFm_radioStation(station, success, failure) {
       urlencode({session: this.radio_session, url: station}),
       function _success(pairs) {
         // save off current station info
+		self.radio_original_station_url = station;
 		if (pairs.url)
 			self.radio_station_url = pairs.url;
 		if (pairs.stationname)
@@ -854,6 +856,8 @@ function sbLastFm_requestMoreRadio(success, failure) {
             mediaItem.setProperty(LASTFM_NS + props[i], tags[0].textContent);
           }
         }
+		dump("radio station url: " + self.radio_original_station_url + "\n");
+		mediaItem.setProperty(PROPERTY_STATION, self.radio_original_station_url);
 
         self.radio_mediaList.add(mediaItem);
       }
@@ -1232,11 +1236,11 @@ function sbLastFm_onMediacoreEvent(aEvent) {
       break;
     case Ci.sbIMediacoreEvent.VIEW_CHANGE:
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
-	  dump("setting radio_playing: " + this.radio_playing + "\n");
+	  //dump("setting radio_playing: " + this.radio_playing + "\n");
       break;
     case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
       if (this.radio_playing) {
-		  dump("setting station: " + this.radio_station_name + "\n");
+		//dump("setting station: " + this.radio_station_name + "\n");
         SBDataSetStringValue('lastfm.radio.station', this.radio_station_name);
       } else {
         SBDataSetStringValue('lastfm.radio.station', '');
@@ -1303,8 +1307,8 @@ sbLastFm.prototype.onStop = function sbLastFm_onStop() {
 
 sbLastFm.prototype.showStation = function sbLastFm_showStation(e) {
 	if (this.radio_playing) {
-		var stationPage = this.radio_station_url.replace(/^lastfm:\/\//,
-				"http://last.fm/");
+		var stationPage = this.radio_original_station_url
+			.replace(/^lastfm:\/\//, "http://last.fm/");
 		stationPage = stationPage.replace(/\/personal$/, "");
 		var mainWin =
 			Components.classes['@mozilla.org/appshell/window-mediator;1']
@@ -1313,6 +1317,7 @@ sbLastFm.prototype.showStation = function sbLastFm_showStation(e) {
 		if (mainWin && mainWin.gBrowser)
 			mainWin.gBrowser.loadOneTab(stationPage);
 		e.preventDefault();
+		e.stopPropagation();
 	}
 }
 

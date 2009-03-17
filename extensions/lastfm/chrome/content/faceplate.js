@@ -2,8 +2,6 @@ function LFFPD(m) {
   dump('last.fm faceplate debug: '+m+'\n');
 }
 
-LFFPD('begin script');
-
 var sbLastFmFaceplate = {
   'stationPref': null,
   'disableTags': ['sb-player-back-button', 'sb-player-shuffle-button', 
@@ -11,11 +9,11 @@ var sbLastFmFaceplate = {
 };
 
 function sbLastFmFaceplate_stationPref_change() {
-  LFFPD('pref change!');
+  //LFFPD('pref change!');
   sbLastFmFaceplate.stationChanged();
 }
 function sbLastFmFaceplate_requestPref_change() {
-  LFFPD('requesting more tracks pref change!');
+  //LFFPD('requesting more tracks pref change!');
   sbLastFmFaceplate.requestChanged();
 }
 
@@ -84,9 +82,5 @@ function sbLastFmFaceplate_requestChanged() {
   }
 }
 
-
-
 window.addEventListener('load', function () { sbLastFmFaceplate.init() ;}, false);
 window.addEventListener('unload', function () { sbLastFmFaceplate.fini() ;}, false);
-
-LFFPD('end script');
