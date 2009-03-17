@@ -86,7 +86,7 @@ ArtistInfo.prototype = {
 				"&query=DESCRIBE+%3Chttp://dbpedia.org/resource/" +
 				artist.replace(/ /g, "_") + "%3E&output=xml";
 		*/
-		var url = "view-source:http://dbpedia.org/data/" +
+		var url = "http://dbpedia.org/data/" +
 			artist.replace(/ /g, "_") + ".rdf";
 		mtUtils.log("Wikipedia", "DBpedia URL:" + url);
 		var prefBranch = Cc["@mozilla.org/preferences-service;1"]
