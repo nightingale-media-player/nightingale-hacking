@@ -115,6 +115,9 @@ private:
   // mWindowWatcher             Window watcher service.
   // mWindowMediator            Window mediator service.
   // mObserverService           Observer service.
+  // mSentMainWinPresentedNotification
+  //                            True if the main window presented notification
+  //                            has been sent.
   // mMonitor                   Monitor for the window watcher.
   // mIsShuttingDown            True if the window watcher service is shutting
   //                            down.
@@ -138,6 +141,7 @@ private:
   nsCOMPtr<nsIWindowWatcher>    mWindowWatcher;
   nsCOMPtr<nsIWindowMediator>   mWindowMediator;
   nsCOMPtr<nsIObserverService>  mObserverService;
+  PRBool                        mSentMainWinPresentedNotification;
   PRMonitor*                    mMonitor;
   PRBool                        mIsShuttingDown;
   nsCOMArray<nsIDOMWindow>      mWindowList;

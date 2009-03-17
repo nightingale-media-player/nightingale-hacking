@@ -71,6 +71,7 @@ protected:
   
   // helpers
   nsresult Init();
+  nsresult BeginMarshallMonitoring();
   nsresult PrepareShutdown();
   nsresult FinalShutdown();
   nsresult QuitApplicationGranted();

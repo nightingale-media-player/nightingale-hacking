@@ -438,6 +438,7 @@ sbWindowWatcher::OnQuitApplicationGranted()
  */
 
 sbWindowWatcher::sbWindowWatcher() :
+  mSentMainWinPresentedNotification(PR_FALSE),
   mIsShuttingDown(PR_FALSE),
   mServicingCallWithWindowList(PR_FALSE)
 {
@@ -707,6 +708,21 @@ sbWindowWatcher::OnWindowReady(nsIDOMWindow* aWindow)
 
   // Function variables.
   PRBool   success;
+  nsresult rv;
+
+  // If window is the main Songbird window, notify observers.
+  if (!mSentMainWinPresentedNotification) {
+    nsAutoString windowType;
+    rv = GetWindowType(aWindow, windowType);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    if (windowType.EqualsLiteral("Songbird:Main")) {
+      rv = mObserverService->NotifyObservers(aWindow,
+                                             "songbird-main-window-presented",
+                                             nsnull);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+      mSentMainWinPresentedNotification = PR_TRUE;
+    }
+  }
 
   // Operate within the monitor.
   {

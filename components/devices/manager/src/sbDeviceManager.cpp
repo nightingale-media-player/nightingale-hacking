@@ -53,6 +53,7 @@
 #define NS_PROFILE_STARTUP_OBSERVER_ID          "profile-after-change"
 #define NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID "quit-application-granted"
 #define NS_PROFILE_SHUTDOWN_OBSERVER_ID         "profile-before-change"
+#define SB_MAINWIN_PRESENTED_OBSERVER_ID        "songbird-main-window-presented"
 
 NS_IMPL_THREADSAFE_ADDREF(sbDeviceManager)
 NS_IMPL_THREADSAFE_RELEASE(sbDeviceManager)
@@ -448,6 +449,11 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     
     rv = obsSvc->AddObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = obsSvc->AddObserver(observer,
+                             SB_MAINWIN_PRESENTED_OBSERVER_ID,
+                             PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
     
     rv = obsSvc->AddObserver(observer, NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -461,6 +467,11 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
   } else if (!strcmp(NS_PROFILE_STARTUP_OBSERVER_ID, aTopic)) {
     // Called after the profile has been loaded, so prefs and such are available
     rv = this->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (!strcmp(SB_MAINWIN_PRESENTED_OBSERVER_ID, aTopic)) {
+    // Called after the main Songbird window is presented in case device
+    // enumeration hangs.
+    rv = BeginMarshallMonitoring();
     NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(NS_QUIT_APPLICATION_GRANTED_OBSERVER_ID, aTopic)) {
     // Called when the request to shutdown has been granted
@@ -501,6 +512,9 @@ NS_IMETHODIMP sbDeviceManager::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     
     rv = obsSvc->RemoveObserver(observer, NS_PROFILE_STARTUP_OBSERVER_ID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = obsSvc->RemoveObserver(observer, SB_MAINWIN_PRESENTED_OBSERVER_ID);
     NS_ENSURE_SUCCESS(rv, rv);
     
     rv = obsSvc->RemoveObserver(observer, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
@@ -584,9 +598,6 @@ nsresult sbDeviceManager::Init()
     
     rv = marshall->LoadControllers(registrar);
     NS_ENSURE_SUCCESS(rv, rv);
-     
-    rv = marshall->BeginMonitoring();
-    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = enumerator->HasMoreElements(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -633,6 +644,38 @@ nsresult sbDeviceManager::GetCanDisconnect(PRBool* aCanDisconnect)
   }
 
   *aCanDisconnect = canDisconnect;
+
+  return NS_OK;
+}
+
+nsresult sbDeviceManager::BeginMarshallMonitoring()
+{
+  nsresult rv;
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  nsAutoMonitor mon(mMonitor);
+
+  // Get the list of marshalls.
+  nsCOMPtr<nsIArray> marshalls;
+  rv = this->GetMarshalls(getter_AddRefs(marshalls));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Begin monitoring for each marshall.
+  PRUint32 length;
+  rv = marshalls->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < length; i++) {
+    // Get the next marshall.
+    nsCOMPtr<sbIDeviceMarshall> marshall;
+    rv = marshalls->QueryElementAt(i,
+                                   NS_GET_IID(sbIDeviceMarshall),
+                                   getter_AddRefs(marshall));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Begin marshall monitoring.
+    rv = marshall->BeginMonitoring();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
