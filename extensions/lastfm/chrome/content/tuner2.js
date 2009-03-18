@@ -112,8 +112,8 @@ var LastfmTuner = {
 
 		// Fixup the links for the personal stations
 		var username = LastfmTuner.svc.username;
-		$("#header-stations a.radio").each(function() {
-				this.href = "lastfm://user/" + username + "/" + this.id;
+		$("#nav-user-stations-results a").each(function() {
+			this.href = "lastfm://user/" + username + "/" + this.id;
 		});
 
 		// Show the personal stations
@@ -908,7 +908,15 @@ $(document).ready(function() {
 	$("#user-profile").hide();
 
 	// Hide the results blocks
-	$('.nav-results').hide();
+	$('.nav-results:not(.selected)').hide();
+
+	// Setup hovers for the user-stations box
+	$('#nav-user-stations-results .nav-station').hover(function over(e) {
+		this.oldClass = this.className;
+		this.className += " row-selected";
+	}, function(e) {
+		this.className = this.oldClass;
+	});
 
 	// Setup the search box
 	$('#search-box').focus(function() {
