@@ -34,13 +34,20 @@ ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = $(NULL)
+CPP_SRCS = sbMediaManagerModule.cpp \
+           sbMediaFileManager.cpp \
+           $(NULL)
 
 CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(DEPTH)/components/library/base/public \
+               $(DEPTH)/components/library/mediamanager/public \
+               $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/property/src \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
