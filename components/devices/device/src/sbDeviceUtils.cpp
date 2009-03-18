@@ -305,20 +305,33 @@ nsresult sbDeviceUtils::GetMediaItemByDevicePersistentId
     return NS_ERROR_NOT_AVAILABLE;
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // ensure at least one item has the device persistent ID
+  // Return the first item with an exactly matching persistent ID.
+  // GetItemsByProperty does not do an exact match (e.g., case insensitive,
+  // number strings limited to 64-bit float precision; see bug 15640).
   PRUint32 length;
   rv = mediaItemList->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (length < 1)
-    return NS_ERROR_NOT_AVAILABLE;
+  for (PRInt32 i = 0; i < length; i++) {
+    // get the next media item
+    nsCOMPtr<sbIMediaItem> mediaItem;
+    rv = mediaItemList->QueryElementAt(i,
+                                       NS_GET_IID(sbIMediaItem),
+                                       getter_AddRefs(mediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // get the first item with the persistent ID
-  rv = mediaItemList->QueryElementAt(0,
-                                     NS_GET_IID(sbIMediaItem),
-                                     (void**) aItem);
-  NS_ENSURE_SUCCESS(rv, rv);
+    // check for an exact match
+    nsAutoString devicePersistentId;
+    rv = mediaItem->GetProperty
+                      (NS_LITERAL_STRING(SB_PROPERTY_DEVICE_PERSISTENT_ID),
+                       devicePersistentId);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (aDevicePersistentId.Equals(devicePersistentId)) {
+      mediaItem.forget(aItem);
+      return NS_OK;
+    }
+  }
 
-  return NS_OK;
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 /* static */
