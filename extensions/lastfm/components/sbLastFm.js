@@ -521,8 +521,9 @@ function sbLastFm_login() {
     // authenticate against the new Last.fm "rest" API
     self.apiAuth();
 
-    // authenticate against the Last.fm radio API
-    self.radioLogin(function() { }, function() { });
+    // authenticate against the Last.fm radio API.  if we logged in
+	// successfully, then go login to the website too
+    self.radioLogin(function() { self.webLogin(); }, function() { });
 
   }, function failure(aAuthFailed) {
     self.loggedIn = false;
@@ -759,6 +760,23 @@ function sbLastFm_getPairs(url, success, failure) {
   return xhr;
 }
 
+// log in to the last.fm website so that if we get directed over to web links
+// from radio links we'll already have a logged in state
+sbLastFm.prototype.webLogin =
+function sbLastFm_webLogin() {
+	var self = this;
+	var postdata = new Object;
+	postdata.username = this.username;
+	postdata.password = this.password;
+	postdata.refererKey = "";
+	postdata.backto = "http://www.last.fm/";
+	postdata.login = "Come on in";
+	POST("https://www.last.fm/login/", postdata,
+		function(xhr) {
+		},
+		function(xhr) {
+		});
+}
 
 // log in to the last.fm radio service based on the credentials stored in 
 // the sbLastFm service.
