@@ -8,3 +8,25 @@
 <!ENTITY lastfm.profile.caption "Profiel">
 <!ENTITY lastfm.profile.scrobble "Mijn liedjes scrobblen">
 <!ENTITY lastfm.profile.logout "Uitloggen">
+<!ENTITY lastfm.radio "Last.fm Radio">
+<!ENTITY lastfm.radio.login.help "Om naar de Last.fm Radio te luisteren moet u ingelogd zijn in Last.fm. Als u nog geen Last.fm-account hebt, kunt u zich registreren.">
+<!ENTITY lastfm.radio.start "Niet zeker waar te starten? Probeer te zoeken, of kijk naar wat anderen luisteren.">
+<!ENTITY lastfm.radio.start.top.artists "Top artiesten op Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Top tags op Last.fm">
+<!ENTITY lastfm.radio.register "Registreren">
+<!ENTITY lastfm.radio.search "Zoeken">
+<!ENTITY lastfm.radio.library "Bibliotheek">
+<!ENTITY lastfm.radio.loved "Favoriete liedjes">
+<!ENTITY lastfm.radio.neighbourhood "Mijn buurt">
+<!ENTITY lastfm.radio.recommended "Aanbevelingen">
+<!ENTITY lastfm.radio.recent_stations "Recent beluisterde stations">
+<!ENTITY lastfm.radio.from.lastfm "Van Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Aanbevolen artiesten">
+<!ENTITY lastfm.radio.top_artists "Uw top artiesten">
+<!ENTITY lastfm.radio.top_tags "Uw top tags">
+<!ENTITY lastfm.radio.friends "Uw vrienden">
+<!ENTITY lastfm.radio.neighbours "Muzikale buren">
+<!ENTITY lastfm.radio.from.songbird "Van Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Uw meest afgespeelde artiesten">
+<!ENTITY lastfm.radio.highest_rated_artists "Uw hoogst gewaardeerde artiesten">
+<!ENTITY lastfm.radio.popular_genres "Uw populaire genres">

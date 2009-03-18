@@ -8,3 +8,17 @@
 <!ENTITY lastfm.profile.caption "Профил">
 <!ENTITY lastfm.profile.scrobble "Скроблуј песме које слушам">
 <!ENTITY lastfm.profile.logout "Одјави се">
+<!ENTITY lastfm.radio "Last.fm радио">
+<!ENTITY lastfm.radio.login.help "Да бисте слушали Last.fm радио, морате бити пријављени на Last.fm. Ако већ не поседујете налог на Last.fm-у, можете да га отворите.">
+<!ENTITY lastfm.radio.register "Региструј се">
+<!ENTITY lastfm.radio.search "Претражуј">
+<!ENTITY lastfm.radio.library "Библиотека">
+<!ENTITY lastfm.radio.neighbourhood "Суседство">
+<!ENTITY lastfm.radio.recommended "Препоруке">
+<!ENTITY lastfm.radio.recent_stations "Скорашње станице">
+<!ENTITY lastfm.radio.recommended_artists "Препоручени извођачи">
+<!ENTITY lastfm.radio.friends "Ваши пријатељи">
+<!ENTITY lastfm.radio.neighbours "Суседи">
+<!ENTITY lastfm.radio.most_played_artists "Ваши најслушанији извођачи">
+<!ENTITY lastfm.radio.highest_rated_artists "Ваши најбоље оцењени извођачи">
+<!ENTITY lastfm.radio.popular_genres "Ваши популарни жанрови">

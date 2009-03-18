@@ -8,3 +8,25 @@
 <!ENTITY lastfm.profile.caption "پروفایل">
 <!ENTITY lastfm.profile.scrobble "آهنگ های مرا ثبت کن">
 <!ENTITY lastfm.profile.logout "خروج">
+<!ENTITY lastfm.radio "last.fm رادیو">
+<!ENTITY lastfm.radio.login.help "برای گوش دادن به رادیو، ابتدا باید وارد شوید. اگر هنوز حساب کاربری ندارید، می‌توانید ثبت‌نام کنید">
+<!ENTITY lastfm.radio.start "مطمئن نیستید که از کجا شروع کنید؟ جستجویی کنید یا ببینید دیگران چه موسیقی‌ای گوش می‌دهند">
+<!ENTITY lastfm.radio.start.top.artists "هنرمندان محبوب">
+<!ENTITY lastfm.radio.start.top.tags "برچسب‌های محبوب">
+<!ENTITY lastfm.radio.register "ثبت‌نام">
+<!ENTITY lastfm.radio.search "جستجو">
+<!ENTITY lastfm.radio.library "کتابخانه">
+<!ENTITY lastfm.radio.loved "آهنگ‌های مورد علاقه">
+<!ENTITY lastfm.radio.neighbourhood "همسایه‌ها">
+<!ENTITY lastfm.radio.recommended "توصیه‌ نامه‌ها">
+<!ENTITY lastfm.radio.recent_stations "ایستگاه‌های اخیر">
+<!ENTITY lastfm.radio.from.lastfm "last.fm از">
+<!ENTITY lastfm.radio.recommended_artists "هنرمندان توصیه شده">
+<!ENTITY lastfm.radio.top_artists "هنرمندان محبوب انتخابی شما">
+<!ENTITY lastfm.radio.top_tags "برچسب‌های محبوب انتخابی شما">
+<!ENTITY lastfm.radio.friends "دوستان شما">
+<!ENTITY lastfm.radio.neighbours "همسایه‌ها">
+<!ENTITY lastfm.radio.from.songbird "songbird از">
+<!ENTITY lastfm.radio.most_played_artists "هنرمندانی که بیشتر گوش داده‌اید">
+<!ENTITY lastfm.radio.highest_rated_artists "هنرمندانی که به آن‌ها بیشترین امتیاز را داده‌اید">
+<!ENTITY lastfm.radio.popular_genres "سبک‌های محبوب شما">

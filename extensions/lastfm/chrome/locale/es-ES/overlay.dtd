@@ -8,3 +8,25 @@
 <!ENTITY lastfm.profile.caption "Perfil">
 <!ENTITY lastfm.profile.scrobble "Enviar mis canciones">
 <!ENTITY lastfm.profile.logout "Cerrar sesión">
+<!ENTITY lastfm.radio "Radio de Last.fm">
+<!ENTITY lastfm.radio.login.help "Para poder escuchar la radio de Last.fm, debes iniciar sesión. Si aún no tienes cuenta en Last.fm, puedes registrarte para conseguir una.">
+<!ENTITY lastfm.radio.start "¿No sabes por dónde empezar? Prueba a hacer una búsqueda o comprueba qué están escuchando otros.">
+<!ENTITY lastfm.radio.start.top.artists "Artistas populares en Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Etiquetas populares en Last.fm">
+<!ENTITY lastfm.radio.register "Registro">
+<!ENTITY lastfm.radio.search "Búsqueda">
+<!ENTITY lastfm.radio.library "Biblioteca">
+<!ENTITY lastfm.radio.loved "Pistas favoritas">
+<!ENTITY lastfm.radio.neighbourhood "Vecindario">
+<!ENTITY lastfm.radio.recommended "Recomendaciones">
+<!ENTITY lastfm.radio.recent_stations "Estaciones recientes">
+<!ENTITY lastfm.radio.from.lastfm "De Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Artistas recomendados">
+<!ENTITY lastfm.radio.top_artists "Tus artistas favoritos">
+<!ENTITY lastfm.radio.top_tags "Tus etiquetas favoritas">
+<!ENTITY lastfm.radio.friends "Tus amigos">
+<!ENTITY lastfm.radio.neighbours "Vecinos">
+<!ENTITY lastfm.radio.from.songbird "Desde Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Tus artistas más reproducidos">
+<!ENTITY lastfm.radio.highest_rated_artists "Tus artistas mejor valorados">
+<!ENTITY lastfm.radio.popular_genres "Tus géneros más populares">

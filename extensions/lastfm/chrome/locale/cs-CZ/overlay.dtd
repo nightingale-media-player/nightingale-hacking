@@ -8,3 +8,25 @@
 <!ENTITY lastfm.profile.caption "Profil">
 <!ENTITY lastfm.profile.scrobble "Odesílat informace o přehrávané hudbě">
 <!ENTITY lastfm.profile.logout "Odhlásit">
+<!ENTITY lastfm.radio "Rádio Last.fm">
+<!ENTITY lastfm.radio.login.help "Pro poslouchání rádia Last.fm musíte být přihlášeni do Last.fm. Pokud ještě účet nemáte, stačí se zaregistrovat.">
+<!ENTITY lastfm.radio.start "Nevíte kde začít? Zkuste vyhledávaní nebo se podívejte, co poslouchají ostatní.">
+<!ENTITY lastfm.radio.start.top.artists "Nejoblíbenější umělci na Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Nejoblíbenější štítky na Last.fm">
+<!ENTITY lastfm.radio.register "Registrovat">
+<!ENTITY lastfm.radio.search "Hledat">
+<!ENTITY lastfm.radio.library "Knihovna">
+<!ENTITY lastfm.radio.loved "Milované skladby">
+<!ENTITY lastfm.radio.neighbourhood "Sousedství">
+<!ENTITY lastfm.radio.recommended "Doporučení">
+<!ENTITY lastfm.radio.recent_stations "Nedávné stanice">
+<!ENTITY lastfm.radio.from.lastfm "Z Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Doporučení umělci">
+<!ENTITY lastfm.radio.top_artists "Vaši oblíbení umělci">
+<!ENTITY lastfm.radio.top_tags "Vaše oblíbené štítky">
+<!ENTITY lastfm.radio.friends "Vaši přátelé">
+<!ENTITY lastfm.radio.neighbours "Sousedé">
+<!ENTITY lastfm.radio.from.songbird "Ze Songbirdu">
+<!ENTITY lastfm.radio.most_played_artists "Vaši nejčastěji přehrávaní umělci">
+<!ENTITY lastfm.radio.highest_rated_artists "Vaši nejlépe hodnocení umělci">
+<!ENTITY lastfm.radio.popular_genres "Vaše oblíbené žánry">
