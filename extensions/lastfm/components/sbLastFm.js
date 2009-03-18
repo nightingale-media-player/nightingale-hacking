@@ -1313,17 +1313,15 @@ sbLastFm.prototype.showStation = function sbLastFm_showStation(e) {
 			// if the user is playing one of their personal stations
 			// then make the ShowCurrentTrack event trigger open up
 			// their user page
-			/*
 			if (stationPage.match(/\/personal$/)) 
-				stationPage = stationPage.replace(/\/personal$/, "");
+				stationPage = stationPage.replace(/\/personal$/, "/library");
 			else if (stationPage.match(/\/loved$/))
-				stationPage = stationPage.replace(/\/loved$/, "");
-			else if (stationPage.match(/\/neighbours$/))
-				stationPage = stationPage.replace(/\/neighbours$/, "");
+				stationPage = stationPage.replace(/\/loved$/, "/library/loved");
+			//else if (stationPage.match(/\/neighbours$/))
+			//	stationPage = stationPage.replace(/\/neighbours$/, "");
 			else if (stationPage.match(/\/recommended$/))
 				stationPage = stationPage.replace(/\/recommended$/, "");
-			*/
-			stationPage = stationPage.replace(/\/[a-z]+$/, "");
+			//stationPage = stationPage.replace(/\/[a-z]+$/, "");
 		}
 		if (stationPage.match(/\/similarartists$/)) {
 			stationPage = stationPage.replace(/\/similarartists$/, "");
