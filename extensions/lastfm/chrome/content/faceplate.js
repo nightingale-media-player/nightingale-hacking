@@ -56,6 +56,11 @@ function sbLastFmFaceplate_stationChanged() {
     }
     // hide the radio icon from the faceplate
     stationIcon.style.visibility = "collapse";
+	
+	// Remove mediacore listener
+	Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+			.getService(Ci.sbIMediacoreManager)
+			.removeListener(sbLastFmFaceplate);
   } else {
     for (var i in this.disableTags) {
       var elements = document.getElementsByTagName(this.disableTags[i]);
@@ -65,6 +70,11 @@ function sbLastFmFaceplate_stationChanged() {
     }
 	// show the radio icon from the faceplate
     stationIcon.style.visibility = "visible";
+	
+	// Add mediacore listener
+	Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+			.getService(Ci.sbIMediacoreManager)
+			.addListener(sbLastFmFaceplate);
   }
 }
 
@@ -80,6 +90,18 @@ function sbLastFmFaceplate_requestChanged() {
 	// enable the next track button
       b.removeAttribute('disabled');
   }
+}
+
+sbLastFmFaceplate.onMediacoreEvent =
+function sbLastFmFaceplate_onMediacoreEvent(aEvent) {
+	switch(aEvent.type) {
+		case Ci.sbIMediacoreEvent.TRACK_CHANGE:
+			document.getElementsByTagName('sb-player-back-button')[0]
+				.setAttribute("disabled", "true");
+			break;
+		default:
+			break;
+	}
 }
 
 window.addEventListener('load', function () { sbLastFmFaceplate.init() ;}, false);
