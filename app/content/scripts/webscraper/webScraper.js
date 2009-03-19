@@ -35,6 +35,8 @@
   \sa scraperSteps.js
 */
 
+Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+
 function WebScraper(medialist) {
   this.medialist = medialist;
 
@@ -43,6 +45,9 @@ function WebScraper(medialist) {
   this.job._progress = 0;
   this.job._total = 0;
   
+  // Create a DOM event listener set.
+  this._domEventListenerSet = new DOMEventListenerSet();
+
   this._terminate = false;
   this._seenURLs = {};
 }
@@ -80,9 +85,11 @@ WebScraper.prototype = {
 
     // Watch for DOM nodes getting added to documents we scrape.
     if(aNode instanceof Document){
-      aNode.addEventListener("DOMNodeInserted",
-                             function(event) { webScraper.start(event.originalTarget) },
-                             true);
+      this._domEventListenerSet.add
+        (aNode,
+         "DOMNodeInserted",
+         function(event) { webScraper.start(event.originalTarget) },
+         true);
     }
 
     // begin the pipeline.
@@ -90,7 +97,8 @@ WebScraper.prototype = {
   },
 
   cancel: function WebScraper_cancel() {
-    self._terminate = true;
+    this._domEventListenerSet.removeAll();
+    this._terminate = true;
   }
 };
 
