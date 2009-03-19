@@ -160,7 +160,7 @@ function SBAppInitialize()
     if (platform == "Windows_NT") {
       SBRegisterWindowsSongbirdProtocol();
     }
-    else if (platform == "Linux") {
+    else {
       SBRegisterGConfSongbirdProtocol();
     }
   }
@@ -170,6 +170,10 @@ function SBAppInitialize()
 }
 
 function SBRegisterWindowsSongbirdProtocol() {
+  if (!("@mozilla.org/windows-registry-key;1" in Components.classes)) {
+    // no windows registry key, probably not Windows
+    return;
+  }
   var path = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("CurProcD", Components.interfaces.nsIFile);
@@ -204,6 +208,10 @@ function SBRegisterWindowsSongbirdProtocol() {
 }
 
 function SBRegisterGConfSongbirdProtocol() {
+  if (!("@mozilla.org/gnome-gconf-service;1" in Components.classes)) {
+    // gnome-gconf-service doesn't exist
+    return;
+  }
   var path = Components.classes["@mozilla.org/file/directory_service;1"]
                        .getService(Components.interfaces.nsIProperties)
                        .get("CurProcD", Components.interfaces.nsIFile);
@@ -211,7 +219,7 @@ function SBRegisterGConfSongbirdProtocol() {
   file.append("songbird");
 
   var gconf = Components.classes["@mozilla.org/gnome-gconf-service;1"]
-                                       .getService(Components.interfaces.nsIGConfService);
+                        .getService(Components.interfaces.nsIGConfService);
   gconf.setString("/desktop/gnome/url-handlers/songbird/command", '"' + file.path + '" "%s"');
   gconf.setBool("/desktop/gnome/url-handlers/songbird/enabled", true);
   gconf.setBool("/desktop/gnome/url-handlers/songbird/needs_terminal", false);
