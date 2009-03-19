@@ -52,6 +52,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsINetUtil.h>
+#include <nsIObserverService.h>
 #include <nsIUUIDGenerator.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
@@ -70,6 +71,9 @@
 #define ONE_MS 1
 
 static const char *gsFmtRadix10 = "%lld";
+
+static char const LIBRARY_MANAGER_BEFORE_SHUTDOWN[] = "songbird-library-manager-before-shutdown";
+static char const OBSERVER_SERVICE_CONTRACT_ID[] = "@mozilla.org/observer-service;1";
 
 /*
  * To log this module, set the following environment variable:
@@ -351,7 +355,7 @@ sbLocalDatabaseSmartMediaListCondition::ToString(nsAString& _retval)
 //==============================================================================
 
 
-NS_IMPL_THREADSAFE_ISUPPORTS8(sbLocalDatabaseSmartMediaList,
+NS_IMPL_THREADSAFE_ISUPPORTS9(sbLocalDatabaseSmartMediaList,
                               nsIClassInfo,
                               nsISupportsWeakReference,
                               sbILibraryResource,
@@ -359,16 +363,18 @@ NS_IMPL_THREADSAFE_ISUPPORTS8(sbLocalDatabaseSmartMediaList,
                               sbILocalDatabaseMediaItem,
                               sbIMediaItem,
                               sbIMediaList,
-                              sbIMediaListListener);
+                              sbIMediaListListener,
+                              nsIObserver);
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbLocalDatabaseSmartMediaList,
+NS_IMPL_CI_INTERFACE_GETTER8(sbLocalDatabaseSmartMediaList,
                              nsIClassInfo,
                              nsISupportsWeakReference,
                              sbILibraryResource,
                              sbILocalDatabaseSmartMediaList,
                              sbIMediaItem,
                              sbIMediaList,
-                             sbIMediaListListener);
+                             sbIMediaListListener,
+                             nsIObserver);
 
 sbLocalDatabaseSmartMediaList::sbLocalDatabaseSmartMediaList()
 : mInnerMonitor(nsnull)
@@ -511,6 +517,14 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   rv = mi->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_OUTERGUID), guid);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Register for library shutdown
+  nsCOMPtr<nsIObserverService> observerService =
+      do_GetService(OBSERVER_SERVICE_CONTRACT_ID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = observerService->AddObserver(this, LIBRARY_MANAGER_BEFORE_SHUTDOWN, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   // Register self for "before delete" so we can delete our storage list
   nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(library, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -3198,3 +3212,28 @@ sbLocalDatabaseSmartMediaList::GetSourceLibraryGuid(nsAString &retVal) {
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseSmartMediaList::Observe(nsISupports *aObject,
+                                       const char *aTopic,
+                                       const PRUnichar *aData) {
+  if (strcmp(aTopic, LIBRARY_MANAGER_BEFORE_SHUTDOWN) == 0) {
+    // Unregister ourselves from the library so we don't leak in odd cases
+    // See bug 14896 for more information
+    nsCOMPtr<sbILibrary> library;
+    nsresult rv = mItem->GetLibrary(getter_AddRefs(library));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(library, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = libraryList->RemoveListener(this);
+    // Unregister ourselves as we're done
+    nsCOMPtr<nsIObserverService> observerService =
+        do_GetService(OBSERVER_SERVICE_CONTRACT_ID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = observerService->RemoveObserver(this, LIBRARY_MANAGER_BEFORE_SHUTDOWN);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Problem removing shutdown notification observer");
+  }
+  return NS_OK;
+}

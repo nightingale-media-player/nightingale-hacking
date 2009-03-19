@@ -86,7 +86,8 @@ SmartMediaListsUpdater.prototype = {
   // db table names
   _dirtyPropertiesTable  : "smartplupd_dirty_properties",
   _dirtyListsTable       : "smartplupd_dirty_lists",
-
+  _monitor               : null,
+  
   // --------------------------------------------------------------------------
   // setup init & shutdown
   // --------------------------------------------------------------------------
@@ -191,8 +192,10 @@ SmartMediaListsUpdater.prototype = {
     // Clean up
     this._timer = null;
     this._secondaryTimer = null;
-    this._monitor.shutdown();
-    this._monitor = null;
+    if (this._monitor) {
+      this._monitor.shutdown();
+      this._monitor = null;
+    }
   },
 
   // --------------------------------------------------------------------------

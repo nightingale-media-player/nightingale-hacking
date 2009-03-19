@@ -40,6 +40,7 @@
 #include <nsAutoLock.h>
 
 #include <nsIClassInfo.h>
+#include <nsIObserver.h>
 #include <nsIArray.h>
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
@@ -143,6 +144,7 @@ class sbLocalDatabaseSmartMediaList : public sbILocalDatabaseMediaItem,
                                       public sbILocalDatabaseSmartMediaList,
                                       public sbIMediaListListener,
                                       public nsSupportsWeakReference,
+                                      public nsIObserver,
                                       public nsIClassInfo
 {
 typedef nsRefPtr<sbLocalDatabaseSmartMediaListCondition> sbRefPtrCondition;
@@ -151,6 +153,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASESMARTMEDIALIST
   NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_NSIOBSERVER
   NS_DECL_NSICLASSINFO
 
   NS_FORWARD_SAFE_SBIMEDIAITEM(mItem)
