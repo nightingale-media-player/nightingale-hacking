@@ -49,8 +49,8 @@
 #include "sbAlbumArtService.h"
 
 // Songbird imports.
+#include <sbILibrary.h>
 #include <sbILibraryManager.h>
-#include <sbIMediaList.h>
 #include <sbIAlbumArtFetcherSet.h>
 #include <sbIPropertyArray.h>
 #include <sbStandardProperties.h>
@@ -60,12 +60,16 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIBinaryOutputStream.h>
 #include <nsICategoryManager.h>
+#include <nsIConverterInputStream.h>
+#include <nsIConverterOutputStream.h>
 #include <nsICryptoHash.h>
 #include <nsIFileURL.h>
 #include <nsIMutableArray.h>
 #include <nsIProperties.h>
 #include <nsIProxyObjectManager.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIUnicharLineInputStream.h>
+#include <nsIUnicharOutputStream.h>
 #include <nsServiceManagerUtils.h>
 #include <prprf.h>
 
@@ -82,6 +86,17 @@
 // Time before clearing the temporary cache (in ms)
 #define TEMPORARY_CACHE_CLEAR_TIME  60000
 
+// Interval for checking if any files need to be removed from the album art
+// cache folder (in ms).
+#define ALBUM_ART_CACHE_CLEANUP_INTERVAL 10000
+
+// The maximum number of URLs to check at one time
+#define MAX_ARTWORK_URL_CHECK 50
+
+// Name of log file to save urls we need to check
+#define SB_ARTWORK_LOG_FILE "artwork.log"
+#define SB_ARTWORK_LOG_CHARSET "UTF-8"
+#define SB_ARTWORK_LOG_RWBUFFER 1024
 //
 // sbAlbumArtServiceValidExtensionList  List of valid album art file extensions.
 //
@@ -117,10 +132,10 @@ static PRLogModuleInfo* gAlbumArtServiceLog = nsnull;
 //
 //------------------------------------------------------------------------------
 
-NS_IMPL_ISUPPORTS2(sbAlbumArtService,
+NS_IMPL_ISUPPORTS3(sbAlbumArtService,
                    sbIAlbumArtService,
+                   sbIMediaListListener,
                    nsIObserver)
-
 
 //------------------------------------------------------------------------------
 //
@@ -392,7 +407,152 @@ sbAlbumArtService::RetrieveTemporaryData(const nsAString& aKey,
   return succeeded ? NS_OK : NS_ERROR_NOT_AVAILABLE;
 }
 
+//------------------------------------------------------------------------------
+//
+// sbIMediaListListener implementation.
+//
+//------------------------------------------------------------------------------
 
+NS_IMETHODIMP
+sbAlbumArtService::OnItemAdded(sbIMediaList *aMediaList,
+                               sbIMediaItem *aMediaItem,
+                               PRUint32 aIndex,
+                               PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnItemAdded", this));
+
+  // We don't need to worry about items being added
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+ 
+NS_IMETHODIMP
+sbAlbumArtService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                       sbIMediaItem *aMediaItem,
+                                       PRUint32 aIndex,
+                                       PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnBeforeItemRemoved", this));
+ 
+  // We want after not before
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                      sbIMediaItem *aMediaItem,
+                                      PRUint32 aIndex,
+                                      PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnAfterItemRemoved", this));
+  // We want to be notified of each item removed
+  *_retval = PR_FALSE;
+
+  nsresult rv;
+  nsString oldImageUrl;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                               oldImageUrl);
+  if (NS_FAILED(rv) || oldImageUrl.IsEmpty()) {
+    return NS_OK;
+  }
+
+  return StoreAlbumArtUrlForCheck(oldImageUrl);
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnItemUpdated(sbIMediaList *aMediaList,
+                                 sbIMediaItem *aMediaItem,
+                                 sbIPropertyArray *aProperties,
+                                 PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(_retval);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnItemUpdated", this));
+  *_retval = PR_FALSE;
+
+  nsresult rv;
+  nsString oldImageUrl;
+
+  rv = aProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                                     oldImageUrl);
+  if (NS_FAILED(rv) || oldImageUrl.IsEmpty()) {
+    return NS_OK;
+  }
+
+  return StoreAlbumArtUrlForCheck(oldImageUrl);
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnItemMoved(sbIMediaList *aMediaList,
+                               PRUint32 aFromIndex,
+                               PRUint32 aToIndex,
+                               PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(_retval);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnItemMoved", this));
+  
+  // Not interested in moved items
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnListCleared(sbIMediaList *aMediaList,
+                                 PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(_retval);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnListCleared", this));
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtService::OnBatchBegin(sbIMediaList *aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  TRACE(("sbAlbumArtService[0x%8.x] - OnBatchBegin", this));
+
+  // Increment our counter so we know we are in a batch operation
+  mBatchHelper.Begin();
+  return NS_OK;
+}
+ 
+NS_IMETHODIMP
+sbAlbumArtService::OnBatchEnd(sbIMediaList *aMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  
+  // Decrement our counter so we can tell when we are no longer in a batch
+  // operation
+  mBatchHelper.End();
+  TRACE(("sbAlbumArtService[0x%8.x] - OnBatchEnd %d",
+         this,
+         mBatchHelper.Depth()));
+
+  if (!mBatchHelper.IsActive()) {
+    // Start the timer so we can clean the cache
+    nsresult rv;
+    rv = mAlbumArtCleanTimer->Init(this, 
+                                   ALBUM_ART_CACHE_CLEANUP_INTERVAL,
+                                   nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -432,20 +592,29 @@ sbAlbumArtService::Observe(nsISupports*     aSubject,
     mPrefsAvailable = PR_TRUE;
     rv = Initialize();
     NS_ENSURE_SUCCESS(rv, rv);
+  } else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC)) {
+    // Initialize Library specific stuff.
+    rv = InitializeLibraryWatch();
+    NS_ENSURE_SUCCESS(rv, rv);
   } else if (!strcmp(aTopic, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC)) {
     // Finalize the album art service.
     Finalize();
   } else if (!strcmp(NS_TIMER_CALLBACK_TOPIC, aTopic)) {
-    // Time to flush the cache
-
-    if (mCacheFlushTimer) {
-      nsresult rv = mCacheFlushTimer->Cancel();
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a cache timer");
+    nsCOMPtr<nsITimer> aObserveTimer = do_QueryInterface(aSubject, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (aObserveTimer == mCacheFlushTimer) {
+      // Time to flush the cache
+      rv = mCacheFlushTimer->Cancel();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel the cache timer");
       mCacheFlushTimer = nsnull;
+  
+      // Expire cached data
+      mTemporaryCache.Clear();
+    } else if (aObserveTimer == mAlbumArtCleanTimer) {
+      // Time to check artwork cache files
+      rv = ScanAlbumArtUrls();
+      NS_ENSURE_SUCCESS(rv, rv);
     }
-
-    // Expire cached data
-    mTemporaryCache.Clear();
   }
 
   return NS_OK;
@@ -510,6 +679,10 @@ sbAlbumArtService::Initialize()
                                        PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = mObserverService->AddObserver(this,
+                                       SB_LIBRARY_MANAGER_READY_TOPIC,
+                                       PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mObserverService->AddObserver(this,
                                        SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                                        PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -546,6 +719,10 @@ sbAlbumArtService::Initialize()
   PRBool succeeded = mTemporaryCache.Init(TEMPORARY_CACHE_SIZE);
   NS_ENSURE_TRUE(succeeded, NS_ERROR_FAILURE);
 
+  // Create our timer to clean up album artwork from the cache folder
+  mAlbumArtCleanTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Mark component as initialized.
   mInitialized = PR_TRUE;
 
@@ -560,6 +737,41 @@ sbAlbumArtService::Initialize()
 //------------------------------------------------------------------------------
 
 /**
+ * Start watching the main library for any changes to items artwork or items
+ * being removed. Also load any previous cache files that need to be checked.
+ */
+
+nsresult
+sbAlbumArtService::InitializeLibraryWatch()
+{
+  nsresult rv;
+
+  // Get the main library so we can listen to changes
+  nsCOMPtr<sbILibrary> mainLibrary;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mMainLibraryList = do_QueryInterface(mainLibrary, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mMainLibraryList->AddListener(this,
+                                    PR_FALSE,  /* not weak */
+                                    sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
+                                      sbIMediaList::LISTENER_FLAGS_BATCHEND  |
+                                      sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                                      sbIMediaList::LISTENER_FLAGS_ITEMUPDATED,
+                                    nsnull     /* filter */);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Now that the library is available lets check for any images we could
+  // not remove last time due to shutdown.
+  rv = LoadSetFromFile();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+/**
  * Finalize the album art service.
  */
 
@@ -567,6 +779,8 @@ void
 sbAlbumArtService::Finalize()
 {
   TRACE(("sbAlbumArtService[0x%8.x] - Finalize", this));
+  nsresult rv;
+
   // Clear the fetcher info.
   mFetcherInfoList.Clear();
   
@@ -578,15 +792,32 @@ sbAlbumArtService::Finalize()
     mObserverService->RemoveObserver(this,
                                      "profile-after-change");
     mObserverService->RemoveObserver(this,
+                                     SB_LIBRARY_MANAGER_READY_TOPIC);
+    mObserverService->RemoveObserver(this,
                                      SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     mObserverService = nsnull;
   }
 
   if (mCacheFlushTimer) {
-    nsresult rv = mCacheFlushTimer->Cancel();
+    rv = mCacheFlushTimer->Cancel();
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a cache timer");
     mCacheFlushTimer = nsnull;
   }
+
+  if (mAlbumArtCleanTimer) {
+    rv = mAlbumArtCleanTimer->Cancel();
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel artwork clean up timer");
+    mAlbumArtCleanTimer = nsnull;
+  }
+
+  if (mMainLibraryList) {
+    rv = mMainLibraryList->RemoveListener(this);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove main library listener");
+  }
+  
+  // Dump anything left in our URLSet to file so we can load it later
+  rv = SaveSetToFile();
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to save list of cache files to check");
 }
 
 
@@ -835,5 +1066,280 @@ sbAlbumArtService::GetAlbumArtFileExtension(const nsACString& aMimeType,
   // Return results.
   aFileExtension.AssignLiteral(fileExtension.get());
 
+  return NS_OK;
+}
+
+
+/**
+ * Stores the aCacheURL if unique and if no batch is running starts the
+ * Album Art Clean Timer.
+ */
+
+nsresult
+sbAlbumArtService::StoreAlbumArtUrlForCheck(nsString& aCacheURL)
+{
+  TRACE(("sbAlbumArtService[0x%8.x] - StoreAlbumArtUrlForCheck", this));
+  nsresult rv;
+  
+  // Add the URL to the set, result.second indicates if the URL was inserted
+  std::pair<sbStringSetIter, bool> result = mAlbumArtUrlSet.insert(aCacheURL);
+  if (result.second && !mBatchHelper.IsActive()) {
+    rv = mAlbumArtCleanTimer->Init(this, 
+                                   ALBUM_ART_CACHE_CLEANUP_INTERVAL,
+                                   nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+/**
+ * Stores the set of album art cache URLs to check to a file in case we are
+ * unable to check them before the application quits.
+ */
+
+nsresult
+sbAlbumArtService::SaveSetToFile()
+{
+  nsresult rv;
+  
+  nsCOMPtr<nsIFile> cacheFile;
+  rv = mAlbumArtCacheDir->Clone(getter_AddRefs(cacheFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cacheFile->Append(NS_LITERAL_STRING(SB_ARTWORK_LOG_FILE));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mAlbumArtUrlSet.empty()) {
+    // erase the file
+    rv = cacheFile->Remove(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // Dump the set to the file
+    nsCOMPtr<nsIFileOutputStream> fileOutputStream =
+      do_CreateInstance("@mozilla.org/network/file-output-stream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = fileOutputStream->Init(cacheFile,
+                                NS_FILE_OUTPUT_STREAM_OPEN_DEFAULT,
+                                NS_FILE_OUTPUT_STREAM_OPEN_DEFAULT,
+                                0);
+    NS_ENSURE_SUCCESS(rv, rv);
+    sbAutoFileOutputStream autoFileOutputStream(fileOutputStream);
+    
+    nsCOMPtr<nsIConverterOutputStream> converterStream =
+      do_CreateInstance("@mozilla.org/intl/converter-output-stream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = converterStream->Init(fileOutputStream,
+                               SB_ARTWORK_LOG_CHARSET,
+                               SB_ARTWORK_LOG_RWBUFFER,
+                               nsIConverterInputStream::DEFAULT_REPLACEMENT_CHARACTER);
+    
+    nsCOMPtr<nsIUnicharOutputStream> outputStream =
+      do_QueryInterface(converterStream, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sbStringSetIter currUrl;
+    for (currUrl = mAlbumArtUrlSet.begin();
+         currUrl != mAlbumArtUrlSet.end();
+         currUrl++) {
+      nsAutoString writeUrl(*currUrl);
+      writeUrl.Append(NS_LITERAL_STRING("\n"));
+      PRUint32 writeCount;
+      PRBool writeOk;
+      rv = outputStream->WriteString(writeUrl, &writeOk);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    
+    // Flush and close the outputStream
+    outputStream->Flush();
+    outputStream->Close();
+  }
+ 
+  return NS_OK;
+}
+
+/**
+ * Retrieves any album art cache URLs from a file to be checked that were not
+ * checked in a previous run due to a shutdown.
+ */
+
+nsresult
+sbAlbumArtService::LoadSetFromFile()
+{
+  nsresult rv;
+  
+  nsCOMPtr<nsIFile> cacheFile;
+  rv = mAlbumArtCacheDir->Clone(getter_AddRefs(cacheFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cacheFile->Append(NS_LITERAL_STRING(SB_ARTWORK_LOG_FILE));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if the file even exists
+  PRBool exists;
+  rv = cacheFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!exists) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIFileInputStream> fileInputStream =
+    do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = fileInputStream->Init(cacheFile,
+                              PR_RDONLY | nsIFileInputStream::CLOSE_ON_EOF,
+                              PR_IRUSR,
+                              0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIConverterInputStream> converterStream =
+    do_CreateInstance("@mozilla.org/intl/converter-input-stream;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = converterStream->Init(fileInputStream,
+                             SB_ARTWORK_LOG_CHARSET,
+                             SB_ARTWORK_LOG_RWBUFFER,
+                             nsIConverterInputStream::DEFAULT_REPLACEMENT_CHARACTER);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIUnicharLineInputStream> lineInputStream =
+    do_QueryInterface(converterStream, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the file into the set
+  PRBool hasMore = PR_TRUE;
+  while(hasMore) {
+    nsString inLine;
+    rv = lineInputStream->ReadLine(inLine, &hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mAlbumArtUrlSet.insert(inLine);
+  }
+
+  if (!mAlbumArtUrlSet.empty()) {
+    // Start the timer (if we have urls left)
+    rv = mAlbumArtCleanTimer->Init(this, 
+                                   ALBUM_ART_CACHE_CLEANUP_INTERVAL,
+                                   nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/**
+ * Scan the urls of the images that have been collected from items removed or
+ * updated and if they no longer exist in the library then delete the files.
+ *
+ */
+
+nsresult
+sbAlbumArtService::ScanAlbumArtUrls()
+{
+  TRACE(("sbAlbumArtService[0x%8.x] - ScanAlbumArtUrls", this));
+  
+  if (mAlbumArtUrlSet.empty()) {
+    // Nothing to scan
+    return NS_OK;
+  }
+
+  nsresult rv;
+
+  PRUint32 urlCounter = 0;
+  while (!mAlbumArtUrlSet.empty() && urlCounter < MAX_ARTWORK_URL_CHECK) {
+    sbStringSetIter begin = mAlbumArtUrlSet.begin();
+    rv = CheckAlbumArtCache(*begin);
+    if (NS_FAILED(rv)) {
+      // Warn that we failed to check/remove the file...
+    }
+    mAlbumArtUrlSet.erase(begin);
+    urlCounter++;
+  }
+
+  // Save what is left in the set if anything
+  rv = SaveSetToFile();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (!mAlbumArtUrlSet.empty()) {
+    // Start the timer (if we have urls left)
+    rv = mAlbumArtCleanTimer->Init(this, 
+                                   ALBUM_ART_CACHE_CLEANUP_INTERVAL,
+                                   nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+
+/**
+ * Searches the library for items that have the same primaryImageURL as
+ * aCacheURL and if no items exists removes that image from the cache.
+ *
+ * \param aCacheURL - String URL of artwork cache file to check if other items
+ *                    reference it.
+ */
+
+nsresult
+sbAlbumArtService::CheckAlbumArtCache(const nsAString& aCacheURL)
+{
+  TRACE(("sbAlbumArtService[0x%8.x] - CheckAlbumArtCache", this));
+  NS_ENSURE_STATE(mMainLibraryList);
+  nsresult rv;
+
+  nsCOMPtr<nsIArray> items;
+  rv = mMainLibraryList->GetItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                                            aCacheURL,
+                                            getter_AddRefs(items));
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    rv = RemoveAlbumArtCache(aCacheURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (NS_SUCCEEDED(rv)) {
+    PRUint32 itemCount;
+    rv = items->GetLength(&itemCount);
+    if (NS_SUCCEEDED(rv) && items == 0) {
+      rv = RemoveAlbumArtCache(aCacheURL);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+
+/**
+ * Removes a file from the artwork cache folder as indicated by aCacheURL.
+ *
+ * \param aCacheURL - String URL of artwork cache to remove from the artwork
+ *                    cache folder.
+ */
+
+nsresult
+sbAlbumArtService::RemoveAlbumArtCache(const nsAString& aCacheURL)
+{
+  TRACE(("sbAlbumArtService[0x%8.x] - RemoveAlbumArtCache", this));
+  // Turn the url into a nsIFile and remove
+  nsresult rv;
+  nsCOMPtr<nsIURI> pURI;
+  
+  // Convert to nsIURI
+  rv = mIOService->NewURI(NS_ConvertUTF16toUTF8(aCacheURL),
+                          nsnull,
+                          nsnull,
+                          getter_AddRefs(pURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // With a file we can just grab the nsIFile and remove
+  // Note: resource:// URIs are converted to file:// if possible by the QI.
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(pURI, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<nsIFile> file;
+    rv = fileURL->GetFile(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isInCache = PR_FALSE;
+    rv = mAlbumArtCacheDir->Contains(file, PR_FALSE, &isInCache);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_SUCCEEDED(rv) && isInCache) {
+      rv = file->Remove(PR_FALSE); // Should be a single file so no recursive.
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
   return NS_OK;
 }
