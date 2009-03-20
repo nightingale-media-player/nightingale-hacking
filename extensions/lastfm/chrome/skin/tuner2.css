@@ -78,6 +78,9 @@ div#header-top {
 	background-image: url(chrome://sb-lastfm/skin/bg-header-lastfm.png);
 	background-repeat: repeat-x;
 }
+div#header-top[paintblack="true"] {
+	background-image: url(chrome://sb-lastfm/skin/bg-header-lastfm-black.png);	
+}
 
 div#header-top img#lastfm-logo {
 	vertical-align: middle;
@@ -129,6 +132,13 @@ div#header-top div#user-profile img#lastfm-user-image {
 	cursor: pointer;
 }
 div#header-top div#user-profile span#lastfm-user-name {
+	color: white;
+	font-weight: bold;
+	vertical-align: middle;
+	cursor: pointer;
+}
+div#header-top div#user-profile span#lastfm-header-style {
+	display: none;
 	color: white;
 	font-weight: bold;
 	vertical-align: middle;

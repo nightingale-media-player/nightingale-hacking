@@ -74,6 +74,15 @@ var LastfmTuner = {
 				LastfmTuner.dataSBHighestRatedArtists);
 		LastfmTuner.populateBox("nav-genres-sb",
 				LastfmTuner.dataSBGenres);
+		
+		// Set up the header display
+		LastfmTuner.setHeaderDisplay();
+		$("#lastfm-header-style").click(function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			LastfmTuner.toggleHeaderDisplay();
+		});
+
 	},
 
 	fini: function() {
@@ -710,6 +719,27 @@ var LastfmTuner = {
 			LastfmTuner.jsonSvc.encode(LastfmTuner.recentStations));
 	},
 
+	setHeaderDisplay: function() {
+		var paintBlack = Application.prefs.getValue("extensions.lastfm.header",
+																								false);
+		var hTopEl = document.getElementById("header-top");
+		$("#lastfm-header-style").empty();
+		if (paintBlack) {
+			// Set the background to Black
+			$("#lastfm-header-style").append("Simply Red");
+			hTopEl.setAttribute("paintblack", "true");
+		} else {
+			$("#lastfm-header-style").append("Paint it Black");
+			hTopEl.setAttribute("paintblack", "false");
+		}
+	},
+	
+	toggleHeaderDisplay: function() {
+		var paintBlack = Application.prefs.getValue("extensions.lastfm.header",
+																								false);
+		Application.prefs.setValue("extensions.lastfm.header", !paintBlack);
+		this.setHeaderDisplay();
+	},
 
 	observe: function(subject, topic, data) {
 		if (subject instanceof Components.interfaces.nsIPrefBranch) {
