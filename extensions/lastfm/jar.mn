@@ -100,6 +100,8 @@ lastfm.jar:
   skin/error.png                  (chrome/skin/error.png)
   skin/button-ban.png             (chrome/skin/button-ban.png)
   skin/button-love.png            (chrome/skin/button-love.png)
+  skin/button-tag.png             (chrome/skin/button-tag.png)
+  skin/button-delete-tag.png      (chrome/skin/button-delete-tag.png)
   skin/icon_radio_small.png       (chrome/skin/icon_radio_small.png)
   skin/bg-faceplate-buttons.png   (chrome/skin/bg-faceplate-buttons.png)
   skin/default-avatar.png         (chrome/skin/default-avatar.png)

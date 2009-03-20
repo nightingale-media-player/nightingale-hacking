@@ -72,3 +72,67 @@
 #lastfmFaceplate[loveban=ban] #lastfmFaceplateBan:hover {
   -moz-image-region: rect(16px, 32px, 32px, 16px);
 }
+
+#lastfmFaceplateTag {
+  list-style-image: url('button-tag.png');
+  -moz-image-region: rect(0px, 16px, 16px, 0px);
+  width: 16px;
+  height: 16px;
+}
+#lastfmFaceplateTag:hover {
+  -moz-image-region: rect(16px, 16px, 32px, 0px);
+}
+#lastfmFaceplateTag:active {
+}
+
+/* TAG PANEL */
+panel#lastfmTagPanel {
+	-moz-border-radius: 5px;
+	opacity: 0.8;
+}
+
+#lastfmTagPanel #background {
+	-moz-border-radius: 5px;
+	background-color: black;
+	opacity: 1.0;
+	width: 100%;
+}
+#lastfmTagPanel #tag-vbox {
+	padding: 4px;
+	opacity: 1.0;
+}
+
+#lastfmTagPanel label {
+	color: #eee;
+}
+
+#lastfmTagPanel #new-tags {
+	width: 20em;
+}
+
+#lastfmTagPanel #existing-tags {
+	margin-left: 4px;
+}
+
+#lastfmTagPanel image.tag-remove {
+	list-style-image: url('button-delete-tag.png');
+	-moz-image-region: rect(12px, 12px, 24px, 0px);
+	width: 12px;
+	height: 12px;
+	opacity: 1.0;
+	cursor: pointer;
+}
+#lastfmTagPanel image.tag-remove:hover {
+	-moz-image-region: rect(24px, 12px, 36px, 0px);
+	cursor: pointer;
+}
+#lastfmTagPanel image.tag-remove-disabled {
+	list-style-image: none;
+	width: 12px;
+	height: 12px;
+	opacity: 1.0;
+}
+
+#lastfmTagPanel label.tag-link {
+	cursor: pointer;
+}

@@ -1174,6 +1174,33 @@ function sbLastFm_scrobble(aEntries) {
   }
 }
 
+sbLastFm.prototype.addTags =
+function sbLastFm_addTags(aMediaItem, tagString, success, failure) {
+  this.apiCall('track.addTags', {
+		track: aMediaItem.getProperty(SBProperties.trackName),
+		artist: aMediaItem.getProperty(SBProperties.artistName),
+		tags: tagString,
+	  }, function() {
+	  	dump("Successfully added tags: " + tagString + "\n");
+		success();
+	  }, function() {
+	    dump("Failed to add tags: " + tagString + "\n");
+		failure();
+	});
+}
+
+sbLastFm.prototype.removeTag =
+function sbLastFm_removeTag(aMediaItem, aTagName) {
+  this.apiCall('track.removeTag', {
+		track: aMediaItem.getProperty(SBProperties.trackName),
+		artist: aMediaItem.getProperty(SBProperties.artistName),
+		tag: aTagName,
+	  }, function() {
+	  	dump("Successfully removed tag: " + aTagName + "\n");
+	  }, function() {
+	    dump("Failed to remove tag: " + aTagName + "\n");
+	});
+}
 
 // love and ban
 sbLastFm.prototype.loveBan =
@@ -1316,6 +1343,34 @@ function sbLastFm_onTrackChange(aItem) {
       aItem.getProperty(SBProperties.excludeFromHistory) != '1') {
     this.nowPlaying(new PlayedTrack(aItem));
   }
+
+  var tags = new Object();
+  this.tags = tags;
+  // update the metaverse's tags for this track
+  this.apiCall('track.getInfo', {
+	track: aItem.getProperty(SBProperties.trackName),
+	artist: aItem.getProperty(SBProperties.artistName)
+  }, function response(success, xml) {
+    // update the tagPanel with the tags for this track
+    var tagElements = xml.getElementsByTagName('tag');
+	for (var i=0; i<tagElements.length; i++) {
+		var tag = tagElements[i].childNodes[1].textContent;
+		tags[tag] = false;
+	}
+  });
+  
+  // update the personal tags for this track
+  this.apiCall('track.getTags', {
+	track: aItem.getProperty(SBProperties.trackName),
+	artist: aItem.getProperty(SBProperties.artistName)
+  }, function response(success, xml) {
+    // update the tagPanel with the tags for this track
+    var tagElements = xml.getElementsByTagName('tag');
+	for (var i=0; i<tagElements.length; i++) {
+		var tag = tagElements[i].childNodes[1].textContent;
+		tags[tag] = true;
+	}
+  });
 }
 
 sbLastFm.prototype.onStop = function sbLastFm_onStop() {

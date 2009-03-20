@@ -127,6 +127,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </vbox>
       </deck>
     </panel>
+
+	
+	<panel id="lastfmTagPanel" position="before_end">
+		<stack>
+			<vbox id="background" flex="1" />
+			<vbox id="tag-vbox">
+				<label value="&lastfm.tags.enter_new;" />
+				<textbox id="new-tags" type="search" searchbutton="true"
+					onkeypress="if (event.keyCode == 13) LastFm.addTags(event)"
+					/>
+				<vbox id="existing-tags" />
+			</vbox>
+		</stack>
+	</panel>
+
   </popupset>
 
   <statusbar id="status-bar">
