@@ -83,6 +83,5 @@ private:
   nsresult GetManagedDirectoryRoot(nsString &aRootDir);
 
   nsCOMPtr<nsIIOService> mIOService;
-  nsCOMPtr<snIStringBundle> mStringBundle;
 };
 
