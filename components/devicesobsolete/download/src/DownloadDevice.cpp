@@ -115,7 +115,7 @@
 #define SB_STRING_BUNDLE_CHROME_URL                                            \
                                 "chrome://songbird/locale/songbird.properties"
 #define SB_DOWNLOAD_COL_SPEC \
-  "http://songbirdnest.com/data/1.0#ordinal 42 http://songbirdnest.com/data/1.0#trackName 137 http://songbirdnest.com/data/1.0#artistName 115 http://songbirdnest.com/data/1.0#albumName 115 http://songbirdnest.com/data/1.0#originPageImage 43 http://songbirdnest.com/data/1.0#downloadDetails 266 http://songbirdnest.com/data/1.0#downloadButton 73"
+  "http://songbirdnest.com/data/1.0#trackName 179 http://songbirdnest.com/data/1.0#artistName 115 http://songbirdnest.com/data/1.0#albumName 115 http://songbirdnest.com/data/1.0#originPageImage 43 http://songbirdnest.com/data/1.0#downloadDetails 266 http://songbirdnest.com/data/1.0#downloadButton 73"
 
 #define SB_PREF_DOWNLOAD_MEDIALIST "songbird.library.download"
 #define SB_PREF_WEB_LIBRARY     "songbird.library.web"
@@ -1847,6 +1847,10 @@ nsresult sbDownloadDevice::InitializeDownloadMediaList()
         NS_ENSURE_SUCCESS(rv, rv);
     }
 
+    /* Update the download media list. */
+    rv = UpdateDownloadMediaList();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     /* Create a download media list listener. */
     NS_NEWXPCOM(mpDeviceLibraryListener, sbDeviceBaseLibraryListener);
     NS_ENSURE_TRUE(mpDeviceLibraryListener, NS_ERROR_OUT_OF_MEMORY);
@@ -1896,7 +1900,6 @@ void sbDownloadDevice::FinalizeDownloadMediaList()
 nsresult sbDownloadDevice::CreateDownloadMediaList()
 {
     nsAutoString                downloadMediaListGUID;
-    nsAutoString                downloadColSpec;
     nsresult                    rv;
 
     /* Create the download media list. */
@@ -1912,29 +1915,6 @@ nsresult sbDownloadDevice::CreateDownloadMediaList()
     rv = mpMainLibrary->SetProperty
              (NS_LITERAL_STRING(SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID),
               downloadMediaListGUID);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /* Set the download device media list name. */
-    rv = mpDownloadMediaList->SetName(NS_LITERAL_STRING(SB_DOWNLOAD_LIST_NAME));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /* Set the download device media list default column spec. */
-    downloadColSpec.AppendLiteral(SB_DOWNLOAD_COL_SPEC);
-    rv = mpDownloadMediaList->SetProperty
-                            (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
-                             downloadColSpec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    /* Set the download device media list custom type property. */
-    rv = mpDownloadMediaList->SetProperty
-                                (NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
-                                 NS_LITERAL_STRING(SB_DOWNLOAD_CUSTOM_TYPE));
-
-    /* Set the sortable property to false. */
-    rv = mpDownloadMediaList->SetProperty
-                                (NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE),
-                                 NS_LITERAL_STRING("0"));
-
     NS_ENSURE_SUCCESS(rv, rv);
 
     return (NS_OK);
@@ -1982,6 +1962,44 @@ void sbDownloadDevice::GetDownloadMediaList()
     mpDownloadMediaList = do_QueryInterface(pMediaItem, &rv);
     if (NS_FAILED(rv))
         mpDownloadMediaList = nsnull;
+}
+
+
+/*
+ * UpdateDownloadMediaList
+ *
+ *   This function updates the download device media list.
+ */
+
+nsresult sbDownloadDevice::UpdateDownloadMediaList()
+{
+    nsresult rv;
+
+    /* Set the download device media list name. */
+    rv = mpDownloadMediaList->SetName(NS_LITERAL_STRING(SB_DOWNLOAD_LIST_NAME));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Set the download device media list default column spec. */
+    nsAutoString downloadColSpec;
+    downloadColSpec.AppendLiteral(SB_DOWNLOAD_COL_SPEC);
+    rv = mpDownloadMediaList->SetProperty
+                            (NS_LITERAL_STRING(SB_PROPERTY_DEFAULTCOLUMNSPEC),
+                             downloadColSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Set the download device media list custom type property. */
+    rv = mpDownloadMediaList->SetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                                 NS_LITERAL_STRING(SB_DOWNLOAD_CUSTOM_TYPE));
+
+    /* Set the sortable property to false. */
+    rv = mpDownloadMediaList->SetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_ISSORTABLE),
+                                 NS_LITERAL_STRING("0"));
+
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
 }
 
 

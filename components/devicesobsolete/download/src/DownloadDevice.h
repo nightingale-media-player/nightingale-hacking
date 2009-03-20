@@ -51,7 +51,7 @@
  */
 
 #define SONGBIRD_DownloadDevice_CONTRACTID                                     \
-                            "@songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1"
+                    "@songbirdnest.com/Songbird/OldDeviceImpl/DownloadDevice;1"
 #define SONGBIRD_DownloadDevice_CLASSNAME "Songbird Download Device"
 #define SONGBIRD_DownloadDevice_CID                                            \
 {                                                                              \
@@ -200,6 +200,8 @@ class sbDownloadDevice : public nsIObserver,
     nsresult CreateDownloadMediaList();
 
     void GetDownloadMediaList();
+
+    nsresult UpdateDownloadMediaList();
 
 
     /*
