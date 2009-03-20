@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "Tracks Apreciats">
 <!ENTITY lastfm.radio.neighbourhood "Veïns">
 <!ENTITY lastfm.radio.recommended "Recomanacions">
+<!ENTITY lastfm.radio.user_stations "Estacions de l&apos;Usuari">
 <!ENTITY lastfm.radio.recent_stations "Estacions Recents">
 <!ENTITY lastfm.radio.from.lastfm "De Last.fm">
 <!ENTITY lastfm.radio.recommended_artists "Artistes Recomanats">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "Els Teus Artistes Més Escoltats">
 <!ENTITY lastfm.radio.highest_rated_artists "Els Teus Artistes Més Valorats">
 <!ENTITY lastfm.radio.popular_genres "Els Teus Gèneres Populars">
+<!ENTITY lastfm.radio.play "Play">

@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "Milované skladby">
 <!ENTITY lastfm.radio.neighbourhood "Sousedství">
 <!ENTITY lastfm.radio.recommended "Doporučení">
+<!ENTITY lastfm.radio.user_stations "Uživatelské stanice">
 <!ENTITY lastfm.radio.recent_stations "Nedávné stanice">
 <!ENTITY lastfm.radio.from.lastfm "Z Last.fm">
 <!ENTITY lastfm.radio.recommended_artists "Doporučení umělci">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "Vaši nejčastěji přehrávaní umělci">
 <!ENTITY lastfm.radio.highest_rated_artists "Vaši nejlépe hodnocení umělci">
 <!ENTITY lastfm.radio.popular_genres "Vaše oblíbené žánry">
+<!ENTITY lastfm.radio.play "Přehrát">

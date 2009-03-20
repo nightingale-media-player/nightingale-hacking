@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "آهنگ‌های مورد علاقه">
 <!ENTITY lastfm.radio.neighbourhood "همسایه‌ها">
 <!ENTITY lastfm.radio.recommended "توصیه‌ نامه‌ها">
+<!ENTITY lastfm.radio.user_stations "ایستگاه‌های کاربر">
 <!ENTITY lastfm.radio.recent_stations "ایستگاه‌های اخیر">
 <!ENTITY lastfm.radio.from.lastfm "last.fm از">
 <!ENTITY lastfm.radio.recommended_artists "هنرمندان توصیه شده">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "هنرمندانی که بیشتر گوش داده‌اید">
 <!ENTITY lastfm.radio.highest_rated_artists "هنرمندانی که به آن‌ها بیشترین امتیاز را داده‌اید">
 <!ENTITY lastfm.radio.popular_genres "سبک‌های محبوب شما">
+<!ENTITY lastfm.radio.play "پخش">

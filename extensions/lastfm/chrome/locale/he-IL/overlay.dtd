@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "קטעי שמע אהודים">
 <!ENTITY lastfm.radio.neighbourhood "שכנים">
 <!ENTITY lastfm.radio.recommended "המלצות">
+<!ENTITY lastfm.radio.user_stations "תחנות המשתמש">
 <!ENTITY lastfm.radio.recent_stations "תחנות אחרונות">
 <!ENTITY lastfm.radio.from.lastfm "מLast.fm">
 <!ENTITY lastfm.radio.recommended_artists "אמנים מומלצים">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "האמנים המושמעים ביותר אצלך">
 <!ENTITY lastfm.radio.highest_rated_artists "האמנים המדורגים ביותר אצלך">
 <!ENTITY lastfm.radio.popular_genres "הז&apos;אנרים הפופלאריים ביותר אצלך">
+<!ENTITY lastfm.radio.play "נגן">

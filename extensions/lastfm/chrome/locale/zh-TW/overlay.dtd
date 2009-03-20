@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "喜愛曲目">
 <!ENTITY lastfm.radio.neighbourhood "鄰居">
 <!ENTITY lastfm.radio.recommended "推薦">
+<!ENTITY lastfm.radio.user_stations "使用者電台">
 <!ENTITY lastfm.radio.recent_stations "最近收聽的電台">
 <!ENTITY lastfm.radio.from.lastfm "來自 Last.fm">
 <!ENTITY lastfm.radio.recommended_artists "推薦的演出者">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "你的最常播放演出者">
 <!ENTITY lastfm.radio.highest_rated_artists "你的最高評價演出者">
 <!ENTITY lastfm.radio.popular_genres "你的熱門曲風">
+<!ENTITY lastfm.radio.play "播放">

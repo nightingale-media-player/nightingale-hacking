@@ -8,3 +8,27 @@
 <!ENTITY lastfm.profile.caption "Perfil">
 <!ENTITY lastfm.profile.scrobble "Scrobble minhas faixas">
 <!ENTITY lastfm.profile.logout "Deslogar">
+<!ENTITY lastfm.radio "Radio Last.fm">
+<!ENTITY lastfm.radio.login.help "Para escutar a radio Last.fm, você precisa estar logado no Last.fm. Se não tiver uma conta, é necessário registrar-se.">
+<!ENTITY lastfm.radio.start "Não sabe por onde iniciar? Tente uma pesquisa ou verifique o que os outros estão escutando.">
+<!ENTITY lastfm.radio.start.top.artists "Top Artistas no Last.fm">
+<!ENTITY lastfm.radio.start.top.tags "Top Tags no Last.fm">
+<!ENTITY lastfm.radio.register "Registrar">
+<!ENTITY lastfm.radio.search "Pesquisar">
+<!ENTITY lastfm.radio.library "Biblioteca">
+<!ENTITY lastfm.radio.loved "Faixas Amadas">
+<!ENTITY lastfm.radio.neighbourhood "Vizinhança">
+<!ENTITY lastfm.radio.recommended "Recomendações">
+<!ENTITY lastfm.radio.user_stations "Estação de Usuários">
+<!ENTITY lastfm.radio.recent_stations "Estações Recentes">
+<!ENTITY lastfm.radio.from.lastfm "Do Last.fm">
+<!ENTITY lastfm.radio.recommended_artists "Artistas recomendados">
+<!ENTITY lastfm.radio.top_artists "Seus Top Artistas">
+<!ENTITY lastfm.radio.top_tags "Suas Top Tags">
+<!ENTITY lastfm.radio.friends "Seus amigos">
+<!ENTITY lastfm.radio.neighbours "Vizinhos">
+<!ENTITY lastfm.radio.from.songbird "Do Songbird">
+<!ENTITY lastfm.radio.most_played_artists "Seus Artistas mais tocados">
+<!ENTITY lastfm.radio.highest_rated_artists "Seus Artistas mais conceituados">
+<!ENTITY lastfm.radio.popular_genres "Seus  Gêneros Populares">
+<!ENTITY lastfm.radio.play "Tocar">

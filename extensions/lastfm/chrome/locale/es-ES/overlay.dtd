@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "Pistas favoritas">
 <!ENTITY lastfm.radio.neighbourhood "Vecindario">
 <!ENTITY lastfm.radio.recommended "Recomendaciones">
+<!ENTITY lastfm.radio.user_stations "Emisoras de los usuarios">
 <!ENTITY lastfm.radio.recent_stations "Estaciones recientes">
 <!ENTITY lastfm.radio.from.lastfm "De Last.fm">
 <!ENTITY lastfm.radio.recommended_artists "Artistas recomendados">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "Tus artistas más reproducidos">
 <!ENTITY lastfm.radio.highest_rated_artists "Tus artistas mejor valorados">
 <!ENTITY lastfm.radio.popular_genres "Tus géneros más populares">
+<!ENTITY lastfm.radio.play "Reproducir">
