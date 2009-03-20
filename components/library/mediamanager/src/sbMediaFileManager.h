@@ -67,11 +67,22 @@ protected:
                       const nsString &aPath,
                       PRBool *aRetVal);
   
-  nsresult GetExtension(const nsString &aPath, nsString &aRetVal);
+  nsresult Delete(sbIMediaItem *aMediaItem, 
+                  nsIURI *aItemUri, 
+                  PRBool *aRetVal);
   
-  nsresult Delete(sbIMediaItem *aMediaItem, PRBool *aRetVal);
+  nsresult CheckDirectoryForDeletion(nsIURI *aItemUri);
+  
+  nsresult NormalizeDir(nsString &aDir);
   
 private:
+  
+  nsresult CheckDirectoryForDeletion_Recursive(nsString &aRoot, 
+                                               nsIFile *aDir);
+  
+  nsresult GetManagedDirectoryRoot(nsString &aRootDir);
+
   nsCOMPtr<nsIIOService> mIOService;
+  nsCOMPtr<snIStringBundle> mStringBundle;
 };
 
