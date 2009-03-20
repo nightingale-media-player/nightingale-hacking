@@ -55,4 +55,7 @@ private:
   sbStringTransformImpl* mImpl;
 };
 
+#define SB_STRINGTRANSFORM_CLASSNAME "sbStringTransform"
+
+
 #endif /* __SB_STRINGTRANSFORM_H__ */

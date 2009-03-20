@@ -50,6 +50,9 @@ sbStringTransform::Init()
   nsresult rv = mImpl->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = sbArticlesData::EnsureLoaded();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

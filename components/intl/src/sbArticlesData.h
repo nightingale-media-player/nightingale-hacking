@@ -44,8 +44,9 @@ public:
                                  const nsAString & aLanguage,
                                  nsAString &_retval);
 
-protected:
   static nsresult EnsureLoaded();
+
+protected:
   ~sbArticlesData();
 
   nsresult LoadArticles();
