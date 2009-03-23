@@ -47,8 +47,9 @@ function findRadioNode(node, radioString) {
 	return null;
 }
 
-var metricsObserver = {
+var mmListener = {
 	time : null,
+	playingTrack : null,
 	onMediacoreEvent : function(ev) {
 		var item = ev.data;
 		if (gMM.sequencer.view == null)
@@ -61,34 +62,46 @@ var metricsObserver = {
 						gMM.sequencer.viewPosition);
 				
 				// check to see if we have an active timer
-				if (metricsObserver.time) {
+				if (mmListener.time) {
 					var now = Date.now()/1000;
-					var diff = now - metricsObserver.time;
+					var diff = now - mmListener.time;
 					gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
 				}
 				
 				// if our new stream we're playing isn't a shoutcast
 				// stream then cancel the timer
 				if (!currentItem.getProperty(SC_id)) {
-					metricsObserver.time = null;
+					mmListener.time = null;
+					mmListener.setPlayerState(false);
+					mmListener.playingTrack = null;
 					return;
-				}
+				} 
+				// Ensure the playing buttons and SHOUTcast faceplate
+				// icon are in the right state
+				mmListener.playingTrack = item;
+				mmListener.setPlayerState(true);
 
 				// if we're here then we're a shoutcast stream, and we should
 				// start a timer
-				metricsObserver.time = Date.now()/1000;
+				mmListener.time = Date.now()/1000;
+				break;
+			case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
+				mmListener.setPlayerState(false);
 				break;
 			case Ci.sbIMediacoreEvent.STREAM_END:
 			case Ci.sbIMediacoreEvent.STREAM_STOP:
+				mmListener.setPlayerState(false);
+				mmListener.playingTrack = null;
+
 				// check to see if we have an active timer
-				if (!metricsObserver.time) {
-					metricsObserver.time = null;
+				if (!mmListener.time) {
+					mmListener.time = null;
 					return;
 				}
 				var now = Date.now()/1000;
-				var diff = now - metricsObserver.time;
+				var diff = now - mmListener.time;
 				gMetrics.metricsAdd("shoutcast", "stream", "time", diff);
-				metricsObserver.time = null;
+				mmListener.time = null;
 				break;
 			case Ci.sbIMediacoreEvent.METADATA_CHANGE:
 				var currentItem = gMM.sequencer.currentItem;
@@ -124,6 +137,49 @@ var metricsObserver = {
 				break;
 			default:
 				break;
+		}
+	},
+
+	disableTags : ['sb-player-back-button', 'sb-player-shuffle-button', 
+      'sb-player-repeat-button', 'sb-player-forward-button'],
+
+	setPlayerState: function(scStream) {
+		var stationIcon = document.getElementById("shoutcast-station-icon");
+		var stopButton = document.getElementById("play_stop_button");
+		var playButton = document.getElementById("play_pause_button");
+
+		if (scStream) {
+			stationIcon.style.visibility = "visible";
+			for (var i in mmListener.disableTags) {
+				var elements = document.getElementsByTagName(
+									mmListener.disableTags[i]);
+				for (var j=0; j<elements.length; j++) {
+					elements[j].setAttribute('disabled', 'true');
+				}
+			}
+			playButton.setAttribute("hidden", "true");
+			stopButton.removeAttribute("hidden");
+		} else {
+			stationIcon.style.visibility = "collapse";
+			stopButton.setAttribute("hidden", "true");
+			playButton.removeAttribute("hidden");
+			
+			// if we're not playign something then reset the button state
+			// OR if we're not playing Last.fm
+			if ((gMM.status.state == Ci.sbIMediacoreStatus.STATUS_STOPPED) ||
+				(gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING &&
+				 	Application.prefs.getValue('songbird.lastfm.radio.station',
+						'') == ''))
+			{
+				dump("SHOUTCAST: resetting buttons\n");
+				for (var i in mmListener.disableTags) {
+					var elements = document.getElementsByTagName(
+										mmListener.disableTags[i]);
+					for (var j=0; j<elements.length; j++) {
+						elements[j].removeAttribute('disabled');
+					}
+				}
+			}
 		}
 	}
 }
@@ -206,7 +262,7 @@ ShoutcastRadio.Controller = {
 		SPS.save();
 
 		// Attach our listener for media core events
-		gMM.addListener(metricsObserver);
+		gMM.addListener(mmListener);
 
 		// Attach our listener to the ShowCurrentTrack event issued by the
 		// faceplate
@@ -313,7 +369,7 @@ ShoutcastRadio.Controller = {
 
 	onUnLoad: function() {
 		this._initialized = false;
-		gMM.removeListener(metricsObserver);
+		gMM.removeListener(mmListener);
 		//ShoutcastRadio.Controller.titleDr.unbind();
 	}
 }
