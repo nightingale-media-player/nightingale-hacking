@@ -19,6 +19,7 @@
 <!ENTITY lastfm.radio.loved "Favoriete liedjes">
 <!ENTITY lastfm.radio.neighbourhood "Mijn buurt">
 <!ENTITY lastfm.radio.recommended "Aanbevelingen">
+<!ENTITY lastfm.radio.user_stations "Gebruikersstations">
 <!ENTITY lastfm.radio.recent_stations "Recent beluisterde stations">
 <!ENTITY lastfm.radio.from.lastfm "Van Last.fm">
 <!ENTITY lastfm.radio.recommended_artists "Aanbevolen artiesten">
@@ -30,3 +31,4 @@
 <!ENTITY lastfm.radio.most_played_artists "Uw meest afgespeelde artiesten">
 <!ENTITY lastfm.radio.highest_rated_artists "Uw hoogst gewaardeerde artiesten">
 <!ENTITY lastfm.radio.popular_genres "Uw populaire genres">
+<!ENTITY lastfm.radio.play "Afspelen">
