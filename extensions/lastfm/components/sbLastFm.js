@@ -1399,6 +1399,10 @@ sbLastFm.prototype.showStation = function sbLastFm_showStation(e) {
 		if (stationPage.match(/\/similarartists$/)) {
 			stationPage = stationPage.replace(/\/similarartists$/, "");
 		}
+		if (stationPage.match(/last\.fm\/globaltags\//)) {
+			stationPage = stationPage.replace(/last\.fm\/globaltags\//,
+					"last.fm/tags/");
+		}
 		var mainWin =
 			Components.classes['@mozilla.org/appshell/window-mediator;1']
 			.getService(Components.interfaces.nsIWindowMediator)
