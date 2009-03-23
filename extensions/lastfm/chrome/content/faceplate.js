@@ -68,6 +68,11 @@ function sbLastFmFaceplate_stationChanged() {
         elements[j].setAttribute('disabled', 'true');
       }
     }
+	// If this has the disabled attribute (e.g. coming from SHOUTcast), then
+	// remove it
+	document.getElementsByTagName("sb-player-forward-button")[0]
+		.removeAttribute('disabled');
+
 	// show the radio icon from the faceplate
     stationIcon.style.visibility = "visible";
 	
