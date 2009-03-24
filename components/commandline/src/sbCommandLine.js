@@ -111,6 +111,15 @@ sbCommandLineHandler.prototype = {
 
   handle : function (cmdLine) {
 
+    if (/@ 0x/(__LOCATION__)) {
+      // this is a debug build, dump out the args
+      var args = [];
+      for (var i = 0; i < cmdLine.length; ++i) {
+        args.push(cmdLine.getArgument(i));
+      }
+      dump("arguments: " + uneval(args) + "\n");
+    }
+
     var urilist = [];
     var oldlength = this.itemUriSpecs.length;
 
