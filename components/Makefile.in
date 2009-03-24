@@ -51,6 +51,7 @@ SUBDIRS = addonmetadata \
           mediacore \
           mediacore/metadata/manager/public \
           mediaimport \
+          mediamanager \
           mediapages \
           metrics \
           moz \
@@ -85,6 +86,7 @@ SUBDIRDEPS8 = devices : library property mediacore
 SUBDIRDEPS9 = testharness : moz
 SUBDIRDEPS10 = property : intl
 SUBDIRDEPS11 = albumart : library moz property mediacore/metadata/manager/public
+SUBDIRDEPS12 = mediamanager : library watchfolder/public
 
 ifdef SB_ENABLE_STATIC
 SUBDIRS += static
