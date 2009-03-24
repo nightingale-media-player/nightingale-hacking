@@ -1315,6 +1315,14 @@ void sbGStreamerMediacore::AbortAndRestartPlayback()
 
   g_object_set (G_OBJECT (mPipeline), "uri", mCurrentUri.get(), NULL);
 
+  // Apply volume/mute to our new pipeline
+  if (mMute) {
+    g_object_set (G_OBJECT (mPipeline), "volume", 0.0, NULL);
+  }
+  else {
+    g_object_set (G_OBJECT (mPipeline), "volume", mVolume, NULL);
+  }
+
   rv = Play();
   NS_ENSURE_SUCCESS (rv, /* void */);
 }
