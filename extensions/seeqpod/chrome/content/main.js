@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2008, Pioneers of the Inevitable, Inc.
+Copyright (c) 2008-2009, Pioneers of the Inevitable, Inc.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -25,8 +25,6 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-const SEEQPOD_PROFILE_VERSION = 2;
 
 if (typeof Seeqpod == 'undefined') {
   var Seeqpod = {};
@@ -56,19 +54,6 @@ Seeqpod.Controller = {
     this._initialized = true;
     this._strings = document.getElementById("seeqpod-strings");
 
-    // Perform extra actions the first time the extension is run, or on upgrade
-    if (Application.prefs.get("extensions.seeqpod.firstrun").value ||
-        Application.prefs.get("extensions.seeqpod.profileversion").value <
-            SEEQPOD_PROFILE_VERSION) {
-      Application.prefs.setValue("extensions.seeqpod.firstrun", false);
-      Application.prefs.setValue("extensions.seeqpod.profileversion",
-                                 SEEQPOD_PROFILE_VERSION);
-      this._firstRunSetup();
-    }
-
-    // This allows to clean up in case we get uninstalled
-    Seeqpod.uninstallObserver.register();
-
     var metrics = Components.classes['@songbirdnest.com/Songbird/Metrics;1']
       .getService(Ci.sbIMetrics);
 
@@ -95,101 +80,7 @@ Seeqpod.Controller = {
    */
   onUnLoad: function() {
     this._initialized = false;
-  },
-
-  /**
-   * Perform extra setup the first time the extension is run
-   */
-  _firstRunSetup : function() {
-    // add and remove service pane nodes
-    ServicePane.configure();
-
-    // update search engine
-    var search = Components.classes['@mozilla.org/browser/search-service;1']
-      .getService(Components.interfaces.nsIBrowserSearchService);
-
-    // remove the old engine if it's there
-    var searchEngine = search.getEngineByName('SeeqPod');
-    if (searchEngine) {
-      search.removeEngine(searchEngine);
-    }
-    var searchEngine = search.getEngineByName('Seeqpod');
-    if (searchEngine) {
-      search.removeEngine(searchEngine);
-    }
-
-    // add the new engine
-    search.addEngine('chrome://seeqpod/content/seeqpod-search.xml',
-        Components.interfaces.nsISearchEngine.DATA_XML,
-        'http://www.seeqpod.com/favicon.ico', false);
-    function setUpSearchEngine() {
-      // make it the default after half a second
-      var searchEngine = search.getEngineByName("SeeqPod");
-      if (!searchEngine) {
-        setTimeout(setUpSearchEngine, 500);
-        return;
-      }
-      searchEngine.hidden = false;
-      search.moveEngine(searchEngine, 1);
-      gSearchHandler._previousSearchEngine = searchEngine;
-    }
-    setUpSearchEngine();
   }
-}
-
-/**
- * Observer shutdown events to detect if we are being uninstalled and perform clean up
- */
-Seeqpod.uninstallObserver = {
-    _uninstall : false,
-
-    observe : function(subject, topic, data) {
-        if (topic == "em-action-requested") {
-            // Extension has been flagged to be uninstalled
-            subject.QueryInterface(Components.interfaces.nsIUpdateItem);
-            if (subject.id == "{ab4bf7ab-0100-b748-a82c-a0a467773cca}") {
-                if (data == "item-uninstalled" || data == "item-disabled") {
-                    this._uninstall = true;
-                } else if (data == "item-cancel-action") {
-                    this._uninstall = false;
-                }
-            }
-        } else if (topic == "quit-application-granted") {
-            // We're shutting down, so check to see if we were flagged for uninstall - if we were, then cleanup here
-            if (this._uninstall) {
-                // clean up the service pane
-                ServicePane.removeAllNodes();
-
-                // remove the search engine
-                try {
-                  var search =
-                    Components.classes['@mozilla.org/browser/search-service;1']
-                    .getService(Components.interfaces.nsIBrowserSearchService)
-                  var searchEngine = search.getEngineByName("SeeqPod");
-                   search.removeEngine(searchEngine);
-                } catch (e) { }
-
-                // clear the first-run pref
-                try {
-                  Application.prefs.get("extensions.seeqpod.firstrun").reset();
-                } catch(e) { }
-
-            }
-            this.unregister();
-        }
-    },
-
-    register : function() {
-        var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-        observerService.addObserver(this, "em-action-requested", false);
-        observerService.addObserver(this, "quit-application-granted", false);
-    },
-
-    unregister : function() {
-        var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-        observerService.removeObserver(this, "em-action-requested");
-        observerService.removeObserver(this, "quit-application-granted");
-    }
 }
 
 window.addEventListener("load", function(e) { Seeqpod.Controller.onLoad(e); }, false);
