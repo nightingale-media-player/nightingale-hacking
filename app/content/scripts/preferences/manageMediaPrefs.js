@@ -148,14 +148,14 @@ var manageMediaPrefsPane = {
           case "manage_media_pref_library_folder":
             let prefElem = aEvent.target;
             let fileField = document.getElementById("manage_media_library_file");
-            fileField.file = prefElem.value;
-            // we want to use the full path
-            fileField.label = prefElem.value.path;
+            fileField.file = prefElem.value || manageMediaPrefsPane._libraryFolder;
+            // we want to use the full path, unless that ends up being empty
+            fileField.label = fileField.file.path;
             // update the one for formatting as well
             let label = document.getElementById("manage_media_format_dir_label");
             let formatter = document.getElementById("manage_media_format_dir_formatter");
             label.value = SBFormattedString("prefs.media_management.file_label",
-                                            [prefElem.value.leafName,
+                                            [fileField.file.leafName,
                                              formatter.defaultSeparator]);
             break;
         }
@@ -175,16 +175,20 @@ var manageMediaPrefsPane = {
   
   get _libraryFolder() {
     try {
-      return document.getElementById("manage_media_pref_library_folder").value;
+      var prefValue = document.getElementById("manage_media_pref_library_folder")
+                              .value;
+      if (prefValue) {
+        return prefValue;
+      }
     } catch (ex) {
-      // invalid? boo. use default.
-      var file = Cc["@mozilla.org/file/directory_service;1"]
-                   .getService(Ci.nsIProperties)
-                   .get("Music", Ci.nsIFile);
-      // XXX Mook: this needs more thought, since it could mean we clobber files!
-      //document.getElementById("manage_media_pref_library_folder").value = file;
-      return file;
+      /* invalid file? boo. use default. */
     }
+    var file = Cc["@mozilla.org/file/directory_service;1"]
+                 .getService(Ci.nsIProperties)
+                 .get("Music", Ci.nsIFile);
+    // XXX Mook: this needs more thought, since it could mean we clobber files!
+    //document.getElementById("manage_media_pref_library_folder").value = file;
+    return file;
   },
   
   set _libraryFolder(aValue) {

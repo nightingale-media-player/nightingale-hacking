@@ -14,7 +14,8 @@
 <!ENTITY prefWindow.manageMedia.format.box.label      "Structure folders as:">
 <!ENTITY prefWindow.manageMedia.format.dir.suffix     "Song files">
 <!ENTITY prefWindow.manageMedia.format.file.label     "Rename files as:">
-<!ENTITY prefWindow.manageMedia.format.file.suffix    ".mp3">
+<!ENTITY prefWindow.manageMedia.format.file.suffix    ".ext">
+<!ENTITY prefWindow.manageMedia.format.file.suffix.tooltip "The file type of your media file, such as .mp3 or .ogg">
 
 <!ENTITY prefWindow.manageMedia.enable.enable.label   "Turn Managed Mode On">
 <!ENTITY prefWindow.manageMedia.enable.disable.label  "Turn Managed Mode Off">

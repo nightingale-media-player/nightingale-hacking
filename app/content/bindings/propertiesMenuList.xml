@@ -138,13 +138,15 @@
           }
           return Number.POSITIVE_INFINITY;
         </getter>
-        <setter><![CDATA[
-          val = parseInt(val);
-          if (val < 1) {
-            throw new Components.Exception(Components.results.NS_ERROR_INVALID_ARG);
-          }
-          this.setAttribute("maxProperties", val);
-        ]]></setter>
+        <setter>
+          <![CDATA[
+            val = parseInt(val);
+            if (val < 1) {
+              throw new Components.Exception(Components.results.NS_ERROR_INVALID_ARG);
+            }
+            this.setAttribute("maxProperties", val);
+          ]]>
+        </setter>
       </property>
       <property name="defaultSeparator">
         <!-- the default separator to use; if not specified via an attribute of
@@ -340,11 +342,18 @@
                 let vbox = event.target.parentNode;
                 self.removeChild(vbox);
                 self._children.splice(self._children.indexOf(vbox), 1);
-                let menulist = event.target.linkedMenuList;
-                self.removeChild(menulist);
-                self._children.splice(self._children.indexOf(menulist), 1);
+                let menuContainer = event.target.linkedMenuList;
+                if (menuContainer.parentNode != self) {
+                  menuContainer = menuContainer.parentNode;
+                }
+                self.removeChild(menuContainer);
+                self._children.splice(self._children.indexOf(menuContainer), 1);
                 --self._controlsCount;
                 self._updateAddLink();
+                // trigger a pref change, so it can get persisted as appropriate
+                let changeEvent = document.createEvent("Events");
+                changeEvent.initEvent("change", true, true);
+                self.dispatchEvent(changeEvent);
               };
               vbox.appendChild(separator);
               vbox.appendChild(link);
@@ -363,20 +372,22 @@
             for (let idx = 0; idx < values.length; idx += 2) {
               // make a property dropdown
               let val = values[idx];
-              let elem = document.createElement("menulist");
-              elem.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              let menulist = document.createElement("menulist");
+              menulist.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              let menuContainer = document.createElement("vbox");
+              menuContainer.appendChild(menulist);
               if (idx > 0) {
                 // separator (not generated for first property)
-                let vbox = makeSeparator(elem, values[idx - 1]);
+                let vbox = makeSeparator(menulist, values[idx - 1]);
                 this.insertBefore(vbox, existingChild);
                 this._children.push(vbox);
               }
-              this.insertBefore(elem, existingChild);
-              this._children.push(elem);
-              elem.selectedIndex = 0;
-              for (let i = 0; i < elem.itemCount; ++i) {
-                if (elem.getItemAtIndex(i).value == val) {
-                  elem.selectedIndex = i;
+              this.insertBefore(menuContainer, existingChild);
+              this._children.push(menuContainer);
+              menulist.selectedIndex = 0;
+              for (let i = 0; i < menulist.itemCount; ++i) {
+                if (menulist.getItemAtIndex(i).value == val) {
+                  menulist.selectedIndex = i;
                   break;
                 }
               }
@@ -396,16 +407,18 @@
                 return;
               }
               // add a new menulist
-              let elem = document.createElement("menulist");
-              elem.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              let menulist = document.createElement("menulist");
+              menulist.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              let menuContainer = document.createElement("vbox");
+              menuContainer.appendChild(menulist);
               ++self._controlsCount;
-              let vbox = makeSeparator(elem,
+              let vbox = makeSeparator(menulist,
                                        self.defaultSeparator);
               self.insertBefore(vbox, event.target.parentNode);
               self._children.push(vbox);
-              self.insertBefore(elem, link.parentNode);
-              self._children.push(elem);
-              elem.selectedIndex = 0;
+              self.insertBefore(menuContainer, link.parentNode);
+              self._children.push(menuContainer);
+              menulist.selectedIndex = 0;
               self._updateAddLink();
               
               // update this.value
