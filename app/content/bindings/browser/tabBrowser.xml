@@ -576,6 +576,10 @@
             // Update the URL bar.
             var loc = this.mCurrentBrowser.currentURI;
 
+            // Update the busy state before notifying progress listeners.
+            var prevIsBusy = this.mIsBusy;
+            this.mIsBusy = this.mCurrentTab.hasAttribute("busy");
+
             var webProgress = this.mCurrentBrowser.webProgress;
             var securityUI = this.mCurrentBrowser.securityUI;
 
@@ -604,11 +608,10 @@
             // Update the window title.
             this.updateTitlebar();
 
-            // If the new tab is busy, and our current state is not busy, then
+            // If the new tab is busy, and our previous state was not busy, then
             // we need to fire a start to all progress listeners.
             const nsIWebProgressListener = Components.interfaces.nsIWebProgressListener;
-            if (this.mCurrentTab.hasAttribute("busy") && !this.mIsBusy) {
-              this.mIsBusy = true;
+            if (this.mCurrentTab.hasAttribute("busy") && !prevIsBusy) {
               webProgress = this.mCurrentBrowser.webProgress;
               for (i = 0; i < this.mProgressListeners.length; i++) {
                 p = this.mProgressListeners[i];
@@ -617,10 +620,9 @@
               }
             }
 
-            // If the new tab is not busy, and our current state is busy, then
+            // If the new tab is not busy, and our previous state was busy, then
             // we need to fire a stop to all progress listeners.
-            if (!this.mCurrentTab.hasAttribute("busy") && this.mIsBusy) {
-              this.mIsBusy = false;
+            if (!this.mCurrentTab.hasAttribute("busy") && prevIsBusy) {
               webProgress = this.mCurrentBrowser.webProgress;
               for (i = 0; i < this.mProgressListeners.length; i++) {
                 p = this.mProgressListeners[i];
