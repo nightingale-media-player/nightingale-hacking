@@ -273,14 +273,32 @@ LastFm.onLoad = function() {
     this._faceplateTag.addEventListener('click', function(event) {
           LastFm.metrics.metricsInc('lastfm', 'faceplate', 'tag');
 		  LastFm._tagPanel.openPopup(event.target);
-		  var tagBox = document.getElementById("existing-tags");
-		  while (tagBox.firstChild)
-		  	tagBox.removeChild(tagBox.firstChild);
-		  for (var tag in LastFm._service.tags) {
-			var removable = LastFm._service.tags[tag];
-			var hbox = LastFm.showOneMoreTag(tagBox, tag, removable);
-			tagBox.appendChild(hbox);
+		  var globalTags = document.getElementById("global-tags");
+		  var userTags = document.getElementById("user-tags");
+		  // clear out the tag boxes
+		  while (userTags.firstChild)
+		  	userTags.removeChild(userTags.firstChild);
+		  while (globalTags.firstChild)
+		  	globalTags.removeChild(globalTags.firstChild);
+		  
+		  // grab the tags from the service
+		  for (var tag in LastFm._service.userTags) {
+			var removable = LastFm._service.userTags[tag];
+			var hbox = LastFm.showOneMoreTag(tag, removable);
+			userTags.appendChild(hbox);
 		  }
+		  for (var tag in LastFm._service.globalTags) {
+			var removable = LastFm._service.globalTags[tag];
+			var hbox = LastFm.showOneMoreTag(tag, removable);
+			globalTags.appendChild(hbox);
+		  }
+		  
+		  if (!userTags.firstChild)
+			  document.getElementById("label-user-tags")
+				  .style.visibility = "collapse";
+		  if (!globalTags.firstChild)
+			  document.getElementById("label-global-tags")
+				  .style.visibility = "collapse";
         }, false);
     this._faceplate.appendChild(this._faceplateTag);
   }
@@ -303,12 +321,11 @@ LastFm.onLoad = function() {
 
 }
 
-LastFm.showOneMoreTag = function(tagBox, tagName, removable) {
+LastFm.showOneMoreTag = function(tagName, removable) {
 	var hbox = document.createElement('hbox');
 	hbox.setAttribute("align", "center");
 	var delTag = document.createElement('image');
 	delTag.setAttribute("mousethrough", "never");
-	delTag.setAttribute('class', 'tag-remove');
 	delTag.setAttribute('id', tagName);
 	hbox.appendChild(delTag);
 	if (removable) {
@@ -316,12 +333,20 @@ LastFm.showOneMoreTag = function(tagBox, tagName, removable) {
 			var tagName = event.target.id;
 			dump("removing tag: " + tagName + "\n");
 			LastFm._service.removeTag(gMM.sequencer.currentItem, tagName);
-			tagBox.removeChild(hbox);
-			delete LastFm._service.tags[tag];
+			this.parentNode.parentNode.removeChild(this.parentNode);
+			if (!this.parentNode.parentNode.firstChild)
+				document.getElementById("label-user-tags")
+					  .style.visibility = "collapse";
 		}, false);
+		delTag.setAttribute('class', 'tag-remove');
 	} else {
-		delTag.setAttribute('class', 'tag-remove-disabled');
-	}
+		delTag.addEventListener('click', function(event) {
+			var tagName = event.target.id;
+			dump("adding tag: " + tagName + "\n");
+			LastFm.addThisTag(gMM.sequencer.currentItem, tagName);
+		}, false);
+		delTag.setAttribute('class', 'tag-add');
+}
 	var label = document.createElement('label');
 	label.setAttribute('value', tagName);
 	label.setAttribute('class', 'tag-link');
@@ -339,24 +364,36 @@ LastFm.showOneMoreTag = function(tagBox, tagName, removable) {
 }
 
 LastFm.addTags = function(event) {
-  // call the API to add the tags
-  var textbox = event.target;
-  var tagString = textbox.value;
-  this._service.addTags(gMM.sequencer.currentItem, tagString,
-	  function() {
-		  // add them to the tag panel
-		  var tagBox = document.getElementById("existing-tags");
-		  var tags = tagString.split(",");
-		  for (var i in tags) {
-		      var tag = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
-			  var hbox = LastFm.showOneMoreTag(tagBox, tag, true);
-			  tagBox.appendChild(hbox);
-			  LastFm._service.tags[tag] = true;
-		  }
-		  textbox.value = "";
-	  }, function() {
+	// call the API to add the tags
+	var textbox = event.target;
+	var tagString = textbox.value;
+	LastFm.addThisTag(gMM.sequencer.currentItem, tagString, function() {
+		textbox.value = "";
+	}, function() {
+	});
+}
+
+LastFm.addThisTag = function(mediaItem, tagString, success, failure) {
+	this._service.addTags(mediaItem, tagString, function() {
+		// add them to the tag panel
+		var tagBox = document.getElementById("user-tags");
+		var tags = tagString.split(",");
+		for (var i in tags) {
+			var tag = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
+			var hbox = LastFm.showOneMoreTag(tag, true);
+			tagBox.appendChild(hbox);
+			LastFm._service.userTags[tag] = true;
+		}
+		if (tagBox.firstChild)
+		    document.getElementById("label-user-tags")
+				  .style.visibility = "visible";
+		if (typeof(success) == "function")
+			success();
+	}, function() {
 		alert(LastFm._strings.getString('lastfm.tags.add_fail'));
-	  });
+		if (typeof(failure) == "function")
+			failure();
+	});
 }
 
 LastFm.onUnload = function() {

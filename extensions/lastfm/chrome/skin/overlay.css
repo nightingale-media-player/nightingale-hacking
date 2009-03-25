@@ -120,17 +120,23 @@ panel#lastfmTagPanel {
 	width: 12px;
 	height: 12px;
 	opacity: 1.0;
-	cursor: pointer;
+	cursor: pointer !important;
 }
 #lastfmTagPanel image.tag-remove:hover {
 	-moz-image-region: rect(24px, 12px, 36px, 0px);
 	cursor: pointer;
 }
-#lastfmTagPanel image.tag-remove-disabled {
-	list-style-image: none;
+#lastfmTagPanel image.tag-add {
+	list-style-image: url('button-add-tag.png');
+	-moz-image-region: rect(12px, 12px, 24px, 0px);
 	width: 12px;
 	height: 12px;
 	opacity: 1.0;
+	cursor: pointer !important;
+}
+#lastfmTagPanel image.tag-add:hover {
+	-moz-image-region: rect(24px, 12px, 36px, 0px);
+	cursor: pointer;
 }
 
 #lastfmTagPanel label.tag-link {

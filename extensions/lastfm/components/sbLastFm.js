@@ -450,7 +450,7 @@ function sbLastFm() {
   if (mainWin && mainWin.window) {
 	var self = this;
     mainWin.window.addEventListener("ShowCurrentTrack", function(e) {
-			self.showStation(e) }, true);
+			self.showStation(e).call(self) }, true);
   }
 		
   LastFmUninstallObserver.register();
@@ -523,7 +523,10 @@ function sbLastFm_login() {
 
     // authenticate against the Last.fm radio API.  if we logged in
 	// successfully, then go login to the website too
-    self.radioLogin(function() { self.webLogin(); }, function() { });
+    self.radioLogin(function() { 
+		self.getLovedTracks();
+		self.webLogin();
+	}, function() { });
 
   }, function failure(aAuthFailed) {
     self.loggedIn = false;
@@ -758,6 +761,27 @@ function sbLastFm_getPairs(url, success, failure) {
   xhr.open('GET', url, true);
   xhr.send(null);
   return xhr;
+}
+
+// get the list of tracks the user has loved
+sbLastFm.prototype.getLovedTracks =
+function sbLastFm_getLovedTracks() {
+	var self = this;
+	this.apiCall('user.getLovedTracks', {
+		user: self.username
+	}, function response(success, xml, xmlText) {
+		xmlText = xmlText.replace(
+					/<\?xml version="1.0" encoding="[uU][tT][fF]-8"\?>/, "");
+		var x = new XML(xmlText);
+
+		self.lovedTracks = new Object();
+		for each (var track in x..track) {
+			var trackName = track.name.toString().toLowerCase();
+			var artistName = track.artist.name.toString().toLowerCase();
+			self.lovedTracks[trackName + "@@" + artistName] = true;
+			dump("adding loved track:" + trackName + "\n");
+		}
+	});
 }
 
 // log in to the last.fm website so that if we get directed over to web links
@@ -1033,11 +1057,11 @@ function sbLastFm_apiCall(method, params, responseCallback) {
   // see: http://www.last.fm/api/rest
   // note: this isn't really REST.
 
-  function callback(success, xml) {
+  function callback(success, xml, xmlText) {
     if (typeof(responseCallback) == 'function') {
-      responseCallback(success, xml);
+      responseCallback(success, xml, xmlText);
     } else {
-      responseCallback.responseReceived(success, xml);
+      responseCallback.responseReceived(success, xml, xmlText);
     }
   }
 
@@ -1079,25 +1103,25 @@ function sbLastFm_apiCall(method, params, responseCallback) {
   POST(API_URL, post_params, function (xhr) {
     if (!xhr.responseXML) {
       // we expect all API responses to have XML
-      callback(false, null);
+      callback(false, null, null);
       return;
     }
     if (xhr.responseXML.documentElement.tagName != 'lfm' ||
         !xhr.responseXML.documentElement.hasAttribute('status')) {
       // we expect the root (document) element to be <lfm status="...">
-      callback(false, xhr.responseXML);
+      callback(false, xhr.responseXML, xhr.responseText);
       return;
     }
     if (xhr.responseXML.documentElement.getAttribute('status' == 'failed')) {
       // the server reported an error
       self.log('Last.fm Web Services Error: '+xhr.responseText);
-      callback(false, xhr.responseXML);
+      callback(false, xhr.responseXML, xhr.responseText);
       return;
     }
     // all should be good!
-    callback(true, xhr.responseXML);
+    callback(true, xhr.responseXML, xhr.responseText);
   }, function (xhr) {
-    callback(false, null);
+    callback(false, null, null);
   });
 }
 
@@ -1191,6 +1215,10 @@ function sbLastFm_addTags(aMediaItem, tagString, success, failure) {
 
 sbLastFm.prototype.removeTag =
 function sbLastFm_removeTag(aMediaItem, aTagName) {
+  delete this.userTags[aTagName];
+  for (var tag in this.userTags) {
+	  dump("remaining tag: " + tag + "\n");
+  }
   this.apiCall('track.removeTag', {
 		track: aMediaItem.getProperty(SBProperties.trackName),
 		artist: aMediaItem.getProperty(SBProperties.artistName),
@@ -1207,6 +1235,18 @@ sbLastFm.prototype.loveBan =
 function sbLastFm_loveBan(aMediaItem, aLove) {
   this.loveTrack = aMediaItem;
   this.love = aLove;
+  if (aMediaItem) {
+	  var trackName = aMediaItem.getProperty(SBProperties.trackName).toLowerCase();
+	  var artistName = aMediaItem.getProperty(SBProperties.artistName).toLowerCase();
+
+	  if (aLove) {
+		  dump("loving this track\n");
+		  this.lovedTracks[trackName + "@@" + artistName] = true;
+	  } else {
+		  dump("deleting this track\n");
+		  delete this.lovedTracks[trackName + "@@" + artistName];
+	  }
+  }
   this.listeners.each(function(l) { l.onLoveBan(); });
 }
 
@@ -1281,7 +1321,7 @@ function sbLastFm_onMediacoreEvent(aEvent) {
       break;
     case Ci.sbIMediacoreEvent.VIEW_CHANGE:
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
-	  //dump("setting radio_playing: " + this.radio_playing + "\n");
+	  dump("setting radio_playing: " + this.radio_playing + "\n");
       break;
     case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
       if (this.radio_playing) {
@@ -1337,6 +1377,14 @@ function sbLastFm_onTrackChange(aItem) {
 
   // reset the love/ban state
   this.loveBan(null, false);
+  var trackName = aItem.getProperty(SBProperties.trackName).toLowerCase();
+  var artistName = aItem.getProperty(SBProperties.artistName).toLowerCase();
+  if (this.lovedTracks[trackName + "@@" + artistName]) {
+	  dump("This is a loved track!\n");
+	  this.loveBan(aItem, true);
+  } else {
+	  dump("Not a loved track\n");
+  }
 
   // send now playing info if appropriate
   if (this.shouldScrobble && this.loggedIn &&
@@ -1344,8 +1392,10 @@ function sbLastFm_onTrackChange(aItem) {
     this.nowPlaying(new PlayedTrack(aItem));
   }
 
-  var tags = new Object();
-  this.tags = tags;
+  this.userTags = new Object();
+  this.globalTags = new Object();
+  self = this;
+
   // update the metaverse's tags for this track
   this.apiCall('track.getInfo', {
 	track: aItem.getProperty(SBProperties.trackName),
@@ -1355,7 +1405,7 @@ function sbLastFm_onTrackChange(aItem) {
     var tagElements = xml.getElementsByTagName('tag');
 	for (var i=0; i<tagElements.length; i++) {
 		var tag = tagElements[i].childNodes[1].textContent;
-		tags[tag] = false;
+		self.globalTags[tag] = false;
 	}
   });
   
@@ -1368,7 +1418,7 @@ function sbLastFm_onTrackChange(aItem) {
     var tagElements = xml.getElementsByTagName('tag');
 	for (var i=0; i<tagElements.length; i++) {
 		var tag = tagElements[i].childNodes[1].textContent;
-		tags[tag] = true;
+		self.userTags[tag] = true;
 	}
   });
 }

@@ -137,7 +137,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				<textbox id="new-tags" type="search" searchbutton="true"
 					onkeypress="if (event.keyCode == 13) LastFm.addTags(event)"
 					/>
-				<vbox id="existing-tags" />
+				<label id="label-user-tags" value="&lastfm.tags.user;" />
+				<vbox id="user-tags" />
+				<label id="label-global-tags" value="&lastfm.tags.global;" />
+				<vbox id="global-tags" />
 			</vbox>
 		</stack>
 	</panel>
