@@ -326,6 +326,7 @@ try
       textbox.focus();
     }
     playlist.addEventListener("Play", onJumpToPlay, true);
+    playlist.addEventListener("keypress", onListKeypress, true);
     _applySearch();
     source_guid = guid;
     source_libraryguid = libraryguid;
@@ -490,6 +491,11 @@ try
     }
 
     var mediaItem = playlist.mediaListView.selection.currentMediaItem;
+    if (!mediaItem && (playlist.mediaListView.length > 0)) {
+      mediaItem = playlist.mediaListView.getItemByIndex(0);
+    }
+    if (!mediaItem)
+      return;
 
     var rowid;
     if (!play_own_view) {
@@ -518,6 +524,7 @@ try
 
     var playlist = document.getElementById("jumpto.playlist");
     playlist.removeEventListener("Play", onJumpToPlay, true);
+    playlist.removeEventListener("keypress", onListKeypress, true);
     window.arguments[0][0].__JUMPTO__ = null;
     
     playingUrl_remote.unbind();
