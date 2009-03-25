@@ -40,6 +40,12 @@ const SONGBIRD_CLH_CLASSNAME = "Songbird Command Line Handler";
 // "m" for ordinary priority see sbICommandLineHandler.idl
 const SONGBIRD_CLH_CATEGORY= "m-songbird-clh";
 
+function _debugPrint(msg) {
+  if (/@ 0x/(__LOCATION__)) {
+    dump(msg + "\n");
+  }
+}
+
 function resolveURIInternal(aCmdLine, aArgument) {
   var uri = aCmdLine.resolveURI(aArgument);
 
@@ -111,19 +117,11 @@ sbCommandLineHandler.prototype = {
 
   handle : function (cmdLine) {
 
-    if (/@ 0x/(__LOCATION__)) {
-      // this is a debug build, dump out the args
-      var args = [];
-      for (var i = 0; i < cmdLine.length; ++i) {
-        args.push(cmdLine.getArgument(i));
-      }
-      dump("arguments: " + uneval(args) + "\n");
-    }
-
     var urilist = [];
     var oldlength = this.itemUriSpecs.length;
 
     if (cmdLine.handleFlag("register-extensions", false)) {
+      _debugPrint("aborting due to handle of register-extensions");
       throw Components.results.NS_ERROR_ABORT;
     }
 
