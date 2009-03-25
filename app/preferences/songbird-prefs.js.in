@@ -472,6 +472,10 @@ pref("songbird.dbengine.cacheSize", 200);
 
 
 
-
+// library management
+pref("songbird.media_management.library.enabled", false);
+// songbird.media_management.library.format.dir has no default due to platform-
+// specific directory separator character
+pref("songbird.media_management.library.format.file", "http://songbirdnest.com/data/1.0#trackNumber,%20-%20,http://songbirdnest.com/data/1.0#trackName");
 
 

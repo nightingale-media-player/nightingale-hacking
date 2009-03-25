@@ -1,0 +1,462 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+// 
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+// 
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+// 
+// Software distributed under the License is distributed 
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
+// express or implied. See the GPL for the specific language 
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this 
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc., 
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+// 
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!DOCTYPE bindings SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!--
+    - a <menulist> where the items in the list are the user-viewable properties
+    -->
+  <binding id="propertiesMenuList"
+           extends="chrome://global/content/bindings/menulist.xml#menulist">
+
+    <implementation>
+      <constructor>
+      <![CDATA[
+      try{
+        const Cc = Components.classes;
+        const Ci = Components.interfaces;
+        var PM = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+                   .getService(Ci.sbIPropertyManager);
+
+        var alreadyAdded = {};
+        var enableAll = Application.prefs.getValue(
+                       "songbird.columnpicker.allowSecondaryProperties", false);
+        var alsoUnlocalized = Application.prefs.getValue(
+                       "songbird.columnpicker.allowUnlocalizedSecondaryProperties", 
+                       false);
+        
+        var self = this;
+        function addItems(isSecondary) {
+          var propEnumerator = PM.propertyIDs;
+          while (propEnumerator.hasMore()) {
+            var propertyID = propEnumerator.getNext();
+            if (!alreadyAdded[propertyID]) {
+              var propertyInfo = PM.getPropertyInfo(propertyID);
+              if (isSecondary ||
+                  propertyInfo.userViewable)
+              {
+                // if this is a secondary prop, and it has no localized string
+                // it probably doesn't make sense to have it there, so only show it
+                // if the user really really wants it there
+                if (isSecondary &&
+                    !alsoUnlocalized && 
+                    propertyInfo.displayName.match("^http://"))
+                {
+                  continue;
+                }
+                self.appendItem(propertyInfo.displayName, propertyID);
+                alreadyAdded[propertyInfo.id] = true;
+              }
+            }
+          }
+        }
+        
+        addItems(false);
+        if (enableAll) {
+          addItems(true);
+        }
+      } catch(e) {
+        Components.utils.reportError(e);
+        throw(e);
+      }
+      ]]>
+      </constructor>
+      
+    </implementation>
+  </binding>
+
+
+  <binding id="propertiesFormatter">
+    <content>
+      <children/>
+    </content>
+    <implementation>
+      
+      <!-- properties -->
+      <property name="readonly">
+        <!-- whether the whole element is read only -->
+        <getter>
+          return this.hasAttribute("readonly");
+        </getter>
+        <setter>
+          if (val) {
+            this.setAttribute("readonly", val);
+          } else {
+            this.removeAttribute("readonly");
+          }
+        </setter>
+      </property>
+      <property name="separatorEditable">
+        <!-- whether the separators between menulists is editable -->
+        <getter>
+          return this.hasAttribute("separatorEditable");
+        </getter>
+        <setter>
+          if (val) {
+            this.setAttribute("separatorEditable", val);
+          } else {
+            this.removeAttribute("separatorEditable");
+          }
+          this._rebuildControls();
+        </setter>
+      </property>
+      <property name="maxProperties">
+        <!-- the maximum number of properties one could have -->
+        <getter>
+          if (this.hasAttribute("maxProperties")) {
+            return Math.max(parseInt(this.getAttribute("maxProperties")), 1);
+          }
+          return Number.POSITIVE_INFINITY;
+        </getter>
+        <setter><![CDATA[
+          val = parseInt(val);
+          if (val < 1) {
+            throw new Components.Exception(Components.results.NS_ERROR_INVALID_ARG);
+          }
+          this.setAttribute("maxProperties", val);
+        ]]></setter>
+      </property>
+      <property name="defaultSeparator">
+        <!-- the default separator to use; if not specified via an attribute of
+          -  the same name, the platform-specific directory separator is used.
+          -->
+        <getter>
+          if (this.hasAttribute("defaultSeparator")) {
+            return this.getAttribute("defaultSeparator");
+          }
+          const OS = Components.classes["@mozilla.org/xre/app-info;1"]
+                               .getService(Components.interfaces.nsIXULRuntime)
+                               .OS;
+          switch (OS) {
+            case "WINNT":
+              return "\\";
+            default:
+              return "/";
+          }
+        </getter>
+      </property>
+      <property name="value">
+        <!-- the values of this formatter, as a JS string;
+          - consists of a comma-delimited string of alternating property IDs
+          - and url-escaped separator strings, e.g.
+          - "http://...#artistName,%3C,http://...#albumName"
+          - meant to be used with the prefwindow system.
+          -->
+        <getter>
+          <![CDATA[
+            var ary = [];
+            for (let node = this.firstChild; node; node = node.nextSibling) {
+              if (this._children.indexOf(node) == -1) {
+                continue;
+              }
+              if (node.localName == "menulist") {
+                ary.push(node.value);
+              } else {
+                let child = node.firstChild;
+                if (child && (child instanceof XULElement) && ("value" in child))
+                  ary.push(child.value);
+              }
+            }
+            ary.pop(); // drop the last "add" element
+            return this.serializeValues(ary);
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            if (val instanceof Array) {
+              this.setAttribute("value", this.serializeValues(val));
+            } else {
+              this.setAttribute("value", val);
+            }
+            this._rebuildControls();
+          ]]>
+        </setter>
+      </property>
+      
+      <!-- fields -->
+      <field name="_children">
+        <!-- an array of the generated children -->
+        []
+      </field>
+      <field name="_controlsCount">
+        <!-- the number of property controls (drop-downs) in use -->
+      </field>
+      <field name="_addlink">
+        <!-- the "+" link to add more things -->
+      </field>
+
+      <!-- constructor -->
+      <constructor>
+        <![CDATA[
+          /* import modules */
+          Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+
+          /* initialize the value */
+          var prefElem = document.getElementById(this.getAttribute("preference"));
+          if (prefElem) {
+            this.value = prefElem.value || this.getAttribute("value");
+          }
+        ]]>
+      </constructor>
+
+      <!-- methods -->
+      <method name="serializeValues">
+        <!-- serialize the given values into a string for use with .value
+          -  @param aValues the values to serialize
+          -  @return a string suitable for .value
+          -  @see .value
+          -->
+        <parameter name="aValues"/>
+        <body>
+          <![CDATA[
+            if (!(aValues instanceof Array)) {
+              throw new Components.Exception(
+                Components.results.NS_ERROR_INVALID_ARG,
+                "propertiesFormatter._serializeValues expects an array!");
+            }
+            var ary = [];
+            if (aValues.length > 0 && !(aValues.length % 2)) {
+              throw new Components.Exception(
+                "propertiesFormatter._serializeValues has even number of values (" +
+                  aValues.length + ")",
+                Components.results.NS_ERROR_INVALID_ARG);
+            }
+            for (var i = 0; i < aValues.length; ++i) {
+              if (i % 2) {
+                // odd, expect separator
+                ary.push(escape(aValues[i]))
+              } else {
+                // even, expect property
+                if (aValues[i].indexOf("://") == -1) {
+                  throw new Components.Exception(
+                    "propertiesFormatter._serializeValues argument at position " +
+                      i + " not a property: " + aValues[i],
+                    Components.results.NS_ERROR_INVALID_ARG);
+                }
+                ary.push(aValues[i]);
+              }
+            }
+            return ary.join(",");
+          ]]>
+        </body>
+      </method>
+            
+      <!-- internal methods -->
+      <method name="_getValueArray">
+        <!-- takes the value="" attribute and converts it into an array,
+          -  ["http://...#artistName", ",", "http://...#albumName"]
+          -->
+        <body>
+          <![CDATA[
+            var ary = this.getAttribute("value").split(",");
+            if ((ary.length == 1 && ary[0] == "") || !(ary.length % 2)) {
+              if (!(ary.length % 2)) {
+                Components.utils.reportError("values " + ary + "invalid, using default");
+              }
+              return ["http://songbirdnest.com/data/1.0#artistName",
+                      this.defaultSeparator,
+                      "http://songbirdnest.com/data/1.0#albumName"];
+            }
+            for (let i = 0; i < ary.length; ++i) {
+              if (i % 2) {
+                // odd, should be a separator
+                ary[i] = unescape(ary[i]);
+              } else {
+                if (ary[i].indexOf("://") == -1) {
+                  throw new Components.Exception(
+                    "propertiesFormatter._getValueArray argument at position " +
+                      i + " not a property: " + ary[i],
+                    Components.results.NS_ERROR_INVALID_ARG);
+                }
+              }
+            }
+            return ary;
+          ]]>
+        </body>
+      </method>
+      <method name="_rebuildControls">
+        <!-- rebuild the contents of the binding to match the current .value
+          - XXXMook: need to be smarter and only rebuild things that have changed
+          -->
+        <body>
+          <![CDATA[
+            const self = this;
+            const myURL = (new Error).stack                  /* find the URL of this XBL binding */
+                                     .split(/\n/)[1]         /* by poking the stack */
+                                     .replace(/^[^@]*@/, '') /* dropping the function info */
+                                     .replace(/:\d+$/, '');  /* and the line number info */
+
+            /**
+             * Creates a separator block, with a possibly-editable textbox and
+             * a link-like thing to remove it plus the associated menulist
+             * @param aMenuList the menu list to be removed
+             * @param aVal the initial text to go into the separator
+             * @return the separator block constructed
+             */
+            function makeSeparator(aMenuList, aVal) {
+              var vbox = document.createElement("vbox");
+              var separator = document.createElement("textbox");
+              separator.setAttribute("value", aVal);
+              separator.setAttribute("class", "plain");
+              if (!self.separatorEditable) {
+                separator.setAttribute("readonly", true);
+              }
+              var link = document.createElement("label");
+              link.className = "text-link";
+              link.setAttribute("value",
+                                SBString("properties_formatter.remove.label"));
+              link.linkedMenuList = aMenuList;
+              link.onclick = function(event) {
+                let vbox = event.target.parentNode;
+                self.removeChild(vbox);
+                self._children.splice(self._children.indexOf(vbox), 1);
+                let menulist = event.target.linkedMenuList;
+                self.removeChild(menulist);
+                self._children.splice(self._children.indexOf(menulist), 1);
+                --self._controlsCount;
+                self._updateAddLink();
+              };
+              vbox.appendChild(separator);
+              vbox.appendChild(link);
+              return vbox;
+            }
+
+            // remove old children
+            for each (let child in this._children) {
+              this.removeChild(child);
+            }
+            this._controlsCount = 0;
+            this._children = [];
+            let existingChild = this.firstChild;
+
+            let values = this._getValueArray();
+            for (let idx = 0; idx < values.length; idx += 2) {
+              // make a property dropdown
+              let val = values[idx];
+              let elem = document.createElement("menulist");
+              elem.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              if (idx > 0) {
+                // separator (not generated for first property)
+                let vbox = makeSeparator(elem, values[idx - 1]);
+                this.insertBefore(vbox, existingChild);
+                this._children.push(vbox);
+              }
+              this.insertBefore(elem, existingChild);
+              this._children.push(elem);
+              elem.selectedIndex = 0;
+              for (let i = 0; i < elem.itemCount; ++i) {
+                if (elem.getItemAtIndex(i).value == val) {
+                  elem.selectedIndex = i;
+                  break;
+                }
+              }
+              ++self._controlsCount;
+            }
+            // make the "add property" pseudo-separator
+            let vbox = document.createElement("vbox");
+            self._addlink = document.createElement("label");
+            let link = self._addlink;
+            link.className = "text-link";
+            link.setAttribute("value",
+                              SBString("properties_formatter.add.label"));
+            link.onclick = function(event) {
+              let link = event.target;
+              if (link.disabled) {
+                // why are we even here? we ought to be disabled
+                return;
+              }
+              // add a new menulist
+              let elem = document.createElement("menulist");
+              elem.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              ++self._controlsCount;
+              let vbox = makeSeparator(elem,
+                                       self.defaultSeparator);
+              self.insertBefore(vbox, event.target.parentNode);
+              self._children.push(vbox);
+              self.insertBefore(elem, link.parentNode);
+              self._children.push(elem);
+              elem.selectedIndex = 0;
+              self._updateAddLink();
+              
+              // update this.value
+              var prefElem = self.ownerDocument
+                                 .getElementById(self.getAttribute("preference"));
+              if (prefElem) {
+                prefElem.value = prefElem.getElementValue(self);
+              }
+            };
+
+            // add XBL <children/>
+            if (existingChild) {
+              var separator = document.createElement("textbox");
+              if (this.hasAttribute("trailingSeparator")) {
+                separator.setAttribute("value", this.defaultSeparator);
+                if (this.readonly) {
+                  separator.setAttribute("readonly", true);
+                }
+              } else {
+                separator.setAttribute("readonly", true);
+              }
+              separator.setAttribute("class", "plain");
+              vbox.appendChild(separator);
+            }
+            vbox.appendChild(link);
+            // .disabled needs to be toggled after it gets inserted into the document
+            self._updateAddLink();
+            this.insertBefore(vbox, existingChild);
+            this._children.push(vbox);
+          ]]>
+        </body>
+      </method>
+      
+      <method name="_updateAddLink">
+        <!-- Update the "+" link enable/disable state
+          -->
+        <body>
+          <![CDATA[
+            this._addlink.disabled = !(this._controlsCount < this.maxProperties);
+            // sigh, .disabled doesnt seem to work
+            if (this._addlink.disabled) {
+              this._addlink.setAttribute("disabled", true);
+            } else {
+              this._addlink.removeAttribute("disabled");
+            }
+          ]]>
+        </body>
+      </method>
+      
+    </implementation>
+  </binding>
+</bindings>
+
+

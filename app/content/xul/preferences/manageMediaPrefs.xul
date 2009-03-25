@@ -1,0 +1,152 @@
+<?xml version="1.0"?>
+<!-- vim: set sw=2 -->
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!ENTITY % songbirdPrefsDTD SYSTEM "chrome://songbird/locale/preferences-songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+%songbirdPrefsDTD;
+]>
+
+<!-- Media management prefs overlay. -->
+<overlay id="manage_media_pref_overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <prefpane id="paneManageMedia"
+            onpaneload="manageMediaPrefsPane.doPaneLoad(event);">
+
+    <preferences id="manage_media_preferences">
+      <preference id="manage_media_pref_library_folder" type="file"
+                  name="songbird.media_management.library.folder"/>
+      <preference id="manage_media_pref_library_copy" type="bool"
+                  name="songbird.media_management.library.copy"/>
+      <preference id="manage_media_pref_library_move" type="bool"
+                  name="songbird.media_management.library.move"/>
+      <preference id="manage_media_pref_library_rename" type="bool"
+                  name="songbird.media_management.library.rename"/>
+      
+      <preference id="manage_media_pref_library_format_dir" type="string"
+                  name="songbird.media_management.library.format.dir"/>
+      <preference id="manage_media_pref_library_format_file" type="string"
+                  name="songbird.media_management.library.format.file"/>
+      <preference id="manage_media_pref_library_enable" type="bool"
+                  name="songbird.media_management.library.enabled"/>
+    </preferences>
+
+    <commandset id="manage_media_commandset"/>
+
+    <groupbox id="mange_media_library_box">
+      <caption id="manage_media_library_caption"
+               label="&prefWindow.manageMedia.library.label;"/>
+      <hbox>
+        <filefield id="manage_media_library_file" flex="1"/>
+        <button id="manage_media_library_browse"
+                label="&prefWindow.manageMedia.library.browse.label;"
+                oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>
+      </hbox>
+    </groupbox>
+    
+    <groupbox id="manage_media_mode_box">
+      <caption id="manage_media_mode_caption"
+               label="&prefWindow.manageMedia.mode.box.label;"/>
+      <description id="manage_media_mode_description">
+        &prefWindow.manageMedia.mode.label;
+      </description>
+      <checkbox id="manage_media_copy_checkbox"
+                preference="manage_media_pref_library_copy"
+                label="&prefWindow.manageMedia.mode.copy.label;"/>
+      <checkbox id="manage_media_move_checkbox"
+                preference="manage_media_pref_library_move"
+                label="&prefWindow.manageMedia.mode.move.label;"/>
+      <checkbox id="manage_media_rename_checkbox"
+                preference="manage_media_pref_library_rename"
+                label="&prefWindow.manageMedia.mode.rename.label;"/>
+    </groupbox>
+
+    <groupbox id="manage_media_format_box">
+      <caption id="manage_media_format_caption"
+               label="&prefWindow.manageMedia.format.box.label;"/>
+      <hbox id="manage_media_format_dir_container">
+        <label id="manage_media_format_dir_label"/>
+        <sb-properties-formatter id="manage_media_format_dir_formatter"
+             preference-editable="true" maxProperties="3" trailingSeparator="true"
+             preference="manage_media_pref_library_format_dir">
+          &prefWindow.manageMedia.format.dir.suffix;
+        </sb-properties-formatter>
+      </hbox>
+      <label id="manage_media_format_label"
+             value="&prefWindow.manageMedia.format.file.label;"/>
+      <hbox id="manage_media_format_file_container">
+        <sb-properties-formatter defaultSeparator=" - "
+             id="manage_media_format_file_formatter" maxProperties="3"
+             preference-editable="true" separatorEditable="true"
+             preference="manage_media_pref_library_format_file">
+          &prefWindow.manageMedia.format.file.suffix;
+        </sb-properties-formatter>
+      </hbox>
+    </groupbox>
+    
+    <hbox>
+      <button id="manage_media_global_cmd"
+              preference-editable="true"
+              label="WARNING: Managed mode is broken"
+              label-enable="&prefWindow.manageMedia.enable.enable.label;"
+              label-disable="&prefWindow.manageMedia.enable.disable.label;"
+              oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
+              preference="manage_media_pref_library_enable"/>
+      <description id="manage_media_global_description">
+        &prefWindow.manageMedia.enable.description;
+      </description>
+    </hbox>
+
+  </prefpane>
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the media management preferences panel JavaScript. -->
+  <script
+    type="application/x-javascript"
+    src="chrome://songbird/content/scripts/preferences/manageMediaPrefs.js"/>
+
+</overlay>
+

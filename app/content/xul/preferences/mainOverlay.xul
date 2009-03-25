@@ -31,7 +31,12 @@
 <?xml-stylesheet href="chrome://songbird/skin/preferences/preferences.css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+<!DOCTYPE window [
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%songbirdDTD;
+<!ENTITY % songbirdPrefsDTD SYSTEM "chrome://songbird/locale/preferences-songbird.dtd">
+%songbirdPrefsDTD;
+]>
 
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
@@ -55,7 +60,13 @@
                   src="chrome://songbird/locale/songbird.properties"/>
   </stringbundleset>
 
- <prefWindow id="BrowserPreferences">
+ <prefwindow id="BrowserPreferences">
+
+  <prefpane id="paneManageMedia"
+            label="&prefWindow.manageMedia.label;"
+            insertafter="paneMain"
+            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            src="chrome://songbird/content/xul/preferences/manageMediaPrefs.xul" />
 
   <!-- Hide the Applications panel for the moment -->
   <prefpane id="paneApplications"
@@ -64,7 +75,7 @@
 #ifdef XP_WIN
   <prefpane id="paneHotkeys"
             label="&hotkeys.prefpane;"
-            insertafter="paneContent"
+            insertafter="paneMain"
             src="chrome://songbird/content/xul/preferences/hotKeys.xul" />
 #endif
   <prefpane id="panePlayback"
@@ -87,6 +98,6 @@
             insertafter="paneRemoteAPI"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/importMediaPrefs.xul" />
- </prefWindow>
+ </prefwindow>
 
 </overlay>
