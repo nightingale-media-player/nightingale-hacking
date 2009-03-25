@@ -52,6 +52,9 @@
         // Add the songbird autocomplete source to the textbox.
         this._textbox.setAttribute("autocompletesearch", 
                   "search-autocomplete songbird-autocomplete");
+
+        // Initialize value to the textbox value.
+        this.value = this._textbox.value;
       </constructor>
       
 
@@ -113,14 +116,14 @@
         <setter><![CDATA[
           // Make sure to remove the "empty" attribute if someone is setting
           // the search bar value to a non-empty string. Similarly, we need to
-          // add the "empty" attribute if someone is clearing the search box,
-          // but only if the search box currently doesn't have focus.
+          // add the "empty" attribute if someone is clearing the search box.
           if (val) {
             this.removeAttribute("empty");
             this._textbox.value = val;
           }
           else {
             this._textbox.value = "";
+            this.setAttribute("empty", "true");
             if (!this._textbox.hasAttribute("focused")) {
               this.updateDisplay();
             }
@@ -217,12 +220,17 @@
 
           this.updateLiveSearchAttribute();
 
-          // Go-button clicks in live search mode clear the search terms
-          if (this.liveSearchMode && aEvent 
+          // Go-button clicks clear the search terms
+          if (aEvent
               && aEvent.originalTarget.getAttribute("anonid") == "search-go-button")
           {
+            // Clear the search terms
             this.value = "";
-            this._sendSearchEvent();
+
+            // Search on cleared term in live search mode
+            if (this.liveSearchMode)
+              this._sendSearchEvent();
+
             return;
           }
 
@@ -409,6 +417,9 @@
 
       <!-- Starts the idle search timer on input when in live search mode  -->
       <handler event="input"><![CDATA[
+
+        // Update widget value to the search textbox value.
+        this.value = this._textbox.value;
 
         if (!this.liveSearchMode) {
           return;

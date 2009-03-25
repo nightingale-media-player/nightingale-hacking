@@ -611,7 +611,7 @@ treechildren::-moz-tree-twisty(open) {
 .searchbar-engine-button[addengines="true"] {
   background-image:url('chrome://songbird/skin/base-elements/bg-button-highlighted.png');
 }
-searchbar:not([empty="true"])[livesearchmode="true"] > .searchbar-textbox > .search-go-container > .search-go-button {
+searchbar:not([empty="true"]) > .searchbar-textbox > .search-go-container > .search-go-button {
   list-style-image: url("chrome://songbird/skin/nav-bar/button-clear-search.png");
 }
 
