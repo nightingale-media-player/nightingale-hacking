@@ -244,7 +244,7 @@ LastFm.onLoad = function() {
             LastFm._service.loveBan(null, false);
           } else {
             /* otherwise, love */
-            LastFm._service.loveBan(gMM.sequencer.currentItem.guid, true);
+            LastFm._service.loveBan(gMM.sequencer.currentItem, true);
           }
         }, false);
     this._faceplate.appendChild(this._faceplateLove);
@@ -260,7 +260,7 @@ LastFm.onLoad = function() {
             LastFm._service.loveBan(null, false);
           } else {
             /* otherwise, ban */
-            LastFm._service.loveBan(gMM.sequencer.currentItem.guid, false);
+            LastFm._service.loveBan(gMM.sequencer.currentItem, false);
           }
         }, false);
     this._faceplate.appendChild(this._faceplateBan);
@@ -374,6 +374,7 @@ LastFm.addTags = function(event) {
 }
 
 LastFm.addThisTag = function(mediaItem, tagString, success, failure) {
+	// need to handle adding a global tag that already exists as a user tag
 	this._service.addTags(mediaItem, tagString, function() {
 		// add them to the tag panel
 		var tagBox = document.getElementById("user-tags");
@@ -594,7 +595,7 @@ LastFm.onErrorChanged = function LastFm_onErrorChanged(aError) {
 }
 
 // Love & Ban support
-LastFm.onLoveBan = function LastFm_onLoveBan() {
+LastFm.onLoveBan = function LastFm_onLoveBan(aItem, love) {
   if (this._service.loveTrack) {
     // the current track is loved or banned
     this._faceplate.setAttribute('loveban', this._service.love?'love':'ban');

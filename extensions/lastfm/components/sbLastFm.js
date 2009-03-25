@@ -779,7 +779,6 @@ function sbLastFm_getLovedTracks() {
 			var trackName = track.name.toString().toLowerCase();
 			var artistName = track.artist.name.toString().toLowerCase();
 			self.lovedTracks[trackName + "@@" + artistName] = true;
-			dump("adding loved track:" + trackName + "\n");
 		}
 	});
 }
@@ -1200,32 +1199,45 @@ function sbLastFm_scrobble(aEntries) {
 
 sbLastFm.prototype.addTags =
 function sbLastFm_addTags(aMediaItem, tagString, success, failure) {
-  this.apiCall('track.addTags', {
+	var self = this;
+	this.apiCall('track.addTags', {
 		track: aMediaItem.getProperty(SBProperties.trackName),
 		artist: aMediaItem.getProperty(SBProperties.artistName),
 		tags: tagString,
-	  }, function() {
+	}, function() {
 	  	dump("Successfully added tags: " + tagString + "\n");
-		success();
-	  }, function() {
+		self.listeners.each(function(l) {
+			if (typeof(l.onItemTagsAdded) == "function") {
+				var tags = tagString.split(",");
+				for (var i in tags)
+					tags[i] = tags[i].replace(/^\s*/, "").replace(/\s*$/, "");
+				l.onItemTagsAdded(aMediaItem, tags);
+			}
+		});
+		if (typeof(success) == "function")
+			success();
+	}, function() {
 	    dump("Failed to add tags: " + tagString + "\n");
-		failure();
+		if (typeof(failure) == "function")
+			failure();
 	});
 }
 
 sbLastFm.prototype.removeTag =
 function sbLastFm_removeTag(aMediaItem, aTagName) {
-  delete this.userTags[aTagName];
-  for (var tag in this.userTags) {
-	  dump("remaining tag: " + tag + "\n");
-  }
-  this.apiCall('track.removeTag', {
+	var self = this;
+	this.apiCall('track.removeTag', {
 		track: aMediaItem.getProperty(SBProperties.trackName),
 		artist: aMediaItem.getProperty(SBProperties.artistName),
 		tag: aTagName,
-	  }, function() {
+	}, function() {
 	  	dump("Successfully removed tag: " + aTagName + "\n");
-	  }, function() {
+		self.listeners.each(function(l) {
+			if (typeof(l.onItemTagRemoved) == "function")
+				l.onItemTagRemoved(aMediaItem, aTagName);
+		});
+		delete this.userTags[aTagName];
+	}, function() {
 	    dump("Failed to remove tag: " + aTagName + "\n");
 	});
 }
@@ -1235,10 +1247,13 @@ sbLastFm.prototype.loveBan =
 function sbLastFm_loveBan(aMediaItem, aLove) {
   this.loveTrack = aMediaItem;
   this.love = aLove;
+  var existing = false;
   if (aMediaItem) {
 	  var trackName = aMediaItem.getProperty(SBProperties.trackName).toLowerCase();
 	  var artistName = aMediaItem.getProperty(SBProperties.artistName).toLowerCase();
 
+	  if (this.lovedTracks[trackName + "@@" + artistName])
+		  existing = true;
 	  if (aLove) {
 		  dump("loving this track\n");
 		  this.lovedTracks[trackName + "@@" + artistName] = true;
@@ -1247,7 +1262,10 @@ function sbLastFm_loveBan(aMediaItem, aLove) {
 		  delete this.lovedTracks[trackName + "@@" + artistName];
 	  }
   }
-  this.listeners.each(function(l) { l.onLoveBan(); });
+  if (notify)
+	this.listeners.each(function(l) {
+		l.onLoveBan(aMediaItem, aLove, existing);
+	});
 }
 
 // sbIPlaybackHistoryListener
@@ -1260,7 +1278,7 @@ function sbLastFm_onEntriesAdded(aEntries) {
       enumerate(aEntries.enumerate(),
                 function(item) {
                   item.QueryInterface(Ci.sbIPlaybackHistoryEntry);
-                  if (item.item.guid == self.loveTrack) {
+                  if (item.item.guid == self.loveTrack.guid) {
                     // love or ban the track
                     item.setAnnotation(self.love?ANNOTATION_LOVE:ANNOTATION_BAN,
                       'true');
