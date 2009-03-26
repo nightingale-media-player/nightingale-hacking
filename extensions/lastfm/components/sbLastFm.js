@@ -1262,7 +1262,7 @@ function sbLastFm_loveBan(aMediaItem, aLove) {
 		  delete this.lovedTracks[trackName + "@@" + artistName];
 	  }
   }
-  if (notify)
+  if (existing)
 	this.listeners.each(function(l) {
 		l.onLoveBan(aMediaItem, aLove, existing);
 	});
