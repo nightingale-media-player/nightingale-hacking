@@ -1384,6 +1384,10 @@ sbMediacoreSequencer::ProcessNewPosition()
     mon.Exit();
 
     rv = CoreHandleNextSetup();
+    if(rv == NS_ERROR_ABORT) {
+      NS_WARNING("Someone aborted playback of the next track.");
+      return NS_OK;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_OK;
@@ -1392,6 +1396,10 @@ sbMediacoreSequencer::ProcessNewPosition()
   mon.Exit();
 
   rv = Setup();
+  if(rv == NS_ERROR_ABORT) {
+    NS_WARNING("Someone aborted playback of the next track.");
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   mon.Enter();
@@ -1599,7 +1607,7 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
 
     // Process any pending abort requests
     if(HandleAbort()) {
-      return NS_OK;
+      return NS_ERROR_ABORT;
     }
 
     mon.Enter();
@@ -1708,8 +1716,10 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 
     // Process any pending abort requests
     if(HandleAbort()) {
-      return NS_OK;
+      return NS_ERROR_ABORT;
     }
+
+    mon.Enter();
   }
 
   rv = UpdateURLDataRemotes(uri);
@@ -2391,6 +2401,10 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = Setup(aURI);
+  if(rv == NS_ERROR_ABORT) {
+    NS_WARNING("Someone aborted playback of the next track.");
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = UpdatePlayStateDataRemotes();
@@ -2442,6 +2456,10 @@ sbMediacoreSequencer::Play()
   mon.Exit();
 
   rv = Setup();
+  if(rv == NS_ERROR_ABORT) {
+    NS_WARNING("Someone aborted playback of the next track.");
+    return NS_OK;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   mon.Enter();
