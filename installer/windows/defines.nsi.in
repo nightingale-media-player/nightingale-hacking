@@ -1,4 +1,7 @@
 #filter substitution
+!define FALSE                 "0"
+!define TRUE                  "1"
+
 !define BrandShortName        "@SB_APPNAME@"
 !define BrandFullName         "@SB_APPNAME@"
 
@@ -10,7 +13,6 @@
 
 !define AppVersion            "@SB_MILESTONE@"
 !define AppBuildNumber        "@SB_BUILD_NUMBER@"
-!define AppOldVersion         "0.2.5"
 !define GREVersion            "@SB_MOZILLA_VERSION@"
 !define AppVersionWindows     "@SB_MILESTONE_WINDOWS@"
 
@@ -20,6 +22,7 @@
 !define DDEApplication        "Songbird"
 !define AppRegName            "Songbird"
 
+!define DefaultDistributionName "PartnerId"
 !define DistHelperEXE         "disthelper.exe"
 
 !define ApplicationIni        "application.ini"
@@ -34,54 +37,54 @@
 #endif
 
 #ifdef DEBUG
+!define InstallerBuildMode    "debug"
 !define DebugBuild            "Debug Build"
 !define MozCRuntime           "mozcrt19d.dll"
 !define CRuntime              "msvcr80d.dll"
 !define CPPRuntime            "msvcp80d.dll"
-!define CRuntimeManifest      "Microsoft.VC80.CRT.manifest"
 #else
+!define InstallerBuildMode    "release"
 !define DebugBuild            ""
 !define MozCRuntime           "mozcrt19.dll"
 !define CRuntime              "msvcr80.dll"
 !define CPPRuntime            "msvcp80.dll"
+#endif
+
 !define CRuntimeManifest      "Microsoft.VC80.CRT.manifest"
-#endif
-
-#ifdef SB_FLASH_REDISTRIBUTABLE
-!define InstallFlashRedistributable      "true"
-!define FlashRedistributableInstaller    "@SB_FLASH_REDISTRIBUTABLE@"
-!define FlashRedistributableInstallerEXE "flash_installer.exe"
-#endif
-
-#ifdef MEDIA_CORE_GST
-!define IncludeLib "true"
-!define IncludeGStreamerPlugins "true"
-#endif
 
 #ifdef SONGBIRD_OFFICIAL
 !define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}\"
-!define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
 !define PreferredIcon             songbird.ico
 !define PreferredInstallerIcon    songbird_installer.ico
 !define PreferredUninstallerIcon  songbird_uninstaller.ico
 !define VistaIcon                 songbird_vista.ico
-!define IsOfficialBuild           "true"
+!define InstallerBuildType        "release"
 #else
-!define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}-${AppVersion}_${AppBuildNumber}\"
-!define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
+!define PreferredInstallDir       "$PROGRAMFILES\${BrandShortName}-${AppVersion}-${AppBuildNumber}\"
 !define PreferredIcon             songbird_nightly.ico
 !define PreferredInstallerIcon    songbird_nightly.ico
 !define PreferredUninstallerIcon  songbird_nightly.ico
 !define VistaIcon                 songbird_nightly.ico
+!define InstallerBuildType        "nightly"
 #endif
 
-!define ForceQuitMessage            "@SB_APPNAME@  is currently running and will be forced to quit."
+!define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
+
+# Strings
+
+!define ForceQuitMessage            "@SB_APPNAME@ is currently running and will be forced to quit."
+
 !define BackupMessage               "Your existing media library and user profile will not be migrated to ${BrandShortName} ${AppVersion}.$\n$\nYou can continue to use your existing media library and user profile with your existing version of ${BrandShortName}.  In addition to installing ${BrandShortName} ${AppVersion}, would you like to keep your existing version of ${BrandShortName}?"
+
 !define ShortBackupMessage          "Moving ${BrandShortName} ${AppOldVersion} to $INSTDIR\legacy\${AppOldVersion}\${BrandShortName}"
+
 !define UninstallMessage            "We found an older version of ${BrandShortName} present on this computer, do you wish to uninstall it before installing ${BrandShortName} ${AppVersion}?"
+
 !define UninstallMessageSameFolder  "The selected installation folder contains an older version of ${BrandShortName}. Do you wish to uninstall it and replace it with ${BrandShortName} ${AppVersion}?"
-!define DirectoryNotEmptyMessage    "The folder $INSTDIR is not empty. $\n$\nInstalling ${BrandShortName} into an existing folder is not recommended.  Proceed with the installation anyway?"
+
+!define DirectoryNotEmptyMessage    "The folder selected for installation is not empty. $\n$\nAre you sure you want to install into this directory? "
+
 !define AbortInstallMessage         "Are you sure you want to cancel installation of ${BrandShortName}?"
-!define FlashRedistributableInstallMessage "Installing Adobe Flash Redistributable"
+
 !define TakeSurveyMessage "We're sorry to see that you uninstalled ${BrandShortName}.$\n$\nWill you consider helping us make ${BrandShortName} better by taking a quick anonymous survey to help us improve the product?$\nIt shouldn't take more than 30 seconds to complete."
 !define UnintallSurveyURL http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d

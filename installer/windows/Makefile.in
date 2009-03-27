@@ -62,6 +62,8 @@ SONGBIRD_INSTALLER = common.nsh \
                      make-installer.sh \
                      PrepareInstaller.bat \
                      Songbird.nsi \
+                     sb-installer.nsi \
+                     sb-uninstaller.nsi \
                      $(NULL)
 
 INSTALLER_PREPROCESS = defines.nsi \
