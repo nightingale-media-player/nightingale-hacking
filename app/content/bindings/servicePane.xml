@@ -729,7 +729,6 @@
           }
 
           event.stopPropagation();
-          event.preventBubble();
           event.preventDefault();
         ]]></body>
       </method>
