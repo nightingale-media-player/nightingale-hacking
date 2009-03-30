@@ -136,8 +136,10 @@
         };
         if (!m3uMediaList) {
           siteLib.scanMediaOnCreation = false;
-          siteLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
-                                         callback );
+          siteLib.createMediaListFromURL("remoteList1",
+                                         "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                         callback,
+                                         "test9-remoteList1" );
         }
         else {
           setPlaylist(m3uMediaList);
@@ -152,8 +154,10 @@
         };
         if (!m3uMediaList) {
           siteLib.scanMediaOnCreation = true;
-          siteLib.createMediaListFromURL("http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
-                                         callback );
+          siteLib.createMediaListFromURL("remoteList2",
+                                         "http://dingo.songbirdnest.com/~redfive/test_files/remoteLibraryTest.m3u",
+                                         callback,
+                                         "test9-remoteList2" );
         }
         else {
           setPlaylist(m3uMediaList);

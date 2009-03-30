@@ -1,0 +1,135 @@
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<html>
+  <head>
+    <title>Remote API Test: Custom Buttons</title>
+    <script>
+      var siteLib;
+      var siteList;
+      var downloadingTrack = new Array();
+
+      function createProperties() {
+        // create a new property that will act as a download button
+        songbird.createImageProperty(
+                         "http://example.com/custom/downloadImage",
+                         "GetIt!",
+                         true);
+      }
+
+      function populateList() {
+        var tracks = ["http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/teru_-_My_Name_is_teru_and_I_ll_be_Your_Tour_Guide_Today.mp3",
+                      "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/omnivista_-_Celebrity_Omni_Vista_s_Lazy_Summer_Mix_.mp3",
+                      "http://dingo.songbirdnest.com/~redfive/test_files/ccmixter/mactonite_-_Days_of_April_(Part_1).mp3" ];
+
+        var item = siteLib.createMediaItem(tracks[0]);
+        item.setProperty("http://example.com/customguid", "1"); 
+        // check for existence first to not overwrite the image if it's been changed already
+        if (! item.getProperty("http://example.com/custom/downloadImage") )
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.emusic.com/favicon.ico");
+        siteList.add(item);
+            
+        item = siteLib.createMediaItem(tracks[1]);
+        item.setProperty("http://example.com/customguid", "2"); 
+        // check for existence first to not overwrite the image if it's been changed already
+        if (! item.getProperty("http://example.com/custom/downloadImage") )
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.emusic.com/favicon.ico");
+        siteList.add(item);
+      
+        item = siteLib.createMediaItem(tracks[2]);
+        item.setProperty("http://example.com/customguid", "3"); 
+        // check for existence first to not overwrite the image if it's been changed already
+        if (! item.getProperty("http://example.com/custom/downloadImage") )
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.emusic.com/favicon.ico");
+        siteList.add(item);
+      }
+
+      function showColumns() {
+        // put the download image column in front of the songbird download column
+        songbird.webPlaylist.insertColumnBefore("http://example.com/custom/downloadImage", "http://songbirdnest.com/data/1.0#downloadButton");
+      }
+
+      function ondownloadcomplete (event) {
+        // probably need to do deeper checking on this to make sure we get the correct track
+        //  in the case of the user downloading a bunch of tracks. Can compare the customguid.
+        var item = downloadingTrack.pop();
+        // on completion of the download we will succeed or fail. set the image appropriately
+        if ( event.status == 0 ) { // 0 means success
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.songbirdnest.com/files/images/button_opera.png");
+        } else {
+          item.setProperty("http://example.com/custom/downloadImage",  "http://www.songbirdnest.com/files/images/15_cartbird.thumbnail.png");
+        }
+      };
+
+      function onplaylistcellclick (event) {
+        // when the user clicks on the image, start a download. keep track of it.
+        if (event.property == "http://example.com/custom/downloadImage") {
+          // either check for a download token. or the value of the image to take
+          //   the correct action. As this is currently written you will download
+          //   the song twice. (css tweak to disble click stat change probably would
+          //   be good too).
+          songbird.downloadItem(event.item);
+          downloadingTrack.push(event.item);
+        }
+      }
+
+      function load() {
+        // Set everything up
+
+        document.addEventListener("downloadcomplete", ondownloadcomplete, false);
+        document.addEventListener("PlaylistCellClick", onplaylistcellclick, false);
+
+        siteLib = songbird.siteLibrary;
+        siteList = siteLib.createSimpleMediaList("Site List");
+
+        createProperties();
+
+        populateList();
+
+        songbird.webPlaylist.mediaList = siteList;
+
+        showColumns();
+      }
+
+      function unload() {
+        // be sure to clean up your listeners in unload
+        if (siteList)
+          siteLib.remove(siteList);
+        document.removeEventListener("downloadcomplete", ondownloadcomplete, false);
+        document.removeEventListener("PlaylistCellClick", onplaylistcellclick, false);
+      }
+
+    </script>
+  </head>
+
+  <body onload="load();" onunload="unload();">
+    <h1>Custom Download Handling</h1>
+  </body>
+
+</html>
+

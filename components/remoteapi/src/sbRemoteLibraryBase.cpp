@@ -251,7 +251,8 @@ sbRemoteLibraryBase::sbRemoteLibraryBase(sbRemotePlayer* aRemotePlayer) :
   mShouldScan(PR_TRUE),
   mEnumerationResult(NS_ERROR_NOT_INITIALIZED),
   mRemotePlayer(aRemotePlayer),
-  mIgnoreHiddenPlaylists(PR_TRUE)
+  mIgnoreHiddenPlaylists(PR_TRUE),
+  mAllowDuplicates(PR_FALSE)
 {
   NS_ASSERTION(aRemotePlayer, "aRemotePlayer is null");
 #ifdef PR_LOGGING
@@ -423,7 +424,7 @@ sbRemoteLibraryBase::CreateMediaItem( const nsAString& aURL,
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = mLibrary->CreateMediaItem(uri,
                                  nsnull,
-                                 PR_TRUE,
+                                 mAllowDuplicates,
                                  getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -529,7 +530,8 @@ sbRemoteLibraryBase::CreateMediaListFromURL( const nsAString& aName,
   NS_ENSURE_ARG(!aURL.IsEmpty());
   NS_ENSURE_STATE(mLibrary);
 
-  LOG_LIB(("sbRemoteLibraryBase::CreateMediaListFromURL()"));
+  LOG_LIB(("sbRemoteLibraryBase::CreateMediaListFromURL(%s)",
+            NS_LossyConvertUTF16toASCII(aURL).get() ));
 
   nsString siteID;
   if (aSiteID.IsEmpty()) {
@@ -626,17 +628,18 @@ sbRemoteLibraryBase::GetMediaListBySiteID( const nsAString &aSiteID,
 /**
  * Determines if the library is the site library of the given remote player
  */
-static PRBool IsSiteLibrary(sbILibrary * aLibrary, sbIRemotePlayer * aRemotePlayer) {
+static PRBool IsSiteLibrary(sbILibrary *aLibrary, sbIRemotePlayer *aRemotePlayer) {
   PRBool result = PR_FALSE;
   nsCOMPtr<sbIRemoteLibrary> siteLibrary;
-  nsresult rv = aRemotePlayer->GetSiteLibrary(getter_AddRefs(siteLibrary));
-  if (NS_SUCCEEDED(rv)) {
+  nsresult rv = aRemotePlayer->GetSiteLibrary( getter_AddRefs(siteLibrary) );
+  if ( NS_SUCCEEDED(rv) ) {
     nsCOMPtr<sbIMediaItem> siteLibraryAsItem = do_QueryInterface(siteLibrary);
     nsCOMPtr<sbIMediaItem> libraryAsItem = do_QueryInterface(aLibrary);
     PRBool equal = PR_FALSE;
-    result = siteLibraryAsItem && libraryAsItem && 
-      NS_SUCCEEDED(siteLibraryAsItem->Equals(libraryAsItem, &equal)) &&
-      equal;
+    result = ( siteLibraryAsItem &&
+               libraryAsItem &&
+               NS_SUCCEEDED( siteLibraryAsItem->Equals( libraryAsItem, &equal ) ) &&
+               equal );
   }
   return result;
 }

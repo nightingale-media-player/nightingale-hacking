@@ -149,6 +149,7 @@ protected:
   nsRefPtr<sbRemotePlayer> mRemotePlayer;
   
   PRBool mIgnoreHiddenPlaylists;
+  PRBool mAllowDuplicates;
 };
 
 #endif // __SB_REMOTE_LIBRARYBASE_H__

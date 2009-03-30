@@ -126,6 +126,7 @@ sbRemoteLibrary::sbRemoteLibrary(sbRemotePlayer* aRemotePlayer) :
   sbRemoteLibraryBase(aRemotePlayer)
 {
   LOG_LIB(("sbRemoteLibrary::sbRemoteLibrary()"));
+  mAllowDuplicates = PR_TRUE;
 }
 
 sbRemoteLibrary::~sbRemoteLibrary()

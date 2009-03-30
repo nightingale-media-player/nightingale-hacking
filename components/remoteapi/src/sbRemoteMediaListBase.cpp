@@ -462,7 +462,6 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not get spec from uri.")
 
     // Create the item. 
-    nsCOMPtr<sbIMediaItem> newItem;
     rv = library->CreateMediaItem( NS_ConvertUTF8toUTF16(uriCStr),
                                    getter_AddRefs(item) );
     SB_ENSURE_WITH_JSTHROW( cx, rv, "Could not create new Media Item.")

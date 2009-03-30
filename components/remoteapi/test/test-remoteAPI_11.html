@@ -60,6 +60,10 @@
         songbird.webPlaylist.mediaList = songbird.downloadMediaList;
       }
 
+      function showSiteLib() {
+        songbird.webPlaylist.mediaList = siteLib;
+      }
+
       function showSiteList() {
         songbird.webPlaylist.mediaList = siteList;
       }
@@ -116,6 +120,9 @@
     
     <p>
     <form>
+      <input type="button" id="show_site_library_button" value="Show Site Lib"
+             onclick="showSiteLib();" />  (songbird.webPlaylist.mediaList = siteLib)
+      <br />
       <input type="button" id="show_site_button" value="Show Site List"
              onclick="showSiteList();" />  (songbird.webPlaylist.mediaList = siteList)
       <br />
