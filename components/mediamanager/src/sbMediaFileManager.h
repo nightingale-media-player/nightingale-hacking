@@ -24,10 +24,18 @@
 //
 */
 
+// Songbird includes
 #include <sbIMediaFileManager.h>
+#include <sbIPropertyManager.h>
+
+// Mozilla includes
 #include <nsIIOService.h>
+#include <nsIFile.h>
+#include <nsIPrefBranch.h>
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 #include <nsCOMPtr.h>
+#include <nsNetUtil.h>
 
 #define SB_MEDIAFILEMANAGER_DESCRIPTION              \
   "Songbird Media File Manager Implementation"
@@ -39,6 +47,16 @@
    0x11b2,                                                 \
    {0x8d, 0x6a, 0xe1, 0x78, 0x4d, 0xbd, 0x2d, 0x89}        \
   }
+
+// Preference keys
+#define PREF_MFM_ROOT         "songbird.media_management.library."
+#define PREF_MFM_LOCATION     "songbird.media_management.library.folder"
+#define PREF_MFM_DIRFORMAT    "format.dir"
+#define PREF_MFM_FILEFORMAT   "format.file"
+#define PREF_MFM_DEFPROPERTY  "default.property."
+
+// String keys
+#define STRING_MFM_UNKNOWNPROP  "mediamanager.nonexistingproperty"
 
 class sbMediaFileManager : public sbIMediaFileManager {
 public:
@@ -67,8 +85,7 @@ protected:
                       const nsString &aPath,
                       PRBool *aRetVal);
   
-  nsresult Delete(sbIMediaItem *aMediaItem, 
-                  nsIURI *aItemUri, 
+  nsresult Delete(nsIURI *aItemUri, 
                   PRBool *aRetVal);
   
   nsresult CheckDirectoryForDeletion(nsIURI *aItemUri);
@@ -77,11 +94,29 @@ protected:
   
 private:
   
-  nsresult CheckDirectoryForDeletion_Recursive(nsString &aRoot, 
-                                               nsIFile *aDir);
+  nsresult CheckDirectoryForDeletion_Recursive(nsIFile *aDir);
   
-  nsresult GetManagedDirectoryRoot(nsString &aRootDir);
+  nsresult GetFormatedFileFolder(nsTArray<nsString> aFormatSpec,
+                                 sbIMediaItem* aMediaItem,
+                                 PRBool aAppendProperty,
+                                 nsString &aRetVal);
 
-  nsCOMPtr<nsIIOService> mIOService;
+  nsresult IsOrganized(nsIURI    *aItemUri,
+                       nsString  &aFilename,
+                       nsString  &aPath,
+                       PRBool    *aRetVal);
+
+  // Hold on to the services we use very often
+  nsCOMPtr<nsIIOService>                    mIOService;
+  nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
+  nsCOMPtr<nsINetUtil>                      mNetUtil;
+  nsCOMPtr<sbIPropertyManager>              mPropertyManager;
+
+  // Where our media folder is located.
+  nsCOMPtr<nsIFile>                         mMediaFolder;
+
+  // Formating properties (filename, folders, separators)
+  nsTArray<nsString>                        mTrackNameConfig;
+  nsTArray<nsString>                        mFolderNameConfig;
 };
 

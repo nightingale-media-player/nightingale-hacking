@@ -31,14 +31,40 @@ interface sbIMediaItem;
 [scriptable, uuid(e9745a6e-1dd1-11b2-ba47-ed36d873a452)]
 interface sbIMediaFileManager : nsISupports
 {
+  /**
+   * Organization Flags:
+   *  MANAGE_RENAME - This renames a file so that it matches the metadata
+   *   of the item, the rename will only happen if the item is located in or
+   *   will be located in the Managed Folder.
+   *  MANAGE_DELETE - This deletes an items file if it is located in the
+   *   Managed Folder.
+   *  MANAGE_COPY   - This will copy an items file into the Managed Folder.
+   *  MANAGE_MOVE   - This will move a file into a sub folder in the Managed
+   *   Folder based on the items metadata, the move will only happen if the
+   *   item is located in or will be located in the Managed Folder.
+   *
+   *  Example modes:
+   *   MANAGE_RENAME | MANAGE_MOVE - This will move and rename a file if it is
+   *    located in the Managed Folder based on the items metadata.
+   *     example: /ManagedFolder/Artist/Album/## - Title.ext
+   *   MANAGE_COPY - This will only copy the file into the Managed Folder, it
+   *    will not move or rename it based on the items metadata.
+   *   MANAGE_RENAME | MANAGE_MOVE | MANAGE_COPY - This will copy, move and
+   *    rename the items file into the Managed Folder based on the items
+   *    metadata.
+   */
+
   // Rename the file so it matches the items metadata
-  const unsigned short MANAGE_RENAME = 1;
+  const unsigned short MANAGE_RENAME  = 1;
 
   // Delete a file that has been removed from the list
-  const unsigned short MANAGE_DELETE = 2; 
+  const unsigned short MANAGE_DELETE  = 2; 
   
-  // Copy a file into the media library and organize the location/name
-  const unsigned short MANAGE_COPY   = 4; 
+  // Copy a file into the media library
+  const unsigned short MANAGE_COPY    = 4;
+  
+  // Move a file into the correct sub folder so it matches the items metadata
+  const unsigned short MANAGE_MOVE    = 8;
 
   // Organize an item in the media library folder
   boolean organizeItem(in sbIMediaItem aMediaItem, in unsigned short aManageType);
