@@ -3156,15 +3156,17 @@ sbMediacoreSequencer::OnAfterItemRemoved(sbIMediaList *aMediaList,
       *_retval = PR_FALSE;
       return NS_OK;
     } else {
-      // Grip.
-      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
-      mon.Exit();
+      if(mPlaybackControl) {
+        // Grip.
+        nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+        mon.Exit();
 
-      // if the item is our list, stop playback now and shutdown watcher
-      rv = playbackControl->Stop();
-      NS_ENSURE_SUCCESS(rv, rv);
+        // if the item is our list, stop playback now and shutdown watcher
+        rv = playbackControl->Stop();
+        NS_ENSURE_SUCCESS(rv, rv);
 
-      mon.Enter();
+        mon.Enter();
+      }
 
       mStatus = sbIMediacoreStatus::STATUS_STOPPED;
 
