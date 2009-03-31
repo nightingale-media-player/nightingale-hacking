@@ -82,6 +82,9 @@
         if ( event.status == 0 ) { // 0 means success
           item.setProperty("http://example.com/custom/downloadImage",  "http://www.songbirdnest.com/files/images/button_opera.png");
         } else {
+          // Set the downloadButton to blank so the 'Try Again' clickable image doesn't appear
+          item.setProperty("http://songbirdnest.com/data/1.0#downloadButton", "");
+          // Change the download image to something indicating failure.
           item.setProperty("http://example.com/custom/downloadImage",  "http://www.songbirdnest.com/files/images/15_cartbird.thumbnail.png");
         }
       };
