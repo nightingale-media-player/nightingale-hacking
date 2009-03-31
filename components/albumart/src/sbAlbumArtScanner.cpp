@@ -656,7 +656,7 @@ sbAlbumArtScanner::Initialize()
   mFetcherSet =
     do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = mFetcherSet->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_REMOTE);
+  rv = mFetcherSet->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_ALL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create an array for items in an album

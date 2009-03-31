@@ -473,10 +473,11 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   
   // Before doing anything else, check to see if we've  
   // recently cached a value for the given artist/album
-  nsString cacheKey = NS_LITERAL_STRING("File:");
-  cacheKey.Append(artistAlbum);
+  nsString cacheKeyFile = NS_LITERAL_STRING("File:");
+  cacheKeyFile.Append(artistAlbum);
   nsCOMPtr<nsISupports> cacheData = nsnull;
-  rv = mAlbumArtService->RetrieveTemporaryData(cacheKey, getter_AddRefs(cacheData));
+  rv = mAlbumArtService->RetrieveTemporaryData(cacheKeyFile,
+                                               getter_AddRefs(cacheData));
   
   // Try to get the file from the cache data
   if (NS_SUCCEEDED(rv)) {
@@ -500,9 +501,10 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   // from different albums, all in the same directory)
   nsCString directory;
   contentSrcURL->GetDirectory(directory);
-  cacheKey.AssignLiteral("Directory:");
-  cacheKey.Append(NS_ConvertUTF8toUTF16(directory));
-  rv = mAlbumArtService->RetrieveTemporaryData(cacheKey, getter_AddRefs(cacheData));
+  nsString cacheKeyDir = NS_LITERAL_STRING("Directory:");
+  cacheKeyDir.Append(NS_ConvertUTF8toUTF16(directory));
+  rv = mAlbumArtService->RetrieveTemporaryData(cacheKeyDir,
+                                               getter_AddRefs(cacheData));
   
   // Try to get the entries from the cache data
   if (NS_SUCCEEDED(rv)) {
@@ -593,20 +595,13 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
   
   // If needed, cache the list of images in this folder 
   if (entriesToBeCached) {
-    rv = mAlbumArtService->CacheTemporaryData(cacheKey, entriesToBeCached);
+    rv = mAlbumArtService->CacheTemporaryData(cacheKeyDir, entriesToBeCached);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   
-  // Now either save the file in the cache, or an empty
-  // string to indicate that there is nothing to be found
+  // Now save the file in the cache if we found one.
   if (*aAlbumArtFile) {
-    rv = mAlbumArtService->CacheTemporaryData(cacheKey, *aAlbumArtFile);
-  } else {
-    nsCOMPtr<nsISupportsString> supportsStr;
-    supportsStr = do_CreateInstance("@mozilla.org/supports-string;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = mAlbumArtService->CacheTemporaryData(cacheKey, supportsStr);
-    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mAlbumArtService->CacheTemporaryData(cacheKeyFile, *aAlbumArtFile);
   }
 
   return NS_OK;
