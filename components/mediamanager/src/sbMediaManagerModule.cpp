@@ -30,7 +30,8 @@
 #include "sbMediaManagementService.h"
 
 // Mozilla imports.
-#include "nsIGenericFactory.h"
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
 
 // Construct and initialize the sbMediaFileManager object.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init);
@@ -39,6 +40,34 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaManagementJob)
 
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaManagementService, Init);
+
+static NS_METHOD
+sbMediaManagementServiceRegisterSelf(nsIComponentManager *aCompMgr,
+                                     nsIFile *aPath,
+                                     const char *aLoaderStr,
+                                     const char *aType,
+                                     const nsModuleComponentInfo *aInfo)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> catman =
+    do_GetService("@mozilla.org/categorymanager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  char* perviousEntry;
+  rv = catman->AddCategoryEntry("app-startup",
+                                SB_MEDIAMANAGEMENTSERVICE_CLASSNAME,
+                                SB_MEDIAMANAGEMENTSERVICE_CONTRACTID,
+                                PR_TRUE,
+                                PR_TRUE,
+                                &perviousEntry);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (perviousEntry) {
+    NS_Free(perviousEntry);
+  }
+  
+  return NS_OK;
+}
 
 static const nsModuleComponentInfo sbMediaManagerComponents[] =
 {
@@ -62,7 +91,7 @@ static const nsModuleComponentInfo sbMediaManagerComponents[] =
     SB_MEDIAMANAGEMENTSERVICE_CID,
     SB_MEDIAMANAGEMENTSERVICE_CONTRACTID,
     sbMediaManagementServiceConstructor,
-    sbMediaManagementService::RegisterSelf
+    sbMediaManagementServiceRegisterSelf
   }
 };
 

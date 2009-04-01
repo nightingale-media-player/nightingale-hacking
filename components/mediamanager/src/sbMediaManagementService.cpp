@@ -30,7 +30,6 @@
 /**
  * mozilla interfaces
  */
-#include <nsICategoryManager.h>
 #include <nsIObserverService.h>
 #include <nsIPrefBranch2.h>
 #include <nsIPrefService.h>
@@ -84,7 +83,12 @@ static PRLogModuleInfo* gMediaManagementServiceLog = nsnull;
  * local type declarations
  */
 struct ProcessItemData {
-  /* these are not owning */
+  /**
+   * a structure used to pass data to the ProcessItem enumeration callback.
+   * the items here are shared across the items being enumerated.
+   *
+   * these pointers are not owning; they are temporary only
+   */
   sbMediaManagementService* mediaMgmtService;
   sbIMediaFileManager* fileMan;
 };
@@ -115,7 +119,8 @@ sbMediaManagementService::~sbMediaManagementService()
  *****/
 
 /* readonly attribute sbILibrary managedLibrary; */
-NS_IMETHODIMP sbMediaManagementService::GetManagedLibrary(sbILibrary * *aManagedLibrary)
+NS_IMETHODIMP
+sbMediaManagementService::GetManagedLibrary(sbILibrary * *aManagedLibrary)
 {
   NS_ENSURE_ARG_POINTER(aManagedLibrary);
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
@@ -124,13 +129,15 @@ NS_IMETHODIMP sbMediaManagementService::GetManagedLibrary(sbILibrary * *aManaged
 }
 
 /* attribute boolean isEnabled; */
-NS_IMETHODIMP sbMediaManagementService::GetIsEnabled(PRBool *aIsEnabled)
+NS_IMETHODIMP
+sbMediaManagementService::GetIsEnabled(PRBool *aIsEnabled)
 {
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   *aIsEnabled = mEnabled;
   return NS_OK;
 }
-NS_IMETHODIMP sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
+NS_IMETHODIMP
+sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
 {
   // XXX Mook: needs to start doing things
   nsresult rv;
@@ -166,7 +173,8 @@ NS_IMETHODIMP sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
 }
 
 /* readonly attribute boolean isScanning; */
-NS_IMETHODIMP sbMediaManagementService::GetIsScanning(PRBool *aIsScanning)
+NS_IMETHODIMP
+sbMediaManagementService::GetIsScanning(PRBool *aIsScanning)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -176,7 +184,10 @@ NS_IMETHODIMP sbMediaManagementService::GetIsScanning(PRBool *aIsScanning)
  *****/
 
 /* void observe (in nsISupports aSubject, in string aTopic, in wstring aData); */
-NS_IMETHODIMP sbMediaManagementService::Observe(nsISupports *aSubject, const char *aTopic, const PRUnichar *aData)
+NS_IMETHODIMP
+sbMediaManagementService::Observe(nsISupports *aSubject,
+                                  const char *aTopic,
+                                  const PRUnichar *aData)
 {
   nsresult rv;
   NS_ENSURE_ARG_POINTER(aTopic);
@@ -266,22 +277,24 @@ NS_IMETHODIMP sbMediaManagementService::Observe(nsISupports *aSubject, const cha
 
 /* boolean onItemAdded (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
                         in unsigned long aIndex); */
-NS_IMETHODIMP sbMediaManagementService::OnItemAdded(sbIMediaList *aMediaList,
-                                                    sbIMediaItem *aMediaItem,
-                                                    PRUint32 aIndex,
-                                                    PRBool *_retval)
+NS_IMETHODIMP
+sbMediaManagementService::OnItemAdded(sbIMediaList *aMediaList,
+                                      sbIMediaItem *aMediaItem,
+                                      PRUint32 aIndex,
+                                      PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE; /* keep listening to messages */
-  return this->OnItemChanged(aMediaItem);
+  return this->QueueItem(aMediaItem, sbIMediaFileManager::MANAGE_COPY);
 }
 
 /* boolean onBeforeItemRemoved (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
                                 in unsigned long aIndex); */
-NS_IMETHODIMP sbMediaManagementService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
-                                                            sbIMediaItem *aMediaItem,
-                                                            PRUint32 aIndex,
-                                                            PRBool *_retval)
+NS_IMETHODIMP
+sbMediaManagementService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
+                                              sbIMediaItem *aMediaItem,
+                                              PRUint32 aIndex,
+                                              PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE; /* skip all further OnBeforeItemRemoved */
@@ -290,34 +303,37 @@ NS_IMETHODIMP sbMediaManagementService::OnBeforeItemRemoved(sbIMediaList *aMedia
 
 /* boolean onAfterItemRemoved (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
                                in unsigned long aIndex); */
-NS_IMETHODIMP sbMediaManagementService::OnAfterItemRemoved(sbIMediaList *aMediaList,
-                                                           sbIMediaItem *aMediaItem,
-                                                           PRUint32 aIndex,
-                                                           PRBool *_retval)
+NS_IMETHODIMP
+sbMediaManagementService::OnAfterItemRemoved(sbIMediaList *aMediaList,
+                                             sbIMediaItem *aMediaItem,
+                                             PRUint32 aIndex,
+                                             PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE; /* keep listening to messages */
-  return this->OnItemChanged(aMediaItem);
+  return this->QueueItem(aMediaItem, sbIMediaFileManager::MANAGE_DELETE);
 }
 
 /* boolean onItemUpdated (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
                           in sbIPropertyArray aProperties); */
-NS_IMETHODIMP sbMediaManagementService::OnItemUpdated(sbIMediaList *aMediaList,
-                                                      sbIMediaItem *aMediaItem,
-                                                      sbIPropertyArray *aProperties,
-                                                      PRBool *_retval)
+NS_IMETHODIMP
+sbMediaManagementService::OnItemUpdated(sbIMediaList *aMediaList,
+                                        sbIMediaItem *aMediaItem,
+                                        sbIPropertyArray *aProperties,
+                                        PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE; /* keep listening to messages */
-  return this->OnItemChanged(aMediaItem);
+  return this->QueueItem(aMediaItem, sbIMediaFileManager::MANAGE_MOVE);
 }
 
 /* boolean onItemMoved (in sbIMediaList aMediaList, in unsigned long aFromIndex,
                         in unsigned long aToIndex); */
-NS_IMETHODIMP sbMediaManagementService::OnItemMoved(sbIMediaList *aMediaList,
-                                                    PRUint32 aFromIndex,
-                                                    PRUint32 aToIndex,
-                                                    PRBool *_retval)
+NS_IMETHODIMP
+sbMediaManagementService::OnItemMoved(sbIMediaList *aMediaList,
+                                      PRUint32 aFromIndex,
+                                      PRUint32 aToIndex,
+                                      PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE; /* skip all further OnItemMoved */
@@ -325,8 +341,9 @@ NS_IMETHODIMP sbMediaManagementService::OnItemMoved(sbIMediaList *aMediaList,
 }
 
 /* boolean onListCleared (in sbIMediaList aMediaList); */
-NS_IMETHODIMP sbMediaManagementService::OnListCleared(sbIMediaList *aMediaList,
-                                                      PRBool *_retval)
+NS_IMETHODIMP
+sbMediaManagementService::OnListCleared(sbIMediaList *aMediaList,
+                                        PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_TRUE; /* skip all further OnListCleared */
@@ -334,14 +351,16 @@ NS_IMETHODIMP sbMediaManagementService::OnListCleared(sbIMediaList *aMediaList,
 }
 
 /* void onBatchBegin (in sbIMediaList aMediaList); */
-NS_IMETHODIMP sbMediaManagementService::OnBatchBegin(sbIMediaList *aMediaList)
+NS_IMETHODIMP
+sbMediaManagementService::OnBatchBegin(sbIMediaList *aMediaList)
 {
   /* we don't care about batching, we use a timeout anyway */
   return NS_OK;
 }
 
 /* void onBatchEnd (in sbIMediaList aMediaList); */
-NS_IMETHODIMP sbMediaManagementService::OnBatchEnd(sbIMediaList *aMediaList)
+NS_IMETHODIMP
+sbMediaManagementService::OnBatchEnd(sbIMediaList *aMediaList)
 {
   /* we don't care about batching, we use a timeout anyway */
   return NS_OK;
@@ -351,7 +370,8 @@ NS_IMETHODIMP sbMediaManagementService::OnBatchEnd(sbIMediaList *aMediaList)
  * nsITimerCallback
  */
 /* void notify (in nsITimer timer); */
-NS_IMETHODIMP sbMediaManagementService::Notify(nsITimer *aTimer)
+NS_IMETHODIMP
+sbMediaManagementService::Notify(nsITimer *aTimer)
 {
   NS_ENSURE_ARG_POINTER(aTimer);
   nsresult rv;
@@ -383,27 +403,26 @@ NS_IMETHODIMP sbMediaManagementService::Notify(nsITimer *aTimer)
       mManageMode |= sbIMediaFileManager::MANAGE_COPY;
     }
     
-    /* XXX Mook: huh? doesn't have this? need to sync up what we need to do
     rv = prefBranch->GetBoolPref("songbird.media_management.library.move",
                                  &isSet);
     if (NS_SUCCEEDED(rv) && isSet) {
       mManageMode |= sbIMediaFileManager::MANAGE_MOVE;
     }
-    */
-    rv = prefBranch->GetBoolPref("songbird.media_management.library.rename",
+
+    rv = prefBranch->GetBoolPref("songbird.media_management.library.delete",
                                  &isSet);
     if (NS_SUCCEEDED(rv) && isSet) {
-      mManageMode |= sbIMediaFileManager::MANAGE_RENAME;
+      mManageMode |= sbIMediaFileManager::MANAGE_DELETE;
     }
 
     if (mManageMode) {
       nsCOMPtr<sbIMediaFileManager> fileMan =
-        do_GetService(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
+        do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       
       ProcessItemData data = { this, fileMan };
       
-      PRUint32 count = mDirtyItems.EnumerateEntries(ProcessItem, &data);
+      PRUint32 count = mDirtyItems.EnumerateRead(ProcessItem, &data);
     }
     return NS_OK;
   }
@@ -413,37 +432,9 @@ NS_IMETHODIMP sbMediaManagementService::Notify(nsITimer *aTimer)
 /*****
  * sbMediaManagementService
  *****/
-/* static */
+
 NS_METHOD
-sbMediaManagementService::RegisterSelf(nsIComponentManager *aCompMgr,
-                                       nsIFile *aPath,
-                                       const char *aLoaderStr,
-                                       const char *aType,
-                                       const nsModuleComponentInfo *aInfo)
-{
-  nsresult rv;
-  nsCOMPtr<nsICategoryManager> catman =
-    do_GetService("@mozilla.org/categorymanager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  char* perviousEntry;
-  rv = catman->AddCategoryEntry("app-startup",
-                                SB_MEDIAMANAGEMENTSERVICE_CLASSNAME,
-                                SB_MEDIAMANAGEMENTSERVICE_CONTRACTID,
-                                PR_TRUE,
-                                PR_TRUE,
-                                &perviousEntry);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  if (perviousEntry) {
-    NS_Free(perviousEntry);
-  }
-  
-  return NS_OK;
-}
-
-
-NS_METHOD sbMediaManagementService::Init()
+sbMediaManagementService::Init()
 {
   TRACE(("%s: initing", __FUNCTION__));
   NS_ENSURE_FALSE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
@@ -463,15 +454,28 @@ NS_METHOD sbMediaManagementService::Init()
   return NS_OK;
 }
 
-NS_METHOD sbMediaManagementService::ScanLibrary()
+NS_METHOD
+sbMediaManagementService::ScanLibrary()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_METHOD sbMediaManagementService::OnItemChanged(/*in*/ sbIMediaItem* aItem)
+NS_METHOD
+sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
 {
-  nsISupportsHashKey* result = mDirtyItems.PutEntry(aItem);
-  NS_ENSURE_TRUE(result, NS_ERROR_OUT_OF_MEMORY);
+  PRBool success;
+  
+  #if DEBUG
+  PRUint32 oldOp;
+  success = mDirtyItems.Get(aItem, &oldOp);
+  if (success) {
+    NS_ASSERTION(oldOp != sbIMediaFileManager::MANAGE_DELETE,
+                 "operations on a deleted media item!");
+  }
+  #endif
+  
+  success = mDirtyItems.Put(aItem, aOperation);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   
   nsresult rv;
   
@@ -489,7 +493,8 @@ NS_METHOD sbMediaManagementService::OnItemChanged(/*in*/ sbIMediaItem* aItem)
   return NS_OK;
 }
 
-NS_METHOD sbMediaManagementService::StartListening()
+NS_METHOD
+sbMediaManagementService::StartListening()
 {
   TRACE(("%s: starting", __FUNCTION__));
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
@@ -507,7 +512,8 @@ NS_METHOD sbMediaManagementService::StartListening()
   return NS_OK;
 }
 
-NS_METHOD sbMediaManagementService::StopListening()
+NS_METHOD
+sbMediaManagementService::StopListening()
 {
   TRACE(("%s: stopping", __FUNCTION__));
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
@@ -526,20 +532,25 @@ NS_METHOD sbMediaManagementService::StopListening()
 }
 
 /* static */
-PLDHashOperator sbMediaManagementService::ProcessItem(nsISupportsHashKey* aKey,
-                                                      void* aClosure)
+PLDHashOperator
+sbMediaManagementService::ProcessItem(nsISupports* aKey,
+                                      PRUint32 aOperation,
+                                      void* aClosure)
 {
   nsresult rv;
   
   ProcessItemData* data = 
     reinterpret_cast<ProcessItemData*>(aClosure);
 
-  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey->GetKey());
+  if (!(aOperation & data->mediaMgmtService->mManageMode)) {
+    // we don't want to manage this
+    return PL_DHASH_NEXT;
+  }
+
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey);
   NS_ENSURE_TRUE(item, PL_DHASH_STOP);
   PRBool success;
-  rv = data->fileMan->OrganizeItem(item,
-                                   data->mediaMgmtService->mManageMode,
-                                   &success);
+  rv = data->fileMan->OrganizeItem(item, aOperation, &success);
   if (NS_FAILED(rv)) {
     nsresult __rv = rv;
     NS_ENSURE_SUCCESS_BODY(rv, rv);

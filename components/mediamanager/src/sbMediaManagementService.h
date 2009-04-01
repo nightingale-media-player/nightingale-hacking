@@ -34,7 +34,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
-#include <nsTHashtable.h>
+#include <nsDataHashtable.h>
 
 class nsIComponentManager;
 
@@ -58,17 +58,6 @@ public:
 
 public:
   /**
-   * component registration callback
-   * @see nsIGenericFactory NSRegisterSelfProcPtr
-   */
-  static NS_METHOD RegisterSelf(nsIComponentManager *aCompMgr,
-                                nsIFile *aPath,
-                                const char *aLoaderStr,
-                                const char *aType,
-                                const nsModuleComponentInfo *aInfo);
-
-public:
-  /**
    * Initialize the media management service
    */
   NS_METHOD Init();
@@ -82,7 +71,7 @@ protected:
   /**
    * Queue an item for processing
    */
-  NS_METHOD OnItemChanged(/*in*/ sbIMediaItem* aItem);
+  NS_METHOD QueueItem(sbIMediaItem* aItem, PRUint32 aOperation);
 
   /**
    * do anything else needed to start listening for changes
@@ -97,7 +86,9 @@ protected:
   /**
    * helper for submitting individual items
    */
-  static PLDHashOperator ProcessItem(nsISupportsHashKey* aKey, void* aClosure);
+  static PLDHashOperator ProcessItem(nsISupports* aKey,
+                                     PRUint32 aOperation,
+                                     void* aClosure);
 
 private:
   virtual ~sbMediaManagementService();
@@ -126,9 +117,9 @@ protected:
   nsCOMPtr<nsITimer> mPerformActionTimer;
   
   /**
-   * list of media items that need updating
+   * list of media items that need updating and the type of modification involved
    */
-  nsTHashtable<nsISupportsHashKey> mDirtyItems;
+  nsDataHashtable<nsISupportsHashKey, PRUint32> mDirtyItems;
   
   /**
    * which operations we will do for media management
