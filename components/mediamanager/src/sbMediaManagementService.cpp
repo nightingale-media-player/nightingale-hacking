@@ -158,18 +158,21 @@ sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
                                                 MMS_SCAN_DELAY,
                                                 nsITimer::TYPE_ONE_SHOT);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     mEnabled = aIsEnabled;
-    
+
     return NS_OK;
+
   } else {
     // enabled -> disabled transition
     rv = StopListening();
-    NS_ENSURE_SUCCESS(rv, rv);    
-    
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mEnabled = aIsEnabled;
+    return NS_OK;
   }
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_NOTREACHED("neither enabled nor disabled!");
+  return NS_ERROR_UNEXPECTED;
 }
 
 /* readonly attribute boolean isScanning; */
@@ -262,6 +265,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
     
     mLibrary = nsnull;
+    return NS_OK;
   }
   
   if (!strcmp("app-startup", aTopic)) {
@@ -409,6 +413,12 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
       mManageMode |= sbIMediaFileManager::MANAGE_MOVE;
     }
 
+    rv = prefBranch->GetBoolPref("songbird.media_management.library.rename",
+                                 &isSet);
+    if (NS_SUCCEEDED(rv) && isSet) {
+      mManageMode |= sbIMediaFileManager::MANAGE_RENAME;
+    }
+
     rv = prefBranch->GetBoolPref("songbird.media_management.library.delete",
                                  &isSet);
     if (NS_SUCCEEDED(rv) && isSet) {
@@ -426,7 +436,9 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
     }
     return NS_OK;
   }
-  return NS_ERROR_NOT_IMPLEMENTED;
+  
+  NS_NOTREACHED("sbMediaManagementService::Notify on an unknown timer");
+  return NS_ERROR_UNEXPECTED;
 }
 
 /*****
@@ -445,11 +457,11 @@ sbMediaManagementService::Init()
   nsCOMPtr<nsIObserverService> obs =
     do_GetService("@mozilla.org/observer-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-    rv = obs->AddObserver(this,
-                          "profile-after-change",
-                          PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = obs->AddObserver(this,
+                        "profile-after-change",
+                        PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -541,10 +553,18 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
   
   ProcessItemData* data = 
     reinterpret_cast<ProcessItemData*>(aClosure);
+  PRUint32 opMask = data->mediaMgmtService->mManageMode;
 
-  if (!(aOperation & data->mediaMgmtService->mManageMode)) {
+  if (!(aOperation & opMask)) {
     // we don't want to manage this
     return PL_DHASH_NEXT;
+  }
+  
+  switch (aOperation) {
+    /* on copy and move, also rename if enabled */
+    case sbIMediaFileManager::MANAGE_COPY:
+    case sbIMediaFileManager::MANAGE_MOVE:
+      aOperation |= (opMask & sbIMediaFileManager::MANAGE_RENAME);
   }
 
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey);
