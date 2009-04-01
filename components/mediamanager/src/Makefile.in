@@ -37,6 +37,7 @@ endif
 CPP_SRCS = sbMediaManagerModule.cpp \
            sbMediaManagementJob.cpp \
            sbMediaFileManager.cpp \
+           sbMediaManagementService.cpp \
            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/mediamanager/public \

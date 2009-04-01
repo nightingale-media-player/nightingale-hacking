@@ -27,6 +27,7 @@
 // Local imports.
 #include "sbMediaFileManager.h"
 #include "sbMediaManagementJob.h"
+#include "sbMediaManagementService.h"
 
 // Mozilla imports.
 #include "nsIGenericFactory.h"
@@ -36,6 +37,8 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init);
 
 // Construct the sbMediaManagementJob object.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaManagementJob)
+
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaManagementService, Init);
 
 static const nsModuleComponentInfo sbMediaManagerComponents[] =
 {
@@ -52,6 +55,14 @@ static const nsModuleComponentInfo sbMediaManagerComponents[] =
     SB_MEDIAMANAGEMENTJOB_CID,
     SB_MEDIAMANAGEMENTJOB_CONTRACTID,
     sbMediaManagementJobConstructor
+  },
+  // Media management service component info.
+  {
+    SB_MEDIAMANAGEMENTSERVICE_CLASSNAME,
+    SB_MEDIAMANAGEMENTSERVICE_CID,
+    SB_MEDIAMANAGEMENTSERVICE_CONTRACTID,
+    sbMediaManagementServiceConstructor,
+    sbMediaManagementService::RegisterSelf
   }
 };
 
