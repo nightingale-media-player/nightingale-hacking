@@ -31,6 +31,8 @@ CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
            sbGStreamerMediacoreModule.cpp \
            sbGStreamerMediacoreUtils.cpp \
            sbGStreamerPlatformBase.cpp \
+           sbGStreamerPipeline.cpp \
+           sbGStreamerRTPStreamer.cpp \
            $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
@@ -128,6 +130,8 @@ DYNAMIC_LIB_EXTRA_IMPORTS = \
       xpcom \
       gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+      gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+      gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = \

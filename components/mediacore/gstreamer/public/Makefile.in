@@ -31,8 +31,13 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = \
     sbIGStreamerService.idl \
-	sbIGStreamerMediacore.idl
+    sbIGStreamerMediacore.idl \
+    sbIGStreamerRTPStreamer.idl \
+    sbIGStreamerPipeline.idl \
     $(NULL)
+
+XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
+                 $(NULL)
 
 XPIDL_MODULE = sbGStreamerMediacore.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
