@@ -233,7 +233,6 @@ GST_PLUGINS_GOOD_NAMES := gstalaw \
                          gsteffectv \
                          gstequalizer \
                          gstflac \
-                         gstflxdec \
                          gstgamma \
                          gstgoom \
                          gsticydemux \
