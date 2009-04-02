@@ -70,7 +70,6 @@ protected:
   virtual ~sbMediaFileManager();
   
   nsresult GetNewPath(sbIMediaItem *aMediaItem,
-                      nsIURI *aItemUri,
                       nsString &aPath, 
                       PRBool *aRetVal);
 
@@ -80,15 +79,15 @@ protected:
                           PRBool *aRetVal);
 
   nsresult CopyRename(sbIMediaItem *aMediaItem, 
-                      nsIURI *aItemUri,
+                      nsIFile *aItemFile,
                       const nsString &aFilename,
                       const nsString &aPath,
                       PRBool *aRetVal);
   
-  nsresult Delete(nsIURI *aItemUri, 
+  nsresult Delete(nsIFile *aItemFile, 
                   PRBool *aRetVal);
   
-  nsresult CheckDirectoryForDeletion(nsIURI *aItemUri);
+  nsresult CheckDirectoryForDeletion(nsIFile *aItemFile);
   
   nsresult NormalizeDir(nsString &aDir);
   
@@ -101,11 +100,11 @@ private:
                                  PRBool aAppendProperty,
                                  nsString &aRetVal);
 
-  nsresult IsOrganized(nsIURI    *aItemUri,
+  nsresult IsOrganized(nsIFile   *aItemFile,
                        nsString  &aFilename,
                        nsString  &aPath,
                        PRBool    *aRetVal);
-
+  
   // Hold on to the services we use very often
   nsCOMPtr<nsIIOService>                    mIOService;
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
