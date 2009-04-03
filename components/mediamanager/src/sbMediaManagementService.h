@@ -27,6 +27,7 @@
 
 #include "sbIMediaManagementService.h"
 
+#include <sbIJobProgress.h>
 #include <sbIMediaListListener.h>
 
 #include <nsIObserver.h>
@@ -41,9 +42,11 @@ class nsIComponentManager;
 struct nsModuleComponentInfo;
 
 class sbILibrary;
+class sbIMediaManagementJob;
 
 class sbMediaManagementService : public sbIMediaManagementService,
                                  public sbIMediaListListener,
+                                 public sbIJobProgressListener,
                                  public nsITimerCallback,
                                  public nsIObserver
 {
@@ -51,6 +54,7 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMEDIAMANAGEMENTSERVICE
   NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBIJOBPROGRESSLISTENER
   NS_DECL_NSIOBSERVER
   NS_DECL_NSITIMERCALLBACK
 
@@ -125,6 +129,11 @@ protected:
    * which operations we will do for media management
    */
   PRUint32 mManageMode;
+  
+  /**
+   * The job for scanning the whole library
+   */
+  nsCOMPtr<sbIMediaManagementJob> mLibraryScanJob;
 };
 
 

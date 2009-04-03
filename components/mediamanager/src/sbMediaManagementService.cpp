@@ -38,13 +38,16 @@
 /**
  * songbird interfaces
  */
+#include <sbIJobProgressService.h>
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbIMediaFileManager.h>
+#include <sbIMediaManagementJob.h>
 
 /**
  * other mozilla headers
  */
+#include <prtime.h>
 #include <nsISupportsUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
@@ -58,8 +61,9 @@
  * constants
  */
 
-#define MMS_STARTUP_DELAY (1 * 10 * 1000) /* milliseconds */
-#define MMS_SCAN_DELAY    (5 * 1000) /* milliseconds */
+#define MMS_STARTUP_DELAY  (10 * PR_MSEC_PER_SEC)
+#define MMS_SCAN_DELAY     (5 * PR_MSEC_PER_SEC)
+#define MMS_PROGRESS_DELAY (1 * PR_MSEC_PER_SEC)
 
 /**
  * logging
@@ -93,9 +97,10 @@ struct ProcessItemData {
   sbIMediaFileManager* fileMan;
 };
 
-NS_IMPL_ISUPPORTS4(sbMediaManagementService,
+NS_IMPL_ISUPPORTS5(sbMediaManagementService,
                    sbIMediaManagementService,
                    sbIMediaListListener,
+                   sbIJobProgressListener,
                    nsITimerCallback,
                    nsIObserver)
 
@@ -179,7 +184,9 @@ sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
 NS_IMETHODIMP
 sbMediaManagementService::GetIsScanning(PRBool *aIsScanning)
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aIsScanning);
+  *aIsScanning = (mLibraryScanJob != nsnull);
+  return NS_OK;
 }
 
 /*****
@@ -372,9 +379,53 @@ sbMediaManagementService::OnBatchEnd(sbIMediaList *aMediaList)
   return NS_OK;
 }
 
+
+/*****
+ * sbIJobProgressListener
+ *****/
+/* void onJobProgress (in sbIJobProgress aJobProgress); */
+NS_IMETHODIMP
+sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
+{
+  NS_ENSURE_ARG_POINTER(aJobProgress);
+  
+  nsresult rv;
+
+  PRUint16 progress;
+  rv = aJobProgress->GetStatus(&progress);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (progress == sbIJobProgress::STATUS_RUNNING) {
+    // still running, ignore
+    return NS_OK;
+  }
+  
+  // job complete
+  rv = mLibraryScanJob->RemoveJobProgressListener(this);
+  mLibraryScanJob = nsnull;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (mDirtyItems.Count() > 0) {
+    // have queued jobs
+    if (!mPerformActionTimer) {
+      mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  
+    TRACE(("%s: job complete, has queue, setting timer", __FUNCTION__));
+    rv = mPerformActionTimer->InitWithCallback(this,
+                                               MMS_SCAN_DELAY,
+                                               nsITimer::TYPE_ONE_SHOT);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  return NS_OK;
+}
+
+
 /*****
  * nsITimerCallback
- */
+ *****/
 /* void notify (in nsITimer timer); */
 NS_IMETHODIMP
 sbMediaManagementService::Notify(nsITimer *aTimer)
@@ -473,13 +524,38 @@ sbMediaManagementService::Init()
 NS_METHOD
 sbMediaManagementService::ScanLibrary()
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_TRUE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_STATE(!mLibraryScanJob);
+  
+  nsresult rv;
+  
+  mLibraryScanJob = do_CreateInstance(SB_MEDIAMANAGEMENTJOB_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mLibraryScanJob->AddJobProgressListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mLibraryScanJob->OrganizeMediaList(mLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIJobProgressService> progressSvc =
+    do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = progressSvc->ShowProgressDialog(mLibraryScanJob,
+                                       nsnull,
+                                       MMS_PROGRESS_DELAY);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
 }
 
 NS_METHOD
 sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
 {
+  NS_ENSURE_ARG_POINTER(aItem);
   PRBool success;
+  nsresult rv;
   
   #if DEBUG
   PRUint32 oldOp;
@@ -493,7 +569,10 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
   success = mDirtyItems.Put(aItem, aOperation);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   
-  nsresult rv;
+  if (mLibraryScanJob) {
+    TRACE(("%s: item changed, not setting timer due to library scan job"));
+    return NS_OK;
+  }
   
   if (!mPerformActionTimer) {
     mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
