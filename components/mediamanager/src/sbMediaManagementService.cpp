@@ -58,8 +58,8 @@
  * constants
  */
 
-#define MMS_STARTUP_DELAY (5 * 60 * 1000) /* milliseconds */
-#define MMS_SCAN_DELAY    (60 * 1000) /* milliseconds */
+#define MMS_STARTUP_DELAY (1 * 10 * 1000) /* milliseconds */
+#define MMS_SCAN_DELAY    (5 * 1000) /* milliseconds */
 
 /**
  * logging
@@ -250,6 +250,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
       NS_ENSURE_SUCCESS(rv, rv);
     }
     
+    TRACE(("%s: arming delayed startup timer", __FUNCTION__));
     rv = mDelayedStartupTimer->InitWithCallback(this,
                                                 MMS_STARTUP_DELAY,
                                                 nsITimer::TYPE_ONE_SHOT);
@@ -261,6 +262,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
   }
   
   if (!strcmp(SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, aTopic)) {
+    TRACE(("%s: shutting down", __FUNCTION__));
     rv = StopListening();
     NS_ENSURE_SUCCESS(rv, rv);
     
@@ -381,6 +383,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
   nsresult rv;
 
   if (aTimer == mDelayedStartupTimer) {
+    TRACE(("%s: delayed startup timer fired", __FUNCTION__));
     mDelayedStartupTimer = nsnull;
 
     rv = StartListening();
@@ -391,6 +394,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
 
     return NS_OK;
   } else if (aTimer == mPerformActionTimer) {
+    TRACE(("%s: perform action timer fired", __FUNCTION__));
     
     NS_ENSURE_TRUE(mDirtyItems.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
     

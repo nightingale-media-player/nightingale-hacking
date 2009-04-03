@@ -87,7 +87,20 @@ var manageMediaPrefsPane = {
         // cancel dialog, don't do anything
         return;
       }
-      // XXX mook: apply preferences here
+
+      // need to manually set the dir pref if it's not user set, because it has
+      // no default value (needs platform-specific path separator)
+      var dirPrefElem = document.getElementById("manage_media_pref_library_format_dir");
+      var dirFormatElem = document.getElementById("manage_media_format_dir_formatter");
+      if (!dirPrefElem.hasUserValue) {
+        dirPrefElem.valueFromPreferences = dirFormatElem.value;
+      }
+
+      // dialog is closing, apply any preferences that should never instant-apply
+      var mediaMgmtSvc = Cc["@songbirdnest.com/Songbird/media-manager-service;1"]
+                           .getService(Ci.sbIMediaManagementService);
+      mediaMgmtSvc.isEnabled = document.getElementById("manage_media_pref_library_enable")
+                                       .value;
     }
     window.addEventListener('dialogaccept', forceCheck, false);
     window.addEventListener('dialogcancel', forceCheck, false);

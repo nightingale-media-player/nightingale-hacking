@@ -477,5 +477,9 @@ pref("songbird.media_management.library.enabled", false);
 // songbird.media_management.library.format.dir has no default due to platform-
 // specific directory separator character
 pref("songbird.media_management.library.format.file", "http://songbirdnest.com/data/1.0#trackNumber,%20-%20,http://songbirdnest.com/data/1.0#trackName");
+pref("songbird.media_management.library.copy", true);
+pref("songbird.media_management.library.move", true);
+pref("songbird.media_management.library.delete", false);
+pref("songbird.media_management.library.rename", true);
 
 

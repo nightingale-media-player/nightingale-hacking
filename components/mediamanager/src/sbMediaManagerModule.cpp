@@ -56,7 +56,7 @@ sbMediaManagementServiceRegisterSelf(nsIComponentManager *aCompMgr,
   char* perviousEntry;
   rv = catman->AddCategoryEntry("app-startup",
                                 SB_MEDIAMANAGEMENTSERVICE_CLASSNAME,
-                                SB_MEDIAMANAGEMENTSERVICE_CONTRACTID,
+                                "service," SB_MEDIAMANAGEMENTSERVICE_CONTRACTID,
                                 PR_TRUE,
                                 PR_TRUE,
                                 &perviousEntry);
