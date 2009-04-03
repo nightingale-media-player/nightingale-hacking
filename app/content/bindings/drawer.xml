@@ -85,11 +85,7 @@
 
       <method name="start">
         <body>
-          try {
-            this.init = 1;
-            this.onInit();
-          } catch (e) {
-          }
+          this.init = 1;
         </body>
       </method>
 
@@ -632,10 +628,6 @@
         <body>
           this.computeItemHeight();
           this.init = 1;
-          try {
-            this.onInit();
-          } catch (e) {
-          }
         </body>
       </method>
       
