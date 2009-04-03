@@ -143,7 +143,7 @@ function setupMediaManagerPreferences () {
   managedFolder.create(Ci.nsIFile.DIRECTORY_TYPE, 0777);
   
   prefBranch.setComplexValue(SB_MM_PREF_FOLDER, Ci.nsILocalFile, managedFolder);
-  prefBranch.setBoolPref(SB_MM_PREF_ENABLED, true);
+  prefBranch.setBoolPref(SB_MM_PREF_ENABLED, false);
   prefBranch.setBoolPref(SB_MM_PREF_COPY, true);
   prefBranch.setBoolPref(SB_MM_PREF_MOVE, true);
   prefBranch.setBoolPref(SB_MM_PREF_RENAME, true);
