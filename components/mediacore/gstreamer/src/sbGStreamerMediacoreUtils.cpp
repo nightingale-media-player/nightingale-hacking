@@ -110,9 +110,9 @@ ConvertSinglePropertyToTag(sbIProperty *property,
 /* Some nasty macros. Less nasty than writing all this out any other way... */
 #define TAG_CONVERT_STRING(sbname,gstname) \
   if (id == NS_LITERAL_STRING (sbname)) { \
-    const gchar * gstvalue = NS_ConvertUTF16toUTF8(value).BeginReading(); \
+    NS_ConvertUTF16toUTF8 utf8value(value); \
     gst_tag_list_add (taglist, GST_TAG_MERGE_APPEND, (gchar *)gstname, \
-            gstvalue, NULL); \
+            utf8value.BeginReading(), NULL); \
     return PR_TRUE; \
   }
 

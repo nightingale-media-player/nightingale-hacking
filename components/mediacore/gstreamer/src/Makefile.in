@@ -33,6 +33,7 @@ CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
            sbGStreamerPlatformBase.cpp \
            sbGStreamerPipeline.cpp \
            sbGStreamerRTPStreamer.cpp \
+           sbGStreamerTranscode.cpp \
            $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
@@ -58,6 +59,7 @@ CPP_INCLUDES = \
       $(topsrcdir)/components/moz/threads/src \
       $(DEPTH)/components/property/public \
       $(topsrcdir)/components/property/src \
+      $(DEPTH)/components/job/public \
       $(MOZSDK_INCLUDE_DIR) \
       $(MOZSDK_INCLUDE_DIR)/nspr \
       $(MOZSDK_INCLUDE_DIR)/xpcom \

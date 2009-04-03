@@ -80,7 +80,7 @@ sbGStreamerPipeline::~sbGStreamerPipeline()
 }
 
 NS_IMETHODIMP
-sbGStreamerPipeline::Initialise()
+sbGStreamerPipeline::Init()
 {
   TRACE(("sbGStreamerPipeline[0x%.8x] - Initialise", this));
 

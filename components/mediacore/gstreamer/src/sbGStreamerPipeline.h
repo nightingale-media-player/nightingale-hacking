@@ -67,7 +67,7 @@ public:
   virtual void HandleMessage(GstMessage *message);
   virtual PRBool HandleSynchronousMessage(GstMessage *message);
 
-  NS_IMETHOD Initialise();
+  NS_IMETHOD Init();
 
 protected:
   virtual void HandleEOSMessage(GstMessage *message);
