@@ -194,12 +194,13 @@ sbMediaManagementJob::ProcessNextItem()
   // This is a serious error
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsString filePath;
-  rv = ProcessItem(nextItem, filePath);
+  rv = ProcessItem(nextItem);
   if (NS_FAILED(rv)) {
     // TODO: We need to log this error, we actually want to log common errors
     // so that we don't get thousands of files listed in the error dialog.
-    mErrorMessages.AppendElement(filePath);
+    TRACE(("sbMediaManagementJob::ProcessNextItem - Adding [%s] to errors",
+           NS_ConvertUTF16toUTF8(mCurrentContentURL).get()));
+    mErrorMessages.AppendElement(mCurrentContentURL);
   }
   
   // Increment our counter and check our status
@@ -227,12 +228,30 @@ sbMediaManagementJob::ProcessNextItem()
 }
 
 nsresult
-sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem,
-                                  nsAString& outFilePath)
+sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
 {
   TRACE(("sbMediaManagementJob[0x%.8x] - ProcessItem", this));
   NS_ENSURE_ARG_POINTER(aItem);
   nsresult rv;
+  
+  nsString propValue;
+  nsString propHidden;
+  nsString propIsList;
+  
+  propHidden.AssignLiteral(SB_PROPERTY_HIDDEN);
+  propIsList.AssignLiteral(SB_PROPERTY_ISLIST);
+    
+  PRBool isHidden =
+    (NS_SUCCEEDED(aItem->GetProperty(propHidden, propValue)) &&
+     propValue.EqualsLiteral("1"));
+  PRBool isList =
+    (NS_SUCCEEDED(aItem->GetProperty(propIsList, propValue)) &&
+     propValue.EqualsLiteral("1"));
+
+  if (isHidden || isList) {
+    // We don't organize lists or hidden items
+    return NS_OK;
+  }
   
   // Reset our current url incase something fails
   mCurrentContentURL = EmptyString();
@@ -257,18 +276,40 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem,
   nsCOMPtr<nsIFile> itemFile;
   rv = fileUrl->GetFile(getter_AddRefs(itemFile));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Get the path for the progress display
+  rv = itemFile->GetPath(mCurrentContentURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Update the progress for the user
+  rv = UpdateProgress();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isInMediaFolder = PR_FALSE;
   rv = mMediaFolder->Contains(itemFile, PR_FALSE, &isInMediaFolder);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 manageType;
-  if (isInMediaFolder) {
-    manageType = sbIMediaFileManager::MANAGE_RENAME;
-  } else {
-    manageType = sbIMediaFileManager::MANAGE_COPY;
+  PRUint32 manageType = 0;
+  if (mShouldMoveFiles) {
+    // Move files so that they are in the correct folder structure
+    manageType = manageType | sbIMediaFileManager::MANAGE_MOVE;
+    TRACE(("sbMediaManagementJob - Adding MANAGE_MOVE"));
   }
-    
+  if (mShouldRenameFiles) {
+    // Rename files so they have the correct filename
+    manageType = manageType | sbIMediaFileManager::MANAGE_RENAME;
+    TRACE(("sbMediaManagementJob - Adding MANAGE_RENAME"));
+  }
+  if (!isInMediaFolder && mShouldCopyFiles) {
+    // Copy files to the media folder if not already there
+    manageType = manageType | sbIMediaFileManager::MANAGE_COPY;
+    TRACE(("sbMediaManagementJob - Adding MANAGE_COPY"));
+  }
+  // Check if there is anything to do for this item
+  if (manageType == 0) {
+    TRACE(("sbMediaManagementJob - No need to organize this file."));
+    return NS_OK;
+  }
+
   // Organize the file by calling the sbIMediaFileManager
   PRBool organizedItem;
   rv = mMediaFileManager->OrganizeItem(aItem,
@@ -328,21 +369,53 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
   NS_ENSURE_ARG_POINTER( aMediaList );
   nsresult rv;
   
-  // Grab a Media File Manager component
-  mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  /**
+   * Preferences - BEGIN
+   */
   // Get the preference branch.
   nsCOMPtr<nsIPrefBranch2> prefBranch =
      do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
- 
+
   // Grab our Media Managed Folder
   mMediaFolder = nsnull;
   rv = prefBranch->GetComplexValue(PREF_MMJOB_LOCATION,
                                    NS_GET_IID(nsILocalFile),
                                    getter_AddRefs(mMediaFolder));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv) || mMediaFolder == nsnull) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  // Get flag to indicate if we are to copy files to the media folder
+  mShouldCopyFiles = PR_FALSE;
+  rv = prefBranch->GetBoolPref(PREF_MMJOB_COPYFILES, &mShouldCopyFiles);
+  if (NS_FAILED(rv)) {
+    mShouldCopyFiles = PR_FALSE;
+  }
+  
+  // Get flag to indicate if we are to move files in the media folder
+  mShouldMoveFiles = PR_FALSE;
+  rv = prefBranch->GetBoolPref(PREF_MMJOB_MOVEFILES, &mShouldMoveFiles);
+  if (NS_FAILED(rv)) {
+    mShouldMoveFiles = PR_FALSE;
+  }
+  
+  // Get flag to indicate if we are to rename files in the media folder
+  mShouldRenameFiles = PR_FALSE;
+  rv = prefBranch->GetBoolPref(PREF_MMJOB_RENAMEFILES, &mShouldRenameFiles);
+  if (NS_FAILED(rv)) {
+    mShouldRenameFiles = PR_FALSE;
+  }
+  
+  // Get our timer value
+  mIntervalTimerValue = MMJOB_SCANNER_INTERVAL;
+  rv = prefBranch->GetIntPref(PREF_MMJOB_INTERVAL, &mIntervalTimerValue);
+  if (NS_FAILED(rv)) {
+    mIntervalTimerValue = MMJOB_SCANNER_INTERVAL;
+  }
+  /**
+   * Preference - END
+   */
 
   // Inform the watch folder service of the Media Library Folder we are about
   // to organize. This prevents the watch folder service from re-reading in the
@@ -364,17 +437,9 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Get flag to indicate if we are to copy files to the media folder
-  rv = prefBranch->GetBoolPref(PREF_MMJOB_COPYFILES, &mCopyFilesToMediaFolder);
-  if (NS_FAILED(rv)) {
-    mCopyFilesToMediaFolder = PR_FALSE;
-  }
-  
-  // Get our timer values
-  rv = prefBranch->GetIntPref(PREF_MMJOB_INTERVAL, &mIntervalTimerValue);
-  if (NS_FAILED(rv)) {
-    mIntervalTimerValue = MMJOB_SCANNER_INTERVAL;
-  }
+  // Grab a Media File Manager component
+  mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Grab our string bundle
   nsCOMPtr<nsIStringBundleService> StringBundleService =

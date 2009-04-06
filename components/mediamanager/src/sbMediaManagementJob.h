@@ -83,9 +83,12 @@
 #define MMJOB_SCANNER_INTERVAL 10
 
 // Preference keys
-#define PREF_MMJOB_INTERVAL "songbird.media_management.library.scan.interval"
-#define PREF_MMJOB_LOCATION "songbird.media_management.library.folder"
-#define PREF_MMJOB_COPYFILES "songbird.media_management.libary.copy"
+#define PREF_MMJOB_INTERVAL     "songbird.media_management.library.scan.interval"
+#define PREF_MMJOB_LOCATION     "songbird.media_management.library.folder"
+#define PREF_MMJOB_COPYFILES    "songbird.media_management.library.copy"
+#define PREF_MMJOB_MOVEFILES    "songbird.media_management.library.move"
+#define PREF_MMJOB_RENAMEFILES  "songbird.media_management.library.rename"
+#define PREF_MMJOB_ENABLED      "songbird.media_management.library.enabled"
 
 //------------------------------------------------------------------------------
 //
@@ -112,38 +115,40 @@ private:
   nsresult UpdateProgress();
   
   nsresult ProcessNextItem();
-  nsresult ProcessItem(sbIMediaItem* aItem, nsAString& outFilePath);
+  nsresult ProcessItem(sbIMediaItem* aItem);
 protected:
   // We need to hold onto the media list so we can get the items
-  nsCOMPtr<sbIMediaList>                   mMediaList;
+  nsCOMPtr<sbIMediaList>                  mMediaList;
  
   // Where our media folder is located.
-  nsCOMPtr<nsIFile>                        mMediaFolder;
+  nsCOMPtr<nsIFile>                       mMediaFolder;
   
   // Flag to indicate if we need to copy files into the Media Folder
-  PRBool                                   mCopyFilesToMediaFolder;
+  PRBool                                  mShouldCopyFiles;
+  PRBool                                  mShouldMoveFiles;
+  PRBool                                  mShouldRenameFiles;
   
   // Watch Folder information
-  PRBool                                   mShouldIgnoreMediaFolder;
-  nsCOMPtr<sbIWatchFolderService>          mWatchFolderService;
+  PRBool                                  mShouldIgnoreMediaFolder;
+  nsCOMPtr<sbIWatchFolderService>         mWatchFolderService;
   
   // Keep a single instance of the file manager for this job
-  nsCOMPtr<sbIMediaFileManager>            mMediaFileManager;
+  nsCOMPtr<sbIMediaFileManager>           mMediaFileManager;
   
   // Timers for doing our work
-  nsCOMPtr<nsITimer>                       mIntervalTimer;
-  PRInt32                                  mIntervalTimerValue;
+  nsCOMPtr<nsITimer>                      mIntervalTimer;
+  PRInt32                                 mIntervalTimerValue;
 
   // sbIJobProgress variables
-  PRUint16                                 mStatus;
-  nsTArray<nsString>                       mErrorMessages;
-  nsCOMArray<sbIJobProgressListener>       mListeners;
-  PRUint32                                 mCompletedItemCount;
-  PRUint32                                 mTotalItemCount;
-  nsString                                 mCurrentContentURL;
+  PRUint16                                mStatus;
+  nsTArray<nsString>                      mErrorMessages;
+  nsCOMArray<sbIJobProgressListener>      mListeners;
+  PRUint32                                mCompletedItemCount;
+  PRUint32                                mTotalItemCount;
+  nsString                                mCurrentContentURL;
 
   // String bundle for status messages.
-  nsCOMPtr<nsIStringBundle>                mStringBundle;
+  nsCOMPtr<nsIStringBundle>               mStringBundle;
 };
 
 #endif // __SB_MEDIAMANAGEMENTJOB_H__
