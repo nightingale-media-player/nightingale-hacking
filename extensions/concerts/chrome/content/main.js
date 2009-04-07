@@ -114,7 +114,10 @@ Concerts = {
 			this.rebuildOnTourPlaylist();
 
 			// Add our mediacore listener to listen for Artists on Tour plays
-			this._setupSmartPlaylistListener();
+			// works for both old & new API since gMediaCore is aliased to gPPS
+			// and both gPPS & the new media core manager have the same
+			// addListener interface
+			gMediaCore.addListener(this._mmListener);
 	 
 			// Add the listener for playlist "On Tour" clicks
 			if (typeof(gBrowser) != "undefined")
@@ -142,8 +145,13 @@ Concerts = {
 	},
   
 	onUnLoad: function() {
-		this._initialized = false;
-		this.skSvc.unregisterSPSUpdater();
+		Concerts._initialized = false;
+		var skSvc = Cc["@songbirdnest.com/Songbird/Concerts/Songkick;1"]
+			.getService(Ci.sbISongkick);
+		skSvc.unregisterSPSUpdater();
+		if (Concerts._artistDataRemote)
+			Concerts._artistDataRemote.unbind();
+		gMediaCore.removeListener(this._mmListener);
 	},
   
 	/***********************************************************************
@@ -263,8 +271,8 @@ Concerts = {
 		var createDataRemote = new Components.Constructor(
 				"@songbirdnest.com/Songbird/DataRemote;1",
 				Ci.sbIDataRemote, "init");
-		var artistDataRemote = createDataRemote("metadata.artist", null);
-		artistDataRemote.bindObserver(this, true);
+		Concerts._artistDataRemote = createDataRemote("metadata.artist", null);
+		Concerts._artistDataRemote.bindObserver(this, true);
 
 		// See if we're already playing (to catch the feather/layout switch)
 		var currentItem;
@@ -424,53 +432,46 @@ Concerts = {
 	 * Setup listener for view changes so we can track the # of times the
 	 * Artists on Tour smart playlist is played
 	 *********************************************************************/
-	_setupSmartPlaylistListener : function() {
-		var observer = {
-			onMediacoreEvent : function(ev) {
-				switch (ev.type) {
-					case Components.interfaces.sbIMediacoreEvent.VIEW_CHANGE:
-						observer.onViewChange(ev.data);
-						break;
-					default:
-						break;
-				}
-			},
-			onStop : function() { },
-			onBeforeTrackChange : function() { },
-			onTrackChange : function() { },
-			onTrackIndexChange : function() { },
-			onBeforeViewChange : function() { },
-			onViewChange : function(aView) {
-				debugLog("viewChangeListener", "on view change triggered");
-				var touringPlaylist = null;
-				try {
-					var itemEnum = LibraryUtils.mainLibrary.getItemsByProperty(
-							SBProperties.customType,
-							"concerts_artistsTouring").enumerate();
-					while (itemEnum.hasMoreElements()) {
-						touringPlaylist = itemEnum.getNext();
-						break;
-					}
-				} catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
-				}
-
-				if (touringPlaylist == null)
-					return;
-
-				if (aView.mediaList.getProperty(SBProperties.outerGUID)
-					== touringPlaylist.guid)
-				{
-					debugLog("viewChangeListener",
-						"Artists on tour playback initiated");
-					gMetrics.metricsInc("concerts", "smartpls.played", "");
-				}
+	_mmListener: {
+		onMediacoreEvent : function(ev) {
+			switch (ev.type) {
+				case Components.interfaces.sbIMediacoreEvent.VIEW_CHANGE:
+					this.onViewChange(ev.data);
+					break;
+				default:
+					break;
 			}
-		};
+		},
+		onStop : function() { },
+		onBeforeTrackChange : function() { },
+		onTrackChange : function() { },
+		onTrackIndexChange : function() { },
+		onBeforeViewChange : function() { },
+		onViewChange : function(aView) {
+			debugLog("viewChangeListener", "on view change triggered");
+			var touringPlaylist = null;
+			try {
+				var itemEnum = LibraryUtils.mainLibrary.getItemsByProperty(
+						SBProperties.customType,
+						"concerts_artistsTouring").enumerate();
+				while (itemEnum.hasMoreElements()) {
+					touringPlaylist = itemEnum.getNext();
+					break;
+				}
+			} catch (e if e.result == Cr.NS_ERROR_NOT_AVAILABLE) {
+			}
 
-		// works for both old & new API since gMediaCore is aliased to gPPS
-		// and both gPPS & the new media core manager have the same
-		// addListener interface
-		gMediaCore.addListener(observer);
+			if (touringPlaylist == null)
+				return;
+
+			if (aView.mediaList.getProperty(SBProperties.outerGUID)
+				== touringPlaylist.guid)
+			{
+				debugLog("viewChangeListener",
+					"Artists on tour playback initiated");
+				gMetrics.metricsInc("concerts", "smartpls.played", "");
+			}
+		}
 	},
 }
 
@@ -600,3 +601,4 @@ Concerts.uninstallObserver = {
 }
 
 window.addEventListener("load", function(e) { Concerts.onLoad(e); }, false);
+window.addEventListener("unload", function(e) { Concerts.onUnLoad(e); }, false);
