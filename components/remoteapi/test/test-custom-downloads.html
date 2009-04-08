@@ -153,6 +153,28 @@
 
   <body onload="load();" onunload="unload();">
     <h1>Custom Download Handling</h1>
+    <ul>
+      <li>This page initially loads the site list, which contains 5 different tracks
+      </li>
+      <li>The site library should never contain duplicates of those tracks no matter
+          how many times you reload/visit/download tracks
+      </li>
+      <li>The main library will contain duplicates if you download a track more than once
+      </li>
+      <li>Clearing the site list will not remove the items from the site library
+      </li>
+      <li>Clearing the site library will remove the items and list, you will have to reload
+          or click populate to get tracks into the site library again.
+      </li>
+      <li>If you download a track the icon will change during download to an animated
+          image.
+      </li>
+      <li>When the download is complete, successfull or not, the image will change again.
+      </li>
+      <li>Subsequent visits to the page, after downloading the track, should persist the
+          image. It should never reset.
+      </li>
+    </ul>
     <form>
       <input type='button' value='clear site lib' onclick='siteLib.clear()' />
       <input type='button' value='clear site list' onclick='siteList.clear()' />
