@@ -26,15 +26,5 @@
 
 // Restore the preferences
 restoreMediaManagerPreferences();
-
-// Get rid of the temp folder created by getTempFolder.
-(function(){
-  for each (var file in gFilesToClose) {
-    try {
-      file.close();
-    } catch(e) {
-      /* nothing */
-    }
-  }
-})();
 removeTempFolder();
+removeTestLibraries();

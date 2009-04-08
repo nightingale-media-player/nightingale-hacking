@@ -42,18 +42,51 @@ Components.utils.import('resource://gre/modules/XPCOMUtils.jsm');
  */
 var SB_NS = "http://songbirdnest.com/data/1.0#";
 var SB_MEDIAFILEMANAGER = "@songbirdnest.com/Songbird/media-manager/file;1";
+var SB_MEDIAMANAGERJOB = "@songbirdnest.com/Songbird/media-manager/job;1";
 
 // Media manager preferences
-const SB_MM_PREF_FOLDER = "songbird.media_management.library.folder";
-const SB_MM_PREF_ENABLED = "songbird.media_management.library.enabled";
-const SB_MM_PREF_COPY = "songbird.media_management.library.copy";
-const SB_MM_PREF_MOVE = "songbird.media_management.library.move";
-const SB_MM_PREF_RENAME = "songbird.media_management.library.rename";
-const SB_MM_PREF_FMTDIR = "songbird.media_management.library.format.dir";
-const SB_MM_PREF_FMTFILE = "songbird.media_management.library.format.file";
+var SB_MM_PREF_FOLDER = "songbird.media_management.library.folder";
+var SB_MM_PREF_ENABLED = "songbird.media_management.library.enabled";
+var SB_MM_PREF_COPY = "songbird.media_management.library.copy";
+var SB_MM_PREF_MOVE = "songbird.media_management.library.move";
+var SB_MM_PREF_RENAME = "songbird.media_management.library.rename";
+var SB_MM_PREF_FMTDIR = "songbird.media_management.library.format.dir";
+var SB_MM_PREF_FMTFILE = "songbird.media_management.library.format.file";
+
+// An array of what our test results should be
+var gResultInformation = [
+  { originalFileName: "TestFile1.mp3",
+    expectedFileName: "1 - Sample.mp3",
+    expectedFolder:   "Managed/Songbird/Unit Test Classics" },
+  { originalFileName: "TestFile2.mp3",
+    expectedFileName: "2 - Sample.mp3",
+    expectedFolder:   "Managed/Songbird/Unit Test Classics" },
+  { originalFileName: "TestFile3.mp3",
+    expectedFileName: "3 - Sample.mp3",
+    expectedFolder:   "Managed/Songbird/Unit Test Classics" },
+
+  { originalFileName: "TestFile4.mp3",
+    expectedFileName: "1 - TestFile4.mp3.mp3",
+    expectedFolder:   "Managed/Unknown Artist/Unknown Album" },
+
+  { originalFileName: "TestFile5.mp3",
+    expectedFileName: "1 - Sample.mp3",
+    expectedFolder:   "Managed/Songbird/Unknown Album" },
+
+  { originalFileName: "TestFile6.mp3",
+    expectedFileName: "1 - Sample.mp3",
+    expectedFolder:   "Managed/Unknown Artist/Unit Test Classics" }
+];
 
 // Keep a copy of the original prefs so we don't screw anything up
 var gOriginalPrefs = null;
+// Test library to use.
+var gTestLibrary;
+// Items we add to the library to test our file management
+var gTestMediaItems;
+// We use this in many places for creating our file paths
+var gFileLocation = "testharness/mediamanager/files/";
+
 
 /**
  * Save the Media Manager preferences.
@@ -75,8 +108,12 @@ function saveMediaManagerPreferences () {
 
   // Store the current preferences so we can restore them later
   if (Application.prefs.has(SB_MM_PREF_FOLDER)) {
-    gOriginalPrefs.folder = prefBranch.getComplexValue(SB_MM_PREF_FOLDER,
-                                                       Ci.nsILocalFile);
+    try {
+      gOriginalPrefs.folder = prefBranch.getComplexValue(SB_MM_PREF_FOLDER,
+                                                         Ci.nsILocalFile);
+    } catch (err) {
+      log("Unable to save folder preference: " + err);
+    }
   }
   
   gOriginalPrefs.enabled = Application.prefs.getValue(SB_MM_PREF_ENABLED, false);
@@ -94,6 +131,7 @@ function saveMediaManagerPreferences () {
 function restoreMediaManagerPreferences() {
   // Don't do anything if we didn't save the prefs
   if (gOriginalPrefs == null) {
+    log("Not restoring prefs!!!");
     return;
   }
 
@@ -113,47 +151,105 @@ function restoreMediaManagerPreferences() {
   prefBranch.setCharPref(SB_MM_PREF_FMTFILE, gOriginalPrefs.formatFile);
 }
 
+/**
+ * Set up what we want the preferences to be, we need to do this since the
+ * Media Manager depends on the preferences to organize.
+ */
+function setupMediaManagerPreferences () {
+  // First thing is to save them if they have not already been saved
+  if (gOriginalPrefs == null) {
+    saveMediaManagerPreferences();
+  }
+  
+  var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                     .getService(Ci.nsIPrefBranch2);
 
+  var separator = "/";
+  if (getPlatform() == "Windows_NT") {
+    separator = "\\";
+  }
+  var managedFolder = testFolder.clone();
+  managedFolder.append("Managed");
+  // Create the folder
+  managedFolder.create(Ci.nsIFile.DIRECTORY_TYPE, 0777);
+  
+  prefBranch.setComplexValue(SB_MM_PREF_FOLDER, Ci.nsILocalFile, managedFolder);
+  prefBranch.setBoolPref(SB_MM_PREF_ENABLED, false);
+  prefBranch.setBoolPref(SB_MM_PREF_COPY, true);
+  prefBranch.setBoolPref(SB_MM_PREF_MOVE, true);
+  prefBranch.setBoolPref(SB_MM_PREF_RENAME, true);
+  prefBranch.setCharPref(SB_MM_PREF_FMTDIR,
+                         SB_NS + "artistName," +
+                         separator + "," +
+                         SB_NS + "albumName");
+  prefBranch.setCharPref(SB_MM_PREF_FMTFILE,
+                         SB_NS + "trackNumber," +
+                         " - ," +
+                         SB_NS + "trackName");
+}
 
 /**
- * Create our test library
+ * Adds some test files to the test library, we need to use items in a library
+ * since the MediaFileManager uses the property information to organize.
  */
-function createNewLibrary(databaseGuid, databaseLocation) {
+function addItemsToLibrary(aLibrary) {
+  var toAdd = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                .createInstance(Ci.nsIMutableArray);
+  var propertyArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                        .createInstance(Ci.nsIMutableArray);
+  var ioService = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService);
+  for (var i = 0; i < gResultInformation.length; i++) {
+    // Set up the item
+    var newFile = testFolder.clone();
+    newFile.append(gResultInformation[i].originalFileName);
+    toAdd.appendElement(ioService.newFileURI(newFile), false);
+    
+    // Setup default properties for this item
+    var props = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                  .createInstance(Ci.sbIMutablePropertyArray);
+    props.appendProperty(SB_NS + "contentLength", i + 1);
+    props.appendProperty(SB_NS + "trackNumber", i + 1);
+    propertyArray.appendElement(props, false);
+  }
 
-  var directory;
-  if (databaseLocation) {
-    directory = databaseLocation.QueryInterface(Ci.nsIFileURL).file;
-  }
-  else {
-    directory = Cc["@mozilla.org/file/directory_service;1"].
-                getService(Ci.nsIProperties).
-                get("ProfD", Ci.nsIFile);
-    directory.append("db");
-  }
-  
-  var file = directory.clone();
-  file.append(databaseGuid + ".db");
-
-  var libraryFactory =
-    Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
-      .getService(Ci.sbILibraryFactory);
-  var hashBag = Cc["@mozilla.org/hash-property-bag;1"].
-                createInstance(Ci.nsIWritablePropertyBag2);
-  hashBag.setPropertyAsInterface("databaseFile", file);
-  var library = libraryFactory.createLibrary(hashBag);
-  try {
-    library.clear();
-  }
-  catch(e) {
-  }
-  
-  if (library) {
-    var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
-                         getService(Ci.sbILibraryManager);
-    libraryManager.registerLibrary(library, false);
-  }
-  return library;
+  aLibrary.batchCreateMediaItems(toAdd, propertyArray);
 }
+
+/**
+ * Check the items path with the expected results, return true if ok.
+ */
+function checkItem(aMediaItem, aResultInformationIndex) {
+  // First get the current path from the item
+  var current = aMediaItem.contentSrc.QueryInterface(Ci.nsIFileURL);
+  if (!(current instanceof Ci.nsIFileURL)) {
+    return false;
+  }
+  current = current.file;
+  var currentPath = decodeURIComponent(current.path);
+  
+  // Now put together the expected path for the item
+  var expected = testFolder.clone();
+  expected = appendPathToDirectory(expected,
+                                   gResultInformation[aResultInformationIndex].expectedFolder);
+  expected.append(gResultInformation[aResultInformationIndex].expectedFileName);
+  var expectedPath = expected.path;
+  
+  // Compare the current to expected
+  return (current.equals(expected));
+}
+
+/**
+ * Check that a file for an item has been deleted.
+ */
+function checkDeletedItem(aMediaItem) {
+  var fileURI = aMediaItem.contentSrc.QueryInterface(Ci.nsIFileURL);
+  if (fileURI instanceof Ci.nsIFileURL) {
+    var file = fileURI.file;
+    return !file.exists();
+  }
+  return false;
+} 
 
 /**
  * A test Media List Listener to watch for additions to the library
@@ -269,8 +365,13 @@ function removeTempFolder() {
   }
 }
 
-
 /**
- * Make sure to save the current preferences so we do not mess anything up.
+ * Get rid of any test librarys we have created
  */
-//saveMediaManagerPreferences();
+function removeTestLibraries() {
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
+                       getService(Ci.sbILibraryManager);
+  try {
+    libraryManager.unregisterLibrary(gTestLibrary);
+  } catch (err) {}
+}

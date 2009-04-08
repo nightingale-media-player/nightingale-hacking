@@ -32,7 +32,9 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = mediamanager
 
 SONGBIRD_TESTS = $(srcdir)/head_mediamanager.js \
+                 $(srcdir)/tail_mediamanager.js \
                  $(srcdir)/test_mediafilemanager.js \
+                 $(srcdir)/test_mediamanagementjob.js \
                  $(NULL)
 
 SUBDIRS = files \

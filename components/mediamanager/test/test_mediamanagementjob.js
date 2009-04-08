@@ -33,53 +33,45 @@ var testFolder = getCopyOfFolder(newAppRelativeFile(gFileLocation),
                                  "_temp_mediafilemanager_files");
 
 /**
+ * Job progress listener for the organizeList
+ */
+function onManagementComplete(job) {
+  try { 
+    if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+      return;
+    }
+    job.removeJobProgressListener(onManagementComplete);
+
+    for (var i = 0; i < gTestMediaItems.length; i++) {
+      var item = gTestMediaItems.queryElementAt(i, Ci.sbIMediaItem);
+      assertTrue(checkItem(item, i), "Item " + i + " was not relocated properly");
+    }
+    
+    // Check if everything worked
+    testFinished();
+  } catch (err) {
+    doFail("ERROR: " + err);
+  }
+}
+
+/**
  * Call back for after the metadata read job completes
  */
 function onComplete(job) {
-  try { 
+  try {
     if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
       return;
     }
     job.removeJobProgressListener(onComplete);
     
     // Manage the files
-    var fileManager = Cc[SB_MEDIAFILEMANAGER]
-                        .createInstance(Ci.sbIMediaFileManager);
-    // COPY/MOVE/RENAME
-    for (var i = 0; i < gTestMediaItems.length; i++) {
-      var isManaged = false;
-      var item = gTestMediaItems.queryElementAt(i, Ci.sbIMediaItem);
-      try {
-        isManaged = fileManager.organizeItem(item,
-                                             Ci.sbIMediaFileManager.MANAGE_RENAME |
-                                               Ci.sbIMediaFileManager.MANAGE_COPY |
-                                               Ci.sbIMediaFileManager.MANAGE_MOVE);
-      } catch (err) {
-        doFail("ERROR: Unable to manage item: " + err);
-      }
-      assertTrue(isManaged, "Unable to manage item " + i);
-      assertTrue(checkItem(item, i), "Item " + i + " was not relocated properly");
-    }
-    
-    // DELETE
-    for (var i = 0; i < gTestMediaItems.length; i++) {
-      var isManaged = false;
-      var item = gTestMediaItems.queryElementAt(i, Ci.sbIMediaItem);
-      try {
-        isManaged = fileManager.organizeItem(item,
-                                             Ci.sbIMediaFileManager.MANAGE_DELETE);
-      } catch (err) {
-        doFail("Unable to delete item: " + err);
-      }
-      assertTrue(isManaged, "Unable to delete item " + i);
-      assertTrue(checkDeletedItem(item), "Item " + i + " was not deleted");
-    }
-
-    testFinished();
+    var mediaManagerJob = Cc[SB_MEDIAMANAGERJOB]
+                            .createInstance(Ci.sbIMediaManagementJob);
+    mediaManagerJob.addJobProgressListener(onManagementComplete);
+    mediaManagerJob.organizeMediaList(gTestLibrary);
   } catch (err) {
     doFail("ERROR: " + err);
   }
-
 }
 
 function runTest () {
@@ -87,7 +79,7 @@ function runTest () {
   setupMediaManagerPreferences();
 
   // Create the test library, do not init with items
-  gTestLibrary = createLibrary("test_mediafilemanager", null, false);
+  gTestLibrary = createLibrary("test_mediamanagementjob", null, false);
   assertTrue(gTestLibrary);
   assertEqual(gTestLibrary.length, 0);
 
