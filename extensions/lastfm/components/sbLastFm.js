@@ -1396,7 +1396,7 @@ function sbLastFm_onTrackChange(aItem) {
   this.loveBan(null, false);
   var trackName = aItem.getProperty(SBProperties.trackName).toLowerCase();
   var artistName = aItem.getProperty(SBProperties.artistName).toLowerCase();
-  if (this.lovedTracks[trackName + "@@" + artistName]) {
+  if (this.lovedTracks && this.lovedTracks[trackName + "@@" + artistName]) {
 	  dump("This is a loved track!\n");
 	  this.loveBan(aItem, true);
   } else {
