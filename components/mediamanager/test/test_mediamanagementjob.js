@@ -44,7 +44,17 @@ function onManagementComplete(job) {
 
     for (var i = 0; i < gTestMediaItems.length; i++) {
       var item = gTestMediaItems.queryElementAt(i, Ci.sbIMediaItem);
-      assertTrue(checkItem(item, i), "Item " + i + " was not relocated properly");
+      /**
+       * Check each item to see if it was copied to the managed folder and
+       * organized properly. The last file in our list started in the managed
+       * folder so it should be checked that it was moved not copied.
+       * parameter 3 is a boolean True is check if original file is still in
+       * place, and false is check that the original file has been removed.
+       */
+      assertTrue(checkItem(item,
+                           i,
+                           (i != (gTestMediaItems.length - 1))),
+                 "Item " + i + " was not relocated properly");
     }
     
     // Check if everything worked
@@ -77,6 +87,20 @@ function onComplete(job) {
 function runTest () {
   // Setup the preferences for the media manager
   setupMediaManagerPreferences();
+
+  // Move last test item into the managed folder so we can test a file that is
+  // already there. (It should be moved/renamed but not copied)
+  var changeIndex = (gResultInformation.length - 1);
+  var testItem = testFolder.clone();
+  testItem.append(gResultInformation[changeIndex].originalFileName);
+  var managedFolder = testFolder.clone();
+  managedFolder.append("Managed");
+  // Managed folder should have already been created in the
+  // setupMediaManagerPreferences function.
+  testItem.moveTo(managedFolder, "");
+  // Update the array information
+  gResultInformation[changeIndex].originalFileName = "Managed/" +
+    gResultInformation[changeIndex].originalFileName;
 
   // Create the test library, do not init with items
   gTestLibrary = createLibrary("test_mediamanagementjob", null, false);

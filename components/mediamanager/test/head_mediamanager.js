@@ -202,7 +202,8 @@ function addItemsToLibrary(aLibrary) {
   for (var i = 0; i < gResultInformation.length; i++) {
     // Set up the item
     var newFile = testFolder.clone();
-    newFile.append(gResultInformation[i].originalFileName);
+    newFile = appendPathToDirectory(newFile,
+                                    gResultInformation[i].originalFileName);
     toAdd.appendElement(ioService.newFileURI(newFile), false);
     
     // Setup default properties for this item
@@ -217,26 +218,47 @@ function addItemsToLibrary(aLibrary) {
 }
 
 /**
- * Check the items path with the expected results, return true if ok.
+ * \brief checkItem - Check to make sure the item has been organized properly,
+ * this means it has been copyied to the managed folder if not originally there,
+ * moved to the correct path under the managed folder, and renamed to the
+ * correct filename.
+ * \param aMediaItem - The media item to check
+ * \param aResultInformationIndex - Index of the gResultInformation array that
+ *  this item falls under.
+ * \param aShouldHaveOriginal - Should the original file still be in place?
  */
-function checkItem(aMediaItem, aResultInformationIndex) {
+function checkItem(aMediaItem, aResultInformationIndex, aShouldHaveOriginal) {
   // First get the current path from the item
   var current = aMediaItem.contentSrc.QueryInterface(Ci.nsIFileURL);
   if (!(current instanceof Ci.nsIFileURL)) {
     return false;
   }
   current = current.file;
-  var currentPath = decodeURIComponent(current.path);
   
   // Now put together the expected path for the item
   var expected = testFolder.clone();
-  expected = appendPathToDirectory(expected,
-                                   gResultInformation[aResultInformationIndex].expectedFolder);
+  var expFolder = gResultInformation[aResultInformationIndex].expectedFolder;
+  expected = appendPathToDirectory(expected, expFolder);
   expected.append(gResultInformation[aResultInformationIndex].expectedFileName);
-  var expectedPath = expected.path;
+
+  // Ensure that the file has been copied to its new location with proper
+  // filename and folder path.
+  if (!current.equals(expected)) {
+    return false;
+  }
   
-  // Compare the current to expected
-  return (current.equals(expected));
+  // Now check that the original file is still in place or not
+  var original = testFolder.clone();
+  var origName = gResultInformation[aResultInformationIndex].originalFileName;
+  original = appendPathToDirectory(original, origName);
+  
+  if ((!original.exists() && aShouldHaveOriginal) ||
+      (original.exists() && !aShouldHaveOriginal)) {
+    return false;
+  }
+
+  // All tests passed so the file has been organized correctly.
+  return true;
 }
 
 /**

@@ -58,7 +58,8 @@ function onComplete(job) {
         doFail("ERROR: Unable to manage item: " + err);
       }
       assertTrue(isManaged, "Unable to manage item " + i);
-      assertTrue(checkItem(item, i), "Item " + i + " was not relocated properly");
+      assertTrue(checkItem(item, i, true),
+                 "Item " + i + " was not relocated properly");
     }
     
     // DELETE
