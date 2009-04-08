@@ -835,11 +835,13 @@ function sbLastFm_radioStation(station, success, failure) {
 		self.radio_original_station_url = station;
 		if (pairs.url)
 			self.radio_station_url = pairs.url;
-		if (pairs.stationname)
+		if (pairs.stationname) {
 			self.radio_station_name = pairs.stationname;
+		}
 		else {
-			self.radio_station_name = unescape(self.radio_station_url.replace(
-				/^lastfm:\/\//, "").replace(/\//, " "));
+			self.radio_station_name =
+				decodeURIComponent(self.radio_station_url.replace(
+					/^lastfm:\/\//, "").replace(/\//, " "));
 		}
         success();
       }, function _failure(xhr) {
