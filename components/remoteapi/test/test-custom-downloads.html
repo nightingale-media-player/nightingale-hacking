@@ -30,6 +30,7 @@
   <head>
     <title>Remote API Test: Custom Downloading</title>
     <script>
+      var mainLib;
       var siteLib;
       var siteList;
       var downloadingTrack = new Array();
@@ -122,6 +123,7 @@
         document.addEventListener("downloadcomplete", ondownloadcomplete, false);
         document.addEventListener("PlaylistCellClick", onplaylistcellclick, false);
 
+        mainLib = songbird.mainLibrary;
         siteLib = songbird.siteLibrary;
         siteList = siteLib.createSimpleMediaList("Site List");
 
@@ -129,7 +131,7 @@
 
         populateList();
 
-        songbird.webPlaylist.mediaList = siteList;
+        setWebPlaylist(siteList);
 
         showColumns();
       }
@@ -142,6 +144,10 @@
         document.removeEventListener("PlaylistCellClick", onplaylistcellclick, false);
       }
 
+      function setWebPlaylist(aMediaList) {
+        songbird.webPlaylist.mediaList = aMediaList;
+      }
+
     </script>
   </head>
 
@@ -151,6 +157,10 @@
       <input type='button' value='clear site lib' onclick='siteLib.clear()' />
       <input type='button' value='clear site list' onclick='siteList.clear()' />
       <input type='button' value='populate' onclick='populateList()' />
+      <br/>
+      <input type="button" value="Set Main Lib" onclick="setWebPlaylist(mainLib);" /> 
+      <input type="button" value="Set Site Lib" onclick="setWebPlaylist(siteLib);" /> 
+      <input type="button" value="Set Site List" onclick="setWebPlaylist(siteList);" /> 
     </form>
   </body>
 
