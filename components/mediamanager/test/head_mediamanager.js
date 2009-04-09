@@ -393,7 +393,10 @@ function removeTempFolder() {
 function removeTestLibraries() {
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"].
                        getService(Ci.sbILibraryManager);
-  try {
-    libraryManager.unregisterLibrary(gTestLibrary);
-  } catch (err) {}
+
+  // Since unregisterLibrary does not clear or delete the library we have
+  // to clear it so that subsequent createLibrary calls with the same guid do
+  // not have items in it.
+  gTestLibrary.clear();
+  libraryManager.unregisterLibrary(gTestLibrary);
 }

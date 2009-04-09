@@ -102,9 +102,13 @@ function runTest () {
   gResultInformation[changeIndex].originalFileName = "Managed/" +
     gResultInformation[changeIndex].originalFileName;
 
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryManager);
+
   // Create the test library, do not init with items
   gTestLibrary = createLibrary("test_mediamanagementjob", null, false);
   assertTrue(gTestLibrary);
+  libraryManager.registerLibrary(gTestLibrary, false);
   assertEqual(gTestLibrary.length, 0);
 
   var listListener = new TestMediaListListener();
