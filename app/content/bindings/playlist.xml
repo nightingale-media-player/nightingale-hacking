@@ -1316,7 +1316,7 @@
             clearTimeout(this._saveColumnSpecTimeout);
           }
           this._saveColumnSpecTimeout = 
-            setTimeout(function(o) { o._saveColumnSpec(); }, 100, this);
+            setTimeout(function(o) { o._saveColumnSpec(); }, 5000, this);
         </body>
       </method>
 
