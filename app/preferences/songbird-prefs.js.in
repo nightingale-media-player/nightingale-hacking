@@ -270,11 +270,7 @@ pref("songbird.url.support.corefailure", "http://wiki.songbirdnest.com/Developer
 //
 
 // Value is in milliseconds
-#ifdef XP_WIN
 pref("songbird.mediacore.output.buffertime", 2000);
-#else
-pref("songbird.mediacore.output.buffertime", 1000);
-#endif
 
 // Value is in kilobytes
 pref("songbird.mediacore.streaming.buffersize", 128);
