@@ -40,7 +40,6 @@
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
-Components.utils.import("resource://app/jsmodules/SBProperties.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 //------------------------------------------------------------------------------
@@ -196,9 +195,10 @@ var manageMediaPrefsPane = {
     } catch (ex) {
       /* invalid file? boo. use default. */
     }
-    var file = Cc["@mozilla.org/file/directory_service;1"]
-                 .getService(Ci.nsIProperties)
-                 .get("Music", Ci.nsIFile);
+
+    var file = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                 .getService(Ci.sbIDownloadDeviceHelper)
+                 .getDefaultMusicFolder();
     // XXX Mook: this needs more thought, since it could mean we clobber files!
     //document.getElementById("manage_media_pref_library_folder").value = file;
     return file;
