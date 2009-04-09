@@ -60,8 +60,9 @@
 class CDatabaseResult : public sbIDatabaseResult
 {
 friend class CDatabaseQuery;
+friend class QueryProcessorThread;
 public:
-  CDatabaseResult();
+  explicit CDatabaseResult(PRBool aRequiresLocking = PR_FALSE);
   virtual ~CDatabaseResult();
 
   NS_DECL_ISUPPORTS
@@ -84,14 +85,13 @@ protected:
   typedef std::deque< std::vector<nsString> > dbrowcells_t;
   typedef std::map<nsString, PRUint32> dbcolumnresolvemap_t;
   
+  PRPackedBool m_RequiresLocking;
+
+  PRLock *m_pLock;
+
   dbcolumnnames_t m_ColumnNames;
-  PRLock* m_pColumnNamesLock;
-  
   dbrowcells_t m_RowCells;
-  PRLock* m_pRowCellsLock;
-  
   dbcolumnresolvemap_t m_ColumnResolveMap;
-  PRLock* m_pColumnResolveMap;
 };
 
 #endif // __DATABASE_RESULT_H__

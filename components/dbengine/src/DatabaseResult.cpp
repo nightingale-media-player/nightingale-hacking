@@ -48,6 +48,22 @@ static PRLogModuleInfo* gDatabaseResultLog = nsnull;
 #define LOG(args) /* nothing */
 #endif
 
+static inline 
+void IfLock(PRLock *aLock) 
+{
+  if(NS_UNLIKELY(aLock)) {
+    PR_Lock(aLock);
+  }
+}
+
+static inline
+void IfUnlock(PRLock *aLock) 
+{
+  if(NS_UNLIKELY(aLock)) {
+    PR_Unlock(aLock);
+  }
+}
+
 // CLASSES ====================================================================
 //=============================================================================
 // CDatabaseQuery Class
@@ -57,29 +73,27 @@ static PRLogModuleInfo* gDatabaseResultLog = nsnull;
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseResult, sbIDatabaseResult)
 
 //-----------------------------------------------------------------------------
-CDatabaseResult::CDatabaseResult()
+CDatabaseResult::CDatabaseResult(PRBool aRequiresLocking)
+: m_RequiresLocking(aRequiresLocking)
+, m_pLock(nsnull)
 {
 #ifdef PR_LOGGING
-  if (!gDatabaseResultLog)
+  if(!gDatabaseResultLog)
     gDatabaseResultLog = PR_NewLogModule("sbDatabaseResult");
 #endif
-  m_pColumnNamesLock = PR_NewLock();
-  m_pRowCellsLock = PR_NewLock();
-  m_pColumnResolveMap = PR_NewLock();
 
-  NS_ASSERTION(m_pColumnNamesLock, "CDatabaseResult.m_pColumnNamesLock failed");
-  NS_ASSERTION(m_pRowCellsLock, "CDatabaseResult.m_pRowCellsLock failed");
+  if(NS_UNLIKELY(m_RequiresLocking))
+  {
+    m_pLock = PR_NewLock();
+    NS_ASSERTION(m_pLock, "CDatabaseResult.m_pColumnNamesLock failed");
+  }
 } //ctor
 
 //-----------------------------------------------------------------------------
 CDatabaseResult::~CDatabaseResult()
 {
-  if (m_pColumnNamesLock)
-    PR_DestroyLock(m_pColumnNamesLock);
-  if (m_pRowCellsLock)
-    PR_DestroyLock(m_pRowCellsLock);
-  if (m_pColumnResolveMap)
-    PR_DestroyLock(m_pColumnResolveMap);
+  if(m_RequiresLocking && m_pLock)
+    PR_DestroyLock(m_pLock);
 } //dtor
 
 //-----------------------------------------------------------------------------
@@ -87,9 +101,14 @@ CDatabaseResult::~CDatabaseResult()
 NS_IMETHODIMP CDatabaseResult::GetColumnCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  PR_Lock(m_pColumnNamesLock);
-  *_retval = m_ColumnNames.size();
-  PR_Unlock(m_pColumnNamesLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    *_retval = m_ColumnNames.size();
+    IfUnlock(m_pLock);
+  }
+  else {
+    *_retval = m_ColumnNames.size();
+  }
   return NS_OK;
 } //GetColumnCount
 
@@ -97,13 +116,16 @@ NS_IMETHODIMP CDatabaseResult::GetColumnCount(PRUint32 *_retval)
 /* wstring GetColumnName (in PRInt32 dbColumn); */
 NS_IMETHODIMP CDatabaseResult::GetColumnName(PRUint32 dbColumn, nsAString &_retval)
 {
-  NS_ENSURE_ARG_MIN(dbColumn, 0);
-
-  PR_Lock(m_pColumnNamesLock);
-  if(dbColumn < m_ColumnNames.size()) {
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    if(dbColumn < m_ColumnNames.size()) {
+      _retval = m_ColumnNames[dbColumn];
+    }
+    IfUnlock(m_pLock);
+  }
+  else if(dbColumn < m_ColumnNames.size()) {
     _retval = m_ColumnNames[dbColumn];
   }
-  PR_Unlock(m_pColumnNamesLock);
 
   return NS_OK;
 } //GetColumnName
@@ -113,9 +135,7 @@ NS_IMETHODIMP CDatabaseResult::GetColumnName(PRUint32 dbColumn, nsAString &_retv
 NS_IMETHODIMP CDatabaseResult::GetColumnIndex(const nsAString &aColumnName, PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-
   *_retval = GetColumnIndexFromName(aColumnName);
-
   return NS_OK;
 } //GetColumnIndex
 
@@ -125,10 +145,14 @@ NS_IMETHODIMP CDatabaseResult::GetColumnIndex(const nsAString &aColumnName, PRUi
 NS_IMETHODIMP CDatabaseResult::GetRowCount(PRUint32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-
-  PR_Lock(m_pRowCellsLock);
-  *_retval = m_RowCells.size();
-  PR_Unlock(m_pRowCellsLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    *_retval = m_RowCells.size();
+    IfUnlock(m_pLock);
+  }
+  else {
+    *_retval = m_RowCells.size();
+  }
 
   return NS_OK;
 } //GetRowCount
@@ -137,13 +161,16 @@ NS_IMETHODIMP CDatabaseResult::GetRowCount(PRUint32 *_retval)
 /* wstring GetRowCell (in PRInt32 dbRow, in PRInt32 dbCell); */
 NS_IMETHODIMP CDatabaseResult::GetRowCell(PRUint32 dbRow, PRUint32 dbCell, nsAString &_retval)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
-
-  PR_Lock(m_pRowCellsLock);
-  if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size()) {
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size()) {
+      _retval = m_RowCells[dbRow][dbCell];
+    }
+    IfUnlock(m_pLock);
+  }
+  else if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size()) {
     _retval = m_RowCells[dbRow][dbCell];
   }
-  PR_Unlock(m_pRowCellsLock);
 
   return NS_OK;
 } //GetRowCell
@@ -152,7 +179,6 @@ NS_IMETHODIMP CDatabaseResult::GetRowCell(PRUint32 dbRow, PRUint32 dbCell, nsASt
 /* wstring GetRowCellByColumn (in PRInt32 dbRow, in wstring dbColumn); */
 NS_IMETHODIMP CDatabaseResult::GetRowCellByColumn(PRUint32 dbRow, const nsAString &dbColumn, nsAString &_retval)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
   PRUint32 dbCell = GetColumnIndexFromName(dbColumn);
   return GetRowCell(dbRow, dbCell, _retval);
 } //GetRowCellByColumn
@@ -161,17 +187,23 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellByColumn(PRUint32 dbRow, const nsAStrin
 /* wstring GetColumnNamePtr (in PRInt32 dbColumn); */
 NS_IMETHODIMP CDatabaseResult::GetColumnNamePtr(PRUint32 dbColumn, PRUnichar **_retval)
 {
-  NS_ENSURE_ARG_MIN(dbColumn, 0);
-  PR_Lock(m_pColumnNamesLock);
-  if(dbColumn < m_ColumnNames.size())
-  {
-    *_retval = const_cast<PRUnichar *>(PromiseFlatString(m_ColumnNames[dbColumn]).get());
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    if(dbColumn < m_ColumnNames.size()) {
+      *_retval = const_cast<PRUnichar *>(m_ColumnNames[dbColumn].BeginReading());
+    }
+    else {
+      *_retval = nsnull;
+    }
+    IfUnlock(m_pLock);
   }
-  else
-  {
+  else if(dbColumn < m_ColumnNames.size()) {
+    *_retval = const_cast<PRUnichar *>(m_ColumnNames[dbColumn].BeginReading());
+  }
+  else {
     *_retval = nsnull;
   }
-  PR_Unlock(m_pColumnNamesLock);
+
   return NS_OK;
 } //GetColumnName
 
@@ -179,19 +211,22 @@ NS_IMETHODIMP CDatabaseResult::GetColumnNamePtr(PRUint32 dbColumn, PRUnichar **_
 /* wstring GetRowCellPtr (in PRInt32 dbRow, in PRInt32 dbCell); */
 NS_IMETHODIMP CDatabaseResult::GetRowCellPtr(PRUint32 dbRow, PRUint32 dbCell, PRUnichar **_retval)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
-  NS_ENSURE_ARG_MIN(dbCell, 0);
-
-  PR_Lock(m_pRowCellsLock);
-  if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size())
-  {
-    *_retval = const_cast<PRUnichar *>(PromiseFlatString(m_RowCells[dbRow][dbCell]).get());
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size()) {
+      *_retval = const_cast<PRUnichar *>(m_RowCells[dbRow][dbCell].BeginReading());
+    }
+    else {
+      *_retval = nsnull;
+    }
+    IfUnlock(m_pLock);
   }
-  else
-  {
+  else if(dbRow < m_RowCells.size() && dbCell < m_RowCells[dbRow].size()) {
+    *_retval = const_cast<PRUnichar *>(m_RowCells[dbRow][dbCell].BeginReading());
+  }
+  else {
     *_retval = nsnull;
   }
-  PR_Unlock(m_pRowCellsLock);
 
   return NS_OK;
 } //GetRowCell
@@ -200,7 +235,6 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellPtr(PRUint32 dbRow, PRUint32 dbCell, PR
 /* noscript wstring GetRowCellByColumnPtr (in PRInt32 dbRow, in wstring dbColumn); */
 NS_IMETHODIMP CDatabaseResult::GetRowCellByColumnPtr(PRUint32 dbRow, const nsAString &dbColumn, PRUnichar **_retval)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
   PRUint32 dbCell = GetColumnIndexFromName(dbColumn);
   return GetRowCellPtr(dbRow, dbCell, _retval);
 } //GetRowCellByColumnPtr
@@ -208,17 +242,20 @@ NS_IMETHODIMP CDatabaseResult::GetRowCellByColumnPtr(PRUint32 dbRow, const nsASt
 //-----------------------------------------------------------------------------
 NS_IMETHODIMP CDatabaseResult::ClearResultSet()
 {
-  PR_Lock(m_pColumnNamesLock);
-  PR_Lock(m_pRowCellsLock);
-  PR_Lock(m_pColumnResolveMap);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
 
-  m_ColumnNames.clear();
-  m_RowCells.clear();
-  m_ColumnResolveMap.clear();
+    m_ColumnNames.clear();
+    m_RowCells.clear();
+    m_ColumnResolveMap.clear();
 
-  PR_Unlock(m_pColumnResolveMap);
-  PR_Unlock(m_pRowCellsLock);
-  PR_Unlock(m_pColumnNamesLock);
+    IfUnlock(m_pLock);
+  }
+  else {
+    m_ColumnNames.clear();
+    m_RowCells.clear();
+    m_ColumnResolveMap.clear();
+  }
 
   return NS_OK;
 } //ClearResultSet
@@ -226,21 +263,33 @@ NS_IMETHODIMP CDatabaseResult::ClearResultSet()
 //-----------------------------------------------------------------------------
 nsresult CDatabaseResult::AddRow(const std::vector<nsString> &vCellValues)
 {
-  PR_Lock(m_pRowCellsLock);
-  m_RowCells.push_back(vCellValues);
-  PR_Unlock(m_pRowCellsLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    m_RowCells.push_back(vCellValues);
+    IfUnlock(m_pLock);
+  }
+  else {
+    m_RowCells.push_back(vCellValues);
+  }
+
   return NS_OK;
 } //AddRow
 
 //-----------------------------------------------------------------------------
 nsresult CDatabaseResult::DeleteRow(PRUint32 dbRow)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    if(dbRow < m_RowCells.size()) {
+      dbrowcells_t::iterator itRows = m_RowCells.begin();
+      itRows += dbRow;
 
-  PR_Lock(m_pRowCellsLock);
-
-  if(dbRow < m_RowCells.size())
-  {
+      if(itRows != m_RowCells.end())
+        m_RowCells.erase(itRows);
+    }
+    IfUnlock(m_pLock);
+  }
+  else if(dbRow < m_RowCells.size()) {
     dbrowcells_t::iterator itRows = m_RowCells.begin();
     itRows += dbRow;
 
@@ -248,47 +297,66 @@ nsresult CDatabaseResult::DeleteRow(PRUint32 dbRow)
       m_RowCells.erase(itRows);
   }
 
-  PR_Unlock(m_pRowCellsLock);
-
   return NS_OK;
 } //DeleteRow
 
 //-----------------------------------------------------------------------------
 nsresult CDatabaseResult::SetColumnNames(const std::vector<nsString> &vColumnNames)
 {
-  PR_Lock(m_pColumnNamesLock);
-  m_ColumnNames = vColumnNames;
-  PR_Unlock(m_pColumnNamesLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    m_ColumnNames = vColumnNames;
+    IfUnlock(m_pLock);
+  }
+  else {
+    m_ColumnNames = vColumnNames;
+  }
+
   return NS_OK;
 } //SetColumnNames
 
 //-----------------------------------------------------------------------------
 nsresult CDatabaseResult::SetColumnName(PRUint32 dbColumn, const nsString &strColumnName)
 {
-  NS_ENSURE_ARG_MIN(dbColumn, 0);
-  PR_Lock(m_pColumnNamesLock);
-  m_ColumnNames[dbColumn] = strColumnName;
-  PR_Unlock(m_pColumnNamesLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    m_ColumnNames[dbColumn] = strColumnName;
+    IfUnlock(m_pLock);
+  }
+  else {
+    m_ColumnNames[dbColumn] = strColumnName;
+  }
+
   return NS_OK;
 } //SetColumnName
 
 //-----------------------------------------------------------------------------
 nsresult CDatabaseResult::SetRowCell(PRUint32 dbRow, PRUint32 dbCell, const nsString &strCellValue)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
-  PR_Lock(m_pRowCellsLock);
-  m_RowCells[dbRow][dbCell] = strCellValue;
-  PR_Unlock(m_pRowCellsLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    m_RowCells[dbRow][dbCell] = strCellValue;
+    IfUnlock(m_pLock);
+  }
+  else {
+    m_RowCells[dbRow][dbCell] = strCellValue;
+  }
+
   return NS_OK;
 } //SetRowCell
 
 //-----------------------------------------------------------------------------
 nsresult CDatabaseResult::SetRowCells(PRUint32 dbRow, const std::vector<nsString> &vCellValues)
 {
-  NS_ENSURE_ARG_MIN(dbRow, 0);
-  PR_Lock(m_pRowCellsLock);
-  m_RowCells[dbRow] = vCellValues;
-  PR_Unlock(m_pRowCellsLock);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
+    m_RowCells[dbRow] = vCellValues;
+    IfUnlock(m_pLock);
+  }
+  else {
+    m_RowCells[dbRow] = vCellValues;
+  }
+
   return NS_OK;
 } //SetRowCells
 
@@ -298,15 +366,24 @@ PRUint32 CDatabaseResult::GetColumnIndexFromName(const nsAString &strColumnName)
   RebuildColumnResolveMap();
   PRUint32 retval = -1;
 
-  PR_Lock(m_pColumnResolveMap);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
 
-  dbcolumnresolvemap_t::const_iterator itColumnIndex =
-    m_ColumnResolveMap.find(PromiseFlatString(strColumnName));
+    dbcolumnresolvemap_t::const_iterator itColumnIndex =
+      m_ColumnResolveMap.find(nsString(strColumnName));
 
-  if(itColumnIndex != m_ColumnResolveMap.end())
-    retval = itColumnIndex->second;
+    if(itColumnIndex != m_ColumnResolveMap.end())
+      retval = itColumnIndex->second;
 
-  PR_Unlock(m_pColumnResolveMap);
+    IfUnlock(m_pLock);
+  }
+  else {
+    dbcolumnresolvemap_t::const_iterator itColumnIndex =
+      m_ColumnResolveMap.find(nsString(strColumnName));
+
+    if(itColumnIndex != m_ColumnResolveMap.end())
+      retval = itColumnIndex->second;
+  }
 
   return retval;
 } //GetColumnIndexFromName
@@ -314,20 +391,28 @@ PRUint32 CDatabaseResult::GetColumnIndexFromName(const nsAString &strColumnName)
 //-----------------------------------------------------------------------------
 void CDatabaseResult::RebuildColumnResolveMap()
 {
-  PR_Lock(m_pColumnNamesLock);
-  PR_Lock(m_pColumnResolveMap);
+  if(NS_UNLIKELY(m_RequiresLocking)) {
+    IfLock(m_pLock);
 
-  if(m_ColumnNames.size() != m_ColumnResolveMap.size() ||
-     m_ColumnResolveMap.size() == 0)
-  {
+    if(m_ColumnNames.size() != m_ColumnResolveMap.size() ||
+       m_ColumnResolveMap.size() == 0) {
+      m_ColumnResolveMap.clear();
+
+      PRUint32 nSize =  m_ColumnNames.size();
+      for(PRUint32 i = 0; i < nSize; i++) {
+        m_ColumnResolveMap.insert(std::make_pair<nsString, PRUint32>(m_ColumnNames[i], i));
+      }
+    }
+    
+    IfUnlock(m_pLock);
+  }
+  else if(m_ColumnNames.size() != m_ColumnResolveMap.size() ||
+          m_ColumnResolveMap.size() == 0) {
     m_ColumnResolveMap.clear();
 
     PRUint32 nSize =  m_ColumnNames.size();
-    for(PRUint32 i = 0; i < nSize; i++)
-    {
+    for(PRUint32 i = 0; i < nSize; i++) {
       m_ColumnResolveMap.insert(std::make_pair<nsString, PRUint32>(m_ColumnNames[i], i));
     }
   }
-  PR_Unlock(m_pColumnResolveMap);
-  PR_Unlock(m_pColumnNamesLock);
 }

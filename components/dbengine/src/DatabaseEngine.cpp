@@ -1548,9 +1548,10 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
   nsresult rv = pThread->PushQueryToQueue(pQuery);
   NS_ENSURE_SUCCESS(rv, 1);
 
-  PR_Lock(pQuery->m_StateLock);
-  pQuery->m_IsExecuting = PR_TRUE;
-  PR_Unlock(pQuery->m_StateLock);
+  {
+    sbSimpleAutoLock lock(pQuery->m_pLock);
+    pQuery->m_IsExecuting = PR_TRUE;
+  }
 
   rv = pThread->NotifyQueue();
   NS_ENSURE_SUCCESS(rv, 1);
@@ -2043,6 +2044,15 @@ CDatabaseEngine::DeleteMarkedDatabases()
     pQuery->SetLastError(SQLITE_ERROR);
     pQuery->GetQueryCount(&nQueryCount);
 
+    // Create a result set object
+    nsRefPtr<CDatabaseResult> databaseResult = 
+      new CDatabaseResult(pQuery->m_AsyncQuery);
+
+    if(NS_UNLIKELY(!databaseResult)) {
+      // Out of memory, attempt to restart the thread
+      return;
+    }
+
     for(PRUint32 currentQuery = 0; currentQuery < nQueryCount && !pQuery->m_IsAborting; ++currentQuery)
     {
       nsAutoPtr<bindParameterArray_t> pParameters;
@@ -2069,9 +2079,9 @@ CDatabaseEngine::DeleteMarkedDatabases()
         continue;
       }
       
-      PR_Lock(pQuery->m_CurrentQueryLock);
+      PR_Lock(pQuery->m_pLock);
       pQuery->m_CurrentQuery = currentQuery;
-      PR_Unlock(pQuery->m_CurrentQueryLock);
+      PR_Unlock(pQuery->m_pLock);
 
       pParameters = pQuery->PopQueryParameters();
 
@@ -2147,18 +2157,10 @@ CDatabaseEngine::DeleteMarkedDatabases()
         {
         case SQLITE_ROW:
           {
-            CDatabaseResult *pRes = pQuery->GetResultObject();
-            PR_Lock(pQuery->m_pQueryResultLock);
-
             int nCount = sqlite3_column_count(pStmt);
-
             if(bFirstRow)
             {
               bFirstRow = PR_FALSE;
-
-              PR_Unlock(pQuery->m_pQueryResultLock);
-              pRes->ClearResultSet();
-              PR_Lock(pQuery->m_pQueryResultLock);
 
               std::vector<nsString> vColumnNames;
               vColumnNames.reserve(nCount);
@@ -2175,7 +2177,7 @@ CDatabaseEngine::DeleteMarkedDatabases()
                   vColumnNames.push_back(strColumnName);
                 }
               }
-              pRes->SetColumnNames(vColumnNames);
+              databaseResult->SetColumnNames(vColumnNames);
             }
 
             std::vector<nsString> vCellValues;
@@ -2212,7 +2214,7 @@ CDatabaseEngine::DeleteMarkedDatabases()
               }
               totalRows++;
 
-              pRes->AddRow(vCellValues);
+              databaseResult->AddRow(vCellValues);
 
               // If this is a rolling limit query, we're done
               if (rollingLimit > 0) {
@@ -2222,8 +2224,6 @@ CDatabaseEngine::DeleteMarkedDatabases()
                 finishEarly = PR_TRUE;
               }
             }
-
-            PR_Unlock(pQuery->m_pQueryResultLock);
           }
           break;
 
@@ -2266,12 +2266,7 @@ CDatabaseEngine::DeleteMarkedDatabases()
             !pQuery->m_IsAborting &&
             !finishEarly);
 
-      //Didn't get any rows
-      if(bFirstRow)
-      {
-        CDatabaseResult *pRes = pQuery->GetResultObject();
-        pRes->ClearResultSet();
-      }
+      pQuery->SetResultObject(databaseResult);
 
       // Quoth the sqlite wiki:
       // Sometimes people think they have finished with a SELECT statement because sqlite3_step() 
@@ -2281,13 +2276,12 @@ CDatabaseEngine::DeleteMarkedDatabases()
     }
 
     //Whatever happened, the query is done running now.
-    PR_Lock(pQuery->m_StateLock);
-
-    pQuery->m_QueryHasCompleted = PR_TRUE;
-    pQuery->m_IsExecuting = PR_FALSE;
-    pQuery->m_IsAborting = PR_FALSE;
-
-    PR_Unlock(pQuery->m_StateLock);
+    {
+      sbSimpleAutoLock lock(pQuery->m_pLock);
+      pQuery->m_QueryHasCompleted = PR_TRUE;
+      pQuery->m_IsExecuting = PR_FALSE;
+      pQuery->m_IsAborting = PR_FALSE;
+    }
 
     LOG(("DBE: Notified query monitor."));
 

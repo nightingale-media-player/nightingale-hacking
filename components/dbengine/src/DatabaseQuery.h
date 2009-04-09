@@ -46,6 +46,7 @@ class CDatabaseQuery;
 #include <prlock.h>
 #include <prmon.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsTArray.h>
@@ -123,9 +124,6 @@ class CDatabaseQuery : public sbIDatabaseQuery,
 friend class CDatabaseEngine;
 friend class QueryProcessorThread;
 
-friend int SQLiteAuthorizer(void *pData, int nOp, const char *pArgA, const char *pArgB, const char *pDBName, const char *pTrigger);
-friend void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID);
-
 public:
   CDatabaseQuery();
   virtual ~CDatabaseQuery();
@@ -146,42 +144,33 @@ public:
 
 protected:
   CDatabaseResult* GetResultObject();
-  NS_IMETHOD PopQuery(sbIDatabasePreparedStatement **_retval);
+  void SetResultObject(CDatabaseResult *aResultObject);
+
+  nsresult PopQuery(sbIDatabasePreparedStatement **_retval);
   bindParameterArray_t* GetQueryParameters(PRInt32 aQueryIndex);
   bindParameterArray_t* PopQueryParameters();
 
-  PRLock *m_pLocationURILock;
+  PRLock *m_pLock;
+
   nsCString m_LocationURIString;
 
-  PRLock* m_StateLock;
   PRBool m_IsAborting;
   PRBool m_IsExecuting;
-  
   PRBool m_AsyncQuery;
 
-  PRLock*  m_CurrentQueryLock;
   PRUint32 m_CurrentQuery;
-
   PRInt32 m_LastError;
 
-  PRLock* m_pQueryResultLock;
-  CDatabaseResult* m_QueryResult;
-
-  PRLock* m_pDatabaseGUIDLock;
+  nsRefPtr<CDatabaseResult> m_QueryResult;
   nsString m_DatabaseGUID;
-
-  PRLock* m_pDatabaseQueryListLock;
   std::deque< nsCOMPtr<sbIDatabasePreparedStatement> > m_DatabaseQueryList;
 
   PRMonitor* m_pQueryRunningMonitor;
   PRBool m_QueryHasCompleted;
 
   nsInterfaceHashtableMT<nsISupportsHashKey, sbIDatabaseSimpleQueryCallback> m_CallbackList;
-
-  PRLock* m_pBindParametersLock;
   std::deque< bindParameterArray_t > m_BindParameters;
 
-  PRLock* m_pRollingLimitLock;
   PRUint64 m_RollingLimit;
   PRUint32 m_RollingLimitColumnIndex;
   PRUint32 m_RollingLimitResult;
@@ -189,7 +178,7 @@ protected:
   nsCOMPtr<sbIDatabaseEngine> mDatabaseEngine;
 
 private:
-  NS_IMETHOD EnsureLastQueryParameter(PRUint32 aParamIndex);
+  nsresult EnsureLastQueryParameter(PRUint32 aParamIndex);
 };
 
 #endif // __DATABASE_QUERY_H__

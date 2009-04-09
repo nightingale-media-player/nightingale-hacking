@@ -2826,7 +2826,6 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
     rv = query->Execute(&dbresult);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIDatabaseResult> result;
     rv = query->GetResultObject(getter_AddRefs(result));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -3124,6 +3123,9 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
 
   nsresult rv;
 
+  PRUint32 theCount = 0;
+  PRTime startTime = PR_Now();
+
   nsRefPtr<sbLocalDatabaseMediaListBase> viewMediaList =
     aView->GetNativeMediaList();
 
@@ -3260,6 +3262,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count = selectedItems.Count();
+  theCount = count;
 
   if (isLibrary) {
     // If we are removing from the library, we need to notify all the simple
@@ -3377,6 +3380,11 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     // Remove from our cache.
     mMediaItemTable.Remove(guid);
   }
+
+  
+  PRTime endTime = PR_Now();
+
+  printf("[sbLocalDatabaseLibrary] - Remove (%d) Selected Time To Process: %ld\n", theCount, endTime - startTime);
 
   return NS_OK;
 }
