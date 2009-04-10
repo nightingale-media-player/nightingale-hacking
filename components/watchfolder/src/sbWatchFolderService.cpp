@@ -1008,7 +1008,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIArray> uriArray;
-      GetURIArrayForStringPaths(mAddedPaths, getter_AddRefs(uriArray));
+      rv = GetURIArrayForStringPaths(mAddedPaths, getter_AddRefs(uriArray));
       NS_ENSURE_SUCCESS(rv, rv);
       mAddedPaths.clear();
 
