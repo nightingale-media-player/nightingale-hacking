@@ -61,9 +61,11 @@
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsIFile.h>
-#include <nsIStringBundle.h>
 #include <nsITimer.h>
 #include <nsTArray.h>
+
+// Other imports
+#include <map>
 
 //
 // Songbird media management job component defs.
@@ -96,6 +98,14 @@
 //
 //------------------------------------------------------------------------------
 
+/**
+ * typedefs for the Error grouping.
+ */
+typedef std::map<nsresult, PRUint32>    sbErrorMap;
+typedef sbErrorMap::iterator            sbErrorMapIter;
+typedef std::pair<sbErrorMapIter, bool> sbErrorPairResult;
+typedef sbErrorMap::value_type          sbErrorPair;
+
 class sbMediaManagementJob : public sbIMediaManagementJob,
                              public sbIJobCancelable,
                              public nsITimerCallback
@@ -112,10 +122,14 @@ public:
   virtual ~sbMediaManagementJob();
 
 private:
-  nsresult UpdateProgress();
+  nsresult  UpdateProgress();
   
-  nsresult ProcessNextItem();
-  nsresult ProcessItem(sbIMediaItem* aItem);
+  void      SaveError(nsresult aErrorCode);
+  PRBool    AppendErrorToList(PRUint32 aErrorCount,
+                              nsString aErrorKey,
+                              nsTArray<nsString> &aErrorMessages);
+  nsresult  ProcessNextItem();
+  nsresult  ProcessItem(sbIMediaItem* aItem);
 protected:
   // We need to hold onto the media list so we can get the items
   nsCOMPtr<sbIMediaList>                  mMediaList;
@@ -141,14 +155,14 @@ protected:
 
   // sbIJobProgress variables
   PRUint16                                mStatus;
-  nsTArray<nsString>                      mErrorMessages;
   nsCOMArray<sbIJobProgressListener>      mListeners;
   PRUint32                                mCompletedItemCount;
   PRUint32                                mTotalItemCount;
   nsString                                mCurrentContentURL;
 
-  // String bundle for status messages.
-  nsCOMPtr<nsIStringBundle>               mStringBundle;
+  // Hold a map of the number of error messages that have occured so we can
+  // group them
+  sbErrorMap                              mErrorMap;
 };
 
 #endif // __SB_MEDIAMANAGEMENTJOB_H__

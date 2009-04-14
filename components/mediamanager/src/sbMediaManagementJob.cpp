@@ -60,6 +60,7 @@
 
 // Songbird imports
 #include <sbIMediaList.h>
+#include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPrefBranch.h>
@@ -136,10 +137,7 @@ sbMediaManagementJob::~sbMediaManagementJob()
   if (mIntervalTimer) {
     mIntervalTimer = nsnull;
   }
-  
-  if (mStringBundle) {
-    mStringBundle = nsnull;
-  }
+ 
 }
 
 /**
@@ -178,6 +176,42 @@ sbMediaManagementJob::UpdateProgress()
   return NS_OK;
 }
 
+void
+sbMediaManagementJob::SaveError(nsresult aErrorCode)
+{
+  // Save the errors in the error map
+  sbErrorPairResult result = mErrorMap.insert(sbErrorPair(aErrorCode, 1));
+  if (!result.second) {
+    // result already exists so increment
+    result.first->second++;
+  }
+}
+
+PRBool
+sbMediaManagementJob::AppendErrorToList(PRUint32 aErrorCount,
+                                        nsString aErrorKey,
+                                        nsTArray<nsString> &aErrorMessages)
+{
+  nsresult rv;
+  
+  nsString errorCount;
+  errorCount.AppendInt(aErrorCount);
+
+  nsTArray<nsString> params;
+  params.AppendElement(errorCount);
+
+  sbStringBundle bundle;
+  nsString errorString = bundle.Format(NS_ConvertUTF16toUTF8(aErrorKey).get(),
+                                       params);
+  if (!errorString.IsEmpty()) {
+    aErrorMessages.AppendElement(errorString);
+  } else {
+    return PR_FALSE;
+  }
+  
+  return PR_TRUE;
+}
+
 /**
  * \brief ProcessNextItem - Organize the next item in our list.
  */
@@ -196,17 +230,13 @@ sbMediaManagementJob::ProcessNextItem()
 
   rv = ProcessItem(nextItem);
   if (NS_FAILED(rv)) {
-    // TODO: We need to log this error, we actually want to log common errors
-    // so that we don't get thousands of files listed in the error dialog.
-    TRACE(("sbMediaManagementJob::ProcessNextItem - Adding [%s] to errors",
-           NS_ConvertUTF16toUTF8(mCurrentContentURL).get()));
-    mErrorMessages.AppendElement(mCurrentContentURL);
+    SaveError(rv);
   }
   
   // Increment our counter and check our status
   mCompletedItemCount++;
   if (mCompletedItemCount >= mTotalItemCount) {
-    if (mErrorMessages.Length() > 0) {
+    if ((mErrorMap.size()) > 0) {
       mStatus = sbIJobProgress::STATUS_FAILED;
     } else {
       mStatus = sbIJobProgress::STATUS_SUCCEEDED;
@@ -316,13 +346,9 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
                                        manageType,
                                        &organizedItem);
   NS_ENSURE_SUCCESS(rv, rv);
-
   if (!organizedItem)
   {
-    // Need to log this error somehow
-    TRACE(("sbMediaManagementJob - Unable to organize item."));
-  } else {
-    TRACE(("sbMediaManagementJob - Organized item."));
+    SaveError(NS_ERROR_FILE_COPY_OR_MOVE_FAILED);
   }
 
   return NS_OK;
@@ -441,16 +467,6 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
   mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Grab our string bundle
-  nsCOMPtr<nsIStringBundleService> StringBundleService =
-    do_GetService("@mozilla.org/intl/stringbundle;1", &rv );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = StringBundleService->CreateBundle(
-         "chrome://songbird/locale/songbird.properties",
-         getter_AddRefs(mStringBundle));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create our timer
   mIntervalTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -465,7 +481,6 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
   NS_ENSURE_SUCCESS(rv, rv);
   mCompletedItemCount = 0;
   mStatus = sbIJobProgress::STATUS_RUNNING;
-  mErrorMessages.Clear();
   
   // Update the progress
   rv = UpdateProgress();
@@ -500,34 +515,14 @@ sbMediaManagementJob::GetStatusText(nsAString& aText)
 {
   TRACE(("sbMediaManagementJob[0x%8.x] - GetStatusText", this));
   nsresult rv;
-  nsString outMessage;
-  nsString stringKey;
+  sbStringBundle bundle;
 
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {
-    stringKey.AppendLiteral("mediamanager.scanning.item.message");
-
-    const PRUnichar *strings[1] = {
-      mCurrentContentURL.get()
-    };
-    rv = mStringBundle->FormatStringFromName(stringKey.get(),
-                                             strings,
-                                             NS_ARRAY_LENGTH(strings),
-                                             getter_Copies(outMessage));
+    nsTArray<nsString> params;
+    params.AppendElement(mCurrentContentURL);
+    aText = bundle.Format("mediamanager.scanning.item.message", params);
   } else {
-    // TODO: Check for Completed (Success/failure) states and display appropriate
-    // message.
-    // Success: Display completed message
-    // Failed : check for message count (> 0 = Failure, 0 = User cancelled)
-    stringKey.AppendLiteral("mediamanager.scanning.completed");
-    rv = mStringBundle->GetStringFromName(
-                  stringKey.get(),
-                  getter_Copies(outMessage));
-  }
-
-  if (NS_FAILED(rv)) {
-    aText.Assign(stringKey);
-  } else {
-    aText.Assign(outMessage);
+    aText = bundle.Get("mediamanager.scanning.completed");
   }
 
   return NS_OK;
@@ -539,32 +534,21 @@ sbMediaManagementJob::GetTitleText(nsAString& aText)
 {
   TRACE(("sbMediaManagementJob[0x%8.x] - GetTitleText", this));
   nsresult rv;
-  
-  nsString titleString;
-  
-  // TODO: Check for Completed (Success/failure) states and display appropriate
-  // message.
-  // Success: Display completed message
-  // Failed : check for message count (> 0 = Failure, 0 = User cancelled)
-  
-  // Figure out current percentage
-  PRFloat64 percentDone =
-    ((PRFloat64) mCompletedItemCount / (PRFloat64) mTotalItemCount) * 100;
-  nsString percentString;
-  percentString.AppendInt((PRUint32) percentDone);
+  sbStringBundle bundle;
 
-  const PRUnichar *strings[1] = {
-    percentString.get()
-  };
-  rv = mStringBundle->FormatStringFromName(NS_LITERAL_STRING("mediamanager.scanning.title").get(),
-                                           strings,
-                                           NS_ARRAY_LENGTH(strings),
-                                           getter_Copies(titleString));
-  if (NS_FAILED(rv)) {
-    titleString.AssignLiteral("mediamanager.scanning.title");
+  if (mStatus == sbIJobProgress::STATUS_RUNNING) {
+    PRFloat64 percentDone =
+      ((PRFloat64) mCompletedItemCount / (PRFloat64) mTotalItemCount) * 100;
+    nsString percentString;
+    AppendInt(percentString, percentDone);
+    
+    nsTArray<nsString> params;
+    params.AppendElement(percentString);
+    aText = bundle.Format("mediamanager.scanning.title", params);
+  } else {
+    aText = bundle.Get("mediamanager.scanning.completed");
   }
 
-  aText = titleString;
   return NS_OK;
 }
 
@@ -599,7 +583,7 @@ sbMediaManagementJob::GetErrorCount(PRUint32* aCount)
   TRACE(("sbMediaManagementJob[0x%8.x] - GetErrorCount", this));
   NS_ENSURE_ARG_POINTER( aCount );
 
-  *aCount = mErrorMessages.Length();
+  *aCount = mErrorMap.size();
   return NS_OK;
 }
 
@@ -610,13 +594,45 @@ sbMediaManagementJob::GetErrorMessages(nsIStringEnumerator** aMessages)
   TRACE(("sbMediaManagementJob[0x%8.x] - GetErrorMessages", this));
   NS_ENSURE_ARG_POINTER(aMessages);
 
+  nsTArray<nsString> errorMessages;
   *aMessages = nsnull;
 
+  /**
+   * Iterate through the grouped errors we have collected.
+   */
+  sbErrorMapIter begin = mErrorMap.begin();
+  sbErrorMapIter end = mErrorMap.end();
+  sbErrorMapIter currError;
+  PRUint32 unknownCount = 0;
+  nsString errorKeyBase;
+  errorKeyBase.AssignLiteral("mediamanager.errors.");
+  for (currError = begin; currError != end; ++currError++) {
+    nsString errorKey;
+    errorKey.Assign(errorKeyBase);
+    AppendInt(errorKey, (*currError).first);
+    TRACE(("sbMediaManagementJob: Lookup Error [%s]",
+           NS_ConvertUTF16toUTF8(errorKey).get()));
+    PRBool foundError = AppendErrorToList((*currError).second,
+                                          errorKey,
+                                          errorMessages);
+    if (!foundError) {
+      unknownCount += (*currError).second;
+    }
+  }
+  
+  // Append the unknown totals
+  if (unknownCount > 0) {
+    AppendErrorToList(unknownCount,
+                      NS_LITERAL_STRING("mediamanager.errors.unknown"),
+                      errorMessages);
+  }
+
   nsCOMPtr<nsIStringEnumerator> enumerator =
-    new sbTArrayStringEnumerator(&mErrorMessages);
+    new sbTArrayStringEnumerator(&errorMessages);
   NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
 
   enumerator.forget(aMessages);
+
   return NS_OK;
 }
 
