@@ -37,6 +37,13 @@
 #include <nsHashKeys.h>
 #include <nsDataHashtable.h>
 
+// Define constants for our preference keys
+#define SB_PREF_MEDIA_MANAGER_ENABLED "songbird.media_management.library.enabled"
+#define SB_PREF_MEDIA_MANAGER_COPY    "songbird.media_management.library.copy"
+#define SB_PREF_MEDIA_MANAGER_MOVE    "songbird.media_management.library.move"
+#define SB_PREF_MEDIA_MANAGER_RENAME  "songbird.media_management.library.rename"
+#define SB_PREF_MEDIA_MANAGER_DELETE  "songbird.media_management.library.delete"
+
 class nsIComponentManager;
 
 struct nsModuleComponentInfo;

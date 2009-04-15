@@ -31,8 +31,6 @@
  * mozilla interfaces
  */
 #include <nsIObserverService.h>
-#include <nsIPrefBranch2.h>
-#include <nsIPrefService.h>
 #include <nsITimer.h>
 
 /**
@@ -43,6 +41,7 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaFileManager.h>
 #include <sbIMediaManagementJob.h>
+#include <sbPrefBranch.h>
 
 /**
  * other mozilla headers
@@ -205,24 +204,6 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
   TRACE(("%s: observing %s", __FUNCTION__, aTopic));
 
   if (!strcmp("profile-after-change", aTopic)) {
-    nsCOMPtr<nsIPrefBranch> prefBranch =
-      do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = prefBranch->GetBoolPref("songbird.media_management.library.enabled",
-                                 &mEnabled);
-    if (NS_FAILED(rv)) {
-      mEnabled = PR_FALSE;
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    
-    if (!mEnabled) {
-      TRACE(("not enabled, don't bother doing anything else"));
-      return NS_OK;
-    }
-    
-    // library management is enabled, wait for library ready and manage things
-  
     nsCOMPtr<nsIObserverService> obs =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -251,7 +232,17 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
 
     rv = obs->RemoveObserver(this, aTopic);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    sbPrefBranch prefBranch(nsnull, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mEnabled = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_ENABLED, PR_FALSE);
+
+    if (!mEnabled) {
+      TRACE(("not enabled, don't bother doing anything else"));
+      return NS_OK;
+    }
     
+    // library management is enabled, setup startup timer
     if (!mDelayedStartupTimer) {
       mDelayedStartupTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -452,33 +443,18 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
     // get the management type
     mManageMode = 0;
     PRBool isSet;
-    nsCOMPtr<nsIPrefBranch> prefBranch =
-      do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+    
+    sbPrefBranch prefBranch(nsnull, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    rv = prefBranch->GetBoolPref("songbird.media_management.library.copy",
-                                 &isSet);
-    if (NS_SUCCEEDED(rv) && isSet) {
-      mManageMode |= sbIMediaFileManager::MANAGE_COPY;
-    }
-    
-    rv = prefBranch->GetBoolPref("songbird.media_management.library.move",
-                                 &isSet);
-    if (NS_SUCCEEDED(rv) && isSet) {
-      mManageMode |= sbIMediaFileManager::MANAGE_MOVE;
-    }
-
-    rv = prefBranch->GetBoolPref("songbird.media_management.library.rename",
-                                 &isSet);
-    if (NS_SUCCEEDED(rv) && isSet) {
-      mManageMode |= sbIMediaFileManager::MANAGE_RENAME;
-    }
-
-    rv = prefBranch->GetBoolPref("songbird.media_management.library.delete",
-                                 &isSet);
-    if (NS_SUCCEEDED(rv) && isSet) {
-      mManageMode |= sbIMediaFileManager::MANAGE_DELETE;
-    }
+    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_COPY, PR_FALSE);
+    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_COPY; }
+    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_MOVE, PR_FALSE);
+    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_MOVE; }
+    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_RENAME, PR_FALSE);
+    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_RENAME; }
+    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_DELETE, PR_FALSE);
+    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_DELETE; }
 
     if (mManageMode) {
       nsCOMPtr<sbIMediaFileManager> fileMan =
