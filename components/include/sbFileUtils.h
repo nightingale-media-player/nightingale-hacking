@@ -28,7 +28,7 @@
 #define SBFILEUTILS_H_
 
 #include <nsIFileStreams.h>
-#include <nsIlocalFile.h>
+#include <nsILocalFile.h>
 #include <nsNetCID.h>
 #include <nsStringAPI.h>
 
