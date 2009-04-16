@@ -122,7 +122,7 @@ public:
   virtual ~sbMediaManagementJob();
 
 private:
-  nsresult  UpdateProgress();
+  void      UpdateProgress();
   
   void      SaveError(nsresult aErrorCode);
   PRBool    AppendErrorToList(PRUint32 aErrorCount,

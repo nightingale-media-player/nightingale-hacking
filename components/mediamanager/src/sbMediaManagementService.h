@@ -33,6 +33,7 @@
 #include <nsIObserver.h>
 #include <nsITimer.h>
 
+#include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
 #include <nsHashKeys.h>
 #include <nsDataHashtable.h>
@@ -45,11 +46,13 @@
 #define SB_PREF_MEDIA_MANAGER_DELETE  "songbird.media_management.library.delete"
 
 class nsIComponentManager;
+class nsIThread;
 
 struct nsModuleComponentInfo;
 
 class sbILibrary;
 class sbIMediaManagementJob;
+class sbIJobProgressService;
 
 class sbMediaManagementService : public sbIMediaManagementService,
                                  public sbIMediaListListener,
@@ -72,12 +75,27 @@ public:
    * Initialize the media management service
    */
   NS_METHOD Init();
+  
+  /**
+   * Initialize the background item processing thread
+   */
+  void InitProcessActionThread();
+  
+  /**
+   * Shut down the background item processing thread
+   */
+  void ShutdownProcessActionThread();
+
+  /**
+   * type used to hold items that need to be checked
+   */
+  typedef nsDataHashtable<nsISupportsHashKey, PRUint32> DirtyItems_t;
 
 protected:
   /**
    * Scan mLibrary for things that need updating and dispatch jobs
    */
-  NS_METHOD ScanLibrary();
+  void ScanLibrary();
   
   /**
    * Queue an item for processing
@@ -128,9 +146,19 @@ protected:
   nsCOMPtr<nsITimer> mPerformActionTimer;
   
   /**
+   * background thread the actions occur on
+   */
+  nsCOMPtr<nsIThread> mPerformActionThread;
+  
+  /**
    * list of media items that need updating and the type of modification involved
    */
-  nsDataHashtable<nsISupportsHashKey, PRUint32> mDirtyItems;
+  nsAutoPtr<DirtyItems_t> mDirtyItems;
+  
+  /**
+   * lock for mDirtyItems
+   */
+  PRLock *mDirtyItemsLock;
   
   /**
    * which operations we will do for media management
@@ -141,6 +169,11 @@ protected:
    * The job for scanning the whole library
    */
   nsCOMPtr<sbIMediaManagementJob> mLibraryScanJob;
+  
+  /**
+   * The job progress service, for use on a background thread
+   */
+  nsCOMPtr<sbIJobProgressService> mJobProgressSvc;
 };
 
 

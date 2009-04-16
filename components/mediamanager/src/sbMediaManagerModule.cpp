@@ -31,15 +31,17 @@
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
+#include <nsIClassInfoImpl.h>
 #include <nsIGenericFactory.h>
 
 // Construct and initialize the sbMediaFileManager object.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init)
 
 // Construct the sbMediaManagementJob object.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaManagementJob)
+NS_DECL_CLASSINFO(sbMediaManagementJob)
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaManagementService, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaManagementService, Init)
 
 static NS_METHOD
 sbMediaManagementServiceRegisterSelf(nsIComponentManager *aCompMgr,
@@ -83,7 +85,14 @@ static const nsModuleComponentInfo sbMediaManagerComponents[] =
     SB_MEDIAMANAGEMENTJOB_CLASSNAME,
     SB_MEDIAMANAGEMENTJOB_CID,
     SB_MEDIAMANAGEMENTJOB_CONTRACTID,
-    sbMediaManagementJobConstructor
+    sbMediaManagementJobConstructor,
+    nsnull, // RegisterSelf
+    nsnull, // UnregisterSelf,
+    nsnull, // factory destructor
+    NS_CI_INTERFACE_GETTER_NAME(sbMediaManagementJob),
+    nsnull, // language helper
+    &NS_CLASSINFO_NAME(sbMediaManagementJob),  /* global class-info pointer */
+    nsIClassInfo::THREADSAFE
   },
   // Media management service component info.
   {

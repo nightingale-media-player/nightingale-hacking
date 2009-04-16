@@ -31,6 +31,10 @@
  * mozilla interfaces
  */
 #include <nsIObserverService.h>
+#include <nsIPrefBranch2.h>
+#include <nsIPrefService.h>
+#include <nsIProxyObjectManager.h>
+#include <nsIThread.h>
 #include <nsITimer.h>
 
 /**
@@ -50,11 +54,13 @@
 #include <nsISupportsUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <nsAutoLock.h>
 
 /**
  * other songbird headers
  */
 #include <sbLibraryUtils.h>
+#include <sbProxyUtils.h>
 
 /**
  * constants
@@ -94,14 +100,15 @@ struct ProcessItemData {
    */
   sbMediaManagementService* mediaMgmtService;
   sbIMediaFileManager* fileMan;
+  sbMediaManagementService::DirtyItems_t* dirtyItems;
 };
 
-NS_IMPL_ISUPPORTS5(sbMediaManagementService,
-                   sbIMediaManagementService,
-                   sbIMediaListListener,
-                   sbIJobProgressListener,
-                   nsITimerCallback,
-                   nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS5(sbMediaManagementService,
+                              sbIMediaManagementService,
+                              sbIMediaListListener,
+                              sbIJobProgressListener,
+                              nsITimerCallback,
+                              nsIObserver)
 
 sbMediaManagementService::sbMediaManagementService()
   : mEnabled(PR_FALSE)
@@ -263,8 +270,25 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     TRACE(("%s: shutting down", __FUNCTION__));
     rv = StopListening();
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbMediaManagementService, this, ShutdownProcessActionThread);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = mPerformActionThread->Dispatch(runnable, nsIEventTarget::DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mPerformActionThread->Shutdown();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mPerformActionThread = nsnull;
     mLibrary = nsnull;
+
+    nsAutoLock::DestroyLock(mDirtyItemsLock);
+    mDirtyItemsLock = nsnull;
+    mDirtyItems->Clear();
+    mDirtyItems = nsnull;
+
     return NS_OK;
   }
   
@@ -379,6 +403,7 @@ NS_IMETHODIMP
 sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
+  NS_ENSURE_TRUE(mPerformActionTimer, NS_ERROR_NOT_INITIALIZED);
   
   nsresult rv;
 
@@ -396,12 +421,13 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
   mLibraryScanJob = nsnull;
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mDirtyItems.Count() > 0) {
+  PRUint32 itemCount;
+  { /* scope */
+    nsAutoLock lock(mDirtyItemsLock);
+    itemCount = mDirtyItems->Count();
+  }
+  if (itemCount > 0) {
     // have queued jobs
-    if (!mPerformActionTimer) {
-      mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
   
     TRACE(("%s: job complete, has queue, setting timer", __FUNCTION__));
     rv = mPerformActionTimer->InitWithCallback(this,
@@ -431,14 +457,34 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
     rv = StartListening();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = ScanLibrary();
+    nsCOMPtr<sbIJobProgressService> jobProgressSvc =
+      do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                              NS_GET_IID(sbIJobProgressService),
+                              jobProgressSvc,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                              getter_AddRefs(mJobProgressSvc));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbMediaManagementService, this, ScanLibrary);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = mPerformActionThread->Dispatch(runnable, nsIEventTarget::DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_OK;
   } else if (aTimer == mPerformActionTimer) {
     TRACE(("%s: perform action timer fired", __FUNCTION__));
     
-    NS_ENSURE_TRUE(mDirtyItems.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
+    NS_ENSURE_TRUE(mDirtyItemsLock, NS_ERROR_NOT_INITIALIZED);
+    { /* scope */
+      nsAutoLock lock(mDirtyItemsLock);
+      NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_NOT_INITIALIZED);
+      NS_ENSURE_TRUE(mDirtyItems->IsInitialized(), NS_ERROR_NOT_INITIALIZED);
+    }
     
     // get the management type
     mManageMode = 0;
@@ -461,9 +507,25 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
         do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
       
-      ProcessItemData data = { this, fileMan };
+      ProcessItemData data;
+      { /* scope */
+        nsAutoLock lock(mDirtyItemsLock);
+        data.mediaMgmtService = this;
+        data.fileMan = fileMan;
+        data.dirtyItems = mDirtyItems.forget();
+        mDirtyItems = new DirtyItems_t;
+        NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_OUT_OF_MEMORY);
+        PRBool success = mDirtyItems->Init();
+        if (!success) {
+          data.dirtyItems->Clear();
+          delete data.dirtyItems;
+          return NS_ERROR_OUT_OF_MEMORY;
+        }
+      }
       
-      PRUint32 count = mDirtyItems.EnumerateRead(ProcessItem, &data);
+      PRUint32 count = data.dirtyItems->EnumerateRead(ProcessItem, &data);
+      data.dirtyItems->Clear();
+      delete data.dirtyItems;
     }
     return NS_OK;
   }
@@ -483,7 +545,12 @@ sbMediaManagementService::Init()
   NS_ENSURE_FALSE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
   nsresult rv;
   
-  NS_ENSURE_TRUE(mDirtyItems.Init(), NS_ERROR_OUT_OF_MEMORY);
+  mDirtyItemsLock = nsAutoLock::NewLock("sbMediaManagementService::mDirtyItemsLock");
+  NS_ENSURE_TRUE(mDirtyItemsLock, NS_ERROR_OUT_OF_MEMORY);
+  
+  mDirtyItems = new DirtyItems_t;
+  NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_OUT_OF_MEMORY);
+  NS_ENSURE_TRUE(mDirtyItems->Init(), NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIObserverService> obs =
     do_GetService("@mozilla.org/observer-service;1", &rv);
@@ -493,66 +560,113 @@ sbMediaManagementService::Init()
                         "profile-after-change",
                         PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbMediaManagementService, this, InitProcessActionThread);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+  
+  rv = NS_NewThread(getter_AddRefs(mPerformActionThread), runnable);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
-NS_METHOD
+void
+sbMediaManagementService::InitProcessActionThread()
+{
+  NS_PRECONDITION(!mPerformActionTimer, "mPerformActionTimer already initialized!");
+  nsresult rv;
+  mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+}
+
+void
+sbMediaManagementService::ShutdownProcessActionThread()
+{
+  NS_PRECONDITION(mPerformActionTimer, "mPerformActionTimer not initialized!");
+  nsresult rv;
+  
+  NS_ENSURE_TRUE(mDirtyItemsLock, /* void */);
+  NS_ENSURE_TRUE(mDirtyItems, /* void */);
+
+  PRUint32 itemCount;
+  { /* scope */
+    nsAutoLock lock(mDirtyItemsLock);
+    itemCount = mDirtyItems->Count();
+  }
+  if (itemCount > 0) {
+    // have queued jobs, flush them
+    rv = Notify(mPerformActionTimer);
+    if (NS_FAILED(rv)) {
+      nsresult __rv = rv;
+      NS_ENSURE_SUCCESS_BODY(rv, rv);
+    }
+  }
+
+  if (mPerformActionTimer) {
+    rv = mPerformActionTimer->Cancel();
+    if (NS_FAILED(rv)) {
+      nsresult __rv = rv;
+      NS_ENSURE_SUCCESS_BODY(rv, rv);
+    }
+    
+    mPerformActionTimer = nsnull;
+  }
+}
+
+void
 sbMediaManagementService::ScanLibrary()
 {
-  NS_ENSURE_TRUE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
-  NS_ENSURE_STATE(!mLibraryScanJob);
+  NS_ENSURE_TRUE(mLibrary, /* void */);
+  NS_ENSURE_FALSE(mLibraryScanJob, /* void */);
   
   nsresult rv;
   
   mLibraryScanJob = do_CreateInstance(SB_MEDIAMANAGEMENTJOB_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
   
   rv = mLibraryScanJob->AddJobProgressListener(this);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
   
   rv = mLibraryScanJob->OrganizeMediaList(mLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
   
-  nsCOMPtr<sbIJobProgressService> progressSvc =
-    do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = progressSvc->ShowProgressDialog(mLibraryScanJob,
-                                       nsnull,
-                                       MMS_PROGRESS_DELAY);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  return NS_OK;
+  rv = mJobProgressSvc->ShowProgressDialog(mLibraryScanJob,
+                                           nsnull,
+                                           MMS_PROGRESS_DELAY);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
 NS_METHOD
 sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
 {
+  NS_ENSURE_TRUE(mDirtyItemsLock, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aItem);
   PRBool success;
   nsresult rv;
   
   #if DEBUG
   PRUint32 oldOp;
-  success = mDirtyItems.Get(aItem, &oldOp);
+  { /* scope */
+    nsAutoLock lock(mDirtyItemsLock);
+    success = mDirtyItems->Get(aItem, &oldOp);
+  }
   if (success) {
     NS_ASSERTION(oldOp != sbIMediaFileManager::MANAGE_DELETE,
                  "operations on a deleted media item!");
   }
   #endif
   
-  success = mDirtyItems.Put(aItem, aOperation);
+  { /* scope */
+    nsAutoLock lock(mDirtyItemsLock);
+    success = mDirtyItems->Put(aItem, aOperation);
+  }
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   
   if (mLibraryScanJob) {
     TRACE(("%s: item changed, not setting timer due to library scan job"));
     return NS_OK;
-  }
-  
-  if (!mPerformActionTimer) {
-    mPerformActionTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   TRACE(("%s: item changed, setting timer", __FUNCTION__));
@@ -588,16 +702,15 @@ sbMediaManagementService::StopListening()
 {
   TRACE(("%s: stopping", __FUNCTION__));
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mPerformActionTimer, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
   
   rv = mLibrary->RemoveListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
   
   // flush
-  if (mPerformActionTimer) {
-    rv = mPerformActionTimer->InitWithCallback(this, 0, nsITimer::TYPE_ONE_SHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  rv = mPerformActionTimer->InitWithCallback(this, 0, nsITimer::TYPE_ONE_SHOT);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
 }

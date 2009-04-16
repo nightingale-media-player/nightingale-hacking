@@ -66,12 +66,20 @@
 #include <sbPrefBranch.h>
 #include <sbStandardProperties.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS5(sbMediaManagementJob,
-                              sbIMediaManagementJob,
-                              sbIJobProgress,
-                              sbIJobProgressUI,
-                              sbIJobCancelable,
-                              nsITimerCallback)
+NS_IMPL_THREADSAFE_ADDREF(sbMediaManagementJob)
+NS_IMPL_THREADSAFE_RELEASE(sbMediaManagementJob)
+NS_IMPL_QUERY_INTERFACE5_CI(sbMediaManagementJob,
+                            sbIMediaManagementJob,
+                            sbIJobProgress,
+                            sbIJobProgressUI,
+                            sbIJobCancelable,
+                            nsITimerCallback)
+NS_IMPL_CI_INTERFACE_GETTER5(sbMediaManagementJob,
+                             sbIMediaManagementJob,
+                             sbIJobProgress,
+                             sbIJobProgressUI,
+                             sbIJobCancelable,
+                             nsITimerCallback)
 
 /**
  * To log this module, set the following environment variable:
@@ -144,11 +152,22 @@ sbMediaManagementJob::~sbMediaManagementJob()
  * \brief UpdateProgress - Notify the listeners of the progress information for
  *  this job.
  */
-nsresult
+void
 sbMediaManagementJob::UpdateProgress()
 {
   TRACE(("sbMediaManagementJob[0x%.8x] - UpdateProgress", this));
   nsresult rv;
+  
+  if (!NS_IsMainThread()) {
+    // this needs to fire on the main thread, because the job progress listeners
+    // may be main thread only
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbMediaManagementJob, this, UpdateProgress);
+    NS_ENSURE_TRUE(runnable, /* void */);
+    rv = NS_DispatchToMainThread(runnable);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    return;
+  }
   
   if (mStatus != sbIJobProgress::STATUS_RUNNING) {
     TRACE(("sbMediaManagementJob::UpdateProgress - Shutting down Job"));
@@ -162,18 +181,16 @@ sbMediaManagementJob::UpdateProgress()
     {
       nsString mediaFolderPath;
       rv = mMediaFolder->GetPath(mediaFolderPath);
-      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, /* void */);
       
       rv = mWatchFolderService->RemoveIgnorePath(mediaFolderPath);
-      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_SUCCESS(rv, /* void */);
     }
   }
 
   for (PRInt32 i = mListeners.Count() - 1; i >= 0; --i) {
     mListeners[i]->OnJobProgress(this);
   }
-
-  return NS_OK;
 }
 
 void
@@ -241,11 +258,9 @@ sbMediaManagementJob::ProcessNextItem()
     } else {
       mStatus = sbIJobProgress::STATUS_SUCCEEDED;
     }
-    rv = UpdateProgress();
-    NS_ENSURE_SUCCESS(rv, rv);
+    UpdateProgress();
   } else {
-    rv = UpdateProgress();
-    NS_ENSURE_SUCCESS(rv, rv);
+    UpdateProgress();
 
     // Start up the interval timer that will process the next item
     rv = mIntervalTimer->InitWithCallback(this,
@@ -311,8 +326,7 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
   rv = itemFile->GetPath(mCurrentContentURL);
   NS_ENSURE_SUCCESS(rv, rv);
   // Update the progress for the user
-  rv = UpdateProgress();
-  NS_ENSURE_SUCCESS(rv, rv);
+  UpdateProgress();
 
   PRBool isInMediaFolder = PR_FALSE;
   rv = mMediaFolder->Contains(itemFile, PR_FALSE, &isInMediaFolder);
@@ -374,8 +388,7 @@ sbMediaManagementJob::Notify(nsITimer* aTimer)
     rv = ProcessNextItem();
     if (NS_FAILED(rv)) {
       mStatus = sbIJobProgress::STATUS_FAILED;
-      rv = UpdateProgress();
-      NS_ENSURE_SUCCESS(rv, rv);
+      UpdateProgress();
     }
   }
   return NS_OK;
@@ -483,8 +496,7 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
   mStatus = sbIJobProgress::STATUS_RUNNING;
   
   // Update the progress
-  rv = UpdateProgress();
-  NS_ENSURE_SUCCESS(rv, rv);
+  UpdateProgress();
   
   // Fire off the first timer notify to process the first item
   rv = Notify(mIntervalTimer);
@@ -711,5 +723,6 @@ sbMediaManagementJob::Cancel()
   // Indicate that we have stopped and call UpdateProgress to take care of
   // cleanup.
   mStatus = sbIJobProgress::STATUS_FAILED;
-  return UpdateProgress();
+  UpdateProgress();
+  return NS_OK;
 }
