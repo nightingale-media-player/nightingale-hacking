@@ -29,7 +29,50 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+target_name = sbiTunesMediaImport$(DEBUG:%=_d)
+
+CPP_SRCS = sbiTunesImporterComponent.cpp \
+           sbiTunesXMLParser.cpp \
+           $(NULL)
+           
+CPP_INCLUDES = $(topsrcdir)/components/include \
+               $(DEPTH)/components/moz/strings/components/public \
+               $(DEPTH)/components/mediaimport/library/base/public \
+               $(DEPTH)/components/mediaimport/library/itunes/public \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/xml \
+               $(NULL)
+               
+IS_COMPONENT = 1
+
+DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+
+DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            nspr4 \
+                            xpcom \
+                            xpcomglue_s \
+                            $(NULL)
+
+DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
+                           $(DEPS_DIR)/wpdsdk/Lib/x86/ \
+                           $(DEPTH)/components/moz/strings/components/src \
+                           $(DEPTH)/components/devices/base/src/ \
+                           $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += \
+  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
+  $(NULL)
+
+LIBSONGBIRD_COMPONENT = SongbirdiTunesImporterComponent
+
 SONGBIRD_COMPONENTS = $(srcdir)/sbITunesImporter.js \
+                      $(DYNAMIC_LIB) \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

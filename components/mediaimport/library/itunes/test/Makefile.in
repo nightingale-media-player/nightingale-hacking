@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = itunesimporter
 
 SONGBIRD_TESTS = $(srcdir)/test_itunes_importer.js \
+                 $(srcdir)/test_itunes_xml_parser.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

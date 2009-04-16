@@ -47,6 +47,7 @@
 
 // Local imports.
 #include "sbStringBundleService.h"
+#include "sbStringMap.h"
 
 // Mozilla imports.
 #include <nsICategoryManager.h>
@@ -124,6 +125,16 @@ sbStringBundleServiceUnregister(nsIComponentManager*         aCompMgr,
   return NS_OK;
 }
 
+//------------------------------------------------------------------------------
+// sbStringMap stuff
+//------------------------------------------------------------------------------
+
+#define SB_STRINGMAP_CLASSNAME "sbStringMap"
+#define SB_STRINGMAP_CID \
+{ 0x56a00dd5, 0xcfae, 0x4910, \
+  { 0xae, 0x12, 0xef, 0x53, 0x93, 0x5d, 0xcf, 0x3e } }
+
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbStringMap)
 
 //------------------------------------------------------------------------------
 //
@@ -142,6 +153,13 @@ static nsModuleComponentInfo sbStringsComponents[] =
     sbStringBundleServiceConstructor,
     sbStringBundleServiceRegister,
     sbStringBundleServiceUnregister
+  },
+  // sbStringMap
+  {
+    SB_STRINGMAP_CLASSNAME,
+    SB_STRINGMAP_CID,
+    SB_STRINGMAP_CONTRACTID,
+    sbStringMapConstructor
   }
 };
 
