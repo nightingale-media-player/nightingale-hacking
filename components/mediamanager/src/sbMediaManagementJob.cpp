@@ -64,6 +64,7 @@
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
 #include <sbPrefBranch.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 
 NS_IMPL_THREADSAFE_ADDREF(sbMediaManagementJob)
@@ -333,9 +334,18 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
     return NS_OK;
   }
 
+  // use a proxy to the main thread because of bug 16065, see bug 15989 comment 3
+  nsCOMPtr<sbIMediaItem> proxiedItem;
+  rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+                            NS_GET_IID(sbIMediaItem),
+                            aItem,
+                            NS_PROXY_SYNC,
+                            getter_AddRefs(proxiedItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+    
   // Organize the file by calling the sbIMediaFileManager
   PRBool organizedItem;
-  rv = mMediaFileManager->OrganizeItem(aItem,
+  rv = mMediaFileManager->OrganizeItem(proxiedItem,
                                        manageType,
                                        &organizedItem);
   NS_ENSURE_SUCCESS(rv, rv);
