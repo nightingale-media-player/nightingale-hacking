@@ -115,37 +115,11 @@ sbMediaManagementJob::sbMediaManagementJob() :
   }
 #endif
   TRACE(("sbMediaManagementJob[0x%.8x] - ctor", this));
-  MOZ_COUNT_CTOR(sbMediaManagementJob);
 }
 
 sbMediaManagementJob::~sbMediaManagementJob()
 {
   TRACE(("sbMediaManagementJob[0x%.8x] - dtor", this));
-  MOZ_COUNT_DTOR(sbMediaManagementJob);
-  if (mMediaFolder) {
-    mMediaFolder = nsnull;
-  }
-  
-  if (mWatchFolderService) {
-    mWatchFolderService = nsnull;
-  }
-  
-  if (mMediaList) {
-    mMediaList = nsnull;
-  }
-  
-  if (mMediaFolder) {
-    mMediaFolder = nsnull;
-  }
-  
-  if (mMediaFileManager) {
-    mMediaFileManager = nsnull;
-  }
-  
-  if (mIntervalTimer) {
-    mIntervalTimer = nsnull;
-  }
- 
 }
 
 /**
@@ -171,8 +145,10 @@ sbMediaManagementJob::UpdateProgress()
   
   if (mStatus != sbIJobProgress::STATUS_RUNNING) {
     TRACE(("sbMediaManagementJob::UpdateProgress - Shutting down Job"));
-    mIntervalTimer->Cancel();
-    mIntervalTimer = nsnull;
+    if (mIntervalTimer) {
+      mIntervalTimer->Cancel();
+      mIntervalTimer = nsnull;
+    }
 
     // Remove the media folder from the ignore list in watch folders.
     if (mShouldIgnoreMediaFolder &&
@@ -262,11 +238,14 @@ sbMediaManagementJob::ProcessNextItem()
   } else {
     UpdateProgress();
 
-    // Start up the interval timer that will process the next item
-    rv = mIntervalTimer->InitWithCallback(this,
-                                          mIntervalTimerValue,
-                                          nsITimer::TYPE_ONE_SHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Start up the interval timer that will process the next item, if it has
+    // not been cancelled
+    if (mIntervalTimer) {
+      rv = mIntervalTimer->InitWithCallback(this,
+                                            mIntervalTimerValue,
+                                            nsITimer::TYPE_ONE_SHOT);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   
   return NS_OK;
