@@ -461,6 +461,10 @@ sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
       // Sanitize the property value so that it only contains characters that
       // are valid for a filename
       propertyValue.StripChars(FILE_ILLEGAL_CHARACTERS);
+      // We also need to strip path separators since filenames and folder names
+      // should not have them.
+      propertyValue.StripChars(FILE_PATH_SEPARATOR);
+
       aRetVal.Append(propertyValue);
     }
   }
