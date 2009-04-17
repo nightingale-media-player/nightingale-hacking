@@ -22,30 +22,14 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = strings \
-          distribution \
-          clipboard \
-          domevents \
-          filedownloader \
-          prompter \
-          proxy \
-          temporaryfileservice \
-          threads \
-          urlformatter \
-          variant \
-          windowwatcher \
-          xpcom \
-          streams \
-          shutdownservice \
-          $(NULL)
-
-SUBDIRDEPS = prompter : windowwatcher
+SONGBIRD_COMPONENTS = $(srcdir)/sbShutdownService.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

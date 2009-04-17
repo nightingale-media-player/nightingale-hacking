@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -48,9 +48,20 @@ var JobProgressDialog = {
    * Called when the dialog loads
    */
   onLoad: function JobProgressDialog_onLoad() {
+    // The first window argument can either be a |nsIDialogParamBlock| or a 
+    // |nsIArray| object (i.e. from |WindowUtils.openDialog()|).
+    var argArray = null;
+    if (window.arguments[0] instanceof Ci.nsIDialogParamBlock) {
+      argArray = window.arguments[0].objects;
+    }
+    else if (window.arguments[0] instanceof Ci.nsIArray) {
+      argArray = window.arguments[0];
+    }
+    else {
+      throw Cr.NS_ERROR_INVALID_ARG;
+    }
 
-    var dialogPB = window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
-    this._job = dialogPB.objects.queryElementAt(0, Ci.sbIJobProgress);
+    this._job = argArray.queryElementAt(0, Ci.sbIJobProgress);
     
     if (this._job.status == Ci.sbIJobProgress.STATUS_SUCCEEDED) {
       window.close();
