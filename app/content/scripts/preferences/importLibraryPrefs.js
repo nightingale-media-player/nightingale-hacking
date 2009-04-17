@@ -279,16 +279,41 @@ var importLibraryPrefsUI = {
    */
 
   _update: function importLibrary__update() {
-    // Get the auto-import preference value.
-    var autoImportPrefElem = this._getPrefElem("auto_import_pref");
-    var autoImportPrefValue = this._getPrefElemValue(autoImportPrefElem);
-
     // Disable the library import command when there is no file selected.
     var importCommand = document.getElementById
                                    ("import_library_import_command");
     var libraryPath = this._getPrefElem("library_file_path_pref").value;
     var choseLibrary = (libraryPath != "");
     importCommand.setAttribute("disabled", choseLibrary ? "false" : "true");
+
+    // Update the broadcasters
+    this._updateCheckboxBroadcaster("import_tracks_itunes");
+    this._updateCheckboxBroadcaster("export_tracks_itunes");
+  },
+
+
+  /**
+   * Update a broadcaster based on the corresponding checkbox 'checked' value.
+   *
+   * \param aIdBaseString The base string of the checkbox and broadcaster ID.
+   *        i.e. "myoption_for_something"
+   *        Where "myoption_for_something_checkbox" and 
+   *        "myoption_for_something_broadcaster" are element IDs.
+   */
+  
+  _updateCheckboxBroadcaster: function(aIdBaseString) {
+    var broadcasterElem = 
+      document.getElementById(aIdBaseString + "_broadcaster");
+    var checkboxElem =
+      document.getElementById(aIdBaseString + "_checkbox");
+
+    // Update the broadcaster based on the checkbox value
+    if (checkboxElem.checked) {
+      broadcasterElem.removeAttribute("disabled");
+    }
+    else {
+      broadcasterElem.setAttribute("disabled", "true");
+    }
   },
 
 

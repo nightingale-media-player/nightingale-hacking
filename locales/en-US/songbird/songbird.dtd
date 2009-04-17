@@ -504,14 +504,22 @@
 
 <!-- Import library dialog and preference entities. -->
 <!ENTITY import_library.dialog.title                      "Import a library">
-<!ENTITY import_library.prefs.title                       "iTunes">
+<!ENTITY import_library.prefs.title                       "iTunes Import/Export">
 <!ENTITY import_library.library_file_label                "Library File:">
-<!ENTITY import_library.auto_import_checkbox              "Automatically import changes in my iTunes library when &brandShortName; launches">
-<!ENTITY import_library.dont_import_playlists_checkbox    "Do not update playlists (only update songs)">
 <!ENTITY import_library.unsupported_media_alert_checkbox  "Alert me when unsupported tracks or playlists are not imported">
 <!ENTITY import_library.prefs.path_group_caption          "iTunes Music Library Location">
-<!ENTITY import_library.prefs.options_group_caption       "Import Options">
+<!ENTITY import_library.prefs.options_group_caption       "Import/Export Options">
 <!ENTITY import_library.import_command                    "Import Library">
+<!ENTITY importexport_library_auto_startup_checkbox       "Auto import/export on startup">
+<!ENTITY importexport_library_auto_shutdown_checkbox      "Auto import/export on shutdown">
+<!ENTITY import_tracks_itunes_checkbox                    "Import tracks from iTunes">
+<!ENTITY import_playlists_itunes_checkbox                 "Import playlists">
+<!ENTITY import_smartplaylists_itunes_checkbox            "Import smart playlists">
+<!ENTITY export_tracks_itunes_checkbox                    "Export tracks to iTunes">
+<!ENTITY export_playlists_itunes_checkbox                 "Export playlists">
+<!ENTITY export_subscriptions_itunes_checkbox             "Export subscriptions">
+<!ENTITY export_smartplaylists_itunes_checkbox            "Export smart playlists">
+<!ENTITY importexport_show_notifications_checkbox         "Show notifications when the import/export is complete">
 
 <!-- Import library dirty playlist dialog entities. -->
 <!ENTITY import_library.dirty_playlist_dialog.title        "Playlist changed">

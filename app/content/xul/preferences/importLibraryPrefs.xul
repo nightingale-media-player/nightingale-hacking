@@ -55,23 +55,7 @@
       name="songbird.library_importer.library_file_path"
       type="unichar"
       onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
-
-    <!-- Startup auto-import preference. -->
-    <preference
-      id="auto_import_pref"
-      prefid="auto_import_pref"
-      name="songbird.library_importer.auto_import"
-      type="bool"
-      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
-
-    <!-- Import playlists preference. -->
-    <preference
-      id="dont_import_playlists_pref"
-      prefid="dont_import_playlists_pref"
-      name="songbird.library_importer.dont_import_playlists"
-      type="bool"
-      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
-
+    
     <!-- Alert user on unsupported media preference. -->
     <preference
       id="unsupported_media_alert_pref"
@@ -80,6 +64,78 @@
       type="bool"
       onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
 
+    <!-- Process at startup -->
+    <preference
+      id="auto_importexport_startup_pref"
+      prefid="auto_importexport_startup_pref"
+      name="songbird.library_importexport.autostartup"
+      type="bool"
+      onchange=""/>
+
+    <!-- Process at shutdown -->
+    <preference
+      id="auto_importexport_shutdown_pref"
+      prefid="auto_importexport_shutdown_pref"
+      name="songbird.library_importexport.autoshutdown"
+      type="bool"
+      onchange=""/>
+
+    <!-- Import tracks from iTunes  -->
+    <preference 
+      id="import_tracks_itunes_pref"
+      prefid="import_tracks_itunes_pref"
+      name="songbird.library_importer.import_tracks"
+      type="bool"
+      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+
+    <!-- Import playlists from iTunes -->
+    <preference
+      id="import_playlists_itunes_pref"
+      prefid="import_playlists_itunes_pref"
+      name="songbird.library_importer.import_playlists"
+      type="bool"
+      onchange=""/>
+
+    <!-- Import smart playlists from iTunes -->
+    <preference
+      id="import_smartplaylists_itunes_pref"
+      prefid="import_smartplaylists_itunes_pref"
+      name="songbird.library_importer.import_smartplaylists"
+      type="bool"
+      onchange=""/>
+ 
+    <!-- Export tracks to iTunes -->
+    <preference
+      id="export_tracks_itunes_pref"
+      prefid="export_tracks_itunes_pref"
+      name="songbird.library_exporter.export_tracks"
+      type="bool"
+      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+
+    <!-- Export playlists to iTunes -->
+    <preference
+      id="export_playlists_itunes_pref"
+      prefid="export_playlists_itunes_pref"
+      name="songbird.library_exporter.export_playlists"
+      type="bool"
+      onchange=""/>
+
+    <!-- Export smart playlists to iTunes -->
+    <preference
+      id="export_smartplaylists_itunes_pref"
+      prefid="export_smartplaylists_itunes_pref"
+      name="songbird.library_exporter.export_smartplaylists"
+      type="bool"
+      onchange=""/>
+
+    <!-- Show notifications when import/export is complete  -->
+    <preference
+      id="importexport_show_notifications_pref"
+      prefid="importexport_show_notifications_pref"
+      name="songbird.library_importexport.show_notifications"
+      type="bool"
+      onchange=""/>
+  
   </preferences>
 
   <!-- Panel commands. -->
@@ -102,6 +158,12 @@
     <tabpanel id="import_library_tabpanel"
               orient="vertical"
               onpaneload="importLibraryPrefsPane.doPaneLoad();">
+
+      <!-- Broadcasters -->
+      <broadcasterset>
+        <broadcaster id="import_tracks_itunes_broadcaster" />
+        <broadcaster id="export_tracks_itunes_broadcaster" />
+      </broadcasterset>
 
       <!-- Library path preference controls. -->
       <groupbox>
@@ -133,20 +195,68 @@
         <!-- Library import options group caption. -->
         <caption label="&import_library.prefs.options_group_caption;"/>
 
-        <!-- Checkbox for startup auto import. -->
-        <checkbox id="import_library_auto_import_checkbox"
-                  preference="auto_import_pref"
-                  label="&import_library.auto_import_checkbox;"/>
+        <!-- Startup import/export options checkbox -->
+        <checkbox id="importexport_library_auto_startup_checkbox"
+                  preference="auto_importexport_startup_pref"
+                  label="&importexport_library_auto_startup_checkbox;" />
 
-        <!-- Checkbox for playlist import. -->
-        <checkbox id="import_library_dont_import_playlist_checkbox"
-                  preference="dont_import_playlists_pref"
-                  label="&import_library.dont_import_playlists_checkbox;"/>
+        <!-- Shutdown import/export options checkbox -->
+        <checkbox id="importexport_library_auto_shutdown_checkbox"
+                  preference="auto_importexport_shutdown_pref"
+                  label="&importexport_library_auto_shutdown_checkbox;" />
 
-        <!-- Checkbox for alerting user on unsupported media. -->
-        <checkbox id="import_library_unsupported_media_alert_checkbox"
-                  preference="unsupported_media_alert_pref"
-                  label="&import_library.unsupported_media_alert_checkbox;"/>
+        <spacer height="10" />
+
+        <!-- Import tracks from iTunes checkbox -->
+        <checkbox id="import_tracks_itunes_checkbox"
+                  preference="import_tracks_itunes_pref"
+                  label="&import_tracks_itunes_checkbox;" />
+        
+        <vbox class="indent" observes="import_tracks_itunes_broadcaster">
+          
+          <!-- Import playlists from iTunes checkbox -->
+          <checkbox id="import_playlists_itunes_checkbox"
+                    preference="import_playlists_itunes_pref"
+                    observes="import_tracks_itunes_broadcaster"
+                    label="&import_playlists_itunes_checkbox;" />
+
+          <!-- Import smart playlists from iTunes checkbox -->
+          <checkbox id="import_smartplaylists_itunes_checkbox"
+                    preference="import_smartplaylists_itunes_pref"
+                    observes="import_tracks_itunes_broadcaster"
+                    label="&import_smartplaylists_itunes_checkbox;" />
+        
+        </vbox>
+
+        <spacer height="10" />
+
+        <!-- Export tracks to iTunes checkbox -->
+        <checkbox id="export_tracks_itunes_checkbox"
+                  preference="export_tracks_itunes_pref"
+                  label="&export_tracks_itunes_checkbox;" />
+
+        <vbox class="indent" observes="export_tracks_itunes_broadcaster">
+         
+          <!-- Export playlists to iTunes checkbox -->
+          <checkbox id="export_playlists_itunes_checkbox"
+                    preference="export_playlists_itunes_pref"
+                    observes="export_tracks_itunes_broadcaster"
+                    label="&export_playlists_itunes_checkbox;" />
+         
+          <!-- Export smart playlists to iTunes checkbox -->
+          <checkbox id="export_smartplaylists_itunes_checkbox"
+                    preference="export_smartplaylists_itunes_pref"
+                    observes="export_tracks_itunes_broadcaster"
+                    label="&export_smartplaylists_itunes_checkbox;" />
+        
+        </vbox>
+
+        <spacer height="10" />
+
+        <!-- Show notifications during import/export checkbox -->
+        <checkbox id="importexport_show_notifications_checkbox"
+                  preference="importexport_show_notifications_pref"
+                  label="&importexport_show_notifications_checkbox;" />
 
       </groupbox>
 
