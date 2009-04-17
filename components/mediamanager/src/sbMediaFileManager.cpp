@@ -248,37 +248,32 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
     }
   }
   
-  if ((aManageType & sbIMediaFileManager::MANAGE_RENAME) ||
-      (aManageType & sbIMediaFileManager::MANAGE_COPY) ||
-      (aManageType & sbIMediaFileManager::MANAGE_MOVE)) {
-    
-    // Check if this file is already managed (the old content src is equal to
-    // the newly created content src)
-    PRBool isOrganized = PR_FALSE;
-    rv = IsOrganized(itemFile, filename, path, &isOrganized);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    if (!isOrganized) {
-      // Not managed so perform copy and/or rename
-      rv = CopyRename(aMediaItem, itemFile, filename, path, aRetVal);
-      NS_ENSURE_SUCCESS(rv, rv);
+  // Check if this file is already managed (the old content src is equal to
+  // the newly created content src)
+  PRBool isOrganized = PR_FALSE;
+  rv = IsOrganized(itemFile, filename, path, &isOrganized);
+  NS_ENSURE_SUCCESS(rv, rv);
   
-      if ((aRetVal) &&
-          (aManageType & sbIMediaFileManager::MANAGE_MOVE))
-      {
-        // Delete the original file if it was in the managed folder
-        PRBool isManaged = PR_FALSE;
-        rv = mMediaFolder->Contains(itemFile, PR_FALSE, &isManaged);
+  if (!isOrganized) {
+    // Not managed so perform copy and/or rename
+    rv = CopyRename(aMediaItem, itemFile, filename, path, aRetVal);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if ((aRetVal) &&
+        (aManageType & sbIMediaFileManager::MANAGE_MOVE))
+    {
+      // Delete the original file if it was in the managed folder
+      PRBool isManaged = PR_FALSE;
+      rv = mMediaFolder->Contains(itemFile, PR_FALSE, &isManaged);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (isManaged) {
+        rv = Delete(itemFile, aRetVal);
         NS_ENSURE_SUCCESS(rv, rv);
-        if (isManaged) {
-          rv = Delete(itemFile, aRetVal);
-          NS_ENSURE_SUCCESS(rv, rv);
-        }
       }
-    } else {
-      // Already managed.
-      *aRetVal = PR_TRUE;
     }
+  } else {
+    // Already managed.
+    *aRetVal = PR_TRUE;
   }
   
   return NS_OK;
