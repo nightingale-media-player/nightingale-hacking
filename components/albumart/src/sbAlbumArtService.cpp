@@ -455,18 +455,24 @@ sbAlbumArtService::OnAfterItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(_retval);
   TRACE(("sbAlbumArtService[0x%8.x] - OnAfterItemRemoved", this));
+  
+  // XXXAus: See bug 16096, it will explain why the code below is commented out.
+  *_retval = PR_TRUE;
+
   // We want to be notified of each item removed
-  *_retval = PR_FALSE;
+  //*_retval = PR_FALSE;
 
-  nsresult rv;
-  nsString oldImageUrl;
-  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                               oldImageUrl);
-  if (NS_FAILED(rv) || oldImageUrl.IsEmpty()) {
-    return NS_OK;
-  }
+  //nsresult rv;
+  //nsString oldImageUrl;
+  //rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+  //                             oldImageUrl);
+  //if (NS_FAILED(rv) || oldImageUrl.IsEmpty()) {
+  //  return NS_OK;
+  //}
 
-  return StoreAlbumArtUrlForCheck(oldImageUrl);
+  //return StoreAlbumArtUrlForCheck(oldImageUrl);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -480,18 +486,24 @@ sbAlbumArtService::OnItemUpdated(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aProperties);
   NS_ENSURE_ARG_POINTER(_retval);
   TRACE(("sbAlbumArtService[0x%8.x] - OnItemUpdated", this));
-  *_retval = PR_FALSE;
 
-  nsresult rv;
-  nsString oldImageUrl;
+  // XXXAus: See bug 16096, it will explain why the code below is commented out.
+  *_retval = PR_TRUE;
 
-  rv = aProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                                     oldImageUrl);
-  if (NS_FAILED(rv) || oldImageUrl.IsEmpty()) {
-    return NS_OK;
-  }
+  //*_retval = PR_FALSE;
 
-  return StoreAlbumArtUrlForCheck(oldImageUrl);
+  //nsresult rv;
+  //nsString oldImageUrl;
+
+  //rv = aProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+  //                                   oldImageUrl);
+  //if (NS_FAILED(rv) || oldImageUrl.IsEmpty()) {
+  //  return NS_OK;
+  //}
+
+  //return StoreAlbumArtUrlForCheck(oldImageUrl);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -543,14 +555,17 @@ sbAlbumArtService::OnBatchEnd(sbIMediaList *aMediaList)
          this,
          mBatchHelper.Depth()));
 
-  if (!mBatchHelper.IsActive()) {
-    // Start the timer so we can clean the cache
-    nsresult rv;
-    rv = mAlbumArtCleanTimer->Init(this, 
-                                   ALBUM_ART_CACHE_CLEANUP_INTERVAL,
-                                   nsITimer::TYPE_ONE_SHOT);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  // XXXAus: See bug 16096, it will explain why the code below is commented out.
+
+  //if (!mBatchHelper.IsActive()) {
+  //  // Start the timer so we can clean the cache
+  //  nsresult rv;
+  //  rv = mAlbumArtCleanTimer->Init(this, 
+  //                                 ALBUM_ART_CACHE_CLEANUP_INTERVAL,
+  //                                 nsITimer::TYPE_ONE_SHOT);
+  //  NS_ENSURE_SUCCESS(rv, rv);
+  //}
+
   return NS_OK;
 }
 
