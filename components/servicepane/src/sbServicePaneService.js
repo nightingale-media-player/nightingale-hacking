@@ -176,6 +176,9 @@ ServicePaneNode.prototype.__defineGetter__ ('hidden', function () {
 ServicePaneNode.prototype.__defineSetter__ ('hidden', function (aValue) {
   this.setAttributeNS(SP,'Hidden', aValue?'true':'false'); });
 
+ServicePaneNode.prototype.__defineGetter__ ('hasNoChildren', function () {
+  return this._container.GetCount() == 0; })
+
 ServicePaneNode.prototype.__defineGetter__ ('editable', function () {
   return this.getAttributeNS(SP,'Editable') == 'true'; })
 ServicePaneNode.prototype.__defineSetter__ ('editable', function (aValue) {
@@ -206,6 +209,9 @@ ServicePaneNode.prototype.__defineGetter__ ('stringbundle', function () {
 ServicePaneNode.prototype.__defineSetter__ ('stringbundle', function (aValue) {
   this.setAttributeNS(SP,'stringbundle', aValue); });
 
+ServicePaneNode.prototype.__defineGetter__ ('shouldHideIfEmpty', function() {
+  return (this.properties && this.properties.split(/\s/).indexOf("hide-if-empty") > -1);
+});
 
 ServicePaneNode.prototype.__defineGetter__('childNodes',
     function() {
@@ -295,9 +301,15 @@ ServicePaneNode.prototype.appendChild = function(aChild) {
     throw this.id+' is not a container';
   }
 
+  // Show this node if the "hide-if-empty" property is set
+  if (this.shouldHideIfEmpty && this.hasNoChildren) {
+    this.hidden = false;
+  } 
+
   aChild.unlinkNode();
 
   this._container.AppendElement(aChild.resource);
+
   return aChild;
 };
 
@@ -320,11 +332,17 @@ ServicePaneNode.prototype.insertBefore = function(aNewNode, aAdjacentNode) {
 
   DEBUG(' index='+index);
 
+  // Show this node if the "hide-if-empty" property is set
+  if (this.shouldHideIfEmpty && this.hasNoChildren) {
+    this.hidden = false;  
+  }
+
   // add it back in there
   this._container.InsertElementAt(aNewNode.resource, index, true);
 }
 
 ServicePaneNode.prototype.removeChild = function(aChild) {
+
   if (!this.isContainer) {
     throw this.id + ' is not a container';
   }
@@ -334,6 +352,11 @@ ServicePaneNode.prototype.removeChild = function(aChild) {
   }
 
   this._container.RemoveElement(aChild.resource, true);
+
+  // Hide this node if the "hide-if-empty" property is set. 
+  if (this.shouldHideIfEmpty && this.hasNoChildren) {
+    this.hidden = true;
+  }
 
   aChild.clearNode();
 }
@@ -389,7 +412,6 @@ ServicePaneNode.prototype.clearNode = function () {
     }
   }
 }
-
 
 
 
