@@ -45,7 +45,7 @@ SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
 SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
                 $(SONGBIRD_PP_DIR)/$(INSTALLER_README) \
-                $(topsrcdir)/app/branding/songbird.png \
+                $(topsrcdir)/app/branding/songbird-512.png \
                 $(NULL)
 
 SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
