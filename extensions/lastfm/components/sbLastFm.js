@@ -365,6 +365,10 @@ function sbLastFm() {
     .getService(Ci.sbIMediacoreManager);
   this._mediacoreManager.addListener(this);
 
+  // save the previous shuffle and repeat modes
+  this.prevShuffleMode = this._mediacoreManager.sequencer.mode;
+  this.prevRepeatMode = this._mediacoreManager.sequencer.repeatMode;
+
   // set up the radio library and medialist
   var libraryFactory =
     Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/LibraryFactory;1"]
@@ -939,6 +943,16 @@ function sbLastFm_saveRecentStation(name, stationUrl, url, sImageUrl,
 sbLastFm.prototype.radioPlay =
 function sbLastFm_radioPlay(station) {
   // FIXME: make sure we've got a radio session active...
+  
+  // See if we're already playing a station.  If not, save the shuffle/repeat
+  // settings since we reset them later on in the success handler
+  if (SBDataGetStringValue("lastfm.radio.station") == "" &&
+		  !SBDataGetBoolValue("lastfm.radio.requesting"))
+  {
+	  dump("Saving shuffle/repeat modes\n");
+	  this.prevShuffleMode = this._mediacoreManager.sequencer.mode;
+	  this.prevRepeatMode = this._mediacoreManager.sequencer.repeatMode;
+  }
  
   // clear the playlist
   this.radio_mediaList.clear();
@@ -980,6 +994,7 @@ function sbLastFm_radioPlay(station) {
           function requestMoreRadio_success() {
 		    // we have to make sure we're going sequentially. the radio
 			// protocol says we can't play out of order from the XSPF
+			dump("Resetting repeat/shuffle modes");
 			self._mediacoreManager.sequencer.mode =
 			  Ci.sbIMediacoreSequencer.MODE_FORWARD;
 			self._mediacoreManager.sequencer.repeatMode =
@@ -1335,12 +1350,25 @@ function sbLastFm_observe(subject, topic, data) {
 sbLastFm.prototype.onMediacoreEvent = 
 function sbLastFm_onMediacoreEvent(aEvent) {
   switch(aEvent.type) {
+    case Ci.sbIMediacoreEvent.STREAM_END:
     case Ci.sbIMediacoreEvent.STREAM_STOP:
       this.onStop();
+
+	  // reset the shuffle and repeat modes to the previous setting
+	  dump("Resetting repeat/shuffle modes\n");
+	  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
+	  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
       break;
     case Ci.sbIMediacoreEvent.VIEW_CHANGE:
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
 	  dump("setting radio_playing: " + this.radio_playing + "\n");
+	  
+	  // reset the shuffle and repeat modes to the previous setting
+	  if (!this.radio_playing) {
+		  dump("view change: resetting repeat/shuffle modes\n");
+		  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
+		  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
+	  }
       break;
     case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
       if (this.radio_playing) {
@@ -1378,10 +1406,6 @@ function sbLastFm_onMediacoreEvent(aEvent) {
       this.onTrackChange(aEvent.data);
       break;
     case Ci.sbIMediacoreEvent.STREAM_START:
-      break;
-    case Ci.sbIMediacoreEvent.STREAM_STOP:
-      break;
-    case Ci.sbIMediacoreEvent.STREAM_END:
       break;
     default:
       break;
