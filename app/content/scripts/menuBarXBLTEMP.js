@@ -43,7 +43,9 @@ function doMenu( command, event ) {
                                .selectedMediaItems;
         }
       }
-      SBNewPlaylist(enumerator);
+      if(gServicePane.open) {
+        SBNewPlaylist(enumerator);
+      }
     break;
     case "menuitem_file_smart":
       SBNewSmartPlaylist();

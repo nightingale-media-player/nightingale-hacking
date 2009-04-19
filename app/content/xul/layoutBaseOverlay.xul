@@ -71,7 +71,7 @@
   <menubar id="main-menubar">
     <menu id="file-menu" label="&menu.file;"  accesskey="&menu.file.accesskey;">
       <menupopup id="menu_FilePopup">
-        <menuitem id="menuitem_file_new" key="newplaylist-key" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
+        <menuitem id="menuitem_file_new" key="newplaylist-key" observes="servicePaneOpen" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <menuitem id="menuitem_file_smart" key="newsmartplaylist-key" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
         <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
         <!-- XXX lone: disabled; see bug 4387
@@ -302,6 +302,16 @@
     <!-- ********************************************************************* -->
 
     <broadcasterset id="mainBroadcasterSet">
+      <broadcaster id="servicePaneOpen">
+        <observes type="dataremote"
+                  key="splitter.servicepane_splitter.collapsed"
+                  attribute="hidden"
+                  onchange="if(gServicePane.open) {
+                              document.getElementById('menuitem_file_new').hidden = false;
+                            } else {
+                              document.getElementById('menuitem_file_new').hidden = true;
+                            }" />
+      </broadcaster>
       <!-- Used by the Control menu -->
       <broadcaster id="controlIsPlaying">
         <observes type="dataremote"
