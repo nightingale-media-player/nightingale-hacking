@@ -475,7 +475,7 @@ pref("songbird.media_management.library.enabled", false);
 pref("songbird.media_management.library.format.file", "http://songbirdnest.com/data/1.0#trackNumber,%20-%20,http://songbirdnest.com/data/1.0#trackName");
 pref("songbird.media_management.library.copy", true);
 pref("songbird.media_management.library.move", true);
-pref("songbird.media_management.library.delete", false);
+pref("songbird.media_management.library.delete", true);
 pref("songbird.media_management.library.rename", true);
 
 

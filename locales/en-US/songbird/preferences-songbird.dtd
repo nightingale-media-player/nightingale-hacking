@@ -5,12 +5,6 @@
 <!ENTITY prefWindow.manageMedia.library.label         "Music Library">
 <!ENTITY prefWindow.manageMedia.library.browse.label  "Choose...">
 
-<!ENTITY prefWindow.manageMedia.mode.box.label        "Managed Mode Options">
-<!ENTITY prefWindow.manageMedia.mode.label            "Managed Mode allows &brandShortName; to copy new songs into your music library and automatically keeps your music library organized by moving and renaming files.">
-<!ENTITY prefWindow.manageMedia.mode.copy.label       "Copy new songs into your music library">
-<!ENTITY prefWindow.manageMedia.mode.move.label       "Move files into folders corresponding to their metadata (for example, artist and album)">
-<!ENTITY prefWindow.manageMedia.mode.rename.label     "Rename files">
-
 <!ENTITY prefWindow.manageMedia.format.box.label      "Structure folders as:">
 <!ENTITY prefWindow.manageMedia.format.dir.suffix     "Song files">
 <!ENTITY prefWindow.manageMedia.format.file.label     "Rename files as:">

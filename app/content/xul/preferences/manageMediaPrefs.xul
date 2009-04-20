@@ -82,23 +82,6 @@
       </hbox>
     </groupbox>
     
-    <groupbox id="manage_media_mode_box">
-      <caption id="manage_media_mode_caption"
-               label="&prefWindow.manageMedia.mode.box.label;"/>
-      <description id="manage_media_mode_description">
-        &prefWindow.manageMedia.mode.label;
-      </description>
-      <checkbox id="manage_media_copy_checkbox"
-                preference="manage_media_pref_library_copy"
-                label="&prefWindow.manageMedia.mode.copy.label;"/>
-      <checkbox id="manage_media_move_checkbox"
-                preference="manage_media_pref_library_move"
-                label="&prefWindow.manageMedia.mode.move.label;"/>
-      <checkbox id="manage_media_rename_checkbox"
-                preference="manage_media_pref_library_rename"
-                label="&prefWindow.manageMedia.mode.rename.label;"/>
-    </groupbox>
-
     <groupbox id="manage_media_format_box">
       <caption id="manage_media_format_caption"
                label="&prefWindow.manageMedia.format.box.label;"/>
@@ -111,8 +94,9 @@
                  value="&prefWindow.manageMedia.format.dir.suffix;"/>
         </sb-properties-formatter>
       </hbox>
-      <label id="manage_media_format_label"
-             value="&prefWindow.manageMedia.format.file.label;"/>
+      <checkbox id="manage_media_format_label"
+                preference="manage_media_pref_library_rename"
+                label="&prefWindow.manageMedia.format.file.label;"/>
       <sb-properties-formatter defaultSeparator=" - "
            id="manage_media_format_file_formatter" maxProperties="3"
            preference-editable="true" separatorEditable="true"
