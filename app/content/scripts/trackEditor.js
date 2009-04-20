@@ -707,6 +707,17 @@ var TrackEditor = {
 
     this._elements["notification_box"].hidden = true;
     
+    var trackeditorTabs = document.getElementById("trackeditor-tabs");
+    var tabCount = 0;
+    for (var tab = trackeditorTabs.firstChild; tab; tab = tab.nextSibling) {
+      if (("hidden" in tab) && (!tab.hidden)) {
+        ++tabCount;
+      }
+    }
+    if (tabCount > 1) {
+      trackeditorTabs.hidden = false;
+    }
+    
     
     // Monitor all changes in order to update the dialog controls
     this.state.addPropertyListener("all", this);
