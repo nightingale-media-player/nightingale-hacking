@@ -335,8 +335,12 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
   }
 
   // use a proxy to the main thread because of bug 16065, see bug 15989 comment 3
+  nsCOMPtr<nsIThread> mainThread;
+  rv = NS_GetMainThread(getter_AddRefs(mainThread));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   nsCOMPtr<sbIMediaItem> proxiedItem;
-  rv = do_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+  rv = do_GetProxyForObject(mainThread,
                             NS_GET_IID(sbIMediaItem),
                             aItem,
                             NS_PROXY_SYNC,
