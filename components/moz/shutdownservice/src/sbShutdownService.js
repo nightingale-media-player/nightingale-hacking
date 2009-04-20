@@ -111,7 +111,7 @@ sbShutdownJobService.prototype =
 
   // sbIJobProgress
   get status() {
-    return Ci.sbIJobProgress.STATUS_RUNNING;
+    return this._mStatus;
   },
 
   get statusText() {
