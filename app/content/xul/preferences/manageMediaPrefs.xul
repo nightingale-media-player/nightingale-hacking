@@ -70,42 +70,43 @@
     </preferences>
 
     <commandset id="manage_media_commandset"/>
-
-    <groupbox id="mange_media_library_box">
-      <caption id="manage_media_library_caption"
-               label="&prefWindow.manageMedia.library.label;"/>
-      <hbox>
-        <filefield id="manage_media_library_file" flex="1"/>
-        <button id="manage_media_library_browse"
-                label="&prefWindow.manageMedia.library.browse.label;"
-                oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>
-      </hbox>
-    </groupbox>
-    
-    <groupbox id="manage_media_format_box">
-      <caption id="manage_media_format_caption"
-               label="&prefWindow.manageMedia.format.box.label;"/>
-      <hbox id="manage_media_format_dir_container">
-        <label id="manage_media_format_dir_label"/>
-        <sb-properties-formatter id="manage_media_format_dir_formatter"
-             preference-editable="true" maxProperties="3" trailingSeparator="true"
-             preference="manage_media_pref_library_format_dir">
-          <label id="manage_media_format_dir_suffix_label"
-                 value="&prefWindow.manageMedia.format.dir.suffix;"/>
+    <notificationbox id="media_manage_notification_box">
+      <groupbox id="mange_media_library_box">
+        <caption id="manage_media_library_caption"
+                 label="&prefWindow.manageMedia.library.label;"/>
+        <hbox>
+          <filefield id="manage_media_library_file" flex="1"/>
+          <button id="manage_media_library_browse"
+                  label="&prefWindow.manageMedia.library.browse.label;"
+                  oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>
+        </hbox>
+      </groupbox>
+      
+      <groupbox id="manage_media_format_box">
+        <caption id="manage_media_format_caption"
+                 label="&prefWindow.manageMedia.format.box.label;"/>
+        <hbox id="manage_media_format_dir_container">
+          <label id="manage_media_format_dir_label"/>
+          <sb-properties-formatter id="manage_media_format_dir_formatter"
+               preference-editable="true" maxProperties="3" trailingSeparator="true"
+               preference="manage_media_pref_library_format_dir">
+            <label id="manage_media_format_dir_suffix_label"
+                   value="&prefWindow.manageMedia.format.dir.suffix;"/>
+          </sb-properties-formatter>
+        </hbox>
+        <checkbox id="manage_media_format_label"
+                  preference="manage_media_pref_library_rename"
+                  label="&prefWindow.manageMedia.format.file.label;"/>
+        <sb-properties-formatter defaultSeparator=" - "
+             id="manage_media_format_file_formatter" maxProperties="3"
+             preference-editable="true" separatorEditable="true"
+             preference="manage_media_pref_library_format_file">
+          <label id="manage_media_format_file_suffix_label"
+                 tooltiptext="&prefWindow.manageMedia.format.file.suffix.tooltip;"
+                 value="&prefWindow.manageMedia.format.file.suffix;"/>
         </sb-properties-formatter>
-      </hbox>
-      <checkbox id="manage_media_format_label"
-                preference="manage_media_pref_library_rename"
-                label="&prefWindow.manageMedia.format.file.label;"/>
-      <sb-properties-formatter defaultSeparator=" - "
-           id="manage_media_format_file_formatter" maxProperties="3"
-           preference-editable="true" separatorEditable="true"
-           preference="manage_media_pref_library_format_file">
-        <label id="manage_media_format_file_suffix_label"
-               tooltiptext="&prefWindow.manageMedia.format.file.suffix.tooltip;"
-               value="&prefWindow.manageMedia.format.file.suffix;"/>
-      </sb-properties-formatter>
-    </groupbox>
+      </groupbox>
+    </notificationbox>
     
     <hbox>
       <button id="manage_media_global_cmd"

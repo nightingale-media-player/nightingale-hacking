@@ -58,6 +58,8 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
+const MMPREF_WRITE_TEST_FILE = "test.txt";
+const PERMS_FILE = 0644;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -79,12 +81,18 @@ var manageMediaPrefsPane = {
    */
 
   doPaneLoad: function manageMediaPrefsPane_doPaneLoad() {
+    var self = this;
     function forceCheck(event) {
       const instantApply =
         Application.prefs.getValue("browser.preferences.instantApply", true);
       if (event.type == "dialogcancel" && !instantApply) {
         // cancel dialog, don't do anything
-        return;
+        return true;
+      }
+
+      if (!self._checkForValidPref(false)) {
+        event.preventDefault();
+        return false;
       }
 
       // need to manually set the dir pref if it's not user set, because it has
@@ -100,6 +108,8 @@ var manageMediaPrefsPane = {
                            .getService(Ci.sbIMediaManagementService);
       mediaMgmtSvc.isEnabled = document.getElementById("manage_media_pref_library_enable")
                                        .value;
+
+      return true;
     }
     window.addEventListener('dialogaccept', forceCheck, false);
     window.addEventListener('dialogcancel', forceCheck, false);
@@ -113,7 +123,7 @@ var manageMediaPrefsPane = {
     document.getElementById("manage_media_pref_library_folder")
             .dispatchEvent(event);
 
-    this._checkForValidPref();
+    this._checkForValidPref(true);
   },
 
 
@@ -225,7 +235,26 @@ var manageMediaPrefsPane = {
    * notification if it is not.
    * @return true if valid, false if not.
    */
-  _checkForValidPref: function manageMediaPrefsPane__checkForValidPref() {
+  _checkForValidPref: function manageMediaPrefsPane__checkForValidPref(aSilent) {
+    var notifBox = document.getElementById("media_manage_notification_box");
+    function showErrorNotification(aMsg) {
+      if (aSilent) {
+        return;
+      }
+      
+      // focus this pref pane and this tab
+      var pane = document.getElementById("paneManageMedia");
+      document.documentElement.showPane(pane);
+      
+      // show the notification, hiding any other ones of this class
+      var oldNotif;
+      while ((oldNotif = notifBox.getNotificationWithValue("media_manage_error"))) {
+        notifBox.removeNotification(oldNotif);
+      }
+      notifBox.appendNotification(aMsg, "media_manage_error", null,
+                                  notifBox.PRIORITY_CRITICAL_LOW, []);
+    }
+
     var button = document.getElementById("manage_media_global_cmd");
     var prefElem = document.getElementById(button.getAttribute("preference"));
     var enabled = prefElem.value;
@@ -235,6 +264,51 @@ var manageMediaPrefsPane = {
       button.label = button.getAttribute("label-enable");
     }
     document.getElementById("manage_media_global_description").hidden = enabled;
+
+    if (enabled) {
+      // Need to check if the user chose a usable folder for the managed folder.
+      var managedFolder = document.getElementById("manage_media_library_file");
+      if (!managedFolder || !managedFolder.file) {
+        snowErrorNotification(SBString("prefs.media_management.error.no_path"));
+        return false;
+      }
+      var file = managedFolder.file;
+      if (!file.exists()) {
+        showErrorNotification(
+            SBFormattedString("prefs.media_management.error.not_exist",
+                              [file.path]));
+        return false;
+      }
+      if (!file.isDirectory()) {
+        showErrorNotification(
+            SBFormattedString("prefs.media_management.error.not_directory",
+                              [file.path]));
+        return false;
+      }
+      if (!file.isReadable()) {
+        showErrorNotification(
+            SBFormattedString("prefs.media_management.error.not_readable",
+                              [file.path]));
+        return false;
+      }
+
+      // Try to create a test file so we can be sure it can be written to
+      try {
+        var testFile = file.clone();
+        testFile.append(MMPREF_WRITE_TEST_FILE);
+        if (!testFile.exists()) {
+          testFile.create(Ci.nsILocalFile.NORMAL_FILE_TYPE, PERMS_FILE);
+          testFile.remove(false);
+        }
+      } catch (ex) {
+        showErrorNotification(
+            SBFormattedString("prefs.media_management.error.not_writable",
+                              [testFile.path]));
+        return false;
+      }
+    }
+
+    return true;
   },
   
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener])
