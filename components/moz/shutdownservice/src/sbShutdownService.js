@@ -227,9 +227,12 @@ sbShutdownJobService.prototype =
   },
 
   _notifyListeners: function() {
-    for (var i = 0; i < this._mListeners.length; i++) {
+    // Clone the listeners, otherwise removing one in the middle can 
+    // cause issues.
+    var listeners = [].concat(this._mListeners); 
+    for (var i = 0; i < listeners.length; i++) {
       try {
-        this._mListeners[i].onJobProgress(this);
+        listeners[i].onJobProgress(this);
       }
       catch (e) {
         Cu.reportError(e);

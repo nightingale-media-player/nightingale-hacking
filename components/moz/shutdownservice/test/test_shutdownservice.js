@@ -84,6 +84,11 @@ sbShutdownTestController.prototype = {
   
     if (aJobProgress.status == Ci.sbIJobProgress.STATUS_SUCCEEDED) {
       LOG("The shutdown service has successfully completed");
+
+      // Remove ourselves as a job listener
+      var shutdownService = Cc["@songbirdnest.com/shutdown-service;1"]
+                              .getService(Ci.sbIJobProgress);
+      shutdownService.removeJobProgressListener(this);
       
       testFinished();
     }
