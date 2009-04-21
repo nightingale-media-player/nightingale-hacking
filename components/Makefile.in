@@ -50,6 +50,7 @@ SUBDIRS = addonmetadata \
           jscodelib \
           mediacore \
           mediacore/metadata/manager/public \
+          mediaexport \
           mediaimport \
           mediamanager \
           mediapages \
