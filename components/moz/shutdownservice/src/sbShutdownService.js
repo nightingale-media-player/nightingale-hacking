@@ -52,10 +52,11 @@ function sbShutdownJobService()
 
 sbShutdownJobService.prototype = 
 {
-  _mTasks:     [], 
-  _mTaskIndex: 0,
-  _mListeners: [],
-  _mStatus:    Ci.sbIJobProgress.STATUS_RUNNING,
+  _mTasks:          [], 
+  _mTaskIndex:      0,
+  _mListeners:      [],
+  _mShouldShutdown: true,
+  _mStatus:         Ci.sbIJobProgress.STATUS_RUNNING,
 
   // nsIObserver
   observe: function(aSubject, aTopic, aData) {
@@ -83,6 +84,12 @@ sbShutdownJobService.prototype =
         // There are tasks to run, hault shutdown for now.
         var stopShutdown = aSubject.QueryInterface(Ci.nsISupportsPRBool);
         stopShutdown.data = true;
+
+        // If this notice was made by the unit test, don't shutdown once
+        // all the tasks have been processed.
+        if (aData && aData == "is-unit-test") {
+          this._mShouldShutdown = false;
+        }
       
         this._startProcessingTasks();
       }
@@ -212,9 +219,11 @@ sbShutdownJobService.prototype =
     this._mStatus = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._notifyListeners();
 
-    var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
-                       .getService(Ci.nsIAppStartup);
-    appStartup.quit(Ci.nsIAppStartup.eAttemptQuit);
+    if (this._mShouldShutdown) {
+      var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
+                         .getService(Ci.nsIAppStartup);
+      appStartup.quit(Ci.nsIAppStartup.eAttemptQuit);
+    }
   },
 
   _notifyListeners: function() {

@@ -69,7 +69,9 @@ sbShutdownTestController.prototype = {
     shutdownService.QueryInterface(Ci.nsIObserver);
     var fakeBool = Cc["@mozilla.org/supports-PRBool;1"]
                      .createInstance(Ci.nsISupportsPRBool);
-    shutdownService.observe(fakeBool, "quit-application-requested", null);
+    shutdownService.observe(fakeBool, 
+                            "quit-application-requested", 
+                            "is-unit-test");
 
     // Make sure that the service modified the bool to cancel shutdown
     assertTrue(fakeBool.data);
