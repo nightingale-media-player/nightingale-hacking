@@ -156,6 +156,11 @@ sbTestTask.prototype =
   notify: function(aTimer) {
     LOG("Completed shutdown task: " + this._titleText);
 
+    // Cleanup with the observer service
+    var observerService = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+    observerService.removeObserver(this, "songbird-shutdown");
+
     this.status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._jobListener.onJobProgress(this);
   },
