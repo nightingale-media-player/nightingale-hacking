@@ -90,6 +90,9 @@ sbShutdownTestController.prototype = {
                               .getService(Ci.sbIJobProgress);
       shutdownService.removeJobProgressListener(this);
       
+      // Cleanup the tasks
+      this._listeners.splice(0);
+      
       testFinished();
     }
   },
@@ -113,11 +116,11 @@ sbTestTask.prototype =
 {
   _jobListener   : null,
   _timer         : null,
-  status        : Ci.sbIJobProgress.STATUS_RUNNING,
-  statusText    : "Testing Shutdown Job",
-  titleText     : "",
-  progress      : 0,
-  total         : 0,
+  status         : Ci.sbIJobProgress.STATUS_RUNNING,
+  statusText     : "Testing Shutdown Job",
+  titleText      : "",
+  progress       : 0,
+  total          : 0,
 
   // sbIJobProgress
   get errorCount() {
