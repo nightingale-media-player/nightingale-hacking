@@ -961,11 +961,8 @@ var AlbumArt = {
     // Get the new now selected media item
     var selection = AlbumArt._mediaListView.selection;
     var curImageUrl = null;
-    var item = null;
-    var itemEnum = selection.selectedMediaItems;
-    if (itemEnum.hasMoreElements())
-      item = itemEnum.getNext();
-
+    var item = selection.currentMediaItem;
+    
     // Clear the old now selected media item
     AlbumArt.clearNowSelectedMediaItem();
 
