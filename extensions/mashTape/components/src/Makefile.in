@@ -46,7 +46,6 @@ EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Amazon.js \
                           $(srcdir)/HypeM.js \
                           $(srcdir)/Info.js \
                           $(srcdir)/MTV.js \
-                          $(srcdir)/MTVVideos.js \
                           $(srcdir)/SmugMug.js \
                           $(srcdir)/Wikipedia.js \
                           $(srcdir)/YahooMusic.js \
