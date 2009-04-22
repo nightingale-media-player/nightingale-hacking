@@ -116,14 +116,14 @@ FunctionEnd
 Function InstallUninstallRegistryKeys
    StrCpy $R0 "${BrandFullNameInternal}-$InstallerType-${AppBuildNumber}"
 
-   ; preedTODO: this will conflict in dist mode; we need to include dist name
-   ; here.
-   ; Write the uninstall keys for Windows
-   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "DisplayName" "${BrandFullName} ${AppVersion} (Build ${AppBuildNumber})"
-   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "InstallLocation" "$INSTDIR"
-   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
-   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoModify" 1
-   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoRepair" 1
+   ${If} $DistributionMode != ${TRUE}
+      ; Write the uninstall keys for Windows
+      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "DisplayName" "${BrandFullName} ${AppVersion} (Build ${AppBuildNumber})"
+      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "InstallLocation" "$INSTDIR"
+      WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "UninstallString" '"$INSTDIR\${FileUninstallEXE}"'
+      WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoModify" 1
+      WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\$R0" "NoRepair" 1
+   ${EndIf}
 FunctionEnd
 
 Function InstallBrandingRegistryKeys 
@@ -134,6 +134,15 @@ Function InstallBrandingRegistryKeys
    CreateShortCut "$SMPROGRAMS\$StartMenuDir\${BrandFullNameInternal} (Safe-Mode).lnk" "$INSTDIR\${FileMainEXE}" "-safe-mode" "$INSTDIR\$LinkIconFile" 0 SW_SHOWNORMAL "" "${BrandFullName} Safe-Mode"
    CreateShortCut "$SMPROGRAMS\$StartMenuDir\Uninstall ${BrandFullNameInternal}.lnk" "$INSTDIR\${FileUninstallEXE}" "" "$INSTDIR\${PreferredUninstallerIcon}" 0
    !insertmacro MUI_STARTMENU_WRITE_END
+
+   ; Because the RootAppRegistryKey changes based on the mode the installer is
+   ; run in, we need to copy the value of the key that the MUI Start Menu page
+   ; sets (which is set at installer build time, not installer runtime), copy
+   ; it over to the correct area for how our installer is being run, and then
+   ; delete it.
+   ReadRegStr $R0 HKLM ${MuiStartmenupageRegKey} ${MuiStartmenupageRegName}
+   WriteRegStr HKLM $RootAppRegistryKey "${MuiStartmenupageRegName}" $R0
+   DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 FunctionEnd 
 
 Function InstallFiles
@@ -207,7 +216,7 @@ Section "Desktop Icon"
    CreateShortCut "$DESKTOP\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
    ; Remember that we installed a desktop shortcut.
-   WriteRegStr HKLM $RootAppRegistryKey "Desktop Shortcut Location" "$DESKTOP\${BrandFullNameInternal}.lnk"
+   WriteRegStr HKLM $RootAppRegistryKey ${DesktopShortcutRegName} "$DESKTOP\${BrandFullNameInternal}.lnk"
  
 End: 
 SectionEnd
@@ -225,7 +234,7 @@ Section "QuickLaunch Icon"
    CreateShortCut "$QUICKLAUNCH\${BrandFullNameInternal}.lnk" "$INSTDIR\${FileMainEXE}" "" "$INSTDIR\$LinkIconFile" 0
 
    ; Remember that we installed a quicklaunch shortcut.
-   WriteRegStr HKLM $RootAppRegistryKey "Quicklaunch Shortcut Location" "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
+   WriteRegStr HKLM $RootAppRegistryKey ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
 End:
 SectionEnd
 

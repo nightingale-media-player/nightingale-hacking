@@ -68,6 +68,13 @@
 !define InstallerBuildType        "nightly"
 #endif
 
+; Registry key paths/names shared between the installer/uninstaller
+
+!define MuiStartmenupageRegKey "Software\\${BrandFullNameInternal}\\StartMenuTempKey"
+!define MuiStartmenupageRegName "StartMenuFolder"
+!define DesktopShortcutRegName "DesktopShortcutLocation"
+!define QuicklaunchRegName "QuicklaunchShortcutLocation"
+
 !define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
 
 # Strings

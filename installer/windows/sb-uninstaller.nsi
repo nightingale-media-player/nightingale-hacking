@@ -68,24 +68,28 @@ Function un.RemoveBrandingRegistryKeys
    SetShellVarContext all
 
    ; Read where start menu shortcuts are installed
-   ReadRegStr $0 HKLM $RootAppRegistryKey "Start Menu Folder"
+   ReadRegStr $R0 HKLM $RootAppRegistryKey ${MuiStartmenupageRegName}
 
    ; Remove start menu shortcuts and start menu folder.
-   ${If} ${FileExists} "$SMPROGRAMS\$0\${BrandFullNameInternal}.lnk"
-      RMDir /r "$SMPROGRAMS\$0\*.*"
+   ${If} ${FileExists} "$SMPROGRAMS\$R0\${BrandFullNameInternal}.lnk"
+      Delete "$SMPROGRAMS\$R0\${BrandFullNameInternal}.lnk"
    ${EndIf}
 
    ; Read location of desktop shortcut and remove if present.
-   ReadRegStr $0 HKLM $RootAppRegistryKey "Desktop Shortcut Location"
-   ${If} ${FileExists} $0
-      Delete $0
+   ReadRegStr $R0 HKLM $RootAppRegistryKey ${DesktopShortcutRegName}
+   ${If} ${FileExists} $R0
+      Delete $R0
    ${EndIf}
 
    ; Read location of quicklaunch shortcut and remove if present.
-   ReadRegStr $0 HKLM $RootAppRegistryKey "Quicklaunch Shortcut Location"
-   ${If} ${FileExists} $0
-      Delete $0
+   ReadRegStr $R0 HKLM $RootAppRegistryKey ${QuicklaunchRegName}
+   ${If} ${FileExists} $R0
+      Delete $R0
    ${EndIf}
+
+   ; Always remove this temporary key on uninstall; we shouldn't ever have it
+   ; around
+   DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 FunctionEnd
 
 Function un.RemoveAppRegistryKeys
@@ -100,7 +104,7 @@ Function un.RemoveAppRegistryKeys
    DeleteRegKey HKLM "$0"
 
    ; Remove the last of the registry keys
-   DeleteRegKey HKLM "Software\$RootAppRegistryKey"
+   DeleteRegKey HKLM "$RootAppRegistryKey"
 FunctionEnd 
  
 Function un.UninstallFiles
@@ -228,5 +232,4 @@ FunctionEnd
 Function un.onInit
    ${UAC.U.Elevate.AdminOnly} ${FileUninstallEXE}
    Call un.CommonInstallerInit
-   Call un.SetRootRegistryKey
 FunctionEnd

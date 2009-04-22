@@ -122,10 +122,8 @@ BrandingText " "
 
 ; Start Menu Folder Page Configuration
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
-# preedTODO XXX fix this; see bug 15922
-# should be: !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\\${BrandFullNameInternal}\\$InstallerType\\${AppBuildNumber}"
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\\${BrandFullNameInternal}\\nightly\\${AppBuildNumber}"
-!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "${MuiStartmenupageRegKey}"
+!define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "${MuiStartmenupageRegName}"
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuDir
 
 ; Install directory page
