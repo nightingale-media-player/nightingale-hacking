@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(9153d1d0-ed79-4bc2-a3a6-259cf13781c4)]
+[scriptable, uuid(1d72cf9e-9e5d-4a0d-8b4b-90f7efc014d4)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -173,6 +173,13 @@ interface sbILibrary : sbIMediaList
    * \return Duplicate media item or null if no duplicates.
    */
   sbIMediaItem getDuplicate(in sbIMediaItem aMediaItem);
+
+  /**
+   * \brief Clear all media items (excluding medialists) from the library.
+   * \note If you wish to clear the entire library (including medialists)
+   *       use clear() instead.
+   */
+  void clearItems();
 
   /**
    * \brief A list of available media list types.

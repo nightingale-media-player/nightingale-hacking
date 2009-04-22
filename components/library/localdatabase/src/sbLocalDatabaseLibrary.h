@@ -282,6 +282,16 @@ private:
                                 sbMediaItemArray* aEntry,
                                 void* aUserData);
 
+  /**
+   * \brief Notify lists containing the items that the items are
+   *        about to be removed.
+   * \note This method also removes the items from the cache.
+   */
+  static PLDHashOperator PR_CALLBACK
+    NotifyListsBeforeAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                                      sbMediaItemArray* aEntry,
+                                      void* aUserData);
+
   static PLDHashOperator PR_CALLBACK
     EntriesToMediaListArray(nsISupportsHashKey* aEntry,
                             void* aUserData);
@@ -330,7 +340,9 @@ private:
                                          PRBool aAllowDuplicates,
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
-                                         
+  
+  nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE);
+
   /* Migration related methods */
   nsresult NeedsMigration(PRBool *aNeedsMigration, 
                           PRUint32 *aFromVersion, 

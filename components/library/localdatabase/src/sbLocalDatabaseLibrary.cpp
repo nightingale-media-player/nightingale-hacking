@@ -363,14 +363,6 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
                                                      item,
                                                      mNotificationIndexes[i]);
 
-    // Shift indexes of items that come after the deleted index
-    // XXXFIXME: this has N^2 performance characteristics and is not a good way to handle this.
-    for (PRUint32 j = i + 1; j < count; j++) {
-      if (mNotificationIndexes[j] > mNotificationIndexes[i]) {
-        mNotificationIndexes[j]--;
-      }
-    }
-
     nsAutoString guid;
     rv = item->GetGuid(guid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2208,6 +2200,51 @@ sbLocalDatabaseLibrary::NotifyListsAfterItemRemoved(nsISupportsHashKey::KeyType 
   return PL_DHASH_NEXT;
 }
 
+/*static*/ PLDHashOperator PR_CALLBACK
+sbLocalDatabaseLibrary::NotifyListsBeforeAfterItemRemoved(nsISupportsHashKey::KeyType aKey,
+                                                          sbMediaItemArray* aEntry,
+                                                          void* aUserData)
+{
+  NS_PRECONDITION(aEntry, "Null entry in the hash?!");
+  NS_PRECONDITION(aUserData, "Null userData!");
+
+  sbMediaItemInfoTable* infoTable = static_cast<sbMediaItemInfoTable*>(aUserData);
+  NS_ENSURE_TRUE(infoTable, PL_DHASH_STOP);
+
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  nsString itemGuid;
+  rv = item->GetGuid(itemGuid);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  PRUint32 count = aEntry->Count();
+  for (PRUint32 i = 0; i < count; i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(aEntry->ObjectAt(i), &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    nsCOMPtr<sbIMediaList> list = do_QueryInterface(simple, &rv);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    PRUint32 index;
+    rv = list->IndexOf(item, 0, &index);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersBeforeItemRemoved(list, item, index);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    rv = simple->NotifyListenersAfterItemRemoved(list, item, index);
+    NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+    infoTable->Remove(itemGuid);
+  }
+
+  return PL_DHASH_NEXT;
+}
+
+
 /* static */ PLDHashOperator PR_CALLBACK
 sbLocalDatabaseLibrary::EntriesToMediaListArray(nsISupportsHashKey* aEntry,
                                                 void* aUserData)
@@ -2722,6 +2759,15 @@ sbLocalDatabaseLibrary::GetDuplicate(sbIMediaItem*  aMediaItem,
  * See sbILibrary
  */
 NS_IMETHODIMP
+sbLocalDatabaseLibrary::ClearItems() 
+{
+  return ClearInternal(PR_TRUE);
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
 sbLocalDatabaseLibrary::GetMediaListTypes(nsIStringEnumerator** aMediaListTypes)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - GetMediaListTypes(%s)", this));
@@ -3031,6 +3077,80 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   return NS_OK;
 }
 
+nsresult 
+sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
+{
+  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
+  NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
+
+  sbAutoBatchHelper batchHelper(*this);
+
+  nsresult rv = mPropertyCache->Write();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We only have to get the simple media lists because those are
+  // the lists that are used for storage for all other media list types.
+  // The outer implementation (ie, the actual smart, dynamic media list) 
+  // will pick up the changes made to it's storage list.
+  sbMediaListArray lists;
+  rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Notify simple media lists that they are getting cleared
+  for (PRInt32 i = 0; i < lists.Count(); i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(lists[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simple->NotifyListenersListCleared(lists[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<sbIDatabaseQuery> query;
+  rv = MakeStandardQuery(getter_AddRefs(query));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!aExcludeLists) {
+    // Clear our caches
+    mMediaItemTable.Clear();
+    mMediaListTable.Clear();
+
+    rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items WHERE is_list = 0"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRInt32 dbOk;
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate the cached list
+  rv = GetArray()->Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Invalidate all simple media lists
+  for (PRInt32 i = 0; i < lists.Count(); i++) {
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(lists[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Invalidate the list's item array because its content are gone
+    rv = simple->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Notify the list's listeners that the list was cleared
+    NotifyListenersListCleared(lists[i]);
+  }
+
+  // Notify the library's listeners that the library was cleared
+  NotifyListenersListCleared(SB_IMEDIALIST_CAST(this));
+
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseLibrary::NeedsMigration(PRBool *aNeedsMigration,
                                        PRUint32 *aFromVersion,
@@ -3123,9 +3243,6 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
 
   nsresult rv;
 
-  PRUint32 theCount = 0;
-  PRTime startTime = PR_Now();
-
   nsRefPtr<sbLocalDatabaseMediaListBase> viewMediaList =
     aView->GetNativeMediaList();
 
@@ -3134,10 +3251,6 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
   nsCOMPtr<sbILocalDatabaseGUIDArray> fullArray = viewMediaList->GetArray();
 
   // Keep track of removed item's indexes for notifications
-  nsDataHashtable<nsISupportsHashKey, PRUint32> itemIndexes;
-  rv = itemIndexes.Init();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   sbILocalDatabaseGUIDArray* viewArray = aView->GetGUIDArray();
 
   // Figure out if we have a library or a simple media list
@@ -3157,7 +3270,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = query->AddQuery(NS_LITERAL_STRING("begin"));
+  rv = query->AddQuery(NS_LITERAL_STRING("BEGIN"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Loop through the selected media items and build the in criterion for the
@@ -3168,9 +3281,12 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
 
   // If we are a library, we can delete things by media item id
   if (isLibrary) {
-    nsCOMPtr<sbIDatabasePreparedStatement> deletePreparedStatement;
-    query->PrepareQuery(NS_LITERAL_STRING("DELETE FROM media_items WHERE media_item_id = ?"), getter_AddRefs(deletePreparedStatement));
-    
+    sbAutoBatchHelper batchHelper(*this);
+
+    nsString deleteQuery;
+    deleteQuery.SetLength(1048576); // This ends up being 2M of RAM.
+    deleteQuery.Assign(NS_LITERAL_STRING("DELETE FROM media_items WHERE media_item_id IN ("));
+
     while (NS_SUCCEEDED(aSelection->GetNext(getter_AddRefs(indexedMediaItem)))) {
       nsCOMPtr<sbIMediaItem> item;
       rv = indexedMediaItem->GetMediaItem(getter_AddRefs(item));
@@ -3184,11 +3300,9 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       rv = viewArray->GetMediaItemIdByIndex(index, &mediaItemId);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = query->AddPreparedStatement(deletePreparedStatement);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = query->BindInt32Parameter(0, mediaItemId);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
+      deleteQuery.AppendInt(mediaItemId);
+      deleteQuery.AppendLiteral(",");
+
       // Finally, remember this media item so we can send notifications
       PRBool success = selectedItems.AppendObject(item);
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -3203,19 +3317,74 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       rv = fullArray->GetIndexByRowid(rowid, &fullArrayIndex);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Stash the index for notifications
-      success = itemIndexes.Put(item, fullArrayIndex);
-      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+      sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(SB_IMEDIALIST_CAST(this),
+                                                                         item,
+                                                                         fullArrayIndex);
+
+      sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(SB_IMEDIALIST_CAST(this),
+                                                                        item,
+                                                                        fullArrayIndex);
     }
+
+    PRUint32 count = selectedItems.Count();
+
+    // If we are removing from the library, we need to notify all the simple
+    // media lists that contains the items as well as the library's listeners
+    sbMediaItemToListsMap map;
+    PRBool success = map.Init(count);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+    sbMediaListArray lists;
+
+    rv = GetContainingLists(&selectedItems, &lists, &map);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Start a batch in both the library and all the lists that we are
+    // removing from
+    sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
+    map.EnumerateRead(NotifyListsBeforeAfterItemRemoved, &mMediaItemTable);
+
+    rv = GetArray()->Invalidate();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Invalidate all of the simple media lists we notified
+    for (PRInt32 i = 0; i < lists.Count(); i++) {
+      nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+        do_QueryInterface(lists[i], &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = simple->Invalidate();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    deleteQuery.Replace(deleteQuery.Length() - 1, 1, NS_LITERAL_STRING(")"));
+    
+    rv = query->AddQuery(deleteQuery);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = query->AddQuery(NS_LITERAL_STRING("COMMIT"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Now actually delete the items
+    PRInt32 dbSuccess;
+    rv = query->Execute(&dbSuccess);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-  else {
+  else { // !isLibrary
     nsCOMPtr<sbIDatabasePreparedStatement> deletePreparedStatement;
-    query->PrepareQuery(NS_LITERAL_STRING("delete from simple_media_lists where media_item_id = ? AND ordinal = ?"), getter_AddRefs(deletePreparedStatement));
+    query->PrepareQuery(NS_LITERAL_STRING("DELETE FROM simple_media_lists WHERE media_item_id = ? AND ordinal = ?"), getter_AddRefs(deletePreparedStatement));
 
     PRUint32 mediaItemId;
     rv = viewMediaList->GetMediaItemId(&mediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
     
+    sbAutoBatchHelper batchHelper(*viewMediaList);
+
+    // If this is a media list, just notify the list
+    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
+      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, viewMediaList), &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     while (NS_SUCCEEDED(aSelection->GetNext(getter_AddRefs(indexedMediaItem)))) {
       nsCOMPtr<sbIMediaItem> item;
       rv = indexedMediaItem->GetMediaItem(getter_AddRefs(item));
@@ -3238,10 +3407,6 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       query->BindStringParameter(1, ordinal);
       NS_ENSURE_SUCCESS(rv, rv);
       
-      // Finally, remember this media item so we can send notifications
-      PRBool success = selectedItems.AppendObject(item);
-      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
       // Get the index of this item in the full array
       //TODO: this scares me! investigate!
       PRUint64 rowid;
@@ -3252,139 +3417,35 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       rv = fullArray->GetIndexByRowid(rowid, &fullArrayIndex);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // Stash the index for notifications
-      success = itemIndexes.Put(item, fullArrayIndex);
-      NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-    }
-  }
-
-  rv = query->AddQuery(NS_LITERAL_STRING("commit"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 count = selectedItems.Count();
-  theCount = count;
-
-  if (isLibrary) {
-    // If we are removing from the library, we need to notify all the simple
-    // media lists that contains the items as well as the library's listeners
-    sbMediaItemToListsMap map;
-    PRBool success = map.Init();
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-
-    sbMediaListArray lists;
-
-    rv = GetContainingLists(&selectedItems, &lists, &map);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Start a batch in both the library and all the lists that we are
-    // removing from
-    sbAutoBatchHelper batchHelper(*this);
-    sbAutoSimpleMediaListBatchHelper listsBatchHelper(&lists);
-
-    sbListItemIndexMap containedItemIndexes;
-    success = containedItemIndexes.Init();
-    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-    map.EnumerateRead(NotifyListsBeforeItemRemoved, &containedItemIndexes);
-
-    for (PRUint32 i = 0; i < count; i++) {
-
-      PRUint32 index;
-      PRBool success = itemIndexes.Get(selectedItems[i], &index);
-      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
-      sbLocalDatabaseMediaListListener::NotifyListenersBeforeItemRemoved(SB_IMEDIALIST_CAST(this),
-                                                                         selectedItems[i],
-                                                                         index);
-    }
-
-    // Now actually delete the items
-    PRInt32 dbSuccess;
-    rv = query->Execute(&dbSuccess);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = GetArray()->Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Invalidate all of the simple media lists we notified
-    for (PRInt32 i = 0; i < lists.Count(); i++) {
-      nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-        do_QueryInterface(lists[i], &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = simple->Invalidate();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // Notify simple media lists after removal
-    map.EnumerateRead(NotifyListsAfterItemRemoved, &containedItemIndexes);
-
-    // Notify our listeners of after removal
-    for (PRUint32 i = 0; i < count; i++) {
-      PRUint32 index;
-      PRBool success = itemIndexes.Get(selectedItems[i], &index);
-      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
-      sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(SB_IMEDIALIST_CAST(this),
-                                                                        selectedItems[i],
-                                                                        index);
-    }
-  }
-  else { // isLibrary
-    sbAutoBatchHelper batchHelper(*viewMediaList);
-
-    // If this is a media list, just notify the list
-    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-      do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaList*, viewMediaList), &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRUint32 i = 0; i < count; i++) {
-      PRUint32 index;
-      PRBool success = itemIndexes.Get(selectedItems[i], &index);
-      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
       rv = simple->NotifyListenersBeforeItemRemoved(viewMediaList,
-                                                    selectedItems[i],
-                                                    index);
+                                                    item,
+                                                    fullArrayIndex);
       NS_ENSURE_SUCCESS(rv, rv);
-    }
 
-    // Now actually delete the items
-    PRInt32 dbSuccess;
-    rv = query->Execute(&dbSuccess);
-    NS_ENSURE_SUCCESS(rv, rv);
+      nsString guid;
+      rv = simple->NotifyListenersAfterItemRemoved(viewMediaList,
+                                                   item,
+                                                   fullArrayIndex);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = item->GetGuid(guid);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Remove from our cache.
+      mMediaItemTable.Remove(guid);
+    }
 
     rv = simple->Invalidate();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    for (PRUint32 i = 0; i < count; i++) {
-      PRUint32 index;
-      PRBool success = itemIndexes.Get(selectedItems[i], &index);
-      NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
-
-      rv = simple->NotifyListenersAfterItemRemoved(viewMediaList,
-                                                   selectedItems[i],
-                                                   index);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-
-  for (PRUint32 i = 0; i < count; i++) {
-    nsString guid;
-
-    sbIMediaItem* mediaItem = selectedItems.ObjectAt(i);
-    NS_ASSERTION(mediaItem, "Null in selectedItems!");
-
-    rv = mediaItem->GetGuid(guid);
+    // Now actually delete the items
+    rv = query->AddQuery(NS_LITERAL_STRING("COMMIT"));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Remove from our cache.
-    mMediaItemTable.Remove(guid);
+    PRInt32 dbSuccess;
+    rv = query->Execute(&dbSuccess);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  
-  PRTime endTime = PR_Now();
-
-  printf("[sbLocalDatabaseLibrary] - Remove (%d) Selected Time To Process: %ld\n", theCount, endTime - startTime);
 
   return NS_OK;
 }
@@ -3684,63 +3745,7 @@ sbLocalDatabaseLibrary::RemoveSome(nsISimpleEnumerator* aMediaItems)
 NS_IMETHODIMP
 sbLocalDatabaseLibrary::Clear()
 {
-  SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
-  NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
-  
-  nsresult rv = mPropertyCache->Write();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  sbMediaListArray lists;
-  rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Notify simple media lists that they are getting cleared
-  for (PRInt32 i = 0; i < lists.Count(); i++) {
-    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-      do_QueryInterface(lists[i], &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = simple->NotifyListenersListCleared(lists[i]);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // Clear our caches
-  mMediaItemTable.Clear();
-  mMediaListTable.Clear();
-
-  nsCOMPtr<sbIDatabaseQuery> query;
-  rv = MakeStandardQuery(getter_AddRefs(query));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRInt32 dbOk;
-  rv = query->Execute(&dbOk);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Invalidate the cached list
-  rv = GetArray()->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Invalidate all simple media lists
-  for (PRInt32 i = 0; i < lists.Count(); i++) {
-    nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
-      do_QueryInterface(lists[i], &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Invalidate the list's item array because its content is gone
-    rv = simple->Invalidate();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Notify the list's listeners that the list was cleared
-    NotifyListenersListCleared(lists[i]);
-  }
-
-  // Notify the library's listeners that the library was cleared
-  NotifyListenersListCleared(SB_IMEDIALIST_CAST(this));
-
-  return NS_OK;
+  return ClearInternal(PR_FALSE);
 }
 
 /**

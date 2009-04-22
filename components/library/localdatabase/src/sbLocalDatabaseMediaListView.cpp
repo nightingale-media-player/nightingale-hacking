@@ -781,22 +781,93 @@ sbLocalDatabaseMediaListView::GetSelection(sbIMediaListViewSelection** aSelectio
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
 {
-  nsresult rv;
+  PRUint32 viewLength = 0;
+  nsresult rv = GetLength(&viewLength);
+  NS_ENSURE_SUCCESS(rv, rv);
 
+  PRInt32 selectionLength = 0;
+  rv = mSelection->GetCount(&selectionLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 filterCount = 0;
+  if(mViewFilter) {
+    rv = mViewFilter->GetGroupCount(&filterCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Check to see if the only filters are 'hidden' and 'is_list'.
+    // If that is the case, we can pretend like there are no filters.
+    if(filterCount) {
+      nsCOMPtr<sbILibraryConstraintBuilder> builder =
+        do_CreateInstance(SONGBIRD_LIBRARY_CONSTRAINTBUILDER_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                        NS_LITERAL_STRING("0"),
+                        nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = builder->Intersect(nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = builder->Include(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                            NS_LITERAL_STRING("0"),
+                            nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbILibraryConstraint> constraint;
+      rv = builder->Get(getter_AddRefs(constraint));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRBool isEqual = PR_FALSE;
+      rv = mViewFilter->Equals(constraint, &isEqual);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(isEqual) {
+        filterCount = 0;
+      }
+    }
+  }
+
+  PRUint32 searchCount = 0;
+  if(mViewSearch) {
+    rv = mViewSearch->GetGroupCount(&searchCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRBool isSelected = PR_FALSE;
   PRInt32 currentIndex;
   rv = mSelection->GetCurrentIndex(&currentIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool isSelected;
   rv = mSelection->IsIndexSelected(currentIndex, &isSelected);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsISimpleEnumerator> selection;
-  rv = mSelection->GetSelectedIndexedMediaItems(getter_AddRefs(selection));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // The user is removing all of the tracks from the view, 
+  // use clear instead. It's very important to check for filter
+  // and search counts here otherwise we may clear the library
+  // because the user has selected everything in the view when
+  // it's in a filtered or has a search applied!
+  if((viewLength == selectionLength) && !filterCount && !searchCount) {
+    // If it's a library, call clear items instead. We do this so
+    // that all playlists the user has are preserved.
+    if(mMediaListId == 0) {
+      rv = mLibrary->ClearItems();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      // Plain medialists just get cleared.
+      rv = mMediaList->Clear();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    nsCOMPtr<nsISimpleEnumerator> selection;
+    rv = mSelection->GetSelectedIndexedMediaItems(getter_AddRefs(selection));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mLibrary->RemoveSelected(selection, this);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mLibrary->RemoveSelected(selection, this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Invalidate current selection as it has been removed
   if (isSelected) {

@@ -1380,6 +1380,16 @@ sbDeviceLibrary::GetDevice(sbIDevice **aDevice)
 }
 
 /*
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbDeviceLibrary::ClearItems()
+{
+  NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
+  return mDeviceLibrary->ClearItems();
+}
+
+/*
  * See sbIMediaList
  */
 NS_IMETHODIMP 
