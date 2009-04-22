@@ -293,6 +293,18 @@ moz_debugger=""
 #	MOZ_PROGRAM=$1
 #	shift
 #fi
+
+##
+## Make sure we're not running under sudo; it breaks the profile
+##
+if [ -n "$SUDO_UID" ]
+then
+	if [ "$HOME" != "`grep $USER /etc/passwd | cut -d : -f 6`" ]
+	then
+		moz_bail "Please do not execute $cmdname via sudo without -H; it breaks user data."
+	fi
+fi
+
 ##
 ## Program not given, try to guess a default
 ##
