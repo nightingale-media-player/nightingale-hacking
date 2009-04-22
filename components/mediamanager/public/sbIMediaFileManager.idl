@@ -26,9 +26,11 @@
 
 #include "nsISupports.idl"
 
+interface nsIFile;
+
 interface sbIMediaItem;
 
-[scriptable, uuid(e9745a6e-1dd1-11b2-ba47-ed36d873a452)]
+[scriptable, uuid(17f91812-1dd2-11b2-93a2-cc9ebb01e9fa)]
 interface sbIMediaFileManager : nsISupports
 {
   /**
@@ -66,8 +68,26 @@ interface sbIMediaFileManager : nsISupports
   // Move a file into the correct sub folder so it matches the items metadata
   const unsigned short MANAGE_MOVE    = 8;
 
-  // Organize an item in the media library folder
-  boolean organizeItem(in sbIMediaItem aMediaItem, in unsigned short aManageType);
+  /**
+   * Organize an item in the media library folder
+   *
+   * @param aMediaItem the item to organize
+   * @param aManageType the actions to take (see flags above)
+   * @param aForceTargetFile if given, force the target file to be based on this
+   *        path, ignoring the properties on the item itself
+   */
+  boolean organizeItem(in sbIMediaItem aMediaItem,
+                       in unsigned short aManageType,
+                       [optional] in nsIFile aForceTargetFile);
+  
+  /**
+   * Get the path the item would be organized to if we were to do it
+   * 
+   * @param aMediaItem  - the media item we will organize
+   * @param aManageType - the actions to take (see flags above)
+   * @return              the resulting path
+   */
+  nsIFile getManagedPath(in sbIMediaItem aItem, in unsigned short aManageType);
 };
 
 //

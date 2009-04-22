@@ -155,10 +155,11 @@ protected:
 
   // sbIJobProgress variables
   PRUint16                                mStatus;
+  nsString                                mStatusText;
   nsCOMArray<sbIJobProgressListener>      mListeners;
   PRUint32                                mCompletedItemCount;
   PRUint32                                mTotalItemCount;
-  nsString                                mCurrentContentURL;
+  nsString                                mCurrentTargetPath;
 
   // Hold a map of the number of error messages that have occured so we can
   // group them

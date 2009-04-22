@@ -186,8 +186,6 @@ sbMediaManagementJob::AppendErrorToList(PRUint32 aErrorCount,
                                         nsString aErrorKey,
                                         nsTArray<nsString> &aErrorMessages)
 {
-  nsresult rv;
-  
   nsString errorCount;
   errorCount.AppendInt(aErrorCount);
 
@@ -277,34 +275,21 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
     // We don't organize lists or hidden items
     return NS_OK;
   }
-  
-  // Reset our current url incase something fails
-  mCurrentContentURL = EmptyString();
 
   nsCOMPtr<nsIURI> itemUri;
   rv = aItem->GetContentSrc(getter_AddRefs(itemUri));
   NS_ENSURE_SUCCESS (rv, rv);
   
-  PRBool isFile;
-  rv = itemUri->SchemeIs("file", &isFile);
-  NS_ENSURE_SUCCESS(rv, rv);
-  // If this is not a file then just return to go on to the next item
-  if (!isFile) {
-    return NS_ERROR_FILE_UNRECOGNIZED_PATH;
-  }
-  
   // Get an nsIFileURL object from the nsIURI
   nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // If this is not a file then just return to go on to the next item
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FILE_UNRECOGNIZED_PATH);
 
   // Get the file object
   nsCOMPtr<nsIFile> itemFile;
   rv = fileUrl->GetFile(getter_AddRefs(itemFile));
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  // Get the path for the progress display
-  rv = itemFile->GetPath(mCurrentContentURL);
-  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the progress for the user
   UpdateProgress();
 
@@ -333,6 +318,36 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
     TRACE(("sbMediaManagementJob - No need to organize this file."));
     return NS_OK;
   }
+  
+  // Get the managed path for status display
+  nsCOMPtr<nsIFile> targetFile;
+  rv = mMediaFileManager->GetManagedPath(aItem,
+                                         manageType,
+                                         getter_AddRefs(targetFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Generate the status text
+  nsString targetFilePath;
+  rv = targetFile->GetPath(targetFilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mMediaFolder->Contains(targetFile, PR_TRUE, &isInMediaFolder);
+  if (NS_FAILED(rv)) {
+    isInMediaFolder = PR_FALSE;
+  }
+  if (isInMediaFolder) {
+    nsString mediaFolderPath;
+    rv = mMediaFolder->GetPath(mediaFolderPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mStatusText = Substring(targetFilePath, mediaFolderPath.Length());
+    TRACE(("%s: setting status text to truncated value %s",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(mStatusText).get()));
+  } else {
+    mStatusText = targetFilePath;
+    TRACE(("%s: setting status text to full path %s",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(mStatusText).get()));
+  }
 
   // use a proxy to the main thread because of bug 16065, see bug 15989 comment 3
   nsCOMPtr<nsIThread> mainThread;
@@ -347,10 +362,12 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
                             getter_AddRefs(proxiedItem));
   NS_ENSURE_SUCCESS(rv, rv);
     
-  // Organize the file by calling the sbIMediaFileManager
+  // Organize the file by calling the sbIMediaFileManager, using the target
+  // path we got above to avoid re-computation
   PRBool organizedItem;
   rv = mMediaFileManager->OrganizeItem(proxiedItem,
                                        manageType,
+                                       targetFile,
                                        &organizedItem);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!organizedItem)
@@ -519,12 +536,11 @@ NS_IMETHODIMP
 sbMediaManagementJob::GetStatusText(nsAString& aText)
 {
   TRACE(("sbMediaManagementJob[0x%8.x] - GetStatusText", this));
-  nsresult rv;
   sbStringBundle bundle;
 
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {
     nsTArray<nsString> params;
-    params.AppendElement(mCurrentContentURL);
+    params.AppendElement(mStatusText);
     aText = bundle.Format("mediamanager.scanning.item.message", params);
   } else {
     aText = bundle.Get("mediamanager.scanning.completed");
@@ -538,7 +554,6 @@ NS_IMETHODIMP
 sbMediaManagementJob::GetTitleText(nsAString& aText)
 {
   TRACE(("sbMediaManagementJob[0x%8.x] - GetTitleText", this));
-  nsresult rv;
   sbStringBundle bundle;
 
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {

@@ -742,7 +742,7 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey);
   NS_ENSURE_TRUE(item, PL_DHASH_STOP);
   PRBool success;
-  rv = data->fileMan->OrganizeItem(item, aOperation, &success);
+  rv = data->fileMan->OrganizeItem(item, aOperation, nsnull, &success);
   if (NS_FAILED(rv)) {
     nsresult __rv = rv;
     NS_ENSURE_SUCCESS_BODY(rv, rv);

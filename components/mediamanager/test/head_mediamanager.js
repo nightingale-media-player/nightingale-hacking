@@ -229,8 +229,9 @@ function addItemsToLibrary(aLibrary) {
  */
 function checkItem(aMediaItem, aResultInformationIndex, aShouldHaveOriginal) {
   // First get the current path from the item
-  var current = aMediaItem.contentSrc.QueryInterface(Ci.nsIFileURL);
+  var current = aMediaItem.contentSrc;
   if (!(current instanceof Ci.nsIFileURL)) {
+    log("item [" + current.spec + "] is not a file URL!");
     return false;
   }
   current = current.file;
@@ -244,6 +245,8 @@ function checkItem(aMediaItem, aResultInformationIndex, aShouldHaveOriginal) {
   // Ensure that the file has been copied to its new location with proper
   // filename and folder path.
   if (!current.equals(expected)) {
+    log("current value ["+ current.path +
+        "] is not expectd value [" + expected.path + "]!");
     return false;
   }
   
@@ -252,8 +255,11 @@ function checkItem(aMediaItem, aResultInformationIndex, aShouldHaveOriginal) {
   var origName = gResultInformation[aResultInformationIndex].originalFileName;
   original = appendPathToDirectory(original, origName);
   
-  if ((!original.exists() && aShouldHaveOriginal) ||
-      (original.exists() && !aShouldHaveOriginal)) {
+  if (!original.exists() && aShouldHaveOriginal) {
+    log("original doesn't exist, but expected!");
+    return false;
+  } else if (original.exists() && !aShouldHaveOriginal) {
+    log("original exists, but expected to be removed!");
     return false;
   }
 

@@ -154,11 +154,13 @@ NS_IMETHODIMP sbMediaFileManager::Init()
  * \brief Organize an item in the media library folder.
  * \param aMediaItem  - The media item we are organizing.
  * \param aManageType - How to manage this items file.
+ * \param aForceTargetFile - [optional] a precalculated target
  * \param aRetVal     - True if successful.
  */
 NS_IMETHODIMP
 sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem, 
                                  unsigned short aManageType,
+                                 nsIFile *aForceTargetFile,
                                  PRBool *aRetVal)
 {
   TRACE(("sbMediaFileManager[0x%.8x] - OrganizeItem", this));
@@ -183,17 +185,18 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
   rv = aMediaItem->GetContentSrc(getter_AddRefs(itemUri));
   NS_ENSURE_SUCCESS (rv, rv);
   
-  PRBool isFile;
-  rv = itemUri->SchemeIs("file", &isFile);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  if (!isFile) {
-    return NS_ERROR_INVALID_ARG;
-  }
-
   // Get an nsIFileURL object from the nsIURI
   nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv) || !fileUrl) {
+    #if PR_LOGGING
+      nsCString spec;
+      rv = itemUri->GetSpec(spec);
+      if (NS_SUCCEEDED(rv)) {
+        TRACE(("%s: item %s is not a local file", __FUNCTION__, spec));
+      }
+    #endif /* PR_LOGGING */
+    return NS_ERROR_INVALID_ARG;
+  }
 
   // Get the file object
   nsCOMPtr<nsIFile> itemFile;
@@ -213,41 +216,63 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
 
     return NS_OK;
   }
+  
+  if (!((aManageType & sbIMediaFileManager::MANAGE_MOVE) ||
+        (aManageType & sbIMediaFileManager::MANAGE_COPY)))
+  {
+    LOG(("%s: nothing to manage", __FUNCTION__));
+    return NS_OK;
+  }
+  
+  // Get the target file
+  nsCOMPtr<nsIFile> newFile;
+  
+  if (aForceTargetFile) {
+    #if PR_LOGGING
+      nsString path;
+      rv = aForceTargetFile->GetPath(path);
+      if (NS_SUCCEEDED(rv)) {
+        TRACE(("%s: has forced file [%s]",
+               __FUNCTION__,
+               NS_ConvertUTF16toUTF8(path).get()));
+      } else {
+        TRACE(("%s: has forced file, unknown path (error %08x)", __FUNCTION__, rv));
+      }
+    #endif /* PR_LOGGING */
+    rv = aForceTargetFile->Clone(getter_AddRefs(newFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    // check to make sure the (untrusted) target path is in the managed folder
+    PRBool isInManagedFolder;
+    rv = mMediaFolder->Contains(newFile, PR_TRUE, &isInManagedFolder);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(isInManagedFolder, NS_ERROR_INVALID_ARG);
+  } else {
+    rv = GetManagedPath(aMediaItem, aManageType, getter_AddRefs(newFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA) {
+      // non-fatal failure, go to next item
+      LOG(("%s: failed to get managed path", __FUNCTION__));
+      return NS_OK;
+    }
+  }
 
   nsString filename;
   nsString path;
   
-  if (aManageType & sbIMediaFileManager::MANAGE_MOVE) {
-      // Since we are organizing the folder path get the new one
-      rv = GetNewPath(aMediaItem, path, aRetVal);
-      NS_ENSURE_SUCCESS(rv, rv);
-  } else if (aManageType & sbIMediaFileManager::MANAGE_COPY) {
-      // Since we are only copying and not organizing the folder path just get
-      // the root of the managed folder.
-      rv = mMediaFolder->GetPath(path);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      if (!path.IsEmpty()) {
-        *aRetVal = PR_TRUE;
-      }
-  }
-  // If there was an error trying to get the new path, abort now, but don't
-  // cause an exception
-  if (!*aRetVal) {
-    return NS_OK;
-  }
- 
-  if (aManageType & sbIMediaFileManager::MANAGE_RENAME) {
-    rv = GetNewFilename(aMediaItem, itemUri, filename, aRetVal);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    // If there was an error trying to construct the new filename, abort now,
-    // but don't cause an exception
-    if (!*aRetVal) {
-      return NS_OK;
-    }
-  }
+  rv = newFile->GetLeafName(filename);
+  NS_ENSURE_SUCCESS(rv, rv);
   
+  nsCOMPtr<nsIFile> parent;
+  rv = newFile->GetParent(getter_AddRefs(parent));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = parent->GetPath(path);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  TRACE(("%s: organized path is [%s] :: [%s]",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(path).get(),
+         NS_ConvertUTF16toUTF8(filename).get()));
+ 
   // Check if this file is already managed (the old content src is equal to
   // the newly created content src)
   PRBool isOrganized = PR_FALSE;
@@ -275,6 +300,100 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
     // Already managed.
     *aRetVal = PR_TRUE;
   }
+  
+  return NS_OK;
+}
+
+/**
+ * \brief Get the path the item would be organized to if we were to do it
+ * \param aMediaItem  - the media item we will organize
+ * \param aManageType - the actions to take (see flags above)
+ * \param _retval     - the resulting path
+ */
+/* nsIFile getManagedPath (in sbIMediaItem aItem, in unsigned short aManageType); */
+NS_IMETHODIMP
+sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
+                                   PRUint16 aManageType,
+                                   nsIFile **_retval)
+{
+  TRACE(("sbMediaFileManager[0x%.8x] - GetManagedPath", this));
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  if (aManageType == 0) {
+    // No action was requested, fail altogether
+    return NS_ERROR_INVALID_ARG;
+  }
+  
+  nsresult rv;
+
+  // First make sure that we're operating on a file
+  
+  // Get to the old file's path
+  nsCOMPtr<nsIURI> itemUri;
+  rv = aItem->GetContentSrc(getter_AddRefs(itemUri));
+  NS_ENSURE_SUCCESS (rv, rv);
+  
+  // Get an nsIFileURL object from the nsIURI
+  nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_INVALID_ARG);
+
+  // Get the file object
+  nsCOMPtr<nsIFile> oldItemFile;
+  rv = fileUrl->GetFile(getter_AddRefs(oldItemFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Find the target file
+  nsCOMPtr<nsIFile> newItemFile;
+  
+  if (aManageType & sbIMediaFileManager::MANAGE_DELETE) {
+    // file will be deleted; don't make a new path
+    oldItemFile.forget(_retval);
+    return NS_OK;
+  }
+
+  nsString filename;
+  nsString path;
+  PRBool success;
+  
+  // figure out the containing folder for the final path
+  if (aManageType & sbIMediaFileManager::MANAGE_MOVE) {
+    // Since we are organizing the folder path get the new one
+    rv = GetNewPath(aItem, path, &success);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
+    nsCOMPtr<nsILocalFile> localFile =
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = localFile->InitWithPath(path);
+    NS_ENSURE_SUCCESS(rv, rv);
+    newItemFile = do_QueryInterface(localFile, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else if (aManageType & sbIMediaFileManager::MANAGE_COPY) {
+    // Since we are only copying and not organizing the folder path just get
+    // the root of the managed folder.
+    rv = mMediaFolder->Clone(getter_AddRefs(newItemFile));
+    NS_ENSURE_SUCCESS(rv, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
+  } else {
+    // neither move nor copy is set, we need to abort
+    return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+  }
+ 
+  if (aManageType & sbIMediaFileManager::MANAGE_RENAME) {
+    rv = GetNewFilename(aItem, itemUri, filename, &success);
+    NS_ENSURE_SUCCESS(rv, rv);
+    // If there was an error trying to construct the new filename, abort now,
+    // but don't cause an exception
+    NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
+  } else {
+    // not renaming, use the old name
+    rv = oldItemFile->GetLeafName(filename);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = newItemFile->Append(filename);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  newItemFile.forget(_retval);
   
   return NS_OK;
 }
@@ -590,8 +709,9 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsCOMPtr<nsILocalFile> newLocalFile;
-    newLocalFile = do_CreateInstance("@mozilla.org/file/local;1");
+    newLocalFile = do_CreateInstance("@mozilla.org/file/local;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s: setting to path %s", __FUNCTION__, aPath));
     rv = newLocalFile->InitWithPath(aPath);
     NS_ENSURE_SUCCESS(rv, rv);
     newLocalFile->Append(aFilename);
