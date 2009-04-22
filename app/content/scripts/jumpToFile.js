@@ -169,6 +169,20 @@ try
     var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
                        .getService(Components.interfaces.sbIMediacoreManager);
     var view = mm.sequencer.view;
+
+    // Don't use the view if it's not valid.  This can happen if the sequencer
+    // obtained a view and then the feathers changed.  The view could then be
+    // invalid (see bug 15713).  Ideally, the sequencer would remove its view if
+    // it becomes invalid.  Not doing this check here can result in an exception
+    // in _resetSearchString because it will cause a select call to be made to
+    // the selection, and the selection won't have a tree.
+    if (view &&
+        (!view.treeView ||
+         !view.treeView.selection ||
+         !view.treeView.selection.tree)) {
+      view = null;
+    }
+
     if (view) {
       // a view is playing, use it
       guid = view.mediaList.guid;

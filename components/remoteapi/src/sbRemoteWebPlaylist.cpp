@@ -243,7 +243,8 @@ sbRemoteWebPlaylist::GetSelection( nsISimpleEnumerator **aSelection )
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIMediaListViewSelection> viewSelection;
-  rv = mediaListView->GetSelection( getter_AddRefs(viewSelection) );
+  mediaListView->GetSelection( getter_AddRefs(viewSelection) );
+  NS_ENSURE_TRUE( viewSelection, NS_ERROR_UNEXPECTED );
 
   // get enumeration of selected items
   nsCOMPtr<nsISimpleEnumerator> selection;
@@ -274,8 +275,8 @@ sbRemoteWebPlaylist::SetSelectionByIndex( PRUint32 aIndex, PRBool aSelected )
   NS_ENSURE_SUCCESS( rv, rv );
 
   nsCOMPtr<sbIMediaListViewSelection> viewSelection;
-  rv = mediaListView->GetSelection( getter_AddRefs(viewSelection) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  mediaListView->GetSelection( getter_AddRefs(viewSelection) );
+  NS_ENSURE_TRUE( viewSelection, NS_ERROR_UNEXPECTED );
 
   if (aSelected) {
     rv = viewSelection->Select(aIndex);

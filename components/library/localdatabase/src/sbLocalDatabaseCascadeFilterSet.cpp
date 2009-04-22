@@ -374,7 +374,7 @@ sbLocalDatabaseCascadeFilterSet::ChangeFilter(PRUint16 aIndex,
   if (fs.treeView) {
     nsCOMPtr<nsITreeSelection> selection;
     rv = fs.treeView->GetSelection(getter_AddRefs(selection));
-    if (NS_SUCCEEDED(rv)) {
+    if (selection) {
       // will fail at getting selection if it's not set up yet
       rv = selection->ClearSelection();
       NS_ENSURE_SUCCESS(rv, rv);
@@ -454,7 +454,7 @@ sbLocalDatabaseCascadeFilterSet::Set(PRUint16 aIndex,
       nsCOMPtr<nsITreeSelection> selection;
       rv = downstream.treeView->GetSelection(getter_AddRefs(selection));
       // the selection may not exist if the tree hasn't been shown yet
-      if (NS_SUCCEEDED(rv) && selection) {
+      if (selection) {
         rv = selection->ClearSelection();
         NS_ENSURE_SUCCESS(rv, rv);
       }

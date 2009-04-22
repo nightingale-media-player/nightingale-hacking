@@ -298,7 +298,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
   if (!mManageSelection) {
     nsCOMPtr<sbIMediaListViewSelection> viewSelection;
     rv = mMediaListView->GetSelection(getter_AddRefs(viewSelection));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(viewSelection, NS_ERROR_UNEXPECTED);
     mViewSelection = viewSelection;
 
     nsCOMPtr<sbIMediaListViewSelectionListener> selectionListener =
@@ -1433,14 +1433,11 @@ sbLocalDatabaseTreeView::GetSelection(nsITreeSelection** aSelection)
 {
   TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetSelection()", this));
 
+  // this matches the MediaListView
   NS_ENSURE_ARG_POINTER(aSelection);
-
-  if (!mSelection) {
-    return NS_ERROR_FAILURE;
-  }
-
-  NS_ADDREF(*aSelection = mSelection);
+  NS_IF_ADDREF(*aSelection = mSelection);
   return NS_OK;
+
 }
 NS_IMETHODIMP
 sbLocalDatabaseTreeView::SetSelection(nsITreeSelection* aSelection)
@@ -1912,6 +1909,8 @@ sbLocalDatabaseTreeView::GetProgressMode(PRInt32 row,
     rv = tvpi->GetProgressMode(value, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetMode(%d, %d) = %d", this,
+         row, col, _retval));
 
   return NS_OK;
 }
@@ -1952,6 +1951,9 @@ sbLocalDatabaseTreeView::GetCellValue(PRInt32 row,
     rv = tvpi->GetCellValue(value, _retval);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  TRACE(("sbLocalDatabaseTreeView[0x%.8x] - GetCellValue(%d, %d) = %s", this,
+         row, colIndex, NS_LossyConvertUTF16toASCII(_retval).get()));
 
   return NS_OK;
 }
