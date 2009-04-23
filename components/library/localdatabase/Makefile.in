@@ -29,17 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = public \
-          src \
-          content \
-          test \
+SUBDIRS = content \
           $(NULL)
 
 ifdef SB_ENABLE_LIBRARY_PERF
   SUBDIRS += perf
 endif
-
-SUBDIRDEPS  = src : public
-SUBDIRDEPS2 = test : src
 
 include $(topsrcdir)/build/rules.mk

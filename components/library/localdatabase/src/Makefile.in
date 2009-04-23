@@ -25,7 +25,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @top_srcdir@/components/library/base/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -42,6 +42,7 @@ XPIDL_HEADER_SRCS = $(DEPTH)/components/mediacore/base/public/sbIMediacoreEvent.
                     $(DEPTH)/components/mediacore/base/public/sbIMediacoreStatus.idl \
                     $(NULL)
 
+# preedTODO: fix the basename call
 XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
                     $(NULL)                     
 
@@ -73,8 +74,10 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbFilterTreeSelection.cpp \
            sbSelectionListUtils.cpp \
            sbLocalDatabaseDiffingService.cpp \
-           $(topsrcdir)/components/library/base/src/sbLibraryChangeset.cpp \
            $(NULL)
+
+# From components/library/base/src/
+CPP_SRCS += sbLibraryChangeset.cpp
 
 CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/job/public \
@@ -122,8 +125,6 @@ endif
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4 \
                             xpcom \
@@ -150,8 +151,9 @@ LIBSONGBIRD_COMPONENT = SongbirdLocalDatabaseLibraryModule
 SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
                       $(srcdir)/sbSmartMediaListsUpdater.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \
-                      $(DYNAMIC_LIB) \
                       $(NULL)
+
+IS_COMPONENT = 1
                       
 SONGBIRD_JSMODULES = $(srcdir)/sbLocalDatabaseMigrationUtils.jsm
 

@@ -44,15 +44,27 @@ PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
 SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
 SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
-                $(SONGBIRD_PP_DIR)/$(INSTALLER_README) \
                 $(topsrcdir)/app/branding/songbird-512.png \
                 $(NULL)
 
-SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
-                  $(SB_PLATFORM)-$(SB_ARCH) \
-                  $(SB_MILESTONE) \
-                  $(SB_BUILD_NUMBER) \
-                  $(INSTALLER_README)
+INSTALLER_FINAL_DIR = $(SONGBIRD_OBJDIR)/_built_installer
+INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)
+INSTALLER_STAGE_DIR = Songbird
 
 include $(topsrcdir)/build/rules.mk
 
+libs::
+	$(INSTALL_FILE) $(CURDIR)/../LICENSE.html $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(CURDIR)/../$(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
+	$(RM) -rf $(INSTALLER_FINAL_DIR)
+	$(MKDIR) $(INSTALLER_FINAL_DIR)
+	$(RM) -rf $(INSTALLER_STAGE_DIR)
+	$(MKDIR) $(INSTALLER_STAGE_DIR)
+	$(RM) -f $(INSTALLER_NAME).tar
+	$(RM) -f $(INSTALLER_NAME).tar.gz
+	$(CP) -RL $(SONGBIRD_DISTDIR)/* $(INSTALLER_STAGE_DIR)
+	$(TAR) -c -f $(INSTALLER_NAME).tar $(INSTALLER_STAGE_DIR)
+	$(GZIP) -9 $(INSTALLER_NAME).tar
+	$(SHA1SUM) $(INSTALLER_NAME).tar.gz > $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME).tar.gz.sha1
+	$(MD5SUM) $(INSTALLER_NAME).tar.gz > $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME).tar.gz.md5
+	$(MV) $(INSTALLER_NAME).tar.gz $(INSTALLER_FINAL_DIR)

@@ -46,4 +46,8 @@ EXTENSION_MAX_VER := 1.2.0b1
 
 XPI_NAME = $(EXTENSION_BUILD_ID)
 
+CREATEDIRS = $(EXTENSION_STAGE_DIR) $(SONGBIRD_COMPONENTSDIR) $(SONGBIRD_PREFERENCESDIR)
+
 include $(topsrcdir)/build/rules.mk
+
+export:: create_dirs

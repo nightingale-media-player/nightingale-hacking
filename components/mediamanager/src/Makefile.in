@@ -91,7 +91,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 LIBSONGBIRD_COMPONENT = SongbirdMediaManager
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

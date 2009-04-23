@@ -25,7 +25,7 @@
 DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @srcdir@/.. @top_srcdir@/components/filesystemevents/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -34,14 +34,20 @@ ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = $(topsrcdir)/components/filesystemevents/base/src/sbBaseFileSystemWatcher.cpp \
-           $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemNode.cpp \
-           $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemTree.cpp \
-           $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemTreeState.cpp \
-           $(topsrcdir)/components/filesystemevents/base/src/sbFileSystemChange.cpp \
-           sbMacFileSystemWatcher.cpp \
-           ../FileSystemComponent.cpp \
+CPP_SRCS = sbMacFileSystemWatcher.cpp \
            $(NULL)
+
+# From  components/filesystemevents/base/src
+CPP_SRCS += sbBaseFileSystemWatcher.cpp \
+            sbFileSystemNode.cpp \
+            sbFileSystemTree.cpp \
+            sbFileSystemTreeState.cpp \
+            sbFileSystemChange.cpp \
+            $(NULL)
+
+# From current_directory/..
+CPP_SRCS += FileSystemComponent.cpp \
+            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(topsrcdir)/components/filesystemevents \
@@ -58,9 +64,6 @@ CPP_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))) \
-                   $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
@@ -86,8 +89,7 @@ SB_MACOSX_SDK = $(SB_MACOSX_SDK_10_5)
 
 LIBSONGBIRD_COMPONENT = SongbirdFileSystemBase
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk
 

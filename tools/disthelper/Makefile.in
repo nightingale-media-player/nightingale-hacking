@@ -59,6 +59,6 @@ endif # SB_PLATFORM = windows
 SIMPLE_PROGRAM = disthelper$(BIN_SUFFIX)
 SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-SONGBIRD_DIST = $(SIMPLE_PROGRAM)
+FINAL_TARGET = $(SONGBIRD_DISTDIR)
 
 include $(topsrcdir)/build/rules.mk

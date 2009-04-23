@@ -36,10 +36,4 @@ SUBDIRS = base \
           marshall \
           $(NULL)
 
-SUBDIRDEPS  = controller: base device
-SUBDIRDEPS2 = device : base
-SUBDIRDEPS3 = manager : base controller device marshall
-SUBDIRDEPS4 = monitor : base
-SUBDIRDEPS5 = marshall : base controller device
-
 include $(topsrcdir)/build/rules.mk

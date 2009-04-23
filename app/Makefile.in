@@ -57,4 +57,6 @@ include $(topsrcdir)/build/rules.mk
 autoreg:
 	touch $(SONGBIRD_DISTDIR)/.autoreg
 
-all:: autoreg
+libs:: autoreg
+
+.PHONY: autoreg

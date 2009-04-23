@@ -39,18 +39,7 @@ else
   SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird$(BIN_SUFFIX)
 endif
 
-GUNZIP_SRC = $(XULRUNNER_DIR)/xulrunner.tar.gz
-GUNZIP_DEST_DIR = $(SONGBIRD_XULRUNNERDIR)
-
 ifeq (windows,$(SB_PLATFORM))
-
-ifdef MEDIA_CORE_VLC
-VLC_PLUGIN = npvlc
-SONGBIRD_PLUGINS += $(DEPS_DIR)/plugins/vlc/plugins/*$(DLL_SUFFIX)
-
-SONGBIRD_VLCPLUGINS = $(DEPS_DIR)/plugins/vlc/plugins/plugins/*$(DLL_SUFFIX) \
-                      $(NULL)
-endif
 
 # Kinda hacky (mostly because there *could* be other useful things on win32
 # in the runtime dir, OTHER than the MSVCRTs... there *aren't*, but there 
@@ -92,48 +81,17 @@ ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 
 SONGBIRD_DIST += $(SONGBIRD_XULRUNNERDIR)/libjemalloc.so
 
-# non-existent variable, VLC no-worky on linux yet...
-ifdef (MEDIA_CORE_VLC)
-ifdef (SB_LINUX_VLC)
-VLC_PLUGIN = libvlcplugin
-
-SONGBIRD_PLUGINS += $(PLUGINS_DIR)/vlc/plugins/$(VLC_PLUGIN)$(DLL_SUFFIX)
-SONGBIRD_COMPONENTS += $(PLUGINS_DIR)/vlc/components/vlcintf.xpt
-SONGBIRD_VLCPLUGINS = $(PLUGINS_DIR)/vlc/vlcplugins/*$(DLL_SUFFIX)
-endif # SB_LINUX_VLC
-
-SONGBIRD_XULRUNNER += $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3.0.0 \
-                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3-3.8.so.3 \
-                      $(DEPS_DIR)/id3lib/$(SB_CONFIGURATION)/lib/libid3.so \
-                      $(NULL)
-endif # MEDIA_CORE_VLC
-
 endif # linux
 
 ifeq (macosx,$(SB_PLATFORM))
 
-all:: runtimelibs
-
-ifdef MEDIA_CORE_VLC
-all:: vlcplugin
-endif
+libs:: runtimelibs
 
 runtimelibs::
 	$(MKDIR) -p $(SONGBIRD_MACOS)
 	$(CP) -Lfp $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(SONGBIRD_MACOS) \
                $(NULL)
-
-# Plugins on OS X are not files but rather directories! Doing it this way
-# keeps us from having to remove a bunch of '.svn' folders after a recursive
-# directory copy.
-
-VLC_TAR_FILENAME = VLC\ Plugin.tar.gz
-
-vlcplugin::
-	$(MKDIR) -p $(SONGBIRD_PLUGINSDIR)
-	$(TAR) -z -x -f $(DEPS_DIR)/plugins/vlc/$(SB_CONFIGURATION)/$(VLC_TAR_FILENAME) \
-    -C $(SONGBIRD_PLUGINSDIR)
 
 endif
 
@@ -502,7 +460,8 @@ include $(topsrcdir)/build/rules.mk
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
 xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
-all:: move-sb-stub-executable copy-extensions copy-xr-shell-stub addmsvcrtmanifest
+libs:: move-sb-stub-executable copy-xr-shell-stub addmsvcrtmanifest
+#libs:: move-sb-stub-executable copy-extensions copy-xr-shell-stub addmsvcrtmanifest
 
 # WE have to add manifest information to the few remaining .exes that actually
 # link against the MSVCRT; see bug 10022
@@ -522,7 +481,8 @@ endif # NOT SB_USE_JEMALLOC and MSVC with manifest tool
 
 .PHONY : move-sb-stub-executable copy-xr-shell-stub copy-extensions addmsvcrtmanifest
 
-copy-extensions : gunzip_file
+copy-extensions:
+	$(error in copy-extensions)
 	@echo $(xulrunner_extensions)
 ifneq (,$(xulrunner_extensions))
 	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
@@ -586,3 +546,6 @@ copy-xr-shell-stub: gunzip_file
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 	$(CP) -dfp $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
 endif
+
+export::
+	$(TAR) -z -x -f $(XULRUNNER_DIR)/xulrunner.tar.gz -C $(SONGBIRD_XULRUNNERDIR)

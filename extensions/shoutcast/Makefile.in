@@ -48,3 +48,6 @@ XPI_NAME = $(EXTENSION_BUILD_ID)
 
 include $(topsrcdir)/build/rules.mk
 
+CREATEDIRS = $(EXTENSION_STAGE_DIR) $(SONGBIRD_PREFERENCESDIR)
+
+export:: create_dirs

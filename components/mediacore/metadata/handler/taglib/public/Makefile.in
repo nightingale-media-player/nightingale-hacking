@@ -36,6 +36,4 @@ XPIDL_SRCS = sbITagLibChannelFileIOManager.idl \
 XPIDL_MODULE = sbMetadataHandlerTaglib.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
-
 include $(topsrcdir)/build/rules.mk

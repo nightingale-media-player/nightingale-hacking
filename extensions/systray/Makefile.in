@@ -45,7 +45,7 @@ XPI_NAME = $(EXTENSION_NAME)
 
 # Set this to 1 to install the extension
 ifdef DEBUG
-INSTALL_EXTENSION = 1
+   INSTALL_EXTENSION = 1
 endif
 
 include $(topsrcdir)/build/rules.mk

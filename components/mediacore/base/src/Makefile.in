@@ -71,7 +71,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(mo
 
 LIBSONGBIRD_COMPONENT = SongbirdMediacoreBase
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

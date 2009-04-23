@@ -135,7 +135,6 @@ LIBSONGBIRD_COMPONENT = SongbirdRemoteAPIModule
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

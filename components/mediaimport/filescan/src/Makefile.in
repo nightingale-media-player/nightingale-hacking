@@ -84,6 +84,6 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 LIBSONGBIRD_COMPONENT = SongbirdFileScanComponent
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

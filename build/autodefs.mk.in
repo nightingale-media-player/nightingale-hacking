@@ -7,10 +7,10 @@
 # http://www.songbirdnest.com
 #
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the �GPL�).
+# GNU General Public License Version 2 (the ``GPL'').
 #
 # Software distributed under the License is distributed
-# on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either
+# on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
 # express or implied. See the GPL for the specific language
 # governing rights and limitations.
 #
@@ -190,34 +190,39 @@ SB_FLASH_REDISTRIBUTABLE = @SB_FLASH_REDISTRIBUTABLE@
 # Tools
 #
 
-AR        = @AR@
-AWK       = @AWK@
-CC        = @CC@
-CHMOD     = @CHMOD@
-CP        = @CP@
-CXX       = @CXX@
-FIND      = @FIND@
-GUNZIP    = @GUNZIP@
-GZIP      = @GZIP@
-LD        = @LD@
-LN        = @LN@
-MKDIR     = @MKDIR@
-MV        = @MV@
+AR = @AR@
+AWK = @AWK@
+CC = @CC@
+CHMOD = @CHMOD@
+CP = @CP@
+CXX = @CXX@
+FIND = @FIND@
+GUNZIP = @GUNZIP@
+GZIP = @GZIP@
+INSTALL = @INSTALL@
+INSTALL_FILE = @INSTALL@ -m 0644
+INSTALL_PROG = @INSTALL@ -m 0755
+LD = @LD@
+LN = @LN@
+MD5SUM = @MD5SUM@
+MKDIR = @MKDIR@ -p
+MV = @MV@
 MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
-PERL      = @PERL@
-PYTHON    = @PYTHON@
-RANLIB    = @RANLIB@
-RC        = @RC@
-RM        = @RM@
-SHA1SUM   = @SHA1SUM@
-STRIP     = @STRIP@
-TAR       = @TAR@
-UNZIP     = @UNZIP@
-ZIP       = @ZIP@
+PERL = @PERL@
+PYTHON = @PYTHON@
+RANLIB = @RANLIB@
+RC = @RC@
+RM = @RM@
+SHA1SUM = @SHA1SUM@
+STRIP = @STRIP@
+SYSINSTALL = echo
+TAR = @TAR@
+UNZIP = @UNZIP@
+ZIP = @ZIP@
 
-XPIDL   = $(MOZSDK_DIR)/bin/xpidl
+XPIDL = $(MOZSDK_DIR)/bin/xpidl
 XPTLINK = $(MOZSDK_DIR)/bin/xpt_link
-MAR     = $(MOZSDK_DIR)/bin/mar
+MAR = $(MOZSDK_DIR)/bin/mar
 MBSDIFF = $(MOZSDK_DIR)/bin/mbsdiff
 
 #

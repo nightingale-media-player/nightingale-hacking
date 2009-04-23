@@ -86,9 +86,9 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 LIBSONGBIRD_COMPONENT = SongbirdWatchFolderComponent 
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(srcdir)/sbMoveRenameHelper.js \
-                      $(NULL)
+IS_COMPONENT = 1
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbMoveRenameHelper.js
 
 include $(topsrcdir)/build/rules.mk
 

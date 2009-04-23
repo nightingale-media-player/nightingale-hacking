@@ -34,19 +34,19 @@ ICON_SOURCE_NAME = songbird
 ICON_TARGET_NAME = default
 
 ifeq (windows,$(SB_PLATFORM))
-ICON_EXTENSION = ico
+   ICON_EXTENSION = ico
 endif
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-ICON_EXTENSION = xpm
+   ICON_EXTENSION = xpm
 endif
-ifeq (macosx,($SB_PLATFORM))
-ICON_EXTENSION = icns
+ifeq (macosx,$(SB_PLATFORM))
+   ICON_EXTENSION = icns
 endif
 
-tasks: all install-icons
+libs:: install-icons
 
 ifeq (macosx,$(SB_PLATFORM))
-SONGBIRD_DIST = $(srcdir)/songbird.icns
+   SONGBIRD_DIST = $(srcdir)/songbird.icns
 endif
 
 install-icons:: 

@@ -31,8 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = components \
           defaults \
-          public \
-		  chrome \
+          chrome \
           $(NULL)
 
 EXTENSION_NAME = audioscrobbler
@@ -47,3 +46,7 @@ EXTENSION_MAX_VER := 1.2.0b1
 XPI_NAME = $(EXTENSION_BUILD_ID)
 
 include $(topsrcdir)/build/rules.mk
+
+CREATEDIRS = $(EXTENSION_STAGE_DIR) $(SONGBIRD_PREFERENCESDIR)
+
+export:: create_dirs

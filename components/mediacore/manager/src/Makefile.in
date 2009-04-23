@@ -25,7 +25,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @top_srcdir@/components/mediacore/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -36,12 +36,15 @@ CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreShuffleSequenceGenerator.cpp \
            sbMediacoreSequencer.cpp \
            sbMediacoreTypeSniffer.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbMediacoreVotingChain.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbMediacoreError.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreVolumeControl.cpp \
            $(NULL)
+
+# From components/mediacore/base/src
+CPP_SRCS += sbMediacoreVotingChain.cpp \
+            sbMediacoreEvent.cpp \
+            sbMediacoreError.cpp \
+            sbBaseMediacoreEventTarget.cpp \
+            sbBaseMediacoreVolumeControl.cpp \
+            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
@@ -76,8 +79,6 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcom \
@@ -99,7 +100,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMo
 
 LIBSONGBIRD_COMPONENT = SongbirdMediacoreManager
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

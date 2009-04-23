@@ -106,6 +106,8 @@ JS_COMPONENTS = $(srcdir)/sbAutoDownloader.js \
                 $(srcdir)/sbDownloadDeviceServicePaneModule.js \
                 $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) $(JS_COMPONENTS)
+SONGBIRD_COMPONENTS = $(JS_COMPONENTS)
+
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

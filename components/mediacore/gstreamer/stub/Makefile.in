@@ -41,15 +41,14 @@ DYNAMIC_LIB_IMPORT_PATHS = \
       $(MOZSDK_LIB_DIR) \
       $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk
 
 # XXX Note that on a windows debug build, ogg.dll is named ogg_d.dll.  This is
 # fixed using a perl script to copy the file and make the change
 
-all:: copy_libs_manifest
+libs:: copy_libs_manifest
 
 copy_libs_manifest:
 	$(CYGWIN_WRAPPER) \

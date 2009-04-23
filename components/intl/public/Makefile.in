@@ -37,7 +37,6 @@ XPIDL_MODULE = sbIntl.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbIntl
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk
 

@@ -78,8 +78,7 @@ endif
 # put this in our staging directory
 EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/xpcom_helloworld/.xpistage
 
-# into components/ 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
-
 include $(topsrcdir)/build/rules.mk
 
+libs::
+	$(INSTALL_PROG) $(DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)

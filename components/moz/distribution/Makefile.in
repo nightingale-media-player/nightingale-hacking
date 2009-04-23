@@ -31,13 +31,13 @@ include $(DEPTH)/build/autodefs.mk
 
 # don't use SONGBIRD_JSMODULES because we need to rename the file too
 
-all:: $(SONGBIRD_JSMODULESDIR)/Distribution.jsm
+libs:: $(SONGBIRD_JSMODULESDIR)/Distribution.jsm
 
 $(SONGBIRD_JSMODULESDIR)/Distribution.jsm: $(topsrcdir)/dependencies/vendor/mozbrowser/components/distribution.js
 ifeq (,$(wildcard $(SONGBIRD_JSMODULESDIR)))
 	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_JSMODULESDIR)
 endif
-	$(CYGWIN_WRAPPER) $(CP) -dfp $< $@
+	$(INSTALL_FILE) $< $@
 
 include $(topsrcdir)/build/rules.mk
 

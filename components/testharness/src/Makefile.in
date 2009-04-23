@@ -77,7 +77,8 @@ LIBSONGBIRD_COMPONENTS = sbTestHarnessConsoleListenerModule
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbTestHarness.js \
                       $(srcdir)/httpd.js \
-                      $(DYNAMIC_LIB) \
                       $(NULL)
+
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

@@ -36,6 +36,5 @@ XPIDL_MODULE = sbWindowWatcher.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbWindowWatcher
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

@@ -105,7 +105,7 @@ endif
 
 CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \
                       $(NULL)
-                             
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+        
+IS_COMPONENT = 1                     
 
 include $(topsrcdir)/build/rules.mk

@@ -79,6 +79,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
 
 LIBSONGBIRD_COMPONENT = SongbirdPlaybackHistoryServiceModule
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

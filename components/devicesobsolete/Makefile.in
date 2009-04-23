@@ -35,8 +35,4 @@ SUBDIRS = base \
 #          wm \
           $(NULL)
 
-SUBDIRDEPS  = manager : base
-SUBDIRDEPS3 = download : base
-#SUBDIRDEPS4 = wm : base
-
 include $(topsrcdir)/build/rules.mk

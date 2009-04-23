@@ -33,6 +33,4 @@ SUBDIRS = handler \
           manager \
           $(NULL)
 
-SUBDIRDEPS = handler : manager
-
 include $(topsrcdir)/build/rules.mk

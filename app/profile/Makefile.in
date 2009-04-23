@@ -29,6 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_PROFILE = mimeTypes.rdf
+SONGBIRD_PROFILE = $(srcdir)/mimeTypes.rdf
 
 include $(topsrcdir)/build/rules.mk

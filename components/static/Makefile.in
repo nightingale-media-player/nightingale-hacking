@@ -54,15 +54,14 @@ DYNAMIC_LIB_EXTRA_IMPORTS = \
   $(shell cat link-imports) \
   $(NULL)
 
+# preedTODO Huh?
 DYNAMIC_LIB_STATIC_IMPORTS = \
   $(shell cat link-static-imports)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
   $(shell cat link-paths)
 
-SONGBIRD_COMPONENTS = \
-  $(DYNAMIC_LIB) \
-  $(NULL)
+IS_COMPONENT = 1
 
 STATIC_COMPONENT_LIST = $(shell cat link-names)
 

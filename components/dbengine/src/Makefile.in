@@ -35,6 +35,7 @@ else
 target_name = sbDBEngine
 endif
 
+# preedTODO investigate
 ifeq (windows,$(SB_PLATFORM))
 C_FLAGS = -nologo \
           -W3 \
@@ -149,10 +150,6 @@ CPP_INCLUDES = $(srcdir) \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
-                   $(C_SRCS:.c=$(OBJ_SUFFIX)) \
-                   $(NULL)
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcom \
@@ -195,7 +192,6 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 LIBSONGBIRD_COMPONENT = SongbirdDatabaseEngineComponent
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

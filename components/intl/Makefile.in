@@ -29,17 +29,5 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifneq (,$(filter windows linux macosx solaris,$(SB_PLATFORM)))
-
-SUBDIRS = public \
-          src \
-          test \
-          $(NULL)
-
-SUBDIRDEPS  = src : public
-SUBDIRDEPS2 = test: src
-
-endif
-
 include $(topsrcdir)/build/rules.mk
 

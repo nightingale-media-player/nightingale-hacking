@@ -11,7 +11,7 @@ TARGET_COMPONENTS_DIR = ../.xpistage/components
 
 include $(topsrcdir)/build/rules.mk
 
-all:: extinstall
+libs:: extinstall
 
 extinstall:
 	$(MKDIR) -p $(TARGET_COMPONENTS_DIR)

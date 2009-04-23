@@ -35,12 +35,6 @@ XPIDL_SRCS = sbILastFmWebServices.idl \
 XPIDL_MODULE = sbLastFm.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-include $(topsrcdir)/build/rules.mk
-
-TARGET_DIR = ../.xpistage/components
+EXTENSION_STAGE_DIR = ../.xpistage
 
 include $(topsrcdir)/build/rules.mk
-
-all::
-	$(MKDIR) -p $(TARGET_DIR)
-	$(CP) -f $(XPIDL_MODULE) $(TARGET_DIR)

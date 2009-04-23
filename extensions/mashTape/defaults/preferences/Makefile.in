@@ -33,13 +33,13 @@ include $(DEPTH)/build/autodefs.mk
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/prefs.js \
                           $(NULL)
 
-TARGET_DIR = ../../.xpistage/defaults/preferences
+EXTENSION_STAGE_DIR = ../../.xpistage
 
 include $(topsrcdir)/build/rules.mk
 
-all:: extinstall
+libs:: extinstall
 
 extinstall:
-	$(MKDIR) -p $(TARGET_DIR)
-	$(CP) -f $(EXTRA_SCRIPT_COMPONENTS) $(TARGET_DIR)
+	$(INSTALL_FILE) $(EXTRA_SCRIPT_COMPONENTS) $(SONGBIRD_PREFERENCESDIR)
 
+.PHONY: extinstall

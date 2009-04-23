@@ -25,7 +25,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @top_srcdir@/components/devices/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -33,9 +33,11 @@ target_name = sbDeviceManager2$(DEBUG:%=_d)
 
 CPP_SRCS = sbDeviceManagerModule.cpp \
            sbDeviceManager.cpp \
-           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
-           $(NULL)
+
+# From components/devices/base/src/
+CPP_SRCS += sbBaseDeviceEventTarget.cpp \
+            sbDeviceEvent.cpp
+            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/controller/public \
@@ -69,8 +71,6 @@ CPP_INCLUDES += $(topsrcdir)/components/include \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcom \
@@ -81,6 +81,6 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdDeviceManager2
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

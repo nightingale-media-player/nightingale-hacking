@@ -57,11 +57,17 @@ SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
                  $(NULL)
 endif
 
-SONGBIRD_INSTALLER = common.nsh \
-                     defines.nsi.in \
-                     make-installer.sh \
-                     PrepareInstaller.bat \
-                     Songbird.nsi \
+SONGBIRD_DIST += $(SB_LICENSE_FILE)
+
+SONGBIRD_INSTALLER = $(srcdir)/common.nsh \
+                     $(srcdir)/Songbird.nsi \
+                     $(srcdir)/sb-installer.nsi \
+                     $(srcdir)/sb-uninstaller.nsi \
+                     $(srcdir)/songbird.ico \
+                     $(srcdir)/songbird_nightly.ico \
+                     $(srcdir)/songbird_installer.ico \
+                     $(srcdir)/songbird_uninstaller.ico \
+                     $(srcdir)/songbird_vista.ico \
                      sb-installer.nsi \
                      sb-uninstaller.nsi \
                      $(NULL)
@@ -73,14 +79,11 @@ export SB_APPNAME
 export SB_MILESTONE
 export SB_BUILD_NUMBER
 
-SHELL_EXECUTE = make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(INSTALLER_README) $(SB_BUILD_NUMBER)
+libs:: copy_added_files_list
+	make-installer.sh $(SB_PLATFORM)-$(SB_ARCH) $(INSTALLER_README) $(SB_BUILD_NUMBER)
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
-
-# We do this here because win32 is the only platform right now that needs it;
-# see bug 13809
-all:: copy_added_files_list
 
 copy_added_files_list:
 	$(CP) -dfp $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files

@@ -40,6 +40,5 @@ XPIDL_MODULE = sbJob.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbJob
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

@@ -413,47 +413,55 @@ CXXFLAGS=$_SAVE_CXXFLAGS
 GNU_CC=$GCC
 AC_SUBST(GNU_CC)
 
+AC_CHECK_PROGS(AWK, ${AWK} gawk awk)
+if test -z "$AWK"; then AC_MSG_ERROR(Awk not found); fi
+
+AC_CHECK_PROG(CHMOD, chmod, chmod)
+if test -z "$CHMOD"; then AC_MSG_ERROR(Chmod not found); fi
+
+AC_CHECK_PROGS(CP, ${CP} gnucp gcp cp)
+if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
+
+AC_CHECK_PROG(GZIP, gzip, gzip)
+
+AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
+
+AC_CHECK_PROG(FIND, find, find)
+if test -z "$FIND"; then AC_MSG_ERROR(Find not found); fi
+
+AC_CHECK_PROGS(INSTALL, ${INSTALL} install)
+if test -z "$INSTALL"; then AC_MSG_ERROR(Install not found); fi
+
+AC_CHECK_PROG(LN, ln, ln)
+if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
+
+AC_CHECK_PROGS(MD5SUM, ${MD5SUM} gmd5sum md5sum, "")
+
+AC_CHECK_PROG(MKDIR, mkdir, mkdir)
+if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
+
+AC_CHECK_PROG(MV, mv, mv)
+if test -z "$MV"; then AC_MSG_ERROR(Mv not found); fi
+
 AC_CHECK_PROG(PERL, perl, perl)
 if test -z "$PERL"; then AC_MSG_ERROR(Perl not found); fi
 
 AC_CHECK_PROG(PYTHON, python, python)
 if test -z "$PYTHON"; then AC_MSG_ERROR(Python not found); fi
 
-AC_CHECK_PROG(ZIP, zip, zip)
-if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
+AC_CHECK_PROG(RM, rm, rm)
+if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
+
+AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
+
+AC_CHECK_PROGS(TAR, ${TAR} gtar tar)
 
 AC_CHECK_PROG(UNZIP, unzip, unzip)
 if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 
-AC_CHECK_PROG(LN, ln, ln)
-if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
+AC_CHECK_PROG(ZIP, zip, zip)
+if test -z "$ZIP"; then AC_MSG_ERROR(Zip not found); fi
 
-AC_CHECK_PROG(FIND, find, find)
-if test -z "$FIND"; then AC_MSG_ERROR(Find not found); fi
-
-AC_CHECK_PROG(MV, mv, mv)
-if test -z "$MV"; then AC_MSG_ERROR(Mv not found); fi
-
-AC_CHECK_PROG(CHMOD, chmod, chmod)
-if test -z "$CHMOD"; then AC_MSG_ERROR(Chmod not found); fi
-
-AC_CHECK_PROG(RM, rm, rm)
-if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
-
-AC_CHECK_PROG(MKDIR, mkdir, mkdir)
-if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
-
-AC_CHECK_PROGS(AWK, ${AWK} gawk awk)
-if test -z "$AWK"; then AC_MSG_ERROR(Awk not found); fi
-
-AC_CHECK_PROGS(CP, ${CP} gnucp gcp cp)
-if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
-
-AC_CHECK_PROG(GZIP, gzip, gzip)
-AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
-AC_CHECK_PROGS(TAR, ${TAR} gtar tar)
-
-AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 case "$SB_PLATFORM" in
   windows)

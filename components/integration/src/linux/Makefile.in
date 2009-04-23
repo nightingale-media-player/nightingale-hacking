@@ -25,7 +25,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @srcdir@/..
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -54,8 +54,6 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
 
 DYNAMIC_LIB = $(target_name)
 
-DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcom \
                             xpcomglue_s \
@@ -64,19 +62,23 @@ DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
 DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
                           $(NULL)
 
-CPP_SRCS = ../WindowCloak.cpp \
-           ../IntegrationComponent.cpp \
-           ../NativeWindowFromNode.cpp \
-           sbNativeWindowManager.cpp \
+CPP_SRCS = sbNativeWindowManager.cpp \
            $(NULL)
+
+# From current_directory/..
+CPP_SRCS += WindowCloak.cpp \
+            IntegrationComponent.cpp \
+            NativeWindowFromNode.cpp \
+            $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+IS_COMPONENT = 1
 
+# preedTODO: fix this
 CFLAGS      += $(shell pkg-config --cflags gtk+-2.0 gdk-x11-2.0)
 CXXFLAGS    += $(shell pkg-config --cflags gtk+-2.0 gdk-x11-2.0)
 

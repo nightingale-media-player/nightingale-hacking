@@ -29,12 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = public \
-          src \
-          test \
-          $(NULL)
-
-SUBDIRDEPS  = src : public
-SUBDIRDEPS2 = test : src
-
 include $(topsrcdir)/build/rules.mk
+
+# Always build test, no matter what; the ordering matters here; we want
+# the tests subdir to be built last
+SUBDIRS += test

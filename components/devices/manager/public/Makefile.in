@@ -37,6 +37,5 @@ XPIDL_SRCS = $(NULL)
 #XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbDeviceManager
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
 
 include $(topsrcdir)/build/rules.mk

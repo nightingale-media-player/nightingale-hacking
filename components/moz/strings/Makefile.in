@@ -30,7 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = components \
-          src \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk

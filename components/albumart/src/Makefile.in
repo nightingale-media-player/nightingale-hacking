@@ -92,9 +92,10 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/threads/src/$(moz_threads) \
   $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(srcdir)/sbLastFmAlbumArtFetcher.js \
+SONGBIRD_COMPONENTS = $(srcdir)/sbLastFmAlbumArtFetcher.js \
                       $(NULL)
+
+IS_COMPONENT = 1
 
 SONGBIRD_JSMODULES = $(srcdir)/sbCoverHelper.jsm \
                      $(NULL)

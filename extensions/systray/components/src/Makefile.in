@@ -105,9 +105,6 @@ IS_COMPONENT = 1
 # dynamic libraries (.so on unix, .dll on windows, etc)
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-# compile our C++ files into the component
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 # our component depends on these mozilla libraries
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             xpcom \
@@ -120,8 +117,9 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 # put this in our staging directory
 EXTENSION_STAGE_DIR = ../../.xpistage
 
-# into components/ 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+CREATEDIRS += $(EXTENSION_STAGE_DIR)/components/libs
+
+export:: create_dirs
 
 include $(topsrcdir)/build/rules.mk
 

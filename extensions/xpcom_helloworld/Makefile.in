@@ -49,7 +49,11 @@ EXTENSION_MAX_VER := 1.2.0b1
 
 # Set this to 1 to install the extension
 ifdef DEBUG
-INSTALL_EXTENSION = 1
+   INSTALL_EXTENSION = 1
 endif
+
+CREATEDIRS = $(SONGBIRD_COMPONENTSDIR)
+
+libs:: create_dirs
 
 include $(topsrcdir)/build/rules.mk

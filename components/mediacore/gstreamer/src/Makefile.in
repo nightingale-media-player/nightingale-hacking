@@ -1,7 +1,7 @@
 DEPTH     = ../../../..
 topsrcdir = @top_srcdir@
 srcdir    = @srcdir@
-VPATH     = @srcdir@
+VPATH     = @srcdir@ @top_srcdir@/components/mediacore/base/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -15,17 +15,8 @@ MODULE = sbGStreamerMediacore
 endif
 
 SUBDIRS = metadata
-SUBDIRDEPS = dll_link: metadata
 
-CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreEventTarget.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreFactory.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacorePlaybackControl.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbBaseMediacoreVolumeControl.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbMediacoreCapabilities.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbMediacoreEvent.cpp \
-           $(topsrcdir)/components/mediacore/base/src/sbMediacoreError.cpp \
-           sbGStreamerService.cpp \
+CPP_SRCS = sbGStreamerService.cpp \
            sbGStreamerMediacore.cpp \
            sbGStreamerMediacoreFactory.cpp \
            sbGStreamerMediacoreModule.cpp \
@@ -36,14 +27,26 @@ CPP_SRCS = $(topsrcdir)/components/mediacore/base/src/sbBaseMediacore.cpp \
            sbGStreamerTranscode.cpp \
            $(NULL)
 
+# from /components/mediacore/base/src
+CPP_SRCS += sbBaseMediacore.cpp \
+            sbBaseMediacoreEventTarget.cpp \
+            sbBaseMediacoreFactory.cpp \
+            sbBaseMediacorePlaybackControl.cpp \
+            sbBaseMediacoreVolumeControl.cpp \
+            sbMediacoreCapabilities.cpp \
+            sbMediacoreEvent.cpp \
+            sbMediacoreError.cpp \
+            $(NULL)
+
+# preedTODO fix this
 ifeq (windows,$(SB_PLATFORM))
-	  CPP_SRCS += sbGStreamerPlatformWin32.cpp
+   CPP_SRCS += sbGStreamerPlatformWin32.cpp
 else
 ifeq (macosx, $(SB_PLATFORM))
-	  CMM_SRCS = sbGStreamerPlatformOSX.mm
+   CMM_SRCS = sbGStreamerPlatformOSX.mm
 else
-	  # Others - linux, solaris, etc.
-	  CPP_SRCS += sbGStreamerPlatformGDK.cpp
+   # Others - linux, solaris, etc.
+   CPP_SRCS += sbGStreamerPlatformGDK.cpp
 endif
 endif
 
@@ -105,8 +108,8 @@ else
 endif
 
 ifeq (macosx, $(SB_PLATFORM))
-	  CMM_INCLUDES = $(CPP_INCLUDES) 
-      CMM_EXTRA_INCLUDES = $(CPP_EXTRA_INCLUDES)
+   CMM_INCLUDES = $(CPP_INCLUDES) 
+   CMM_EXTRA_INCLUDES = $(CPP_EXTRA_INCLUDES)
 endif
 
 # The dynamic gstreamer libs on windows have "-0" appended to their names
@@ -115,15 +118,6 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 DYNAMIC_LIB = $(MODULE)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))) \
-                   $(NULL)
-
-ifeq (macosx, $(SB_PLATFORM))
-    DYNAMIC_LIB_OBJS += $(notdir $(CMM_SRCS:.mm=$(OBJ_SUFFIX))) \
-                   $(NULL)
-endif
-
 
 DYNAMIC_LIB_EXTRA_IMPORTS = \
       nspr4 \
@@ -186,7 +180,7 @@ else
 endif
 
 ifeq (macosx, $(SB_PLATFORM))
-	  DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit
+   DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit
 endif
 
 
@@ -194,7 +188,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
                       $(NULL)
 
 # We use the stub loader to load this dll, so stick it in the lib directory
-SONGBIRD_LIB = $(DYNAMIC_LIB) \
-               $(NULL)
+#SONGBIRD_LIB = $(CURDIR)/$(DYNAMIC_LIB) \
+#               $(NULL)
 
 include $(topsrcdir)/build/rules.mk

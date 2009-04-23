@@ -29,6 +29,16 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+TIERS = base \
+        deps \
+        appbase \
+        componentsbase \
+        ui \
+        componentsall \
+        extensions \
+        branding \
+        $(NULL)
+
 CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_COMPONENTSDIR) \
              $(SONGBIRD_DEFAULTSDIR) \
@@ -36,10 +46,20 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
              $(SONGBIRD_PLUGINSDIR) \
              $(SONGBIRD_SCRIPTSDIR) \
              $(SONGBIRD_XULRUNNERDIR) \
+             $(SONGBIRD_SDKINCLUDEDIR) \
+             $(SONGBIRD_JSMODULESDIR) \
+             $(SONGBIRD_LIBDIR) \
+             $(SONGBIRD_SEARCHPLUGINSDIR) \
+             $(SONGBIRD_PROFILEDIR) \
              $(NULL)
 
 ifdef SB_ENABLE_TESTS
-  CREATEDIRS += $(SONGBIRD_TESTSDIR)
+   CREATEDIRS += $(SONGBIRD_TESTSDIR)
+   TIERS += tests
+endif
+
+ifdef SB_ENABLE_STATIC
+   TIERS += static
 endif
 
 ifeq (windows,$(SB_PLATFORM))
@@ -50,33 +70,31 @@ ifeq (macosx,$(SB_PLATFORM))
   CREATEDIRS += $(SONGBIRD_MACOS)
 endif
 
-SUBDIRS = build \
-          dependencies \
-          bindings \
-          app \
-          components \
-          feathers \
-          locales \
-          extensions \
-          tools \
-          $(SONGBIRD_BRANDING_DIR) \
-          $(NULL)
 
-SUBDIRDEPS = components : bindings
+#SUBDIRS = build \
+#          dependencies \
+#          bindings \
+#          app \
+#          components \
+#          feathers \
+#          locales \
+#          extensions \
+#          tools \
+#          $(SONGBIRD_BRANDING_DIR) \
+#          $(NULL)
+
+#SUBDIRDEPS = components : bindings
 
 ifdef HAS_EXTRAS
-SUBDIRS += extras
-SUBDIRDEPS2 = extras : components
-endif
-
-ifdef SONGBIRD_OFFICIAL
-SUBDIRS += update
-SUBDIRDEPS3 = update : installer
+   TIERS += extras
 endif
 
 ifdef MAKE_INSTALLER
-   SUBDIRS += installer
-   SUBDIRDEPS = installer : components app feathers locales stripsymbols
+   TIERS += installer
+endif
+
+ifdef SONGBIRD_OFFICIAL
+   TIERS += update
 endif
 
 ifdef SB_ENABLE_BREAKPAD

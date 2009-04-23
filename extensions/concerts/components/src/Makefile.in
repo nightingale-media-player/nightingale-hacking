@@ -28,6 +28,8 @@
 #   Daniel Glazman <daniel.glazman@disruptive-innovations.com>
 #   Matthew Gertner <matthew@allpeers.com>
 
+# preedTODO: no it's not ^^^^^
+
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@

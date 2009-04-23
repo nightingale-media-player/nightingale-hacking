@@ -64,7 +64,8 @@ LIBSONGBIRD_COMPONENT = sbMediaSniffer
 
 SONGBIRD_COMPONENTS = \
   $(COMPONENTS_DIR)/contenthandling/media/sbMediaContentListener.js \
-  $(DYNAMIC_LIB) \
   $(NULL)
+
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

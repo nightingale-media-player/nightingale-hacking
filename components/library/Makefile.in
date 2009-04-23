@@ -33,7 +33,5 @@ SUBDIRS = base \
           localdatabase \
           $(NULL)
 
-SUBDIRDEPS  = localdatabase : base
-
 include $(topsrcdir)/build/rules.mk
 

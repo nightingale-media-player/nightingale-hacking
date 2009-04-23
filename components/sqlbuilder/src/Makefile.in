@@ -72,6 +72,6 @@ endif
 
 LIBSONGBIRD_COMPONENT = SongbirdSQLStatementBuilderModule
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

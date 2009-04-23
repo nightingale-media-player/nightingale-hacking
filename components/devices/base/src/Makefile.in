@@ -25,7 +25,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @top_srcdir@/components/moz/strings/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -40,8 +40,10 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
            sbDeviceProperties.cpp \
            sbDeviceCapabilities.cpp \
            sbDeviceStatus.cpp \
-           $(topsrcdir)/components/moz/strings/src/sbTArrayStringEnumerator.cpp \
            $(NULL)
+
+# From /components/moz/strings/src/
+CPP_SRCS += sbTArrayStringEnumerator.cpp
 
 CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/devices/base/public \
@@ -65,8 +67,6 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
 
 DYNAMIC_LIB = sbDeviceBase$(DEBUG:%=_d)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             nspr4 \
                             xpcomglue_s \
@@ -81,8 +81,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/library/base/src/sta
                               $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
                               $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
+IS_COMPONENT = 1
 
 LIBSONGBIRD_COMPONENTS = SongbirdDeviceBaseComps
 

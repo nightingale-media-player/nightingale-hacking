@@ -46,6 +46,4 @@ SUBDIRS = strings \
           shutdownservice \
           $(NULL)
 
-SUBDIRDEPS = prompter : windowwatcher
-
 include $(topsrcdir)/build/rules.mk

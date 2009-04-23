@@ -31,8 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 # XXX Mook: disthelper only works on Windows for now
 ifeq (,$(filter-out windows,$(SB_PLATFORM)))
-SUBDIRS = disthelper \
-          $(NULL)
+SUBDIRS += disthelper \
+           $(NULL)
 endif
 
 include $(topsrcdir)/build/rules.mk

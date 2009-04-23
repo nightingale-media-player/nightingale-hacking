@@ -25,7 +25,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @top_srcdir@/components/devices/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -44,12 +44,15 @@ XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
            sbDeviceDeviceTesterUtils.cpp \
            sbMockDevice.cpp \
-           $(topsrcdir)/components/devices/base/src/sbBaseDeviceEventTarget.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceEvent.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceLibrary.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceLibraryHelpers.cpp \
-           $(topsrcdir)/components/devices/base/src/sbDeviceContent.cpp \
            $(NULL)
+
+# From components/devices/base/src/
+CPP_SRCS += sbBaseDeviceEventTarget.cpp \
+            sbDeviceEvent.cpp \
+            sbDeviceLibrary.cpp \
+            sbDeviceLibraryHelpers.cpp \
+            sbDeviceContent.cpp \
+            $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(DEPTH)/components/devices/base/public \
@@ -92,7 +95,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/device/src/s
                               $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
                               $(NULL)
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) $(XPIDL_MODULE)
+IS_COMPONENT = 1
 
 SONGBIRD_TEST_COMPONENT = devicedevice
 

@@ -36,6 +36,8 @@ ifndef CONFIG_MK_INCLUDED
 CONFIG_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
+EXIT_ON_ERROR = set -e; # Shell loops continue past errors without this.
+
 ####
 # check for missing vendor-binaries and mozbrowser dir (common errors)
 ifeq (,$(wildcard $(MOZSDK_SCRIPTS_DIR)/printconfigsetting.py))

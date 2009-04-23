@@ -48,4 +48,8 @@ XPI_NAME = $(EXTENSION_BUILD_ID)
 JAR_MANIFEST = jar.mn
 JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 
+CREATEDIRS = $(EXTENSION_STAGE_DIR) $(SONGBIRD_PREFERENCESDIR)
+
+export:: create_dirs
+
 include $(topsrcdir)/build/rules.mk

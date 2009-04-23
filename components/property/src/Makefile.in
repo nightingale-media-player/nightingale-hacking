@@ -35,7 +35,7 @@ ifdef DEBUG
 target_name := $(addsuffix _d,$(target_name))
 endif
 
-all:: sbProperties.jsm
+export:: sbProperties.jsm
 sbProperties.jsm: sbProperties.jsm.in sbStandardProperties.h
 sbProperties.jsm: sbStandardProperties.pl
 	$(PERL) $< $(srcdir)
@@ -95,8 +95,6 @@ CPP_INCLUDES = $(DEPTH)/components/property/public \
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4 \
                             xpcom \
@@ -127,10 +125,11 @@ endif
 
 LIBSONGBIRD_COMPONENT = SongbirdPropertiesModule
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(srcdir)/sbSmartPlaylistPropertyRegistrar.js \
+SONGBIRD_COMPONENTS = $(srcdir)/sbSmartPlaylistPropertyRegistrar.js \
                       $(NULL)
-                      
+
+IS_COMPONENT = 1
+
 # TODO: Post 0.5 we need to remove js modules from the line above           
 SONGBIRD_JSMODULES =  sbProperties.jsm \
                       $(NULL)           

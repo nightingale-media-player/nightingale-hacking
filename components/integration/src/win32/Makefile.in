@@ -24,7 +24,7 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ @srcdir@/..
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -65,8 +65,6 @@ CPP_INCLUDES = $(DEPTH)/components/integration/public \
 
 DYNAMIC_LIB = $(target_name)
 
-DYNAMIC_LIB_OBJS = $(patsubst %.cpp,%$(OBJ_SUFFIX),$(notdir $(CPP_SRCS)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             plds4  \
                             xpcom \
@@ -77,23 +75,26 @@ DYNAMIC_LIB_EXTRA_IMPORTS += ole32 \
                              $(NULL)
 
 CPP_SRCS = MultiMonitor.cpp \
-           ../NativeWindowFromNode.cpp \
-           ../WindowCloak.cpp \
-           ../WindowLayer.cpp \
            WindowMinMax.cpp \
            WindowMinMaxSubclass.cpp \
            WindowRegion.cpp \
            WindowResizeHook.cpp \
            GlobalHotkeys.cpp \
-           ../IntegrationComponent.cpp \
            sbNativeWindowManager.cpp \
            $(NULL)
+
+# From current_directory/..
+CPP_SRCS += NativeWindowFromNode.cpp \
+            WindowCloak.cpp \
+            WindowLayer.cpp \
+            IntegrationComponent.cpp \
+            $(NULL)
 
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
 
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB)
+IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

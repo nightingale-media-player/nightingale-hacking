@@ -36,8 +36,4 @@ SUBDIRS = base \
           playback \
           $(NULL)
 
-SUBDIRDEPS = metadata manager gstreamer : base
-SUBDIRDEPS2 = playback : manager
-SUBDIRDEPS3 = gstreamer : metadata
-
 include $(topsrcdir)/build/rules.mk

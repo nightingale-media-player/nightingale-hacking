@@ -48,7 +48,7 @@ RESOURCES_PPFLAGS = -DEXTENSION_VER=$(EXTENSION_VER) \
 
 include $(topsrcdir)/build/rules.mk
 
-all:: extinstall
+libs:: extinstall
 
 extinstall :
 	@$(CYGWIN_WRAPPER)	$(MKDIR) -p $(EXTENSION_DIR)
