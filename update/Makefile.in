@@ -67,7 +67,7 @@ REMOVED_FILES = files-removed-from-$(SB_PLATFORM).in
 REMOVED_FILES_GEN = $(TARGET_DIR)/removed-files
 
 # MUST specify a target, no default rule
-default: all
+default:: complete partial
 
 complete:: complete-patch complete-snippet dump-build-id
 
