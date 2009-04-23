@@ -353,7 +353,10 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
                       getter_AddRefs(deleteItemPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint32 j = 0;
+  PRUint32 totalOffset = 1;
   PRUint32 count = mNotificationList.Count();
+
   for (PRUint32 i = 0; i < count; i++) {
     nsCOMPtr<sbIMediaItem> item = do_QueryInterface(mNotificationList[i], &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -362,6 +365,17 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
     mFriendLibrary->NotifyListenersBeforeItemRemoved(libraryList,
                                                      item,
                                                      mNotificationIndexes[i]);
+
+    // Shift indexes of items that come after the deleted index. This may
+    // seem like a very odd thing to do but we can do this safely because
+    // this method only applies to _libraries_. Medialists shift the indexes
+    // as well but they do it more sanely. What we are doing here is only
+    // possible because the items are guaranteed to be in the right order
+    // because of how they are fetched!
+    j = i + 1;
+    if(mNotificationIndexes[j] > mNotificationIndexes[i]) {
+      mNotificationIndexes[j] -= totalOffset++;
+    }
 
     nsAutoString guid;
     rv = item->GetGuid(guid);
