@@ -29,4 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+# Tests for this component were originally commented out, but with no 
+# explanation as to why; so, comment them out in BSNG as well
+
+DISABLE_IMPLICIT_SUBDIRS = 1
+
+SUBDIRS = public \
+          src \
+          $(NULL)
+
 include $(topsrcdir)/build/rules.mk

@@ -89,6 +89,7 @@ tier_componentsall_dirs = \
    components/servicepane \
    components/update \
    components/webservices \
+   components/mediaexport \
    $(NULL)
 
 tier_appbase_dirs = \
@@ -115,6 +116,10 @@ endif
 
 tier_branding_dirs = \
    $(SONGBIRD_BRANDING_DIR) \
+   $(NULL)
+
+tier_unittests_dirs = \
+   components/testharness \
    $(NULL)
 
 tier_update_dirs = \

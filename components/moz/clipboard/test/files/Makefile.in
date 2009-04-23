@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = clipboardhelper/files
 
-SONGBIRD_TESTS = $(srcdir)/*.png \
+SONGBIRD_TESTS = $(srcdir)/test.png \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

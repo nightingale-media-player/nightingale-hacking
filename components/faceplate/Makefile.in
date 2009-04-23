@@ -30,13 +30,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# preedTODO disable tests for this directory.
 # Note: Tests have been disabled, since the API has been commented out.
 #       The component still runs, since it is responsible for switching
 #       to the display faceplate, but you cannot interact with it.
-#SUBDIRS = public \
-#          src \
-##          test \
-#          $(NULL)
+
+DISABLE_IMPLICIT_SUBDIRS = 1
+
+SUBDIRS = public \
+          src \
+          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -55,7 +55,7 @@ CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
 
 ifdef SB_ENABLE_TESTS
    CREATEDIRS += $(SONGBIRD_TESTSDIR)
-   TIERS += tests
+   TIERS += unittests
 endif
 
 ifdef SB_ENABLE_STATIC
