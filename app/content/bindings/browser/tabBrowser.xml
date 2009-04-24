@@ -854,20 +854,14 @@
         <![CDATA[
           this.mStrip.collapsed = !aShow;
           if (aShow) {
-            /*
             // XXXdwh temporary unclean dependency on specific menu items in navigator.xul
-            document.getElementById("menu_closeWindow").hidden = false;
-            document.getElementById("menu_close").setAttribute("label", this.mStringBundle.getString("tabs.closeTab"));
-           */
+            document.getElementById('menuitem_file_closetab').hidden = false;
             if (!this.mTabbedMode)
               this.enterTabbedMode();
           }
           else {
             // XXXdwh temporary unclean dependency on specific menu items in navigator.xul
-            /*
-            document.getElementById("menu_closeWindow").hidden = true;
-            document.getElementById("menu_close").setAttribute("label", this.mStringBundle.getString("tabs.close"));
-           */
+            document.getElementById('menuitem_file_closetab').hidden = true;
           }
         ]]>
         </body>
