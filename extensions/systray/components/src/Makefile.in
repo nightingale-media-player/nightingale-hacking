@@ -119,7 +119,9 @@ EXTENSION_STAGE_DIR = ../../.xpistage
 
 CREATEDIRS += $(EXTENSION_STAGE_DIR)/components/libs
 
-export:: create_dirs
-
 include $(topsrcdir)/build/rules.mk
 
+export:: create_dirs
+
+libs::
+	$(INSTALL_PROG) $(DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)

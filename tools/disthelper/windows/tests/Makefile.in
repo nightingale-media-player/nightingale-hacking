@@ -60,4 +60,6 @@ SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
 SIMPLE_PROGRAM = tests$(BIN_SUFFIX)
 SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
+NO_DIST_INSTALL = 1
+
 include $(topsrcdir)/build/rules.mk
