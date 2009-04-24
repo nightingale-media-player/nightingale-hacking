@@ -422,6 +422,19 @@ sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
 {
   LOG(("%s: After Media Item Removed!!", __FUNCTION__));
 
+  if (mPrefController->GetShouldExportPlaylists() ||
+      mPrefController->GetShouldExportSmartPlaylists())
+  {
+    nsresult rv;
+    nsCOMPtr<sbIMediaList> removedList = do_QueryInterface(aMediaItem, &rv);
+    if (NS_SUCCEEDED(rv) && removedList) {
+      nsString listName;
+
+      rv = removedList->GetName(listName);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
   return NS_OK;
 }
 
