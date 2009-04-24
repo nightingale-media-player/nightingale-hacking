@@ -110,6 +110,7 @@ FunctionEnd
 Function un.UninstallFiles
    ; List of files to uninstall
    Delete $INSTDIR\${ApplicationIni}
+   Delete $INSTDIR\${UpdaterIni}
    Delete $INSTDIR\${FileMainEXE}
    Delete $INSTDIR\${DistHelperEXE}
    !ifndef UsingJemalloc

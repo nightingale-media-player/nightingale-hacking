@@ -151,6 +151,7 @@ Function InstallFiles
 
    ; List of files to install
    File ${ApplicationIni}
+   File ${UpdaterIni}
    File ${FileMainEXE}
    !ifdef IncludeLib
       File ${CRuntime}
