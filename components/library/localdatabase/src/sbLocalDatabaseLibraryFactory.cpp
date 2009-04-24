@@ -225,7 +225,8 @@ sbLocalDatabaseLibraryFactory::CreateLibrary(nsIPropertyBag2* aCreationParameter
 nsresult
 sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
                                                          sbILibrary** _retval,
-                                                         nsIPropertyBag2* aCreationParameters)
+                                                         nsIPropertyBag2* aCreationParameters,
+                                                         nsString aResourceGUID /* = EmptyString() */)
 {
   NS_ENSURE_ARG_POINTER(aDatabase);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -291,7 +292,7 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
   
   // If the database file does not exist, create and initalize it
   if (!exists) {
-    rv = InitalizeLibrary(aDatabase);
+    rv = InitalizeLibrary(aDatabase, aResourceGUID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -334,7 +335,8 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
 }
 
 nsresult
-sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
+sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile, 
+                                                const nsAString &aResourceGUID)
 {
   nsresult rv;
   PRInt32 dbOk;
@@ -452,20 +454,23 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile)
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create a resource guid for this database.
-  nsCOMPtr<nsIUUIDGenerator> uuidGen =
-    do_GetService("@mozilla.org/uuid-generator;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsString guid(aResourceGUID);
+  if(guid.IsEmpty()) {
+    // Create a resource guid for this database.
+    nsCOMPtr<nsIUUIDGenerator> uuidGen =
+      do_GetService("@mozilla.org/uuid-generator;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  nsID id;
-  rv = uuidGen->GenerateUUIDInPlace(&id);
-  NS_ENSURE_SUCCESS(rv, rv);
+    nsID id;
+    rv = uuidGen->GenerateUUIDInPlace(&id);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  char guidChars[NSID_LENGTH];
-  id.ToProvidedString(guidChars);
+    char guidChars[NSID_LENGTH];
+    id.ToProvidedString(guidChars);
 
-  nsString guid(NS_ConvertASCIItoUTF16(nsDependentCString(guidChars + 1,
-                                                          NSID_LENGTH - 3)));
+    guid = NS_ConvertASCIItoUTF16(nsDependentCString(guidChars + 1,
+                                                     NSID_LENGTH - 3));
+  }
 
   // Insert the guid into the database.
   nsCOMPtr<sbISQLInsertBuilder> insert =

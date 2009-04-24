@@ -62,12 +62,13 @@ public:
 
   nsresult CreateLibraryFromDatabase(nsIFile* aDatabase,
                                      sbILibrary** _retval,
-                                     nsIPropertyBag2* aCreationParameters = nsnull);
+                                     nsIPropertyBag2* aCreationParameters = nsnull,
+                                     nsString aResourceGUID = EmptyString());
 
   nsresult Init();
 
 private:
-  nsresult InitalizeLibrary(nsIFile* aDatabaseFile);
+  nsresult InitalizeLibrary(nsIFile* aDatabaseFile, const nsAString &aResourceGUID);
 
 private:
   nsInterfaceHashtable<nsHashableHashKey, nsIWeakReference> mCreatedLibraries;

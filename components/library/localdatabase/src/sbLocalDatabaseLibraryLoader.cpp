@@ -32,6 +32,7 @@
 #include <nsIGenericFactory.h>
 #include <nsILocalFile.h>
 #include <nsIObserverService.h>
+#include <nsIIOService.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIPromptService.h>
@@ -39,6 +40,8 @@
 #include <nsIPropertyBag2.h>
 #include <nsIStringBundle.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIURI.h>
+#include <nsIURL.h>
 #include <sbILibrary.h>
 #include <sbIMediaList.h>
 #include <sbIMetrics.h>
@@ -47,6 +50,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsTHashtable.h>
 #include <nsXPCOMCID.h>
@@ -57,6 +61,7 @@
 #include "sbLocalDatabaseCID.h"
 #include "sbLocalDatabaseLibraryFactory.h"
 
+#include <DatabaseQuery.h>
 #include <sbIPropertyManager.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
@@ -273,7 +278,6 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 
   // Figure out the GUID for this library.
   nsAutoString resourceGUID;
-
   PRInt32 libraryInfoIndex = -1;
 
   // The prefs here should point to a library resourceGUID.
@@ -356,7 +360,9 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
 
   nsCOMPtr<sbILibrary> library;
   rv = libraryFactory->CreateLibraryFromDatabase(location,
-                                                 getter_AddRefs(library));
+                                                 getter_AddRefs(library),
+                                                 nsnull,
+                                                 resourceGUID);
   if (NS_FAILED(rv)) {
     // We can't access this required database file. For now we're going to
     // simply make a new blank database in the default location and switch 
@@ -367,13 +373,6 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
     // Make sure we can access this one.
     rv = libraryFactory->CreateLibraryFromDatabase(location,
                                                    getter_AddRefs(library));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Set the name.
-    nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(library, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mediaList->SetName(aLibraryNameKey);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // And update the libraryInfo object.
@@ -389,6 +388,10 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibrary(const nsACString& aLibraryGUI
     rv = libraryInfo->SetResourceGUID(resourceGUID);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Set the name.
+  rv = library->SetName(aLibraryNameKey);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = library->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE), 
                             aCustomType);
