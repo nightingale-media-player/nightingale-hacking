@@ -108,6 +108,7 @@
 #define SB_PROPERTY_ARTISTDETAILURL           "http://songbirdnest.com/data/1.0#artistDetailUrl"
 #define SB_PROPERTY_EXCLUDE_FROM_HISTORY      "http://songbirdnest.com/data/1.0#excludeFromHistory"
 #define SB_PROPERTY_DISABLE_DOWNLOAD          "http://songbirdnest.com/data/1.0#disableDownload"
+#define SB_PROPERTY_ISSUBSCRIPTION            "http://songbirdnest.com/data/1.0#isSubscription"
 
 
 // Device library specific properties
