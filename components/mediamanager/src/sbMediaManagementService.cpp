@@ -45,7 +45,8 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaFileManager.h>
 #include <sbIMediaManagementJob.h>
-#include <sbPrefBranch.h>
+#include <sbPropertiesCID.h>
+#include <sbStringUtils.h>
 
 /**
  * other mozilla headers
@@ -240,9 +241,10 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     rv = obs->RemoveObserver(this, aTopic);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    sbPrefBranch prefBranch(nsnull, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    mEnabled = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_ENABLED, PR_FALSE);
+    rv = mPrefBranch->GetBoolPref(SB_PREF_MEDIA_MANAGER_ENABLED, &mEnabled);
+    if (NS_FAILED(rv)) {
+      mEnabled = PR_FALSE;
+    }
 
     if (!mEnabled) {
       TRACE(("not enabled, don't bother doing anything else"));
@@ -289,9 +291,26 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     mDirtyItems->Clear();
     mDirtyItems = nsnull;
 
+    if (mPrefBranch) {
+      nsCOMPtr<nsIPrefBranch2> prefBranch2 = do_QueryInterface(mPrefBranch, &rv);
+      NS_ENSURE_SUCCESS(rv, rv); 
+      rv = prefBranch2->RemoveObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this);
+      NS_ENSURE_SUCCESS(rv, rv);
+      mPrefBranch = nsnull;
+    }
+
     return NS_OK;
   }
   
+  if (!strcmp(NS_PREFBRANCH_PREFCHANGE_TOPIC_ID, aTopic)) {
+    nsString modifiedPref(aData);
+    if (modifiedPref.EqualsLiteral(SB_PREF_MEDIA_MANAGER_FMTFILE) ||
+        modifiedPref.EqualsLiteral(SB_PREF_MEDIA_MANAGER_FMTDIR)) {
+      return SetupLibraryListener();
+    }
+    return NS_OK;
+  }
+
   if (!strcmp("app-startup", aTopic)) {
     return NS_OK;
   }
@@ -489,18 +508,27 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
     // get the management type
     mManageMode = 0;
     PRBool isSet;
-    
-    sbPrefBranch prefBranch(nsnull, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_COPY, PR_FALSE);
-    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_COPY; }
-    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_MOVE, PR_FALSE);
-    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_MOVE; }
-    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_RENAME, PR_FALSE);
-    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_RENAME; }
-    isSet = prefBranch.GetBoolPref(SB_PREF_MEDIA_MANAGER_DELETE, PR_FALSE);
-    if (isSet) { mManageMode |= sbIMediaFileManager::MANAGE_DELETE; }
+
+    // Check if Copy is enabled
+    rv = mPrefBranch->GetBoolPref(SB_PREF_MEDIA_MANAGER_COPY, &isSet);
+    if (NS_SUCCEEDED(rv) && isSet) {
+      mManageMode |= sbIMediaFileManager::MANAGE_COPY;
+    }
+    // Check if Move is enabled
+    rv = mPrefBranch->GetBoolPref(SB_PREF_MEDIA_MANAGER_MOVE, &isSet);
+    if (NS_SUCCEEDED(rv) && isSet) {
+      mManageMode |= sbIMediaFileManager::MANAGE_MOVE;
+    }
+    // Check if Rename is enabled
+    rv = mPrefBranch->GetBoolPref(SB_PREF_MEDIA_MANAGER_RENAME, &isSet);
+    if (NS_SUCCEEDED(rv) && isSet) {
+      mManageMode |= sbIMediaFileManager::MANAGE_RENAME;
+    }
+    // Check if Delete is enabled
+    rv = mPrefBranch->GetBoolPref(SB_PREF_MEDIA_MANAGER_DELETE, &isSet);
+    if (NS_SUCCEEDED(rv) && isSet) {
+      mManageMode |= sbIMediaFileManager::MANAGE_DELETE;
+    }
 
     if (mManageMode) {
       nsCOMPtr<sbIMediaFileManager> fileMan =
@@ -566,6 +594,15 @@ sbMediaManagementService::Init()
   NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
   
   rv = NS_NewThread(getter_AddRefs(mPerformActionThread), runnable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIPrefService> prefRoot =
+    do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  // Get the branch we are interested in
+  rv = prefRoot->GetBranch(SB_PREF_MEDIA_MANAGER_ROOT,
+                           getter_AddRefs(mPrefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -684,16 +721,18 @@ sbMediaManagementService::StartListening()
   TRACE(("%s: starting", __FUNCTION__));
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
-  
-  rv = mLibrary->AddListener(this,
-                             PR_FALSE,
-                             sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                               sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
-                               sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                               sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
-                             nsnull);
+ 
+  // Call setup which will create filters and such
+  rv = SetupLibraryListener();
   NS_ENSURE_SUCCESS(rv, rv);
   
+  // Also listen for changes to the format preferences so we can
+  // reload the filter on the listener.
+  nsCOMPtr<nsIPrefBranch2> prefBranch2 = do_QueryInterface(mPrefBranch, &rv);
+  NS_ENSURE_SUCCESS(rv, rv); 
+
+  rv = prefBranch2->AddObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this, false);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
@@ -706,6 +745,11 @@ sbMediaManagementService::StopListening()
   nsresult rv;
   
   rv = mLibrary->RemoveListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIPrefBranch2> prefBranch2 = do_QueryInterface(mPrefBranch, &rv);
+  NS_ENSURE_SUCCESS(rv, rv); 
+  rv = prefBranch2->RemoveObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this);
   NS_ENSURE_SUCCESS(rv, rv);
   
   // flush
@@ -751,3 +795,81 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
   }
   return PL_DHASH_NEXT;
 }
+
+NS_METHOD
+sbMediaManagementService::SetupLibraryListener()
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+
+  // First we update the filter properties
+  nsCOMPtr<sbIMutablePropertyArray> filterProperties;
+  filterProperties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = filterProperties->SetStrict(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreatePropertyFilter(filterProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now listen to the library (removing previous listeners first)
+  rv = mLibrary->RemoveListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mLibrary->AddListener(this,
+                             PR_FALSE,
+                             sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                               sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                               sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
+                               sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                             filterProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_METHOD
+sbMediaManagementService::AddPropertiesToFilter(const char *aKeyName,
+                                                sbIMutablePropertyArray *aFilter)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aKeyName);
+  nsresult rv;
+
+  nsCString pathPropList;
+  rv = mPrefBranch->GetCharPref(aKeyName, getter_Copies(pathPropList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!pathPropList.IsEmpty()) {
+    // Split it up and add the properties to an array
+    nsTArray<nsString> listValues;
+    nsString_Split(NS_ConvertUTF8toUTF16(pathPropList),
+                   NS_LITERAL_STRING(","),
+                   listValues);
+    for (PRUint32 i = 0; i < listValues.Length(); i++) {
+      if ((i % 2) == 0) {
+        rv = aFilter->AppendProperty(listValues[i], EmptyString());
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  return NS_OK;
+}
+
+NS_METHOD
+sbMediaManagementService::CreatePropertyFilter(sbIMutablePropertyArray* aFilter)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+
+  rv = AddPropertiesToFilter(SB_PREF_MEDIA_MANAGER_FMTFILE, aFilter);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = AddPropertiesToFilter(SB_PREF_MEDIA_MANAGER_FMTDIR, aFilter);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

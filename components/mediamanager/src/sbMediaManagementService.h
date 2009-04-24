@@ -29,9 +29,11 @@
 
 #include <sbIJobProgress.h>
 #include <sbIMediaListListener.h>
+#include <sbIPropertyArray.h>
 
 #include <nsIObserver.h>
 #include <nsITimer.h>
+#include <nsIPrefBranch.h>
 
 #include <nsAutoPtr.h>
 #include <nsCOMPtr.h>
@@ -39,11 +41,15 @@
 #include <nsDataHashtable.h>
 
 // Define constants for our preference keys
-#define SB_PREF_MEDIA_MANAGER_ENABLED "songbird.media_management.library.enabled"
-#define SB_PREF_MEDIA_MANAGER_COPY    "songbird.media_management.library.copy"
-#define SB_PREF_MEDIA_MANAGER_MOVE    "songbird.media_management.library.move"
-#define SB_PREF_MEDIA_MANAGER_RENAME  "songbird.media_management.library.rename"
-#define SB_PREF_MEDIA_MANAGER_DELETE  "songbird.media_management.library.delete"
+#define SB_PREF_MEDIA_MANAGER_ROOT    "songbird.media_management.library."
+#define SB_PREF_MEDIA_MANAGER_ENABLED "enabled"
+#define SB_PREF_MEDIA_MANAGER_COPY    "copy"
+#define SB_PREF_MEDIA_MANAGER_MOVE    "move"
+#define SB_PREF_MEDIA_MANAGER_RENAME  "rename"
+#define SB_PREF_MEDIA_MANAGER_DELETE  "delete"
+#define SB_PREF_MEDIA_MANAGER_FMTFILE "format.file"
+#define SB_PREF_MEDIA_MANAGER_FMTDIR  "format.dir"
+#define SB_PREF_MEDIA_MANAGER_LISTEN  "format."
 
 class nsIComponentManager;
 class nsIThread;
@@ -119,6 +125,22 @@ protected:
                                      PRUint32 aOperation,
                                      void* aClosure);
 
+  /**
+   * Starts listening to a library for changes, or updates an existing listener
+   */
+  NS_METHOD SetupLibraryListener();
+
+  /**
+   * Retrieve a list of properties we need to watch based on the preferences.
+   */
+  NS_METHOD CreatePropertyFilter(sbIMutablePropertyArray *aFilter);
+
+  /**
+   * Adds properties extracted from preferences to a property array.
+   */
+  NS_METHOD AddPropertiesToFilter(const char *aKeyName,
+                                  sbIMutablePropertyArray *aFilter);
+
 private:
   virtual ~sbMediaManagementService();
 
@@ -174,6 +196,11 @@ protected:
    * The job progress service, for use on a background thread
    */
   nsCOMPtr<sbIJobProgressService> mJobProgressSvc;
+
+  /**
+   * The preferences branch for our service.
+   */
+  nsCOMPtr<nsIPrefBranch> mPrefBranch;
 };
 
 
