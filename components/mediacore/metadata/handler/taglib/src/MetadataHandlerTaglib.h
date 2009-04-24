@@ -345,6 +345,10 @@ private:
 
     nsresult AddMetadataValue(
         const char                  *name,
+        bool                        value);
+
+    nsresult AddMetadataValue(
+        const char                  *name,
         PRUint64                    value);
 
     nsresult AddMetadataValue(

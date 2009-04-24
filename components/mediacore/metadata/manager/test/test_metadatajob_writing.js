@@ -154,9 +154,9 @@ function runTest() {
       //[SBProperties.totalDiscs, 0], // TODO: reconcile 0/""/null
       //[SBProperties.totalDiscs, 2],
       
-      [SBProperties.year, 2004]
+      [SBProperties.year, 2004],
       
-      // bug 9090: isCompliation not dealt with by MetadataHandlerTaglib
+      [SBProperties.isPartOfCompilation, 1]
     ];
 
     // List of properties we want to write

@@ -122,6 +122,20 @@
   }                                                         \
   PR_END_MACRO
 
+#define WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY, method) \
+  PR_BEGIN_MACRO                                            \
+  result = mpMetadataPropertyArray->GetPropertyValue(       \
+    NS_LITERAL_STRING(SB_PROPERTY), propertyValue);         \
+  if (NS_SUCCEEDED(result)) {                               \
+    if (propertyValue.EqualsLiteral("0"))                   \
+      f.tag()->set##method(false);                          \
+    else                                                    \
+      f.tag()->set##method(true);                           \
+  }                                                         \
+  else \
+    fprintf(stderr, "No value for property '%s'\n", SB_PROPERTY); \
+  PR_END_MACRO
+
 /*******************************************************************************
  *
  * Taglib metadata handler logging services.
@@ -606,7 +620,9 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_DISCNUMBER, Disc);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_TOTALDISCS, TotalDiscs);
       WRITE_NUMERIC_PROPERTY(result, SB_PROPERTY_BPM, Bpm);
-      // todo: isCompilation! + Tests!
+      WRITE_BOOLEAN_PROPERTY(result, SB_PROPERTY_ISPARTOFCOMPILATION, 
+              IsCompilation);
+      // todo: Tests!
 
       /* Write MP3 specific properties. */
       // TODO: write other files' metadata.
@@ -1760,24 +1776,24 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
     AddMetadataValue(SB_PROPERTY_KEY,             ConvertCharset(pTag->key(), aCharset));
     AddMetadataValue(SB_PROPERTY_COPYRIGHT,       ConvertCharset(pTag->license(), aCharset));
     AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,    ConvertCharset(pTag->licenseUrl(), aCharset));
-    AddMetadataValue(SB_PROPERTY_YEAR,            pTag->year());
-    AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     pTag->track());
-    AddMetadataValue(SB_PROPERTY_TOTALTRACKS,     pTag->totalTracks());
-    AddMetadataValue(SB_PROPERTY_DISCNUMBER,      pTag->disc());
-    AddMetadataValue(SB_PROPERTY_TOTALDISCS,      pTag->totalDiscs());
-    AddMetadataValue(SB_PROPERTY_BPM,             pTag->bpm());
+    AddMetadataValue(SB_PROPERTY_YEAR,            (PRUint64)pTag->year());
+    AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     (PRUint64)pTag->track());
+    AddMetadataValue(SB_PROPERTY_TOTALTRACKS,     (PRUint64)pTag->totalTracks());
+    AddMetadataValue(SB_PROPERTY_DISCNUMBER,      (PRUint64)pTag->disc());
+    AddMetadataValue(SB_PROPERTY_TOTALDISCS,      (PRUint64)pTag->totalDiscs());
+    AddMetadataValue(SB_PROPERTY_BPM,             (PRUint64)pTag->bpm());
     AddMetadataValue(SB_PROPERTY_CONTENTTYPE,     NS_LITERAL_STRING("audio"));
-    // todo: compilation!
+    AddMetadataValue(SB_PROPERTY_ISPARTOFCOMPILATION, pTag->isCompilation());
   }
   
   pAudioProperties = pTagFile->audioProperties();
   if (pAudioProperties)
   {
-      AddMetadataValue(SB_PROPERTY_BITRATE, pAudioProperties->bitrate());
-      AddMetadataValue(SB_PROPERTY_SAMPLERATE, pAudioProperties->sampleRate());
+      AddMetadataValue(SB_PROPERTY_BITRATE, (PRUint64)pAudioProperties->bitrate());
+      AddMetadataValue(SB_PROPERTY_SAMPLERATE, (PRUint64)pAudioProperties->sampleRate());
       AddMetadataValue(SB_PROPERTY_DURATION, 
               (PRUint64)pAudioProperties->length() * 1000000);
-      AddMetadataValue(SB_PROPERTY_CHANNELS, pAudioProperties->channels());
+      AddMetadataValue(SB_PROPERTY_CHANNELS, (PRUint64)pAudioProperties->channels());
   }
   
   return true; // file was valid
@@ -2350,6 +2366,38 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     }
 
     /* Convert the integer value into a string. */    
+    sbAutoString valueString(value);
+
+    /* Add the metadata value. */
+    result = mpMetadataPropertyArray->AppendProperty
+                                     (NS_ConvertASCIItoUTF16(name),
+                                      valueString);
+
+    return (result);
+}
+
+/*
+ * AddMetadataValue
+ *
+ *   --> name                   Metadata name.
+ *   --> value                  Metadata value.
+ *
+ *   This function adds the metadata value specified by value with the name
+ * specified by name to the set of metadata values.
+ */
+
+nsresult sbMetadataHandlerTaglib::AddMetadataValue(
+    const char                  *name,
+    bool                        value)
+{
+    nsresult                    result = NS_OK;
+
+    // If the property is false, we don't add it.
+    if (!value) {
+      return result;
+    }
+
+    /* Convert the boolean value into a string. */
     sbAutoString valueString(value);
 
     /* Add the metadata value. */
