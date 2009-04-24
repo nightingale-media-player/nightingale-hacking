@@ -94,7 +94,7 @@
                    value="&prefWindow.manageMedia.format.dir.suffix;"/>
           </sb-properties-formatter>
         </hbox>
-        <checkbox id="manage_media_format_label"
+        <checkbox id="manage_media_format_rename"
                   preference="manage_media_pref_library_rename"
                   label="&prefWindow.manageMedia.format.file.label;"/>
         <sb-properties-formatter defaultSeparator=" - "

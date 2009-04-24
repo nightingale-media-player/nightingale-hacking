@@ -124,6 +124,7 @@ var manageMediaPrefsPane = {
             .dispatchEvent(event);
 
     this._checkForValidPref(true);
+    this._updateUI();
   },
 
 
@@ -157,7 +158,7 @@ var manageMediaPrefsPane = {
     if (prefElem) {
       prefElem.value = !prefElem.value;
     }
-    this._checkForValidPref();
+    this._updateUI();
   },
   
   /**
@@ -258,12 +259,6 @@ var manageMediaPrefsPane = {
     var button = document.getElementById("manage_media_global_cmd");
     var prefElem = document.getElementById(button.getAttribute("preference"));
     var enabled = prefElem.value;
-    if (enabled) {
-      button.label = button.getAttribute("label-disable");
-    } else {
-      button.label = button.getAttribute("label-enable");
-    }
-    document.getElementById("manage_media_global_description").hidden = enabled;
 
     if (enabled) {
       // Need to check if the user chose a usable folder for the managed folder.
@@ -310,7 +305,41 @@ var manageMediaPrefsPane = {
 
     return true;
   },
-  
+ 
+  _updateUI: function manageMediaPrefsPane__updateUI() {
+    // Get the controls so we can enable/disable them
+    var managedFolder = document.getElementById("manage_media_library_file");
+    var browseButton = document.getElementById("manage_media_library_browse");
+    var dirFormatter = document.getElementById("manage_media_format_dir_formatter");
+    var renameCheck = document.getElementById("manage_media_format_rename");
+    var fileFormatter = document.getElementById("manage_media_format_file_formatter");
+    var fmtDirLabel = document.getElementById("manage_media_format_dir_label");
+     
+    var button = document.getElementById("manage_media_global_cmd");
+    var prefElem = document.getElementById(button.getAttribute("preference"));
+    var enabled = prefElem.value;
+    if (enabled) {
+      // Enable all the controls
+      button.label = button.getAttribute("label-disable");
+      managedFolder.removeAttribute("disabled");
+      browseButton.disabled = false;
+      renameCheck.removeAttribute("disabled");
+      fmtDirLabel.removeAttribute("disabled");
+      dirFormatter.disableAll = false;
+      fileFormatter.disableAll = false;
+    } else {
+      // Disable the controls
+      button.label = button.getAttribute("label-enable");
+      managedFolder.setAttribute("disabled", true);
+      browseButton.disabled = false;
+      renameCheck.setAttribute("disabled", true);
+      fmtDirLabel.setAttribute("disabled", true);
+      dirFormatter.disableAll = true;
+      fileFormatter.disableAll = true;
+    }
+    document.getElementById("manage_media_global_description").hidden = enabled;
+  },
+
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener])
 };
 

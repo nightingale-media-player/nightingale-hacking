@@ -103,18 +103,28 @@
     <implementation>
       
       <!-- properties -->
-      <property name="readonly">
-        <!-- whether the whole element is read only -->
+      <property name="disableAll">
+        <!-- Disable all the controls inside this control -->
         <getter>
-          return this.hasAttribute("readonly");
+          return this.hasAttribute("disabled");
         </getter>
-        <setter>
+        <setter><![CDATA[
+          // We need to (en/dis)able all of the menulist and textboxes manually
+          // We also (en/dis)able the labels (for the + and - buttons)
           if (val) {
-            this.setAttribute("readonly", val);
+            this.setAttribute("disabled", val);
+            this._updateControls("menulist", true);
+            this._updateControls("textbox", true);
+            this._updateControls("label", true);
           } else {
-            this.removeAttribute("readonly");
+            this.removeAttribute("disabled");
+            this._updateControls("menulist", false);
+            this._updateControls("textbox", false);
+            this._updateControls("label", false);
+            // We have to make sure that the add link is in the correct state
+            this._updateAddLink();
           }
-        </setter>
+        ]]></setter>
       </property>
       <property name="separatorEditable">
         <!-- whether the separators between menulists is editable -->
@@ -339,6 +349,11 @@
                                 SBString("properties_formatter.remove.label"));
               link.linkedMenuList = aMenuList;
               link.onclick = function(event) {
+                let link = event.target;
+                if (link.hasAttribute("disabled")) {
+                  // do not do anything if we are disabled.
+                  return;
+                }
                 let vbox = event.target.parentNode;
                 self.removeChild(vbox);
                 self._children.splice(self._children.indexOf(vbox), 1);
@@ -402,8 +417,8 @@
                               SBString("properties_formatter.add.label"));
             link.onclick = function(event) {
               let link = event.target;
-              if (link.disabled) {
-                // why are we even here? we ought to be disabled
+              if (link.hasAttribute("disabled")) {
+                // do not do anything if we are disabled.
                 return;
               }
               // add a new menulist
@@ -457,9 +472,8 @@
           -->
         <body>
           <![CDATA[
-            this._addlink.disabled = !(this._controlsCount < this.maxProperties);
-            // sigh, .disabled doesnt seem to work
-            if (this._addlink.disabled) {
+            var isDisabled = !(this._controlsCount < this.maxProperties);
+            if (isDisabled) {
               this._addlink.setAttribute("disabled", true);
             } else {
               this._addlink.removeAttribute("disabled");
@@ -468,6 +482,26 @@
         </body>
       </method>
       
+      <method name="_updateControls">
+        <!-- Update all the controls we manually created to either an enabled or disabled
+             state.
+          -->
+        <parameter name="aTagName"/>
+        <parameter name="setDisabled"/>
+        <body><![CDATA[
+          var nodes = this.getElementsByTagName(aTagName);
+          for (var i = 0; i < nodes.length; i++) {
+            if (setDisabled) {
+              nodes[i].setAttribute("disabled", true);
+              nodes[i].disabled = true;
+            } else {
+              nodes[i].removeAttribute("disabled");
+              nodes[i].disabled = false;
+            }
+          }
+        ]]></body>
+      </method>
+
     </implementation>
   </binding>
 </bindings>
