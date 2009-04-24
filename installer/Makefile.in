@@ -31,3 +31,9 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = $(SB_PLATFORM) 
 
 include $(topsrcdir)/build/rules.mk
+
+# preedTODO: the easiest way to re-express this dependency is to do it as
+# part of the export step for the installer; it seems to work, but even still,
+# that's kinda janky.
+export::
+	$(MAKE) -C $(DEPTH) stripsymbols
