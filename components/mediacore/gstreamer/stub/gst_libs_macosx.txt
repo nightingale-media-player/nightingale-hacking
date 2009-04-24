@@ -6,7 +6,8 @@
 @lib/libgobject-2.0.dylib
 @lib/libgthread-2.0.dylib
 @lib/libogg.dylib
-@lib/libtheora.dylib
+@lib/libtheoradec.dylib
+@lib/libtheoraenc.dylib
 @lib/libvorbis.dylib
 @lib/libvorbisenc.dylib
 @lib/libvorbisfile.dylib

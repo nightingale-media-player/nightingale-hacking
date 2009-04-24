@@ -1,5 +1,6 @@
 @lib/libogg.so
-@lib/libtheora.so
+@lib/libtheoradec.so
+@lib/libtheoraenc.so
 @lib/libvorbis.so
 @lib/libvorbisenc.so
 @lib/libvorbisfile.so
