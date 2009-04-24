@@ -72,7 +72,7 @@ Function un.RemoveBrandingRegistryKeys
 
    ; Remove start menu shortcuts and start menu folder.
    ${If} ${FileExists} "$SMPROGRAMS\$R0\${BrandFullNameInternal}.lnk"
-      Delete "$SMPROGRAMS\$R0\${BrandFullNameInternal}.lnk"
+      RMDir /r "$SMPROGRAMS\$R0\*.*"
    ${EndIf}
 
    ; Read location of desktop shortcut and remove if present.
