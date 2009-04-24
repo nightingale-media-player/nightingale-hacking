@@ -88,12 +88,10 @@ protected:
 private:
   nsRefPtr<sbMediaExportPrefController>  mPrefController;
   nsCOMPtr<sbIMutablePropertyArray>      mFilteredProperties;
-  nsCOMPtr<nsIMutableArray>              mObservedMediaLists;
-  nsCOMArray<sbIMediaList>               mPendingObservedMediaLists;
+  nsCOMArray<sbIMediaList>               mObservedMediaLists;
   sbMediaListItemMap                     mAddedItemsMap;
   sbStringList                           mAddedMediaList;
-  sbStringList                           mRemovedMediaList;
-  sbStringList                           mRenamedMediaList;
+  sbStringList                           mRemovedMediaLists;
   PRBool                                 mIsRunning;
 };
 

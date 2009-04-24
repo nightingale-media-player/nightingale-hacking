@@ -117,8 +117,6 @@ nsresult
 sbMediaExportService::InitInternal()
 {
   nsresult rv;
-  mObservedMediaLists = do_CreateInstance("@mozilla.org/array;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // No need to listen for the library manager ready notice
   nsCOMPtr<nsIObserverService> observerService =
@@ -184,16 +182,9 @@ sbMediaExportService::Shutdown()
 
   if (mIsRunning) {
     // Removing listener references from all the observed media lists.
-    PRUint32 observedListsLength = 0;
-    rv = mObservedMediaLists->GetLength(&observedListsLength);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRUint32 i = 0; i < observedListsLength; i++) {
-      nsCOMPtr<sbIMediaList> curMediaList;
-      rv = mObservedMediaLists->QueryElementAt(i, 
-                                               NS_GET_IID(sbIMediaList),
-                                               getter_AddRefs(curMediaList));
-      if (NS_FAILED(rv) || !curMediaList) {
+    for (PRInt32 i = 0; i < mObservedMediaLists.Count(); i++) {
+      nsCOMPtr<sbIMediaList> curMediaList = mObservedMediaLists[i];
+      if (!curMediaList) {
         NS_WARNING("Could not get a the media list reference!");
         continue;
       }
@@ -211,8 +202,7 @@ sbMediaExportService::Shutdown()
 #endif 
     }
 
-    rv = mObservedMediaLists->Clear();
-    NS_ENSURE_SUCCESS(rv, rv);
+    mObservedMediaLists.Clear();
   }
 
   return NS_OK;
@@ -268,10 +258,10 @@ sbMediaExportService::ListenToMediaList(sbIMediaList *aMediaList)
   rv = aMediaList->AddListener(this, PR_FALSE, flags, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mObservedMediaLists->AppendElement(aMediaList, PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(mObservedMediaLists.AppendObject(aMediaList),
+                 NS_ERROR_FAILURE);
 
-  return rv;
+  return NS_OK;
 }
 
 nsresult
@@ -374,12 +364,15 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
        mPrefController->GetShouldExportSmartPlaylists()) &&
       NS_SUCCEEDED(rv) && itemAsList) 
   {
-    mAddedMediaList.push_back(itemGuid);
+    // Only worry if this is a list that we should be watching
+    PRBool shouldWatchList = PR_FALSE;
+    rv = GetShouldWatchMediaList(itemAsList, &shouldWatchList);
+    if (NS_SUCCEEDED(rv) && shouldWatchList) {
+      rv = ListenToMediaList(itemAsList);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    // Don't block this call, wait until the batch add ends to see if this
-    // media list needs to be listened to.
-    NS_WARN_IF_FALSE(mPendingObservedMediaLists.AppendObject(itemAsList),
-        "Could not add media list to pending observe media lists array!");
+      mAddedMediaList.push_back(itemGuid);
+    }
   }
   // Handle the added mediaitem track.
   else {
@@ -422,6 +415,32 @@ sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
 {
   LOG(("%s: After Media Item Removed!!", __FUNCTION__));
 
+  if (mPrefController->GetShouldExportPlaylists() ||
+      mPrefController->GetShouldExportSmartPlaylists())
+  {
+    nsresult rv;
+    nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
+    if (NS_SUCCEEDED(rv) && itemAsList) {
+      // If this is a list that is currently being observed by this service,
+      // then remove the listener hook and add the list guid to the removed
+      // media lists string list.
+      PRInt32 index = mObservedMediaLists.IndexOf(itemAsList);
+      if (index > -1) {
+        nsString listGuid;
+        rv = itemAsList->GetGuid(listGuid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mRemovedMediaLists.push_back(listGuid);
+
+        rv = itemAsList->RemoveListener(this);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        NS_WARN_IF_FALSE(mObservedMediaLists.RemoveObjectAt(index),
+            "Could not remove the media list from the observed lists array!");
+      }
+    }
+  }
+
   return NS_OK;
 }
 
@@ -432,7 +451,6 @@ sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList,
                                     PRBool *aRetVal)
 {
   LOG(("%s: Media Item Updated!!", __FUNCTION__));
-
   return NS_OK;
 }
 
@@ -443,7 +461,6 @@ sbMediaExportService::OnItemMoved(sbIMediaList *aMediaList,
                                   PRBool *aRetVal)
 {
   LOG(("%s: Media Item Moved!", __FUNCTION__));
-
   return NS_OK;
 }
 
@@ -452,7 +469,6 @@ sbMediaExportService::OnListCleared(sbIMediaList *aMediaList,
                                     PRBool *aRetVal)
 {
   LOG(("%s: Media List Cleared!", __FUNCTION__));
-
   return NS_OK;
 }
 
@@ -460,7 +476,6 @@ NS_IMETHODIMP
 sbMediaExportService::OnBatchBegin(sbIMediaList *aMediaList)
 {
   LOG(("%s: Media List Batch Begin!", __FUNCTION__));
-
   return NS_OK;
 }
 
@@ -468,26 +483,6 @@ NS_IMETHODIMP
 sbMediaExportService::OnBatchEnd(sbIMediaList *aMediaList)
 {
   LOG(("%s: Media List Batch End!", __FUNCTION__));
-
-  // If there are any pending batched media lists that were added, start 
-  // listening to them if we should.
-  if (mPendingObservedMediaLists.Count() > 0) {
-    for (PRInt32 i = 0; i < mPendingObservedMediaLists.Count(); i++) {
-      nsCOMPtr<sbIMediaList> curPendingMediaList = 
-        mPendingObservedMediaLists[i];
-
-      PRBool shouldWatchList = PR_FALSE;
-      nsresult rv = GetShouldWatchMediaList(curPendingMediaList, 
-                                            &shouldWatchList);
-      if (NS_SUCCEEDED(rv) && shouldWatchList) {
-        rv = ListenToMediaList(curPendingMediaList);
-        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Coult not listen to media list!");
-      }
-    }
-
-    mPendingObservedMediaLists.Clear();
-  }
-
   return NS_OK;
 }
 
@@ -601,12 +596,6 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
 {
   NS_ENSURE_ARG_POINTER(aNeedsToRunTask);
   *aNeedsToRunTask = PR_FALSE;
-
-  // Dump out all the added media items (for testing)
-  sbMediaListItemMapIter begin = mAddedItemsMap.begin();
-  sbMediaListItemMapIter end = mAddedItemsMap.end();
-  sbMediaListItemMapIter next;
-  
   return NS_OK;
 }
 
