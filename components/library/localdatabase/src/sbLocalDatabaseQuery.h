@@ -41,15 +41,16 @@ class sbLocalDatabaseQuery
   typedef nsTArray<PRUint32> sbUint32Array;
 
 public:
-
-  sbLocalDatabaseQuery(const nsAString& aBaseTable,
-                       const nsAString& aBaseConstraintColumn,
-                       PRUint32 aBaseConstraintValue,
-                       const nsAString& aBaseForeignKeyColumn,
-                       nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
-                       nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
-                       PRBool aIsDistinct,
-                       sbILocalDatabasePropertyCache* aPropertyCache);
+  explicit
+    sbLocalDatabaseQuery(const nsAString& aBaseTable,
+                         const nsAString& aBaseConstraintColumn,
+                         PRUint32 aBaseConstraintValue,
+                         const nsAString& aBaseForeignKeyColumn,
+                         nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
+                         nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
+                         PRBool aIsDistinct,
+                         PRBool aDistinctWithSortableValues,
+                         sbILocalDatabasePropertyCache* aPropertyCache);
 
   nsresult GetFullCountQuery(nsAString& aQuery);
   nsresult GetFullGuidRangeQuery(nsAString& aQuery);
@@ -99,7 +100,8 @@ private:
   nsString mBaseForeignKeyColumn;
   nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* mFilters;
   nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* mSorts;
-  PRBool mIsDistinct;
+  PRPackedBool mIsDistinct;
+  PRPackedBool mDistinctWithSortableValues;
 
   nsCOMPtr<sbISQLSelectBuilder> mBuilder;
   PRBool mIsFullLibrary;

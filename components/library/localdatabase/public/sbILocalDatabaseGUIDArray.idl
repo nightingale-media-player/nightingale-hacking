@@ -50,7 +50,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(7ecb8720-5499-11dd-ae16-0800200c9a66)]
+[scriptable, uuid(a5c6c0b1-a217-4c33-b7d3-05e7e98c6350)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -66,6 +66,13 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   attribute unsigned long fetchSize;
 
   attribute boolean isDistinct;
+  
+  /**
+   * \brief If the guid array is distinct, this value will cause the guid array 
+   *        to be filled with the sortable values instead of human redeable 
+   *        values.
+   */
+  attribute boolean distinctWithSortableValues;
 
   readonly attribute unsigned long length;
 

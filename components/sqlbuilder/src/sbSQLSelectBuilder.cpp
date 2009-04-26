@@ -153,6 +153,7 @@ sbSQLSelectBuilder::Reset()
   mIsDistinct = PR_FALSE;
   mOutputColumns.Clear();
   mOrders.Clear();
+  mGroups.Clear();
 
   return NS_OK;
 }

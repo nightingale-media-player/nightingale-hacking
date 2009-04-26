@@ -423,6 +423,21 @@ sbLocalDatabaseAsyncGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetDistinctWithSortableValues(PRBool *aDistinctWithSortableValues)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetDistinctWithSortableValues(aDistinctWithSortableValues);
+}
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::SetDistinctWithSortableValues(PRBool aDistinctWithSortableValues)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->SetDistinctWithSortableValues(aDistinctWithSortableValues);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetLength(PRUint32* aLength)
 {
   nsAutoMonitor monitor(mSyncMonitor);

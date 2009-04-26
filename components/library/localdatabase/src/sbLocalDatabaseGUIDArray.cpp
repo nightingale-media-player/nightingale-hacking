@@ -78,6 +78,7 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
   mIsDistinct(PR_FALSE),
+  mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),
   mNullsFirst(PR_FALSE),
   mPrimarySortsCount(0)
@@ -208,6 +209,22 @@ sbLocalDatabaseGUIDArray::SetIsDistinct(PRBool aIsDistinct)
   mIsDistinct = aIsDistinct;
   return Invalidate();
 }
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetDistinctWithSortableValues(PRBool *aDistinctWithSortableValues)
+{
+  NS_ENSURE_ARG_POINTER(aDistinctWithSortableValues);
+  *aDistinctWithSortableValues = mDistinctWithSortableValues;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetDistinctWithSortableValues(PRBool aDistinctWithSortableValues)
+{
+  mDistinctWithSortableValues = aDistinctWithSortableValues;
+  return Invalidate();
+}
+
 
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::GetListener(sbILocalDatabaseGUIDArrayListener** aListener)
@@ -646,6 +663,9 @@ sbLocalDatabaseGUIDArray::CloneInto(sbILocalDatabaseGUIDArray* aDest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aDest->SetIsDistinct(mIsDistinct);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aDest->SetDistinctWithSortableValues(mDistinctWithSortableValues);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 sortCount = mSorts.Length();
@@ -1200,6 +1220,7 @@ sbLocalDatabaseGUIDArray::UpdateQueries()
                                  &mFilters,
                                  &mSorts,
                                  mIsDistinct,
+                                 mDistinctWithSortableValues,
                                  mPropertyCache);
 
   rv = ldq->GetFullCountQuery(mFullCountQuery);

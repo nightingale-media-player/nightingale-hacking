@@ -77,6 +77,7 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
                                            nsTArray<sbLocalDatabaseGUIDArray::FilterSpec>* aFilters,
                                            nsTArray<sbLocalDatabaseGUIDArray::SortSpec>* aSorts,
                                            PRBool aIsDistinct,
+                                           PRBool aDistinctWithSortableValues,
                                            sbILocalDatabasePropertyCache* aPropertyCache) :
   mBaseTable(aBaseTable),
   mBaseConstraintColumn(aBaseConstraintColumn),
@@ -85,6 +86,7 @@ sbLocalDatabaseQuery::sbLocalDatabaseQuery(const nsAString& aBaseTable,
   mFilters(aFilters),
   mSorts(aSorts),
   mIsDistinct(aIsDistinct),
+  mDistinctWithSortableValues(aDistinctWithSortableValues),
   mPropertyCache(aPropertyCache),
   mHasSearch(PR_FALSE)
 {
@@ -535,7 +537,7 @@ sbLocalDatabaseQuery::AddGuidColumns(PRBool aIsNull)
         }
       }
       else {
-        if (mIsDistinct) {
+        if (mIsDistinct && !mDistinctWithSortableValues) {
           rv = mBuilder->AddColumn(SORT_ALIAS, OBJ_COLUMN);
           NS_ENSURE_SUCCESS(rv, rv);
         }

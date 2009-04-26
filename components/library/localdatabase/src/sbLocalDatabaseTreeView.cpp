@@ -2240,6 +2240,11 @@ sbLocalDatabaseTreeView::GetNextRowIndexForKeyNavigation(const nsAString& aKeySt
     return NS_OK;
   }
 
+  // If we have a fake all row, we have to add 1 to the index we return.
+  if (mFakeAllRow) {
+    index++;
+  }
+
   *_retval = (PRInt32)index;
   return NS_OK;
 }

@@ -131,6 +131,9 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mProtoArray->SetIsDistinct(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = mProtoArray->SetDistinctWithSortableValues(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRBool success = mListeners.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 

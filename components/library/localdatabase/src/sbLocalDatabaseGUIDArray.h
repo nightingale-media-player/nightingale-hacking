@@ -252,6 +252,8 @@ private:
 
   // Get distinct values?
   PRPackedBool mIsDistinct;
+  // Distinct values are the sortable versions and not human readable?
+  PRPackedBool mDistinctWithSortableValues;
 
   // Is the cache valid
   PRPackedBool mValid;

@@ -213,6 +213,10 @@
   this._property = this.cfs.getProperty(index);
   this.tree.view = this.cfs.getTreeView(index);
 
+  // Install our special keyNavigate function. The signature must match the
+  // keyNavigate method in tree.xml.
+  this.tree._keyNavigate = this._treeKeyNavigate;
+
   // Get the property info for the property
   var pm = this._Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                    .getService(this._Ci.sbIPropertyManager);
@@ -533,8 +537,91 @@
 ]]>
         </body>
       </method>
+
+      <method name="_treeKeyNavigate">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+          // Watch out, 'this' here refers to the tree (_incrementalString and
+          // _lastKeyTime are members of the tree).
+          const MAX_KEY_DELAY = 500;
+
+          var key = String.fromCharCode(event.charCode).toLowerCase();
+          if (event.timeStamp - this._lastKeyTime > MAX_KEY_DELAY) {
+            this._incrementalString = key;
+          }
+          else {
+            this._incrementalString += key;
+          }
+          this._lastKeyTime = event.timeStamp;
+
+          var incrementalString = this._incrementalString;
+
+          // Grab our special interface for the lookup.
+          var view =
+            this.view.QueryInterface(Components.interfaces.sbIMediaListViewTreeView);
+
+          var currentIndex = this.currentIndex;
+          var start = 1;
+
+          if (incrementalString.length > 1) {
+            start = 0;
+
+            if (currentIndex < 0) {
+              currentIndex = 0;
+            }
+          }
+
+          var index =
+            view.getNextRowIndexForKeyNavigation(incrementalString,
+                                                 currentIndex + start);
+
+          if (index == -1) {
+            index = view.getNextRowIndexForKeyNavigation(incrementalString, 0);
+          }
+          
+          return index;
+
+        ]]>
+        </body>
+      </method>
     </implementation>
 
+    <handlers>
+      <handler event="keypress" phase="capturing">
+        <![CDATA[
+        // This code originally comes from tree.xml from Mozilla.
+        // It had to be modified to allow handling of spaces while
+        // attempting to navigate within the filterlist. This makes
+        // this code incompatible with the original.
+        
+        if (event.originalTarget != this.tree)
+          return;
+        
+        if (this.tree._editingColumn)
+          return;
+
+        if (event.charCode == ' '.charCodeAt(0)) {
+         var c = this.currentIndex;
+         if (!this.tree.view.selection.isSelected(c) ||
+             (!this.tree.view.selection.single && this.tree._isAccelPressed(event))) {
+           this.tree.view.selection.toggleSelect(c);
+         }
+        }
+         
+        if (!this.tree.disableKeyNavigation && event.charCode > 0 &&
+            !event.altKey && !this.tree._isAccelPressed(event) &&
+            !event.metaKey && !event.ctrlKey) {
+          var l = this.tree._keyNavigate(event);
+          if (l >= 0) {
+            this.tree.view.selection.timedSelect(l, this._selectDelay);
+            this.tree.treeBoxObject.ensureRowIsVisible(l);
+          }
+          event.stopPropagation();
+        }
+        ]]>
+      </handler>
+    </handlers>
   </binding>
 
   <binding id="columnpicker" display="xul:button"
