@@ -29,21 +29,38 @@
 
 #include <nsIObserver.h>
 
-//
+
+//------------------------------------------------------------------------------
+// Pure virtual listener class for listening to pref changes.
+
+class sbMediaExportPrefListener
+{
+public:
+  NS_IMETHOD OnBoolPrefChanged(const nsAString & aPrefName,
+                               const PRBool aNewPrefValue) = 0;
+};
+
+//------------------------------------------------------------------------------
 // Utility class to abstract all the pref listening and management out of the
 // export media service.
-//
+
 class sbMediaExportPrefController : public nsIObserver
 {
 public:
   sbMediaExportPrefController();
   virtual ~sbMediaExportPrefController();
 
-  nsresult Init();
+  nsresult Init(sbMediaExportPrefListener *aListener);
   nsresult Shutdown();
 
+  // TODO: Delete these
+  // See bug 16185. 
   PRBool GetShouldProcessOnShutdown();
   PRBool GetShouldPorcessOnStartup();
+  
+  // Utility method, returns true if any media should be exported.
+  PRBool GetShouldExportAnyMedia();
+  
   PRBool GetShouldExportTracks();
   PRBool GetShouldExportPlaylists();
   PRBool GetShouldExportSmartPlaylists();
@@ -57,6 +74,8 @@ private:
   PRBool mShouldExportTracks;
   PRBool mShouldExportPlaylists;
   PRBool mShouldExportSmartPlaylists;
+
+  sbMediaExportPrefListener *mListener;  // weak
 };
 
 #endif  // sbMediaExportPrefController_h_

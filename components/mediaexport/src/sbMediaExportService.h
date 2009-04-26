@@ -56,7 +56,8 @@ class sbMediaExportService : public nsIClassInfo,
                              public nsIObserver,
                              public sbIMediaListListener,
                              public sbIMediaListEnumerationListener,
-                             public sbIShutdownJob
+                             public sbIShutdownJob,
+                             public sbMediaExportPrefListener
 {
 public:
   sbMediaExportService();
@@ -70,6 +71,10 @@ public:
                                 const char* aType,
                                 const nsModuleComponentInfo *aInfo);
 
+  // sbMediaExportPrefListener
+  NS_IMETHOD OnBoolPrefChanged(const nsAString & aPrefName,
+                               const PRBool aNewPrefValue);
+
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
@@ -81,9 +86,12 @@ public:
 protected:
   nsresult InitInternal();
   nsresult Shutdown();
+  nsresult StopListening();
   nsresult ListenToMediaList(sbIMediaList *aMediaList);
   nsresult GetShouldWatchMediaList(sbIMediaList *aMediaList, 
                                    PRBool *aShouldWatch);
+
+  nsresult BeginExportData();
 
 private:
   nsRefPtr<sbMediaExportPrefController>  mPrefController;
@@ -93,6 +101,9 @@ private:
   sbStringList                           mAddedMediaList;
   sbStringList                           mRemovedMediaLists;
   PRBool                                 mIsRunning;
+
+  // sbIJobProgress / sbIShutdownJob stuff:
+  nsCOMArray<sbIJobProgressListener> mJobListeners;
 };
 
 #endif  // sbMediaExportService_h_

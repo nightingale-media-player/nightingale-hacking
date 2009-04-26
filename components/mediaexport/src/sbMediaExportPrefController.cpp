@@ -42,6 +42,7 @@ sbMediaExportPrefController::sbMediaExportPrefController()
   , mShouldExportTracks(PR_FALSE)
   , mShouldExportPlaylists(PR_FALSE)
   , mShouldExportSmartPlaylists(PR_FALSE)
+  , mListener(nsnull)
 {
 }
 
@@ -50,7 +51,7 @@ sbMediaExportPrefController::~sbMediaExportPrefController()
 }
 
 nsresult
-sbMediaExportPrefController::Init()
+sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
 {
   TRACE(("%s: Initializing the mediaexport pref controller", __FUNCTION__));
 
@@ -81,6 +82,7 @@ sbMediaExportPrefController::Init()
                                PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mListener = aListener;
   return NS_OK;
 }
 
@@ -106,6 +108,7 @@ sbMediaExportPrefController::Shutdown()
   rv = prefBranch->RemoveObserver(PREF_EXPORT_SMARTPLAYLISTS, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mListener = nsnull;
   return NS_OK;
 }
 
@@ -150,6 +153,12 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
     mShouldExportSmartPlaylists = modifiedValue;
   }
 
+  if (mListener) {
+    rv = mListener->OnBoolPrefChanged(modifiedPref, modifiedValue);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "Could not notify of mediaexport pref change!");
+  }
+
   return NS_OK;
 }
 
@@ -163,6 +172,14 @@ PRBool
 sbMediaExportPrefController::GetShouldPorcessOnStartup()
 {
   return mShouldProcessOnStartup;
+}
+
+PRBool
+sbMediaExportPrefController::GetShouldExportAnyMedia()
+{
+  return mShouldExportTracks ||
+         mShouldExportPlaylists ||
+         mShouldExportSmartPlaylists;
 }
 
 PRBool

@@ -107,7 +107,7 @@ sbMediaExportService::Init()
   mPrefController = new sbMediaExportPrefController();
   NS_ENSURE_TRUE(mPrefController, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = mPrefController->Init();
+  rv = mPrefController->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -118,19 +118,8 @@ sbMediaExportService::InitInternal()
 {
   nsresult rv;
 
-  // No need to listen for the library manager ready notice
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Don't bother starting any listeners when the service should not run.
-  if (!mPrefController->GetShouldExportTracks() &&
-      !mPrefController->GetShouldExportPlaylists() && 
-      !mPrefController->GetShouldExportSmartPlaylists())
-  {
+  if (!mPrefController->GetShouldExportAnyMedia()) {
     return NS_OK;
   }
 
@@ -180,6 +169,17 @@ sbMediaExportService::Shutdown()
   rv = mPrefController->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  rv = StopListening();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaExportService::StopListening()
+{
+  nsresult rv;
+
   if (mIsRunning) {
     // Removing listener references from all the observed media lists.
     for (PRInt32 i = 0; i < mObservedMediaLists.Count(); i++) {
@@ -203,6 +203,39 @@ sbMediaExportService::Shutdown()
     }
 
     mObservedMediaLists.Clear();
+
+    // Clean up the exported data lists
+    mAddedItemsMap.clear();
+    mAddedMediaList.clear();
+    mRemovedMediaLists.clear();
+
+    mIsRunning = PR_FALSE;
+  }
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
+                                        const PRBool aNewPrefValue)
+{
+  LOG(("%s: '%s' pref changed : %s",
+        __FUNCTION__,
+        NS_ConvertUTF16toUTF8(aPrefName).get(),
+        (aNewPrefValue ? "true" : "false")));
+
+  nsresult rv;
+  
+  // If the user turned on some export prefs and the service is not running
+  // it is now time to start running.
+  if (!mIsRunning && mPrefController->GetShouldExportAnyMedia()) {
+    rv = InitInternal();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  // Shutdown if the service is currently running
+  else if (mIsRunning && !mPrefController->GetShouldExportAnyMedia()) {
+    rv = StopListening();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -328,6 +361,14 @@ sbMediaExportService::Observe(nsISupports *aSubject,
 {
   nsresult rv;
   if (strcmp(aTopic, SB_LIBRARY_MANAGER_READY_TOPIC) == 0) {
+    // No need to listen for the library manager ready notice
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_READY_TOPIC);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = InitInternal();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -595,7 +636,19 @@ NS_IMETHODIMP
 sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
 {
   NS_ENSURE_ARG_POINTER(aNeedsToRunTask);
-  *aNeedsToRunTask = PR_FALSE;
+  
+  // Only export data if there was any recorded activity.
+  if (mAddedItemsMap.size() > 0 || 
+      mAddedMediaList.size() > 0 ||
+      mRemovedMediaLists.size() > 0)
+  {
+    *aNeedsToRunTask = PR_TRUE;
+  }
+  else {
+    *aNeedsToRunTask = PR_FALSE;
+  }
+  
+  
   return NS_OK;
 }
 
