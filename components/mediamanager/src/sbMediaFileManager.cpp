@@ -27,6 +27,7 @@
 // Songbird includes
 #include "sbMediaFileManager.h"
 #include <sbIMediaItem.h>
+#include <sbIWatchFolderService.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
@@ -58,6 +59,35 @@ static PRLogModuleInfo* gMediaFileManagerLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
+
+/**
+ * \brief Helper class to ignore an item from watch folders while it's being
+ *        modified
+ */
+class sbMediaFileManagerUnwatchHelper {
+public:
+  sbMediaFileManagerUnwatchHelper(nsIFile* aFile)
+  {
+    nsresult rv;
+    mWatchFolderSvc =
+      do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    rv = aFile->GetPath(mFilePath);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    rv = mWatchFolderSvc->AddIgnorePath(mFilePath);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
+  ~sbMediaFileManagerUnwatchHelper()
+  {
+    if (mWatchFolderSvc && !mFilePath.IsEmpty()) {
+      nsresult rv = mWatchFolderSvc->RemoveIgnorePath(mFilePath);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+    }
+  }
+protected:
+  nsString mFilePath;
+  nsCOMPtr<sbIWatchFolderService> mWatchFolderSvc;
+};
 
 /**
  * \brief Constructor of the sbMediaFileManager component.
@@ -280,6 +310,8 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
   
   if (!isOrganized) {
+    sbMediaFileManagerUnwatchHelper srcHelper(itemFile),
+                                    destHelper(newFile);
     // Not managed so perform copy and/or rename
     rv = CopyRename(aMediaItem, itemFile, filename, path, aRetVal);
     NS_ENSURE_SUCCESS(rv, rv);
