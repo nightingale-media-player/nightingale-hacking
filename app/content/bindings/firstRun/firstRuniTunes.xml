@@ -43,9 +43,9 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
-   * First run import media widget.
+   * First run iTunes import/export library widget.
    *
-   *   This widget provides a first run import media UI.
+   *   This widget provides a first run iTunes import/export library UI.
    *
    * Methods:
    *
@@ -55,7 +55,7 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-first-run-import-media">
+  <binding id="sb-first-run-itunes">
 
     <!-- ***********************************************************************
      *
@@ -66,47 +66,37 @@
     <xbl:content
       xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-      <vbox anonid="container_box" class="sb-first-run-import-media-box">
+      <vbox anonid="container_box" class="sb-first-run-itunes-box">
 
         <!-- Header. -->
         <label class="sb-first-run-header"
-               value="&first_run.import_media.header.label;"/>
-        <description>&first_run.import_media.description;</description>
+               value="&first_run.itunes.header.label;"/>
+        <description>&first_run.itunes.description;</description>
 
-        <!-- Radio group. -->
-        <radiogroup anonid="import_radiogroup"
-                    oncommand="_doCommand(event);">
+		<groupbox anonid="itunes_groupbox">
 
-          <!-- Scan directories radio button. -->
-          <radio anonid="scan_directories_radio"
-                 value="scan_directories"
-                 label="&first_run.import_media.radio.scan_directories.label;"/>
+          <!-- Import from iTunes checkbox. -->
+          <checkbox anonid="itunes_import_checkbox"
+                 checked="false"
+                 oncommand="_doCommand(event);"
+                 label="&first_run.itunes.checkbox.import.label;"/>
           <description
-            class="indent sb-first-run-import-media-sub-radio can-disable"
-            parentradio="scan_directories_radio">
-            &first_run.import_media.scan_directories.description;
+            anonid="itunes_import_desc" 
+            class="indent sb-first-run-itunes-sub-checkbox">
+            &first_run.itunes.checkbox.import.description;
           </description>
-          <hbox class="indent">
-            <textbox anonid="scan_directory_textbox"
-                     class="sb-first-run-import-media-scan-directory-textbox"
-                     parentradio="scan_directories_radio"/>
-            <button label="&window.browse;"
-                    parentradio="scan_directories_radio"
-                    action="browse_scan_directory"/>
-          </hbox>
-          <checkbox
-            anonid="scan_directories_watch_checkbox"
-            class="indent sb-first-run-import-media-sub-radio"
-            label="&first_run.import_media.scan_directories.watch.label;"
-            parentradio="scan_directories_radio"
-            checked="true"/>
 
-          <!-- Don't import radio button. -->
-          <radio anonid="dont_import_radio"
-                 value="dont_import"
-                 label="&first_run.import_media.radio.dont_import.label;"/>
+          <!-- Export from iTunes radio button. -->
+          <checkbox anonid="itunes_export_checkbox"
+                 checked="false"
+                 label="&first_run.itunes.checkbox.export.label;"/>
+          <description
+            anonid="itunes_export_desc" 
+            class="indent sb-first-run-itunes-sub-checkbox">
+            &first_run.itunes.checkbox.export.description;
+          </description>
 
-        </radiogroup>
+        </groupbox>
 
       </vbox>
 
@@ -124,7 +114,7 @@
       <!--
        * Private fields.
        *
-       *   _widgetSvc           First-run import media widget services object.
+       *   _widgetSvc           First-run iTunes widget services object.
        -->
 
       <field name="_widgetSvc"/>
@@ -141,7 +131,7 @@
         this._importExternalServices();
 
         // Create a widget services object.
-        this._widgetSvc = new firstRunImportMediaSvc(this);
+        this._widgetSvc = new firstRuniTunesSvc(this);
 
         // Initialize the widget services.
         this._widgetSvc.initialize();
@@ -170,6 +160,7 @@
       ]]></body></method>
 
 
+
       <!--
        * Handle the command event specified by aEvent.
        *
@@ -179,9 +170,14 @@
       <method name="_doCommand">
         <parameter name="aEvent"/>
         <body><![CDATA[
-          this._widgetSvc.doCommand(aEvent);
+          // If the user opts to import their iTunes library, then skip the
+          // second Import Media wizardpage and go straight to the first-run
+          // add-ons page
+          if (aEvent.target.checked)
+            this.parentNode.setAttribute("next", "first_run_add_ons_page");
         ]]></body>
       </method>
+
 
 
       <!--
@@ -190,7 +186,7 @@
 
       <method name="_importExternalServices"><body><![CDATA[
         // Import the device control services.
-        if (typeof(firstRunImportMediaSvc) == "undefined") {
+        if (typeof(firstRuniTunesSvc) == "undefined") {
           var jsLoader;
 
           // Get the Javascript sub-script loader services.
@@ -198,14 +194,14 @@
                                .getService
                                   (Components.interfaces.mozIJSSubScriptLoader);
           jsLoader.loadSubScript("chrome://songbird/content/scripts/" +
-                                   "firstRun/firstRunImportMedia.js",
+                                   "firstRun/firstRuniTunes.js",
                                  null);
         }
       ]]></body></method>
 
     </implementation>
 
-  </binding> <!-- sb-first-run-import-media -->
+  </binding> <!-- sb-first-run-itunes -->
 
 </bindings>
 

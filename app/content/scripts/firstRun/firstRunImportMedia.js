@@ -94,16 +94,10 @@ firstRunImportMediaSvc.prototype = {
   // Widget services fields.
   //
   //   _widget                  First-run wizard import media widget.
-  //   _domEventListenerSet     Set of DOM event listeners.
-  //   _libraryImporter         Library importer object.
-  //   _metricsImportType       Import type to add to metrics.
   //   _watchFolderAvailable    True if watch folder services are available.
   //
 
   _widget: null,
-  _domEventListenerSet: null,
-  _libraryImporter: null,
-  _metricsImportType: "none",
   _watchFolderAvailable: false,
 
 
@@ -118,21 +112,6 @@ firstRunImportMediaSvc.prototype = {
    */
 
   initialize: function firstRunImportMediaSvc_initialize() {
-    // Create a DOM event listener set.
-    this._domEventListenerSet = new DOMEventListenerSet();
-
-    // Listen for first-run wizard connection reset events.
-    var _this = this;
-    var func = function() { return _this._doSaveComplete(); };
-    this._domEventListenerSet.add(firstRunWizard.wizardElem,
-                                  "FirstRunSaveComplete",
-                                  func,
-                                  false);
-
-    // Get the library importer.
-    this._libraryImporter = Cc["@songbirdnest.com/Songbird/ITunesImporter;1"]
-                              .getService(Ci.sbILibraryImporter);
-
     // Select the default scan directory.
     this._selectDefaultScanDirectory();
 
@@ -151,11 +130,6 @@ firstRunImportMediaSvc.prototype = {
    */
 
   finalize: function firstRunImportMediaSvc_finalize() {
-    // Remove DOM event listeners.
-    if (this._domEventListenerSet)
-      this._domEventListenerSet.removeAll();
-    this._domEventListenerSet = null;
-
     // Clear object fields.
     this._widget = null;
   },
@@ -168,19 +142,21 @@ firstRunImportMediaSvc.prototype = {
   saveSettings: function firstRunImportMediaSvc_saveSettings() {
     // Dispatch processing of the import settings radio group.
     var importRadioGroupElem = this._getElement("import_radiogroup");
+	var metricsImportType;
     switch (importRadioGroupElem.value) {
       case "scan_directories" :
         this._saveScanDirectoriesSettings();
-        break;
-
-      case "itunes" :
-        this._saveITunesImportSettings();
+        metricsImportType = "filescan";
         break;
 
       default :
-        this._metricsImportType = "none";
+        metricsImportType = "none";
         break;
     }
+    
+    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
+                    .createInstance(Ci.sbIMetrics);
+    metrics.metricsInc("firstrun", "mediaimport", metricsImportType);
   },
 
 
@@ -247,20 +223,6 @@ firstRunImportMediaSvc.prototype = {
   },
 
 
-  /**
-   * Handle the wizard save complete event specified by aEvent.
-   *
-   * \param aEvent              Wizard save complete event.
-   */
-
-  _doSaveComplete: function firstRunImportMediaSvc__doSaveComplete(aEvent) {
-    // Update first-run metrics after all wizard settings have been saved.
-    var metrics = Cc["@songbirdnest.com/Songbird/Metrics;1"]
-                    .createInstance(Ci.sbIMetrics);
-    metrics.metricsInc("firstrun", "mediaimport", this._metricsImportType);
-  },
-
-
   //----------------------------------------------------------------------------
   //
   // Internal widget services.
@@ -315,19 +277,6 @@ firstRunImportMediaSvc.prototype = {
             this._getElement("scan_directories_watch_checkbox");
       scanDirectoriesWatchCheckBox.hidden = true;
     }
-
-    // If an iTunes library file is present, enable the iTunes import option;
-    // otherwise, disable it.
-    var iTunesRadioElem = this._getElement("itunes_radio");
-    var iTunesRadioDescElem = this._getElement("itunes_radio_desc");
-    if (this._libraryImporter.libraryDefaultFilePath) {
-      iTunesRadioElem.disabled = false;
-      iTunesRadioDescElem.disabled = false;
-    }
-    else {
-      iTunesRadioElem.disabled = true;
-      iTunesRadioDescElem.disabled = true;
-    }
   },
 
 
@@ -362,34 +311,6 @@ firstRunImportMediaSvc.prototype = {
                                    scanDirectoryPath);
       }
     }
-
-    // Set the selected media import type for metrics collection.
-    this._metricsImportType = "filescan";
-  },
-
-
-  /**
-   * Save the iTunes import user settings.
-   */
-
-  _saveITunesImportSettings:
-    function firstRunImportMediaSvc__saveITunesImportSettings() {
-    // Get the iTunes import settings.
-    var syncLibraryCheckbox =
-          this._getElement("itunes_keep_in_sync_checkbox");
-    var autoImportEnabled = syncLibraryCheckbox.checked;
-    var importLibraryFilePath = this._libraryImporter.libraryDefaultFilePath;
-
-    // Save the iTunes import settings.
-    Application.prefs.setValue("songbird.library_importer.auto_import",
-                               autoImportEnabled);
-    Application.prefs.setValue
-                        ("songbird.library_importer.library_file_path",
-                         importLibraryFilePath);
-    Application.prefs.setValue("songbird.firstrun.do_import_library", true);
-
-    // Set the selected media import type for metrics collection.
-    this._metricsImportType = "itunes";
   },
 
 

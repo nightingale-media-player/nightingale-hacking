@@ -91,6 +91,17 @@ Additional styles imported directly by the first run dialog.
 .sb-first-run-feedback-email-box {
 }
 
+/* iTunes import/export page styles */
+.sb-first-run-itunes-box {
+  -moz-box-flex: 1;
+}
+
+.sb-first-run-itunes-sub-checkbox {
+  font-size: smaller;
+  margin-top: 0;
+}
+
+
 /* Import media page styles. */
 radiogroup {
   margin-top:8px;
@@ -202,6 +213,10 @@ sb-first-run-eula {
 
 sb-first-run-feedback {
   -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRunFeedback.xml#sb-first-run-feedback");
+}
+
+sb-first-run-itunes {
+  -moz-binding: url("chrome://songbird/content/bindings/firstRun/firstRuniTunes.xml#sb-first-run-itunes");
 }
 
 sb-first-run-import-media {

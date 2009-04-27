@@ -80,13 +80,24 @@
   <!-- Welcome page. -->
   <wizardpage id="first_run_welcome_page"
               pageid="first_run_welcome_page"
-              next="first_run_import_media_page"
+              next="first_run_itunes_page"
               label="&first_run.title;"
               hideback="true"
               onpageshow="firstRunWizard.doPageShow();">
     <sb-first-run-welcome id="first_run_welcome"
                           class="first-run-wizard-page"
                           firstrunwizardpage="true"/>
+  </wizardpage>
+
+  <!-- iTunes import/export page. -->
+  <wizardpage id="first_run_itunes_page"
+              pageid="first_run_itunes_page"
+              next="first_run_import_media_page"
+              label="&first_run.title;"
+              onpageshow="firstRunWizard.doPageShow();">
+    <sb-first-run-itunes id="first_run_itunes"
+                               class="first-run-wizard-page"
+                               firstrunwizardpage="true"/>
   </wizardpage>
 
   <!-- Import media page. -->

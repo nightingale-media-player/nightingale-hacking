@@ -480,16 +480,21 @@
 <!ENTITY first_run.feedback.email.description       "Subscribe to our newsletter to hear about new releases and important updates.">
 <!ENTITY first_run.feedback.email.textbox.emptytext "enter your email to stay up-to-date">
 
+<!-- First-run iTunes import/export entities. -->
+<!ENTITY first_run.itunes.header.label                  "iTunes Import/Export">
+<!ENTITY first_run.itunes.description                   "It appears you have iTunes installed. &brandShortName; can be configured to import and/or export tracks between &brandShortName; and iTunes so that your libraries are in sync.">
+<!ENTITY first_run.itunes.checkbox.import.label         "Import tracks and playlists from iTunes">
+<!ENTITY first_run.itunes.checkbox.import.description   "Podcasts and music purchased from the iTunes Store can be imported into Songbird.  This feature works well if Songbird is going to be your primary music player.">
+<!ENTITY first_run.itunes.checkbox.export.label         "Export new tracks and playlists to iTunes">
+<!ENTITY first_run.itunes.checkbox.export.description   "Music acquired through Songbird can be exported to iTunes so that it can be transferred to your iPod or iPhone.">
+
 <!-- First-run import media entities. -->
 <!ENTITY first_run.import_media.header.label                 "Import Media">
 <!ENTITY first_run.import_media.description                  "Select what media you'd like to import into &brandShortName;. Once &brandShortName; launches you can add additional media in a variety of ways.">
-<!ENTITY first_run.import_media.radio.itunes.label           "Import my iTunes Library">
 <!ENTITY first_run.import_media.radio.scan_directories.label "Scan directories on my computer">
 <!ENTITY first_run.import_media.radio.dont_import.label      "Do not import media">
-<!ENTITY first_run.import_media.itunes.description           "It appears you have iTunes installed. Would you like to import your library into &brandShortName;?">
-<!ENTITY first_run.import_media.itunes.keep_in_sync.label    "Keep &brandShortName; up-to-date with changes to my iTunes library">
 <!ENTITY first_run.import_media.scan_directories.description "Would you like &brandShortName; to attempt to import media by scanning specific directories on your computer?">
-<!ENTITY first_run.import_media.scan_directories.watch.label "Watch this folder for changes">
+<!ENTITY first_run.import_media.scan_directories.watch.label "Watch this directory for changes">
 
 <!-- First-run install add-ons entities. -->
 <!ENTITY first_run.install_add_ons.title "Downloading Add-ons">
