@@ -135,7 +135,7 @@ var manageMediaPrefsPane = {
    */
 
   doBrowseCommand: function manageMediaPrefsPane_doBrowseCommand(aEvent) {
-    const title = SBString("prefs.manageMedia.browse.title");
+    const title = SBString("prefs.media_management.browse.title");
     var folderPicker = Cc["@mozilla.org/filepicker;1"]
                          .createInstance(Ci.nsIFilePicker);
     folderPicker.init(window, title, Ci.nsIFilePicker.modeGetFolder);
