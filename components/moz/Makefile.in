@@ -37,6 +37,7 @@ SUBDIRS = strings \
           prompter \
           proxy \
           temporaryfileservice \
+          threadpoolservice \
           threads \
           urlformatter \
           variant \

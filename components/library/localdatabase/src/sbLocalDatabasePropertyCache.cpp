@@ -65,6 +65,7 @@
 #include <sbIPropertyArray.h>
 #include "sbLocalDatabaseSQL.h"
 #include <sbIDatabaseQuery.h>
+#include <sbThreadPoolService.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -92,7 +93,7 @@ PRLogModuleInfo *gLocalDatabasePropertyCacheLog = nsnull;
 #define SORTINVALIDATE_TIMER_PERIOD  50
 
 #define NS_XPCOM_SHUTDOWN_THREADS_OBSERVER_ID "xpcom-shutdown-threads"
-#define NS_FINAL_UI_STARTUP_OBSERVER_ID     "final-ui-startup"
+#define NS_FINAL_UI_STARTUP_OBSERVER_ID       "final-ui-startup"
 
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
@@ -102,8 +103,6 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 : mWritePendingCount(0),
   mCache(sbLocalDatabasePropertyCache::CACHE_SIZE),
-  mIsShuttingDown(PR_FALSE),
-  mFlushThreadMonitor(nsnull),
   mMonitor(nsnull),
   mLibrary(nsnull),
   mSortInvalidateJob(nsnull)
@@ -120,9 +119,6 @@ sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
   if (mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
-  }
-  if (mFlushThreadMonitor) {
-    nsAutoMonitor::DestroyMonitor(mFlushThreadMonitor);
   }
 
   MOZ_COUNT_DTOR(sbLocalDatabasePropertyCache);
@@ -165,20 +161,16 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
   PRBool success = mDirty.Init(CACHE_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<nsIThreadManager> threadMan =
-    do_GetService(NS_THREADMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mFlushThreadMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mFlushThreadMonitor");
-  NS_ENSURE_TRUE(mFlushThreadMonitor, NS_ERROR_OUT_OF_MEMORY);
-  rv = threadMan->NewThread(0, getter_AddRefs(mFlushThread) );
+  mThreadPoolService = do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, this, RunFlushThread);
-  NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
-  rv = mFlushThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  mFlushTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("started background thread"));
+
+  rv = mFlushTimer->Init(this, 
+                         SB_LOCALDATABASE_CACHE_FLUSH_DELAY, 
+                         nsITimer::TYPE_REPEATING_SLACK);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mLibrary = aLibrary;
 
@@ -284,17 +276,9 @@ sbLocalDatabasePropertyCache::Shutdown()
   
   nsresult rv = NS_OK;
 
-  if (mFlushThread) {
-    {
-      // tell the flush thread to finish
-      nsAutoMonitor mon(mFlushThreadMonitor);
-      mIsShuttingDown = PR_TRUE;
-      mon.Notify();
-    }
-
-    // let the thread join
-    mFlushThread->Shutdown();
-    mFlushThread = nsnull;
+  if(mFlushTimer) {
+    rv = mFlushTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // If we were in the middle of rebuilding all the sort info
@@ -1258,6 +1242,9 @@ sbLocalDatabasePropertyCache::Observe(nsISupports* aSubject,
       mSortInvalidateJob->Shutdown();
       mSortInvalidateJob = nsnull;
     }
+  } else if (strcmp(aTopic, NS_TIMER_CALLBACK_TOPIC) == 0) {
+    rv = DispatchFlush();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1267,7 +1254,6 @@ NS_IMETHODIMP
 sbLocalDatabasePropertyCache::InvalidateSortData(sbIJobProgress** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(!mIsShuttingDown, NS_ERROR_FAILURE);
   NS_ENSURE_TRUE(!mSortInvalidateJob, NS_ERROR_ALREADY_INITIALIZED);
   nsresult rv = NS_OK;
 
@@ -1335,27 +1321,33 @@ sbLocalDatabasePropertyCache::GetSetInvalidSortDataPref(
   return rv;
 }
 
+nsresult
+sbLocalDatabasePropertyCache::DispatchFlush() 
+{
+  PRUint32 dirtyCount = 0;
+  
+  {
+    nsAutoMonitor mon(mMonitor);
+    dirtyCount = mDirty.Count();
+  }
+
+  if (dirtyCount) {
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbLocalDatabasePropertyCache, this, RunFlushThread);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+    
+    nsresult rv = mThreadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    LOG(("property cache flush operation dispatched"));
+  }
+}
+
 void
 sbLocalDatabasePropertyCache::RunFlushThread()
 {
-  const PRIntervalTime timeout =
-    PR_MillisecondsToInterval(SB_LOCALDATABASE_CACHE_FLUSH_DELAY);
-  while (PR_TRUE) {
-    nsAutoMonitor mon(mFlushThreadMonitor);
-    nsresult rv = mon.Wait(timeout);
-    if (NS_FAILED(rv)) {
-      // some other thread has acquired the monitor while the timeout expired
-      // don't write, go back and try to re-acquire the monitor
-      continue;
-    }
-    if (mIsShuttingDown) {
-      // shutting down, stop this thread
-      // (flush will happen on main thread in Shutdown())
-      break;
-    }
-    rv = Write();
-    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to flush property cache; will retry");
-  }
+  nsresult rv = Write();
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to flush property cache; will retry");
 }
 
 nsresult

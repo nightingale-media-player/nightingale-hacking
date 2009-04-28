@@ -37,6 +37,7 @@
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
 #include <nsIThread.h>
+#include <nsIThreadPool.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
@@ -63,7 +64,7 @@ class sbIPropertyManager;
 class sbLocalDatabaseSortInvalidateJob;
 
 class sbLocalDatabasePropertyCache: public sbILocalDatabasePropertyCache,
-    public nsIObserver
+                                    public nsIObserver
 {
 public:
   friend class sbLocalDatabaseResourcePropertyBag;
@@ -191,6 +192,7 @@ private:
     nsCOMPtr<sbIDatabaseQuery> query;
     PRUint32 dirtyGuidCount;
   };
+  nsresult DispatchFlush();
   void RunFlushThread();
 
   static
@@ -199,9 +201,9 @@ private:
   // The GUID of the library resource
   nsString mLibraryResourceGUID;
 
-  PRBool mIsShuttingDown;
-  nsCOMPtr<nsIThread> mFlushThread;
-  PRMonitor* mFlushThreadMonitor;
+  // Cache Flush Interval Timer
+  nsCOMPtr<nsITimer> mFlushTimer;
+  nsCOMPtr<nsIThreadPool> mThreadPoolService;
 
   // Backstage pass to our parent library. Can't use an nsRefPtr because the
   // library owns us and that would create a cycle.

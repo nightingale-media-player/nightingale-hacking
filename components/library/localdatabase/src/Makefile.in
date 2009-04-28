@@ -112,6 +112,7 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(topsrcdir)/components/library/base/src/static \
                $(topsrcdir)/components/library/localdatabase/src \
                $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threadpoolservice/src \
                $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/sqlbuilder/src \
