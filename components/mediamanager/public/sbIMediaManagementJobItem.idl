@@ -25,38 +25,35 @@
 */
 
 /**
- * \file sbIMediaManagementJob.idl
- * \brief Definition of the sbIMediaManagementJob interface
+ * \file sbIMediaManagementJobItem.idl
+ * \brief An item holding information from a sbIMediaManagementJob
  */
 
 #include "nsISupports.idl"
-#include "sbIJobProgress.idl"
 
+interface nsIFile;
 interface sbIMediaItem;
 
-[scriptable, uuid(12a0707e-1dd2-11b2-bd17-fa3f7aa7f25b)]
-interface sbIMediaManagementJob : sbIJobProgress
+/**
+ * an item that would be organized by a sbIMediaManagementJob
+ */
+[scriptable, uuid(53b000f8-1dd2-11b2-91ce-f4ad2bc783d6)]
+interface sbIMediaManagementJobItem : nsISupports
 {
   /**
-   * Initialze the media management job by preparing to act upon a particular
-   * media list
-   * \param aMediaList the media list to organize
+   * the media item that would be managed
    */
-  void init(in sbIMediaList aMediaList);
-
+  readonly attribute sbIMediaItem item;
+  
   /**
-   * This will scan the list and organize the files based on the preferences,
-   * only if the file is already located in the media library folder.
-   * \see init();
+   * the path that the item would be copied or moved to
    */
-  void organizeMediaList();
+  readonly attribute nsIFile targetPath;
+  
+  /**
+   * the action that would be taken to manage the item; the value is a
+   * combination of the MANAGE_* constants in sbIMediaFileManager
+   * \see sbIMediaFileManager
+   */
+  readonly attribute unsigned short action;
 };
-
-//
-// C++ defs.
-//
-
-%{C++
-#define SB_MEDIAMANAGEMENTJOB_CONTRACTID \
-          "@songbirdnest.com/Songbird/media-manager/job;1"
-%}C++

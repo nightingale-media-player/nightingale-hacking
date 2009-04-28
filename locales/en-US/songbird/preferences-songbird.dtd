@@ -1,5 +1,6 @@
 <!-- Songbird-specific preferences entities -->
 
+<!-- Media Management entities -->
 <!ENTITY prefWindow.manageMedia.label                 "Manage Music">
 <!ENTITY prefWindow.manageMedia.title                 "Manage Music">
 <!ENTITY prefWindow.manageMedia.library.label         "Music Library">
@@ -14,3 +15,8 @@
 <!ENTITY prefWindow.manageMedia.enable.enable.label   "Turn Managed Mode On">
 <!ENTITY prefWindow.manageMedia.enable.disable.label  "Turn Managed Mode Off">
 <!ENTITY prefWindow.manageMedia.enable.description    "You will be shown a preview before your files are moved or renamed.">
+
+<!-- Media Management preview entities -->
+<!ENTITY prefWindow.manageMedia.preview.title         "Manage Media Preview">
+<!ENTITY prefWindow.manageMedia.preview.more.label    "More...">
+<!ENTITY prefWindow.manageMedia.preview.reveal.label  "Show Source File...">

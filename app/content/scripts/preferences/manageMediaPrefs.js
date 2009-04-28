@@ -38,8 +38,10 @@
 //------------------------------------------------------------------------------
 
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm"); 
 Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 //------------------------------------------------------------------------------
@@ -106,8 +108,28 @@ var manageMediaPrefsPane = {
       // dialog is closing, apply any preferences that should never instant-apply
       var mediaMgmtSvc = Cc["@songbirdnest.com/Songbird/media-manager-service;1"]
                            .getService(Ci.sbIMediaManagementService);
-      mediaMgmtSvc.isEnabled = document.getElementById("manage_media_pref_library_enable")
-                                       .value;
+      // if we want to toggle global enable, show a preview
+      var enablePrefElem =
+        document.getElementById("manage_media_pref_library_enable");
+      if (!mediaMgmtSvc.isEnabled && enablePrefElem.value) {
+        // show the preview
+        var accepted =
+          WindowUtils.openModalDialog(window,
+                                      "chrome://songbird/content/xul/manageMediaPreview.xul",
+                                      "manage_media_preview_dialog",
+                                      "chrome,centerscreen",
+                                      [LibraryUtils.mainLibrary],
+                                      null);
+        if (!accepted) {
+          // cancelled the dialog; force write the pref
+          enablePrefElem.valueFromPreferences = mediaMgmtSvc.isEnabled;
+          enablePrefElem.value = mediaMgmtSvc.isEnabled;
+          event.preventDefault();
+          self._checkForValidPref(true);
+          return false;
+        }
+      }
+      mediaMgmtSvc.isEnabled = enablePrefElem.value;
 
       return true;
     }
