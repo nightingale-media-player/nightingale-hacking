@@ -57,25 +57,37 @@ var SB_MM_PREF_FMTFILE = "songbird.media_management.library.format.file";
 var gResultInformation = [
   { originalFileName: "TestFile1.mp3",
     expectedFileName: "1 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics" },
+    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
   { originalFileName: "TestFile2.mp3",
     expectedFileName: "2 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics" },
+    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
   { originalFileName: "TestFile3.mp3",
     expectedFileName: "3 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unit Test Classics" },
+    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
 
   { originalFileName: "TestFile4.mp3",
     expectedFileName: "1 - TestFile4.mp3.mp3",
-    expectedFolder:   "Managed/Unknown Artist/Unknown Album" },
+    expectedFolder:   "Managed/Unknown Artist/Unknown Album",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
 
   { originalFileName: "TestFile5.mp3",
     expectedFileName: "1 - Sample.mp3",
-    expectedFolder:   "Managed/Songbird/Unknown Album" },
+    expectedFolder:   "Managed/Songbird/Unknown Album",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
 
   { originalFileName: "TestFile6.mp3",
     expectedFileName: "1 - Sample.mp3",
-    expectedFolder:   "Managed/Unknown Artist/Unit Test Classics" }
+    expectedFolder:   "Managed/Unknown Artist/Unit Test Classics",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_MOVE |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME }
 ];
 
 // Keep a copy of the original prefs so we don't screw anything up
