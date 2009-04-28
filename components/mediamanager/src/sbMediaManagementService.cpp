@@ -665,7 +665,10 @@ sbMediaManagementService::ScanLibrary()
   rv = mLibraryScanJob->AddJobProgressListener(this);
   NS_ENSURE_SUCCESS(rv, /* void */);
   
-  rv = mLibraryScanJob->OrganizeMediaList(mLibrary);
+  rv = mLibraryScanJob->Init(mLibrary);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  
+  rv = mLibraryScanJob->OrganizeMediaList();
   NS_ENSURE_SUCCESS(rv, /* void */);
   
   rv = mJobProgressSvc->ShowProgressDialog(mLibraryScanJob,
@@ -702,7 +705,8 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   
   if (mLibraryScanJob) {
-    TRACE(("%s: item changed, not setting timer due to library scan job"));
+    TRACE(("%s: item changed, not setting timer due to library scan job",
+           __FUNCTION__));
     return NS_OK;
   }
 

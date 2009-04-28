@@ -203,6 +203,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
 
   if (aManageType == 0) {
     // No action was requested, fail altogether
+    TRACE(("%s - no action requested (%04x)", __FUNCTION__, aManageType));
     return NS_ERROR_INVALID_ARG;
   }
   
@@ -288,6 +289,16 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem *aMediaItem,
 
   nsString filename;
   nsString path;
+
+  #if PR_LOGGING
+    rv = itemFile->GetPath(path);
+    if (NS_FAILED(rv)) {
+      path.AssignLiteral("<failed>");
+    }
+    TRACE(("%s: source path is [%s]",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(path).get()));
+  #endif /* PR_LOGGING */
   
   rv = newFile->GetLeafName(filename);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -700,6 +711,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
     if (equals) {
       // yes, skip copying but don't report an error
+      TRACE(("%s - Skipping copy because old path equals new path [%s] [%s]",
+             __FUNCTION__,
+             NS_ConvertUTF16toUTF8(aPath).get(),
+             NS_ConvertUTF16toUTF8(aFilename).get()));
       *aRetVal = PR_TRUE;
       return NS_OK;
     }
@@ -711,6 +726,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
     
     if (exists) {
       *aRetVal = PR_FALSE;
+      TRACE(("%s - Skipping copy because target file [%s] [%s] exists",
+             __FUNCTION__,
+             NS_ConvertUTF16toUTF8(aPath).get(),
+             NS_ConvertUTF16toUTF8(aFilename).get()));
       return NS_OK;
     }
     
@@ -731,6 +750,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
     PRBool equals = oldFilename.Equals(aFilename);
     #endif
     if (equals) {
+      TRACE(("%s - Skipping renaming because target file [%s] [%s] has correct name",
+             __FUNCTION__,
+             NS_ConvertUTF16toUTF8(aPath).get(),
+             NS_ConvertUTF16toUTF8(aFilename).get()));
       *aRetVal = PR_TRUE;
       return NS_OK;
     }
@@ -755,6 +778,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
     
     if (exists) {
       *aRetVal = PR_FALSE;
+      TRACE(("%s - Skipping rename because target file [%s] [%s] exists",
+             __FUNCTION__,
+             NS_ConvertUTF16toUTF8(aPath).get(),
+             NS_ConvertUTF16toUTF8(aFilename).get()));
       return NS_OK;
     }
     

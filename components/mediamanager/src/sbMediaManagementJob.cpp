@@ -67,14 +67,76 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 
+class sbMediaManagementJobItem : public sbIMediaManagementJobItem
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIAMANAGEMENTJOBITEM
+  
+  sbMediaManagementJobItem(sbIMediaItem*, nsIFile*, PRUint16);
+  ~sbMediaManagementJobItem();
+protected:
+  nsCOMPtr<sbIMediaItem> mItem;
+  nsCOMPtr<nsIFile> mTargetPath;
+  PRUint16 mAction;
+};
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbMediaManagementJobItem,
+                              sbIMediaManagementJobItem)
+
+sbMediaManagementJobItem::sbMediaManagementJobItem(sbIMediaItem* aItem,
+                                                   nsIFile* aTargetPath,
+                                                   PRUint16 aAction)
+  : mItem(aItem),
+    mTargetPath(aTargetPath),
+    mAction(aAction)
+{
+}
+
+sbMediaManagementJobItem::~sbMediaManagementJobItem()
+{
+}
+
+/* readonly attribute sbIMediaItem item; */
+NS_IMETHODIMP
+sbMediaManagementJobItem::GetItem(sbIMediaItem * *aItem)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_IF_ADDREF(*aItem = mItem);
+  return NS_OK;
+}
+
+/* readonly attribute nsIFile targetPath; */
+NS_IMETHODIMP
+sbMediaManagementJobItem::GetTargetPath(nsIFile * *aTargetPath)
+{
+  NS_ENSURE_ARG_POINTER(aTargetPath);
+  NS_IF_ADDREF(*aTargetPath = mTargetPath);
+  return NS_OK;
+}
+
+/* readonly attribute unsigned short action; */
+NS_IMETHODIMP
+sbMediaManagementJobItem::GetAction(PRUint16 *aAction)
+{
+  NS_ENSURE_ARG_POINTER(aAction);
+  *aAction = mAction;
+  return NS_OK;
+}
+
 NS_IMPL_THREADSAFE_ADDREF(sbMediaManagementJob)
 NS_IMPL_THREADSAFE_RELEASE(sbMediaManagementJob)
-NS_IMPL_QUERY_INTERFACE5_CI(sbMediaManagementJob,
-                            sbIMediaManagementJob,
-                            sbIJobProgress,
-                            sbIJobProgressUI,
-                            sbIJobCancelable,
-                            nsITimerCallback)
+NS_INTERFACE_MAP_BEGIN(sbMediaManagementJob)
+  NS_INTERFACE_MAP_ENTRY(sbIMediaManagementJob)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(sbIJobProgress, sbIMediaManagementJob)
+  NS_INTERFACE_MAP_ENTRY(sbIJobProgressUI)
+  NS_INTERFACE_MAP_ENTRY(sbIJobCancelable)
+  NS_INTERFACE_MAP_ENTRY(nsISimpleEnumerator)
+  NS_INTERFACE_MAP_ENTRY(nsITimerCallback)
+  NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIMediaManagementJob)
+  NS_IMPL_QUERY_CLASSINFO(sbMediaManagementJob)
+NS_INTERFACE_MAP_END
+
 NS_IMPL_CI_INTERFACE_GETTER5(sbMediaManagementJob,
                              sbIMediaManagementJob,
                              sbIJobProgress,
@@ -166,7 +228,7 @@ sbMediaManagementJob::UpdateProgress()
   }
 
   for (PRInt32 i = mListeners.Count() - 1; i >= 0; --i) {
-    mListeners[i]->OnJobProgress(this);
+    mListeners[i]->OnJobProgress(static_cast<sbIJobProgress*>(static_cast<sbIMediaManagementJob*>(this)));
   }
 }
 
@@ -213,29 +275,36 @@ sbMediaManagementJob::ProcessNextItem()
   TRACE(("sbMediaManagementJob[0x%.8x] - ProcessNextItem", this));
   nsresult rv;
 
-  // Get the next item
-  nsCOMPtr<sbIMediaItem> nextItem;
-  rv = mMediaList->GetItemByIndex(mCompletedItemCount,
-                                  getter_AddRefs(nextItem));
-  // This is a serious error
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mNextJobItem) {
+    rv = ProcessItem(mNextJobItem);
+    if (NS_FAILED(rv)) {
+      #if PR_LOGGING
+        nsresult __rv = rv;
+        NS_ENSURE_SUCCESS_BODY(rv, rv);
+      #endif
+      SaveError(rv);
+    }
+    
+    UpdateProgress();
 
-  rv = ProcessItem(nextItem);
-  if (NS_FAILED(rv)) {
-    SaveError(rv);
+    rv = FindNextItem(getter_AddRefs(mNextJobItem));
+    if (NS_FAILED(rv)) {
+      #if PR_LOGGING
+        nsresult __rv = rv;
+        NS_ENSURE_SUCCESS_BODY(rv, rv);
+      #endif
+      SaveError(rv);
+    }
   }
   
-  // Increment our counter and check our status
-  mCompletedItemCount++;
-  if (mCompletedItemCount >= mTotalItemCount) {
-    if ((mErrorMap.size()) > 0) {
+  // check our status
+  if (mCompletedItemCount > mTotalItemCount || !mNextJobItem) {
+    if (!mErrorMap.empty()) {
       mStatus = sbIJobProgress::STATUS_FAILED;
     } else {
       mStatus = sbIJobProgress::STATUS_SUCCEEDED;
     }
-    UpdateProgress();
   } else {
-    UpdateProgress();
 
     // Start up the interval timer that will process the next item, if it has
     // not been cancelled
@@ -246,90 +315,27 @@ sbMediaManagementJob::ProcessNextItem()
       NS_ENSURE_SUCCESS(rv, rv);
     }
   }
+  UpdateProgress();
   
   return NS_OK;
 }
 
 nsresult
-sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
+sbMediaManagementJob::ProcessItem(sbMediaManagementJobItem* aJobItem)
 {
   TRACE(("sbMediaManagementJob[0x%.8x] - ProcessItem", this));
-  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(aJobItem);
   nsresult rv;
   
-  nsString propValue;
-  nsString propHidden;
-  nsString propIsList;
-  
-  propHidden.AssignLiteral(SB_PROPERTY_HIDDEN);
-  propIsList.AssignLiteral(SB_PROPERTY_ISLIST);
-    
-  PRBool isHidden =
-    (NS_SUCCEEDED(aItem->GetProperty(propHidden, propValue)) &&
-     propValue.EqualsLiteral("1"));
-  PRBool isList =
-    (NS_SUCCEEDED(aItem->GetProperty(propIsList, propValue)) &&
-     propValue.EqualsLiteral("1"));
-
-  if (isHidden || isList) {
-    // We don't organize lists or hidden items
-    return NS_OK;
-  }
-
-  nsCOMPtr<nsIURI> itemUri;
-  rv = aItem->GetContentSrc(getter_AddRefs(itemUri));
-  NS_ENSURE_SUCCESS (rv, rv);
-  
-  // Get an nsIFileURL object from the nsIURI
-  nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
-  // If this is not a file then just return to go on to the next item
-  NS_ENSURE_SUCCESS(rv, NS_ERROR_FILE_UNRECOGNIZED_PATH);
-
-  // Get the file object
-  nsCOMPtr<nsIFile> itemFile;
-  rv = fileUrl->GetFile(getter_AddRefs(itemFile));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Update the progress for the user
-  UpdateProgress();
-
-  PRBool isInMediaFolder = PR_FALSE;
-  rv = mMediaFolder->Contains(itemFile, PR_FALSE, &isInMediaFolder);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 manageType = 0;
-  if (mShouldMoveFiles) {
-    // Move files so that they are in the correct folder structure
-    manageType = manageType | sbIMediaFileManager::MANAGE_MOVE;
-    TRACE(("sbMediaManagementJob - Adding MANAGE_MOVE"));
-  }
-  if (mShouldRenameFiles) {
-    // Rename files so they have the correct filename
-    manageType = manageType | sbIMediaFileManager::MANAGE_RENAME;
-    TRACE(("sbMediaManagementJob - Adding MANAGE_RENAME"));
-  }
-  if (!isInMediaFolder && mShouldCopyFiles) {
-    // Copy files to the media folder if not already there
-    manageType = manageType | sbIMediaFileManager::MANAGE_COPY;
-    TRACE(("sbMediaManagementJob - Adding MANAGE_COPY"));
-  }
-  // Check if there is anything to do for this item
-  if (manageType == 0) {
-    TRACE(("sbMediaManagementJob - No need to organize this file."));
-    return NS_OK;
-  }
-  
-  // Get the managed path for status display
   nsCOMPtr<nsIFile> targetFile;
-  rv = mMediaFileManager->GetManagedPath(aItem,
-                                         manageType,
-                                         getter_AddRefs(targetFile));
+  rv = aJobItem->GetTargetPath(getter_AddRefs(targetFile));
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Generate the status text
   nsString targetFilePath;
   rv = targetFile->GetPath(targetFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
+  PRBool isInMediaFolder;
   rv = mMediaFolder->Contains(targetFile, PR_TRUE, &isInMediaFolder);
   if (NS_FAILED(rv)) {
     isInMediaFolder = PR_FALSE;
@@ -354,10 +360,18 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
   rv = NS_GetMainThread(getter_AddRefs(mainThread));
   NS_ENSURE_SUCCESS(rv, rv);
   
+  nsCOMPtr<sbIMediaItem> item;
+  rv = aJobItem->GetItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRUint16 manageType;
+  rv = aJobItem->GetAction(&manageType);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   nsCOMPtr<sbIMediaItem> proxiedItem;
   rv = do_GetProxyForObject(mainThread,
                             NS_GET_IID(sbIMediaItem),
-                            aItem,
+                            item,
                             NS_PROXY_SYNC,
                             getter_AddRefs(proxiedItem));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -372,12 +386,147 @@ sbMediaManagementJob::ProcessItem(sbIMediaItem* aItem)
   NS_ENSURE_SUCCESS(rv, rv);
   if (!organizedItem)
   {
+    #if PR_LOGGING
+      LOG(("%s - Gracefully? failed to organize item [%s]",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(targetFilePath).get()));
+    #endif
     SaveError(NS_ERROR_FILE_COPY_OR_MOVE_FAILED);
   }
 
   return NS_OK;
 }
 
+nsresult
+sbMediaManagementJob::FindNextItem(sbMediaManagementJobItem** _retval)
+{
+  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  TRACE(("sbMediaManagementJob[0x%.8x] - FindNextItem", this));
+  nsresult rv;
+
+  while (PR_TRUE) {
+    if (!(mCompletedItemCount < mTotalItemCount)) {
+      *_retval = nsnull;
+      return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+    }
+    // Get the next item
+    nsCOMPtr<sbIMediaItem> nextItem;
+    rv = mMediaList->GetItemByIndex(mCompletedItemCount,
+                                    getter_AddRefs(nextItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    mCompletedItemCount++;
+  
+    nsString propValue;
+    
+    NS_NAMED_LITERAL_STRING(PROP_HIDDEN, SB_PROPERTY_HIDDEN);
+      
+    PRBool isHidden =
+      (NS_SUCCEEDED(nextItem->GetProperty(PROP_HIDDEN, propValue)) &&
+       propValue.EqualsLiteral("1"));
+    nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(nextItem);
+  
+    if (isHidden || itemAsList) {
+      // We don't organize lists or hidden items, try the next one
+      continue;
+    }
+
+    nsCOMPtr<nsIURI> itemUri;
+    rv = nextItem->GetContentSrc(getter_AddRefs(itemUri));
+    NS_ENSURE_SUCCESS (rv, rv);
+  
+    // Get an nsIFileURL object from the nsIURI
+    nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
+    // If this is not a file then just return to go on to the next item
+    if (NS_FAILED(rv) || !fileUrl) {
+      // item is not a file, try the next one
+      continue;
+    }
+
+    // Get the file object
+    nsCOMPtr<nsIFile> itemFile;
+    rv = fileUrl->GetFile(getter_AddRefs(itemFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isInMediaFolder = PR_FALSE;
+    rv = mMediaFolder->Contains(itemFile, PR_TRUE, &isInMediaFolder);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 manageType = 0;
+    if (mShouldMoveFiles) {
+      // Move files so that they are in the correct folder structure
+      manageType = manageType | sbIMediaFileManager::MANAGE_MOVE;
+      TRACE(("sbMediaManagementJob - Adding MANAGE_MOVE"));
+    }
+    if (mShouldRenameFiles) {
+      // Rename files so they have the correct filename
+      manageType = manageType | sbIMediaFileManager::MANAGE_RENAME;
+      TRACE(("sbMediaManagementJob - Adding MANAGE_RENAME"));
+    }
+    if (mShouldCopyFiles) {
+      // Copy files to the media folder if not already there
+      manageType = manageType | sbIMediaFileManager::MANAGE_COPY;
+      TRACE(("sbMediaManagementJob - Adding MANAGE_COPY"));
+    }
+  
+    // Get the managed path
+    nsCOMPtr<nsIFile> targetFile;
+    rv = mMediaFileManager->GetManagedPath(nextItem,
+                                           manageType,
+                                           getter_AddRefs(targetFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (rv == NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA) {
+      // there was an error, try the next item
+      continue;
+    }
+    
+    // at this point, we have an item, and a target path
+    // figure out the required actions
+    nsCOMPtr<nsIFile> oldParent;
+    rv = itemFile->GetParent(getter_AddRefs(oldParent));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIFile> newParent;
+    rv = targetFile->GetParent(getter_AddRefs(newParent));
+    if (isInMediaFolder) {
+      manageType &= ~sbIMediaFileManager::MANAGE_COPY;
+    } else {
+      manageType &= ~sbIMediaFileManager::MANAGE_MOVE;
+    }
+    PRBool isSameParent;
+    rv = oldParent->Equals(newParent, &isSameParent);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isSameParent) {
+      // didn't change the directory the file will live in
+      manageType &= ~(sbIMediaFileManager::MANAGE_MOVE |
+                      sbIMediaFileManager::MANAGE_COPY);
+    }
+    nsString oldName, newName;
+    rv = itemFile->GetLeafName(oldName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = targetFile->GetLeafName(newName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (oldName.Equals(newName)) {
+      manageType &= ~sbIMediaFileManager::MANAGE_RENAME;
+    }
+    
+    if (!manageType) {
+      // we didn't have to do anything to this file after all, try the next one
+      continue;
+    }
+    
+    nsRefPtr<sbMediaManagementJobItem> result =
+      new sbMediaManagementJobItem(nextItem, targetFile, manageType);
+    NS_ENSURE_TRUE(result, NS_ERROR_OUT_OF_MEMORY);
+    result.forget(_retval);
+    return NS_OK;
+  } /* end of find item loop */
+
+  NS_NOTREACHED("Shouldn't get here from the loop!");
+  return NS_ERROR_UNEXPECTED;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -406,18 +555,59 @@ sbMediaManagementJob::Notify(nsITimer* aTimer)
 
 //------------------------------------------------------------------------------
 //
+// nsISimpleEnumerator Implementation.
+//
+//------------------------------------------------------------------------------
+
+/* boolean hasMoreElements (); */
+NS_IMETHODIMP
+sbMediaManagementJob::HasMoreElements(PRBool *_retval)
+{
+  TRACE(("sbMediaManagementJob[0x%8.x] - HasMoreElements", this));
+  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = (mCompletedItemCount < mTotalItemCount) || mNextJobItem;
+  return NS_OK;
+}
+
+/* nsISupports getNext (); */
+NS_IMETHODIMP
+sbMediaManagementJob::GetNext(nsISupports **_retval)
+{
+  TRACE(("sbMediaManagementJob[0x%8.x] - GetNext", this));
+  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  if (!mNextJobItem) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsresult rv = CallQueryInterface(mNextJobItem.get(), _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = FindNextItem(getter_AddRefs(mNextJobItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
 // sbIMediaManagementJob implementation.
 //
 //------------------------------------------------------------------------------
 
-/* void organizeMediaList (in sbIMediaList aMediaList); */
+/* void init (in sbIMediaList aMediaList); */
 NS_IMETHODIMP
-sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
+sbMediaManagementJob::Init(sbIMediaList *aMediaList)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - OrganizeMediaList", this));
-  NS_ENSURE_ARG_POINTER( aMediaList );
+  TRACE(("sbMediaManagementJob[0x%8.x] - Init", this));
+  NS_ENSURE_FALSE(mMediaList, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  
   nsresult rv;
   
+  mMediaList = aMediaList;
+
   /**
    * Preferences - BEGIN
    */
@@ -466,6 +656,30 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
    * Preference - END
    */
 
+  // Grab a Media File Manager component
+  mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Reset all the progress information
+  rv = mMediaList->GetLength(&mTotalItemCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mCompletedItemCount = 0;
+  
+  rv = FindNextItem(getter_AddRefs(mNextJobItem));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+/* void organizeMediaList (); */
+NS_IMETHODIMP
+sbMediaManagementJob::OrganizeMediaList()
+{
+  TRACE(("sbMediaManagementJob[0x%8.x] - OrganizeMediaList", this));
+  NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+  
+
   // Inform the watch folder service of the Media Library Folder we are about
   // to organize. This prevents the watch folder service from re-reading in the
   // changes that this job is about to do.
@@ -486,23 +700,11 @@ sbMediaManagementJob::OrganizeMediaList(sbIMediaList *aMediaList)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Grab a Media File Manager component
-  mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create our timer
   mIntervalTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   ///////////////////////////////////////
-
-  // Hold on to the list.
-  mMediaList = aMediaList;
-
-  // Reset all the progress information
-  rv = aMediaList->GetLength(&mTotalItemCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-  mCompletedItemCount = 0;
   mStatus = sbIJobProgress::STATUS_RUNNING;
   
   // Update the progress

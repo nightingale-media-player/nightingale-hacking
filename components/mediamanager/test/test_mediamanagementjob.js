@@ -77,8 +77,9 @@ function onComplete(job) {
     // Manage the files
     var mediaManagerJob = Cc[SB_MEDIAMANAGERJOB]
                             .createInstance(Ci.sbIMediaManagementJob);
+    mediaManagerJob.init(gTestLibrary);
     mediaManagerJob.addJobProgressListener(onManagementComplete);
-    mediaManagerJob.organizeMediaList(gTestLibrary);
+    mediaManagerJob.organizeMediaList();
   } catch (err) {
     doFail("ERROR: " + err);
   }

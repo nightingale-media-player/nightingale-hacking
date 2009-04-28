@@ -57,10 +57,12 @@
 #include <sbIWatchFolderService.h>
 
 // Mozilla imports.
+#include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <nsIClassInfo.h>
 #include <nsIFile.h>
+#include <nsISimpleEnumerator.h>
 #include <nsITimer.h>
 #include <nsTArray.h>
 
@@ -98,16 +100,12 @@
 //
 //------------------------------------------------------------------------------
 
-/**
- * typedefs for the Error grouping.
- */
-typedef std::map<nsresult, PRUint32>    sbErrorMap;
-typedef sbErrorMap::iterator            sbErrorMapIter;
-typedef std::pair<sbErrorMapIter, bool> sbErrorPairResult;
-typedef sbErrorMap::value_type          sbErrorPair;
+class sbMediaManagementJobItem;
 
 class sbMediaManagementJob : public sbIMediaManagementJob,
+                             public sbIJobProgressUI,
                              public sbIJobCancelable,
+                             public nsISimpleEnumerator,
                              public nsITimerCallback
 {
 public:
@@ -116,6 +114,7 @@ public:
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBIJOBPROGRESSUI
   NS_DECL_SBIJOBCANCELABLE
+  NS_DECL_NSISIMPLEENUMERATOR
   NS_DECL_NSITIMERCALLBACK
 
   sbMediaManagementJob();
@@ -129,8 +128,22 @@ private:
                               nsString aErrorKey,
                               nsTArray<nsString> &aErrorMessages);
   nsresult  ProcessNextItem();
-  nsresult  ProcessItem(sbIMediaItem* aItem);
+  nsresult  ProcessItem(sbMediaManagementJobItem* aJobItem);
+  
+  /**
+   * caculate the next job item (i.e. media item and target, action)
+   * \return the resulting job item, or null if no more items need to be processed
+   */
+  nsresult  FindNextItem(sbMediaManagementJobItem** _retval);
 protected:
+  /**
+   * typedefs for the Error grouping.
+   */
+  typedef std::map<nsresult, PRUint32>    sbErrorMap;
+  typedef sbErrorMap::iterator            sbErrorMapIter;
+  typedef std::pair<sbErrorMapIter, bool> sbErrorPairResult;
+  typedef sbErrorMap::value_type          sbErrorPair;
+
   // We need to hold onto the media list so we can get the items
   nsCOMPtr<sbIMediaList>                  mMediaList;
  
@@ -160,6 +173,9 @@ protected:
   PRUint32                                mCompletedItemCount;
   PRUint32                                mTotalItemCount;
   nsString                                mCurrentTargetPath;
+  
+  // The next item we would process
+  nsRefPtr<sbMediaManagementJobItem>      mNextJobItem;
 
   // Hold a map of the number of error messages that have occured so we can
   // group them

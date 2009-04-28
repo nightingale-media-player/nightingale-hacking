@@ -30,21 +30,52 @@
  */
 
 #include "nsISupports.idl"
-#include "sbIJobProgressUI.idl"
+#include "sbIJobProgress.idl"
 
+interface nsIFile;
+interface sbIMediaItem;
 interface sbIMediaList;
 
-[scriptable, uuid(41b7b5ed-e9a8-4ff2-ad29-f6aa0c704889)]
-interface sbIMediaManagementJob : sbIJobProgressUI
+[scriptable, uuid(12a0707e-1dd2-11b2-bd17-fa3f7aa7f25b)]
+interface sbIMediaManagementJob : sbIJobProgress
 {
-  // This will scan a list and organize the files based on the preferences,
-  // only if the file is already located in the media library folder.
-  void organizeMediaList(in sbIMediaList aMediaList);
+  /**
+   * Initialze the media management job by preparing to act upon a particular
+   * media list
+   * \param aMediaList the media list to organize
+   */
+  void init(in sbIMediaList aMediaList);
+
+  /**
+   * This will scan the list and organize the files based on the preferences,
+   * only if the file is already located in the media library folder.
+   * \see init();
+   */
+  void organizeMediaList();
+};
+
+/**
+ * an item that would be organized by a sbIMediaManagementJob
+ */
+[scriptable, uuid(53b000f8-1dd2-11b2-91ce-f4ad2bc783d6)]
+interface sbIMediaManagementJobItem : nsISupports
+{
+  /**
+   * the media item that would be managed
+   */
+  readonly attribute sbIMediaItem item;
   
-  // Consolidates a media list by copying all items files that are not already
-  // located in the media library folder.
-  // TODO: possibly implement later if at all
-  //void consolidateMediaList(in sbIMediaList aMediaList);
+  /**
+   * the path that the item would be copied or moved to
+   */
+  readonly attribute nsIFile targetPath;
+  
+  /**
+   * the action that would be taken to manage the item; the value is a
+   * combination of the MANAGE_* constants in sbIMediaFileManager
+   * \see sbIMediaFileManager
+   */
+  readonly attribute unsigned short action;
 };
 
 //
