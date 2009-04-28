@@ -84,8 +84,8 @@ public:
   nsresult EnqueueCommand(CommandType aType, PRUint32 aIndex);
 
   sbLocalDatabaseAsyncGUIDArray();
+  virtual ~sbLocalDatabaseAsyncGUIDArray();
 
-  ~sbLocalDatabaseAsyncGUIDArray();
 private:
 
   // GUID array this class wraps
