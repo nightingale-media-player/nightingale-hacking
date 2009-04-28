@@ -60,6 +60,7 @@
 
 // Songbird imports
 #include <sbIMediaList.h>
+#include <sbIMediaManagementJobItem.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbTArrayStringEnumerator.h>
@@ -668,7 +669,7 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList)
   rv = FindNextItem(getter_AddRefs(mNextJobItem));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  return NS_OK;
+  return rv; /* may be NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA if no items */
 }
 
 /* void organizeMediaList (); */

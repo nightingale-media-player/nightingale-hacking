@@ -93,6 +93,7 @@ var manageMediaPrefsPane = {
       }
 
       if (!self._checkForValidPref(false)) {
+        this._updateUI();
         event.preventDefault();
         return false;
       }
@@ -126,6 +127,7 @@ var manageMediaPrefsPane = {
           enablePrefElem.value = mediaMgmtSvc.isEnabled;
           event.preventDefault();
           self._checkForValidPref(true);
+          self._updateUI();
           return false;
         }
       }
@@ -286,7 +288,7 @@ var manageMediaPrefsPane = {
       // Need to check if the user chose a usable folder for the managed folder.
       var managedFolder = document.getElementById("manage_media_library_file");
       if (!managedFolder || !managedFolder.file) {
-        snowErrorNotification(SBString("prefs.media_management.error.no_path"));
+        showErrorNotification(SBString("prefs.media_management.error.no_path"));
         return false;
       }
       var file = managedFolder.file;
