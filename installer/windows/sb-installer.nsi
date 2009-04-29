@@ -44,7 +44,7 @@ Section "-Application" Section1
       StrCpy $LinkIconFile ${PreferredIcon}
    ${EndIf}
 
-   Call InstallFiles
+   !insertmacro InstallFiles
 
    ${If} $UnpackMode == ${FALSE}
       Call InstallAppRegistryKeys
@@ -144,65 +144,6 @@ Function InstallBrandingRegistryKeys
    WriteRegStr HKLM $RootAppRegistryKey "${MuiStartmenupageRegName}" $R0
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 FunctionEnd 
-
-Function InstallFiles
-   SetOutPath $INSTDIR
-   SetShellVarContext all
-
-   ; List of files to install
-   File ${ApplicationIni}
-   File ${UpdaterIni}
-   File ${FileMainEXE}
-   !ifdef IncludeLib
-      File ${CRuntime}
-      File ${CPPRuntime}
-   !endif
-   File ${MozCRuntime}
-   File ${PreferredIcon}
-   File ${PreferredInstallerIcon}
-   File ${PreferredUninstallerIcon}
-   File ${VistaIcon}
-  
-   ; List of text files to install
-   File LICENSE.html
-   File TRADEMARK.txt
-   File README.txt
-   File blocklist.xml
-  
-   ; List of directories to install
-   File /r chrome
-   File /r components
-   File /r defaults
-   File /r extensions
-   File /r jsmodules
-   File /r plugins
-   File /r searchplugins
-   File /r scripts
-   File /r ${XULRunnerDir}
-
-   # Gstreamer stuff
-   File /r lib
-   File /r gst-plugins
-
-   # We only need to do this if we're not using jemalloc...
-   !ifndef UsingJemalloc
-      ; With VC8, we need the CRT and the manifests all over the place due to 
-      ; SxS until BMO 350616 gets fixed
-      !ifdef CRuntimeManifest
-         SetOutPath $INSTDIR
-         File ${CRuntime}
-         File ${CPPRuntime}
-         File ${CRuntimeManifest}
-         SetOutPath $INSTDIR\${XULRunnerDir}
-         File ${CRuntime}
-         File ${CPPRuntime}
-         File ${CRuntimeManifest}
-      !endif
-   !endif
-
-   SetOutPath $INSTDIR
-   WriteUninstaller ${FileUninstallEXE}
-FunctionEnd
 
 Section "Desktop Icon"
    ${If} $DistributionMode == ${TRUE}

@@ -57,7 +57,7 @@ Section "Uninstall"
    ${EndIf}
 
    Call un.RemoveAppRegistryKeys
-   Call un.UninstallFiles
+   !insertmacro un.UninstallFiles
 
    ; Refresh desktop.
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
@@ -111,76 +111,6 @@ Function un.RemoveAppRegistryKeys
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}"
 FunctionEnd 
  
-Function un.UninstallFiles
-   ; List of files to uninstall
-   Delete $INSTDIR\${ApplicationIni}
-   Delete $INSTDIR\${UpdaterIni}
-   Delete $INSTDIR\${FileMainEXE}
-   Delete $INSTDIR\${DistHelperEXE}
-   !ifndef UsingJemalloc
-      Delete $INSTDIR\${CRuntime}
-      Delete $INSTDIR\${CPPRuntime}
-      Delete $INSTDIR\${CRuntimeManifest}
-   !endif
-   Delete $INSTDIR\${MozCRuntime}
-
-   Delete $INSTDIR\${PreferredIcon}
-   Delete $INSTDIR\${PreferredInstallerIcon}
-   Delete $INSTDIR\${PreferredUninstallerIcon}
-
-   Delete $INSTDIR\${VistaIcon}
-   ; Log file updater.exe redirects if the PostUpdateWin helper is called
-   Delete $INSTDIR\uninstall.update
-  
-   ; Text files to uninstall
-   Delete $INSTDIR\LICENSE.html
-   Delete $INSTDIR\TRADEMARK.txt
-   Delete $INSTDIR\README.txt
-   Delete $INSTDIR\blocklist.xml
-  
-   ; These files are created by the application
-   Delete $INSTDIR\*.chk
- 
-   ; Mozilla updates can leave this folder behind when updates fail.
-   RMDir /r $INSTDIR\updates
-
-   ; Mozilla updates can leave some of these files over when updates fail.
-   Delete $INSTDIR\removed-files
-   Delete $INSTDIR\active-update.xml
-   Delete $INSTDIR\updates.xml
-   
-   ; List of directories to remove recursively.
-   RMDir /r $INSTDIR\chrome
-   RMDir /r $INSTDIR\components
-   RMDir /r $INSTDIR\defaults
-   RMDir /r $INSTDIR\distribution
-   RMDir /r $INSTDIR\extensions
-   RMDir /r $INSTDIR\jsmodules
-   RMDir /r $INSTDIR\plugins
-   RMDir /r $INSTDIR\searchplugins
-   RMDir /r $INSTDIR\scripts
-   RMDir /r $INSTDIR\lib
-   RMDir /r $INSTDIR\gst-plugins
-   RMDir /r $INSTDIR\${XULRunnerDir}
-
-   ; Remove uninstaller
-   Delete $INSTDIR\${FileUninstallEXE}
- 
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;; I commented this out, because I don't think we *truly* want to do this. 
-   ;; But we might have to later.
-   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-   ;SetShellVarContext current
-   ;RMDir /r "$APPDATA\Songbird"
-   ;RMDir /r "$LOCALAPPDATA\Songbird"
-   ;SetShellVarContext all
- 
-   Call un.DeleteUpdateAddedFiles
-  
-   ; Do not attempt to remove this directory recursively; see bug 6367
-   RMDir $INSTDIR
-FunctionEnd
-
 ;
 ; Show a prompt to allow the user to take a survey.
 ;

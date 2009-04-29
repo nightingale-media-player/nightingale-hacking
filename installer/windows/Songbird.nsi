@@ -73,6 +73,7 @@ RequestExecutionLevel user
 ; defines.nsi is generated from defines.nsi.in!
 !include defines.nsi
 !include common.nsh
+!include sb-filelist.nsi
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Product version information. 

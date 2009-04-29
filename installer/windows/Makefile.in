@@ -60,6 +60,7 @@ SONGBIRD_INSTALLER = $(srcdir)/common.nsh \
                      $(srcdir)/Songbird.nsi \
                      $(srcdir)/sb-installer.nsi \
                      $(srcdir)/sb-uninstaller.nsi \
+                     $(srcdir)/sb-filelist.nsi \
                      $(srcdir)/songbird.ico \
                      $(srcdir)/songbird_nightly.ico \
                      $(srcdir)/songbird_installer.ico \
