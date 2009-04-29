@@ -56,7 +56,7 @@ static PRLogModuleInfo* gThreadPoolServiceLog = nsnull;
 #endif
 
 #define DEFAULT_THREAD_LIMIT    (8)
-#define DEFAULT_IDLE_LIMIT      (0)
+#define DEFAULT_IDLE_LIMIT      (1)
 #define DEFAULT_IDLE_TIMEOUT    (10000) /* in milliseconds */
 
 #define NS_XPCOM_SHUTDOWN_THREADS_OBSERVER_ID "xpcom-shutdown-threads" 

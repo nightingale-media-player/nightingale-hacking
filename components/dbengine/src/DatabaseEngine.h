@@ -50,6 +50,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsRefPtrHashtable.h>
+#include <nsServiceManagerUtils.h>
 #include <nsIThread.h>
 #include <nsThreadUtils.h>
 #include <nsIRunnable.h>
@@ -59,6 +60,7 @@
 #include <nsITimer.h>
 
 #include "sbLeadingNumbers.h"
+#include <sbThreadPoolService.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
@@ -79,7 +81,7 @@ extern CDatabaseEngine *gEngine;
 void SQLiteUpdateHook(void *pData, int nOp, const char *pArgA, const char *pArgB, sqlite_int64 nRowID);
 
 // CLASSES ====================================================================
-class QueryProcessorThread;
+class QueryProcessorQueue;
 class CDatabaseDumpProcessor;
 
 class collationBuffers;
@@ -88,7 +90,7 @@ class CDatabaseEngine : public sbIDatabaseEngine,
                         public nsIObserver
 {
 public:
-  friend class QueryProcessorThread;
+  friend class QueryProcessorQueue;
 
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
@@ -118,13 +120,13 @@ protected:
 
   nsresult CloseDB(sqlite3 *pHandle);
 
-  already_AddRefed<QueryProcessorThread> GetThreadByQuery(CDatabaseQuery *pQuery, PRBool bCreate = PR_FALSE);
-  already_AddRefed<QueryProcessorThread> CreateThreadFromQuery(CDatabaseQuery *pQuery);
+  already_AddRefed<QueryProcessorQueue> GetQueueByQuery(CDatabaseQuery *pQuery, PRBool bCreate = PR_FALSE);
+  already_AddRefed<QueryProcessorQueue> CreateQueueFromQuery(CDatabaseQuery *pQuery);
 
   PRInt32 SubmitQueryPrivate(CDatabaseQuery *pQuery);
 
   static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine,
-                                         QueryProcessorThread * pThread);
+                                         QueryProcessorQueue * pQueue);
   
 private:
   //[query list]
@@ -165,7 +167,7 @@ private:
   nsString m_DBStorePath;
 
   //[database guid / thread]
-  nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorThread> m_ThreadPool;
+  nsRefPtrHashtableMT<nsStringHashKey, QueryProcessorQueue> m_QueuePool;
 
   PRMonitor* m_pThreadMonitor;
   PRMonitor* m_CollationBuffersMapMonitor;
@@ -195,30 +197,29 @@ private:
 #endif
 };
 
-class QueryProcessorThread : public nsIRunnable
+class QueryProcessorQueue : public nsIRunnable
 {
    friend class CDatabaseEngine;
    friend class CDatabaseDumpProcessor;
 
 public:
   //[thread queue]
-  typedef nsTArray<CDatabaseQuery *> threadqueue_t;
+  typedef nsTArray<CDatabaseQuery *> queryqueue_t;
 
 public:
   NS_DECL_ISUPPORTS
 
-  QueryProcessorThread()
+  QueryProcessorQueue()
   : m_Shutdown(PR_FALSE)
-  , m_IdleTime(0)
+  , m_Running(PR_FALSE)
   , m_pQueueMonitor(nsnull)
   , m_pHandleLock(nsnull)
   , m_pHandle(nsnull)
   , m_pEngine(nsnull) {
-    MOZ_COUNT_CTOR(QueryProcessorThread);
+    MOZ_COUNT_CTOR(QueryProcessorQueue);
   }
 
-  ~QueryProcessorThread() {
-
+  ~QueryProcessorQueue() {
     if(m_pHandleLock) {
       PR_DestroyLock(m_pHandleLock);
     }
@@ -226,7 +227,8 @@ public:
     if(m_pQueueMonitor) {
       nsAutoMonitor::DestroyMonitor(m_pQueueMonitor);
     }
-    MOZ_COUNT_DTOR(QueryProcessorThread);
+
+    MOZ_COUNT_DTOR(QueryProcessorQueue);
   }
 
   nsresult Init(CDatabaseEngine *pEngine,
@@ -238,7 +240,7 @@ public:
     m_pHandleLock = PR_NewLock();
     NS_ENSURE_TRUE(m_pHandleLock, NS_ERROR_OUT_OF_MEMORY);
 
-    m_pQueueMonitor = nsAutoMonitor::NewMonitor("QueryProcessorThread.m_pQueueMonitor");
+    m_pQueueMonitor = nsAutoMonitor::NewMonitor("QueryProcessorQueue.m_pQueueMonitor");
     NS_ENSURE_TRUE(m_pQueueMonitor, NS_ERROR_OUT_OF_MEMORY);
 
     m_pEngine = pEngine;
@@ -246,13 +248,9 @@ public:
 
     m_GUID = aGUID;
 
-    nsCOMPtr<nsIThread> pThread;
-    
-    nsresult rv = NS_NewThread(getter_AddRefs(pThread), this);
+    nsresult rv = NS_ERROR_UNEXPECTED;
+    m_pEventTarget = do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
-    // Saves an AddRef.
-    pThread.swap(m_pThread);
 
     return NS_OK;
   }
@@ -263,14 +261,6 @@ public:
 
     CDatabaseEngine::QueryProcessor(m_pEngine, 
                                     this);
-
-    nsresult rv = ClearQueue();
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = m_pEngine->CloseDB(m_pHandle);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    m_pHandle = nsnull;
 
     return NS_OK;
   }
@@ -317,20 +307,11 @@ public:
     return NS_OK;
   }
 
-  nsresult NotifyQueue() {
-    NS_ENSURE_TRUE(m_pQueueMonitor, NS_ERROR_NOT_INITIALIZED);
-
-    nsAutoMonitor mon(m_pQueueMonitor);
-    mon.NotifyAll();
-
-    return NS_OK;
-  }
-
   nsresult ClearQueue() {
     nsAutoMonitor mon(m_pQueueMonitor);
 
-    threadqueue_t::size_type current = 0;
-    threadqueue_t::size_type length = m_Queue.Length();
+    queryqueue_t::size_type current = 0;
+    queryqueue_t::size_type length = m_Queue.Length();
     
     for(; current < length; current++) {
 
@@ -343,33 +324,50 @@ public:
     return NS_OK;
   }
 
+  nsresult RunQueue() {
+    nsAutoMonitor mon(m_pQueueMonitor);
+
+    // If the query processor for this queue isn't running right now
+    // start running it on the threadpool.
+    if(!m_Running) {
+      return m_pEventTarget->Dispatch(this, nsIEventTarget::DISPATCH_NORMAL);
+    }
+
+    return NS_OK;
+  }
+
   nsresult PrepareForShutdown() {
     NS_ENSURE_TRUE(m_pEngine, NS_ERROR_NOT_INITIALIZED);
-
     m_Shutdown = PR_TRUE;
-
+    
     nsAutoMonitor mon(m_pQueueMonitor);
     return mon.NotifyAll();
   }
 
-  nsIThread * GetThread() {
-    return m_pThread;
+  nsresult Shutdown() {
+    nsresult rv = ClearQueue();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = m_pEngine->CloseDB(m_pHandle);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    m_pHandle = nsnull;
   }
 
 protected:
   CDatabaseEngine* m_pEngine;
-  nsCOMPtr<nsIThread> m_pThread;
+  nsCOMPtr<nsIEventTarget> m_pEventTarget;
 
   nsString m_GUID;
 
-  PRBool   m_Shutdown;
-  PRInt64  m_IdleTime;
+  PRPackedBool  m_Shutdown;
+  PRPackedBool  m_Running;
 
   PRLock *      m_pHandleLock;
   sqlite3*      m_pHandle;
 
   PRMonitor *   m_pQueueMonitor;
-  threadqueue_t m_Queue;
+  queryqueue_t  m_Queue;
 };
 
 // These classes are used for time-critical string copy during the collation

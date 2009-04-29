@@ -604,7 +604,7 @@ class CDatabaseDumpProcessor : public nsIRunnable
 {
 public:
   CDatabaseDumpProcessor(CDatabaseEngine *aCallback,
-                         QueryProcessorThread *aQueryProcessorThread,
+                         QueryProcessorQueue *aQueryProcessorQueue,
                          nsIFile *aOutputFile);
   virtual ~CDatabaseDumpProcessor();
   NS_DECL_ISUPPORTS
@@ -624,7 +624,7 @@ protected:
   nsCOMPtr<nsIFileOutputStream>  mOutputStream;
   nsCOMPtr<nsIFile>              mOutputFile;
   nsRefPtr<CDatabaseEngine>      mEngineCallback;
-  nsRefPtr<QueryProcessorThread> mQueryProcessorThread;
+  nsRefPtr<QueryProcessorQueue>  mQueryProcessorQueue;
   PRBool                         writeableSchema;  // true if PRAGMA writable_schema=on
 };
 
@@ -632,10 +632,10 @@ protected:
 NS_IMPL_THREADSAFE_ISUPPORTS1(CDatabaseDumpProcessor, nsIRunnable)
 
 CDatabaseDumpProcessor::CDatabaseDumpProcessor(CDatabaseEngine *aCallback,
-                                               QueryProcessorThread *aQueryProcessorThread,
+                                               QueryProcessorQueue *aQueryProcessorQueue,
                                                nsIFile *aOutputFile)
 : mEngineCallback(aCallback)
-, mQueryProcessorThread(aQueryProcessorThread)
+, mQueryProcessorQueue(aQueryProcessorQueue)
 , mOutputFile(aOutputFile)
 {
 }
@@ -656,7 +656,7 @@ CDatabaseDumpProcessor::Run()
   NS_ENSURE_SUCCESS(rv, rv);
 
   {
-    nsAutoLock handleLock(mQueryProcessorThread->m_pHandleLock);
+    nsAutoLock handleLock(mQueryProcessorQueue->m_pHandleLock);
     
     // First query, 'schema' dump
     PRInt32 rc;
@@ -706,7 +706,7 @@ CDatabaseDumpProcessor::RunSchemaDumpQuery(const nsACString & aQuery)
   // If we get a SQLITE_CORRUPT error, rerun the query after appending
   // "ORDER BY rowid DESC" to the end.
   nsCString query(aQuery);
-  PRInt32 rc = sqlite3_exec(mQueryProcessorThread->m_pHandle,
+  PRInt32 rc = sqlite3_exec(mQueryProcessorQueue->m_pHandle,
                             query.get(),
                             (sqlite3_callback)DumpCallback,
                             this,
@@ -718,7 +718,7 @@ CDatabaseDumpProcessor::RunSchemaDumpQuery(const nsACString & aQuery)
     }
 
     sqlite3_snprintf(sizeof(zQ2), zQ2, "%s ORDER BY rowid DESC", query.get());
-    rc = sqlite3_exec(mQueryProcessorThread->m_pHandle,
+    rc = sqlite3_exec(mQueryProcessorQueue->m_pHandle,
                       zQ2,
                       (sqlite3_callback)DumpCallback,
                       this,
@@ -734,7 +734,7 @@ CDatabaseDumpProcessor::RunTableDumpQuery(const nsACString & aSelect)
 {
   nsCString select(aSelect);
   sqlite3_stmt *pSelect;
-  int rc = sqlite3_prepare(mQueryProcessorThread->m_pHandle,
+  int rc = sqlite3_prepare(mQueryProcessorQueue->m_pHandle,
                            select.get(),
                            -1,
                            &pSelect,
@@ -819,7 +819,7 @@ CDatabaseDumpProcessor::DumpCallback(void *pArg,
     zTableInfo = appendText(zTableInfo, zTable, '"');
     zTableInfo = appendText(zTableInfo, ");", 0);
 
-    rc = sqlite3_prepare(dumpProcessor->mQueryProcessorThread->m_pHandle, 
+    rc = sqlite3_prepare(dumpProcessor->mQueryProcessorQueue->m_pHandle, 
                          zTableInfo, -1, &pTableInfo, 0);
     if (zTableInfo) { 
       free(zTableInfo);
@@ -922,7 +922,7 @@ CDatabaseDumpProcessor::appendText(char *zIn,
 //-----------------------------------------------------------------------------
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(CDatabaseEngine, sbIDatabaseEngine, nsIObserver)
-NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorThread, nsIRunnable)
+NS_IMPL_THREADSAFE_ISUPPORTS1(QueryProcessorQueue, nsIRunnable)
 
 CDatabaseEngine *gEngine = nsnull;
 
@@ -1006,7 +1006,7 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   LOG(("CDatabaseEngine[0x%.8x] - Init() - sqlite version %s",
        this, sqlite3_libversion()));
 
-  PRBool success = m_ThreadPool.Init();
+  PRBool success = m_QueuePool.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   m_pThreadMonitor =
@@ -1065,13 +1065,13 @@ NS_IMETHODIMP CDatabaseEngine::Init()
 
 //-----------------------------------------------------------------------------
 PR_STATIC_CALLBACK(PLDHashOperator)
-EnumThreadsOperate(nsStringHashKey::KeyType aKey, QueryProcessorThread *aThread, void *aClosure)
+EnumQueuesOperate(nsStringHashKey::KeyType aKey, QueryProcessorQueue *aQueue, void *aClosure)
 {
-  NS_ASSERTION(aThread, "aThread is null");
+  NS_ASSERTION(aQueue, "aQueue is null");
   NS_ASSERTION(aClosure, "aClosure is null");
 
   // Stop if thread is null.
-  NS_ENSURE_TRUE(aThread, PL_DHASH_STOP);
+  NS_ENSURE_TRUE(aQueue, PL_DHASH_STOP);
 
   // Stop if closure is null because it
   // contains the operation we are going to perform.
@@ -1082,13 +1082,13 @@ EnumThreadsOperate(nsStringHashKey::KeyType aKey, QueryProcessorThread *aThread,
 
   switch(*op) {
     case CDatabaseEngine::dbEnginePreShutdown:
-      rv = aThread->PrepareForShutdown();
+      rv = aQueue->PrepareForShutdown();
       NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to prepare worker thread for shutdown.");
     break;
 
     case CDatabaseEngine::dbEngineShutdown:
-      rv = aThread->GetThread()->Shutdown();
-      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to shutdown worker thread.");
+      rv = aQueue->Shutdown();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to shut down processor queue.");
     break;
 
     default:
@@ -1104,12 +1104,12 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
   m_IsShutDown = PR_TRUE;
 
   PRUint32 op = dbEnginePreShutdown;
-  m_ThreadPool.EnumerateRead(EnumThreadsOperate, &op);
+  m_QueuePool.EnumerateRead(EnumQueuesOperate, &op);
 
   op = dbEngineShutdown;
-  m_ThreadPool.EnumerateRead(EnumThreadsOperate, &op);
+  m_QueuePool.EnumerateRead(EnumQueuesOperate, &op);
 
-  m_ThreadPool.Clear();
+  m_QueuePool.Clear();
   
 #ifdef XP_MACOSX
   if (m_Collator)
@@ -1493,16 +1493,16 @@ NS_IMETHODIMP CDatabaseEngine::CloseDatabase(const nsAString &aDatabaseGUID)
 {
   nsAutoMonitor mon(m_pThreadMonitor);
 
-  nsRefPtr<QueryProcessorThread> pThread;
-  if(m_ThreadPool.Get(aDatabaseGUID, getter_AddRefs(pThread))) {
+  nsRefPtr<QueryProcessorQueue> pQueue;
+  if(m_QueuePool.Get(aDatabaseGUID, getter_AddRefs(pQueue))) {
     
-    nsresult rv = pThread->PrepareForShutdown();
+    nsresult rv = pQueue->PrepareForShutdown();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = pThread->GetThread()->Shutdown();
+    rv = pQueue->Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    m_ThreadPool.Remove(aDatabaseGUID);
+    m_QueuePool.Remove(aDatabaseGUID);
   }
 
   return NS_OK;
@@ -1543,10 +1543,10 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
     return 0;
   }
 
-  nsRefPtr<QueryProcessorThread> pThread = GetThreadByQuery(pQuery, PR_TRUE);
-  NS_ENSURE_TRUE(pThread, 1);
+  nsRefPtr<QueryProcessorQueue> pQueue = GetQueueByQuery(pQuery, PR_TRUE);
+  NS_ENSURE_TRUE(pQueue, 1);
 
-  nsresult rv = pThread->PushQueryToQueue(pQuery);
+  nsresult rv = pQueue->PushQueryToQueue(pQuery);
   NS_ENSURE_SUCCESS(rv, 1);
 
   {
@@ -1554,7 +1554,7 @@ PRInt32 CDatabaseEngine::SubmitQueryPrivate(CDatabaseQuery *pQuery)
     pQuery->m_IsExecuting = PR_TRUE;
   }
 
-  rv = pThread->NotifyQueue();
+  rv = pQueue->RunQueue();
   NS_ENSURE_SUCCESS(rv, 1);
 
   PRBool bAsyncQuery = PR_FALSE;
@@ -1584,11 +1584,11 @@ CDatabaseEngine::DumpDatabase(const nsAString & aDatabaseGUID, nsIFile *aOutFile
   rv = dummyQuery->Init();
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsRefPtr<QueryProcessorThread> pThread = GetThreadByQuery(dummyQuery, PR_TRUE);
-  NS_ENSURE_TRUE(pThread, NS_ERROR_FAILURE);
+  nsRefPtr<QueryProcessorQueue> pQueue = GetQueueByQuery(dummyQuery, PR_TRUE);
+  NS_ENSURE_TRUE(pQueue, NS_ERROR_FAILURE);
 
   nsRefPtr<CDatabaseDumpProcessor> dumpProcessor = 
-    new CDatabaseDumpProcessor(this, pThread, aOutFile);
+    new CDatabaseDumpProcessor(this, pQueue, aOutFile);
 
   return dumpProcessor->Run();
 }
@@ -1655,7 +1655,7 @@ NS_IMETHODIMP CDatabaseEngine::ReleaseMemory()
 }
 
 //-----------------------------------------------------------------------------
-already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDatabaseQuery *pQuery,
+already_AddRefed<QueryProcessorQueue> CDatabaseEngine::GetQueueByQuery(CDatabaseQuery *pQuery,
                                                          PRBool bCreate /*= PR_FALSE*/)
 {
   NS_ENSURE_TRUE(pQuery, nsnull);
@@ -1663,25 +1663,25 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::GetThreadByQuery(CDataba
   nsAutoString strGUID;
   nsAutoMonitor mon(m_pThreadMonitor);
 
-  nsRefPtr<QueryProcessorThread> pThread;
+  nsRefPtr<QueryProcessorQueue> pQueue;
 
   nsresult rv = pQuery->GetDatabaseGUID(strGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  if(!m_ThreadPool.Get(strGUID, getter_AddRefs(pThread))) {
-    pThread = CreateThreadFromQuery(pQuery);
+  if(!m_QueuePool.Get(strGUID, getter_AddRefs(pQueue))) {
+    pQueue = CreateQueueFromQuery(pQuery);
   }
 
-  NS_ENSURE_TRUE(pThread, nsnull);
+  NS_ENSURE_TRUE(pQueue, nsnull);
 
-  QueryProcessorThread *p = pThread.get();
+  QueryProcessorQueue *p = pQueue.get();
   NS_ADDREF(p);
 
   return p;
 }
 
 //-----------------------------------------------------------------------------
-already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CDatabaseQuery *pQuery)
+already_AddRefed<QueryProcessorQueue> CDatabaseEngine::CreateQueueFromQuery(CDatabaseQuery *pQuery)
 {
   nsAutoString strGUID;
   nsAutoMonitor mon(m_pThreadMonitor);
@@ -1689,20 +1689,20 @@ already_AddRefed<QueryProcessorThread> CDatabaseEngine::CreateThreadFromQuery(CD
   nsresult rv = pQuery->GetDatabaseGUID(strGUID);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  nsRefPtr<QueryProcessorThread> pThread(new QueryProcessorThread());
-  NS_ENSURE_TRUE(pThread, nsnull);
+  nsRefPtr<QueryProcessorQueue> pQueue(new QueryProcessorQueue());
+  NS_ENSURE_TRUE(pQueue, nsnull);
 
   sqlite3 *pHandle = nsnull;
   rv = OpenDB(strGUID, pQuery, &pHandle);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  rv = pThread->Init(this, strGUID, pHandle);
+  rv = pQueue->Init(this, strGUID, pHandle);
   NS_ENSURE_SUCCESS(rv, nsnull);
 
-  PRBool success = m_ThreadPool.Put(strGUID, pThread);
+  PRBool success = m_QueuePool.Put(strGUID, pQueue);
   NS_ENSURE_TRUE(success, nsnull);
 
-  QueryProcessorThread *p = pThread.get();
+  QueryProcessorQueue *p = pQueue.get();
   NS_ADDREF(p);
 
   return p;
@@ -1967,10 +1967,10 @@ CDatabaseEngine::DeleteMarkedDatabases()
 
 //-----------------------------------------------------------------------------
 /*static*/ void PR_CALLBACK CDatabaseEngine::QueryProcessor(CDatabaseEngine* pEngine,
-                                                            QueryProcessorThread *pThread)
+                                                            QueryProcessorQueue *pQueue)
 {  
   if(!pEngine ||
-     !pThread ) {
+     !pQueue ) {
     NS_WARNING("Called QueryProcessor without an engine or thread!!!!");
     return;
   }
@@ -1983,57 +1983,37 @@ CDatabaseEngine::DeleteMarkedDatabases()
 
 
     { // Enter Monitor
-      // Wrap any calls that access the pThread.m_Queue because they cause a
+      // Wrap any calls that access the pQueue.m_Queue because they cause a
       // context switch between threads and can mess up the link between the
-      // NotifyQueue() call and the Wait() here. See bug 6514 for more details.
-      nsAutoMonitor mon(pThread->m_pQueueMonitor);
+      // RunQueue() call and the GetQueueSize() here. See bug 6514 for more details.
+      nsAutoMonitor mon(pQueue->m_pQueueMonitor);
 
       PRUint32 queueSize = 0;
-      nsresult rv = pThread->GetQueueSize(queueSize);
+      nsresult rv = pQueue->GetQueueSize(queueSize);
       NS_ASSERTION(NS_SUCCEEDED(rv), "Couldn't get queue size.");
 
-      while (!queueSize &&
-             !pThread->m_Shutdown) {
-
-        mon.Wait();
-
-        rv = pThread->GetQueueSize(queueSize);
-        NS_ASSERTION(NS_SUCCEEDED(rv), "Couldn't get queue size.");
-      }
-
-      // Handle shutdown request
-      if (pThread->m_Shutdown) {
-
-#if defined(XP_WIN)
-        // Cleanup all thread resources.
-        sqlite3_thread_cleanup();
-#endif
-
+      // Nothing to execute
+      if(!queueSize || pQueue->m_Shutdown) {
+        pQueue->m_Running = PR_FALSE;
         return;
       }
 
       // We must have an item in the queue
-      rv = pThread->PopQueryFromQueue(&pQuery);
-      NS_ASSERTION(NS_SUCCEEDED(rv),
-        "Failed to pop query from queue. Thread will restart.");
+      rv = pQueue->PopQueryFromQueue(&pQuery);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "No query to pop from queue.");
 
-      // Restart the thread.
       if(NS_FAILED(rv)) {
-
-#if defined(XP_WIN)
-        // Cleanup all thread resources.
-        sqlite3_thread_cleanup();
-#endif
-
+        pQueue->m_Running = PR_FALSE;
         return;
       }
 
+      pQueue->m_Running = PR_TRUE;
     } // Exit Monitor
 
     //The query is now in a running state.
     nsAutoMonitor mon(pQuery->m_pQueryRunningMonitor);
 
-    sqlite3 *pDB = pThread->m_pHandle;
+    sqlite3 *pDB = pQueue->m_pHandle;
 
     LOG(("DBE: Process Start, thread 0x%x query 0x%x",
       PR_GetCurrentThread(), pQuery));
@@ -2073,7 +2053,7 @@ CDatabaseEngine::DeleteMarkedDatabases()
       CDatabasePreparedStatement *actualPreparedStatement = 
         static_cast<CDatabasePreparedStatement*>(preparedStatement.get());
       sqlite3_stmt *pStmt = 
-        actualPreparedStatement->GetStatement(pThread->m_pHandle);
+        actualPreparedStatement->GetStatement(pQueue->m_pHandle);
       
       if (!pStmt) {
         LOG(("DBE: Failed to create a prepared statement from the Query object."));

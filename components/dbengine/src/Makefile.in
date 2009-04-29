@@ -131,6 +131,7 @@ CPP_INCLUDES = $(srcdir) \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/intl/src \
                $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threadpoolservice/src \
                $(topsrcdir)/components/moz/threads/src \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/appcomps \
