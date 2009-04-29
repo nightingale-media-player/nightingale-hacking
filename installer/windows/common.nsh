@@ -155,11 +155,16 @@ FunctionEnd
 !insertmacro AbortOperation ""
 !insertmacro AbortOperation "un."
 
+;
+; BE CAREFUL about changing this; it's used all over the place, so you'll have
+; to match up all the cleanup routines in the uninstaller, etc.
+;
+
 !macro SetRootRegistryKey un
    Function ${un}SetRootRegistryKey
 
    ${If} $InstallerType == "dist"
-      StrCpy $R1 "distribution\\$DistributionName" 
+      StrCpy $R1 "$InstallerType\\$DistributionName" 
    ${ElseIf} $InstallerType == "release"
       StrCpy $R1 $InstallerType
    ${ElseIf} $InstallerType == "nightly"
@@ -169,7 +174,7 @@ FunctionEnd
       Abort 
    ${EndIf}
 
-   StrCpy $RootAppRegistryKey "Software\\${BrandFullNameInternal}\\$R1"
+   StrCpy $RootAppRegistryKey "${RootAppRegistryKeyBase}\\$R1"
 
    ${If} $InstallerMode == "debug"
       MessageBox MB_OK "RootAppRegistryKey is $RootAppRegistryKey"
