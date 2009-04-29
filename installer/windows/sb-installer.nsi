@@ -194,13 +194,20 @@ Function LaunchApp
    UAC::ExecCodeSegment $0 
 FunctionEnd 
 
+; Only valid for release and distribution installers
 Function GetOldVersionLocation
+   ${If} $InstallerType == "nightly"
+      MessageBox MB_OK "Assertion Failed: InstallerType = nightly in GetOldVersionLocation; aborting."
+      Abort
+   ${EndIf}
+
    ReadRegStr $R0 HKLM $RootAppRegistryKey "InstallDir"
    ClearErrors
    StrCpy $0 $R0
 FunctionEnd
 
 Function ValidateInstallationDirectory
+RevalidateInstallationDirectory:
    ${DirState} "$INSTDIR" $R0
 
    ${If} $R0 == 1
@@ -213,7 +220,19 @@ Function ValidateInstallationDirectory
          Quit
       ${EndIf}
 
-      MessageBox MB_YESNO|MB_ICONQUESTION "This folder isn't empty; are you sure?" IDYES OverrideDirCheck IDNO NotValid
+      ; This only works because we haven't changed the name of our uninstaller;
+      ; go us.
+      IfFileExists "$INSTDIR\${FileUninstallEXE}" 0 ConfirmDirtyDirectory
+         MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" /SD IDNO IDYES CallCallUninstaller
+         Abort
+
+         CallCallUninstaller:
+            Push $INSTDIR
+            Call CallUninstaller
+            Goto RevalidateInstallationDirectory
+
+      ConfirmDirtyDirectory:
+         MessageBox MB_YESNO|MB_ICONQUESTION "${DirectoryNotEmptyMessage}" IDYES OverrideDirCheck IDNO NotValid
 
       NotValid:
          Abort
@@ -222,16 +241,23 @@ Function ValidateInstallationDirectory
    OverrideDirCheck:
 FunctionEnd
 
+Function CallUninstaller
+   Exch $0
+   ExecWait '$0\${FileUninstallEXE} /S _?=$0'
+   Delete '$0\${FileUninstallEXE}'
+   RMDir $0
+   Pop $0
+FunctionEnd
+
 Function PreviousInstallationCheck
    Call GetOldVersionLocation
    ${If} $0 != ""
-      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" /SD IDNO IDYES CallUninstaller
+      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" /SD IDNO IDYES CallCallUninstaller
       Abort
 
-      CallUninstaller:
-         ExecWait '$0\${FileUninstallEXE} /S _?=$0'
-         Delete '$0\${FileUninstallEXE}'
-         Delete '$0'
+      CallCallUninstaller:
+         Push $0
+         Call CallUninstaller
    ${EndIf}
 FunctionEnd
 
