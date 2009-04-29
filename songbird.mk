@@ -197,7 +197,7 @@ endif
 
 all: songbird_output build
 
-debug: all
+debug release: all
 
 mozbrowser_update:
 	$(MOZBROWSER_UPDATE)
