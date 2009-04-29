@@ -127,7 +127,7 @@ public:
   //        This is only used for serialization and the value is never 
   //        generated.
   //
-  nsresult SetParentID(PRUint32 aID);
+  nsresult SetParentID(const PRUint32 aID);
   nsresult GetParentID(PRUint32 *aOutID);
 
 private:

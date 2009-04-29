@@ -58,6 +58,7 @@
 #include <prtypes.h>
 #include <assert.h>
 #include <prprf.h>
+#include <locale.h>
 
 #include <nsIScriptError.h>
 #include <nsIConsoleService.h>
