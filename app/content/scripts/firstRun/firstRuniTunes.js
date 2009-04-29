@@ -172,8 +172,6 @@ firstRuniTunesSvc.prototype = {
                         ("songbird.library_importer.library_file_path",
                          importLibraryFilePath);
     Application.prefs.setValue("songbird.firstrun.do_import_library", true);
-    Application.prefs.setValue("songbird.library_importexport.autostartup",
-                        importEnabled);
     Application.prefs.setValue("songbird.library_importer.import_tracks",
                         importEnabled);
     Application.prefs.setValue("songbird.library_importer.import_playlists",
@@ -187,8 +185,6 @@ firstRuniTunesSvc.prototype = {
     var exportEnabled = exportCheckbox.checked;
 
     // Save the iTunes export settings.
-    Application.prefs.setValue("songbird.library_importexport.autoshutdown",
-                        exportEnabled);
     Application.prefs.setValue("songbird.library_exporter.export_tracks",
                         exportEnabled);
     Application.prefs.setValue("songbird.library_exporter.export_playlists",

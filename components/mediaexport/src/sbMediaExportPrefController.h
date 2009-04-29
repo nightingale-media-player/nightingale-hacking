@@ -53,11 +53,6 @@ public:
   nsresult Init(sbMediaExportPrefListener *aListener);
   nsresult Shutdown();
 
-  // TODO: Delete these
-  // See bug 16185. 
-  PRBool GetShouldProcessOnShutdown();
-  PRBool GetShouldPorcessOnStartup();
-  
   // Utility method, returns true if any media should be exported.
   PRBool GetShouldExportAnyMedia();
   
@@ -69,8 +64,6 @@ public:
   NS_DECL_NSIOBSERVER
 
 private:
-  PRBool mShouldProcessOnShutdown;
-  PRBool mShouldProcessOnStartup;
   PRBool mShouldExportTracks;
   PRBool mShouldExportPlaylists;
   PRBool mShouldExportSmartPlaylists;

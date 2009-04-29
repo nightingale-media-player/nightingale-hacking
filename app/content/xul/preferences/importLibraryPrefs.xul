@@ -64,22 +64,6 @@
       type="bool"
       onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
 
-    <!-- Process at startup -->
-    <preference
-      id="auto_importexport_startup_pref"
-      prefid="auto_importexport_startup_pref"
-      name="songbird.library_importexport.autostartup"
-      type="bool"
-      onchange=""/>
-
-    <!-- Process at shutdown -->
-    <preference
-      id="auto_importexport_shutdown_pref"
-      prefid="auto_importexport_shutdown_pref"
-      name="songbird.library_importexport.autoshutdown"
-      type="bool"
-      onchange=""/>
-
     <!-- Import tracks from iTunes  -->
     <preference 
       id="import_tracks_itunes_pref"
@@ -194,18 +178,6 @@
 
         <!-- Library import options group caption. -->
         <caption label="&import_library.prefs.options_group_caption;"/>
-
-        <!-- Startup import/export options checkbox -->
-        <checkbox id="importexport_library_auto_startup_checkbox"
-                  preference="auto_importexport_startup_pref"
-                  label="&importexport_library_auto_startup_checkbox;" />
-
-        <!-- Shutdown import/export options checkbox -->
-        <checkbox id="importexport_library_auto_shutdown_checkbox"
-                  preference="auto_importexport_shutdown_pref"
-                  label="&importexport_library_auto_shutdown_checkbox;" />
-
-        <spacer height="10" />
 
         <!-- Import tracks from iTunes checkbox -->
         <checkbox id="import_tracks_itunes_checkbox"

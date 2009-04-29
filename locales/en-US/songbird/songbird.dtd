@@ -515,8 +515,6 @@
 <!ENTITY import_library.prefs.path_group_caption          "iTunes Music Library Location">
 <!ENTITY import_library.prefs.options_group_caption       "Import/Export Options">
 <!ENTITY import_library.import_command                    "Import Library">
-<!ENTITY importexport_library_auto_startup_checkbox       "Auto import/export on startup">
-<!ENTITY importexport_library_auto_shutdown_checkbox      "Auto import/export on shutdown">
 <!ENTITY import_tracks_itunes_checkbox                    "Import tracks from iTunes">
 <!ENTITY import_playlists_itunes_checkbox                 "Import playlists">
 <!ENTITY import_smartplaylists_itunes_checkbox            "Import smart playlists">

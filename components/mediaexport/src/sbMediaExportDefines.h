@@ -33,10 +33,6 @@
 //------------------------------------------------------------------------------
 // Import/Export preference constants
 
-#define PREF_IMPORTEXPORT_ONSHUTDOWN \
-  "songbird.library_importexport.autoshutdown"
-#define PREF_IMPORTEXPORT_ONSTARTUP  \
-  "songbird.library_importexport.autostartup"
 #define PREF_EXPORT_TRACKS \
   "songbird.library_exporter.export_tracks"
 #define PREF_EXPORT_PLAYLISTS \

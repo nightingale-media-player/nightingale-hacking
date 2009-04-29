@@ -37,9 +37,7 @@
 NS_IMPL_ISUPPORTS1(sbMediaExportPrefController, nsIObserver)
 
 sbMediaExportPrefController::sbMediaExportPrefController()
-  : mShouldProcessOnShutdown(PR_FALSE)
-  , mShouldProcessOnStartup(PR_FALSE)
-  , mShouldExportTracks(PR_FALSE)
+  : mShouldExportTracks(PR_FALSE)
   , mShouldExportPlaylists(PR_FALSE)
   , mShouldExportSmartPlaylists(PR_FALSE)
   , mListener(nsnull)
@@ -61,14 +59,6 @@ sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Adding observer values for each pref will load the value in |Observe|.
-  rv = prefBranch->AddObserver(PREF_IMPORTEXPORT_ONSHUTDOWN,
-                               this,
-                               PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = prefBranch->AddObserver(PREF_IMPORTEXPORT_ONSTARTUP,
-                               this,
-                               PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
   rv = prefBranch->AddObserver(PREF_EXPORT_TRACKS,
                                this,
                                PR_FALSE);
@@ -97,10 +87,6 @@ sbMediaExportPrefController::Shutdown()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Cleanup the pref observers 
-  rv = prefBranch->RemoveObserver(PREF_IMPORTEXPORT_ONSHUTDOWN, this);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = prefBranch->RemoveObserver(PREF_IMPORTEXPORT_ONSTARTUP, this);
-  NS_ENSURE_SUCCESS(rv, rv);
   rv = prefBranch->RemoveObserver(PREF_EXPORT_TRACKS, this);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = prefBranch->RemoveObserver(PREF_EXPORT_PLAYLISTS, this);
@@ -137,13 +123,7 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
         NS_ConvertUTF16toUTF8(modifiedPref).get(),
         (modifiedValue ? "true" : "false")));
 
-  if (modifiedPref.EqualsLiteral(PREF_IMPORTEXPORT_ONSHUTDOWN)) {
-    mShouldProcessOnShutdown = modifiedValue;
-  }
-  else if (modifiedPref.EqualsLiteral(PREF_IMPORTEXPORT_ONSTARTUP)) {
-    mShouldProcessOnStartup = modifiedValue;
-  }
-  else if (modifiedPref.EqualsLiteral(PREF_EXPORT_TRACKS)) {
+  if (modifiedPref.EqualsLiteral(PREF_EXPORT_TRACKS)) {
     mShouldExportTracks = modifiedValue;
   }
   else if (modifiedPref.EqualsLiteral(PREF_EXPORT_PLAYLISTS)) {
@@ -160,18 +140,6 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
   }
 
   return NS_OK;
-}
-
-PRBool 
-sbMediaExportPrefController::GetShouldProcessOnShutdown()
-{
-  return mShouldProcessOnShutdown; 
-}
-
-PRBool
-sbMediaExportPrefController::GetShouldPorcessOnStartup()
-{
-  return mShouldProcessOnStartup;
 }
 
 PRBool
