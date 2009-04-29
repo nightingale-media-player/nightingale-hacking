@@ -416,7 +416,8 @@
 
 
       <!-- Starts the idle search timer on input when in live search mode  -->
-      <handler event="input"><![CDATA[
+      <handler event="input">
+          <![CDATA[
 
         // Update widget value to the search textbox value.
         this.value = this._textbox.value;
@@ -429,7 +430,7 @@
           clearInterval( this._editIdleInterval );
         }
 
-        var timeout = 1000;
+        var timeout = 2000;
         var isBackspace = event.keyCode == KeyEvent.DOM_VK_BACK_SPACE;
         var length = this._textbox.value.length;
 
@@ -439,7 +440,7 @@
              (length >= 2 && !isBackspace) ||  // Everything after three chars is fast
              (length > 3))
         {
-          timeout = 100;
+          timeout = 200;
         }
         
         this._editIdleInterval = setInterval(
