@@ -70,7 +70,8 @@
     </preferences>
 
     <commandset id="manage_media_commandset"/>
-    <notificationbox id="media_manage_notification_box">
+
+    <notificationbox id="media_manage_notification_box" flex="1">
       <groupbox id="mange_media_library_box">
         <caption id="manage_media_library_caption"
                  label="&prefWindow.manageMedia.library.label;"/>
@@ -106,20 +107,22 @@
                  value="&prefWindow.manageMedia.format.file.suffix;"/>
         </sb-properties-formatter>
       </groupbox>
+
+      <hbox>
+        <vbox>
+          <button id="manage_media_global_cmd"
+                  preference-editable="true"
+                  label="WARNING: Managed mode is broken"
+                  label-enable="&prefWindow.manageMedia.enable.enable.label;"
+                  label-disable="&prefWindow.manageMedia.enable.disable.label;"
+                  oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
+                  preference="manage_media_pref_library_enable"/>
+        </vbox>
+        <description id="manage_media_global_description" flex="1">
+          &prefWindow.manageMedia.enable.description;
+        </description>
+      </hbox>
     </notificationbox>
-    
-    <hbox>
-      <button id="manage_media_global_cmd"
-              preference-editable="true"
-              label="WARNING: Managed mode is broken"
-              label-enable="&prefWindow.manageMedia.enable.enable.label;"
-              label-disable="&prefWindow.manageMedia.enable.disable.label;"
-              oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
-              preference="manage_media_pref_library_enable"/>
-      <description id="manage_media_global_description">
-        &prefWindow.manageMedia.enable.description;
-      </description>
-    </hbox>
 
   </prefpane>
 
