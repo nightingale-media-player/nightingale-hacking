@@ -162,6 +162,11 @@ firstRuniTunesSvc.prototype = {
     var importEnabled = importCheckbox.checked;
     var importLibraryFilePath = this._libraryImporter.libraryDefaultFilePath;
 
+    // If we don't have a valid iTunes Library path then iTunes isn't installed
+    // and this wizard was in fact skipped, so no need to save any preferences
+    if (!importLibraryFilePath)
+	  return;
+
     // Save the iTunes import settings.
     Application.prefs.setValue
                         ("songbird.library_importer.library_file_path",
