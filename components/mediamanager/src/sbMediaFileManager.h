@@ -80,8 +80,7 @@ protected:
 
   nsresult CopyRename(sbIMediaItem *aMediaItem, 
                       nsIFile *aItemFile,
-                      const nsString &aFilename,
-                      const nsString &aPath,
+                      nsIFile *aNewFile,
                       PRBool *aRetVal);
   
   nsresult Delete(nsIFile *aItemFile, 
@@ -100,11 +99,6 @@ private:
                                  PRBool aAppendProperty,
                                  nsString &aRetVal);
 
-  nsresult IsOrganized(nsIFile   *aItemFile,
-                       nsString  &aFilename,
-                       nsString  &aPath,
-                       PRBool    *aRetVal);
-  
   // Hold on to the services we use very often
   nsCOMPtr<nsIIOService>                    mIOService;
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
