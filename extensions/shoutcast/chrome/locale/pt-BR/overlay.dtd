@@ -1,3 +1,8 @@
 <!ENTITY shoutcast-radio.filter "Filtro">
 <!ENTITY shoutcast-radio.genre "Gênero">
 <!ENTITY shoutcast-radio.clear "Limpar">
+<!ENTITY shoutcast-radio.add-station "">
+<!ENTITY shoutcast-radio.enter-name "">
+<!ENTITY shoutcast-radio.station-name "">
+<!ENTITY shoutcast-radio.enter-url "">
+<!ENTITY shoutcast-radio.enter-genre "">

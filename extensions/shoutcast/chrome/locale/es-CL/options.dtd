@@ -1,18 +1,18 @@
-<!ENTITY prefpane.label "">
+<!ENTITY prefpane.label "SHOUTcast">
 <!ENTITY prefs.caption "">
 <!ENTITY prefwindow.title "">
 <!ENTITY bit-rate.limit.label "">
 <!ENTITY listeners.limit.label "">
-<!ENTITY listeners.limit.label.2 "">
+<!ENTITY listeners.limit.label.2 "gente escuchando">
 <!ENTITY bit-rate.label "">
 <!ENTITY bit-rate.accesskey "">
-<!ENTITY listeners.label "">
+<!ENTITY listeners.label "Número de auditores">
 <!ENTITY listeners.accesskey "">
 <!ENTITY prefs.track.guessing.title "">
 <!ENTITY prefs.track.guessing.label "">
 <!ENTITY prefs.track.guessing.help "">
 <!ENTITY prefs.customGenres "">
 <!ENTITY custom-genres.help.label "">
-<!ENTITY prefs.tosCaption "">
-<!ENTITY prefs.tosBegin "">
-<!ENTITY prefs.tosLinkText "">
+<!ENTITY prefs.tosCaption "Términos de uso">
+<!ENTITY prefs.tosBegin "El uso del directorio SHOUTcast está regido por sus términos de uso">
+<!ENTITY prefs.tosLinkText "Ver términos de uso">

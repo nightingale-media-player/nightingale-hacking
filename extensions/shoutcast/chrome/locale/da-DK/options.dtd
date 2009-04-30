@@ -14,5 +14,5 @@
 <!ENTITY prefs.customGenres "Tilpas genrer">
 <!ENTITY custom-genres.help.label "Hvis du har tilpassede genrer, du vil have vist i SHOUTcast kataloget, indtast en kommasepareret liste af genrer her.">
 <!ENTITY prefs.tosCaption "Anvendelsesbetingelser">
-<!ENTITY prefs.tosBegin "Brug af SHOURcast kataloget er begrænset af  deres anvendelsesbetingelser.">
+<!ENTITY prefs.tosBegin "Brug af SHOUTcast kataloget er begrænset af  deres anvendelsesbetingelser.">
 <!ENTITY prefs.tosLinkText "Se anvendelsesbetingelser">

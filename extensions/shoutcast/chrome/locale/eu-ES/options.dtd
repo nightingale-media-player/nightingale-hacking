@@ -1,6 +1,18 @@
 <!ENTITY prefpane.label "SHOUTcast">
+<!ENTITY prefs.caption "">
 <!ENTITY prefwindow.title "SHOUTcast irratiaren hobespenak">
+<!ENTITY bit-rate.limit.label "">
+<!ENTITY listeners.limit.label "">
+<!ENTITY listeners.limit.label.2 "">
 <!ENTITY bit-rate.label "Bit rate (kbps)">
 <!ENTITY bit-rate.accesskey "B">
 <!ENTITY listeners.label "Entzule kopurua">
 <!ENTITY listeners.accesskey "E">
+<!ENTITY prefs.track.guessing.title "">
+<!ENTITY prefs.track.guessing.label "">
+<!ENTITY prefs.track.guessing.help "">
+<!ENTITY prefs.customGenres "">
+<!ENTITY custom-genres.help.label "">
+<!ENTITY prefs.tosCaption "">
+<!ENTITY prefs.tosBegin "">
+<!ENTITY prefs.tosLinkText "">
