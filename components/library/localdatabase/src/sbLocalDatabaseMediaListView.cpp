@@ -834,6 +834,30 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  PRBool cfsIsFiltering = PR_FALSE;
+
+  if(mCascadeFilterSet) {
+    PRUint16 cfsCount = 0;
+    rv = mCascadeFilterSet->GetLength(&cfsCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for(PRUint16 current = 0; current < cfsCount; ++current) {
+      nsCOMPtr<nsIArray> filterConfig;
+      
+      rv = mCascadeFilterSet->Get(current, getter_AddRefs(filterConfig));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length = 0;
+      rv = filterConfig->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if(length > 0) {
+        cfsIsFiltering = PR_TRUE;
+        break;
+      }
+    }
+  }
+
   PRBool isSelected = PR_FALSE;
   PRInt32 currentIndex;
   rv = mSelection->GetCurrentIndex(&currentIndex);
@@ -847,7 +871,7 @@ sbLocalDatabaseMediaListView::RemoveSelectedMediaItems()
   // and search counts here otherwise we may clear the library
   // because the user has selected everything in the view when
   // it's in a filtered or has a search applied!
-  if((viewLength == selectionLength) && !filterCount && !searchCount) {
+  if((viewLength == selectionLength) && !filterCount && !searchCount && !cfsIsFiltering) {
     // If it's a library, call clear items instead. We do this so
     // that all playlists the user has are preserved.
     if(mMediaListId == 0) {
