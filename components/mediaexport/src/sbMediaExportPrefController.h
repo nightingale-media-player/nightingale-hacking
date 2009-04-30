@@ -55,7 +55,10 @@ public:
 
   // Utility method, returns true if any media should be exported.
   PRBool GetShouldExportAnyMedia();
-  
+    
+  // Utility method, returns true if any playlist type should be exported.
+  PRBool GetShouldExportAnyPlaylists();
+
   PRBool GetShouldExportTracks();
   PRBool GetShouldExportPlaylists();
   PRBool GetShouldExportSmartPlaylists();

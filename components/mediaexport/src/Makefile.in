@@ -35,6 +35,7 @@ target := $(addsuffix _d,$(target))
 endif
 
 CPP_SRCS = sbMediaExportPrefController.cpp \
+           sbMediaExportTaskWriter.cpp \
            sbMediaExportService.cpp \
            sbMediaExportComponent.cpp \
            $(NULL)

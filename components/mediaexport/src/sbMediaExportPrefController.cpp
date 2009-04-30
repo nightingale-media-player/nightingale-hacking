@@ -151,6 +151,12 @@ sbMediaExportPrefController::GetShouldExportAnyMedia()
 }
 
 PRBool
+sbMediaExportPrefController::GetShouldExportAnyPlaylists()
+{
+  return mShouldExportPlaylists || mShouldExportSmartPlaylists;
+}
+
+PRBool
 sbMediaExportPrefController::GetShouldExportTracks()
 {
   return mShouldExportTracks;

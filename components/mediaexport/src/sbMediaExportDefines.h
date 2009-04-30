@@ -28,7 +28,12 @@
 #define sbMediaExportDefines_h_
 
 #include <prlog.h>
-
+#include <nsStringAPI.h>
+#include <nsAppDirectoryServiceDefs.h>
+#include <list>
+ 
+typedef std::list<nsString>                 sbStringList;
+typedef sbStringList::const_iterator        sbStringListIter;
 
 //------------------------------------------------------------------------------
 // Import/Export preference constants
@@ -40,6 +45,18 @@
 #define PREF_EXPORT_SMARTPLAYLISTS \
   "songbird.library_exporter.export_smartplaylists"
 
+//------------------------------------------------------------------------------
+// Task file constants
+ 
+//
+// NOTE: When changing these values, please reflect the changes in the unittest!
+//
+#define TASKFILE_NAME                     "songbird_export.task"
+#define TASKFILE_SCHEMAVERSION            "1"
+#define TASKFILE_SCHEMAVERSION_HEADER     "schema-version"
+#define TASKFILE_ADDEDMEDIALISTS_HEADER   "added-medialists"
+#define TASKFILE_REMOVEDMEDIALISTS_HEADER "removed-medialists"
+#define TASKFILE_ADDEDMEDIAITEMS_HEADER   "added-mediaitems"
 
 //------------------------------------------------------------------------------
 // Media export service XPCOM info

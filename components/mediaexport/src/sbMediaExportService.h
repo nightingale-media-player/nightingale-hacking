@@ -27,6 +27,8 @@
 #ifndef sbMediaExportService_h_
 #define sbMediaExportService_h_
 
+#include "sbMediaExportDefines.h"
+#include "sbMediaExportTaskWriter.h"
 #include <sbIShutdownJob.h>
 #include <sbIJobProgress.h>
 #include <sbIPropertyArray.h>
@@ -39,17 +41,26 @@
 #include <nsCOMPtr.h>
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
-#include <nsStringAPI.h>
 #include <nsIClassInfo.h>
-#include <list>
 #include <map>
 #include "sbMediaExportPrefController.h"
 
-typedef std::list<nsString>                 sbStringList;
-typedef sbStringList::iterator              sbStringListIter;
 typedef std::map<nsString, sbStringList>    sbMediaListItemMap;
 typedef sbMediaListItemMap::value_type      sbMediaListItemMapPair;
 typedef sbMediaListItemMap::iterator        sbMediaListItemMapIter;
+
+//
+// \brief Enum for keeping track of what specific type of data that the 
+//        enumerated property lookup is currently running for.
+//
+typedef enum {
+  eNone                = 0,
+  eAllMediaLists       = 1,
+  eAddedMediaLists     = 2,
+  eRemovedMediaLists   = 3,
+  eAddedMediaItems    = 4,
+  eMediaListAddedItems = 5,
+} EEnumerationLookupState;
 
 
 class sbMediaExportService : public nsIClassInfo,
@@ -84,16 +95,40 @@ public:
   NS_DECL_SBISHUTDOWNJOB
 
 protected:
+  // Internal service startup handling
   nsresult InitInternal();
+
+  // Internal service shutdown handling
   nsresult Shutdown();
-  nsresult StopListening();
+
+  // Stop listening to all observed media lists and clear changes. 
+  nsresult StopListeningMediaLists();
+
+  // Media list listening utility methods
   nsresult ListenToMediaList(sbIMediaList *aMediaList);
   nsresult GetShouldWatchMediaList(sbIMediaList *aMediaList, 
                                    PRBool *aShouldWatch);
 
+  // Start/Stop entry points for the entire export process
   nsresult BeginExportData();
+  nsresult FinishExportData();
+
+  // Start/stop entry points for each specific data export types.
+  nsresult DetermineNextExportState();
+  nsresult StartExportState();
+  nsresult FinishExportState();
+
+  // Lookup mediaitems by a guid list.
+  nsresult GetMediaListByGuid(const nsAString & aItemGuid,
+                              sbIMediaList **aMediaList);
+  nsresult EnumerateItemsByGuids(sbStringList & aGuidStringList,
+                                 sbIMediaList *aMediaList);
+
+  // Notify job progress listeners.
+  nsresult NotifyListeners();
 
 private:
+  // Core and changed item stuff:
   nsRefPtr<sbMediaExportPrefController>  mPrefController;
   nsCOMPtr<sbIMutablePropertyArray>      mFilteredProperties;
   nsCOMArray<sbIMediaList>               mObservedMediaLists;
@@ -101,9 +136,18 @@ private:
   sbStringList                           mAddedMediaList;
   sbStringList                           mRemovedMediaLists;
   PRBool                                 mIsRunning;
+  EEnumerationLookupState                mEnumState;
 
+  // Exporting stuff:
+  nsRefPtr<sbMediaExportTaskWriter>  mTaskWriter;
+  EEnumerationLookupState            mExportState;
+  sbMediaListItemMapIter             mCurExportListIter;
+  nsCOMPtr<sbIMediaList>             mCurExportMediaList;
+  PRBool                             mFinishedExportState;
+  
   // sbIJobProgress / sbIShutdownJob stuff:
   nsCOMArray<sbIJobProgressListener> mJobListeners;
+  PRUint16                           mStatus;
 };
 
 #endif  // sbMediaExportService_h_
