@@ -158,6 +158,11 @@ sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
     return NS_OK;
   }
 
+  // mark everything as not scanned, since we don't know if things have been
+  // added
+  rv = mPrefBranch->ClearUserPref(SB_PREF_MEDIA_MANAGER_COMPLETE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (aIsEnabled) {
     // disabled -> enabled transition
     if (!mDelayedStartupTimer) {
@@ -440,6 +445,11 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
   mLibraryScanJob = nsnull;
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // mark that we've done this once so we don't redo this unncessarily
+  // the next time we start the app
+  rv = mPrefBranch->SetBoolPref(SB_PREF_MEDIA_MANAGER_COMPLETE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 itemCount;
   { /* scope */
     nsAutoLock lock(mDirtyItemsLock);
@@ -475,6 +485,27 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
 
     rv = StartListening();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool isScanComplete;
+    rv = mPrefBranch->GetBoolPref(SB_PREF_MEDIA_MANAGER_COMPLETE, &isScanComplete);
+    if (NS_SUCCEEDED(rv) && isScanComplete) {
+      // we've previously completed a full manage, don't do that again
+      PRUint32 itemCount;
+      { /* scope */
+        nsAutoLock lock(mDirtyItemsLock);
+        itemCount = mDirtyItems->Count();
+      }
+      if (itemCount > 0) {
+        // have queued jobs
+
+        TRACE(("%s: scan skipped, has queue, setting timer", __FUNCTION__));
+        rv = mPerformActionTimer->InitWithCallback(this,
+                                                   MMS_SCAN_DELAY,
+                                                   nsITimer::TYPE_ONE_SHOT);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      return NS_OK;
+    }
 
     nsCOMPtr<sbIJobProgressService> jobProgressSvc =
       do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);

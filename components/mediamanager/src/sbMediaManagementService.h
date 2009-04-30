@@ -41,15 +41,16 @@
 #include <nsDataHashtable.h>
 
 // Define constants for our preference keys
-#define SB_PREF_MEDIA_MANAGER_ROOT    "songbird.media_management.library."
-#define SB_PREF_MEDIA_MANAGER_ENABLED "enabled"
-#define SB_PREF_MEDIA_MANAGER_COPY    "copy"
-#define SB_PREF_MEDIA_MANAGER_MOVE    "move"
-#define SB_PREF_MEDIA_MANAGER_RENAME  "rename"
-#define SB_PREF_MEDIA_MANAGER_DELETE  "delete"
-#define SB_PREF_MEDIA_MANAGER_FMTFILE "format.file"
-#define SB_PREF_MEDIA_MANAGER_FMTDIR  "format.dir"
-#define SB_PREF_MEDIA_MANAGER_LISTEN  "format."
+#define SB_PREF_MEDIA_MANAGER_ROOT     "songbird.media_management.library."
+#define SB_PREF_MEDIA_MANAGER_COMPLETE "complete"
+#define SB_PREF_MEDIA_MANAGER_ENABLED  "enabled"
+#define SB_PREF_MEDIA_MANAGER_COPY     "copy"
+#define SB_PREF_MEDIA_MANAGER_MOVE     "move"
+#define SB_PREF_MEDIA_MANAGER_RENAME   "rename"
+#define SB_PREF_MEDIA_MANAGER_DELETE   "delete"
+#define SB_PREF_MEDIA_MANAGER_FMTFILE  "format.file"
+#define SB_PREF_MEDIA_MANAGER_FMTDIR   "format.dir"
+#define SB_PREF_MEDIA_MANAGER_LISTEN   "format."
 
 class nsIComponentManager;
 class nsIThread;
