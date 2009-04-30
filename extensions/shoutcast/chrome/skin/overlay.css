@@ -30,3 +30,7 @@ treecol[bind="http://songbirdnest.com/data/1.0#listenerCount"] > label,
 	-moz-box-align: center;
 }
 
+#radioTosGroup label {
+	margin-left: 3px;
+	margin-right: 3px;
+}

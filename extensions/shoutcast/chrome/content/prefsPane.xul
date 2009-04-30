@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
+<?xml-stylesheet href="chrome://shoutcast-radio/skin/overlay.css"
+		type="text/css"?>
 
 <!DOCTYPE prefwindow SYSTEM "chrome://shoutcast-radio/locale/options.dtd">
 
@@ -94,11 +96,20 @@
 			</groupbox>
 
 			<groupbox id="radioTosGroup" flex="1">
-				<caption label="&prefs.tosCaption;" />
-				<description>&prefs.tosBegin;</description>
-				<vbox flex="1">
-					<label class="text-link"
-						href="http://www.shoutcast.com/disclaimer.phtml">&prefs.tosLinkText;</label>
+				<caption label="SHOUTcast" />
+				<vbox>
+					<hbox flex="1">
+						<label>&prefs.tosBegin;</label>
+						<label class="text-link"
+							href="http://www.shoutcast.com/disclaimer.phtml">&prefs.tosLinkText;</label>
+						<label>&prefs.tosEnd;</label>
+					</hbox>
+					<hbox flex="1">
+						<label>&prefs.toolbarBegin;</label>
+						<label class="text-link"
+							href="http://toolbar.aol.com/shoutcastradio/download.html">&prefs.toolbarLinkText;</label>
+						<label>&prefs.toolbarEnd;</label>
+					</hbox>
 				</vbox>
 			</groupbox>
 		</vbox>
