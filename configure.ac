@@ -978,14 +978,13 @@ AC_SUBST(SB_DEPENDENCIES_DIR)
 # Check for media cores to enable
 #
 
-MEDIA_CORE_VLC=
 MEDIA_CORE_WMP=
 MEDIA_CORE_GST=
 MEDIA_CORE_GST_SYSTEM=
 MEDIA_CORE_QT=
 
 AC_ARG_WITH(media-core,
-            [  --with-media-core=vlc,windowsmedia,gstreamer,gstreamer-system,qt,default,none  Media cores to enable],
+            [  --with-media-core=windowsmedia,gstreamer,gstreamer-system,qt,default,none  Media cores to enable],
             [ SB_MEDIA_CORES=$withval ],
             [ SB_MEDIA_CORES=default ])
 for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
@@ -1015,8 +1014,6 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
     elif test "$option" = "none"; then
         # Nothing needs to be set here
         true
-    elif test "$option" = "vlc"; then
-        MEDIA_CORE_VLC=1
     elif test "$option" = "windowsmedia"; then
         MEDIA_CORE_WMP=1
     elif test "$option" = "gstreamer"; then
@@ -1033,19 +1030,16 @@ for option in `echo $SB_MEDIA_CORES | sed 's/,/ /g'`; do
         AC_MSG_ERROR([You can not build the gstreamer and gstreamer-system media cores at the same time])
     fi
 done
-AC_SUBST(MEDIA_CORE_VLC)
 AC_SUBST(MEDIA_CORE_WMP)
 AC_SUBST(MEDIA_CORE_GST)
 AC_SUBST(MEDIA_CORE_GST_SYSTEM)
 AC_SUBST(MEDIA_CORE_QT)
 
-FORCE_MEDIA_CORE_VLC=
 FORCE_MEDIA_CORE_WMP=
-FORCE_MEDIA_CORE_GST=
 FORCE_MEDIA_CORE_QT=
 
 AC_ARG_WITH(force-media-core,
-            [  --with-force-media-core=vlc,windowsmedia,gstreamer,qt,default,none  Media cores to force install and enable],
+            [  --with-force-media-core=windowsmedia,gstreamer,qt,default,none  Media cores to force install and enable],
             [ SB_FORCED_MEDIA_CORES=$withval ],
             [ SB_FORCED_MEDIA_CORES=default ])
 for option in `echo $SB_FORCED_MEDIA_CORES | sed 's/,/ /g'`; do
@@ -1055,21 +1049,15 @@ for option in `echo $SB_FORCED_MEDIA_CORES | sed 's/,/ /g'`; do
     elif test "$option" = "none"; then
         # Nothing needs to be set here
         true
-    elif test "$option" = "vlc"; then
-        FORCE_MEDIA_CORE_VLC=1
     elif test "$option" = "windowsmedia"; then
         FORCE_MEDIA_CORE_WMP=1
-    elif test "$option" = "gstreamer"; then
-        FORCE_MEDIA_CORE_GST=1
     elif test "$option" = "qt"; then
         FORCE_MEDIA_CORE_QT=1
     else
         AC_MSG_ERROR([Unknown --with-force-media-core option $option])
     fi
 done
-AC_SUBST(FORCE_MEDIA_CORE_VLC)
 AC_SUBST(FORCE_MEDIA_CORE_WMP)
-AC_SUBST(FORCE_MEDIA_CORE_GST)
 AC_SUBST(FORCE_MEDIA_CORE_QT)
 
 #

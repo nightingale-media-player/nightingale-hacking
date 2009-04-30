@@ -62,10 +62,6 @@ ifdef SB_ENABLE_STATIC
    TIERS += static
 endif
 
-ifeq (windows,$(SB_PLATFORM))
-  CREATEDIRS += $(SONGBIRD_VLCPLUGINSDIR)
-endif
-
 ifeq (macosx,$(SB_PLATFORM))
   CREATEDIRS += $(SONGBIRD_MACOS)
 endif

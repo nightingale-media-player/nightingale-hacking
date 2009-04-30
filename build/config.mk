@@ -126,8 +126,7 @@ PPDEFINES += -DSB_FLASH_REDISTRIBUTABLE="$(SB_FLASH_REDISTRIBUTABLE)"
 endif
 
 # core wrappers to enable
-PPDEFINES += $(if $(MEDIA_CORE_VLC), -DMEDIA_CORE_VLC=1) \
-             $(if $(MEDIA_CORE_WMP), -DMEDIA_CORE_WMP=1) \
+PPDEFINES += $(if $(MEDIA_CORE_WMP), -DMEDIA_CORE_WMP=1) \
              $(if $(MEDIA_CORE_GST), -DMEDIA_CORE_GST=1) \
              $(if $(MEDIA_CORE_GST_SYSTEM), -DMEDIA_CORE_GST_SYSTEM=1) \
              $(if $(MEDIA_CORE_QT),  -DMEDIA_CORE_QT=1 ) \
