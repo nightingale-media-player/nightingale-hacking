@@ -626,15 +626,19 @@ sbLibraryImporterManager.prototype = {
     // Get the auto-import preferences.
     var Application = Cc["@mozilla.org/fuel/application;1"]
                         .getService(Ci.fuelIApplication);
-    var autoImport =
-          Application.prefs.getValue("songbird.library_importer.auto_import",
-                                     false);
     var firstRunDoImportLibrary =
           Application.prefs.getValue("songbird.firstrun.do_import_library",
                                      false);
+    var importTracks = Application.prefs.getValue(
+          "songbird.library_importer.import_tracks", false);
+    var importPlaylists = Application.prefs.getValue(
+          "songbird.library_importer.import_playlists", false);
+    var importSmartPlaylists = Application.prefs.getValue(
+          "songbird.library_importer.import_smartplaylists", false);
 
     // Do nothing if not auto-importing, or if this is first run.
-    if (!autoImport || !this.defaultLibraryImporter || firstRunDoImportLibrary)
+    if (!this.defaultLibraryImporter || firstRunDoImportLibrary ||
+        (!importTracks && !importPlaylists && !importSmartPlaylists))
       return;
 
     // Wait until the main Songbird window is ready before initiating
