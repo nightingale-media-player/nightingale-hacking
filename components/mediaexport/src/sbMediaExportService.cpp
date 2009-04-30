@@ -375,6 +375,9 @@ sbMediaExportService::BeginExportData()
   mFinishedExportState = PR_FALSE;
   mExportState = eNone;
 
+  // Reset the mediaitems map iter
+  mCurExportListIter = mAddedItemsMap.end();
+
   // Start the export:
   rv = DetermineNextExportState();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -570,7 +573,7 @@ sbMediaExportService::StartExportState()
 
     case eAddedMediaItems:
     {
-      if (mCurExportListIter == nsnull) {
+      if (mCurExportListIter == mAddedItemsMap.end()) {
         // If the |mCurExportListIter| iterator is currently null, then
         // this is the first time
         mCurExportListIter = mAddedItemsMap.begin();
@@ -679,8 +682,6 @@ sbMediaExportService::FinishExportState()
       if (mCurExportListIter == mAddedItemsMap.end()) {
         // All of the items have been processed - and this is the last state
         // of the export, finish up the service.
-        mCurExportListIter = nsnull;
-
         rv = DetermineNextExportState();
         NS_ENSURE_SUCCESS(rv, rv);
         break;
