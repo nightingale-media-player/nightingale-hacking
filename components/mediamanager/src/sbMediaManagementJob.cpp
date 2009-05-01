@@ -256,8 +256,7 @@ sbMediaManagementJob::AppendErrorToList(PRUint32 aErrorCount,
   params.AppendElement(errorCount);
 
   sbStringBundle bundle;
-  nsString errorString = bundle.Format(NS_ConvertUTF16toUTF8(aErrorKey).get(),
-                                       params);
+  nsString errorString = bundle.Format(aErrorKey, params, EmptyString());
   if (!errorString.IsEmpty()) {
     aErrorMessages.AppendElement(errorString);
   } else {
