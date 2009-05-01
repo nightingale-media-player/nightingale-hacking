@@ -205,7 +205,7 @@ FunctionEnd
       # centralize the option parsing (and other options do make sense for
       # the uninstaller), so we basically just ignore the option, even if
       # it somehow gets set.
-      ${${un}GetOptions} $R0 "/UNPACK" "$0"
+      ${${un}GetOptions} $R0 "/UNPACK" $0
       IfErrors +2 0
          StrCpy $UnpackMode ${TRUE}
 
@@ -215,7 +215,7 @@ FunctionEnd
          StrCpy $InstallerType "dist"
          StrCpy $DistributionName $0
 
-      ${${un}GetOptions} $R0 "/DEBUG" "$0"
+      ${${un}GetOptions} $R0 "/DEBUG" $0
       IfErrors +2 0
          StrCpy $InstallerMode "debug"
 
