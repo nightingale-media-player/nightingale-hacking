@@ -10,7 +10,7 @@ XPIDL_SRCS = mashTape.idl \
              $(NULL)
 
 # into this xpt (an xpt is like a compiled IDL read at runtime)
-#XPIDL_MODULE = mashTape.xpt
+XPIDL_MODULE = mashTape.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 # and put it into the extension

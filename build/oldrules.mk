@@ -755,9 +755,15 @@ endif
 
 xpidl_module_typelibs = $(XPIDL_MODULE_TYPELIBS)
 
+# If the collected typelibs are the same (single file) as XPIDL_MODULE, 
+# there's no reason to run xpt_link on them (in fact, this creates a circular
+# make dependency that gets dropped, but xpt_link clobbers the file in the
+# process of trying to link it, and fails anyway.
+
+ifneq ($(strip $(XPIDL_MODULE)),$(strip $(xpidl_module_typelibs)))
 $(XPIDL_MODULE): $(xpidl_module_typelibs)
-	$(CYGWIN_WRAPPER) $(XPTLINK) $(xpidl_module) $(xpidl_module_typelibs)
-	$(CHMOD) -x $(xpidl_module)
+	$(XPTLINK) $(xpidl_module) $(xpidl_module_typelibs)
+endif
 
 xpidl_clean_link:
 	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_module)

@@ -34,7 +34,7 @@ XPIDL_SRCS = Songkick.idl \
              $(NULL)
 
 # into this xpt (an xpt is like a compiled IDL read at runtime)
-#XPIDL_MODULE = Songkick.xpt
+XPIDL_MODULE = Songkick.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 # and put it into the extension
