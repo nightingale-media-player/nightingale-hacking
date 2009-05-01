@@ -107,7 +107,7 @@ Function un.RemoveAppRegistryKeys
    DeleteRegKey HKLM "$RootAppRegistryKey"
 
    ; And if we're the last installed copy of Songbird, delete all our reg keys
-   DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\\$InstallerType"
+   DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\$InstallerType"
    DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}"
 FunctionEnd 
  

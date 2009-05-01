@@ -164,17 +164,17 @@ FunctionEnd
    Function ${un}SetRootRegistryKey
 
    ${If} $InstallerType == "dist"
-      StrCpy $R1 "$InstallerType\\$DistributionName" 
+      StrCpy $R1 "$InstallerType\$DistributionName" 
    ${ElseIf} $InstallerType == "release"
       StrCpy $R1 $InstallerType
    ${ElseIf} $InstallerType == "nightly"
-      StrCpy $R1 "$InstallerType\\${AppBuildNumber}"
+      StrCpy $R1 "$InstallerType\${AppBuildNumber}"
    ${Else}
       MessageBox MB_OK "Invalid InstallerType: $InstallerType"
       Abort 
    ${EndIf}
 
-   StrCpy $RootAppRegistryKey "${RootAppRegistryKeyBase}\\$R1"
+   StrCpy $RootAppRegistryKey "${RootAppRegistryKeyBase}\$R1"
 
    ${If} $InstallerMode == "debug"
       MessageBox MB_OK "RootAppRegistryKey is $RootAppRegistryKey"
@@ -222,7 +222,7 @@ FunctionEnd
       Call ${un}SetRootRegistryKey
 
       ${If} $InstallerMode == "debug"
-         MessageBox MB_OK "UnpackMode is is $UnpackMode"
+         MessageBox MB_OK "UnpackMode is $UnpackMode"
          MessageBox MB_OK "DistributionMode is $DistributionMode"
          MessageBox MB_OK "InstallerMode is $InstallerMode"
          MessageBox MB_OK "InstallerType is $InstallerType"

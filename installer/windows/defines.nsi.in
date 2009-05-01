@@ -70,8 +70,8 @@
 
 ; Registry key paths/names shared between the installer/uninstaller
 
-!define RootAppRegistryKeyBase "Software\\${BrandFullNameInternal}"
-!define MuiStartmenupageRegKey "${RootAppRegistryKeyBase}\\StartMenuTempKey"
+!define RootAppRegistryKeyBase "Software\${BrandFullNameInternal}"
+!define MuiStartmenupageRegKey "${RootAppRegistryKeyBase}\StartMenuTempKey"
 !define MuiStartmenupageRegName "StartMenuFolder"
 !define DesktopShortcutRegName "DesktopShortcutLocation"
 !define QuicklaunchRegName "QuicklaunchShortcutLocation"
