@@ -51,8 +51,6 @@
 // Songbird imports.
 #include <sbIAlbumArtFetcher.h>
 #include <sbIAlbumArtService.h>
-#include <sbIMediaList.h>
-#include <sbIMediaListListener.h>
 #include <sbMemoryUtils.h>
 #include <sbLibraryUtils.h>
 
@@ -68,7 +66,6 @@
 #include <nsTArray.h>
 #include <nsInterfaceHashtable.h>
 #include <nsITimer.h>
-#include <set>
 
 //------------------------------------------------------------------------------
 //
@@ -90,9 +87,6 @@
     { 0x85, 0x52, 0xD7, 0x4D, 0x31, 0x3C, 0x62, 0xB6 }                         \
   }
 
-typedef std::set<nsString>    sbStringSet;
-typedef sbStringSet::iterator sbStringSetIter;
-
 //------------------------------------------------------------------------------
 //
 // Songbird album art service classes.
@@ -104,7 +98,6 @@ typedef sbStringSet::iterator sbStringSetIter;
  */
 
 class sbAlbumArtService : public sbIAlbumArtService,
-                          public sbIMediaListListener,
                           public nsIObserver
 {
   //----------------------------------------------------------------------------
@@ -121,7 +114,6 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIALBUMARTSERVICE
-  NS_DECL_SBIMEDIALISTLISTENER
   NS_DECL_NSIOBSERVER
 
 
@@ -198,19 +190,6 @@ private:
   nsCOMPtr<nsITimer>            mCacheFlushTimer;
   
   //
-  // mMainLibraryList           Main library we monitor for changes.
-  // mBatchCounter              Keep track of the batches running
-  // mAlbumArtUrlSet            Array of URLs to check for "cleaning"
-  // mAlbumArtCleanTimer        Timer for checking if album art files need to
-  //                            be removed.
-  //
-  
-  nsCOMPtr<sbIMediaList>        mMainLibraryList;
-  sbLibraryBatchHelper          mBatchHelper;
-  sbStringSet                   mAlbumArtUrlSet;
-  nsCOMPtr<nsITimer>            mAlbumArtCleanTimer;
-  
-  //
   // Internal services.
   //
 
@@ -234,17 +213,6 @@ private:
 
   nsresult GetAlbumArtFileExtension(const nsACString& aMimeType,
                                     nsAString&        aFileExtension);
-
-  nsresult StoreAlbumArtUrlForCheck(nsString& aCacheURL);
-  
-  nsresult SaveSetToFile();
-  nsresult LoadSetFromFile();
-
-  nsresult ScanAlbumArtUrls();
-
-  nsresult CheckAlbumArtCache(const nsAString& aCacheURL);
-
-  nsresult RemoveAlbumArtCache(const nsAString& aCacheURL);
 
 };
 
