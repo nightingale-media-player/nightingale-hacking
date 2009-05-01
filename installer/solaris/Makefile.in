@@ -28,22 +28,22 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
+ifdef SONGBIRD_OFFICIAL
+   INSTALLER_README = README_OFFICIAL.txt
+else
+   INSTALLER_README = README_NIGHTLY.txt
+endif
+
 SONGBIRD_PP_DIR = $(CURDIR)/..
 SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
+                        $(topsrcdir)/installer/common/$(INSTALLER_README).in \
                         $(NULL)
 
 PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
 
 SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
-ifdef SONGBIRD_OFFICIAL
-readme = README_OFFICIAL.txt
-else
-readme = README_NIGHTLY.txt
-endif
-
 SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
-                $(topsrcdir)/installer/common/$(readme) \
                 $(topsrcdir)/installer/common/songbird.desktop \
                 $(topsrcdir)/app/branding/songbird-512.png \
                 $(NULL)
@@ -52,6 +52,6 @@ SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
                   $(SB_PLATFORM)-$(SB_ARCH) \
                   $(SB_MILESTONE) \
                   $(SB_BUILD_NUMBER) \
-                  $(readme)
+                  $(INSTALLER_README)
 
 include $(topsrcdir)/build/rules.mk

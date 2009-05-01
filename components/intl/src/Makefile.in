@@ -109,6 +109,7 @@ ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
                        $(NULL)
 
     DYNAMIC_LIB_EXTRA_FLAGS += $(shell pkg-config --libs glib-2.0) \
+                               -lm \
                                $(NULL)
 endif
 

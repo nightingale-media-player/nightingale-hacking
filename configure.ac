@@ -842,6 +842,18 @@ case "$SB_PLATFORM" in
     AC_SUBST(GTK_CFLAGS)
     AC_SUBST(GTK_LIBS)
 
+    PKG_CHECK_MODULES(GLIB, glib-2.0)
+    AC_SUBST(GLIB_CFLAGS)
+    AC_SUBST(GLIB_LIBS)
+
+    # The iPod support needs dbus and hal.
+    PKG_CHECK_MODULES(DBUS, dbus-glib-1)
+    PKG_CHECK_MODULES(HAL, hal)
+    AC_SUBST(DBUS_CFLAGS)
+    AC_SUBST(DBUS_LIBS)
+    AC_SUBST(HAL_CFLAGS)
+    AC_SUBST(HAL_LIBS)
+
     if test "$GNU_CC" = "yes" ; then
       AC_MSG_ERROR([GCC not yet supported])
       LDFLAGS_DLL="-shared"
