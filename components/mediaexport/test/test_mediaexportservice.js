@@ -56,6 +56,7 @@ TestController.prototype =
   _phase                : 0,
   _shutdownService      : null,
   _tracks               : [],
+  _trackPaths           : [],
   _mainLibrary          : null,
   _playlist             : null,
   _smartPlaylist        : null,
@@ -70,6 +71,17 @@ TestController.prototype =
     this._tracks[0] = rootUri + "one.mp3";
     this._tracks[1] = rootUri + "two.mp3";
     this._tracks[2] = rootUri + "three.mp3";
+
+    // Get the file-system paths for the URI's created above.
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    var fileProtocolHandler = ioService.getProtocolHandler("file")
+                              .QueryInterface(Ci.nsIFileProtocolHandler);
+    for (var i = 0; i < this._tracks.length; i++) {
+      var curTrackURL = this._tracks[i];
+      this._trackPaths[i] = 
+        fileProtocolHandler.getFileFromURLSpec(curTrackURL).path;
+    }
 
     // Make sure the tracks, playlist, and smart playlist are not currently
     // in the library.
@@ -150,9 +162,9 @@ TestController.prototype =
 
         // There should only be three added media items.
         assertTrue(addedLibraryItems.length == 3);
-        assertTrue(addedLibraryItems[0] == this._tracks[0]);
-        assertTrue(addedLibraryItems[1] == this._tracks[1]);
-        assertTrue(addedLibraryItems[2] == this._tracks[2]);
+        assertTrue(addedLibraryItems[0] == this._trackPaths[0]);
+        assertTrue(addedLibraryItems[1] == this._trackPaths[1]);
+        assertTrue(addedLibraryItems[2] == this._trackPaths[2]);
         break;
 
       case 1:
@@ -172,9 +184,9 @@ TestController.prototype =
           parsedTask.getAddedMediaItems()[this._playlist.name];
         assertTrue(addedMediaItems.length == 3);
 
-        assertTrue(addedMediaItems[0] == this._tracks[0]);
-        assertTrue(addedMediaItems[1] == this._tracks[1]);
-        assertTrue(addedMediaItems[2] == this._tracks[2]);
+        assertTrue(addedMediaItems[0] == this._trackPaths[0]);
+        assertTrue(addedMediaItems[1] == this._trackPaths[1]);
+        assertTrue(addedMediaItems[2] == this._trackPaths[2]);
         break;
 
       case 2:

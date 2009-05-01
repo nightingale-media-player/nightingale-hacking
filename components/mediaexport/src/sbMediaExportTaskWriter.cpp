@@ -27,6 +27,8 @@
 #include "sbMediaExportTaskWriter.h"
 
 #include <nsIFile.h>
+#include <nsIURI.h>
+#include <nsIFileURL.h>
 #include <nsDirectoryServiceUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
@@ -45,9 +47,9 @@
   0=Removed Playlist A
   1=Removed Playlist B
   [added-mediaitems:TEST PLAYLIST]
-  0=file:///path/to/file1.mp3
-  1=file:///path/to/file2.mp3
-  2=file:///path/to/file3.mp3
+  0=/path/to/file1.mp3
+  1=/path/to/file2.mp3
+  2=/path/to/file3.mp3
 
 */
 
@@ -199,17 +201,36 @@ sbMediaExportTaskWriter::WriteAddedTrack(sbIMediaItem *aMediaItem)
   NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
 
-  nsString itemContentURL;
-  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-                               itemContentURL);
+  // Get the path of mediaitem and write that info to disk
+  nsCOMPtr<nsIURI> contentUri;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentUri));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIFileURL> contentFileURL = do_QueryInterface(contentUri, &rv);
+  if (NS_FAILED(rv) || !contentFileURL) {
+    // If this is not a local resource, just warn and return.
+    NS_WARNING("WARNING: Tried to write a remote mediaitem resource!");
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIFile> contentFile;
+  rv = contentFileURL->GetFile(getter_AddRefs(contentFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString itemContentPath;
+  rv = contentFile->GetPath(itemContentPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool exists = PR_FALSE;
+  rv = contentFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   LOG(("%s: Writing added track '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(itemContentURL).get()));
+        __FUNCTION__, NS_ConvertUTF16toUTF8(itemContentPath).get()));
 
   mOutputStream << mCurOutputIndex++ 
                 << "="
-                << NS_ConvertUTF16toUTF8(itemContentURL).get()
+                << NS_ConvertUTF16toUTF8(itemContentPath).get()
                 << std::endl;
 
   return NS_OK;
