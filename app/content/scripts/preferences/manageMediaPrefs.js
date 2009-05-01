@@ -355,7 +355,7 @@ var manageMediaPrefsPane = {
       // Disable the controls
       button.label = button.getAttribute("label-enable");
       managedFolder.setAttribute("disabled", true);
-      browseButton.disabled = false;
+      browseButton.disabled = true;
       renameCheck.setAttribute("disabled", true);
       fmtDirLabel.setAttribute("disabled", true);
       dirFormatter.disableAll = true;
