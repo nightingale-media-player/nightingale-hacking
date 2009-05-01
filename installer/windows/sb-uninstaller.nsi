@@ -40,7 +40,7 @@ ShowUninstDetails hide
 Section "Uninstall"
    Call un.CloseApp
 
-   ${If} $DistributionMode == "1"
+   ${If} ${TRUE} == $DistributionMode
       System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI", "$INSTDIR\distribution\distribution.ini").r0'
 
       ; We don't really bother checking if we failed here because there's a) not
