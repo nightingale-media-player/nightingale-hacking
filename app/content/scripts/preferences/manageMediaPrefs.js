@@ -322,7 +322,7 @@ var manageMediaPrefsPane = {
       } catch (ex) {
         showErrorNotification(
             SBFormattedString("prefs.media_management.error.not_writable",
-                              [testFile.path]));
+                              [file.path]));
         return false;
       }
     }
