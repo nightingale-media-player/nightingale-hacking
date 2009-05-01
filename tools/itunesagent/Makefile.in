@@ -29,11 +29,13 @@ VPATH = @srcdir@ @srcdir@/$(SB_PLATFORM)
 include $(DEPTH)/build/autodefs.mk
 
 CPP_SRCS = main.cpp \
+           sbError.cpp \
+           sbiTunesAgentProcessor.cpp \
            $(NULL)
 
 # we force include mozilla-config.h; otherwise this is not necessary
 CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-               $(srcdir)
+               $(srcdir) \
                $(NULL)
 
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
@@ -49,12 +51,14 @@ CPP_INCLUDES += $(srcdir)/windows \
                                                
 CPP_SRCS += winmain.cpp \
             sbiTunesAgentAppWatcher.cpp \
+            sbiTunesAgentWindowsProcessor.cpp \
+            sbiTunesLibrary.cpp \
             $(NULL)
 
 SUBDIRS += $(NULL)
 endif # SB_PLATFORM = windows
 
-SIMPLE_PROGRAM = itunesagent$(BIN_SUFFIX)
+SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
 SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 FINAL_TARGET = $(SONGBIRD_DISTDIR)

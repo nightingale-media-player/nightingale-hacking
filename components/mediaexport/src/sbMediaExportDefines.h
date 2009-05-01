@@ -57,6 +57,7 @@ typedef sbStringList::const_iterator        sbStringListIter;
 #define TASKFILE_ADDEDMEDIALISTS_HEADER   "added-medialists"
 #define TASKFILE_REMOVEDMEDIALISTS_HEADER "removed-medialists"
 #define TASKFILE_ADDEDMEDIAITEMS_HEADER   "added-mediaitems"
+#define SHUTDOWN_NAME                     "songbird_export.shutdown"
 
 //------------------------------------------------------------------------------
 // Media export service XPCOM info

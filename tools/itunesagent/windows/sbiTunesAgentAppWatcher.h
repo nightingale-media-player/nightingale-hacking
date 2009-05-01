@@ -31,6 +31,8 @@
 #include <set>
 #include <string>
 
+#include "sbCallback.h"
+
 /**
  * Class that waits for an app to be started
  */
@@ -45,11 +47,12 @@ public:
     FOUND,
     
   };
+  typedef sbCallbackBase<bool, bool> Callback;
   /**
    * Waits for the App process to be started. Returns true
    * if the process started, or false if returning for a different reason
    */
-  bool WaitForApp();
+  bool WaitForApp(Callback const & aCallback);
 private:
   /**
    * Collection of process ID's type.

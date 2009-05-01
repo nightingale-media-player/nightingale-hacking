@@ -33,7 +33,8 @@
 DWORD const ITUNES_CHECK_INTERVAL_MS = 1000; // 1 second
 
 TCHAR const ITUNES_FILE_NAME[] = L"/itunes.exe";
-int const ITUNES_FILE_NAME_LENGTH = sizeof(ITUNES_FILE_NAME) / sizeof(ITUNES_FILE_NAME[0]) - 1;
+int const ITUNES_FILE_NAME_LENGTH = sizeof(ITUNES_FILE_NAME) / 
+  sizeof(ITUNES_FILE_NAME[0]) - 1;
 
 sbiTunesAgentAppWatcher::sbiTunesAgentAppWatcher(std::wstring const & aApp) : 
   mProcessIDCount(0),
@@ -64,7 +65,8 @@ bool sbiTunesAgentAppWatcher::IsAppProcess(DWORD aProcessID) {
   return isApp;
 }
 
-bool sbiTunesAgentAppWatcher::SearchForApp() {
+bool 
+sbiTunesAgentAppWatcher::SearchForApp() {
   bool found = false;
   /**
    * Search for an App process in the ID array buffer
@@ -83,15 +85,21 @@ bool sbiTunesAgentAppWatcher::SearchForApp() {
   return found;
 }
 
-bool sbiTunesAgentAppWatcher::WaitForApp() 
+bool 
+sbiTunesAgentAppWatcher::WaitForApp(sbiTunesAgentAppWatcher::Callback const & aCallback) 
 {
   bool foundApp;
   do {
-    if (!EnumProcesses(mProcessIDsBuffer, sizeof(mProcessIDsBuffer), &mProcessIDCount)) {
+    if (!EnumProcesses(mProcessIDsBuffer, 
+                       sizeof(mProcessIDsBuffer), 
+                       &mProcessIDCount)) {
       return false;
     }
     foundApp = SearchForApp();
     if (!foundApp) {
+      if (aCallback(true)) {
+        return false;
+      }
       Sleep(ITUNES_CHECK_INTERVAL_MS);
     }
   } while (!foundApp);

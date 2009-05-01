@@ -31,8 +31,6 @@
 
 #include "sbiTunesAgentAppWatcher.h"
 
-wchar_t const ITUNES_EXECUTABLE_NAME[] = L"itunes.exe";
-
 /**
  * Win32 WinMain entry point used to forward to the generic main
  */
@@ -132,9 +130,5 @@ int WINAPI WinMain(HINSTANCE,
   int result = -1;
   // Since waiting for iTunes is a windows only issue, we'll do it
   // here
-  sbiTunesAgentAppWatcher appWatcher(ITUNES_EXECUTABLE_NAME);
-  if (appWatcher.WaitForApp()) {
-    result = main(commandLine.ArgCount(), commandLine.Args());
-  }
-  return result;
+  return main(commandLine.ArgCount(), commandLine.Args());
 }

@@ -24,19 +24,6 @@
  //
  */
 
-#include "sbiTunesAgentProcessor.h"
+#include "sbError.h"
 
-/**
- * Standard C main function
- */
-int main(int argc, char * argv[]) {
-  sbError error;
-  sbiTunesAgentProcessorPtr processor(sbCreatesbiTunesAgentProcessor());
-  if (processor->TaskFileExists()) {
-    error = processor->WaitForiTunes();
-    if (!error) {
-      error = processor->ProcessTaskFile();
-    }
-  }
-  return error ? -1 : 0;
-}
+sbError const sbNoError(true);
