@@ -26,31 +26,81 @@
 
 #include "sbiTunesAgentWindowsProcessor.h"
 #include "sbiTunesAgentAppWatcher.h"
+#include <shlobj.h>
 
 wchar_t const ITUNES_EXECUTABLE_NAME[] = L"itunes.exe";
+wchar_t const AGENT_EXPORT_FILENAME_MASK[] = L"songbird_export.task*";
+wchar_t const AGENT_ERROR_FILENAME[] = L"itunesexporterrors.txt";
+wchar_t const AGENT_LOG_FILENAME[] = L"itunesexport.log";
+wchar_t const AGENT_SHUTDOWN_FILENAME[] = L"songbird_export.shutdown";
+char const WINDOWS_RUN_KEY[] = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+char const WINDOWS_RUN_KEY_VALUE[] = "sbitunesagent";
 
-char const AGENT_EXPORT_FILENAME_MASK[] = "songbird_export.task*";
-char const AGENT_ERROR_FILENAME[] = "itunesexporterrors.txt";
-char const AGENT_LOG_FILENAME[] = "itunesexport.log";
-char const AGENT_SHUTDOWN_FILENAME[] = "songbird_export.shutdown";
+// table of number of bytes given a UTF8 lead char
+static const int UTF8_SIZE[] = {
+  // 0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 00
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 10
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 20
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 30
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 40
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 50
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 60
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 70
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 80
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 90
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // A0
+     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // B0
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // C0
+     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // D0
+     2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // E0
+     3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5  // F0
+};
 
-static std::string GetSongbirdPath() {
-  char buffer[4096];
-  ::GetEnvironmentVariableA("AppData", buffer, sizeof(buffer));
-  std::string path(buffer);
+std::wstring ConvertUTF8ToUTF16(const std::string& src) {
+  std::wstring result;
+  wchar_t c;
+  std::string::const_iterator it, end = src.end();
+  #define GET_BITS(c,n) (((c) & 0xFF) & ((unsigned char)(1 << (n)) - 1))
+  for (it = src.begin(); it < end;) {
+    int bits = UTF8_SIZE[(*it) & 0xFF];
+    c = GET_BITS(*it++, 8 - 1 - bits);
+    switch(bits) {
+      case 5: c <<= 6; c |= GET_BITS(*it++, 6);
+      case 4: c <<= 6; c |= GET_BITS(*it++, 6);
+      case 3: c <<= 6; c |= GET_BITS(*it++, 6);
+      case 2: c <<= 6; c |= GET_BITS(*it++, 6);
+      case 1: c <<= 6; c |= GET_BITS(*it++, 6);
+    }
+    result.append(1, c);
+  }
+  return result;
+  #undef GET_BITS
+}
+
+#define STRINGIT2(arg) #arg
+#define STRINGIT(arg) STRINGIT2(arg)
+
+static std::wstring GetSongbirdPath() {
+  WCHAR buffer[MAX_PATH + 2];
+  HRESULT result = SHGetSpecialFolderPathW(NULL, buffer, CSIDL_APPDATA, true);
+  if (!SUCCEEDED(result)) 
+    return std::wstring();
+ 
+  std::wstring path(buffer);
   if (!path.empty()) {
     switch (path[path.length()-1]) {
-      case '/':
-      case '\\':
+    case L'/':
+    case L'\\':
         // Nothing to do here,
       break;
       default:
-        path += '\\';
+      path += L'\\';
       break;
     }
   }
-  path += "\\songbird2\\";
-  
+  path += ConvertUTF8ToUTF16(STRINGIT(SB_APPNAME) STRINGIT(SB_PROFILE_VERSION));
+  path += L'/';
   return path;
 }
 
@@ -64,51 +114,58 @@ sbiTunesAgentWindowsProcessor::~sbiTunesAgentWindowsProcessor() {
 }
 
 sbError
-sbiTunesAgentWindowsProcessor::AddTracks(std::wstring const & aSource,
+sbiTunesAgentWindowsProcessor::AddTracks(std::string const & aSource,
                                          Tracks const & aPaths) {
-  
-  return miTunesLibrary.AddTracks(aSource, aPaths); 
+  std::deque<std::wstring> paths;
+  Tracks::const_iterator const end = aPaths.end();
+  for (Tracks::const_iterator iter = aPaths.begin(); iter != end; ++iter) {
+    paths.push_back(ConvertUTF8ToUTF16(*iter));
+  }
+  return miTunesLibrary.AddTracks(ConvertUTF8ToUTF16(aSource),
+                                  paths);
 }
 
 sbError
 sbiTunesAgentWindowsProcessor::CreatePlaylist(
-    std::wstring const & aPlaylistName) {
-  return miTunesLibrary.CreatePlaylist(aPlaylistName);
+    std::string const & aPlaylistName) {
+  return miTunesLibrary.CreatePlaylist(ConvertUTF8ToUTF16(aPlaylistName));
 }
 
 bool sbiTunesAgentWindowsProcessor::ErrorHandler(sbError const & aError) {
-  std::string path(GetSongbirdPath());
+  std::wstring path(GetSongbirdPath());
   path += AGENT_ERROR_FILENAME;
-  std::wofstream error(path.c_str());
+  std::ofstream error(path.c_str());
   if (error) {
-    error << L"ERROR: " << aError.Message() << std::endl;
+    error << "ERROR: " << aError.Message() << std::endl;
   }
   return true;
 }
 
-std::string sbiTunesAgentWindowsProcessor::GetTaskFilePath() {
-  std::string path(GetSongbirdPath());
+bool sbiTunesAgentWindowsProcessor::OpenTaskFile(std::ifstream & aStream) {
+  std::wstring path(GetSongbirdPath());
   path += AGENT_EXPORT_FILENAME_MASK;
   // Look for a file that matches the mask
-  WIN32_FIND_DATAA findData;
-  HANDLE hFind = FindFirstFileA(path.c_str(), &findData);
+  WIN32_FIND_DATAW findData;
+  HANDLE hFind = FindFirstFileW(path.c_str(), &findData);
   if (hFind == INVALID_HANDLE_VALUE) {
-    return std::string();
+    return false;
   }
   // We found one so return the full path of it
   path = GetSongbirdPath() + findData.cFileName;
+  mCurrentTaskFile = path;
   FindClose(hFind);
-  return path;
+  aStream.open(path.c_str());
+  return true;
 }
 
 sbError sbiTunesAgentWindowsProcessor::Initialize() {
   return miTunesLibrary.Initialize();  
 }
 
-void sbiTunesAgentWindowsProcessor::Log(std::wstring const & aMsg) {
+void sbiTunesAgentWindowsProcessor::Log(std::string const & aMsg) {
   if (mLogState != DEACTIVATED) {
     if (mLogState != OPENED) {
-      std::string logPath(GetSongbirdPath());
+      std::wstring logPath(GetSongbirdPath());
       logPath += AGENT_LOG_FILENAME;
       mLog.open(logPath.c_str());
       // If we can't open then don't bother trying again
@@ -118,19 +175,57 @@ void sbiTunesAgentWindowsProcessor::Log(std::wstring const & aMsg) {
   }
 }
 
+void sbiTunesAgentWindowsProcessor::RemoveTaskFile() {
+  if (!mCurrentTaskFile.empty()) {
+    DeleteFileW(mCurrentTaskFile.c_str());
+    mCurrentTaskFile.clear();
+  }
+}
+
 sbError
-sbiTunesAgentWindowsProcessor::RemovePlaylist(std::wstring const & aPlaylist) {
-  return miTunesLibrary.RemovePlaylist(aPlaylist);
+sbiTunesAgentWindowsProcessor::RemovePlaylist(std::string const & aPlaylist) {
+  return miTunesLibrary.RemovePlaylist(ConvertUTF8ToUTF16(aPlaylist));
 }
 
 bool sbiTunesAgentWindowsProcessor::Shutdown() {
-  std::string path = GetSongbirdPath();
+  std::wstring path = GetSongbirdPath();
   path += AGENT_SHUTDOWN_FILENAME;
-  return DeleteFileA(path.c_str()) != 0;
+  return DeleteFileW(path.c_str()) != 0;
 }
 
 bool sbiTunesAgentWindowsProcessor::ShutdownCallback(bool) {
   return Shutdown();
+}
+
+/**
+ * Returns what to do with the file given it's version
+ */
+sbiTunesAgentWindowsProcessor::VersionAction 
+sbiTunesAgentWindowsProcessor::VersionCheck(std::string const & aVersion) {
+  if (atoi(aVersion.c_str()) == 1) {
+    return OK;
+  }
+  return ABORT;
+}
+
+bool sbiTunesAgentWindowsProcessor::TaskFileExists() {
+  std::wstring path(GetSongbirdPath());
+  path += AGENT_EXPORT_FILENAME_MASK;
+  // Look for a file that matches the mask
+  WIN32_FIND_DATAW findData;
+  HANDLE hFind = FindFirstFileW(path.c_str(), &findData);
+  if (hFind == INVALID_HANDLE_VALUE) {
+    return false;
+  }
+  FindClose(hFind);
+  return true;
+}
+
+/**
+ * Sleep for x milliseconds
+ */
+void sbiTunesAgentWindowsProcessor::Sleep(unsigned long aMilliseconds){
+  ::Sleep(aMilliseconds);
 }
 
 sbError 

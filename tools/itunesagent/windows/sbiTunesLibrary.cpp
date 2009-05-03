@@ -45,9 +45,8 @@ sbiTunesLibrary::~sbiTunesLibrary() {
  */
 sbError CheckCOMError(_com_error const & error) {
   if (error.Error() != SB_ITUNES_ERROR_BUSY) {
-    std::wstringstream msg;
-    msg << L"Error: iTunes Exception occurred [" << error.Error() << L"] " 
-        << error.ErrorMessage();
+    std::stringstream msg;
+    msg << L"Error: iTunes Exception occurred " << error.Error();
     return sbError(msg.str());
   }
   return sbNoError;
@@ -167,7 +166,7 @@ CreateVariantArray(std::deque<std::wstring> const & aStrings,
 }
 
 sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource, 
-                                  std::deque<std::wstring> const & aTrackPaths) {
+                                   std::deque<std::wstring> const & aTrackPaths) {
   if (!miTunesApp) {
     return sbError(L"iTunes objects not initialized");
   }
@@ -200,15 +199,15 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
         if (!playlist) {
           playlist = mSongbirdPlaylist->CreatePlaylist(aSource.c_str());
           if (!playlist) {
-            std::wostringstream msg;
-            msg << L"Unable to create playlist " << aSource;
+            std::ostringstream msg;
+            msg << "Unable to create playlist";
             return sbError(msg.str());
           }
         }
         userPlaylist = playlist;
         if (!userPlaylist) {
-          std::wostringstream msg;
-          msg << L"Playlist " << aSource << L" is not a user defined playlist";
+          std::ostringstream msg;
+          msg << "Playlist is not a user defined playlist";
           return sbError(msg.str());
         }
         break;
@@ -278,7 +277,10 @@ sbiTunesLibrary::RemovePlaylist(std::wstring const & aPlaylistName) {
     try {
       iTunesLib::IITPlaylistPtr playlist = 
         mSongbirdPlaylists->GetItemByName(aPlaylistName.c_str());
-      playlist->Delete();
+      if (playlist) {
+        playlist->Delete();
+      }
+      break;
     }
     catch (_com_error const & COMError) {
       sbError error = CheckCOMError(COMError);

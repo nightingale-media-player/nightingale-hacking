@@ -39,7 +39,7 @@
 
 // Icky icky Win32 macros
 #undef GetFreeSpace
-#import "progid:iTunes.Application"
+#include "iTunes.tlh"
 
 #include "sbError.h"
 

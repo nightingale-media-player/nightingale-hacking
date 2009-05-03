@@ -35,6 +35,7 @@
 
 #include "sbError.h"
 
+
 /**
  * This is the base class for the iTunes agent processor.
  * It provides an interface for tasks. And contains platform neutral code such
@@ -46,84 +47,123 @@ class sbiTunesAgentProcessor
 {
 public:
   static int const BATCH_SIZE = 300;
+  
   /**
    * Clean up any resources
    */
   virtual ~sbiTunesAgentProcessor();
+  
   /**
    * Returns true if there are any tasks file ready to process
    */
-  virtual bool TaskFileExists() { 
-    return !GetTaskFilePath().empty(); 
-  }
+  virtual bool TaskFileExists() = 0; 
+  
+  /**
+   * Removes the task file
+   */
+  virtual void RemoveTaskFile() = 0;
+  
   /**
    * Process the task file
    * This basically opens the file and calls ProcessStream
    */
   sbError ProcessTaskFile();
+  
   /**
    * Waits for the iTunes process to start
    */
   virtual sbError WaitForiTunes()=0;
+  
   /**
    * Adds a track to the iTunes database given a path
    */
-  sbError AddTrack(std::wstring const & aSource,
-                   std::wstring const & aPath);
+  sbError AddTrack(std::string const & aSource,
+                   std::string const & aPath);
+
 protected:
-  typedef std::deque<std::wstring> Tracks;
+  typedef std::deque<std::string> Tracks;
+  
   /**
    * Initialize any state
    */
   sbiTunesAgentProcessor();
+  
   /**
    * Adds a track to the iTunes database given a path
    */
-  virtual sbError AddTracks(std::wstring const & aSource,
+  virtual sbError AddTracks(std::string const & aSource,
                             Tracks const & aPaths)=0;
+  
+  /**
+   * Removes a playlist from the iTunes database
+   */
+  virtual sbError RemovePlaylist(std::string const & aPlaylist)=0;
+  
   /**
    * Creates a playlist (Recreates it if it already exists)
    */
-  virtual sbError CreatePlaylist(std::wstring const & aPlaylistName) = 0;
+  virtual sbError CreatePlaylist(std::string const & aPlaylistName) = 0;
+  
   /**
    * Retrieve the path to the task file
    */
-  virtual std::string GetTaskFilePath() = 0;
+  virtual bool OpenTaskFile(std::ifstream & aStream) = 0;
+  
   /**
    * Reports the error, returns true if app should continue
    */
   virtual bool ErrorHandler(sbError const & aError) = 0;
+  
   /**
    * Performs any initialization necessary. Optional to implement
    */
   virtual sbError Initialize() { return sbNoError; }
+  
   /**
    * Logs the message to the platform specific log device
    */
-  virtual void Log(std::wstring const & aMsg) = 0;
-  /**
-   * Removes a playlist from the iTunes database
-   */
-  virtual sbError RemovePlaylist(std::wstring const & aPlaylist)=0;
+  virtual void Log(std::string const & aMsg) = 0;
+  
   /**
    * Returns true if we should shutdown
    */
   virtual bool Shutdown() = 0;
+  
+  /**
+   * Sleep for x milliseconds
+   */
+  virtual void Sleep(unsigned long aMilliseconds) = 0;
+  
   /**
    * This allows the derived class to perform any kind of
    * cleanup needed after shutdown has been processed. Default
    * implementation is to do nothing
    */
   virtual void ShutdownDone() {}
-private:
-  std::wifstream mInputStream;
   
-  Tracks mTrackBatch;
-  std::wstring mLastSource;
+  enum VersionAction {
+    OK,     // It's OK, we like this version we know it well
+    ABORT,  // Have no clue what to do with it, so just stop
+    RETRY   // Retry we've converted the file and there's a new one to process 
+            // it. The parser will just delete this file
+  };
+  
+  /**
+   * Returns what to do with the file given it's version
+   */
+  virtual VersionAction VersionCheck(std::string const & aVersion) = 0;
+  
+private:
+  std::ifstream  mInputStream;
+  Tracks         mTrackBatch;
+  std::string    mLastSource;
 };
 
-typedef std::auto_ptr<sbiTunesAgentProcessor> sbiTunesAgentProcessorPtr;
+//------------------------------------------------------------------------------
 
+// Utility method to create a itunes agent parser.
+typedef std::auto_ptr<sbiTunesAgentProcessor> sbiTunesAgentProcessorPtr;
 sbiTunesAgentProcessor * sbCreatesbiTunesAgentProcessor();
 
 #endif /* SBITUNESAGENTPROCESSOR_H_ */
+

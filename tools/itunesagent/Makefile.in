@@ -47,6 +47,7 @@ SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
                                psapi \
                                $(NULL)
 CPP_INCLUDES += $(srcdir)/windows \
+                $(DEPS_DIR)/private \
                 $(NULL)
                                                
 CPP_SRCS += winmain.cpp \
@@ -54,6 +55,8 @@ CPP_SRCS += winmain.cpp \
             sbiTunesAgentWindowsProcessor.cpp \
             sbiTunesLibrary.cpp \
             $(NULL)
+
+CPP_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
 
 SUBDIRS += $(NULL)
 endif # SB_PLATFORM = windows

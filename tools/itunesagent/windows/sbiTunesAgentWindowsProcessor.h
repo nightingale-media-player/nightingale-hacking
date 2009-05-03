@@ -45,6 +45,18 @@ public:
    */
   virtual ~sbiTunesAgentWindowsProcessor();
   /**
+   * Removes the task file
+   */
+  virtual void RemoveTaskFile();
+  /**
+   * Returns true if there are any tasks file ready to process
+   */
+  virtual bool TaskFileExists(); 
+  /**
+   * Returns what to do with the file given it's version
+   */
+  virtual VersionAction VersionCheck(std::string const & aVersion);
+  /**
    * Waits for the iTunes process to start
    */
   virtual sbError WaitForiTunes();
@@ -52,12 +64,12 @@ protected:
   /**
    * Adds a track to the iTunes database given a path
    */
-  virtual sbError AddTracks(std::wstring const & aSource,
+  virtual sbError AddTracks(std::string const & aSource,
                             Tracks const & aPaths);
   /**
    * Creates a playlist (Recreates it if it already exists)
    */
-  sbError CreatePlaylist(std::wstring const & aPlaylistName);
+  sbError CreatePlaylist(std::string const & aPlaylistName);
   /**
    * Reports the error
    */
@@ -69,22 +81,28 @@ protected:
   /**
    * Retrieve the path to the task file
    */
-  virtual std::string GetTaskFilePath();
+  virtual bool OpenTaskFile(std::ifstream & aStream);
   /**
    * Logs the message to the platform specific log device
    */
-  virtual void Log(std::wstring const & aMsg);
+  virtual void Log(std::string const & aMsg);
   /**
    * Removes a playlist from the iTunes database
    */
-  virtual sbError RemovePlaylist(std::wstring const & aPlaylist);
+  virtual sbError RemovePlaylist(std::string const & aPlaylist);
   /**
    * Returns true if we should shutdown
    */
   virtual bool Shutdown();
+  /**
+   * Sleep for x milliseconds
+   */
+  virtual void Sleep(unsigned long aMilliseconds);
 private:
   sbiTunesLibrary miTunesLibrary;
-  std::wofstream mLog;
+  std::ofstream mLog;
+  std::wstring mCurrentTaskFile;
+
   enum LogState {
     DEACTIVATED,
     ACTIVE,

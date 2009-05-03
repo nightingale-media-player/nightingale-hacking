@@ -26,18 +26,21 @@
 
 #include "sbiTunesAgentProcessor.h"
 
-#ifndef _WIN32_WINNT    // Allow use of features specific to Windows XP or later.                   
-#define _WIN32_WINNT 0x0501 // Change this to the appropriate value to target other versions of Windows.
-#endif            
-#include <windows.h>
-
 #include <sstream>
 
-wchar_t const * const ADDED_MEDIA_ITEMS = L"added-mediaitems";
-wchar_t const * const ADDED_PLAYLISTS = L"added-playlists";
-wchar_t const * const DELETED_PLAYLISTS = L"deleted-playlists";
 
-sbiTunesAgentProcessor::sbiTunesAgentProcessor() {
+//------------------------------------------------------------------------------
+// Export media task constants
+
+char const * const ADDED_MEDIA_ITEMS = "added-mediaitems";
+char const * const ADDED_PLAYLISTS = "added-medialists";
+char const * const DELETED_PLAYLISTS = "removed-medialists";
+char const * const SCHEMA_VERSION = "schema-version";
+
+//------------------------------------------------------------------------------
+
+sbiTunesAgentProcessor::sbiTunesAgentProcessor()
+{
 }
 
 sbiTunesAgentProcessor::~sbiTunesAgentProcessor() 
@@ -45,33 +48,36 @@ sbiTunesAgentProcessor::~sbiTunesAgentProcessor()
   assert(mTrackBatch.empty());
 }
 
-inline 
-std::wstring Strip(std::wstring const & aText) {
+inline std::string 
+Strip(std::string const & aText) 
+{
   if (!aText.empty()) {
-    std::wstring::size_type start = aText.find_first_not_of(L" \t");
-    std::wstring::size_type end = aText.find_last_not_of(L" \t");
-    return std::wstring(aText, start, end + 1);
+    std::string::size_type start = aText.find_first_not_of(" \t");
+    std::string::size_type end = aText.find_last_not_of(" \t");
+    return std::string(aText, start, end + 1);
   }
   return aText;
 }
 
-static inline
-void ParseTask(std::wstring const & aTask,
-               std::wstring & aAction,
-               std::wstring & aLibrary) {
-  std::wstring::size_type const colon = aTask.find(L':');
-  if (colon != std::wstring::npos) {
+static inline void
+ParseTask(std::string const & aTask,
+          std::string & aAction,
+          std::string & aLibrary)
+{
+  std::string::size_type const colon = aTask.find(':');
+  if (colon != std::string::npos) {
     aAction = Strip(aTask.substr(0, colon));
     aLibrary = Strip(aTask.substr(colon + 1, aAction.length() - colon - 1));
   }
   else {
     aAction = Strip(aTask);
-    aLibrary = std::wstring();
+    aLibrary.clear();
   }
 }
  
-sbError sbiTunesAgentProcessor::AddTrack(std::wstring const & aSource,
-                                         std::wstring const & aPath) {
+sbError sbiTunesAgentProcessor::AddTrack(std::string const & aSource,
+                                         std::string const & aPath) 
+{
   if (mLastSource.empty()) {
     mLastSource = aSource;
   }
@@ -89,18 +95,16 @@ sbError sbiTunesAgentProcessor::AddTrack(std::wstring const & aSource,
 }
 
 sbError
-sbiTunesAgentProcessor::ProcessTaskFile() {
-  
+sbiTunesAgentProcessor::ProcessTaskFile()
+{
   int retry = 60;
+  
   // Keep process all files we find
-  for (std::string taskPath = GetTaskFilePath();
-       !taskPath.empty();
-       taskPath = GetTaskFilePath()) {
-    mInputStream.open(taskPath.c_str());
+  while (OpenTaskFile(mInputStream)) {
     if (!mInputStream) {
       // Can't open, maybe it's being written to try again
       if (--retry == 0) {
-        return sbError(L"Unable to open the export track file");
+        return sbError("Unable to open the export track file");
       }
       Sleep(1000);
       continue;
@@ -109,44 +113,57 @@ sbiTunesAgentProcessor::ProcessTaskFile() {
     if (error && !ErrorHandler(error)) {
       return error;
     }
-    std::wstring line;
-    std::wstring action;
-    std::wstring source;
+    std::string line;
+    std::string action;
+    std::string source;
     int lineno = 0;
     while (std::getline(mInputStream, line)) {
-      std::wstring::size_type const beginBracket = 
-        line.find_first_not_of(L" \t");
+      std::string::size_type const beginBracket = 
+        line.find_first_not_of(" \t");
       // Look for the right bracket as first non-whitespace
-      if (beginBracket != std::wstring::npos && line[beginBracket] == L'[') {
-        std::wstring::size_type const endBracket = line.find_last_of(L']');
-        if (endBracket != std::wstring::npos) {
-          std::wstring task = line.substr(beginBracket + 1, 
-                                          endBracket - beginBracket - 1);
+      if (beginBracket != std::string::npos && line[beginBracket] == '[') {
+        std::string::size_type const endBracket = line.find_last_of(']');
+        if (endBracket != std::string::npos) {
+          std::string task = line.substr(beginBracket + 1, 
+                                         endBracket - beginBracket - 1);
           ParseTask(task, action, source);
+          if (action == SCHEMA_VERSION) {
+            VersionAction const versionAction = VersionCheck(source);
+            action.clear();
+            source.clear();
+            if (versionAction == ABORT) {
+              return sbError("Incompatible version encountered");
+            }
+            else if (versionAction == RETRY) {
+              mInputStream.close();
+              continue; // Will hit the inner while and it will stop
+            }
+          }
         }
       }
       else {
         // If there is no action then there's nothing to do yet
         if (action.empty()) {
+          ++lineno;
           continue;
         }
-        std::wstring::size_type const equalSign = line.find(L'=');
-        if (equalSign != std::wstring::npos) {
-          std::wstring const & key = Strip(line.substr(0, equalSign));
-          std::wstring const & value = Strip(line.substr(equalSign + 1));
+        std::string::size_type const equalSign = line.find('=');
+        if (equalSign != std::string::npos) {
+          std::string const & key = Strip(line.substr(0, equalSign));
+          std::string const & value = Strip(line.substr(equalSign + 1));
           // We've been told to add the track
           if (action == ADDED_MEDIA_ITEMS) {
-            if (key == L"URL") {
-              sbError const & error = AddTrack(source,
-                                               value);
+            if (key == "URL") {
+              sbError const & error = AddTrack(source, value);
               if (error && !ErrorHandler(error)) {
                 return error;
               }
             }
             else {
-              std::wostringstream msg;
-              msg << key << L" is an invalid key, ignoring line " 
-                  << lineno << L": " << lineno;
+              std::ostringstream msg;
+              msg << key 
+                  << " is an invalid key, ignoring line " 
+                  << lineno;
               sbError error(msg.str());
               if (!ErrorHandler(error)) {
                 return error;
@@ -159,7 +176,7 @@ sbiTunesAgentProcessor::ProcessTaskFile() {
               if (error && !ErrorHandler(error)) {
                 return error;
               }
-              mLastSource = std::wstring();
+              mLastSource.clear();
               mTrackBatch.clear();
             }
             sbError const & error = CreatePlaylist(value);
@@ -169,47 +186,36 @@ sbiTunesAgentProcessor::ProcessTaskFile() {
           }
           // We've been told to remove the playlist
           else if (action == DELETED_PLAYLISTS) {
-            if (key == L"NAME") {
-              if (!mTrackBatch.empty()) {
-                sbError const & error = AddTracks(mLastSource, mTrackBatch);
-                if (error && !ErrorHandler(error)) {
-                  return error;
-                }
-                mLastSource = std::wstring();
-                mTrackBatch.clear();
-              }
-              sbError const & error = RemovePlaylist(value);
+            if (!mTrackBatch.empty()) {
+              sbError const & error = AddTracks(mLastSource, mTrackBatch);
               if (error && !ErrorHandler(error)) {
                 return error;
               }
+              mLastSource.clear();
+              mTrackBatch.clear();
             }
-            else {
-              std::wostringstream msg;
-              msg << key << L" is an invalid key, ignoring line " 
-                  << lineno << L": " << lineno;
-              sbError error(msg.str());
-              if (!ErrorHandler(error)) {
-                return error;
-              }
+            sbError const & error = RemovePlaylist(value);
+            if (error && !ErrorHandler(error)) {
+              return error;
             }
           }
           else {
-            std::wostringstream msg;
-            msg << action << L" is an invalid action , ignoring line " 
-                << lineno << L": " << lineno;
+            std::ostringstream msg;
+            msg << action << " is an invalid action , ignoring line " 
+                << lineno;
             sbError error(msg.str());
             if (!ErrorHandler(error)) {
               return error;
             }
-            action = std::wstring();
+            action.clear();
           }
         }
         else {
           // If the line wasn't blank then report an error
           if (!Strip(line).empty()) {
-            std::wostringstream msg;
-            msg << action << L" is an invalid action , ignoring line " 
-                << lineno << L": " << line;
+            std::ostringstream msg;
+            msg << action 
+                << " is an invalid action , ignoring line " << lineno;
             sbError error(msg.str());
             if (!ErrorHandler(error)) {
               return error;
@@ -228,12 +234,12 @@ sbiTunesAgentProcessor::ProcessTaskFile() {
       if (error) {
         ErrorHandler(error);
       }
-      mLastSource = std::wstring();
+      mLastSource.clear();
       mTrackBatch.clear();
     }
     // Close the stream and remove the file
     mInputStream.close();
-    remove(taskPath.c_str());
+    RemoveTaskFile();
   }
   return sbNoError;
 }
