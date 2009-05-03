@@ -198,6 +198,59 @@ bool sbiTunesAgentWindowsProcessor::ShutdownCallback(bool) {
 }
 
 /**
+ * Registers the application to startup when the user logs in
+ */
+sbError 
+sbiTunesAgentWindowsProcessor::RegisterForLogin() {
+  sbError error;
+  HKEY runKey;
+  if (RegOpenKeyExA(HKEY_CURRENT_USER, 
+                    WINDOWS_RUN_KEY,
+                    0, 
+                    KEY_READ | KEY_WRITE, 
+                    &runKey) == ERROR_SUCCESS) {
+    wchar_t exePath[MAX_PATH + 1];
+    GetModuleFileNameW(0, exePath, MAX_PATH + 1);
+    
+    DWORD const bytes = (wcslen(exePath) + 1) * 
+                    sizeof(std::string::traits_type::char_type);
+    if (RegSetValueExA(runKey, 
+                       WINDOWS_RUN_KEY_VALUE, 
+                       0, 
+                       REG_EXPAND_SZ, 
+                       reinterpret_cast<BYTE const *>(exePath),
+                       bytes) != ERROR_SUCCESS) {
+      error = sbError(L"Unable to set the Windows RUN sbitunesagent value");
+    }
+    RegCloseKey(runKey);
+  }
+  else {
+    error = sbError(L"Unable to get Windows RUN registry key");
+  }
+  return error;
+}
+
+/**
+ * Unregisters the application to startup when the user logs in
+ */
+sbError 
+sbiTunesAgentWindowsProcessor::UnregisterForLogin() {
+  sbError error;
+  HKEY runKey;
+  if (RegOpenKeyA(HKEY_CURRENT_USER, WINDOWS_RUN_KEY, &runKey) == ERROR_SUCCESS) {
+    if ( RegDeleteValueA(runKey, 
+                         WINDOWS_RUN_KEY_VALUE) != ERROR_SUCCESS) {
+      error = sbError(L"Unable to remove the Windows RUN sbitunesagent value");
+    }
+    RegCloseKey(runKey);
+  }
+  else {
+    error = sbError(L"Unable to get Windows RUN registry key");
+  }
+  return error;
+}
+
+/**
  * Returns what to do with the file given it's version
  */
 sbiTunesAgentWindowsProcessor::VersionAction 

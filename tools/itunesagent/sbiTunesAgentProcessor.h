@@ -80,6 +80,20 @@ public:
   sbError AddTrack(std::string const & aSource,
                    std::string const & aPath);
 
+  /**
+   * Reports the error, returns true if app should continue
+   */
+  virtual bool ErrorHandler(sbError const & aError) = 0;
+  
+  /**
+   * Registers the application to startup when the user logs in
+   */
+  virtual sbError RegisterForLogin()=0;
+
+  /**
+   * Unregisters the application to startup when the user logs in
+   */
+  virtual sbError UnregisterForLogin()=0;
 protected:
   typedef std::deque<std::string> Tracks;
   
@@ -108,11 +122,6 @@ protected:
    * Retrieve the path to the task file
    */
   virtual bool OpenTaskFile(std::ifstream & aStream) = 0;
-  
-  /**
-   * Reports the error, returns true if app should continue
-   */
-  virtual bool ErrorHandler(sbError const & aError) = 0;
   
   /**
    * Performs any initialization necessary. Optional to implement

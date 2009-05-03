@@ -29,13 +29,27 @@
 /**
  * Standard C main function
  */
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[]) { 
   sbError error;
   sbiTunesAgentProcessorPtr processor(sbCreatesbiTunesAgentProcessor());
-  if (processor->TaskFileExists()) {
-    error = processor->WaitForiTunes();
-    if (!error) {
-      error = processor->ProcessTaskFile();
+  // Were we asked to unregister from "run"
+  if (argc > 1 && std::string(argv[1]) == "--unregister") {
+    error = processor->UnregisterForLogin();
+  }
+  else {
+    // Register the app with the run startup key
+    error = processor->RegisterForLogin();
+    if (error) {
+      // Handle the error and return if told to stop
+      if (!processor->ErrorHandler(error)) {
+        return -1;
+      }
+    }
+    if (processor->TaskFileExists()) {
+      error = processor->WaitForiTunes();
+      if (!error) {
+        error = processor->ProcessTaskFile();
+      }
     }
   }
   return error ? -1 : 0;

@@ -44,18 +44,37 @@ public:
    * Cleanup resources
    */
   virtual ~sbiTunesAgentWindowsProcessor();
+  
   /**
    * Removes the task file
    */
   virtual void RemoveTaskFile();
+  
+  /**
+   * Reports the error
+   */
+  virtual bool ErrorHandler(sbError const & aError);
+  
+  /**
+   * Registers the application to startup when the user logs in
+   */
+  virtual sbError RegisterForLogin();
+  
   /**
    * Returns true if there are any tasks file ready to process
    */
-  virtual bool TaskFileExists(); 
+  virtual bool TaskFileExists();
+  
+  /**
+   * Unregisters the application to startup when the user logs in
+   */
+  virtual sbError UnregisterForLogin();
+  
   /**
    * Returns what to do with the file given it's version
    */
   virtual VersionAction VersionCheck(std::string const & aVersion);
+  
   /**
    * Waits for the iTunes process to start
    */
@@ -66,34 +85,37 @@ protected:
    */
   virtual sbError AddTracks(std::string const & aSource,
                             Tracks const & aPaths);
+  
   /**
    * Creates a playlist (Recreates it if it already exists)
    */
   sbError CreatePlaylist(std::string const & aPlaylistName);
-  /**
-   * Reports the error
-   */
-  virtual bool ErrorHandler(sbError const & aError);
+
   /**
    * Performs any initialization necessary. Optional to implement
    */
   virtual sbError Initialize();
+  
   /**
    * Retrieve the path to the task file
    */
   virtual bool OpenTaskFile(std::ifstream & aStream);
+  
   /**
    * Logs the message to the platform specific log device
    */
   virtual void Log(std::string const & aMsg);
+  
   /**
    * Removes a playlist from the iTunes database
    */
   virtual sbError RemovePlaylist(std::string const & aPlaylist);
+  
   /**
    * Returns true if we should shutdown
    */
   virtual bool Shutdown();
+  
   /**
    * Sleep for x milliseconds
    */
