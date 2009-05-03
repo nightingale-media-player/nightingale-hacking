@@ -88,12 +88,13 @@ public:
   /**
    * Registers the application to startup when the user logs in
    */
-  virtual sbError RegisterForLogin()=0;
+  virtual sbError RegisterForStartOnLogin()=0;
 
   /**
-   * Unregisters the application to startup when the user logs in
+   * Unregisters the application from automatically starting when the user
+   * logs in
    */
-  virtual sbError UnregisterForLogin()=0;
+  virtual sbError UnregisterForStartOnLogin()=0;
 protected:
   typedef std::deque<std::string> Tracks;
   

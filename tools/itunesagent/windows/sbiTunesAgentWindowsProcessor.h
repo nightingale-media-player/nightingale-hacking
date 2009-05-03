@@ -58,7 +58,7 @@ public:
   /**
    * Registers the application to startup when the user logs in
    */
-  virtual sbError RegisterForLogin();
+  virtual sbError RegisterForStartOnLogin();
   
   /**
    * Returns true if there are any tasks file ready to process
@@ -68,7 +68,7 @@ public:
   /**
    * Unregisters the application to startup when the user logs in
    */
-  virtual sbError UnregisterForLogin();
+  virtual sbError UnregisterForStartOnLogin();
   
   /**
    * Returns what to do with the file given it's version

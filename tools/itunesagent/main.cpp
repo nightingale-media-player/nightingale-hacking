@@ -34,11 +34,11 @@ int main(int argc, char * argv[]) {
   sbiTunesAgentProcessorPtr processor(sbCreatesbiTunesAgentProcessor());
   // Were we asked to unregister from "run"
   if (argc > 1 && std::string(argv[1]) == "--unregister") {
-    error = processor->UnregisterForLogin();
+    error = processor->UnregisterForStartOnLogin();
   }
   else {
     // Register the app with the run startup key
-    error = processor->RegisterForLogin();
+    error = processor->RegisterForStartOnLogin();
     if (error) {
       // Handle the error and return if told to stop
       if (!processor->ErrorHandler(error)) {

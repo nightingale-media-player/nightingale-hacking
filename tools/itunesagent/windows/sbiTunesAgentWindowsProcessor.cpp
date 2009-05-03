@@ -33,8 +33,8 @@ wchar_t const AGENT_EXPORT_FILENAME_MASK[] = L"songbird_export.task*";
 wchar_t const AGENT_ERROR_FILENAME[] = L"itunesexporterrors.txt";
 wchar_t const AGENT_LOG_FILENAME[] = L"itunesexport.log";
 wchar_t const AGENT_SHUTDOWN_FILENAME[] = L"songbird_export.shutdown";
-char const WINDOWS_RUN_KEY[] = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
-char const WINDOWS_RUN_KEY_VALUE[] = "sbitunesagent";
+wchar_t const WINDOWS_RUN_KEY[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
+wchar_t const WINDOWS_RUN_KEY_VALUE[] = L"sbitunesagent";
 
 // table of number of bytes given a UTF8 lead char
 static const int UTF8_SIZE[] = {
@@ -201,32 +201,32 @@ bool sbiTunesAgentWindowsProcessor::ShutdownCallback(bool) {
  * Registers the application to startup when the user logs in
  */
 sbError 
-sbiTunesAgentWindowsProcessor::RegisterForLogin() {
-  sbError error;
+sbiTunesAgentWindowsProcessor::RegisterForStartOnLogin() {
   HKEY runKey;
-  if (RegOpenKeyExA(HKEY_CURRENT_USER, 
-                    WINDOWS_RUN_KEY,
-                    0, 
-                    KEY_READ | KEY_WRITE, 
-                    &runKey) == ERROR_SUCCESS) {
-    wchar_t exePath[MAX_PATH + 1];
-    GetModuleFileNameW(0, exePath, MAX_PATH + 1);
-    
-    DWORD const bytes = (wcslen(exePath) + 1) * 
-                    sizeof(std::string::traits_type::char_type);
-    if (RegSetValueExA(runKey, 
-                       WINDOWS_RUN_KEY_VALUE, 
-                       0, 
-                       REG_EXPAND_SZ, 
-                       reinterpret_cast<BYTE const *>(exePath),
-                       bytes) != ERROR_SUCCESS) {
-      error = sbError(L"Unable to set the Windows RUN sbitunesagent value");
-    }
-    RegCloseKey(runKey);
+  LONG result = RegOpenKeyExW(HKEY_CURRENT_USER, 
+                              WINDOWS_RUN_KEY,
+                              0, 
+                              KEY_READ | KEY_WRITE, 
+                              &runKey);
+  if (result != ERROR_SUCCESS) {
+    return sbError(L"Unable to set the Windows RUN sbitunesagent value");
   }
-  else {
+  wchar_t exePath[MAX_PATH + 1];
+  GetModuleFileNameW(0, exePath, MAX_PATH + 1);
+  
+  sbError error;
+  DWORD const bytes = (wcslen(exePath) + 1) * 
+                  sizeof(std::string::traits_type::char_type);
+  result = RegSetValueExW(runKey, 
+                          WINDOWS_RUN_KEY_VALUE, 
+                          0, 
+                          REG_SZ, 
+                          reinterpret_cast<BYTE const *>(exePath),
+                          bytes);
+  if (result != ERROR_SUCCESS) {
     error = sbError(L"Unable to get Windows RUN registry key");
   }
+  RegCloseKey(runKey);
   return error;
 }
 
@@ -234,19 +234,20 @@ sbiTunesAgentWindowsProcessor::RegisterForLogin() {
  * Unregisters the application to startup when the user logs in
  */
 sbError 
-sbiTunesAgentWindowsProcessor::UnregisterForLogin() {
+sbiTunesAgentWindowsProcessor::UnregisterForStartOnLogin() {
   sbError error;
   HKEY runKey;
-  if (RegOpenKeyA(HKEY_CURRENT_USER, WINDOWS_RUN_KEY, &runKey) == ERROR_SUCCESS) {
-    if ( RegDeleteValueA(runKey, 
-                         WINDOWS_RUN_KEY_VALUE) != ERROR_SUCCESS) {
-      error = sbError(L"Unable to remove the Windows RUN sbitunesagent value");
-    }
-    RegCloseKey(runKey);
-  }
-  else {
+  LONG result = RegOpenKeyW(HKEY_CURRENT_USER, WINDOWS_RUN_KEY, &runKey);
+  if (result != ERROR_SUCCESS) {
     error = sbError(L"Unable to get Windows RUN registry key");
   }
+  result = RegDeleteValueW(runKey, 
+                       WINDOWS_RUN_KEY_VALUE);
+  if (result != ERROR_SUCCESS) {
+    error = sbError(L"Unable to remove the Windows RUN sbitunesagent value");
+  }
+  RegCloseKey(runKey);
+
   return error;
 }
 
