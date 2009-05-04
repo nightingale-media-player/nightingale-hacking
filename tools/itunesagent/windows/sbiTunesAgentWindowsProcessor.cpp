@@ -167,11 +167,11 @@ void sbiTunesAgentWindowsProcessor::Log(std::string const & aMsg) {
     if (mLogState != OPENED) {
       std::wstring logPath(GetSongbirdPath());
       logPath += AGENT_LOG_FILENAME;
-      mLog.open(logPath.c_str());
+      mLogStream.open(logPath.c_str());
       // If we can't open then don't bother trying again
-      mLogState = mLog ? OPENED : DEACTIVATED;
+      mLogState = mLogStream ? OPENED : DEACTIVATED;
     }
-    mLog << aMsg << std::endl;
+    mLogStream << aMsg << std::endl;
   }
 }
 

@@ -117,15 +117,7 @@ protected:
   virtual void Sleep(unsigned long aMilliseconds);
 private:
   sbiTunesLibrary miTunesLibrary;
-  std::ofstream mLog;
   std::wstring mCurrentTaskFile;
-
-  enum LogState {
-    DEACTIVATED,
-    ACTIVE,
-    OPENED
-  };
-  LogState mLogState;
   
   bool ShutdownCallback(bool);
 };

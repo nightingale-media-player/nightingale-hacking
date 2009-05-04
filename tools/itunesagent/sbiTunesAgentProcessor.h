@@ -37,6 +37,9 @@
 
 #define EXPORT_SCHEMAVERSION  1
 
+// Logging options
+#define AGENT_LOGGING 1
+
 
 /**
  * This is the base class for the iTunes agent processor.
@@ -170,6 +173,16 @@ protected:
     }
     return ABORT;
   }
+
+protected:
+  typedef enum {
+    DEACTIVATED = 0,
+    ACTIVE      = 1,
+    OPENED      = 2
+  } sbLogState;
+
+  sbLogState    mLogState;
+  std::ofstream mLogStream;
   
 private:
   std::ifstream  mInputStream;

@@ -38,6 +38,8 @@ CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
                $(srcdir) \
                $(NULL)
 
+CPP_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
+               
 SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
@@ -56,13 +58,29 @@ CPP_SRCS += winmain.cpp \
             sbiTunesLibrary.cpp \
             $(NULL)
 
-CPP_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
-
 SUBDIRS += $(NULL)
 endif # SB_PLATFORM = windows
 
+ifeq ($(SB_PLATFORM),macosx)
+CMM_INCLUDES += $(srcdir) \
+                $(srcdir)/macosx \
+                $(MOZSDK_INCLUDE_DIR) \
+                $(NULL)
+
+CMM_SRCS += sbiTunesAgentMacProcessor.mm \
+            $(NULL)
+
+CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
+
+
+SIMPLE_PROGRAM_FLAGS += -mmacosx-version-min=10.4 -framework CoreServices -framework CoreFoundation -framework Cocoa -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk
+SIMPLE_PROGRAM_OBJS += $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
+                       $(NULL)
+
+endif # SB_PLATFORM = macosx
+
 SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
-SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+SIMPLE_PROGRAM_OBJS += $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 FINAL_TARGET = $(SONGBIRD_DISTDIR)
 
