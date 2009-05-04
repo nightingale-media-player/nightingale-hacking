@@ -33,7 +33,6 @@ SUBDIRS = bindings \
           html \
           scripts \
           xul \
-          test \
           mediapages \
           $(NULL)
 
