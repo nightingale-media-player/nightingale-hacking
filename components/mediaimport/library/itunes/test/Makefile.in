@@ -33,6 +33,7 @@ SONGBIRD_TEST_COMPONENT = itunesimporter
 
 SONGBIRD_TESTS = $(srcdir)/test_itunes_importer.js \
                  $(srcdir)/test_itunes_xml_parser.js \
+                 $(srcdir)/test_itunes_xml_parser_error.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

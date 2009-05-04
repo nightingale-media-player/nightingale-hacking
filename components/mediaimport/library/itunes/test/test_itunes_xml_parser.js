@@ -412,18 +412,6 @@ testXML += "    </array>\n";
 testXML += "</dict>\n";
 testXML += "</plist>\n";
 
-/**
- * Chopped version of an iTunes XML file to test error handling
- */
-
-badTestXML =  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-badTestXML += "<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
-badTestXML += "<plist version=\"1.0\">\n";
-badTestXML += "<dict>\n";
-badTestXML += "    <key>Major Version</key><integer>1</integer>\n";
-badTestXML += "    <key>Minor Version</key><integer>1</integer>\n";
-badTestXML += "    <key>Application Version</key><string>8.1</string>\n";
-
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 //
@@ -438,8 +426,8 @@ badTestXML += "    <key>Application Version</key><string>8.1</string>\n";
 
 function stringToStream(aString) {
   stream = 
-    Cc["@mozilla.org/io/string-input-stream;1"].createInstance(
-      Ci.nsIStringInputStream);
+    Cc["@mozilla.org/io/string-input-stream;1"]
+      .createInstance(Ci.nsIStringInputStream);
   stream.setData(aString, -1);
   return stream;
 }
@@ -475,23 +463,22 @@ function runTest() {
     onTracksComplete : function() {
       ++this.onTracksCompleteCount;
     },
-    onPlaylist : function(aProperties, 
-                          tracks) {
+    onPlaylist : function(aProperties, tracks) {
       ++this.onPlaylistCount;
     },
     onPlaylistsComplete : function () {
       ++this.onPlaylistsCompleteCount;
+      assertEqual(this.topLevelPropertyCount, 7, "Top level properties do not match");
+      assertEqual(this.onTrackCount, 3, "Invalid track count");
+      assertEqual(this.onTracksCompleteCount, 1, "Invalid track complete count");
+      assertEqual(this.onPlaylistCount, 14, "Invalid playlist count");
+      assertEqual(this.onPlaylistsCompleteCount, 1, "Invalid playlist complete count");
+      assertEqual(this.onErrorCount, 0, "Invalid error count");
+      testFinished();
     },
     onError : function(aErrorMessage) {
       ++this.onErrorCount;
-    },
-    reset : function() {
-      this.topLevelPropertyCount = 0;
-      this.onTrackCount = 0;
-      this.onTracksCompleteCount = 0;
-      this.onPlaylistCount = 0;
-      this.onPlaylistsCompleteCount = 0;
-      this.onErrorCount = 0;
+      fail("onError called on non-error test case");
     },
     topLevelPropertyCount : 0,
     onTrackCount : 0,
@@ -505,29 +492,11 @@ function runTest() {
   var parser = Cc["@songbirdnest.com/Songbird/sbiTunesXMLParser;1"]
                  .getService(Ci.sbIiTunesXMLParser);
   assertTrue(parser, "iTunes importer component is not available.");
-  parser.parse(stringToStream(badTestXML), listener);
-  assertEqual(listener.topLevelPropertyCount, 0, "Top level properties do not match");
-  assertEqual(listener.onTrackCount, 0, "Invalid track count for error situation");
-  assertEqual(listener.onTracksCompleteCount, 0, "Invalid track complete count for error situation");
-  assertEqual(listener.onPlaylistCount, 0, "Invalid playlist count for error situation");
-  assertEqual(listener.onPlaylistsCompleteCount, 0, "Invalid playlist complete count for error situation");
-  assertEqual(listener.onErrorCount, 1, "Invalid error count for error situation");
-  dump("Finalizing\n");
-  parser.finalize();
-  dump("Reseting\n");
-  listener.reset();
 
-  dump("Next test\n");
   // Test normal xml data
   parser = Cc["@songbirdnest.com/Songbird/sbiTunesXMLParser;1"]
              .getService(Ci.sbIiTunesXMLParser);
   assertTrue(parser, "iTunes importer component is not available.");
   parser.parse(stringToStream(testXML), listener);
-  assertEqual(listener.topLevelPropertyCount, 7, "Top level properties do not match");
-  assertEqual(listener.onTrackCount, 3, "Invalid track count");
-  assertEqual(listener.onTracksCompleteCount, 1, "Invalid track complete count");
-  assertEqual(listener.onPlaylistCount, 14, "Invalid playlist count");
-  assertEqual(listener.onPlaylistsCompleteCount, 1, "Invalid playlist complete count");
-  assertEqual(listener.onErrorCount, 0, "Invalid error count");
-  parser.finalize();
+  testPending();
 }
