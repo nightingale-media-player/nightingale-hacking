@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 target_name = sbiTunesMediaImport$(DEBUG:%=_d)
 
 CPP_SRCS = sbiTunesXMLParser.cpp \
+           sbiTunesImporterComponent.cpp \
            $(NULL)
 
 # Add back in when we have the UI issues fixed           
@@ -39,7 +40,6 @@ CPP_SRCS = sbiTunesXMLParser.cpp \
 #           sbiTunesImporter.cpp \
 #           sbiTunesImporterAlbumArtListener.cpp \
 #           sbiTunesImporterBatchCreateListener.cpp \
-#           sbiTunesImporterComponent.cpp \
 #           sbiTunesImporterJob.cpp \
 #           sbiTunesImporterStatus.cpp \
 #           sbiTunesSignature.cpp \

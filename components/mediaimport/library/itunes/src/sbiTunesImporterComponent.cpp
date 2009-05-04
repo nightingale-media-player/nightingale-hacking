@@ -38,6 +38,8 @@
 #include "sbiTunesImporter.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesXMLParser)
+#ifdef ITUNES_IMPORT_PROGRESS_WORKS 
+
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesImporter)
 
 #define SB_LIBRARY_IMPORTER_CATEGORY "library-importer"
@@ -75,6 +77,7 @@ static NS_METHOD sbiTunesImporterUnregisterSelf(nsIComponentManager* aCompMgr,
                                             PR_TRUE);
   return rv;
 }
+#endif
 
 static nsModuleComponentInfo sbiTunesImporter[] =
 {
@@ -84,6 +87,7 @@ static nsModuleComponentInfo sbiTunesImporter[] =
     SBITUNESXMLPARSER_CONTRACTID,
     sbiTunesXMLParserConstructor
   },
+#ifdef ITUNES_IMPORT_PROGRESS_WORKS 
   {
     SBITUNESIMPORTER_CLASSNAME,
     SBITUNESIMPORTER_CID,
@@ -92,6 +96,7 @@ static nsModuleComponentInfo sbiTunesImporter[] =
     sbiTunesImporterRegisterSelf,
     sbiTunesImporterUnregisterSelf
   },
+#endif
 };
 
 NS_IMPL_NSGETMODULE(SongbirdiTunesImporterComponent, sbiTunesImporter)
