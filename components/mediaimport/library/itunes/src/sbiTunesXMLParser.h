@@ -37,6 +37,9 @@
 #include <sbIiTunesXMLParser.h>
 
 class nsIInputStream;
+class nsIInputStreamPump;
+
+typedef nsCOMPtr<nsISAXXMLReader> nsISAXXMLReaderPtr;
 
 #define SBITUNESXMLPARSER_CONTRACTID                     \
   "@songbirdnest.com/Songbird/sbiTunesXMLParser;1"
@@ -62,6 +65,8 @@ public:
   NS_DECL_NSISAXCONTENTHANDLER
   NS_DECL_NSISAXERRORHANDLER
 
+  // For use when directly allocating a parser
+  static sbiTunesXMLParser * New();
   /**
    * Initializes the state of the parser
    */
@@ -106,7 +111,6 @@ private:
   
   // Typedefs
   typedef nsCOMPtr<sbIMutableStringMap> sbIMutableStringMapPtr;
-  typedef nsCOMPtr<nsISAXXMLReader> nsISAXXMLReaderPtr;
   typedef nsCOMPtr<sbIiTunesXMLParserListener> sbIiTunesXMLParserListenerPtr;
   typedef nsTArray<PRInt32> Tracks;
   typedef nsCOMPtr<nsIInputStream> nsIInputStreamPtr;
@@ -127,6 +131,7 @@ private:
   
   PRInt32 mState;
   sbIMutableStringMapPtr mProperties;
+  nsCOMPtr<nsIInputStreamPump> mPump;
   nsISAXXMLReaderPtr mSAXReader;
   nsString mPropertyName;
   sbIiTunesXMLParserListenerPtr mListener;

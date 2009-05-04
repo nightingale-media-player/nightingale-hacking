@@ -30,10 +30,15 @@
 #include <nsComponentManagerUtils.h>
 #include <nsISAXAttributes.h>
 #include <nsISAXLocator.h>
+#include <nsIInputStreamPump.h>
+#include <nsThreadUtils.h>
 
 #include <sbIiTunesXMLParserListener.h>
+#include <sbProxiedComponentManager.h>
 
 #include <sbFileUtils.h>
+
+PRUint32 CHUNK_SIZE = 10 * 1024; // 10k of data at a time
 
 inline 
 nsString BuildErrorMessage(char const * aType,
@@ -119,7 +124,89 @@ void LogError(char const * aType,
 }
 #endif /* PR_LOGGING */
 
-NS_IMPL_ISUPPORTS3(sbiTunesXMLParser,
+/**
+ * Stream listener class that allows us process UI requests while parsing the stream
+ */
+class sbiTunesImporterStreamListener : public nsIStreamListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISTREAMLISTENER
+  NS_DECL_NSIREQUESTOBSERVER
+  sbiTunesImporterStreamListener(nsISAXXMLReader * aReader);
+
+private:
+  ~sbiTunesImporterStreamListener();
+
+  nsISAXXMLReaderPtr mReader;
+};
+
+NS_IMPL_ISUPPORTS2(sbiTunesImporterStreamListener, nsIStreamListener,
+                                                   nsIRequestObserver)
+
+sbiTunesImporterStreamListener::sbiTunesImporterStreamListener(nsISAXXMLReader * aReader) :
+  mReader(aReader) {
+}
+
+sbiTunesImporterStreamListener::~sbiTunesImporterStreamListener() 
+{
+}
+
+/**
+ *  void onDataAvailable (in nsIRequest aRequest, 
+ *                       in nsISupports aContext, 
+ *                       in nsIInputStream aInputStream, 
+ *                       in unsigned long aOffset, 
+ *                       in unsigned long aCount);
+ */
+NS_IMETHODIMP 
+sbiTunesImporterStreamListener::OnDataAvailable(nsIRequest *aRequest, 
+                                                nsISupports *aContext, 
+                                                nsIInputStream *aInputStream, 
+                                                PRUint32 aOffset, 
+                                                PRUint32 aCount)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_ENSURE_ARG_POINTER(aInputStream);
+  NS_PRECONDITION(mReader, "mReader not initialized");
+  
+  nsresult rv =  mReader->OnDataAvailable(aRequest,
+                                          aContext,
+                                          aInputStream,
+                                          aOffset,
+                                          aCount);
+
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+// nsIRequestObserver
+
+/* void onStartRequest (in nsIRequest aRequest, in nsISupports aContext); */
+NS_IMETHODIMP
+sbiTunesImporterStreamListener::OnStartRequest(nsIRequest *aRequest,
+                                               nsISupports *aContext)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_PRECONDITION(mReader, "mReader not initialized");
+  
+  return mReader->OnStartRequest(aRequest, aContext);
+}
+
+/* void onStopRequest (in nsIRequest aRequest, in nsISupports aContext, in nsresult aStatusCode); */
+NS_IMETHODIMP
+sbiTunesImporterStreamListener::OnStopRequest(nsIRequest *aRequest,
+                                              nsISupports *aContext,
+                                              nsresult aStatusCode)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+  NS_PRECONDITION(mReader, "mReader not initialized");
+  
+  return mReader->OnStopRequest(aRequest, aContext, aStatusCode);
+}
+
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbiTunesXMLParser,
     sbIiTunesXMLParser,
     nsISAXContentHandler,
     nsISAXErrorHandler)
@@ -128,8 +215,13 @@ NS_IMPL_ISUPPORTS3(sbiTunesXMLParser,
 char const XML_CONTENT_TYPE[] = "text/xml";
 char const NS_SAXXMLREADER_CONTRACTID[] = "@mozilla.org/saxparser/xmlreader;1";
 
+sbiTunesXMLParser * sbiTunesXMLParser::New() {
+  return new sbiTunesXMLParser;
+}
+
 sbiTunesXMLParser::sbiTunesXMLParser() : mState(START) {
   MOZ_COUNT_CTOR(sbiTunesXMLParser);
+  nsISAXXMLReaderPtr const & reader = GetSAXReader();
 }
 
 sbiTunesXMLParser::~sbiTunesXMLParser() {
@@ -141,6 +233,11 @@ sbiTunesXMLParser::~sbiTunesXMLParser() {
 NS_IMETHODIMP sbiTunesXMLParser::Parse(nsIInputStream * aiTunesXMLStream,
                                        sbIiTunesXMLParserListener * aListener) {
 
+  nsresult rv;
+  
+  /**
+   * Need to ensure the enumeration is ordered as we expect
+   */
   NS_ENSURE_TRUE(TOP_LEVEL_PROPERTIES == TOP_LEVEL_PROPERTY_NAME - 1 &&
                  TOP_LEVEL_PROPERTY_NAME == TOP_LEVEL_PROPERTY_VALUE - 1 &&
                  TRACK == TRACK_PROPERTY_NAME - 1 &&
@@ -152,14 +249,14 @@ NS_IMETHODIMP sbiTunesXMLParser::Parse(nsIInputStream * aiTunesXMLStream,
                  NS_ERROR_FAILURE);
   NS_ENSURE_ARG_POINTER(aiTunesXMLStream);
   NS_ENSURE_ARG_POINTER(aListener);
-  
+  /* Update status. */
+
   mListener = aListener;
   
-  nsresult rv = InitializeProperties();
+  rv = InitializeProperties();
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsISAXXMLReaderPtr const & reader = GetSAXReader();
-  NS_ENSURE_TRUE(reader, NS_ERROR_FAILURE);
 
   rv = reader->SetContentHandler(this);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -167,7 +264,17 @@ NS_IMETHODIMP sbiTunesXMLParser::Parse(nsIInputStream * aiTunesXMLStream,
   rv = reader->SetErrorHandler(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = reader->ParseFromStream(aiTunesXMLStream, "utf8", XML_CONTENT_TYPE);
+  rv = reader->ParseAsync(nsnull);
+  
+  mPump = do_CreateInstance("@mozilla.org/network/input-stream-pump;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mPump->Init(aiTunesXMLStream, -1, -1, CHUNK_SIZE, 1, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIStreamListener> streamListener = new sbiTunesImporterStreamListener(mSAXReader);
+  rv = mPump->AsyncRead(streamListener, nsnull);
+  
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
@@ -182,7 +289,7 @@ NS_IMETHODIMP sbiTunesXMLParser::Finalize() {
   return NS_OK;
 }
 
-sbiTunesXMLParser::nsISAXXMLReaderPtr const & sbiTunesXMLParser::GetSAXReader() {
+nsISAXXMLReaderPtr const & sbiTunesXMLParser::GetSAXReader() {
   if (!mSAXReader) {
     nsresult rv;
     mSAXReader = do_CreateInstance(NS_SAXXMLREADER_CONTRACTID, &rv);
@@ -223,7 +330,7 @@ sbiTunesXMLParser::StartElement(const nsAString & uri,
         mState = TOP_LEVEL_PROPERTY_NAME;
       }
       break;
-      case TRACKS: {
+      case TRACK: {
         mState = TRACK_PROPERTY_NAME;
       }
       break;
@@ -308,6 +415,9 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
       case TRACKS_COLLECTION: {  // We're leaving the tracks collection, 
                                  // so go back to the tracks section 
         mState = TRACKS;
+        mListener->OnTracksComplete();
+        // Process pending events before we return
+        NS_ProcessPendingEvents(nsnull, 0);
       }
       break;
       case TRACK: {  // We're leaving a track so notify
@@ -316,11 +426,6 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
         LOG(("onTrack\n"));
         mListener->OnTrack(mProperties);
         mProperties->Clear();
-      }
-      break;
-      case PLAYLISTS_COLLECTION: {  // We're leaving the playlist collection
-                                    // go back to the playlists section
-        mState = PLAYLISTS;        
       }
       break;
       case PLAYLIST: {  // We're leaving a playlist so notify
@@ -342,13 +447,29 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
         mState = DONE;
       }
       break;
+      default: {
+        NS_WARNING("Unexpected state in sbiTunesXMLParser::EndElement (dict)");
+      }
+      break;
     }
   }
   // if We're leaving an array, see if it's the playlist's array of items
   // and if so, set the state back to the playlist.
   else if (localName.EqualsLiteral("array")) {
-    if (mState == PLAYLIST_ITEMS) {
-      mState = PLAYLIST;
+    switch (mState) {
+      case PLAYLIST_ITEMS: {
+        mState = PLAYLIST;
+      }
+      break;
+      case PLAYLISTS_COLLECTION: {  // We're leaving the playlist collection                                
+        mState = PLAYLISTS;        // go back to the playlists section
+        mListener->OnPlaylistsComplete();
+      }
+      break;
+      default: {
+        NS_WARNING("Unexpected state in sbiTunesXMLParser::EndElement (array)");
+      }
+      break;
     }
   }
   return NS_OK;
@@ -362,7 +483,8 @@ NS_IMETHODIMP sbiTunesXMLParser::Characters(const nsAString & value) {
     case TOP_LEVEL_PROPERTY_NAME:
     case TRACK_PROPERTY_NAME:
     case PLAYLIST_PROPERTY_NAME:
-    case PLAYLIST_ITEM_NAME: {
+    case PLAYLIST_ITEM_NAME:
+    case TRACKS: {
       if (value.EqualsLiteral("Tracks")) {
         mState = TRACKS;
         mListener->OnTopLevelProperties(mProperties);

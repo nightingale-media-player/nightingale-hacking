@@ -53,6 +53,7 @@ interface sbIiTunesXMLParserListener : nsISupports {
    *        this call.
    */
   void onTrack(in sbIStringMap aProperties);
+  void onTracksComplete();
   /**
    * Called when a playlist has been processed
    * \param a Properties the collection of properties for the playlist
@@ -69,5 +70,6 @@ interface sbIiTunesXMLParserListener : nsISupports {
    * \param aErrorMessage Description of the error where it occured
    * \@RETURN return true if processing should continue or false to stop
    */
+   void onPlaylistsComplete();
   boolean onError(in AString aErrorMessage);
 };

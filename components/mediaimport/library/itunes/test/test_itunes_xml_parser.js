@@ -472,9 +472,15 @@ function runTest() {
     onTrack : function(aProperties) {
       ++this.onTrackCount;
     },
+    onTracksComplete : function() {
+      ++this.onTracksCompleteCount;
+    },
     onPlaylist : function(aProperties, 
                           tracks) {
       ++this.onPlaylistCount;
+    },
+    onPlaylistsComplete : function () {
+      ++this.onPlaylistsCompleteCount;
     },
     onError : function(aErrorMessage) {
       ++this.onErrorCount;
@@ -482,12 +488,16 @@ function runTest() {
     reset : function() {
       this.topLevelPropertyCount = 0;
       this.onTrackCount = 0;
+      this.onTracksCompleteCount = 0;
       this.onPlaylistCount = 0;
+      this.onPlaylistsCompleteCount = 0;
       this.onErrorCount = 0;
     },
     topLevelPropertyCount : 0,
     onTrackCount : 0,
+    onTracksCompleteCount : 0,
     onPlaylistCount : 0,
+    onPlaylistsCompleteCount : 0,
     onErrorCount : 0
   };    
 
@@ -498,7 +508,9 @@ function runTest() {
   parser.parse(stringToStream(badTestXML), listener);
   assertEqual(listener.topLevelPropertyCount, 0, "Top level properties do not match");
   assertEqual(listener.onTrackCount, 0, "Invalid track count for error situation");
+  assertEqual(listener.onTracksCompleteCount, 0, "Invalid track complete count for error situation");
   assertEqual(listener.onPlaylistCount, 0, "Invalid playlist count for error situation");
+  assertEqual(listener.onPlaylistsCompleteCount, 0, "Invalid playlist complete count for error situation");
   assertEqual(listener.onErrorCount, 1, "Invalid error count for error situation");
   dump("Finalizing\n");
   parser.finalize();
@@ -512,8 +524,10 @@ function runTest() {
   assertTrue(parser, "iTunes importer component is not available.");
   parser.parse(stringToStream(testXML), listener);
   assertEqual(listener.topLevelPropertyCount, 7, "Top level properties do not match");
-  assertEqual(listener.onTrackCount, 3, "Invalid track count for error situation");
-  assertEqual(listener.onPlaylistCount, 14, "Invalid playlist count for error situation");
-  assertEqual(listener.onErrorCount, 0, "Invalid error count for error situation");
+  assertEqual(listener.onTrackCount, 3, "Invalid track count");
+  assertEqual(listener.onTracksCompleteCount, 1, "Invalid track complete count");
+  assertEqual(listener.onPlaylistCount, 14, "Invalid playlist count");
+  assertEqual(listener.onPlaylistsCompleteCount, 1, "Invalid playlist complete count");
+  assertEqual(listener.onErrorCount, 0, "Invalid error count");
   parser.finalize();
 }

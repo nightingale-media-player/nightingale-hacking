@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -32,6 +32,10 @@
 #include <nsTArray.h>
 #include <nsIStringEnumerator.h>
 
+/**
+ * Adapter to allow an nsTArray<ns?String> to be used as an
+ * nsIStringEnumerator
+ */
 class sbTArrayStringEnumerator : public nsIStringEnumerator
 {
 typedef nsTArray<nsString> sbStringArray;
@@ -41,6 +45,12 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSISTRINGENUMERATOR
 
+  static sbTArrayStringEnumerator * New(const sbStringArray & aStringArray);
+  /**
+   * Allocates sbTArrayStringEnumerator
+   * XXX TODO This and the other methods should use a reference 
+   * instead of a pointer
+   */
   sbTArrayStringEnumerator(const sbStringArray* aStringArray);
   sbTArrayStringEnumerator(const sbCStringArray* aStringArray);
 

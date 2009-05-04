@@ -29,11 +29,52 @@
 * \brief Songbird iTunes Importer component
 */
 
-#include "nsIGenericFactory.h"
+#include <nsCOMPtr.h>
+#include <nsServiceManagerUtils.h>
+#include <nsICategoryManager.h>
+#include <nsIGenericFactory.h>
 
 #include "sbiTunesXMLParser.h"
+#include "sbiTunesImporter.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesXMLParser)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbiTunesImporter)
+
+#define SB_LIBRARY_IMPORTER_CATEGORY "library-importer"
+
+// Registration functions for becoming a startup observer
+static NS_METHOD sbiTunesImporterRegisterSelf(nsIComponentManager* aCompMgr,
+                                              nsIFile* aPath,
+                                              const char* registryLocation,
+                                              const char* componentType,
+                                              const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = categoryManager->AddCategoryEntry(SB_LIBRARY_IMPORTER_CATEGORY,
+                                         SBITUNESIMPORTER_CLASSNAME,
+                                         SBITUNESIMPORTER_CONTRACTID,
+                                         PR_TRUE, PR_TRUE, nsnull);
+
+  return rv;
+}
+
+static NS_METHOD sbiTunesImporterUnregisterSelf(nsIComponentManager* aCompMgr,
+                                                nsIFile* aPath,
+                                                const char* registryLocation,
+                                                const nsModuleComponentInfo* info)
+{
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> categoryManager =
+      do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = categoryManager->DeleteCategoryEntry(SB_LIBRARY_IMPORTER_CATEGORY,
+                                            SBITUNESIMPORTER_CLASSNAME,
+                                            PR_TRUE);
+  return rv;
+}
 
 static nsModuleComponentInfo sbiTunesImporter[] =
 {
@@ -42,6 +83,14 @@ static nsModuleComponentInfo sbiTunesImporter[] =
     SBITUNESXMLPARSER_CID,
     SBITUNESXMLPARSER_CONTRACTID,
     sbiTunesXMLParserConstructor
+  },
+  {
+    SBITUNESIMPORTER_CLASSNAME,
+    SBITUNESIMPORTER_CID,
+    SBITUNESIMPORTER_CONTRACTID,
+    sbiTunesImporterConstructor,
+    sbiTunesImporterRegisterSelf,
+    sbiTunesImporterUnregisterSelf
   },
 };
 

@@ -354,3 +354,64 @@ nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
   return GetContentURI(uri, _retval);
 }
 
+/**
+ * Enumerator class that populates the array it is given
+ */
+class MediaItemArrayCreator : public sbIMediaListEnumerationListener
+{
+public:
+  MediaItemArrayCreator(nsCOMArray<sbIMediaItem> & aMediaItems) : 
+    mMediaItems(aMediaItems)
+   {}
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+private:
+  nsCOMArray<sbIMediaItem> & mMediaItems;
+};
+
+NS_IMPL_ISUPPORTS1(MediaItemArrayCreator,
+                   sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP MediaItemArrayCreator::OnEnumerationBegin(sbIMediaList*,
+                                                         PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP MediaItemArrayCreator::OnEnumeratedItem(sbIMediaList*,
+                                                      sbIMediaItem* aItem,
+                                                      PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  PRBool const added = mMediaItems.AppendObject(aItem);
+  NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP MediaItemArrayCreator::OnEnumerationEnd(sbIMediaList*,
+                                                      nsresult)
+{
+  return NS_OK;
+}
+
+
+nsresult 
+sbLibraryUtils::GetItemsByProperty(sbIMediaList * aMediaList,
+                                   nsAString const & aPropertyName, 
+                                   nsAString const & aValue,
+                                   nsCOMArray<sbIMediaItem> & aMediaItems) {
+  nsRefPtr<MediaItemArrayCreator> creator = new MediaItemArrayCreator(aMediaItems);
+  return aMediaList->EnumerateItemsByProperty(aPropertyName,
+                                              aValue,
+                                              creator,
+                                              sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+}

@@ -28,6 +28,11 @@
 
 NS_IMPL_ISUPPORTS1(sbTArrayStringEnumerator, nsIStringEnumerator)
 
+sbTArrayStringEnumerator * 
+sbTArrayStringEnumerator::New(const sbStringArray & aStringArray) {
+  return new sbTArrayStringEnumerator(&aStringArray);
+}
+
 sbTArrayStringEnumerator::sbTArrayStringEnumerator(const sbStringArray* aStringArray) :
   mNextIndex(0)
 {

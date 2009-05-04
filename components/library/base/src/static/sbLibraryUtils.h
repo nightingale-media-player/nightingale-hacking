@@ -27,6 +27,7 @@
 #ifndef __SBLIBRARYUTILS_H__
 #define __SBLIBRARYUTILS_H__
 
+#include <nsCOMArray.h>
 #include <nsCOMPtr.h>
 #include <pratom.h>
 #include <nsServiceManagerUtils.h>
@@ -140,6 +141,11 @@ public:
    */
   static nsresult GetFileContentURI(/* in */ nsIFile*  aFile,
                                     /* out */ nsIURI** _retval);
+  
+  static nsresult GetItemsByProperty(sbIMediaList * aMediaList,
+                                     nsAString const & aPropertyName, 
+                                     nsAString const & aValue,
+                                     nsCOMArray<sbIMediaItem> & aMediaItems);
 };
 
 /**

@@ -178,9 +178,6 @@ sbLibraryImporterManager.prototype = {
 
   onLibraryChanged:
     function sbLibraryImporterManager_onLibraryChanged(aLibFilePath, aGUID) {
-    // Get the library importer.
-    //XXXeps should use importer that called onLibraryChanged
-    var libraryImporter = this.defaultLibraryImporter;
 
     // Get the FUEL application services.
     var Application = Cc["@mozilla.org/fuel/application;1"]
@@ -188,6 +185,7 @@ sbLibraryImporterManager.prototype = {
 
     // Get library file path from which to import and previously imported
     // library file path.
+    //XXXeps should use importer that called onLibraryChanged
     var importer = this.defaultLibraryImporter;
     var libraryFilePath = Application.prefs.getValue
                             ("songbird.library_importer.library_file_path",
