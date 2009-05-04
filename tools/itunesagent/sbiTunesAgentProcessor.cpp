@@ -153,21 +153,9 @@ sbiTunesAgentProcessor::ProcessTaskFile()
           std::string const & value = Strip(line.substr(equalSign + 1));
           // We've been told to add the track
           if (action == ADDED_MEDIA_ITEMS) {
-            if (key == "URL") {
-              sbError const & error = AddTrack(source, value);
-              if (error && !ErrorHandler(error)) {
-                return error;
-              }
-            }
-            else {
-              std::ostringstream msg;
-              msg << key 
-                  << " is an invalid key, ignoring line " 
-                  << lineno;
-              sbError error(msg.str());
-              if (!ErrorHandler(error)) {
-                return error;
-              }
+            sbError const & error = AddTrack(source, value);
+            if (error && !ErrorHandler(error)) {
+              return error;
             }
           }
           else if (action == ADDED_PLAYLISTS) {

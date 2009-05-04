@@ -53,8 +53,10 @@ sbError CheckCOMError(_com_error const & error) {
 }
 
 void WaitForCompletion(iTunesLib::IITOperationStatus * aStatus) {
-  while (aStatus->InProgress) {
-    Sleep(100);
+  if (aStatus) {
+    while (aStatus->InProgress) {
+      Sleep(100);
+    }
   }
 }
 
