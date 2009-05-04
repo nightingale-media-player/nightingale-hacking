@@ -1377,28 +1377,3 @@ create_dirs_clean:
 	$(CYGWIN_WRAPPER) $(RM) -rf $(CREATEDIRS)
 
 .PHONY : create_dirs_clean
-
-#------------------------------------------------------------------------------
-# Rules for cleaning up
-#------------------------------------------------------------------------------
-
-# GARBAGE - a list of files to delete upon completion
-
-ifdef GARBAGE
-
-remove_cmd = $(CYGWIN_WRAPPER) $(RM) -f $(GARBAGE)
-
-out:
-	$(warning garbage string: $(GARBAGE))
-.PHONY : out
-
-endif #GARBAGE
-
-garbage:
-	$(remove_cmd)
-
-.PHONY : garbage
-
-#------------------------------------------------------------------------------
-###endif #RULES_MK_INCLUDED
-#------------------------------------------------------------------------------

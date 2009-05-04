@@ -82,15 +82,6 @@ ifneq (,$(OBJS)$(XPIDLSRCS)$(SDK_XPIDLSRCS)$(SIMPLE_PROGRAMS))
 endif
 
 
-#all::   $(targets) \
-#        garbage \
-#        $(NULL)
-
-#clean:: $(clean_targets) \
-#        create_dirs_clean \
-#        $(NULL)
-
-
 ################################################################################
 
 # The root makefile doesn't want to do a plain export/libs, because
@@ -120,6 +111,19 @@ default all:: create_dirs
 	$(MAKE) libs
 #	$(MAKE) tools
 endif
+
+ALL_TRASH = \
+   $(GARBAGE) \
+   $(xpidl_headers) $(xpidl_typelibs) $(XPIDL_MODULE) \
+   $(DYNAMIC_LIB_OBJS) $(linker_objs) \
+   $(OBJS:.$(OBJ_SUFFIX)=.s) $(OBJS:.$(OBJ_SUFFIX)=.ii) \
+   $(OBJS:.$(OBJ_SUFFIX)=.i) \
+   $(SIMPLE_PROGRAM) $(SIMPLE_PROGRAM_OBJS) \
+   LOGS TAGS a.out
+
+clean:: $(SUBMAKEFILES)
+	-$(RM) -f $(ALL_TRASH)
+	+$(LOOP_OVER_SUBDIRS)
 
 MAKE_TIER_SUBMAKEFILES = +$(if $(tier_$*_dirs),$(MAKE) $(addsuffix /Makefile,$(tier_$*_dirs)))
 
