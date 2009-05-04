@@ -71,11 +71,6 @@ public:
   virtual sbError UnregisterForStartOnLogin();
   
   /**
-   * Returns what to do with the file given it's version
-   */
-  virtual VersionAction VersionCheck(std::string const & aVersion);
-  
-  /**
    * Waits for the iTunes process to start
    */
   virtual sbError WaitForiTunes();

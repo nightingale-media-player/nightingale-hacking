@@ -35,6 +35,8 @@
 
 #include "sbError.h"
 
+#define EXPORT_SCHEMAVERSION  1
+
 
 /**
  * This is the base class for the iTunes agent processor.
@@ -161,7 +163,13 @@ protected:
   /**
    * Returns what to do with the file given it's version
    */
-  virtual VersionAction VersionCheck(std::string const & aVersion) = 0;
+  VersionAction VersionCheck(std::string const & aVersion)
+  {
+    if (atoi(aVersion.c_str()) == EXPORT_SCHEMAVERSION1) {
+      return OK;
+    }
+    return ABORT;
+  }
   
 private:
   std::ifstream  mInputStream;

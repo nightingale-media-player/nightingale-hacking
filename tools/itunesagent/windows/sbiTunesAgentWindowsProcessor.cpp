@@ -251,17 +251,6 @@ sbiTunesAgentWindowsProcessor::UnregisterForStartOnLogin() {
   return error;
 }
 
-/**
- * Returns what to do with the file given it's version
- */
-sbiTunesAgentWindowsProcessor::VersionAction 
-sbiTunesAgentWindowsProcessor::VersionCheck(std::string const & aVersion) {
-  if (atoi(aVersion.c_str()) == 1) {
-    return OK;
-  }
-  return ABORT;
-}
-
 bool sbiTunesAgentWindowsProcessor::TaskFileExists() {
   std::wstring path(GetSongbirdPath());
   path += AGENT_EXPORT_FILENAME_MASK;
