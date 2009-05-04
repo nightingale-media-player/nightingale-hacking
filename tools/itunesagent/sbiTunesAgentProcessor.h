@@ -165,7 +165,7 @@ protected:
    */
   VersionAction VersionCheck(std::string const & aVersion)
   {
-    if (atoi(aVersion.c_str()) == EXPORT_SCHEMAVERSION1) {
+    if (atoi(aVersion.c_str()) == EXPORT_SCHEMAVERSION) {
       return OK;
     }
     return ABORT;
