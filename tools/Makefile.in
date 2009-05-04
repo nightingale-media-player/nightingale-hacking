@@ -32,8 +32,11 @@ include $(DEPTH)/build/autodefs.mk
 # XXX Mook: disthelper only works on Windows for now
 ifeq (,$(filter-out windows,$(SB_PLATFORM)))
 SUBDIRS += disthelper \
-           itunesagent \
            $(NULL)
+ifdef HAS_EXTRAS
+SUBDIRS += itunesagent \
+           $(NULL)
+endif
 
 endif
 
