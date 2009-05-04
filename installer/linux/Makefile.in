@@ -51,9 +51,9 @@ INSTALLER_FINAL_DIR = $(SONGBIRD_OBJDIR)/_built_installer
 INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)
 
 ifdef SONGBIRD_OFFICIAL
-   INSTALLER_STAGE_DIR := Songbird
+   INSTALLER_STAGE_DIR = Songbird
 else
-   INSTALLER_STAGE_DIR := Songbird_build-$(SB_BUILD_NUMBER)
+   INSTALLER_STAGE_DIR = Songbird_build-$(SB_BUILD_NUMBER)
 endif
 
 include $(topsrcdir)/build/rules.mk
