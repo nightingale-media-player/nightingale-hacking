@@ -29,22 +29,20 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-
-SUBDIRS += base     \
-           test     \
+SUBDIRS += base \
            $(NULL)
 
-ifeq ($(SB_PLATFORM), windows)
-SUBDIRS += win32
-else
-ifeq ($(SB_PLATFORM), macosx)
-# Only build the mac component if the build enviroment has the 10.5 SDK
-ifneq (macosx_,$(SB_PLATFORM)_$(SB_MACOSX_SDK_10_5))
-SUBDIRS += macosx
+ifeq (windows,$(SB_PLATFORM))
+   SUBDIRS += win32
 endif
-else
-SUBDIRS += linux
+ifeq (macosx,$(SB_PLATFORM))
+   # Only build the mac component if the build enviroment has the 10.5 SDK
+   ifneq (,$(SB_MACOSX_SDK_10_5))
+      SUBDIRS += macosx
+   endif
 endif
+ifeq (linux,$(SB_PLATFORM))
+   SUBDIRS += linux
 endif
 
 include $(topsrcdir)/build/rules.mk
