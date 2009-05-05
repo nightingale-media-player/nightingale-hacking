@@ -1193,6 +1193,9 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
       rv = textProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    
+    rv = textProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   if (aHasNullSort) {
@@ -1262,6 +1265,9 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
       rv = datetimeProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    
+    rv = datetimeProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = datetimeProperty->SetUserViewable(aUserViewable);
@@ -1311,6 +1317,9 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
       rv = durationProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    
+    rv = durationProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = durationProperty->SetUserViewable(aUserViewable);
@@ -1363,6 +1372,9 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
       rv = uriProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+    
+    rv = uriProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = uriProperty->SetUserViewable(aUserViewable);
@@ -1404,10 +1416,15 @@ sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
 
   // create the image property
   nsRefPtr<sbImagePropertyInfo> imageProperty(
-      new sbImagePropertyInfo(aPropertyID, displayName,
+      new sbImagePropertyInfo(aPropertyID, displayName, aDisplayKey,
         aRemoteReadable, aRemoteWritable, aUserViewable,
         aUserEditable));
   NS_ENSURE_TRUE(imageProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  if (!aDisplayKey.IsEmpty()) {
+    rv = imageProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(imageProperty);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1436,10 +1453,15 @@ sbPropertyManager::RegisterImageLink(const nsAString& aPropertyID,
 
   // create the image property
   nsRefPtr<sbImageLinkPropertyInfo> imageLinkProperty(
-      new sbImageLinkPropertyInfo(aPropertyID, displayName,
+      new sbImageLinkPropertyInfo(aPropertyID, displayName, aDisplayKey,
         aRemoteReadable, aRemoteWritable, aUserViewable,
         aUserEditable, aUrlPropertyID));
   NS_ENSURE_TRUE(imageLinkProperty, NS_ERROR_OUT_OF_MEMORY);
+
+  if (!aDisplayKey.IsEmpty()) {
+    rv = imageLinkProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = AddPropertyInfo(imageLinkProperty);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1490,6 +1512,9 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
       rv = numberProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    rv = numberProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = numberProperty->SetUserViewable(aUserViewable);
@@ -1546,6 +1571,9 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
       rv = booleanProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    rv = booleanProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = booleanProperty->SetUserViewable(aUserViewable);
@@ -1586,6 +1614,9 @@ sbPropertyManager::RegisterDummy(sbDummyPropertyInfo *dummyProperty,
       rv = dummyProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+
+    rv = dummyProperty->SetLocalizationKey(aDisplayKey);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsCOMPtr<sbIPropertyInfo> propInfo = do_QueryInterface(NS_ISUPPORTS_CAST(sbIDummyPropertyInfo*, dummyProperty), &rv);

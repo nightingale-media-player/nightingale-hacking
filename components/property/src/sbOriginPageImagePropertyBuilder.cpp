@@ -50,6 +50,7 @@ sbOriginPageImagePropertyBuilder::Get(sbIPropertyInfo** _retval)
   nsRefPtr<sbOriginPageImagePropertyInfo> pi = 
     new sbOriginPageImagePropertyInfo(mPropertyID,
                                       displayName,
+                                      mDisplayNameKey,
                                       mRemoteReadable,
                                       mRemoteWritable,
                                       mUserViewable,

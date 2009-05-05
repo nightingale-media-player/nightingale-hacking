@@ -39,15 +39,17 @@
 
 sbOriginPageImagePropertyInfo::sbOriginPageImagePropertyInfo(const nsAString& aPropertyID,
                                                              const nsAString& aDisplayName,
+                                                             const nsAString& aLocalizationKey,
                                                              const PRBool aRemoteReadable,
                                                              const PRBool aRemoteWritable,
                                                              const PRBool aUserViewable,
                                                              const PRBool aUserEditable) :
-  sbImageLinkPropertyInfo(aPropertyID, 
-                          aDisplayName, 
-                          aRemoteReadable, 
-                          aRemoteWritable, 
-                          aUserViewable, 
+  sbImageLinkPropertyInfo(aPropertyID,
+                          aDisplayName,
+                          aLocalizationKey,
+                          aRemoteReadable,
+                          aRemoteWritable,
+                          aUserViewable,
                           aUserEditable,
                           NS_LITERAL_STRING(SB_PROPERTY_ORIGINPAGE))
 {

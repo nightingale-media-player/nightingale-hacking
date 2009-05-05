@@ -57,6 +57,7 @@ protected:
   nsString mID;
   nsString mType;
   nsString mDisplayName;
+  nsString mLocalizationKey;
   PRBool mUserViewable;
   PRBool mUserEditable;
   PRBool mRemoteReadable;

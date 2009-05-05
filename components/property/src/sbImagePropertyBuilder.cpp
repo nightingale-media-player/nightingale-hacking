@@ -49,6 +49,7 @@ sbImagePropertyBuilder::Get(sbIPropertyInfo** _retval)
 
   nsRefPtr<sbImagePropertyInfo> pi = new sbImagePropertyInfo(mPropertyID,
                                                              displayName,
+                                                             mDisplayNameKey,
                                                              mRemoteReadable,
                                                              mRemoteWritable,
                                                              mUserViewable,

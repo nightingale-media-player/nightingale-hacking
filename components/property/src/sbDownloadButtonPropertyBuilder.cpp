@@ -68,6 +68,7 @@ sbDownloadButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   nsRefPtr<sbDownloadButtonPropertyInfo> pi =
     new sbDownloadButtonPropertyInfo(mPropertyID,
                                      displayName,
+                                     mDisplayNameKey,
                                      label,
                                      retryLabel,
                                      mRemoteReadable,

@@ -52,6 +52,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbDownloadButtonPropertyInfo,
  */
 sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPropertyID,
                                                            const nsAString& aDisplayName,
+                                                           const nsAString& aLocalizationKey,
                                                            const nsAString& aLabel,
                                                            const nsAString& aRetryLabel,
                                                            const PRBool aRemoteReadable,
@@ -61,6 +62,7 @@ sbDownloadButtonPropertyInfo::sbDownloadButtonPropertyInfo(const nsAString& aPro
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
+  mLocalizationKey = aLocalizationKey;
   mLabel = aLabel;
   mRetryLabel = aRetryLabel;
   mUserViewable = aUserViewable;

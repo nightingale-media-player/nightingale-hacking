@@ -36,7 +36,7 @@
 #include <nsTArray.h>
 #include <nsInterfaceHashtable.h>
 
-class nsModuleComponentInfo;
+struct nsModuleComponentInfo;
 class nsIComponentManager;
 class nsIFile;
 class sbIPropertyUnitConverter;

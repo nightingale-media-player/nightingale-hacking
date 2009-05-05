@@ -47,6 +47,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbSimpleButtonPropertyInfo,
  */
 sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropertyID,
                                                        const nsAString& aDisplayName,
+                                                       const nsAString& aLocalizationKey,
                                                        PRBool aHasLabel,
                                                        const nsAString& aLabel,
                                                        const PRBool aRemoteReadable,
@@ -56,6 +57,7 @@ sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropert
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
+  mLocalizationKey = aLocalizationKey;
   mHasLabel = aHasLabel;
   mLabel = aLabel;
   mUserViewable = aUserViewable;

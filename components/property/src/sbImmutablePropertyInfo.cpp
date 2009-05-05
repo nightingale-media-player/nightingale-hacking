@@ -252,6 +252,19 @@ sbImmutablePropertyInfo::SetDisplayName(const nsAString& aDisplayName)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/* attribute AString localizationKey; */
+NS_IMETHODIMP
+sbImmutablePropertyInfo::GetLocalizationKey(nsAString & aLocalizationKey)
+{
+  aLocalizationKey = mLocalizationKey;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbImmutablePropertyInfo::SetLocalizationKey(const nsAString & aLocalizationKey)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 NS_IMETHODIMP
 sbImmutablePropertyInfo::GetUserViewable(PRBool *aUserViewable)
 {

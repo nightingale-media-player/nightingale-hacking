@@ -49,6 +49,7 @@ sbRatingPropertyBuilder::Get(sbIPropertyInfo** _retval)
 
   nsRefPtr<sbRatingPropertyInfo> pi = new sbRatingPropertyInfo(mPropertyID,
                                                                displayName,
+                                                               mDisplayNameKey,
                                                                mRemoteReadable,
                                                                mRemoteWritable,
                                                                mUserViewable,

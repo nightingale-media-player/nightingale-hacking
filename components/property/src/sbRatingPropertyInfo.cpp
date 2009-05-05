@@ -41,6 +41,7 @@ NS_IMPL_ISUPPORTS_INHERITED2(sbRatingPropertyInfo,
 
 sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
                                            const nsAString& aDisplayName,
+                                           const nsAString& aLocalizationKey,
                                            const PRBool aRemoteReadable,
                                            const PRBool aRemoteWritable,
                                            const PRBool aUserViewable,
@@ -48,6 +49,7 @@ sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
 {
   mID = aPropertyID;
   mDisplayName = aDisplayName;
+  mLocalizationKey = aLocalizationKey;
   mUserViewable = aUserViewable;
   mUserEditable = aUserEditable;
   mRemoteReadable = aRemoteReadable;

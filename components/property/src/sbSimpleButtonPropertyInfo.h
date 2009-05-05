@@ -50,6 +50,7 @@ public:
 
   sbSimpleButtonPropertyInfo(const nsAString& aPropertyID,
                              const nsAString& aDisplayName,
+                             const nsAString& aLocalizationKey,
                              PRBool aHasLabel,
                              const nsAString& aLabel,
                              const PRBool aRemoteReadable,

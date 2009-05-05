@@ -127,7 +127,7 @@ interface sbIPropertyOperator : nsISupports
 * \brief An interface used to describe a metadata property for use by the UI and other sbILibrary interfaces (smartplaylists, etc)
 * \sa sbIPropertyManager
 */
-[scriptable, uuid(dbc4e321-3a05-44e1-9217-a5ba056e1bfd)]
+[scriptable, uuid(736df4ca-1dd2-11b2-adeb-b4366f783780)]
 interface sbIPropertyInfo : nsISupports
 {
   readonly attribute AString OPERATOR_EQUALS;
@@ -212,6 +212,11 @@ interface sbIPropertyInfo : nsISupports
    * \brief Localized display name of this property.
    */
   attribute AString displayName;
+
+  /**
+   * \brief Key used to find related localization strings
+   */
+  attribute AString localizationKey;
 
   /** 
    * \brief A user may view this property. 

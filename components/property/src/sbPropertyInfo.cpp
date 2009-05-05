@@ -83,6 +83,7 @@ sbPropertyInfo::sbPropertyInfo()
 , mIDLock(nsnull)
 , mTypeLock(nsnull)
 , mDisplayNameLock(nsnull)
+, mLocalizationKeyLock(nsnull)
 , mUserViewableLock(nsnull)
 , mUserViewable(PR_FALSE)
 , mUserEditableLock(nsnull)
@@ -109,6 +110,10 @@ sbPropertyInfo::sbPropertyInfo()
   mDisplayNameLock = PR_NewLock();
   NS_ASSERTION(mDisplayNameLock,
     "sbPropertyInfo::mDisplayNameLock failed to create lock!");
+
+  mLocalizationKeyLock = PR_NewLock();
+  NS_ASSERTION(mLocalizationKeyLock,
+    "sbPropertyInfo::mLocalizationKeyLock failed to create lock!");
 
   mUserViewableLock = PR_NewLock();
   NS_ASSERTION(mUserViewableLock,
@@ -151,6 +156,10 @@ sbPropertyInfo::~sbPropertyInfo()
 
   if(mDisplayNameLock) {
     PR_DestroyLock(mDisplayNameLock);
+  }
+
+  if(mLocalizationKeyLock) {
+    PR_DestroyLock(mLocalizationKeyLock);
   }
 
   if(mUserViewableLock) {
@@ -401,6 +410,34 @@ NS_IMETHODIMP sbPropertyInfo::SetDisplayName(const nsAString &aDisplayName)
 
   return NS_ERROR_ALREADY_INITIALIZED;
 }
+
+/* attribute AString localizationKey; */
+NS_IMETHODIMP sbPropertyInfo::GetLocalizationKey(nsAString & aLocalizationKey)
+{
+  sbSimpleAutoLock lock(mLocalizationKeyLock);
+
+  if(mLocalizationKey.IsEmpty()) {
+    sbSimpleAutoLock lock(mIDLock);
+    aLocalizationKey = mID;
+  }
+  else {
+    aLocalizationKey = mLocalizationKey;
+  }
+
+  return NS_OK;
+}
+NS_IMETHODIMP sbPropertyInfo::SetLocalizationKey(const nsAString & aLocalizationKey)
+{
+  sbSimpleAutoLock lock(mLocalizationKeyLock);
+
+  if(mLocalizationKey.IsEmpty()) {
+    mLocalizationKey = aLocalizationKey;
+    return NS_OK;
+  }
+
+  return NS_ERROR_ALREADY_INITIALIZED;
+}
+
 
 NS_IMETHODIMP sbPropertyInfo::GetUserViewable(PRBool *aUserViewable)
 {

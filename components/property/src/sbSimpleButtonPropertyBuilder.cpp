@@ -64,6 +64,7 @@ sbSimpleButtonPropertyBuilder::Get(sbIPropertyInfo** _retval)
   nsRefPtr<sbSimpleButtonPropertyInfo> pi =
     new sbSimpleButtonPropertyInfo(mPropertyID,
                                    displayName,
+                                   mDisplayNameKey,
                                    hasLabel,
                                    label,
                                    mRemoteReadable,

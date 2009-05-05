@@ -1,3 +1,4 @@
+// vim: set sw=2 : */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -64,6 +65,8 @@ NS_IMETHOD GetType(nsAString & aType) { return _to GetType(aType); } \
 NS_IMETHOD SetType(const nsAString & aType) { return _to SetType(aType); } \
 NS_IMETHOD GetDisplayName(nsAString & aDisplayName) { return _to GetDisplayName(aDisplayName); } \
 NS_IMETHOD SetDisplayName(const nsAString & aDisplayName) { return _to SetDisplayName(aDisplayName); } \
+NS_IMETHOD GetLocalizationKey(nsAString & aLocalizationKey) { return _to GetLocalizationKey(aLocalizationKey); } \
+NS_IMETHOD SetLocalizationKey(const nsAString & aLocalizationKey) { return _to SetLocalizationKey(aLocalizationKey); } \
 NS_IMETHOD GetUserViewable(PRBool *aUserViewable) { return _to GetUserViewable(aUserViewable); } \
 NS_IMETHOD SetUserViewable(PRBool aUserViewable) { return _to SetUserViewable(aUserViewable); } \
 NS_IMETHOD GetUserEditable(PRBool *aUserEditable) { return _to GetUserEditable(aUserEditable); } \
@@ -116,6 +119,9 @@ protected:
 
   PRLock*   mDisplayNameLock;
   nsString  mDisplayName;
+
+  PRLock*   mLocalizationKeyLock;
+  nsString  mLocalizationKey;
 
   PRLock*   mUserViewableLock;
   PRBool    mUserViewable;

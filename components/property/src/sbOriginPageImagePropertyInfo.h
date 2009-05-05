@@ -42,6 +42,7 @@ public:
 
   sbOriginPageImagePropertyInfo(const nsAString& aPropertyID,
                                 const nsAString& aDisplayName,
+                                const nsAString& aLocalizationKey,
                                 const PRBool aRemoteReadable,
                                 const PRBool aRemoteWritable,
                                 const PRBool aUserViewable,

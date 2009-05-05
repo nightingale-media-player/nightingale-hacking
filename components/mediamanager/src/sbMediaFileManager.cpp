@@ -587,21 +587,41 @@ sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
           rv = mPropertyManager->GetPropertyInfo(configValue,
                                                  getter_AddRefs(info));
           NS_ENSURE_SUCCESS(rv, rv);
-  
-          nsString propertyDisplayName;
-          rv = info->GetDisplayName(propertyDisplayName);
-          NS_ENSURE_SUCCESS(rv, rv);
-  
+          
+          // try to get a custom localized string first
           sbStringBundle stringBundle;
-          nsTArray<nsString> params;
-          params.AppendElement(propertyDisplayName);
-          propertyValue = stringBundle.Format(STRING_MFM_UNKNOWNPROP,
-                                              params,
-                                              "Unknown %S");
+
+          nsString unknownKey;
+          rv = info->GetLocalizationKey(unknownKey);
+          NS_ENSURE_SUCCESS(rv, rv);
+          unknownKey.Insert(NS_LITERAL_STRING("."), 0);
+          unknownKey.Insert(NS_LITERAL_STRING(STRING_MFM_UNKNOWNPROP), 0);
+          propertyValue = stringBundle.Get(unknownKey, configValue);
+
+          if (propertyValue.Equals(configValue)) {
+            // no custom default value, use the fallback
+  
+            nsString propertyDisplayName;
+            rv = info->GetDisplayName(propertyDisplayName);
+            NS_ENSURE_SUCCESS(rv, rv);
+    
+            nsTArray<nsString> params;
+            params.AppendElement(propertyDisplayName);
+            propertyValue = stringBundle.Format(STRING_MFM_UNKNOWNPROP,
+                                                params,
+                                                "Unknown %S");
+          }
   
           rv = mPrefBranch->SetCharPref(defaultPrefKey.get(), 
                                    NS_ConvertUTF16toUTF8(propertyValue).get());
           NS_ENSURE_SUCCESS(rv, rv);
+        }
+        
+        if (propertyValue.IsEmpty()) {
+          // there was no data, _and_ the fallback value was empty
+          // skip this property and the next separator
+          i++;
+          continue;
         }
       }
       // Sanitize the property value so that it only contains characters that

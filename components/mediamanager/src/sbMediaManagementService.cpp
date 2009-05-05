@@ -161,7 +161,9 @@ sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
   // mark everything as not scanned, since we don't know if things have been
   // added
   rv = mPrefBranch->ClearUserPref(SB_PREF_MEDIA_MANAGER_COMPLETE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (rv != NS_ERROR_UNEXPECTED) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   if (aIsEnabled) {
     // disabled -> enabled transition
