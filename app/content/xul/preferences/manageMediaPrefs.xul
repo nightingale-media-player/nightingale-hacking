@@ -78,7 +78,7 @@
         <hbox>
           <filefield id="manage_media_library_file" flex="1"/>
           <button id="manage_media_library_browse"
-                  label="&prefWindow.manageMedia.library.browse.label;"
+                  label="&window.browse;"
                   oncommand="manageMediaPrefsPane.doBrowseCommand(event);"/>
         </hbox>
       </groupbox>
