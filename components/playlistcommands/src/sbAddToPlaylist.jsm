@@ -199,7 +199,8 @@ var SBPlaylistCommand_AddToPlaylist =
 
   getCommandEnabled: function( aSubMenu, aIndex, aHost )
   {
-    if (this.m_Context.m_Playlist.tree.currentIndex == -1) return false;
+    if (this.m_Context.m_Playlist.mediaListView.selection.count == 0)
+      return false;
     var cmds = this._getMenu(aSubMenu);
     return (aIndex in cmds.m_Enableds) && cmds.m_Enableds[ aIndex ];
   },

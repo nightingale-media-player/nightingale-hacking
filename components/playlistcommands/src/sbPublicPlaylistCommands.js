@@ -1424,7 +1424,7 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
 
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
-  return ( unwrap(aContext.playlist).tree.currentIndex != -1 );
+  return (unwrap(aContext.playlist).mediaListView.selection.count != 0);
 }
 
 // Returns true when at least one track is selected in the playlist and none of the selected tracks have downloading forbidden
