@@ -75,9 +75,9 @@ TestController.prototype =
     this._tracks[2] = rootUri + "three.mp3";
 
     // Create another set of fake mediaitems.
-    this._tracks2[0] = "file:///foo/file1.mp3";
-    this._tracks2[1] = "file:///foo/file2.mp3";
-    this._tracks2[2] = "file:///foo/file3.mp3";
+    this._tracks2[0] = rootUri + "four.mp3";
+    this._tracks2[1] = rootUri + "five.mp3";
+    this._tracks2[2] = rootUri + "six.mp3";
 
     // Get the file-system paths for the URI's created above.
     var ioService = Cc["@mozilla.org/network/io-service;1"]

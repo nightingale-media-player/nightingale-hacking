@@ -29,6 +29,7 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreServices/CoreServices.h>
 #import <CoreFoundation/CoreFoundation.h>
+#import "SBiTunesLibrary.h"
 #include <sys/param.h>
 
 #define STRINGIT2(arg) #arg
@@ -41,6 +42,9 @@
 #define AGENT_SHUTDOWN_FILENAME  "songbird_export.shutdown"
 
 #define AGENT_ITUNES_SLEEP_INTERVAL 5000 
+
+// AppleEvent stuff
+const OSType iTunesSignature = 'hook';
 
 
 //------------------------------------------------------------------------------
@@ -200,7 +204,11 @@ sbiTunesAgentMacProcessor::RegisterForStartOnLogin()
 {
   // todo write me!
   // bug 16115
-  return sbNoError;  
+
+  // Testing hack:
+  [[SBiTunesLibraryManager mainLibraryPlaylist] playlistName];
+
+  return sbNoError;
 }
 
 sbError
@@ -215,8 +223,99 @@ sbError
 sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
                                      Tracks const & aPaths)
 {
-  // todo write me!
-  // bug 16117
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Build up an apple event...
+  OSErr err;
+  AppleEvent cmdEvent, replyEvent;
+  NSString *gizmo = @"'----':@";
+
+  printf("\n\n  Adding Tracks to %s\n\n",
+      aSource.c_str());
+
+  // Create a descriptor list to push all the file alias from the
+  // supplied URL array.
+  AEDescList urlList;
+  err = AECreateDesc(typeNull, NULL, 0, &urlList);
+  if (err != noErr) {
+    NSLog(@"Error creating AEDescList: %d", err);
+    [pool release];
+    return sbNoError;
+  }
+  err = AECreateList(NULL, 0, false, &urlList);
+  if (err != noErr) {
+    NSLog(@"Erroc reate AECreateList: %d", err);
+    [pool release];
+    return sbNoError;
+  }
+
+  // Iterate through the list of tracks and create aliases.
+  Tracks::const_iterator begin = aPaths.begin();
+  Tracks::const_iterator end = aPaths.end();
+  Tracks::const_iterator next;
+  for (next = begin; next != end; ++next) {
+    FSRef curTrackFileRef;
+    err = FSPathMakeRef((UInt8 *)next->c_str(),
+                        &curTrackFileRef,
+                        false);
+    if (err != noErr) {
+      printf(" - could not get FSRef for '%s'\n", next->c_str());
+      continue;
+    }
+  
+    // Convert the FSRef to the an alias handle.
+    AliasHandle curTrackAliasHandle;
+    err = FSNewAliasMinimal(&curTrackFileRef, &curTrackAliasHandle);
+    if (err != noErr) {
+      printf(" - could not create a alias for '%s'\n", next->c_str());
+      continue;
+    }
+
+    // Push the alias onto the AppleEvent arg list.
+    err = AEPutPtr(&urlList,
+                   0,
+                   typeAlias,
+                   *curTrackAliasHandle,
+                   GetHandleSize((Handle) curTrackAliasHandle));
+    if (err != noErr) {
+      printf(" - could not push the alias to the appleevent '%s'\n", 
+          next->c_str());
+      continue;
+    }
+
+    DisposeHandle((Handle) curTrackAliasHandle);
+  }
+
+  AEBuildError buildError;
+  err = AEBuildAppleEvent(iTunesSignature,          // class 
+                          'Add ',                   // ID
+                          typeApplSignature,        // address type
+                          &iTunesSignature,         // address data
+                          sizeof(iTunesSignature),  // address length
+                          kAutoGenerateReturnID,    // return ID
+                          kAnyTransactionID,        // transaction ID
+                          &cmdEvent,                // result
+                          &buildError,              // error
+                          [gizmo UTF8String],       // params format
+                          &urlList);                // ... (var args)
+  if (err != noErr) {
+    NSLog(@"Could not build apple event: %d", err);
+    [pool release];
+    return sbNoError;
+  }
+
+  // Now send the message
+  err = AESendMessage(&cmdEvent,
+                      &replyEvent,
+                      kAEWaitReply + kAENeverInteract,
+                      kAEDefaultTimeout);
+  if (err != noErr) {
+    NSLog(@"Error sending AppleEvent: %d", err);
+    [pool release];
+    return sbNoError;
+  }
+
+  [pool release];
   return sbNoError;
 }
 
@@ -267,8 +366,8 @@ sbiTunesAgentMacProcessor::Log(std::string const & aMsg)
 bool
 sbiTunesAgentMacProcessor::Shutdown()
 {
-  // No cleanup needed just yet.
-  return true;
+  // This method needs to check for the agent shutdown file.
+  return false;
 }
 
 void
