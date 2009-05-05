@@ -78,7 +78,7 @@
 				<vbox flex="1">
 					<description>&custom-genres.help.label;</description>
 					<textbox id="custom-genres-textbox"
-						emptytext="Enter comma-separated list of genres here"
+						emptytext="&prefs.customGenres.emptytext;"
 						preference="prefCustomGenres" />
 				</vbox>
 			</groupbox>
