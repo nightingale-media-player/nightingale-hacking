@@ -23,17 +23,8 @@
 #
 
 ##############################################################################
-# Rules.mk
+# file-autotargets.mk
 #
-# This file takes care of lots of messy rules. Each one is explained below.
-###############################################################################
-
-#------------------------------------------------------------------------------
-# Only include this file once
-ifndef FILE_AUTOTARGETS_MK_INCLUDED
-FILE_AUTOTARGETS_MK_INCLUDED=1
-#------------------------------------------------------------------------------
-
 # Throughout the old build system, there are constructs where we create a list
 # of files, and the variable represents their location to be placed in the
 # dist directory, to be shipped (SONGBIRD_DIST, SONGBIRD_XULRUNNER, etc.)
@@ -41,11 +32,11 @@ FILE_AUTOTARGETS_MK_INCLUDED=1
 # The old method of doing this took this list and just ran a cp on it. This
 # is bad for a couple of reasons:
 #
-# a. As that list grows (gst-plugins-*, especially), we run the risk of running
-# into shell/command MAX_PATH limits (on Win32, especially)
+#   a. As that list grows (gst-plugins-*, especially), we run the risk of
+#      running into shell/command MAX_PATH limits (on Win32, especially)
 #
-# b. Doing it this way doesn't allow make to do proper dependency checking,
-# and not execute if the file already exists.
+#   b. Doing it this way doesn't allow make to do proper dependency checking,
+#      and not execute if the file already exists.
 #
 # Unfortunately, getting make to accept that there can be a dependency from a
 # sourcefile in a set of random, different directories to the basename of
@@ -66,6 +57,14 @@ FILE_AUTOTARGETS_MK_INCLUDED=1
 #
 # I'm betting there's a better way to do this, but... it works.
 #
+###############################################################################
+
+#------------------------------------------------------------------------------
+# Only include this file once
+ifndef FILE_AUTOTARGETS_MK_INCLUDED
+FILE_AUTOTARGETS_MK_INCLUDED=1
+#------------------------------------------------------------------------------
+
 # preedTODO: confirm there are no dups.; see page 70 of make book
 GST_PLUGINS_TARGETS = $(addprefix $(SONGBIRD_GSTPLUGINSDIR)/,$(notdir $(SONGBIRD_GST_PLUGINS)))
 libs:: $(SONGBIRD_GSTPLUGINSDIR) $(GST_PLUGINS_TARGETS)
@@ -119,80 +118,62 @@ PROFILE_DIR_TARGETS = $(addprefix $(SONGBIRD_PROFILEDIR)/,$(notdir $(SONGBIRD_PR
 libs:: $(PROFILE_DIR_TARGETS)
 
 ##
-## THERE BE DRAGGONS HERE!
+## THERE BE DRAGONS HERE!
 ##
-## The ordering of these rules matters! You must be more generic rules
-## (SONGBIRD_DIST) further down in the list, or else they'll get matched with
-## the core parts, and none of the wildcard "magic" will work.
+## The ordering of these rules matters! More generic rules (SONGBIRD_DIST)
+## MUST be further down in the list, or else they'll get matched with
+## the core parts in the stem and none of the wildcard "magic" will work.
 ##
 ## Translation: best not to mess with this stuff, unless you really have to...
 ##
 
-# preedTODO: remove goo here...
-
 .SECONDEXPANSION:
 $(SONGBIRD_JSMODULESDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_JSMODULES))),$(addprefix $$d,%)))
-	@echo goo1
 	$(INSTALL_FILE) $^ $(SONGBIRD_JSMODULESDIR)/$(@F)
 
 $(SONGBIRD_GSTPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_GST_PLUGINS))),$(addprefix $$d,%)))
-	@echo goo2
 	$(INSTALL_PROG) $^ $(SONGBIRD_GSTPLUGINSDIR)/$(@F)
 
 $(SONGBIRD_LIBDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_LIB))),$(addprefix $$d,%)))
-	@echo goo3
 	$(INSTALL_PROG) $^ $(SONGBIRD_LIBDIR)/$(@F)
 
 $(SONGBIRD_XULRUNNERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_XULRUNNER))),$(addprefix $$d,%)))
-	@echo goo4
 	$(INSTALL) $^ $(SONGBIRD_XULRUNNERDIR)/$(@F)
 
 $(SONGBIRD_CHROMEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CHROME))),$(addprefix $$d,%)))
-	@echo goo5
 	$(INSTALL) $^ $(SONGBIRD_CHROMEDIR)/$(@F)
 
 $(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SEARCHPLUGINS))),$(addprefix $$d,%)))
-	@echo goo6
 	$(INSTALL_FILE) $^ $(SONGBIRD_SEARCHPLUGINSDIR)/$(@F)
 
 $(SONGBIRD_SCRIPTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SCRIPTS))),$(addprefix $$d,%)))
-	@echo goo7
 	$(INSTALL_FILE) $^ $(SONGBIRD_SCRIPTSDIR)/$(@F)
 
 $(SONGBIRD_DOCUMENTATIONDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_DOCUMENTATION))),$(addprefix $$d,%)))
-	@echo goo8
 	$(INSTALL_FILE) $^ $(SONGBIRD_DOCUMENTATIONDIR)/$(@F)
 
 $(SONGBIRD_PREFERENCESDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PREFS))),$(addprefix $$d,%)))
-	@echo goo9
 	$(INSTALL_FILE) $^ $(SONGBIRD_PREFERENCESDIR)/$(@F)
 
 $(SONGBIRD_PLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PLUGINS))),$(addprefix $$d,%)))
-	@echo goo10
 	$(INSTALL_FILE) $^ $(SONGBIRD_PLUGINSDIR)/$(@F)
 
 $(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SEARCHPLUGINS))),$(addprefix $$d,%)))
-	@echo goo11
 	$(INSTALL_FILE) $^ $(SONGBIRD_SEARCHPLUGINSDIR)/$(@F)
 
 $(SONGBIRD_PROFILEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PROFILE))),$(addprefix $$d,%)))
-	@echo goo12
 	$(INSTALL_FILE) $^ $(SONGBIRD_PROFILEDIR)/$(@F)
 
 $(SONGBIRD_INSTALLERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_INSTALLER))),$(addprefix $$d,%)))
-	@echo goo13
 	$(INSTALL_FILE) $^ $(SONGBIRD_INSTALLERDIR)/$(@F)
 
 $(SONGBIRD_COMPONENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_COMPONENTS))),$(addprefix $$d,%)))
-	@echo goo14
 	$(INSTALL_PROG) $^ $(SONGBIRD_COMPONENTSDIR)/$(@F)
 
 $(SONGBIRD_DISTDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_DIST))),$(addprefix $$d,%)))
-	@echo goo15
 	$(INSTALL) $^ $(SONGBIRD_DISTDIR)/$(@F)
 
 $(SONGBIRD_CONTENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CONTENTS))),$(addprefix $$d,%)))
-	@echo goo16
 	$(INSTALL_FILE) $^ $(SONGBIRD_CONTENTSDIR)/$(@F)
 
 #------------------------------------------------------------------------------
