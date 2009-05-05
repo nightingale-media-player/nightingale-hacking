@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "Nogle SHOUTcast streams sender stream-tekst i formen &apos;Kunstner - Sportitel&apos;. Hvis du aktiverer denne valgmulighed, vil tilføjelsen SHOUTcast forsøge at fortolke disse, og sende beskeder når spor ændres, så kan andre tilføjelser blive orienteret om ændringer af spor i et stream.">
 <!ENTITY prefs.customGenres "Tilpas genrer">
 <!ENTITY custom-genres.help.label "Hvis du har tilpassede genrer, du vil have vist i SHOUTcast kataloget, indtast en kommasepareret liste af genrer her.">
-<!ENTITY prefs.tosCaption "Anvendelsesbetingelser">
 <!ENTITY prefs.tosBegin "Brug af SHOUTcast kataloget er begrænset af  deres anvendelsesbetingelser.">
 <!ENTITY prefs.tosLinkText "Se anvendelsesbetingelser">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "Installer">
+<!ENTITY prefs.toolbarLinkText "værktøjslinjen SHOUTcast">
+<!ENTITY prefs.toolbarEnd "browser-udvidelse til nem SHOUTcast adgang fra din browser.">

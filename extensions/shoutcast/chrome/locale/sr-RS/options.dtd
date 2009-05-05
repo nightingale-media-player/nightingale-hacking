@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "">
 <!ENTITY prefs.customGenres "">
 <!ENTITY custom-genres.help.label "">
-<!ENTITY prefs.tosCaption "Услови коришћења">
 <!ENTITY prefs.tosBegin "Коришћење SHOUTcast директоријума је ограничено условима коришћења">
 <!ENTITY prefs.tosLinkText "Погледај услове коришћења">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "">
+<!ENTITY prefs.toolbarLinkText "">
+<!ENTITY prefs.toolbarEnd "">

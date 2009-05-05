@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "Algumas estações informam a faixa em execução enviando texto sob a forma &apos;Artista - Nome da música&apos;. Ativando essa opção a extensão SHOUTcast tentará identificar o nome do artista e o da faixa separados por hífen, permitindo assim que outras extensões do SongBird sejam notificadas da mudança de faixa durante um stream.">
 <!ENTITY prefs.customGenres "Gêneros personalizados">
 <!ENTITY custom-genres.help.label "">
-<!ENTITY prefs.tosCaption "Termos de uso">
 <!ENTITY prefs.tosBegin "O uso do diretório de streams SHOUTcast está sujeito a seus termos de uso.">
 <!ENTITY prefs.tosLinkText "Ver termos de uso">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "">
+<!ENTITY prefs.toolbarLinkText "">
+<!ENTITY prefs.toolbarEnd "">

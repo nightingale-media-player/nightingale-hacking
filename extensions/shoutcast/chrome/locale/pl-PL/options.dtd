@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "Niektóre strumienie SHOUTcasta dostarczają informacji o odtwarzanym utworze w formie &quot;Wykonawca - Tytuł utworu&quot;.  Jeżeli włączysz tę opcję, rozszerzenie SHOUTcast spróbuje przetworzyć te dane i wysłać informację o zmianie odtwarzanego w strumieniu utworu, aby inne rozszerzenia wiedziały o tym fakcie.">
 <!ENTITY prefs.customGenres "Własne gatunki">
 <!ENTITY custom-genres.help.label "Jeżeli masz zdefiniowane własne gatunki, które chcesz, by były wyświetlane w katalogu SHOUTcasta, wprowadź tutaj listę ich nazw oddzielonych przecinkami.">
-<!ENTITY prefs.tosCaption "Zasady użytkowania">
 <!ENTITY prefs.tosBegin "Użytkowanie katalogu SHOUTcasta wiąże się z akceptacją zasad jego użytkowania">
 <!ENTITY prefs.tosLinkText "Zobacz zasady użytkowania">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "Zainstaluj">
+<!ENTITY prefs.toolbarLinkText "pasek narzędzi SHOUTcastu">
+<!ENTITY prefs.toolbarEnd "dodatek do przeglądarki ułatwiający dostęp do SHOUTcastu z Twojej przeglądarki.">

@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "">
 <!ENTITY prefs.customGenres "">
 <!ENTITY custom-genres.help.label "">
-<!ENTITY prefs.tosCaption "">
 <!ENTITY prefs.tosBegin "">
 <!ENTITY prefs.tosLinkText "">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "">
+<!ENTITY prefs.toolbarLinkText "">
+<!ENTITY prefs.toolbarEnd "">

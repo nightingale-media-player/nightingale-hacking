@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "Nebes frosow SHOUTcast a fros tekst y&apos;n furvas &apos;Artydh - Titel an Hyns&apos;. Mar kwre&apos;ta galosegi an ethol ma, SHOUTcast a assay styrya hemma ha danvon negys a-dro dhe janjyow hynsyow a-berth y&apos;n fros dhe geworansow erel.">
 <!ENTITY prefs.customGenres "Ehennow Personelhes">
 <!ENTITY custom-genres.help.label "Mar mynn&apos;ta diskwedhes ehennow personelhes yn Arayel SHOUTcast, ynwor omma rol a ehennow diberthys gans kommas.">
-<!ENTITY prefs.tosCaption "Termow Usya">
 <!ENTITY prefs.tosBegin "Kyns gul devnydh a Arayel SHOUTcast, res yw degemeres aga Thermow Usya">
 <!ENTITY prefs.tosLinkText "Gweles Termow Usya">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "Lea">
+<!ENTITY prefs.toolbarLinkText "Toulvar SHOUTcast">
+<!ENTITY prefs.toolbarEnd "keworrans-peurel may hyllydh hedhes SHOUTcast yn es dhyworth dha beurel.">

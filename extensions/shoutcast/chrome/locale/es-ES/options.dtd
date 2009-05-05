@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "Algunas fuentes de SHOUTcast envían un texto con el formato &quot;Artista - Título de la pista&quot;. Si activa esta opción, la extensión SHOUTcast intentará analizar esto y enviará eventos de cambio de pista, de esta forma se informará a otros complementos de cambios en la pista de la fuente de datos.">
 <!ENTITY prefs.customGenres "Géneros personalizados">
 <!ENTITY custom-genres.help.label "Si tiene una lista de géneros que quiera mostrar en el directorio SHOUTcast, introduzca una lista separada por comas de géneros aquí">
-<!ENTITY prefs.tosCaption "Términos de uso">
 <!ENTITY prefs.tosBegin "El uso del directorio SHOUTcast está sujeto a sus términos de uso">
 <!ENTITY prefs.tosLinkText "Ver los términos de uso">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "">
+<!ENTITY prefs.toolbarLinkText "">
+<!ENTITY prefs.toolbarEnd "">

@@ -13,6 +13,9 @@
 <!ENTITY prefs.track.guessing.help "Einige SHOUTcast-Streams senden Informationen der Form &apos;Künstler-Liedtitel&apos;. Wenn Sie diese Option aktivieren, wird das SHOUTcast Addon versuchen, diese Informationen zu erhalten, damit andere Addons über Titeländerungen im Stream benachrichtigt werden können.">
 <!ENTITY prefs.customGenres "Benutzerdefinierte Genres">
 <!ENTITY custom-genres.help.label "Wenn Sie benutzerdefinierte Genres im SHOUTcast-Ordner anzeigen lassen wollen, geben Sie hier eine durch Kommas abgetrennte Liste der Genres ein">
-<!ENTITY prefs.tosCaption "Nutzungsbedingungen">
 <!ENTITY prefs.tosBegin "Die Benutzung von SHOUTcast ist an die Nutzungsbedingungen gebunden">
 <!ENTITY prefs.tosLinkText "Nutzungsbedingungen anzeigen">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "Die">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast Toolbar">
+<!ENTITY prefs.toolbarEnd "für einen einfacheren Zugriff auf SHOUTcast mit dem Browser installieren.">
