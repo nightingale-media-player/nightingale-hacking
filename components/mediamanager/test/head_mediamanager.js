@@ -72,7 +72,7 @@ var gResultInformation = [
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
 
   { originalFileName: "TestFile4.mp3",
-    expectedFileName: "1 - TestFile4.mp3.mp3",
+    expectedFileName: "1 - TestFile4.mp3",
     expectedFolder:   "Managed/Unknown Artist/Unknown Album",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
                       Ci.sbIMediaFileManager.MANAGE_RENAME },
