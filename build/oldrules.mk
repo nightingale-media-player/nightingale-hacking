@@ -28,15 +28,7 @@
 # This file takes care of lots of messy rules. Each one is explained below.
 ###############################################################################
 
-#------------------------------------------------------------------------------
-# Only include this file once
-##ifndef RULES_MK_INCLUDED
-##RULES_MK_INCLUDED=1
-#------------------------------------------------------------------------------
-
 # include config.mk to pick up extra variables
-
-include $(topsrcdir)/build/config.mk
 
 ifneq (,$(SB_ENABLE_STATIC))
   ifneq (,$(LIBSONGBIRD_COMPONENT))
@@ -60,116 +52,13 @@ endif
 # does what you'd expect.
 #
 
-#targets=
-#clean_targets=
-
-#ifdef CREATEDIRS
-#targets += create_dirs
-#endif
-
 ifdef XPIDL_SRCS
 XPIDL_HEADER_SRCS += $(XPIDL_SRCS)
 XPIDL_TYPELIB_SRCS += $(XPIDL_SRCS)
 endif
 
-ifdef XPIDL_HEADER_SRCS
-targets += xpidl_compile_headers
-clean_targets += xpidl_clean_headers
-endif
-
-ifdef XPIDL_TYPELIB_SRCS
-targets += xpidl_compile_typelibs
-clean_targets += xpidl_clean_typelibs
-endif
-
-#ifdef XPIDL_MODULE
-#targets += xpidl_link
-#clean_targets += xpidl_clean_link
-#endif
-
-#ifdef CPP_SRCS
-#targets += cpp_compile
-#clean_targets += cpp_clean
-#endif
-
-#ifdef CMM_SRCS
-#targets += mm_compile
-#clean_targets += mm_clean
-#endif
-
-ifdef STATIC_LIB
-targets += lib_link
-clean_targets += lib_clean
-endif
-
-ifdef C_SRCS
-targets += c_compile
-clean_targets += c_clean
-endif
-
-#ifdef UNZIP_SRC
-#targets += unzip_file
-#endif
-
-#ifdef EXECUTABLE
-#targets += chmod_add_executable
-#endif
-
-#ifdef CLONEDIR
-#targets += clone_dir
-#endif
-
-#ifdef SONGBIRD_PP_COMPONENTS
-#targets += sb_components_preprocess
-#endif
-#
-#ifdef SONGBIRD_PP_RESOURCES
-#targets += sb_resources_preprocess
-#endif
-#
-#ifdef SONGBIRD_INSTALLER
-#targets += copy_sb_installer
-#clean_targets += clean_copy_sb_installer
-#endif
-#
-#ifdef SONGBIRD_TESTS
-#targets += copy_sb_tests
-#endif
-#
-#ifdef SONGBIRD_LICENSE_FILE
-#targets += copy_sb_license_file
-#clean_targets += clean_copy_sb_license_file
-#endif
-
-#ifdef JAR_MANIFEST
-#targets += make_jar
-#clean_targets += clean_jar_postprocess
-#endif
-
-ifdef PREFERENCES
-targets += preferences_preprocess
-endif
-
-#ifdef APPINI
-#targets += appini_preprocess
-#clean_targets += clean_appini
-#endif
-
-ifdef DOXYGEN_PREPROCESS
-targets += run_doxygen_preprocess
-clean_targets += clean_doxygen_preprocess
-endif
-
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL : all clean
-
-#all::   $(targets) \
-#        garbage \
-#        $(NULL)
-
-#clean:: $(clean_targets) \
-#        create_dirs_clean \
-#        $(NULL)
 
 #------------------------------------------------------------------------------
 # Utilities
