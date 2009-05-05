@@ -18,6 +18,7 @@ lastfm.jar:
 % locale  sb-lastfm  nl-NL  %locale/nl-NL/
 % locale  sb-lastfm  pl-PL  %locale/pl-PL/
 % locale  sb-lastfm  pt-BR  %locale/pt-BR/
+% locale  sb-lastfm  pt-PT  %locale/pt-PT/
 % locale  sb-lastfm  ru-RU  %locale/ru-RU/
 #% locale  sb-lastfm  sr-RS  %locale/sr-RS/
 #% locale  sb-lastfm  sv-SE  %locale/sv-SE/
