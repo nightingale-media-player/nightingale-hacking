@@ -444,8 +444,22 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
   // Start clean
   aFilename.Truncate();
 
+  // Get the previous filename extension
+  nsCOMPtr<nsIURL> url(do_QueryInterface(aItemUri, &rv));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCString extension;
+  rv = url->GetFileExtension(extension);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsString fullExtension;
+  fullExtension.Insert(PRUnichar('.'), 0);
+  fullExtension.Append(NS_ConvertUTF8toUTF16(extension));
+
   // Format the file name
-  rv = GetFormatedFileFolder(mTrackNameConfig, aMediaItem, PR_FALSE, aFilename);
+  rv = GetFormatedFileFolder(mTrackNameConfig,
+                             aMediaItem,
+                             PR_FALSE,
+                             fullExtension,
+                             aFilename);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the resulting filename is empty, we have nothing to rename to, skip the
@@ -455,17 +469,9 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
     return NS_OK;
   }
 
-  // Get the previous filename extension
-  nsCOMPtr<nsIURL> url(do_QueryInterface(aItemUri, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCString extension;
-  rv = url->GetFileExtension(extension);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Append the extension to the new filename
-  if (!extension.IsEmpty()) {
-    aFilename.Append(NS_LITERAL_STRING("."));
-    aFilename.Append(NS_ConvertUTF8toUTF16(extension));
+  if (!fullExtension.IsEmpty()) {
+    aFilename.Append(fullExtension);
   }
   
   // We successfully constructed the new filename
@@ -502,7 +508,11 @@ sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Format the Folder
-  rv = GetFormatedFileFolder(mFolderNameConfig, aMediaItem, PR_TRUE, aPath);
+  rv = GetFormatedFileFolder(mFolderNameConfig,
+                             aMediaItem,
+                             PR_TRUE,
+                             EmptyString(),
+                             aPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aRetVal = PR_TRUE;
@@ -525,6 +535,7 @@ nsresult
 sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
                                           sbIMediaItem*       aMediaItem,
                                           PRBool              aAppendProperty,
+                                          nsString            aFileExtension,
                                           nsString&           aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
@@ -599,6 +610,15 @@ sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
       // We also need to strip path separators since filenames and folder names
       // should not have them.
       propertyValue.StripChars(FILE_PATH_SEPARATOR);
+
+      // We need to check the Track Name property for an extension at the end
+      // and remove it if it exists.
+      if (!aFileExtension.IsEmpty() && configValue.EqualsLiteral(SB_PROPERTY_TRACKNAME)) {
+        if (StringEndsWith(propertyValue, aFileExtension)) {
+          PRInt32 extIndex = propertyValue.RFindChar('.');
+          propertyValue.SetLength(propertyValue.Length() - aFileExtension.Length());
+        }
+      }
 
       aRetVal.Append(propertyValue);
     }

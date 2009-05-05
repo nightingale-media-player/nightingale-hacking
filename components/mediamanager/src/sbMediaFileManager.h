@@ -97,6 +97,7 @@ private:
   nsresult GetFormatedFileFolder(nsTArray<nsString> aFormatSpec,
                                  sbIMediaItem* aMediaItem,
                                  PRBool aAppendProperty,
+                                 nsString aFileExtension,
                                  nsString &aRetVal);
 
   // Hold on to the services we use very often
