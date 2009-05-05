@@ -26,6 +26,7 @@ DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+
 include $(DEPTH)/build/autodefs.mk
 
 ifdef SONGBIRD_OFFICIAL
@@ -44,14 +45,30 @@ PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
 SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
 
 SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
-                $(SONGBIRD_PP_DIR)/$(INSTALLER_README) \
                 $(NULL)
 
+INSTALLER_FINAL_DIR = $(SONGBIRD_OBJDIR)/_built_installer
+INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH).dmg
+
+MAC_APPLICATIONS_SYMLINK = $(DEPTH)/dist/Applications
+
 libs::
-	$(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
-    $(SB_PLATFORM)-$(SB_ARCH) \
-    $(SB_MILESTONE) \
-    $(SB_BUILD_NUMBER) \
-    $(INSTALLER_README)
+	$(RM) -rf $(INSTALLER_FINAL_DIR)
+	$(MKDIR) $(INSTALLER_FINAL_DIR)
+	$(RM) -f $(INSTALLER_NAME)
+	test -h $(MAC_APPLICATIONS_SYMLINK) && $(RM) $(MAC_APPLICATIONS_SYMLINK)
+	$(INSTALL_FILE) $(CURDIR)/../LICENSE.html $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(CURDIR)/../$(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
+	$(INSTALL_FILE) $(CURDIR)/../$(INSTALLER_README) $(SONGBIRD_OBJDIR)/dist/README.txt
+	$(LN) -s /Applications/ $(MAC_APPLICATIONS_SYMLINK)
+	$(srcdir)/make-diskimage \
+    $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME) \
+    $(DEPTH)/dist \
+    Songbird \
+    -null- \
+    $(srcdir)/songbird.dsstore \
+    $(srcdir)/background.tiff \
+    $(srcdir)/MacSongbirdDiskImage.icns 
+	cd $(INSTALLER_FINAL_DIR) && $(MD5SUM) ./$(INSTALLER_NAME) > $(INSTALLER_NAME).md5
 
 include $(topsrcdir)/build/rules.mk
