@@ -202,35 +202,53 @@ TaskFileDataParser.prototype =
 
     var curLine = {};
     var hasMore = true;
+    var hasSchema = false;
+    var nextItem = 0;
+    var result;
+    
     while (hasMore) {
       hasMore = inputStream.readLine(curLine);
       dump(curLine.value + "\n");
 
-      // Determine what mode the file is in.
-      if (curLine.value.indexOf(TASKFILE_SCHEMAVERSION_HEADER) > -1) {
-        // Ensure that the file is writing out the current task file.
-        var startIndex = curLine.value.indexOf(":") + 1;
-        var endIndex = curLine.value.indexOf("]");
-        var curSchemaVersion = curLine.value.substring(startIndex, endIndex);
-        assertTrue(curSchemaVersion == TASKFILE_SCHEMAVERSION);
+      if (curLine.value == "") {
+        // empty line
+        continue;
       }
-      else if (curLine.value.indexOf(TASKFILE_ADDEDMEDIALISTS_HEADER) > -1) {
-        this._curParseMode = this._STATE_MODE_ADDEDMEDIALISTS;
+      else if ((result = /^\[(.*?)(?::(.*))?\]$/(curLine.value))) {
+        // this is a section header
+        nextItem = 0;
+        switch(result[1]) {
+          case TASKFILE_SCHEMAVERSION_HEADER:
+            assertEqual(result[2], TASKFILE_SCHEMAVERSION,
+                        "schema version mismatch");
+            hasSchema = true;
+            break;
+          case TASKFILE_ADDEDMEDIALISTS_HEADER:
+            assertEqual(result[2], null,
+                        "unexpected junk in add media lists header");
+            this._curParseMode = this._STATE_MODE_ADDEDMEDIALISTS;
+            break;
+          case TASKFILE_REMOVEDMEDIALISTS_HEADER:
+            assertEqual(result[2], null,
+                        "unexpected junk in remove media lists header");
+            this._curParseMode = this._STATE_MODE_REMOVEDMEDIALISTS;
+            break;
+          case TASKFILE_ADDEDMEDIAITEMS_HEADER:
+            this._curParseMode = this._STATE_MODE_ADDEDMEDIAITEMS;
+            assertNotEqual(result[2], null, "No media list name found");
+            // remember to decode UTF8 encoded list name
+            this._curMediaListName = decodeURIComponent(escape(result[2]));
+            break;
+          default:
+            doFail('Unexpected section header "' + escape(result[1]) + '"');
+        }
       }
-      else if (curLine.value.indexOf(TASKFILE_REMOVEDMEDIALISTS_HEADER) > -1) {
-        this._curParseMode = this._STATE_MODE_REMOVEDMEDIALISTS;
-      }
-      else if (curLine.value.indexOf(TASKFILE_ADDEDMEDIAITEMS_HEADER) > -1) {
-        this._curParseMode = this._STATE_MODE_ADDEDMEDIAITEMS;
-
-        // Find the current medialist name
-        var start = curLine.value.indexOf(":") + 1;
-        var end = curLine.value.indexOf("]");
-        this._curMediaListName = curLine.value.substring(start, end);
-      }
-      else {
-        var curValue = curLine.value.substring(curLine.value.indexOf("=") + 1);
-
+      else if ((result = /^(\d+)=(.*)$/(curLine.value))) {
+        // this is an item
+        assertEqual(result[1], nextItem, "items out of order");
+        nextItem++;
+        // all names are in utf8
+        var curValue = decodeURIComponent(escape(result[2]));
         switch (this._curParseMode) {
           case this._STATE_MODE_ADDEDMEDIALISTS:
             this._addedMediaLists.push(curValue);
@@ -248,7 +266,12 @@ TaskFileDataParser.prototype =
             break;
         }
       }
+      else {
+        doFail("Unexpected line");
+      }
     }
+
+    assertTrue(hasSchema, "No schema version information found");
 
     inputStream.close();
   },
