@@ -175,6 +175,8 @@
           // add-ons page
           if (aEvent.target.checked)
             this.parentNode.setAttribute("next", "first_run_add_ons_page");
+          else
+            this.parentNode.setAttribute("next", "first_run_import_media_page");
         ]]></body>
       </method>
 
