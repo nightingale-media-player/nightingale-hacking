@@ -115,7 +115,7 @@ endif
 ALL_TRASH = \
    $(GARBAGE) \
    $(xpidl_headers) $(xpidl_typelibs) $(XPIDL_MODULE) \
-   $(DYNAMIC_LIB_OBJS) $(linker_objs) \
+   $(DYNAMIC_LIB_OBJS) \
    $(OBJS:.$(OBJ_SUFFIX)=.s) $(OBJS:.$(OBJ_SUFFIX)=.ii) \
    $(OBJS:.$(OBJ_SUFFIX)=.i) \
    $(SIMPLE_PROGRAM) $(SIMPLE_PROGRAM_OBJS) \
