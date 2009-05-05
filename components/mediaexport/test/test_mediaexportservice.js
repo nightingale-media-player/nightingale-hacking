@@ -56,7 +56,9 @@ TestController.prototype =
   _phase                : 0,
   _shutdownService      : null,
   _tracks               : [],
+  _tracks2              : [],
   _trackPaths           : [],
+  _track2Paths          : [],
   _mainLibrary          : null,
   _playlist             : null,
   _smartPlaylist        : null,
@@ -72,6 +74,11 @@ TestController.prototype =
     this._tracks[1] = rootUri + "two.mp3";
     this._tracks[2] = rootUri + "three.mp3";
 
+    // Create another set of fake mediaitems.
+    this._tracks2[0] = "file:///foo/file1.mp3";
+    this._tracks2[1] = "file:///foo/file2.mp3";
+    this._tracks2[2] = "file:///foo/file3.mp3";
+
     // Get the file-system paths for the URI's created above.
     var ioService = Cc["@mozilla.org/network/io-service;1"]
                       .getService(Ci.nsIIOService);
@@ -80,6 +87,12 @@ TestController.prototype =
     for (var i = 0; i < this._tracks.length; i++) {
       var curTrackURL = this._tracks[i];
       this._trackPaths[i] = 
+        fileProtocolHandler.getFileFromURLSpec(curTrackURL).path;
+    }
+
+    for (var i = 0; i < this._tracks2.length; i++) {
+      var curTrackURL = this._tracks2[i];
+      this._track2Paths[i] = 
         fileProtocolHandler.getFileFromURLSpec(curTrackURL).path;
     }
 
@@ -125,6 +138,7 @@ TestController.prototype =
         this._addPlaylist();
         this._addSmartPlaylist();
         this._addTracks(this._playlist);
+        this._addTracks2(this._mainLibrary);
         break;
 
       case 2:
@@ -187,6 +201,15 @@ TestController.prototype =
         assertTrue(addedMediaItems[0] == this._trackPaths[0]);
         assertTrue(addedMediaItems[1] == this._trackPaths[1]);
         assertTrue(addedMediaItems[2] == this._trackPaths[2]);
+
+        // Should be 3 added mediaitems to |this._mainLibrary|.
+        addedMediaItems = 
+          parsedTask.getAddedMediaItems()[this._mainLibrary.name];
+        assertTrue(addedMediaItems.length == 3);
+
+        assertTrue(addedMediaItems[0] == this._track2Paths[0]);
+        assertTrue(addedMediaItems[1] == this._track2Paths[1]);
+        assertTrue(addedMediaItems[2] == this._track2Paths[2]);
         break;
 
       case 2:
@@ -259,6 +282,17 @@ TestController.prototype =
     }
   },
 
+  // Add tracks from |this._tracks2|
+  _addTracks2: function(aTargetMediaList) {
+    for (var i = 0; i < this._tracks2.length; i++) {
+      var mediaItem =
+        this._mainLibrary.createMediaItem(newURI(this._tracks2[i]));
+      aTargetMediaList.add(mediaItem);
+      this._log("Added '" + this._tracks2[i] + "'' (" + 
+                    mediaItem.guid + ") to '" + aTargetMediaList.name + "'");
+    }
+  },
+  
   _removeTracks: function() {
     // |clearItems()| doesn't remove any medialists.
     this._mainLibrary.clearItems();

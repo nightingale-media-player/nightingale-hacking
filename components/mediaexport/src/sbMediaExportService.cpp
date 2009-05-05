@@ -577,6 +577,8 @@ sbMediaExportService::StartExportState()
         // If the |mCurExportListIter| iterator is currently null, then
         // this is the first time
         mCurExportListIter = mAddedItemsMap.begin();
+        LOG(("%s: There are %i media lists with added media items.",
+              __FUNCTION__, mAddedItemsMap.size()));
       }
       
       // Lookup the name of the current media item.
@@ -591,12 +593,17 @@ sbMediaExportService::StartExportState()
 
       nsString curExportListGuid(mCurExportListIter->first);
 
+      LOG(("%s: Getting ready to lookup medialist guid '%s'",
+            __FUNCTION__, NS_ConvertUTF16toUTF8(curExportListGuid).get()));
+
       if (mainLibraryGuid.Equals(curExportListGuid)) {
+        LOG(("%s: This GUID is the main library!", __FUNCTION__));
         mCurExportMediaList = mainLibrary;
         mExportState = eMediaListAddedItems;
         // Fall through to process below -
       }
       else {
+        LOG(("%s: This GUID is not the main library!", __FUNCTION__));
         // This is not the main library, lookup the list name.
         NS_NAMED_LITERAL_STRING(guidProperty, SB_PROPERTY_GUID);
         rv = mainLibrary->EnumerateItemsByProperty(
@@ -680,6 +687,7 @@ sbMediaExportService::FinishExportState()
       mCurExportMediaList = nsnull;
 
       if (mCurExportListIter == mAddedItemsMap.end()) {
+        LOG(("%s: Done exporting all the added mediaitems!", __FUNCTION__));
         // All of the items have been processed - and this is the last state
         // of the export, finish up the service.
         rv = DetermineNextExportState();
@@ -690,6 +698,9 @@ sbMediaExportService::FinishExportState()
       // Switch back to the parent mediaitems enum
       mExportState = eAddedMediaItems;
       mFinishedExportState = PR_FALSE;
+
+      rv = StartExportState();
+      NS_ENSURE_SUCCESS(rv, rv);
       break;
     }
 
