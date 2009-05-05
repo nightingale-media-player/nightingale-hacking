@@ -68,7 +68,6 @@ CMM_INCLUDES += $(srcdir) \
                 $(NULL)
 
 CMM_SRCS += sbiTunesAgentMacProcessor.mm \
-            SBiTunesLibrary.mm \
             $(NULL)
 
 CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
