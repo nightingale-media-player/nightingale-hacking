@@ -28,6 +28,7 @@
 #include "sbMediaFileManager.h"
 #include <sbIMediaItem.h>
 #include <sbIWatchFolderService.h>
+#include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
@@ -123,10 +124,6 @@ NS_IMETHODIMP sbMediaFileManager::Init()
   TRACE(("%s", __FUNCTION__));
 
   nsresult rv;
-  
-  // Get the IOService
-  mIOService = do_GetService("@mozilla.org/network/io-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the NetUtils
   mNetUtil = do_GetService("@mozilla.org/network/util;1", &rv);
@@ -692,8 +689,6 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
 
   nsresult rv;
 
-  NS_ENSURE_STATE(mIOService);
-
   // Make sure the Src and Dest files are not equal
   PRBool isSrcDestSame = PR_FALSE;
   rv = aSrcFile->Equals(aDestFile, &isSrcDestSame);
@@ -770,7 +765,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
 
   // Make a new nsIURI object pointing at the new file
   nsCOMPtr<nsIURI> newURI;
-  rv = mIOService->NewFileURI(aDestFile, getter_AddRefs(newURI));
+  rv = sbLibraryUtils::GetFileContentURI(aDestFile, getter_AddRefs(newURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // And send that URI back as the item contentsrc

@@ -29,7 +29,6 @@
 #include <sbIPropertyManager.h>
 
 // Mozilla includes
-#include <nsIIOService.h>
 #include <nsIFile.h>
 #include <nsIPrefBranch.h>
 #include <nsStringGlue.h>
@@ -101,7 +100,6 @@ private:
                                  nsString &aRetVal);
 
   // Hold on to the services we use very often
-  nsCOMPtr<nsIIOService>                    mIOService;
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
   nsCOMPtr<nsINetUtil>                      mNetUtil;
   nsCOMPtr<sbIPropertyManager>              mPropertyManager;
