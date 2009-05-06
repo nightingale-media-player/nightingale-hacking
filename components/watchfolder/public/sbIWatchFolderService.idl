@@ -52,7 +52,7 @@ interface sbIWatchFolderService : nsISupports
   //        The item is already being ignored, the count is incremented.
   // \see   removeIgnorePath
   //
-  void addIgnorePath(in AString aFilePath, [optional] in unsigned long aIgnoreCount);
+  void addIgnorePath(in AString aFilePath, [optional] in long aIgnoreCount);
 
   //
   // \brief Remove a absolute file path from the ignored paths list of the

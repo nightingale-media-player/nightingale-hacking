@@ -715,8 +715,12 @@ sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath,
     *aIsIgnoredPath = PR_FALSE;
   } else {
     *aIsIgnoredPath = PR_TRUE;
-    if (foundIter->second != 0) {
+    if (foundIter->second != IGNORE_ALWAYS) {
       --foundIter->second;
+      if (foundIter->second < 1) {
+        // the count has reached zero, stop ignoring
+        mIgnorePaths.erase(foundIter);
+      }
     }
   }
   return NS_OK;
@@ -743,24 +747,26 @@ sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
 
 NS_IMETHODIMP
 sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath,
-                                    PRUint32 aIgnoreCount)
+                                    PRInt32 aIgnoreCount)
 {
-  LOG(("sbWatchFolderService::AddIgnorePath %s",
-        NS_LossyConvertUTF16toASCII(aFilePath).get()));
+  LOG(("sbWatchFolderService::AddIgnorePath %s (count %i)",
+        NS_LossyConvertUTF16toASCII(aFilePath).get(), aIgnoreCount));
+  
+  NS_ENSURE_ARG_MIN(aIgnoreCount, 0);
   
   nsString filePath(aFilePath);
 
   sbStringMap::iterator it = mIgnorePaths.find(filePath);
   if (aIgnoreCount == 0) {
     // ignore always, doesn't matter if it already exists
-    mIgnorePaths[filePath] = aIgnoreCount;
+    mIgnorePaths[filePath] = IGNORE_ALWAYS;
   } else {
     if (it == mIgnorePaths.end()) {
       // new ignore path
       mIgnorePaths[filePath] = aIgnoreCount;
     } else {
       // already exists
-      if (it->second != 0) {
+      if (it->second != IGNORE_ALWAYS) {
         // old value not infinite, add the requested count
         it->second += aIgnoreCount;
       }

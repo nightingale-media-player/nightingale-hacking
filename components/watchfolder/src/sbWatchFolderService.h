@@ -180,6 +180,9 @@ protected:
   nsresult DecrementIgnoredPathCount(const nsAString & aFilePath, 
                                      PRBool *aIsIgnoredPath);
 
+protected:
+  static const PRInt32 IGNORE_ALWAYS = -1;
+
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
   nsCOMPtr<sbILibrary>           mMainLibrary;
