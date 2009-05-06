@@ -1060,6 +1060,18 @@ NS_IMETHODIMP CDatabaseEngine::Init()
   setlocale(LC_COLLATE, mCollationLocale.get());
 #endif
 
+  m_pThreadPool = do_CreateInstance("@mozilla.org/thread-pool;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = m_pThreadPool->SetThreadLimit(4);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = m_pThreadPool->SetIdleThreadLimit(1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = m_pThreadPool->SetIdleThreadTimeout(30000);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -1111,13 +1123,16 @@ NS_IMETHODIMP CDatabaseEngine::Shutdown()
 
   m_QueuePool.Clear();
   
+  nsresult rv = m_pThreadPool->Shutdown();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
 #ifdef XP_MACOSX
   if (m_Collator)
     ::UCDisposeCollator(&m_Collator);
 #endif
 
   if(m_PromptForDeleteTimer) {
-    nsresult rv = m_PromptForDeleteTimer->Cancel();
+    rv = m_PromptForDeleteTimer->Cancel();
     NS_ENSURE_SUCCESS(rv, rv);
 
     m_PromptForDeleteTimer = nsnull;
@@ -1981,12 +1996,12 @@ CDatabaseEngine::DeleteMarkedDatabases()
   {
     pQuery = nsnull;
 
-
     { // Enter Monitor
       // Wrap any calls that access the pQueue.m_Queue because they cause a
       // context switch between threads and can mess up the link between the
       // RunQueue() call and the GetQueueSize() here. See bug 6514 for more details.
       nsAutoMonitor mon(pQueue->m_pQueueMonitor);
+      pQueue->m_Running = PR_FALSE;
 
       PRUint32 queueSize = 0;
       nsresult rv = pQueue->GetQueueSize(queueSize);
@@ -1994,7 +2009,6 @@ CDatabaseEngine::DeleteMarkedDatabases()
 
       // Nothing to execute
       if(!queueSize || pQueue->m_Shutdown) {
-        pQueue->m_Running = PR_FALSE;
         return;
       }
 
@@ -2003,7 +2017,6 @@ CDatabaseEngine::DeleteMarkedDatabases()
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "No query to pop from queue.");
 
       if(NS_FAILED(rv)) {
-        pQueue->m_Running = PR_FALSE;
         return;
       }
 
@@ -2028,9 +2041,11 @@ CDatabaseEngine::DeleteMarkedDatabases()
     // Create a result set object
     nsRefPtr<CDatabaseResult> databaseResult = 
       new CDatabaseResult(pQuery->m_AsyncQuery);
-
+    
+    // Out of memory, attempt to restart the thread
     if(NS_UNLIKELY(!databaseResult)) {
-      // Out of memory, attempt to restart the thread
+      nsAutoMonitor mon(pQueue->m_pQueueMonitor);
+      pQueue->m_Running = PR_FALSE;
       return;
     }
 
@@ -2280,6 +2295,18 @@ CDatabaseEngine::DeleteMarkedDatabases()
 
   return;
 } //QueryProcessor
+
+already_AddRefed<nsIEventTarget> 
+CDatabaseEngine::GetEventTarget()
+{
+  NS_ENSURE_TRUE(m_pThreadPool, nsnull);
+  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIEventTarget> eventTarget = do_QueryInterface(m_pThreadPool, &rv);
+  NS_ENSURE_SUCCESS(rv, nsnull);
+
+  return eventTarget.forget();
+}
 
 //-----------------------------------------------------------------------------
 void CDatabaseEngine::ReportError(sqlite3* db, sqlite3_stmt* stmt) {

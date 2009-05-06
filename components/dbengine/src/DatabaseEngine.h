@@ -52,6 +52,7 @@
 #include <nsRefPtrHashtable.h>
 #include <nsServiceManagerUtils.h>
 #include <nsIThread.h>
+#include <nsIThreadPool.h>
 #include <nsThreadUtils.h>
 #include <nsIRunnable.h>
 #include <nsIObserver.h>
@@ -60,7 +61,6 @@
 #include <nsITimer.h>
 
 #include "sbLeadingNumbers.h"
-#include <sbThreadPoolService.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_DATABASEENGINE_CONTRACTID                \
@@ -127,6 +127,8 @@ protected:
 
   static void PR_CALLBACK QueryProcessor(CDatabaseEngine* pEngine,
                                          QueryProcessorQueue * pQueue);
+
+  already_AddRefed<nsIEventTarget> GetEventTarget();
   
 private:
   //[query list]
@@ -184,6 +186,8 @@ private:
   deleteDatabaseMap_t m_DatabasesToDelete;
 
   nsCOMPtr<nsITimer> m_PromptForDeleteTimer;
+
+  nsCOMPtr<nsIThreadPool> m_pThreadPool;
 
   // Pre-allocated memory for sqlite page cache and scratch.
   // Created in InitMemoryConstraints and destroyed in Shutdown.
@@ -248,9 +252,8 @@ public:
 
     m_GUID = aGUID;
 
-    nsresult rv = NS_ERROR_UNEXPECTED;
-    m_pEventTarget = do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    m_pEventTarget = m_pEngine->GetEventTarget();
+    NS_ENSURE_TRUE(m_pEventTarget, NS_ERROR_UNEXPECTED);
 
     return NS_OK;
   }
@@ -265,7 +268,8 @@ public:
     return NS_OK;
   }
 
-  nsresult PushQueryToQueue(CDatabaseQuery *pQuery, PRBool bPushToFront = PR_FALSE) {
+  nsresult PushQueryToQueue(CDatabaseQuery *pQuery, 
+                            PRBool bPushToFront = PR_FALSE) {
     NS_ENSURE_ARG_POINTER(pQuery);
 
     nsAutoMonitor mon(m_pQueueMonitor);
@@ -330,7 +334,11 @@ public:
     // If the query processor for this queue isn't running right now
     // start running it on the threadpool.
     if(!m_Running) {
-      return m_pEventTarget->Dispatch(this, nsIEventTarget::DISPATCH_NORMAL);
+      m_Running = PR_TRUE;
+
+      nsresult rv = 
+        m_pEventTarget->Dispatch(this, nsIEventTarget::DISPATCH_NORMAL);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
     return NS_OK;
@@ -352,6 +360,7 @@ public:
     NS_ENSURE_SUCCESS(rv, rv);
 
     m_pHandle = nsnull;
+    return NS_OK;
   }
 
 protected:

@@ -58,7 +58,6 @@
 #endif
 
 #define DATABASEQUERY_DEFAULT_CALLBACK_SLOTS  (2)
-#define DATABASEQUERY_MAX_WAIT_TIME           (1000)
 
 #ifdef PR_LOGGING
 static PRLogModuleInfo* sDatabaseQueryLog = nsnull;
@@ -440,7 +439,7 @@ NS_IMETHODIMP CDatabaseQuery::WaitForCompletion(PRInt32 *_retval)
   {
     nsAutoMonitor mon(m_pQueryRunningMonitor);
     while (!m_QueryHasCompleted) {
-      mon.Wait( PR_MillisecondsToInterval(DATABASEQUERY_MAX_WAIT_TIME) );
+      mon.Wait();
     }
 
     NS_ASSERTION( !m_IsExecuting, "Query marked completed but still executing.");
