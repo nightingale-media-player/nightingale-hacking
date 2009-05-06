@@ -67,7 +67,7 @@ sbError sbiTunesLibrary::Initialize() {
                                 __uuidof(iTunesLib::IiTunes),
                                 reinterpret_cast<LPVOID*>(&miTunesApp));
   if (FAILED(hr) || !miTunesApp) {
-    return sbError(L"Failed to initialize the iTunesApp object");
+    return sbError("Failed to initialize the iTunesApp object");
   }
   // Often the iTunes app is busy and we have to retry
   for (;;) {
@@ -76,19 +76,19 @@ sbError sbiTunesLibrary::Initialize() {
       if (!mLibraryPlaylist) {
         mLibraryPlaylist = miTunesApp->GetLibraryPlaylist();
         if (!mLibraryPlaylist) {
-          return sbError(L"Failed to initialize the library playlist object");
+          return sbError("Failed to initialize the library playlist object");
         }
       }
       // Get the sources for iTunes
       iTunesLib::IITSourceCollectionPtr sources = miTunesApp->GetSources();
       if (!sources) {
-        return sbError(L"Failed to get the source collection");
+        return sbError("Failed to get the source collection");
       }
       // Get the main library source
       if (!mLibrarySource) {
         mLibrarySource = sources->GetItemByName(L"Library");
         if (!mLibrarySource) {
-          return sbError(L"Failed to initialize the library source object");
+          return sbError("Failed to initialize the library source object");
         }
       }
       // If we haven't gotten the Songbird playlist source then go get it
@@ -98,7 +98,7 @@ sbError sbiTunesLibrary::Initialize() {
       if (!playlists) {
         playlists = mLibrarySource->GetPlaylists();
         if (!mLibrarySource) {
-          return sbError(L"Failed to initialize the playlist collection object");
+          return sbError("Failed to initialize the playlist collection object");
         }
       }
       // Find the songbird playlist and source
@@ -107,26 +107,26 @@ sbError sbiTunesLibrary::Initialize() {
       if (!playlist) {
         playlist = miTunesApp->CreateFolder(SB_ITUNES_PLAYLIST_NAME);
         if (!playlist) {
-          return sbError(L"Failed to create the Songbird playlist");
+          return sbError("Failed to create the Songbird playlist");
         }
       }
       hr = playlist.QueryInterface(__uuidof(iTunesLib::IITUserPlaylist),
                                    &mSongbirdPlaylist);
       if (FAILED(hr) || !mSongbirdPlaylist) {
-        return sbError(L"Failed to get user playlist from Songbird playlist");
+        return sbError("Failed to get user playlist from Songbird playlist");
       }
       
       if (!mSongbirdPlaylistSource) {
         mSongbirdPlaylistSource = mSongbirdPlaylist->GetSource();
         if (!mSongbirdPlaylistSource) {
-          return sbError(L"Failed to get the source for the Songbird playlist");
+          return sbError("Failed to get the source for the Songbird playlist");
         }
       }
       if (!mSongbirdPlaylists) {
         mSongbirdPlaylists = mSongbirdPlaylistSource->GetPlaylists();
         if (!mSongbirdPlaylists) {
-          return sbError(L"Failed to get the playlist "
-                         L"from the Songbird playlist source");
+          return sbError("Failed to get the playlist "
+                         "from the Songbird playlist source");
         }
       }
       // All good exit
@@ -170,7 +170,7 @@ CreateVariantArray(std::deque<std::wstring> const & aStrings,
 sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource, 
                                    std::deque<std::wstring> const & aTrackPaths) {
   if (!miTunesApp) {
-    return sbError(L"iTunes objects not initialized");
+    return sbError("iTunes objects not initialized");
   }
   if (aSource == SB_ITUNES_MAIN_LIBRARY_SOURCE_NAME) {
     // Loop until success

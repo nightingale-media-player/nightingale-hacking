@@ -264,9 +264,10 @@ sbiTunesAgentProcessor::ProcessTaskFile()
         }
       }
       ++lineno;
-      if (Shutdown()) {
-        mInputStream.close();
+      if (ShouldShutdown()) {
+        // Notify shutdown done and exit
         ShutdownDone();
+        return sbNoError;
       }
     }
     if (!mTrackBatch.empty()) {

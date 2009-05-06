@@ -51,7 +51,7 @@ protected:
   virtual sbError CreatePlaylist(std::string const & aPlaylistName);
   virtual bool OpenTaskFile(std::ifstream & aStream);
   virtual void Log(std::string const & aMsg);
-  virtual bool Shutdown();
+  virtual bool ShouldShutdown();
   virtual void Sleep(unsigned long aMilliseconds);
   virtual void ShutdownDone();
 

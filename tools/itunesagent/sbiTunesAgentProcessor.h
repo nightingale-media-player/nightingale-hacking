@@ -40,6 +40,11 @@
 // Logging options
 #define AGENT_LOGGING 1
 
+/**
+ * Turns preprocessor labels' values into strings
+ */
+#define STRINGIZE2(arg) #arg
+#define STRINGIZE(arg) STRINGIZE2(arg)
 
 /**
  * This is the base class for the iTunes agent processor.
@@ -142,7 +147,7 @@ protected:
   /**
    * Returns true if we should shutdown
    */
-  virtual bool Shutdown() = 0;
+  virtual bool ShouldShutdown() = 0;
   
   /**
    * Sleep for x milliseconds

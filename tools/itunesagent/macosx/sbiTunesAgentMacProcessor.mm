@@ -31,9 +31,6 @@
 #import <CoreFoundation/CoreFoundation.h>
 #include <sys/param.h>
 
-#define STRINGIT2(arg) #arg
-#define STRINGIT(arg) STRINGIT2(arg)
-
 // Agent constants, these should be unified soon.
 #define AGENT_EXPORT_FILENAME    "songbird_export.task"
 #define AGENT_ERROR_FILENAME     "itunesexporterrors.txt"
@@ -73,7 +70,7 @@ GetSongbirdProfilePath()
 
     [profilePath appendFormat:@"%@/%s/", 
       [(NSURL *)folderUrlRef path],
-      STRINGIT(SB_APPNAME) STRINGIT(SB_PROFILE_VERSION)];
+      STRINGIZE(SB_APPNAME) STRINGIZE(SB_PROFILE_VERSION)];
     
     CFRelease(folderUrlRef);
     gSongbirdProfilePath = [[NSString alloc] initWithString:profilePath];
@@ -265,10 +262,10 @@ sbiTunesAgentMacProcessor::Log(std::string const & aMsg)
 }
 
 bool
-sbiTunesAgentMacProcessor::Shutdown()
+sbiTunesAgentMacProcessor::ShouldShutdown()
 {
   // No cleanup needed just yet.
-  return true;
+  return false;
 }
 
 void

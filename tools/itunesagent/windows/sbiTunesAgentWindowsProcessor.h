@@ -109,7 +109,7 @@ protected:
   /**
    * Returns true if we should shutdown
    */
-  virtual bool Shutdown();
+  virtual bool ShouldShutdown();
   
   /**
    * Sleep for x milliseconds

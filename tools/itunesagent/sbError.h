@@ -40,11 +40,14 @@ public:
   /**
    * Initialize the error object with a message and the processor
    */
-  sbError(std::string const & aMessage = std::string()) :
+  explicit sbError(std::string const & aMessage = std::string()) :
     mMessage(aMessage),
     mChecked(false) {
   }
-
+  explicit sbError(char const * aMessage) :
+    mMessage(aMessage),
+    mChecked(false) {
+  }
   /**
    * Copies the error, marking the source as checked 
    */
@@ -67,7 +70,7 @@ public:
   /**
    * Used to create the sbNoError instance
    */
-  sbError(bool aChecked) : mChecked(aChecked) {}
+  explicit sbError(bool aChecked) : mChecked(aChecked) {}
   
   /**
    * Detect unhandled errors

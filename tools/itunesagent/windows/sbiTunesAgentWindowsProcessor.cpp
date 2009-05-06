@@ -78,9 +78,6 @@ std::wstring ConvertUTF8ToUTF16(const std::string& src) {
   #undef GET_BITS
 }
 
-#define STRINGIT2(arg) #arg
-#define STRINGIT(arg) STRINGIT2(arg)
-
 static std::wstring GetSongbirdPath() {
   WCHAR buffer[MAX_PATH + 2];
   HRESULT result = SHGetSpecialFolderPathW(NULL, buffer, CSIDL_APPDATA, true);
@@ -99,7 +96,7 @@ static std::wstring GetSongbirdPath() {
       break;
     }
   }
-  path += ConvertUTF8ToUTF16(STRINGIT(SB_APPNAME) STRINGIT(SB_PROFILE_VERSION));
+  path += ConvertUTF8ToUTF16(STRINGIZE(SB_APPNAME) STRINGIZE(SB_PROFILE_VERSION));
   path += L'/';
   return path;
 }
@@ -187,14 +184,14 @@ sbiTunesAgentWindowsProcessor::RemovePlaylist(std::string const & aPlaylist) {
   return miTunesLibrary.RemovePlaylist(ConvertUTF8ToUTF16(aPlaylist));
 }
 
-bool sbiTunesAgentWindowsProcessor::Shutdown() {
+bool sbiTunesAgentWindowsProcessor::ShouldShutdown() {
   std::wstring path = GetSongbirdPath();
   path += AGENT_SHUTDOWN_FILENAME;
   return DeleteFileW(path.c_str()) != 0;
 }
 
 bool sbiTunesAgentWindowsProcessor::ShutdownCallback(bool) {
-  return Shutdown();
+  return ShouldShutdown();
 }
 
 /**
@@ -209,7 +206,7 @@ sbiTunesAgentWindowsProcessor::RegisterForStartOnLogin() {
                               KEY_READ | KEY_WRITE, 
                               &runKey);
   if (result != ERROR_SUCCESS) {
-    return sbError(L"Unable to set the Windows RUN sbitunesagent value");
+    return sbError("Unable to set the Windows RUN sbitunesagent value");
   }
   wchar_t exePath[MAX_PATH + 1];
   GetModuleFileNameW(0, exePath, MAX_PATH + 1);
@@ -224,7 +221,7 @@ sbiTunesAgentWindowsProcessor::RegisterForStartOnLogin() {
                           reinterpret_cast<BYTE const *>(exePath),
                           bytes);
   if (result != ERROR_SUCCESS) {
-    error = sbError(L"Unable to get Windows RUN registry key");
+    error = sbError("Unable to get Windows RUN registry key");
   }
   RegCloseKey(runKey);
   return error;
@@ -239,12 +236,12 @@ sbiTunesAgentWindowsProcessor::UnregisterForStartOnLogin() {
   HKEY runKey;
   LONG result = RegOpenKeyW(HKEY_CURRENT_USER, WINDOWS_RUN_KEY, &runKey);
   if (result != ERROR_SUCCESS) {
-    error = sbError(L"Unable to get Windows RUN registry key");
+    error = sbError("Unable to get Windows RUN registry key");
   }
   result = RegDeleteValueW(runKey, 
                        WINDOWS_RUN_KEY_VALUE);
   if (result != ERROR_SUCCESS) {
-    error = sbError(L"Unable to remove the Windows RUN sbitunesagent value");
+    error = sbError("Unable to remove the Windows RUN sbitunesagent value");
   }
   RegCloseKey(runKey);
 
@@ -280,7 +277,7 @@ sbiTunesAgentWindowsProcessor::WaitForiTunes() {
   if (appWatcher.WaitForApp(callback)) {
     return sbNoError;
   }
-  return sbError(L"Waiting terminated before iTunes started");
+  return sbError("Waiting terminated before iTunes started");
 }
 
 sbiTunesAgentProcessor * sbCreatesbiTunesAgentProcessor() {
