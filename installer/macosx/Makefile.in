@@ -69,6 +69,7 @@ libs::
     $(srcdir)/songbird.dsstore \
     $(srcdir)/background.tiff \
     $(srcdir)/MacSongbirdDiskImage.icns 
-	cd $(INSTALLER_FINAL_DIR) && $(MD5SUM) ./$(INSTALLER_NAME) > $(INSTALLER_NAME).md5
+	#preedTODO: Fix hard-coded md5
+	cd $(INSTALLER_FINAL_DIR) && md5 ./$(INSTALLER_NAME) > $(INSTALLER_NAME).md5
 
 include $(topsrcdir)/build/rules.mk
