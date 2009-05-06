@@ -51,6 +51,9 @@
   1=/path/to/file2.mp3
   2=/path/to/file3.mp3
 
+  All playlist names and filenames are URL-escaped, and after unescaping will
+  be in UTF-8.
+
 */
 
 
@@ -68,9 +71,13 @@ nsresult
 sbMediaExportTaskWriter::Init()
 {
   LOG(("%s: Setting up a task writer instance", __FUNCTION__));
+
+  // Create an nsINetUtil instance to do URL-escaping.
+  nsresult rv;
+  mNetUtil = do_GetService(NS_IOSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   // First, setup the actual export data file to write to.
-  nsresult rv;
   nsCOMPtr<nsIFile> taskFile;
   rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR, 
                               getter_AddRefs(taskFile));
@@ -176,17 +183,21 @@ sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList
   rv = aMediaList->GetName(mediaListName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCString escaped;
+  rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(mediaListName),
+          nsINetUtil::ESCAPE_URL_PATH, escaped);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   LOG(("%s: Writing header '%s' for medialist name '%s'",
         __FUNCTION__, 
-        TASKFILE_ADDEDMEDIAITEMS_HEADER,
-        NS_ConvertUTF16toUTF8(mediaListName).get()));
+        TASKFILE_ADDEDMEDIAITEMS_HEADER, escaped.get()));
 
   // Header format looks like this
   // [added-mediaitems:Playlist Name]
   mOutputStream << "[" 
                 << TASKFILE_ADDEDMEDIAITEMS_HEADER
                 << ":"
-                << NS_ConvertUTF16toUTF8(mediaListName).get()
+                << escaped.get()
                 << "]"
                 << std::endl;
 
@@ -224,13 +235,18 @@ sbMediaExportTaskWriter::WriteAddedTrack(sbIMediaItem *aMediaItem)
   PRBool exists = PR_FALSE;
   rv = contentFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString escaped;
+  rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(itemContentPath),
+          nsINetUtil::ESCAPE_URL_PATH, escaped);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   LOG(("%s: Writing added track '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(itemContentPath).get()));
+        __FUNCTION__, escaped.get()));
 
   mOutputStream << mCurOutputIndex++ 
                 << "="
-                << NS_ConvertUTF16toUTF8(itemContentPath).get()
+                << escaped.get()
                 << std::endl;
 
   return NS_OK;
@@ -246,26 +262,36 @@ sbMediaExportTaskWriter::WriteMediaListName(sbIMediaList *aMediaList)
   rv = aMediaList->GetName(listName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCString escaped;
+  rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(listName),
+          nsINetUtil::ESCAPE_URL_PATH, escaped);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   LOG(("%s: Writing media list name '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(listName).get()));
+        __FUNCTION__, escaped.get()));
 
   mOutputStream << mCurOutputIndex++
                 << "="
-                << NS_ConvertUTF16toUTF8(listName).get()
+                << escaped.get()
                 << std::endl;
 
   return NS_OK;
 }
 
 nsresult
-sbMediaExportTaskWriter::WriteString(const nsAString & aString)
+sbMediaExportTaskWriter::WriteEscapedString(const nsAString & aString)
 {
+  nsCString escaped;
+  nsresult rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(aString),
+          nsINetUtil::ESCAPE_URL_PATH, escaped);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   LOG(("%s: Writing string '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(aString).get()));
+        __FUNCTION__, escaped.get()));
 
   mOutputStream << mCurOutputIndex++
                 << "="
-                << NS_ConvertUTF16toUTF8(aString).get()
+                << escaped.get()
                 << std::endl;
 
   return NS_OK;

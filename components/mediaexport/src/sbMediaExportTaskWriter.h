@@ -34,7 +34,7 @@
 #include <fstream>
 #include <sbIMediaList.h>
 #include <sbIMediaItem.h>
-
+#include <nsNetUtil.h>
 
 class sbMediaExportTaskWriter : public nsISupports
 {
@@ -85,15 +85,16 @@ public:
   nsresult WriteMediaListName(sbIMediaList *aMediaList);
 
   //
-  // \brief Write a string out to the exported task file.
+  // \brief Write a string out to the exported task file, after URL-escaping it.
   // \param aString The string to write out to the task file.
   //
-  nsresult WriteString(const nsAString & aString);
+  nsresult WriteEscapedString(const nsAString & aString);
 
 private:
   nsString       mTaskFilepath;
   PRUint32       mCurOutputIndex;
   std::ofstream  mOutputStream;
+  nsCOMPtr<nsINetUtil> mNetUtil;
 };
 
 #endif  // sbMediaExportTaskWriter_h_

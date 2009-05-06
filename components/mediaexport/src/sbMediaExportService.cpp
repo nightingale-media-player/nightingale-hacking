@@ -560,7 +560,7 @@ sbMediaExportService::StartExportState()
       sbStringListIter end = mRemovedMediaLists.end();
       sbStringListIter next;
       for (next = mRemovedMediaLists.begin(); next != end; ++next) {
-        rv = mTaskWriter->WriteString(*next);
+        rv = mTaskWriter->WriteEscapedString(*next);
         NS_ENSURE_SUCCESS(rv, rv);
       }
 

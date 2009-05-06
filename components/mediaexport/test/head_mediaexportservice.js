@@ -237,7 +237,7 @@ TaskFileDataParser.prototype =
             this._curParseMode = this._STATE_MODE_ADDEDMEDIAITEMS;
             assertNotEqual(result[2], null, "No media list name found");
             // remember to decode UTF8 encoded list name
-            this._curMediaListName = decodeURIComponent(escape(result[2]));
+            this._curMediaListName = decodeURIComponent(result[2]);
             break;
           default:
             doFail('Unexpected section header "' + escape(result[1]) + '"');
@@ -248,7 +248,7 @@ TaskFileDataParser.prototype =
         assertEqual(result[1], nextItem, "items out of order");
         nextItem++;
         // all names are in utf8
-        var curValue = decodeURIComponent(escape(result[2]));
+        var curValue = decodeURIComponent(result[2]);
         switch (this._curParseMode) {
           case this._STATE_MODE_ADDEDMEDIALISTS:
             this._addedMediaLists.push(curValue);

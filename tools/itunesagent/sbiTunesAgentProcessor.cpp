@@ -60,6 +60,55 @@ Strip(std::string const & aText)
   return aText;
 }
 
+inline bool
+isHex(char c)
+{
+  if ((c >= '0' && c <= '9') ||
+      (c >= 'a' && c <= 'f') ||
+      (c >= 'A' && c <= 'F'))
+    return true;
+  return false;
+}
+
+inline int
+hexValue(char c)
+{
+  if (c >= '0' && c <= '9')
+    return c - '0';
+  else if (c >= 'a' && c <= 'f')
+    return c - 'a' + 10;
+  else if (c >= 'A' && c <= 'F')
+    return c - 'A' + 10;
+  else
+    return 0;
+}
+
+inline std::string
+Unescape(std::string const & aText)
+{
+  if (!aText.empty()) {
+    std::string unescaped;
+    size_t len = aText.length();
+    for (size_t i = 0; i < len; i++) {
+      if (i+2 < len && 
+          aText[i] == '%' && 
+          isHex(aText[i+1]) && 
+          isHex(aText[i+2]))
+      {
+        unescaped.push_back((char)
+                ((hexValue(aText[i+1]) << 4) | hexValue(aText[i+2])));
+        i += 2;
+      }
+      else if (aText[i] == '+')
+        unescaped.push_back(' ');
+      else
+        unescaped.push_back(aText[i]);
+    }
+    return unescaped;
+  }
+  return aText;
+}
+
 static inline void
 ParseTask(std::string const & aTask,
           std::string & aAction,
@@ -68,7 +117,8 @@ ParseTask(std::string const & aTask,
   std::string::size_type const colon = aTask.find(':');
   if (colon != std::string::npos) {
     aAction = Strip(aTask.substr(0, colon));
-    aLibrary = Strip(aTask.substr(colon + 1, aAction.length() - colon - 1));
+    aLibrary = Unescape(
+            Strip(aTask.substr(colon + 1, aAction.length() - colon - 1)));
   }
   else {
     aAction = Strip(aTask);
@@ -151,7 +201,8 @@ sbiTunesAgentProcessor::ProcessTaskFile()
         std::string::size_type const equalSign = line.find('=');
         if (equalSign != std::string::npos) {
           std::string const & key = Strip(line.substr(0, equalSign));
-          std::string const & value = Strip(line.substr(equalSign + 1));
+          std::string const & value = Unescape(
+                  Strip(line.substr(equalSign + 1)));
           // We've been told to add the track
           if (action == ADDED_MEDIA_ITEMS) {
             sbError const & error = AddTrack(source, value);
