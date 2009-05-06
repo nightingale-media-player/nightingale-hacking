@@ -1341,6 +1341,7 @@ sbLocalDatabasePropertyCache::DispatchFlush()
     
     LOG(("property cache flush operation dispatched"));
   }
+  return NS_OK;
 }
 
 void
