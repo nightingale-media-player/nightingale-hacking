@@ -317,7 +317,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
       rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), 
                                   mediaItemPath);
       if (NS_SUCCEEDED(rv)) {
-        rv = wfService->AddIgnorePath(mediaItemPath);
+        rv = wfService->AddIgnorePath(mediaItemPath, 0);
         if (NS_SUCCEEDED(rv)) {
           mIgnoredContentPaths.insert(mediaItemPath);
         }
