@@ -168,7 +168,6 @@ static PRLogModuleInfo* gMediaManagementJobLog = nsnull;
 //------------------------------------------------------------------------------
 
 sbMediaManagementJob::sbMediaManagementJob() :
-  mShouldIgnoreMediaFolder(PR_FALSE),
   mStatus(sbIJobProgress::STATUS_RUNNING),
   mCompletedItemCount(0),
   mTotalItemCount(0)
@@ -212,19 +211,6 @@ sbMediaManagementJob::UpdateProgress()
     if (mIntervalTimer) {
       mIntervalTimer->Cancel();
       mIntervalTimer = nsnull;
-    }
-
-    // Remove the media folder from the ignore list in watch folders.
-    if (mShouldIgnoreMediaFolder &&
-        mMediaFolder &&
-        mWatchFolderService)
-    {
-      nsString mediaFolderPath;
-      rv = mMediaFolder->GetPath(mediaFolderPath);
-      NS_ENSURE_SUCCESS(rv, /* void */);
-      
-      rv = mWatchFolderService->RemoveIgnorePath(mediaFolderPath);
-      NS_ENSURE_SUCCESS(rv, /* void */);
     }
   }
 
@@ -679,27 +665,6 @@ sbMediaManagementJob::OrganizeMediaList()
   NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
   
-
-  // Inform the watch folder service of the Media Library Folder we are about
-  // to organize. This prevents the watch folder service from re-reading in the
-  // changes that this job is about to do.
-  mWatchFolderService =
-    do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
-  if (NS_SUCCEEDED(rv) && mWatchFolderService) {
-    rv = mWatchFolderService->GetIsRunning(&mShouldIgnoreMediaFolder);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-        "Could not determine if watchfolders is running!");
-  }
-  
-  if (mShouldIgnoreMediaFolder) {
-    nsString mediaFolderPath;
-    rv = mMediaFolder->GetPath(mediaFolderPath);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    rv = mWatchFolderService->AddIgnorePath(mediaFolderPath);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   // Create our timer
   mIntervalTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);

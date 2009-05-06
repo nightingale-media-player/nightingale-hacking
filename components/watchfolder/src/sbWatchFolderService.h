@@ -46,8 +46,10 @@
 #include <sbIMediaListListener.h>
 #include <nsIDOMWindow.h>
 #include <set>
+#include <map>
 
 typedef std::set<nsString> sbStringSet;
+typedef std::map<nsString, PRUint32> sbStringMap;
 
 typedef enum {
   eNone  = 0,
@@ -173,9 +175,10 @@ protected:
 
   //
   // \brief Check to see if a given file path is on the ignored paths list.
+  //        If found, decrements the times-to-ignore count as appropriate.
   //
-  nsresult GetIsIgnoredPath(const nsAString & aFilePath, 
-                            PRBool *aIsIgnoredPath);
+  nsresult DecrementIgnoredPathCount(const nsAString & aFilePath, 
+                                     PRBool *aIsIgnoredPath);
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
@@ -190,7 +193,7 @@ private:
   sbStringSet                    mDelayedChangedPaths;
   sbStringSet                    mAddedPaths;
   sbStringSet                    mRemovedPaths;
-  sbStringSet                    mIgnorePaths;
+  sbStringMap                    mIgnorePaths;
   nsString                       mWatchPath;
   nsCString                      mFileSystemWatcherGUID;
   EWatchFolderState              mServiceState;

@@ -27,6 +27,7 @@
 // Songbird includes
 #include <sbIMediaFileManager.h>
 #include <sbIPropertyManager.h>
+#include <sbIWatchFolderService.h>
 
 // Mozilla includes
 #include <nsIFile.h>
@@ -103,6 +104,7 @@ private:
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
   nsCOMPtr<nsINetUtil>                      mNetUtil;
   nsCOMPtr<sbIPropertyManager>              mPropertyManager;
+  nsCOMPtr<sbIWatchFolderService>           mWatchFolderService;
 
   // Where our media folder is located.
   nsCOMPtr<nsIFile>                         mMediaFolder;

@@ -27,7 +27,6 @@
 // Songbird includes
 #include "sbMediaFileManager.h"
 #include <sbIMediaItem.h>
-#include <sbIWatchFolderService.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
@@ -65,35 +64,6 @@ static PRLogModuleInfo* gMediaFileManagerLog = nsnull;
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
 #endif /* PR_LOGGING */
-
-/**
- * \brief Helper class to ignore an item from watch folders while it's being
- *        modified
- */
-class sbMediaFileManagerUnwatchHelper {
-public:
-  sbMediaFileManagerUnwatchHelper(nsIFile* aFile)
-  {
-    nsresult rv;
-    mWatchFolderSvc =
-      do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, /* void */);
-    rv = aFile->GetPath(mFilePath);
-    NS_ENSURE_SUCCESS(rv, /* void */);
-    rv = mWatchFolderSvc->AddIgnorePath(mFilePath);
-    NS_ENSURE_SUCCESS(rv, /* void */);
-  }
-  ~sbMediaFileManagerUnwatchHelper()
-  {
-    if (mWatchFolderSvc && !mFilePath.IsEmpty()) {
-      nsresult rv = mWatchFolderSvc->RemoveIgnorePath(mFilePath);
-      NS_ENSURE_SUCCESS(rv, /* void */);
-    }
-  }
-protected:
-  nsString mFilePath;
-  nsCOMPtr<sbIWatchFolderService> mWatchFolderSvc;
-};
 
 /**
  * \brief Constructor of the sbMediaFileManager component.
@@ -725,9 +695,9 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   }
 #endif
 
-  // Get the new filename
-  nsString newFilename;
-  rv = aDestFile->GetLeafName(newFilename);
+  // Get the old path
+  nsString oldPath;
+  rv = aSrcFile->GetPath(oldPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the new path
@@ -735,6 +705,21 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   rv = aDestFile->GetPath(newPath);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  if (!mWatchFolderService) {
+    mWatchFolderService =
+      do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = mWatchFolderService->AddIgnorePath(oldPath, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mWatchFolderService->AddIgnorePath(newPath, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the new filename
+  nsString newFilename;
+  rv = aDestFile->GetLeafName(newFilename);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Copy the old file to the new location with the new file name
   nsCOMPtr<nsIFile> newParentDir;
   rv = aDestFile->GetParent(getter_AddRefs(newParentDir));

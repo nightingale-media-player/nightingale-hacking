@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(F6AAA1F9-627B-4A64-9E07-0276DBFA14DF)]
+[scriptable, uuid(4187f9fa-1dd2-11b2-aa06-fa9e44f7e445)]
 interface sbIWatchFolderService : nsISupports
 {
   //
@@ -48,8 +48,11 @@ interface sbIWatchFolderService : nsISupports
   //        This path will be ignored until it is removed via a call to
   //        |removeIgnorePath()|.
   // \param aFilePath The absolute path to start ignoring.
+  // \param aIgnoreCount The number of times to ignore; 0 means infinite.  If
+  //        The item is already being ignored, the count is incremented.
+  // \see   removeIgnorePath
   //
-  void addIgnorePath(in AString aFilePath);
+  void addIgnorePath(in AString aFilePath, [optional] in unsigned long aIgnoreCount);
 
   //
   // \brief Remove a absolute file path from the ignored paths list of the

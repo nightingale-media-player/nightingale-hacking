@@ -705,14 +705,20 @@ sbWatchFolderService::HandleRootPathMissing()
 }
 
 nsresult
-sbWatchFolderService::GetIsIgnoredPath(const nsAString & aFilePath, 
-                                       PRBool *aIsIgnoredPath) 
+sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath, 
+                                                PRBool *aIsIgnoredPath) 
 {
   NS_ENSURE_ARG_POINTER(aIsIgnoredPath);
 
-  sbStringSetIter foundIter = mIgnorePaths.find(nsString(aFilePath));
-  *aIsIgnoredPath = (foundIter != mIgnorePaths.end());
-  
+  sbStringMap::iterator foundIter = mIgnorePaths.find(nsString(aFilePath));
+  if (foundIter == mIgnorePaths.end()) {
+    *aIsIgnoredPath = PR_FALSE;
+  } else {
+    *aIsIgnoredPath = PR_TRUE;
+    if (foundIter->second != 0) {
+      --foundIter->second;
+    }
+  }
   return NS_OK;
 }
 
@@ -736,12 +742,30 @@ sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
 }
 
 NS_IMETHODIMP
-sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
+sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath,
+                                    PRUint32 aIgnoreCount)
 {
   LOG(("sbWatchFolderService::AddIgnorePath %s",
         NS_LossyConvertUTF16toASCII(aFilePath).get()));
   
-  mIgnorePaths.insert(nsString(aFilePath));
+  nsString filePath(aFilePath);
+
+  sbStringMap::iterator it = mIgnorePaths.find(filePath);
+  if (aIgnoreCount == 0) {
+    // ignore always, doesn't matter if it already exists
+    mIgnorePaths[filePath] = aIgnoreCount;
+  } else {
+    if (it == mIgnorePaths.end()) {
+      // new ignore path
+      mIgnorePaths[filePath] = aIgnoreCount;
+    } else {
+      // already exists
+      if (it->second != 0) {
+        // old value not infinite, add the requested count
+        it->second += aIgnoreCount;
+      }
+    }
+  }
   return NS_OK;
 }
 
@@ -857,7 +881,7 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
-  nsresult rv = GetIsIgnoredPath(aFilePath, &isIgnoredPath);
+  nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
  
   // Don't bother with this change if it is currently being ignored.
@@ -907,7 +931,7 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
-  nsresult rv = GetIsIgnoredPath(aFilePath, &isIgnoredPath);
+  nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!isIgnoredPath) {
@@ -928,7 +952,7 @@ sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
-  nsresult rv = GetIsIgnoredPath(aFilePath, &isIgnoredPath);
+  nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
   
   if (!isIgnoredPath) {
