@@ -1421,11 +1421,6 @@ sbPropertyManager::RegisterImage(const nsAString& aPropertyID,
         aUserEditable));
   NS_ENSURE_TRUE(imageProperty, NS_ERROR_OUT_OF_MEMORY);
 
-  if (!aDisplayKey.IsEmpty()) {
-    rv = imageProperty->SetLocalizationKey(aDisplayKey);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   rv = AddPropertyInfo(imageProperty);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1457,11 +1452,6 @@ sbPropertyManager::RegisterImageLink(const nsAString& aPropertyID,
         aRemoteReadable, aRemoteWritable, aUserViewable,
         aUserEditable, aUrlPropertyID));
   NS_ENSURE_TRUE(imageLinkProperty, NS_ERROR_OUT_OF_MEMORY);
-
-  if (!aDisplayKey.IsEmpty()) {
-    rv = imageLinkProperty->SetLocalizationKey(aDisplayKey);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   rv = AddPropertyInfo(imageLinkProperty);
   NS_ENSURE_SUCCESS(rv, rv);
