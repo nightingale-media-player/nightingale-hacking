@@ -1172,6 +1172,11 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
     this._ensurePlaylistFolderExists();
     // Set the weight of the main library
     node.setAttributeNS(SP, 'Weight', -4);
+    
+    // if the iTunes folder exists, then make it visible
+    var fnode = this._servicePane.getNode('SB:iTunes');
+    if (fnode)
+      fnode.hidden = false;
   } if (customType == 'web') {
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
@@ -1320,6 +1325,27 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
   return fnode;
 }
 
+/**
+ * Get the service pane node for the iTunes folder (which contains all
+ * the imported iTunes playlists in the main library).
+ */
+sbLibraryServicePane.prototype._ensureiTunesFolderExists =
+function sbLibraryServicePane__ensureiTunesFolderExists() {
+  var fnode = this._servicePane.getNode('SB:iTunes');
+  if (!fnode) {
+    // make sure it exists
+    var fnode = this._servicePane.addNode('SB:iTunes',
+        this._servicePane.root, true);
+  }
+  fnode.name = '&servicesource.itunes';
+  this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
+  fnode.hidden = false;
+  fnode.contractid = CONTRACTID;
+  fnode.editable = false;
+  fnode.setAttributeNS(SP, 'Weight', 3);
+  return fnode;
+}
+
 
 sbLibraryServicePane.prototype._scanForRemovedItems =
 function sbLibraryServicePane__scanForRemovedItems(aLibrary) {
@@ -1414,10 +1440,12 @@ sbLibraryServicePane.prototype._insertMediaListNode =
 function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
   //logcall(arguments);
 
-  // If it is a main library media list, it belongs in the "Playlists" folder
+  // If it is a main library media list, it belongs in either the
+  // "Playlists" or "iTunes" folder, depending on whether it was imported
+  // from iTunes or not
   if (aMediaList.library == this._libraryManager.mainLibrary)
   {
-    // unless it's the download playlist
+    // the download playlist is a special case
     if (aNode.getAttributeNS(LSP, 'ListCustomType') == 'download') {
       // FIXME: put it right after the library
       this._servicePane.root.appendChild(aNode);
@@ -1474,7 +1502,14 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
       }
 
       // make sure the playlist folder exists
-      var folder = this._ensurePlaylistFolderExists();
+      var folder;
+      // if it has an iTunesGUID property, it's imported from iTunes
+      if (aMediaList.getProperty(SBProperties.iTunesGUID) != null) {
+        folder = this._ensureiTunesFolderExists();
+      } else {
+        folder = this._ensurePlaylistFolderExists();
+      }
+      this._servicePane.sortNode(folder);
       
       // get the type for this node
       var nodeType = getNodeType(aNode);
