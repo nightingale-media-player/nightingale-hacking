@@ -47,6 +47,15 @@
 #define STRINGIZE(arg) STRINGIZE2(arg)
 
 /**
+ * Error checking helper macro
+ */
+#define SB_ENSURE_SUCCESS(res, ret)                            \
+    if (res) {                                                 \
+      return ret;                                              \
+    }
+
+
+/**
  * This is the base class for the iTunes agent processor.
  * It provides an interface for tasks. And contains platform neutral code such
  * as parsing the agent ini file.

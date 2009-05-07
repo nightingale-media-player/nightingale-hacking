@@ -29,6 +29,7 @@
 #import <Cocoa/Cocoa.h>
 #import <CoreServices/CoreServices.h>
 #import <CoreFoundation/CoreFoundation.h>
+#import "SBNSString+Utils.h"
 #include <sys/param.h>
 
 // Agent constants, these should be unified soon.
@@ -89,11 +90,13 @@ sbiTunesAgentProcessor* sbCreatesbiTunesAgentProcessor()
 //------------------------------------------------------------------------------
 
 sbiTunesAgentMacProcessor::sbiTunesAgentMacProcessor()
+  : mLibraryMgr(new sbiTunesLibraryManager())
 {
 }
 
 sbiTunesAgentMacProcessor::~sbiTunesAgentMacProcessor()
 {
+  delete mLibraryMgr;
 }
 
 std::string
@@ -197,7 +200,7 @@ sbiTunesAgentMacProcessor::RegisterForStartOnLogin()
 {
   // todo write me!
   // bug 16115
-  return sbNoError;  
+  return sbNoError;
 }
 
 sbError
@@ -212,25 +215,62 @@ sbError
 sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
                                      Tracks const & aPaths)
 {
-  // todo write me!
-  // bug 16117
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  sbError error;
+  sbiTunesPlaylist *sourceList = NULL;
+
+  std::string mainLibraryName;
+  error = mLibraryMgr->GetMainLibraryPlaylistName(mainLibraryName);
+  SB_ENSURE_SUCCESS(error, error);
+
+  bool shouldDeleteList = true;
+  if (mainLibraryName.compare(aSource) == 0) {
+    error = mLibraryMgr->GetMainLibraryPlaylist(&sourceList);
+    SB_ENSURE_SUCCESS(error, error);
+
+    // don't delete this list
+    shouldDeleteList = false;
+  }
+  else {
+    // This source list isn't the main library, add these items to the 
+    // main library.
+    error = mLibraryMgr->GetSongbirdPlaylist(aSource, &sourceList);
+    SB_ENSURE_SUCCESS(error, error);
+  }
+
+  error = mLibraryMgr->AddTrackPaths(aPaths, sourceList);
+  SB_ENSURE_SUCCESS(error, error);
+
+  if (shouldDeleteList) {
+    delete sourceList;
+  }
+
+  [pool release];
   return sbNoError;
 }
 
 sbError
 sbiTunesAgentMacProcessor::RemovePlaylist(std::string const & aPlaylistName)
 {
-  // todo write me!
-  // bug 16121
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  sbError error;
+  sbiTunesPlaylist *playlist = NULL;
+  error = mLibraryMgr->GetSongbirdPlaylist(aPlaylistName, &playlist);
+  SB_ENSURE_SUCCESS(error, error);
+
+  error = mLibraryMgr->DeleteSongbirdPlaylist(playlist);
+  SB_ENSURE_SUCCESS(error, error);
+
+  [pool release];
   return sbNoError;
 }
 
 sbError
 sbiTunesAgentMacProcessor::CreatePlaylist(std::string const & aPlaylistName)
 {
-  // todo write me!
-  // bug 16119
-  return sbNoError;
+  return mLibraryMgr->CreateSongbirdPlaylist(aPlaylistName);
 }
 
 bool
@@ -251,7 +291,7 @@ sbiTunesAgentMacProcessor::Log(std::string const & aMsg)
 {
   if (mLogState != DEACTIVATED) {
     if (mLogState != OPENED) {
-      std::string logPath([GetSongbirdProfilePath UTF8String]);
+      std::string logPath = [GetSongbirdProfilePath UTF8String];
       logPath += AGENT_LOG_FILENAME;
       mLogStream.open(logPath.c_str());
       // If we can't open then don't bother trying again
