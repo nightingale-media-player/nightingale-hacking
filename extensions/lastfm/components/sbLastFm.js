@@ -689,6 +689,9 @@ function sbLastFm_submit(submissions, success) {
     return;
   }
 
+  if (submissions.length == 0)
+	  return;
+
   // build the submission
   var url = this.submission_url;
   var params = {s:this.session};
@@ -949,7 +952,6 @@ function sbLastFm_radioPlay(station) {
   if (SBDataGetStringValue("lastfm.radio.station") == "" &&
 		  !SBDataGetBoolValue("lastfm.radio.requesting"))
   {
-	  dump("Saving shuffle/repeat modes\n");
 	  this.prevShuffleMode = this._mediacoreManager.sequencer.mode;
 	  this.prevRepeatMode = this._mediacoreManager.sequencer.repeatMode;
   }
@@ -961,7 +963,6 @@ function sbLastFm_radioPlay(station) {
   this.radio_station_url = station;
   this.radio_station_name = station;
 
-  dump("******* radioplay: " + station + "\n");
   // manually set the buffering state so the user has some feedback that
   // Songbird is trying to do something
   // this is kinda hacky. sorry :(
@@ -994,7 +995,6 @@ function sbLastFm_radioPlay(station) {
           function requestMoreRadio_success() {
 		    // we have to make sure we're going sequentially. the radio
 			// protocol says we can't play out of order from the XSPF
-			dump("Resetting repeat/shuffle modes");
 			self._mediacoreManager.sequencer.mode =
 			  Ci.sbIMediacoreSequencer.MODE_FORWARD;
 			self._mediacoreManager.sequencer.repeatMode =
@@ -1167,6 +1167,14 @@ function sbLastFm_scrobble(aEntries) {
     // collect the playlist history entries into objects that can be sent
     // to last.fm's audioscrobbler api
     for (var i=entry_list.length-1; i>=0; i--) {
+	  // if metadata is empty, then skip this track - but mark it as
+	  // scrobbled anyway so we don't try again in the future
+	  if (entry_list[i].item.getProperty(SBProperties.artistName) == null ||
+		  entry_list[i].item.getProperty(SBProperties.trackName) == null)
+	  {
+		  continue;
+	  }
+
       var rating = '';
       if (entry_list[i].hasAnnotation(ANNOTATION_LOVE)) {
         rating = 'L';
@@ -1193,6 +1201,7 @@ function sbLastFm_scrobble(aEntries) {
         for (i=0; i<entry_list.length; i++) {
           let entry = entry_list[i];
           entry.setAnnotation(ANNOTATION_SCROBBLED, 'true');
+
           if (entry.hasAnnotation(ANNOTATION_LOVE)) {
             self.apiCall('track.love', {
                 track: entry.item.getProperty(SBProperties.trackName),
@@ -1355,17 +1364,14 @@ function sbLastFm_onMediacoreEvent(aEvent) {
       this.onStop();
 
 	  // reset the shuffle and repeat modes to the previous setting
-	  dump("Resetting repeat/shuffle modes\n");
 	  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
 	  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
       break;
     case Ci.sbIMediacoreEvent.VIEW_CHANGE:
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
-	  dump("setting radio_playing: " + this.radio_playing + "\n");
 	  
 	  // reset the shuffle and repeat modes to the previous setting
 	  if (!this.radio_playing) {
-		  dump("view change: resetting repeat/shuffle modes\n");
 		  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
 		  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
 	  }
@@ -1417,6 +1423,12 @@ sbLastFm.prototype.onTrackChange =
 function sbLastFm_onTrackChange(aItem) {
   // NOTE: This depends on the current assumption that onTrackChange will
   // be run before onEntriesAdded. Otherwise love/ban won't work.
+
+  if (aItem.getProperty(SBProperties.artistName) == null ||
+	  aItem.getProperty(SBProperties.trackName) == null)
+  {
+	  return;
+  }
 
   // reset the love/ban state
   this.loveBan(null, false);
