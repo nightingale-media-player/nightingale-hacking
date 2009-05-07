@@ -228,7 +228,7 @@ struct PropertyMap {
 };
 
 /**
- * Mapping between Songbird properties and itTunes
+ * Mapping between Songbird properties and iTunes
  */
 PropertyMap gPropertyMap[] = {
   { SB_ITUNES_GUID_PROPERTY,      "Persistent ID", 0 },
@@ -1030,7 +1030,11 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
       rv = miTunesDBServices.WaitForCompletion(
                sbiTunesDatabaseServices::INFINITE_WAIT);
       NS_ENSURE_SUCCESS(rv, rv);
-    
+
+      rv = mediaList->SetProperty(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY),
+                                  playlistiTunesID);
+      NS_ENSURE_SUCCESS(rv, rv);
+   
       rv = ProcessPlaylistItems(mediaList,
                                 aTrackIds,
                                 aTrackIdsCount);
