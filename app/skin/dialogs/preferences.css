@@ -131,7 +131,7 @@ listheader
 }
 #manage_media_format_dir_formatter > hbox > vbox > menulist,
 #manage_media_format_file_formatter > hbox > vbox > menulist {
-  width: 10em;
+  min-width: 10em;
 }
 #manage_media_format_dir_container > label,
 #manage_media_format_file_container > label,
