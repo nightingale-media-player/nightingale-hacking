@@ -26,29 +26,11 @@ DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+
 include $(DEPTH)/build/autodefs.mk
 
-ifdef SONGBIRD_OFFICIAL
-   INSTALLER_README = README_OFFICIAL.txt
-else
-   INSTALLER_README = README_NIGHTLY.txt
-endif
-
-SONGBIRD_PP_DIR = $(CURDIR)/..
-SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
-                        $(topsrcdir)/installer/common/$(INSTALLER_README).in \
-                        $(NULL)
-
-PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
-
-SONGBIRD_LICENSE_FILE = $(SB_LICENSE_FILE)
-
-SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
-                $(topsrcdir)/app/branding/songbird-512.png \
+SONGBIRD_DIST = $(topsrcdir)/app/branding/songbird-512.png \
                 $(NULL)
-
-INSTALLER_FINAL_DIR = $(SONGBIRD_OBJDIR)/_built_installer
-INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)
 
 ifdef SONGBIRD_OFFICIAL
    INSTALLER_STAGE_DIR = Songbird
@@ -59,17 +41,11 @@ endif
 include $(topsrcdir)/build/rules.mk
 
 libs::
-	$(INSTALL_FILE) $(CURDIR)/../LICENSE.html $(SONGBIRD_DISTDIR)
-	$(INSTALL_FILE) $(CURDIR)/../$(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
-	$(RM) -rf $(INSTALLER_FINAL_DIR)
-	$(MKDIR) $(INSTALLER_FINAL_DIR)
 	$(RM) -rf $(INSTALLER_STAGE_DIR)
 	$(MKDIR) $(INSTALLER_STAGE_DIR)
-	$(RM) -f $(INSTALLER_NAME).tar
-	$(RM) -f $(INSTALLER_NAME).tar.gz
-	$(CP) -RL $(SONGBIRD_DISTDIR)/* $(INSTALLER_STAGE_DIR)
-	$(TAR) -c -f $(INSTALLER_NAME).tar $(INSTALLER_STAGE_DIR)
-	$(GZIP) -9 $(INSTALLER_NAME).tar
-	$(SHA1SUM) $(INSTALLER_NAME).tar.gz > $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME).tar.gz.sha1
-	$(MD5SUM) $(INSTALLER_NAME).tar.gz > $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME).tar.gz.md5
-	$(MV) $(INSTALLER_NAME).tar.gz $(INSTALLER_FINAL_DIR)
+	$(RM) -f $(SB_INSTALLER_NAME)
+	$(CP) -RLp $(SONGBIRD_DISTDIR)/* $(INSTALLER_STAGE_DIR)
+	$(TAR) --owner=0 --group=0 --numeric-owner -c $(INSTALLER_STAGE_DIR) | $(GZIP) -c9 > $(SB_INSTALLER_NAME)
+	$(MV) $(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)
+	# This is a copy of dist; remove it, since it takes up so much space.
+	$(RM) -rf $(INSTALLER_STAGE_DIR)

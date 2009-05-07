@@ -30,6 +30,19 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = $(SB_PLATFORM) 
 
+ifdef SONGBIRD_OFFICIAL
+   INSTALLER_README = README_OFFICIAL.txt
+else
+   INSTALLER_README = README_NIGHTLY.txt
+endif
+
+SONGBIRD_PP_DIR = $(CURDIR)
+SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
+                        $(topsrcdir)/installer/common/$(INSTALLER_README).in \
+                        $(NULL)
+
+PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
+
 include $(topsrcdir)/build/rules.mk
 
 # preedTODO: the easiest way to re-express this dependency is to do it as
@@ -37,3 +50,15 @@ include $(topsrcdir)/build/rules.mk
 # that's kinda janky.
 export::
 	$(MAKE) -C $(DEPTH) stripsymbols
+	$(INSTALL_FILE) $(topsrcdir)/TRADEMARK.txt $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(SB_LICENSE_FILE) $(SONGBIRD_DISTDIR)
+	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
+ifeq (macosx,$(SB_PLATFORM))
+	# On mac, the README needs to go here, as well.
+	$(INSTALL_FILE) $(INSTALLER_README) $(SONGBIRD_OBJDIR)/dist/README.txt
+endif
+	$(MKDIR) $(SB_INSTALLER_FINAL_DIR)
+
+# We do the cd here so the path in the .md5 file is standardized with a "./"
+libs::
+	cd $(SB_INSTALLER_FINAL_DIR) && $(MD5SUM) ./$(SB_INSTALLER_NAME) > $(SB_INSTALLER_NAME).md5

@@ -25,57 +25,30 @@ DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+
 include $(DEPTH)/build/autodefs.mk
 
 ifdef SONGBIRD_OFFICIAL
-   INSTALLER_README = README_OFFICIAL.txt
+   SONGBIRD_DIST += $(srcdir)/songbird.ico \
+                    $(srcdir)/songbird_installer.ico \
+                    $(srcdir)/songbird_uninstaller.ico \
+                    $(srcdir)/songbird_vista.ico \
+                    $(NULL)
 else
-   INSTALLER_README = README_NIGHTLY.txt
+   SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
+                    $(NULL)
 endif
 
-SONGBIRD_PP_DIR = $(CURDIR)/..
-SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
-                        $(topsrcdir)/installer/common/$(INSTALLER_README).in \
+SONGBIRD_PP_DIR = $(CURDIR)
+SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
                         $(NULL)
 
-PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
-
-SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
-                $(NULL)
-
-ifdef SONGBIRD_OFFICIAL
-SONGBIRD_DIST += $(srcdir)/songbird.ico \
-                 $(srcdir)/songbird_installer.ico \
-                 $(srcdir)/songbird_uninstaller.ico \
-                 $(srcdir)/songbird_vista.ico \
-                 $(NULL)
-else
-SONGBIRD_DIST += $(srcdir)/songbird_nightly.ico \
-                 $(NULL)
-endif
-
-SONGBIRD_DIST += $(SB_LICENSE_FILE)
-
-SONGBIRD_INSTALLER = $(srcdir)/common.nsh \
-                     $(srcdir)/Songbird.nsi \
-                     $(srcdir)/sb-installer.nsi \
-                     $(srcdir)/sb-uninstaller.nsi \
-                     $(srcdir)/sb-filelist.nsi \
-                     $(srcdir)/songbird.ico \
-                     $(srcdir)/songbird_nightly.ico \
-                     $(srcdir)/songbird_installer.ico \
-                     $(srcdir)/songbird_uninstaller.ico \
-                     $(srcdir)/songbird_vista.ico \
-                     $(NULL)
-
-INSTALLER_PREPROCESS = defines.nsi \
-                       $(NULL)
+PPDEFINES += $(SB_BRANDING_DEFINES) \
+             -DSB_INSTALLER_NAME="$(SB_INSTALLER_NAME)" \
+             $(NULL)
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
-
-INSTALLER_FINAL_DIR = $(SONGBIRD_OBJDIR)/_built_installer
-INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH).exe
 
 #preedTODO set ICON_FILE=something
 
@@ -83,11 +56,7 @@ INSTALLER_NAME = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)
 # now that needs it; see bug 13809
 libs::
 	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
-	$(INSTALL_FILE) $(SONGBIRD_PP_DIR)/$(INSTALLER_README) $(SONGBIRD_DISTDIR)/README.txt
-	$(RM) -rf $(INSTALLER_FINAL_DIR)
-	$(MKDIR) $(INSTALLER_FINAL_DIR)
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/README.txt
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
 	cd $(SONGBIRD_DISTDIR) && $(topsrcdir)/tools/win32/nsis/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V4 $(srcdir)/songbird.nsi
-	cd $(SONGBIRD_DISTDIR) && $(MD5SUM) ./$(INSTALLER_NAME) > $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME).md5
-	$(MV) $(SONGBIRD_DISTDIR)/$(INSTALLER_NAME) $(INSTALLER_FINAL_DIR)/$(INSTALLER_NAME)
+	$(MV) $(SONGBIRD_DISTDIR)/$(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME)

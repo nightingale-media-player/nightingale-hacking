@@ -437,7 +437,7 @@ if test -z "$INSTALL"; then AC_MSG_ERROR(Install not found); fi
 AC_CHECK_PROG(LN, ln, ln)
 if test -z "$LN"; then AC_MSG_ERROR(Ln not found); fi
 
-AC_CHECK_PROGS(MD5SUM, ${MD5SUM} gmd5sum md5sum, "")
+AC_CHECK_PROGS(MD5SUM, ${MD5SUM} gmd5sum md5sum md5, "")
 
 AC_CHECK_PROG(MKDIR, mkdir, mkdir)
 if test -z "$MKDIR"; then AC_MSG_ERROR(Mkdir not found); fi
@@ -511,6 +511,7 @@ case "$SB_PLATFORM" in
     LIB_PREFIX=""
     LIB_SUFFIX=".lib"
     DLL_SUFFIX=".dll"
+    INSTALLER_SUFFIX=".exe"
     AC_DEFINE(UNICODE)
     AC_DEFINE(_UNICODE)
     AC_DEFINE(_WINDOWS)
@@ -527,6 +528,7 @@ case "$SB_PLATFORM" in
     LIB_PREFIX="lib"
     LIB_SUFFIX=".a"
     DLL_SUFFIX=".dylib"
+    INSTALLER_SUFFIX=".dmg"
     AC_DEFINE(XP_MACOSX)
     AC_DEFINE(XP_UNIX)
     AC_DEFINE(NO_X11)
@@ -537,6 +539,7 @@ case "$SB_PLATFORM" in
     LIB_PREFIX="lib"
     LIB_SUFFIX=".a"
     DLL_SUFFIX=".so"
+    INSTALLER_SUFFIX=".tar.gz"
     AC_DEFINE(XP_UNIX)
     AC_DEFINE(_REENTRANT)
   ;;
@@ -546,6 +549,7 @@ AC_SUBST(OBJ_SUFFIX)
 AC_SUBST(LIB_PREFIX)
 AC_SUBST(LIB_SUFFIX)
 AC_SUBST(DLL_SUFFIX)
+AC_SUBST(INSTALLER_SUFFIX)
 
 #
 # Set platform-specific flags
@@ -940,11 +944,9 @@ AC_SUBST(STRIP_FLAGS)
 #
 
 AC_ARG_WITH(license-file,
-            [  --with-license-file=PATH             the location of the license file to use.],
-            SB_LICENSE_FILE=$withval)
-if test -z "$SB_LICENSE_FILE"; then
-  SB_LICENSE_FILE="\$(topsrcdir)/$OBJDIRNAME/installer/LICENSE.html"
-fi
+            [  --with-license-file=PATH, path to the license file to use (default=installer/LICENSE.html],
+            [ SB_LICENSE_FILE=$withval],
+            [ SB_LICENSE_FILE="\$(topsrcdir)/$OBJDIRNAME/installer/LICENSE.html" ])
 AC_SUBST(SB_LICENSE_FILE)
 
 #
@@ -963,17 +965,6 @@ if test -z "$SB_USER_EULA_FILE"; then
   SB_USER_EULA_FILE=eula.html
 fi
 AC_SUBST(SB_USER_EULA_FILE)
-
-#
-# Check for --with-flash-redistributable
-#
-
-AC_ARG_WITH(flash-redistributable,
-            [  --with-flash-redistributable=PATH    the location of the flash redistributable to
-                                       package into and install from the application
-                                       installer. *Windows only*.],
-            SB_FLASH_REDISTRIBUTABLE=$withval)
-AC_SUBST(SB_FLASH_REDISTRIBUTABLE)
 
 #
 # Check for an alternate dependencies location

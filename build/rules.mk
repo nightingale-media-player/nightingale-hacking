@@ -170,7 +170,7 @@ export:: $(SUBMAKEFILES) $(SUBDIRS)
 ## preedTODO: hacky; fix this.
 MAKE_JAR_DEP = $(if $(JAR_MANIFEST),make_jar)
 
-libs:: $(HOST_LIBRARY) $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM) $(SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(STATIC_LIB) $(DYNAMIC_LIB) $(JAR_MANIFEST) preferences_preprocess $(MAKE_JAR_DEP) copy_sb_tests shell_execute make_xpi run_installer_preprocess
+libs:: $(HOST_LIBRARY) $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM) $(SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(STATIC_LIB) $(DYNAMIC_LIB) $(JAR_MANIFEST) preferences_preprocess $(MAKE_JAR_DEP) copy_sb_tests shell_execute make_xpi
 ifndef NO_DIST_INSTALL
    ifdef LIBRARY
       ifdef EXPORT_LIBRARY # Stage libs that will be linked into a static build

@@ -111,9 +111,6 @@ libs:: $(SEARCHPLUGINS_DIR_TARGETS)
 CONTENTS_DIR_TARGETS = $(addprefix $(SONGBIRD_CONTENTSDIR)/,$(notdir $(SONGBIRD_CONTENTS)))
 libs:: $(CONTENTS_DIR_TARGETS)
 
-INSTALLER_DIR_TARGETS = $(addprefix $(SONGBIRD_INSTALLERDIR)/,$(notdir $(SONGBIRD_INSTALLER)))
-libs:: $(INSTALLER_DIR_TARGETS)
-
 PROFILE_DIR_TARGETS = $(addprefix $(SONGBIRD_PROFILEDIR)/,$(notdir $(SONGBIRD_PROFILE)))
 libs:: $(PROFILE_DIR_TARGETS)
 
@@ -163,9 +160,6 @@ $(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONG
 
 $(SONGBIRD_PROFILEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PROFILE))),$(addprefix $$d,%)))
 	$(INSTALL_FILE) $^ $(SONGBIRD_PROFILEDIR)/$(@F)
-
-$(SONGBIRD_INSTALLERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_INSTALLER))),$(addprefix $$d,%)))
-	$(INSTALL_FILE) $^ $(SONGBIRD_INSTALLERDIR)/$(@F)
 
 $(SONGBIRD_COMPONENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_COMPONENTS))),$(addprefix $$d,%)))
 	$(INSTALL_PROG) $^ $(SONGBIRD_COMPONENTSDIR)/$(@F)

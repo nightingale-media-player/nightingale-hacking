@@ -53,7 +53,10 @@ CRCCheck force
 RequestExecutionLevel user
 
 ; Addional include directories
+; Relative to dist, so this is the $(objdir)/installer/windows...
 !addincludedir ..\installer\windows
+; ... and this is $(srcdir)/installer/windows
+!addincludedir ..\..\installer\windows
 
 ; From NSIS
 !include FileFunc.nsh

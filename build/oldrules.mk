@@ -891,25 +891,6 @@ endif #DOXYGEN_PREPROCESS
 #-----------------------
 
 
-# Preprocesses the $(INSTALLER_PREPROCESS) files and turns them into plain .nsi files.
-
-ifeq (windows,$(SB_PLATFORM))
-INSTALLER_PPFLAGS = --line-endings=crlf
-endif
-
-run_installer_preprocess:
-ifdef INSTALLER_PREPROCESS
-	for file in $(INSTALLER_PREPROCESS); do \
-    source=$(srcdir)/$$file.in; \
-    target=$(SONGBIRD_INSTALLERDIR)/$$file; \
-    $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(INSTALLER_PPFLAGS) \
-      $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) -- $$source > $$target; \
-  done
-
-.PHONY : run_installer_preprocess
-
-endif #INSTALLER_PREPROCESS
-
 #------------------------------------------------------------------------------
 # Rules for packaging things nicely
 #------------------------------------------------------------------------------

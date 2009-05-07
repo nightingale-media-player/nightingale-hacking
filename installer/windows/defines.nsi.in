@@ -76,7 +76,7 @@
 !define DesktopShortcutRegName "DesktopShortcutLocation"
 !define QuicklaunchRegName "QuicklaunchShortcutLocation"
 
-!define PreferredInstallerName    "${BrandShortName}_${AppVersion}-${AppBuildNumber}_${ARCH}.exe"
+!define PreferredInstallerName    "@SB_INSTALLER_NAME@"
 
 # Strings
 
