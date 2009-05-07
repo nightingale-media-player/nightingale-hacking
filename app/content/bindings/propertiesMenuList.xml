@@ -98,7 +98,11 @@
 
   <binding id="propertiesFormatter">
     <content>
-      <children/>
+      <xul:hbox anonid="container-hbox">
+        <xul:vbox anonid="child-vbox">
+          <children/>
+        </xul:vbox>
+      </xul:hbox>
     </content>
     <implementation>
       
@@ -187,7 +191,9 @@
         <getter>
           <![CDATA[
             var ary = [];
-            for (let node = this.firstChild; node; node = node.nextSibling) {
+            var hbox = document.getAnonymousElementByAttribute(this,
+                                "anonid", "container-hbox");
+            for (let node = hbox.firstChild; node; node = node.nextSibling) {
               if (this._children.indexOf(node) == -1) {
                 continue;
               }
@@ -199,7 +205,8 @@
                   ary.push(child.value);
               }
             }
-            ary.pop(); // drop the last "add" element
+            if (this.hasAttribute("trailingSeparator"))
+              ary.pop(); // drop the trailing separator element
             return this.serializeValues(ary);
           ]]>
         </getter>
@@ -329,13 +336,11 @@
                                      .replace(/:\d+$/, '');  /* and the line number info */
 
             /**
-             * Creates a separator block, with a possibly-editable textbox and
-             * a link-like thing to remove it plus the associated menulist
-             * @param aMenuList the menu list to be removed
+             * Creates a separator block, with a possibly-editable textbox 
              * @param aVal the initial text to go into the separator
              * @return the separator block constructed
              */
-            function makeSeparator(aMenuList, aVal) {
+            function makeSeparator(aVal) {
               var vbox = document.createElement("vbox");
               var separator = document.createElement("textbox");
               separator.setAttribute("value", aVal);
@@ -343,6 +348,18 @@
               if (!self.separatorEditable) {
                 separator.setAttribute("readonly", true);
               }
+              vbox.appendChild(separator);
+              return vbox;
+            }
+
+            /**
+             * Creates a <label> node containing the '- Remove' link that
+             * removes itself and the associated menulist when clicked
+             * @param aMenuList the menu list to be removed
+             * @param aSeparator the separator element to be associated with
+             * @return the <label> containing the Remove link
+             */
+            function makeRemoveLink(aMenuList, aSeparator) {
               var link = document.createElement("label");
               link.className = "text-link";
               link.setAttribute("value",
@@ -354,14 +371,13 @@
                   // do not do anything if we are disabled.
                   return;
                 }
-                let vbox = event.target.parentNode;
-                self.removeChild(vbox);
-                self._children.splice(self._children.indexOf(vbox), 1);
+                aSeparator.parentNode.removeChild(aSeparator);
+                self._children.splice(self._children.indexOf(aSeparator), 1);
                 let menuContainer = event.target.linkedMenuList;
                 if (menuContainer.parentNode != self) {
                   menuContainer = menuContainer.parentNode;
                 }
-                self.removeChild(menuContainer);
+                menuContainer.parentNode.removeChild(menuContainer);
                 self._children.splice(self._children.indexOf(menuContainer), 1);
                 --self._controlsCount;
                 self._updateAddLink();
@@ -370,17 +386,20 @@
                 changeEvent.initEvent("change", true, true);
                 self.dispatchEvent(changeEvent);
               };
-              vbox.appendChild(separator);
-              vbox.appendChild(link);
-              return vbox;
+              return link;
             }
 
             // remove old children
             for each (let child in this._children) {
-              this.removeChild(child);
+              child.parentNode.removeChild(child);
             }
             this._controlsCount = 0;
             this._children = [];
+
+            let hbox = document.getAnonymousElementByAttribute(this,
+                                "anonid", "container-hbox");
+            let childVbox = document.getAnonymousElementByAttribute(this,
+                                "anonid", "child-vbox");
             let existingChild = this.firstChild;
 
             let values = this._getValueArray();
@@ -393,11 +412,16 @@
               menuContainer.appendChild(menulist);
               if (idx > 0) {
                 // separator (not generated for first property)
-                let vbox = makeSeparator(menulist, values[idx - 1]);
-                this.insertBefore(vbox, existingChild);
+                let vbox = makeSeparator(values[idx - 1]);
+                
+                // remove link (not generated for first property)
+                let removeLink = makeRemoveLink(menulist, vbox);
+                menuContainer.appendChild(removeLink);
+
+                hbox.insertBefore(vbox, childVbox);
                 this._children.push(vbox);
               }
-              this.insertBefore(menuContainer, existingChild);
+              hbox.insertBefore(menuContainer, childVbox);
               this._children.push(menuContainer);
               menulist.selectedIndex = 0;
               for (let i = 0; i < menulist.itemCount; ++i) {
@@ -409,60 +433,72 @@
               ++self._controlsCount;
             }
             // make the "add property" pseudo-separator
-            let vbox = document.createElement("vbox");
             self._addlink = document.createElement("label");
             let link = self._addlink;
             link.className = "text-link";
             link.setAttribute("value",
                               SBString("properties_formatter.add.label"));
             link.onclick = function(event) {
-              let link = event.target;
+              let link = self._addlink;
               if (link.hasAttribute("disabled")) {
                 // do not do anything if we are disabled.
                 return;
               }
               // add a new menulist
               let menulist = document.createElement("menulist");
-              menulist.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
+              menulist.style.MozBinding =
+                                        "url(" + myURL + "#propertiesMenuList)";
               let menuContainer = document.createElement("vbox");
               menuContainer.appendChild(menulist);
               ++self._controlsCount;
-              let vbox = makeSeparator(menulist,
-                                       self.defaultSeparator);
-              self.insertBefore(vbox, event.target.parentNode);
+              let vbox = makeSeparator(self.defaultSeparator);
+              let removeLink = makeRemoveLink(menulist, vbox);
+              menuContainer.appendChild(removeLink);
+
+              hbox.insertBefore(vbox, self._lastSeparator);
               self._children.push(vbox);
-              self.insertBefore(menuContainer, link.parentNode);
+              hbox.insertBefore(menuContainer, self._lastSeparator);
               self._children.push(menuContainer);
               menulist.selectedIndex = 0;
               self._updateAddLink();
-              
+
               // update this.value
               var prefElem = self.ownerDocument
-                                 .getElementById(self.getAttribute("preference"));
+                               .getElementById(self.getAttribute("preference"));
               if (prefElem) {
                 prefElem.value = prefElem.getElementValue(self);
               }
             };
 
-            // add XBL <children/>
-            if (existingChild) {
-              var separator = document.createElement("textbox");
-              if (this.hasAttribute("trailingSeparator")) {
+            if (this.hasAttribute("trailingSeparator")) {
+              // add the trailing separator if specified
+              let vbox = document.createElement("vbox");
+              self._lastSeparator = vbox;
+              if (existingChild) {
+                var separator = document.createElement("textbox");
                 separator.setAttribute("value", this.defaultSeparator);
                 if (this.readonly) {
-                  separator.setAttribute("readonly", true);
+                    separator.setAttribute("readonly", true);
                 }
-              } else {
-                separator.setAttribute("readonly", true);
+                separator.setAttribute("class", "plain");
+                vbox.appendChild(separator);
               }
-              separator.setAttribute("class", "plain");
-              vbox.appendChild(separator);
+              hbox.insertBefore(vbox, childVbox);
+              this._children.push(vbox);
+            } else {
+              self._lastSeparator = childVbox;
             }
-            vbox.appendChild(link);
-            // .disabled needs to be toggled after it gets inserted into the document
+            // if the child vbox only has one child (e.g. the label), then
+            // append the "+Add" link
+            if (!childVbox.firstChild) {
+              childVbox.appendChild(link);
+              this._children.push(link);
+            }
+            
+            // .disabled needs to be toggled after it gets inserted into the
+            // document
             self._updateAddLink();
-            this.insertBefore(vbox, existingChild);
-            this._children.push(vbox);
+            
           ]]>
         </body>
       </method>

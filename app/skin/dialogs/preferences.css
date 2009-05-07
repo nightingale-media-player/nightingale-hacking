@@ -111,31 +111,45 @@ listheader
 
 
 /* library management tab */
+#manage_media_format_dir_formatter > hbox,
+#manage_media_format_file_formatter > hbox {
+  min-height: 5em;
+}
 #manage_media_format_dir_file .fileFieldLabel,
-#manage_media_format_dir_formatter > vbox > textbox {
+#manage_media_format_dir_formatter > hbox > vbox > textbox {
   background: none;
   border: none;
 }
-#manage_media_format_file_formatter > vbox > textbox:hover > hbox > input,
-#manage_media_format_file_formatter > vbox > textbox > hbox > input:focus {
+#manage_media_format_file_formatter > hbox > vbox > textbox:hover > hbox > input,
+#manage_media_format_file_formatter > hbox > vbox > textbox > hbox > input:focus {
   text-decoration: underline;
 }
 #manage_media_format_dir_file .fileFieldLabel > .textbox-input-box,
-#manage_media_format_dir_formatter > vbox > textbox > .textbox-input-box,
-#manage_media_format_file_formatter > vbox > textbox > .textbox-input-box {
+#manage_media_format_dir_formatter > hbox > vbox > textbox > .textbox-input-box,
+#manage_media_format_file_formatter > hbox > vbox > textbox > .textbox-input-box {
   width: 1em;
 }
-#manage_media_format_dir_formatter > vbox > label,
-#manage_media_format_file_formatter > vbox  > label {
+#manage_media_format_dir_formatter > hbox > vbox > menulist,
+#manage_media_format_file_formatter > hbox > vbox > menulist {
+  width: 10em;
+}
+#manage_media_format_dir_container > label,
+#manage_media_format_file_container > label,
+label#manage_media_format_dir_suffix_label,
+label#manage_media_format_file_suffix_label {
+  min-height: 2em;
+}
+#manage_media_format_dir_formatter > hbox > vbox > label.text-link,
+#manage_media_format_file_formatter > hbox > vbox  > label.text-link {
   /* the add/remove/etc links */
   font-size: 0.8em;
 }
-#manage_media_format_dir_formatter > vbox > label[disabled],
-#manage_media_format_file_formatter > vbox  > label[disabled],
-#manage_media_format_dir_formatter > vbox > label[disabled]:hover,
-#manage_media_format_file_formatter > vbox  > label[disabled]:hover {
+#manage_media_format_dir_formatter > hbox > vbox > label[disabled],
+#manage_media_format_file_formatter > hbox > vbox  > label[disabled],
+#manage_media_format_dir_formatter > hbox > vbox > label[disabled]:hover,
+#manage_media_format_file_formatter > hbox > vbox  > label[disabled]:hover {
   /* the add/remove/etc links, disabled */
   color: GrayText;
   cursor: default !important;
-  text-decoration: none;'
+  text-decoration: none;
 }
