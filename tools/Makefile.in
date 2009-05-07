@@ -30,14 +30,14 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 # XXX Mook: disthelper only works on Windows for now
-ifeq (,$(filter-out windows,$(SB_PLATFORM)))
-SUBDIRS += disthelper \
-           $(NULL)
-ifdef HAS_EXTRAS
-SUBDIRS += itunesagent \
-           $(NULL)
+ifeq (windows,$(SB_PLATFORM))
+   SUBDIRS += disthelper
 endif
 
+# iTunesAgent is Win32/Mac-only and (for now) requires extra goo in
+# vendor-binaries that we can't redistrib
+ifeq (_1,$(filter-out windows macosx,$(SB_PLATFORM))_$(HAS_EXTRAS))
+   SUBDIRS += itunesagent
 endif
 
 include $(topsrcdir)/build/rules.mk

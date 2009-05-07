@@ -314,11 +314,12 @@ AC_SUBST(_REQUIRES_CYGWIN_WRAPPER)
 #
 
 SB_MACOSX_SDK_DEFAULT=
+SB_MACOSX_SDK_10_4=
 SB_MACOSX_SDK_10_5=
 
 case $SB_PLATFORM in
   macosx)
-    SB_MACOSX_SDK_DEFAULT=/Developer/SDKs/MacOSX10.4u.sdk
+    SB_MACOSX_SDK_10_4=/Developer/SDKs/MacOSX10.4u.sdk
     SB_MACOSX_SDK_10_5=/Developer/SDKs/MacOSX10.5.sdk
   ;;
 esac
@@ -329,7 +330,8 @@ esac
 
 AC_ARG_WITH(macosx-sdk,
             [  --with-macosx-sdk=<directory>,path to directory containing the Mac OS X SDK (default=/Developer/SDKs/MacOSX10.4u.sdk) ],
-            [ SB_MACOSX_SDK_DEFAULT=$withval ])
+            [ SB_MACOSX_SDK_DEFAULT=$withval ],
+            [ SB_MACOSX_SDK_DEFAULT=$SB_MACOSX_SDK_10_4])
 
 #
 # Breakpad support
