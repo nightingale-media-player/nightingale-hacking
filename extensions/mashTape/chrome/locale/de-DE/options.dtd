@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Foto-Scrollgeschwindigkeit">
 <!ENTITY mtprefs.tab.photo.faster "Schneller">
 <!ENTITY mtprefs.tab.photo.slower "Langsamer">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Schlüsselwörter suchen">
+<!ENTITY mtprefs.tab.photo.keywords "Weitere Suchschlüsselwörter">
+<!ENTITY mtprefs.tab.photo.keywords.help "Sie können weitere Suchschlüsselwörter angeben, die bei der Fotosuche berücksichtigt werden. Schlüsselwörter müssen mit einem Leerzeichen getrennt werden. Beispiel: live concert band">
 <!ENTITY mtprefs.tab.video.autoplay "Videos automatisch abspielen">
 <!ENTITY mtprefs.tab.video.autoplay.help "Wenn Sie diese Option aktivieren, werden gebündelte Video-Resultate eines nach dem anderen abgespielt. Dies kann zum Beispiel für MTV-Musik-Videos nützlich sein. Bei Nicht-gebündelten Videos geht dies nicht.">

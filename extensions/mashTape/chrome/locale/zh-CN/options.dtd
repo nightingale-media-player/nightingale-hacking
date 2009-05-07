@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "照片移动速度:">
 <!ENTITY mtprefs.tab.photo.faster "快">
 <!ENTITY mtprefs.tab.photo.slower "慢">
+<!ENTITY mtprefs.tab.photo.keywords.caption "搜索关键词">
+<!ENTITY mtprefs.tab.photo.keywords "搜索其他关键词：">
+<!ENTITY mtprefs.tab.photo.keywords.help "您可以指定额外的关键字，附加到您的照片提供者的搜索。关键词应以空格分隔，例如：演唱 乐队">
 <!ENTITY mtprefs.tab.video.autoplay "自动播放视频">
 <!ENTITY mtprefs.tab.video.autoplay.help "当此选项打开时内附的视频服务会自动连续播放，当你要播放所有 MTV 的 MV 时非常有效。不适用于外挂的视频服务。">

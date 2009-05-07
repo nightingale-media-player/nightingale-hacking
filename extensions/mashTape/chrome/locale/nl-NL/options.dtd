@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Snelheid fotoscrollen:">
 <!ENTITY mtprefs.tab.photo.faster "Sneller">
 <!ENTITY mtprefs.tab.photo.slower "Langzamer">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Zoeksleutelwoorden">
+<!ENTITY mtprefs.tab.photo.keywords "Aanvullende zoeksleutelwoorden:">
+<!ENTITY mtprefs.tab.photo.keywords.help "U kunt aanvullende sleutelwoorden opgeven die worden toegevoegd aan de zoekopdracht bij uw fotoprovider. Sleutelwoorden dienen te zijn gescheiden door spaties, bijvoorbeeld: live concert band">
 <!ENTITY mtprefs.tab.video.autoplay "Video’s automatisch afspelen">
 <!ENTITY mtprefs.tab.video.autoplay.help "Inschakelen van deze optie zorgt ervoor dat de gebundelde resultaten van de video-aanbieder automatisch achter elkaar worden afgespeeld. Dit is nuttig voor bijvoorbeeld het automatisch afspelen van alle MTV muziekvideo’s. Niet-gebundelde video-aanbieders werken niet met deze optie.">

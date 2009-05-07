@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Photo scrolling speed:">
 <!ENTITY mtprefs.tab.photo.faster "Faster">
 <!ENTITY mtprefs.tab.photo.slower "Slower">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Search Keywords">
+<!ENTITY mtprefs.tab.photo.keywords "Additional search keywords:">
+<!ENTITY mtprefs.tab.photo.keywords.help "You can specify additional keywords to be appended to your photo provider search. Keywords should be separated by spaces, example: live concert band">
 <!ENTITY mtprefs.tab.video.autoplay "Auto-play videos">
 <!ENTITY mtprefs.tab.video.autoplay.help "Enabling this option will cause the bundled video provider results to auto-play one after another.  This is useful for auto-playing all MTV Music Videos, for instance.  Non-bundled video providers will not work with this option.">

@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Velocità scorrimento foto">
 <!ENTITY mtprefs.tab.photo.faster "Più veloce">
 <!ENTITY mtprefs.tab.photo.slower "Più lento">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Chiavi di ricerca">
+<!ENTITY mtprefs.tab.photo.keywords "Chiavi di ricerca addizionali">
+<!ENTITY mtprefs.tab.photo.keywords.help "E&apos; possibile specificare delle chiavi addizionali da aggiungere alla ricerca di foto. Le chiavi di ricerca dovranno essere separate da spazi, ad esempio: live concerto gruppo">
 <!ENTITY mtprefs.tab.video.autoplay "Riproduci video automaticamente">
 <!ENTITY mtprefs.tab.video.autoplay.help "Abilitare questa opzione farà riprodurre automaticamente uno dopo l&apos;altro i risultati collegati di uno stesso provider video. Ciò può servire, ad esempio, per riprodurre automaticamente tutti i video di MTV Music. I provider video non collegati non funzioneranno con questa opzione.">

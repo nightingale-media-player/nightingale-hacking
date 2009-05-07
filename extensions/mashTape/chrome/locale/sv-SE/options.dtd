@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Visningshastighet, Foto:">
 <!ENTITY mtprefs.tab.photo.faster "Snabbare">
 <!ENTITY mtprefs.tab.photo.slower "Långsammare">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Sökord">
+<!ENTITY mtprefs.tab.photo.keywords "Ytterligare sökord">
+<!ENTITY mtprefs.tab.photo.keywords.help "Du kan specificera ytterligare sökord för din bildsökmotor. Nyckelord ska skiljas åt med mellanrum, till exempel; live konsert band">
 <!ENTITY mtprefs.tab.video.autoplay "Spela upp video automatiskt">
 <!ENTITY mtprefs.tab.video.autoplay.help "Detta alternativet låter dig spela upp videos eftervarandra i en följd.">

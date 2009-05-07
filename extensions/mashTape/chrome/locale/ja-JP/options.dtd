@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "写真スクロール速度:">
 <!ENTITY mtprefs.tab.photo.faster "速く">
 <!ENTITY mtprefs.tab.photo.slower "遅く">
+<!ENTITY mtprefs.tab.photo.keywords.caption "キーワード検索">
+<!ENTITY mtprefs.tab.photo.keywords "追加検索キーワード:">
+<!ENTITY mtprefs.tab.photo.keywords.help "写真プロバイダ検索に追加されるキーワードを指定できます。キーワードは空白で区切ります。例: live concert band">
 <!ENTITY mtprefs.tab.video.autoplay "動画を自動再生する">
 <!ENTITY mtprefs.tab.video.autoplay.help "このオプションを有効にするとバンドル済み動画プロバイダの結果が次々と自動再生されるでしょう。これは例えばすべての MTV Music Video を自動再生するのに便利です。バンドルされていない動画プロバイダはこのオプションで機能しません。">

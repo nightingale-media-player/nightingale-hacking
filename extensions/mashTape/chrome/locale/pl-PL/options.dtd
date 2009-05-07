@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Szybkość przewijania zdjęć:">
 <!ENTITY mtprefs.tab.photo.faster "szybciej">
 <!ENTITY mtprefs.tab.photo.slower "wolniej">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Słowa kluczowe poszukiwań">
+<!ENTITY mtprefs.tab.photo.keywords "Dodatkowe słowa kluczowe:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Możesz określić dodatkowe słowa kluczowe, które zostaną dodane do kryteriów wyszukiwania w wybranym serwisie ze zdjęciami.  Słowa kluczowe powinny zostać oddzielone spacjami. Przykład: na żywo koncert zespół">
 <!ENTITY mtprefs.tab.video.autoplay "Automatycznie odtwarzaj filmy">
 <!ENTITY mtprefs.tab.video.autoplay.help "Włączenie tej opcji spowoduje automatycznie odtwarzanie kolejnych filmów z grup zgodnych z wynikami wyszukiwania.  Funkcja ta jest użyteczna np. dla automatycznego odtwarzania wszystkich teledysków z MTV.  Funkcja ta nie działa z filmami, które nie są dostarczane przez serwisy w grupach.">

@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Tooth skrolya skeusennow:">
 <!ENTITY mtprefs.tab.photo.faster "Buanna">
 <!ENTITY mtprefs.tab.photo.slower "Uskissa">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Geryow-alhwedh">
+<!ENTITY mtprefs.tab.photo.keywords "Geryow-alhwedh hwilas keworansus:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Ty a yll ri geryow-alhwedh erel dhe vos keworrys dhe&apos;th hwilas provier-skeusennow. Mar pleg gwra ranna an geryow-alhwedh dre spasow, r.e. live concert band.">
 <!ENTITY mtprefs.tab.video.autoplay "Lonchya gwydheos yn awtomatek">
 <!ENTITY mtprefs.tab.video.autoplay.help "Mar kwre&apos;ta galosegi an ethol ma, sywyansow an provier-gwydheo fardeladow a wra seni yn awtomatek an eyl war-lergh y gila. Hemm yw dhe les rag seni pub Gwydheo Ilow MTV, rag ensompel. Proviers-gwydheo na yllons fardella ny gesoberons gans an ethol ma.">
