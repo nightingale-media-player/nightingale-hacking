@@ -148,6 +148,25 @@ static PRLogModuleInfo* gLibraryLog = nsnull;
 // Makes some of the logging a little easier to read
 #define LOG_SUBMESSAGE_SPACE "                                 - "
 
+/**
+ * Copies the contents of a nsInterfaceHashtableMT to another
+ */
+template<class V, typename T>
+PLDHashOperator PR_CALLBACK
+CopyInterfaceHashtableEntry(typename V::KeyType aKey,
+                            T* aData,
+                            void* aUserData)
+{
+  nsInterfaceHashtableMT<V, T> *newHash =
+    reinterpret_cast<nsInterfaceHashtableMT<V, T>*>(aUserData);
+
+  NS_ASSERTION(newHash->IsInitialized(), "copying to uninitialized hashtable!");
+
+  PRBool success = newHash->Put(aKey, aData);
+
+  return success ? PL_DHASH_NEXT : PL_DHASH_STOP;
+}
+
 NS_IMPL_ISUPPORTS1(sbLibraryInsertingEnumerationListener,
                    sbIMediaListEnumerationListener)
 
@@ -2029,9 +2048,22 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
 
   // Check all instantiated media lists and notify them if
   // they contain the item
-  sbMediaItemUpdatedInfo info(aItem, aProperties);
-  mMediaListTable.Enumerate(sbLocalDatabaseLibrary::NotifyListItemUpdated,
-                            &info);
+  // use a snapshot because the listeners may do arbitary things, including
+  // re-entering this method
+  sbMediaItemUpdatedInfo info(aItem, aProperties, &mMediaListTable);
+  nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference> tableSnapshot;
+  tableSnapshot.Init(mMediaListTable.Count());
+  mMediaListTable.EnumerateRead(CopyInterfaceHashtableEntry<nsStringHashKey,
+                                                            nsIWeakReference>,
+                                &tableSnapshot);
+  
+  tableSnapshot.Enumerate(sbLocalDatabaseLibrary::NotifyListItemUpdated,
+                          &info);
+
+  // the enumeration might have changed the entries
+  tableSnapshot.EnumerateRead(CopyInterfaceHashtableEntry<nsStringHashKey,
+                                                          nsIWeakReference>,
+                              &mMediaListTable);
 
   // Also notify explicity registered listeners
   sbLocalDatabaseMediaListListener::NotifyListenersItemUpdated(SB_IMEDIALIST_CAST(this),
@@ -2057,6 +2089,14 @@ sbLocalDatabaseLibrary::NotifyCopyListenersItemCopied(sbIMediaItem *aSourceItem,
   nsAutoPtr<sbMediaItemPair> 
     mediaItemPair(new sbMediaItemPair(aSourceItem, aDestinationItem));
 
+  // use a snapshot because the listeners may do arbitary things, including
+  // re-entering this method
+  nsInterfaceHashtableMT<nsISupportsHashKey, sbILocalDatabaseLibraryCopyListener> tableSnapshot;
+  tableSnapshot.Init(mCopyListeners.Count());
+  mCopyListeners.EnumerateRead(CopyInterfaceHashtableEntry<nsISupportsHashKey,
+                                                           sbILocalDatabaseLibraryCopyListener>,
+                               &tableSnapshot);
+  
   mCopyListeners.EnumerateRead(sbLocalDatabaseLibrary::NotifyCopyListeners,
                                mediaItemPair);
 
@@ -2117,6 +2157,7 @@ sbLocalDatabaseLibrary::NotifyListItemUpdated(nsStringHashKey::KeyType aKey,
   } else {
     // If no weak ref, then this list has gone away and we
     // can forget about it
+    info->mediaListTable->Remove(aKey);
     return PL_DHASH_REMOVE;
   }
 

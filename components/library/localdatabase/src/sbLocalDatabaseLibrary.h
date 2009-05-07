@@ -71,6 +71,8 @@ typedef nsCOMArray<sbIMediaList> sbMediaListArray;
 typedef nsClassHashtable<nsISupportsHashKey, sbMediaItemArray>
         sbMediaItemToListsMap;
 typedef nsDataHashtable<nsStringHashKey, PRUint32> sbListItemIndexMap;
+typedef nsInterfaceHashtableMT<nsStringHashKey, nsIWeakReference>
+        sbGUIDToListMap;
 
 // These are the methods from sbLocalDatabaseMediaListBase that we're going to
 // override in sbLocalDatabaseLibrary. Most of them are from sbIMediaList.
@@ -182,14 +184,17 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
   };
   
   struct sbMediaItemUpdatedInfo {
-    sbMediaItemUpdatedInfo(sbIMediaItem     *aItem,
-                           sbIPropertyArray *aProperties)
+    sbMediaItemUpdatedInfo(sbIMediaItem           *aItem,
+                           sbIPropertyArray       *aProperties,
+                           sbGUIDToListMap        *aMediaListTable)
     : item(aItem)
     , newProperties(aProperties)
+    , mediaListTable(aMediaListTable)
     { }
 
     nsCOMPtr<sbIMediaItem> item;
     nsCOMPtr<sbIPropertyArray> newProperties;
+    sbGUIDToListMap *mediaListTable;
   };
 
   typedef nsClassHashtable<nsStringHashKey, sbMediaListFactoryInfo>
@@ -379,8 +384,7 @@ private:
   // Weak references to media lists that have been instantiated
   // (via CreateMediaList and GetMediaItem)
   // Used for fast list update notifications.
-  nsInterfaceHashtableMT<nsStringHashKey, 
-                         nsIWeakReference> mMediaListTable;
+  sbGUIDToListMap mMediaListTable;
 
   nsCOMArray<nsITimer> mBatchCreateTimers;
 
