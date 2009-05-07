@@ -546,13 +546,13 @@ LastFm.updateStatus = function LastFm_updateStatus() {
     if (this._service.loggedIn) {
       if (this._service.shouldScrobble) {
 		if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
-				.indexOf("libre.fm"))
+				.indexOf("libre.fm") >= 0)
 		  stateName = 'logged_in_libre'
 		else
 		  stateName = 'logged_in';
       } else {
 		if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
-				.indexOf("libre.fm"))
+				.indexOf("libre.fm") >= 0)
           stateName = 'disabled_libre';
 		else
           stateName = 'disabled';
