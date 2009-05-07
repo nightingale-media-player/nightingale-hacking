@@ -1367,18 +1367,22 @@ function sbLastFm_onMediacoreEvent(aEvent) {
     case Ci.sbIMediacoreEvent.STREAM_STOP:
       this.onStop();
 
+	  dump("resetting\n");
 	  // reset the shuffle and repeat modes to the previous setting
 	  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
 	  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
       break;
     case Ci.sbIMediacoreEvent.VIEW_CHANGE:
+	  /*
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
 	  
 	  // reset the shuffle and repeat modes to the previous setting
 	  if (!this.radio_playing) {
+		  dump("resetting here too\n");
 		  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
 		  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
 	  }
+	  */
       break;
     case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
       if (this.radio_playing) {
