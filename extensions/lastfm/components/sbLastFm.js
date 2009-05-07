@@ -58,7 +58,8 @@ const PROPERTY_ARTISTID = LASTFM_NS+'artistid';
 // Last.fm API key, secret and URL
 const API_KEY = '4d5bce1e977549f10623b51dd0e10c5a';
 const API_SECRET = '3ebb03d4561260686b98388037931f11'; // obviously not secret
-const API_URL = 'http://ws.audioscrobbler.com/2.0/';
+var API_URL = 'http://ws.audioscrobbler.com/2.0/';
+var AUTH_URL = 'http://post.audioscrobbler.com/';
 
 // handshake failure types
 const HANDSHAKE_FAILURE_AUTH = true;
@@ -315,6 +316,9 @@ function sbLastFm() {
   // the should-we-scrobble pref
   var prefsService = Cc['@mozilla.org/preferences-service;1']
       .getService(Ci.nsIPrefBranch);
+  AUTH_URL = prefsService.getCharPref('extensions.lastfm.auth_url');
+  API_URL = prefsService.getCharPref('extensions.lastfm.api_url');
+
   this.__defineGetter__('shouldScrobble', function() {
     return prefsService.getBoolPref('extensions.lastfm.scrobble');
   });
@@ -565,7 +569,7 @@ function sbLastFm_handshake(success, failure) {
 
   // make the url
   var timestamp = Math.round(Date.now()/1000).toString();
-  var hs_url = 'http://post.audioscrobbler.com/?hs=true&p=1.2.1&c=sbd&v=0.1' +
+  var hs_url = AUTH_URL + '?hs=true&p=1.2.1&c=sbd&v=0.1' +
     '&u=' + this.username + '&t=' + timestamp + '&a=' +
     md5(md5(this.password) + timestamp);
 

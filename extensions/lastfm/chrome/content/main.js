@@ -39,6 +39,8 @@ if (typeof(gBrowser) == "undefined")
 LastFm.Icons = {
   busy: 'chrome://sb-lastfm/skin/busy.png',
   disabled: 'chrome://sb-lastfm/skin/disabled.png',
+  disabled_libre: 'chrome://sb-lastfm/skin/librefm_disabled.png',
+  logged_in_libre: 'chrome://sb-lastfm/skin/librefm.png',
   logged_in: 'chrome://sb-lastfm/skin/as.png',
   logged_out: 'chrome://sb-lastfm/skin/disabled.png',
   error: 'chrome://sb-lastfm/skin/error.png',
@@ -543,16 +545,24 @@ LastFm.updateStatus = function LastFm_updateStatus() {
   } else {
     if (this._service.loggedIn) {
       if (this._service.shouldScrobble) {
-        stateName = 'logged_in';
+		if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
+				.indexOf("libre.fm"))
+		  stateName = 'logged_in_libre'
+		else
+		  stateName = 'logged_in';
       } else {
-        stateName = 'disabled';
+		if (Application.prefs.getValue("extensions.lastfm.auth_url", "")
+				.indexOf("libre.fm"))
+          stateName = 'disabled_libre';
+		else
+          stateName = 'disabled';
       }
     } else {
       stateName = 'logged_out';
     }
   }
   this.setStatusIcon(this.Icons[stateName]);
-  this.setStatusTextId('lastfm.state.'+stateName);
+  this.setStatusTextId('lastfm.state.'+stateName.replace("_libre", ""));
 
   if (stateName == 'logged_in') {
     this._faceplate.removeAttribute('hidden');
