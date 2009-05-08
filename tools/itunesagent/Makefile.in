@@ -118,7 +118,7 @@ ifeq (macosx,$(SB_PLATFORM))
 	# would require a bunch of other infra work
 	$(MKDIR) $(MAC_APP_DIR)
 	$(CP) -R $(srcdir)/$(SB_PLATFORM)/appskeleton/* $(MAC_APP_DIR)
-	$(FIND) $(MAC_APP_DIR) -type d -name '.svn' -exec rm -rf {} \;
+	$(FIND) $(MAC_APP_DIR) -depth -type d -name '.svn' -exec rm -rf {} \;
 	$(INSTALL_FILE) $(CURDIR)/Info.plist $(MAC_APP_DIR)/Contents/
 	$(INSTALL_FILE) $(topsrcdir)/app/branding/songbird.icns $(MAC_APP_DIR)/Contents/Resources
 endif
