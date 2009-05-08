@@ -565,7 +565,9 @@ sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
           unknownKey.Insert(NS_LITERAL_STRING(STRING_MFM_UNKNOWNPROP), 0);
           propertyValue = stringBundle.Get(unknownKey, configValue);
 
-          if (propertyValue.Equals(configValue)) {
+          if (propertyValue.Equals(configValue) ||
+              propertyValue.EqualsLiteral("%S"))
+          {
             // no custom default value, use the fallback
   
             nsString propertyDisplayName;

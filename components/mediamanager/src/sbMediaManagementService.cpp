@@ -45,23 +45,23 @@
 #include <sbILibraryManager.h>
 #include <sbIMediaFileManager.h>
 #include <sbIMediaManagementJob.h>
-#include <sbPropertiesCID.h>
-#include <sbStringUtils.h>
 
 /**
  * other mozilla headers
  */
 #include <prtime.h>
+#include <nsAutoLock.h>
 #include <nsISupportsUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
-#include <nsAutoLock.h>
 
 /**
  * other songbird headers
  */
 #include <sbLibraryUtils.h>
+#include <sbPropertiesCID.h>
 #include <sbProxyUtils.h>
+#include <sbStringUtils.h>
 
 /**
  * constants

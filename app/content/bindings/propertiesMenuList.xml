@@ -56,31 +56,45 @@
                        false);
         
         var self = this;
-        function addItems(isSecondary) {
-          var propEnumerator = PM.propertyIDs;
-          while (propEnumerator.hasMore()) {
-            var propertyID = propEnumerator.getNext();
-            if (!alreadyAdded[propertyID]) {
-              var propertyInfo = PM.getPropertyInfo(propertyID);
-              if (isSecondary ||
-                  propertyInfo.userViewable)
+        function maybeAddPropertyID(propertyID, isSecondary) {
+          if (!alreadyAdded[propertyID]) {
+            var propertyInfo = PM.getPropertyInfo(propertyID);
+            if (isSecondary ||
+                propertyInfo.userViewable)
+            {
+              // if this is a secondary prop, and it has no localized string
+              // it probably doesn't make sense to have it there, so only show it
+              // if the user really really wants it there
+              if (isSecondary &&
+                  !alsoUnlocalized && 
+                  propertyInfo.displayName.match("^http://"))
               {
-                // if this is a secondary prop, and it has no localized string
-                // it probably doesn't make sense to have it there, so only show it
-                // if the user really really wants it there
-                if (isSecondary &&
-                    !alsoUnlocalized && 
-                    propertyInfo.displayName.match("^http://"))
-                {
-                  continue;
-                }
-                self.appendItem(propertyInfo.displayName, propertyID);
-                alreadyAdded[propertyInfo.id] = true;
+                return;
               }
+              self.appendItem(propertyInfo.displayName, propertyID);
+              alreadyAdded[propertyInfo.id] = true;
             }
           }
         }
-        
+        function addItems(isSecondary) {
+          if (self.hasAttribute("propertyCategory")) {
+            var catMgr = Cc["@mozilla.org/categorymanager;1"]
+                           .getService(Ci.nsICategoryManager);
+            var catEnum = catMgr.enumerateCategory("songbird-media-manager-properties");
+            while (catEnum.hasMoreElements()) {
+              var strContainer = catEnum.getNext();
+              if (!(strContainer instanceof Ci.nsISupportsCString)) {
+                continue;
+              }
+              maybeAddPropertyID(strContainer.data, isSecondary);
+            }
+          } else {
+            var propEnumerator = PM.propertyIDs;
+            while (propEnumerator.hasMore()) {
+              maybeAddPropertyID(propEnumerator.getNext(), isSecondary);
+            }
+          }
+        }
         addItems(false);
         if (enableAll) {
           addItems(true);
@@ -407,6 +421,10 @@
               // make a property dropdown
               let val = values[idx];
               let menulist = document.createElement("menulist");
+              if (this.hasAttribute("propertyCategory")) {
+                menulist.setAttribute("propertyCategory",
+                                      this.getAttribute("propertyCategory"));
+              }
               menulist.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
               let menuContainer = document.createElement("vbox");
               menuContainer.appendChild(menulist);

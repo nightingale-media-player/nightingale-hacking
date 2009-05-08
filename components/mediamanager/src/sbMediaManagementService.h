@@ -52,6 +52,9 @@
 #define SB_PREF_MEDIA_MANAGER_FMTDIR   "format.dir"
 #define SB_PREF_MEDIA_MANAGER_LISTEN   "format."
 
+// the category manager category to use for properties to show
+#define SB_CATEGORY_MEDIA_MANAGER_PROPERTIES "songbird-media-manager-properties"
+
 class nsIComponentManager;
 class nsIThread;
 

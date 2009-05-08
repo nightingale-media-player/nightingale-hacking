@@ -34,6 +34,9 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIGenericFactory.h>
 
+// Songbird imports.
+#include <sbStandardProperties.h>
+
 // Construct and initialize the sbMediaFileManager object.
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init)
 
@@ -66,6 +69,60 @@ sbMediaManagementServiceRegisterSelf(nsIComponentManager *aCompMgr,
   
   if (perviousEntry) {
     NS_Free(perviousEntry);
+  }
+
+  // register the properties we want to show up in the prefs dropdowns
+
+  static const char* kDefaultProperties[] = {
+    SB_PROPERTY_CREATED,
+    SB_PROPERTY_UPDATED,
+    SB_PROPERTY_CONTENTLENGTH,
+    SB_PROPERTY_HASH,
+    SB_PROPERTY_TRACKNAME,
+    SB_PROPERTY_ALBUMNAME,
+    SB_PROPERTY_ARTISTNAME,
+    SB_PROPERTY_DURATION,
+    SB_PROPERTY_GENRE,
+    SB_PROPERTY_TRACKNUMBER,
+    SB_PROPERTY_YEAR,
+    SB_PROPERTY_DISCNUMBER,
+    SB_PROPERTY_TOTALDISCS,
+    SB_PROPERTY_TOTALTRACKS,
+    SB_PROPERTY_ISPARTOFCOMPILATION,
+    SB_PROPERTY_PRODUCERNAME,
+    SB_PROPERTY_COMPOSERNAME,
+    SB_PROPERTY_CONDUCTORNAME,
+    SB_PROPERTY_LYRICISTNAME,
+    SB_PROPERTY_RECORDLABELNAME,
+    SB_PROPERTY_RATING,
+    SB_PROPERTY_BITRATE,
+    SB_PROPERTY_SAMPLERATE,
+    SB_PROPERTY_CHANNELS,
+    SB_PROPERTY_BPM,
+    SB_PROPERTY_KEY,
+    SB_PROPERTY_LANGUAGE,
+    SB_PROPERTY_COMMENT,
+    SB_PROPERTY_COPYRIGHT,
+    SB_PROPERTY_SUBTITLE,
+    SB_PROPERTY_METADATAUUID,
+    SB_PROPERTY_SOFTWAREVENDOR,
+    SB_PROPERTY_DESTINATION,
+    SB_PROPERTY_ORIGINPAGE,
+    SB_PROPERTY_ORIGINPAGETITLE,
+    SB_PROPERTY_MEDIALISTNAME,
+    SB_PROPERTY_AVAILABILITY,
+    SB_PROPERTY_ALBUMARTISTNAME,
+  };
+  for (int i = 0; i < NS_ARRAY_LENGTH(kDefaultProperties); ++i) {
+    char* previousEntry;
+    rv = catman->AddCategoryEntry(SB_CATEGORY_MEDIA_MANAGER_PROPERTIES,
+                                  kDefaultProperties[i],
+                                  "",
+                                  PR_TRUE,
+                                  PR_TRUE,
+                                  &previousEntry);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_Free(previousEntry);
   }
   
   return NS_OK;
