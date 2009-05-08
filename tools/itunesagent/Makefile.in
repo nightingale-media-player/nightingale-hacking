@@ -84,6 +84,12 @@ ifeq (macosx,$(SB_PLATFORM))
                      -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
                      $(NULL)
 
+   C_INCLUDES = $(srcdir) \
+                $(MOZSDK_INCLUDE_DIR) \
+                $(NULL)
+
+   C_SRCS = LoginItemsAE.c \
+            $(NULL)
 
    SIMPLE_PROGRAM_FLAGS += -mmacosx-version-min=10.4 \
                            -framework CoreServices \
@@ -91,7 +97,10 @@ ifeq (macosx,$(SB_PLATFORM))
                            -framework Cocoa \
                            -Wl,-syslibroot,$(SB_MACOSX_SDK_10_4)
 
-   SIMPLE_PROGRAM_OBJS += $(CMM_SRCS:.mm=$(OBJ_SUFFIX))
+   SIMPLE_PROGRAM_OBJS += $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
+                          $(C_SRCS:.c=$(OBJ_SUFFIX)) \
+                          $(NULL)
+
    MAC_APP_DIR = $(SONGBIRD_DISTDIR)/$(SIMPLE_PROGRAM).app
 
    SONGBIRD_PP_DIR = $(CURDIR)

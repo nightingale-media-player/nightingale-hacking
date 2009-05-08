@@ -31,6 +31,8 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import "SBNSString+Utils.h"
 #include <sys/param.h>
+#include <sstream>
+#include "LoginItemsAE.h"
 
 // Agent constants, these should be unified soon.
 #define AGENT_EXPORT_FILENAME    "songbird_export.task"
@@ -43,6 +45,14 @@
 
 //------------------------------------------------------------------------------
 // Misc utility methods
+
+inline sbError
+sbOSStatusError(const char *aMsg, OSStatus & aErr)
+{
+  std::ostringstream msg;
+  msg << "ERROR: " << aMsg << " : OSErr == " << aErr;
+  return sbError(msg.str());
+}
 
 static NSString *gSongbirdProfilePath = nil;
 
@@ -78,6 +88,17 @@ GetSongbirdProfilePath()
   }
 
   return gSongbirdProfilePath;
+}
+
+static NSURL *
+GetSongbirdAgentURL()
+{
+  NSString *agentBundleID = @"org.songbirdnest.songbirditunesagent";
+  NSString *agentPath = 
+    [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:agentBundleID];
+  NSURL *agentURL = [NSURL fileURLWithPath:agentPath];
+
+  return agentURL;
 }
 
 //------------------------------------------------------------------------------
@@ -192,22 +213,75 @@ bool
 sbiTunesAgentMacProcessor::ErrorHandler(sbError const & aError)
 {
   // todo write me!
-  return false;
+  return true;
 }
 
 sbError
 sbiTunesAgentMacProcessor::RegisterForStartOnLogin()
 {
-  // todo write me!
-  // bug 16115
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Always clean previous entries first.
+  sbError error = UnregisterForStartOnLogin();
+  SB_ENSURE_SUCCESS(error, error);
+
+  NSURL *agentURL = GetSongbirdAgentURL();
+  if (!agentURL) {
+    [pool release];
+    return sbError("Could not get the agent URL!");
+  }
+
+  OSStatus err = LIAEAddURLAtEnd((CFURLRef)agentURL, true);
+  if (err != noErr) {
+    [pool release];
+    return sbOSStatusError("Could not add URL to startup items list!", err);
+  }
+
+  [pool release];
   return sbNoError;
 }
 
 sbError
 sbiTunesAgentMacProcessor::UnregisterForStartOnLogin()
 {
-  // todo write me!
-  // bug 16115
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  NSArray *loginItems = nil;
+  OSStatus err = LIAECopyLoginItems((CFArrayRef *) &loginItems);
+  if (err != noErr) {
+    return sbOSStatusError("Could not get a refernce to the login items!", err);
+  }
+
+  NSURL *agentURL = GetSongbirdAgentURL();
+  if (!agentURL) {
+    return sbError("Could not get the agent URL!");
+  }
+
+  unsigned int index = 0;
+  NSDictionary *curLoginItemDict = nil;
+  NSEnumerator *loginItemsEnum = [loginItems objectEnumerator];
+  while ((curLoginItemDict = [loginItemsEnum nextObject])) {
+    NSURL *curLoginItemURL = 
+      [curLoginItemDict objectForKey:(NSString *)kLIAEURL];
+    NSRange agentRange =
+      [[curLoginItemURL path] rangeOfString:@"songbirditunesagent"];
+    
+    if ([curLoginItemURL isEqualTo:agentURL] || 
+        agentRange.location != NSNotFound) 
+    {
+      err = LIAERemove(index);
+      if (!err != noErr) {
+        [pool release];
+        return sbOSStatusError("Could not remove item from startup list!", err);
+      }
+      
+      break;
+    }
+
+    index++;
+  }
+
+  [pool release];
   return sbNoError;
 }
 
