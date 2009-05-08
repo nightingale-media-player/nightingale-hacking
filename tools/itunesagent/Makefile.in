@@ -29,6 +29,10 @@ VPATH = @srcdir@ @srcdir@/$(SB_PLATFORM)
 
 include $(DEPTH)/build/autodefs.mk
 
+ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+   $(error The Songbird iTunes agent can only be built on Win32 and Mac)
+endif
+
 CPP_SRCS = main.cpp \
            sbError.cpp \
            sbiTunesAgentProcessor.cpp \
@@ -64,6 +68,8 @@ ifeq (windows,$(SB_PLATFORM))
 endif # SB_PLATFORM = windows
 
 ifeq (macosx,$(SB_PLATFORM))
+   include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
+
    CMM_INCLUDES += $(srcdir) \
                    $(srcdir)/macosx \
                    $(MOZSDK_INCLUDE_DIR) \
@@ -86,11 +92,34 @@ ifeq (macosx,$(SB_PLATFORM))
                            -Wl,-syslibroot,$(SB_MACOSX_SDK_10_4)
 
    SIMPLE_PROGRAM_OBJS += $(CMM_SRCS:.mm=$(OBJ_SUFFIX))
+   MAC_APP_DIR = $(SONGBIRD_DISTDIR)/$(SIMPLE_PROGRAM).app
+
+   SONGBIRD_PP_DIR = $(CURDIR)
+   SONGBIRD_PP_RESOURCES = $(srcdir)/$(SB_PLATFORM)/Info.plist.in
+   PPDEFINES += $(SB_BRANDING_DEFINES) 
 endif # SB_PLATFORM = macosx
 
 SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
 SIMPLE_PROGRAM_OBJS += $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
-FINAL_TARGET = $(SONGBIRD_DISTDIR)
+ifeq (macosx,$(SB_PLATFORM))
+   FINAL_TARGET = $(MAC_APP_DIR)/Contents/MacOS/
+else
+   FINAL_TARGET = $(SONGBIRD_DISTDIR)
+endif
 
 include $(topsrcdir)/build/rules.mk
+
+# Ordering matters here; we need the pre-processed Info.plist to happen in the
+# rules.mk export:: before our local export:: runs
+export::
+ifeq (macosx,$(SB_PLATFORM))
+	# We do a cp followed by a find so we don't have to use rsync, which
+	# would require a bunch of other infra work
+	$(MKDIR) $(MAC_APP_DIR)
+	$(CP) -R $(srcdir)/$(SB_PLATFORM)/appskeleton/* $(MAC_APP_DIR)
+	$(FIND) $(MAC_APP_DIR) -type d -name '.svn' -exec rm -rf {} \;
+	$(INSTALL_FILE) $(CURDIR)/Info.plist $(MAC_APP_DIR)/Contents/
+	$(INSTALL_FILE) $(topsrcdir)/app/branding/songbird.icns $(MAC_APP_DIR)/Contents/Resources
+endif
+
