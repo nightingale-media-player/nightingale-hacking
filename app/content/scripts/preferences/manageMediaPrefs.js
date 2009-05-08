@@ -98,39 +98,11 @@ var manageMediaPrefsPane = {
         return false;
       }
 
-      // need to manually set the dir pref if it's not user set, because it has
-      // no default value (needs platform-specific path separator)
-      var dirPrefElem = document.getElementById("manage_media_pref_library_format_dir");
-      var dirFormatElem = document.getElementById("manage_media_format_dir_formatter");
-      if (!dirPrefElem.hasUserValue) {
-        dirPrefElem.valueFromPreferences = dirFormatElem.value;
-      }
-
       // dialog is closing, apply any preferences that should never instant-apply
       var mediaMgmtSvc = Cc["@songbirdnest.com/Songbird/media-manager-service;1"]
                            .getService(Ci.sbIMediaManagementService);
-      // if we want to toggle global enable, show a preview
       var enablePrefElem =
         document.getElementById("manage_media_pref_library_enable");
-      if (!mediaMgmtSvc.isEnabled && enablePrefElem.value) {
-        // show the preview
-        var accepted =
-          WindowUtils.openModalDialog(window,
-                                      "chrome://songbird/content/xul/manageMediaPreview.xul",
-                                      "manage_media_preview_dialog",
-                                      "chrome,centerscreen",
-                                      [LibraryUtils.mainLibrary],
-                                      null);
-        if (!accepted) {
-          // cancelled the dialog; force write the pref
-          enablePrefElem.valueFromPreferences = mediaMgmtSvc.isEnabled;
-          enablePrefElem.value = mediaMgmtSvc.isEnabled;
-          event.preventDefault();
-          self._checkForValidPref(true);
-          self._updateUI();
-          return false;
-        }
-      }
       mediaMgmtSvc.isEnabled = enablePrefElem.value;
 
       return true;
@@ -151,6 +123,22 @@ var manageMediaPrefsPane = {
     this._updateUI();
   },
 
+  /**
+   * Handle the Preview command event
+   */
+  doDisplayPreview: function() {
+    if (!this._checkForValidPref(false)) {
+      return false;
+    }
+
+    // show the preview
+    WindowUtils.openModalDialog(window,
+                                "chrome://songbird/content/xul/manageMediaPreview.xul",
+                                "manage_media_preview_dialog",
+                                "chrome,centerscreen",
+                                [LibraryUtils.mainLibrary],
+                                null);
+  },
 
   /**
    * Handle the browse command event specified by aEvent.
@@ -234,8 +222,7 @@ var manageMediaPrefsPane = {
     var file = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
                  .getService(Ci.sbIDownloadDeviceHelper)
                  .getDefaultMusicFolder();
-    // XXX Mook: this needs more thought, since it could mean we clobber files!
-    //document.getElementById("manage_media_pref_library_folder").value = file;
+    document.getElementById("manage_media_pref_library_folder").value = file;
     return file;
   },
   
@@ -247,37 +234,55 @@ var manageMediaPrefsPane = {
       document.getElementById("manage_media_pref_library_folder").value = aValue;
     } else {
       // set to default folder
-      aValue = Cc["@mozilla.org/file/directory_service;1"]
-                 .getService(Ci.nsIProperties)
-                 .get("Music", Ci.nsIFile);
-      // XXX Mook: this needs more thought, since it could mean we clobber files!
-      //document.getElementById("manage_media_pref_library_folder").value = aValue;
+      aValue = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                 .getService(Ci.sbIDownloadDeviceHelper)
+                 .getDefaultMusicFolder();
+      document.getElementById("manage_media_pref_library_folder").value = aValue;
     }
   },
-  
+ 
+  /**
+   * Shows a notification message after removing any other ones of the same class.
+   */
+  _showErrorNotification: function(aMsg) {
+    // focus this pref pane and this tab
+    var pane = document.getElementById("paneManageMedia");
+    document.documentElement.showPane(pane);
+    
+    var notifBox = document.getElementById("media_manage_notification_box");
+
+    // show the notification, hiding any other ones of this class
+    var oldNotif;
+    while ((oldNotif = notifBox.getNotificationWithValue("media_manage_error"))) {
+      notifBox.removeNotification(oldNotif);
+    }
+    notifBox.appendNotification(aMsg,
+                                "media_manage_error",
+                                null,
+                                notifBox.PRIORITY_CRITICAL_LOW,
+                                []);
+  },
+
   /**
    * Check if the current value of the preference is valid; pops up a
    * notification if it is not.
    * @return true if valid, false if not.
    */
   _checkForValidPref: function manageMediaPrefsPane__checkForValidPref(aSilent) {
-    var notifBox = document.getElementById("media_manage_notification_box");
+    var self = this;
     function showErrorNotification(aMsg) {
       if (aSilent) {
         return;
       }
-      
-      // focus this pref pane and this tab
-      var pane = document.getElementById("paneManageMedia");
-      document.documentElement.showPane(pane);
-      
-      // show the notification, hiding any other ones of this class
-      var oldNotif;
-      while ((oldNotif = notifBox.getNotificationWithValue("media_manage_error"))) {
-        notifBox.removeNotification(oldNotif);
-      }
-      notifBox.appendNotification(aMsg, "media_manage_error", null,
-                                  notifBox.PRIORITY_CRITICAL_LOW, []);
+      self._showErrorNotification(aMsg); 
+    }
+
+    // need to manually set the dir pref if it's not user set, because it has
+    // no default value (needs platform-specific path separator)
+    var dirPrefElem = document.getElementById("manage_media_pref_library_format_dir");
+    var dirFormatElem = document.getElementById("manage_media_format_dir_formatter");
+    if (!dirPrefElem.hasUserValue) {
+      dirPrefElem.valueFromPreferences = dirFormatElem.value;
     }
 
     var button = document.getElementById("manage_media_global_cmd");
@@ -339,29 +344,31 @@ var manageMediaPrefsPane = {
     var fileFormatter = document.getElementById("manage_media_format_file_formatter");
     var fmtDirLabel = document.getElementById("manage_media_format_dir_label");
      
-    var button = document.getElementById("manage_media_global_cmd");
-    var prefElem = document.getElementById(button.getAttribute("preference"));
+    var enableButton = document.getElementById("manage_media_global_cmd");
+    var previewButton = document.getElementById("manage_media_global_preview");
+    var prefElem = document.getElementById(enableButton.getAttribute("preference"));
     var enabled = prefElem.value;
     if (enabled) {
       // Enable all the controls
-      button.label = button.getAttribute("label-disable");
+      enableButton.label = enableButton.getAttribute("label-disable");
       managedFolder.removeAttribute("disabled");
       browseButton.disabled = false;
       renameCheck.removeAttribute("disabled");
       fmtDirLabel.removeAttribute("disabled");
       dirFormatter.disableAll = false;
       fileFormatter.disableAll = false;
+      previewButton.disabled = false;
     } else {
       // Disable the controls
-      button.label = button.getAttribute("label-enable");
+      enableButton.label = enableButton.getAttribute("label-enable");
       managedFolder.setAttribute("disabled", true);
       browseButton.disabled = true;
       renameCheck.setAttribute("disabled", true);
       fmtDirLabel.setAttribute("disabled", true);
       dirFormatter.disableAll = true;
       fileFormatter.disableAll = true;
+      previewButton.disabled = true;
     }
-    document.getElementById("manage_media_global_description").hidden = enabled;
   },
 
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener])

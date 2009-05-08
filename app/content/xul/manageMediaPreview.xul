@@ -55,14 +55,14 @@
         flex="1"
         type="songbird"
         resizers="all"
-        buttons="accept,cancel"
+        buttons="accept"
         ondialogaccept="onExit();"
         onload="mediaManagePreview.onLoad();">
 
   <!-- Use Songbird window region. -->
   <windowregion/>
 
-  <vbox>
+  <vbox flex="1">
     <!-- Unsupported media list. -->
     <richlistbox id="preview_listbox" flex="1" seltype="single"/>
     <richlistitem id="preview_listitem_template" collapsed="true"

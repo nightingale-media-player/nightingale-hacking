@@ -111,18 +111,17 @@
       </groupbox>
 
       <hbox>
-        <vbox>
-          <button id="manage_media_global_cmd"
-                  preference-editable="true"
-                  label="WARNING: Managed mode is broken"
-                  label-enable="&prefWindow.manageMedia.enable.enable.label;"
-                  label-disable="&prefWindow.manageMedia.enable.disable.label;"
-                  oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
-                  preference="manage_media_pref_library_enable"/>
-        </vbox>
-        <description id="manage_media_global_description" flex="1">
-          &prefWindow.manageMedia.enable.description;
-        </description>
+        <button id="manage_media_global_cmd"
+                preference-editable="true"
+                label="WARNING: Managed mode is broken"
+                label-enable="&prefWindow.manageMedia.enable.enable.label;"
+                label-disable="&prefWindow.manageMedia.enable.disable.label;"
+                oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
+                preference="manage_media_pref_library_enable"/>
+        <spacer flex="1" />
+        <button id="manage_media_global_preview"
+                label="&prefWindow.manageMedia.enable.preview.label;"
+                oncommand="return manageMediaPrefsPane.doDisplayPreview();"/>
       </hbox>
     </notificationbox>
 

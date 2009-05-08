@@ -14,7 +14,7 @@
 
 <!ENTITY prefWindow.manageMedia.enable.enable.label   "Turn Managed Mode On">
 <!ENTITY prefWindow.manageMedia.enable.disable.label  "Turn Managed Mode Off">
-<!ENTITY prefWindow.manageMedia.enable.description    "You will be shown a preview before your files are moved or renamed.">
+<!ENTITY prefWindow.manageMedia.enable.preview.label  "Preview">
 
 <!-- Media Management preview entities -->
 <!ENTITY prefWindow.manageMedia.preview.title         "Manage Media Preview">
