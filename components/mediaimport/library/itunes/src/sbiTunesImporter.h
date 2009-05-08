@@ -103,7 +103,7 @@ private:
   /**
    * Batch size for doing work
    */
-  static PRUint32 const BATCH_SIZE = 300;
+  static PRUint32 const BATCH_SIZE = 500;
   /**
    * Data format version for the database
    */

@@ -38,8 +38,6 @@
 
 #include <sbFileUtils.h>
 
-PRUint32 CHUNK_SIZE = 10 * 1024; // 10k of data at a time
-
 inline 
 nsString BuildErrorMessage(char const * aType,
                             nsISAXLocator * aLocator,
@@ -269,7 +267,7 @@ NS_IMETHODIMP sbiTunesXMLParser::Parse(nsIInputStream * aiTunesXMLStream,
   mPump = do_CreateInstance("@mozilla.org/network/input-stream-pump;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mPump->Init(aiTunesXMLStream, -1, -1, CHUNK_SIZE, 1, PR_TRUE);
+  rv = mPump->Init(aiTunesXMLStream, -1, -1, 0, 0, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<nsIStreamListener> streamListener = new sbiTunesImporterStreamListener(mSAXReader);
@@ -416,8 +414,6 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
                                  // so go back to the tracks section 
         mState = TRACKS;
         mListener->OnTracksComplete();
-        // Process pending events before we return
-        NS_ProcessPendingEvents(nsnull, 0);
       }
       break;
       case TRACK: {  // We're leaving a track so notify

@@ -211,7 +211,7 @@ sbLibraryImporterManager.prototype = {
     if (!libraryFile ||
         !previousLibraryFile ||
         !libraryFile.equals(previousLibraryFile)) {
-      SBJobUtils.showProgressDialog(job, null);
+      SBJobUtils.showProgressDialog(job, null, 0, true);
     }
   },
 

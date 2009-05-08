@@ -417,7 +417,7 @@ try
                               ("songbird.library_importer.library_file_path",
                                "");
       job = libraryImporter.import(libraryFilePath, "songbird", false);
-      SBJobUtils.showProgressDialog(job, window);
+      SBJobUtils.showProgressDialog(job, window, 0, true);
     }
     return job;
   }

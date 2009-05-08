@@ -32,17 +32,15 @@ include $(DEPTH)/build/autodefs.mk
 target_name = sbiTunesMediaImport$(DEBUG:%=_d)
 
 CPP_SRCS = sbiTunesXMLParser.cpp \
+           sbiTunesDatabaseServices.cpp \
+           sbiTunesImporter.cpp \
+           sbiTunesImporterAlbumArtListener.cpp \
+           sbiTunesImporterJob.cpp \
+           sbiTunesImporterStatus.cpp \
+           sbiTunesSignature.cpp \
            sbiTunesImporterComponent.cpp \
            $(NULL)
 
-# Add back in when we have the UI issues fixed           
-#           sbiTunesDatabaseServices.cpp \
-#           sbiTunesImporter.cpp \
-#           sbiTunesImporterAlbumArtListener.cpp \
-#           sbiTunesImporterBatchCreateListener.cpp \
-#           sbiTunesImporterJob.cpp \
-#           sbiTunesImporterStatus.cpp \
-#           sbiTunesSignature.cpp \
            
 CPP_INCLUDES = $(topsrcdir)/components/include \
                $(DEPTH)/components/albumart/public \
@@ -100,8 +98,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 LIBSONGBIRD_COMPONENT = SongbirdiTunesImporterComponent
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbITunesImporter.js \
-                      $(DYNAMIC_LIB) \
+SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

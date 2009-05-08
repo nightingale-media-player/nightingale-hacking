@@ -68,7 +68,6 @@
 #endif
 
 #include "sbiTunesImporterAlbumArtListener.h"
-#include "sbiTunesImporterBatchCreateListener.h"
 #include "sbiTunesImporterJob.h"
 #include "sbiTunesImporterStatus.h"
 
@@ -753,11 +752,9 @@ FindPlaylistByName(sbILibrary * aLibrary,
 
 nsresult
 sbiTunesImporter::UpdateProgress() {
-  PRUint32 bytesAvailable;
-  nsresult rv = mStream->Available(&bytesAvailable);
-  NS_ENSURE_SUCCESS(rv, rv);
+  PRUint32 bytesAvailable = 0;
   
-  mStatus->SetProgress(mStreamSize - bytesAvailable);
+  mStatus->SetProgress(mTrackCount);
   return NS_OK;
 }
 
@@ -1300,21 +1297,13 @@ sbiTunesImporter::ProcessNewItems(
   rv = propertyArrays->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsRefPtr<sbiTunesImporterBatchCreateListener> batchCreateListener = 
-    sbiTunesImporterBatchCreateListener::New();
   if (length > 0) {
-    rv = mLibrary->BatchCreateMediaItemsAsync(batchCreateListener,
-                                              uriArray, 
-                                              propertyArrays, 
-                                              PR_FALSE);
-    nsCOMPtr<nsIThread> mainThread;
-    NS_GetMainThread(getter_AddRefs(mainThread));
-    NS_ENSURE_SUCCESS(rv, rv);
-    while (!batchCreateListener->Completed()) {
-      ::NS_ProcessPendingEvents(mainThread, PR_INTERVAL_NO_TIMEOUT);
-    }
-    rv = batchCreateListener->GetNewMediaItems(aNewItems);
-    NS_ENSURE_SUCCESS(rv, rv);
+    // Have to do synchronous to prevent playlist creation happening while
+    // we're still creating its items.
+    rv = mLibrary->BatchCreateMediaItems(uriArray, 
+                                         propertyArrays, 
+                                         PR_FALSE,
+                                         aNewItems);
   }
   else {
     *aNewItems = nsnull;
@@ -1375,6 +1364,10 @@ sbiTunesImporter::ProcessCreatedItems(
                               mIOService,
                               miTunesLibSig, 
                               getter_AddRefs(uri));
+      // If we can't get the URI then just skip it
+      if (rv == NS_ERROR_NOT_AVAILABLE) {
+        continue;
+      }
       NS_ENSURE_SUCCESS(rv, rv);
       
       rv = track->GetPropertyArray(getter_AddRefs(propertyArray));
@@ -1507,11 +1500,11 @@ sbiTunesImporter::iTunesTrack::GetTrackURI(
     return NS_ERROR_NOT_AVAILABLE;
   }
   
+  if (uri16.IsEmpty()) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
   // Convert to UTF8
   nsCString uri = NS_ConvertUTF16toUTF8(uri16);
-  // Need this because Find's case insentive compare version can't be reached
-  nsCString uriLowerCase(uri);
-  ToLowerCase(uriLowerCase);
   
   nsCString adjustedURI;
   
@@ -1519,11 +1512,11 @@ sbiTunesImporter::iTunesTrack::GetTrackURI(
     uri.Cut(uri.Length() -1, 1);
   }
   
-  if (uriLowerCase.Find("file://localhost//") == 0) {
+  if (uri.Find("file://localhost//", CaseInsensitiveCompare) == 0) {
     adjustedURI.AssignLiteral("file://///");
     uri.Cut(0, 18);
   }
-  else if (uriLowerCase.Find("file://localhost/") == 0) {
+  else if (uri.Find("file://localhost/", CaseInsensitiveCompare) == 0) {
     adjustedURI.AssignLiteral("file:///");
     uri.Cut(0,17);
   }

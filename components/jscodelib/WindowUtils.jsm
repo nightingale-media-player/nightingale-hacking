@@ -105,6 +105,53 @@ var WindowUtils = {
                                                         aInArgs,
                                                         aOutArgs,
                                                         aLocale) {
+    return this.openDialog(aParent,
+                           aURL,
+                           aName,
+                           aOptions,
+                           true,
+                           aInArgs,
+                           aOutArgs,
+                           aLocale);
+    },
+  /**
+   * \brief Open the dialog specified by aURL.  The parent window of the
+   *        dialog is specified by aParent.  The name of the dialog is specified
+   *        by aName.  The dialog options are specified by aOptions.  Pass the
+   *        arguments specified by the array aInArgs in an nsIDialogParamBlock
+   *        to the dialog.  The arguments may be strings or nsISupports.
+   *        Strings may be specified as locale string bundle keys.  In addition,
+   *        if an array of strings is specified as an argument, the first string
+   *        is the locale key for a formatted string, and the remaining strings
+   *        are the format arguments.  Strings are interpreted as locale keys if
+   *        they're wrapped in "&;" (e.g., "&local.string;"); otherwise, they're
+   *        interpreted as literal strings.
+   *        Set the value field of the objects within the array aOutArgs to the
+   *        arguments returned by the dialog.
+   *        A locale string bundle may be optionally specified by aLocale.  If
+   *        one is not specified, the Songbird locale bundle is used.
+   *        Return true if the dialog was accepted.
+   *
+   * \param aParent             Dialog parent window.
+   * \param aURL                URL of dialog chrome.
+   * \param aName               Dialog name.
+   * \param aOptions            Dialog options.
+   * \param aModal              True if the dialog should be modal
+   * \param aInArgs             Array of arguments passed into dialog.
+   * \param aOutArgs            Array of argments returned from dialog.
+   * \param aLocale             Optional locale string bundle.
+   *
+   * \return                    True if dialog accepted.
+   */
+
+  openDialog: function WindowUtils_openDialog(aParent,
+                                              aURL,
+                                              aName,
+                                              aOptions,
+                                              aModal,
+                                              aInArgs,
+                                              aOutArgs,
+                                              aLocale) {
     // Set the dialog arguments.
     var dialogPB = null;
     if (aInArgs)
@@ -113,8 +160,10 @@ var WindowUtils = {
     // Get the options.
     var options = aOptions.split(",");
 
-    // Add options for a modal dialog.
-    options.push("modal=yes");
+    // Add options for a dialog.
+    if (aModal) {
+      options.push("modal=yes");
+    }
     options.push("resizable=no");
 
     // Set accessibility options.

@@ -100,7 +100,11 @@ private:
   /**
    * The last reported progress of the import
    */
-  PRUint32 mLastProgress;  
+  PRUint32 mLastProgress;
+  /**
+   * The last status value that was reported
+   */
+  nsString mLastStatusText;
   /**
    * The current progress
    */

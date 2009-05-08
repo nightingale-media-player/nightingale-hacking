@@ -40,7 +40,6 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
-
 /******************************************************************************
  * A collection of functions for manipulating sbIJob* interfaces
  *****************************************************************************/
@@ -57,8 +56,9 @@ var SBJobUtils = {
    * \param aTimeout        Time to wait before opening a dialog. 
    *                        Defaults to 1 second.  Pass 0 to open 
    *                        the dialog immediately.
+   * \param aNonModal       if true the dialog is not modal
    */
-  showProgressDialog: function(aJobProgress, aWindow, aTimeout) {
+  showProgressDialog: function(aJobProgress, aWindow, aTimeout, aNonModal) {
     if (!(aJobProgress instanceof Ci.sbIJobProgress)) {
       throw new Error("showProgressDialog requires an object implementing sbIJobProgress");
     }
@@ -80,13 +80,12 @@ var SBJobUtils = {
                            .getService(Components.interfaces.nsIWindowMediator);
         aWindow = wm.getMostRecentWindow("Songbird:Main");
       }
-      
-      // Otherwise, launch the dialog  
-      WindowUtils.openModalDialog(
-         aWindow,
+      WindowUtils.openDialog(
+        aWindow,
          "chrome://songbird/content/xul/jobProgress.xul",
          "job_progress_dialog",
          "chrome,centerscreen",
+         !aNonModal,
          [ aJobProgress ],
          null,
          null);
@@ -264,19 +263,24 @@ SBJobUtils.JobBase.prototype = {
    * _jobProgressDelegate if set.
    */
   onJobProgress: function Job_onJobProgress(aJob) {
-    if ((!this._jobProgressDelegate) || this._jobProgressDelegate != aJob) {
-      // Just report the error. Don't throw, as that would just go to the
-      // sub-job, and wouldn't help.
-      Cu.reportError("Job_onJobProgress called with invalid _jobProgressDelegate state!");
-    }
-    
-    // Forward the progress notification on to all our listeners
-    this.notifyJobProgressListeners();
-    
-    // If the delegate is done, allow the main job to move on
-    if (this._jobProgressDelegate.status != Ci.sbIJobProgress.STATUS_RUNNING) {
-      this.onJobDelegateCompleted();
-    }
+    try {
+        if ((!this._jobProgressDelegate) || this._jobProgressDelegate != aJob) {
+          // Just report the error. Don't throw, as that would just go to the
+          // sub-job, and wouldn't help.
+          Cu.reportError("Job_onJobProgress called with invalid _jobProgressDelegate state!");
+        }
+        
+        // Forward the progress notification on to all our listeners
+        this.notifyJobProgressListeners();
+        
+        // If the delegate is done, allow the main job to move on
+        if (this._jobProgressDelegate.status != Ci.sbIJobProgress.STATUS_RUNNING) {
+          this.onJobDelegateCompleted();
+        }
+     }
+     catch (e) {
+       Cu.reportError(e);
+     }
   },
   
   

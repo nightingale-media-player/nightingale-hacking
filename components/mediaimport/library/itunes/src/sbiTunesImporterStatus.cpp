@@ -114,38 +114,43 @@ void sbiTunesImporterStatus::SetStatusText(nsAString const & aMsg) {
 }
 
 nsresult sbiTunesImporterStatus::Update() {
+  nsresult rv;
+  
   nsString status(mStatusText);
+#if WHEN_PROGRESS_WORKS  
   // Calc the 0 to 100 progress value
   double const progress = static_cast<double>(mProgress) * 100.0 / 
                               static_cast<double>(mProgressMax);
+#endif                              
   // Round the value
-  PRUint32 progressAsInt = progress + 0.5;
-  // XXX TODO This should probably be done better
-  if (!mDone) {
-    if (mLastProgress != progressAsInt) {
+  PRUint32 progressAsInt = mProgress; // progress + 0.5;
+  if (!mLastStatusText.Equals(mStatusText) || mLastProgress + 10 < progressAsInt) {    
+    if (!mDone) {
       status.AppendLiteral(" ");
       status.AppendInt(progressAsInt, 10);
-      status.AppendLiteral("%");
+      // XXX l10n TODO: If we can't do % progress internationalize
+      status.AppendLiteral(" tracks processed (l10n this text)");
     }
-  }
-  nsresult rv = mStatusDataRemote->SetStringValue(status);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mStatusDataRemote->SetStringValue(status);
+    NS_ENSURE_SUCCESS(rv, rv);
+#if WHEN_PROGRESS_WORKS    
+    if (mJobProgress) {
+      if (mLastProgress != progressAsInt) {
+        mLastProgress = progressAsInt;
+        rv = mJobProgress->SetProgress(progressAsInt);
+        NS_ENSURE_SUCCESS(rv, rv);
   
-  if (mJobProgress) {
-    if (mLastProgress != progressAsInt) {
-      mLastProgress = progressAsInt;
-      rv = mJobProgress->SetProgress(progressAsInt);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = mJobProgress->SetTotal(100);
-      NS_ENSURE_SUCCESS(rv, rv);
+        rv = mJobProgress->SetTotal(100);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }      
     }
-    
+#endif    
     if (mDone) {
       rv = mJobProgress->SetStatus(sbIJobProgress::STATUS_SUCCEEDED);
     }
+    mLastProgress = progressAsInt;
+    mLastStatusText = mStatusText;
   }
-  mLastProgress = progressAsInt;
   return NS_OK;
 }
 
