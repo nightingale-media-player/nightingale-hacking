@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -53,6 +53,9 @@ function testTextInfo() {
   catch(err) {
     assertEqual(err.result, Cr.NS_ERROR_ALREADY_INITIALIZED);
   }
+  
+  textInfo.localizationKey = "My localization key";
+  assertEqual(textInfo.localizationKey, "My localization key");
   
   textInfo.displayName = "My Display Name";
   assertEqual(textInfo.displayName, "My Display Name");
