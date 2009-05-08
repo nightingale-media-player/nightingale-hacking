@@ -33,6 +33,8 @@ ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
    $(error The Songbird iTunes agent can only be built on Win32 and Mac)
 endif
 
+SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
+
 CPP_SRCS = main.cpp \
            sbError.cpp \
            sbiTunesAgentProcessor.cpp \
@@ -81,7 +83,8 @@ ifeq (macosx,$(SB_PLATFORM))
                $(NULL)
 
    CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) \
-                     -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION)
+                     -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION) \
+                     -DSB_SIMPLE_PROGRAM=$(SIMPLE_PROGRAM) \
                      $(NULL)
 
    C_INCLUDES = $(srcdir) \
@@ -108,7 +111,6 @@ ifeq (macosx,$(SB_PLATFORM))
    PPDEFINES += $(SB_BRANDING_DEFINES) 
 endif # SB_PLATFORM = macosx
 
-SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
 SIMPLE_PROGRAM_OBJS += $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 ifeq (macosx,$(SB_PLATFORM))

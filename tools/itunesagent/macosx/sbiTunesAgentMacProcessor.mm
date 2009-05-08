@@ -93,10 +93,34 @@ GetSongbirdProfilePath()
 static NSURL *
 GetSongbirdAgentURL()
 {
+  NSURL *agentURL = nil;
+  NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
   NSString *agentBundleID = @"org.songbirdnest.songbirditunesagent";
   NSString *agentPath = 
-    [[NSWorkspace sharedWorkspace] absolutePathForAppBundleWithIdentifier:agentBundleID];
-  NSURL *agentURL = [NSURL fileURLWithPath:agentPath];
+    [workspace absolutePathForAppBundleWithIdentifier:agentBundleID];
+
+  if (!agentPath) {
+    // If no path is returned for the agent bundle identifier, it's because 
+    // the agent has not been registered with Launch Services yet.
+    // This usually happens because the Finder does not look for additional
+    // applications inside of another .app. To fix this, simply register
+    // the path to the agent based on the parent apps path.
+    NSString *parentAppBundleID = @"org.songbirdnest.songbird";
+    NSString *songbirdURL =
+      [workspace absolutePathForAppBundleWithIdentifier:parentAppBundleID];
+
+    // Build the path to the agent.
+    NSString *agentPath = 
+      [NSString stringWithFormat:@"%@/Contents/Resources/%s.app",
+                                 songbirdURL,
+                                 STRINGIZE(SB_SIMPLE_PROGRAM)];
+    // Now register with LS
+    agentURL = [NSURL fileURLWithPath:agentPath];
+    LSRegisterURL((CFURLRef)agentURL, true);
+  }
+  else {
+    agentURL = [NSURL fileURLWithPath:agentPath];
+  }
 
   return agentURL;
 }
