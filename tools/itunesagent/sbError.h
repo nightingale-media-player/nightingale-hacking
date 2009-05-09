@@ -88,6 +88,12 @@ public:
   }
   
   /**
+   * Mark it checked
+   */
+  void Checked() {
+    mChecked = true;
+  }
+  /**
    * Returns the message associated with the error
    */
   std::string const & Message() const {

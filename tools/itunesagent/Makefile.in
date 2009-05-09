@@ -54,33 +54,35 @@ SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 ifeq (windows,$(SB_PLATFORM))
    SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
-                                  version \
-                                  psapi \
-                                  $(NULL)
+                               version \
+                               psapi \
+                               $(NULL)
 
    CPP_INCLUDES += $(srcdir)/windows \
-                   $(DEPS_DIR)/private \
-                   $(NULL)
+                $(DEPS_DIR)/private \
+                $(NULL)
                                                
-   CPP_SRCS += winmain.cpp \
-               sbiTunesAgentAppWatcher.cpp \
-               sbiTunesAgentWindowsProcessor.cpp \
-               sbiTunesLibrary.cpp \
-               $(NULL)
+CPP_SRCS += sbIDispatchPtr.cpp \
+            sbiTunesAgentAppWatcher.cpp \
+            sbiTunesAgentWindowsProcessor.cpp \
+            sbiTunesLibrary.cpp \
+            winmain.cpp \
+            $(NULL)
+
 endif # SB_PLATFORM = windows
 
 ifeq (macosx,$(SB_PLATFORM))
    include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 
    CMM_INCLUDES += $(srcdir) \
-                   $(srcdir)/macosx \
-                   $(MOZSDK_INCLUDE_DIR) \
-                   $(NULL)
+                $(srcdir)/macosx \
+                $(MOZSDK_INCLUDE_DIR) \
+                $(NULL)
 
    CMM_SRCS += sbiTunesAgentMacProcessor.mm \
                sbiTunesLibrary.mm \
                SBNSString+Utils.mm \
-               $(NULL)
+            $(NULL)
 
    CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) \
                      -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION) \

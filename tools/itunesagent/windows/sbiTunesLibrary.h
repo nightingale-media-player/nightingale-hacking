@@ -37,11 +37,8 @@
 #include <tchar.h>
 #include <windows.h>
 
-// Icky icky Win32 macros
-#undef GetFreeSpace
-#include "iTunes.tlh"
-
 #include "sbError.h"
+#include "sbIDispatchPtr.h"
 
 /**
  * This class wraps the iTunes COM API to provide a simpler interface
@@ -81,12 +78,12 @@ public:
    */
   sbError RemovePlaylist(std::wstring const & aPlaylistName);
 private:
-  iTunesLib::IITLibraryPlaylistPtr mLibraryPlaylist;
-  iTunesLib::IITSourcePtr mLibrarySource;
-  iTunesLib::IITPlaylistCollectionPtr mSongbirdPlaylists;
-  iTunesLib::IITUserPlaylistPtr mSongbirdPlaylist;
-  iTunesLib::IITSourcePtr mSongbirdPlaylistSource;
-  iTunesLib::IiTunesPtr miTunesApp;   
+  sbIDispatchPtr mLibraryPlaylist;
+  sbIDispatchPtr mLibrarySource;
+  sbIDispatchPtr mSongbirdPlaylists;
+  sbIDispatchPtr mSongbirdPlaylist;
+  sbIDispatchPtr mSongbirdPlaylistSource;
+  sbIDispatchPtr miTunesApp;   
 };
 
 #endif /* SBITUNESLIBRARY_H_ */

@@ -34,6 +34,9 @@ HRESULT const SB_ITUNES_ERROR_BUSY = 0x8001010a;
 wchar_t const SB_ITUNES_MAIN_LIBRARY_SOURCE_NAME[] = L"Library";
 wchar_t const SB_ITUNES_PLAYLIST_NAME[] = L"Songbird";
 
+wchar_t const ITUNES_APP_PROGID[] = L"iTunes.Application";
+
+
 sbiTunesLibrary::sbiTunesLibrary() {
 }
 
@@ -41,105 +44,160 @@ sbiTunesLibrary::~sbiTunesLibrary() {
 }
 
 /**
- * Returns the error unless it's the busy error
+ * Returns an error message for the COM error, if any
  */
-sbError CheckCOMError(_com_error const & error) {
-  if (error.Error() != SB_ITUNES_ERROR_BUSY) {
+sbError MakeCOMError(HRESULT aError, std::string const & aAction) {
+  if (FAILED(aError)) {
     std::stringstream msg;
-    msg << L"Error: iTunes Exception occurred " << error.Error();
+    msg << "Error: iTunes error [" << aError << "] occurred while " << aAction;
     return sbError(msg.str());
   }
   return sbNoError;
 }
 
-void WaitForCompletion(iTunesLib::IITOperationStatus * aStatus) {
+/**
+ * Returns true if this is the busy error and we need to retry
+ * also perform a sleep so we don't hog the CPU
+ */
+inline
+bool COMBusyError(HRESULT error) {
+  bool const busy = error == SB_ITUNES_ERROR_BUSY;
+  if (busy) {
+    // Sleep for 1/10 second
+    Sleep(100);
+  }
+  return busy; 
+}
+
+/**
+ * Returns true if the variant is a non-null dispatch pointer
+ */
+inline
+bool IsIDispatch(VARIANTARG const & aVar) {
+  return aVar.vt == VT_DISPATCH && aVar.pdispVal != 0;
+}
+
+void WaitForCompletion(IDispatch * aStatus) {
   if (aStatus) {
-    while (aStatus->InProgress) {
+    sbIDispatchPtr status(aStatus);
+    bool inProgress;
+    for (HRESULT hr = status.GetProperty(L"InProgress", inProgress); 
+         SUCCEEDED(hr) && inProgress;
+         hr = status.GetProperty(L"InProgress", inProgress)) {
       Sleep(100);
     }
   }
 }
 
 sbError sbiTunesLibrary::Initialize() {
-  HRESULT hr = CoCreateInstance(__uuidof(iTunesLib::iTunesApp), 
-                                0,
-                                CLSCTX_LOCAL_SERVER,
-                                __uuidof(iTunesLib::IiTunes),
-                                reinterpret_cast<LPVOID*>(&miTunesApp));
-  if (FAILED(hr) || !miTunesApp) {
+  CLSID iTunesClassID;
+  HRESULT hr = CLSIDFromProgID(ITUNES_APP_PROGID,
+                               &iTunesClassID);
+  if (FAILED(hr)) {
+    return sbError("iTunes was not found");
+  }
+  hr = CoCreateInstance(iTunesClassID, 
+                        0,
+                        CLSCTX_LOCAL_SERVER,
+                        __uuidof(IDispatch),
+                        miTunesApp);
+  if (FAILED(hr) || !miTunesApp.get()) {
     return sbError("Failed to initialize the iTunesApp object");
   }
   // Often the iTunes app is busy and we have to retry
   for (;;) {
-    try {
-      // Get the library playlist
-      if (!mLibraryPlaylist) {
-        mLibraryPlaylist = miTunesApp->GetLibraryPlaylist();
-        if (!mLibraryPlaylist) {
-          return sbError("Failed to initialize the library playlist object");
-        }
+    // Get the library playlist
+    if (!mLibraryPlaylist.get()) {
+      hr = miTunesApp.GetProperty(L"LibraryPlaylist", &mLibraryPlaylist);
+      if (COMBusyError(hr)) {
+        continue;
       }
-      // Get the sources for iTunes
-      iTunesLib::IITSourceCollectionPtr sources = miTunesApp->GetSources();
-      if (!sources) {
-        return sbError("Failed to get the source collection");
+      else if (FAILED(hr) || !mLibraryPlaylist.get()) {
+        return sbError("Failed to initialize the library playlist object");
       }
-      // Get the main library source
-      if (!mLibrarySource) {
-        mLibrarySource = sources->GetItemByName(L"Library");
-        if (!mLibrarySource) {
-          return sbError("Failed to initialize the library source object");
-        }
+    }
+    // Get the sources for iTunes
+    sbIDispatchPtr sources;
+    hr = miTunesApp.GetProperty(L"Sources", &sources);
+    if (COMBusyError(hr)) {
+      continue;
+    }
+    else if (FAILED(hr) || !sources.get()) {
+      return sbError("Failed to get the source collection");
+    }
+    // Get the main library source
+    if (!mLibrarySource.get()) {
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(L"Library");
+      VARIANTARG result;
+      VariantInit(&result);
+      hr = sources.Invoke(L"ItemByName", args, result, DISPATCH_PROPERTYGET);  
+      if (COMBusyError(hr)) {
+        continue;
       }
+      else if (FAILED(hr) || !IsIDispatch(result)) {
+        return sbError("Failed to initialize the library source object");
+      }
+      mLibrarySource = result.pdispVal;
+    }
+    if (!mSongbirdPlaylist.get()) {
       // If we haven't gotten the Songbird playlist source then go get it
       // Get the playlists
-      iTunesLib::IITPlaylistCollectionPtr playlists = 
-        mLibrarySource->GetPlaylists();
-      if (!playlists) {
-        playlists = mLibrarySource->GetPlaylists();
-        if (!mLibrarySource) {
-          return sbError("Failed to initialize the playlist collection object");
-        }
+      sbIDispatchPtr playlists;
+      hr = mLibrarySource.GetProperty(L"Playlists", &playlists);
+      if (COMBusyError(hr)) {
+        continue;
+      }
+      else if (FAILED(hr) || !playlists.get()) {
+        return sbError("Failed to initialize the playlist collection object");
       }
       // Find the songbird playlist and source
-      iTunesLib::IITPlaylistPtr playlist = 
-        playlists->GetItemByName(SB_ITUNES_PLAYLIST_NAME);
-      if (!playlist) {
-        playlist = miTunesApp->CreateFolder(SB_ITUNES_PLAYLIST_NAME);
-        if (!playlist) {
+      sbIDispatchPtr playlist;
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(SB_ITUNES_PLAYLIST_NAME);
+      VARIANTARG result;
+      VariantInit(&result);
+      hr = playlists.Invoke(L"ItemByName", args, result, DISPATCH_PROPERTYGET);
+      if (COMBusyError(hr)) {
+        continue;
+      }
+      // Did we get a playlist back, if not create one
+      else if (FAILED(hr) || !IsIDispatch(result)) {
+        sbIDispatchPtr::VarArgs args(1);
+        args.Append(SB_ITUNES_PLAYLIST_NAME);
+        VariantClear(&result);
+        hr = miTunesApp.Invoke(L"CreateFolder", args, result);
+        if (COMBusyError(hr)) {
+          continue;
+        }
+        // Did we create the playlist? If not return an error
+        else if (FAILED(hr) || !IsIDispatch(result)) {
           return sbError("Failed to create the Songbird playlist");
         }
       }
-      hr = playlist.QueryInterface(__uuidof(iTunesLib::IITUserPlaylist),
-                                   &mSongbirdPlaylist);
-      if (FAILED(hr) || !mSongbirdPlaylist) {
-        return sbError("Failed to get user playlist from Songbird playlist");
+      mSongbirdPlaylist = result.pdispVal;
+    }    
+    if (!mSongbirdPlaylistSource.get()) {
+      hr = mSongbirdPlaylist.GetProperty(L"Source", &mSongbirdPlaylistSource);
+      if (COMBusyError(hr)) {
+        continue;
       }
-      
-      if (!mSongbirdPlaylistSource) {
-        mSongbirdPlaylistSource = mSongbirdPlaylist->GetSource();
-        if (!mSongbirdPlaylistSource) {
-          return sbError("Failed to get the source for the Songbird playlist");
-        }
+      else if (FAILED(hr) || !mSongbirdPlaylistSource.get()) {
+        return sbError("Failed to get the source for the Songbird playlist");
       }
-      if (!mSongbirdPlaylists) {
-        mSongbirdPlaylists = mSongbirdPlaylistSource->GetPlaylists();
-        if (!mSongbirdPlaylists) {
-          return sbError("Failed to get the playlist "
-                         "from the Songbird playlist source");
-        }
-      }
-      // All good exit
-      break;
     }
-    catch (_com_error const & COMError) {
-      sbError error = CheckCOMError(COMError);
-      if (error) {
-        return error;
+    if (!mSongbirdPlaylists.get()) {
+      hr = mSongbirdPlaylistSource.GetProperty(L"Playlists", &mSongbirdPlaylists);
+      if (COMBusyError(hr)) {
+        continue;
       }
-      // Give up the CPU so we don't hog it 
-      Sleep(100);
+      else if (FAILED(hr) || !mSongbirdPlaylists.get()) {
+        return sbError("Failed to get the playlist "
+                       "from the Songbird playlist source");
+      }
     }
+    // All good exit
+    break;
   }
   return sbNoError;
 }
@@ -150,7 +208,7 @@ sbError sbiTunesLibrary::Initialize() {
  */
 static void 
 CreateVariantArray(std::deque<std::wstring> const & aStrings,
-                        VARIANT * aVariant) {
+                        VARIANTARG * aVariant) {
   aVariant->vt = VT_ARRAY | VT_BSTR;
   SAFEARRAYBOUND bounds;
   bounds.cElements = aStrings.size();
@@ -169,106 +227,104 @@ CreateVariantArray(std::deque<std::wstring> const & aStrings,
 
 sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource, 
                                    std::deque<std::wstring> const & aTrackPaths) {
-  if (!miTunesApp) {
+  if (!miTunesApp.get()) {
     return sbError("iTunes objects not initialized");
   }
   if (aSource == SB_ITUNES_MAIN_LIBRARY_SOURCE_NAME) {
     // Loop until success
     for (;;) {
-      try {
-        _variant_t var;
-        CreateVariantArray(aTrackPaths, &var);
-        iTunesLib::IITOperationStatusPtr progress = 
-          mLibraryPlaylist->AddFiles(&var);
-        WaitForCompletion(progress);
-        break;
+      VARIANTARG varFiles;
+      CreateVariantArray(aTrackPaths, &varFiles);
+      VARIANTARG result;
+      VariantInit(&result);
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(varFiles);
+      VariantClear(&varFiles);
+      HRESULT hr = mLibraryPlaylist.Invoke(L"AddFiles", args, result);
+      if (COMBusyError(hr)) {
+        continue;
       }
-      catch (_com_error const & COMError) {
-        sbError error = CheckCOMError(COMError);
-        if (error) {
-          return error;
-        }
-        // Give up the CPU so we don't hog it 
-        Sleep(100);
+      else if (FAILED(hr)) {
+        return MakeCOMError(hr, "adding tracks");
       }
+      if (IsIDispatch(result)) {
+        WaitForCompletion(result.pdispVal);
+      }
+      VariantClear(&result);
+      break;
     }
   }
   else {
-    iTunesLib::IITUserPlaylistPtr userPlaylist;
+    sbIDispatchPtr userPlaylist;
     for (;;) {
-      try {
-        iTunesLib::IITPlaylistPtr playlist = mSongbirdPlaylists->GetItemByName(aSource.c_str());
-        if (!playlist) {
-          playlist = mSongbirdPlaylist->CreatePlaylist(aSource.c_str());
-          if (!playlist) {
-            std::ostringstream msg;
-            msg << "Unable to create playlist";
-            return sbError(msg.str());
-          }
-        }
-        userPlaylist = playlist;
-        if (!userPlaylist) {
-          std::ostringstream msg;
-          msg << "Playlist is not a user defined playlist";
-          return sbError(msg.str());
-        }
-        break;
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(aSource);
+      VARIANTARG result;
+      VariantInit(&result);
+      HRESULT hr = mSongbirdPlaylists.Invoke(L"ItemByName", 
+                                             args, 
+                                             result, 
+                                             DISPATCH_PROPERTYGET);
+      if (COMBusyError(hr)) {
+        continue;
       }
-      catch (_com_error const & COMError) {
-        sbError error = CheckCOMError(COMError);
-        if (error) {
-          return error;
+      else if (FAILED(hr) || !IsIDispatch(result)) {
+        VariantClear(&result);
+        sbIDispatchPtr::VarArgs args(1);
+        args.Append(aSource);
+        hr = mSongbirdPlaylist.Invoke(L"CreatePlaylist", args, result);
+        if (FAILED(hr)) {
+          return MakeCOMError(hr, "creating a playlist");
         }
-        // Give up the CPU so we don't hog it 
-        Sleep(100);
       }
+      userPlaylist = result.pdispVal;
+      break;
     }
-    assert(userPlaylist);
+    assert(userPlaylist.get());
     for (;;) {
-      try {
-        _variant_t var;
-        CreateVariantArray(aTrackPaths, &var);
-        iTunesLib::IITOperationStatusPtr progress = 
-          mLibraryPlaylist->AddFiles(&var);
-        WaitForCompletion(progress);
-        break;
+      VARIANTARG var;
+      VariantInit(&var);
+      CreateVariantArray(aTrackPaths, &var);
+      VARIANTARG result;
+      VariantInit(&result);
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(var);
+      VariantClear(&var);
+      HRESULT hr = userPlaylist.Invoke(L"AddFiles", args, result);
+      if (COMBusyError(hr)) {
+        continue;
       }
-      catch (_com_error const & COMError) {
-        sbError error = CheckCOMError(COMError);
-        if (error) {
-          return error;
-        }
-        // Give up the CPU so we don't hog it 
-        Sleep(100);
+      else if (FAILED(hr)) {
+        return MakeCOMError(hr, "adding files");
       }
+      if (IsIDispatch(result)) {
+        WaitForCompletion(result.pdispVal);
+      }
+      VariantClear(&result);
+      break;
     }
   }
   return sbNoError;
 }
 
 sbError sbiTunesLibrary::CreatePlaylist(std::wstring const & aPlaylistName) {
-
+  sbError error = RemovePlaylist(aPlaylistName);
+  // We expect errors so just continue and attempt the create
+  error.Checked();
   for (;;) {
-    try {
-      iTunesLib::IITPlaylistPtr playlist = 
-        mSongbirdPlaylists->GetItemByName(aPlaylistName.c_str());
-      // If the playlist exists wipe it, since we're "creating it"
-      if (playlist) {
-        playlist->Delete();
-      }
-      //_variant_t var(mSongbirdPlaylistSource);
-      //miTunesApp->CreatePlaylistInSource(aPlaylistName.c_str(), &var);
-      mSongbirdPlaylist->CreatePlaylist(aPlaylistName.c_str());
-      break;
+    sbIDispatchPtr::VarArgs args(1);
+    args.Append(aPlaylistName);
+    VARIANTARG result;
+    VariantInit(&result);
+    HRESULT hr = mSongbirdPlaylist.Invoke(L"CreatePlaylist", args, result);
+    if (COMBusyError(hr)) {
+      continue;
     }
-    catch (_com_error const & COMError) {
-      sbError error = CheckCOMError(COMError);
-      if (error) {
-        return error;
-      }
-      // Give up the CPU so we don't hog it 
-      Sleep(100);
+    else if (FAILED(hr)) {
+      return MakeCOMError(hr, "creating playlist");
     }
+    VariantClear(&result);
+    break;
   }
   return sbNoError;
 }
@@ -276,22 +332,32 @@ sbError sbiTunesLibrary::CreatePlaylist(std::wstring const & aPlaylistName) {
 sbError 
 sbiTunesLibrary::RemovePlaylist(std::wstring const & aPlaylistName) {
   for (;;) {
-    try {
-      iTunesLib::IITPlaylistPtr playlist = 
-        mSongbirdPlaylists->GetItemByName(aPlaylistName.c_str());
-      if (playlist) {
-        playlist->Delete();
-      }
-      break;
+    sbIDispatchPtr::VarArgs args(1);
+    args.Append(aPlaylistName);
+    VARIANTARG result;
+    VariantInit(&result);
+    HRESULT hr = mSongbirdPlaylists.Invoke(L"ItemByName", 
+                                           args, 
+                                           result, 
+                                           DISPATCH_PROPERTYGET);
+    if (COMBusyError(hr)) {
+      continue;
     }
-    catch (_com_error const & COMError) {
-      sbError error = CheckCOMError(COMError);
-      if (error) {
-        return error;
-      }
-      // Give up the CPU so we don't hog it 
-      Sleep(100);   
+    else if (FAILED(hr) || !IsIDispatch(result)) {
+      return MakeCOMError(hr, "find playlist");
     }
+    sbIDispatchPtr playlist(result.pdispVal);
+    VariantClear(&result);
+    
+    sbIDispatchPtr::VarArgs deleteArgs;
+    hr = playlist.Invoke(L"Delete");
+    if (COMBusyError(hr)) {
+      continue;
+    }
+    else if (FAILED(hr)) {
+      return MakeCOMError(hr, "deleting playlist");
+    }
+    break;
   }
   return sbNoError;
 }
