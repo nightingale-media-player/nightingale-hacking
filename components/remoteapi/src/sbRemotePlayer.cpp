@@ -65,7 +65,7 @@
 #include <nsDOMJSUtils.h>
 #include <nsIArray.h>
 #include <nsICategoryManager.h>
-#include <nsIContent.h>
+#include <nsIContentViewer.h>
 #include <nsIDocShell.h>
 #include <nsIDocShellTreeItem.h>
 #include <nsIDocShellTreeOwner.h>
@@ -120,7 +120,12 @@ static PRLogModuleInfo* gRemotePlayerLog = nsnull;
 #endif
 
 #undef LOG
+#undef TRACE
 #define LOG(args) PR_LOG(gRemotePlayerLog, PR_LOG_WARN, args)
+#define TRACE(args) PR_LOG(gRemotePlayerLog, PR_LOG_DEBUG, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
 
 static NS_DEFINE_CID(kRemotePlayerCID, SONGBIRD_REMOTEPLAYER_CID);
 
@@ -472,25 +477,28 @@ sbRemotePlayer::InitInternal(nsPIDOMWindow* aWindow)
   NS_ENSURE_SUCCESS( rv, rv );
 
   //
-  // Get the Chrome Document
+  // Get the Chrome Document by going up the docshell tree
   //
   nsIDocShell *docShell = mPrivWindow->GetDocShell();
   NS_ENSURE_STATE(docShell);
+  
+  nsCOMPtr<nsIDocShellTreeItem> treeItem = do_QueryInterface(docShell, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Step up to the chrome layer through the event handler
-  nsCOMPtr<nsIDOMEventTarget> chromeEventHandler;
-  docShell->GetChromeEventHandler( getter_AddRefs(chromeEventHandler) );
-  NS_ENSURE_STATE(chromeEventHandler);
-  nsCOMPtr<nsIContent> chromeElement(
-                                do_QueryInterface( chromeEventHandler, &rv ) );
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<nsIDocShellTreeItem> rootItem;
+  rv = treeItem->GetRootTreeItem(getter_AddRefs(rootItem));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Get the document from the chrome content
-  nsIDocument *doc = chromeElement->GetDocument();
-  NS_ENSURE_STATE(doc);
+  nsCOMPtr<nsIDocShell> rootShell = do_QueryInterface(rootItem, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  mChromeDoc = do_QueryInterface( doc, &rv );
-  NS_ENSURE_SUCCESS( rv, rv );
+  nsCOMPtr<nsIContentViewer> contentViewer;
+  rv = rootShell->GetContentViewer(getter_AddRefs(contentViewer));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = contentViewer->GetDOMDocument(getter_AddRefs(mChromeDoc));
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_STATE(mChromeDoc);
 
   LOG(("sbRemotePlayer::Init() -- registering unload listener"));
   // Have our HandleEvent called on page unloads, so we can unhook commands
