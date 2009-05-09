@@ -101,11 +101,16 @@ static std::wstring GetSongbirdPath() {
   return path;
 }
 
- sbiTunesAgentWindowsProcessor::sbiTunesAgentWindowsProcessor() {
+ sbiTunesAgentWindowsProcessor::sbiTunesAgentWindowsProcessor() : 
+   mAppExistsMutex(0) {
+   
    HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 }
   
 sbiTunesAgentWindowsProcessor::~sbiTunesAgentWindowsProcessor() {
+  if (mAppExistsMutex) {
+    CloseHandle(mAppExistsMutex);
+  }
   miTunesLibrary.Finalize();
   CoUninitialize();
 }
@@ -120,6 +125,14 @@ sbiTunesAgentWindowsProcessor::AddTracks(std::string const & aSource,
   }
   return miTunesLibrary.AddTracks(ConvertUTF8ToUTF16(aSource),
                                   paths);
+}
+
+bool sbiTunesAgentWindowsProcessor::GetIsAgentRunning() {
+  // Create a named mutex to prevent other instances from starting
+  HANDLE mAppExistsMutex = CreateMutex(0, TRUE, L"songbirditunesagent");
+  // Check for other instances. We'll either get the already exist
+  // error or it might fail due to permissions
+  return !mAppExistsMutex || GetLastError() == ERROR_ALREADY_EXISTS;
 }
 
 sbError

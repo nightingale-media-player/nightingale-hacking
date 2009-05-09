@@ -30,6 +30,7 @@
 #import <CoreServices/CoreServices.h>
 #import <CoreFoundation/CoreFoundation.h>
 #import "SBNSString+Utils.h"
+#import "SBNSWorkspace+Utils.h"
 #include <sys/param.h>
 #include <sstream>
 #include "LoginItemsAE.h"
@@ -40,7 +41,10 @@
 #define AGENT_LOG_FILENAME       "itunesexport.log"
 #define AGENT_SHUTDOWN_FILENAME  "songbird_export.shutdown"
 
-#define AGENT_ITUNES_SLEEP_INTERVAL 5000 
+#define AGENT_ITUNES_SLEEP_INTERVAL 5000
+
+
+static const NSString *kAgentBundleId = @"org.songbirdnest.songbirditunesagent";
 
 
 //------------------------------------------------------------------------------
@@ -95,9 +99,8 @@ GetSongbirdAgentURL()
 {
   NSURL *agentURL = nil;
   NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-  NSString *agentBundleID = @"org.songbirdnest.songbirditunesagent";
   NSString *agentPath = 
-    [workspace absolutePathForAppBundleWithIdentifier:agentBundleID];
+    [workspace absolutePathForAppBundleWithIdentifier:kAgentBundleId];
 
   if (!agentPath) {
     // If no path is returned for the agent bundle identifier, it's because 
@@ -236,7 +239,7 @@ sbiTunesAgentMacProcessor::WaitForiTunes()
 bool
 sbiTunesAgentMacProcessor::ErrorHandler(sbError const & aError)
 {
-  // todo write me!
+  NSLog(@"ERROR: %s", aError.Message().c_str());
   return true;
 }
 
@@ -294,7 +297,7 @@ sbiTunesAgentMacProcessor::UnregisterForStartOnLogin()
         agentRange.location != NSNotFound) 
     {
       err = LIAERemove(index);
-      if (!err != noErr) {
+      if (err != noErr) {
         [pool release];
         return sbOSStatusError("Could not remove item from startup list!", err);
       }
@@ -307,6 +310,17 @@ sbiTunesAgentMacProcessor::UnregisterForStartOnLogin()
 
   [pool release];
   return sbNoError;
+}
+
+bool
+sbiTunesAgentMacProcessor::GetIsAgentRunning()
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  bool retval = [NSWorkspace isProcessAlreadyRunning:kAgentBundleId];
+
+  [pool release];
+  return retval;
 }
 
 sbError

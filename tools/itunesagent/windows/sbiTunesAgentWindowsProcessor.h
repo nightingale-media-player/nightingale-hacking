@@ -69,7 +69,12 @@ public:
    * Unregisters the application to startup when the user logs in
    */
   virtual sbError UnregisterForStartOnLogin();
-  
+ 
+  /**
+   * Returns true if the agent is already running as another process.
+   */
+  virtual bool GetIsAgentRunning();
+
   /**
    * Waits for the iTunes process to start
    */
@@ -118,7 +123,12 @@ protected:
 private:
   sbiTunesLibrary miTunesLibrary;
   std::wstring mCurrentTaskFile;
+  HANDLE mAppExistsMutex;
   
+  /**
+   * Callback for the app watcher to know when a shutdown
+   * has been issued.
+   */
   bool ShutdownCallback(bool);
 };
 

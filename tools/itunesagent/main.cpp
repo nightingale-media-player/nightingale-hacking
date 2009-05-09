@@ -37,6 +37,11 @@ int main(int argc, char * argv[]) {
     error = processor->UnregisterForStartOnLogin();
   }
   else {
+    // Don't start duplicate copies of the agent.
+    if (processor->GetIsAgentRunning()) {
+      return 0;
+    }
+    
     // Register the app with the run startup key
     error = processor->RegisterForStartOnLogin();
     if (error) {

@@ -82,7 +82,8 @@ ifeq (macosx,$(SB_PLATFORM))
    CMM_SRCS += sbiTunesAgentMacProcessor.mm \
                sbiTunesLibrary.mm \
                SBNSString+Utils.mm \
-            $(NULL)
+               SBNSWorkspace+Utils.mm \
+               $(NULL)
 
    CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) \
                      -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION) \

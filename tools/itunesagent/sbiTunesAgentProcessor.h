@@ -114,6 +114,12 @@ public:
    * logs in
    */
   virtual sbError UnregisterForStartOnLogin()=0;
+
+  /**
+   * Returns true if the agent is already running as another process.
+   */
+  virtual bool GetIsAgentRunning() = 0;
+
 protected:
   typedef std::deque<std::string> Tracks;
   
