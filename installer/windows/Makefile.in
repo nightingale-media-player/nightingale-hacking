@@ -58,5 +58,5 @@ libs::
 	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/README.txt
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
-	cd $(SONGBIRD_DISTDIR) && $(topsrcdir)/tools/win32/nsis/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V4 $(srcdir)/songbird.nsi
+	cd $(SONGBIRD_DISTDIR) && $(topsrcdir)/tools/win32/nsis/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
 	$(MV) $(SONGBIRD_DISTDIR)/$(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME)

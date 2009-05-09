@@ -24,6 +24,7 @@
 
 !define DefaultDistributionName "PartnerId"
 !define DistHelperEXE         "disthelper.exe"
+!define AgentEXE              "songbirditunesagent.exe"
 
 !define ApplicationIni        "application.ini"
 !define UpdaterIni            "updater.ini"

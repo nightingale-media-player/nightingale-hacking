@@ -41,6 +41,8 @@
    File ${ApplicationIni}
    File ${UpdaterIni}
    File ${FileMainEXE}
+   File ${DistHelperEXE}
+   File ${AgentEXE}
    !ifdef IncludeLib
       File ${CRuntime}
       File ${CPPRuntime}
@@ -102,6 +104,7 @@
    Delete $INSTDIR\${UpdaterIni}
    Delete $INSTDIR\${FileMainEXE}
    Delete $INSTDIR\${DistHelperEXE}
+   Delete $INSTDIR\${AgentEXE}
    !ifndef UsingJemalloc
       Delete $INSTDIR\${CRuntime}
       Delete $INSTDIR\${CPPRuntime}
