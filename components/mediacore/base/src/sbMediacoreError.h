@@ -32,6 +32,13 @@
 #ifndef __SB_MEDIACOREERROR_H__
 #define __SB_MEDIACOREERROR_H__
 
+#if _MSC_VER
+// This is really lame but we have to do it so that sbIMediacoreError
+// gets the right method signature for GetMessage.
+#pragma push_macro("GetMessage")
+#undef GetMessage
+#endif
+
 #include <sbIMediacoreError.h>
 
 #include <nsAutoLock.h>
@@ -56,5 +63,9 @@ protected:
   PRUint32 mCode;
   nsString mMessage;
 };
+
+#if _MSC_VER
+#pragma pop_macro("GetMessage")
+#endif
 
 #endif /* __SB_MEDIACOREERROR_H__ */
