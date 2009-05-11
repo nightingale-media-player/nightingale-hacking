@@ -69,6 +69,7 @@ NS_IMPL_THREADSAFE_CI(sbMediaExportService)
 sbMediaExportService::sbMediaExportService()
   : mIsRunning(PR_FALSE)
   , mEnumState(eNone)
+  , mExportState(eNone)
   , mFinishedExportState(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -141,6 +142,7 @@ sbMediaExportService::InitInternal()
   if (mPrefController->GetShouldExportPlaylists() ||
       mPrefController->GetShouldExportSmartPlaylists())
   {
+    mEnumState = eAllMediaLists;
     rv = mainLibrary->EnumerateItemsByProperty(
         NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
         NS_LITERAL_STRING("1"),
@@ -990,14 +992,15 @@ sbMediaExportService::OnEnumeratedItem(sbIMediaList *aMediaList,
                                        sbIMediaItem *aMediaItem,
                                        PRUint16 *aRetVal)
 {
-  LOG(("%s: mEnumState == %i", __FUNCTION__, mEnumState));
+  LOG(("%s: mEnumState == %i, mExportState == %i", 
+        __FUNCTION__, mEnumState, mExportState));
   
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aRetVal);
   
   *aRetVal = sbIMediaListEnumerationListener::CONTINUE;
   nsresult rv;
-  
+
   // If |mExportState| isn't set, than the service is looking up all of the
   // medialists to figure out if they need to be watched.
   if (mExportState == eNone && mEnumState == eAllMediaLists) {
