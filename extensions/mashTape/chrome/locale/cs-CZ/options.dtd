@@ -28,5 +28,8 @@
 <!ENTITY mtprefs.tab.photo.speed "Rychlost rolování fotografií">
 <!ENTITY mtprefs.tab.photo.faster "Rychleji">
 <!ENTITY mtprefs.tab.photo.slower "Pomaleji">
+<!ENTITY mtprefs.tab.photo.keywords.caption "Klíčová slova pro vyhledávání">
+<!ENTITY mtprefs.tab.photo.keywords "Doplňková klíčová slova pro vyhledávání:">
+<!ENTITY mtprefs.tab.photo.keywords.help "Vyhledávání fotografií můžete doplnit dalšími klíčovými slovy. Klíčová slova oddělujte mezerami, například: živě skupina koncert">
 <!ENTITY mtprefs.tab.video.autoplay "Automaticky přehrát videa">
 <!ENTITY mtprefs.tab.video.autoplay.help "Povolením této volby umožníte poskytovatelům videa automaticky přehrávat videa jedno po druhém. To je užitečné například pro automatické přehrávání všech hudebních videí z MTV. Tato funkce funguje jen s poskytovateli videa, kteří jsou součástí mashTape.">
