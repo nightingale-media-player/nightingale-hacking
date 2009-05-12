@@ -246,10 +246,10 @@ sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
     // startup/login hooks that the agent has setup.
     nsCOMPtr<sbIMediaExportAgentService> agentService =
       do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = agentService->UnregisterExportAgent();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_SUCCEEDED(rv) && agentService) {
+      rv = agentService->UnregisterExportAgent();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
@@ -419,10 +419,10 @@ sbMediaExportService::FinishExportData()
   if (mPrefController->GetShouldStartExportAgent()) {
     nsCOMPtr<sbIMediaExportAgentService> agentService =
       do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = agentService->StartExportAgent();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_SUCCEEDED(rv) && agentService) {
+      rv = agentService->StartExportAgent();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   return NS_OK;
