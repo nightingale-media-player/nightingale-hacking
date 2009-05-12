@@ -93,7 +93,7 @@ var manageMediaPrefsPane = {
       }
 
       if (!self._checkForValidPref(false)) {
-        this._updateUI();
+        self._updateUI();
         event.preventDefault();
         return false;
       }
@@ -207,7 +207,16 @@ var manageMediaPrefsPane = {
   /**
    * The library folder to dump things in
    */
-  
+
+  get _defaultLibraryFolder() {
+    var file = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                 .getService(Ci.sbIDownloadDeviceHelper)
+                 .getDefaultMusicFolder();
+    file.append(SBBrandedString("mediamanager.music_dir",
+                                SBStringBrandShortName()));
+    return file;
+  },
+
   get _libraryFolder() {
     try {
       var prefValue = document.getElementById("manage_media_pref_library_folder")
@@ -218,12 +227,9 @@ var manageMediaPrefsPane = {
     } catch (ex) {
       /* invalid file? boo. use default. */
     }
-
-    var file = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                 .getService(Ci.sbIDownloadDeviceHelper)
-                 .getDefaultMusicFolder();
-    document.getElementById("manage_media_pref_library_folder").value = file;
-    return file;
+    document.getElementById("manage_media_pref_library_folder").value =
+      this._defaultLibraryFolder;
+    return this._defaultLibraryFolder;
   },
   
   set _libraryFolder(aValue) {
@@ -234,9 +240,7 @@ var manageMediaPrefsPane = {
       document.getElementById("manage_media_pref_library_folder").value = aValue;
     } else {
       // set to default folder
-      aValue = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                 .getService(Ci.sbIDownloadDeviceHelper)
-                 .getDefaultMusicFolder();
+      aValue = this._defaultLibraryFolder;
       document.getElementById("manage_media_pref_library_folder").value = aValue;
     }
   },
@@ -297,19 +301,24 @@ var manageMediaPrefsPane = {
         return false;
       }
       var file = managedFolder.file;
+      var missingDefault = false;
       if (!file.exists()) {
-        showErrorNotification(
-            SBFormattedString("prefs.media_management.error.not_exist",
-                              [file.path]));
-        return false;
+        if (file != this._defaultLibraryFolder) {
+          missingDefault = true;
+        } else {
+          showErrorNotification(
+              SBFormattedString("prefs.media_management.error.not_exist",
+                                [file.path]));
+          return false;
+        }
       }
-      if (!file.isDirectory()) {
+      if (!missingDefault && !file.isDirectory()) {
         showErrorNotification(
             SBFormattedString("prefs.media_management.error.not_directory",
                               [file.path]));
         return false;
       }
-      if (!file.isReadable()) {
+      if (!missingDefault && !file.isReadable()) {
         showErrorNotification(
             SBFormattedString("prefs.media_management.error.not_readable",
                               [file.path]));
