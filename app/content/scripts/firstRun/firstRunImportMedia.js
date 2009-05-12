@@ -140,6 +140,13 @@ firstRunImportMediaSvc.prototype = {
    */
 
   saveSettings: function firstRunImportMediaSvc_saveSettings() {
+    // If the user didn't visit this first-run page, then skip saving settings
+    // or setting metrics
+    if (document.getElementById("first_run_itunes_page").getAttribute("next")
+        != "first_run_import_media_page") {
+      return;
+    }
+
     // Dispatch processing of the import settings radio group.
     var importRadioGroupElem = this._getElement("import_radiogroup");
 	var metricsImportType;
