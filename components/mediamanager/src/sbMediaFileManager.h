@@ -94,11 +94,17 @@ private:
   
   nsresult CheckDirectoryForDeletion_Recursive(nsIFile *aDir);
   
-  nsresult GetFormatedFileFolder(nsTArray<nsString> aFormatSpec,
-                                 sbIMediaItem* aMediaItem,
-                                 PRBool aAppendProperty,
-                                 nsString aFileExtension,
-                                 nsString &aRetVal);
+  void     RemoveBadCharacters(nsString& aStringToParse);
+
+  nsresult GetUnknownValue(nsString  aPropertyKey,
+                           nsString& aUnknownValue);
+
+  nsresult GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
+                                  sbIMediaItem*       aMediaItem,
+                                  PRBool              aAppendProperty,
+                                  PRBool              aTrimAtEnd,
+                                  nsString            aFileExtension,
+                                  nsString&           aRetVal);
 
   // Hold on to the services we use very often
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;

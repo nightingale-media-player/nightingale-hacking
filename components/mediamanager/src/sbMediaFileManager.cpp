@@ -422,11 +422,12 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
   fullExtension.Append(NS_ConvertUTF8toUTF16(extension));
 
   // Format the file name
-  rv = GetFormatedFileFolder(mTrackNameConfig,
-                             aMediaItem,
-                             PR_FALSE,
-                             fullExtension,
-                             aFilename);
+  rv = GetFormattedFileFolder(mTrackNameConfig,
+                              aMediaItem,
+                              PR_FALSE,
+                              PR_FALSE,           // Trim the full filename
+                              fullExtension,
+                              aFilename);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If the resulting filename is empty, we have nothing to rename to, skip the
@@ -475,14 +476,107 @@ sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Format the Folder
-  rv = GetFormatedFileFolder(mFolderNameConfig,
-                             aMediaItem,
-                             PR_TRUE,
-                             EmptyString(),
-                             aPath);
+  rv = GetFormattedFileFolder(mFolderNameConfig,
+                              aMediaItem,
+                              PR_TRUE,
+                              PR_TRUE,          // Trim each folder
+                              EmptyString(),
+                              aPath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   *aRetVal = PR_TRUE;
+
+  return NS_OK;
+}
+
+void
+sbMediaFileManager::RemoveBadCharacters(nsString& aStringToParse)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  // Sanitize the string so that it only contains characters that are valid for
+  // a filename
+  aStringToParse.StripChars(FILE_ILLEGAL_CHARACTERS);
+
+  // We also need to strip path separators since filenames and folder names
+  // should not have them.
+  aStringToParse.StripChars(FILE_PATH_SEPARATOR);
+
+  // Windows does not like Spaces at the end of a file/folder name
+  aStringToParse.Trim(" ", PR_FALSE, PR_TRUE);
+
+  // Windows also does not like Space at the begining of the file/folder name
+  // and dots are bad as well since on some operating systems they represent
+  // a hidden file.
+  aStringToParse.Trim(". ", PR_TRUE, PR_FALSE);
+}
+
+nsresult
+sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
+                                    nsString& aUnknownValue)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+
+  // Make sure the result is empty for return in case we can not find
+  // what we should put as Unknown
+  aUnknownValue.Truncate();
+
+  // Use the locale to create the default string for non-existant properties
+  // then store it as a pref and always reuse it (so as to avoid it changing
+  // on us when the user switches to a different locale)
+  nsCString defaultPrefKey;
+  defaultPrefKey.AssignLiteral(PREF_MFM_DEFPROPERTY);
+  defaultPrefKey.Append(NS_ConvertUTF16toUTF8(aPropertyKey));
+  
+  PRBool prefExists;
+  rv = mPrefBranch->PrefHasUserValue(defaultPrefKey.get(), &prefExists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // If the pref exists, reuse it
+  if (prefExists) {
+    nsCString value;
+    rv = mPrefBranch->GetCharPref(defaultPrefKey.get(),
+                                  getter_Copies(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+    aUnknownValue.Assign(NS_ConvertUTF8toUTF16(value));
+  } else {
+    // If not, create it
+    nsCOMPtr<sbIPropertyInfo> info;
+    rv = mPropertyManager->GetPropertyInfo(aPropertyKey,
+                                           getter_AddRefs(info));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // try to get a custom localized string first
+    sbStringBundle stringBundle;
+
+    nsString unknownKey;
+    rv = info->GetLocalizationKey(unknownKey);
+    NS_ENSURE_SUCCESS(rv, rv);
+    unknownKey.Insert(NS_LITERAL_STRING("."), 0);
+    unknownKey.Insert(NS_LITERAL_STRING(STRING_MFM_UNKNOWNPROP), 0);
+    aUnknownValue.Assign(stringBundle.Get(unknownKey, aPropertyKey));
+
+    if (aUnknownValue.Equals(aPropertyKey) ||
+        aUnknownValue.EqualsLiteral("%S"))
+    {
+      // no custom default value, use the fallback
+
+      nsString propertyDisplayName;
+      rv = info->GetDisplayName(propertyDisplayName);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsTArray<nsString> params;
+      params.AppendElement(propertyDisplayName);
+      aUnknownValue.Assign(stringBundle.Format(STRING_MFM_UNKNOWNPROP,
+                                               params,
+                                               "Unknown %S"));
+    }
+
+    rv = mPrefBranch->SetCharPref(defaultPrefKey.get(), 
+                             NS_ConvertUTF16toUTF8(aUnknownValue).get());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -495,15 +589,22 @@ sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
  * \param aAppendProperty - When we find a property with no value use "Unknown"
  *        and if this is TRUE append the name of the property so we get values
  *        like "Unkown Album" or Unknown Artist"
+ * \param aTrimEachProperty - If FALSE then we will wait until all of the properties
+ *        have been put together to trim spaces from the front and end of the
+ *        result, if TRUE then we will trim each property value.
+ * \param aFileExtension - This is the file extension that is going to be
+ *        added on to the string, we use this to remove any from the property
+ *        value so we don't get duplicates.
  * \param aRetVal - Format string representing the new File Name or Folder.
  *        This function will append to the aRetVal not replace.
  */
 nsresult
-sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
-                                          sbIMediaItem*       aMediaItem,
-                                          PRBool              aAppendProperty,
-                                          nsString            aFileExtension,
-                                          nsString&           aRetVal)
+sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
+                                           sbIMediaItem*       aMediaItem,
+                                           PRBool              aAppendProperty,
+                                           PRBool              aTrimEachProperty,
+                                           nsString            aFileExtension,
+                                           nsString&           aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -527,90 +628,40 @@ sbMediaFileManager::GetFormatedFileFolder(nsTArray<nsString>  aFormatSpec,
       nsString propertyValue;
       rv = aMediaItem->GetProperty(configValue, propertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
-      
-      // If the property had no associated value, set it to "unknown"
-      if (propertyValue.IsEmpty()) {
-        // Use the locale to create the default string for non-existant properties
-        // then store it as a pref and always reuse it (so as to avoid it changing
-        // on us when the user switches to a different locale)
-        nsCString defaultPrefKey;
-        defaultPrefKey.AssignLiteral(PREF_MFM_DEFPROPERTY);
-        defaultPrefKey.Append(NS_ConvertUTF16toUTF8(configValue));
-        
-        PRBool prefExists;
-        rv = mPrefBranch->PrefHasUserValue(defaultPrefKey.get(), &prefExists);
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        // If the pref exists, reuse it
-        if (prefExists) {
-          nsCString value;
-          rv = mPrefBranch->GetCharPref(defaultPrefKey.get(),
-                                        getter_Copies(value));
-          NS_ENSURE_SUCCESS(rv, rv);
-          propertyValue = NS_ConvertUTF8toUTF16(value);
-        } else {
-          // If not, create it
-          nsCOMPtr<sbIPropertyInfo> info;
-          rv = mPropertyManager->GetPropertyInfo(configValue,
-                                                 getter_AddRefs(info));
-          NS_ENSURE_SUCCESS(rv, rv);
-          
-          // try to get a custom localized string first
-          sbStringBundle stringBundle;
-
-          nsString unknownKey;
-          rv = info->GetLocalizationKey(unknownKey);
-          NS_ENSURE_SUCCESS(rv, rv);
-          unknownKey.Insert(NS_LITERAL_STRING("."), 0);
-          unknownKey.Insert(NS_LITERAL_STRING(STRING_MFM_UNKNOWNPROP), 0);
-          propertyValue = stringBundle.Get(unknownKey, configValue);
-
-          if (propertyValue.Equals(configValue) ||
-              propertyValue.EqualsLiteral("%S"))
-          {
-            // no custom default value, use the fallback
-  
-            nsString propertyDisplayName;
-            rv = info->GetDisplayName(propertyDisplayName);
-            NS_ENSURE_SUCCESS(rv, rv);
-    
-            nsTArray<nsString> params;
-            params.AppendElement(propertyDisplayName);
-            propertyValue = stringBundle.Format(STRING_MFM_UNKNOWNPROP,
-                                                params,
-                                                "Unknown %S");
-          }
-  
-          rv = mPrefBranch->SetCharPref(defaultPrefKey.get(), 
-                                   NS_ConvertUTF16toUTF8(propertyValue).get());
-          NS_ENSURE_SUCCESS(rv, rv);
+     
+      if (!propertyValue.IsEmpty()) {
+        if (aTrimEachProperty) {
+          RemoveBadCharacters(propertyValue);
         }
-        
-        if (propertyValue.IsEmpty()) {
+
+        // We need to check the Track Name property for an extension at the end
+        // and remove it if it exists.
+        if (!aFileExtension.IsEmpty() &&
+            configValue.EqualsLiteral(SB_PROPERTY_TRACKNAME)) {
+          if (StringEndsWith(propertyValue, aFileExtension)) {
+            propertyValue.SetLength(propertyValue.Length() - aFileExtension.Length());
+          }
+        }
+      }
+
+      // If the property had no associated value, set it to "unknown" if we can
+      if (propertyValue.IsEmpty()) {
+        rv = GetUnknownValue(configValue, propertyValue); 
+        if (NS_FAILED(rv) || propertyValue.IsEmpty()) {
           // there was no data, _and_ the fallback value was empty
           // skip this property and the next separator
           i++;
           continue;
         }
       }
-      // Sanitize the property value so that it only contains characters that
-      // are valid for a filename
-      propertyValue.StripChars(FILE_ILLEGAL_CHARACTERS);
-      // We also need to strip path separators since filenames and folder names
-      // should not have them.
-      propertyValue.StripChars(FILE_PATH_SEPARATOR);
 
-      // We need to check the Track Name property for an extension at the end
-      // and remove it if it exists.
-      if (!aFileExtension.IsEmpty() && configValue.EqualsLiteral(SB_PROPERTY_TRACKNAME)) {
-        if (StringEndsWith(propertyValue, aFileExtension)) {
-          PRInt32 extIndex = propertyValue.RFindChar('.');
-          propertyValue.SetLength(propertyValue.Length() - aFileExtension.Length());
-        }
-      }
-
+      // We finally have something to add
       aRetVal.Append(propertyValue);
     }
+  }
+
+  if (!aTrimEachProperty && !aRetVal.IsEmpty()) {
+    RemoveBadCharacters(aRetVal);
   }
 
   return NS_OK;
