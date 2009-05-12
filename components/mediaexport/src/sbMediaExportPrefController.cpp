@@ -40,6 +40,7 @@ sbMediaExportPrefController::sbMediaExportPrefController()
   : mShouldExportTracks(PR_FALSE)
   , mShouldExportPlaylists(PR_FALSE)
   , mShouldExportSmartPlaylists(PR_FALSE)
+  , mShouldStartExportAgent(PR_FALSE)
   , mListener(nsnull)
 {
 }
@@ -71,6 +72,13 @@ sbMediaExportPrefController::Init(sbMediaExportPrefListener *aListener)
                                this,
                                PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
+  rv = prefBranch->AddObserver(PREF_EXPORT_STARTAGENT,
+                               this,
+                               PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Don't bother checking the result on this pref.
+  prefBranch->GetBoolPref(PREF_EXPORT_STARTAGENT, &mShouldStartExportAgent);
 
   mListener = aListener;
   return NS_OK;
@@ -92,6 +100,8 @@ sbMediaExportPrefController::Shutdown()
   rv = prefBranch->RemoveObserver(PREF_EXPORT_PLAYLISTS, this);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = prefBranch->RemoveObserver(PREF_EXPORT_SMARTPLAYLISTS, this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prefBranch->RemoveObserver(PREF_EXPORT_STARTAGENT, this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mListener = nsnull;
@@ -132,6 +142,9 @@ sbMediaExportPrefController::Observe(nsISupports *aSubject,
   else if (modifiedPref.EqualsLiteral(PREF_EXPORT_SMARTPLAYLISTS)) {
     mShouldExportSmartPlaylists = modifiedValue;
   }
+  else if (modifiedPref.EqualsLiteral(PREF_EXPORT_STARTAGENT)) {
+    mShouldStartExportAgent = modifiedValue;
+  }
 
   if (mListener) {
     rv = mListener->OnBoolPrefChanged(modifiedPref, modifiedValue);
@@ -154,6 +167,12 @@ PRBool
 sbMediaExportPrefController::GetShouldExportAnyPlaylists()
 {
   return mShouldExportPlaylists || mShouldExportSmartPlaylists;
+}
+
+PRBool
+sbMediaExportPrefController::GetShouldStartExportAgent()
+{
+  return mShouldStartExportAgent; 
 }
 
 PRBool

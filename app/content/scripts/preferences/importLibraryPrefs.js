@@ -261,12 +261,23 @@ var importLibraryPrefsUI = {
    * \param aEvent              Import options change event.
    */
 
-  doImportOptionsChange: function
-                           importLibraryPrefsUI_doImportOptionsChange(aEvent) {
+  doOptionsChange: function libraryPrefsUI_doOptionsChange(aEvent, aElement) {
+    // Turn off all child prefs that are parent to the root impor/export
+    // checkboxes.
+    var prefid = aElement.getAttribute("id");
+    var prefValue = aElement.value;
+    if (!prefValue && prefid == "import_tracks_itunes_pref") {
+      document.getElementById("import_playlists_itunes_pref").value = false;
+      document.getElementById("import_smartplaylists_itunes_pref").value = false;
+    }
+    else if (!prefValue && prefid == "export_tracks_itunes_pref") {
+      document.getElementById("export_playlists_itunes_pref").value = false;
+      document.getElementById("export_smartplaylists_itunes_pref").value = false;
+    }
+    
     // Update the UI.
     this._update();
   },
-
 
   //----------------------------------------------------------------------------
   //

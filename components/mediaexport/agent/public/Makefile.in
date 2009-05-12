@@ -22,13 +22,19 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS += agent
+XPIDL_SRCS = sbIMediaExportAgentService.idl \
+             $(NULL)
+
+XPIDL_MODULE = sbMediaExportAgentService.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+LIBSONGBIRD_COMPONENT = sbMediaExportAgentService
 
 include $(topsrcdir)/build/rules.mk

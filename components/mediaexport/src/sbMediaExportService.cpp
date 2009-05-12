@@ -39,6 +39,7 @@
 #include <nsIClassInfoImpl.h>
 #include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
+#include <sbIMediaExportAgentService.h>
 
 
 #ifdef PR_LOGGING
@@ -166,11 +167,11 @@ sbMediaExportService::Shutdown()
 
   rv = observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mPrefController->Shutdown();
+  
+  rv = StopListeningMediaLists();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = StopListeningMediaLists();
+  rv = mPrefController->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -238,6 +239,16 @@ sbMediaExportService::OnBoolPrefChanged(const nsAString & aPrefName,
   // Shutdown if the service is currently running
   else if (mIsRunning && !mPrefController->GetShouldExportAnyMedia()) {
     rv = StopListeningMediaLists();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Since the user has turned off the media exporting prefs, tell the 
+    // export-agent to unregister itself. This call will remove any 
+    // startup/login hooks that the agent has setup.
+    nsCOMPtr<sbIMediaExportAgentService> agentService =
+      do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = agentService->UnregisterExportAgent();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -403,6 +414,16 @@ sbMediaExportService::FinishExportData()
   mStatus = sbIJobProgress::STATUS_SUCCEEDED;
   rv = NotifyListeners();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only start the export agent if we are supposed to.
+  if (mPrefController->GetShouldStartExportAgent()) {
+    nsCOMPtr<sbIMediaExportAgentService> agentService =
+      do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = agentService->StartExportAgent();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

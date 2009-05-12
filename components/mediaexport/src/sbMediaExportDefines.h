@@ -44,6 +44,8 @@ typedef sbStringList::const_iterator        sbStringListIter;
   "songbird.library_exporter.export_playlists"
 #define PREF_EXPORT_SMARTPLAYLISTS \
   "songbird.library_exporter.export_smartplaylists"
+#define PREF_EXPORT_STARTAGENT \
+  "songbird.library_exporter.start_agent"
 
 //------------------------------------------------------------------------------
 // Task file constants

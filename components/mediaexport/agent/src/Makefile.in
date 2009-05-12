@@ -22,41 +22,30 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediaExport
+target := sbMediaExportAgentService
 ifdef DEBUG
 target := $(addsuffix _d,$(target))
 endif
 
-CPP_SRCS = sbMediaExportPrefController.cpp \
-           sbMediaExportTaskWriter.cpp \
-           sbMediaExportService.cpp \
-           sbMediaExportComponent.cpp \
+CPP_SRCS = sbMediaExportITunesAgentComponent.cpp \
+           sbMediaExportITunesAgentService.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/property/public \
-               $(DEPTH)/components/job/public \
-               $(DEPTH)/components/moz/strings/components/public \
-               $(DEPTH)/components/mediaexport/agent/public \
+CPP_INCLUDES = $(DEPTH)/components/mediaexport/agent/public \
                $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threads/src \
-               $(topsrcdir)/components/property/src \
-               $(topsrcdir)/components/library/base/src/static \
                $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_IDL_DIR) \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
@@ -69,17 +58,22 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             xpcomglue_s \
                             $(NULL)
 
+ifeq (macosx,$(SB_PLATFORM))
+  # Needed for nsILocalFileMac.h
+  CPP_INCLUDES += /Developer/Headers/FlatCarbon \
+                  $(NULL)
+ 
+  DYNAMIC_LIB_EXTRA_FLAGS += -mmacosx-version-min=10.4 \
+                             -framework ApplicationServices \
+                             -framework CoreServices \
+                             $(NULL)
+endif
+
 DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                            $(NULL)
 
-DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
-  $(NULL)
-
-LIBSONGBIRD_COMPONENT = SongbirdMediaExport 
+LIBSONGBIRD_COMPONENT = SongbirdMediaExportITunesAgentComponent
 
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk
-

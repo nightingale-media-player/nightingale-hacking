@@ -54,7 +54,7 @@
       prefid="library_file_path_pref"
       name="songbird.library_importer.library_file_path"
       type="unichar"
-      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
     
     <!-- Alert user on unsupported media preference. -->
     <preference
@@ -62,7 +62,7 @@
       prefid="unsupported_media_alert_pref"
       name="songbird.library_importer.unsupported_media_alert.enabled"
       type="bool"
-      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
 
     <!-- Import tracks from iTunes  -->
     <preference 
@@ -70,7 +70,7 @@
       prefid="import_tracks_itunes_pref"
       name="songbird.library_importer.import_tracks"
       type="bool"
-      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
 
     <!-- Import playlists from iTunes -->
     <preference
@@ -94,7 +94,7 @@
       prefid="export_tracks_itunes_pref"
       name="songbird.library_exporter.export_tracks"
       type="bool"
-      onchange="importLibraryPrefsUI.doImportOptionsChange(event);"/>
+      onchange="importLibraryPrefsUI.doOptionsChange(event, this);"/>
 
     <!-- Export playlists to iTunes -->
     <preference
@@ -202,20 +202,20 @@
 
         <spacer height="10" />
 
-        <!-- Export tracks to iTunes checkbox -->
+        <!-- Export tracks checkbox -->
         <checkbox id="export_tracks_itunes_checkbox"
                   preference="export_tracks_itunes_pref"
                   label="&export_tracks_itunes_checkbox;" />
 
         <vbox class="indent" observes="export_tracks_itunes_broadcaster">
          
-          <!-- Export playlists to iTunes checkbox -->
+          <!-- Export playlists checkbox -->
           <checkbox id="export_playlists_itunes_checkbox"
                     preference="export_playlists_itunes_pref"
                     observes="export_tracks_itunes_broadcaster"
                     label="&export_playlists_itunes_checkbox;" />
          
-          <!-- Export smart playlists to iTunes checkbox -->
+          <!-- Export smart playlists checkbox -->
           <checkbox id="export_smartplaylists_itunes_checkbox"
                     preference="export_smartplaylists_itunes_pref"
                     observes="export_tracks_itunes_broadcaster"

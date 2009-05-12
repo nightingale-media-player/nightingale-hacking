@@ -59,6 +59,10 @@ public:
   // Utility method, returns true if any playlist type should be exported.
   PRBool GetShouldExportAnyPlaylists();
 
+  // Utility method, used to determine if the pref has been set to prevent
+  // the export agent from starting.
+  PRBool GetShouldStartExportAgent();
+
   PRBool GetShouldExportTracks();
   PRBool GetShouldExportPlaylists();
   PRBool GetShouldExportSmartPlaylists();
@@ -70,6 +74,7 @@ private:
   PRBool mShouldExportTracks;
   PRBool mShouldExportPlaylists;
   PRBool mShouldExportSmartPlaylists;
+  PRBool mShouldStartExportAgent;
 
   sbMediaExportPrefListener *mListener;  // weak
 };

@@ -478,4 +478,4 @@ pref("songbird.media_management.library.move", true);
 pref("songbird.media_management.library.delete", true);
 pref("songbird.media_management.library.rename", true);
 
-
+pref("songbird.library_exporter.start_agent", true);
