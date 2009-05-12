@@ -48,6 +48,8 @@ var PREF_EXPORT_PLAYLISTS =
            "songbird.library_exporter.export_playlists";
 var PREF_EXPORT_SMARTPLAYLISTS =
            "songbird.library_exporter.export_smartplaylists";
+var PREF_EXPORT_STARTAGENT = 
+           "songbird.library_exporter.start_agent"
 
 var AppPrefs = Cc["@mozilla.org/fuel/application;1"]
                  .getService(Ci.fuelIApplication).prefs;
@@ -128,6 +130,7 @@ function setExportNothing()
   AppPrefs.setValue(PREF_EXPORT_TRACKS, false);
   AppPrefs.setValue(PREF_EXPORT_PLAYLISTS, false);
   AppPrefs.setValue(PREF_EXPORT_SMARTPLAYLISTS, false);
+  AppPrefs.setValue(PREF_EXPORT_STARTAGENT, false);
 }
 
 //
@@ -138,6 +141,7 @@ function setExportTracksOnly()
   AppPrefs.setValue(PREF_EXPORT_TRACKS, true);
   AppPrefs.setValue(PREF_EXPORT_PLAYLISTS, false);
   AppPrefs.setValue(PREF_EXPORT_SMARTPLAYLISTS, false);
+  AppPrefs.setValue(PREF_EXPORT_STARTAGENT, false);
 }
 
 //
@@ -148,6 +152,7 @@ function setExportTracksPlaylists()
   AppPrefs.setValue(PREF_EXPORT_TRACKS, true);
   AppPrefs.setValue(PREF_EXPORT_PLAYLISTS, true);
   AppPrefs.setValue(PREF_EXPORT_SMARTPLAYLISTS, false);
+  AppPrefs.setValue(PREF_EXPORT_STARTAGENT, false);
 }
 
 //
@@ -158,6 +163,7 @@ function setExportTracksPlaylistsSmartPlaylists()
   AppPrefs.setValue(PREF_EXPORT_TRACKS, true);
   AppPrefs.setValue(PREF_EXPORT_PLAYLISTS, true);
   AppPrefs.setValue(PREF_EXPORT_SMARTPLAYLISTS, true);
+  AppPrefs.setValue(PREF_EXPORT_STARTAGENT, false);
 }
 
 //------------------------------------------------------------------------------
