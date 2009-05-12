@@ -151,6 +151,14 @@ public:
                   nsTArray<nsString>& aParams,
                   const char*         aDefault = nsnull);
 
+  nsString Format(const nsAString&    aKey,
+                  const nsAString&    aParam,
+                  const nsAString&    aDefault = SBVoidString());
+
+  nsString Format(const char*         aKey,
+                  const nsAString&    aParam,
+                  const char*         aDefault = nsnull);
+
 
   //----------------------------------------------------------------------------
   //

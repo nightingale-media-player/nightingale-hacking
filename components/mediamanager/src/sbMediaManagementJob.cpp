@@ -68,6 +68,10 @@
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 
+// constants
+// the maximum number of file details to show per type of error message
+#define ERROR_DETAILS_MAX_COUNT 10
+
 class sbMediaManagementJobItem : public sbIMediaManagementJobItem
 {
 public:
@@ -159,6 +163,9 @@ static PRLogModuleInfo* gMediaManagementJobLog = nsnull;
 #else
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
+#if __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
 #endif /* PR_LOGGING */
 
 //------------------------------------------------------------------------------
@@ -177,12 +184,12 @@ sbMediaManagementJob::sbMediaManagementJob() :
     gMediaManagementJobLog = PR_NewLogModule("sbMediaManagementJob");
   }
 #endif
-  TRACE(("sbMediaManagementJob[0x%.8x] - ctor", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
 }
 
 sbMediaManagementJob::~sbMediaManagementJob()
 {
-  TRACE(("sbMediaManagementJob[0x%.8x] - dtor", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
 }
 
 /**
@@ -192,7 +199,7 @@ sbMediaManagementJob::~sbMediaManagementJob()
 void
 sbMediaManagementJob::UpdateProgress()
 {
-  TRACE(("sbMediaManagementJob[0x%.8x] - UpdateProgress", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
   nsresult rv;
   
   if (!NS_IsMainThread()) {
@@ -207,7 +214,7 @@ sbMediaManagementJob::UpdateProgress()
   }
   
   if (mStatus != sbIJobProgress::STATUS_RUNNING) {
-    TRACE(("sbMediaManagementJob::UpdateProgress - Shutting down Job"));
+    TRACE(("%s - Shutting down Job", __FUNCTION__));
     if (mIntervalTimer) {
       mIntervalTimer->Cancel();
       mIntervalTimer = nsnull;
@@ -220,13 +227,61 @@ sbMediaManagementJob::UpdateProgress()
 }
 
 void
-sbMediaManagementJob::SaveError(nsresult aErrorCode)
+sbMediaManagementJob::SaveError(nsresult aErrorCode,
+                                sbMediaManagementJobItem* aJobItem)
 {
+  // figure out the related text
+  nsString errorText;
+  while (aJobItem) {
+    /*
+     * NOTE: this loop exists only as a disguised gigantic if() statement
+     *       so that it is easier to bail out if any condition fails, but
+     *       still not be an exposed function.
+     *       In a language like JavaScript (or GCC-specific C++), this would
+     *       just be a local function instead.
+     */
+    #define _ENSURE_SUCCESS(res, ret)       \
+      if (NS_FAILED(res)) {                 \
+        nsresult __rv = res;                \
+        NS_ENSURE_SUCCESS_BODY(res, ret);   \
+        break;                              \
+      }
+    nsresult rv;
+    nsCOMPtr<sbIMediaItem> item;
+    rv = aJobItem->GetItem(getter_AddRefs(item));
+    _ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIURI> uri;
+    rv = item->GetContentSrc(getter_AddRefs(uri));
+    _ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFileURL> url = do_QueryInterface(uri, &rv);
+    _ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> file;
+    rv = url->GetFile(getter_AddRefs(file));
+    _ENSURE_SUCCESS(rv, rv);
+    rv = file->GetPath(errorText);
+    _ENSURE_SUCCESS(rv, rv);
+    break;
+    #undef _ENSURE_SUCCESS
+  }
+  
   // Save the errors in the error map
-  sbErrorPairResult result = mErrorMap.insert(sbErrorPair(aErrorCode, 1));
-  if (!result.second) {
-    // result already exists so increment
-    result.first->second++;
+  sbErrorMapIter detailIt = mErrorMap.find(aErrorCode);
+  if (detailIt != mErrorMap.end()) {
+    // result already exists
+    detailIt->second.first++;
+    if (!errorText.IsEmpty() &&
+        detailIt->second.second.size() < ERROR_DETAILS_MAX_COUNT)
+    {
+      detailIt->second.second.push_back(errorText);
+    }
+  } else {
+    // no existing list
+    sbErrorDetail detail;
+    detail.first = 1;
+    if (!errorText.IsEmpty()) {
+      detail.second.push_back(errorText);
+    }
+    mErrorMap.insert(sbErrorPair(aErrorCode, detail));
   }
 }
 
@@ -258,7 +313,7 @@ sbMediaManagementJob::AppendErrorToList(PRUint32 aErrorCount,
 nsresult
 sbMediaManagementJob::ProcessNextItem()
 {
-  TRACE(("sbMediaManagementJob[0x%.8x] - ProcessNextItem", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   if (mNextJobItem) {
@@ -268,7 +323,7 @@ sbMediaManagementJob::ProcessNextItem()
         nsresult __rv = rv;
         NS_ENSURE_SUCCESS_BODY(rv, rv);
       #endif
-      SaveError(rv);
+      SaveError(rv, mNextJobItem);
     }
     
     UpdateProgress();
@@ -279,7 +334,7 @@ sbMediaManagementJob::ProcessNextItem()
         nsresult __rv = rv;
         NS_ENSURE_SUCCESS_BODY(rv, rv);
       #endif
-      SaveError(rv);
+      SaveError(rv, nsnull);
     }
   }
   
@@ -309,7 +364,7 @@ sbMediaManagementJob::ProcessNextItem()
 nsresult
 sbMediaManagementJob::ProcessItem(sbMediaManagementJobItem* aJobItem)
 {
-  TRACE(("sbMediaManagementJob[0x%.8x] - ProcessItem", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
   nsresult rv;
   
@@ -331,13 +386,15 @@ sbMediaManagementJob::ProcessItem(sbMediaManagementJobItem* aJobItem)
     rv = mMediaFolder->GetPath(mediaFolderPath);
     NS_ENSURE_SUCCESS(rv, rv);
     mStatusText = Substring(targetFilePath, mediaFolderPath.Length());
-    TRACE(("%s: setting status text to truncated value %s",
+    TRACE(("%s[0x%.8x]: setting status text to truncated value %s",
            __FUNCTION__,
+           this,
            NS_ConvertUTF16toUTF8(mStatusText).get()));
   } else {
     mStatusText = targetFilePath;
-    TRACE(("%s: setting status text to full path %s",
+    TRACE(("%s[0x%.8x]: setting status text to full path %s",
            __FUNCTION__,
+           this,
            NS_ConvertUTF16toUTF8(mStatusText).get()));
   }
 
@@ -377,7 +434,7 @@ sbMediaManagementJob::ProcessItem(sbMediaManagementJobItem* aJobItem)
            __FUNCTION__,
            NS_ConvertUTF16toUTF8(targetFilePath).get()));
     #endif
-    SaveError(NS_ERROR_FILE_COPY_OR_MOVE_FAILED);
+    SaveError(NS_ERROR_FILE_COPY_OR_MOVE_FAILED, aJobItem);
   }
 
   return NS_OK;
@@ -389,7 +446,7 @@ sbMediaManagementJob::FindNextItem(sbMediaManagementJobItem** _retval)
   NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  TRACE(("sbMediaManagementJob[0x%.8x] - FindNextItem", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   while (PR_TRUE) {
@@ -524,7 +581,7 @@ sbMediaManagementJob::FindNextItem(sbMediaManagementJobItem** _retval)
 NS_IMETHODIMP
 sbMediaManagementJob::Notify(nsITimer* aTimer)
 {
-  TRACE(("sbMediaManagementJob[0x%.8x] - Notify", this));
+  TRACE(("%s[0x%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aTimer);
   nsresult rv;
 
@@ -549,7 +606,7 @@ sbMediaManagementJob::Notify(nsITimer* aTimer)
 NS_IMETHODIMP
 sbMediaManagementJob::HasMoreElements(PRBool *_retval)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - HasMoreElements", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = (mCompletedItemCount < mTotalItemCount) || mNextJobItem;
@@ -560,7 +617,7 @@ sbMediaManagementJob::HasMoreElements(PRBool *_retval)
 NS_IMETHODIMP
 sbMediaManagementJob::GetNext(nsISupports **_retval)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetNext", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
   
@@ -586,7 +643,7 @@ sbMediaManagementJob::GetNext(nsISupports **_retval)
 NS_IMETHODIMP
 sbMediaManagementJob::Init(sbIMediaList *aMediaList)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - Init", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_FALSE(mMediaList, NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediaList);
   
@@ -661,7 +718,7 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList)
 NS_IMETHODIMP
 sbMediaManagementJob::OrganizeMediaList()
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - OrganizeMediaList", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_TRUE(mMediaList, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
   
@@ -692,7 +749,7 @@ sbMediaManagementJob::OrganizeMediaList()
 NS_IMETHODIMP
 sbMediaManagementJob::GetStatus(PRUint16* aStatus)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetStatus", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aStatus );
   *aStatus = mStatus;
   return NS_OK;
@@ -702,7 +759,7 @@ sbMediaManagementJob::GetStatus(PRUint16* aStatus)
 NS_IMETHODIMP
 sbMediaManagementJob::GetStatusText(nsAString& aText)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetStatusText", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   sbStringBundle bundle;
 
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {
@@ -720,7 +777,7 @@ sbMediaManagementJob::GetStatusText(nsAString& aText)
 NS_IMETHODIMP
 sbMediaManagementJob::GetTitleText(nsAString& aText)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetTitleText", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   sbStringBundle bundle;
 
   if (mStatus == sbIJobProgress::STATUS_RUNNING) {
@@ -744,7 +801,7 @@ sbMediaManagementJob::GetTitleText(nsAString& aText)
 NS_IMETHODIMP
 sbMediaManagementJob::GetProgress(PRUint32* aProgress)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetProgress", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aProgress );
 
   *aProgress = mCompletedItemCount;
@@ -755,7 +812,7 @@ sbMediaManagementJob::GetProgress(PRUint32* aProgress)
 NS_IMETHODIMP
 sbMediaManagementJob::GetTotal(PRUint32* aTotal)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetTotal", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aTotal );
 
   // A 0 value makes the progress bar indeterminate
@@ -767,10 +824,17 @@ sbMediaManagementJob::GetTotal(PRUint32* aTotal)
 NS_IMETHODIMP
 sbMediaManagementJob::GetErrorCount(PRUint32* aCount)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetErrorCount", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aCount );
 
-  *aCount = mErrorMap.size();
+  *aCount = 0;
+
+  sbErrorMapIter it;
+  sbErrorMapIter end = mErrorMap.end();
+  for (it = mErrorMap.begin(); it != end; ++it) {
+    *aCount += 1 + it->second.second.size();
+  }
+  TRACE(("%s - found %n errors", __FUNCTION__, aCount));
   return NS_OK;
 }
 
@@ -778,7 +842,7 @@ sbMediaManagementJob::GetErrorCount(PRUint32* aCount)
 NS_IMETHODIMP
 sbMediaManagementJob::GetErrorMessages(nsIStringEnumerator** aMessages)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetErrorMessages", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMessages);
 
   nsTArray<nsString> errorMessages;
@@ -787,23 +851,30 @@ sbMediaManagementJob::GetErrorMessages(nsIStringEnumerator** aMessages)
   /**
    * Iterate through the grouped errors we have collected.
    */
-  sbErrorMapIter begin = mErrorMap.begin();
-  sbErrorMapIter end = mErrorMap.end();
   sbErrorMapIter currError;
+  sbErrorMapIter end = mErrorMap.end();
   PRUint32 unknownCount = 0;
-  nsString errorKeyBase;
-  errorKeyBase.AssignLiteral("mediamanager.errors.");
-  for (currError = begin; currError != end; ++currError++) {
-    nsString errorKey;
-    errorKey.Assign(errorKeyBase);
+  sbStringBundle bundle;
+  NS_NAMED_LITERAL_STRING(errorKeyBase, "mediamanager.errors.");
+  for (currError = mErrorMap.begin(); currError != end; ++currError) {
+    nsString errorKey(errorKeyBase);
     AppendInt(errorKey, (*currError).first);
     TRACE(("sbMediaManagementJob: Lookup Error [%s]",
            NS_ConvertUTF16toUTF8(errorKey).get()));
-    PRBool foundError = AppendErrorToList((*currError).second,
+    PRBool foundError = AppendErrorToList((*currError).second.first,
                                           errorKey,
                                           errorMessages);
     if (!foundError) {
-      unknownCount += (*currError).second;
+      unknownCount += (*currError).second.first;
+    }
+    std::list<nsString>::const_iterator msgIt = currError->second.second.begin();
+    std::list<nsString>::const_iterator msgEnd = currError->second.second.end();
+    for (/* msgIt = begin */; msgIt != msgEnd; ++msgIt) {
+      TRACE(("%s - adding error %s", __FUNCTION__, NS_ConvertUTF16toUTF8(*msgIt).get()));
+      nsString message = bundle.Format(NS_LITERAL_STRING("prefs.media_management.error.details"),
+                                       *msgIt,
+                                       *msgIt);
+      errorMessages.AppendElement(message);
     }
   }
   
@@ -827,7 +898,7 @@ sbMediaManagementJob::GetErrorMessages(nsIStringEnumerator** aMessages)
 NS_IMETHODIMP
 sbMediaManagementJob::AddJobProgressListener(sbIJobProgressListener *aListener)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - AddJobProgressListener", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aListener);
 
   PRInt32 index = mListeners.IndexOf(aListener);
@@ -843,7 +914,7 @@ sbMediaManagementJob::AddJobProgressListener(sbIJobProgressListener *aListener)
 NS_IMETHODIMP
 sbMediaManagementJob::RemoveJobProgressListener(sbIJobProgressListener* aListener)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - RemoveJobProgressListener", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aListener);
 
   PRInt32 indexToRemove = mListeners.IndexOf(aListener);
@@ -869,7 +940,7 @@ sbMediaManagementJob::RemoveJobProgressListener(sbIJobProgressListener* aListene
 NS_IMETHODIMP
 sbMediaManagementJob::GetCrop(nsAString & aCrop)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetCrop", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   aCrop.AssignLiteral("center");
   return NS_OK;
 }
@@ -884,7 +955,7 @@ sbMediaManagementJob::GetCrop(nsAString & aCrop)
 NS_IMETHODIMP
 sbMediaManagementJob::GetCanCancel(PRBool* _retval)
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - GetCanCancel", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   *_retval = PR_TRUE;
   return NS_OK;
 }
@@ -893,7 +964,7 @@ sbMediaManagementJob::GetCanCancel(PRBool* _retval)
 NS_IMETHODIMP
 sbMediaManagementJob::Cancel()
 {
-  TRACE(("sbMediaManagementJob[0x%8.x] - Cancel", this));
+  TRACE(("%s[0x%8.x]", __FUNCTION__, this));
 
   // Indicate that we have stopped and call UpdateProgress to take care of
   // cleanup.

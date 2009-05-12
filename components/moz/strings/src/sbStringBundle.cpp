@@ -55,6 +55,25 @@
 // Mozilla imports.
 #include <nsIStringBundle.h>
 #include <nsServiceManagerUtils.h>
+#include <prlog.h>
+
+/**
+ * logging
+ * 
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbStringBundle:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gStringBundleLog = nsnull;
+#define TRACE(args) PR_LOG(gStringBundleLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gStringBundleLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 
 //------------------------------------------------------------------------------
@@ -74,6 +93,14 @@
 sbStringBundle::sbStringBundle(const char* aURI)
 {
   nsresult rv;
+  
+#ifdef PR_LOGGING
+  if (!gStringBundleLog) {
+    gStringBundleLog = PR_NewLogModule("sbStringBundle");
+  }
+#endif
+
+  TRACE(("%s[%8.x] - %s", __FUNCTION__, this, aURI));
 
   // Get the Songbird string bundle service.
   mStringBundleService = do_GetService(SB_STRINGBUNDLESERVICE_CONTRACTID, &rv);
@@ -105,6 +132,14 @@ sbStringBundle::sbStringBundle(const char* aURI)
 sbStringBundle::sbStringBundle(nsIStringBundle* aBundle)
 {
   nsresult rv;
+
+#ifdef PR_LOGGING
+  if (!gStringBundleLog) {
+    gStringBundleLog = PR_NewLogModule("sbStringBundle");
+  }
+#endif
+
+  TRACE(("%s[%8.x] - (existing bundle %.08x)", __FUNCTION__, this, aBundle));
 
   // Get the Songbird string bundle service.
   mStringBundleService = do_GetService(SB_STRINGBUNDLESERVICE_CONTRACTID, &rv);
@@ -139,6 +174,12 @@ sbStringBundle::Get(const nsAString& aKey,
 {
   nsString stringValue;
   nsresult rv;
+  
+  TRACE(("%s[%8.x] - %s (default %s)",
+         __FUNCTION__,
+         this,
+         NS_ConvertUTF16toUTF8(aKey).get(),
+         NS_ConvertUTF16toUTF8(aDefault).get()));
 
   // Get the default string value.
   if (!aDefault.IsVoid())
@@ -168,6 +209,8 @@ nsString
 sbStringBundle::Get(const char* aKey,
                     const char* aDefault)
 {
+  TRACE(("%s[%8.x] - %s (default %s)", __FUNCTION__, this, aKey, aDefault));
+
   // Convert the key.
   nsAutoString key;
   if (aKey)
@@ -207,6 +250,12 @@ sbStringBundle::Format(const nsAString&    aKey,
   nsString stringValue;
   nsresult rv;
 
+  TRACE(("%s[%8.x] - %s (has params) (default %s)",
+         __FUNCTION__,
+         this,
+         NS_ConvertUTF16toUTF8(aKey).get(),
+         NS_ConvertUTF16toUTF8(aDefault).get()));
+
   // Get the default string value.
   if (!aDefault.IsVoid())
     stringValue = aDefault;
@@ -245,6 +294,12 @@ sbStringBundle::Format(const char*         aKey,
                        nsTArray<nsString>& aParams,
                        const char*         aDefault)
 {
+  TRACE(("%s[%8.x] - %s (has params) (default %s)",
+         __FUNCTION__,
+         this,
+         aKey,
+         aDefault));
+
   // Convert the key.
   nsAutoString key;
   if (aKey)
@@ -262,6 +317,39 @@ sbStringBundle::Format(const char*         aKey,
   return Format(key, aParams, defaultString);
 }
 
+nsString
+sbStringBundle::Format(const nsAString&    aKey,
+                       const nsAString&    aParam,
+                       const nsAString&    aDefault)
+{
+  TRACE(("%s[%8.x] - %s (param %s) (default %s)",
+         __FUNCTION__,
+         this,
+         NS_ConvertUTF16toUTF8(aKey).get(),
+         NS_ConvertUTF16toUTF8(aParam).get(),
+         NS_ConvertUTF16toUTF8(aDefault).get()));
+
+  nsTArray<nsString> params(1);
+  params.AppendElement(aParam);
+  return Format(aKey, params, aDefault);
+}
+
+nsString
+sbStringBundle::Format(const char*         aKey,
+                       const nsAString&    aParam,
+                       const char*         aDefault)
+{
+  TRACE(("%s[%8.x] - %s (param %s) (default %s)",
+         __FUNCTION__,
+         this,
+         aKey,
+         aParam,
+         aDefault));
+
+  nsTArray<nsString> params(1);
+  params.AppendElement(aParam);
+  return Format(aKey, params, aDefault);
+}
 
 //------------------------------------------------------------------------------
 //
@@ -280,6 +368,8 @@ nsresult
 sbStringBundle::LoadBundle(const char* aURI)
 {
   nsresult rv;
+  
+  TRACE(("%s[%8.x] - loading bundle %s", __FUNCTION__, this, aURI));
 
   // Create the string bundle.
   nsCOMPtr<nsIStringBundle> bundle;
@@ -305,6 +395,8 @@ nsresult
 sbStringBundle::LoadBundle(nsIStringBundle* aBundle)
 {
   nsresult rv;
+
+  TRACE(("%s[%8.x] - existing bundle [%8.x]", __FUNCTION__, this, aBundle));
 
   // Add the string bundle to the list of string bundles.
   mBundleList.AppendObject(aBundle);
@@ -341,6 +433,10 @@ sbStringBundle::LoadBundle(nsIStringBundle* aBundle)
 nsresult
 sbStringBundle::ApplySubstitutions(nsAString& aString)
 {
+  TRACE(("%s[%8.x] - applying %s",
+         __FUNCTION__,
+         this,
+         NS_ConvertUTF16toUTF8(aString).get()));
   // Apply all string substitutions.
   PRInt32 currentOffset = 0;
   do {

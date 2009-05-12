@@ -67,6 +67,7 @@
 #include <nsTArray.h>
 
 // Other imports
+#include <list>
 #include <map>
 
 //
@@ -123,7 +124,7 @@ public:
 private:
   void      UpdateProgress();
   
-  void      SaveError(nsresult aErrorCode);
+  void      SaveError(nsresult aErrorCode, sbMediaManagementJobItem* aJobItem);
   PRBool    AppendErrorToList(PRUint32 aErrorCount,
                               nsString aErrorKey,
                               nsTArray<nsString> &aErrorMessages);
@@ -139,10 +140,11 @@ protected:
   /**
    * typedefs for the Error grouping.
    */
-  typedef std::map<nsresult, PRUint32>    sbErrorMap;
-  typedef sbErrorMap::iterator            sbErrorMapIter;
-  typedef std::pair<sbErrorMapIter, bool> sbErrorPairResult;
-  typedef sbErrorMap::value_type          sbErrorPair;
+  typedef std::pair<PRUint32, std::list<nsString> > sbErrorDetail;
+  typedef std::map<nsresult, sbErrorDetail>         sbErrorMap;
+  typedef sbErrorMap::iterator                      sbErrorMapIter;
+  typedef std::pair<sbErrorMapIter, bool>           sbErrorPairResult;
+  typedef sbErrorMap::value_type                    sbErrorPair;
 
   // We need to hold onto the media list so we can get the items
   nsCOMPtr<sbIMediaList>                  mMediaList;
