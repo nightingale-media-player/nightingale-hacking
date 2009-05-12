@@ -40,6 +40,7 @@
 #define AGENT_ERROR_FILENAME     "itunesexporterrors.txt"
 #define AGENT_LOG_FILENAME       "itunesexport.log"
 #define AGENT_SHUTDOWN_FILENAME  "songbird_export.shutdown"
+#define AGENT_ERROR_FILENAME     "itunesexporterrors.txt"
 
 #define AGENT_ITUNES_SLEEP_INTERVAL 5000
 
@@ -239,7 +240,12 @@ sbiTunesAgentMacProcessor::WaitForiTunes()
 bool
 sbiTunesAgentMacProcessor::ErrorHandler(sbError const & aError)
 {
-  NSLog(@"ERROR: %s", aError.Message().c_str());
+  std::string path([GetSongbirdProfilePath() UTF8String]);
+  path += AGENT_ERROR_FILENAME;
+  std::ofstream error(path.c_str());
+  if (error) {
+    error << "ERROR: " << aError.Message() << std::endl;
+  }
   return true;
 }
 
