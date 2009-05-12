@@ -38,7 +38,7 @@ CPP_SRCS = sbMediaExportITunesAgentComponent.cpp \
            sbMediaExportITunesAgentService.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/mediaexport/agent/public \
+CPP_INCLUDES = $(DEPTH)/components/mediaexport/public \
                $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/nspr \

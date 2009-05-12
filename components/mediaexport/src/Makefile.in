@@ -44,7 +44,7 @@ CPP_INCLUDES = $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/job/public \
                $(DEPTH)/components/moz/strings/components/public \
-               $(DEPTH)/components/mediaexport/agent/public \
+               $(DEPTH)/components/mediaexport/public \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
