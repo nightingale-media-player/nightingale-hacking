@@ -976,6 +976,8 @@ $(document).ready(function() {
 		LastfmTuner.myCountry =
 			data.getElementsByTagName("countryName")[0].textContent;
 		dump("Country: " + LastfmTuner.myCountry + "\n");
+		if (LastfmTuner.myCountry == "(Unknown Country?)")
+			LastfmTuner.myCountry = "UNITED STATES";
 		LastfmTuner.svc.apiCall('geo.getTopArtists', {
 			country : LastfmTuner.myCountry
 		}, function response(success, xml) {
