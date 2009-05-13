@@ -132,7 +132,7 @@ sbError sbiTunesAgentProcessor::AddTrack(std::string const & aSource,
   if (mLastSource.empty()) {
     mLastSource = aSource;
   }
-  else if (mLastSource != aSource) {
+  else if (mLastSource != aSource || mTrackBatch.size() >= BATCH_SIZE) {
     sbError const & error = AddTracks(mLastSource,
                                       mTrackBatch);
     if (error && !ErrorHandler(error)) {
