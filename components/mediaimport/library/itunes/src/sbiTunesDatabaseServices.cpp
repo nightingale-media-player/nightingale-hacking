@@ -130,7 +130,7 @@ sbiTunesDatabaseServices::RemoveSBIDEntry(nsAString const & aSongbirdID) {
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsString sql;
-  sql.AppendLiteral("DELETE FROM itunes_id_map WHERE sonbird_id = \"");
+  sql.AppendLiteral("DELETE FROM itunes_id_map WHERE songbird_id = \"");
   sql.Append(aSongbirdID);
   sql.AppendLiteral("\"");
   rv = mDBQuery->AddQuery(sql);
