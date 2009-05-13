@@ -48,24 +48,6 @@
 #include <set>
 #include <map>
 
-typedef std::set<nsString> sbStringSet;
-typedef std::map<nsString, PRUint32> sbStringMap;
-
-typedef enum {
-  eNone  = 0,
-  eRemoval = 1,
-  eChanged = 2,
-  eMoveOrRename = 3,
-} EProcessType;
-
-typedef enum {
-  eNotSupported = 0,  // Service is not supported on current platform
-  eDisabled     = 1,  // Service is disabled (by user pref)
-  eStarted      = 2,  // Service has initialized internally, not watching yet.
-  eWatching     = 3,  // Service is now watching changes
-} EWatchFolderState;
-
-
 class sbWatchFolderService : public sbIWatchFolderService,
                              public sbIFileSystemListener,
                              public sbIMediaListEnumerationListener,
@@ -90,6 +72,32 @@ public:
                                 const char* aLoaderStr,
                                 const char* aType,
                                 const nsModuleComponentInfo *aInfo);
+
+protected:
+  typedef std::set<nsString> sbStringSet;
+  typedef sbStringSet::iterator sbStringSetIter;
+  struct ignorePathData_t {
+    PRInt32 depth; // number of calls to addIgnorePath()
+    PRInt32 count; // number from addIgnoreCount()
+    ignorePathData_t() : depth(0), count(0) {}
+    ignorePathData_t(PRInt32 aDepth, PRInt32 aCount)
+      : depth(aDepth), count(aCount) {}
+  };
+  typedef std::map<nsString, ignorePathData_t> sbStringMap;
+  
+  typedef enum {
+    eNone  = 0,
+    eRemoval = 1,
+    eChanged = 2,
+    eMoveOrRename = 3,
+  } EProcessType;
+  
+  typedef enum {
+    eNotSupported = 0,  // Service is not supported on current platform
+    eDisabled     = 1,  // Service is disabled (by user pref)
+    eStarted      = 2,  // Service has initialized internally, not watching yet.
+    eWatching     = 3,  // Service is now watching changes
+  } EWatchFolderState;
 
 protected:
   //
@@ -179,9 +187,6 @@ protected:
   //
   nsresult DecrementIgnoredPathCount(const nsAString & aFilePath, 
                                      PRBool *aIsIgnoredPath);
-
-protected:
-  static const PRInt32 IGNORE_ALWAYS = -1;
 
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;

@@ -763,9 +763,9 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
       do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  rv = mWatchFolderService->AddIgnorePath(oldPath, 1);
+  rv = mWatchFolderService->AddIgnoreCount(oldPath, 1);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = mWatchFolderService->AddIgnorePath(newPath, 1);
+  rv = mWatchFolderService->AddIgnoreCount(newPath, 1);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the new filename

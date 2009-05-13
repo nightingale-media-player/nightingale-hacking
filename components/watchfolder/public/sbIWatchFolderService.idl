@@ -26,7 +26,7 @@
 
 #include "nsISupports.idl"
 
-[scriptable, uuid(4187f9fa-1dd2-11b2-aa06-fa9e44f7e445)]
+[scriptable, uuid(a33307c2-1dd1-11b2-ad85-c03a5b21f0a3)]
 interface sbIWatchFolderService : nsISupports
 {
   //
@@ -43,23 +43,44 @@ interface sbIWatchFolderService : nsISupports
   //
   readonly attribute boolean isRunning;
 
-  //
-  // \brief Add a absolute file path to be ignored by the watch folder service.
-  //        This path will be ignored until it is removed via a call to
-  //        |removeIgnorePath()|.
-  // \param aFilePath The absolute path to start ignoring.
-  // \param aIgnoreCount The number of times to ignore; 0 means infinite.  If
-  //        The item is already being ignored, the count is incremented.
-  // \see   removeIgnorePath
-  //
-  void addIgnorePath(in AString aFilePath, [optional] in long aIgnoreCount);
+  /**
+   * \brief Add a absolute file path to be ignored by the watch folder service.
+   *        This path will be ignored until it is removed via a call to
+   *        |removeIgnorePath()|.  Each call to |addIgnorePath()| should be
+   *        balanced by a call to |removeIgnorePath()|.
+   *        When used in conjunction with |addIgnoreCount()|, the count will be
+   *        decremented as normal when the path is ignored.  The path will
+   *        continue to be ignored when the count reaches zero.
+   * \param aFilePath The absolute path to start ignoring.
+   */
+  void addIgnorePath(in AString aFilePath);
 
-  //
-  // \brief Remove a absolute file path from the ignored paths list of the
-  //        watch folder service. All future events at the specified path
-  //        will be processed by the watch folders service.
-  // \param aFilePath The absolute path to stop ignoring.
-  //
+  /**
+   * \brief Remove an absolute file path from the ignored paths list of the
+   *        watch folder service. All future events at the specified path
+   *        will be processed by the watch folders service.
+   *        When used in conjunction with |addIgnoreCount()|, any remaining
+   *        events specified by the count will still be ignored.
+   * \param aFilePath The absolute path to stop ignoring.
+   */
   void removeIgnorePath(in AString aFilePath);
+  
+  /**
+   * \brief Add an absolute file path to be ignore by the watch folder service.
+   *        This path will be ignored for the given number of events, which
+   *        includes file addition, deletion, or change.
+   *        When used in conjunction with |addIgnorePath()| and
+   *        |removeIgnorPath()|, the counter will be decremented as events are
+   *        ignored.  The path may continue to be ignored after the count
+   *        reaches zero if any calls to |addIgnorePath()| are not balanced by
+   *        calls to |removeIgnorePath()|.
+   * \param aFilePath The absolute path to ignore.
+   * \param aCount The number of times to ignore events for the given path.
+   *               Passing in zero will have no effect.
+   *               Passing in a negative number will decrement the previously
+   *               recorded count.
+   *               Attempts to decrement the count below zero will be silently
+   *               clamped to zero.
+   */
+  void addIgnoreCount(in AString aFilePath, in long aCount);
 };
-
