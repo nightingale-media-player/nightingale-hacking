@@ -35,7 +35,7 @@ interface sbIStringMap;
  * pieces in the iTunes XML file. You implement this interface in order to 
  * handle getting data from the iTunes XML file
  */
-[scriptable, uuid(25c9acc4-1dd2-11b2-be1c-9c59f8a5d704)] 
+[scriptable, uuid(9dd1dbc8-2e7a-4554-83d7-f0431367cbb9)] 
 interface sbIiTunesXMLParserListener : nsISupports {
   /**
    * Called when the top level properties have been processed
@@ -53,6 +53,9 @@ interface sbIiTunesXMLParserListener : nsISupports {
    *        this call.
    */
   void onTrack(in sbIStringMap aProperties);
+  /**
+   * Called when all the tracks have been read
+   */
   void onTracksComplete();
   /**
    * Called when a playlist has been processed
@@ -70,6 +73,13 @@ interface sbIiTunesXMLParserListener : nsISupports {
    * \param aErrorMessage Description of the error where it occured
    * \@RETURN return true if processing should continue or false to stop
    */
-   void onPlaylistsComplete();
   boolean onError(in AString aErrorMessage);
+  /**
+   * Called when all the playlists have been read
+   */
+  void onPlaylistsComplete();
+  /**
+   * Called for progress through the XML stream
+   */
+  void OnProgress(in PRInt64 aBytesRead);
 };

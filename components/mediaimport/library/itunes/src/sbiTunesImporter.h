@@ -103,7 +103,7 @@ private:
   /**
    * Batch size for doing work
    */
-  static PRUint32 const BATCH_SIZE = 500;
+  static PRUint32 const BATCH_SIZE = 100;
   /**
    * Data format version for the database
    */
@@ -251,10 +251,6 @@ private:
    */
   sbiTunesImporterStatusPtr mStatus;
   /**
-   * Stream size
-   */
-  PRUint32 mStreamSize;
-  /**
    * Timing service
    */
 #ifdef SB_ENABLE_TEST_HARNESS
@@ -284,7 +280,11 @@ private:
    * Number of unsupported media items we've encountered
    */
   PRUint32 mUnsupportedMediaCount;
-
+  /**
+   * Number of bytes read during XML parsing
+   */
+  PRInt64 mBytesRead;
+  
   /**
    * Cancels the current import
    */

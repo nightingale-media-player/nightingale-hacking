@@ -79,33 +79,25 @@ protected:
   ~sbiTunesXMLParser();
 private:
   /**
-   * Various states we're in as we traverse the XML file
-   * NOTE: *_VALUE entries must follow their *_NAME counterparts which
-   * must follow their base values: TRACK, TRACK_PROEPRTY_NAME, 
-   * TRACK_PROPERTY_VALUE.
+   * This is the basic state of the parser. The TRACKS and PLAYLISTS
+   * states are special in the fact that they're more signals to
+   * the next state. As such we do not return through them, but
+   * go directly back to the TOP_LEVEL_PROPERTIES state.
    */
   enum State
   {
     START,                     // Initial state
     TOP_LEVEL_PROPERTIES,      // Base top level properties state <dict>
-    TOP_LEVEL_PROPERTY_NAME,   // key element for property name <key>
-    TOP_LEVEL_PROPERTY_VALUE,  // value element for property value <key>
     
-    TRACKS,                    // Found the Tracks section
+    TRACKS,                    // Found the Tracks section 
     TRACKS_COLLECTION,         // In the tracks collection <dict>
     TRACK,                     // Base track state <dict>
-    TRACK_PROPERTY_NAME,       // Track's property name <key>
-    TRACK_PROPERTY_VALUE,      // Track's property value <key> 
     
     PLAYLISTS,                 // Playlists section
     PLAYLISTS_COLLECTION,      // Playlists collection <array>
     PLAYLIST,                  // Base playlist state <dict>
-    PLAYLIST_PROPERTY_NAME,    // Playlist's property name <key>
-    PLAYLIST_PROPERTY_VALUE,   // Playlist's property value <key>
     PLAYLIST_ITEMS,            // Playlist items collection <array>
     PLAYLIST_ITEM,             // Base playlist item state <dict>
-    PLAYLIST_ITEM_NAME,        // Playlist item's name <key>
-    PLAYLIST_ITEM_VALUE,       // Playlist item's value <key>
     DONE                       // We're done, ignore the rest
   };
   
@@ -134,8 +126,10 @@ private:
   nsCOMPtr<nsIInputStreamPump> mPump;
   nsISAXXMLReaderPtr mSAXReader;
   nsString mPropertyName;
+  nsString mCharacters;
   sbIiTunesXMLParserListenerPtr mListener;
   Tracks mTracks;
+  PRInt64 mBytesRead;
 };
 
 #endif /* SBITUNESXMLPARSER_H_ */

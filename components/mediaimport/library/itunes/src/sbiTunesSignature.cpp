@@ -32,6 +32,8 @@
 #include <nsIScriptableUConv.h>
 
 #include <sbIDatabaseQuery.h>
+#include <sbIDatabaseResult.h>
+
 #include <sbProxiedComponentManager.h>
 
 
@@ -129,7 +131,22 @@ sbiTunesSignature::RetrieveSignature(nsAString const & aID,
                     "WHERE id = \"");
   sql.Append(aID);
   sql.AppendLiteral("\"");
-  nsresult rv = ExecuteSQL(sql);
+
+  nsresult rv = mDBQuery->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+ 
+  PRInt32 dbResult;
+  rv = mDBQuery->Execute(&dbResult);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDatabaseResult> result;
+  rv = mDBQuery->GetResultObject(getter_AddRefs(result));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = result->GetRowCell(0, 0, aSignature);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDBQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
   
   return NS_OK;
@@ -143,9 +160,6 @@ nsresult sbiTunesSignature::ExecuteSQL(nsAString const & aSQLStatement) {
   rv = mDBQuery->Execute(&result);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mDBQuery->WaitForCompletion(&result);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = mDBQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
   

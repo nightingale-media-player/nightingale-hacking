@@ -71,11 +71,11 @@ public:
   /**
    * Sets the current progress
    */
-  void SetProgress(PRUint32 aProgress);
+  void SetProgress(PRInt64 aProgress);
   /**
    * Sets the max process value
    */
-  void SetProgressMax(PRUint32 aMaxProgress);
+  void SetProgressMax(PRInt64 aMaxProgress);
   /**
    * Signals we're done
    */
@@ -98,7 +98,7 @@ private:
    */
   sbiTunesImporterJobPtr mJobProgress;
   /**
-   * The last reported progress of the import
+   * The last reported progress of the import 0 - 100
    */
   PRUint32 mLastProgress;
   /**
@@ -106,13 +106,13 @@ private:
    */
   nsString mLastStatusText;
   /**
-   * The current progress
+   * The current progress 0 - 100
    */
   PRUint32 mProgress;
   /**
-   * The maximum progress value
+   * The maximum progress value (Size of the stream)
    */
-  PRUint32 mProgressMax;
+  PRInt64 mProgressMax;
   /**
    * Our data remote used by the UI
    */

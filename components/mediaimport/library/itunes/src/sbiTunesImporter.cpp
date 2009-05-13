@@ -162,24 +162,16 @@ nsString ConvertDateTime(nsAString const & aDateTime) {
   }
   // Convert "1970-01-01T00:00:00Z" to "1970/01/01 00:00:00 UTC".
   nsCString dateTime = ::NS_LossyConvertUTF16toASCII(aDateTime);
-  nsCString::char_type *begin, *end;
-  for (dateTime.BeginWriting(&begin, &end);begin != end; ++begin) {
-    switch (*begin) {
-      case '-': {
-        *begin  = '/';
-      }
-      break;
-      case 'T': {
-        *begin = ' ';
-      }
-      break;
-    }
+  PRInt32 zIndex = dateTime.FindChar('T');
+  if (zIndex != -1) {
+    dateTime.Replace(zIndex, 1, ' ');
   }
-  dateTime.EndWriting();
-  PRInt32 zIndex = dateTime.Find("Z");
+  zIndex = dateTime.FindChar('Z');
   if (zIndex != -1) {
     dateTime.Replace(zIndex, 1, "GMT");
   }
+  // Strip the first two digits as PR_ParseTimeString can't handle 4 digit years
+  dateTime.Cut(0, 2);
   // Parse the date/time string into epoch time.
   PRTime prTime;
   PRStatus status = PR_ParseTimeString(dateTime.BeginReading(),
@@ -526,6 +518,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
                           PRBool aCheckForChanges, 
                           sbIJobProgress ** aJobProgress)
 {
+  NS_ENSURE_ARG_POINTER(aJobProgress);
   TRACE(("sbiTunesImporter::Import(%s, %s, %s)",
          NS_LossyConvertUTF16toASCII(aLibFilePath).get(),
          NS_LossyConvertUTF16toASCII(aGUID).get(),
@@ -582,15 +575,25 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
   rv = sbOpenInputStream(mLibraryPath, getter_AddRefs(mStream));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mStream->Available(&mStreamSize);
+  PRUint32 bytesRead = 0;
+  nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1", 
+                                                  &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  mStatus->SetProgressMax(mStreamSize);
+  rv = file->InitWithPath(mLibraryPath);
+  if (NS_SUCCEEDED(rv)) {
+    PRInt64 size;
+    rv = file->GetFileSize(&size);
+    if (NS_SUCCEEDED(rv)) {
+      mStatus->SetProgressMax(size);
+    }
+  }
+  
   
   nsAString const & msg = 
     mImport ? NS_LITERAL_STRING("Importing library") :
               NS_LITERAL_STRING("Checking for changes in library");
-                       ;
+
   mStatus->SetStatusText(msg);
 
   // Scope batching
@@ -655,8 +658,9 @@ sbiTunesImporter::OSType sbiTunesImporter::GetOSType()
 // sbIiTunesXMLParserListener implementation
 
 /* void onTopLevelProperties (in sbIStringMap aProperties); */
-NS_IMETHODIMP sbiTunesImporter::OnTopLevelProperties(sbIStringMap *aProperties)
-{
+NS_IMETHODIMP sbiTunesImporter::OnTopLevelProperties(sbIStringMap *aProperties) {
+  NS_ENSURE_ARG_POINTER(aProperties);
+  
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Library Persistent ID"), 
                                  miTunesLibID);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -670,19 +674,34 @@ NS_IMETHODIMP sbiTunesImporter::OnTopLevelProperties(sbIStringMap *aProperties)
 }
 
 NS_IMETHODIMP 
-sbiTunesImporter::OnTrack(sbIStringMap *aProperties)
-{
+sbiTunesImporter::OnTrack(sbIStringMap *aProperties) {
+  NS_ENSURE_ARG_POINTER(aProperties);
+  
   if (mStatus->CancelRequested()) {
     Cancel();
     return NS_ERROR_ABORT;
   }
   nsresult rv = UpdateProgress();
+  
   iTunesTrack * const track = new iTunesTrack;
   NS_ENSURE_TRUE(track, NS_ERROR_OUT_OF_MEMORY);
 
   rv  = track->Initialize(aProperties);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
+#ifdef DEBUG  
+  nsString uri16;
+  if (track->mProperties.Get(NS_LITERAL_STRING("Location"), &uri16)) {
+    LOG(("Importing Track %s\n", NS_ConvertUTF16toUTF8(uri16).get()));
+  }
+#endif
+  // If there is no persistent ID, then skip it
+  nsString persistentID;
+  if (!track->mProperties.Get(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY), 
+                              &persistentID)) {
+    delete track;
+    return NS_OK;
+  }
   mTrackBatch.push_back(track);
   if (mTrackBatch.size() == BATCH_SIZE) {
     ProcessTrackBatch();
@@ -692,7 +711,7 @@ sbiTunesImporter::OnTrack(sbIStringMap *aProperties)
 
 NS_IMETHODIMP 
 sbiTunesImporter::OnTracksComplete() {
-  if (mTrackBatch.size() > 0) {
+  if (!mStatus->CancelRequested() && mTrackBatch.size() > 0) {
     ProcessTrackBatch();
   }
   return NS_OK;
@@ -700,6 +719,7 @@ sbiTunesImporter::OnTracksComplete() {
 
 PRBool 
 sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
+  
   nsString playlistName;
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Name"), playlistName);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
@@ -752,9 +772,7 @@ FindPlaylistByName(sbILibrary * aLibrary,
 
 nsresult
 sbiTunesImporter::UpdateProgress() {
-  PRUint32 bytesAvailable = 0;
-  
-  mStatus->SetProgress(mTrackCount);
+  mStatus->SetProgress(mBytesRead);
   return NS_OK;
 }
 
@@ -763,6 +781,9 @@ sbiTunesImporter::OnPlaylist(sbIStringMap *aProperties,
                              PRInt32 *aTrackIds, 
                              PRUint32 aTrackIdsCount)
 {
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aTrackIds);
+  
   if (mStatus->CancelRequested()) {
     Cancel();
     return NS_ERROR_ABORT;
@@ -779,6 +800,7 @@ sbiTunesImporter::OnPlaylist(sbIStringMap *aProperties,
     rv = aProperties->Get(name, playlistName);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    LOG(("Importing playlist %s\n", NS_ConvertUTF16toUTF8(playlistName).get()));
     nsString text(name);
     text.Append(playlistName);
     
@@ -795,11 +817,17 @@ sbiTunesImporter::OnPlaylist(sbIStringMap *aProperties,
         rv = FindPlaylistByName(mLibrary,
                                 playlistName, 
                                 getter_AddRefs(mediaList));
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        rv = miTunesDBServices.WaitForCompletion(
-                 sbiTunesDatabaseServices::INFINITE_WAIT);
-        NS_ENSURE_SUCCESS(rv, rv);
+        NS_ENSURE_SUCCESS(rv, rv);        
+      }
+      else if (!playlistSBGUID.IsEmpty()) {
+        nsCOMPtr<sbIMediaItem> mediaListAsItem;
+        // Get the media list as an item, if it fails then just continue with
+        // mediaList being null
+        rv = mLibrary->GetItemByGuid(playlistSBGUID, getter_AddRefs(mediaListAsItem));
+        if (NS_SUCCEEDED(rv)) {
+          // if this errors, mediaList will be null which is fine
+          mediaList = do_QueryInterface(mediaListAsItem);
+        }
       }
       ImportPlaylist(aProperties,
                      aTrackIds,
@@ -835,7 +863,10 @@ static nsresult
 IsPlaylistDirty(sbIMediaList * aMediaList, 
                 PRBool & aIsDirty) {
   sbiTunesSignature signature;
-  nsresult rv = ComputePlaylistSignature(signature, aMediaList);
+  nsresult rv = signature.Initialize();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = ComputePlaylistSignature(signature, aMediaList);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsString computedSignature;
@@ -850,7 +881,7 @@ IsPlaylistDirty(sbIMediaList * aMediaList,
   rv = signature.RetrieveSignature(playlistGuid, storedSignature);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  aIsDirty = computedSignature.Equals(storedSignature);
+  aIsDirty = !computedSignature.Equals(storedSignature);
   
   return NS_OK;
 }
@@ -894,6 +925,9 @@ nsresult
 sbiTunesImporter::ProcessPlaylistItems(sbIMediaList * aMediaList,
                                        PRInt32 * aTrackIds,
                                        PRUint32 aTrackIdsCount) {
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aTrackIds);
+  
   nsresult rv;
   nsCOMPtr<nsIMutableArray> tracks = 
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
@@ -937,6 +971,7 @@ sbiTunesImporter::ProcessPlaylistItems(sbIMediaList * aMediaList,
 
 static nsresult
 StorePlaylistSignature(sbIMediaList * aMediaList) {
+  
   sbiTunesSignature signature;
   nsresult rv = signature.Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -963,6 +998,9 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
                                  PRInt32 *aTrackIds, 
                                  PRUint32 aTrackIdsCount,
                                  sbIMediaList * aMediaList) {
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aTrackIds);
+  
   nsresult rv;
   
   nsCOMPtr<sbIMediaList> mediaList(aMediaList);
@@ -982,7 +1020,7 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
   NS_ENSURE_SUCCESS(rv, rv);
     
   nsCString action("replace");
-  if (!mImportPlaylists) {
+  if (!isDirty || !mImportPlaylists) {
     action = "keep";
   }
   else if (mediaList && isDirty) {   
@@ -1022,10 +1060,6 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
       NS_ENSURE_SUCCESS(rv, rv);
       
       rv = miTunesDBServices.MapID(miTunesLibID, playlistiTunesID, guid);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = miTunesDBServices.WaitForCompletion(
-               sbiTunesDatabaseServices::INFINITE_WAIT);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = mediaList->SetProperty(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY),
@@ -1121,7 +1155,9 @@ sbiTunesImporter::OnError(const nsAString & aErrorMessage, PRBool *_retval)
 {
   LOG(("XML Parsing error: %s\n", 
       ::NS_LossyConvertUTF16toASCII(aErrorMessage).get()));
-  mListener->OnImportError();
+  if (mStatus.get() && !mStatus->CancelRequested()) {
+    mListener->OnImportError();
+  }
   return NS_OK;
 }
 
@@ -1142,6 +1178,8 @@ static PLDHashOperator
 EnumReadFunc(nsAString const & aKey,
              nsString aValue,
              void* aUserArg) {
+  NS_ENSURE_TRUE(aUserArg, PL_DHASH_STOP);
+  
   sbiTunesImporterEnumeratePropertiesData * data = 
     reinterpret_cast<sbiTunesImporterEnumeratePropertiesData *>(aUserArg);
   nsString currentValue;
@@ -1159,6 +1197,9 @@ nsresult sbiTunesImporter::ProcessUpdates() {
        iter != end;
        ++iter) {
     iTunesTrack * const track = *iter;
+    if (!track) {
+      continue;
+    }
     nsString guid;
     rv = miTunesDBServices.GetSBIDFromITID(miTunesLibID, track->mTrackID, guid);
     if (NS_SUCCEEDED(rv) && !guid.IsEmpty()) {
@@ -1196,6 +1237,7 @@ nsresult
 sbiTunesImporter::ProcessNewItems(
   TracksByID & aTrackMap,
   nsIArray ** aNewItems) {
+  NS_ENSURE_ARG_POINTER(aNewItems);
   
   nsresult rv;
   
@@ -1315,6 +1357,8 @@ nsresult
 sbiTunesImporter::ProcessCreatedItems(
   nsIArray * aCreatedItems,
   TracksByID const & aTrackMap) {
+  NS_ENSURE_ARG_POINTER(aCreatedItems);
+  
   PRUint32 length;
   nsresult rv = aCreatedItems->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1421,7 +1465,10 @@ nsresult sbiTunesImporter::ProcessTrackBatch() {
   return NS_OK;
 }
 
-nsresult sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
+nsresult 
+sbiTunesImporter::iTunesTrack::Initialize(sbIStringMap * aProperties) {
+  NS_ENSURE_ARG_POINTER(aProperties);
+  
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Track ID"), mTrackID);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1458,6 +1505,8 @@ static PLDHashOperator
 ConvertToPropertyArray(nsAString const & aKey,
                        nsString aValue,
                        void * aUserArg) {
+  NS_ENSURE_TRUE(aUserArg, PL_DHASH_STOP);
+  
   sbIMutablePropertyArray * array = 
     reinterpret_cast<sbIMutablePropertyArray*>(aUserArg);
   nsresult rv = array->AppendProperty(aKey, aValue);
@@ -1468,6 +1517,7 @@ ConvertToPropertyArray(nsAString const & aKey,
 nsresult 
 sbiTunesImporter::iTunesTrack::GetPropertyArray(
     sbIPropertyArray ** aPropertyArray) {
+  NS_ENSURE_ARG_POINTER(aPropertyArray);
   
   nsresult rv;
   nsCOMPtr<sbIMutablePropertyArray> array = 
@@ -1488,6 +1538,7 @@ sbiTunesImporter::iTunesTrack::GetTrackURI(
   nsIIOService * aIOService,
   sbiTunesSignature & aSignature,
   nsIURI ** aTrackURI) {
+  NS_ENSURE_ARG_POINTER(aIOService);
   NS_ENSURE_ARG_POINTER(aTrackURI);
 
   if (mURI) {
@@ -1549,9 +1600,19 @@ sbiTunesImporter::iTunesTrack::GetTrackURI(
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Get the track URI.
-  rv = aIOService->NewURI(adjustedURI, nsnull, nsnull, aTrackURI);
+  rv = aIOService->NewURI(adjustedURI, nsnull, nsnull, getter_AddRefs(mURI));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  *aTrackURI = mURI.get();
+  NS_ADDREF(*aTrackURI);
   
   return NS_OK;
 }
 
+/* void onDataAvailable (in nsIRequest aRequest, in nsISupports aContext, in nsIInputStream aInputStream, in unsigned long aOffset, in unsigned long aCount); */
+NS_IMETHODIMP 
+sbiTunesImporter::OnProgress(PRInt64 aBytesResad)
+{
+  mBytesRead = aBytesResad;
+  return NS_OK;
+}

@@ -84,7 +84,11 @@ nsresult sbiTunesImporterStatus::Initialize() {
     rv = mJobProgress->SetTitleText(titleText);
     NS_ENSURE_SUCCESS(rv, rv);
     
-    mJobProgress->SetStatusText(SBLocalizedString("import_library.job.status_text"));
+    rv = mJobProgress->SetStatusText(SBLocalizedString("import_library.job.status_text"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = mJobProgress->SetStatus(sbIJobProgress::STATUS_RUNNING);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }
@@ -100,12 +104,12 @@ nsresult sbiTunesImporterStatus::Reset() {
   return NS_OK;
 }
 
-void sbiTunesImporterStatus::SetProgress(PRUint32 aProgress) {
-  mProgress = aProgress;
+void sbiTunesImporterStatus::SetProgress(PRInt64 aProgress) {
+  mProgress = (aProgress * 100L) / mProgressMax; 
   Update();
 }
 
-void sbiTunesImporterStatus::SetProgressMax(PRUint32 aProgressMax) {
+void sbiTunesImporterStatus::SetProgressMax(PRInt64 aProgressMax) {
   mProgressMax = aProgressMax;
 }
 
@@ -116,39 +120,33 @@ void sbiTunesImporterStatus::SetStatusText(nsAString const & aMsg) {
 nsresult sbiTunesImporterStatus::Update() {
   nsresult rv;
   
+  // Check if finalized so just return an error
+  if (!mStatusDataRemote || !mJobProgress) { 
+    return NS_ERROR_FAILURE;
+  }
   nsString status(mStatusText);
-#if WHEN_PROGRESS_WORKS  
-  // Calc the 0 to 100 progress value
-  double const progress = static_cast<double>(mProgress) * 100.0 / 
-                              static_cast<double>(mProgressMax);
-#endif                              
   // Round the value
-  PRUint32 progressAsInt = mProgress; // progress + 0.5;
-  if (!mLastStatusText.Equals(mStatusText) || mLastProgress + 10 < progressAsInt) {    
+  if (!mLastStatusText.Equals(mStatusText) || mLastProgress != mProgress) {    
     if (!mDone) {
       status.AppendLiteral(" ");
-      status.AppendInt(progressAsInt, 10);
-      // XXX l10n TODO: If we can't do % progress internationalize
-      status.AppendLiteral(" tracks processed (l10n this text)");
+      status.AppendInt(mProgress, 10);
+      status.AppendLiteral("%");
     }
     rv = mStatusDataRemote->SetStringValue(status);
     NS_ENSURE_SUCCESS(rv, rv);
-#if WHEN_PROGRESS_WORKS    
     if (mJobProgress) {
-      if (mLastProgress != progressAsInt) {
-        mLastProgress = progressAsInt;
-        rv = mJobProgress->SetProgress(progressAsInt);
+      if (mLastProgress != mProgress) {
+        rv = mJobProgress->SetProgress(mProgress);
         NS_ENSURE_SUCCESS(rv, rv);
   
         rv = mJobProgress->SetTotal(100);
         NS_ENSURE_SUCCESS(rv, rv);
       }      
     }
-#endif    
     if (mDone) {
       rv = mJobProgress->SetStatus(sbIJobProgress::STATUS_SUCCEEDED);
     }
-    mLastProgress = progressAsInt;
+    mLastProgress = mProgress;
     mLastStatusText = mStatusText;
   }
   return NS_OK;

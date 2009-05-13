@@ -28,6 +28,7 @@
 
 #include <prlog.h>
 #include <nsComponentManagerUtils.h>
+#include <nsCRTGlue.h>
 #include <nsISAXAttributes.h>
 #include <nsISAXLocator.h>
 #include <nsIInputStreamPump.h>
@@ -217,7 +218,7 @@ sbiTunesXMLParser * sbiTunesXMLParser::New() {
   return new sbiTunesXMLParser;
 }
 
-sbiTunesXMLParser::sbiTunesXMLParser() : mState(START) {
+sbiTunesXMLParser::sbiTunesXMLParser() : mState(START), mBytesRead(0) {
   MOZ_COUNT_CTOR(sbiTunesXMLParser);
   nsISAXXMLReaderPtr const & reader = GetSAXReader();
 }
@@ -233,18 +234,6 @@ NS_IMETHODIMP sbiTunesXMLParser::Parse(nsIInputStream * aiTunesXMLStream,
 
   nsresult rv;
   
-  /**
-   * Need to ensure the enumeration is ordered as we expect
-   */
-  NS_ENSURE_TRUE(TOP_LEVEL_PROPERTIES == TOP_LEVEL_PROPERTY_NAME - 1 &&
-                 TOP_LEVEL_PROPERTY_NAME == TOP_LEVEL_PROPERTY_VALUE - 1 &&
-                 TRACK == TRACK_PROPERTY_NAME - 1 &&
-                 TRACK_PROPERTY_NAME == TRACK_PROPERTY_VALUE - 1 &&   
-                 PLAYLIST == PLAYLIST_PROPERTY_NAME -1 &&
-                 PLAYLIST_PROPERTY_NAME == PLAYLIST_PROPERTY_VALUE - 1 && 
-                 PLAYLIST_ITEM == PLAYLIST_ITEM_NAME - 1 && 
-                 PLAYLIST_ITEM_NAME == PLAYLIST_ITEM_VALUE - 1,
-                 NS_ERROR_FAILURE);
   NS_ENSURE_ARG_POINTER(aiTunesXMLStream);
   NS_ENSURE_ARG_POINTER(aListener);
   /* Update status. */
@@ -302,6 +291,9 @@ nsISAXXMLReaderPtr const & sbiTunesXMLParser::GetSAXReader() {
 NS_IMETHODIMP
 sbiTunesXMLParser::StartDocument() {
   LOG(("StartDocument\n"));
+  // Add bytes in for the <?xml ...
+  // <!DOCTYPE and the <plist
+  mBytesRead = 38 + 112 + 21;
   mState = START;
   return NS_OK;
 }
@@ -316,46 +308,31 @@ sbiTunesXMLParser::EndDocument() {
 /* void startElement (in AString uri, in AString localName, in AString qName, in nsISAXAttributes attributes); */
 NS_IMETHODIMP 
 sbiTunesXMLParser::StartElement(const nsAString & uri,
-                                              const nsAString & localName,
-                                              const nsAString & qName,
-                                              nsISAXAttributes *attributes) {
+                                const nsAString & localName,
+                                const nsAString & qName,
+                                nsISAXAttributes *attributes) {
   LogStartElement(uri, localName, qName, attributes);
-  // Is this a key element
-  if (localName.EqualsLiteral("key")) {
-    // Based on the current state, change the state to a "name" state
-    switch (mState) {
-      case TOP_LEVEL_PROPERTIES: {
-        mState = TOP_LEVEL_PROPERTY_NAME;
-      }
-      break;
-      case TRACK: {
-        mState = TRACK_PROPERTY_NAME;
-      }
-      break;
-      case PLAYLIST: {
-        mState = PLAYLIST_PROPERTY_NAME;
-      }
-      break;
-      case PLAYLIST_ITEM: {
-        mState = PLAYLIST_ITEM_NAME;
-      }
-      break;
-      default: {
-        // Nothing to do, leave state unchanged
-      }
-      break;
-    }
+  
+  // If we're done then ignore everything else
+  if (mState == DONE) {
+    return NS_OK;
   }
-  else if (localName.EqualsLiteral("true") || localName.EqualsLiteral("false")) {
+  // Is this a key element
+  if (localName.EqualsLiteral("true") || localName.EqualsLiteral("false")) {
     // Handle boolean values which are just an element
     if (!mPropertyName.IsEmpty()) {
       mProperties->Set(mPropertyName, localName);
-      // Pop the state back to it's base (ie from TRACK_PROPERTY_VALUE past
-      // TRACK_PROPERTY_NAME to TRACK
-      mState -= 2;
+      mPropertyName.Truncate();
     }
+    mCharacters.Truncate();
+    return NS_OK;
   }
-  else if (localName.EqualsLiteral("dict")) {
+  mListener->OnProgress(mBytesRead);
+  // Add the local name length and then 2 for the < and >. iTunes doesn't use 
+  // name spaces or attributes
+  mBytesRead += localName.Length() + 2;
+  
+  if (localName.EqualsLiteral("dict")) {
     // Based on the current state, figure out what type of collection we're in
     switch (mState) {
       case START: {
@@ -390,6 +367,7 @@ sbiTunesXMLParser::StartElement(const nsAString & uri,
       break;
     }
   }
+  mCharacters.Truncate();
   return NS_OK;
 }
 
@@ -401,26 +379,78 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
           NS_LossyConvertUTF16toASCII(uri).get(),
           NS_LossyConvertUTF16toASCII(localName).get(),
           NS_LossyConvertUTF16toASCII(qName).get()));
+  nsresult rv;
+  mListener->OnProgress(mBytesRead);
+  // Add the local name length and the 3 for the </> characters.
+  mBytesRead += localName.Length() + 3;
+  
+  // If we're done then ignore everything else
+  if (mState == DONE) {
+    return NS_OK;
+  }
+  // Save off the characters and clear the member so we don't have to
+  // worry about return paths
+  nsString characters(mCharacters);
+  mCharacters.Truncate();
+  
+  nsString const propertyName(mPropertyName);
+  mPropertyName.Truncate();
+  
+  if (localName.EqualsLiteral("key")) {
+    switch (mState) {
+      case TOP_LEVEL_PROPERTIES: {
+        if (characters.EqualsLiteral("Tracks")) {
+          rv = mListener->OnTopLevelProperties(mProperties);
+          NS_ENSURE_SUCCESS(rv, rv);
+          mProperties->Clear();
+          mState = TRACKS;
+        }
+        else if (characters.EqualsLiteral("Playlists")) {
+          mState = PLAYLISTS; 
+        }
+        else {
+          mPropertyName = characters;
+        }
+      }
+      break;
+      case PLAYLIST: {
+        if (characters.EqualsLiteral("Playlist Items")) {
+          mState = PLAYLIST_ITEMS;
+        }
+        else {
+          mPropertyName = characters;
+        }
+      }
+      break;
+      case TRACK:
+      case PLAYLIST_ITEM: {
+        mPropertyName = characters;
+      }
+      break;
+      // Nothing to do here, skip the key which is the track ID, we'll pick it up later
+      case TRACKS_COLLECTION:
+      break;
+      default: {
+        NS_WARNING("Unexpected state in sbiTunesXMLParser::EndElement (dict)");
+      }
+      break;
+    }
+  }
   // If we're ending a dict element (dictionary collection
-  if (localName.EqualsLiteral("dict")) {
+  else if (localName.EqualsLiteral("dict")) {
     // There's probably work to be done
     switch (mState) {
-      case TRACKS: {  // Go back to the TOP_LEVEL_PROPERTIES state, 
-                      // we're leaving the tracks section
+      case TRACKS_COLLECTION:
         mState = TOP_LEVEL_PROPERTIES;
-      }
-      break;
-      case TRACKS_COLLECTION: {  // We're leaving the tracks collection, 
-                                 // so go back to the tracks section 
-        mState = TRACKS;
-        mListener->OnTracksComplete();
-      }
-      break;
+        rv = mListener->OnTracksComplete();
+        NS_ENSURE_SUCCESS(rv, rv);
+        break;
       case TRACK: {  // We're leaving a track so notify
                      // Then go back to track collection
         mState = TRACKS_COLLECTION;
         LOG(("onTrack\n"));
-        mListener->OnTrack(mProperties);
+        rv = mListener->OnTrack(mProperties);
+        NS_ENSURE_SUCCESS(rv, rv);
         mProperties->Clear();
       }
       break;
@@ -428,7 +458,8 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
                         // Then go back to the playlists collection
         mState = PLAYLISTS_COLLECTION;
         LOG(("onPlaylist\n"));
-        mListener->OnPlaylist(mProperties, mTracks.Elements(), mTracks.Length());
+        rv = mListener->OnPlaylist(mProperties, mTracks.Elements(), mTracks.Length());
+        NS_ENSURE_SUCCESS(rv, rv);
         mTracks.Clear();
         mProperties->Clear();
       }
@@ -436,11 +467,6 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
       case PLAYLIST_ITEM: {  // We're leaving a playlist item
                              // Go back to the playlist items
         mState = PLAYLIST_ITEMS;
-      }
-      break;
-      case PLAYLISTS: {  // We're leaving the playlists section
-                         // we're done
-        mState = DONE;
       }
       break;
       default: {
@@ -457,9 +483,12 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
         mState = PLAYLIST;
       }
       break;
-      case PLAYLISTS_COLLECTION: {  // We're leaving the playlist collection                                
-        mState = PLAYLISTS;        // go back to the playlists section
-        mListener->OnPlaylistsComplete();
+      // Leaving the playlsits array, go back to top level properties
+      case PLAYLISTS_COLLECTION: {                                          
+        mState = TOP_LEVEL_PROPERTIES;      
+        rv = mListener->OnPlaylistsComplete();
+        NS_ENSURE_SUCCESS(rv, rv);
+        mState = DONE;
       }
       break;
       default: {
@@ -468,75 +497,34 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
       break;
     }
   }
+  else {
+    if (mState == PLAYLIST_ITEM && propertyName.EqualsLiteral("Track ID")) {
+      PRInt32 const trackID = characters.ToInteger(&rv, 10);
+      if (NS_SUCCEEDED(rv)) {
+        PRInt32 const * newTrackID = mTracks.AppendElement(trackID);
+        NS_ENSURE_TRUE(newTrackID, NS_ERROR_OUT_OF_MEMORY);
+      }
+    }
+    else if (!propertyName.IsEmpty()) {
+      mProperties->Set(propertyName, characters);  
+    }
+  }
   return NS_OK;
 }
 
 /* void characters (in AString value); */
 NS_IMETHODIMP sbiTunesXMLParser::Characters(const nsAString & value) {
   LOG(("Characters: %s\n", NS_LossyConvertUTF16toASCII(value).get()));
-  switch (mState) {
-    // Handle the property name. This is where the name string comes in
-    case TOP_LEVEL_PROPERTY_NAME:
-    case TRACK_PROPERTY_NAME:
-    case PLAYLIST_PROPERTY_NAME:
-    case PLAYLIST_ITEM_NAME:
-    case TRACKS: {
-      if (value.EqualsLiteral("Tracks")) {
-        mState = TRACKS;
-        mListener->OnTopLevelProperties(mProperties);
-        mProperties->Clear();
-      }
-      else if (value.EqualsLiteral("Playlists")) {
-        mState = PLAYLISTS;
-      }
-      else if (value.EqualsLiteral("Playlist Items")) {
-        mState = PLAYLIST_ITEMS;
-      }
-      else {
-         mPropertyName = value;
-        ++mState;
-      }
-    }
-    break;
-    
-    // The next case statements handle the values for the properties
-    case TOP_LEVEL_PROPERTY_VALUE: {
-      mState = TOP_LEVEL_PROPERTIES;
-      if (!mPropertyName.IsEmpty()) {
-        mProperties->Set(mPropertyName, value);
-        mPropertyName.Truncate();
-      }
-    }
-    break;
-    case TRACK_PROPERTY_VALUE: {
-      mState = TRACK;      
-      if (!mPropertyName.IsEmpty()) {
-        mProperties->Set(mPropertyName, value);
-        mPropertyName.Truncate();
-      }
-    }
-    break;
-    case PLAYLIST_PROPERTY_VALUE: {
-      mState = PLAYLIST;
-      if (!mPropertyName.IsEmpty()) {
-        mProperties->Set(mPropertyName, value);
-        mPropertyName.Truncate();
-      }
-    }
-    break;
-    // Where we see the track ID
-    case PLAYLIST_ITEM_VALUE: {
-      mState = PLAYLIST_ITEM;
-      if (!mPropertyName.IsEmpty()) {
-        nsresult rv;
-        PRInt32 const trackID = value.ToInteger(&rv, 10);
-        PRInt32 const * newTrackID = mTracks.AppendElement(trackID);
-        NS_ENSURE_TRUE(newTrackID, NS_ERROR_OUT_OF_MEMORY);
-        mPropertyName.Truncate();
-      }
-    }
-    break;
+  // Calculate the bytes in the stream. This isn't perfect, but should
+  // be good enough for progress calculations
+  PRUnichar const * begin;
+  PRUnichar const * end;
+  value.BeginReading(&begin, &end);
+  while (begin != end) {
+    mBytesRead += NS_IsAscii(*begin++) ? 1 : 2;
   }
+  
+  mCharacters.Append(value);
   return NS_OK;
 }
 

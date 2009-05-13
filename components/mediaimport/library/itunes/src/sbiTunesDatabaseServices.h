@@ -45,18 +45,9 @@ public:
   // Need this so nsCOMPtr's are destructed in cpp
   ~sbiTunesDatabaseServices();
   /**
-   * Infinite wait constant used by WaitForCompletion
-   */
-  static PRUint32 const INFINITE_WAIT = 0xFFFFFFFF;
-  /**
    * Performs initialization, such as creating the query objects
    */
   nsresult Initialize();
-  /**
-   * Waits for all queries to complete, or the given timeout expired
-   * \param aTimeoutSeconds The number of seconds to wait.
-   */
-  nsresult WaitForCompletion(PRUint32 aTimeoutSeconds);
   /**
    * Map and iTunes ID to a Songbird ID
    * \param aiTunesLibID the library ID of the iTunes item
@@ -85,10 +76,6 @@ private:
    * Synchronous query object
    */
   sbIDatabaseQueryPtr mDBQuery;
-  /**
-   * Asynchronous query object
-   */
-  sbIDatabaseQueryPtr mAsyncDBQuery;
   /**
    * Flag to denote that a reset is pending
    */

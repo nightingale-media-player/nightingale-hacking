@@ -202,7 +202,7 @@ sbiTunesImporterJob::GetCanCancel(PRBool *aCanCancel)
 NS_IMETHODIMP
 sbiTunesImporterJob::Cancel()
 {
-  mCancelRequested;
+  mCancelRequested = PR_TRUE;
   return NS_OK;
 }
 
@@ -211,7 +211,7 @@ sbiTunesImporterJob::UpdateProgress() {
   PRUint32 const listenerCount = mListeners.Count();
   for (PRUint32 index = 0; index < listenerCount; ++index) {
     nsresult rv = mListeners[index]->OnJobProgress(this);
-    NS_WARN_IF_FALSE(NS_FAILED(rv), "iTunes Import listener reported error");
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "iTunes Import listener reported error");
   }
   return NS_OK;
 }

@@ -58,15 +58,6 @@ sbiTunesDatabaseServices::Initialize() {
   rv = mDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird"));
   NS_ENSURE_SUCCESS(rv, rv);
   
-  mAsyncDBQuery = do_CreateInstance(SB_DBQUERY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = mAsyncDBQuery->SetAsyncQuery(PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = mAsyncDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird"));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsString sql;
   sql.AppendLiteral("CREATE TABLE IF NOT EXISTS itunes_id_map "
                     "(itunes_id TEXT UNIQUE NOT NULL, "
@@ -82,50 +73,9 @@ sbiTunesDatabaseServices::Initialize() {
 }
 
 nsresult 
-sbiTunesDatabaseServices::WaitForCompletion(PRUint32 aTimeoutSeconds) {
-  PRBool executing = PR_TRUE;
-  time_t quit = time(0) + aTimeoutSeconds;
-  nsCOMPtr<nsIThread> mainThread;
-  NS_GetMainThread(getter_AddRefs(mainThread));
-  // Loop until no more queries left to execute
-  while (executing) {
-    // Loop until not executing or timed out
-    while (executing && time(0) < quit) {
-      nsresult rv = mAsyncDBQuery->IsExecuting(&executing);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (executing) {
-        // Allow processing by the UI while we wait
-        NS_ProcessNextEvent(mainThread, 0);
-      }
-    }
-    // If we didn't time out then reset and check for other queries
-    if (!executing) {
-      nsresult rv = mAsyncDBQuery->ResetQuery();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      PRUint32 queryCount = 0;
-      rv = mAsyncDBQuery->GetQueryCount(&queryCount);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (queryCount > 0) {
-        PRBool dbOK;
-        rv = mAsyncDBQuery->Execute(&dbOK);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        // Continue waiting
-        executing = PR_TRUE;
-      }
-    }
-    else {
-      return NS_ERROR_ABORT;
-    }
-  }
-  return NS_OK;
-}
-
-nsresult 
 sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
-                              nsAString const & aiTunesID,
-                              nsAString const & aSongbirdID) {
+                                nsAString const & aiTunesID,
+                                nsAString const & aSongbirdID) {
   nsString sql;
   sql.AppendLiteral("INSERT OR REPLACE INTO itunes_id_map "
                     "(itunes_id, songbird_id) VALUES (\"");
@@ -134,16 +84,20 @@ sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
   sql.AppendLiteral("\", \"");
   sql.Append(aSongbirdID);
   sql.AppendLiteral("\")");
-  nsresult rv = mAsyncDBQuery->AddQuery(sql);
+  nsresult rv = mDBQuery->AddQuery(sql);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
+  PRBool dbOK;
+  rv = mDBQuery->Execute(&dbOK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
 nsresult
 sbiTunesDatabaseServices::GetSBIDFromITID(nsAString const & aiTunesLibID,
-                                        nsAString const & aiTunesID,
-                                        nsAString & aSongbirdID) {
+                                          nsAString const & aiTunesID,
+                                          nsAString & aSongbirdID) {
   nsresult rv = mDBQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
   
