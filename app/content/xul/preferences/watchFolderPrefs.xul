@@ -105,7 +105,7 @@
           <!-- Watch folder enable checkbox. -->
           <checkbox id="watch_folder_enable_checkbox"
                     preference="watch_folder_enable_pref"
-                    oncommand="return watchFolderPrefsPane.doCommand(event)"
+                    oncommand="return watchFolderPrefsPane.onPathChanged(event)"
                     label="&watch_folder.prefs.enable_checkbox;"/>
   
           <!-- Watch folder path box. -->
@@ -116,7 +116,7 @@
             <label value="&watch_folder.prefs.watch_folder_label;"/>
             <textbox id="watch_folder_path_textbox"
                      preference="watch_folder_path_pref"
-                     onchange="return watchFolderPrefsPane.doCommand(event)"
+                     onchange="return watchFolderPrefsPane.onPathChanged(event)"
                      observes="watch_folder_disabled_broadcaster"/>
   
             <!-- Browse button. -->

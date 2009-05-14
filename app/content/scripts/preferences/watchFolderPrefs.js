@@ -68,6 +68,8 @@ if (typeof(Cu) == "undefined")
 //------------------------------------------------------------------------------
 
 var watchFolderPrefsPane = {
+  folderPathChanged: false,
+
   //----------------------------------------------------------------------------
   //
   // Event handling services.
@@ -90,11 +92,12 @@ var watchFolderPrefsPane = {
       }
       if (!self._checkForValidPref(false)) {
         event.preventDefault();
+        event.stopPropagation();
         return false;
       }
     }
-    window.addEventListener('dialogaccept', forceCheck, false);
-    window.addEventListener('dialogcancel', forceCheck, false);
+    window.addEventListener('dialogaccept', forceCheck, true);
+    window.addEventListener('dialogcancel', forceCheck, true);
   },
 
 
@@ -153,7 +156,7 @@ var watchFolderPrefsPane = {
       var shouldAskForImport = 
         filePicker.file.path != watchFolderPathPrefElem.value;
       watchFolderPathPrefElem.value = filePicker.file.path;
-      this.doCommand(aEvent);
+      this.onPathChanged(aEvent);
       
       if (shouldAskForImport) {
         this._rescan(filePicker.file);
@@ -164,19 +167,9 @@ var watchFolderPrefsPane = {
   /**
    * Handle the command event specified by aEvent
    */
-  doCommand: function watchFolderPrefsPane_doCommand(aEvent) {
-    if (!this._checkForValidPref(true)) {
-      // disable the _pref_, not the checkbox
-      var watchFolderEnablePrefElem =
-            document.getElementById("watch_folder_enable_pref");
-      watchFolderEnablePrefElem.value = false;
-      var watchFolderEnableCheckboxElem =
-            document.getElementById("watch_folder_enable_checkbox");
-      watchFolderEnableCheckboxElem.checked = true;
-
-      aEvent.stopPropagation();
-      aEvent.preventDefault();
-      return false;
+  onPathChanged: function watchFolderPrefsPane_onPathChanged(aEvent) {
+    if (aEvent.target.id == "watch_folder_enable_checkbox") {
+      this.folderPathChanged = true;
     }
     // everything's good, remember to apply the enabled pref if it was
     // originally checked but not saved
@@ -264,6 +257,10 @@ var watchFolderPrefsPane = {
           document.getElementById("watch_folder_path_pref");
     var watchFolderPathTextboxElem =
           document.getElementById("watch_folder_path_textbox");
+
+    // only continue checking the folder path validity if the path changed
+    if (!this.folderPathChanged)
+      return true;
 
     var path = watchFolderPathPrefElem.getElementValue(watchFolderPathTextboxElem);
     if (!path) {
