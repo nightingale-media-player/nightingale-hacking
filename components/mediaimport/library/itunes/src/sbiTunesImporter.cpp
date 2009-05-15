@@ -462,7 +462,9 @@ sbiTunesImporter::Finalize()
 {
   if (!mBatchEnded) {
     mBatchEnded = PR_TRUE;
-    mLDBLibrary->ForceEndUpdateBatch();
+    if (mLDBLibrary) {
+      mLDBLibrary->ForceEndUpdateBatch();
+    }
   }
   mListener = nsnull;
   mLibrary = nsnull;
@@ -1196,10 +1198,10 @@ nsresult sbiTunesImporter::ProcessUpdates() {
   for (TrackBatch::iterator iter = mTrackBatch.begin();
        iter != end;
        ++iter) {
-    iTunesTrack * const track = *iter;
-    if (!track) {
+    if (!*iter) {
       continue;
     }
+    iTunesTrack * const track = *iter;
     nsString guid;
     rv = miTunesDBServices.GetSBIDFromITID(miTunesLibID, track->mTrackID, guid);
     if (NS_SUCCEEDED(rv) && !guid.IsEmpty()) {
@@ -1402,7 +1404,11 @@ sbiTunesImporter::ProcessCreatedItems(
   for (TrackBatch::iterator iter = mTrackBatch.begin();
        iter != end;
        ++iter) {
+    if (!*iter) {
+      continue;
+    }
     iTunesTrack * const track = *iter;
+    // This can be null if it's an update
     if (track->mSBGuid.IsEmpty()) {
       rv = track->GetTrackURI(GetOSType(), 
                               mIOService,
