@@ -248,7 +248,13 @@ TestController.prototype =
       this._runCurrentPhase();
     }
     else {
+      // clean up
       setExportNothing();
+
+      // drop references
+      this._shutdownService.removeJobProgressListener(this);
+      this._shutdownService = null;
+
       this._log("Test finished!");
       testFinished();
     }
