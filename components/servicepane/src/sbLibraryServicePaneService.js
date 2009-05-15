@@ -53,6 +53,10 @@ const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
 const TYPE_X_SB_TRANSFER_MEDIA_ITEMS = "application/x-sb-transfer-media-items";
 const TYPE_X_SB_TRANSFER_DISABLE_DOWNLOAD = "application/x-sb-transfer-disable-download";
 
+// If you change this, please change the corresponding usage in
+// sbiTunesImporter.cpp
+const ITUNES_GUID_PROPERTY = "http://songbirdnest.com/data/1.0#iTunesGUID";
+
 /**
  * Given the arguments var of a function, dump the
  * name of the function and the parameters provided
@@ -1504,7 +1508,7 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
       // make sure the playlist folder exists
       var folder;
       // if it has an iTunesGUID property, it's imported from iTunes
-      if (aMediaList.getProperty(SBProperties.iTunesGUID) != null) {
+      if (aMediaList.getProperty(ITUNES_GUID_PROPERTY) != null) {
         folder = this._ensureiTunesFolderExists();
       } else {
         folder = this._ensurePlaylistFolderExists();

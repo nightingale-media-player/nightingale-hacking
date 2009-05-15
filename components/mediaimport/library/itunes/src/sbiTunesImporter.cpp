@@ -72,6 +72,9 @@
 #include "sbiTunesImporterStatus.h"
 
 char const SB_ITUNES_LIBRARY_IMPORT_PREF_PREFIX[] = "library_import.itunes";
+
+// If you change this, please change the corresponding usage in
+// sbLibraryServicePane.js
 #define SB_ITUNES_GUID_PROPERTY "http://songbirdnest.com/data/1.0#iTunesGUID"
 
 #ifdef PR_LOGGING
