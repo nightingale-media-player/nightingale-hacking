@@ -10,11 +10,13 @@
 <!ENTITY lastfm.profile.logout "Log out">
 
 <!ENTITY lastfm.radio "Last.fm Radio">
-<!ENTITY lastfm.radio.login.help "In order to listen to Last.fm Radio, you need to be logged into Last.fm.  If you don't already have a Last.fm account, you can register for one.">
+<!ENTITY lastfm.radio.login.help "In order to listen to Last.fm Radio, you need to be logged into Last.fm and be a Last.fm subscriber.  If you don't already have a Last.fm account, you can register for one.">
 <!ENTITY lastfm.radio.start "Not sure where to start?  Try a search, or check out what others are listening to.">
 <!ENTITY lastfm.radio.start.top.artists "Top Artists on Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Top Tags on Last.fm">
 <!ENTITY lastfm.radio.register "Register">
+<!ENTITY lastfm.radio.subscriber.button "Subscribe">
+<!ENTITY lastfm.radio.subscriber.help "In order to listen to Last.fm Radio, you must be a subscriber.">
 <!ENTITY lastfm.radio.search "Search">
 <!ENTITY lastfm.radio.library "Library">
 <!ENTITY lastfm.radio.loved "Loved Tracks">

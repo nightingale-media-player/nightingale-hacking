@@ -17,8 +17,25 @@
 <script type="application/x-javascript" src="tuner2.js"></script>
 
 <body>
+	<div id="subscriber-page">
+		<div class="lightbox-bkg" />
+		<div id="subscriber-box">
+			<p>
+			<div id="subscriber-text">
+				<img src="chrome://sb-lastfm/skin/grad_white.png" />
+				<p>&lastfm.radio.subscriber.help;</p>
+				<p>
+					<xul:button class="subscriber-button"
+					label="&lastfm.radio.subscriber.button;"
+					onclick="gBrowser.loadOneTab('http://www.last.fm/subscribe')"
+					/>
+				</p>
+				</div>
+			</p>
+		</div>
+	</div>
 	<div id="login-page">
-		<div id="login-bkg" />
+		<div class="lightbox-bkg" />
 		<div id="login-box">
 			<p>
 			<div id="login-text">

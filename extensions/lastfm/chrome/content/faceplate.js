@@ -19,7 +19,6 @@ function sbLastFmFaceplate_requestPref_change() {
 
 sbLastFmFaceplate.init = 
 function sbLastFmFaceplate_init() {
-  LFFPD('init');
   var stationIcon = document.getElementById("lastfm-station-icon");
   stationIcon.style.visibility = "collapse";
   this.stationPref = Application.prefs.get('songbird.lastfm.radio.station');
@@ -32,7 +31,6 @@ function sbLastFmFaceplate_init() {
 
 sbLastFmFaceplate.fini = 
 function sbLastFmFaceplate_fini() {
-  LFFPD('fini');
   this.stationPref.events.removeListener('change', 
       sbLastFmFaceplate_stationPref_change);
   this.stationPref = null;

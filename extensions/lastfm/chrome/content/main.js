@@ -415,7 +415,8 @@ LastFm.onLoginClick = function(event) {
   this._service.userLoggedOut = false;
   this._service.username = this._username.value;
   this._service.password = this._password.value;
-  this._service.login();
+  // call login, telling the service to ignore any saved sessions
+  this._service.login(true);
 }
 LastFm.onCancelClick = function(event) {
   this._service.cancelLogin();
@@ -457,14 +458,15 @@ LastFm.onLoggedInStateChanged = function LastFm_onLoggedInStateChanged() {
     this._deck.selectedPanel = this._profile;
   } else {
     // logged out
-
-    // remove the "log out" menu item
-    this._menuLogout.parentNode.removeChild(this._menuLogout);
-    // insert the "log in" menu item
-    this._menuEnableScrobbling.parentNode.insertBefore(this._menuLogin,
-        this._menuEnableScrobbling);
-    // disable the "enable scrobbling" menu item
-    this._menuEnableScrobbling.disabled = true;
+	if (this._service.userLoggedOut) {
+		// remove the "log out" menu item
+		this._menuLogout.parentNode.removeChild(this._menuLogout);
+		// insert the "log in" menu item
+		this._menuEnableScrobbling.parentNode.insertBefore(this._menuLogin,
+			this._menuEnableScrobbling);
+		// disable the "enable scrobbling" menu item
+		this._menuEnableScrobbling.disabled = true;
+	}
 
     // switch back to the login panel
     this._deck.selectedPanel = this._login;

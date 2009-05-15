@@ -9,14 +9,16 @@ img {
 }
 
 /* LOGIN PAGE */
-div#login-page {
+div#login-page, div#subscriber-page {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	z-index: 500;
+}
+div#subscriber-page {
 	display: none;
 }
-div#login-bkg {
+div.lightbox-bkg {
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -25,19 +27,21 @@ div#login-bkg {
 	z-index: 501;
 }
 
-div#login-box {
+div#login-box, div#subscriber-box {
 	position: absolute;
 	width: 100%;
 	height: 100%;
 	z-index: 510;
 	display: table;
 }
-div#login-box p {
+div#login-box p,
+div#subscriber-box p {
 	display: table-cell;
 	vertical-align: middle;
 	text-align: center;
 }
-div#login-box p div#login-text {
+div#login-box p div#login-text,
+div#subscriber-box p div#subscriber-text {
 	width: 300px;
 	display: inline-block;
 
@@ -46,7 +50,8 @@ div#login-box p div#login-text {
 	position: relative;
 	padding: 2em;
 }
-div#login-box p div#login-text img {
+div#login-box p div#login-text img,
+div#subscriber-box p div#subscriber-text img {
 	height: 100%;
 	left: 0px;
 	position: absolute;
@@ -54,7 +59,8 @@ div#login-box p div#login-text img {
 	width: 100%;
 	z-index: 530;
 }
-div#login-box p div#login-text p {
+div#login-box p div#login-text p,
+div#subscriber-box p div#subscriber-text p {
 	position: relative;
 	z-index: 550;
 	font-size: 9pt;
