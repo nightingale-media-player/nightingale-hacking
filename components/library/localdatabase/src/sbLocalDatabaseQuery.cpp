@@ -420,7 +420,7 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   // Left join the properties table to the base table includig a null
   // constraint on the obj_sortable column
   nsCOMPtr<sbISQLBuilderCriterion> criterionGuid;
-  rv = mBuilder->CreateMatchCriterionTable(NS_LITERAL_STRING("_p0"),
+  rv = mBuilder->CreateMatchCriterionTable(NS_LITERAL_STRING("_pX"),
                                            MEDIAITEMID_COLUMN,
                                            sbISQLSelectBuilder::MATCH_EQUALS,
                                            MEDIAITEMS_ALIAS,
@@ -429,7 +429,7 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbISQLBuilderCriterion> criterionProperty;
-  rv = mBuilder->CreateMatchCriterionLong(NS_LITERAL_STRING("_p0"),
+  rv = mBuilder->CreateMatchCriterionLong(NS_LITERAL_STRING("_pX"),
                                           NS_LITERAL_STRING("property_id"),
                                           sbISQLSelectBuilder::MATCH_EQUALS,
                                           GetPropertyId(mSorts->ElementAt(0).property),
@@ -444,11 +444,11 @@ sbLocalDatabaseQuery::GetNullResortQuery(nsAString& aQuery)
 
   rv = mBuilder->AddJoinWithCriterion(sbISQLSelectBuilder::JOIN_LEFT,
                                       PROPERTIES_TABLE,
-                                      NS_LITERAL_STRING("_p0"),
+                                      NS_LITERAL_STRING("_pX"),
                                       criterion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mBuilder->CreateMatchCriterionNull(NS_LITERAL_STRING("_p0"),
+  rv = mBuilder->CreateMatchCriterionNull(NS_LITERAL_STRING("_pX"),
                                           OBJSORTABLE_COLUMN,
                                           sbISQLSelectBuilder::MATCH_EQUALS,
                                           getter_AddRefs(criterion));
