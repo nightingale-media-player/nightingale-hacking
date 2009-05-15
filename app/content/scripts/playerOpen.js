@@ -458,7 +458,11 @@ function onHelp()
   onMenu(helpitem);
 }
 
-
+function SBOpenEqualizer() 
+{
+  var features = "chrome,titlebar,toolbar,centerscreen,resizable=no";
+  SBOpenWindow( "chrome://songbird/content/xul/mediacore/mediacoreEqualizer.xul", "Equalizer", features);
+}
 
 function SBOpenPreferences(paneID, parentWindow)
 {

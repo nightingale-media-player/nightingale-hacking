@@ -43,7 +43,9 @@ CPP_SRCS += sbMediacoreVotingChain.cpp \
             sbMediacoreEvent.cpp \
             sbMediacoreError.cpp \
             sbBaseMediacoreEventTarget.cpp \
+            sbBaseMediacoreMultibandEqualizer.cpp \
             sbBaseMediacoreVolumeControl.cpp \
+            sbMediacoreEqualizerBand.cpp \
             $(NULL)
 
 CPP_INCLUDES = $(DEPTH)/components/dataremote/public \

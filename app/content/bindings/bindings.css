@@ -557,6 +557,11 @@ sb-add-on-bundle-installer {
   -moz-binding: url("chrome://songbird/content/bindings/addOnBundleInstaller.xml#sb-add-on-bundle-installer");
 }
 
+/* Equalizer bindings */
+sb-eq-band-slider {
+  -moz-binding: url("chrome://songbird/content/bindings/eqBandSlider.xml#eq-band-slider") !important;
+}
+
 /* properties formatter bindings */
 sb-properties-formatter {
   -moz-binding: url("chrome://songbird/content/bindings/propertiesMenuList.xml#propertiesFormatter");

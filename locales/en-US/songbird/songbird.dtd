@@ -82,6 +82,7 @@
 <!ENTITY menu.help.keyboard "Keyboard Shortcuts">
 <!ENTITY menu.help.about    "About &brandShortName;..." >
 
+<!ENTITY menu.equalizer     "Equalizer..." >
 <!ENTITY menu.preferences   "Options..." >
 <!ENTITY menu.extensions    "Add-ons..." >
 <!ENTITY menu.clearprivatedata "Clear Private Data...">
@@ -179,6 +180,38 @@
 <!ENTITY about.version            "Version" >
 <!ENTITY about.buttons.credits    "Credits" >
 
+<!ENTITY equalizer.title          "Equalizer" >
+<!ENTITY equalizer.on.checkbox    "On" >
+<!ENTITY equalizer.band0.label    "30" >
+<!ENTITY equalizer.band1.label    "60" >
+<!ENTITY equalizer.band2.label    "120" >
+<!ENTITY equalizer.band3.label    "250" >
+<!ENTITY equalizer.band4.label    "500" >
+<!ENTITY equalizer.band5.label    "1K" >
+<!ENTITY equalizer.band6.label    "2K" >
+<!ENTITY equalizer.band7.label    "4K" >
+<!ENTITY equalizer.band8.label    "8K" >
+<!ENTITY equalizer.band9.label    "16K" >
+<!ENTITY equalizer.preset.custom      "Custom" >
+<!ENTITY equalizer.preset.rock        "Rock" >
+<!ENTITY equalizer.preset.soft_rock   "Soft Rock" >
+<!ENTITY equalizer.preset.techno      "Techno" >
+<!ENTITY equalizer.preset.ska         "Ska" >
+<!ENTITY equalizer.preset.reggae      "Reggae" >
+<!ENTITY equalizer.preset.live        "Live" >
+<!ENTITY equalizer.preset.club        "Club" >
+<!ENTITY equalizer.preset.party       "Party" >
+<!ENTITY equalizer.preset.classical   "Classical" >
+<!ENTITY equalizer.preset.large_hall  "Large Hall" >
+<!ENTITY equalizer.preset.dance       "Dance" >
+<!ENTITY equalizer.preset.pop         "Pop" >
+<!ENTITY equalizer.preset.soft        "Soft" >
+<!ENTITY equalizer.preset.small_speakers   "Laptop/Headphones" >
+<!ENTITY equalizer.preset.full_bass_treble "Full Bass and Treble" >
+<!ENTITY equalizer.preset.full_treble "Full treble" >
+<!ENTITY equalizer.preset.full_bass   "Full bass" >
+
+
 <!ENTITY setupprogress.pleasewait "Please wait..." >
 <!ENTITY setupprogress.cancel     "Cancel">
 
@@ -197,6 +230,7 @@
 <!ENTITY locale.language.accesskey        "L" >
 <!ENTITY menu.view.accesskey              "V" >
 <!ENTITY menu.preferences.accesskey       "O" >
+<!ENTITY menu.equalizer.accesskey         "Q" >
 <!ENTITY menu.extensions.accesskey        "A" >
 <!ENTITY menu.clearprivatedata.accesskey  "P" >
 <!ENTITY menu.errorconsole.accesskey      "C" >
@@ -334,6 +368,7 @@
 <!ENTITY menu.edit.findagain.key       "G" >
 <!ENTITY bookmarkPage.key              "D" >
 <!ENTITY jumpto.key                    "J" >
+<!ENTITY equalizer.key                 "E" >
 <!ENTITY switchfeathers.key            "M" >
 <!ENTITY search.key                    "F" >
 <!ENTITY searchFocus.key               "K" >

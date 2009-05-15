@@ -203,5 +203,7 @@ sbMediacoreEvent::CreateEvent(PRUint32 aType,
   rv = event->Init(aType, aError, aData, aOrigin);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return CallQueryInterface(event.get(), retval);
+  NS_IF_ADDREF(*retval = event);
+
+  return NS_OK;
 }

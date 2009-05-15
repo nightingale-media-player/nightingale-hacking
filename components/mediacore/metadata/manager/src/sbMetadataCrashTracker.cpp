@@ -199,9 +199,11 @@ nsresult
 sbMetadataCrashTracker::LogURLBegin(const nsACString& aURL)
 {
   nsresult rv = NS_OK;
+  
   // Make sure we have a log
   if (!mOutputStream) {
-    StartLog();
+    rv = StartLog();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   nsAutoLock lock(mLock);

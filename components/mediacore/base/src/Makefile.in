@@ -32,10 +32,12 @@ include $(DEPTH)/build/autodefs.mk
 target := sbMediacoreBase$(DEBUG:%=_d)
 
 CPP_SRCS = sbBaseMediacore.cpp \
+           sbBaseMediacoreMultibandEqualizer.cpp \
            sbBaseMediacoreFactory.cpp \
            sbBaseMediacorePlaybackControl.cpp \
            sbBaseMediacoreVolumeControl.cpp \
            sbMediacoreCapabilities.cpp \
+           sbMediacoreEqualizerBand.cpp \
            sbMediacoreError.cpp \
            sbMediacoreEvent.cpp \
            sbMediacoreVotingChain.cpp \

@@ -33,8 +33,10 @@ CPP_SRCS += sbBaseMediacore.cpp \
             sbBaseMediacoreFactory.cpp \
             sbBaseMediacorePlaybackControl.cpp \
             sbBaseMediacoreVolumeControl.cpp \
+            sbBaseMediacoreMultibandEqualizer.cpp \
             sbMediacoreCapabilities.cpp \
             sbMediacoreEvent.cpp \
+            sbMediacoreEqualizerBand.cpp \
             sbMediacoreError.cpp \
             $(NULL)
 

@@ -49,6 +49,12 @@
 #define SB_MEDIACORE_DATAREMOTE_FACEPLATE_MUTE        "faceplate.mute"
 
 /**
+ * Equalizer DataRemotes
+ */
+#define SB_MEDIACORE_DATAREMOTE_EQ_ENABLED        "eq.enabled"
+#define SB_MEDIACORE_DATAREMOTE_EQ_BAND_PREFIX    "eq.band."
+
+/**
  * Metadata DataRemotes
  */
 #define SB_MEDIACORE_DATAREMOTE_METADATA_ALBUM    "metadata.album"

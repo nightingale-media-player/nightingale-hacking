@@ -31,7 +31,7 @@ interface nsIVariant;
 interface sbIMediacore;
 interface sbIMediacoreError;
 interface sbIMediacoreEvent;
-interface sbIMediacoreSimpleEqualizer;
+interface sbIMediacoreMultibandEqualizer;
 interface sbIMediacoreBalanceControl;
 
 interface sbIMediacorePlaybackControl;
@@ -58,8 +58,8 @@ interface sbIMediacoreManager : nsISupports
   readonly attribute sbIMediacoreBalanceControl  balanceControl;
   readonly attribute sbIMediacoreVolumeControl   volumeControl;
 
-  readonly attribute sbIMediacoreSimpleEqualizer equalizer;
-  readonly attribute sbIMediacorePlaybackControl playbackControl;
+  readonly attribute sbIMediacoreMultibandEqualizer equalizer;
+  readonly attribute sbIMediacorePlaybackControl    playbackControl;
 
   readonly attribute sbIMediacoreCapabilities    capabilities;
   readonly attribute sbIMediacoreStatus          status;

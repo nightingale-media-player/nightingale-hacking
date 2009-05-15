@@ -246,7 +246,19 @@
         <![CDATA[
           var m = this.maxpos;
           var x = event.screenX - this.slider.boxObject.screenX; 
-          var v = (x - this.thumb.boxObject.width/2) / (this.slider.boxObject.width - this.thumb.boxObject.width) * m;
+          var y = event.screenY - this.slider.boxObject.screenY;
+          
+          var v = 0;
+          
+          if (this.getAttribute("orient") == "vertical") {
+            v = (y - this.thumb.boxObject.height/2) /
+                (this.slider.boxObject.height - this.thumb.boxObject.height) * m;
+          }
+          else {
+            v = (x - this.thumb.boxObject.width/2) / 
+                (this.slider.boxObject.width - this.thumb.boxObject.width) * m;
+          }
+          
           if (v < 0) v = 0; else if (v > m) v = m;
           if (this.getAttribute("dir") == "reverse") v = m - v;
           this.slider.setAttribute('curpos', ''+v);

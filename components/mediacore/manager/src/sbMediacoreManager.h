@@ -44,12 +44,14 @@
 #include <sbIMediacoreVideoWindow.h>
 #include <sbIMediacoreVoting.h>
 
+#include <sbBaseMediacoreMultibandEqualizer.h>
 #include <sbBaseMediacoreVolumeControl.h>
 
 // Forward declared classes
 class sbBaseMediacoreEventTarget;
 
-class sbMediacoreManager : public sbBaseMediacoreVolumeControl,
+class sbMediacoreManager : public sbBaseMediacoreMultibandEqualizer,
+                           public sbBaseMediacoreVolumeControl,
                            public sbIMediacoreManager,
                            public sbPIMediacoreManager,
                            public sbIMediacoreEventTarget,
@@ -79,6 +81,13 @@ public:
   nsresult PreShutdown();
   nsresult Shutdown();
 
+  // sbBaseMediacoreMultibandEqualizer overrides
+  virtual nsresult OnInitBaseMediacoreMultibandEqualizer();
+  virtual nsresult OnSetEqEnabled(PRBool aEqEnabled);
+  virtual nsresult OnGetBandCount(PRUint32 *aBandCount);
+  virtual nsresult OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand);
+  virtual nsresult OnSetBand(sbIMediacoreEqualizerBand *aBand);
+
   // sbBaseMediacoreVolumeControl overrides
   virtual nsresult OnInitBaseMediacoreVolumeControl();
   virtual nsresult OnSetMute(PRBool aMute);
@@ -86,6 +95,12 @@ public:
 
   nsresult SetVolumeDataRemote(PRFloat64 aVolume);
 
+  nsresult GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex,
+                                           sbIDataRemote **aRemote);
+  nsresult SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *aBand);
+
+  nsresult CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex, 
+                                            sbIDataRemote **aRemote);
 protected:
   virtual ~sbMediacoreManager();
 
@@ -100,6 +115,11 @@ protected:
     EnumerateIntoArrayISupportsKey(nsISupports *aKey,
                                    T* aData,
                                    void* aArray);
+  template<class T>
+  static NS_HIDDEN_(PLDHashOperator)
+    EnumerateIntoArrayUint32Key(const PRUint32 &aKey,
+                                T* aData,
+                                void* aArray);
 
   nsresult GenerateInstanceName(nsAString &aInstanceName);
 
@@ -116,6 +136,9 @@ protected:
   nsCOMPtr<sbIMediacore>                mPrimaryCore;
   nsCOMPtr<sbIMediacoreSequencer>       mSequencer;
   nsAutoPtr<sbBaseMediacoreEventTarget> mBaseEventTarget;
+
+  nsCOMPtr<sbIDataRemote> mDataRemoteEqualizerEnabled;
+  nsInterfaceHashtableMT<nsUint32HashKey, sbIDataRemote> mDataRemoteEqualizerBands;
 
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateVolume;
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;

@@ -72,6 +72,14 @@
 #define SB_CORE_BASE_NAME   "mediacore"
 #define SB_CORE_NAME_SUFFIX "@core.songbirdnest.com"
 
+#define SB_EQUALIZER_DEFAULT_BAND_COUNT \
+  sbBaseMediacoreMultibandEqualizer::EQUALIZER_BAND_COUNT_DEFAULT
+
+#define SB_EQUALIZER_BANDS \
+  sbBaseMediacoreMultibandEqualizer::EQUALIZER_BANDS_10
+
+#define SB_EQUALIZER_DEFAULT_BAND_GAIN  (0.0)
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMediacoreManager:5
@@ -87,12 +95,13 @@ static PRLogModuleInfo* gMediacoreManager = nsnull;
 
 NS_IMPL_THREADSAFE_ADDREF(sbMediacoreManager)
 NS_IMPL_THREADSAFE_RELEASE(sbMediacoreManager)
-NS_IMPL_QUERY_INTERFACE10_CI(sbMediacoreManager,
+NS_IMPL_QUERY_INTERFACE11_CI(sbMediacoreManager,
                             sbIMediacoreManager,
                             sbPIMediacoreManager,
                             sbIMediacoreEventTarget,
                             sbIMediacoreFactoryRegistrar,
                             sbIMediacoreVideoWindow,
+                            sbIMediacoreMultibandEqualizer,
                             sbIMediacoreVolumeControl,
                             sbIMediacoreVoting,
                             nsISupportsWeakReference,
@@ -139,13 +148,8 @@ sbMediacoreManager::~sbMediacoreManager()
 }
 
 template<class T>
-PLDHashOperator sbMediacoreManager::EnumerateIntoArrayStringKey(
-                                      const nsAString& aKey,
-                                      T* aData,
-                                      void* aArray)
+PLDHashOperator appendElementToArray(T* aData, void* aArray)
 {
-  TRACE(("sbMediacoreManager[0x%x] - EnumerateIntoArray (String)"));
-
   nsIMutableArray *array = (nsIMutableArray*)aArray;
   nsresult rv;
   nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
@@ -158,22 +162,33 @@ PLDHashOperator sbMediacoreManager::EnumerateIntoArrayStringKey(
 }
 
 template<class T>
+PLDHashOperator sbMediacoreManager::EnumerateIntoArrayStringKey(
+                                      const nsAString& aKey,
+                                      T* aData,
+                                      void* aArray)
+{
+  TRACE(("sbMediacoreManager[0x%x] - EnumerateIntoArray (String)"));
+  return appendElementToArray(aData, aArray);
+}
+
+template<class T>
 PLDHashOperator sbMediacoreManager::EnumerateIntoArrayISupportsKey(
                                       nsISupports* aKey,
                                       T* aData,
                                       void* aArray)
 {
   TRACE(("sbMediacoreManager[0x%x] - EnumerateIntoArray (nsISupports)"));
+  return appendElementToArray(aData, aArray);
+}
 
-  nsIMutableArray *array = (nsIMutableArray*)aArray;
-  nsresult rv;
-  nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  rv = array->AppendElement(aData, false);
-  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-
-  return PL_DHASH_NEXT;
+template<class T>
+PLDHashOperator sbMediacoreManager::EnumerateIntoArrayUint32Key(
+                                      const PRUint32 &aKey,
+                                      T* aData,
+                                      void* aArray)
+{
+  TRACE(("sbMediacoreManager[0x%x] - EnumerateIntoArray (PRUint32)"));
+  return appendElementToArray(aData, aArray);
 }
 
 nsresult
@@ -244,6 +259,9 @@ sbMediacoreManager::Init()
 
   mSequencer = sequencer;
 
+  rv = InitBaseMediacoreMultibandEqualizer();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   rv = InitBaseMediacoreVolumeControl();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -296,6 +314,11 @@ sbMediacoreManager::Shutdown()
     mSequencer = nsnull;
   }
 
+  if (mDataRemoteEqualizerEnabled) {
+    rv = mDataRemoteEqualizerEnabled->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if (mDataRemoteFaceplateVolume) {
     rv = mDataRemoteFaceplateVolume->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -310,10 +333,27 @@ sbMediacoreManager::Shutdown()
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mDataRemoteEqualizerBands.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayUint32Key,
+                                          mutableArray.get());
+
+  PRUint32 length = 0;
+  rv = mutableArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIDataRemote> dataRemote = do_QueryElementAt(mutableArray, current, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = dataRemote->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mutableArray->Clear();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   mCores.EnumerateRead(sbMediacoreManager::EnumerateIntoArrayStringKey,
                        mutableArray.get());
 
-  PRUint32 length = 0;
   rv = mutableArray->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -470,6 +510,287 @@ sbMediacoreManager::VoteWithURIOrChannel(nsIURI *aURI,
   }
 
   NS_ADDREF(*_retval = votingChain);
+
+  return NS_OK;
+}
+
+// ----------------------------------------------------------------------------
+// sbBaseMediacoreMultibandEqualizer overrides
+// ----------------------------------------------------------------------------
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnInitBaseMediacoreMultibandEqualizer()
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsString nullString;
+  nullString.SetIsVoid(PR_TRUE);
+
+  PRBool success = mDataRemoteEqualizerBands.Init(10);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  mDataRemoteEqualizerEnabled =
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDataRemoteEqualizerEnabled->Init(
+    NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_EQ_ENABLED),
+    nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString eqEnabledStr;
+  rv = mDataRemoteEqualizerEnabled->GetStringValue(eqEnabledStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool eqEnabled = PR_FALSE;
+  if(!eqEnabledStr.IsEmpty()) {
+    rv = mDataRemoteEqualizerEnabled->GetBoolValue(&eqEnabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  mEqEnabled = eqEnabled;
+
+  rv = mDataRemoteEqualizerEnabled->SetBoolValue(mEqEnabled);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("[sbMediacoreManager] - Initializing eq enabled from data remote, enabled: %s",
+      eqEnabled ? "true" : "false"));
+
+  // Initialize the eq band data remotes
+  for(PRUint32 i = 0; i < SB_EQUALIZER_DEFAULT_BAND_COUNT; ++i) {
+    nsCOMPtr<sbIMediacoreEqualizerBand> band;
+    rv = GetBand(i, getter_AddRefs(band));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnSetEqEnabled(PRBool aEqEnabled)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+
+  if(mPrimaryCore) {
+    nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
+      do_QueryInterface(mPrimaryCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mon.Exit();
+
+    rv = equalizer->SetEqEnabled(aEqEnabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If the EQ wasn't enabled before, set the bands.
+    if(!mEqEnabled && aEqEnabled) {
+      nsCOMPtr<nsISimpleEnumerator> bands;
+      rv = GetBands(getter_AddRefs(bands));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = equalizer->SetBands(bands);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    mon.Exit();
+  }
+
+  rv = mDataRemoteEqualizerEnabled->SetBoolValue(aEqEnabled);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnGetBandCount(PRUint32 *aBandCount)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+
+  if(mPrimaryCore) {
+    nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
+      do_QueryInterface(mPrimaryCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mon.Exit();
+
+    rv = equalizer->GetBandCount(aBandCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mon.Exit();
+    *aBandCount = SB_EQUALIZER_DEFAULT_BAND_COUNT;
+  }
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand)
+{
+  NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+
+  if(mPrimaryCore) {
+    nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
+      do_QueryInterface(mPrimaryCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mon.Exit();
+
+    nsCOMPtr<sbIMediacoreEqualizerBand> band;
+    rv = equalizer->GetBand(aBandIndex, getter_AddRefs(band));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 bandIndex = 0, bandFrequency = 0;
+    double bandGain = 0.0;
+
+    rv = band->GetValues(&bandIndex, &bandFrequency, &bandGain);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aBand->Init(bandIndex, bandFrequency, bandGain);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<sbIDataRemote> bandRemote;
+    rv = GetAndEnsureEQBandHasDataRemote(aBandIndex, getter_AddRefs(bandRemote));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString bandRemoteValue;
+    rv = bandRemote->GetStringValue(bandRemoteValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ConvertUTF16toUTF8 gainStr(bandRemoteValue);
+    PRFloat64 gain = 0;
+
+    if((PR_sscanf(gainStr.BeginReading(), "%lg", &gain) != 1) ||
+       (gain > 1.0 || gain < -1.0)) {
+      gain = SB_EQUALIZER_DEFAULT_BAND_GAIN;
+      SB_ConvertFloatEqGainToJSStringValue(SB_EQUALIZER_DEFAULT_BAND_GAIN, 
+                                           gainStr);
+      rv = bandRemote->SetStringValue(NS_ConvertUTF8toUTF16(gainStr));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = aBand->Init(aBandIndex, SB_EQUALIZER_BANDS[aBandIndex], gain);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMediacoreManager::OnSetBand(sbIMediacoreEqualizerBand *aBand)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsAutoMonitor mon(mMonitor);
+
+  if(mPrimaryCore) {
+    nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer =
+      do_QueryInterface(mPrimaryCore, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mon.Exit();
+
+    rv = equalizer->SetBand(aBand);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    mon.Exit();
+  }
+
+  rv = SetAndEnsureEQBandHasDataRemote(aBand);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreManager::GetAndEnsureEQBandHasDataRemote(PRUint32 aBandIndex, 
+                                                    sbIDataRemote **aRemote)
+{
+  NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
+  NS_ENSURE_ARG_POINTER(aRemote);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIDataRemote> bandRemote;
+  PRBool success = mDataRemoteEqualizerBands.Get(aBandIndex, getter_AddRefs(bandRemote));
+
+  if(!success) {
+    rv = CreateDataRemoteForEqualizerBand(aBandIndex, getter_AddRefs(bandRemote));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  bandRemote.forget(aRemote);
+
+  return NS_OK;
+}
+
+nsresult 
+sbMediacoreManager::SetAndEnsureEQBandHasDataRemote(sbIMediacoreEqualizerBand *aBand)
+{
+  NS_ENSURE_ARG_POINTER(aBand);
+
+  PRUint32 bandIndex = 0, bandFrequency = 0;
+  double bandGain = 0.0;
+
+  nsresult rv = aBand->GetValues(&bandIndex, &bandFrequency, &bandGain);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDataRemote> bandRemote;
+  PRBool success = mDataRemoteEqualizerBands.Get(bandIndex, getter_AddRefs(bandRemote));
+  
+  if(!success) {
+    rv = CreateDataRemoteForEqualizerBand(bandIndex, getter_AddRefs(bandRemote));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCString bandGainStr;
+  SB_ConvertFloatEqGainToJSStringValue(bandGain, bandGainStr);
+
+  NS_ConvertUTF8toUTF16 gainStr(bandGainStr);
+  rv = bandRemote->SetStringValue(gainStr);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex, 
+                                                     sbIDataRemote **aRemote)
+{
+  NS_ENSURE_ARG_RANGE(aBandIndex, 0, SB_EQUALIZER_DEFAULT_BAND_COUNT);
+  NS_ENSURE_ARG_POINTER(aRemote);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsString nullString;
+  nullString.SetIsVoid(PR_TRUE);
+
+  nsCOMPtr<sbIDataRemote> bandRemote = 
+    do_CreateInstance("@songbirdnest.com/Songbird/DataRemote;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString bandRemoteName(NS_LITERAL_STRING(SB_MEDIACORE_DATAREMOTE_EQ_BAND_PREFIX));
+  bandRemoteName.AppendInt(aBandIndex);
+
+  rv = bandRemote->Init(bandRemoteName, nullString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool success = mDataRemoteEqualizerBands.Put(aBandIndex, bandRemote);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  bandRemote.forget(aRemote);
 
   return NS_OK;
 }
@@ -682,7 +1003,7 @@ sbMediacoreManager::GetVolumeControl(
 
 NS_IMETHODIMP
 sbMediacoreManager::GetEqualizer(
-                      sbIMediacoreSimpleEqualizer * *aEqualizer)
+                      sbIMediacoreMultibandEqualizer * *aEqualizer)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetEqualizer", this));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -692,16 +1013,12 @@ sbMediacoreManager::GetEqualizer(
 
   nsAutoMonitor mon(mMonitor);
 
-  if(!mPrimaryCore) {
-    return nsnull;
-  }
-
   nsresult rv = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<sbIMediacoreSimpleEqualizer> eq =
-    do_QueryInterface(mPrimaryCore, &rv);
+  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer = 
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  eq.forget(aEqualizer);
+  equalizer.forget(aEqualizer);
 
   return NS_OK;
 }
@@ -837,17 +1154,47 @@ sbMediacoreManager::SetPrimaryCore(sbIMediacore * aPrimaryCore)
   mPrimaryCore = aPrimaryCore;
 
   nsresult rv = NS_ERROR_UNEXPECTED;
+  
   nsCOMPtr<sbIMediacoreVolumeControl> volumeControl =
     do_QueryInterface(mPrimaryCore, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsAutoMonitor lock(sbBaseMediacoreVolumeControl::mMonitor);
+  // No equalizer interface on the primary core is not a fatal error.
+  nsCOMPtr<sbIMediacoreMultibandEqualizer> equalizer = 
+    do_QueryInterface(mPrimaryCore, &rv);
+  if(NS_FAILED(rv)) {
+    equalizer = nsnull;
+  }
+  mon.Exit();
+
+  nsAutoMonitor volMon(sbBaseMediacoreVolumeControl::mMonitor);
 
   rv = volumeControl->SetVolume(mVolume);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = volumeControl->SetMute(mMute);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  volMon.Exit();
+
+  if(equalizer) {
+    nsAutoMonitor eqMon(sbBaseMediacoreMultibandEqualizer::mMonitor);
+
+    PRBool eqEnabled = mEqEnabled;
+    rv = equalizer->SetEqEnabled(mEqEnabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    eqMon.Exit();
+
+    if(eqEnabled) {
+      nsCOMPtr<nsISimpleEnumerator> bands;
+      rv = GetBands(getter_AddRefs(bands));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = equalizer->SetBands(bands);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   return NS_OK;
 }

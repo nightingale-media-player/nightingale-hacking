@@ -164,6 +164,12 @@
         <menuitem id="menuitem_control_rep1" label="&menu.control.rep1;" type="radio" observes="controlModeRepeatOnce" accesskey="&menu.control.rep1.accesskey;" />
         <menuseparator/>
         <menuitem id="menuitem_control_jumpto" key="jumpto-key" label="&menu.control.jumpto;" type="checkbox" observes="controlJumpTo" accesskey="&menu.control.jumpto.accesskey;" />
+        <menuseparator id="menu_EQSeparator"/>
+        <menuitem id="menu_equalizer"
+                  key="equalizer-key"
+                  label="&menu.equalizer;"
+                  accesskey="&menu.equalizer.accesskey;"
+                  oncommand="SBOpenEqualizer();" />
       </menupopup>
     </menu>
 
@@ -375,6 +381,7 @@
       <key id="switch-feathers-key" modifiers="accel,shift" key="&switchfeathers.key;" oncommand="toggleNextFeatherLayout();"/>
       <key id="help-key" keycode="VK_F1" oncommand="onHelp();"/>
       <key id="jumpto-key" modifiers="accel" key="&jumpto.key;" oncommand="onJumpToFileKey();"/>
+      <key id="equalizer-key" modifiers="accel" key="&equalizer.key;" oncommand="SBOpenEqualizer();"/>
       <key id="sanitize-key" modifiers="accel,shift" keycode="&sanitize.keycode;" oncommand="doMenu('menuitem_tools_clearprivatedata');"/>
       <key id="downloadmgr-key" modifiers="accel,shift" key="&downloadmgr.key;" oncommand="doMenu('menu_downloadmgr');"/>
       

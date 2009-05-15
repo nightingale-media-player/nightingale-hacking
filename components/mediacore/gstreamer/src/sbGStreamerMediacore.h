@@ -48,6 +48,7 @@
 #include <sbIPropertyArray.h>
 
 #include <sbBaseMediacore.h>
+#include <sbBaseMediacoreMultibandEqualizer.h>
 #include <sbBaseMediacorePlaybackControl.h>
 #include <sbBaseMediacoreVolumeControl.h>
 #include <sbBaseMediacoreEventTarget.h>
@@ -62,6 +63,7 @@
 class nsIURI;
 
 class sbGStreamerMediacore : public sbBaseMediacore,
+                             public sbBaseMediacoreMultibandEqualizer,
                              public sbBaseMediacorePlaybackControl,
                              public sbBaseMediacoreVolumeControl,
                              public sbIMediacoreVotingParticipant,
@@ -91,6 +93,13 @@ public:
   virtual nsresult OnInitBaseMediacore();
   virtual nsresult OnGetCapabilities();
   virtual nsresult OnShutdown();
+
+  // sbBaseMediacoreMultibandEqualizer overrides
+  virtual nsresult OnInitBaseMediacoreMultibandEqualizer();
+  virtual nsresult OnSetEqEnabled(PRBool aEqEnabled);
+  virtual nsresult OnGetBandCount(PRUint32 *aBandCount);
+  virtual nsresult OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand);
+  virtual nsresult OnSetBand(sbIMediacoreEqualizerBand *aBand);
 
   // sbBaseMediacorePlaybackControl overrides
   virtual nsresult OnInitBaseMediacorePlaybackControl();
@@ -183,6 +192,7 @@ protected:
   std::vector<GstElement*> mAudioFilters;
 
   GstElement *mReplaygainElement;
+  GstElement *mEqualizerElement;
 
   // Metadata, both in original GstTagList form, and transformed into an
   // sbIPropertyArray. Both may be NULL.

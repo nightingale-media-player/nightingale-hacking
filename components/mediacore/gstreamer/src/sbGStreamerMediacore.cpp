@@ -42,6 +42,7 @@
 #include <nsThreadUtils.h>
 #include <nsCOMPtr.h>
 #include <prlog.h>
+#include <prprf.h>
 
 // Required to crack open the DOM XUL Element and get a native window handle.
 #include <nsIBaseWindow.h>
@@ -90,6 +91,14 @@
 
 #define MAX_FILE_SIZE_FOR_ACCURATE_SEEK (20 * 1024 * 1024)
 
+#define EQUALIZER_FACTORY_NAME "equalizer-10bands"
+
+#define EQUALIZER_DEFAULT_BAND_COUNT \
+  sbBaseMediacoreMultibandEqualizer::EQUALIZER_BAND_COUNT_DEFAULT
+
+#define EQUALIZER_BANDS \
+  sbBaseMediacoreMultibandEqualizer::EQUALIZER_BANDS_10
+
 /**
  * To log this class, set the following environment variable in a debug build:
  *
@@ -119,8 +128,9 @@ static PRLogModuleInfo* gGStreamerMediacore =
 NS_IMPL_THREADSAFE_ADDREF(sbGStreamerMediacore)
 NS_IMPL_THREADSAFE_RELEASE(sbGStreamerMediacore)
 
-NS_IMPL_QUERY_INTERFACE10_CI(sbGStreamerMediacore,
+NS_IMPL_QUERY_INTERFACE11_CI(sbGStreamerMediacore,
                             sbIMediacore,
+                            sbIMediacoreMultibandEqualizer,
                             sbIMediacorePlaybackControl,
                             sbIMediacoreVolumeControl,
                             sbIMediacoreVotingParticipant,
@@ -131,8 +141,9 @@ NS_IMPL_QUERY_INTERFACE10_CI(sbGStreamerMediacore,
                             nsIObserver,			
                             nsIClassInfo)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbGStreamerMediacore,
+NS_IMPL_CI_INTERFACE_GETTER8(sbGStreamerMediacore,
                              sbIMediacore,
+                             sbIMediacoreMultibandEqualizer,
                              sbIMediacorePlaybackControl,
                              sbIMediacoreVideoWindow,
                              sbIMediacoreVolumeControl,
@@ -151,6 +162,7 @@ sbGStreamerMediacore::sbGStreamerMediacore() :
     mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
     mPrefs(nsnull),
     mReplaygainElement(nsnull),
+    mEqualizerElement(nsnull),
     mTags(NULL),
     mProperties(nsnull),
     mStopped(PR_FALSE),
@@ -185,6 +197,9 @@ sbGStreamerMediacore::~sbGStreamerMediacore()
   if (mReplaygainElement)
     gst_object_unref (mReplaygainElement);
 
+  if (mEqualizerElement)
+    gst_object_unref (mEqualizerElement);
+
   std::vector<GstElement *>::const_iterator it = mAudioFilters.begin();
   for ( ; it < mAudioFilters.end(); ++it)
     gst_object_unref (*it);
@@ -202,6 +217,9 @@ sbGStreamerMediacore::Init()
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   rv = sbBaseMediacore::InitBaseMediacore();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbBaseMediacoreMultibandEqualizer::InitBaseMediacoreMultibandEqualizer();
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sbBaseMediacorePlaybackControl::InitBaseMediacorePlaybackControl();
@@ -1370,14 +1388,148 @@ sbGStreamerMediacore::OnShutdown()
 }
 
 //-----------------------------------------------------------------------------
+// sbBaseMediacoreMultibandEqualizer
+//-----------------------------------------------------------------------------
+/*virtual*/ nsresult 
+sbGStreamerMediacore::OnInitBaseMediacoreMultibandEqualizer()
+{
+  mEqualizerElement = 
+    gst_element_factory_make (EQUALIZER_FACTORY_NAME, NULL);
+  NS_WARN_IF_FALSE(mEqualizerElement, "No support for equalizer.");
+
+  if (mEqualizerElement) {
+    // Ref and sink the object to take ownership; we'll keep track of it 
+    // from here on.
+    gst_object_ref (mEqualizerElement);
+    gst_object_sink (mEqualizerElement);
+
+    // Set the bands to the frequencies we want
+    char band[16] = {0};
+
+    GValue freqVal = {0};
+    g_value_init (&freqVal, G_TYPE_DOUBLE);
+    
+    for(PRUint32 i = 0; i < EQUALIZER_DEFAULT_BAND_COUNT; ++i) {
+      PR_snprintf (band, 16, "band%i::freq", i);
+      g_value_set_double (&freqVal, EQUALIZER_BANDS[i]);
+      gst_child_proxy_set_property (GST_OBJECT (mEqualizerElement), 
+                                    band, 
+                                    &freqVal);
+    }
+
+    g_value_unset (&freqVal);
+
+    AddAudioFilter(mEqualizerElement);
+  }
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
+sbGStreamerMediacore::OnSetEqEnabled(PRBool aEqEnabled)
+{
+  // Not necessarily an error if we don't have an Equalizer Element.
+  // The plugin may simply be missing from the user's installation.
+  if(!mEqualizerElement) {
+    return NS_OK;
+  }
+
+  // Disable gain on bands if we're being disabled.
+  if(!aEqEnabled) {
+    char band[8] = {0};
+    double bandGain = 0;
+
+    nsAutoMonitor lock(mMonitor);
+
+    for(PRUint32 i = 0; i < EQUALIZER_DEFAULT_BAND_COUNT; ++i) {
+      PR_snprintf (band, 8, "band%i", i);
+      g_object_set (G_OBJECT (mEqualizerElement), band, bandGain, NULL);
+    }
+  }
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbGStreamerMediacore::OnGetBandCount(PRUint32 *aBandCount)
+{
+  NS_ENSURE_ARG_POINTER(aBandCount);
+
+  *aBandCount = 0;
+
+  // Not necessarily an error if we don't have an Equalizer Element.
+  // The plugin may simply be missing from the user's installation.
+  if (!mEqualizerElement) {
+    return NS_OK;
+  }
+
+  *aBandCount = EQUALIZER_DEFAULT_BAND_COUNT;
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbGStreamerMediacore::OnGetBand(PRUint32 aBandIndex, sbIMediacoreEqualizerBand *aBand)
+{
+  NS_ENSURE_ARG_POINTER(aBand);
+  NS_ENSURE_ARG_RANGE(aBandIndex, 0, EQUALIZER_DEFAULT_BAND_COUNT - 1);
+
+  // Not necessarily an error if we don't have an Equalizer Element.
+  // The plugin may simply be missing from the user's installation.
+  if (!mEqualizerElement) {
+    return NS_OK;
+  }
+
+  char band[8] = {0};
+  PR_snprintf(band, 8, "band%i", aBandIndex);
+
+  gdouble bandGain = 0.0;
+  g_object_get (G_OBJECT (mEqualizerElement), band, &bandGain, NULL);
+
+  nsresult rv = aBand->Init(aBandIndex, EQUALIZER_BANDS[aBandIndex], bandGain);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbGStreamerMediacore::OnSetBand(sbIMediacoreEqualizerBand *aBand)
+{
+  NS_ENSURE_ARG_POINTER(aBand);
+  
+  // Not necessarily an error if we don't have an Equalizer Element.
+  // The plugin may simply be missing from the user's installation.
+  if (!mEqualizerElement) {
+    return NS_OK;
+  }
+
+  PRUint32 bandIndex = 0;
+  nsresult rv = aBand->GetIndex(&bandIndex);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  double bandGain = 0.0;
+  rv = aBand->GetGain(&bandGain);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clamp and recenter.
+  bandGain = (12.0 * SB_ClampDouble(bandGain, -1.0, 1.0));
+
+  char band[8] = {0};
+  PR_snprintf(band, 8, "band%i", bandIndex);
+
+  nsAutoMonitor lock(mMonitor);
+  g_object_set (G_OBJECT (mEqualizerElement), band, bandGain, NULL);
+  
+  return NS_OK;
+}
+
+//-----------------------------------------------------------------------------
 // sbBaseMediacorePlaybackControl
 //-----------------------------------------------------------------------------
 
 /*virtual*/ nsresult 
 sbGStreamerMediacore::OnInitBaseMediacorePlaybackControl()
 {
-  /* Need to create the platform interface stuff here once that's updated. */
-
   return NS_OK;
 }
 

@@ -35,12 +35,20 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
+#include "sbMediacoreEqualizerBand.h"
 #include "sbMediacoreEvent.h"
 
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEqualizerBand);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediacoreEvent);
 
 static nsModuleComponentInfo sbBaseMediacoreComponents[] =
 {
+  {
+    SB_MEDIACORE_EQUALIZER_BAND_CLASSNAME,
+    SB_MEDIACORE_EQUALIZER_BAND_CID,
+    SB_MEDIACORE_EQUALIZER_BAND_CONTRACTID,
+    sbMediacoreEqualizerBandConstructor
+  },
   {
     SB_MEDIACORE_EVENT_CLASSNAME,
     SB_MEDIACORE_EVENT_CID,
