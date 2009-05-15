@@ -302,6 +302,7 @@ sbiTunesXMLParser::StartDocument() {
 NS_IMETHODIMP
 sbiTunesXMLParser::EndDocument() {
   LOG(("EndDocument\n"));
+  mSAXReader = nsnull;
   return NS_OK;
 }
 

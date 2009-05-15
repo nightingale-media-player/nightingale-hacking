@@ -31,6 +31,8 @@
 * \brief JavaScript source for the iTunes XML Parser unit tests.
 */
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 /**
  * Chopped version of an iTunes XML file to test error handling
  */
@@ -111,12 +113,15 @@ function runTest() {
       assertEqual(this.onErrorCount, 1, "Invalid error count for error situation");
       testFinished();
     },
+    onProgress : function() { /* nothing */ },
     topLevelPropertyCount : 0,
     onTrackCount : 0,
     onTracksCompleteCount : 0,
     onPlaylistCount : 0,
     onPlaylistsCompleteCount : 0,
-    onErrorCount : 0
+    onErrorCount : 0,
+    
+    QueryInterface: XPCOMUtils.generateQI([Ci.sbIiTunesXMLParserListener])
   };    
 
   // Test error condition
@@ -125,4 +130,5 @@ function runTest() {
   assertTrue(parser, "iTunes importer component is not available.");
   parser.parse(stringToStream(badTestXML), listener);
   testPending();
+  parser = null; // drop the reference to prevent leaks
 }
