@@ -59,7 +59,7 @@ static PRLogModuleInfo * BaseMediacoreMultibandEqualizer() {
 #define LOG(args)   /* nothing */
 #endif
 
-inline double
+double
 SB_ClampDouble(double aGain, double aMin, double aMax)
 {
   double gain = aGain;

@@ -39,7 +39,7 @@
 #include <nsHashKeys.h>
 #include <nsInterfaceHashtable.h>
 
-inline double
+double
 SB_ClampDouble(double aGain, double aMin, double aMax);
 
 void
