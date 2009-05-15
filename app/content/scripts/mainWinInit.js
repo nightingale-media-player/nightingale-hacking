@@ -1,4 +1,3 @@
-// JScript source code
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -227,28 +226,34 @@ function SBDoFirstRun() {
   // This is done to simplify the display, avoid some bugs,
   // and improve performance.
   if (job) {
-    job.addJobProgressListener(function firstRunLibraryHider(){
-      // only do anything on complete
-      if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
-        return;
-      }
-      // unhook the listener
-      job.removeJobProgressListener(arguments.callee);
-      // We have to do this from the "main thread" via the timer
-      setTimeout(function () {
-        // load the main library in the media tab / first tab
-        const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
-        var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
-        gBrowser.loadMediaListViewWithFlags(mediaListView,
-                                            gBrowser.selectedTab,
-                                            null,
-                                            nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
-      
-        // Set up the smart playlists after import is complete
-        // (improves performance slightly)
-        SBFirstRunSmartPlaylists();
-      }, 100);
-    });
+    function onJobComplete() {
+      // load the main library in the media tab / first tab
+      const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
+      var mediaListView =
+          LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
+      gBrowser.loadMediaListViewWithFlags(mediaListView,
+                                          gBrowser.selectedTab,
+                                          null,
+                                          nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
+
+      // Set up the smart playlists after import is complete
+      // (improves performance slightly)
+      SBFirstRunSmartPlaylists();
+    }
+    if (job.status != Ci.sbIJobProgress.STATUS_RUNNING)
+      setTimeout(onJobComplete, 100);
+    else {
+      job.addJobProgressListener(function firstRunLibraryHider(){
+        // only do anything on complete
+        if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
+          return;
+        }
+        // unhook the listener
+        job.removeJobProgressListener(arguments.callee);
+        // We have to do this from the "main thread" via the timer
+        setTimeout(onJobComplete, 100);
+      });
+    }
   } else {
     // Make sure we have the default smart playlists
     SBFirstRunSmartPlaylists();
