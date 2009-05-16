@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Ваши наиболее высоко оценённые исполнители">
 <!ENTITY lastfm.radio.popular_genres "Ваши популярные жанры">
 <!ENTITY lastfm.radio.play "Воспроизвести">
+<!ENTITY lastfm.tags.enter_new "Введите новые теги (через запятую)">
+<!ENTITY lastfm.tags.add_fail "Ошибка при добавлении тегов!">
+<!ENTITY lastfm.tags.user "Ваши теги:">
+<!ENTITY lastfm.tags.global "Глобальные теги Last.fm:">

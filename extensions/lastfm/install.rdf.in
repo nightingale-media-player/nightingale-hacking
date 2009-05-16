@@ -44,6 +44,9 @@
     <em:contributor>pokorny: Cornish Translation</em:contributor>
     <em:contributor>Brogh: Cornish Translation</em:contributor>
     <em:contributor>KongShaoLong: Portuguese (Portugal) Translation</em:contributor>
+    <em:contributor>Hiromacu: Hungarian Translation</em:contributor>
+    <em:contributor>gxgpet: Romanian Translation</em:contributor>
+    <em:contributor>miles: Slovenian Translation</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:type>2</em:type>
     <em:iconURL>chrome://sb-lastfm/content/extensionicon.png</em:iconURL>

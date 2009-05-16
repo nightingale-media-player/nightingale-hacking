@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Vaši nejlépe hodnocení umělci">
 <!ENTITY lastfm.radio.popular_genres "Vaše oblíbené žánry">
 <!ENTITY lastfm.radio.play "Přehrát">
+<!ENTITY lastfm.tags.enter_new "Vložit nové štítky (oddělené čárkou)">
+<!ENTITY lastfm.tags.add_fail "Nepodařilo se přidat štítky!">
+<!ENTITY lastfm.tags.user "Vaše štítky:">
+<!ENTITY lastfm.tags.global "Last.fm štítky:">

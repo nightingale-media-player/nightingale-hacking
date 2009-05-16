@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Your Highest Rated Artists">
 <!ENTITY lastfm.radio.popular_genres "Your Popular Genres">
 <!ENTITY lastfm.radio.play "Play">
+<!ENTITY lastfm.tags.enter_new "Enter new tags (comma-separated)">
+<!ENTITY lastfm.tags.add_fail "Failed to add tags!">
+<!ENTITY lastfm.tags.user "Your Tags:">
+<!ENTITY lastfm.tags.global "Last.fm Global Tags:">

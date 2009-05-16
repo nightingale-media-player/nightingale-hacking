@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "最高評価のアーティスト">
 <!ENTITY lastfm.radio.popular_genres "ベストジャンル">
 <!ENTITY lastfm.radio.play "再生">
+<!ENTITY lastfm.tags.enter_new "新しくタグを入力 (コンマ区切り)">
+<!ENTITY lastfm.tags.add_fail "タグの追加に失敗！">
+<!ENTITY lastfm.tags.user "あなたのタグ:">
+<!ENTITY lastfm.tags.global "Last.fm 全体のタグ:">

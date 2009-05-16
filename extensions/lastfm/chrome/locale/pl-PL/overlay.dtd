@@ -12,7 +12,7 @@
 <!ENTITY lastfm.radio.login.help "Aby słuchać radia Last.fm, musisz zalogować się do Last.fm. Jeżeli nie posiadasz jeszcze konta na Last.fm, możesz się zarejestrować.">
 <!ENTITY lastfm.radio.start "Nie wiesz, gdzie rozpocząć? Spróbuj czegoś poszukać, lub sprawdzić czego słuchają inni.">
 <!ENTITY lastfm.radio.start.top.artists "Najpopularniejsi na Last.fm wykonawcy">
-<!ENTITY lastfm.radio.start.top.tags "Najpopularniejsze na Last.fm tagi">
+<!ENTITY lastfm.radio.start.top.tags "Najpopularniejsze tagi na Last.fm">
 <!ENTITY lastfm.radio.register "Zarejestruj się">
 <!ENTITY lastfm.radio.search "Szukaj">
 <!ENTITY lastfm.radio.library "Biblioteka">
@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Najwyżej oceniani przez Ciebie wykonawcy">
 <!ENTITY lastfm.radio.popular_genres "Najczęściej słuchane przez Ciebie gatunki">
 <!ENTITY lastfm.radio.play "Odtwarzaj">
+<!ENTITY lastfm.tags.enter_new "Wprowadź nowe tagi (oddzielone przecinkami)">
+<!ENTITY lastfm.tags.add_fail "Nie udało się dodać tagów!">
+<!ENTITY lastfm.tags.user "Twoje tagi:">
+<!ENTITY lastfm.tags.global "Najpopularniejsze tagi na Last.fm:">

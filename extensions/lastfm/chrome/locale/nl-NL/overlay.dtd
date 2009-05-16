@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Uw hoogst gewaardeerde artiesten">
 <!ENTITY lastfm.radio.popular_genres "Uw populaire genres">
 <!ENTITY lastfm.radio.play "Afspelen">
+<!ENTITY lastfm.tags.enter_new "Geef nieuwe tags op (gescheiden door komma&apos;s)">
+<!ENTITY lastfm.tags.add_fail "Kon de tags niet toevoegen!">
+<!ENTITY lastfm.tags.user "Uw tags:">
+<!ENTITY lastfm.tags.global "Globale Last.fm-tags:">

@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Els Teus Artistes Més Valorats">
 <!ENTITY lastfm.radio.popular_genres "Els Teus Gèneres Populars">
 <!ENTITY lastfm.radio.play "Play">
+<!ENTITY lastfm.tags.enter_new "Afegir noves etiquetes (separades per comes)">
+<!ENTITY lastfm.tags.add_fail "Error al afegir etiquetes!">
+<!ENTITY lastfm.tags.user "Les teves etiquetes:">
+<!ENTITY lastfm.tags.global "Etiquetes Globals de Last.fm">

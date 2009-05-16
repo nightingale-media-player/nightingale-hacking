@@ -32,3 +32,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Seus Artistas mais conceituados">
 <!ENTITY lastfm.radio.popular_genres "Seus  Gêneros Populares">
 <!ENTITY lastfm.radio.play "Tocar">
+<!ENTITY lastfm.tags.enter_new "Entre com novas tags (separadas por vírgulas)">
+<!ENTITY lastfm.tags.add_fail "Falha ao adicionar tags!">
+<!ENTITY lastfm.tags.user "Suas tags:">
+<!ENTITY lastfm.tags.global "Tags Globais Last.fm:">
