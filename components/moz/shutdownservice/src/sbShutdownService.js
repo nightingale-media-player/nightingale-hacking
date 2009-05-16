@@ -219,6 +219,9 @@ sbShutdownJobService.prototype =
     this._mStatus = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._notifyListeners();
 
+    // drop the references to the tasks
+    this._mTasks.splice(0);
+
     if (this._mShouldShutdown) {
       var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
                          .getService(Ci.nsIAppStartup);
