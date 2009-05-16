@@ -171,7 +171,6 @@ var mmListener = {
 				 	Application.prefs.getValue('songbird.lastfm.radio.station',
 						'') == ''))
 			{
-				dump("SHOUTCAST: resetting buttons\n");
 				for (var i in mmListener.disableTags) {
 					var elements = document.getElementsByTagName(
 										mmListener.disableTags[i]);
@@ -543,7 +542,6 @@ var shoutcastUninstallObserver = {
 					if (!item || (item.getProperty(SBProperties.customType) ==
 							"radio_favouritesList"))
 					{
-						dump("OMG\n");
 						SPS.removeNode(node);
 					}
 				}
