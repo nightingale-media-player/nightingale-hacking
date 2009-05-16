@@ -12,7 +12,11 @@
 <!ENTITY prefs.track.guessing.label "Использовать анализ имени артиста и названия песни">
 <!ENTITY prefs.track.guessing.help "Некоторые радиостанции передают текст в форме &apos;Артист - Название трека&apos;. Если вы включите эту опцию, дополнение SHOUTcast будет пытаться анализировать это и отправлять уведомления о смене трека, чтобы другие дополнения могли узнавать об этом во время потокового вещания.">
 <!ENTITY prefs.customGenres "Жанры, определённые пользователем">
+<!ENTITY prefs.customGenres.emptytext "Введите сюда через запятую список жанров">
 <!ENTITY custom-genres.help.label "Если вы хотите добавить какие-то свои жанры в директорию SHOUTcast, то перечислите их через запятую в строке далее:">
-<!ENTITY prefs.tosCaption "Условия использования">
 <!ENTITY prefs.tosBegin "Право пользования директорией SHOUTcast описано в Условиях использования">
 <!ENTITY prefs.tosLinkText "Просмотреть Условия использования">
+<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.toolbarBegin "Установите дополнение">
+<!ENTITY prefs.toolbarLinkText "SHOUTcast Toolbar">
+<!ENTITY prefs.toolbarEnd "для быстрого доступа к SHOUTcast из вашего браузера">

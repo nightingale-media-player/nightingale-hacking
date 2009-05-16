@@ -73,6 +73,8 @@
 	<em:contributor>Funkin2x (es-CL localisation)</em:contributor>
 	<em:contributor>KongShaoLong (pt-PT localisation)</em:contributor>
 	<em:contributor>Sappa (uk-UA localisation)</em:contributor>
+	<em:contributor>Martino T (it-IT localisation)</em:contributor>
+	<em:contributor>miles (sl-SI localisation)</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:iconURL>chrome://shoutcast-radio/skin/shoutcast_icon-32x32.png</em:iconURL>
 	<em:optionsURL>chrome://shoutcast-radio/content/optionsWindow.xul</em:optionsURL>

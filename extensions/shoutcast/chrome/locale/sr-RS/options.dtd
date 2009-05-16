@@ -1,5 +1,4 @@
 <!ENTITY prefpane.label "SHOUTcast">
-<!ENTITY prefs.caption "">
 <!ENTITY prefwindow.title "Подешавања SHOUTcast радија">
 <!ENTITY bit-rate.limit.label "Прикажи само SHOUTcast токове са брзином у битовима од најмање">
 <!ENTITY listeners.limit.label "Прикажи само SHOUTcast токове са најмање">
@@ -8,14 +7,6 @@
 <!ENTITY bit-rate.accesskey "Б">
 <!ENTITY listeners.label "Број слушалаца">
 <!ENTITY listeners.accesskey "с">
-<!ENTITY prefs.track.guessing.title "">
-<!ENTITY prefs.track.guessing.label "">
-<!ENTITY prefs.track.guessing.help "">
-<!ENTITY prefs.customGenres "">
-<!ENTITY custom-genres.help.label "">
 <!ENTITY prefs.tosBegin "Коришћење SHOUTcast директоријума је ограничено условима коришћења">
 <!ENTITY prefs.tosLinkText "Погледај услове коришћења">
 <!ENTITY prefs.tosEnd "">
-<!ENTITY prefs.toolbarBegin "">
-<!ENTITY prefs.toolbarLinkText "">
-<!ENTITY prefs.toolbarEnd "">
