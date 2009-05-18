@@ -40,19 +40,26 @@
 #include <nsMemory.h>
 #include <nsIProgrammingLanguage.h>
 #include <sbIMediaExportAgentService.h>
+#include <nsIThread.h>
+#include <nsIProxyObjectManager.h>
+#include <nsIRunnable.h>
+#include <nsIThreadManager.h>
+#include <nsThreadUtils.h>
+#include <nsIThreadPool.h>
+#include <sbThreadPoolService.h>
 
 
 #ifdef PR_LOGGING
 PRLogModuleInfo *gMediaExportLog = nsnull;
 #endif
 
-NS_IMPL_ISUPPORTS6(sbMediaExportService,
-                   nsIClassInfo,
-                   nsIObserver,
-                   sbIMediaListListener,
-                   sbIMediaListEnumerationListener,
-                   sbIJobProgress,
-                   sbIShutdownJob)
+NS_IMPL_THREADSAFE_ISUPPORTS6(sbMediaExportService,
+                              nsIClassInfo,
+                              nsIObserver,
+                              sbIMediaListListener,
+                              sbIMediaListEnumerationListener,
+                              sbIJobProgress,
+                              sbIShutdownJob)
 
 NS_IMPL_CI_INTERFACE_GETTER6(sbMediaExportService,
                              nsIClassInfo,
@@ -371,6 +378,23 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
   // Passed all tests, this is a playlist that should be watched
   *aShouldWatch = PR_TRUE;
   return NS_OK;
+}
+
+void
+sbMediaExportService::WriteExportData()
+{
+  nsresult rv = BeginExportData();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                   "ERROR: Could not begin exporting songbird data!");
+}
+
+void
+sbMediaExportService::ProxyNotifyListeners()
+{
+  nsresult rv;
+  rv = NotifyListeners();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                   "ERROR: Could not notify the listeners!");
 }
 
 nsresult
@@ -803,6 +827,20 @@ sbMediaExportService::NotifyListeners()
   LOG(("%s: updating listeners of job progress", __FUNCTION__));
 
   nsresult rv;
+  if (!NS_IsMainThread()) {
+    // Since all of the listeners expect to be notified on the main thread, 
+    // proxy back to this method on the main thread.
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable = 
+      NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, ProxyNotifyListeners);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+
+    return mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  }
+
   for (PRInt32 i = 0; i < mJobListeners.Count(); i++) {
     rv = mJobListeners[i]->OnJobProgress(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
@@ -1196,7 +1234,17 @@ sbMediaExportService::StartTask()
   nsresult rv = NotifyListeners();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return BeginExportData();
+  // Since looking up the stashed data locks the main thread, write out the
+  // export data on a background thread.
+  nsCOMPtr<nsIThreadPool> threadPoolService = 
+    do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, WriteExportData);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+
+  return threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
 }
 
 //------------------------------------------------------------------------------

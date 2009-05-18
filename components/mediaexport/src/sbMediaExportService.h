@@ -109,6 +109,12 @@ protected:
   nsresult GetShouldWatchMediaList(sbIMediaList *aMediaList, 
                                    PRBool *aShouldWatch);
 
+  // Background thread method to Write export data to disk.
+  void WriteExportData();
+
+  // Background thread method to notify the listeners on the main thread.
+  void ProxyNotifyListeners();
+
   // Start/Stop entry points for the entire export process
   nsresult BeginExportData();
   nsresult FinishExportData();
