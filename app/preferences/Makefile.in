@@ -29,9 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-PREFERENCES = songbird-prefs.js.in \
-              songbird-channel-prefs.js.in \
-              browser-prefs.js \
-              $(NULL)
+SONGBIRD_PP_RESOURCES = $(srcdir)/songbird-prefs.js.in \
+                        $(srcdir)/songbird-channel-prefs.js.in \
+                        $(NULL)
+
+SONGBIRD_PP_DIR = $(SONGBIRD_PREFERENCESDIR)
+
+SONGBIRD_PREFERENCES += $(srcdir)/browser-prefs.js \
+                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk

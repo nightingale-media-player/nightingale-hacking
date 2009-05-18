@@ -47,16 +47,6 @@ ifeq (macosx,$(SB_PLATFORM))
   export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
 endif
 
-#
-# Collect a list of rules to run. We use two variables so that 'make clean'
-# does what you'd expect.
-#
-
-ifdef XPIDL_SRCS
-XPIDL_HEADER_SRCS += $(XPIDL_SRCS)
-XPIDL_TYPELIB_SRCS += $(XPIDL_SRCS)
-endif
-
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL : all clean
 
@@ -588,80 +578,6 @@ c_clean:
 endif #C_SRCS
 
 #------------------------------------------------------------------------------
-# Rules for XPIDL compilation
-#------------------------------------------------------------------------------
-
-# XPIDL_SRCS - a list of idl files to turn into header and typelib files
-# XPIDL_HEADER_SRCS - a list of idl files to turn into C++ header files
-# XPIDL_TYPELIB_SRCS - a list of idl files to turn into xpt typelib files
-# XPIDL_MODULE - the name of an xpt file that will created from linking several
-#                other xpt typelibs
-# XPIDL_MODULE_TYPELIBS - a list of xpt files to link into the module
-# XPIDL_INCLUDES - a list of dirs to search when looking for included idls
-# XPIDL_EXTRA_FLAGS - additional flags to send to XPIDL
-
-#ifdef XPIDL_HEADER_SRCS
-
-xpidl_headers = $(XPIDL_HEADER_SRCS:.idl=.h)
-
-xpidl_includes_temp = $(MOZSDK_IDL_DIR) \
-                      $(srcdir) \
-                      $(XPIDL_INCLUDES) \
-                      $(NULL)
-
-xpidl_includes = $(addprefix $(XPIDLFLAGS_INCLUDE), $(xpidl_includes_temp))
-
-xpidl_compile_headers: $(XPIDL_HEADER_SRCS) $(xpidl_headers)
-
-$(xpidl_headers): %.h: %.idl
-	$(XPIDL) -m header $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) $<
-	$(INSTALL_FILE) $@ $(SONGBIRD_SDKINCLUDEDIR)
-
-xpidl_clean_headers:
-	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_headers)
-
-xpidl_typelibs = $(XPIDL_TYPELIB_SRCS:.idl=.xpt)
-xpidl_compile_typelibs: $(XPIDL_TYPELIB_SRCS) $(xpidl_typelibs)
-
-$(xpidl_typelibs): %.xpt: %.idl
-	$(XPIDL) -m typelib $(xpidl_includes) $(XPIDL_EXTRA_FLAGS) -e $@ $<
-	@echo might call $(INSTALL_FILE) $@ $(SONGBIRD_DISTDIR)/components
-
-xpidl_clean_typelibs:
-	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_typelibs)
-
-#-----------------------
-
-#ifdef XPIDL_MODULE
-
-ifneq (,$(SB_ENABLE_STATIC))
-    # in static builds, don't put the xpt in the dist directory
-    xpidl_module := $(addprefix $(SONGBIRD_OBJDIR)/components/static/, $(XPIDL_MODULE))
-    XPIDL_MODULE =
-else
-    xpidl_module = $(XPIDL_MODULE)
-endif
-
-xpidl_module_typelibs = $(XPIDL_MODULE_TYPELIBS)
-
-# If the collected typelibs are the same (single file) as XPIDL_MODULE, 
-# there's no reason to run xpt_link on them (in fact, this creates a circular
-# make dependency that gets dropped, but xpt_link clobbers the file in the
-# process of trying to link it, and fails anyway.
-
-ifneq ($(strip $(XPIDL_MODULE)),$(strip $(xpidl_module_typelibs)))
-$(XPIDL_MODULE): $(xpidl_module_typelibs)
-	$(XPTLINK) $(xpidl_module) $(xpidl_module_typelibs)
-endif
-
-xpidl_clean_link:
-	$(CYGWIN_WRAPPER) $(RM) -f $(xpidl_module)
-
-#.PHONY : xpidl_link xpidl_clean_link
-
-#endif #XPIDL_MODULE
-
-#------------------------------------------------------------------------------
 # Rules for moving files around
 #------------------------------------------------------------------------------
 
@@ -720,30 +636,6 @@ clone_dir:
 
 endif #CLONEDIR
 
-## preedTODO: remove this ifdef
-ifndef PP_COMPONENTS_STRIP_SUFFIXES
-PP_COMPONENTS_STRIP_SUFFIXES = .in
-endif
-
-sb_components_preprocess:
-ifdef SONGBIRD_PP_COMPONENTS
-ifeq (,$(wildcard $(SONGBIRD_COMPONENTSDIR)))
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_COMPONENTSDIR)
-endif
-ifneq (,$(strip $(SONGBIRD_PP_COMPONENTS)))
-	for item in $(SONGBIRD_PP_COMPONENTS); do \
-	  target=$(SONGBIRD_COMPONENTSDIR)/`basename $$item $(PP_COMPONENTS_STRIP_SUFFIXES)`; \
-	  $(CYGWIN_WRAPPER) $(RM) -f $$target; \
-	  $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(COMPONENTS_PPFLAGS) \
-	    $(PPDEFINES) -- $$item > $$target; \
-	done
-endif
-.PHONY : sb_components_preprocess
-endif #SONGBIRD_PP_COMPONENTS
-
-#-----------------------
-
-
 #------------------------------------------------------------------------------
 # Rules for Songbird Pre-processed resources
 #------------------------------------------------------------------------------
@@ -764,7 +656,7 @@ ifeq (windows,$(SB_PLATFORM))
    RESOURCES_PPFLAGS += --line-endings=crlf
 endif
 ifndef PP_RESOURCES_STRIP_SUFFIXES
-PP_RESOURCES_STRIP_SUFFIXES = .in
+  PP_RESOURCES_STRIP_SUFFIXES = .in
 endif
 endif
 
@@ -815,47 +707,6 @@ endif #SONGBIRD_TESTS
 #------------------------------------------------------------------------------
 # Rules for preprocessing
 #------------------------------------------------------------------------------
-
-
-# on windows pref files need CRLF line endings
-ifeq (windows,$(SB_PLATFORM))
-PREF_PPFLAGS = --line-endings=crlf
-endif
-
-ifndef PREFERENCES_STRIP_SUFFIXES
-PREFERENCES_STRIP_SUFFIXES = .in
-endif
-
-preferences_preprocess:
-ifdef PREFERENCES
-	@$(MKDIR) -p $(SONGBIRD_PREFERENCESDIR)
-	for item in $(PREFERENCES); do \
-	  target=$(SONGBIRD_PREFERENCESDIR)/`basename $$item $(PREFERENCES_STRIP_SUFFIXES)`; \
-	  $(CYGWIN_WRAPPER) $(RM) -f $$target; \
-    $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(PREF_PPFLAGS) $(ACDEFINES) \
-      $(PPDEFINES) -- $(srcdir)/$$item > $$target; \
-  done
-endif #PREFERENCES
-.PHONY : preferences_preprocess
-
-#-----------------------
-
-# Preprocesses the $(APPINI) file and turns it into 'application.ini'.
-
-appini_preprocess: $(if $(APPINI), $(SONGBIRD_DISTDIR)/application.ini)
-
-appini_target = $(SONGBIRD_DISTDIR)/application.ini
-
-$(SONGBIRD_DISTDIR)/application.ini: $(APPINI)
-	$(CYGWIN_WRAPPER) $(RM) -f $(appini_target)
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_DISTDIR)
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) -- \
-    $(srcdir)/$(APPINI) > $(appini_target)
-
-clean_appini:
-	$(CYGWIN_WRAPPER) $(RM) -f $(appini_target)
-
-.PHONY : appini_preprocess clean_appini
 
 #-----------------------
 
@@ -1151,85 +1002,6 @@ clean_xpi:
 else
 make_xpi:
 endif # XPI_NAME
-
-#------------------------------------------------------------------------------
-# Rules for changing permissions
-#------------------------------------------------------------------------------
-
-ifdef EXECUTABLE
-chmod_add_executable:
-	$(warning WARNING: $@ is DEPRECATED and slated for REMOVAL; you have been warned...)
-	$(CYGWIN_WRAPPER) $(CHMOD) +x $(EXECUTABLE)
-.PHONY : chmod_add_executable
-endif
-
-#------------------------------------------------------------------------------
-# Rules for manipulating ZIP archives
-#------------------------------------------------------------------------------
-
-# UNZIP_SRC - The name of a zip file to decompress in its entirety
-# UNZIP_DEST - The name of a directory to hold the archive's contents
-# UNZIP_FLAGS - an override of UNZIPFLAGS to pass to the program
-# UNZIP_EXTRA_FLAGS - an additional list of flags to pass to the program
-
-ifdef UNZIP_FLAGS
-unzip_flags = $(UNZIP_FLAGS)
-else
-unzip_flags = $(UNZIPFLAGS)
-ifdef UNZIP_EXTRA_FLAGS
-unzip_flags += $(UNZIP_EXTRA_FLAGS)
-endif
-endif
-
-unzip_file:
-ifdef UNZIP_SRC
-   ifneq (1,$(words $(UNZIP_SRC)))
-      $(error You can only have one file specified by UNZIP_SRC)
-   endif
-   ifndef UNZIP_DEST_DIR
-      $(error UNZIP_DEST_DIR *must* be set when extracting from UNZIP_SRC = $(UNZIP_SRC))
-   endif
-
-	$(warning WARNING: $@ is DEPRECATED and slated for REMOVAL; you have been warned...)
-	$(CYGWIN_WRAPPER) $(UNZIP) $(unzip_flags) $(UNZIP_SRC) $(UNZIPFLAGS_EXTRACT) $(UNZIP_DEST_DIR)
-endif # UNZIP_SRC
-
-.PHONY : unzip_file
-
-
-#------------------------------------------------------------------------------
-# Rules for manipulating GZ archives
-#------------------------------------------------------------------------------
-
-gunzip_file:
-ifdef GUNZIP_SRC
-   ifndef GUNZIP_DEST_DIR
-      $(error GUNZIP_DEST_DIR *must* be set when extracting from GUNZIP_SRC = $(GUNZIP_SRC))
-   endif
-   ifneq (1,$(words $(GUNZIP_SRC)))
-      $(error You can only have one file specified by GUNZIP_SRC)
-   endif
-
-	$(warning WARNING: $@ is DEPRECATED and slated for REMOVAL; you have been warned...)
-	$(TAR) -z -x -f $(GUNZIP_SRC) -C $(GUNZIP_DEST_DIR)
-
-.PHONY : gunzip_file
-
-endif # GUNZIP_SRC
-
-#------------------------------------------------------------------------------
-# Rules for executing something in a shell (sh)
-#------------------------------------------------------------------------------
-
-
-shell_execute:
-ifdef SHELL_EXECUTE
-	$(error $@ is hard DEPRECATED; stop using it...)
-	sh $(SHELL_EXECUTE)
-endif #SHELL_EXECUTE
-
-.PHONY : shell_execute
-
 
 #------------------------------------------------------------------------------
 # Rules for making directories

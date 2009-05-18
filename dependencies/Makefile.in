@@ -542,7 +542,7 @@ endif # Not-jemalloc and MSVC with manifest tool
 endif # windows
 	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
 
-copy-xr-shell-stub: gunzip_file
+copy-xr-shell-stub:
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 	$(CP) -dfp $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
 endif

@@ -114,7 +114,7 @@ endif
 
 ALL_TRASH = \
    $(GARBAGE) \
-   $(xpidl_headers) $(xpidl_typelibs) $(XPIDL_MODULE) \
+   $(XPIDL_HEADERS) $(XPIDL_TYPELIBS) $(XPIDL_MODULE) \
    $(DYNAMIC_LIB_OBJS) \
    $(OBJS:.$(OBJ_SUFFIX)=.s) $(OBJS:.$(OBJ_SUFFIX)=.ii) \
    $(OBJS:.$(OBJ_SUFFIX)=.i) \
@@ -170,7 +170,7 @@ export:: $(SUBMAKEFILES) $(SUBDIRS)
 ## preedTODO: hacky; fix this.
 MAKE_JAR_DEP = $(if $(JAR_MANIFEST),make_jar)
 
-libs:: $(HOST_LIBRARY) $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM) $(SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(STATIC_LIB) $(DYNAMIC_LIB) $(JAR_MANIFEST) preferences_preprocess $(MAKE_JAR_DEP) copy_sb_tests shell_execute make_xpi
+libs:: $(HOST_LIBRARY) $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM) $(SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(STATIC_LIB) $(DYNAMIC_LIB) $(JAR_MANIFEST) $(MAKE_JAR_DEP) copy_sb_tests make_xpi
 ifndef NO_DIST_INSTALL
    ifdef LIBRARY
       ifdef EXPORT_LIBRARY # Stage libs that will be linked into a static build
@@ -218,36 +218,63 @@ ifndef NO_DIST_INSTALL
    endif
 endif # !NO_DIST_INSTALL
 
-ifdef XPIDL_SRCS
-libs:: $(patsubst %.idl,%.xpt, $(XPIDL_SRCS)) $(XPIDL_MODULE)
-   ifdef XPIDL_MODULE
-   ifndef XPI_NAME
-	   $(INSTALL_FILE) $(XPIDL_MODULE) $(SONGBIRD_COMPONENTSDIR)
-   endif
-   endif
-endif
-
-#export:: $(SUBMAKEFILES) $(MAKE_DIRS) $(SUBDIRS) $(xpidl_headers) $(if $(EXPORTS)$(XPIDL_SRCS)$(SDK_HEADERS)$(SDK_XPIDLSRCS),$(PUBLIC)) $(if $(SDK_HEADERS)$(SDK_XPIDLSRCS),$(SDK_PUBLIC)) $(if $(XPIDLSRCS),$(IDL_DIR)) $(if $(SDK_XPIDLSRCS),$(SDK_IDL_DIR))
-#	+$(LOOP_OVER_DIRS)
-#	+$(LOOP_OVER_TOOL_DIRS)
-
-XPIDL_GEN_DIR = .
-
-#export:: $(SUBMAKEFILES) $(MAKE_DIRS) $(SUBDIRS) $(XPIDL_SRCS)
-#	+$(LOOP_OVER_SUBDIRS)
-#	+$(LOOP_OVER_TOOL_DIRS)
-
-export:: gunzip_file unzip_file appini_preprocess
-
-export:: $(patsubst %.idl,$(XPIDL_GEN_DIR)/%.h, $(XPIDL_SRCS)) $(SONGBIRD_PP_COMPONENTS) sb_resources_preprocess sb_components_preprocess 
-	@#echo in xpidl header target: $(xpidl_headers), $(XPIDL_HEADER_SRCS), $^
+export:: $(SONGBIRD_PP_COMPONENTS) sb_resources_preprocess
+	@#echo in xpidl header target: $(XPIDL_HEADERS), $(XPIDL_HEADER_SRCS), $^
 	@#echo command is: $(CP) $^ 
 
-#export:: $(xpidl_headers)
-#	@echo in xpidl header target: $(xpidl_headers), $(XPIDL_HEADER_SRCS), $^
-#	@echo command is: $(CP) $^ 
-
 include $(topsrcdir)/build/oldrules.mk
+
+## oldrules.mk translations ##
+
+#------------------------------------------------------------------------------
+# Rules for XPIDL compilation
+#------------------------------------------------------------------------------
+#
+# XPIDL_SRCS - a list of idl files to turn into header and typelib files
+# XPIDL_HEADER_SRCS - a list of idl files to turn into C++ header files
+# XPIDL_TYPELIB_SRCS - a list of idl files to turn into xpt typelib files
+# XPIDL_MODULE - the name of an xpt file that will created from linking several
+#                other xpt typelibs
+# XPIDL_MODULE_TYPELIBS - a list of xpt files to link into the module
+# XPIDL_INCLUDES - a list of dirs to search when looking for included idls
+# XPIDL_EXTRA_FLAGS - additional flags to send to XPIDL
+#
+
+XPIDL_INCLUDES += $(MOZSDK_IDL_DIR) \
+                  $(srcdir) \
+                  $(NULL)
+
+XPIDL_HEADERS = $(XPIDL_SRCS:.idl=.h)
+
+$(XPIDL_HEADERS): %.h: %.idl
+	$(XPIDL) -m header $(addprefix -I,$(XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) $<
+
+export:: $(XPIDL_HEADERS)
+
+XPIDL_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+$(XPIDL_TYPELIBS): %.xpt: %.idl
+	$(XPIDL) -m typelib $(addprefix -I,$(XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -e $@ $<
+
+# The ifneq() check is in here because if the collected typelibs are the same 
+# (single file) as XPIDL_MODULE, there's no reason to run xpt_link on them.
+# (In fact, this creates a circular make dependency that gets dropped, but 
+# xpt_link clobbers the file in the process of trying to link it, and 
+# fails anyway.
+
+$(XPIDL_MODULE): $(XPIDL_MODULE_TYPELIBS)
+ifneq ($(strip $(XPIDL_MODULE)),$(strip $(XPIDL_MODULE_TYPELIBS)))
+	$(XPTLINK) $(XPIDL_MODULE) $(XPIDL_MODULE_TYPELIBS)
+endif
+
+libs:: $(XPIDL_TYPELIBS) $(XPIDL_MODULE)
+ifneq (,$(XPIDL_MODULE))
+ifndef XPI_NAME
+	$(INSTALL_FILE) $(XPIDL_MODULE) $(SONGBIRD_COMPONENTSDIR)
+endif
+endif
+
+#########################
 
 .PHONY: $(SUBDIRS) FORCE libs export
 

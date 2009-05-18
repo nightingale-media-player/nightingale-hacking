@@ -29,19 +29,23 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-APPINI = application.ini.in
-
 SONGBIRD_XULRUNNER = $(srcdir)/updater.ini
 
 SONGBIRD_DIST = $(srcdir)/blocklist.xml \
                 $(srcdir)/updater.ini \
                 $(NULL)
 
+SONGBIRD_PP_DIR = $(CURDIR)
+
+# application.ini handling
+SONGBIRD_PP_RESOURCES = $(srcdir)/application.ini.in
+SONGBIRD_DIST += $(CURDIR)/application.ini
+
+PPDEFINES += $(SB_BRANDING_DEFINES)
+
 ifeq (macosx,$(SB_PLATFORM))
    SONGBIRD_CONTENTS += $(CURDIR)/Info.plist
-
-   SONGBIRD_PP_DIR = $(CURDIR)
-   SONGBIRD_PP_RESOURCES = $(srcdir)/Info.plist.in
+   SONGBIRD_PP_RESOURCES += $(srcdir)/Info.plist.in
 endif
 
 SUBDIRS = branding \
