@@ -1,3 +1,4 @@
+# vim: ft=make ts=3 sw=3
 #
 # BEGIN SONGBIRD GPL
 #
@@ -35,8 +36,9 @@ RULES_MK_INCLUDED=1
 #------------------------------------------------------------------------------
 
 # include config.mk to pick up extra variables
-
 include $(topsrcdir)/build/config.mk
+
+# define the tiers of the application
 include $(topsrcdir)/build/tiers.mk
 
 # Since public, src, and test are directories used throughout the tree
@@ -49,31 +51,11 @@ ifeq (,$(DISABLE_IMPLICIT_SUBDIRS))
    endif
 endif
 
-#$(info SUBDIRS are $(SUBDIRS))
-#$(info MAKECMDGOALS is $(MAKECMDGOALS))
-
-################################################################################
-
-# SUBMAKEFILES: List of Makefiles for next level down.
-#   This is used to update or create the Makefiles before invoking them.
-#SUBMAKEFILES += $(addsuffix /Makefile, $(DIRS) $(TOOL_DIRS))
-
-# The root makefile doesn't want to do a plain export/libs, because
-# of the tiers and because of libxul. Suppress the default rules in favor
-# of something else. Makefiles which use this var *must* provide a sensible
-# default rule before including rules.mk
+###############################################################################
 
 LOOP_OVER_SUBDIRS = \
    @$(EXIT_ON_ERROR) \
    $(foreach dir,$(SUBDIRS), $(MAKE) -C $(dir) $@; ) true
-
-LOOP_OVER_STATIC_DIRS = \
-   @$(EXIT_ON_ERROR) \
-   $(foreach dir,$(STATIC_DIRS), $(MAKE) -C $(dir) $@; ) true
-
-LOOP_OVER_TOOL_DIRS = \
-   @$(EXIT_ON_ERROR) \
-   $(foreach dir,$(TOOL_DIRS), $(MAKE) -C $(dir) $@; ) true
 
 # MAKE_DIRS: List of directories to build while looping over directories.
 ifneq (,$(OBJS)$(XPIDLSRCS)$(SDK_XPIDLSRCS)$(SIMPLE_PROGRAMS))
@@ -82,21 +64,14 @@ ifneq (,$(OBJS)$(XPIDLSRCS)$(SDK_XPIDLSRCS)$(SIMPLE_PROGRAMS))
 endif
 
 
-################################################################################
-
-# The root makefile doesn't want to do a plain export/libs, because
-# of the tiers and because of libxul. Suppress the default rules in favor
-# of something else. Makefiles which use this var *must* provide a sensible
-# default rule before including rules.mk
+###############################################################################
 
 # SUBMAKEFILES: List of Makefiles for next level down.
 #   This is used to update or create the Makefiles before invoking them.
-SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS) $(TOOL_DIRS))
+SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
 
 ifdef TIERS
-
-SUBDIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_dirs))
-STATIC_DIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_staticdirs))
+   SUBDIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_dirs))
 
 default all alldep:: create_dirs
 	$(EXIT_ON_ERROR) \
@@ -105,11 +80,8 @@ default all alldep:: create_dirs
 else
 
 default all:: create_dirs
-#	@$(EXIT_ON_ERROR) \
-#    $(foreach dir,$(STATIC_DIRS),$(MAKE) -C $(dir); ) true
 	$(MAKE) export
 	$(MAKE) libs
-#	$(MAKE) tools
 endif
 
 ALL_TRASH = \
@@ -139,17 +111,8 @@ libs_tier_%:
 	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
-#tools_tier_%:
-#	@echo "tools_tier_$@"
-#	@echo "$@"
-#	@$(MAKE_TIER_SUBMAKEFILES)
-#	@$(EXIT_ON_ERROR) \
-#    $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) tools; ) true
-
 $(foreach tier,$(TIERS),tier_$(tier))::
 	@echo "$@: $($@_staticdirs) $($@_dirs)"
-	$(EXIT_ON_ERROR) \
-    $(foreach dir,$($@_staticdirs),$(MAKE) -C $(dir); ) true
 	$(MAKE) export_$@
 	$(MAKE) libs_$@
 
@@ -284,8 +247,8 @@ echo-variable-%:
 echo-tiers:
 	@echo $(TIERS)
 
-echo-dirs:
-	@echo $(DIRS)
+echo-subdirs:
+	@echo $(SUBDIRS)
 
 echo-module:
 	@echo $(MODULE)
@@ -305,12 +268,10 @@ FORCE:
 
 %: SCCS/s.%
 
-# TODO
-#
 # Re-define the list of default suffixes, so gmake won't have to churn through
 # hundreds of built-in suffix rules for stuff we don't need.
-#
-### .SUFFIXES:
+
+.SUFFIXES:
 
 include $(topsrcdir)/build/file-autotargets.mk
 
