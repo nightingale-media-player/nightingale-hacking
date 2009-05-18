@@ -93,6 +93,9 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
 #define PREF_LOAD_AT_STARTUP   "loadAtStartup"
 #define PREF_RESOURCE_GUID     "resourceGUID"
 
+// This is the pref for the URL on inaccessible library
+#define PREF_SUPPORT_INACCESSIBLE_LIBRARY "songbird.url.support.inaccessiblelibrary"
+
 #define MINIMUM_LIBRARY_COUNT 2
 #define LOADERINFO_VALUE_COUNT 4
 
@@ -113,7 +116,12 @@ static PRLogModuleInfo* sLibraryLoaderLog = nsnull;
   "web"
 
 #define DEFAULT_COLUMNSPEC_WEB_LIBRARY \
-  "http://songbirdnest.com/data/1.0#trackName 264 http://songbirdnest.com/data/1.0#duration 56 http://songbirdnest.com/data/1.0#artistName 209 http://songbirdnest.com/data/1.0#originPageImage 44 http://songbirdnest.com/data/1.0#created 119 d http://songbirdnest.com/data/1.0#downloadButton 83"
+  NS_LL("http://songbirdnest.com/data/1.0#trackName 264 ") \
+  NS_LL("http://songbirdnest.com/data/1.0#duration 56 ") \
+  NS_LL("http://songbirdnest.com/data/1.0#artistName 209 ") \
+  NS_LL("http://songbirdnest.com/data/1.0#originPageImage 44 ") \
+  NS_LL("http://songbirdnest.com/data/1.0#created 119 d ") \
+  NS_LL("http://songbirdnest.com/data/1.0#downloadButton 83")
 
 
 NS_IMPL_ISUPPORTS2(sbLocalDatabaseLibraryLoader, sbILibraryLoader, nsIObserver)
@@ -239,7 +247,7 @@ sbLocalDatabaseLibraryLoader::EnsureDefaultLibraries()
                             NS_LITERAL_STRING(DBENGINE_GUID_WEB_LIBRARY),
                             NS_LITERAL_STRING(SB_NAMEKEY_WEB_LIBRARY),
                             NS_LITERAL_STRING(SB_CUSTOMTYPE_WEB_LIBRARY),
-                            NS_LITERAL_STRING(DEFAULT_COLUMNSPEC_WEB_LIBRARY));
+                            NS_MULTILINE_LITERAL_STRING(DEFAULT_COLUMNSPEC_WEB_LIBRARY));
   if (NS_FAILED(rv)) {
     databasesOkay = PR_FALSE;
     retval = rv;
@@ -506,7 +514,7 @@ sbLocalDatabaseLibraryLoader::CreateDefaultLibraryInfo(const nsACString& aPrefKe
  * OK, set a flag and shut down the app; the actual deletion is done
  * in the Observe() method at shutdown time.
  */
-nsresult
+NS_METHOD
 sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries() 
 {
   nsresult rv;
@@ -573,6 +581,86 @@ sbLocalDatabaseLibraryLoader::PromptToDeleteLibraries()
   return NS_OK;
 }
 
+NS_METHOD
+sbLocalDatabaseLibraryLoader::PromptInaccessibleLibraries() 
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIPromptService> promptService =
+    do_GetService("@mozilla.org/embedcomp/prompt-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 buttons = nsIPromptService::BUTTON_POS_0 * nsIPromptService::BUTTON_TITLE_IS_STRING + 
+                     nsIPromptService::BUTTON_POS_0_DEFAULT;
+
+  PRInt32 promptResult;
+
+  // get dialog strings
+  sbStringBundle bundle;
+
+  nsTArray<nsString> params;
+  nsCOMPtr<nsIProperties> dirService =
+    do_GetService("@mozilla.org/file/directory_service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIFile> profileDir;
+  rv = dirService->Get("ProfD",
+                       NS_GET_IID(nsIFile),
+                       getter_AddRefs(profileDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsString profilePath;
+  rv = profileDir->GetPath(profilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  params.AppendElement(profilePath);
+  
+  nsCOMPtr<nsIPrefBranch> prefBranch =
+    do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsString url;
+  char* urlBuffer = nsnull;
+  rv = prefBranch->GetCharPref(PREF_SUPPORT_INACCESSIBLE_LIBRARY, &urlBuffer);
+  if (NS_SUCCEEDED(rv)) {
+    url.Assign(NS_ConvertUTF8toUTF16(nsCString(urlBuffer)));
+    NS_Free(urlBuffer);
+  } else {
+    #if PR_LOGGING
+      nsresult __rv = rv;
+      NS_ENSURE_SUCCESS_BODY(rv, rv);
+    #endif /* PR_LOGGING */
+    url = bundle.Get("database.inaccessible.dialog.url", "<error>");
+  }
+  params.AppendElement(url);
+
+  nsAutoString dialogTitle = bundle.Get("database.inaccessible.dialog.title");
+  nsAutoString dialogText = bundle.Format("database.inaccessible.dialog.text",
+                                          params);
+  nsAutoString buttonText = bundle.Get("database.inaccessible.dialog.buttons.quit");
+
+  // prompt.
+  rv = promptService->ConfirmEx(nsnull,
+                                dialogTitle.BeginReading(),
+                                dialogText.BeginReading(),
+                                buttons,            
+                                buttonText.BeginReading(),   // button 0
+                                nsnull,                      // button 1
+                                nsnull,                      // button 2
+                                nsnull,                      // no checkbox
+                                nsnull,                      // no check value
+                                &promptResult);     
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // now attempt to quit/restart.
+  nsCOMPtr<nsIAppStartup> appStartup = 
+    (do_GetService(NS_APPSTARTUP_CONTRACTID, &rv));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  appStartup->Quit(nsIAppStartup::eForceQuit); 
+
+  return NS_OK;
+}
 
 /* static */ void
 sbLocalDatabaseLibraryLoader::RemovePrefBranch(const nsACString& aPrefBranch)
@@ -801,8 +889,38 @@ sbLocalDatabaseLibraryLoader::Observe(nsISupports *aSubject,
 
   if (strcmp(aTopic, NS_FINAL_UI_STARTUP_CATEGORY) == 0) {
     if (m_DetectedCorruptLibrary) {
-      rv = PromptToDeleteLibraries();
+      /* check to see if the prefs file is writable, to recover from people
+       * running the app with sudo :(
+       */
+      nsCOMPtr<nsIProperties> dirService =
+        do_GetService("@mozilla.org/file/directory_service;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
+      
+      nsCOMPtr<nsIFile> prefFile;
+      rv = dirService->Get("PrefF",
+                           NS_GET_IID(nsIFile),
+                           getter_AddRefs(prefFile));
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      PRBool prefExists;
+      /* if the pref file is missing we go through the normal first-run process
+       * and therefore don't need to care about this
+       */
+      PRBool prefWritable = PR_TRUE;
+      rv = prefFile->Exists(&prefExists);
+      if (NS_SUCCEEDED(rv) && prefExists) {
+        rv = prefFile->IsWritable(&prefWritable);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      if (prefWritable) {
+        rv = PromptToDeleteLibraries();
+        NS_ENSURE_SUCCESS(rv, rv);
+      } else {
+        // database file is not writable, just bail
+        rv = PromptInaccessibleLibraries();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   } else if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
     // By now, databases should all be closed so it is safe to delete

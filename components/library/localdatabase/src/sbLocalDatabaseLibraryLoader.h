@@ -99,7 +99,8 @@ private:
                              nsILocalFile* aDatabaseFile = nsnull,
                              const nsAString& aLibraryNameKey = EmptyString());
 
-  nsresult PromptToDeleteLibraries();
+  NS_METHOD PromptToDeleteLibraries();
+  NS_METHOD PromptInaccessibleLibraries();
 
   PRUint32 GetNextLibraryIndex();
 
