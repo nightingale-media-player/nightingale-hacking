@@ -110,6 +110,7 @@ TestController.prototype =
 
     // Finally, kick off the test.
     this._runCurrentPhase();
+    testPending();
   },
 
   // Run current phase helper
@@ -264,7 +265,6 @@ TestController.prototype =
   _invokeExportService: function() {
     this._log("Export service needs to run = " + 
               this._shutdownService.needsToRunTask);
-        
     assertTrue(this._shutdownService.needsToRunTask);
     this._shutdownService.startTask();
   },
