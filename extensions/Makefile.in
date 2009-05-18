@@ -29,9 +29,9 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = xpcom_helloworld \
-          AlbumArt \
-          $(NULL)
+DEFAULT_EXTENSIONS = xpcom_helloworld \
+                     AlbumArt \
+                     $(NULL)
 
 # AlbumArt is not on the list because it's used internally by the bird, so
 # we need to build it regardless of platform
@@ -47,20 +47,20 @@ NOARCH_EXTENSIONS = shoutcast \
 # of this, we only want to build them on one platform if we're an official
 # build; we're using Linux now (see bug 13477#6)
 ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-  SUBDIRS += $(NOARCH_EXTENSIONS)
+   DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
 else
-  ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
-    SUBDIRS += $(NOARCH_EXTENSIONS)
-  endif
+   ifeq (linux-i686,$(SB_PLATFORM)-$(SB_ARCH))
+      DEFAULT_EXTENSIONS += $(NOARCH_EXTENSIONS)
+   endif
 endif
 
-# XXX Mook: NOT installed by default yet, this shouldn't go anywhere, just a build check
-ifeq (,$(filter-out windows,$(SB_PLATFORM)))
-  SUBDIRS += systray
-endif # platforms with systray support
-
-ifneq (default,$(SB_EXTENSIONS))
-  SUBDIRS = $(subst $(COMMA),$(SPACE),$(SB_EXTENSIONS))
+# XXX Mook: NOT installed by default yet, this shouldn't go anywhere,
+# just a build check
+ifeq (windows,$(SB_PLATFORM))
+   DEFAULT_EXTENSIONS += systray
 endif
+
+SUBDIRS = $(subst $(COMMA),$(SPACE), \
+          $(subst default,$(DEFAULT_EXTENSIONS),$(SB_EXTENSIONS)))
 
 include $(topsrcdir)/build/rules.mk
