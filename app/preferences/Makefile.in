@@ -31,11 +31,9 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_PP_RESOURCES = $(srcdir)/songbird-prefs.js.in \
                         $(srcdir)/songbird-channel-prefs.js.in \
+                        $(srcdir)/browser-prefs.js \
                         $(NULL)
 
 SONGBIRD_PP_DIR = $(SONGBIRD_PREFERENCESDIR)
-
-SONGBIRD_PREFERENCES += $(srcdir)/browser-prefs.js \
-                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk
