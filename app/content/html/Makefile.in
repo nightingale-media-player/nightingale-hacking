@@ -31,7 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 JAR_MANIFEST = jar.mn
 
-SONGBIRD_PP_DIR = $(CURDIR)
 SONGBIRD_PP_RESOURCES = $(srcdir)/eula.html.in \
                         $(srcdir)/about.html.in \
                         $(NULL)

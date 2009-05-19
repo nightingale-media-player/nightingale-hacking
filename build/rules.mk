@@ -66,14 +66,10 @@ endif
 
 ###############################################################################
 
-# SUBMAKEFILES: List of Makefiles for next level down.
-#   This is used to update or create the Makefiles before invoking them.
-SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
-
 ifdef TIERS
    SUBDIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_dirs))
 
-default all alldep:: create_dirs
+default all alldep:: create_dirs $(SUBMAKEFILES)
 	$(EXIT_ON_ERROR) \
 	$(foreach tier,$(TIERS),$(MAKE) tier_$(tier); ) true
 
@@ -97,22 +93,24 @@ clean:: $(SUBMAKEFILES)
 	-$(RM) -f $(ALL_TRASH)
 	+$(LOOP_OVER_SUBDIRS)
 
-MAKE_TIER_SUBMAKEFILES = +$(if $(tier_$*_dirs),$(MAKE) $(addsuffix /Makefile,$(tier_$*_dirs)))
-
 export_tier_%:
-	@echo "export_tier: $*"
-	$(MAKE_TIER_SUBMAKEFILES)
+	@echo "TIER PASS: $* export"
 	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) export; ) true
 
 libs_tier_%:
-	@echo "libs_tier: $*"
-	$(MAKE_TIER_SUBMAKEFILES)
+	@echo "TIER PASS: $* libs"
 	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
-$(foreach tier,$(TIERS),tier_$(tier))::
-	@echo "$@: $($@_staticdirs) $($@_dirs)"
+# This dependency listing is technically incorrect, in that it states that
+# _all_ the tiers are dependent on the makefiles of _all_ the tiers, not just
+# the tier you're actually building. We did this to avoid spawning a (99% of
+# the time) useless make invocation just to check the makefiles of the specific
+# tier we're building. Plus, re-generating makefiles is pretty cheap, even if
+# it's all of them for all the tier_dirs.
+$(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(tier)_dirs),$(addsuffix /Makefile,$(tier_$(tier)_dirs))))
+	@echo "BUILDING $(patsubst tier_%,%,$@) TIER; directories: $($@_dirs)"
 	$(MAKE) export_$@
 	$(MAKE) libs_$@
 
@@ -181,13 +179,23 @@ ifndef NO_DIST_INSTALL
    endif
 endif # !NO_DIST_INSTALL
 
-export:: $(SONGBIRD_PP_COMPONENTS) sb_resources_preprocess
-	@#echo in xpidl header target: $(XPIDL_HEADERS), $(XPIDL_HEADER_SRCS), $^
-	@#echo command is: $(CP) $^ 
-
 include $(topsrcdir)/build/oldrules.mk
 
 ## oldrules.mk translations ##
+
+#------------------------------------------------------------------------------
+# Rules for Makefile generation
+#------------------------------------------------------------------------------
+
+# SUBMAKEFILES: List of Makefiles for next level down.
+#   This is used to update or create the Makefiles before invoking them.
+SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
+
+makefiles: $(SUBMAKEFILES)
+	+$(LOOP_OVER_SUBDIRS)
+
+$(SUBMAKEFILES): % : $(srcdir)/%.in
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR) $@
 
 #------------------------------------------------------------------------------
 # Rules for XPIDL compilation
@@ -236,6 +244,58 @@ ifndef XPI_NAME
 	$(INSTALL_FILE) $(XPIDL_MODULE) $(SONGBIRD_COMPONENTSDIR)
 endif
 endif
+
+#------------------------------------------------------------------------------
+# Rules for pre-processed resources
+#------------------------------------------------------------------------------
+#
+#  A target for pre-processing a list of files and a directory for those files
+#  to end up at.
+#
+#  SONGBIRD_PP_RESOURCES - The list of files to preprocess, the target assumes
+#                          that all the files in with ".in"
+#
+#  SONGBIRD_PP_DIR       - The target directory to put the pre-processed file
+#                          list in $(SONGBIRD_PP_RESOURCES).
+#
+#  PP_RESOURCES_STRIP_SUFFIX  - The suffix of the files to be preprocessed; 
+#                               defaults to ".in", but can be most anything,
+#                               including empty.
+#  
+#  RESOURCES_PPFLAGS     - Command-line flags to pass to the preprocessor
+#
+#  PPDEFINES             - Extra definitions to pass to the preprocessor (in
+#                          the form of -DFOO="bar")
+#
+
+ifeq (windows,$(SB_PLATFORM))
+   RESOURCES_PPFLAGS += --line-endings=crlf
+endif
+
+ifndef PP_RESOURCES_STRIP_SUFFIX
+   PP_RESOURCES_STRIP_SUFFIX = .in
+endif
+
+ifndef SONGBIRD_PP_DIR
+   SONGBIRD_PP_DIR = $(CURDIR)
+endif
+
+GENERATED_PP_DEPS = $(addprefix $(SONGBIRD_PP_DIR)/,$(foreach f,$(SONGBIRD_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
+
+$(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
+   ifeq (,$(wildcard $(SONGBIRD_PP_DIR)))
+	   $(MKDIR) $(SONGBIRD_PP_DIR)
+   endif
+	@for item in $(SONGBIRD_PP_RESOURCES); do \
+      target=$(SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
+      echo Preprocessing $$item into $$target...; \
+      $(RM) -f $$target; \
+      $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+       $(ACDEFINES) $(RESOURCES_PPFLAGS) \
+       $(PPDEFINES) -- $$item > $$target; \
+   done
+
+export:: $(GENERATED_PP_DEPS)
 
 #########################
 

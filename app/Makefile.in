@@ -35,8 +35,6 @@ SONGBIRD_DIST = $(srcdir)/blocklist.xml \
                 $(srcdir)/updater.ini \
                 $(NULL)
 
-SONGBIRD_PP_DIR = $(CURDIR)
-
 # application.ini handling
 SONGBIRD_PP_RESOURCES = $(srcdir)/application.ini.in
 SONGBIRD_DIST += $(CURDIR)/application.ini

@@ -39,7 +39,6 @@ else
                     $(NULL)
 endif
 
-SONGBIRD_PP_DIR = $(CURDIR)
 SONGBIRD_PP_RESOURCES = $(srcdir)/defines.nsi.in \
                         $(NULL)
 

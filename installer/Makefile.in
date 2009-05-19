@@ -36,7 +36,6 @@ else
    INSTALLER_README = README_NIGHTLY.txt
 endif
 
-SONGBIRD_PP_DIR = $(CURDIR)
 SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
                         $(topsrcdir)/installer/common/$(INSTALLER_README).in \
                         $(NULL)
