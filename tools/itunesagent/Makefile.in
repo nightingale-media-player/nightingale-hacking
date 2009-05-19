@@ -101,6 +101,7 @@ ifeq (macosx,$(SB_PLATFORM))
                            -framework CoreServices \
                            -framework CoreFoundation \
                            -framework Cocoa \
+                           -framework Carbon \
                            -Wl,-syslibroot,$(SB_MACOSX_SDK_10_4)
 
    SIMPLE_PROGRAM_OBJS += $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \

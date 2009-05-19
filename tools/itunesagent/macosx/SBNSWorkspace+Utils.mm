@@ -31,6 +31,16 @@
 
 + (BOOL)isProcessAlreadyRunning:(NSString *)aBundleIdentifier
 {
+  // Need to find out information about the current process ID.
+  ProcessSerialNumber runningProcess;
+  GetCurrentProcess(&runningProcess);
+    UInt32 flags = kProcessDictionaryIncludeAllInformationMask;
+
+  NSDictionary *processDict = 
+    (NSDictionary *)ProcessInformationCopyDictionary(&runningProcess, flags);
+
+  NSNumber *runningProcessPID = [processDict objectForKey:@"pid"];
+
   // Since the regular API's on this interface doesn't look at background
   // processes that are being run by the user, we need to use the HIServices
   // API for this (it's bundled under ApplicationServices since 10.2).
@@ -40,7 +50,6 @@
   // Loop through all the users processes to see if a match is found to the
   // passed in bundle identifer.
   while (GetNextProcess(&curProcessSerialNum) == noErr) {
-    UInt32 flags = kProcessDictionaryIncludeAllInformationMask;
     NSDictionary *curProcessDict = 
       (NSDictionary *)ProcessInformationCopyDictionary(&curProcessSerialNum,
                                                        flags);
@@ -54,8 +63,13 @@
     NSString *curProcessBundleId = 
       [curProcessDict objectForKey:(NSString *)kCFBundleIdentifierKey];
     if ([curProcessBundleId isEqualToString:aBundleIdentifier]) {
-      found = YES;
-      break;
+      // Since we have a matching bundle ID - make sure this isn't the current
+      // process by matching up the PIDs.
+      NSNumber *curProcessPID = [curProcessDict objectForKey:@"pid"];
+      if (![runningProcessPID isEqualToNumber:curProcessPID]) {
+        found = YES;
+        break;
+      }
     }
   }
 
