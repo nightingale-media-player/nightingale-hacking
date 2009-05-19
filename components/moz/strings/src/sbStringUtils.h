@@ -103,6 +103,15 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
                           const PRUnichar aNewChar);
 
 /**
+ * Searches a string for any occurences of the substring and replaces
+ * it with the replacement string. Modifies the string in-place.
+ * @see nsString_internal::ReplaceSubstring
+ */
+void nsString_ReplaceSubstring(/* inout */ nsAString &aString,
+                               const nsAString &aOldString,
+                               const nsAString &aNewString);
+
+/**
  * Return true if the given string is possibly UTF8
  * (i.e. it errs on the side of returning true)
  *

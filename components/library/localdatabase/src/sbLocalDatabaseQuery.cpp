@@ -828,7 +828,26 @@ sbLocalDatabaseQuery::AddFilters()
 
       // '*' and '-' are special FTS operators. Make sure they are not in the
       // search filter otherwise the query will fail with a logic error.
-      nsString_ReplaceChar(stripped, NS_LITERAL_STRING("*-"), ' ');
+      nsString_ReplaceSubstring(stripped, 
+                                NS_LITERAL_STRING("*"), 
+                                NS_LITERAL_STRING(" NEAR/8 "));
+      nsString_ReplaceSubstring(stripped, 
+                                NS_LITERAL_STRING("-"), 
+                                NS_LITERAL_STRING(" NEAR/0 "));
+
+      // Quotes have to be escaped, otherwise if they are unbalanced they will
+      // cause a SQL error when the statement is compiled :( We can't actually
+      // use parameter binding here because of the way the underlying GUID array
+      // that uses this object is built. The GUID array completely relies on the
+      // automatic query building to generate the queries it uses. Because of this
+      // it's completely unaware of which query it's running, hence we can't use
+      // parameter binding.
+      nsString_ReplaceSubstring(stripped, 
+                                NS_LITERAL_STRING("\""), 
+                                NS_LITERAL_STRING("\\\""));
+      nsString_ReplaceSubstring(stripped, 
+                                NS_LITERAL_STRING("'"), 
+                                NS_LITERAL_STRING("\\'"));
 
       match.AppendLiteral("'");
       match.Append(stripped);

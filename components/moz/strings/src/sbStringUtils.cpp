@@ -184,6 +184,28 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
   }
 }
 
+void nsString_ReplaceSubstring(/* inout */ nsAString &aString,
+                               const nsAString &aOldString,
+                               const nsAString &aNewString)
+{
+  if (aOldString.Length() == 0) {
+    return;
+  }
+
+  PRUint32 i = 0;
+  while (i < aString.Length())
+  {
+    PRInt32 r = aString.Find(aOldString, i);
+    if (r == -1)
+      break;
+
+    aString.Replace(r, aOldString.Length(), aNewString);
+    i += r + aNewString.Length();
+  }
+
+  return;
+}
+
 PRBool IsLikelyUTF8(const nsACString& aString)
 {
   if (aString.IsEmpty()) {
