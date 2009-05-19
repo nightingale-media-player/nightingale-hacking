@@ -36,12 +36,8 @@ CPP_SRCS = \
   sbStaticModule.cpp \
   $(NULL)
 
-CPP_INCLUDES = \
-  $(MOZSDK_INCLUDE_DIR) \
-  $(MOZSDK_INCLUDE_DIR)/nspr \
+CPP_EXTRA_INCLUDES = \
   $(MOZSDK_INCLUDE_DIR)/necko \
-  $(MOZSDK_INCLUDE_DIR)/string \
-  $(MOZSDK_INCLUDE_DIR)/xpcom \
   $(NULL)
 
 DYNAMIC_LIB = $(target)$(DEBUG:%:_d)$(DLL_SUFFIX)

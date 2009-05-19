@@ -36,15 +36,12 @@ CPP_SRCS = sbCOMArray.cpp \
            sbXPCOMModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+CPP_EXTRA_INCLUDES = \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/docshell \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_IDL_DIR) \
                $(DEPS_DIR)/wpdsdk/Include \
                $(NULL)

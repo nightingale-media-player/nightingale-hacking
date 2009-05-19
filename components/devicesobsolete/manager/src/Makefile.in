@@ -39,16 +39,12 @@ CPP_SRCS = DeviceManager.cpp \
            DeviceManagerComponent.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
                $(topsrcdir)/components/devicesobsolete/base/src \
                $(DEPTH)/components/devicesobsolete/manager/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/uriloader \
                $(MOZSDK_INCLUDE_DIR)/rdf \

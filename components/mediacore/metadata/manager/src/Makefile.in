@@ -46,7 +46,7 @@ CPP_SRCS = sbMetadataManager.cpp \
            sbMetadataModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/albumart/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/albumart/public \
                $(topsrcdir)/components/albumart/src \
                $(DEPTH)/components/mediacore/metadata/manager/public \
                $(DEPTH)/components/mediacore/metadata/manager/src \
@@ -65,10 +65,6 @@ CPP_INCLUDES = $(DEPTH)/components/albumart/public \
                $(topsrcdir)/components/include \
                $(DEPTH)/components/moz/strings/components/public \
                $(topsrcdir)/components/moz/strings/src \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/uconv \

@@ -54,7 +54,7 @@ CPP_SRCS += sbBaseDeviceEventTarget.cpp \
             sbDeviceContent.cpp \
             $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/library/base/public \
@@ -67,12 +67,8 @@ CPP_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(topsrcdir)/components/library/localdatabase/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 DYNAMIC_LIB = sbDeviceDeviceTester$(DEBUG:%=_d)$(DLL_SUFFIX)

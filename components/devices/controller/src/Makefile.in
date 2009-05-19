@@ -34,16 +34,12 @@ target_name = sbDeviceController$(DEBUG:%=_d)
 CPP_SRCS = sbBaseDeviceController.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/controller/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/marshall/public \
                $(topsrcdir)/components/devices/base/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 STATIC_LIB = sbDeviceController$(DEBUG:%=_d)$(LIB_SUFFIX)

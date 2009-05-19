@@ -39,7 +39,7 @@ CPP_SRCS += sbBaseDeviceEventTarget.cpp \
             sbDeviceEvent.cpp
             $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/controller/public \
                $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/marshall/public \
@@ -49,11 +49,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(NULL)
@@ -66,7 +62,7 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
     $(COMPONENTS_OBJDIR)/moz/threads/src/sbMozThreads$(DEBUG:%=_d)
 
 #XXX Mook : Temporary hack pending bug 7150 (proper static lib)
-CPP_INCLUDES += $(topsrcdir)/components/include \
+CPP_EXTRA_INCLUDES += $(topsrcdir)/components/include \
                 $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)

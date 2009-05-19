@@ -79,7 +79,7 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
 # From components/library/base/src/
 CPP_SRCS += sbLibraryChangeset.cpp
 
-CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/job/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
@@ -90,7 +90,6 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/sqlbuilder/public \
                $(MOZSDK_IDL_DIR) \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/appcomps \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/dom \
@@ -99,12 +98,9 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(SQLITE_DIR)/include \
                $(topsrcdir)/components/dbengine/src \
                $(topsrcdir)/components/include \
@@ -119,7 +115,7 @@ CPP_INCLUDES = $(DEPTH)/components/dbengine/public \
                $(NULL)
 
 ifdef DEBUG
-CPP_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
+CPP_EXTRA_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
                 $(MOZSDK_INCLUDE_DIR)/js \
                 $(NULL)
 endif

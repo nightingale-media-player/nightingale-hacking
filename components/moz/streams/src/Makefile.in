@@ -38,11 +38,7 @@ endif
 CPP_SRCS = sbFileObjectStreams.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/necko \
+CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/necko \
                $(NULL)
 
 STATIC_LIB = $(target_name)$(LIB_SUFFIX)

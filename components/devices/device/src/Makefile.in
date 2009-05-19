@@ -36,7 +36,7 @@ CPP_SRCS = sbBaseDevice.cpp \
            sbLibraryListenerHelpers.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/library/base/public \
@@ -51,15 +51,11 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/library/localdatabase/src/ \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 STATIC_LIB = $(target_name)$(LIB_SUFFIX)

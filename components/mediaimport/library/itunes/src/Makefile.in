@@ -42,7 +42,7 @@ CPP_SRCS = sbiTunesXMLParser.cpp \
            $(NULL)
 
            
-CPP_INCLUDES = $(topsrcdir)/components/include \
+CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                $(DEPTH)/components/albumart/public \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/dataremote/public \
@@ -59,14 +59,10 @@ CPP_INCLUDES = $(topsrcdir)/components/include \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/uconv \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/xml \
                $(MOZSDK_INCLUDE_DIR)/xulapp \
                $(NULL)

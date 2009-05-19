@@ -52,7 +52,7 @@ else
 endif
 endif
 
-CPP_INCLUDES = \
+CPP_EXTRA_INCLUDES = \
       $(topsrcdir)/components/include \
       $(DEPTH)/components/library/base/public \
       $(DEPTH)/components/mediacore/base/public \
@@ -65,10 +65,6 @@ CPP_INCLUDES = \
       $(DEPTH)/components/property/public \
       $(topsrcdir)/components/property/src \
       $(DEPTH)/components/job/public \
-      $(MOZSDK_INCLUDE_DIR) \
-      $(MOZSDK_INCLUDE_DIR)/nspr \
-      $(MOZSDK_INCLUDE_DIR)/xpcom \
-      $(MOZSDK_INCLUDE_DIR)/string \
       $(MOZSDK_INCLUDE_DIR)/layout \
       $(MOZSDK_INCLUDE_DIR)/gfx \
       $(MOZSDK_INCLUDE_DIR)/widget \
@@ -89,23 +85,23 @@ CPP_INCLUDES = \
 ifdef MEDIA_CORE_GST_SYSTEM
   CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
 
-  CPP_EXTRA_INCLUDES = $(GSTREAMER_CFLAGS) \
+  CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
                        $(GTK_CFLAGS) \
                        $(NULL)
 else
-  CPP_EXTRA_INCLUDES = -I$(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
-                       -I$(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+  CPP_EXTRA_INCLUDES += $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+                        $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
                        $(NULL)
 
   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
     # macosx or windows
-    CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
-                          -I$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+    CPP_EXTRA_INCLUDES += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
+                          $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
                           $(NULL)
   else
     # everything else
-    CPP_EXTRA_INCLUDES += $(GTK_CFLAGS) \
-                          $(NULL)
+    CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
+                        $(NULL)
   endif
 endif
 

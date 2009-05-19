@@ -39,7 +39,7 @@ CPP_SRCS = \
   sbMediaListEnumSingleItemHelper.cpp \
   $(NULL)
 
-CPP_INCLUDES = \
+CPP_EXTRA_INCLUDES = \
   $(DEPTH)/components/library/base/public \
   $(DEPTH)/components/property/public \
   $(topsrcdir)/components/include \
@@ -47,14 +47,10 @@ CPP_INCLUDES = \
   $(topsrcdir)/components/moz/threads/src \
   $(topsrcdir)/components/library/base/src \
   $(topsrcdir)/components/property/src \
-  $(MOZSDK_INCLUDE_DIR) \
   $(MOZSDK_INCLUDE_DIR)/embedcomponents \
   $(MOZSDK_INCLUDE_DIR)/necko \
-  $(MOZSDK_INCLUDE_DIR)/nspr \
   $(MOZSDK_INCLUDE_DIR)/pref \
-  $(MOZSDK_INCLUDE_DIR)/string \
   $(MOZSDK_INCLUDE_DIR)/rdf \
-  $(MOZSDK_INCLUDE_DIR)/xpcom \
   $(NULL)
 
 STATIC_LIB = $(target)$(LIB_SUFFIX)

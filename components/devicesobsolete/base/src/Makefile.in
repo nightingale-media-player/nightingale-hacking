@@ -38,18 +38,14 @@ endif
 CPP_SRCS = DeviceBase.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/library/localdatabase/src \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/docshell \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/rdf \
                $(MOZSDK_INCLUDE_DIR)/rdfutil \
                $(MOZSDK_INCLUDE_DIR)/necko \

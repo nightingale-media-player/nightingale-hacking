@@ -45,7 +45,7 @@ CPP_SRCS = sbBaseDeviceEventTarget.cpp \
 # From /components/moz/strings/src/
 CPP_SRCS += sbTArrayStringEnumerator.cpp
 
-CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
@@ -56,11 +56,7 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(NULL)

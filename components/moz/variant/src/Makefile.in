@@ -39,12 +39,6 @@ CPP_SRCS = sbVariant.cpp \
            sbVariantUtilsModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(NULL)
-
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))

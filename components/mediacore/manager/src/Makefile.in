@@ -48,7 +48,7 @@ CPP_SRCS += sbMediacoreVotingChain.cpp \
             sbMediacoreEqualizerBand.cpp \
             $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/mediacore/base/public \
                $(DEPTH)/components/mediaimport/playlist/public \
@@ -61,7 +61,6 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(topsrcdir)/components/moz/threads/src \
                $(DEPTH)/components/moz/windowwatcher/public \
                $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/content \
                $(MOZSDK_INCLUDE_DIR)/docshell \
                $(MOZSDK_INCLUDE_DIR)/dom \
@@ -70,13 +69,10 @@ CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(MOZSDK_INCLUDE_DIR)/gfx \
                $(MOZSDK_INCLUDE_DIR)/layout \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/uriloader \
                $(MOZSDK_INCLUDE_DIR)/widget \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)

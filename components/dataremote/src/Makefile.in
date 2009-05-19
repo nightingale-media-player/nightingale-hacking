@@ -37,12 +37,8 @@ CPP_SRCS = sbDataRemoteWrapper.cpp \
            sbDataRemoteModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/dataremote/public \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 

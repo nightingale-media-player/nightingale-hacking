@@ -123,7 +123,7 @@ CPP_SRCS = DatabaseEngineComponent.cpp \
            DatabaseResult.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(srcdir) \
+CPP_EXTRA_INCLUDES = $(srcdir) \
                $(DEPTH)/components/dbengine/public \
                $(DEPTH)/components/moz/strings/components/public \
                $(DEPTH)/components/moz/prompter/public \
@@ -133,19 +133,14 @@ CPP_INCLUDES = $(srcdir) \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threadpoolservice/src \
                $(topsrcdir)/components/moz/threads/src \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/appcomps \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_INCLUDE_DIR)/xpconnect \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_INCLUDE_DIR)/locale \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
@@ -175,8 +170,8 @@ ifeq (linux,$(SB_PLATFORM))
                              $(PTHREAD_LIBS) \
                              $(GLIB_LIBS) \
                              $(NULL)
-  CPP_EXTRA_INCLUDES = $(GLIB_CFLAGS) \
-                       $(NULL)
+  CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
+                     $(NULL)
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
@@ -186,7 +181,7 @@ ifeq (solaris,$(SB_PLATFORM))
                              $(GLIB_LIBS) \
                              -lm \
                              $(NULL)
-  CPP_EXTRA_INCLUDES = $(GLIB_CFLAGS) \
+  CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
                        $(NULL)
 endif
 

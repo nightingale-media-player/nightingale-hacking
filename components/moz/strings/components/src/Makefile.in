@@ -40,14 +40,10 @@ CPP_SRCS = sbStringBundleService.cpp \
            sbStringsModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/moz/strings/components/public \
-               $(topsrcdir)/components/include \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/strings/components/public \
+                     $(topsrcdir)/components/include \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
 

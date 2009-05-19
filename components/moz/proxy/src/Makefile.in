@@ -39,12 +39,9 @@ CPP_SRCS = sbProxiedServices.cpp \
            sbProxiedServicesModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/moz/proxy/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/proxy/public \
                $(topsrcdir)/components/include \
                $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/chardet \
                $(MOZSDK_INCLUDE_DIR)/uconv \
                $(NULL)

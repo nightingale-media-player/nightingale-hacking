@@ -34,12 +34,8 @@ CPP_SRCS = sbDeviceEventTesterModule.cpp \
            sbDeviceEventTesterRemoval.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/base/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(DEPTH)/components/devices/manager/public \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 DYNAMIC_LIB = sbDeviceEventTester$(DEBUG:%=_d)$(DLL_SUFFIX)

@@ -11,13 +11,9 @@ CPP_SRCS   = \
       sbGStreamerStub.cpp \
       $(NULL)
 
-CPP_INCLUDES = \
+CPP_EXTRA_INCLUDES = \
       $(topsrcdir)/components/mediacore/playback/gstreamer/src \
       $(topsrcdir)/components/include \
-      $(MOZSDK_INCLUDE_DIR) \
-      $(MOZSDK_INCLUDE_DIR)/nspr \
-      $(MOZSDK_INCLUDE_DIR)/xpcom \
-      $(MOZSDK_INCLUDE_DIR)/string \
       $(MOZSDK_INCLUDE_DIR)/necko \
       $(NULL)
 

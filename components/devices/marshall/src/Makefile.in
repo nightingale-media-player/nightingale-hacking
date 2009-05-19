@@ -34,7 +34,7 @@ target_name = sbDeviceMarshall$(DEBUG:%=_d)
 CPP_SRCS = sbBaseDeviceMarshall.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/devices/marshall/public \
                $(DEPTH)/components/devices/controller/public \
@@ -44,12 +44,8 @@ CPP_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(DEPTH)/components/library/localdatabase/public \
                $(topsrcdir)/components/library/localdatabase/src \
                $(DEPTH)/components/property/public \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(MOZSDK_INCLUDE_DIR)/docshell \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
                $(NULL)

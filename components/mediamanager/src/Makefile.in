@@ -40,7 +40,7 @@ CPP_SRCS = sbMediaManagerModule.cpp \
            sbMediaManagementService.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/mediamanager/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediamanager/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/property/public \
                $(DEPTH)/components/job/public \
@@ -52,13 +52,9 @@ CPP_INCLUDES = $(DEPTH)/components/mediamanager/public \
                $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/property/src \
                $(topsrcdir)/components/library/base/src/static \
-               $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)

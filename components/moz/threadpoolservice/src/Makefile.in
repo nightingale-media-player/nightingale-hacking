@@ -35,11 +35,8 @@ CPP_SRCS = sbThreadPoolService.cpp \
            sbThreadPoolServiceModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+CPP_EXTRA_INCLUDES = \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
 
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)

@@ -40,13 +40,10 @@ target_name = systray
 
 # ~= mozilla build system's REQUIRES
 EXTRA_CPP_INCLUDES = \
-                     nspr          \
-                     xpcom         \
                      widget        \
                      appshell      \
                      docshell      \
                      dom           \
-                     string        \
                      gfx           \
                      imglib2       \
                      necko         \
@@ -92,10 +89,9 @@ ifeq (,$(filter $(MOZ_WIDGET_TOOLKIT),windows gtk2))
     $(NULL)
 endif # stub impl
 
-CPP_INCLUDES = ../public \
+CPP_EXTRA_INCLUDES = ../public \
                $(MOZSDK_INCLUDE_DIR) \
                $(MOZSDK_IDL_DIR) \
-               $(addprefix $(MOZSDK_INCLUDE_DIR)/,$(EXTRA_CPP_INCLUDES)) \
                $(NULL)
 
 # build a component (ie: a dynamically loadable module)

@@ -41,7 +41,7 @@ endif
 CPP_SRCS = sbGStreamerMetadataHandler.cpp \
            $(NULL)
 
-CPP_INCLUDES = \
+CPP_EXTRA_INCLUDES = \
       $(topsrcdir)/components/include \
       $(DEPTH)/components/mediacore/metadata/manager/public \
       $(DEPTH)/components/property/public \
@@ -49,13 +49,9 @@ CPP_INCLUDES = \
       $(DEPTH)/components/mediacore/base/public \
       $(DEPTH)/components/mediacore/gstreamer/public \
       $(topsrcdir)/components/mediacore/gstreamer/src \
-      $(MOZSDK_INCLUDE_DIR) \
       $(MOZSDK_INCLUDE_DIR)/dom \
       $(MOZSDK_INCLUDE_DIR)/intl \
       $(MOZSDK_INCLUDE_DIR)/necko \
-      $(MOZSDK_INCLUDE_DIR)/nspr \
-      $(MOZSDK_INCLUDE_DIR)/string \
-      $(MOZSDK_INCLUDE_DIR)/xpcom \
       $(NULL)
 
 ifdef MEDIA_CORE_GST_SYSTEM
@@ -63,23 +59,23 @@ ifdef MEDIA_CORE_GST_SYSTEM
                     $(GSTREAMER_CFLAGS) \
                     $(NULL)
 
-  CPP_EXTRA_INCLUDES = $(GSTREAMER_CFLAGS) \
-                       $(GLIB_CFLAGS) \
-                       $(NULL)
+  CPP_RAW_INCLUDES = $(GSTREAMER_CFLAGS) \
+                     $(GLIB_CFLAGS) \
+                     $(NULL)
 else
-  CPP_EXTRA_INCLUDES = -I$(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
-                       -I$(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+  CPP_EXTRA_INCLUDES += $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+                       $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
                        $(NULL)
 
   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
     # macosx or windows
-    CPP_EXTRA_INCLUDES += -I$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
-                          -I$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+    CPP_EXTRA_INCLUDES += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
+                          $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
                           $(NULL)
   else
     # everything else
-    CPP_EXTRA_INCLUDES += $(GLIB_CFLAGS) \
-                          $(NULL)
+    CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
+                        $(NULL)
   endif
 endif
 
