@@ -31,8 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = vendor/mozbrowser
 
-# XXXredfive -erhn?
-
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
   SONGBIRD_MAIN_APP = $(SONGBIRD_XULRUNNERDIR)/songbird-bin
 else
@@ -461,7 +459,6 @@ include $(topsrcdir)/build/rules.mk
 xulrunner_extensions = $(notdir $(wildcard $(SONGBIRD_XULRUNNERDIR)/extensions/*))
 
 libs:: move-sb-stub-executable copy-xr-shell-stub addmsvcrtmanifest
-#libs:: move-sb-stub-executable copy-extensions copy-xr-shell-stub addmsvcrtmanifest
 
 # WE have to add manifest information to the few remaining .exes that actually
 # link against the MSVCRT; see bug 10022
@@ -473,8 +470,8 @@ ADD_MANIFEST_EXES = crashreporter.exe \
 addmsvcrtmanifest::
 ifeq ($(SB_USE_JEMALLOC)_$(MSMANIFEST_TOOL),_1)
 	for f in $(ADD_MANIFEST_EXES); do \
-   echo $(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
-   $(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
+   echo mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
+   mt.exe -NOLOGO -MANIFEST "$(SONGBIRD_XULRUNNERDIR)/Microsoft.VC80.CRT.manifest" -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ; \
    done
 endif # NOT SB_USE_JEMALLOC and MSVC with manifest tool
 
@@ -501,7 +498,7 @@ endif
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 SONGBIRD_STUB = $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
-RESHACKER_BIN = $(CYGWIN_WRAPPER) $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
+RESHACKER_BIN = $(topsrcdir)/tools/win32/reshacker/ResHacker.exe
 ifeq (,$(SONGBIRD_OFFICIAL))
 ICON_FILE = $(topsrcdir)/installer/windows/songbird_nightly.ico
 else
@@ -510,17 +507,17 @@ endif
 RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/$(1), $(sb_executable_dir)/$(1), $(ICON_FILE), icongroup, $(2), 1033
 RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" songbird.rc
 move-sb-stub-executable: $(SONGBIRD_MAIN_APP)
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(sb_executable_dir)
-	$(CYGWIN_WRAPPER) $(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
+	$(MKDIR) -p $(sb_executable_dir)
+	$(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
 ifeq (windows,$(SB_PLATFORM))
 # If we're not using jemalloc, add the manifest...
 ifeq ($(MSMANIFEST_TOOL)_$(SB_USE_JEMALLOC),1_)
-	$(CYGWIN_WRAPPER) mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
+	mt.exe -NOLOGO -MANIFEST "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
           -OUTPUTRESOURCE:$(SONGBIRD_STUB)\;1
 endif # Not-jemalloc and MSVC with manifest tool
 	# On Win32, the stub requires the custom CRT in the same directory now,
 	# if it's enabled; move that along if we find it too...
-	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(CYGWIN_WRAPPER) $(CP) -vf $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
+	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(CP) -vf $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
 	# Win32 only - munge the stub installer for icons
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)
@@ -540,11 +537,11 @@ endif # Not-jemalloc and MSVC with manifest tool
 	rc -v -fo songbird.res songbird.rc
 	$(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/songbird.exe, $(sb_executable_dir)/songbird.exe, songbird.res, VersionInfo,1,1033
 endif # windows
-	$(CYGWIN_WRAPPER) $(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
+	$(CHMOD) +x $(sb_executable_dir)/$(notdir $(SONGBIRD_MAIN_APP))
 
 copy-xr-shell-stub:
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-	$(CP) -dfp $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
+	$(INSTALL_PROG) $(topsrcdir)/installer/linux/songbird.sh $(SONGBIRD_DISTDIR)/songbird
 endif
 
 export::

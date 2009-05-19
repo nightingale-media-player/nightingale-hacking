@@ -74,7 +74,7 @@ include $(topsrcdir)/build/rules.mk
 shell_execute: $(SONGBIRD_COMPONENTSDIR)/songbird.xpt
 
 $(SONGBIRD_COMPONENTSDIR)/songbird.xpt: $(wildcard *.xpt)
-	$(CYGWIN_WRAPPER) $(XPTLINK) $@ $^
+	$(XPTLINK) $@ $^
 	$(CHMOD) -x $@
 
 clean::

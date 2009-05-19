@@ -1,3 +1,4 @@
+# vim: ft=make ts=3 sw=3
 #
 # BEGIN SONGBIRD GPL
 #
@@ -62,18 +63,13 @@ endif
 # them to be in the DOS form (i.e. e:/builds/...).  This function
 # does the appropriate conversion on Windows, but is a noop on other systems.
 ifeq (windows,$(SB_PLATFORM))
-  ifneq (,$(CYGWIN_WRAPPER))
-    normalizepath = $(foreach p,$(1),$(shell cygpath -m $(p)))
-  else
-    # assume MSYS
-    #  We use 'pwd -W' to get DOS form of the path.  However, since the given path
-    #  could be a file or a non-existent path, we cannot call 'pwd -W' directly
-    #  on the path.  Instead, we extract the root path (i.e. "c:/"), call 'pwd -W'
-    #  on it, then merge with the rest of the path.
-    root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\1|")
-    non-root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\2|")
-    normalizepath = $(if $(filter /%,$(1)),$(shell cd $(call root-path,$(1)) && pwd -W)/$(call non-root-path,$(1)),$(1))
-  endif
+   # We use 'pwd -W' to get DOS form of the path.  However, since the given path
+   # could be a file or a non-existent path, we cannot call 'pwd -W' directly
+   # on the path.  Instead, we extract the root path (i.e. "c:/"), call 'pwd -W'
+   # on it, then merge with the rest of the path.
+   root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\1|")
+   non-root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\2|")
+   normalizepath = $(if $(filter /%,$(1)),$(shell cd $(call root-path,$(1)) && pwd -W)/$(call non-root-path,$(1)),$(1))
 else
   normalizepath = $(1)
 endif
@@ -91,16 +87,6 @@ ifdef EXTENSION_STAGE_DIR
    SONGBIRD_SEARCHPLUGINSDIR = $(EXTENSION_STAGE_DIR)/searchplugins
    SONGBIRD_SCRIPTSDIR = $(EXTENSION_STAGE_DIR)/scripts
    SONGBIRD_JSMODULESDIR = $(EXTENSION_STAGE_DIR)/jsmodules
-endif
-
-#------------------------------------------------------------------------------
-# Update Makefiles
-#------------------------------------------------------------------------------
-
-# In GNU make 3.80, makefiles must use the /cygdrive syntax, even if we're
-# processing them with AS perl. See bmo 232003
-ifdef AS_PERL
-CYGWIN_TOPSRCDIR = -nowrap -p $(topsrcdir) -wrap
 endif
 
 #------------------------------------------------------------------------------
@@ -159,10 +145,10 @@ endif
 
 
 %$(OBJ_SUFFIX): %.cpp
-	$(CYGWIN_WRAPPER) $(CXX) $(OUTPUT_FLAG) $(compile_flags) $(compile_defs) $(compile_includes) $<
+	$(CXX) $(OUTPUT_FLAG) $(compile_flags) $(compile_defs) $(compile_includes) $<
 
 %.i: %.cpp
-	$(CYGWIN_WRAPPER) $(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $(CFLAGS_PREPROCESS) $<
+	$(CXX) $(compile_flags) $(compile_defs) $(compile_includes) $(CFLAGS_PREPROCESS) $<
 
 endif #CPP_SRCS
 
@@ -219,14 +205,7 @@ endif # libsongbird_component + --enable-static
 mm_compiler_objects = $(CMM_SRCS:.mm=$(OBJ_SUFFIX))
 
 %$(OBJ_SUFFIX): %.mm
-	$(CYGWIN_WRAPPER) $(CXX) $(mm_compile_flags) $(mm_compile_defs) $(mm_compile_includes) $<
-
-#mm_compile: $(mm_compiler_objects)
-
-#mm_clean:
-#	$(CYGWIN_WRAPPER) $(RM) -f $(mm_compiler_objects)
-
-# .PHONY : mm_compile mm_clean
+	$(CXX) $(mm_compile_flags) $(mm_compile_defs) $(mm_compile_includes) $<
 
 endif #CMM_SRCS
 
@@ -325,12 +304,12 @@ linker_out = $(LDFLAGS_OUT_PREFIX)$(DYNAMIC_LIB)$(LDFLAGS_OUT_SUFFIX)
 
 ranlib_cmd =
 ifdef FORCE_RANLIB
-	ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(linker_out) $(FORCE_RANLIB)
+	ranlib_cmd = $(RANLIB) $(linker_out) $(FORCE_RANLIB)
 endif
 
 $(DYNAMIC_LIB): $(DYNAMIC_LIB_OBJS)
 	$(ranlib_cmd)
-	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
+	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
 
 
 endif #DYNAMIC_LIB
@@ -361,7 +340,7 @@ linker_out = $(ARFLAGS_OUT_PREFIX)$(STATIC_LIB)$(ARFLAGS_OUT_SUFFIX)
 static_lib_deps = $(STATIC_LIB_OBJS)
 
 ifdef USING_RANLIB
-ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(linker_out)
+ranlib_cmd = $(RANLIB) $(linker_out)
 static_lib_deps += lib_clean
 else
 ranlib_cmd = @echo Not using ranlib
@@ -369,7 +348,7 @@ endif
 
 #lib_link: $(static_lib_deps)
 $(STATIC_LIB): $(static_lib_deps)
-	$(CYGWIN_WRAPPER) $(AR) $(linker_flags) $(linker_out) $(STATIC_LIB_OBJS)
+	$(AR) $(linker_flags) $(linker_out) $(STATIC_LIB_OBJS)
 	$(ranlib_cmd)
 
 ifneq (,$(SB_ENABLE_STATIC))
@@ -412,7 +391,7 @@ endif # DYNAMIC_LIB_EXTRA_FLAGS
 endif # static component
 
 lib_clean:
-	$(CYGWIN_WRAPPER) $(RM) -f $(STATIC_LIB)
+	$(RM) -f $(STATIC_LIB)
 
 .PHONY : lib_clean lib_static_list
 
@@ -483,16 +462,16 @@ linker_out = $(LDFLAGS_OUT_PREFIX)$(SIMPLE_PROGRAM)$(LDFLAGS_OUT_SUFFIX)
 
 ranlib_cmd =
 ifdef FORCE_RANLIB
-	ranlib_cmd = $(CYGWIN_WRAPPER) $(RANLIB) $(FORCE_RANLIB)
+	ranlib_cmd = $(RANLIB) $(FORCE_RANLIB)
 endif
 
 $(SIMPLE_PROGRAM): $(SIMPLE_PROGRAM_OBJS)
 	$(ranlib_cmd)
-	$(CYGWIN_WRAPPER) $(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
-	$(CYGWIN_WRAPPER) $(CHMOD) +x $(SIMPLE_PROGRAM)
+	$(LD) $(linker_out) $(linker_flags) $(linker_paths) $(linker_objs) $(linker_imports)
+	$(CHMOD) +x $(SIMPLE_PROGRAM)
 
 exe_clean:
-	$(CYGWIN_WRAPPER) $(RM) -f $(SIMPLE_PROGRAM) \
+	$(RM) -f $(SIMPLE_PROGRAM) \
 	      $(SIMPLE_PROGRAM:$(BIN_SUFFIX)=.pdb) \
 	      $(SIMPLE_PROGRAM:$(BIN_SUFFIX)=.lib) \
 	      $(SIMPLE_PROGRAM:$(BIN_SUFFIX)=.exp) \
@@ -546,12 +525,12 @@ endif
 c_compiler_objects = $(C_SRCS:.c=$(OBJ_SUFFIX))
 
 $(c_compiler_objects) :%$(OBJ_SUFFIX): %.c
-	$(CYGWIN_WRAPPER) $(CC) $(c_compile_flags) $(c_compile_defs) $(c_compile_includes) $<
+	$(CC) $(c_compile_flags) $(c_compile_defs) $(c_compile_includes) $<
 
 c_compile: $(c_compiler_objects)
 
 c_clean:
-	$(CYGWIN_WRAPPER) $(RM) -f $(c_compiler_objects) $(COMPILER_GARBAGE)
+	$(RM) -f $(c_compiler_objects) $(COMPILER_GARBAGE)
 
 .PHONY : c_compile c_clean
 
@@ -601,7 +580,7 @@ files_list = $(shell cd $(srcdir) && $(FIND) . $(find_exp))
 
 ifdef files_list
 clone_dir_cmd = cd $(srcdir) && \
-                $(CYGWIN_WRAPPER) $(CP) -P -f -p --parents $(files_list) $(CLONEDIR) \
+                $(CP) -P -f -p --parents $(files_list) $(CLONEDIR) \
                 $(NULL)
 endif
 
@@ -623,7 +602,7 @@ copy_sb_tests:
 ifdef SONGBIRD_TESTS
 ifneq (,$(SB_ENABLE_TESTS))
 ifeq (,$(wildcard $(SONGBIRD_TESTSDIR)))
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(SONGBIRD_TESTSDIR)
+	$(MKDIR)$(SONGBIRD_TESTSDIR)
 endif
 	$(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TESTSDIR)
 endif
@@ -658,7 +637,7 @@ run_doxygen_preprocess:
 
 clean_doxygen_preprocess:
 	for file in $(DOXYGEN_PREPROCESS); do \
-    $(CYGWIN_WRAPPER) $(RM) -f $(SONGBIRD_DOCUMENTATIONDIR)/$$file; \
+    $(RM) -f $(SONGBIRD_DOCUMENTATIONDIR)/$$file; \
   done
 
 .PHONY : run_doxygen_preprocess clean_doxygen_preprocess
@@ -772,21 +751,21 @@ endif
 
 $(JAR_MANIFEST):
 ifneq (,$(jar_mn_in_exists))
-	$(CYGWIN_WRAPPER) $(RM) -f $(JAR_MANIFEST)
+	$(RM) -f $(JAR_MANIFEST)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
     $(srcdir)/$(jar_manifest_in) | \
     $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(JAR_MANIFEST)
 endif
 
 make_jar: $(JAR_MANIFEST)
-	$(CYGWIN_WRAPPER) $(MKDIR) -p $(TARGET_DIR)
+	$(MKDIR) -p $(TARGET_DIR)
 	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
       $(MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(jar_manifest_file)
-	@$(CYGWIN_WRAPPER) $(RM) -rf $(TARGET_DIR)/stage
+	@$(RM) -rf $(TARGET_DIR)/stage
 
 
 clean_jar_postprocess:
-	$(CYGWIN_WRAPPER) $(RM) -f ./$(JAR_MANIFEST)
+	$(RM) -f ./$(JAR_MANIFEST)
 
 # We want the preprocessor to run every time regrdless of whether or not
 # $(jar_manifest_in) has changed because defines may change as well.
@@ -937,11 +916,11 @@ endif # XPI_NAME
 
 create_dirs:
 	$(warning WARNING: $@ is DEPRECATED and slated for REMOVAL; you have been warned...)
-	$(foreach dir,$(CREATEDIRS),$(CYGWIN_WRAPPER) $(MKDIR) $(dir);)
+	$(foreach dir,$(CREATEDIRS),$(MKDIR) $(dir);)
 
 .PHONY : create_dirs
 
 create_dirs_clean:
-	$(CYGWIN_WRAPPER) $(RM) -rf $(CREATEDIRS)
+	$(RM) -rf $(CREATEDIRS)
 
 .PHONY : create_dirs_clean

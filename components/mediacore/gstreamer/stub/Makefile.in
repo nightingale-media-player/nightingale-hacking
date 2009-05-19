@@ -51,7 +51,6 @@ include $(topsrcdir)/build/rules.mk
 libs:: copy_libs_manifest
 
 copy_libs_manifest:
-	$(CYGWIN_WRAPPER) \
-          $(PERL) -p -e "s/ogg.dll/ogg$(DEBUG:%=_d).dll/g" \
-          $(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(SONGBIRD_COMPONENTSDIR)/gst_libs.txt
+	$(PERL) -p -e "s/ogg.dll/ogg$(DEBUG:%=_d).dll/g" \
+   $(srcdir)/gst_libs_$(SB_PLATFORM).txt > $(SONGBIRD_COMPONENTSDIR)/gst_libs.txt
 .PHONY: copy_libs_manifest

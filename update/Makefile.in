@@ -52,8 +52,8 @@ UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLA
 ifeq (macosx,$(SB_PLATFORM))
 TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
 else
-ifdef CYGWIN_WRAPPER
-# windows cygwin needs relative paths, all others need the full path
+ifeq (windows,$(SB_PLATFORM))
+# windows needs relative paths, all others need the full path
 TARGET_DIR=$(DEPTH)/$(DISTDIRNAME)
 else
 TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
@@ -84,7 +84,7 @@ complete-patch:: removed-files
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
     "$(TARGET_DIR)"
-	$(CYGWIN_WRAPPER) $(RM) -f $(REMOVED_FILES_GEN)
+	$(RM) -f $(REMOVED_FILES_GEN)
 
 complete-snippet::
 	@$(MKDIR) -p $(STAGE_DIR)
@@ -155,9 +155,9 @@ partial-snippet::
     $(NULL)
 
 removed-files::
-	$(CYGWIN_WRAPPER) $(RM) -f $(TARGET_DIR)/removed-files
+	$(RM) -f $(TARGET_DIR)/removed-files
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) \
     $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > ./removed-files
-	$(CYGWIN_WRAPPER) $(CP) ./removed-files $(REMOVED_FILES_GEN)
+	$(CP) ./removed-files $(REMOVED_FILES_GEN)
 
 include $(topsrcdir)/build/rules.mk

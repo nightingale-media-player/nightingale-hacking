@@ -51,7 +51,7 @@ include $(topsrcdir)/build/rules.mk
 libs:: extinstall
 
 extinstall :
-	@$(CYGWIN_WRAPPER)	$(MKDIR) -p $(EXTENSION_DIR)
-	$(CYGWIN_WRAPPER)	$(CP)	-f $(srcdir)/chrome.manifest $(EXTENSION_DIR)
+	@$(MKDIR) -p $(EXTENSION_DIR)
+	$(CP)	-f $(srcdir)/chrome.manifest $(EXTENSION_DIR)
 
 .PHONY : extinstall

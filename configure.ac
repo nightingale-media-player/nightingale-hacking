@@ -222,8 +222,6 @@ AC_SUBST(SB_SQLITE_DEBUG)
 # Check platform
 #
 
-_REQUIRES_CYGWIN_WRAPPER="false"
-
 case "$target" in
   *-cygwin*|*-mingw*|*-msvc*|*-mks*)
     SB_PLATFORM="windows"
@@ -235,13 +233,13 @@ case "$target" in
         AC_MSG_ERROR(Unsupported architecture)
       ;;
     esac
-    # Add the Cygwin wrapper if necessary
+    # Check that we're MSYS
     case "$target" in
       *-mingw*)
         # no cygwin wrapper for mingw
       ;;
       *)
-        _REQUIRES_CYGWIN_WRAPPER="true"
+        AC_MSG_ERROR(Songbird must be built using MozillaBuild/MSYS)
       ;;
     esac
   ;;
@@ -302,7 +300,6 @@ case "$target" in
 esac
 AC_SUBST(SB_PLATFORM)
 AC_SUBST(SB_ARCH)
-AC_SUBST(_REQUIRES_CYGWIN_WRAPPER)
 
 #
 # Handle SDK detection
@@ -617,17 +614,6 @@ case "$SB_PLATFORM" in
             fi
     fi
 
-    # Setup cygwin wrapper if required
-    if test "$_REQUIRES_CYGWIN_WRAPPER" = "true"; then
-      CYGWIN_WRAPPER="${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
-      if test "`echo ${srcdir} | grep -c ^/ 2>/dev/null`" = 0; then
-        _pwd=`pwd`
-        CYGWIN_WRAPPER="${_pwd}/${srcdir}/dependencies/$SB_PLATFORM-$SB_ARCH/mozilla/$SB_CONFIGURATION/scripts/cygwin-wrapper"
-      fi
-      CYGDRIVE_MOUNT=`mount -p | awk '{ if (/^\//) { print $1; exit } }'`
-    fi
-
-
     # Check linker version
     _LD_FULL_VERSION=`"${LD}" -v 2>&1 | sed -ne "$_MSVC_VER_FILTER"`
     _LD_MAJOR_VERSION=`echo ${_LD_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
@@ -911,8 +897,6 @@ AC_SUBST(ARFLAGS_PATH_SUFFIX)
 AC_SUBST(ARFLAGS_LIB)
 AC_SUBST(CFLAGS_INCLUDE_PREFIX)
 AC_SUBST(CFLAGS_INCLUDE_SUFFIX)
-AC_SUBST(CYGWIN_WRAPPER)
-AC_SUBST(CYGDRIVE_MOUNT)
 AC_SUBST(_MSC_VER)
 AC_SUBST(MSMANIFEST_TOOL)
 AC_SUBST(LDFLAGS_DLL)

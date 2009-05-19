@@ -101,13 +101,6 @@ HAS_EXTRAS = @HAS_EXTRAS@
 HAVE_FLUENDO_MP3 = @HAVE_FLUENDO_MP3@
 
 #
-# Cygwin stuff
-#
-
-CYGWIN_WRAPPER = @CYGWIN_WRAPPER@
-CYGDRIVE_MOUNT = @CYGDRIVE_MOUNT@
-
-#
 # Commonly used directories
 #
 

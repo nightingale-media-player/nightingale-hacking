@@ -63,7 +63,6 @@ ifneq (,$(OBJS)$(XPIDLSRCS)$(SDK_XPIDLSRCS)$(SIMPLE_PROGRAMS))
    GARBAGE_DIRS += $(MDDEPDIR)
 endif
 
-
 ###############################################################################
 
 ifdef TIERS
@@ -195,7 +194,7 @@ makefiles: $(SUBMAKEFILES)
 	+$(LOOP_OVER_SUBDIRS)
 
 $(SUBMAKEFILES): % : $(srcdir)/%.in
-	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $(CYGWIN_TOPSRCDIR) $@
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
 
 #------------------------------------------------------------------------------
 # Rules for XPIDL compilation
