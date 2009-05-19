@@ -758,7 +758,7 @@ ifneq (,$(jar_mn_in_exists))
 endif
 
 make_jar: $(JAR_MANIFEST)
-	$(MKDIR) -p $(TARGET_DIR)
+	$(MKDIR) $(TARGET_DIR)
 	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
       $(MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(jar_manifest_file)
 	@$(RM) -rf $(TARGET_DIR)/stage
@@ -822,7 +822,7 @@ clean_jar_postprocess:
 make_ext_stage:
 ifdef EXTENSION_STAGE_DIR
 ifneq (clean,$(MAKECMDGOALS))
-	$(MKDIR) -p $(EXTENSION_STAGE_DIR)
+	$(MKDIR) $(EXTENSION_STAGE_DIR)
 endif
 endif
 
@@ -884,16 +884,16 @@ EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
 make_xpi: make_ext_stage $(install_rdf_file) $(SUBDIRS) $(JAR_MANIFEST)
 	@echo packaging $(EXTENSION_DIR)/$(XPI_NAME).xpi
 	$(RM) -f $(EXTENSION_DIR)/$(XPI_NAME).xpi
-	$(CP) -f $(install_rdf_file) $(EXTENSION_STAGE_DIR)/install.rdf
+	$(INSTALL_FILE) $(install_rdf_file) $(EXTENSION_STAGE_DIR)/install.rdf
  ifneq (,$(EXTENSION_LICENSE))
-	$(CP) -f $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
+	$(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
  endif
 	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(XPI_NAME).xpi.tmp *
-	$(MKDIR) -p $(EXTENSION_DIR)
+	$(MKDIR) $(EXTENSION_DIR)
 	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(XPI_NAME).xpi.tmp \
         $(EXTENSION_DIR)/$(XPI_NAME).xpi
  ifdef INSTALL_EXTENSION
-	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
+	$(MKDIR) $(SONGBIRD_EXTENSIONSDIR)
 	$(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 	$(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
  endif

@@ -38,6 +38,6 @@ include $(topsrcdir)/build/rules.mk
 all:: extinstall
 
 extinstall:
-	$(MKDIR) -p $(TARGET_COMPONENTS_DIR)
-	$(CP) -f $(EXTRA_SCRIPT_COMPONENTS) $(TARGET_COMPONENTS_DIR)
+	$(MKDIR) $(TARGET_COMPONENTS_DIR)
+	$(INSTALL_FILE) $(EXTRA_SCRIPT_COMPONENTS) $(TARGET_COMPONENTS_DIR)
 

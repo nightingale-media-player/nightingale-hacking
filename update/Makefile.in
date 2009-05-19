@@ -79,7 +79,7 @@ dump-build-id::
     $(NULL)
 
 complete-patch:: removed-files
-	@$(MKDIR) -p $(STAGE_DIR)
+	@$(MKDIR) $(STAGE_DIR)
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
@@ -87,7 +87,7 @@ complete-patch:: removed-files
 	$(RM) -f $(REMOVED_FILES_GEN)
 
 complete-snippet::
-	@$(MKDIR) -p $(STAGE_DIR)
+	@$(MKDIR) $(STAGE_DIR)
 	SHA1SUM=$(SHA1SUM) $(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar \
     "complete" \
@@ -121,9 +121,9 @@ endif
 partial-patch:: $(PARTIAL_PATCH_TASK)
 
 partial-patch-unwrap::
-	@$(MKDIR) -p $(STAGE_DIR)/from
+	@$(MKDIR) $(STAGE_DIR)/from
 	cd $(STAGE_DIR)/from && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.pl "../$(SRC_BUILD)"
-	@$(MKDIR) -p $(STAGE_DIR)/to
+	@$(MKDIR) $(STAGE_DIR)/to
 	cd $(STAGE_DIR)/to && MAR=$(MAR) $(MOZSDK_SCRIPTS_DIR)/unwrap_full_update.sh "../$(UPDATE_FILENAME_BASE).complete.mar"
 	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
     $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
@@ -135,7 +135,7 @@ partial-patch-unwrap::
 	@$(RM) -rf $(STAGE_DIR)/to
 
 partial-patch-no-unwrap::
-	@$(MKDIR) -p $(STAGE_DIR)
+	@$(MKDIR) $(STAGE_DIR)
 	MAR=$(MAR) MBSDIFF=$(MBSDIFF) \
     $(MOZSDK_SCRIPTS_DIR)/make_incremental_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).partial.mar" \
@@ -143,7 +143,7 @@ partial-patch-no-unwrap::
     "$(UPDATE_FILENAME_BASE).complete.mar"
 
 partial-snippet::
-	@$(MKDIR) -p $(STAGE_DIR)
+	@$(MKDIR) $(STAGE_DIR)
 	SHA1SUM=$(SHA1SUM) $(PERL) $(SCRIPTS_DIR)/generate-update-snippet.pl \
     $(STAGE_DIR)/$(UPDATE_FILENAME_BASE).partial.mar \
     "partial" \
@@ -158,6 +158,6 @@ removed-files::
 	$(RM) -f $(TARGET_DIR)/removed-files
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) \
     $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > ./removed-files
-	$(CP) ./removed-files $(REMOVED_FILES_GEN)
+	$(INSTALL_FILE) ./removed-files $(REMOVED_FILES_GEN)
 
 include $(topsrcdir)/build/rules.mk

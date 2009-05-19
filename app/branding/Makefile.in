@@ -51,8 +51,8 @@ endif
 
 install-icons:: 
 ifneq (macosx,$(SB_PLATFORM))
-	$(MKDIR) -p $(ICON_TARGET_DIR)
-	$(CP) -f $(srcdir)/songbird.$(ICON_EXTENSION) \
+	$(MKDIR) $(ICON_TARGET_DIR)
+	$(INSTALL_FILE) $(srcdir)/songbird.$(ICON_EXTENSION) \
     $(ICON_TARGET_DIR)/$(ICON_TARGET_NAME).$(ICON_EXTENSION)
 endif
 

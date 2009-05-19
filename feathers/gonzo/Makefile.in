@@ -51,7 +51,7 @@ include $(topsrcdir)/build/rules.mk
 libs:: extinstall
 
 extinstall :
-	@$(MKDIR) -p $(EXTENSION_DIR)
-	$(CP)	-f $(srcdir)/chrome.manifest $(EXTENSION_DIR)
+	@$(MKDIR) $(EXTENSION_DIR)
+	$(INSTALL_FILE) $(srcdir)/chrome.manifest $(EXTENSION_DIR)
 
 .PHONY : extinstall

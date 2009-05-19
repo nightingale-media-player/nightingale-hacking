@@ -39,7 +39,7 @@ SONGBIRD_TESTS = $(srcdir)/head_songbird.js \
                  $(NULL)
 
 manual_copy_step : 
-	$(MKDIR) -p $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
+	$(MKDIR) $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
 	$(CP) -dfp $(SONGBIRD_TESTS) $(SONGBIRD_TESTSDIR)
 
 .PHONY : manual_copy_step

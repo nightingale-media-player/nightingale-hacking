@@ -32,7 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 tasks: prepare all
 
 prepare:: 
-	$(MKDIR) -p $(SONGBIRD_TESTSDIR)/mediaexport/files
+	$(MKDIR) $(SONGBIRD_TESTSDIR)/mediaexport/files
 
 CLONEDIR = $(SONGBIRD_TESTSDIR)/mediaexport/files
 

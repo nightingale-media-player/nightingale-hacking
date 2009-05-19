@@ -86,8 +86,8 @@ ifeq (macosx,$(SB_PLATFORM))
 libs:: runtimelibs
 
 runtimelibs::
-	$(MKDIR) -p $(SONGBIRD_MACOS)
-	$(CP) -Lfp $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
+	$(MKDIR) $(SONGBIRD_MACOS)
+	$(INSTALL_PROG) $(DEPS_DIR)/libogg/$(SB_CONFIGURATION)/lib/*$(DLL_SUFFIX) \
                $(SONGBIRD_MACOS) \
                $(NULL)
 
@@ -482,7 +482,7 @@ copy-extensions:
 	$(error in copy-extensions)
 	@echo $(xulrunner_extensions)
 ifneq (,$(xulrunner_extensions))
-	$(MKDIR) -p $(SONGBIRD_EXTENSIONSDIR)
+	$(MKDIR) $(SONGBIRD_EXTENSIONSDIR)
 	for item in $(xulrunner_extensions); do \
     $(RM) -rf $(SONGBIRD_EXTENSIONSDIR)/$$item; \
     $(MV) -f $(SONGBIRD_XULRUNNERDIR)/extensions/$$item $(SONGBIRD_EXTENSIONSDIR); \
@@ -507,7 +507,7 @@ endif
 RESHACKER_OVERWRITE_ICON = $(RESHACKER_BIN) -addoverwrite $(sb_executable_dir)/$(1), $(sb_executable_dir)/$(1), $(ICON_FILE), icongroup, $(2), 1033
 RESHACKER_REPLACE_RC = $(PERL) -p -i.bak -e "s/(VALUE \"$1\", \")[^\"]*(\")/\$${1}$(2)\$${2}/" songbird.rc
 move-sb-stub-executable: $(SONGBIRD_MAIN_APP)
-	$(MKDIR) -p $(sb_executable_dir)
+	$(MKDIR) $(sb_executable_dir)
 	$(MV) -f $(SONGBIRD_MAIN_APP) $(sb_executable_dir)
 ifeq (windows,$(SB_PLATFORM))
 # If we're not using jemalloc, add the manifest...
@@ -517,7 +517,7 @@ ifeq ($(MSMANIFEST_TOOL)_$(SB_USE_JEMALLOC),1_)
 endif # Not-jemalloc and MSVC with manifest tool
 	# On Win32, the stub requires the custom CRT in the same directory now,
 	# if it's enabled; move that along if we find it too...
-	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(CP) -vf $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
+	test -e $(MOZ_WIN32_CUSTOM_CRT) && $(INSTALL_FILE) $(MOZ_WIN32_CUSTOM_CRT) $(sb_executable_dir)
 	# Win32 only - munge the stub installer for icons
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_APPICON)
 	$(call RESHACKER_OVERWRITE_ICON,xulrunner/xulrunner.exe,IDI_DOCUMENT)

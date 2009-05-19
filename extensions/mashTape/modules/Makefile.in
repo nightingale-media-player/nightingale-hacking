@@ -12,5 +12,5 @@ include $(topsrcdir)/build/rules.mk
 libs:: extinstall
 
 extinstall:
-	$(MKDIR) -p $(TARGET_COMPONENTS_DIR)
-	$(CP) -f $(srcdir)/*.jsm $(TARGET_COMPONENTS_DIR)
+	$(MKDIR) $(TARGET_COMPONENTS_DIR)
+	$(INSTALL_FILE) $(srcdir)/*.jsm $(TARGET_COMPONENTS_DIR)
