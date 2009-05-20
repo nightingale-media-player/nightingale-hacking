@@ -419,60 +419,6 @@ exe_clean:
 endif #SIMPLE_PROGRAM
 
 #------------------------------------------------------------------------------
-# Rules for C compilation
-#------------------------------------------------------------------------------
-
-# C_SRCS - a list of .cpp files to be compiled
-# C_INCLUDES - a list of include dirs
-# C_FLAGS - an override of the default flags to pass to the compiler
-# C_EXTRA_FLAGS - a list of additional flags to pass to the compiler
-# C_DEFS - a override of the default defines to pass to the compiler with -D added
-# C_EXTRA_DEFS - a list of additional defines with -D to pass to the compiler
-
-ifdef C_SRCS
-
-ifdef C_FLAGS
-c_compile_flags = $(C_FLAGS)
-else
-c_compile_flags = $(CFLAGS)
-ifdef C_EXTRA_FLAGS
-c_compile_flags += $(C_EXTRA_FLAGS)
-endif
-endif
-
-ifeq (macosx,$(SB_PLATFORM))
-  c_compile_flags += -isysroot $(SB_MACOSX_SDK)
-endif
-
-ifdef C_DEFS
-c_compile_defs = $(C_DEFS)
-else
-c_compile_defs = $(ACDEFINES)
-ifdef C_EXTRA_DEFS
-c_compile_defs += $(C_EXTRA_DEFS)
-endif
-endif
-
-ifdef C_INCLUDES
-c_compile_includes_temp = $(addprefix $(CFLAGS_INCLUDE_PREFIX), $(C_INCLUDES))
-c_compile_includes = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX), $(c_compile_includes_temp))
-endif
-
-c_compiler_objects = $(C_SRCS:.c=$(OBJ_SUFFIX))
-
-$(c_compiler_objects) :%$(OBJ_SUFFIX): %.c
-	$(CC) $(c_compile_flags) $(c_compile_defs) $(c_compile_includes) $<
-
-c_compile: $(c_compiler_objects)
-
-c_clean:
-	$(RM) -f $(c_compiler_objects) $(COMPILER_GARBAGE)
-
-.PHONY : c_compile c_clean
-
-endif #C_SRCS
-
-#------------------------------------------------------------------------------
 # Rules for moving files around
 #------------------------------------------------------------------------------
 
