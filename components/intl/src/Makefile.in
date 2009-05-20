@@ -62,8 +62,8 @@ CPP_EXTRA_INCLUDES = \
 
 ifeq (macosx,$(SB_PLATFORM))
 
-CPP_INCLUDES += $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
-                $(NULL)
+CPP_EXTRA_INCLUDES += $(topsrcdir)/components/intl/src/$(SB_PLATFORM) \
+                      $(NULL)
 
 
 CMM_INCLUDES = $(DEPTH)/components/intl/public \
