@@ -90,9 +90,9 @@ ifeq (,$(filter $(MOZ_WIDGET_TOOLKIT),windows gtk2))
 endif # stub impl
 
 CPP_EXTRA_INCLUDES = ../public \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(addprefix $(MOZSDK_INCLUDE_DIR)/,$(EXTRA_CPP_INCLUDES)) \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
