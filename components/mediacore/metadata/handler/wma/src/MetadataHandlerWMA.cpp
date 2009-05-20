@@ -44,6 +44,7 @@
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
 #include <nsIURI.h>
+
 #include <nsNetUtil.h>
 #include <nsUnicharUtils.h>
 #include <prlog.h>
@@ -52,12 +53,15 @@
 #include <atlbase.h>
 #include <wmsdk.h>
 #include <wmp.h>
+#include <wininet.h>
 
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
-#define LOG(args) if (gLog) PR_LOG(gLog, PR_LOG_DEBUG, args)
+#define LOG(args)   if (gLog) PR_LOG(gLog, PR_LOG_WARN, args)
+#define TRACE(args) if (gLog) PR_LOG(gLog, PR_LOG_DEBUG, args)
 #else
 #define LOG(args)   /* nothing */
+#define TRACE(args) /* nothing */
 #endif
 
 // DEFINES ====================================================================
@@ -290,19 +294,33 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
 } //Write
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::GetImageData(
-    PRInt32       aType,
-    nsACString    &aMimeType,
-    PRUint32      *aDataLen,
-    PRUint8       **aData)
+sbMetadataHandlerWMA::GetImageData(PRInt32 aType,
+                                   nsACString &aMimeType,
+                                   PRUint32 *aDataLen,
+                                   PRUint8 **aData)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aDataLen);
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  rv = ReadAlbumArtWMFSDK(m_FilePath, aMimeType, aDataLen, aData);
+  if (NS_SUCCEEDED(rv)) {
+    return rv;
+  }
+
+  // can't use WMFSDK, try WMP instead
+  // this typically occurs with DRMed media files because the WMF path
+  // has no way to specify that we don't want to access the streams
+  rv = ReadAlbumArtWMP(m_FilePath, aMimeType, aDataLen, aData);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
-sbMetadataHandlerWMA::SetImageData(
-    PRInt32             aType,
-    const nsAString     &aURL)
+sbMetadataHandlerWMA::SetImageData(PRInt32 aType,
+                                   const nsAString &aURL)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -343,58 +361,73 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
 
   // Get the number of indices
   WORD count = 0;
-  hr = aHeaderInfo->GetAttributeIndices(0xFFFF, aKey.BeginReading(), nsnull, nsnull, &count);
+  hr = aHeaderInfo->GetAttributeIndices(0xFFFF,
+                                        aKey.BeginReading(),
+                                        NULL,
+                                        NULL,
+                                        &count);
   if (FAILED(hr) || !count) {
-    return value;
+    return SBVoidString();
   }
 
   // Alloc the space for the indices
-  WORD* indices = (WORD*)nsMemory::Alloc(sizeof(WORD) * count);
+  sbAutoNSTypePtr<WORD> indices = (WORD*)NS_Alloc(sizeof(WORD) * count);
   if (!indices) {
     NS_ERROR("nsMemory::Alloc failed!");
-    return value;
+    return SBVoidString();
   }
 
   // Ask for the indices
-  hr = aHeaderInfo->GetAttributeIndices(0xFFFF, aKey.BeginReading(), nsnull, indices,
-    &count);
+  hr = aHeaderInfo->GetAttributeIndices(0xFFFF,
+                                        aKey.BeginReading(),
+                                        NULL,
+                                        indices.get(),
+                                        &count);
   if (FAILED(hr)) {
-    nsMemory::Free(indices);
-    return value;
+    return SBVoidString();
   }
 
   // For now, get the first one?
   WMT_ATTR_DATATYPE type;
   WORD lang;
   DWORD size;
-  BYTE *data;
+  sbAutoNSTypePtr<BYTE> data;
   WORD namesize;
 
   // Get the type and size
-  hr = aHeaderInfo->GetAttributeByIndexEx(0xFFFF, *indices, nsnull, &namesize,
-    &type, &lang, nsnull, &size);
+  hr = aHeaderInfo->GetAttributeByIndexEx(0xFFFF,
+                                          *indices.get(),
+                                          NULL,
+                                          &namesize,
+                                          &type,
+                                          &lang,
+                                          NULL,
+                                          &size);
   if (FAILED(hr)) {
     NS_WARNING("GetAttributeByIndexEx failed");
-    nsMemory::Free(indices);
-    return value;
+    return SBVoidString();
   }
 
-  // Alloc
+  // Alloc (documented as "suitably aligned for any kind of variable")
+  // in practice, it forwards to malloc()
   data = (BYTE*)nsMemory::Alloc(size);
   if (!data) {
     NS_ERROR("nsMemory::Alloc failed!");
-    nsMemory::Free(indices);
-    return value;
+    return SBVoidString();
   }
 
   // Get the data
-  hr = aHeaderInfo->GetAttributeByIndexEx(0xFFFF, *indices, NULL, &namesize,
-    &type, &lang, data, &size);
+  hr = aHeaderInfo->GetAttributeByIndexEx(0xFFFF,
+                                          *indices.get(),
+                                          NULL,
+                                          &namesize,
+                                          &type,
+                                          &lang,
+                                          data.get(),
+                                          &size);
   if (FAILED(hr)) {
     NS_WARNING("GetAttributeByIndexEx failed");
-    nsMemory::Free(data);
-    nsMemory::Free(indices);
-    return value;
+    return SBVoidString();
   }
 
   // Calculate the value
@@ -402,14 +435,14 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
 
   switch(type) {
       case WMT_TYPE_STRING:
-        value.Assign((PRUnichar*)data);
+        value.Assign(reinterpret_cast<PRUnichar*>(data.get()));
         break;
 
       case WMT_TYPE_BINARY:
         break;
 
       case WMT_TYPE_QWORD: {
-        PRInt64 intVal = *((QWORD*)data);
+        PRInt64 intVal = *(reinterpret_cast<QWORD*>(data.get()));
         if (aKey.EqualsLiteral(WMP_LENGTH)) {
           // "Duration" comes in 100-nanosecond chunks. Wow.
           // Songbird wants it in microseconds.
@@ -425,7 +458,7 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
       } break;
 
       case WMT_TYPE_DWORD: {
-        PRUint32 intVal = *((DWORD*)data);
+        PRUint32 intVal = *(reinterpret_cast<DWORD*>(data.get()));
         if (aKey.EqualsLiteral(WMP_BITRATE)) {
           // Songbird wants bit rate in kbps
           intVal /= 1000;
@@ -435,12 +468,12 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
       } break;
 
       case WMT_TYPE_WORD:
-        value.AppendInt( (PRInt32)*(WORD*)data );
+        value.AppendInt( (PRInt32)*(reinterpret_cast<WORD*>(data.get())) );
         datatype = 1;
         break;
 
       case WMT_TYPE_BOOL:
-        value.AppendInt( (PRInt32)*(BOOL*)data );
+        value.AppendInt( (PRInt32)*(reinterpret_cast<BOOL*>(data.get())) );
         datatype = 1;
         break;
 
@@ -452,11 +485,72 @@ sbMetadataHandlerWMA::ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo,
         break;
   }
 
-  // Free the space for the indices
-  nsMemory::Free(data);
-  nsMemory::Free(indices);
-
   return value;
+}
+
+NS_METHOD
+sbMetadataHandlerWMA::CreateWMPMediaItem(const nsAString& aFilePath,
+                                         IWMPMedia3** aMedia)
+{
+  HRESULT hr;
+  NS_ENSURE_ARG_POINTER(aMedia);
+
+  CComPtr<IWMPPlayer4> player;
+  hr = player.CoCreateInstance(__uuidof(WindowsMediaPlayer),
+                               NULL,
+                               CLSCTX_INPROC_SERVER);
+  COM_ENSURE_SUCCESS(hr);
+
+  // Set basic settings
+  CComPtr<IWMPSettings> settings;
+  hr = player->get_settings(&settings);
+  COM_ENSURE_SUCCESS(hr);
+
+  hr = settings->put_autoStart(PR_FALSE);
+  COM_ENSURE_SUCCESS(hr);
+
+  VARIANT_BOOL mute = PR_TRUE;
+  hr = settings->put_mute(mute);
+  COM_ENSURE_SUCCESS(hr);
+
+  CComBSTR uiMode(_T("invisible"));
+  hr = player->put_uiMode(uiMode);
+  COM_ENSURE_SUCCESS(hr);
+
+  // Make our custom playlist
+  CComPtr<IWMPPlaylist> playlist;
+  CComBSTR playlistName(_T("SongbirdMetadataPlaylist"));
+  hr = player->newPlaylist(playlistName, NULL, &playlist);
+  COM_ENSURE_SUCCESS(hr);
+
+  hr = player->put_currentPlaylist(playlist);
+  COM_ENSURE_SUCCESS(hr);
+
+  CComBSTR uriString(aFilePath.BeginReading());
+
+  CComPtr<IWMPMedia> newMedia;
+  hr = player->newMedia(uriString, &newMedia);
+  COM_ENSURE_SUCCESS(hr);
+
+  CComPtr<IWMPMedia3> newMedia3;
+  hr = newMedia->QueryInterface(&newMedia3);
+  COM_ENSURE_SUCCESS(hr);
+
+  // Now add our new item.
+  hr = playlist->appendItem(newMedia);
+  COM_ENSURE_SUCCESS(hr);
+
+  // Set our new item as the current one
+  CComPtr<IWMPControls> controls;
+  hr = player->get_controls(&controls);
+  COM_ENSURE_SUCCESS(hr);
+
+  hr = controls->put_currentItem(newMedia);
+  COM_ENSURE_SUCCESS(hr);
+
+  *aMedia = newMedia3.Detach();
+
+  return NS_OK;
 }
 
 NS_METHOD
@@ -464,7 +558,7 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
                                          PRInt32* _retval)
 {
   CComPtr<IWMSyncReader> reader;
-  HRESULT hr = WMCreateSyncReader(nsnull, 0, &reader);
+  HRESULT hr = WMCreateSyncReader(NULL, 0, &reader);
   COM_ENSURE_SUCCESS(hr);
 
   nsAutoString filePath(aFilePath);
@@ -537,63 +631,12 @@ NS_METHOD
 sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
                                       PRInt32* _retval)
 {
-  CComPtr<IWMPPlayer3> player;
-  HRESULT hr = player.CoCreateInstance(__uuidof(WindowsMediaPlayer),
-                                       nsnull, CLSCTX_INPROC_SERVER);
-  COM_ENSURE_SUCCESS(hr);
+  nsresult rv;
+  HRESULT hr;
 
-  // Set basic settings
-  CComPtr<IWMPSettings> settings;
-  hr = player->get_settings(&settings);
-  COM_ENSURE_SUCCESS(hr);
-
-  hr = settings->put_autoStart(PR_FALSE);
-  COM_ENSURE_SUCCESS(hr);
-
-  VARIANT_BOOL mute = PR_TRUE;
-  hr = settings->put_mute(mute);
-  COM_ENSURE_SUCCESS(hr);
-
-  CComBSTR uiMode(_T("invisible"));
-  hr = player->put_uiMode(uiMode);
-  COM_ENSURE_SUCCESS(hr);
-
-  // Make our custom playlist
-  CComPtr<IWMPCore3> core3;
-  hr = player->QueryInterface(&core3);
-  COM_ENSURE_SUCCESS(hr);
-
-  CComPtr<IWMPPlaylist> playlist;
-  CComBSTR playlistName(_T("SongbirdMetadataPlaylist"));
-  hr = core3->newPlaylist(playlistName, nsnull, &playlist);
-  COM_ENSURE_SUCCESS(hr);
-
-  hr = player->put_currentPlaylist(playlist);
-  COM_ENSURE_SUCCESS(hr);
-
-  // Make a new media item from our file
-  CComPtr<IWMPPlayer4> wmp4;
-  hr = player->QueryInterface(&wmp4);
-  COM_ENSURE_SUCCESS(hr);
-
-  nsAutoString strPath(aFilePath);
-  CComBSTR uriString(strPath.get());
-
-  CComPtr<IWMPMedia> newMedia;
-  hr = wmp4->newMedia(uriString, &newMedia);
-  COM_ENSURE_SUCCESS(hr);
-
-  // Now add our new item.
-  hr = playlist->appendItem(newMedia);
-  COM_ENSURE_SUCCESS(hr);
-
-  // Set our new item as the current one
-  CComPtr<IWMPControls> controls;
-  hr = player->get_controls(&controls);
-  COM_ENSURE_SUCCESS(hr);
-
-  hr = controls->put_currentItem(newMedia);
-  COM_ENSURE_SUCCESS(hr);
+  CComPtr<IWMPMedia3> newMedia;
+  rv = CreateWMPMediaItem(aFilePath, &newMedia);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count = kMetadataArrayCount;
   for (PRUint32 index = 0; index < count; index += 2) {
@@ -645,4 +688,222 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
   }
 
   return NS_OK;
+}
+
+NS_METHOD
+sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
+                                         nsACString      &aMimeType,
+                                         PRUint32        *aDataLen,
+                                         PRUint8        **aData)
+{
+  CComPtr<IWMSyncReader> reader;
+  HRESULT hr = WMCreateSyncReader(NULL, 0, &reader);
+  COM_ENSURE_SUCCESS(hr);
+
+  nsAutoString filePath(aFilePath);
+
+  // This will fail for all protected files, so silence the warning
+  hr = reader->Open(filePath.get());
+  if (FAILED(hr)) {
+    TRACE(("%s: failed to open file %s, assuming protected",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(filePath).get()));
+    return NS_ERROR_FAILURE;
+  }
+
+  CComPtr<IWMHeaderInfo3> headerInfo;
+  hr = reader->QueryInterface(&headerInfo);
+  COM_ENSURE_SUCCESS(hr);
+
+  NS_NAMED_LITERAL_STRING(kImageKey, "WM/Picture");
+
+  // Get the number of indices
+  WORD count = 0;
+  hr = headerInfo->GetAttributeIndices(0xFFFF,
+                                       kImageKey.BeginReading(),
+                                       NULL,
+                                       NULL,
+                                       &count);
+  COM_ENSURE_SUCCESS(hr);
+  NS_ENSURE_TRUE(count, NS_ERROR_NO_CONTENT);
+
+  // Alloc the space for the indices
+  sbAutoNSTypePtr<WORD> indices = (WORD*)nsMemory::Alloc(sizeof(WORD) * count);
+  NS_ENSURE_TRUE(indices, NS_ERROR_OUT_OF_MEMORY);
+
+  // Ask for the indices
+  hr = headerInfo->GetAttributeIndices(0xFFFF,
+                                       kImageKey.BeginReading(),
+                                       NULL,
+                                       indices.get(),
+                                       &count);
+  COM_ENSURE_SUCCESS(hr);
+
+  // For now, get the first one?
+  WMT_ATTR_DATATYPE type;
+  WORD lang;
+  DWORD size;
+  WORD namesize;
+
+  // Get the type and size
+  hr = headerInfo->GetAttributeByIndexEx(0xFFFF,
+                                         *(indices.get()),
+                                         NULL,
+                                         &namesize,
+                                         &type,
+                                         &lang,
+                                         NULL,
+                                         &size);
+  COM_ENSURE_SUCCESS(hr);
+
+  // Alloc
+  sbAutoNSTypePtr<BYTE> data = (BYTE*)nsMemory::Alloc(size);
+  NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the data
+  hr = headerInfo->GetAttributeByIndexEx(0xFFFF,
+                                         *(indices.get()),
+                                         NULL,
+                                         &namesize,
+                                         &type,
+                                         &lang,
+                                         data.get(),
+                                         &size);
+  COM_ENSURE_SUCCESS(hr);
+  NS_ENSURE_TRUE(type == WMT_TYPE_BINARY, NS_ERROR_UNEXPECTED);
+
+  // get the picture data out (remembering to use a copy)
+  WM_PICTURE *picData = (WM_PICTURE*)data.get();
+  CopyUTF16toUTF8(nsDependentString(picData->pwszMIMEType), aMimeType);
+  *aData = static_cast<PRUint8*>(nsMemory::Clone(picData->pbData, picData->dwDataLen));
+  NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
+  *aDataLen = picData->dwDataLen;
+
+  hr = reader->Close();
+  return NS_OK;
+}
+
+
+NS_METHOD
+sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
+                                      nsACString      &aMimeType,
+                                      PRUint32        *aDataLen,
+                                      PRUint8        **aData)
+{
+  nsresult rv;
+  HRESULT hr;
+  
+  CComPtr<IWMPMedia3> newMedia;
+  rv = CreateWMPMediaItem(aFilePath, &newMedia);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // read out the metadata
+  long count = 0;
+  CComBSTR key(_T("WM/Picture"));
+  hr = newMedia->getAttributeCountByType(key, NULL, &count);
+  COM_ENSURE_SUCCESS(hr);
+
+  for (long idx = 0; idx < count; ++idx) {
+    CComVariant var;
+    hr = newMedia->getItemInfoByType(key, NULL, idx, &var);
+    COM_ENSURE_SUCCESS(hr);
+
+    CComPtr<IWMPMetadataPicture> picture;
+    switch(V_VT(&var)) {
+      case VT_DISPATCH:
+        hr = var.pdispVal->QueryInterface(&picture);
+        break;
+      case VT_DISPATCH | VT_BYREF:
+        if (!var.ppdispVal) {
+          nsresult __rv = NS_ERROR_INVALID_POINTER;
+          NS_ENSURE_SUCCESS_BODY(hr, hr);
+          continue;
+        }
+        hr = (*(var.ppdispVal))->QueryInterface(&picture);
+        break;
+      default:
+        TRACE(("%s: don't know how to deal with WM/Picture variant type %i",
+               __FUNCTION__, var.vt));
+        continue;
+    }
+
+    if (FAILED(hr) || NS_UNLIKELY(!picture)) {
+      nsresult __rv = NS_ERROR_NO_INTERFACE;
+      NS_ENSURE_SUCCESS_BODY(hr, hr);
+      continue;
+    }
+
+    /* get the picture data
+     * IWMPMetadataPicture will only give us a URL (of the form
+     * "vnd.ms.wmhtml://localhost/WMP<guid>.jpg"), and doesn't directly give us
+     * any way to access the stream.  Fortunately, they also get dumped into
+     * Temporary Internet Files (with the URL intact).
+     * So, we look up the URL in the IE cache and hope it's still there.  It can
+     * be resolved to a local file (in a hidden + system directory), which we
+     * can then read normally.
+     */
+    CComBSTR url;
+    hr = picture->get_URL(&url);
+    COM_ENSURE_SUCCESS(hr);
+
+    DWORD entrySize = 0;
+    BOOL success = GetUrlCacheEntryInfo(url, NULL, &entrySize);
+    NS_ENSURE_TRUE(!success && GetLastError() == ERROR_INSUFFICIENT_BUFFER,
+                   NS_ERROR_FAILURE);
+    NS_ASSERTION(entrySize > 0, "Unexpected entry size");
+
+    sbAutoNSTypePtr<INTERNET_CACHE_ENTRY_INFO> cacheInfo =
+      (INTERNET_CACHE_ENTRY_INFO*)NS_Alloc(entrySize);
+    NS_ENSURE_TRUE(cacheInfo, NS_ERROR_OUT_OF_MEMORY);
+
+    cacheInfo.get()->dwStructSize = sizeof(INTERNET_CACHE_ENTRY_INFO);
+
+    success = GetUrlCacheEntryInfo(url, cacheInfo.get(), &entrySize);
+    NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+    // at this point, cacheInfo.get()->lpszLocalFileName is the local file path
+    nsCOMPtr<nsILocalFile> file =
+      do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = file->InitWithPath(nsDependentString(cacheInfo.get()->lpszLocalFileName));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt64 fileSize;
+    rv = file->GetFileSize(&fileSize);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    sbAutoNSTypePtr<PRUint8> fileData = (PRUint8*)NS_Alloc(fileSize);
+    NS_ENSURE_TRUE(fileData, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<nsIFileInputStream> fileStream =
+      do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fileStream->Init(file, PR_RDONLY, -1, nsIFileInputStream::CLOSE_ON_EOF);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 bytesRead;
+    rv = fileStream->Read((char*)fileData.get(), fileSize, &bytesRead);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // the stream is actually already closed (CLOSE_ON_EOF), but no harm to be
+    // explicit about it
+    rv = fileStream->Close();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // get the picture type
+    CComBSTR mimeType;
+    hr = picture->get_mimeType(&mimeType);
+    COM_ENSURE_SUCCESS(hr);
+    aMimeType.Assign(NS_ConvertUTF16toUTF8(nsDependentString(mimeType)));
+
+    *aDataLen = bytesRead;
+    *aData = fileData.forget();
+
+    return NS_OK;
+  }
+
+  // if we get here, we ran through the pictures and found nothing useful
+  return NS_ERROR_FAILURE;
 }

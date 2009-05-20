@@ -57,6 +57,7 @@ DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
                             unicharutil_external_s \
                             WMVCORE \
+                            wininet \
                             xpcom \
                             xpcomglue_s \
                             $(NULL)

@@ -168,9 +168,14 @@ private:                                                                       \
 //
 //   sbAutoNSMemPtr             Wrapper to auto-dispose memory blocks allocated
 //                              with NS_Alloc.
+//   sbAutoNSTypePtr            Typed version of sbAutoNSMemPtr
 //
 
 SB_AUTO_CLASS(sbAutoNSMemPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
+
+template<typename T>
+SB_AUTO_CLASS(sbAutoNSTypePtr, T*, !!mValue, NS_Free(mValue), mValue = nsnull);
+
 
 
 #endif /* __SBMEMORYUTILS_H__ */

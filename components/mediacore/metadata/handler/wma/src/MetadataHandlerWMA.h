@@ -52,6 +52,7 @@
 
 class nsIChannel;
 struct IWMHeaderInfo3;
+struct IWMPMedia3;
 
 class sbMetadataHandlerWMA : public sbIMetadataHandler
 {
@@ -70,10 +71,62 @@ protected:
   PRBool                       m_Completed;
   PRBool                       m_COMInitialized;
 
+  /**
+   * Read a single string-based metadata (for the WMF API methods)
+   * @param aHeaderInfo the header data to read from
+   * @param aKey the (WMF) metadata key name to read
+   * @return the value of the metadata found in the file, or a void string
+   *         if no values are found
+   */
   nsString ReadHeaderValue(IWMHeaderInfo3 *aHeaderInfo, const nsAString &aKey);
+  
+  /**
+   * Utility function for the WMP metadata reading paths
+   * Given a (absolute native) file path, return a IWMPMedia3 that can be used
+   * to read metadata
+   * @param aFilePath the path to the file to read
+   * @param aMedia [out] the media object
+   */
+  NS_METHOD CreateWMPMediaItem(const nsAString& aFilePath, IWMPMedia3** aMedia);
 
+  /**
+   * Read generic metadata from a file, using the WMFSDK APIs
+   * @param aFilePath the path of the file to read
+   * @param _retval the number of metadata values read
+   * @see sbIMetadataHandler::read()
+   */
   NS_METHOD ReadMetadataWMFSDK(const nsAString& aFilePath, PRInt32* _retval);
+  /**
+   * Read generic metadata from a file, using the WMP APIs
+   * @param aFilePath the path of the file to read
+   * @param _retval the number of metadata values read
+   * @see sbIMetadataHandler::read()
+   */
   NS_METHOD ReadMetadataWMP(const nsAString& aFilePath, PRInt32* _retval);
+
+  /**
+   * Read album art meadata from a file, using the WMFSDK APIs
+   * @param aFilePath the path of the file to read
+   * @param aMimeType [out] the mime type of the metadata
+   * @param aDataLen [out] the length of the image data stream
+   * @param aData [out] the raw image data
+   */
+  NS_METHOD ReadAlbumArtWMFSDK(const nsAString &aFilePath,
+                               nsACString      &aMimeType,
+                               PRUint32        *aDataLen,
+                               PRUint8        **aData);
+  /**
+   * Read album art meadata from a file, using the WMP APIs
+   * @param aFilePath the path of the file to read
+   * @param aMimeType [out] the mime type of the metadata
+   * @param aDataLen [out] the length of the image data stream
+   * @param aData [out] the raw image data
+   */
+  NS_METHOD ReadAlbumArtWMP(const nsAString &aFilePath,
+                            nsACString      &aMimeType,
+                            PRUint32        *aDataLen,
+                            PRUint8        **aData);
+
 };
 
 #endif // __METADATA_HANDLER_WMA_H__
