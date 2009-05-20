@@ -515,7 +515,8 @@
               tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
             }
             tab._viewForPage = aMediaListView;
-            tab._isNewViewForPage = true;
+            if (tab._viewForPage)
+              tab._isNewViewForPage = true;
             return tab;
           ]]>
         </body>
