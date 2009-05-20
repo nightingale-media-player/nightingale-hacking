@@ -35,34 +35,30 @@ else
 target_name = sbIntegration$(DLL_SUFFIX)
 endif
 
-CMM_INCLUDES = $(DEPTH)/components/integration/public \
-               $(DEPTH)/components/dataremote/public \
-               $(DEPTH)/components/controller/public \
-               $(DEPTH)/components/devicesobsolete/manager/public \
-               $(DEPTH)/components/devicesobsolete/base/public \
-               $(DEPTH)/components/devicesobsolete/cd/public \
-               $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
-               $(DEPTH)/components/mediacore/base/public \
-               $(DEPTH)/components/library/base/public \
-               $(topsrcdir)/components/property/src \
-               $(COMPONENTS_DIR)/integration/src/win32 \
-               $(COMPONENTS_DIR)/devicesobsolete/base/src \
-               $(COMPONENTS_DIR)/devicesobsolete/cd/src \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/gfx \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/xultmpl \
-               $(MOZSDK_INCLUDE_DIR)/content \
-               $(MOZSDK_INCLUDE_DIR)/widget \
-               $(MOZSDK_INCLUDE_DIR)/docshell \
-               $(MOZSDK_INCLUDE_DIR)/layout \
-               $(MOZSDK_INCLUDE_DIR)/appshell \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
+                     $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/controller/public \
+                     $(DEPTH)/components/devicesobsolete/manager/public \
+                     $(DEPTH)/components/devicesobsolete/base/public \
+                     $(DEPTH)/components/devicesobsolete/cd/public \
+                     $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(topsrcdir)/components/property/src \
+                     $(COMPONENTS_DIR)/integration/src/win32 \
+                     $(COMPONENTS_DIR)/devicesobsolete/base/src \
+                     $(COMPONENTS_DIR)/devicesobsolete/cd/src \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/xultmpl \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/widget \
+                     $(MOZSDK_INCLUDE_DIR)/docshell \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/appshell \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB = $(target_name)
 

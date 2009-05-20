@@ -106,8 +106,7 @@ else
 endif
 
 ifeq (macosx, $(SB_PLATFORM))
-   CMM_INCLUDES = $(CPP_DEFAULT_INCLUDES) $(CPP_EXTRA_INCLUDES) 
-   CMM_EXTRA_INCLUDES = $(CPP_DEFAULT_INCLUDES) $(CPP_EXTRA_INCLUDES)
+   CMM_EXTRA_INCLUDES = $(CPP_EXTRA_INCLUDES)
 endif
 
 # The dynamic gstreamer libs on windows have "-0" appended to their names
