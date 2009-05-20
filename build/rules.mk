@@ -86,6 +86,7 @@ ALL_TRASH = \
    $(OBJS:.$(OBJ_SUFFIX)=.s) $(OBJS:.$(OBJ_SUFFIX)=.ii) \
    $(OBJS:.$(OBJ_SUFFIX)=.i) \
    $(SIMPLE_PROGRAM) $(SIMPLE_PROGRAM_OBJS) \
+   $(GENERATED_PP_DEPS) \
    LOGS TAGS a.out
 
 clean:: $(SUBMAKEFILES)
@@ -192,6 +193,9 @@ SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
 
 makefiles: $(SUBMAKEFILES)
 	+$(LOOP_OVER_SUBDIRS)
+
+Makefile: $(srcdir)/Makefile.in
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
 
 $(SUBMAKEFILES): % : $(srcdir)/%.in
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/make-makefile -t $(topsrcdir) -d $(DEPTH) $@
