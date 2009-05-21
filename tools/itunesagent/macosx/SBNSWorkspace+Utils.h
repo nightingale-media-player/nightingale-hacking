@@ -39,5 +39,11 @@
 //
 + (BOOL)isProcessAlreadyRunning:(NSString *)aBundleIdentifier;
 
+//
+// \brief Find and kill all the proceses (other than the current process) that
+//        match a given bundle ID.
+//
++ (void)killAllRunningProcesses:(NSString *)aBundleIdentifier;
+
 @end
 

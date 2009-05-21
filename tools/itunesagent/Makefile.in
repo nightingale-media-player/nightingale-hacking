@@ -54,9 +54,9 @@ SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 ifeq (windows,$(SB_PLATFORM))
    SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
-                               version \
-                               psapi \
-                               $(NULL)
+                                  version \
+                                  psapi \
+                                  $(NULL)
 
    CPP_INCLUDES += $(srcdir)/windows \
                 $(DEPS_DIR)/private \

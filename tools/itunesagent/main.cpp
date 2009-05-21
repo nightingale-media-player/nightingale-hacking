@@ -29,12 +29,16 @@
 /**
  * Standard C main function
  */
-int main(int argc, char * argv[]) { 
+int main(int argc, char * argv[]) {
   sbError error;
   sbiTunesAgentProcessorPtr processor(sbCreatesbiTunesAgentProcessor());
   // Were we asked to unregister from "run"
   if (argc > 1 && std::string(argv[1]) == "--unregister") {
     error = processor->UnregisterForStartOnLogin();
+  }
+  else if (argc > 1 && (std::string(argv[1]) == "--roundhouse" ||
+                        std::string(argv[1]) == "--kill")) {
+    error = processor->KillAllAgents();
   }
   else {
     // Don't start duplicate copies of the agent.

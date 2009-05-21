@@ -79,6 +79,12 @@ public:
    * Waits for the iTunes process to start
    */
   virtual sbError WaitForiTunes();
+
+  /**
+   * Finds and sigkills all the agent processes that the user is currently 
+   * running.
+   */
+  virtual sbError KillAllAgents();
 protected:
   /**
    * Adds a track to the iTunes database given a path

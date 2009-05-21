@@ -27,6 +27,9 @@
 #include "sbiTunesAgentWindowsProcessor.h"
 #include "sbiTunesAgentAppWatcher.h"
 #include <shlobj.h>
+#include <windows.h>
+#include <psapi.h>
+#include <sstream>
 
 wchar_t const ITUNES_EXECUTABLE_NAME[] = L"itunes.exe";
 wchar_t const AGENT_EXPORT_FILENAME_MASK[] = L"songbird_export.task*";
@@ -291,6 +294,47 @@ sbiTunesAgentWindowsProcessor::WaitForiTunes() {
     return sbNoError;
   }
   return sbError("Waiting terminated before iTunes started");
+}
+
+sbError
+sbiTunesAgentWindowsProcessor::KillAllAgents() {
+  // Loop through the processes and kill all the running agent processes.
+  DWORD allProcesses[1024], cbNeeded, cProcesses;
+  
+  if (EnumProcesses(allProcesses, sizeof(allProcesses), &cbNeeded)) {
+    cProcesses = cbNeeded / sizeof(DWORD);
+    for (unsigned int i = 0; i < cProcesses; i++) {
+      if (allProcesses[i] == 0) {
+        continue;
+      }
+
+      TCHAR curProcessName[MAX_PATH] = TEXT("");
+      HANDLE hProcess = 
+        OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | PROCESS_TERMINATE, 
+                    FALSE,
+                    allProcesses[i]);
+      
+      if (hProcess != NULL) {
+        if (GetModuleBaseName(hProcess,
+                              NULL,
+                              curProcessName,
+                              sizeof(curProcessName) / sizeof(TCHAR))) {
+          
+          if (_tcscmp(curProcessName, _T("songbirditunesagent.exe")) == 0) {
+            if (!TerminateProcess(hProcess, -1)) {
+              std::ostringstream error;
+              error << "ERROR: Could not kill pid " << allProcesses[i];
+              Log(error.str());
+            }
+          }
+        }
+      }
+
+      CloseHandle(hProcess);
+    }
+  }
+
+  return sbNoError;
 }
 
 sbiTunesAgentProcessor * sbCreatesbiTunesAgentProcessor() {

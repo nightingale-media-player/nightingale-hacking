@@ -46,6 +46,7 @@ public:
   virtual sbError RegisterForStartOnLogin();
   virtual sbError UnregisterForStartOnLogin();
   virtual bool GetIsAgentRunning();
+  virtual sbError KillAllAgents();
 protected:
   virtual sbError AddTracks(std::string const & aSource,
                             Tracks const & aPaths);

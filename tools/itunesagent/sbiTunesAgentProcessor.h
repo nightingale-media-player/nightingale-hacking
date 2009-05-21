@@ -120,6 +120,12 @@ public:
    */
   virtual bool GetIsAgentRunning() = 0;
 
+  /**
+   * Finds and kills all the agent processes that the user is currently 
+   * running.
+   */
+  virtual sbError KillAllAgents() = 0;
+
 protected:
   typedef std::deque<std::string> Tracks;
   
