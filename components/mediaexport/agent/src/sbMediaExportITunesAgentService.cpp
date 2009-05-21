@@ -34,6 +34,8 @@
 #include <CoreServices/CoreServices.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include "nsILocalFileMac.h"
+#elif XP_WIN
+#include <windows.h>
 #endif
 
 
@@ -149,6 +151,58 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
         __FUNCTION__));
 #endif
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediaExportITunesAgentService::GetIsAgentRunning(PRBool *aIsRunning)
+{
+  NS_ENSURE_ARG_POINTER(aIsRunning);
+  *aIsRunning = PR_FALSE;
+
+#ifdef XP_MACOSX
+  // Look for the bundle ID in the running processes
+  ProcessSerialNumber curProcessSerialNum = { 0, kNoProcess };
+
+  // Loop through all the users processes to see if a match is found to the
+  // passed in bundle identifer.
+  while (GetNextProcess(&curProcessSerialNum) == noErr) {
+    UInt32 flags = kProcessDictionaryIncludeAllInformationMask;
+    CFDictionaryRef curProcessDictRef =
+      ProcessInformationCopyDictionary(&curProcessSerialNum, flags);
+
+    // If there was trouble getting a dict ref for this process, just continue.
+    if (!curProcessDictRef) {
+      continue;
+    }
+    
+    // Check to see if this process is the itunes agent bundle ID.
+    CFStringRef curBundleIDRef;
+    if (CFDictionaryGetValueIfPresent(curProcessDictRef,
+                                      kCFBundleIdentifierKey,
+                                      (const void **)&curBundleIDRef))
+    {
+      if (CFStringCompare(curBundleIDRef, 
+                          CFSTR("org.songbirdnest.songbirditunesagent"),
+                          0) == kCFCompareEqualTo)
+      {
+        *aIsRunning = PR_TRUE;
+        break;
+      }
+    }
+  }
+
+#elif XP_WIN
+  // The windows agent uses a mutex handle to prevent duplicate agents 
+  // from running. Simply check for the mutex to find out if the agent
+  // is currently running.
+  HANDLE hMutex = OpenMutex(SYNCHRONIZE, PR_TRUE, L"songbirditunesagent");
+  *aIsRunning = hMutex != nsnull;
+  if (hMutex) {
+    CloseHandle(hMutex);
+  }
+#endif
+  
   return NS_OK;
 }
 
