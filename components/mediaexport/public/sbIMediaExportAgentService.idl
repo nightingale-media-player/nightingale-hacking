@@ -45,7 +45,7 @@
   "Songbird Media Export iTunes Agent Service" 
 %}
 
-[scriptable, uuid(8975357B-49C9-4B6D-98CF-EA5E9B94C996)]
+[scriptable, uuid(DDA49DAF-C9AF-4A36-B377-33D8C1895A7B)]
 interface sbIMediaExportAgentService : nsISupports
 {
   //
@@ -65,5 +65,12 @@ interface sbIMediaExportAgentService : nsISupports
   // @brief Return true if the agent is currently running, false if not.
   //
   readonly attribute boolean isAgentRunning;
+
+  //
+  // @brief This method will find and kill all the active agent processes that
+  //        the user has running. This method should block until all active
+  //        processes have been terminated.
+  //
+  void killActiveAgents();
 };
 

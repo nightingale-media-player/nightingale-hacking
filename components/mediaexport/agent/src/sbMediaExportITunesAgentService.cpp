@@ -206,3 +206,70 @@ sbMediaExportITunesAgentService::GetIsAgentRunning(PRBool *aIsRunning)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbMediaExportITunesAgentService::KillActiveAgents()
+{
+  // The itunes agent has a "--kill" (or "--roundhouse") argument that 
+  // will kill all the active agents for us. Simply get the file spec to the
+  // platforms binary (we don't need to go through LS on macosx for this) and
+  // spawn a nsIProcess with the "--kill" argument.
+
+  nsresult rv;
+  nsCOMPtr<nsIURI> agentParentFolderURI;
+  rv = NS_NewURI(getter_AddRefs(agentParentFolderURI),
+                 NS_LITERAL_STRING("resource://app"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> parentFolderFileURL = 
+    do_QueryInterface(agentParentFolderURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> agentFile;
+
+#if XP_MACOSX
+  // Mac is slightly more tricky because we have to go inside the .app to
+  // find the physical binary.
+  nsString agentPath;
+  rv = agentFile->GetPath(agentPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  agentPath.AppendLiteral("/songbirditunesagent.app/Contents/MacOS/songbirditunesagent");
+
+  nsCOMPtr<nsILocalFileMac> macAgentFileSpec =
+    do_CreateInstance("@mozilla.org/file/local;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = macAgentFileSpec->InitWithPath(agentPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  agentFile = do_QueryInterface(macAgentFileSpec, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+#elif XP_WIN
+  // Windows is simple, simply append the name of the agent + '.exe'
+  rv = parentFolderFileURL->GetFile(getter_AddRefs(agentFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = agentFile->Append(NS_LITERAL_STRING("songbirditunesagent.exe"));
+  NS_ENSURE_SUCCESS(rv, rv);
+#endif
+
+  // Now that the platform specic chunk is done, spawn the process and wait
+  // for it to finish.
+  nsCOMPtr<nsIProcess> killProcess = 
+    do_CreateInstance(NS_PROCESS_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = killProcess->Init(agentFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString args("--kill");
+  const char *argsStr = args.get();
+  PRUint32 pid;
+  
+  // Run the agent with blocking turned on
+  rv = killProcess->Run(PR_TRUE, &argsStr, 1, &pid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
