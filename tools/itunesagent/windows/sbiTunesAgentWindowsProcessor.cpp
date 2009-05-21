@@ -299,12 +299,14 @@ sbiTunesAgentWindowsProcessor::WaitForiTunes() {
 sbError
 sbiTunesAgentWindowsProcessor::KillAllAgents() {
   // Loop through the processes and kill all the running agent processes.
-  DWORD allProcesses[1024], cbNeeded, cProcesses;
+  DWORD allProcesses[1024], cbNeeded, cProcesses, curProcessID;
+
+  curProcessID = GetCurrentProcessId();
   
   if (EnumProcesses(allProcesses, sizeof(allProcesses), &cbNeeded)) {
     cProcesses = cbNeeded / sizeof(DWORD);
     for (unsigned int i = 0; i < cProcesses; i++) {
-      if (allProcesses[i] == 0) {
+      if (allProcesses[i] == 0 || allProcesses[i] == curProcessID) {
         continue;
       }
 
