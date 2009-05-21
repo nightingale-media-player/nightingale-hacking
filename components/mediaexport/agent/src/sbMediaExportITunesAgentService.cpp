@@ -143,7 +143,10 @@ sbMediaExportITunesAgentService::RunAgent(PRBool aShouldUnregister)
   
   const char *argStr = args.get();
   PRUint32 pid;
-  rv = agentProcess->Run(PR_FALSE, &argStr, (aShouldUnregister ? 1 : 0), &pid);
+  rv = agentProcess->Run(aShouldUnregister,  // only block for '--unregister' 
+                         &argStr, 
+                         (aShouldUnregister ? 1 : 0), 
+                         &pid);
   NS_ENSURE_SUCCESS(rv, rv);
 
 #else
@@ -225,6 +228,8 @@ sbMediaExportITunesAgentService::KillActiveAgents()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFile> agentFile;
+  rv = parentFolderFileURL->GetFile(getter_AddRefs(agentFile));
+  NS_ENSURE_SUCCESS(rv, rv);
 
 #if XP_MACOSX
   // Mac is slightly more tricky because we have to go inside the .app to
@@ -246,9 +251,6 @@ sbMediaExportITunesAgentService::KillActiveAgents()
   NS_ENSURE_SUCCESS(rv, rv);
 #elif XP_WIN
   // Windows is simple, simply append the name of the agent + '.exe'
-  rv = parentFolderFileURL->GetFile(getter_AddRefs(agentFile));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = agentFile->Append(NS_LITERAL_STRING("songbirditunesagent.exe"));
   NS_ENSURE_SUCCESS(rv, rv);
 #endif

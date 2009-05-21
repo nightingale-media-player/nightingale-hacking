@@ -47,6 +47,7 @@
 #include <nsThreadUtils.h>
 #include <nsIThreadPool.h>
 #include <sbThreadPoolService.h>
+#include <nsIUpdateService.h>
 
 
 #ifdef PR_LOGGING
@@ -180,7 +181,35 @@ sbMediaExportService::Shutdown()
 
   rv = mPrefController->Shutdown();
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Let's ask the update service if there are updates that need to be applied.
+  nsCOMPtr<nsIUpdateManager> updateMgr =
+    do_GetService("@mozilla.org/updates/update-manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRInt32 updateCount;
+  rv = updateMgr->GetUpdateCount(&updateCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (updateCount > 0) {
+    // When there is at least one update according to the update manager, the
+    // updater will run the next time Songbird is launched. In order to assist
+    // with updates, any currently running instances of the agent need to be
+    // killed.
+    nsCOMPtr<sbIMediaExportAgentService> agentService =
+      do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
+    if (NS_SUCCEEDED(rv) && agentService) {
+      // First, kill the agent(s).
+      rv = agentService->KillActiveAgents();
+      NS_ENSURE_SUCCESS(rv, rv);
 
+      // Next, unregister the agent. The agent will re-register for user login
+      // the next time it is run.
+      rv = agentService->UnregisterExportAgent();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  
   return NS_OK;
 }
 
