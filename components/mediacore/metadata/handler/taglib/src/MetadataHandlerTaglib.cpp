@@ -844,13 +844,18 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
       }
     } else if (isM4A) {
       nsAutoPtr<TagLib::MP4::File> pTagFile;
-      pTagFile = new TagLib::MP4::File(filePath.BeginReading());
+      #if XP_WIN
+        // XXX Mook: temporary hack to make tree build, reopening bug 16158
+        pTagFile = new TagLib::MP4::File(NS_ConvertUTF16toUTF8(filePath).BeginReading());
+      #else
+        pTagFile = new TagLib::MP4::File(filePath.BeginReading());
+      #endif
       NS_ENSURE_STATE(pTagFile);
 
       /* Read the metadata file. */
       if (pTagFile->tag()) {
         result = ReadImageITunes(
-            dynamic_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
+            static_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
             aMimeType, aDataLen, aData);
       }
     }
@@ -2330,7 +2335,7 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
         nsAutoPtr<sbAlbumArt> art(new sbAlbumArt());
         NS_ENSURE_TRUE(art, PR_FALSE);
         result = ReadImageITunes(
-                          dynamic_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
+                          static_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
                           art->mimeType, &(art->dataLen), &(art->data));
         NS_ENSURE_SUCCESS(result, PR_FALSE);
         art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
