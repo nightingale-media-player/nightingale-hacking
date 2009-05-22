@@ -145,9 +145,10 @@ function testRead() {
                    "MP3_ID3v1v24.mp3",
                    "MP3_ID3v22.mp3",
                    "MP3_ID3v23.mp3",
-                   "MP3_ID3v24.mp3" ];
+                   "MP3_ID3v24.mp3",
+                   "MPEG4_Audio_Apple_Lossless.m4a"];
   var noArtFiles = [ "MP3_NoTags.mp3",
-                     "MPEG4_Audio_Apple_Lossless.m4a",
+                     "MPEG4_Audio_Apple_Lossless_NoArt.m4a",
                      "Ogg_Vorbis.ogg",
                      "TrueAudio.tta",
                      "FLAC.flac"];
@@ -175,6 +176,10 @@ function testRead() {
     }
 
     // Try grabbing some other artwork that is not there
+    // but don't do this for .m4a files since there isn't the concept of
+    // album art "type"
+    if (artFiles[index].match("\.m4a$"))
+      continue;
     try {
       var mimeTypeOutparam = {};
       var outSize = {};
