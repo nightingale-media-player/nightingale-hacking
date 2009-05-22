@@ -250,9 +250,15 @@ private:
         PRInt32                     aType,
         const nsAString             &imageSpec);
 
-    nsresult ReadImage(
+    nsresult ReadImageID3v2(
         TagLib::ID3v2::Tag          *aTag,
         PRInt32                     aType,
+        nsACString                  &aMimeType,
+        PRUint32                    *aDataLen,
+        PRUint8                     **aData);
+
+    nsresult ReadImageITunes(
+        TagLib::MP4::Tag            *aTag,
         nsACString                  &aMimeType,
         PRUint32                    *aDataLen,
         PRUint8                     **aData);

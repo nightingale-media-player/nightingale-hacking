@@ -51,6 +51,7 @@
 
 /* Songbird utility classes */
 #include "sbStringUtils.h"
+#include "sbMemoryUtils.h"
 #include <sbProxiedComponentManager.h>
 
 /* Songbird interfaces */
@@ -69,6 +70,7 @@
 #include <nsIStandardURL.h>
 #include <nsICharsetDetector.h>
 #include <nsIUTF8ConverterService.h>
+#include <nsIContentSniffer.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
@@ -789,6 +791,8 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   nsCString                   urlSpec;
   nsCString                   urlScheme;
   nsCString                   fileExt;
+  bool                        isMP3;
+  bool                        isM4A;
   nsresult                    result = NS_OK;
 
   /* Get the channel URL info. */
@@ -805,7 +809,9 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     NS_ENSURE_SUCCESS(result, result);
     ToLowerCase(fileExt);
   
-    if (!fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
+    isMP3 = fileExt.Equals(NS_LITERAL_CSTRING("mp3"));
+    isM4A = fileExt.Equals(NS_LITERAL_CSTRING("m4a"));
+    if (!isMP3 && !isM4A) {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
    
@@ -826,20 +832,31 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
     nsCString filePath = mMetadataPath;
 #endif
 
-    nsAutoPtr<TagLib::MPEG::File> pTagFile;
-    pTagFile = new TagLib::MPEG::File(filePath.BeginReading());    
-    NS_ENSURE_STATE(pTagFile);
+    result = NS_ERROR_FILE_UNKNOWN_TYPE;
+    if (isMP3) {
+      nsAutoPtr<TagLib::MPEG::File> pTagFile;
+      pTagFile = new TagLib::MPEG::File(filePath.BeginReading());
+      NS_ENSURE_STATE(pTagFile);
 
-    /* Read the metadata file. */
-    if (pTagFile->ID3v2Tag()) {
-      result = ReadImage(pTagFile->ID3v2Tag(), aType, aMimeType, aDataLen, aData);
-    } else {
-      result = NS_ERROR_FILE_UNKNOWN_TYPE;
+      /* Read the metadata file. */
+      if (pTagFile->ID3v2Tag()) {
+        result = ReadImageID3v2(pTagFile->ID3v2Tag(), aType, aMimeType, aDataLen, aData);
+      }
+    } else if (isM4A) {
+      nsAutoPtr<TagLib::MP4::File> pTagFile;
+      pTagFile = new TagLib::MP4::File(filePath.BeginReading());
+      NS_ENSURE_STATE(pTagFile);
+
+      /* Read the metadata file. */
+      if (pTagFile->tag()) {
+        result = ReadImageITunes(
+            dynamic_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
+            aMimeType, aDataLen, aData);
+      }
     }
   } else {
     result = NS_ERROR_NOT_IMPLEMENTED;
   }
-
   return result;
 }
 
@@ -1056,11 +1073,11 @@ nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
  * \param aDataLen Output parameter for length of image data
  * \param aData Output parameter for binary data of image
  */
-nsresult sbMetadataHandlerTaglib::ReadImage(TagLib::ID3v2::Tag          *aTag,
-                                            PRInt32                     aType,
-                                            nsACString                  &aMimeType,
-                                            PRUint32                    *aDataLen,
-                                            PRUint8                     **aData)
+nsresult sbMetadataHandlerTaglib::ReadImageID3v2(TagLib::ID3v2::Tag  *aTag,
+                                                 PRInt32             aType,
+                                                 nsACString          &aMimeType,
+                                                 PRUint32            *aDataLen,
+                                                 PRUint8             **aData)
 {
   NS_ENSURE_ARG_POINTER(aTag);
   NS_ENSURE_ARG_POINTER(aData);
@@ -1099,6 +1116,41 @@ nsresult sbMetadataHandlerTaglib::ReadImage(TagLib::ID3v2::Tag          *aTag,
   }
   
   return rv;
+}
+
+nsresult sbMetadataHandlerTaglib::ReadImageITunes(TagLib::MP4::Tag  *aTag,
+                                                 nsACString          &aMimeType,
+                                                 PRUint32            *aDataLen,
+                                                 PRUint8             **aData)
+{
+  NS_ENSURE_ARG_POINTER(aTag);
+  NS_ENSURE_ARG_POINTER(aData);
+  NS_ENSURE_ARG_POINTER(aDataLen);
+  nsCOMPtr<nsIThread> mainThread;
+  nsresult rv = NS_OK;
+
+  /*
+   * Extract the requested image from the metadata
+   */
+  if (!aTag->cover().isNull()) {
+    *aDataLen = aTag->cover().size();
+
+    sbAutoNSTypePtr<PRUint8> data =
+      static_cast<PRUint8 *>(nsMemory::Clone(aTag->cover().data(), *aDataLen));
+    NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<nsIContentSniffer> contentSniffer =
+      do_ProxiedGetService("@mozilla.org/image/loader;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = contentSniffer->GetMIMETypeFromContent(NULL, data.get(), *aDataLen,
+                                                aMimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    *aData = data.forget();
+  }
+
+  return NS_OK;
 }
 
 
@@ -1461,8 +1513,9 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
   if (urlScheme.Equals(NS_LITERAL_CSTRING("file"))) { 
     sbAlbumArt *art = new sbAlbumArt();
     NS_ENSURE_TRUE(art,/*void*/);  
-    result = ReadImage(pTag, sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
-                       art->mimeType, &(art->dataLen), &(art->data));
+    result = ReadImageID3v2(pTag,
+                            sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
+                            art->mimeType, &(art->dataLen), &(art->data));
     NS_ENSURE_SUCCESS(result,/*void*/);
     art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
     nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
@@ -1471,8 +1524,8 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
   
     art = new sbAlbumArt();
     NS_ENSURE_TRUE(art,/*void*/);  
-    result = ReadImage(pTag, sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
-                       art->mimeType, &(art->dataLen), &(art->data));
+    result = ReadImageID3v2(pTag, sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
+                            art->mimeType, &(art->dataLen), &(art->data));
     NS_ENSURE_SUCCESS(result,/*void*/);
     art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER;
     cacheSlot = mCachedAlbumArt.AppendElement();
@@ -2266,6 +2319,26 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
     /* Read the base file metadata. */
     if (NS_SUCCEEDED(result))
         isValid = ReadFile(pTagFile);
+
+    if (NS_SUCCEEDED(result) && isValid) {
+      // If this is a local file, cache common album art in order to speed 
+      // up any subsequent calls to GetImageData.
+      PRBool isFileURI;
+      result = mpURL->SchemeIs("file", &isFileURI);
+      NS_ENSURE_SUCCESS(result, PR_FALSE);
+      if (isFileURI) {
+        nsAutoPtr<sbAlbumArt> art(new sbAlbumArt());
+        NS_ENSURE_TRUE(art, PR_FALSE);
+        result = ReadImageITunes(
+                          dynamic_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
+                          art->mimeType, &(art->dataLen), &(art->data));
+        NS_ENSURE_SUCCESS(result, PR_FALSE);
+        art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
+        nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
+        NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
+        *cacheSlot = art;
+      }
+    }
 
     /* File is invalid on any error. */
     if (NS_FAILED(result))
