@@ -266,7 +266,11 @@ sbLibraryImporterManager.prototype = {
     var alertMsg =
           SBFormattedString("import_library.nonexistent_media_alert.msg",
                             [ aNonExistentMediaCount, aTrackCount ]);
-    prompter.alert(null, alertTitle, alertMsg);
+    var songWin = Cc["@mozilla.org/appshell/window-mediator;1"]
+                    .getService(Ci.nsIWindowMediator)
+                    .getMostRecentWindow("Songbird:Main");
+
+    prompter.alert(songWin, alertTitle, alertMsg);
   },
 
 
@@ -296,7 +300,12 @@ sbLibraryImporterManager.prototype = {
     var alertCheckMsg =
           SBString("import_library.unsupported_media_alert.enable_label");
     var checkState = { value: alertEnabled };
-    prompter.alertCheck(null,
+    
+    var songWin = Cc["@mozilla.org/appshell/window-mediator;1"]
+                    .getService(Ci.nsIWindowMediator)
+                    .getMostRecentWindow("Songbird:Main");
+    
+    prompter.alertCheck(songWin,
                         alertTitle,
                         alertMsg,
                         alertCheckMsg,
