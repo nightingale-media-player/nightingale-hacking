@@ -33,11 +33,11 @@
 
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
+#include <sbIDatabasePreparedStatement.h>
 
 #include <sbProxiedComponentManager.h>
 
 
-#define SB_ITUNES_DB_SIGNATURE_TABLE "itunes_signatures"
 char const SB_ITUNES_DB_GUID[] = "songbird";
 
 sbiTunesSignature::sbiTunesSignature() {}
@@ -58,14 +58,30 @@ nsresult sbiTunesSignature::Initialize() {
   mDBQuery->SetDatabaseGUID(NS_LITERAL_STRING("songbird"));
   
   /* Ensure the signature database table exists. */
-  nsString sql(NS_LITERAL_STRING("CREATE TABLE IF NOT EXISTS "));
-  sql.AppendLiteral(SB_ITUNES_DB_SIGNATURE_TABLE);
-  sql.AppendLiteral(" (id TEXT UNIQUE NOT NULL, "
-                   "signature TEXT NOT NULL)");
-   
-  rv = ExecuteSQL(sql);
+  nsString sql(NS_LITERAL_STRING("CREATE TABLE IF NOT EXISTS itunes_signatures (id TEXT UNIQUE NOT NULL, signature TEXT NOT NULL)"));
+  
+  rv = mDBQuery->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRInt32 result;
+  rv = mDBQuery->Execute(&result);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDBQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  NS_NAMED_LITERAL_STRING(INSERT_SQL,
+                          "INSERT OR REPLACE INTO itunes_signatures (id, signature) VALUES (?, ?)");
+  rv = mDBQuery->PrepareQuery(INSERT_SQL,
+                              getter_AddRefs(mInsertSig));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  NS_NAMED_LITERAL_STRING(SELECT_SQL,
+                          "SELECT signature FROM itunes_signatures WHERE id = ?");
+  rv = mDBQuery->PrepareQuery(SELECT_SQL,
+                              getter_AddRefs(mRetrieveSig));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
@@ -76,7 +92,7 @@ nsresult sbiTunesSignature::Update(nsAString const & aStringData) {
   rv = mHashProc->Update(reinterpret_cast<PRUint8 const *>(byteString.BeginReading()), 
                          byteString.Length());
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -107,34 +123,36 @@ sbiTunesSignature::GetSignature(nsAString & aSignature) {
 nsresult 
 sbiTunesSignature::StoreSignature(nsAString const & aID,
                                   nsAString const & aSignature) {
-  nsresult rv = mDBQuery->ResetQuery();
+  
+  nsresult rv = mDBQuery->AddPreparedStatement(mInsertSig);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsString sql;
-  sql.AssignLiteral("INSERT OR REPLACE INTO " SB_ITUNES_DB_SIGNATURE_TABLE " "
-                    "(id, signature) VALUES (\"");
-  sql.Append(aID);
-  sql.AppendLiteral("\", \"");
-  sql.Append(aSignature);
-  sql.AppendLiteral("\")");
-  rv = ExecuteSQL(sql);
+  rv = mDBQuery->BindStringParameter(0, aID);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  rv = mDBQuery->BindStringParameter(1, aSignature);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRInt32 result;
+  rv = mDBQuery->Execute(&result);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDBQuery->ResetQuery();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
 nsresult 
 sbiTunesSignature::RetrieveSignature(nsAString const & aID,
                                      nsAString & aSignature) {
-  nsString sql;
-  sql.AssignLiteral("SELECT signature FROM " SB_ITUNES_DB_SIGNATURE_TABLE " "
-                    "WHERE id = \"");
-  sql.Append(aID);
-  sql.AppendLiteral("\"");
-
-  nsresult rv = mDBQuery->AddQuery(sql);
+  
+  nsresult rv = mDBQuery->AddPreparedStatement(mRetrieveSig);
   NS_ENSURE_SUCCESS(rv, rv);
- 
+  
+  rv = mDBQuery->BindStringParameter(0, aID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   PRInt32 dbResult;
   rv = mDBQuery->Execute(&dbResult);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -151,18 +169,3 @@ sbiTunesSignature::RetrieveSignature(nsAString const & aID,
   
   return NS_OK;
 }
-
-nsresult sbiTunesSignature::ExecuteSQL(nsAString const & aSQLStatement) {
-  nsresult rv = mDBQuery->AddQuery(aSQLStatement);
-  NS_ENSURE_SUCCESS(rv, rv);
- 
-  PRInt32 result;
-  rv = mDBQuery->Execute(&result);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = mDBQuery->ResetQuery();
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  return NS_OK;
-}
-

@@ -36,6 +36,7 @@
 // Songbird includes
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
+#include <sbIDatabasePreparedStatement.h>
 
 #define SB_DBQUERY_CONTRACTID "@songbirdnest.com/Songbird/DatabaseQuery;1"
 
@@ -69,6 +70,22 @@ sbiTunesDatabaseServices::Initialize() {
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  NS_NAMED_LITERAL_STRING(INSERT_SQL, 
+                          "INSERT OR REPLACE INTO itunes_id_map (itunes_id, songbird_id) VALUES (?, ?)");
+  rv = mDBQuery->PrepareQuery(INSERT_SQL, getter_AddRefs(mInsertMapID));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  NS_NAMED_LITERAL_STRING(SELECT_SQL, 
+                          "SELECT songbird_id FROM itunes_id_map WHERE itunes_id = ?");
+  rv = mDBQuery->PrepareQuery(SELECT_SQL, getter_AddRefs(mSelectMapID));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NAMED_LITERAL_STRING(DELETE_SQL, 
+                          "DELETE FROM itunes_id_map WHERE songbird_id = ?");
+
+  rv = mDBQuery->PrepareQuery(SELECT_SQL, getter_AddRefs(mDeleteMapID));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 
@@ -76,15 +93,14 @@ nsresult
 sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
                                 nsAString const & aiTunesID,
                                 nsAString const & aSongbirdID) {
-  nsString sql;
-  sql.AppendLiteral("INSERT OR REPLACE INTO itunes_id_map "
-                    "(itunes_id, songbird_id) VALUES (\"");
-  sql.Append(aiTunesLibID);
-  sql.Append(aiTunesID);
-  sql.AppendLiteral("\", \"");
-  sql.Append(aSongbirdID);
-  sql.AppendLiteral("\")");
-  nsresult rv = mDBQuery->AddQuery(sql);
+  
+  nsresult rv = mDBQuery->AddPreparedStatement(mInsertMapID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDBQuery->BindStringParameter(0, aiTunesLibID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mDBQuery->BindStringParameter(1, aSongbirdID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool dbOK;
@@ -98,18 +114,16 @@ nsresult
 sbiTunesDatabaseServices::GetSBIDFromITID(nsAString const & aiTunesLibID,
                                           nsAString const & aiTunesID,
                                           nsAString & aSongbirdID) {
-  nsresult rv = mDBQuery->ResetQuery();
+
+  nsresult rv = mDBQuery->AddPreparedStatement(mSelectMapID);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString iTunesID(aiTunesLibID);
+  iTunesID.Append(aiTunesID);
   
-  nsString sql;
-  sql.AppendLiteral("SELECT songbird_id FROM itunes_id_map WHERE "
-                    "itunes_id = \"");
-  sql.Append(aiTunesLibID);
-  sql.Append(aiTunesID);
-  sql.AppendLiteral("\"");
-  rv = mDBQuery->AddQuery(sql);
+  rv = mDBQuery->BindStringParameter(0, iTunesID);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+   
   PRBool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -126,19 +140,16 @@ sbiTunesDatabaseServices::GetSBIDFromITID(nsAString const & aiTunesLibID,
 
 nsresult
 sbiTunesDatabaseServices::RemoveSBIDEntry(nsAString const & aSongbirdID) {
-  nsresult rv = mDBQuery->ResetQuery();
+
+  nsresult rv = mDBQuery->AddPreparedStatement(mDeleteMapID);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsString sql;
-  sql.AppendLiteral("DELETE FROM itunes_id_map WHERE songbird_id = \"");
-  sql.Append(aSongbirdID);
-  sql.AppendLiteral("\"");
-  rv = mDBQuery->AddQuery(sql);
+
+  rv = mDBQuery->BindStringParameter(0, aSongbirdID);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+   
   PRBool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }

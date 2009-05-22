@@ -31,6 +31,8 @@
 
 #include "sbiTunesImporterCommon.h"
 
+class sbIDatabasePreparedStatement;
+
 /**
  * This class manages the ID mappings of the iTunes import table
  * in the database
@@ -72,10 +74,28 @@ public:
    */
   nsresult RemoveSBIDEntry(nsAString const & aSongbirdID);
 private:
+  typedef nsCOMPtr<sbIDatabasePreparedStatement> PreparedStatementPtr;
+  
   /**
    * Synchronous query object
    */
   sbIDatabaseQueryPtr mDBQuery;
+  
+  /**
+   * Insert prepared statement
+   */
+  PreparedStatementPtr mInsertMapID;
+  
+  /**
+   * Select prepared statement
+   */
+  PreparedStatementPtr mSelectMapID;
+  
+  /**
+   * Delete prepared statement
+   */
+  PreparedStatementPtr mDeleteMapID;
+  
   /**
    * Flag to denote that a reset is pending
    */

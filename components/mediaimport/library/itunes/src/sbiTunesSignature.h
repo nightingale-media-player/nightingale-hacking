@@ -33,6 +33,7 @@
 class nsIScriptableUnicodeConverter;
 class nsICryptoHash;
 class sbIDatabaseQuery;
+class sbIDatabasePreparedStatement;
 
 /**
  * This calculates the signature of "things" such as the iTunes database
@@ -71,24 +72,33 @@ public:
 private:
   typedef nsCOMPtr<nsIScriptableUnicodeConverter> nsIScriptableUnicodeConverterPtr;
   typedef nsCOMPtr<nsICryptoHash> nsICryptoHashPtr;
+  typedef nsCOMPtr<sbIDatabasePreparedStatement> PreparedStatementPtr;
   
   /**
    * Hash component
    */
   nsICryptoHashPtr mHashProc;
+  
   /**
    * Our DB query object
    */
   sbIDatabaseQueryPtr mDBQuery;
+
   /**
    * Used as a cache for GetSignature
    */
   nsString mSignature;
   
   /**
-   * Helper function to execute SQL queries
+   * Store signature prepared statement
    */
-  nsresult ExecuteSQL(nsAString const & aSQLStatement);
+  PreparedStatementPtr mInsertSig;
+  
+  /**
+   * Retrieve signature prepared statement
+   */
+  PreparedStatementPtr mRetrieveSig;
+  
 };
 
 #endif /* SBITUNESSIGNATURE_H_ */
