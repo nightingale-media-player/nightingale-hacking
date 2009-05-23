@@ -130,19 +130,27 @@ function runTest () {
                                 .getService(Components.interfaces.sbIFileMetadataService);
   var job = gFileMetadataService.read( gTestMediaItems);
   
-  // Set an observer to know when we complete
-  job.addJobProgressListener(onComplete);
-  testPending();
+  if (job.status == Components.interfaces.sbIJobProgress.STATUS_SUCCEEDED) {
+    jobFinished();
+  } else {
+    // Set an observer to know when we complete
+    job.addJobProgressListener(onComplete);
+    testPending();
+  }
 }
 
 function onComplete(job) {
+  if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
+    return;
+  }
+
+  job.removeJobProgressListener(onComplete);
+
+  jobFinished();
+}
+
+function jobFinished() {
   try { 
-    if (job.status == Components.interfaces.sbIJobProgress.STATUS_RUNNING) {
-      return;
-    }
-
-    job.removeJobProgressListener(onComplete);
-
     assertTrue(gFileList.length > 0);
     
     // Print metadata or all items so we can see the full set of data instead
