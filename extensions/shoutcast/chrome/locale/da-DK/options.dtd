@@ -16,7 +16,7 @@
 <!ENTITY custom-genres.help.label "Hvis du har tilpassede genrer, du vil have vist i SHOUTcast kataloget, indtast en kommasepareret liste med genrer her.">
 <!ENTITY prefs.tosBegin "Brug af SHOUTcast kataloget er begrænset af  deres anvendelsesbetingelser.">
 <!ENTITY prefs.tosLinkText "Se anvendelsesbetingelser">
-<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.tosEnd ".">
 <!ENTITY prefs.toolbarBegin "Installer">
 <!ENTITY prefs.toolbarLinkText "værktøjslinjen SHOUTcast">
 <!ENTITY prefs.toolbarEnd "browserudvidelse til nem SHOUTcast adgang fra din browser.">

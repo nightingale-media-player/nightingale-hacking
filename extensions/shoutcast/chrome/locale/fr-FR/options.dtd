@@ -12,6 +12,7 @@
 <!ENTITY prefs.track.guessing.label "Active l&apos;analyse du titre et de l&apos;artiste">
 <!ENTITY prefs.track.guessing.help "Certains flux de SHOUTcast transmettent du texte sous la forme &apos;Artiste - Titre du morceau&apos;. Si vous activez cette option, l&apos;extension SHOUTcast essaiera de détecter ces informations et enverra des notifications de changements pour les répercuter sur d&apos;autres extensions.">
 <!ENTITY prefs.customGenres "Définir des genres personnalisés">
+<!ENTITY prefs.customGenres.emptytext "Séparés par des virgules Entrez la liste des genres ici">
 <!ENTITY custom-genres.help.label "Si vous souhaitez afficher des genres personnels dans le répertoire de SHOUTcast, veuillez les indiquer ici séparés par des virgules">
 <!ENTITY prefs.tosBegin "L&apos;utilisation du répertoire de SHOUTcast est subordonnée à l&apos;acceptation des conditions d&apos;utilisation">
 <!ENTITY prefs.tosLinkText "Voir les conditions d&apos;utilisation">

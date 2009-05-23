@@ -16,7 +16,7 @@
 <!ENTITY custom-genres.help.label "If you have custom genres you want displayed within the SHOUTcast directory, enter a comma-separated list of genre strings here">
 <!ENTITY prefs.tosBegin "Use of the SHOUTcast directory is bound by their Terms of Use">
 <!ENTITY prefs.tosLinkText "View Terms of Use">
-<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.tosEnd ".">
 <!ENTITY prefs.toolbarBegin "Install the">
 <!ENTITY prefs.toolbarLinkText "SHOUTcast Toolbar">
 <!ENTITY prefs.toolbarEnd "browser add-on for easy SHOUTcast access from your browser.">

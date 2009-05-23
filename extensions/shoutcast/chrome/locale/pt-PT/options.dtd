@@ -12,10 +12,11 @@
 <!ENTITY prefs.track.guessing.label "Tentar identificar o título da faixa e o artista">
 <!ENTITY prefs.track.guessing.help "Algumas transmissões do SHOUTcast emviam texto na forma &apos;Artista - Título da Faixa&apos;. Se activar esta opção a extensão SHOUTcast tentará identificar isto, e enviará notificações de mudança de faixa de forma a que as outras extensões possam ser notificadas da mudança de faixa durante uma transmissão.">
 <!ENTITY prefs.customGenres "Géneros Personalizados">
+<!ENTITY prefs.customGenres.emptytext "Insira lista separada por vírgulas de gêneros aqui">
 <!ENTITY custom-genres.help.label "Se tem géneros personalizados que queira que sejam mostrados no directório do SHOUTcast, introduza aqui uma lista de géneros separado por virgula">
 <!ENTITY prefs.tosBegin "O uso do diretório SHOUTcast está sujeito aos seus">
 <!ENTITY prefs.tosLinkText "Termos de Uso">
-<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.tosEnd ".">
 <!ENTITY prefs.toolbarBegin "Instalar a">
 <!ENTITY prefs.toolbarLinkText "Barra de Ferramentas SHOUTcast">
 <!ENTITY prefs.toolbarEnd "Extensão do browser para um melhor acesso ao SHOUTcast através do próprio browser">

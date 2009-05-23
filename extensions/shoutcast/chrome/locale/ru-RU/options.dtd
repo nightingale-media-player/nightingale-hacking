@@ -16,7 +16,7 @@
 <!ENTITY custom-genres.help.label "Если вы хотите добавить какие-то свои жанры в директорию SHOUTcast, то перечислите их через запятую в строке далее:">
 <!ENTITY prefs.tosBegin "Право пользования директорией SHOUTcast описано в Условиях использования">
 <!ENTITY prefs.tosLinkText "Просмотреть Условия использования">
-<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.tosEnd ".">
 <!ENTITY prefs.toolbarBegin "Установите дополнение">
 <!ENTITY prefs.toolbarLinkText "SHOUTcast Toolbar">
 <!ENTITY prefs.toolbarEnd "для быстрого доступа к SHOUTcast из вашего браузера">

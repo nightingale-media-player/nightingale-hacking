@@ -16,7 +16,7 @@
 <!ENTITY custom-genres.help.label "Per personalizzare la visualizzazione dei generi nella lista degli SHOUTcast, inserire qui i generi separati da una virgola">
 <!ENTITY prefs.tosBegin "L&apos;utilizzo della lista degli SHOUTcast è vincolata dai">
 <!ENTITY prefs.tosLinkText "Termini D&apos;uso">
-<!ENTITY prefs.tosEnd "">
+<!ENTITY prefs.tosEnd ".">
 <!ENTITY prefs.toolbarBegin "Installare la">
 <!ENTITY prefs.toolbarLinkText "barra degli strumenti SHOUTcast">
-<!ENTITY prefs.toolbarEnd "un estensione per un accesso facile a SHOUTcast dal tuo browser.">
+<!ENTITY prefs.toolbarEnd "un estensione per un accesso facile a SHOUTcast dal browser.">

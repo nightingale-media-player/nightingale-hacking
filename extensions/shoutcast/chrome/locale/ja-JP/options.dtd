@@ -12,6 +12,7 @@
 <!ENTITY prefs.track.guessing.label "トラックのタイトルおよびアーティストの解析を有効にする">
 <!ENTITY prefs.track.guessing.help "いくつかの SHOUTcast ストリーム放送では &apos;アーティスト - トラックのタイトル&apos; という書式でテキストを流しています。このオプションを有効にすると、SHOUTcast アドオンがトラック情報を解析し、トラック情報の変更通知イベントを発行します。このイベントによって、他のアドオンがストリーム中のトラック情報の変更通知を受け取ることができます。">
 <!ENTITY prefs.customGenres "カスタムジャンル">
+<!ENTITY prefs.customGenres.emptytext "コンマで区切って入力してジャンルのリストはこちら">
 <!ENTITY custom-genres.help.label "SHOUTcast ディレクトリに表示するジャンルを限定したいときは、ここにジャンル名をカンマで区切って入力してください。">
 <!ENTITY prefs.tosBegin "SHOUTcast ディレクトリの利用は Nullsoft 社の">
 <!ENTITY prefs.tosLinkText "利用規約">
