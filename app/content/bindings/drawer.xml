@@ -895,6 +895,25 @@
         </body>
       </method>
 
+      <method name="updateContent">
+        <body>
+          <![CDATA[
+          var item_nodes = this.parent.getElementsByAttribute( "sbtype",
+                                                               "drawer-item" );
+          var remove_item_nodes = this.parent.getElementsByAttribute
+                                                ( "sbtype",
+                                                  "remove-drawer-item" );
+          var remove_disabled = (item_nodes.length > 1 ? false : true);
+          for (var i = 0; i < remove_item_nodes.length; i++) {
+            if (remove_disabled)
+              remove_item_nodes[i].setAttribute( "disabled", true );
+            else
+              remove_item_nodes[i].removeAttribute( "disabled" );
+          }
+          ]]>
+        </body>
+      </method>
+
       <method name="insertContent">
         <parameter name="before"/>
         <body>
@@ -904,6 +923,7 @@
           this.parent.insertBefore( this.lastcreateditem, before );
           if (this.nextlabelstate) this.setItemState(this.lastcreateditem, this.nextlabelstate);
           this.nextlabelstate = null;
+          this.updateContent();
           var e = document.createEvent("Events");
           e.initEvent("additem", false, true);
           this.lastcreateditem.dispatchEvent(e);
@@ -919,6 +939,7 @@
         <parameter name="content"/>
         <body>
           this.parent.removeChild( content );
+          this.updateContent();
           var e = document.createEvent("Events");
           e.initEvent("removeitem", false, true);
           this.dispatchEvent(e);
