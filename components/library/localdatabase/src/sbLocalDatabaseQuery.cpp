@@ -822,18 +822,31 @@ sbLocalDatabaseQuery::AddFilters()
     nsString match;
     const sbLocalDatabaseGUIDArray::FilterSpec& fs =
       mFilters->ElementAt(searchIndex);
+
     for (PRUint32 i = 0; i < fs.values.Length(); i++) {
 
       nsString stripped(fs.values[i]);
 
       // '*' and '-' are special FTS operators. Make sure they are not in the
       // search filter otherwise the query will fail with a logic error.
-      nsString_ReplaceSubstring(stripped, 
-                                NS_LITERAL_STRING("*"), 
-                                NS_LITERAL_STRING(" NEAR/8 "));
-      nsString_ReplaceSubstring(stripped, 
-                                NS_LITERAL_STRING("-"), 
-                                NS_LITERAL_STRING(" NEAR/0 "));
+      PRInt32 pos = 0;
+
+      do {
+        pos = nsString_FindCharInSet(stripped, "*-", pos);
+        if(pos != -1) {
+          if(pos + 1 < stripped.Length() &&
+             stripped[pos + 1] != '*' && 
+             stripped[pos + 1] != '-' &&
+             stripped[pos + 1] != ' ') {
+            stripped.Replace(pos, 1, NS_LITERAL_STRING(" NEAR/0 "));
+            pos += 8;
+          }
+          else {
+            stripped.Cut(pos, 1);
+          }
+        }
+      }
+      while(pos != -1);
 
       // Quotes have to be escaped, otherwise if they are unbalanced they will
       // cause a SQL error when the statement is compiled :( We can't actually
