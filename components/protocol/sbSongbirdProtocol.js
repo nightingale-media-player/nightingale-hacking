@@ -76,12 +76,22 @@ sbSongbirdDispatch.prototype = {
           }
           
           break; // pedantry
+        case "nocommand":
+          var origURISpec = aUri.spec.replace(/nocommand/, "");
+          Components.utils.reportError(
+                  "sbSongbirdProtocol::newChannel: no command: " + origURISpec);
+          return new BogusChannel(aUri, "application/dummy-mime-type");
+          break;
         default:
           Components.utils.reportError(
                   "sbSongbirdProtocol::newChannel: bad command: " + aUri.host);
           return new BogusChannel(aUri, "application/dummy-mime-type");
           break;
       }
+    } else {
+      Components.utils.reportError(
+              "sbSongbirdProtocol::newChannel: no command: " + aUri.spec);
+      return new BogusChannel(aUri, "application/dummy-mime-type");
     }
   },
 
@@ -94,7 +104,10 @@ sbSongbirdDispatch.prototype = {
       // mozbug 478478
       Components.utils.reportError("sbSongbirdProtocol::newURI: no command provided.\n"+
                                    "Syntax is in the form: songbird:<command>?p1=a&p2=b");
-      throw Components.results.NS_ERROR_UNEXPECTED;
+
+      // Set up the host so that a valid URI can be returned that indicates that
+      // no command was provided.
+      url.host = "nocommand";
     }
     return url;
   },
