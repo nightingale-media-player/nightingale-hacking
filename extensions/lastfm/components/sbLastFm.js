@@ -505,16 +505,18 @@ function sbLastFm() {
 		var gMM = Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
 				.getService(Ci.sbIMediacoreManager);
 		var item = gMM.sequencer.currentItem;
-		var artistPage = item.getProperty(PROPERTY_ARTISTPAGE) + "\n";
-		dump("artist page: " + artistPage + "\n");
-		var mainWin =
-			Components.classes['@mozilla.org/appshell/window-mediator;1']
-			.getService(Components.interfaces.nsIWindowMediator)
-			.getMostRecentWindow('Songbird:Main');
-		if (mainWin && mainWin.gBrowser)
-			mainWin.gBrowser.loadOneTab(artistPage);
-		e.preventDefault();
-		e.stopPropagation();
+		var artistPage = item.getProperty(PROPERTY_ARTISTPAGE);
+    if (artistPage) {
+      dump("artist page: " + artistPage + "\n");
+      var mainWin =
+        Components.classes['@mozilla.org/appshell/window-mediator;1']
+        .getService(Components.interfaces.nsIWindowMediator)
+        .getMostRecentWindow('Songbird:Main');
+      if (mainWin && mainWin.gBrowser)
+        mainWin.gBrowser.loadOneTab(artistPage);
+      e.preventDefault();
+      e.stopPropagation();
+    }
 	}, true);
   }
 		
