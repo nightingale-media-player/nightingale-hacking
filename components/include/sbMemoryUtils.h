@@ -163,6 +163,19 @@ private:                                                                       \
           SB_AUTO_CLASS2(aName, aType, char, aIsValid, aDispose, aInvalidate)
 
 
+/**
+ * Define an auto-disposal class wrapper for data types whose invalid value is
+ * NULL.
+ *
+ * \param aName                 Name of class.
+ * \param aType                 Class data type.
+ * \param aDispose              Code snippet to dispose of the data.
+ */
+
+#define SB_AUTO_NULL_CLASS(aName, aType, aDispose) \
+          SB_AUTO_CLASS(aName, aType, mValue, aDispose, mValue = NULL)
+
+
 //
 // Auto-disposal class wrappers.
 //
