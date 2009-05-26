@@ -1144,13 +1144,20 @@ nsresult sbMetadataHandlerTaglib::ReadImageITunes(TagLib::MP4::Tag  *aTag,
       static_cast<PRUint8 *>(nsMemory::Clone(aTag->cover().data(), *aDataLen));
     NS_ENSURE_TRUE(data, NS_ERROR_OUT_OF_MEMORY);
 
-    nsCOMPtr<nsIContentSniffer> contentSniffer =
-      do_ProxiedGetService("@mozilla.org/image/loader;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+    { // Scope for unlock
 
-    rv = contentSniffer->GetMIMETypeFromContent(NULL, data.get(), *aDataLen,
-                                                aMimeType);
-    NS_ENSURE_SUCCESS(rv, rv);
+      // Release the lock while we're using proxied services to avoid
+      // deadlocking with the main thread trying to grab the taglib lock
+      nsAutoUnlock unlock(sTaglibLock);
+
+      nsCOMPtr<nsIContentSniffer> contentSniffer =
+        do_ProxiedGetService("@mozilla.org/image/loader;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = contentSniffer->GetMIMETypeFromContent(NULL, data.get(), *aDataLen,
+                                                  aMimeType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     *aData = data.forget();
   }
