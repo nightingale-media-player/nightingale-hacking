@@ -65,8 +65,11 @@
 class sbiTunesAgentProcessor
 {
 public:
+#if XP_WIN  
+  static int const BATCH_SIZE = 10;
+#else
   static int const BATCH_SIZE = 300;
-  
+#endif
   /**
    * Clean up any resources
    */
@@ -126,6 +129,12 @@ public:
    */
   virtual sbError KillAllAgents() = 0;
 
+  /**
+   * Sets the batch size for processing
+   */
+  void SetBatchSize(unsigned int aBatchSize) {
+    mBatchSize = aBatchSize;
+  }
 protected:
   typedef std::deque<std::string> Tracks;
   
@@ -209,7 +218,7 @@ protected:
 
   sbLogState    mLogState;
   std::ofstream mLogStream;
-  
+  unsigned int  mBatchSize;
 private:
   std::ifstream  mInputStream;
   Tracks         mTrackBatch;

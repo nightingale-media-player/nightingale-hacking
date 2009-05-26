@@ -25,6 +25,8 @@
  */
 
 #include "sbiTunesAgentProcessor.h"
+#include <iostream>
+#include <sstream>
 
 /**
  * Standard C main function
@@ -35,30 +37,43 @@ int main(int argc, char * argv[]) {
   // Were we asked to unregister from "run"
   if (argc > 1 && std::string(argv[1]) == "--unregister") {
     error = processor->UnregisterForStartOnLogin();
+    return error ? -1 : 0;
   }
-  else if (argc > 1 && (std::string(argv[1]) == "--roundhouse" ||
+  
+  // Kill any of our processes
+  if (argc > 1 && (std::string(argv[1]) == "--roundhouse" ||
                         std::string(argv[1]) == "--kill")) {
     error = processor->KillAllAgents();
+    return error ? -1 : 0;
   }
-  else {
-    // Don't start duplicate copies of the agent.
-    if (processor->GetIsAgentRunning()) {
-      return 0;
+
+  // Don't start duplicate copies of the agent.
+  if (processor->GetIsAgentRunning()) {
+    return 0;
+  }
+ 
+  // Set the batch size
+  if (argc > 2 && std::string(argv[1]) == "--batch-size") {
+    unsigned int batchSize = sbiTunesAgentProcessor::BATCH_SIZE;
+    // Convert the string arg to an integer
+    std::istringstream parser(argv[2]);
+    parser >> batchSize;
+    processor->SetBatchSize(batchSize);
+  }
+  
+  // Register the app with the run startup key
+  error = processor->RegisterForStartOnLogin();
+  if (error) {
+    // Handle the error and return if told to stop
+    if (!processor->ErrorHandler(error)) {
+      return -1;
     }
-    
-    // Register the app with the run startup key
-    error = processor->RegisterForStartOnLogin();
-    if (error) {
-      // Handle the error and return if told to stop
-      if (!processor->ErrorHandler(error)) {
-        return -1;
-      }
-    }
-    if (processor->TaskFileExists()) {
-      error = processor->WaitForiTunes();
-      if (!error) {
-        error = processor->ProcessTaskFile();
-      }
+  }
+  
+  if (processor->TaskFileExists()) {
+   error = processor->WaitForiTunes();
+    if (!error) {
+      error = processor->ProcessTaskFile();
     }
   }
   return error ? -1 : 0;

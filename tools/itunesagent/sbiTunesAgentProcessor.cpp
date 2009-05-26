@@ -40,7 +40,8 @@ char const * const SCHEMA_VERSION = "schema-version";
 //------------------------------------------------------------------------------
 
 sbiTunesAgentProcessor::sbiTunesAgentProcessor()
-  : mLogState((sbLogState)AGENT_LOGGING)
+  : mLogState((sbLogState)AGENT_LOGGING),
+    mBatchSize(sbiTunesAgentProcessor::BATCH_SIZE)
 {
 }
 
@@ -132,7 +133,7 @@ sbError sbiTunesAgentProcessor::AddTrack(std::string const & aSource,
   if (mLastSource.empty()) {
     mLastSource = aSource;
   }
-  else if (mLastSource != aSource || mTrackBatch.size() >= BATCH_SIZE) {
+  else if (mLastSource != aSource || mTrackBatch.size() >= mBatchSize) {
     sbError const & error = AddTracks(mLastSource,
                                       mTrackBatch);
     if (error && !ErrorHandler(error)) {
