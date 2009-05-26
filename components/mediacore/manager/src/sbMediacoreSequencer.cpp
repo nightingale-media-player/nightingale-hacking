@@ -2536,7 +2536,13 @@ sbMediacoreSequencer::Next()
   PRBool hasNext = PR_FALSE;
   PRUint32 length = mSequence.size();
 
-  if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ALL &&
+  if(mPositionInvalidated) {
+    // Our current position is invalid because we had to regenerate a
+    // sequence that didn't include the item that is currently playing.
+    mViewPosition = mSequence[mPosition];
+    hasNext = PR_TRUE;
+  }
+  else if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ALL &&
      mPosition + 1 >= length) {
     mPosition = 0;
     mViewPosition = mSequence[mPosition];
@@ -2562,13 +2568,7 @@ sbMediacoreSequencer::Next()
     }
   }
   else if(mPosition + 1 < length) {
-    // Our current position may be invalid because we had to regenerate a
-    // sequence that didn't include the item that is currently playing.
-    if(!mPositionInvalidated) {
-      // This is not the case, increment the position.
-      ++mPosition;
-    }
-
+    ++mPosition;
     mViewPosition = mSequence[mPosition];
     hasNext = PR_TRUE;
   }
@@ -2936,20 +2936,14 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
         if(NS_FAILED(rv) ||
            mSequence.empty()) {
-
-          mStatus = sbIMediacoreStatus::STATUS_STOPPED;
           mon.Exit();
-
-          rv = StopSequenceProcessor();
-          NS_ENSURE_SUCCESS(rv, rv);
-
-          rv = UpdatePlayStateDataRemotes();
-          NS_ENSURE_SUCCESS(rv, rv);
+          Stop();
+          mon.Enter();
         }
-        mon.Exit();
 
         LOG(("[sbMediacoreSequencer] - Was playing, stream ended, attempting to go to next track in sequence."));
       }
+      mon.Exit();
     }
     break;
 
@@ -2983,12 +2977,13 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
           rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
           NS_ENSURE_SUCCESS(rv, rv);
 
+          mon.Enter();
         }
       }
       else {
         mStopTriggeredBySequencer = PR_FALSE;
-        mon.Exit();
       }
+      mon.Exit();
     }
     break;
 
