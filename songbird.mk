@@ -150,11 +150,9 @@ endif
 #
 
 AUTOCONF ?= autoconf
-GREP ?= grep
 MKDIR ?= mkdir -p
 PERL ?= perl
 RM ?= rm
-SED ?= sed
 SVN ?= svn
 
 SONGBIRD_MESSAGE = Songbird Build System
@@ -166,46 +164,65 @@ CONFIGURE_PREREQS = $(ALLMAKEFILES) \
                     $(CONFIGUREAC) \
                     $(NULL)
 
-# Dependency detection stuff
+# Dependency detection/checkout/updating stuff
 
-MOZBROWSER_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
-MOZBROWSER_UPDATE ?= $(SVN) up $(MOZBROWSER_DIR)
-MOZBROWSER_CHECKOUT ?= $(SVN) co $(MOZBROWSER_SVN_URL) $(MOZBROWSER_DIR)
+define resolve_dep_co_svnurl
+$(if $($(1)_DEP_SVNURL), \
+     $($(1)_DEP_SVNURL), \
+     $(shell $(SVN) info --xml $(TOPSRCDIR) | \
+             $(PERL) -nle '/^<url>/ or next; \
+                           $$_ =~ s@</?url>\s*@@g; \
+                           $$_ =~ s@(.*)/client/(.*)@\1/$($(1)_DEP_REPO)/\2/$($(1)_DEP_REPODIR)@; \
+                           print; \
+                          ' \
+      ) \
+ )
+endef
 
-ifndef SB_DISABLE_DEPENDENT_PKG_MGMT
-   ifeq (,$(wildcard $(MOZBROWSER_DIR)))
-      SB_MOZBROWSER_DEP = mozbrowser_checkout
+SB_DEP_PKGS ?= MOZBROWSER MOZJSHTTPD
 
-      # Allow users to override
-      ifeq (,$(MOZBROWSER_SVN_URL))
-         ifneq (,$(filter $(SVN), $(MOZBROWSER_CHECKOUT)))
-            SVNBASE := $(shell $(SVN) info --xml $(TOPSRCDIR) | $(GREP) '^<url>' | $(SED) -e 's;</*url>;;g')
-            ifneq (,$(SVNBASE))
-               MOZBROWSER_SVN_URL := $(shell echo $(SVNBASE) | $(PERL) -pe 's@(.*)/client/(.*)@\1/vendor/\2/mozbrowser@')
-            endif
-            ifeq (,$(MOZBROWSER_SVN_URL))
-               $(error Failed to detect Subversion base URL... bailing.) 
-            endif
-         else
-            $(info Using user-defined method to pull mozbrowser) 
-         endif
-      endif
-   else
-      SB_MOZBROWSER_DEP = mozbrowser_update
-   endif
+MOZBROWSER_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozbrowser
+MOZBROWSER_DEP_UPDATE ?= $(SVN) up $(MOZBROWSER_DEP_DIR)
+MOZBROWSER_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZBROWSER) $(MOZBROWSER_DEP_DIR)
+MOZBROWSER_DEP_REPO ?= vendor
+MOZBROWSER_DEP_REPODIR ?= mozbrowser
+
+MOZJSHTTPD_DEP_DIR ?= $(TOPSRCDIR)/dependencies/vendor/mozjshttpd
+MOZJSHTTPD_DEP_UPDATE ?= $(SVN) up $(MOZJSHTTPD_DEP_DIR)
+MOZJSHTTPD_DEP_CHECKOUT ?= $(SVN) co $(call resolve_dep_co_svnurl,MOZJSHTTPD) $(MOZJSHTTPD_DEP_DIR)
+MOZJSHTTPD_DEP_REPO ?= vendor
+MOZJSHTTPD_DEP_REPODIR ?= xulrunner/mozilla/netwerk/test/httpserver
+
+ifndef SB_DISABLE_PKG_AUTODEPS
+   SB_DEP_PKG_LIST = $(foreach p,\
+                       $(SB_DEP_PKGS),\
+                       $(if $(wildcard $($(p)_DEP_DIR)),\
+                       $(p)_dep_update,\
+                       $(p)_dep_checkout))
+
+   $(foreach p,\
+	 $(SB_DEP_PKGS),\
+	 $(if $($(1)_DEP_SVNURL),\
+	 $(info Using user-defined SVN url for $1 dependency operations)))
+   
+   $(foreach p,\
+    $(SB_DEP_PKGS),\
+    $(if $(call resolve_dep_co_svnurl,$p),\
+    ,\
+    $(error Subversion URL resolution for dependency package $p failed)))
 endif
 
 all: songbird_output build
 
 debug release: all
 
-mozbrowser_update:
-	$(MOZBROWSER_UPDATE)
+%_dep_update:
+	$($*_DEP_UPDATE)
 
-mozbrowser_checkout:
-	$(MOZBROWSER_CHECKOUT)
+%_dep_checkout:
+	$($*_DEP_CHECKOUT)
 
-$(CONFIGSTATUS): $(CONFIGURE) $(SB_MOZBROWSER_DEP) $(OBJDIR) $(DISTDIR)
+$(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 	cd $(OBJDIR) && \
    $(CONFIGURE) $(CONFIGURE_ARGS)
 
@@ -242,9 +259,9 @@ clobber:
 	$(RM) -rf $(OBJDIR)
 
 depclobber:
-	$(RM) -rf $(MOZBROWSER_DIR)
+	$(RM) -r $(foreach p,$(SB_DEP_PKGS), $($(p)_DEP_DIR))
 
 build : $(CONFIGSTATUS)
 	$(MAKE) -C $(OBJDIR)
 
-.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build mozbrowser_checkout mozbrowser_update
+.PHONY : all debug songbird_output run_autoconf run_configure clean clobber depclobber build %_dep_checkout %_dep_update
