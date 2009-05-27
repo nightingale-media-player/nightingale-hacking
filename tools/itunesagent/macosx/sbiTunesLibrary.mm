@@ -634,6 +634,7 @@ sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
     error = GetAEResponseForDescClass(SB_PLAYLIST_CLASS, 
                                       curIndex + 1,
                                       &responseEvent);
+    curIndex++;
     SB_ENSURE_SUCCESS(error, error);
 
     sbiTunesPlaylist *curPlaylist = new sbiTunesPlaylist();
@@ -697,7 +698,6 @@ sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
       break;
     }
 
-    curIndex++;
     delete curPlaylist;
   }
 
