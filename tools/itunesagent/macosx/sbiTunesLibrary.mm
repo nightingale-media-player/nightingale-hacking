@@ -40,6 +40,7 @@
 #define SB_PLAYLIST_CLASS               'cPly'
 #define SB_FOLDER_PLAYLIST_CLASS        'cFoP'
 #define SB_ITUNES_ADD                   'Add '
+#define SB_PARENT_PROPERTY_NAME         'pPlP'
 
 const OSType iTunesSignature = 'hook';
 const OSType AppleSignature  = 'hook';
@@ -617,8 +618,6 @@ sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
   *aOutPlaylist = NULL;
   sbError error;
 
-  // TODO: Ensure that the parent folder of the found playlist is the 
-  //       Songbird folders ID....
   sbiTunesPlaylist *songbirdFolderList;
   error = GetSongbirdPlaylistFolder(&songbirdFolderList);
   SB_ENSURE_SUCCESS(error, error);
@@ -639,13 +638,51 @@ sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
 
     sbiTunesPlaylist *curPlaylist = new sbiTunesPlaylist();
     if (!curPlaylist) {
+      AEDisposeDesc(&responseEvent);
       return sbError("ERROR: Could not create a sbiTunesPlaylist object");
     }
 
     error = curPlaylist->Init(&responseEvent);
     if (error != sbNoError) {
       delete curPlaylist;
+      AEDisposeDesc(&responseEvent);
       return error;
+    }
+
+    AEDisposeDesc(&responseEvent);
+
+    // Ensure that the parent of this playlist is the Songbird playlist folder.
+    AppleEvent parentEvent;
+    error = GetAEResonseForPropertyType(SB_PARENT_PROPERTY_NAME,
+                                        curPlaylist->GetDescriptor(),
+                                        &parentEvent);
+    if (error != sbNoError) {
+      delete curPlaylist;
+      return error;
+    }
+
+    sbiTunesPlaylist curParentList;
+    error = curParentList.Init(&parentEvent);
+    if (error != sbNoError) {
+      // If this is a playlist that doesn't have a parent?
+      AEDisposeDesc(&parentEvent);
+      delete curPlaylist;
+      continue;
+    }
+
+    AEDisposeDesc(&parentEvent);
+
+    std::string curParentListName;
+    error = curParentList.GetPlaylistName(&curParentListName);
+    if (error != sbNoError) {
+      delete curPlaylist;
+      continue;
+    }
+
+    if (!curParentListName.compare("Songbird")) {
+      // This playlist is not a child of the Songbird playlist folder.
+      delete curPlaylist;
+      continue;
     }
 
     std::string curPlaylistName;
@@ -682,10 +719,12 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
   AEDescList aliasList;
   err = AECreateDesc(typeNull, NULL, 0, &aliasList);
   if (err != noErr) {
+    [pool release];
     return sbOSErrError("Could not create a AEDesc", err);
   }
   err = AECreateList(NULL, 0, false, &aliasList);
   if (err != noErr) {
+    [pool release];
     return sbOSErrError("Could not create a AEDescList", err);
   }
 
@@ -732,6 +771,7 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
                           &aliasList,
                           aTargetPlaylist->GetDescriptor());
   if (err != noErr) {
+    [pool release];
     return sbOSErrError("Could not build the AppleEvent", err);
   }
 
@@ -742,6 +782,7 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
                       kAEDefaultTimeout);
   if (err != noErr) {
     AEDisposeDesc(&cmdEvent);
+    [pool release];
     return sbOSErrError("Could not send the AppleEvent", err);
   }
 

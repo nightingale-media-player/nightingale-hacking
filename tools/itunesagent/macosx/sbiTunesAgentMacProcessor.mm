@@ -361,7 +361,7 @@ sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
     error = mLibraryMgr->GetMainLibraryPlaylist(&sourceList);
     SB_ENSURE_SUCCESS(error, error);
 
-    // don't delete this list
+    // don't delete this list, it's owned by |sbiTunesLibraryManager|.
     shouldDeleteList = false;
   }
   else {
@@ -372,14 +372,13 @@ sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
   }
 
   error = mLibraryMgr->AddTrackPaths(aPaths, sourceList);
-  SB_ENSURE_SUCCESS(error, error);
 
   if (shouldDeleteList) {
     delete sourceList;
   }
 
   [pool release];
-  return sbNoError;
+  return error;
 }
 
 sbError
@@ -390,19 +389,37 @@ sbiTunesAgentMacProcessor::RemovePlaylist(std::string const & aPlaylistName)
   sbError error;
   sbiTunesPlaylist *playlist = NULL;
   error = mLibraryMgr->GetSongbirdPlaylist(aPlaylistName, &playlist);
-  SB_ENSURE_SUCCESS(error, error);
+  if (error == sbNoError) {
+    error = mLibraryMgr->DeleteSongbirdPlaylist(playlist);
+  }
 
-  error = mLibraryMgr->DeleteSongbirdPlaylist(playlist);
-  SB_ENSURE_SUCCESS(error, error);
-
+  if (playlist != NULL) {
+    delete playlist;
+  }
+  
   [pool release];
-  return sbNoError;
+  return error;
 }
 
 sbError
 sbiTunesAgentMacProcessor::CreatePlaylist(std::string const & aPlaylistName)
 {
-  return mLibraryMgr->CreateSongbirdPlaylist(aPlaylistName);
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Only create a playlist if it doesn't already exist.
+  sbError error;
+  sbiTunesPlaylist *playlist = NULL;
+  error = mLibraryMgr->GetSongbirdPlaylist(aPlaylistName, &playlist);
+  if (error && playlist == NULL) {
+    error = mLibraryMgr->CreateSongbirdPlaylist(aPlaylistName);
+  }
+
+  if (playlist != NULL) {
+    delete playlist;
+  }
+
+  [pool release];
+  return error;
 }
 
 bool
