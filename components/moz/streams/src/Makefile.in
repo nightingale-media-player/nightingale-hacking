@@ -36,9 +36,11 @@ target_name = sbMozStreams
 endif
 
 CPP_SRCS = sbFileObjectStreams.cpp \
+           sbFileUtils.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/necko \
+               $(topsrcdir)/components/include \
                $(NULL)
 
 STATIC_LIB = $(target_name)$(LIB_SUFFIX)

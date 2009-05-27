@@ -27,31 +27,38 @@
 #ifndef SBFILEUTILS_H_
 #define SBFILEUTILS_H_
 
-#include <nsIFileStreams.h>
-#include <nsILocalFile.h>
-#include <nsNetCID.h>
-#include <nsStringAPI.h>
+#include <nsStringGlue.h>
+
+class nsIFile;
+class nsIInputStream;
+class nsIURI;
 
 /**
- * Helper function to open a stream given a file path
+ * Helper functions to open a stream given a file path
  */
-inline
-nsresult sbOpenInputStream(nsAString const & aPath, nsIInputStream ** aStream) {
-  nsresult rv;
-  nsCOMPtr<nsILocalFile> file = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = file->InitWithPath(aPath);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIFileInputStream> stream = do_CreateInstance(NS_LOCALFILEINPUTSTREAM_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+nsresult sbOpenInputStream(nsAString const & aPath, nsIInputStream ** aStream);
 
-  rv = stream->Init(file, -1, -1, 0);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  *aStream = stream.forget().get();
-  
-  return NS_OK;
-}
+/**
+ * Helper function to open a stream given a file URL
+ */
+nsresult sbOpenInputStream(nsIURI * aURI, nsIInputStream ** aStream);
+
+/**
+ * Helper function to open a stream given a file
+ */
+nsresult sbOpenInputStream(nsIFile * aFile, nsIInputStream ** aStream);
+
+/**
+ * Read a file into a buffer
+ */
+nsresult sbReadFile(nsIFile * aFile, nsACString &aBuffer);
+
+/**
+ * From xpcom/io/nsStreamUtils.h
+ */
+nsresult
+sbConsumeStream(nsIInputStream *aSource, PRUint32 aMaxCount,
+                nsACString &aBuffer);
+
+
 #endif /* SBFILEUTILS_H_ */

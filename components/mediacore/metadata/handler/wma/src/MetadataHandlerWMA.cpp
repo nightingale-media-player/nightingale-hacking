@@ -37,9 +37,12 @@
 #include "sbIPropertyArray.h"
 #include "sbPropertiesCID.h"
 #include "sbMemoryUtils.h"
+#include <sbProxiedComponentManager.h>
 #include <sbStringUtils.h>
+#include <sbFileUtils.h>
 
 #include <nsIChannel.h>
+#include <nsIContentSniffer.h>
 #include <nsIFileStreams.h>
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
@@ -67,7 +70,13 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 // DEFINES ====================================================================
 
 #define COM_ENSURE_SUCCESS(_val)                           \
-  NS_ENSURE_TRUE(SUCCEEDED(_val), NS_ERROR_FAILURE)
+  PR_BEGIN_MACRO                                           \
+    nsresult __rv = _val;                                  \
+    if (FAILED(__rv)) {                                    \
+      NS_ENSURE_SUCCESS_BODY(_val, _val);                  \
+      return NS_ERROR_FAILURE;                             \
+    }                                                      \
+  PR_END_MACRO
 
 #define countof(_array)                                    \
   sizeof(_array) / sizeof(_array[0])
@@ -90,6 +99,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 #define SB_DESCRIPTION  "description"
 #define SB_COMMENT      SB_PROPERTY_COMMENT
 #define SB_LENGTH       SB_PROPERTY_DURATION
+#define SB_ALBUMARTIST  SB_PROPERTY_ALBUMARTISTNAME
 
 #define WMP_ARTIST      "Author"
 #define WMP_TITLE       "Title"
@@ -109,6 +119,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 #define WMP_DESCRIPTION "Description"
 #define WMP_COMMENT     "Comment"
 #define WMP_LENGTH      "Duration"
+#define WMP_ALBUMARTIST "WM/AlbumArtist"
 
 // These are the keys we're going to read from the WM interface 
 // and push to the SB interface.
@@ -141,7 +152,8 @@ static const metadataKeyMapEntry_t kMetadataKeys[] = {
   KEY_MAP_ENTRY(RATING, WMT_TYPE_STRING),
 //  KEY_MAP_ENTRY(DESCRIPTION, WMT_TYPE_STRING),
 //  KEY_MAP_ENTRY(DIRECTOR, WMT_TYPE_STRING),
-  KEY_MAP_ENTRY(LENGTH, WMT_TYPE_QWORD)
+  KEY_MAP_ENTRY(LENGTH, WMT_TYPE_QWORD),
+  KEY_MAP_ENTRY(ALBUMARTIST, WMT_TYPE_STRING),
 };
 #undef KEY_MAP_ENTRY
 
@@ -322,9 +334,29 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   
   sbAutoNSTypePtr<WORD> indices;
   WORD indicesSize = 0;
+
+  nsString value;
+
+  // special case primary image url
+  rv = propArray->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                                   value);
+  if (NS_UNLIKELY(NS_SUCCEEDED(rv))) {
+    PRBool success;
+    rv = SetImageDataInternal(sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
+                              value,
+                              header,
+                              success);
+    if (NS_SUCCEEDED(rv)) {
+      if (success) {
+        ++*_retval;
+      }
+    } else {
+      nsresult __rv = rv;
+      NS_ENSURE_SUCCESS_BODY(rv, rv);
+    }
+  }
   
   for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(kMetadataKeys); ++i) {
-    nsString value;
     rv = propArray->GetPropertyValue(nsDependentString(kMetadataKeys[i].songbirdName),
                                      value);
     if (NS_LIKELY(rv == NS_ERROR_NOT_AVAILABLE)) {
@@ -455,7 +487,195 @@ NS_IMETHODIMP
 sbMetadataHandlerWMA::SetImageData(PRInt32 aType,
                                    const nsAString &aURL)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_NOT_INITIALIZED);
+
+  HRESULT hr;
+  nsresult rv;
+
+  CComPtr<IWMMetadataEditor> editor;
+  hr = WMCreateEditor(&editor);
+  COM_ENSURE_SUCCESS(hr);
+
+  hr = editor->Open(m_FilePath.get());
+  COM_ENSURE_SUCCESS(hr);
+
+  CComPtr<IWMHeaderInfo3> header;
+  hr = editor->QueryInterface(&header);
+  COM_ENSURE_SUCCESS(hr);
+  
+  PRBool success;
+  rv = SetImageDataInternal(aType, aURL, header, success);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (success) {
+    hr = editor->Flush();
+    COM_ENSURE_SUCCESS(hr);
+  } else {
+    hr = editor->Close();
+    COM_ENSURE_SUCCESS(hr);
+  }
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMetadataHandlerWMA::SetImageDataInternal(PRInt32 aType,
+                                           const nsAString &aURL,
+                                           IWMHeaderInfo3 *aHeader,
+                                           PRBool &aSuccess)
+{
+  NS_ENSURE_ARG_POINTER(aHeader);
+
+  HRESULT hr;
+  nsresult rv;
+  sbAutoNSTypePtr<WORD> indices;
+  
+  // find the index of the existing attribute, if any
+  WORD indicesCount = 0;
+  hr = aHeader->GetAttributeIndices(0xFFFF,
+                                    g_wszWMPicture,
+                                    NULL,
+                                    NULL,
+                                    &indicesCount);
+  COM_ENSURE_SUCCESS(hr);
+  indices = reinterpret_cast<WORD*>(NS_Alloc(sizeof(WORD) * indicesCount));
+  NS_ENSURE_TRUE(indices, NS_ERROR_OUT_OF_MEMORY);
+  hr = aHeader->GetAttributeIndices(0xFFFF,
+                                    g_wszWMPicture,
+                                    NULL,
+                                    indices.get(),
+                                    &indicesCount);
+  COM_ENSURE_SUCCESS(hr);
+  
+  nsCString data;
+  WM_PICTURE *picData = (WM_PICTURE*)data.BeginWriting();
+  WORD targetIndex = static_cast<WORD>(-1);
+  if (indicesCount > 0) {
+    for (WORD offset = 0; offset < indicesCount; ++offset) {
+      WORD nameLength = 0;
+      DWORD dataLength = data.Length();
+      WMT_ATTR_DATATYPE type;
+      // get the size of the data
+      hr = aHeader->GetAttributeByIndexEx(0xFFFF,
+                                          indices.get()[offset],
+                                          NULL,
+                                          &nameLength,
+                                          &type,
+                                          NULL,
+                                          reinterpret_cast<BYTE*>(data.BeginWriting()),
+                                          &dataLength);
+      // now we can go resize things
+      if (hr == NS_E_SDK_BUFFERTOOSMALL) {
+        data.SetLength(dataLength);
+        dataLength = data.Length();
+        nameLength = 0;
+        picData = (WM_PICTURE*)data.BeginWriting();
+        hr = aHeader->GetAttributeByIndexEx(0xFFFF,
+                                            indices.get()[offset],
+                                            NULL,
+                                            &nameLength,
+                                            &type,
+                                            NULL,
+                                            reinterpret_cast<BYTE*>(data.BeginWriting()),
+                                            &dataLength);
+      }
+      COM_ENSURE_SUCCESS(hr);
+
+      if (type != WMT_TYPE_BINARY) {
+        LOG(("%s: index %hu got unknown type %i", __FUNCTION__, offset, type));
+        continue;
+      }
+      
+      // look at the picture to see if it's the right type
+      if (picData->bPictureType != aType) {
+        // the picture is of a different type, don't override
+        // NOTE: this only works because both Songbird and WMP use the type IDs
+        // from ID3v1
+        continue;
+      }
+      
+      // this is the right picture
+      targetIndex = indices.get()[offset];
+      break;
+    }
+  }
+  
+  if (aURL.IsEmpty()) {
+    // trying to remove the album art
+    if (targetIndex != static_cast<WORD>(-1)) {
+      hr = aHeader->DeleteAttribute(0xFFFF, targetIndex);
+      COM_ENSURE_SUCCESS(hr);
+      
+      aSuccess = PR_TRUE;
+    } else {
+      // it wasn't found anyway, so end up doing nothing
+      aSuccess = PR_FALSE;
+    }
+    return NS_OK;
+  }
+  
+  // we do want to set a picture.
+  nsCOMPtr<nsIURI> uri;
+  rv = NS_NewURI(getter_AddRefs(uri), aURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(uri, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIFile> artFile;
+  rv = fileURL->GetFile(getter_AddRefs(artFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCString dataString;
+  rv = sbReadFile(artFile, dataString);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // detect the image type
+  nsCString contentType;
+  nsCOMPtr<nsIContentSniffer> contentSniffer = 
+    do_ProxiedGetService("@mozilla.org/image/loader;1", &rv); 
+  NS_ENSURE_SUCCESS(rv, rv); 
+
+  rv = contentSniffer->GetMIMETypeFromContent(NULL,
+                                              reinterpret_cast<const PRUint8*>(dataString.BeginReading()),
+                                              dataString.Length(),
+                                              contentType); 
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  NS_ConvertASCIItoUTF16 conentTypeUnicode(contentType);
+
+  nsString emptyString;
+  picData->pwszMIMEType = conentTypeUnicode.BeginWriting();
+  /* this only works because both songbird and WMA copy the types from id3v1 */
+  picData->bPictureType = aType;
+  picData->pwszDescription = emptyString.BeginWriting();
+  picData->pbData = reinterpret_cast<BYTE*>(dataString.BeginWriting());
+  picData->dwDataLen = dataString.Length();
+  
+  if (targetIndex == static_cast<WORD>(-1)) {
+    // no existing picture found
+    WORD index = 0;
+    hr = aHeader->AddAttribute(0,
+                               g_wszWMPicture,
+                               &index,
+                               WMT_TYPE_BINARY,
+                               0,
+                               reinterpret_cast<const BYTE*>(data.BeginReading()),
+                               sizeof(WM_PICTURE));
+    COM_ENSURE_SUCCESS(hr);
+  } else {
+    // there's an existing picture of the right type
+    hr = aHeader->ModifyAttribute(0xFFFF,
+                                  targetIndex,
+                                  WMT_TYPE_BINARY,
+                                  NULL,
+                                  reinterpret_cast<const BYTE*>(data.BeginReading()),
+                                  sizeof(WM_PICTURE));
+    COM_ENSURE_SUCCESS(hr);
+  }
+
+  aSuccess = PR_TRUE;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -845,12 +1065,10 @@ sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
   hr = reader->QueryInterface(&headerInfo);
   COM_ENSURE_SUCCESS(hr);
 
-  NS_NAMED_LITERAL_STRING(kImageKey, "WM/Picture");
-
   // Get the number of indices
   WORD count = 0;
   hr = headerInfo->GetAttributeIndices(0xFFFF,
-                                       kImageKey.BeginReading(),
+                                       g_wszWMPicture,
                                        NULL,
                                        NULL,
                                        &count);
@@ -863,7 +1081,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
 
   // Ask for the indices
   hr = headerInfo->GetAttributeIndices(0xFFFF,
-                                       kImageKey.BeginReading(),
+                                       g_wszWMPicture,
                                        NULL,
                                        indices.get(),
                                        &count);
@@ -929,7 +1147,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
 
   // read out the metadata
   long count = 0;
-  CComBSTR key(_T("WM/Picture"));
+  CComBSTR key(g_wszWMPicture);
   hr = newMedia->getAttributeCountByType(key, NULL, &count);
   COM_ENSURE_SUCCESS(hr);
 

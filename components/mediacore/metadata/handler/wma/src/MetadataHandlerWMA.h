@@ -126,6 +126,21 @@ protected:
                             nsACString      &aMimeType,
                             PRUint32        *aDataLen,
                             PRUint8        **aData);
+  
+  /**
+   * Internal helper for writing the image data
+   * This is used because both SetImageData(0 and Write() may want to do this,
+   * but we can't have two IWMMetadataEditor instances open on the same file
+   * @param aType the image type
+   * @param aURL the url of the image file (must be local file)
+   * @param aHeader a pre-opened IWMHeaderInfo3 to write to
+   * @param aSuccess [out] whether data was written
+   * @see sbIMetadataHandler::SetImageData
+   */
+  NS_METHOD SetImageDataInternal(PRInt32          aType,
+                                 const nsAString &aURL,
+                                 IWMHeaderInfo3  *aHeader,
+                                 PRBool          &aSuccess);
 
 };
 
