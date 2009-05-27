@@ -110,30 +110,40 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 #define WMP_COMMENT     "Comment"
 #define WMP_LENGTH      "Duration"
 
-#define KEY_MAP_HEAD                /* nothing */
-#define KEY_MAP_FIRST_ENTRY(_entry) SB_##_entry, WMP_##_entry
-#define KEY_MAP_ENTRY(_entry)       , SB_##_entry, WMP_##_entry
-#define KEY_MAP_LAST_ENTRY(_entry)  KEY_MAP_ENTRY(_entry)
-#define KEY_MAP_TAIL                /* nothing */
-
 // These are the keys we're going to read from the WM interface 
 // and push to the SB interface.
-static const char* kMetadataKeys[] = {
-  KEY_MAP_HEAD
-    KEY_MAP_FIRST_ENTRY(ARTIST)
-      KEY_MAP_ENTRY(TITLE)        KEY_MAP_ENTRY(ALBUM)
-      KEY_MAP_ENTRY(GENRE)        KEY_MAP_ENTRY(TRACKNO)
-      KEY_MAP_ENTRY(VENDOR)       KEY_MAP_ENTRY(COPYRIGHT)
-      KEY_MAP_ENTRY(COMPOSER)     KEY_MAP_ENTRY(CONDUCTOR)
-      KEY_MAP_ENTRY(COMMENT)      KEY_MAP_ENTRY(BPM)
-      KEY_MAP_ENTRY(LYRICS)       KEY_MAP_ENTRY(YEAR)
-      KEY_MAP_ENTRY(BITRATE)      KEY_MAP_ENTRY(RATING)
-//      KEY_MAP_ENTRY(DESCRIPTION)  KEY_MAP_ENTRY(DIRECTOR)
-    KEY_MAP_LAST_ENTRY(LENGTH)
-  KEY_MAP_TAIL
-};
+typedef struct
+{
+  PRUnichar const * const songbirdName;
+  TCHAR const * const wmpName;
+  WMT_ATTR_DATATYPE type;
+} metadataKeyMapEntry_t;
 
-#define kMetadataArrayCount countof(kMetadataKeys)
+#define KEY_MAP_ENTRY(_entry, _type) { NS_L(SB_##_entry), \
+                                       NS_L(WMP_##_entry), \
+                                       _type }
+
+static const metadataKeyMapEntry_t kMetadataKeys[] = {
+  KEY_MAP_ENTRY(ARTIST, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(TITLE, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(ALBUM, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(GENRE, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(TRACKNO, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(VENDOR, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(COPYRIGHT, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(COMPOSER, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(CONDUCTOR, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(COMMENT, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(BPM, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(LYRICS, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(YEAR, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(BITRATE, WMT_TYPE_DWORD),
+  KEY_MAP_ENTRY(RATING, WMT_TYPE_STRING),
+//  KEY_MAP_ENTRY(DESCRIPTION, WMT_TYPE_STRING),
+//  KEY_MAP_ENTRY(DIRECTOR, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(LENGTH, WMT_TYPE_QWORD)
+};
+#undef KEY_MAP_ENTRY
 
 static PRBool sCOMInitialized = PR_FALSE;
 // FUNCTIONS ==================================================================
@@ -289,7 +299,130 @@ NS_IMETHODIMP
 sbMetadataHandlerWMA::Write(PRInt32 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(m_PropertyArray, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv;
+  HRESULT hr;
+
   *_retval = 0;
+  nsCOMPtr<sbIMutablePropertyArray> propArray;
+  m_PropertyArray.forget(getter_AddRefs(propArray));
+
+  CComPtr<IWMMetadataEditor> editor;
+  hr = WMCreateEditor(&editor);
+  COM_ENSURE_SUCCESS(hr);
+
+  hr = editor->Open(m_FilePath.get());
+  COM_ENSURE_SUCCESS(hr);
+
+  CComPtr<IWMHeaderInfo3> header;
+  hr = editor->QueryInterface(&header);
+  COM_ENSURE_SUCCESS(hr);
+  
+  sbAutoNSTypePtr<WORD> indices;
+  WORD indicesSize = 0;
+  
+  for (PRUint32 i = 0; i < NS_ARRAY_LENGTH(kMetadataKeys); ++i) {
+    nsString value;
+    rv = propArray->GetPropertyValue(nsDependentString(kMetadataKeys[i].songbirdName),
+                                     value);
+    if (NS_LIKELY(rv == NS_ERROR_NOT_AVAILABLE)) {
+      // no data
+      continue;
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // find the index of the existing attribute, if any
+    WORD indicesCount = 0;
+    hr = header->GetAttributeIndices(0xFFFF,
+                                     kMetadataKeys[i].wmpName,
+                                     NULL,
+                                     NULL,
+                                     &indicesCount);
+    COM_ENSURE_SUCCESS(hr);
+    if (indicesCount > indicesSize) {
+      indices = reinterpret_cast<WORD*>(NS_Alloc(sizeof(WORD) * indicesCount));
+      NS_ENSURE_TRUE(indices, NS_ERROR_OUT_OF_MEMORY);
+      indicesSize = indicesCount;
+    }
+    indicesCount = indicesSize;
+    hr = header->GetAttributeIndices(0xFFFF,
+                                     kMetadataKeys[i].wmpName,
+                                     NULL,
+                                     indices.get(),
+                                     &indicesCount);
+    COM_ENSURE_SUCCESS(hr);
+    
+    const BYTE* data = NULL;
+    QWORD dataBuffer;
+    DWORD dataLength = 0;
+    switch (kMetadataKeys[i].type) {
+      case WMT_TYPE_STRING: {
+        data = reinterpret_cast<const BYTE*>(value.get());
+        dataLength = value.Length() * sizeof(PRUnichar);
+        break;
+      }
+      case WMT_TYPE_DWORD: {
+        DWORD* dword = reinterpret_cast<DWORD*>(&dataBuffer);
+        PRInt32 success = PR_sscanf(NS_ConvertUTF16toUTF8(value).BeginReading(),
+                                    "%lu",
+                                    dword);
+        if (NS_UNLIKELY(success < 1)) {
+          // the value is not a number but we expected one
+          continue;
+        }
+        data = reinterpret_cast<BYTE*>(dword);
+        dataLength = sizeof(DWORD);
+        break;
+      }
+      case WMT_TYPE_QWORD: {
+        PRInt32 success = PR_sscanf(NS_ConvertUTF16toUTF8(value).BeginReading(),
+                                    "%llu",
+                                    &dataBuffer);
+        if (NS_UNLIKELY(success < 1)) {
+          // the value is not a number but we expected one
+          continue;
+        }
+        data = reinterpret_cast<BYTE*>(&dataBuffer);
+        dataLength = sizeof(QWORD);
+        break;
+      }
+      default: {
+        LOG(("%s: don't know how to handle type %i",
+             __FUNCTION__,
+             kMetadataKeys[i].type));
+        NS_WARNING(__FUNCTION__ ": don't know how to handle type");
+        continue;
+      }
+    }
+    if (indicesCount > 0) {
+      TRACE(("%s: Modifying %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
+      hr = header->ModifyAttribute(0xFFFF,
+                                   *(indices.get()),
+                                   kMetadataKeys[i].type,
+                                   NULL,
+                                   data,
+                                   dataLength);
+      COM_ENSURE_SUCCESS(hr);
+    } else {
+      TRACE(("%s: Adding %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
+      WORD index;
+      hr = header->AddAttribute(0xFFFF,
+                                kMetadataKeys[i].wmpName,
+                                &index,
+                                kMetadataKeys[i].type,
+                                0,
+                                data,
+                                dataLength);
+      COM_ENSURE_SUCCESS(hr);
+    }
+    ++*_retval;
+  }
+  
+  hr = editor->Flush();
+  COM_ENSURE_SUCCESS(hr);
+
   return NS_OK;
 } //Write
 
@@ -338,8 +471,7 @@ NS_IMETHODIMP
 sbMetadataHandlerWMA::SetProps(sbIMutablePropertyArray *props)
 {
   m_PropertyArray = props;
-  // Should we maybe copy this rather than take a reference to it?
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -573,17 +705,16 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
   COM_ENSURE_SUCCESS(hr);
 
   nsString value, wmpKey;
-  PRUint32 count = kMetadataArrayCount;
 
-  for (PRUint32 index = 0; index < count; index += 2) {
-    wmpKey.AssignLiteral(kMetadataKeys[index + 1]);
+  for (PRUint32 index = 0; index < NS_ARRAY_LENGTH(kMetadataKeys); ++index) {
+    wmpKey.Assign(nsDependentString(kMetadataKeys[index].wmpName));
 
     value = ReadHeaderValue(headerInfo, wmpKey);
 
     // If there is a value, add it to the Songbird values.
     if (!value.IsEmpty()) {
       nsAutoString sbKey;
-      sbKey.AssignLiteral(kMetadataKeys[index]);
+      sbKey.Assign(nsDependentString(kMetadataKeys[index].songbirdName));
       nsresult rv = m_PropertyArray->AppendProperty(sbKey, value);
       if (NS_SUCCEEDED(rv)) {
         *_retval += 1;
@@ -638,10 +769,9 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
   rv = CreateWMPMediaItem(aFilePath, &newMedia);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 count = kMetadataArrayCount;
-  for (PRUint32 index = 0; index < count; index += 2) {
+  for (PRUint32 index = 0; index < NS_ARRAY_LENGTH(kMetadataKeys); ++index) {
 
-    CComBSTR key(kMetadataKeys[index + 1]);
+    CComBSTR key(kMetadataKeys[index].wmpName);
     nsAutoString metadataValue;
     PRUint32 metadataValueType = 0;
 
@@ -677,7 +807,7 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
 
     if (!metadataValue.IsEmpty()) {
       nsAutoString sbKey;
-      sbKey.AssignLiteral(kMetadataKeys[index]);
+      sbKey.Assign(nsDependentString(kMetadataKeys[index].songbirdName));
       nsresult rv =
         m_PropertyArray->AppendProperty(sbKey, metadataValue);
       if (NS_SUCCEEDED(rv))
