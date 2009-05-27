@@ -80,6 +80,7 @@
 #include <nsMemory.h>
 
 #include <flacfile.h>
+#include <oggflacfile.h>
 #include <mpcfile.h>
 #include <mpegfile.h>
 #include <urllinkframe.h>
@@ -1743,7 +1744,7 @@ nsresult sbMetadataHandlerTaglib::ReadMetadata()
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg"))) {
             isValid = ReadOGGFile();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
-            isValid = ReadOGGFile();
+            isValid = ReadOGAFile();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogv"))) {
             isValid = ReadOGGFile();
         } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogm"))) {
@@ -2399,6 +2400,49 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile()
     return (isValid);
 }
 
+/*
+ * ReadOGAFile
+ *   <--                        True if file has valid OGG metadata.
+ *
+ *   This function reads metadata from the OGG file with the file path specified
+ * by mMetadataPath, and is special-cased to try ogg vorbis/ogg flac.
+ */
+
+PRBool sbMetadataHandlerTaglib::ReadOGAFile()
+{
+    nsAutoPtr<TagLib::Ogg::FLAC::File> pTagFile;
+    PRBool                          isValid = PR_TRUE;
+    nsresult                        result = NS_OK;
+    
+    pTagFile = new TagLib::Ogg::FLAC::File();
+    if (!pTagFile)
+        result = NS_ERROR_OUT_OF_MEMORY;
+    if (NS_SUCCEEDED(result))
+        result = OpenTagFile(pTagFile);
+    if (NS_SUCCEEDED(result))
+        pTagFile->read();
+    if (NS_SUCCEEDED(result))
+        result = CheckChannelRestart();
+
+    /* Read the base file metadata. */
+    if (NS_SUCCEEDED(result))
+        isValid = ReadFile(pTagFile);
+
+    // If we have an invalid Ogg FLAC file, this is probably Ogg Vorbis.
+    // and if it isn't, we're just going to give up.
+    // Switching the metadata handler to use FileRef for reading
+    // would be a good idea, since that's how we write and this is
+    // also fixed there.
+    if (!isValid) {
+      ReadOGGFile();
+    }
+
+    /* File is invalid on any error. */
+    if (NS_FAILED(result))
+        isValid = PR_FALSE;
+
+    return (isValid);
+}
 
 /*
  * AddMetadataValue

@@ -341,6 +341,8 @@ private:
 
     PRBool ReadOGGFile();
 
+    PRBool ReadOGAFile();
+
     PRBool ReadFLACFile();
 
     PRBool ReadMPCFile();
