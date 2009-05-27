@@ -182,9 +182,9 @@
 
 <!ENTITY equalizer.title          "Equalizer" >
 <!ENTITY equalizer.on.checkbox    "On" >
-<!ENTITY equalizer.band0.label    "30" >
-<!ENTITY equalizer.band1.label    "60" >
-<!ENTITY equalizer.band2.label    "120" >
+<!ENTITY equalizer.band0.label    "32" >
+<!ENTITY equalizer.band1.label    "64" >
+<!ENTITY equalizer.band2.label    "125" >
 <!ENTITY equalizer.band3.label    "250" >
 <!ENTITY equalizer.band4.label    "500" >
 <!ENTITY equalizer.band5.label    "1K" >

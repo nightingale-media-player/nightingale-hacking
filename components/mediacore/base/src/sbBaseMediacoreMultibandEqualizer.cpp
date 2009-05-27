@@ -96,7 +96,7 @@ sbBaseMediacoreMultibandEqualizer::EQUALIZER_BAND_COUNT_DEFAULT = 10;
 
 /*static*/ const PRUint32 
 sbBaseMediacoreMultibandEqualizer::EQUALIZER_BANDS_10[10] = 
-  {30, 60, 120, 250, 500, 1000, 2000, 4000, 8000, 16000};
+  {32, 64, 125, 250, 500, 1000, 2000, 4000, 8000, 16000};
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseMediacoreMultibandEqualizer,
                               sbIMediacoreMultibandEqualizer)
