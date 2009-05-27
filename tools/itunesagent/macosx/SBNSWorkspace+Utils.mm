@@ -26,88 +26,121 @@
 
 #import "SBNSWorkspace+Utils.h"
 
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <signal.h>
 
-//
-// \brief Helper method for finding a process with a given bundle ID.
-//
-OSErr
-GetProcessSerialNumber(NSString *aBundleId, 
-                       ProcessSerialNumberPtr aOutSerialNumber)
+#include <vector>
+#include <string>
+
+typedef std::vector<kinfo_proc>     sbKINFOVector;
+typedef sbKINFOVector::iterator     sbKINFOVectorIter;
+typedef std::vector<pid_t>          sbPIDVector;
+typedef sbPIDVector::const_iterator sbPIDVectorIter;
+
+
+//------------------------------------------------------------------------------
+// BSD System Process Helper methods 
+
+std::string
+GetPidName(pid_t aPid)
 {
-  if (!aBundleId || !aOutSerialNumber) {
-    return -1; 
-  }
-  // Need to find out information about the current process ID.
-  ProcessSerialNumber runningProcess;
-  GetCurrentProcess(&runningProcess);
-    UInt32 flags = kProcessDictionaryIncludeAllInformationMask;
+  std::string processName;
 
-  NSDictionary *processDict = 
-    (NSDictionary *)ProcessInformationCopyDictionary(&runningProcess, flags);
+  int mib[] = {
+    CTL_KERN,
+    KERN_PROCARGS,
+    aPid
+  };
 
-  NSNumber *runningProcessPID = [processDict objectForKey:@"pid"];
+  // Get the size of the buffer needed for the process name.
+  size_t dataLength = 0;
+  if (sysctl(mib, 3, NULL, &dataLength, NULL, 0) >= 0) {
+    // Get the full path of the executable.
+    std::string processPath;
+    processPath.resize(dataLength);
 
-  // Since the regular API's on this interface doesn't look at background
-  // processes that are being run by the user, we need to use the HIServices
-  // API for this (it's bundled under ApplicationServices since 10.2).
-  BOOL found = NO;
-  aOutSerialNumber->lowLongOfPSN = kNoProcess;
-  aOutSerialNumber->highLongOfPSN = kNoProcess;
-
-  // Loop through all the users processes to see if a match is found to the
-  // passed in bundle identifer.
-  while (GetNextProcess(aOutSerialNumber) == noErr) {
-    NSDictionary *curProcessDict = 
-      (NSDictionary *)ProcessInformationCopyDictionary(aOutSerialNumber,
-                                                       flags);
-    // Don't attempt to get any keys out of a nil dictionary. This could 
-    // happen if the user gets a process reference for something they can't
-    // read.
-    if (!curProcessDict) {
-      continue;
-    }
-
-    NSString *curProcessBundleId = 
-      [curProcessDict objectForKey:(NSString *)kCFBundleIdentifierKey];
-    if ([curProcessBundleId isEqualToString:aBundleId]) {
-      // Since we have a matching bundle ID - make sure this isn't the current
-      // process by matching up the PIDs.
-      NSNumber *curProcessPID = [curProcessDict objectForKey:@"pid"];
-      if (![runningProcessPID isEqualToNumber:curProcessPID]) {
-        found = YES;
-        break;
+    if (sysctl(mib, 3, &processPath[0], &dataLength, NULL, 0) >= 0) {
+      // Find the last part of the path to get the executable name.
+      size_t endIndex = processPath.find('\0');
+      size_t lastSlashIndex = processPath.rfind('/', endIndex);
+      if (lastSlashIndex != std::string::npos) {
+        processName = processPath.substr(lastSlashIndex + 1,
+                                         endIndex - lastSlashIndex - 1);
       }
     }
   }
 
-  if (found) {
-    return noErr;
-  }
-  else {
-    return -1;
-  }
+  return processName;
 }
 
+sbPIDVector
+GetActiveProcessesByName(const std::string & aProcessName)
+{
+  sbPIDVector processVector;
+
+  int mib[] = {
+    CTL_KERN,
+    KERN_PROC,
+    KERN_PROC_UID,
+    geteuid()
+  };
+
+  // Get the size of the kinfo_proc array buffer.
+  size_t bufferLength = 0;
+  if (sysctl(mib, 4, NULL, &bufferLength, NULL, 0) < 0) {
+    return processVector;
+  }
+
+  // Set the size of the vector storage.
+  sbKINFOVector kinfoVector;
+  kinfoVector.resize(bufferLength / sizeof(struct kinfo_proc));
+  
+  // Get the lists of processes using the buffer space.
+  if (sysctl(mib, 4, &kinfoVector[0], &bufferLength, NULL, 0) < 0) {
+    return processVector;
+  }
+
+  // Now find any matching process names.
+  sbKINFOVectorIter begin = kinfoVector.begin();
+  sbKINFOVectorIter end = kinfoVector.end();
+  sbKINFOVectorIter next;
+  for (next = begin; next != end; ++next) {
+    // Don't bother appending the current process ID.
+    if ((*next).kp_proc.p_pid != getpid()) {
+      std::string curProcessName = GetPidName((*next).kp_proc.p_pid);
+      if (curProcessName.compare(aProcessName) == 0) {
+        processVector.push_back((*next).kp_proc.p_pid);
+      }
+    }
+  }
+
+  return processVector;
+}
+
+inline void
+SigKill(pid_t aPid)
+{
+  kill(aPid, SIGKILL);
+}
+
+//------------------------------------------------------------------------------
 
 @implementation NSWorkspace (SongbirdProcessUtils)
 
-+ (BOOL)isProcessAlreadyRunning:(NSString *)aBundleIdentifier
++ (BOOL)isProcessAlreadyRunning:(NSString *)aProcessName
 {
-  // If |GetProcessSerialNumber()| returns |noErr| than a process is currently
-  // running with the passed in bundle identifier.
-  ProcessSerialNumber bundleIDProcess;
-  OSErr err = GetProcessSerialNumber(aBundleIdentifier, &bundleIDProcess);
-  return err == noErr;
+  sbPIDVector const & processes = 
+    GetActiveProcessesByName([aProcessName UTF8String]); 
+  return processes.size() > 0;
 }
 
-+ (void)killAllRunningProcesses:(NSString *)aBundleIdentifier
++ (void)killAllRunningProcesses:(NSString *)aProcessName
 {
-  ProcessSerialNumber bundleIDProcess;
-  OSErr err = GetProcessSerialNumber(aBundleIdentifier, &bundleIDProcess);
-  while (err == noErr) {
-    KillProcess(&bundleIDProcess);
-    err = GetProcessSerialNumber(aBundleIdentifier, &bundleIDProcess);
-  }
+  sbPIDVector const & processes = 
+    GetActiveProcessesByName([aProcessName UTF8String]);
+  
+  std::for_each(processes.begin(), processes.end(), SigKill);
 }
 
 @end

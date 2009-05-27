@@ -26,7 +26,6 @@
 
 #import <AppKit/AppKit.h>
 
-
 //
 // \brief NSWorkspace utilities category.
 //
@@ -34,16 +33,15 @@
 @interface NSWorkspace (SongbirdProcessUtils)
 
 //
-// \brief Find out if a process with the same bundle ID is already running
-//        as a process under the current user.
+// \brief Find out if a process is already running.
 //
-+ (BOOL)isProcessAlreadyRunning:(NSString *)aBundleIdentifier;
++ (BOOL)isProcessAlreadyRunning:(NSString *)aProcessName;
 
 //
-// \brief Find and kill all the proceses (other than the current process) that
-//        match a given bundle ID.
+// \brief Find and kill all the processes (other than the current process) that
+//        match a given process name.
 //
-+ (void)killAllRunningProcesses:(NSString *)aBundleIdentifier;
++ (void)killAllRunningProcesses:(NSString *)aProcessName;
 
 @end
 

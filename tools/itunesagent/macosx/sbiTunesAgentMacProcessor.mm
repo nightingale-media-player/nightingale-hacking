@@ -205,7 +205,12 @@ sbiTunesAgentMacProcessor::GetIsItunesRunning()
 sbError
 sbiTunesAgentMacProcessor::KillAllAgents()
 {
-  [NSWorkspace killAllRunningProcesses:kAgentBundleId];
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  NSString *agentName = 
+    [NSString stringWithUTF8String:STRINGIZE(SB_SIMPLE_PROGRAM)];
+  [NSWorkspace killAllRunningProcesses:agentName];
+  
+  [pool release];
   return sbNoError;
 }
 
@@ -330,7 +335,9 @@ sbiTunesAgentMacProcessor::GetIsAgentRunning()
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  bool retval = [NSWorkspace isProcessAlreadyRunning:kAgentBundleId];
+  NSString *agentName = 
+    [NSString stringWithUTF8String:STRINGIZE(SB_SIMPLE_PROGRAM)];
+  bool retval = [NSWorkspace isProcessAlreadyRunning:agentName];
   
   [pool release];
   return retval;
