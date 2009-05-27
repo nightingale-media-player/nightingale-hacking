@@ -293,32 +293,6 @@ PublicPlaylistCommands.prototype = {
                                                 "library_cmd_edit",
                                                 plCmd_IsAnyTrackSelected);
 
-      this.m_cmd_Edit.setCommandVisibleCallback(null,
-                                                "library_cmd_edit",
-                                                plCmd_CanModifyPlaylist);
-
-      this.m_cmd_Edit.appendAction(null,
-                                   "library_cmd_edit_readonly",
-                                   "&command.edit.readonly",
-                                   "&command.tooltip.edit.readonly",
-                                   plCmd_Edit_TriggerCallback);
-
-      this.m_cmd_Edit.setCommandShortcut(null,
-                                         "library_cmd_edit_readonly",
-                                         "&command.shortcut.key.edit",
-                                         "&command.shortcut.keycode.edit",
-                                         "&command.shortcut.modifiers.edit",
-                                         true);
-
-      this.m_cmd_Edit.setCommandEnabledCallback(null,
-                                                "library_cmd_edit_readonly",
-                                                plCmd_IsAnyTrackSelected);
-
-      this.m_cmd_Edit.setCommandVisibleCallback(null,
-                                                "library_cmd_edit_readonly",
-                                                plCmd_NOT(
-                                                  plCmd_CanModifyPlaylist));
-
       // --------------------------------------------------------------------------
       // The DOWNLOAD button
       // --------------------------------------------------------------------------

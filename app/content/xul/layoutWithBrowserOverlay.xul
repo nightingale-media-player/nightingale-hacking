@@ -84,6 +84,10 @@
         <menuitem id="menuitem_file_print" key="printKb" command="cmd_print" 
                   accesskey="&printCmd.accesskey;" label="&printCmd.label;"
                   insertbefore="menu_LocaleSeparator"/>
+        <menuitem id="menuitem_tools_metadata" key="trackeditor-key2"
+                  class="menuitem-iconic" label="&menu.file.metadata;"
+                  accesskey="&menu.file.metadata.accesskey;"
+                  insertbefore="menu_LocaleSeparator" command="cmd_metadata"/>
       </menupopup>
 
 
@@ -239,10 +243,6 @@
       </menupopup>
 
       <menupopup id="menu_ToolsPopup">
-        <menuitem id="menuitem_tools_metadata" key="trackeditor-key2"
-                  class="menuitem-iconic" label="&menu.tools.metadata;"
-                  accesskey="&menu.tools.metadata.accesskey;"
-                  insertbefore="menu_downloadmgr" command="cmd_metadata"/>
         <menuitem id="menuitem_tools_artwork" key="key_getartwork"
                   class="menuitem-iconic" label="&menu.tools.getartwork;"
                   accesskey="&menu.tools.getartwork.accesskey;"

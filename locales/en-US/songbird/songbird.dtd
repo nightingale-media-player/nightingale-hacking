@@ -34,6 +34,7 @@
 <!ENTITY menu.file.library      "Import a Library..." >
 <!ENTITY menu.file.newtab       "New Tab" >
 <!ENTITY menu.file.closetab     "Close Tab" >
+<!ENTITY menu.file.metadata     "View Metadata...">
 <!ENTITY menu.file.scan         "Import Media..." >
 <!ENTITY menu.file.exit         "Exit" >
 
@@ -73,7 +74,6 @@
 <!ENTITY servicepane.title.label        "Service Pane">
 
 <!ENTITY menu.tools            "Tools" >
-<!ENTITY menu.tools.metadata   "Metadata Editor...">
 <!ENTITY menu.tools.getartwork "Get Album Artwork...">
 
 <!ENTITY menu.help          "Help" >
@@ -223,6 +223,7 @@
 <!ENTITY menu.file.open.accesskey         "O" >
 <!ENTITY menu.file.url.accesskey          "A" >
 <!ENTITY menu.file.playlist.accesskey     "I" >
+<!ENTITY menu.file.metadata.accesskey     "V" >
 <!ENTITY menu.file.library.accesskey      "P" >
 <!ENTITY menu.file.newtab.accesskey       "T" >
 <!ENTITY menu.file.closetab.accesskey     "C" >
@@ -260,7 +261,6 @@
 
 
 <!ENTITY menu.tools.accesskey            "T" >
-<!ENTITY menu.tools.metadata.accesskey   "E" >
 <!ENTITY menu.tools.getartwork.accesskey "G" >
 
 <!ENTITY menu.tools.reveal             "Show File" >
