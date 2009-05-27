@@ -982,6 +982,11 @@ var TrackEditor = {
       for (var i = 0; i < items.length; i++) {
         var value = TrackEditor.state.getPropertyValue(property);
         var item = items[i];
+        // don't modify values for non-user-editable items
+        if (!LibraryUtils.canEditMetadata(item)) {
+          continue;
+        }
+
         if (value != item.getProperty(property)) {
           // Completely remove empty properties
           // HACK for 0.7: primaryImageURL likes to be set to ""
