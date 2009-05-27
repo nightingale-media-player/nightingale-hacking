@@ -252,7 +252,7 @@ FunctionEnd
 Function PreviousInstallationCheck
    Call GetOldVersionLocation
    ${If} $0 != ""
-      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageSameFolder}" /SD IDNO IDYES CallCallUninstaller
+      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageOldVersion}" /SD IDNO IDYES CallCallUninstaller
       Abort
 
       CallCallUninstaller:
