@@ -65,11 +65,8 @@
 class sbiTunesAgentProcessor
 {
 public:
-#if XP_WIN  
   static int const BATCH_SIZE = 10;
-#else
-  static int const BATCH_SIZE = 300;
-#endif
+  
   /**
    * Clean up any resources
    */
