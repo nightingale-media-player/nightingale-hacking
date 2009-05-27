@@ -339,133 +339,168 @@ function isConfigurationValid() {
 function doOK()
 {
   checkLimit();
-  var smart_conditions = document.getElementById("smart_conditions");
-  if (isConfigurationValid()) {
-    var list = window.arguments[0];
-    
-    if (!(list instanceof sbILocalDatabaseSmartMediaList)) {
-      var paramObject = list;
+  if (!isConfigurationValid())
+    return true;
+
+  // Get the smart playlist, creating one if necessary
+  var list = window.arguments[0];
+  var paramObject = null;
+  var newSmartPlaylist = null;
+  if (!(list instanceof sbILocalDatabaseSmartMediaList)) {
+    // Get the window parameters object
+    paramObject = list;
+
+    // If a new smart playlist has already been created, use it.  Otherwise,
+    // create a new one.
+    if (paramObject.newSmartPlaylist)
+      list = paramObject.newSmartPlaylist;
+    else
       list = paramObject.newPlaylistFunction();
-      paramObject.newSmartPlaylist = list;
-    }
-    var pm = Components.classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
-                               .getService(Ci.sbIPropertyManager);
-
-    // Save conditions
-    var conditions = smart_conditions.conditions;
-    
-    list.clearConditions();
-    var check = document.getElementById("smart_match_check");
-    if (check.checked) {
-      // the rules themselves are valid, but some values do not make sense to
-      // make playlists for (eg. contains "" ?), so we take care of this here,
-      // by showing those fields as invalid after the user clicks ok.
-      if (!testAdditionalRestrictions(conditions, smart_conditions)) {
-        updateOkButton();
-        return false;
-      }
-      conditions.forEach(function(condition) {
-        var info = pm.getPropertyInfo(condition.metadata);
-        // access specialized operators
-        switch (info.type) {
-          case "datetime":
-            info.QueryInterface(Ci.sbIDatetimePropertyInfo);
-            break;
-          case "boolean":
-            info.QueryInterface(Ci.sbIBooleanPropertyInfo);
-            break;
-        }
-        var op = info.getOperator(condition.condition);
-        var unit;
-        var leftValue;
-        var rightValue;
-        if (op.operator != info.OPERATOR_ISTRUE &&
-            op.operator != info.OPERATOR_ISFALSE &&
-            op.operator != info.OPERATOR_ISSET &&
-            op.operator != info.OPERATOR_ISNOTSET)
-          leftValue = condition.value;
-        if (op.operator == info.OPERATOR_BETWEEN ||
-            op.operator == info.OPERATOR_BETWEENDATES)
-          rightValue = condition.value2;
-        if (condition.useunits)
-          unit = condition.unit;
-        list.appendCondition(condition.metadata,
-                             op,
-                             leftValue,
-                             rightValue,
-                             unit);
-      });
-    }
-    
-    // Save match
-    var matchSomething = document.getElementById("smart_match_check");
-    var matchAnyAll = document.getElementById("smart_any_list");
-    if (matchSomething.checked) {
-      if (matchAnyAll.value == "all") {
-        list.matchType = sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
-      }
-      else {
-        list.matchType = sbILocalDatabaseSmartMediaList.MATCH_TYPE_ANY;
-      }
-    }
-    else {
-     list.matchType = sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
-    }
-
-    // Save limit
-    var limit = document.getElementById("smart_songs_check");
-    var count = document.getElementById("smart_songs_count");
-    var limitType = document.getElementById("smart_songs_list");
-
-    list.setProperty(SB_PROPERTY_UILIMITTYPE, limitType.value);
-
-    if (limit.checked) {
-      switch(limitType.value) {
-        case "songs":
-          list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
-          list.limit = count.value;
-        break;
-        case "minutes":
-          list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
-          list.limit = count.value * USECS_PER_MINUTE;
-        break;
-        case "hours":
-          list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
-          list.limit = count.value * USECS_PER_HOUR;
-        break;
-        case "MB":
-          list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
-          list.limit = count.value * BYTES_PER_MB;
-        break;
-        case "GB":
-          list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
-          list.limit = count.value * BYTES_PER_GB;
-        break;
-      }
-    }
-    else {
-      list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE;
-      list.limit = 0;
-    }
-
-    // Save select by
-    var selectBy = document.getElementById("smart_selected_list");
-    if (selectBy.value == "random") {
-      list.randomSelection = true;
-      list.selectPropertyID = "";
-    }
-    else {
-      list.randomSelection = false;
-      setSelectBy(list, selectBy.value);
-    }
-
-    var autoUpdate = document.getElementById("smart_autoupdate_check");
-    list.autoUpdate = autoUpdate.checked;
-    
-    SmartMediaListColumnSpecUpdater.update(list);
-
-    list.rebuild();
+    newSmartPlaylist = list;
   }
+
+  // Try configuring the smart playlist
+  var success;
+  try {
+    success = configureList(list);
+  } catch (ex) {
+    success = false;
+  }
+
+  // Remove new smart playlist on failure
+  if (!success && newSmartPlaylist) {
+    newSmartPlaylist.library.remove(newSmartPlaylist);
+    newSmartPlaylist = null;
+  }
+
+  // Return new smart playlist
+  if (paramObject)
+    paramObject.newSmartPlaylist = newSmartPlaylist;
+
+  return success;
+}
+
+function configureList(list)
+{
+  var pm = Components
+             .classes["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
+             .getService(Ci.sbIPropertyManager);
+
+  // Save conditions
+  var smart_conditions = document.getElementById("smart_conditions");
+  var conditions = smart_conditions.conditions;
+    
+  list.clearConditions();
+  var check = document.getElementById("smart_match_check");
+  if (check.checked) {
+    // the rules themselves are valid, but some values do not make sense to
+    // make playlists for (eg. contains "" ?), so we take care of this here,
+    // by showing those fields as invalid after the user clicks ok.
+    if (!testAdditionalRestrictions(conditions, smart_conditions)) {
+      updateOkButton();
+      return false;
+    }
+    conditions.forEach(function(condition) {
+      var info = pm.getPropertyInfo(condition.metadata);
+      // access specialized operators
+      switch (info.type) {
+        case "datetime":
+          info.QueryInterface(Ci.sbIDatetimePropertyInfo);
+          break;
+        case "boolean":
+          info.QueryInterface(Ci.sbIBooleanPropertyInfo);
+          break;
+      }
+      var op = info.getOperator(condition.condition);
+      var unit;
+      var leftValue;
+      var rightValue;
+      if (op.operator != info.OPERATOR_ISTRUE &&
+          op.operator != info.OPERATOR_ISFALSE &&
+          op.operator != info.OPERATOR_ISSET &&
+          op.operator != info.OPERATOR_ISNOTSET)
+        leftValue = condition.value;
+      if (op.operator == info.OPERATOR_BETWEEN ||
+          op.operator == info.OPERATOR_BETWEENDATES)
+        rightValue = condition.value2;
+      if (condition.useunits)
+        unit = condition.unit;
+      list.appendCondition(condition.metadata,
+                           op,
+                           leftValue,
+                           rightValue,
+                           unit);
+    });
+  }
+    
+  // Save match
+  var matchSomething = document.getElementById("smart_match_check");
+  var matchAnyAll = document.getElementById("smart_any_list");
+  if (matchSomething.checked) {
+    if (matchAnyAll.value == "all") {
+      list.matchType = sbILocalDatabaseSmartMediaList.MATCH_TYPE_ALL;
+    }
+    else {
+      list.matchType = sbILocalDatabaseSmartMediaList.MATCH_TYPE_ANY;
+    }
+  }
+  else {
+   list.matchType = sbILocalDatabaseSmartMediaList.MATCH_TYPE_NONE;
+  }
+
+  // Save limit
+  var limit = document.getElementById("smart_songs_check");
+  var count = document.getElementById("smart_songs_count");
+  var limitType = document.getElementById("smart_songs_list");
+
+  list.setProperty(SB_PROPERTY_UILIMITTYPE, limitType.value);
+
+  if (limit.checked) {
+    switch(limitType.value) {
+      case "songs":
+        list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_ITEMS;
+        list.limit = count.value;
+      break;
+      case "minutes":
+        list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
+        list.limit = count.value * USECS_PER_MINUTE;
+      break;
+      case "hours":
+        list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_USECS;
+        list.limit = count.value * USECS_PER_HOUR;
+      break;
+      case "MB":
+        list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
+        list.limit = count.value * BYTES_PER_MB;
+      break;
+      case "GB":
+        list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_BYTES;
+        list.limit = count.value * BYTES_PER_GB;
+      break;
+    }
+  }
+  else {
+    list.limitType = sbILocalDatabaseSmartMediaList.LIMIT_TYPE_NONE;
+    list.limit = 0;
+  }
+
+  // Save select by
+  var selectBy = document.getElementById("smart_selected_list");
+  if (selectBy.value == "random") {
+    list.randomSelection = true;
+    list.selectPropertyID = "";
+  }
+  else {
+    list.randomSelection = false;
+    setSelectBy(list, selectBy.value);
+  }
+
+  var autoUpdate = document.getElementById("smart_autoupdate_check");
+  list.autoUpdate = autoUpdate.checked;
+    
+  SmartMediaListColumnSpecUpdater.update(list);
+
+  list.rebuild();
   
   return true;
 }
