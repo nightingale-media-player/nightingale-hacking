@@ -206,6 +206,45 @@ Function GetOldVersionLocation
    StrCpy $0 $R0
 FunctionEnd
 
+; This checks for pre-1.2 versions, which used entirely different reg keys
+;
+; We return the first installation we find and search in reverse order of
+; releases, i.e. newer releases first.
+;
+; See bug 16567 for more details.
+
+Function GetAncientVersionLocation
+   ${If} $InstallerType == "nightly"
+      MessageBox MB_OK "Assertion Failed: InstallerType = nightly in GetOldVersionLocation; aborting."
+      Abort
+   ${EndIf}
+
+   StrCpy $0 ""
+
+   StrCpy $R1 "Software\Songbird\${AncientRegKey112}"
+   ReadRegStr $R0 HKLM $R1 "InstallDir"
+   ${If} $R0 != ""
+      StrCpy $0 $R0
+      Goto out
+   ${EndIf}
+
+   StrCpy $R1 "Software\Songbird\${AncientRegKey111}"
+   ReadRegStr $R0 HKLM $R1 "InstallDir"
+   ${If} $R0 != ""
+      StrCpy $0 $R0
+      Goto out
+   ${EndIf}
+
+   StrCpy $R1 "Software\Songbird\${AncientRegKey100}"
+   ReadRegStr $R0 HKLM $R1 "InstallDir"
+   ${If} $R0 != ""
+      StrCpy $0 $R0
+      Goto out
+   ${EndIf}
+out:
+
+FunctionEnd
+
 Function ValidateInstallationDirectory
 RevalidateInstallationDirectory:
    ${DirState} "$INSTDIR" $R0
@@ -251,6 +290,11 @@ FunctionEnd
 
 Function PreviousInstallationCheck
    Call GetOldVersionLocation
+
+   ${If} $0 == ""
+      Call GetAncientVersionLocation
+   ${EndIf}
+
    ${If} $0 != ""
       MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallMessageOldVersion}" /SD IDNO IDYES CallCallUninstaller
       Abort
