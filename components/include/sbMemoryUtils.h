@@ -28,6 +28,7 @@
 #define __SBMEMORYUTILS_H__
 
 #include <nsMemory.h>
+#include <stdlib.h>
 
 template<class T>
 class sbAutoFreeXPCOMPointerArray
@@ -181,11 +182,13 @@ private:                                                                       \
 //
 //   sbAutoNSMemPtr             Wrapper to auto-dispose memory blocks allocated
 //                              with NS_Alloc.
+//   sbAutoMemPtr               Typed wrapper to auto-dispose memory blocks
+//                              allocated with malloc.
 //   sbAutoNSTypePtr            Typed version of sbAutoNSMemPtr
 //
 
 SB_AUTO_CLASS(sbAutoNSMemPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
-
+template<typename T> SB_AUTO_NULL_CLASS(sbAutoMemPtr, T*, free(mValue));
 template<typename T>
 SB_AUTO_CLASS(sbAutoNSTypePtr, T*, !!mValue, NS_Free(mValue), mValue = nsnull);
 
