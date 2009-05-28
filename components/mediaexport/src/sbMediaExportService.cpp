@@ -48,6 +48,7 @@
 #include <nsIThreadPool.h>
 #include <sbThreadPoolService.h>
 #include <nsIUpdateService.h>
+#include <nsDirectoryServiceUtils.h>
 
 
 #ifdef PR_LOGGING
@@ -432,21 +433,34 @@ sbMediaExportService::BeginExportData()
   LOG(("%s: Starting to export data", __FUNCTION__));
   nsresult rv;
 
-  mTaskWriter = new sbMediaExportTaskWriter();
-  NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_OUT_OF_MEMORY);
+  // Only write out tasks if there is some data to export. This prevents
+  // creating a blank task file.
+  if (mAddedItemsMap.size() > 0 || 
+      mAddedMediaList.size() > 0 ||
+      mRemovedMediaLists.size() > 0)
+  {
+    mTaskWriter = new sbMediaExportTaskWriter();
+    NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = mTaskWriter->Init();
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTaskWriter->Init();
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mFinishedExportState = PR_FALSE;
-  mExportState = eNone;
+    mFinishedExportState = PR_FALSE;
+    mExportState = eNone;
 
-  // Reset the mediaitems map iter
-  mCurExportListIter = mAddedItemsMap.end();
+    // Reset the mediaitems map iter
+    mCurExportListIter = mAddedItemsMap.end();
 
-  // Start the export:
-  rv = DetermineNextExportState();
-  NS_ENSURE_SUCCESS(rv, rv);
+    // Start the export:
+    rv = DetermineNextExportState();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  // If there isn't any data, cleanup and do any post export operations 
+  // (such as start the agent if needed).
+  else {
+    rv = FinishExportData();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
   return NS_OK;
 }
@@ -456,8 +470,10 @@ sbMediaExportService::FinishExportData()
 {
   LOG(("%s: Done exporting data", __FUNCTION__));
   nsresult rv;
-  rv = mTaskWriter->Finish();
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (mTaskWriter) {
+    rv = mTaskWriter->Finish();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Clean up the recording structures.
   mAddedItemsMap.clear();
@@ -1235,6 +1251,8 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
 {
   NS_ENSURE_ARG_POINTER(aNeedsToRunTask);
   
+  *aNeedsToRunTask = PR_FALSE;
+
   // Only export data if there was any recorded activity.
   if (mAddedItemsMap.size() > 0 || 
       mAddedMediaList.size() > 0 ||
@@ -1243,7 +1261,58 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
     *aNeedsToRunTask = PR_TRUE;
   }
   else {
-    *aNeedsToRunTask = PR_FALSE;
+    // Check to see if the agent is not running and there is at least one task
+    // file waiting to be processed.
+    nsresult rv;
+    nsCOMPtr<nsIFile> taskFileParentFolder;
+    rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR,
+                                getter_AddRefs(taskFileParentFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Loop through this folders children to see if we can find a task file
+    // who's name matches the export task filename.
+    nsCOMPtr<nsISimpleEnumerator> dirEnum;
+    rv = taskFileParentFolder->GetDirectoryEntries(getter_AddRefs(dirEnum));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool hasTaskFile = PR_FALSE;
+    PRBool hasMore = PR_FALSE;
+    while ((NS_SUCCEEDED(dirEnum->HasMoreElements(&hasMore))) && hasMore) {
+      nsCOMPtr<nsISupports> curItem;
+      rv = dirEnum->GetNext(getter_AddRefs(curItem));
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      nsCOMPtr<nsIFile> curFile = do_QueryInterface(curItem, &rv);
+      if (NS_FAILED(rv) || !curFile) {
+        continue;
+      }
+
+      nsString curFileName;
+      rv = curFile->GetLeafName(curFileName);
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      if (curFileName.Equals(NS_LITERAL_STRING(TASKFILE_NAME))) {
+        hasTaskFile = PR_TRUE;
+        // Don't bother iterating through the rest of the children.
+        break;
+      }
+    }
+
+    if (hasTaskFile) {
+      nsCOMPtr<sbIMediaExportAgentService> agentService =
+        do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
+      if (NS_SUCCEEDED(rv) && agentService) {
+        PRBool isAgentRunning = PR_FALSE;
+        rv = agentService->GetIsAgentRunning(&isAgentRunning);
+        if (NS_SUCCEEDED(rv) && !isAgentRunning) {
+          *aNeedsToRunTask = PR_TRUE;
+        }
+      }
+    }
   }
 
   LOG(("%s: Export service needs to run at shutdown == %s",
