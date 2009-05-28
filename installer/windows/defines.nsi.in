@@ -90,7 +90,7 @@
 
 !define UninstallMessageSameFolder  "The selected installation folder contains an older version of ${BrandShortName}. Do you wish to uninstall it and replace it with ${BrandShortName} ${AppVersion}?"
 
-!define UninstallMessageOldVersion  "An older version of ${BrandShortName} is installed; only one version of ${BrandShortName} may be installed at a time .$\n$\nDo you wish to uninstall it and install ${BrandShortName} ${AppVersion}?"
+!define UninstallMessageOldVersion  "An older version of ${BrandShortName} is installed; only one version of ${BrandShortName} may be installed at a time.$\n$\nDo you wish to uninstall it and install ${BrandShortName} ${AppVersion}?"
 
 !define DirectoryNotEmptyMessage    "The selected installation folder is not empty.$\n$\nThis can cause problems with your ${BrandShortName} installation.$\n$\nAre you sure you want to install into this directory?"
 
