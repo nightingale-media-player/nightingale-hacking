@@ -32,10 +32,10 @@
 #include <Carbon/Carbon.h>
 #include <string>
 #include <deque>
+#include <list>
 #include "sbiTunesAgentProcessor.h"
 
 class sbError;
-
 
 //------------------------------------------------------------------------------
 // Base class for stashing objects from iTunes.
@@ -62,9 +62,18 @@ public:
   sbiTunesPlaylist();
   virtual ~sbiTunesPlaylist();
 
-  sbError GetPlaylistName(std::string *aOutString);
+  sbError GetPlaylistName(std::string & aOutString);
   sbError SetPlaylistName(std::string const & aPlaylistName);
+
+protected:
+  std::string mPlaylistName;
+  bool        mLoadedPlaylist;
 };
+
+//------------------------------------------------------------------------------
+// Auto-ptr typedefs
+
+typedef std::auto_ptr<sbiTunesPlaylist>  sbiTunesPlaylistPtr;
 
 //------------------------------------------------------------------------------
 // Manager class for modifying the users iTunes library.
@@ -76,19 +85,26 @@ public:
   virtual ~sbiTunesLibraryManager();
 
   //
+  // \brief Initialize the iTunes library class. This method should be called
+  //        before attempting to call any other method on this class.
+  //
+  sbError Init();
+
+  //
   // \brief Get the playlist item for the main iTunes library.
   //
-  sbError GetMainLibraryPlaylist(sbiTunesPlaylist **aOutPlaylist);
+  // NOTE: The out-param is owned by this class, do not |delete|.
+ //
+  sbError GetMainLibraryPlaylist(sbiTunesPlaylist **aPlaylistPtr);
 
   //
   // \brief Get the Songbird folder playlist item from iTunes.
   //        This method will create the folder if it doesn't currently exist
   //        inside of iTunes.
   //
-  //        The returned list is maintained by this class and doesn't need
-  //        to be release by the caller.
+  // NOTE: The out-param is owned by this class, do not |delete|.
   //
-  sbError GetSongbirdPlaylistFolder(sbiTunesPlaylist **aOutPlaylist);
+  sbError GetSongbirdPlaylistFolder(sbiTunesPlaylist **aPlaylistPtr);
 
   //
   // \brief Get the name of the main iTunes library.
@@ -98,10 +114,9 @@ public:
   //
   // \brief Get the playlist object under the Songbird folder by the given
   //        name. 
-  //        
-  //        The returned playlist is not maintained by this class and must
-  //        be released by the caller.
   //
+  // NOTE: The out-param is owned by this class, do not |delete|.
+  //        
   sbError GetSongbirdPlaylist(std::string const & aPlaylistName,
                               sbiTunesPlaylist **aOutPlaylist);
 
@@ -121,10 +136,17 @@ public:
   //
   sbError DeleteSongbirdPlaylist(sbiTunesPlaylist *aPlaylist);
 
+protected:
+  sbError LoadMainLibraryPlaylist();
+  sbError LoadSongbirdPlaylistFolder();
+  sbError BuildSongbirdPlaylistFolderCache();
+
 private:
-  sbiTunesPlaylist *mMainLibraryPlaylist;
-  sbiTunesPlaylist *mSongbirdFolderPlaylist;
+  sbiTunesPlaylistPtr             mMainLibraryPlaylistPtr;
+  sbiTunesPlaylistPtr             mSongbirdFolderPlaylistPtr;
+  std::list<sbiTunesPlaylist *>   mCachedSongbirdPlaylists;
 };
+
 
 #endif  // sbITunesLibrary_h_
 

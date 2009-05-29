@@ -30,6 +30,7 @@
 #import "SBNSString+Utils.h"
 #include "sbError.h"
 #include <sstream>
+#include <iostream>
 
 // Magic keywords from the iTunes AppleScript definition file.
 #define SB_GET_DESCRIPTOR_CLASS         'getd'
@@ -56,6 +57,8 @@ const static NSString *gCreateClassElementFormat =
   @"kocl:type(%@) , insh:(@)";
 const static NSString *gSetPropertyArgFormat =
   @"data:@, '----':obj { form:prop, want:type(prop), seld:type(%@), from:@ }";
+
+typedef std::list<sbiTunesPlaylist *>::iterator sbPlaylistIter;
 
 
 //------------------------------------------------------------------------------
@@ -387,6 +390,7 @@ sbiTunesObject::GetDescriptor()
 //------------------------------------------------------------------------------
 
 sbiTunesPlaylist::sbiTunesPlaylist()
+  : mLoadedPlaylist(false)
 {
 }
 
@@ -395,63 +399,63 @@ sbiTunesPlaylist::~sbiTunesPlaylist()
 }
 
 sbError
-sbiTunesPlaylist::GetPlaylistName(std::string *aOutString)
+sbiTunesPlaylist::GetPlaylistName(std::string & aOutString)
 {
-  if (!aOutString) {
-    return sbError("ERROR: Invalid paramater |aOutString|!");
-  }
+  if (!mLoadedPlaylist) {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
-  AppleEvent replyEvent;
-  sbError error = GetAEResonseForPropertyType(SB_ITEM_PROPERTY_NAME,
-                                              &mDescriptor,
-                                              &replyEvent);
-  SB_ENSURE_SUCCESS(error, error);
+    AppleEvent replyEvent;
+    sbError error = GetAEResonseForPropertyType(SB_ITEM_PROPERTY_NAME,
+                                                &mDescriptor,
+                                                &replyEvent);
+    SB_ENSURE_SUCCESS(error, error);
 
+    // Pluck the string value out of the argument
+    DescType resultType;
+    Size resultSize;
+    OSErr err = AESizeOfParam(&replyEvent, 
+                              keyDirectObject, 
+                              &resultType, 
+                              &resultSize);
+    if (err != noErr) {
+      AEDisposeDesc(&replyEvent);
+      return sbOSErrError("Could not get size of param", err);
+    }
 
-  // Pluck the string value out of the argument
-  DescType resultType;
-  Size resultSize;
-  OSErr err = AESizeOfParam(&replyEvent, 
-                            keyDirectObject, 
-                            &resultType, 
-                            &resultSize);
-  if (err != noErr) {
+    if (resultType != typeUnicodeText) {
+      AEDisposeDesc(&replyEvent);
+      return sbError("ERROR: Unexpected result type");
+    }
+
+    // According to the Apple Event Manager Reference, on OS X 10.4 and 
+    // higher, use |typeUTF8Text| rather than |typeUnicodeText|.
+    UInt8 dataChunk[resultSize];
+    err = AEGetParamPtr(&replyEvent,
+                        keyDirectObject,
+                        typeUTF8Text,
+                        &resultType,
+                        &dataChunk,
+                        resultSize,
+                        &resultSize);
+    if (err != noErr) {
+      AEDisposeDesc(&replyEvent);
+      return sbOSErrError("Could not get ParamPtr", err);
+    }
+
     AEDisposeDesc(&replyEvent);
-    return sbOSErrError("Could not get size of param", err);
+
+    // Use a NSString since it handles our encoding for us.
+    NSString *name = [[NSString alloc] initWithBytes:dataChunk
+                                              length:resultSize
+                                            encoding:NSUTF8StringEncoding];
+    mPlaylistName = [name UTF8String];
+    mLoadedPlaylist = true;
+    [name release];
+    [pool release];
   }
 
-  if (resultType != typeUnicodeText) {
-    AEDisposeDesc(&replyEvent);
-    return sbError("ERROR: Unexpected result type");
-  }
+  aOutString = mPlaylistName;
 
-  // According to the Apple Event Manager Reference, on OS X 10.4 and 
-  // higher, use |typeUTF8Text| rather than |typeUnicodeText|.
-  UInt8 dataChunk[resultSize];
-  err = AEGetParamPtr(&replyEvent,
-                      keyDirectObject,
-                      typeUTF8Text,
-                      &resultType,
-                      &dataChunk,
-                      resultSize,
-                      &resultSize);
-  if (err != noErr) {
-    AEDisposeDesc(&replyEvent);
-    return sbOSErrError("Could not get ParamPtr", err);
-  }
-
-  AEDisposeDesc(&replyEvent);
-
-  // Use a NSString since it handles our encoding for us.
-  NSString *name = [[NSString alloc] initWithBytes:dataChunk
-                                            length:resultSize
-                                          encoding:NSUTF8StringEncoding];
-  *aOutString = [name UTF8String];
-  [name release];
-
-  [pool release];
   return sbNoError;
 }
 
@@ -465,64 +469,80 @@ sbiTunesPlaylist::SetPlaylistName(std::string const & aPlaylistName)
 
 //------------------------------------------------------------------------------
 
+inline void
+DeletePlaylistPtr(sbiTunesPlaylist *aPlaylistPtr)
+{
+  delete aPlaylistPtr;
+}
+
 sbiTunesLibraryManager::sbiTunesLibraryManager()
-  : mMainLibraryPlaylist(NULL), mSongbirdFolderPlaylist(NULL)
 {
 }
 
 sbiTunesLibraryManager::~sbiTunesLibraryManager()
 {
-  if (mMainLibraryPlaylist) {
-    delete mMainLibraryPlaylist;
-  }
-  if (mSongbirdFolderPlaylist) {
-    delete mSongbirdFolderPlaylist;
-  }
+  // Cleanup the child playlists
+  std::for_each(mCachedSongbirdPlaylists.begin(), 
+                mCachedSongbirdPlaylists.end(),
+                DeletePlaylistPtr);
 }
 
 sbError
-sbiTunesLibraryManager::GetMainLibraryPlaylist(sbiTunesPlaylist **aOutPlaylist)
+sbiTunesLibraryManager::Init()
 {
-  if (!aOutPlaylist) {
-    return sbError("ERROR: Invalid paramater |aOutPlaylist|");
-  }
+  sbError error;
 
+  // First things first, load the main library playlist.
+  error = LoadMainLibraryPlaylist();
+  SB_ENSURE_SUCCESS(error, error);
+
+  // Now load the 'Songbird' folder playlist.
+  error = LoadSongbirdPlaylistFolder();
+  SB_ENSURE_SUCCESS(error, error);
+
+  // Now build up a cache of playlists inside of the 'Songbird' folder playlist.
+  error = BuildSongbirdPlaylistFolderCache();
+  SB_ENSURE_SUCCESS(error, error);
+
+  return sbNoError;
+}
+
+sbError
+sbiTunesLibraryManager::LoadMainLibraryPlaylist()
+{
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
-  if (!mMainLibraryPlaylist) {
+
+  if (!mMainLibraryPlaylistPtr.get()) {
     AppleEvent replyEvent;
-    sbError error = GetAEResponseForDescClass(SB_ITUNES_MAINLIBRARYPLAYLIST,
-                                              1,
-                                              &replyEvent);
+    sbError error = 
+      GetAEResponseForDescClass(SB_ITUNES_MAINLIBRARYPLAYLIST, 1, &replyEvent);
     SB_ENSURE_SUCCESS(error, error);
 
-    mMainLibraryPlaylist = new sbiTunesPlaylist();
-    if (!mMainLibraryPlaylist) {
+    sbiTunesPlaylistPtr mainLibPtr(new sbiTunesPlaylist);
+    
+    if (!mainLibPtr.get()) {
       return sbError("ERROR: Coult not create a sbiTunesPlaylist object");
     }
 
-    error = mMainLibraryPlaylist->Init(&replyEvent);
+    error = mainLibPtr->Init(&replyEvent);
     SB_ENSURE_SUCCESS(error, error);
 
     AEDisposeDesc(&replyEvent);
+  
+    // Swap ownership of the pointer
+    mMainLibraryPlaylistPtr = mainLibPtr;
   }
 
-  *aOutPlaylist = mMainLibraryPlaylist;
   [pool release];
   return sbNoError;
 }
 
 sbError
-sbiTunesLibraryManager::GetSongbirdPlaylistFolder(sbiTunesPlaylist **aPlaylist)
+sbiTunesLibraryManager::LoadSongbirdPlaylistFolder()
 {
-  if (!aPlaylist) {
-    return sbError("ERROR: Invalid paramater |aPlaylist|");
-  }
-
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  if (!mSongbirdFolderPlaylist) {
-    // left off right here.
+  if (!mSongbirdFolderPlaylistPtr.get()) {
     int elementCount = 0;
     sbError error = GetElementClassCount(SB_FOLDER_PLAYLIST_CLASS,
                                          NULL,
@@ -538,171 +558,165 @@ sbiTunesLibraryManager::GetSongbirdPlaylistFolder(sbiTunesPlaylist **aPlaylist)
                                           &responseEvent);
         SB_ENSURE_SUCCESS(error, error);
 
-        sbiTunesPlaylist *curPlaylist = new sbiTunesPlaylist();
-        if (!curPlaylist) {
+        sbiTunesPlaylistPtr curPlaylistPtr(new sbiTunesPlaylist());
+        if (!curPlaylistPtr.get()) {
           return sbError("ERROR: Could not create a sbiTunesPlaylist object");
         }
 
-        error = curPlaylist->Init(&responseEvent);
-        if (error != sbNoError) {
-          delete curPlaylist;
-          return error;
-        }
-
+        error = curPlaylistPtr->Init(&responseEvent);
         AEDisposeDesc(&responseEvent);
+        SB_ENSURE_SUCCESS(error, error);
 
         std::string curPlaylistName;
-        error = curPlaylist->GetPlaylistName(&curPlaylistName);
-        if (error != sbNoError) {
-          delete curPlaylist;
-          return error;
-        }
+        error = curPlaylistPtr->GetPlaylistName(curPlaylistName);
+        SB_ENSURE_SUCCESS(error, error);
 
         if (curPlaylistName.compare("Songbird") == 0) {
-          mSongbirdFolderPlaylist = curPlaylist;
+          mSongbirdFolderPlaylistPtr = curPlaylistPtr;
           break;
         }
 
         curIndex++;
-        delete curPlaylist;
       }
     }
 
     // If the playlist wasn't found above, create it now.
-    if (!mSongbirdFolderPlaylist) {
+    if (!mSongbirdFolderPlaylistPtr.get()) {
       AppleEvent createEvent;
       error = CreateElementOfDescClass(SB_FOLDER_PLAYLIST_CLASS, 
                                        NULL, 
                                        &createEvent);
       SB_ENSURE_SUCCESS(error, error);
 
-      mSongbirdFolderPlaylist = new sbiTunesPlaylist();
-      if (!mSongbirdFolderPlaylist) {
+      sbiTunesPlaylistPtr songbirdFolderPtr(new sbiTunesPlaylist());
+      if (!songbirdFolderPtr.get()) {
         return sbError("ERROR: Could not create a sbiTunesPlaylist object");
       }
 
-      error = mSongbirdFolderPlaylist->Init(&createEvent);
+      error = songbirdFolderPtr->Init(&createEvent);
       SB_ENSURE_SUCCESS(error, error);
 
       std::string playlistName("Songbird");
-      error = mSongbirdFolderPlaylist->SetPlaylistName(playlistName);
+      error = songbirdFolderPtr->SetPlaylistName(playlistName);
       SB_ENSURE_SUCCESS(error, error);
+
+      // Swap ownership of the pointer
+      mSongbirdFolderPlaylistPtr = songbirdFolderPtr;
     }
   }
 
-  *aPlaylist = mSongbirdFolderPlaylist;
   [pool release];
+  return sbNoError;
+}
+
+sbError
+sbiTunesLibraryManager::BuildSongbirdPlaylistFolderCache()
+{
+  // Go through the list of playlist objects to build a cache list of playlists
+  // in the Songbird folder.
+
+  sbError error;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Ask iTunes for how many playlist objects there are.
+  int playlistCount = 0;
+  error = GetElementClassCount(SB_PLAYLIST_CLASS, NULL, &playlistCount);
+  SB_ENSURE_SUCCESS(error, error);
+
+  for (unsigned int i = 0; i < playlistCount; i++) {
+    AppleEvent responseEvent;
+    error = GetAEResponseForDescClass(SB_PLAYLIST_CLASS,
+                                      i + 1,
+                                      &responseEvent);
+    if (error == sbNoError) {
+      sbiTunesPlaylistPtr curPlaylist(new sbiTunesPlaylist());
+      error = curPlaylist->Init(&responseEvent);
+      if (error == sbNoError) {
+        // Get the parent of the current playlist.
+        AppleEvent parentEvent;
+        error = GetAEResonseForPropertyType(SB_PARENT_PROPERTY_NAME,
+                                            curPlaylist->GetDescriptor(),
+                                            &parentEvent);
+        if (error == sbNoError) {
+          sbiTunesPlaylistPtr curPlaylistParent(new sbiTunesPlaylist());
+          error = curPlaylistParent->Init(&parentEvent);
+          if (error == sbNoError) {
+            // Get the name of the parent playlist
+            std::string parentListName;
+            error = curPlaylistParent->GetPlaylistName(parentListName);
+            if (error == sbNoError && parentListName.compare("Songbird") == 0) {
+              // This is a Songbird playlist object, push it into the 
+              // cached playlists vector.
+              mCachedSongbirdPlaylists.push_back(curPlaylist.release());
+            }
+          }
+        }
+
+        AEDisposeDesc(&parentEvent);
+      }
+    }
+
+    AEDisposeDesc(&responseEvent);
+  }
+
+  [pool release];
+  return sbNoError;
+}
+
+sbError
+sbiTunesLibraryManager::GetMainLibraryPlaylist(sbiTunesPlaylist **aPlaylistPtr)
+{
+  if (!aPlaylistPtr) {
+    return sbError("Invalid paramater |aPlaylistPtr|");
+  }
+
+  *aPlaylistPtr = mMainLibraryPlaylistPtr.get();
+  return sbNoError;
+}
+
+sbError
+sbiTunesLibraryManager::GetSongbirdPlaylistFolder(sbiTunesPlaylist **aPlaylistPtr)
+{
+  if (!aPlaylistPtr) {
+    return sbError("Invalid paramater |aPtr|");
+  }
+
+  *aPlaylistPtr = mSongbirdFolderPlaylistPtr.get();
   return sbNoError;
 }
 
 sbError
 sbiTunesLibraryManager::GetMainLibraryPlaylistName(std::string & aPlaylistName)
 {
-  sbiTunesPlaylist *mainList;
-  sbError error = GetMainLibraryPlaylist(&mainList);
-  SB_ENSURE_SUCCESS(error, error);
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  return mainList->GetPlaylistName(&aPlaylistName);
+  sbError error = mMainLibraryPlaylistPtr->GetPlaylistName(aPlaylistName); 
+  
+  [pool release];
+  return error;
 }
 
 sbError
 sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
                                             sbiTunesPlaylist **aOutPlaylist)
 {
-  if (!aOutPlaylist) {
-    return sbError("ERROR: Invalid paramater |aOutPlaylist|");
-  }
-
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
-  *aOutPlaylist = NULL;
-  sbError error;
 
-  sbiTunesPlaylist *songbirdFolderList;
-  error = GetSongbirdPlaylistFolder(&songbirdFolderList);
-  SB_ENSURE_SUCCESS(error, error);
-
-  int listCount = 0;
-  error = GetElementClassCount(SB_PLAYLIST_CLASS,
-                               NULL,
-                               &listCount);
-  SB_ENSURE_SUCCESS(error, error);
-
-  int curIndex = 0;
-  while (curIndex < listCount) {
-    AppleEvent responseEvent;
-    error = GetAEResponseForDescClass(SB_PLAYLIST_CLASS, 
-                                      curIndex + 1,
-                                      &responseEvent);
-    curIndex++;
-    SB_ENSURE_SUCCESS(error, error);
-
-    sbiTunesPlaylist *curPlaylist = new sbiTunesPlaylist();
-    if (!curPlaylist) {
-      AEDisposeDesc(&responseEvent);
-      return sbError("ERROR: Could not create a sbiTunesPlaylist object");
-    }
-
-    error = curPlaylist->Init(&responseEvent);
-    if (error != sbNoError) {
-      delete curPlaylist;
-      AEDisposeDesc(&responseEvent);
-      return error;
-    }
-
-    AEDisposeDesc(&responseEvent);
-
-    // Ensure that the parent of this playlist is the Songbird playlist folder.
-    AppleEvent parentEvent;
-    error = GetAEResonseForPropertyType(SB_PARENT_PROPERTY_NAME,
-                                        curPlaylist->GetDescriptor(),
-                                        &parentEvent);
-    if (error != sbNoError) {
-      delete curPlaylist;
-      return error;
-    }
-
-    sbiTunesPlaylist curParentList;
-    error = curParentList.Init(&parentEvent);
-    if (error != sbNoError) {
-      // If this is a playlist that doesn't have a parent?
-      AEDisposeDesc(&parentEvent);
-      delete curPlaylist;
-      continue;
-    }
-
-    AEDisposeDesc(&parentEvent);
-
-    std::string curParentListName;
-    error = curParentList.GetPlaylistName(&curParentListName);
-    if (error != sbNoError) {
-      delete curPlaylist;
-      continue;
-    }
-
-    if (!curParentListName.compare("Songbird")) {
-      // This playlist is not a child of the Songbird playlist folder.
-      delete curPlaylist;
-      continue;
-    }
-
+  bool foundList = false;
+  sbPlaylistIter begin = mCachedSongbirdPlaylists.begin();
+  sbPlaylistIter end = mCachedSongbirdPlaylists.end();
+  sbPlaylistIter next;
+  for (next = begin; next != end && !foundList; ++next) {
     std::string curPlaylistName;
-    error = curPlaylist->GetPlaylistName(&curPlaylistName);
-    if (error != sbNoError) {
-      delete curPlaylist;
-      return error;
-    }
-    
+    sbError error = (*next)->GetPlaylistName(curPlaylistName);
     if (curPlaylistName.compare(aPlaylistName) == 0) {
-      *aOutPlaylist = curPlaylist;
-      break;
+      *aOutPlaylist = *next;
+      foundList = true;
     }
-
-    delete curPlaylist;
   }
 
   [pool release];
-  return sbNoError;
+  return foundList ? sbNoError : sbError("Could not find playlist!");
 }
 
 sbError
@@ -710,7 +724,7 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
                                       sbiTunesPlaylist *aTargetPlaylist)
 {
   if (!aTargetPlaylist) {
-    return sbError("ERROR: Invalid paramater |aTargetPlaylist|");
+    return sbError("Invalid in-param |aTargetPlaylist|");
   }
 
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -795,37 +809,29 @@ sbError
 sbiTunesLibraryManager::CreateSongbirdPlaylist(std::string const & aPlaylistName)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
-  sbiTunesPlaylist *songbirdFolder;
-  sbError error = GetSongbirdPlaylistFolder(&songbirdFolder);
-  SB_ENSURE_SUCCESS(error, error);
 
   AppleEvent responseEvent;
+  sbError error;
   error = CreateElementOfDescClass(SB_PLAYLIST_CLASS,
-                                   songbirdFolder->GetDescriptor(),
+                                   mSongbirdFolderPlaylistPtr->GetDescriptor(),
                                    &responseEvent);
   SB_ENSURE_SUCCESS(error, error);
 
-  sbiTunesPlaylist *playlist = new sbiTunesPlaylist();
-  if (!playlist) {
-    AEDisposeDesc(&responseEvent);
-    return sbError("ERROR: Could not create a sbiTunesPlaylist object");
-  }
-
-  error = playlist->Init(&responseEvent);
+  sbiTunesPlaylistPtr newPlaylist(new sbiTunesPlaylist());
+  error = newPlaylist->Init(&responseEvent);
   AEDisposeDesc(&responseEvent);
   if (error != sbNoError) {
-    delete playlist;
     return error;
   }
 
-  error = playlist->SetPlaylistName(aPlaylistName);
+  error = newPlaylist->SetPlaylistName(aPlaylistName);
   if (error != sbNoError) {
-    delete playlist;
     return error;
   }
 
-  delete playlist;
+  // Push this playlist into the cached playlists vector.
+  mCachedSongbirdPlaylists.push_back(newPlaylist.release());
+
   [pool release];
   return sbNoError;
 }
@@ -835,10 +841,6 @@ sbiTunesLibraryManager::DeleteSongbirdPlaylist(sbiTunesPlaylist *aPlaylist)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   
-  if (!aPlaylist) {
-    return sbError("ERROR: Invalid paramater |aPlaylist|");
-  }
-
   OSErr err;
   AppleEvent cmdEvent;
   err = AEBuildAppleEvent(kAECoreSuite,
@@ -864,6 +866,20 @@ sbiTunesLibraryManager::DeleteSongbirdPlaylist(sbiTunesPlaylist *aPlaylist)
   AEDisposeDesc(&cmdEvent);
   if (err != noErr) {
     return sbOSErrError("Could not send AppleEvent", err);
+  }
+
+  // Find the existing playlist entry in the cached playlists vector by 
+  // comparing pointers.
+  sbPlaylistIter begin = mCachedSongbirdPlaylists.begin();
+  sbPlaylistIter end = mCachedSongbirdPlaylists.end();
+  sbPlaylistIter next;
+  for (next = begin; next != end; ++next) {
+    // Just compare pointers.
+    if (aPlaylist == *next) {
+      sbiTunesPlaylist *ptr = *next;
+      mCachedSongbirdPlaylists.erase(next);
+      delete ptr;
+    }
   }
 
   AEDisposeDesc(&cmdEvent);

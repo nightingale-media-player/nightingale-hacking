@@ -76,6 +76,9 @@ public:
    * Detect unhandled errors
    */
   ~sbError() {
+    if (!mChecked) {
+      printf("\n UNCHECKED MESSAGE: %s\n", mMessage.c_str());
+    }
     assert(mChecked);
   }
   
@@ -85,6 +88,22 @@ public:
   operator bool() const {
     mChecked = true;
     return !mMessage.empty();
+  }
+
+  /**
+   * Compare two error instances by their messages.
+   */
+  bool operator == (sbError const & aError) const {
+    mChecked = true;
+    return mMessage == aError.mMessage;
+  }
+
+  /**
+   * Ensure inequality between two errors by their messages.
+   */
+  bool operator != (sbError const & aError) const {
+    mChecked = true;
+    return !operator == (aError);
   }
   
   /**

@@ -141,6 +141,10 @@ sbiTunesAgentProcessor* sbCreatesbiTunesAgentProcessor()
 sbiTunesAgentMacProcessor::sbiTunesAgentMacProcessor()
   : mLibraryMgr(new sbiTunesLibraryManager())
 {
+  sbError error = mLibraryMgr->Init();
+  if (error != sbNoError) {
+    ErrorHandler(error);
+  }
 }
 
 sbiTunesAgentMacProcessor::~sbiTunesAgentMacProcessor()
@@ -252,12 +256,16 @@ sbiTunesAgentMacProcessor::WaitForiTunes()
 bool
 sbiTunesAgentMacProcessor::ErrorHandler(sbError const & aError)
 {
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
   std::string path([GetSongbirdProfilePath() UTF8String]);
   path += AGENT_ERROR_FILENAME;
   std::ofstream error(path.c_str());
   if (error) {
     error << "ERROR: " << aError.Message() << std::endl;
   }
+
+  [pool release];
   return true;
 }
 
@@ -356,13 +364,9 @@ sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
   error = mLibraryMgr->GetMainLibraryPlaylistName(mainLibraryName);
   SB_ENSURE_SUCCESS(error, error);
 
-  bool shouldDeleteList = true;
   if (mainLibraryName.compare(aSource) == 0) {
     error = mLibraryMgr->GetMainLibraryPlaylist(&sourceList);
     SB_ENSURE_SUCCESS(error, error);
-
-    // don't delete this list, it's owned by |sbiTunesLibraryManager|.
-    shouldDeleteList = false;
   }
   else {
     // This source list isn't the main library, add these items to the 
@@ -372,10 +376,6 @@ sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
   }
 
   error = mLibraryMgr->AddTrackPaths(aPaths, sourceList);
-
-  if (shouldDeleteList) {
-    delete sourceList;
-  }
 
   [pool release];
   return error;
@@ -393,10 +393,6 @@ sbiTunesAgentMacProcessor::RemovePlaylist(std::string const & aPlaylistName)
     error = mLibraryMgr->DeleteSongbirdPlaylist(playlist);
   }
 
-  if (playlist != NULL) {
-    delete playlist;
-  }
-  
   [pool release];
   return error;
 }
@@ -408,14 +404,10 @@ sbiTunesAgentMacProcessor::CreatePlaylist(std::string const & aPlaylistName)
 
   // Only create a playlist if it doesn't already exist.
   sbError error;
-  sbiTunesPlaylist *playlist = NULL;
+  sbiTunesPlaylist *playlist;
   error = mLibraryMgr->GetSongbirdPlaylist(aPlaylistName, &playlist);
-  if (error && playlist == NULL) {
+  if (error != sbNoError) {
     error = mLibraryMgr->CreateSongbirdPlaylist(aPlaylistName);
-  }
-
-  if (playlist != NULL) {
-    delete playlist;
   }
 
   [pool release];
