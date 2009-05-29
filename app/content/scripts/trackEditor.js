@@ -1999,11 +1999,11 @@ TrackEditorArtwork.prototype = {
                         Cc["@songbirdnest.com/Songbird/album-art-service;1"]
                           .getService(Ci.sbIAlbumArtService);
 
-      var newFile = artService.cacheImage(mimeType.value,
-                                          imageData,
-                                          imageData.length);
-      if (newFile) {
-        this._imageSrcChange(newFile.spec);
+      var newURI = artService.cacheImage(mimeType.value,
+                                         imageData,
+                                         imageData.length);
+      if (newURI) {
+        this._imageSrcChange(newURI.spec);
       }
     }
   },

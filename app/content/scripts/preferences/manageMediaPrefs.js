@@ -78,6 +78,8 @@ var manageMediaPrefsPane = {
   //
   //----------------------------------------------------------------------------
 
+  _prefs: [], // Original values for the preferences
+
   /**
    * Handles the preference pane load event.
    */
@@ -103,7 +105,15 @@ var manageMediaPrefsPane = {
                            .getService(Ci.sbIMediaManagementService);
       var enablePrefElem =
         document.getElementById("manage_media_pref_library_enable");
+
+      var startMgtProcess = self._doUpdateCheck(mediaMgmtSvc.isEnabled, enablePrefElem.value);
       mediaMgmtSvc.isEnabled = enablePrefElem.value;
+
+      if (startMgtProcess) {
+        // Disable then enable the mediaMgmtSvc to force a scan
+        mediaMgmtSvc.isEnabled = false;
+        mediaMgmtSvc.isEnabled = true;
+      }
 
       return true;
     }
@@ -121,6 +131,7 @@ var manageMediaPrefsPane = {
 
     this._checkForValidPref(true);
     this._updateUI();
+    this._saveCurrentPrefs();
   },
 
   /**
@@ -378,6 +389,45 @@ var manageMediaPrefsPane = {
       fileFormatter.disableAll = true;
       previewButton.disabled = true;
     }
+  },
+
+  /**
+   * Saves the original values of the preferences
+   */
+
+  _saveCurrentPrefs: function manageMediaPrefsPane__saveCurrentPrefs() {
+    // Go through all the preferences and save the current value
+    var prefList = document.getElementById("manage_media_preferences");
+    var childNode = prefList.firstChild;
+    while (childNode) {
+      // Only save preferences that matter or are not dealt with separately
+      if (childNode.id != "manage_media_pref_library_enable") {
+        this._prefs[childNode.id] = childNode.value;
+      }
+      childNode = childNode.nextSibling;
+    }
+  },
+
+  /**
+   * Checks to see if any of the preferences that we monitor have changed
+   */
+
+  _doUpdateCheck: function manageMediaPrefsPane__doUpdateCheck(isEnabled, willEnable) {
+    if (!isEnabled || !willEnable) {
+      // The Service will not be enabled anyways so just abort the check
+      return false;
+    }
+
+    // Check all the items to see if any have changed, as soon as one has we return true
+    for (var prefID in this._prefs) {
+      var prefNode = document.getElementById(prefID);
+      if (prefNode && prefNode.value != this._prefs[prefID]) {
+        return true;
+      }
+    }
+
+    // Nothing has changed so return false
+    return false;
   },
 
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener])
