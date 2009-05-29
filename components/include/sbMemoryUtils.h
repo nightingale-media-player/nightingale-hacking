@@ -157,7 +157,7 @@ private:                                                                       \
   aType2 mValue2;                                                              \
                                                                                \
   void Invalidate() { aInvalidate; }                                           \
-  void operator=(const aName aValue);                                          \
+  void operator=(const aName aValue) {}                                        \
 }
 
 #define SB_AUTO_CLASS(aName, aType, aIsValid, aDispose, aInvalidate)           \
@@ -174,7 +174,7 @@ private:                                                                       \
  */
 
 #define SB_AUTO_NULL_CLASS(aName, aType, aDispose) \
-          SB_AUTO_CLASS(aName, aType, mValue, aDispose, mValue = NULL)
+          SB_AUTO_CLASS(aName, aType, mValue != NULL, aDispose, mValue = NULL)
 
 
 //

@@ -27,6 +27,7 @@
 #ifndef __SB_AUTORWLOCK_H__
 #define __SB_AUTORWLOCK_H__
 
+#include <nsAutoLock.h>
 #include <prrwlock.h>
 
 /** 
