@@ -220,11 +220,24 @@ var manageMediaPrefsPane = {
    */
 
   get _defaultLibraryFolder() {
-    var file = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
-                 .getService(Ci.sbIDownloadDeviceHelper)
-                 .getDefaultMusicFolder();
+    var baseFile = Cc["@songbirdnest.com/Songbird/DownloadDeviceHelper;1"]
+                     .getService(Ci.sbIDownloadDeviceHelper)
+                     .getDefaultMusicFolder();
+    var file = baseFile.clone();
     file.append(SBBrandedString("mediamanager.music_dir",
                                 SBStringBrandShortName()));
+    if (!file.exists()) {
+      // On Mac we have to have a valid folder in order to display it.
+      try {
+        var permissions = baseFile.permissions;
+        file.create(Ci.nsIFile.DIRECTORY_TYPE, permissions);
+      } catch (e) {
+        Cu.reportError("Unable to create folder: " + file.path +
+                       ", defaulting to " + baseFile.path +
+                       " - Error: " + e);
+        file = baseFile;
+      }
+    }
     return file;
   },
 
