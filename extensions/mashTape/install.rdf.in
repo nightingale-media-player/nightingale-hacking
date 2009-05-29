@@ -78,7 +78,7 @@
 		<em:contributor>bpasu (th-TH Translation)</em:contributor>
 		<em:contributor>Hiromacu (hu-HU Translation)</em:contributor>
 		<em:contributor>miles (sl-SI Translation)</em:contributor>
-		<em:description>Like your favourite old school mix tape, mix and mash up various web sources for your library enhancing pleasure.  N. Dan Smith likes fishsticks.</em:description>
+		<em:description>Like your favourite old school mix tape, mix and mash up various web sources for your library enhancing pleasure.</em:description>
 		<em:iconURL>chrome://mashtape/content/tape.png</em:iconURL>
 		<em:homepageURL>http://mashtape.mozdev.org</em:homepageURL>
 		<em:optionsURL>chrome://mashtape/content/optionsWindow.xul</em:optionsURL>
