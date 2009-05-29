@@ -54,7 +54,7 @@ STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 # preedTODO: fix this hack
 libs::
 ifeq (macosx,$(SB_PLATFORM))
-	$(LN) -s $(target_name)$(LIB_SUFFIX) lib$(target_name)$(LIB_SUFFIX)
+	$(LN) -sf $(target_name)$(LIB_SUFFIX) lib$(target_name)$(LIB_SUFFIX)
 endif
 
 include $(topsrcdir)/build/rules.mk
