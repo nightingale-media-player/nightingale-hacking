@@ -211,6 +211,11 @@ FunctionEnd
 ; We return the first installation we find and search in reverse order of
 ; releases, i.e. newer releases first.
 ;
+; HUGE HACK NOTE: _UNLIKE_ GetOldVersionLocation, this function does NOT 
+; return a location, but rather returns the registry key where that location
+; can be found; this is because we need to clean that key up, because the
+; installer doesn't do it correctly.
+;
 ; See bug 16567 for more details.
 
 Function GetAncientVersionLocation
@@ -221,25 +226,37 @@ Function GetAncientVersionLocation
 
    StrCpy $0 ""
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKey112}"
-   ReadRegStr $R0 HKLM $R1 "InstallDir"
+   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding112}"
+   ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $0 $R0
-      Goto out
+      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp112}"
+      ReadRegStr $R0 HKLM $R1 "InstallDir"
+      ${If} $R0 != ""
+         StrCpy $0 $R1
+         Goto out
+      ${EndIf}
    ${EndIf}
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKey111}"
-   ReadRegStr $R0 HKLM $R1 "InstallDir"
+   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding111}"
+   ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $0 $R0
-      Goto out
+      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp111}"
+      ReadRegStr $R0 HKLM $R1 "InstallDir"
+      ${If} $R0 != ""
+         StrCpy $0 $R1
+         Goto out
+      ${EndIf}
    ${EndIf}
 
-   StrCpy $R1 "Software\Songbird\${AncientRegKey100}"
-   ReadRegStr $R0 HKLM $R1 "InstallDir"
+   StrCpy $R1 "Software\Songbird\${AncientRegKeyBranding100}"
+   ReadRegStr $R0 HKLM $R1 "Start Menu Folder"
    ${If} $R0 != ""
-      StrCpy $0 $R0
-      Goto out
+      StrCpy $R1 "Software\Songbird\${AncientRegKeyApp100}"
+      ReadRegStr $R0 HKLM $R1 "InstallDir"
+      ${If} $R0 != ""
+         StrCpy $0 $R1
+         Goto out
+      ${EndIf}
    ${EndIf}
 out:
 
@@ -289,10 +306,20 @@ Function CallUninstaller
 FunctionEnd
 
 Function PreviousInstallationCheck
+recheck:
+   ; Whether or not we need to delete the extra key
+   StrCpy $R2 ${FALSE}
+
    Call GetOldVersionLocation
 
    ${If} $0 == ""
       Call GetAncientVersionLocation
+
+      ${If} $0 != ""
+         StrCpy $R1 $0 ; this is now the reg key we need to clear
+         ReadRegStr $0 HKLM $R1 "InstallDir"
+         StrCpy $R2 ${TRUE}
+      ${EndIf}
    ${EndIf}
 
    ${If} $0 != ""
@@ -302,6 +329,16 @@ Function PreviousInstallationCheck
       CallCallUninstaller:
          Push $0
          Call CallUninstaller
+
+      ${If} $R2 == ${TRUE}
+         DeleteRegKey HKLM $R1
+         ; This is hardcoded as "Songbird" and not "${BrandNameShort}" because
+         ; while they _should_ be the same thing, we don't want to mess with
+         ; any other keys, in case they weren't.
+         DeleteRegKey /ifempty HKLM "Software\Songbird"
+      ${EndIf}
+
+      Goto recheck
    ${EndIf}
 FunctionEnd
 

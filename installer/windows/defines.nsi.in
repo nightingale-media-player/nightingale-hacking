@@ -70,9 +70,12 @@
 #endif
 
 ; Registry keys for old installations we need to detect; see bug 16567
-!define AncientRegKey100 "1.0.0 - (20081124)"
-!define AncientRegKey111 "1.1.1 - (20090309)"
-!define AncientRegKey112 "1.1.2 - (20090331)"
+!define AncientRegKeyApp100 "1.0.0 - (20081124)"
+!define AncientRegKeyBranding100 "1.0.0 (20081124)"
+!define AncientRegKeyApp111 "1.1.1 - (20090309)"
+!define AncientRegKeyBranding111 "1.1.1 (20090309)"
+!define AncientRegKeyApp112 "1.1.2 - (20090331)"
+!define AncientRegKeyBranding112 "1.1.2 (20090331)"
 
 ; Registry key paths/names shared between the installer/uninstaller
 
