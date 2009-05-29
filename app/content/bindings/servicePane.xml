@@ -613,6 +613,9 @@
             if (this.isMediaTabURL(node.url)) {
               target = "_media";
               this.browser.selectedTab = this.browser.mediaTab;
+            } else if (event.button == 1) {
+              // Middle click.
+              target = "_blank";
             }
             this.browser.loadURI(node.url, null, null, event, target);
             
@@ -966,6 +969,25 @@
         this._onEnterKeypress(event);
       ]]></handler>
       <handler event="click" clickcount="1" button="0" phase="capturing"><![CDATA[
+        if (event.originalTarget.tagName == "treechildren") {
+          var obj={}, row={}, col={};
+          this.mTree.treeBoxObject.getCellAt(event.clientX,
+                                             event.clientY,
+                                             row,
+                                             col,
+                                             obj);
+
+          if ((obj.value != 'twisty') && (row.value >= 0)) {
+            var node = this.getNodeForRow(row.value);
+            if (node) {
+              this.selectAndLoadNode(node, event);
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }
+        }        
+      ]]></handler>
+      <handler event="click" clickcount="1" button="1" phase="capturing"><![CDATA[
         if (event.originalTarget.tagName == "treechildren") {
           var obj={}, row={}, col={};
           this.mTree.treeBoxObject.getCellAt(event.clientX,
