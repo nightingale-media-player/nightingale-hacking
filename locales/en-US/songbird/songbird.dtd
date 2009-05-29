@@ -427,6 +427,7 @@
 <!ENTITY device.info.access.label           "Access Compatibility">
 <!ENTITY device.info.playback_formats.label "Playback Formats">
 <!ENTITY device.info.battery.label          "Battery">
+<!ENTITY device.info.firmware_version.label "Firmware Version">
 
 <!ENTITY device.progress.sync "Sync">
 

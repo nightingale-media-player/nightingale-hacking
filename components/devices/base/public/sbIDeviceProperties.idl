@@ -35,7 +35,7 @@ interface nsIVariant;
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(1b7449fe-86d1-4668-85fb-9d75591e48cd)]
+[scriptable, uuid(a637356d-a89d-4a2a-b0cd-858d24aa347a)]
 interface sbIDeviceProperties : nsISupports
 {
  /**
@@ -57,6 +57,11 @@ interface sbIDeviceProperties : nsISupports
   * \brief Initialize Serial Number propery for a device
   */
   void initSerialNumber(in nsIVariant aSerialNumber);
+
+ /**
+  * \brief Initialize Firmware Version property for a device
+  */
+  void initFirmwareVersion(in AString aFirmwareVersion);
 
  /**
   * \brief Initialize Device Location for a device
@@ -104,6 +109,12 @@ interface sbIDeviceProperties : nsISupports
    */
   readonly attribute nsIVariant serialNumber;
   
+  /**
+   * Firmware version for the device. In human readable format. 
+   * \note Optional, may be empty.
+   */
+  readonly attribute AString firmwareVersion;
+
   /**
    * A URI representing the location of the device. Not included in the hash
    * code and therefore optional.

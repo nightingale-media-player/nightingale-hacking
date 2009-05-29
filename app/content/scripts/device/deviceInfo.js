@@ -282,6 +282,11 @@ var DIW = {
       case "battery" :
         this._deviceSpecUpdateBattery();
         break;
+        
+      case "firmware_version":
+        this._deviceSpecUpdateValue("firmware_version_value_label",
+                                    this._getDeviceFirmwareVersion());
+        break;
 
       default :
         break;
@@ -636,6 +641,13 @@ var DIW = {
     }
   },
 
+  _getDeviceFirmwareVersion: function DIW__getDeviceFirmwareVersion() {
+    try {
+      return this._deviceProperties.firmwareVersion;
+    } catch (err) {
+      return SBString("device.info.unknown");
+    }
+  },
 
   /**
    * \brief Return the device access compatibility.
@@ -708,7 +720,6 @@ var DIW = {
     return retFormats.join(", ") || SBString("device.info.unknown");
   },
 
-
   /**
    * \brief Return the device battery status.  Return the battery power level in
    *        aBatteryLevel.value.  If the device is running off of battery power,
@@ -747,6 +758,7 @@ var DIW = {
       case "access" :
       case "playback_formats" :
       case "battery" :
+      case "firmware_version" :
         return true;
 
       default :

@@ -94,6 +94,14 @@ sbDeviceProperties::InitSerialNumber(nsIVariant *aSerialNumber)
 }
 
 NS_IMETHODIMP
+sbDeviceProperties::InitFirmwareVersion(const nsAString &aFirmwareVersion)
+{
+  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  mFirmwareVersion = aFirmwareVersion;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceProperties::InitDeviceLocation(nsIURI *aDeviceLocationUri)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
@@ -122,7 +130,7 @@ sbDeviceProperties::InitDone()
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
   
-  isInitialized = true;
+  isInitialized = PR_TRUE;
   return NS_OK;
 }
 
@@ -171,6 +179,15 @@ sbDeviceProperties::GetSerialNumber(nsIVariant * *aSerialNumber)
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   NS_IF_ADDREF( *aSerialNumber = mSerialNumber );
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceProperties::GetFirmwareVersion(nsAString &aFirmwareVersion)
+{
+  NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+
+  aFirmwareVersion = mFirmwareVersion;
   return NS_OK;
 }
 

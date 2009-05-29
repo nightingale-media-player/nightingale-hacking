@@ -47,10 +47,12 @@ private:
   ~sbDeviceProperties();
 
 protected:
-  PRBool isInitialized;
+  PRPackedBool isInitialized;
   
   nsString mFriendlyName;
   nsString mVendorName;
+  nsString mFirmwareVersion;
+
   nsCOMPtr<nsIVariant> mModelNumber;
   nsCOMPtr<nsIVariant> mSerialNumber;
   nsCOMPtr<nsIURI> mDeviceLocation;
