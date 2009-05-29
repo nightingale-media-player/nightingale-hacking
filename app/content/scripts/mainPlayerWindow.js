@@ -244,8 +244,10 @@ var gSongbirdWindowController =
                         status.state == status.STATUS_PAUSED );
         return playing && document.commandDispatcher.focusedWindow == window;
       case "cmd_delete": {
-        var list = this._getVisiblePlaylist();
-        return (list && list.userEditable);
+        var node = gServicePane.getSelectedNode();
+        if(node.editable == false) {
+          return false;
+        }
       }
       case "cmd_volume_down":
         return mm.volumeControl.volume > 0;
