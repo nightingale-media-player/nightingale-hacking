@@ -58,8 +58,6 @@ const static NSString *gCreateClassElementFormat =
 const static NSString *gSetPropertyArgFormat =
   @"data:@, '----':obj { form:prop, want:type(prop), seld:type(%@), from:@ }";
 
-typedef std::list<sbiTunesPlaylist *>::iterator sbPlaylistIter;
-
 
 //------------------------------------------------------------------------------
 // AppleEvent utility methods
@@ -623,7 +621,7 @@ sbiTunesLibraryManager::BuildSongbirdPlaylistFolderCache()
   error = GetElementClassCount(SB_PLAYLIST_CLASS, NULL, &playlistCount);
   SB_ENSURE_SUCCESS(error, error);
 
-  for (unsigned int i = 0; i < playlistCount; i++) {
+  for (int i = 0; i < playlistCount; i++) {
     AppleEvent responseEvent;
     error = GetAEResponseForDescClass(SB_PLAYLIST_CLASS,
                                       i + 1,
@@ -703,9 +701,9 @@ sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   bool foundList = false;
-  sbPlaylistIter begin = mCachedSongbirdPlaylists.begin();
-  sbPlaylistIter end = mCachedSongbirdPlaylists.end();
-  sbPlaylistIter next;
+  sbiTunesPlaylistContainerIter begin = mCachedSongbirdPlaylists.begin();
+  sbiTunesPlaylistContainerIter end = mCachedSongbirdPlaylists.end();
+  sbiTunesPlaylistContainerIter next;
   for (next = begin; next != end && !foundList; ++next) {
     std::string curPlaylistName;
     sbError error = (*next)->GetPlaylistName(curPlaylistName);
@@ -870,15 +868,15 @@ sbiTunesLibraryManager::DeleteSongbirdPlaylist(sbiTunesPlaylist *aPlaylist)
 
   // Find the existing playlist entry in the cached playlists vector by 
   // comparing pointers.
-  sbPlaylistIter begin = mCachedSongbirdPlaylists.begin();
-  sbPlaylistIter end = mCachedSongbirdPlaylists.end();
-  sbPlaylistIter next;
-  for (next = begin; next != end; ++next) {
+  sbiTunesPlaylistContainerIter begin = mCachedSongbirdPlaylists.begin();
+  sbiTunesPlaylistContainerIter end = mCachedSongbirdPlaylists.end();
+  for (sbiTunesPlaylistContainerIter next = begin; next != end; ++next) {
     // Just compare pointers.
     if (aPlaylist == *next) {
-      sbiTunesPlaylist *ptr = *next;
+      sbiTunesPlaylist *oldPtr = *next;
       mCachedSongbirdPlaylists.erase(next);
-      delete ptr;
+      delete oldPtr;
+      break;
     }
   }
 

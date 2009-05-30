@@ -32,7 +32,7 @@
 #include <Carbon/Carbon.h>
 #include <string>
 #include <deque>
-#include <list>
+#include <vector>
 #include "sbiTunesAgentProcessor.h"
 
 class sbError;
@@ -71,9 +71,11 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-// Auto-ptr typedefs
+// Typedefs 
 
-typedef std::auto_ptr<sbiTunesPlaylist>  sbiTunesPlaylistPtr;
+typedef std::auto_ptr<sbiTunesPlaylist>      sbiTunesPlaylistPtr;
+typedef std::vector<sbiTunesPlaylist *>      sbiTunesPlaylistContainer;
+typedef sbiTunesPlaylistContainer::iterator  sbiTunesPlaylistContainerIter;
 
 //------------------------------------------------------------------------------
 // Manager class for modifying the users iTunes library.
@@ -144,7 +146,7 @@ protected:
 private:
   sbiTunesPlaylistPtr             mMainLibraryPlaylistPtr;
   sbiTunesPlaylistPtr             mSongbirdFolderPlaylistPtr;
-  std::list<sbiTunesPlaylist *>   mCachedSongbirdPlaylists;
+  sbiTunesPlaylistContainer       mCachedSongbirdPlaylists;
 };
 
 
