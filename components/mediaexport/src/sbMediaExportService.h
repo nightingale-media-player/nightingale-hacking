@@ -42,6 +42,7 @@
 #include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsIClassInfo.h>
+#include <sbIMediaExportService.h>
 #include <map>
 #include "sbMediaExportPrefController.h"
 
@@ -63,7 +64,8 @@ typedef enum {
 } EEnumerationLookupState;
 
 
-class sbMediaExportService : public nsIClassInfo,
+class sbMediaExportService : public sbIMediaExportService,
+                             public nsIClassInfo,
                              public nsIObserver,
                              public sbIMediaListListener,
                              public sbIMediaListEnumerationListener,
@@ -87,6 +89,7 @@ public:
                                const PRBool aNewPrefValue);
 
   NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIAEXPORTSERVICE
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
   NS_DECL_SBIMEDIALISTLISTENER

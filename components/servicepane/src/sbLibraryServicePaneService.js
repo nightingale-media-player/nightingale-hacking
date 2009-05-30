@@ -170,6 +170,36 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
         });
       }
     }
+    // Append the media export context menuitem only if the user has exporting turned on.
+    var appPrefs = Cc["@mozilla.org/fuel/application;1"]
+                     .getService(Ci.fuelIApplication).prefs;
+    if (appPrefs.getValue("songbird.library_exporter.export_tracks", false)) {
+      // Add media export hook if this is the main library
+      var libraryMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryManager);
+      if (list == libraryMgr.mainLibrary) {
+        var exportService = Cc["@songbirdnest.com/media-export-service;1"]
+                              .getService(Ci.sbIMediaExportService);
+
+        var item = aContextMenu.ownerDocument.createElement("menuitem");
+        item.setAttribute("label", SBString("command.libraryexport"));
+        item.addEventListener(
+          "command",
+          function(event) {
+            var exportService = Cc["@songbirdnest.com/media-export-service;1"]
+                                  .getService(Ci.sbIMediaExportService);
+            exportService.exportSongbirdData(); 
+          },
+          false);
+
+        // Disable the item if it doesn't have pending changes.
+        if (!exportService.hasPendingChanges) {
+          item.setAttribute("disabled", "true");
+        }
+
+        aContextMenu.appendChild(item);
+      }
+    }
 
     // Add menu items for a dynamic media list
     if (list.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {

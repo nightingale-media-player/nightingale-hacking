@@ -104,7 +104,7 @@ TestController.prototype =
     removeAllTaskFiles();
 
     // Access the shutdown service via the |sbIShutdownJob| interface
-    this._shutdownService = Cc["@songbirdnest.com/media-export-component;1"]
+    this._shutdownService = Cc["@songbirdnest.com/media-export-service;1"]
                               .getService(Ci.sbIShutdownJob);
     this._shutdownService.addJobProgressListener(this);
 

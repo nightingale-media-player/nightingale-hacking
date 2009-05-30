@@ -1065,6 +1065,7 @@ function goUpdateGlobalContentMenuItems()
   goUpdateCommand("cmd_print");
   goUpdateCommand("cmd_control_previous");
   goUpdateCommand("cmd_control_next");
+  goUpdateCommand("cmd_exportmedia");
 }
 
 /**

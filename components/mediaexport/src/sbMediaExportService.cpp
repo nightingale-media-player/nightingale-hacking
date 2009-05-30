@@ -55,7 +55,8 @@
 PRLogModuleInfo *gMediaExportLog = nsnull;
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS6(sbMediaExportService,
+NS_IMPL_THREADSAFE_ISUPPORTS7(sbMediaExportService,
+                              sbIMediaExportService,
                               nsIClassInfo,
                               nsIObserver,
                               sbIMediaListListener,
@@ -63,7 +64,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS6(sbMediaExportService,
                               sbIJobProgress,
                               sbIShutdownJob)
 
-NS_IMPL_CI_INTERFACE_GETTER6(sbMediaExportService,
+NS_IMPL_CI_INTERFACE_GETTER7(sbMediaExportService,
+                             sbIMediaExportService,
                              nsIClassInfo,
                              nsIObserver,
                              sbIMediaListListener,
@@ -896,6 +898,53 @@ sbMediaExportService::NotifyListeners()
 }
 
 //------------------------------------------------------------------------------
+// sbIMediaExportService
+
+NS_IMETHODIMP
+sbMediaExportService::GetHasPendingChanges(PRBool *aHasPendingChanges)
+{
+  NS_ENSURE_ARG_POINTER(aHasPendingChanges);
+
+  *aHasPendingChanges = PR_FALSE;
+
+  // Only export data if there was any recorded activity.
+  if (mAddedItemsMap.size() > 0 || 
+      mAddedMediaList.size() > 0 ||
+      mRemovedMediaLists.size() > 0)
+  {
+    *aHasPendingChanges = PR_TRUE;
+  }
+
+  LOG(("%s: Media-export service has pending changes == %s",
+        __FUNCTION__, (*aHasPendingChanges ? "true" : "false")));
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMediaExportService::ExportSongbirdData()
+{
+  LOG(("%s: Exporting songbird data (manual trigger)", __FUNCTION__));
+
+  nsresult rv;
+  mStatus = sbIJobProgress::STATUS_RUNNING;
+  rv = NotifyListeners();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Since looking up the stashed data locks the main thread, write out the
+  // export data on a background thread.
+  nsCOMPtr<nsIThreadPool> threadPoolService = 
+    do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIRunnable> runnable =
+    NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, WriteExportData);
+  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
+
+  return threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+}
+
+//------------------------------------------------------------------------------
 // nsIObserver
 
 NS_IMETHODIMP
@@ -1251,19 +1300,16 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
 {
   NS_ENSURE_ARG_POINTER(aNeedsToRunTask);
   
+  nsresult rv;
   *aNeedsToRunTask = PR_FALSE;
+  
+  rv = GetHasPendingChanges(aNeedsToRunTask);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Only export data if there was any recorded activity.
-  if (mAddedItemsMap.size() > 0 || 
-      mAddedMediaList.size() > 0 ||
-      mRemovedMediaLists.size() > 0)
-  {
-    *aNeedsToRunTask = PR_TRUE;
-  }
-  else {
-    // Check to see if the agent is not running and there is at least one task
-    // file waiting to be processed.
-    nsresult rv;
+  if (!*aNeedsToRunTask) {
+    // Since there isn't any pending changes, check to see if the agent should
+    // be started. Only start the agent if it is not running and there is at 
+    // least one pending export task file on disk.
     nsCOMPtr<nsIFile> taskFileParentFolder;
     rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR,
                                 getter_AddRefs(taskFileParentFolder));
@@ -1328,21 +1374,7 @@ sbMediaExportService::StartTask()
   
   // This method gets called by the shutdown service when it is our turn to
   // begin processing. Simply start the export data process here.
-  mStatus = sbIJobProgress::STATUS_RUNNING;
-  nsresult rv = NotifyListeners();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Since looking up the stashed data locks the main thread, write out the
-  // export data on a background thread.
-  nsCOMPtr<nsIThreadPool> threadPoolService = 
-    do_GetService(SB_THREADPOOLSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIRunnable> runnable =
-    NS_NEW_RUNNABLE_METHOD(sbMediaExportService, this, WriteExportData);
-  NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
-
-  return threadPoolService->Dispatch(runnable, NS_DISPATCH_NORMAL);
+  return ExportSongbirdData();
 }
 
 //------------------------------------------------------------------------------
@@ -1367,9 +1399,9 @@ sbMediaExportService::RegisterSelf(nsIComponentManager *aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = catMgr->AddCategoryEntry("app-startup",
-                                SONGBIRD_MEDIAEXPORTSERVICE_CLASSNAME,
+                                SB_MEDIAEXPORTSERVICE_CLASSNAME,
                                 "service,"
-                                SONGBIRD_MEDIAEXPORTSERVICE_CONTRACTID,
+                                SB_MEDIAEXPORTSERVICE_CONTRACTID,
                                 PR_TRUE, PR_TRUE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 

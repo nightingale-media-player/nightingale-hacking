@@ -75,6 +75,7 @@
 
 <!ENTITY menu.tools            "Tools" >
 <!ENTITY menu.tools.getartwork "Get Album Artwork...">
+<!ENTITY menu.tools.exportmedia "Export Library Changes">
 
 <!ENTITY menu.help          "Help" >
 <!ENTITY menu.help.bugz     "Report a Bug" >

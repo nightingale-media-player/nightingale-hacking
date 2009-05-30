@@ -247,6 +247,10 @@
                   class="menuitem-iconic" label="&menu.tools.getartwork;"
                   accesskey="&menu.tools.getartwork.accesskey;"
                   insertbefore="menu_downloadmgr" command="cmd_getartwork"/>
+        <!-- This needs to be hidden when pref is turned off. -->
+        <menuitem id="menuitem_tools_exportmedia" key="key_exportmedia"
+                  class="menuitem-iconic" label="&menu.tools.exportmedia;"
+                  insertbefore="menu_downloadmgr" command="cmd_exportmedia"/>
         <menuseparator insertbefore="menu_downloadmgr"/>
       </menupopup>
 
@@ -397,6 +401,7 @@
       <command id="cmd_mediapage_next" oncommand="goDoCommand(this.id);"/>
       <command id="cmd_metadata" oncommand="goDoCommand('cmd_metadata');"/>
       <command id="cmd_getartwork" oncommand="goDoCommand('cmd_getartwork');"/>
+      <command id="cmd_exportmedia" oncommand="goDoCommand('cmd_exportmedia');"/>
       <command id="cmd_editmetadata" oncommand="goDoCommand('cmd_editmetadata');"/>
       <command id="cmd_viewmetadata" oncommand="goDoCommand('cmd_viewmetadata');"/>
       <command id="cmd_reveal" oncommand="goDoCommand('cmd_reveal');"/>

@@ -30,11 +30,12 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbIMediaExportAgentService.idl \
+             sbIMediaExportService.idl \
              $(NULL)
 
-XPIDL_MODULE = sbMediaExportAgentService.xpt
+XPIDL_MODULE = sbMediaExportService.xpt
 XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
-LIBSONGBIRD_COMPONENT = sbMediaExportAgentService
+LIBSONGBIRD_COMPONENT = sbMediaExportService
 
 include $(topsrcdir)/build/rules.mk

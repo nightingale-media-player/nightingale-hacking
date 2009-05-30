@@ -64,10 +64,6 @@ typedef sbStringList::const_iterator        sbStringListIter;
 //------------------------------------------------------------------------------
 // Media export service XPCOM info
 
-#define SONGBIRD_MEDIAEXPORTSERVICE_CONTRACTID            \
-  "@songbirdnest.com/media-export-component;1"
-#define SONGBIRD_MEDIAEXPORTSERVICE_CLASSNAME             \
-  "Songbird Media Export Service" 
 #define SONGBIRD_MEDIAEXPORTSERVICE_CID                   \
 { /* 7DD185B9-F91E-473D-82DC-65060802D091 */              \
   0x7DD185B9,                                             \

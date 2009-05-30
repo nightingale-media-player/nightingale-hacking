@@ -26,6 +26,7 @@
 
 #include <nsIGenericFactory.h>
 
+#include <sbIMediaExportService.h>
 #include "sbMediaExportService.h"
 #include "sbMediaExportDefines.h"
 
@@ -35,9 +36,9 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaExportService, Init)
 static nsModuleComponentInfo sbMediaExport[] =
 {
   {
-    SONGBIRD_MEDIAEXPORTSERVICE_CLASSNAME,
+    SB_MEDIAEXPORTSERVICE_CLASSNAME,
     SONGBIRD_MEDIAEXPORTSERVICE_CID,
-    SONGBIRD_MEDIAEXPORTSERVICE_CONTRACTID,
+    SB_MEDIAEXPORTSERVICE_CONTRACTID,
     sbMediaExportServiceConstructor,
     sbMediaExportService::RegisterSelf
   },
