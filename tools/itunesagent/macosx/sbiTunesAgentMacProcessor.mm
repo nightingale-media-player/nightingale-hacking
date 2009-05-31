@@ -141,10 +141,6 @@ sbiTunesAgentProcessor* sbCreatesbiTunesAgentProcessor()
 sbiTunesAgentMacProcessor::sbiTunesAgentMacProcessor()
   : mLibraryMgr(new sbiTunesLibraryManager())
 {
-  sbError error = mLibraryMgr->Init();
-  if (error != sbNoError) {
-    ErrorHandler(error);
-  }
 }
 
 sbiTunesAgentMacProcessor::~sbiTunesAgentMacProcessor()
@@ -216,6 +212,16 @@ sbiTunesAgentMacProcessor::KillAllAgents()
   
   [pool release];
   return sbNoError;
+}
+
+sbError
+sbiTunesAgentMacProcessor::ProcessTaskFile()
+{
+  // Setup the library manager now.
+  sbError error = mLibraryMgr->Init();
+  SB_ENSURE_SUCCESS(error, error);
+
+  return sbiTunesAgentProcessor::ProcessTaskFile();
 }
 
 //------------------------------------------------------------------------------

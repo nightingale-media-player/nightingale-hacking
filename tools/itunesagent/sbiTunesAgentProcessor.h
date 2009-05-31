@@ -86,7 +86,7 @@ public:
    * Process the task file
    * This basically opens the file and calls ProcessStream
    */
-  sbError ProcessTaskFile();
+  virtual sbError ProcessTaskFile();
   
   /**
    * Waits for the iTunes process to start
