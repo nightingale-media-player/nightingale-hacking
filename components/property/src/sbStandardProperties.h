@@ -123,4 +123,7 @@
 #define SB_PROPERTY_CREATED_FIRSTRUN_SMARTPLAYLISTS "http://songbirdnest.com/data/1.0#createdFirstRunSmartPlaylists"
 #define SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID   "http://songbirdnest.com/data/1.0#downloadMediaListGUID"
 
+// iTunes Import/export related properties
+#define SB_PROPERTY_ITUNES_GUID "http://songbirdnest.com/data/1.0#iTunesGUID"
+
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

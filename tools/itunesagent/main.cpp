@@ -32,18 +32,17 @@
  * Standard C main function
  */
 int main(int argc, char * argv[]) {
-  sbError error;
   sbiTunesAgentProcessorPtr processor(sbCreatesbiTunesAgentProcessor());
   // Were we asked to unregister from "run"
   if (argc > 1 && std::string(argv[1]) == "--unregister") {
-    error = processor->UnregisterForStartOnLogin();
+    sbError error = processor->UnregisterForStartOnLogin();
     return error ? -1 : 0;
   }
   
   // Kill any of our processes
   if (argc > 1 && (std::string(argv[1]) == "--roundhouse" ||
                         std::string(argv[1]) == "--kill")) {
-    error = processor->KillAllAgents();
+    sbError error = processor->KillAllAgents();
     return error ? -1 : 0;
   }
 
@@ -62,7 +61,7 @@ int main(int argc, char * argv[]) {
   }
   
   // Register the app with the run startup key
-  error = processor->RegisterForStartOnLogin();
+  sbError error = processor->RegisterForStartOnLogin();
   if (error) {
     // Handle the error and return if told to stop
     if (!processor->ErrorHandler(error)) {

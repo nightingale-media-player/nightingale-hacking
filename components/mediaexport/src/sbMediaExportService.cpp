@@ -377,6 +377,13 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
     return NS_OK;
   }
 
+  // Don't watch playlists that are owned by iTunes
+  rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                               propValue);
+  if (NS_SUCCEEDED(rv) && !propValue.IsEmpty()) {
+    return NS_OK;
+  }
+  
   // Don't watch subscriptions
   rv = aMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISSUBSCRIPTION),
                                propValue);

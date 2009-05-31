@@ -247,6 +247,10 @@ private:
    */
   nsString mPlaylistBlacklist;
   /**
+   * The is the iTunes persistent ID of the special Songbird Folder
+   */
+  nsString mSongbirdFolderID;
+  /**
    * Our status updating object
    */
   sbiTunesImporterStatusPtr mStatus;

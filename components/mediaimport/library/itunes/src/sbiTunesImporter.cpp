@@ -61,6 +61,7 @@
 #include <sbLibraryUtils.h>
 #include <sbIMediacoreTypeSniffer.h>
 #include <sbPrefBranch.h>
+#include <sbPropertiesCID.h>
 #include <sbStringUtils.h>
 #include <sbStandardProperties.h>
 #ifdef SB_ENABLE_TEST_HARNESS
@@ -72,10 +73,6 @@
 #include "sbiTunesImporterStatus.h"
 
 char const SB_ITUNES_LIBRARY_IMPORT_PREF_PREFIX[] = "library_import.itunes";
-
-// If you change this, please change the corresponding usage in
-// sbLibraryServicePane.js
-#define SB_ITUNES_GUID_PROPERTY "http://songbirdnest.com/data/1.0#iTunesGUID"
 
 #ifdef PR_LOGGING
 static PRLogModuleInfo* giTunesImporter = nsnull;
@@ -225,7 +222,7 @@ struct PropertyMap {
  * Mapping between Songbird properties and iTunes
  */
 PropertyMap gPropertyMap[] = {
-  { SB_ITUNES_GUID_PROPERTY,      "Persistent ID", 0 },
+  { SB_PROPERTY_ITUNES_GUID,      "Persistent ID", 0 },
   { SB_PROPERTY_ALBUMARTISTNAME,  "Album Artist", 0 },
   { SB_PROPERTY_ALBUMNAME,        "Album", 0 },
   { SB_PROPERTY_ARTISTNAME,       "Artist", 0 },
@@ -702,7 +699,7 @@ sbiTunesImporter::OnTrack(sbIStringMap *aProperties) {
 #endif
   // If there is no persistent ID, then skip it
   nsString persistentID;
-  if (!track->mProperties.Get(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY), 
+  if (!track->mProperties.Get(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID), 
                               &persistentID)) {
     delete track;
     return NS_OK;
@@ -729,6 +726,16 @@ sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
   nsresult rv = aProperties->Get(NS_LITERAL_STRING("Name"), playlistName);
   NS_ENSURE_SUCCESS(rv, PR_FALSE);
   
+  // If we've seen the songbird folder check the parent ID of the playlist
+  // and if the parent is Songbird we don't need to import this playlist
+  // since this is a Songbird playlist
+  if (!mSongbirdFolderID.IsEmpty()) {
+    nsString parentID;
+    rv = aProperties->Get(NS_LITERAL_STRING("Parent Persistent ID"), parentID);
+    if (NS_FAILED(rv) || parentID.Equals(mSongbirdFolderID)) {
+      return PR_FALSE;
+    }
+  }
   nsString master;
   // Don't care if this errors
   aProperties->Get(NS_LITERAL_STRING("Master"), master);
@@ -736,15 +743,40 @@ sbiTunesImporter::ShouldImportPlaylist(sbIStringMap * aProperties) {
   nsString smartInfo;
   aProperties->Get(NS_LITERAL_STRING("Smart Info"), smartInfo);
   
+  nsString isFolder;
+  aProperties->Get(NS_LITERAL_STRING("Folder"), isFolder);
+  
   nsString delimitedName;
   delimitedName.AppendLiteral(":");
   delimitedName.Append(playlistName);
   delimitedName.AppendLiteral(":");
-  // If it has tracks, is not the master playlist, is not a smart playlist, and
-  // is not on the black list it should be imported
+  // If it has tracks, is not the master playlist, is not a folder, is not a 
+  // smart playlist, and is not on the black list it should be imported
   return !master.EqualsLiteral("true") &&
          smartInfo.IsEmpty() &&
+         !isFolder.EqualsLiteral("true") &&
          mPlaylistBlacklist.Find(delimitedName) == -1;
+}
+
+/**
+ * Determines if this is the special Songbird folder for playlists
+ */
+static PRBool 
+IsSongbirdFolder(sbIStringMap * aProperties) {
+  
+  nsString playlistName;
+  nsresult rv = aProperties->Get(NS_LITERAL_STRING("Name"), playlistName);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  
+  nsString smartInfo;
+  aProperties->Get(NS_LITERAL_STRING("Smart Info"), smartInfo);
+  
+  nsString isFolder;
+  aProperties->Get(NS_LITERAL_STRING("Folder"), isFolder);
+
+  return smartInfo.IsEmpty() &&
+         isFolder.EqualsLiteral("true") &&
+         playlistName.EqualsLiteral("Songbird");
 }
 
 static nsresult
@@ -768,6 +800,7 @@ FindPlaylistByName(sbILibrary * aLibrary,
       rv = mediaItem->QueryInterface(NS_GET_IID(sbIMediaList),
                                      reinterpret_cast<void**>(aMediaList));
       NS_ENSURE_SUCCESS(rv, rv);
+      return NS_OK;
     }
   }
   // Not found so return null
@@ -794,7 +827,13 @@ sbiTunesImporter::OnPlaylist(sbIStringMap *aProperties,
     return NS_ERROR_ABORT;
   }
   nsresult rv = UpdateProgress();
-  if (ShouldImportPlaylist(aProperties)) {
+  // If this is the Songbird folder save its ID
+  if (IsSongbirdFolder(aProperties)) {
+    // Ignore errors, if not found it's left empty
+    aProperties->Get(NS_LITERAL_STRING("Playlist Persistent ID"), 
+                     mSongbirdFolderID);
+  }
+  else if (ShouldImportPlaylist(aProperties)) {
     nsString playlistID;
     rv = aProperties->Get(NS_LITERAL_STRING("Playlist Persistent ID"), 
                           playlistID);
@@ -1025,7 +1064,7 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
   NS_ENSURE_SUCCESS(rv, rv);
     
   nsCString action("replace");
-  if (!isDirty || !mImportPlaylists) {
+  if (!mImportPlaylists) {
     action = "keep";
   }
   else if (mediaList && isDirty) {   
@@ -1052,14 +1091,27 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
       NS_ENSURE_SUCCESS(rv, rv);
     }
     if (aTrackIdsCount > 0) {
+      
+      // Setup the properties. We need to do properties so that when
+      // export sees this it knows it's an iTunes playlist
+      nsCOMPtr<sbIMutablePropertyArray> properties =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+                                      playlistName);
+      NS_ENSURE_SUCCESS(rv, rv);
+      
+      rv = properties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                                      playlistiTunesID);
+      NS_ENSURE_SUCCESS(rv, rv);
+     
       rv = mLibrary->CreateMediaList(NS_LITERAL_STRING("simple"), 
-                                     nsnull, 
+                                     properties, 
                                      getter_AddRefs(mediaList));
       NS_ENSURE_SUCCESS(rv, rv);
       
-      rv = mediaList->SetName(playlistName);
-      NS_ENSURE_SUCCESS(rv, rv);
-      
+      // Now add the Songbird and iTunes ID's to the map table
       nsString guid;
       rv = mediaList->GetGuid(guid);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1067,10 +1119,6 @@ sbiTunesImporter::ImportPlaylist(sbIStringMap *aProperties,
       rv = miTunesDBServices.MapID(miTunesLibID, playlistiTunesID, guid);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mediaList->SetProperty(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY),
-                                  playlistiTunesID);
-      NS_ENSURE_SUCCESS(rv, rv);
-   
       rv = ProcessPlaylistItems(mediaList,
                                 aTrackIds,
                                 aTrackIdsCount);
@@ -1267,7 +1315,7 @@ sbiTunesImporter::ProcessNewItems(
 
       nsString persistentID;
       PRBool ok = 
-        (*iter)->mProperties.Get(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY), 
+        (*iter)->mProperties.Get(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID), 
                                  &persistentID);
       NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
       
@@ -1384,7 +1432,7 @@ sbiTunesImporter::ProcessCreatedItems(
     NS_ENSURE_SUCCESS(rv, rv);
     
     nsString iTunesGUID;
-    rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_ITUNES_GUID_PROPERTY),
+    rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
                                 iTunesGUID);
     TracksByID::const_iterator iter = aTrackMap.find(iTunesGUID);
     if (iter != trackMapEnd) {

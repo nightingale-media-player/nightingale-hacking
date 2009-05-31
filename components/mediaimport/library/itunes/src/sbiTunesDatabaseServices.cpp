@@ -97,7 +97,9 @@ sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
   nsresult rv = mDBQuery->AddPreparedStatement(mInsertMapID);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mDBQuery->BindStringParameter(0, aiTunesLibID);
+  nsString compositeID(aiTunesLibID);
+  compositeID.Append(aiTunesID);
+  rv = mDBQuery->BindStringParameter(0, compositeID);
   NS_ENSURE_SUCCESS(rv, rv);
   
   rv = mDBQuery->BindStringParameter(1, aSongbirdID);
