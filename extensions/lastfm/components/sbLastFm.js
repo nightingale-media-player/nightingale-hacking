@@ -496,30 +496,6 @@ function sbLastFm() {
   SBDataSetStringValue("lastfm.radio.station", "");
   SBDataSetBoolValue("lastfm.radio.requesting", false);
 
-  // Attach our listener to the ShowCurrentTrack event issue by the faceplate
-  var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
-		.getService(Ci.nsIWindowMediator)
-		.getMostRecentWindow("Songbird:Main");
-  if (mainWin && mainWin.window) {
-    mainWin.window.addEventListener("ShowCurrentTrack", function(e) {
-		var gMM = Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
-				.getService(Ci.sbIMediacoreManager);
-		var item = gMM.sequencer.currentItem;
-		var artistPage = item.getProperty(PROPERTY_ARTISTPAGE);
-    if (artistPage) {
-      dump("artist page: " + artistPage + "\n");
-      var mainWin =
-        Components.classes['@mozilla.org/appshell/window-mediator;1']
-        .getService(Components.interfaces.nsIWindowMediator)
-        .getMostRecentWindow('Songbird:Main');
-      if (mainWin && mainWin.gBrowser)
-        mainWin.gBrowser.loadOneTab(artistPage);
-      e.preventDefault();
-      e.stopPropagation();
-    }
-	}, true);
-  }
-		
   LastFmUninstallObserver.register();
 }
 
@@ -1002,11 +978,6 @@ function sbLastFm_tuneStation(station, onSuccess, onFailure) {
 			self.station_name = text('name');
 			if (typeof(onSuccess) == "function")
 				onSuccess();
-			/*
-			self.radio_original_station_url = station;
-			self.radio_station_url = pairs.url;
-			self.radio_station_name = pairs.stationname;
-			*/
       });
 }
 

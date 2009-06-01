@@ -27,6 +27,16 @@ function sbLastFmFaceplate_init() {
   this.requestPref = Application.prefs.get('songbird.lastfm.radio.requesting');
   this.requestPref.events.addListener('change', 
       sbLastFmFaceplate_requestPref_change);
+
+  this.listenerBound = false;
+
+  this._service = Components.classes['@songbirdnest.com/lastfm;1']
+    .getService().wrappedJSObject
+  // catch the case of a Feather change
+  if (this._service.station_name && this._service.station_name != '') {
+    Application.prefs.setValue('songbird.lastfm.radio.station',
+        this._service.station_name);
+  }
 }
 
 sbLastFmFaceplate.fini = 
@@ -38,7 +48,14 @@ function sbLastFmFaceplate_fini() {
       sbLastFmFaceplate_requestPref_change);
   this.requestPref = null;
   Application.prefs.setValue('songbird.lastfm.radio.station', '');
-  Application.prefs.setValue('songbird.lastfm.radio.requesting', false);
+  Application.prefs.setValue('songbird.lastfm.radio.requesting', "0");
+
+  // Remove mediacore listener
+  if (this.listenerBound) {
+    Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+      .getService(Ci.sbIMediacoreManager)
+      .removeListener(sbLastFmFaceplate);
+  }
 }
 
 sbLastFmFaceplate.stationChanged =
@@ -55,10 +72,11 @@ function sbLastFmFaceplate_stationChanged() {
     // hide the radio icon from the faceplate
     stationIcon.style.visibility = "collapse";
 	
-	// Remove mediacore listener
-	Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+    // Remove mediacore listener
+    Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
 			.getService(Ci.sbIMediacoreManager)
 			.removeListener(sbLastFmFaceplate);
+    sbLastFmFaceplate.listenerBound = false;
   } else {
     for (var i in this.disableTags) {
       var elements = document.getElementsByTagName(this.disableTags[i]);
@@ -66,18 +84,20 @@ function sbLastFmFaceplate_stationChanged() {
         elements[j].setAttribute('disabled', 'true');
       }
     }
-	// If this has the disabled attribute (e.g. coming from SHOUTcast), then
-	// remove it
-	document.getElementsByTagName("sb-player-forward-button")[0]
-		.removeAttribute('disabled');
+    // If this has the disabled attribute (e.g. coming from SHOUTcast), then
+    // remove it
+    document.getElementsByTagName("sb-player-forward-button")[0]
+      .removeAttribute('disabled');
 
-	// show the radio icon from the faceplate
+    // show the radio icon from the faceplate
     stationIcon.style.visibility = "visible";
-	
-	// Add mediacore listener
-	Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
-			.getService(Ci.sbIMediacoreManager)
-			.addListener(sbLastFmFaceplate);
+
+    // Add mediacore listener
+    Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+        .getService(Ci.sbIMediacoreManager)
+        .addListener(sbLastFmFaceplate);
+
+    sbLastFmFaceplate.listenerBound = true;
   }
 }
 

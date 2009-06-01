@@ -321,6 +321,8 @@ LastFm.onLoad = function() {
     this._service.login();
   }
 
+  // Attach our listener to the ShowCurrentTrack event issue by the faceplate
+  window.addEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
 }
 
 LastFm.showOneMoreTag = function(tagName, removable) {
@@ -402,8 +404,27 @@ LastFm.addThisTag = function(mediaItem, tagString, success, failure) {
 LastFm.onUnload = function() {
   // the window is about to close
   this._service.listeners.remove(this);
+  window.removeEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
 }
 
+LastFm.showCurrentTrack = function(e) {
+  var gMM = Cc['@songbirdnest.com/Songbird/Mediacore/Manager;1']
+      .getService(Ci.sbIMediacoreManager);
+  var item = gMM.sequencer.currentItem;
+  var artistPage =
+      item.getProperty("http://www.songbirdnest.com/lastfm#artistPage");
+  if (artistPage) {
+    dump("artist page: " + artistPage + "\n");
+    var mainWin =
+      Components.classes['@mozilla.org/appshell/window-mediator;1']
+      .getService(Components.interfaces.nsIWindowMediator)
+      .getMostRecentWindow('Songbird:Main');
+    if (mainWin && mainWin.gBrowser)
+      mainWin.gBrowser.loadOneTab(artistPage);
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}
 
 LastFm.showPanel = function LastFm_showPanel() {
   this._panel.openPopup(this._statusIcon);
