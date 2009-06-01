@@ -60,15 +60,29 @@ const static NSString *gSetPropertyArgFormat =
 
 
 //------------------------------------------------------------------------------
-// AppleEvent utility methods
+// iTunes agent error handling 
+
+sbError const sbiTunesNotRunningError("iTunes Not Running!", true);
 
 inline sbError
 sbOSErrError(const char *aMsg, OSErr & aErr)
 {
+  // If the error code matches to the |procNotFound| code (-600) or 
+  // |connectionInvalid| (-609) - iTunes is no longer running.
+  // 
+  // Return a different error so that our caller knows that
+  // iTunes isn't running anymore.
+  if (aErr == procNotFound || aErr == connectionInvalid) {
+    return sbiTunesNotRunningError;
+  }
+    
   std::ostringstream msg;
   msg << "ERROR: " << aMsg << " : OSErr == " << aErr;
   return sbError(msg.str());
 }
+
+//------------------------------------------------------------------------------
+// AppleEvent utility methods
 
 sbError
 GetElementClassCount(DescType aDescType, 
@@ -503,6 +517,21 @@ sbiTunesLibraryManager::Init()
   SB_ENSURE_SUCCESS(error, error);
 
   return sbNoError;
+}
+
+sbError
+sbiTunesLibraryManager::ReloadManager()
+{
+  // Cleanup the existing resources before re-init'ing.
+  std::for_each(mCachedSongbirdPlaylists.begin(),
+                mCachedSongbirdPlaylists.end(),
+                DeletePlaylistPtr);
+
+  mCachedSongbirdPlaylists.clear();
+  mMainLibraryPlaylistPtr.reset();
+  mSongbirdFolderPlaylistPtr.reset();
+
+  return Init();
 }
 
 sbError

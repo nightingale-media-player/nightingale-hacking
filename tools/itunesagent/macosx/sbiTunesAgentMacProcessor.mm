@@ -255,7 +255,7 @@ sbiTunesAgentMacProcessor::WaitForiTunes()
     // This method needs to block for now.
     Sleep(AGENT_ITUNES_SLEEP_INTERVAL);
   }
-  
+
   return sbNoError;
 }
 
@@ -263,12 +263,34 @@ bool
 sbiTunesAgentMacProcessor::ErrorHandler(sbError const & aError)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
+        
   std::string path([GetSongbirdProfilePath() UTF8String]);
   path += AGENT_ERROR_FILENAME;
-  std::ofstream error(path.c_str());
-  if (error) {
-    error << "ERROR: " << aError.Message() << std::endl;
+
+  if (aError == sbiTunesNotRunningError) {
+    // If this message is received, the user shutdown iTunes during an export
+    // operation. Wait for iTunes to pop back up before trying to send any
+    // more data.
+    WaitForiTunes();
+
+    // Since iTunes quit in the middle of our expor operation, all of the 
+    // descriptors for resources (like playlists) are now invalid, reload 
+    // the data with the library manager before pressing on.
+    sbError error = mLibraryMgr->ReloadManager();
+    if (error != sbNoError) {
+      // Something really bad has gone on, just kill the agent now.
+      std::ofstream errorStream(path.c_str());
+      errorStream << "ERROR: Could not reload the Songbird data!" << std::endl
+                  << "  - MESSAGE: " << error.Message() << std::endl;
+      [pool release];
+      return false;
+    }
+  }
+  else {
+    std::ofstream errorStream(path.c_str());
+    if (errorStream) {
+      errorStream << "ERROR: " << aError.Message() << std::endl;
+    }
   }
 
   [pool release];

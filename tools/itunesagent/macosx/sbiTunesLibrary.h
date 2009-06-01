@@ -77,6 +77,8 @@ typedef std::auto_ptr<sbiTunesPlaylist>      sbiTunesPlaylistPtr;
 typedef std::vector<sbiTunesPlaylist *>      sbiTunesPlaylistContainer;
 typedef sbiTunesPlaylistContainer::iterator  sbiTunesPlaylistContainerIter;
 
+extern sbError const sbiTunesNotRunningError;
+
 //------------------------------------------------------------------------------
 // Manager class for modifying the users iTunes library.
 
@@ -91,6 +93,13 @@ public:
   //        before attempting to call any other method on this class.
   //
   sbError Init();
+
+  //
+  // \brief If iTunes is shutdown after the manager has been initialized, the
+  //        the internal data is invalid. Call this method after iTunes has
+  //        been reopened to re-inialize all the managers data.
+  //
+  sbError ReloadManager();
 
   //
   // \brief Get the playlist item for the main iTunes library.

@@ -71,6 +71,14 @@ public:
    * Used to create the sbNoError instance
    */
   explicit sbError(bool aChecked) : mChecked(aChecked) {}
+
+  /**
+   * Used to create misc. sbError instances.
+   */
+  explicit sbError(const char *aMessage, bool aChecked) :
+    mMessage(aMessage) ,
+    mChecked(aChecked) {
+  }
   
   /**
    * Detect unhandled errors
