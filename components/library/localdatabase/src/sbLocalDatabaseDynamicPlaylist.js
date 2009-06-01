@@ -114,13 +114,13 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
   var propMan = Cc["@songbirdnest.com/Songbird/Properties/PropertyManager;1"]
                   .getService(Ci.sbIPropertyManager);
 
-  var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
-               .createInstance(Ci.sbINumberPropertyInfo);
+  var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Boolean;1"]
+               .createInstance(Ci.sbIBooleanPropertyInfo);
   prop.id = SB_PROP_ISSUBSCRIPTION;
   prop.userViewable = false;
   prop.userEditable = false;
-  prop.minValue = 0;
-  prop.maxValue = 1;
+  prop.remoteReadable = true;
+  prop.remoteWritable = true;
   propMan.addPropertyInfo(prop);
 
   prop = Cc["@songbirdnest.com/Songbird/Properties/Info/URI;1"]
@@ -128,6 +128,8 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
   prop.id = SB_PROP_SUBSCRIPTIONURL;
   prop.userViewable = false;
   prop.userEditable = false;
+  prop.remoteReadable = true;
+  prop.remoteWritable = true;
   propMan.addPropertyInfo(prop);
 
   var prop = Cc["@songbirdnest.com/Songbird/Properties/Info/Number;1"]
@@ -135,6 +137,8 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
   prop.id = SB_PROP_SUBSCRIPTIONINTERVAL;
   prop.userViewable = false;
   prop.userEditable = false;
+  prop.remoteReadable = true;
+  prop.remoteWritable = true;
   prop.minValue = 0;
   propMan.addPropertyInfo(prop);
 
@@ -143,6 +147,8 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
   prop.id = SB_PROP_SUBSCRIPTIONNEXTRUN;
   prop.userViewable = false;
   prop.userEditable = false;
+  prop.remoteReadable = true;
+  prop.remoteWritable = true;
   prop.minValue = 0;
   propMan.addPropertyInfo(prop);
 
@@ -221,8 +227,7 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
   pa.appendProperty(SB_NS + "isList", "1");
   pa.appendProperty(SB_PROP_ISSUBSCRIPTION, "1");
 
-  aLibrary.enumerateItemsByProperties(pa,
-                                      listener );
+  aLibrary.enumerateItemsByProperties(pa, listener);
 
 }
 

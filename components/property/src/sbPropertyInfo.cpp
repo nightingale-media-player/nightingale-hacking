@@ -26,13 +26,26 @@
 
 #include "sbPropertyInfo.h"
 #include "sbStandardOperators.h"
-#include <nsAutoPtr.h>
-
-#include <nsISimpleEnumerator.h>
 
 #include <nsArrayEnumerator.h>
-
+#include <nsAutoPtr.h>
+#include <nsISimpleEnumerator.h>
 #include <sbLockUtils.h>
+
+/*
+ *  * To log this module, set the following environment variable:
+ *   *   NSPR_LOG_MODULES=sbPropInfo:5
+ *    */
+#include <prlog.h>
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gPropInfoLog = nsnull;
+#endif
+
+#define LOG(args) PR_LOG(gPropInfoLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
+
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyOperator, sbIPropertyOperator)
 
@@ -90,10 +103,18 @@ sbPropertyInfo::sbPropertyInfo()
 , mUserEditable(PR_TRUE)
 , mOperatorsLock(nsnull)
 , mRemoteReadableLock(nsnull)
+, mRemoteReadable(PR_FALSE)
 , mRemoteWritableLock(nsnull)
+, mRemoteWritable(PR_FALSE)
 , mUnitConverter(nsnull)
 , mUnitConverterLock(nsnull)
 {
+#ifdef PR_LOGGING
+  if (!gPropInfoLog) {
+    gPropInfoLog = PR_NewLogModule("sbPropInfo");
+  }
+#endif
+
   mSecondarySortLock = PR_NewLock();
 
   NS_ASSERTION(mSecondarySortLock,
@@ -357,6 +378,8 @@ NS_IMETHODIMP sbPropertyInfo::GetId(nsAString & aID)
 }
 NS_IMETHODIMP sbPropertyInfo::SetId(const nsAString &aID)
 {
+  LOG(( "sbPropertyInfo::SetId(%s)", NS_LossyConvertUTF16toASCII(aID).get() ));
+
   sbSimpleAutoLock lock(mIDLock);
 
   if(mID.IsEmpty()) {

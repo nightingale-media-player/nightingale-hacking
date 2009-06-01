@@ -63,6 +63,21 @@
 #include <prprf.h>
 #endif
 
+/*
+ *  * To log this module, set the following environment variable:
+ *   *   NSPR_LOG_MODULES=sbPropMan:5
+ *    */
+#include <prlog.h>
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gPropManLog = nsnull;
+#endif
+
+#define LOG(args) PR_LOG(gPropManLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
+
+
 #if !defined(SB_STRING_BUNDLE_CHROME_URL)
   #define SB_STRING_BUNDLE_CHROME_URL "chrome://songbird/locale/songbird.properties"
 #endif
@@ -87,6 +102,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbPropertyManager,
 sbPropertyManager::sbPropertyManager()
 : mPropIDsLock(nsnull)
 {
+#ifdef PR_LOGGING
+  if (!gPropManLog) {
+    gPropManLog = PR_NewLogModule("sbPropMan");
+  }
+#endif
+
   PRBool success = mPropInfoHashtable.Init(100);
   NS_ASSERTION(success,
     "sbPropertyManager::mPropInfoHashtable failed to initialize!");
@@ -162,6 +183,9 @@ NS_IMETHODIMP sbPropertyManager::AddPropertyInfo(sbIPropertyInfo *aPropertyInfo)
 NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
                                                  sbIPropertyInfo **_retval)
 {
+  LOG(( "sbPropertyManager::GetPropertyInfo(%s)", 
+        NS_LossyConvertUTF16toASCII(aID).get() ));
+
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = nsnull;
 
@@ -1549,6 +1573,8 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
                                    PRBool aRemoteReadable,
                                    PRBool aRemoteWritable)
 {
+  LOG(( "sbPropertyManager::RegisterBoolean(%s)",
+        NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
   NS_ASSERTION(aStringBundle, "aStringBundle is null");
 
   nsRefPtr<sbBooleanPropertyInfo> booleanProperty(new sbBooleanPropertyInfo());

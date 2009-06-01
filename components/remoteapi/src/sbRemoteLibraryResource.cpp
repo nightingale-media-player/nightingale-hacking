@@ -96,8 +96,9 @@ sbRemoteLibraryResource::GetProperty( const nsAString &aID,
 
   // well, is it readable?
   if (!readable) {
-    NS_WARNING( "Attempting to get a property value that is not allowed "
-                "to be read from the remote API!" );
+    LOG_RES(( "Attempting to get a property's (%s) value that is not allowed "
+              "to be read from the remote API!",
+              NS_LossyConvertUTF16toASCII(aID).get() ));
     // if not return an error
     return NS_ERROR_FAILURE;
   }
@@ -119,7 +120,7 @@ sbRemoteLibraryResource::GetProperty( const nsAString &aID,
       propVal.AssignLiteral("__BLOCKED__");
     } else {
       LOG_RES(( "sbRemoteLibraryResource::GetProperty() - "
-                "Allowing access to non-file URI: %s",
+                "Allowing access to non-file value: %s",
                 NS_LossyConvertUTF16toASCII(propVal).get() ));
     }
   }
@@ -167,8 +168,9 @@ sbRemoteLibraryResource::SetProperty( const nsAString &aID,
     // well, is it writeable?
     if (!writable) {
       // if not return an error
-      NS_WARNING( "Attempting to set a property value that is not allowed "
-                  "to be set from the remote API!" );
+      LOG_RES(( "Attempting to set a property's (%s) value that is not allowed "
+                "to be set from the remote API!",
+                NS_LossyConvertUTF16toASCII(aID).get() ));
       return NS_ERROR_FAILURE;
     }
   }

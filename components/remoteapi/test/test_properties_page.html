@@ -72,7 +72,9 @@ function runTest(tester) {
       "isPartOfCompilation",        // boolean  1/0
       "enableAutoDownload",         // boolean  1/0
       "excludeFromHistory",         // boolean  1/0
-      "disableDownload"             // boolean  1/0
+      "disableDownload",            // boolean  1/0
+      "isSortable",                 // boolean  1/0
+      "isSubscription"              // boolean  1/0
     ];
 
     // These we can't read from the WPAPI
@@ -150,8 +152,7 @@ function runTest(tester) {
       "smartMediaListState",
       "listType",
       "createdFirstRunSmartPlaylists",
-      "downloadMediaListGUID",
-      "isSubscription"
+      "downloadMediaListGUID"
     ];
 
     var library = songbird.mainLibrary;
