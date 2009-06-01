@@ -119,13 +119,6 @@
               preftype="bool"
               label="&import_playlists_itunes_checkbox;"/>
 
-    <!-- Checkbox for playlist import. -->
-    <checkbox id="import_library_import_smartplaylist_checkbox"
-              prefid="import_smartplaylists_pref"
-              prefname="songbird.library_importer.import_smartplaylists"
-              preftype="bool"
-              label="&import_smartplaylists_itunes_checkbox;"/>
-
   </vbox> <!-- Checkboxes. -->
 
 

@@ -80,14 +80,6 @@
       type="bool"
       onchange=""/>
 
-    <!-- Import smart playlists from iTunes -->
-    <preference
-      id="import_smartplaylists_itunes_pref"
-      prefid="import_smartplaylists_itunes_pref"
-      name="songbird.library_importer.import_smartplaylists"
-      type="bool"
-      onchange=""/>
- 
     <!-- Export tracks to iTunes -->
     <preference
       id="export_tracks_itunes_pref"
@@ -191,13 +183,6 @@
                     preference="import_playlists_itunes_pref"
                     observes="import_tracks_itunes_broadcaster"
                     label="&import_playlists_itunes_checkbox;" />
-
-          <!-- Import smart playlists from iTunes checkbox -->
-          <checkbox id="import_smartplaylists_itunes_checkbox"
-                    preference="import_smartplaylists_itunes_pref"
-                    observes="import_tracks_itunes_broadcaster"
-                    label="&import_smartplaylists_itunes_checkbox;" />
-        
         </vbox>
 
         <spacer height="10" />

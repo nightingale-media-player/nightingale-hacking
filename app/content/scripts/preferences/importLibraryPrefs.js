@@ -268,7 +268,6 @@ var importLibraryPrefsUI = {
     var prefValue = aElement.value;
     if (!prefValue && prefid == "import_tracks_itunes_pref") {
       document.getElementById("import_playlists_itunes_pref").value = false;
-      document.getElementById("import_smartplaylists_itunes_pref").value = false;
     }
     else if (!prefValue && prefid == "export_tracks_itunes_pref") {
       document.getElementById("export_playlists_itunes_pref").value = false;

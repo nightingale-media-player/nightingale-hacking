@@ -554,7 +554,6 @@
 <!ENTITY import_library.import_command                    "Import Library">
 <!ENTITY import_tracks_itunes_checkbox                    "Import tracks from iTunes">
 <!ENTITY import_playlists_itunes_checkbox                 "Import playlists">
-<!ENTITY import_smartplaylists_itunes_checkbox            "Import smart playlists">
 <!ENTITY export_tracks_itunes_checkbox                    "Export tracks to iTunes">
 <!ENTITY export_playlists_itunes_checkbox                 "Export playlists">
 <!ENTITY export_subscriptions_itunes_checkbox             "Export subscriptions">
