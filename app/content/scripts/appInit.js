@@ -478,57 +478,100 @@ appInit.migrator = {
    * Perform UI migration tasks
    */
   _updateUI: function _updateUI() {
-    var prefBranch = Cc["@mozilla.org/preferences-service;1"].getService(Ci.nsIPrefBranch);
-    
-    var migration = 0;
-    try {
-      migration = prefBranch.getIntPref("songbird.migration.ui.version");
-    } catch(ex) {}
+    var prefBranch = Cc["@mozilla.org/preferences-service;1"]
+                       .getService(Ci.nsIPrefBranch);
+    var migration = 
+      Application.prefs.getValue("songbird.migration.ui.version", 0);
     
     // In 0.5 we added the "media pages" switcher button.
     // Make sure it appears in the nav-bar currentset.
-    if (migration == 0) {
-      // Get a wrapper for localstore.rdf
-      var localStoreHelper = this._getLocalStoreHelper();
-      
-      // Make sure the media page switching is in the web toolbar 
-      // currentset for each known layout
-      var feathersManager = Components.classes['@songbirdnest.com/songbird/feathersmanager;1']
-                                      .getService(Components.interfaces.sbIFeathersManager);
-      var layouts = feathersManager.getLayoutDescriptions();
-      while (layouts.hasMoreElements()) {
-        var layoutURL = layouts.getNext().QueryInterface(
-                          Components.interfaces.sbILayoutDescription).url;      
-        var currentSet = localStoreHelper.getPersistedAttribute(layoutURL, "nav-bar", "currentset");
-        if (currentSet && currentSet.indexOf("mediapages-container") == -1) {
-          currentSet += ",mediapages-container";
-          localStoreHelper.setPersistedAttribute(layoutURL, "nav-bar", "currentset", currentSet);
-        }
-      }
-      localStoreHelper.flush();
-      
-      // migrate preferences
-      const PREF_OLD_DOWNLOAD_MUSIC_FOLDER        = "songbird.download.folder";
-      const PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT  = "songbird.download.always";
-      const PREF_DOWNLOAD_MUSIC_FOLDER            = "songbird.download.music.folder";
-      const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT      = "songbird.download.music.alwaysPrompt";
+    switch (migration) {
+      case 0:
+      {
+        // Get a wrapper for localstore.rdf
+        var localStoreHelper = this._getLocalStoreHelper();
 
-      this._migratePref(prefBranch, 
-                        "setCharPref", 
-                        "getCharPref", 
-                        function(p) { return p; }, 
-                        PREF_OLD_DOWNLOAD_MUSIC_FOLDER, 
-                        PREF_DOWNLOAD_MUSIC_FOLDER);
-      
-      this._migratePref(prefBranch, 
-                        "setBoolPref", 
-                        "getCharPref", 
-                        function(p) { return p=="1"; }, 
-                        PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT, 
-                        PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT);
-      
-      // update the migration version
-      prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+        // Make sure the media page switching is in the web toolbar 
+        // currentset for each known layout
+        var feathersManager = Cc['@songbirdnest.com/songbird/feathersmanager;1']
+                                .getService(Ci.sbIFeathersManager);
+        var layouts = feathersManager.getLayoutDescriptions();
+        while (layouts.hasMoreElements()) {
+          var layoutURL = layouts.getNext()
+                                 .QueryInterface(Ci.sbILayoutDescription).url;
+          var currentSet = 
+            localStoreHelper.getPersistedAttribute(layoutURL, 
+                                                   "nav-bar", 
+                                                   "currentset");
+          if (currentSet && currentSet.indexOf("mediapages-container") == -1) {
+            currentSet += ",mediapages-container";
+            localStoreHelper.setPersistedAttribute(layoutURL, 
+                                                   "nav-bar", 
+                                                   "currentset", 
+                                                   currentSet);
+          }
+        }
+        localStoreHelper.flush();
+
+        // migrate preferences
+        const PREF_OLD_DOWNLOAD_MUSIC_FOLDER = 
+          "songbird.download.folder";
+        const PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT = 
+          "songbird.download.always";
+        const PREF_DOWNLOAD_MUSIC_FOLDER  = 
+          "songbird.download.music.folder";
+        const PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT = 
+          "songbird.download.music.alwaysPrompt";
+
+        this._migratePref(prefBranch, 
+                          "setCharPref", 
+                          "getCharPref", 
+                          function(p) { return p; }, 
+                          PREF_OLD_DOWNLOAD_MUSIC_FOLDER, 
+                          PREF_DOWNLOAD_MUSIC_FOLDER);
+
+        this._migratePref(prefBranch, 
+                          "setBoolPref", 
+                          "getCharPref", 
+                          function(p) { return p=="1"; }, 
+                          PREF_OLD_DOWNLOAD_MUSIC_ALWAYSPROMPT, 
+                          PREF_DOWNLOAD_MUSIC_ALWAYSPROMPT);
+
+        // update the migration version
+        prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+
+        // Fall through to process the next migration. 
+      }
+      case 1:
+      {
+        // Migrate iTunes importer pref changes introduced in Songbird 1.2
+        const PREF_OLD_AUTO_ITUNES_IMPORT = 
+          "songbird.library_importer.auto_import";
+        const PREF_IMPORT_ITUNES =
+          "songbird.library_importer.import_tracks";
+
+        const PREF_OLD_ITUNES_DONT_IMPORT_PLAYLISTS = 
+          "songbird.library_importer.dont_import_playlists";
+        const PREF_ITUNES_IMPORT_PLAYLISTS =
+          "songbird.library_importer.import_playlists";
+
+        // Migrating these prefs isn't as easy as |_migratePref|, since the 
+        // "auto_import" pref will determine the value for "dont import 
+        // playlists" pref.
+        if (Application.prefs.getValue(PREF_OLD_AUTO_ITUNES_IMPORT, false)) {
+          // Migrate the "auto_import" pref.
+          Application.prefs.setValue(PREF_IMPORT_ITUNES, true);
+
+          // Now migrate the import playlists pref.
+          Application.prefs.setValue(
+            PREF_ITUNES_IMPORT_PLAYLISTS,
+            !Application.prefs.getValue(PREF_OLD_ITUNES_DONT_IMPORT_PLAYLISTS, false)
+          );
+        }
+
+        // update the migration version
+        prefBranch.setIntPref("songbird.migration.ui.version", ++migration);
+      }
     }
   },
   
