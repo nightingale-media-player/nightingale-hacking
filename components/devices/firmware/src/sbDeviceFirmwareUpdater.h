@@ -27,6 +27,7 @@
 #include <sbIDeviceFirmwareUpdater.h>
 
 #include <nsStringGlue.h>
+#include <nsTArray.h>
 #include <prmon.h>
 
 class sbDeviceFirmwareUpdater : public sbIDeviceFirmwareUpdater
@@ -45,6 +46,8 @@ private:
 protected:
   PRMonitor* mMonitor;
 
+  typedef nsTArray<nsCString> firmwarehandlers_t;
+  firmwarehandlers_t mFirmwareHandlers;
 };
 
 #define SB_DEVICEFIRMWAREUPDATER_DESCRIPTION               \

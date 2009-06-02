@@ -33,9 +33,6 @@
 
 #include <sbProxiedComponentManager.h>
 
-#define SB_DEVICE_FIRMWARE_HANLDER_CONTRACTID_ROOT \
-  "@songbirdnest.com/Songbird/Device/Firmware/Handler/"
-
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceFirmwareHandler, 
                               sbIDeviceFirmwareHandler)
 
@@ -105,11 +102,8 @@ sbBaseDeviceFirmwareHandler::OnInit()
    * This should include setting the following member variables to the
    * the values you need: mContractId.
    *
-   * The contract id root you need to use is 
-   * "@songbirdnest.com/Songbird/Device/Firmware/Handler/", the portion after the
-   * last slash should be something that identifies your handler. You should
-   * end up with a string that looks something like this:
-   * "@songbirdnest.com/Songbird/Device/Firmware/Handler/Acme Portable Player 900x"
+   * You should end up with a string that looks something like this:
+   * "@yourdomain.com/Songbird/Device/Firmware/Handler/Acme Portable Player 900x"
    *
    * The other values only need to be set when OnRefreshInfo is called.
    * These values are: mFirmwareVersion, mReadableFirmwareVersion, mFirmwareLocation
@@ -124,7 +118,6 @@ sbBaseDeviceFirmwareHandler::OnInit()
 
 /*virtual*/ nsresult 
 sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice, 
-                                         sbIDeviceEventListener *aListener, 
                                          PRBool *_retval)
 {
   /**
@@ -132,15 +125,6 @@ sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
    * to determine if your handler can support updating the firmware on
    * the device. _retval should be set to either PR_TRUE (yes, can update) 
    * or PR_FALSE (no, cannot update).
-   *
-   * Progress needs to be reported during this operation. The operation should
-   * happen asynchronously and should not block the main thread. The flow of
-   * expected events is as follows: firmware can update start, firmware can
-   * update progress, firmware can update end. See sbIDeviceEvent for more
-   * information about event payload.
-   *
-   * Events must be sent to both the device and the listener (if it is specified 
-   * during the call).
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -342,7 +326,6 @@ sbBaseDeviceFirmwareHandler::GetResetInstructionsLocation(nsIURI * *aResetInstru
 
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice, 
-                                       sbIDeviceEventListener *aListener, 
                                        PRBool *_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -351,7 +334,7 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = OnCanUpdate(aDevice, aListener, _retval);
+  nsresult rv = OnCanUpdate(aDevice, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

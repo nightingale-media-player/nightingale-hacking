@@ -25,30 +25,21 @@
 //
 */
 
-#include "sbBaseDevice.h"
-#include "sbIMockDevice.h"
-#include <sbIDeviceProperties.h>
+/**
+ * \brief Device Firmware Tests
+ */
 
-class sbDeviceContent;
-
-class sbMockDevice : public sbBaseDevice,
-                     public sbIMockDevice
-{
-public:
-  sbMockDevice();
-  NS_DECL_ISUPPORTS
-  NS_DECL_SBIDEVICE
-  NS_DECL_SBIMOCKDEVICE
-
-public:
-  nsresult ProcessRequest();
-
-protected:
-  PRBool mIsConnected;
+function runTest () {
+  var device = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
+                         .createInstance(Components.interfaces.sbIDevice);
+  assertEqual(device.name, "Bob's Mock Device");
   
-  nsCOMPtr<sbDeviceContent> mContent;
-  nsCOMPtr<sbIDeviceProperties> mProperties;
+  var updater = Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+                          .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
+  assertTrue(updater.hasHandler(device));
+
+  var handler = updater.getHandler(device);
+  assertNotEqual(handler, null);
   
-private:
-  ~sbMockDevice();
-};
+  
+}

@@ -39,6 +39,7 @@
 #include <nsXPCOMCIDInternal.h>
 
 #include <sbIDeviceLibrary.h>
+#include <sbIDeviceProperties.h>
 
 #include <sbDeviceContent.h>
 
@@ -330,7 +331,51 @@ NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
 
 NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;  
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if(!mProperties) {
+    nsCOMPtr<sbIDeviceProperties> properties = 
+      do_CreateInstance("@songbirdnest.com/Songbird/Device/DeviceProperties;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitFriendlyName(NS_LITERAL_STRING("Testing Device"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitVendorName(NS_LITERAL_STRING("ACME Inc."));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIWritableVariant> modelNumber =
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = modelNumber->SetAsString("ACME 9000");
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitModelNumber(modelNumber);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIWritableVariant> serialNumber =
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = serialNumber->SetAsString("ACME-9000-0001-2000-3000");
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitSerialNumber(serialNumber);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitFirmwareVersion(NS_LITERAL_STRING("1.0.0.0"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitDone();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mProperties = properties;
+  }
+
+  NS_ADDREF(*theProperties = mProperties);
+
+  return NS_OK;  
 }
 
 NS_IMETHODIMP sbMockDevice::SubmitRequest(PRUint32 aRequest, nsIPropertyBag2 *aRequestParameters)

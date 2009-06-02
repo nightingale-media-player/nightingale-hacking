@@ -25,34 +25,36 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @top_srcdir@/components/devices/base/src
+VPATH = @srcdir@ @top_srcdir@/components/devices/base/src @top_srcdir@/components/devices/firmware/src/
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbDeviceDeviceTesterInterfaces.idl \
-             sbIMockDevice.idl \
-             $(NULL)
+#
+# XXXAus: I'll need the commented out stuff later. That's why it's there.
+#
 
-XPIDL_INCLUDES = $(topsrcdir)/components/devices/base/public \
-                 $(NULL)
+#XPIDL_SRCS = sbDeviceFirmwareTesterInterfaces.idl \
+#             sbIMockDeviceFirmwareHandler.idl \
+#             $(NULL)
 
-XPIDL_MODULE = DeviceDeviceTester.xpt
+#XPIDL_INCLUDES = $(topsrcdir)/components/devices/base/public \
+#                 $(NULL)
 
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+#XPIDL_MODULE = DeviceFirmwareTester.xpt
+
+#XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 
-CPP_SRCS = sbDeviceDeviceTesterModule.cpp \
-           sbDeviceDeviceTesterUtils.cpp \
-           sbMockDevice.cpp \
+CPP_SRCS = sbDeviceFirmwareTesterModule.cpp \
+           sbMockDeviceFirmwareHandler.cpp \
            $(NULL)
 
 # From components/devices/base/src/
-CPP_SRCS += sbBaseDeviceEventTarget.cpp \
-            sbDeviceEvent.cpp \
-            sbDeviceLibrary.cpp \
-            sbDeviceLibraryHelpers.cpp \
-            sbDeviceContent.cpp \
-            sbDeviceProperties.cpp \
+CPP_SRCS += sbDeviceEvent.cpp \
+            $(NULL)
+            
+# From components/devices/firmware/src/
+CPP_SRCS += sbBaseDeviceFirmwareHandler.cpp \
             $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
@@ -63,16 +65,18 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
+               $(topsrcdir)/components/devices/firmware/src \
                $(topsrcdir)/components/include \
                $(topsrcdir)/components/library/base/src/static \
                $(topsrcdir)/components/library/localdatabase/src \
                $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(NULL)
 
-DYNAMIC_LIB = sbDeviceDeviceTester$(DEBUG:%=_d)$(DLL_SUFFIX)
+DYNAMIC_LIB = sbDeviceFirmwareTester$(DEBUG:%=_d)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
 
@@ -94,11 +98,10 @@ DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/devices/device/src/s
 
 IS_COMPONENT = 1
 
-SONGBIRD_TEST_COMPONENT = devicedevice
+SONGBIRD_TEST_COMPONENT = devicefirmware
 
 SONGBIRD_TESTS = \
-                 $(srcdir)/test_device_utils.js \
-                 $(srcdir)/test_device_mock.js \
+                 $(srcdir)/test_device_firmware_handler.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

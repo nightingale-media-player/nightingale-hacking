@@ -1,10 +1,11 @@
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -24,65 +25,32 @@
 //
 */
 
-#include <sbIDeviceFirmwareHandler.h>
+#include "sbBaseDeviceFirmwareHandler.h"
 
-#include <nsIURI.h>
-
-#include <nsCOMPtr.h>
-#include <nsStringGlue.h>
-#include <prmon.h>
-
-class sbBaseDeviceFirmwareHandler : public sbIDeviceFirmwareHandler
+class sbMockDeviceFirmwareHandler : public sbBaseDeviceFirmwareHandler
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_DECL_SBIDEVICEFIRMWAREHANDLER
+    
+  sbMockDeviceFirmwareHandler();
 
-  sbBaseDeviceFirmwareHandler();
-
-  nsresult Init();
-  
-  /**
-   * \brief Create an nsIURI from a spec string (e.g. http://some.url.com/path)
-   *        in a thread-safe manner
-   * \param aURISpec - The spec string
-   * \param aURI - The pointer which will hold the new URI
-   */
-  nsresult CreateProxiedURI(const nsACString &aURISpec, 
-                            nsIURI **aURI);
-
-  // override me, see cpp file for implementation notes
   virtual nsresult OnInit();
-  // override me, see cpp file for implementation notes
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
-  // override me, see cpp file for implementation notes
   virtual nsresult OnRefreshInfo(sbIDevice *aDevice, 
                                  sbIDeviceEventListener *aListener);
-  // override me, see cpp file for implementation notes
   virtual nsresult OnUpdate(sbIDevice *aDevice, 
                             sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
                             sbIDeviceEventListener *aListener);
-  // override me, see cpp file for implementation notes
   virtual nsresult OnVerifyDevice(sbIDevice *aDevice, 
                                   sbIDeviceEventListener *aListener);
-  // override me, see cpp file for implementation notes
   virtual nsresult OnVerifyUpdate(sbIDevice *aDevice, 
                                   sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
                                   sbIDeviceEventListener *aListener);
 
+private:
+  virtual ~sbMockDeviceFirmwareHandler();
+
 protected:
-  virtual ~sbBaseDeviceFirmwareHandler();
-
-  PRMonitor* mMonitor;
-
-  PRUint32 mFirmwareVersion;
-
-  nsString mContractId;
-  nsString mReadableFirmwareVersion;
-
-  nsCOMPtr<nsIURI> mFirmwareLocation;
-  nsCOMPtr<nsIURI> mReleaseNotesLocation;
-  nsCOMPtr<nsIURI> mResetInstructionsLocation;
 
 };

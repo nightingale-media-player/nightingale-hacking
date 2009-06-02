@@ -69,6 +69,8 @@ function runTest () {
   
   /* TODO: device.parameters */
   
+  test_properties(device);
+  
   test_event(device);
   
   test_request(device);
@@ -193,6 +195,24 @@ function test_library(device) {
   // stop a circular reference
   if (device.connected)
     device.disconnect();
+}
+
+function test_properties(device) {
+  var properties = device.properties;
+  
+  log("friendlyName: " + properties.friendlyName);
+  assertEqual(properties.friendlyName, "Testing Device");
+  log("serialNumber: " + properties.serialNumber);
+  assertEqual(properties.serialNumber, "ACME-9000-0001-2000-3000");
+  log("modelNumber: " + properties.modelNumber);
+  assertEqual(properties.modelNumber, "ACME 9000");
+  log("vendorName: " + properties.vendorName);
+  assertEqual(properties.vendorName, "ACME Inc.");
+  log("firmwareVersion: " + properties.firmwareVersion);
+  assertEqual(properties.firmwareVersion, "1.0.0.0");
+  
+  properties.friendlyName = "New Friendly Test Device";
+  assertEqual(properties.friendlyName, "New Friendly Test Device");
 }
 
 function createPropertyBag(aParams) {
