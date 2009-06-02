@@ -864,11 +864,11 @@ var AlbumArt = {
       var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
                          .getService(Ci.sbIAlbumArtService);
 
-      var newFile = artService.cacheImage(mimeType,
-                                          imageData,
-                                          imageData.length);
-      if (newFile) {
-        AlbumArt.setCurrentStateItemImage(newFile.spec);
+      var newURI = artService.cacheImage(mimeType,
+                                         imageData,
+                                         imageData.length);
+      if (newURI) {
+        AlbumArt.setCurrentStateItemImage(newURI.spec);
       }
     }
   },

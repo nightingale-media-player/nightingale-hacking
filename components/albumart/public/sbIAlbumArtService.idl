@@ -37,7 +37,7 @@
 #include "nsISupports.idl"
 
 interface nsIArray;
-interface nsIFileURL;
+interface nsIURI;
 
 
 /**
@@ -47,7 +47,7 @@ interface nsIFileURL;
  *
  * "@songbirdnest.com/Songbird/album-art-service;1"
  */
-[scriptable, uuid(f88948f8-1dd1-11b2-a38a-e6bf821b07e4)]
+[scriptable, uuid(aa7cdc8e-1dd1-11b2-93af-9e33a97b1a4d)]
 interface sbIAlbumArtService : nsISupports
 {
   /**
@@ -93,9 +93,9 @@ interface sbIAlbumArtService : nsISupports
    * \return                    Album art image cache file URL.
    */
 
-  nsIFileURL cacheImage(in AUTF8String                             aMimeType,
-                        [const, array, size_is(aDataLen)] in octet aData,
-                        in unsigned long                           aDataLen);
+  nsIURI cacheImage(in AUTF8String                             aMimeType,
+                    [const, array, size_is(aDataLen)] in octet aData,
+                    in unsigned long                           aDataLen);
 
   
   /**

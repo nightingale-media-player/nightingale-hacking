@@ -182,9 +182,9 @@ var sbCoverHelper = {
       // Save the image data out to the new file in the artwork folder
       var artService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
                          .getService(Ci.sbIAlbumArtService);
-      var newFile = artService.cacheImage(mimeType, imageData, imageData.length);
-      if (newFile) {
-        return newFile.spec;
+      var newUri = artService.cacheImage(mimeType, imageData, imageData.length);
+      if (newUri) {
+        return newUri.spec;
       }
     } catch (err) {
       Cu.reportError("sbCoverHelper: Unable to save file image data: " + err);
@@ -296,9 +296,9 @@ var sbCoverHelper = {
    */
   getFlavours: function(flavours) {
     flavours.appendFlavour("application/x-moz-file", "nsIFile");
-    flavours.appendFlavour("text/html");
     flavours.appendFlavour("text/x-moz-url");
     flavours.appendFlavour("text/uri-list");
+    flavours.appendFlavour("text/html");
     flavours.appendFlavour("text/unicode");
     flavours.appendFlavour("text/plain");
     return flavours;
@@ -395,12 +395,27 @@ var sbCoverHelper = {
                       .getService(Ci.nsIIOService);
     var imageURI = null;
 
-    // First try to convert the URL to an URI
+    // First try to convert the URL spec to an URI
     try {
       imageURI = ioService.newURI(aImageURL, null, null);
+      // We need to convert resource:// urls to file://
+      if (imageURI.schemeIs("resource")) {
+        var protoHandler = ioService.getProtocolHandler("resource")
+                                    .QueryInterface(Ci.nsIResProtocolHandler);
+        var newImageURL = protoHandler.resolveURI(imageURI);
+        if (newImageURL) {
+          aImageURL = newImageURL;
+          imageURI = ioService.newURI(aImageURL, null, null);
+        } else {
+          Cu.reportError(aImageURL + " did not properly convert from resource" +
+            " to a file url.");
+          return;
+        }
+      }
     } catch (err) {
       Cu.reportError("sbCoverHelper: Unable to convert to URI: [" + aImageURL +
                      "] " + err);
+      return;
     }
     
     // If we have a local file then put it as a proper image mime type
@@ -410,12 +425,12 @@ var sbCoverHelper = {
         // Read the mime type for the flavour
         var mimetype = Cc["@mozilla.org/mime;1"]
                          .getService(Ci.nsIMIMEService)
-                         .getTypeFromFile(imageURI);
+                         .getTypeFromFile(imageURI.file);
 
         // Create an input stream for mime type flavour if we can
         var inputStream = Cc["@mozilla.org/network/file-input-stream;1"]
                             .createInstance(Ci.nsIFileInputStream);
-        inputStream.init(imageURI, FLAGS_DEFAULT, FLAGS_DEFAULT, 0);
+        inputStream.init(imageURI.file, FLAGS_DEFAULT, FLAGS_DEFAULT, 0);
         
         aTransferData.data.addDataForFlavour(mimetype,
                                              inputStream,
@@ -428,19 +443,26 @@ var sbCoverHelper = {
 
       // Add a file flavour
       aTransferData.data.addDataForFlavour("application/x-moz-file",
-                                           imageURI,
+                                           imageURI.file,
                                            0,
                                            Ci.nsILocalFile);
     }
 
     // Add a url flavour
-    aTransferData.data.addDataForFlavour("text/x-moz-url", aImageURL);
+    aTransferData.data.addDataForFlavour("text/x-moz-url",
+                                         aImageURL + "\n" + imageURI.file.path);
 
     // Add a uri-list flavour
     aTransferData.data.addDataForFlavour("text/uri-list", aImageURL);
 
     // Add simple Unicode flavour
     aTransferData.data.addDataForFlavour("text/unicode", aImageURL);
+  
+    // Add HTML flavour
+    aTransferData.data.addDataForFlavour("text/html",
+                                         "<img src=\"" +
+                                          encodeURIComponent(aImageURL) +
+                                          "\"/>");
 
     // Finally a plain text flavour
     aTransferData.data.addDataForFlavour("text/plain", aImageURL);  

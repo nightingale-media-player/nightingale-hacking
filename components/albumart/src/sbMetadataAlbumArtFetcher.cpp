@@ -457,16 +457,16 @@ sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
   sbAutoNSMemPtr autoData(data);
 
   // Cache album art image.
-  nsCOMPtr<nsIFileURL> cacheFileURL;
+  nsCOMPtr<nsIURI> cacheURI;
   rv = mAlbumArtService->CacheImage(mimeType,
                                     data,
                                     dataLength,
-                                    getter_AddRefs(cacheFileURL));
+                                    getter_AddRefs(cacheURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (aListener) {
     // Notify caller we found an image for this item
-    aListener->OnTrackResult(cacheFileURL, aMediaItem);
+    aListener->OnTrackResult(cacheURI, aMediaItem);
   }
 
   return NS_OK;

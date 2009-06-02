@@ -66,7 +66,9 @@
 #include <nsIFileURL.h>
 #include <nsIMutableArray.h>
 #include <nsIProperties.h>
+#include <nsIProtocolHandler.h>
 #include <nsIProxyObjectManager.h>
+#include <nsIResProtocolHandler.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIUnicharLineInputStream.h>
 #include <nsIUnicharOutputStream.h>
@@ -85,6 +87,9 @@
 
 // Time before clearing the temporary cache (in ms)
 #define TEMPORARY_CACHE_CLEAR_TIME  60000
+
+// The resouce:// protocol prefix (host part) for album art cache
+#define SB_RES_PROTO_PREFIX "sb-artwork"
 
 // Interval for checking if any files need to be removed from the album art
 // cache folder (in ms).
@@ -229,7 +234,7 @@ sbAlbumArtService::ImageIsValidAlbumArt(const nsACString& aMimeType,
   }
 
   // Ensure a valid album art file extension can be obtained for the image.
-  nsAutoString fileExtension;
+  nsCAutoString fileExtension;
   rv = GetAlbumArtFileExtension(aMimeType, fileExtension);
   if (NS_FAILED(rv)) {
     *_retval = PR_FALSE;
@@ -261,7 +266,7 @@ NS_IMETHODIMP
 sbAlbumArtService::CacheImage(const nsACString& aMimeType,
                               const PRUint8*    aData,
                               PRUint32          aDataLen,
-                              nsIFileURL**      _retval)
+                              nsIURI**          _retval)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - CacheImage", this));
   // Validate arguments.
@@ -274,31 +279,34 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
   nsresult rv;
 
   // Get the image cache file base name.
-  nsAutoString fileBaseName;
+  nsCAutoString fileBaseName;
   rv = GetCacheFileBaseName(aData, aDataLen, fileBaseName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the image cache file extension.
-  nsAutoString fileExtension;
+  nsCAutoString fileExtension;
   rv = GetAlbumArtFileExtension(aMimeType, fileExtension);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Produce the image cache file object within the album art cache directory.
-  nsAutoString fileName;
+  // Produce the image cache URL
+  nsCString fileName;
   fileName.Assign(fileBaseName);
-  fileName.Append(NS_LITERAL_STRING("."));
+  fileName.AppendLiteral(".");
   fileName.Append(fileExtension);
-  nsCOMPtr<nsIFile> cacheFile;
-  rv = mAlbumArtCacheDir->Clone(getter_AddRefs(cacheFile));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = cacheFile->Append(fileName);
+
+  nsCString cacheDummySpec("resource://" SB_RES_PROTO_PREFIX "/dummy");
+  nsCOMPtr<nsIURI> cacheFileURI;
+  rv = mIOService->NewURI(cacheDummySpec, nsnull, nsnull, getter_AddRefs(cacheFileURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Produce the image cache file nsIFileURL object.
-  nsCOMPtr<nsIURI> cacheFileURI;
-  rv = mIOService->NewFileURI(cacheFile, getter_AddRefs(cacheFileURI));
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Get the mapped file on disc
   nsCOMPtr<nsIFileURL> cacheFileURL = do_QueryInterface(cacheFileURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cacheFileURL->SetFileName(fileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIFile> cacheFile;
+  rv = cacheFileURL->GetFile(getter_AddRefs(cacheFile));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If cache file already exists, return it.
@@ -306,7 +314,7 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
   rv = cacheFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
   if (exists) {
-    cacheFileURL.forget(_retval);
+    cacheFileURI.forget(_retval);
     return NS_OK;
   }
 
@@ -331,7 +339,7 @@ sbAlbumArtService::CacheImage(const nsACString& aMimeType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return results.
-  cacheFileURL.forget(_retval);
+  cacheFileURI.forget(_retval);
 
   return NS_OK;
 }
@@ -547,6 +555,29 @@ sbAlbumArtService::Initialize()
   // Get the album art cache directory.
   rv = GetAlbumArtCacheDir();
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Add the resolver for resource://sb-albumart/
+  nsCOMPtr<nsIIOService> ioservice =
+    do_GetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIProtocolHandler> protoHandler;
+  rv = ioservice->GetProtocolHandler("resource", getter_AddRefs(protoHandler));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIResProtocolHandler> resProtoHandler =
+    do_QueryInterface(protoHandler, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool hasSubstitution;
+  rv = resProtoHandler->HasSubstitution(NS_LITERAL_CSTRING(SB_RES_PROTO_PREFIX),
+                                        &hasSubstitution);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!hasSubstitution) {
+    nsCOMPtr<nsIURI> cacheURI;
+    rv = ioservice->NewFileURI(mAlbumArtCacheDir, getter_AddRefs(cacheURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = resProtoHandler->SetSubstitution(NS_LITERAL_CSTRING(SB_RES_PROTO_PREFIX),
+                                          cacheURI);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Set up the arbitrary data cache
   PRBool succeeded = mTemporaryCache.Init(TEMPORARY_CACHE_SIZE);
@@ -762,7 +793,7 @@ sbAlbumArtService::UpdateAlbumArtFetcherInfo()
 nsresult
 sbAlbumArtService::GetCacheFileBaseName(const PRUint8* aData,
                                         PRUint32       aDataLen,
-                                        nsAString&     aFileBaseName)
+                                        nsACString&    aFileBaseName)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - GetCacheFileBaseName", this));
   // Validate arguments.
@@ -809,39 +840,35 @@ sbAlbumArtService::GetCacheFileBaseName(const PRUint8* aData,
 
 nsresult
 sbAlbumArtService::GetAlbumArtFileExtension(const nsACString& aMimeType,
-                                            nsAString&        aFileExtension)
+                                            nsACString&        aFileExtension)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - GetAlbumArtFileExtension", this));
-  nsCAutoString fileExtension;
   nsresult      rv;
 
   // Look up the file extension from the MIME type.
   rv = mMIMEService->GetPrimaryExtension(aMimeType,
                                          NS_LITERAL_CSTRING(""),
-                                         fileExtension);
+                                         aFileExtension);
   if (NS_FAILED(rv))
-    fileExtension.Truncate();
+    aFileExtension.Truncate();
 
   // Extract the file extension from the MIME type.
-  if (fileExtension.IsEmpty()) {
+  if (aFileExtension.IsEmpty()) {
     PRInt32 mimeSubTypeIndex = aMimeType.RFind("/");
     if (mimeSubTypeIndex >= 0) {
-      fileExtension.Assign(nsDependentCSubstring(aMimeType,
-                                                 mimeSubTypeIndex + 1));
+      aFileExtension.Assign(nsDependentCSubstring(aMimeType,
+                                                  mimeSubTypeIndex + 1));
     } else {
-      fileExtension.Assign(aMimeType);
+      aFileExtension.Assign(aMimeType);
     }
   }
 
   // Convert file extension to lower-case.
-  ToLowerCase(fileExtension);
+  ToLowerCase(aFileExtension);
 
   // Validate the extension.
-  if (!mValidExtensionList.Contains(fileExtension))
+  if (!mValidExtensionList.Contains(aFileExtension))
     return NS_ERROR_FAILURE;
-
-  // Return results.
-  aFileExtension.AssignLiteral(fileExtension.get());
 
   return NS_OK;
 }

@@ -209,10 +209,10 @@ private:
 
   nsresult GetCacheFileBaseName(const PRUint8* aData,
                                 PRUint32       aDataLen,
-                                nsAString&     aFileBaseName);
+                                nsACString&    aFileBaseName);
 
   nsresult GetAlbumArtFileExtension(const nsACString& aMimeType,
-                                    nsAString&        aFileExtension);
+                                    nsACString&       aFileExtension);
 
 };
 
