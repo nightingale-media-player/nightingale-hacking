@@ -197,12 +197,6 @@ var manageMediaPrefsPane = {
             fileField.file = prefElem.value || manageMediaPrefsPane._libraryFolder;
             // we want to use the full path, unless that ends up being empty
             fileField.label = fileField.file.path;
-            // update the one for formatting as well
-            let label = document.getElementById("manage_media_format_dir_label");
-            let formatter = document.getElementById("manage_media_format_dir_formatter");
-            label.value = SBFormattedString("prefs.media_management.file_label",
-                                            [fileField.file.leafName,
-                                             formatter.defaultSeparator]);
             break;
         }
         break;
@@ -375,7 +369,6 @@ var manageMediaPrefsPane = {
     var dirFormatter = document.getElementById("manage_media_format_dir_formatter");
     var renameCheck = document.getElementById("manage_media_format_rename");
     var fileFormatter = document.getElementById("manage_media_format_file_formatter");
-    var fmtDirLabel = document.getElementById("manage_media_format_dir_label");
      
     var enableButton = document.getElementById("manage_media_global_cmd");
     var previewButton = document.getElementById("manage_media_global_preview");
@@ -387,7 +380,6 @@ var manageMediaPrefsPane = {
       managedFolder.removeAttribute("disabled");
       browseButton.disabled = false;
       renameCheck.removeAttribute("disabled");
-      fmtDirLabel.removeAttribute("disabled");
       dirFormatter.disableAll = false;
       fileFormatter.disableAll = false;
       previewButton.disabled = false;
@@ -397,7 +389,6 @@ var manageMediaPrefsPane = {
       managedFolder.setAttribute("disabled", true);
       browseButton.disabled = true;
       renameCheck.setAttribute("disabled", true);
-      fmtDirLabel.setAttribute("disabled", true);
       dirFormatter.disableAll = true;
       fileFormatter.disableAll = true;
       previewButton.disabled = true;

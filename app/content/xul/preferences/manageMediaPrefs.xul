@@ -87,7 +87,7 @@
         <caption id="manage_media_format_caption"
                  label="&prefWindow.manageMedia.format.box.label;"/>
         <hbox id="manage_media_format_dir_container">
-          <label id="manage_media_format_dir_label"/>
+          <!-- <label id="manage_media_format_dir_label"/> -->
           <sb-properties-formatter id="manage_media_format_dir_formatter"
                preference-editable="true" maxProperties="3" trailingSeparator="true"
                propertyCategory="songbird-media-manager-properties"
