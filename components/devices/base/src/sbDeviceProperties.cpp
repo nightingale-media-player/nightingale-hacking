@@ -34,7 +34,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceProperties, sbIDeviceProperties)
 
 /**
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbDeviceContent:5
+ *   NSPR_LOG_MODULES=sbDeviceProperties:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gDevicePropertiesLog = nsnull;
@@ -46,7 +46,7 @@ static PRLogModuleInfo* gDevicePropertiesLog = nsnull;
 #endif /* PR_LOGGING */
 
 sbDeviceProperties::sbDeviceProperties() :
-isInitialized(false)
+isInitialized(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gDevicePropertiesLog) {

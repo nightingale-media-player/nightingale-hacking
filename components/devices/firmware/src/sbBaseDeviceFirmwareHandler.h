@@ -23,3 +23,68 @@
 // END SONGBIRD GPL
 //
 */
+
+#include <sbIDeviceFirmwareHandler.h>
+
+#include <nsIURI.h>
+
+#include <nsCOMPtr.h>
+#include <nsStringGlue.h>
+#include <prmon.h>
+
+class sbBaseDeviceFirmwareHandler : public sbIDeviceFirmwareHandler
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIDEVICEFIRMWAREHANDLER
+
+  sbBaseDeviceFirmwareHandler();
+
+  nsresult Init();
+  
+  /**
+   * \brief Create an nsIURI from a spec string (e.g. http://some.url.com/path)
+   *        in a thread-safe manner
+   * \param aURISpec - The spec string
+   * \param aURI - The pointer which will hold the new URI
+   */
+  nsresult CreateProxiedURI(const nsACString &aURISpec, 
+                            nsIURI **aURI);
+
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnInit();
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
+                               sbIDeviceEventListener *aListener, 
+                               PRBool *_retval);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnRefreshInfo(sbIDevice *aDevice, 
+                                 sbIDeviceEventListener *aListener);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnUpdate(sbIDevice *aDevice, 
+                            sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
+                            sbIDeviceEventListener *aListener);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnVerifyDevice(sbIDevice *aDevice, 
+                                  sbIDeviceEventListener *aListener);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnVerifyUpdate(sbIDevice *aDevice, 
+                                  sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
+                                  sbIDeviceEventListener *aListener);
+
+private:
+  virtual ~sbBaseDeviceFirmwareHandler();
+
+protected:
+  PRMonitor* mMonitor;
+
+  PRUint32 mFirmwareVersion;
+
+  nsString mContractId;
+  nsString mReadableFirmwareVersion;
+
+  nsCOMPtr<nsIURI> mFirmwareLocation;
+  nsCOMPtr<nsIURI> mReleaseNotesLocation;
+  nsCOMPtr<nsIURI> mResetInstructionsLocation;
+
+};

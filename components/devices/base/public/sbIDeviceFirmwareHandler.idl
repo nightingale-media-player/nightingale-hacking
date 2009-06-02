@@ -49,31 +49,36 @@ interface sbIDeviceFirmwareHandler : nsISupports
 
   /**
    * \brief URI for latest firmware (where it can be downloaded from).
-   * \note This value can be refreshed by calling refreshInfo.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute nsIURI latestFirmwareLocation;
   
   /**
    * \brief The latest firmware version, in machine friendly format.
-   * \note This value can be refreshed by calling refreshInfo.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute unsigned long latestFirmwareVersion;
 
   /**
    * \brief The latest firmware version, in human readable format.
-   * \note This value can be refreshed by calling refreshInfo.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute AString latestFirmwareReadableVersion;
 
   /**
    * \brief Location for the release notes of the latest firmware.
-   * \note This value can be refreshed by calling refreshInfo.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute nsIURI releaseNotesLocation;
 
   /**
    * \brief Location of the reset instructions.
-   * \note This value can be refreshed by calling refreshInfo.
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute nsIURI resetInstructionsLocation;
 

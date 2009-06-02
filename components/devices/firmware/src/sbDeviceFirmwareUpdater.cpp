@@ -28,6 +28,9 @@
 
 #include <nsAutoLock.h>
 
+// XXX WARNING XXX 
+// If you change this value here, you have to change it 
+// in sbBaseDeviceFirmwareHandler.cpp as well!
 #define SB_DEVICE_FIRMWARE_HANLDER_CONTRACTID_ROOT \
   "@songbirdnest.com/Songbird/Device/Firmware/Handler/"
 
