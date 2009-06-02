@@ -156,6 +156,8 @@ private:
   
   // sbIJobProgress / sbIShutdownJob stuff:
   nsCOMArray<sbIJobProgressListener> mJobListeners;
+  PRUint32                           mTotal;
+  PRUint32                           mProgress;
   PRUint16                           mStatus;
 };
 

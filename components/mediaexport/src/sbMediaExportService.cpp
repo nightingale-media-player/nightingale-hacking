@@ -49,6 +49,7 @@
 #include <sbThreadPoolService.h>
 #include <nsIUpdateService.h>
 #include <nsDirectoryServiceUtils.h>
+#include <sbStringUtils.h>
 
 
 #ifdef PR_LOGGING
@@ -83,6 +84,8 @@ sbMediaExportService::sbMediaExportService()
   , mEnumState(eNone)
   , mExportState(eNone)
   , mFinishedExportState(PR_FALSE)
+  , mTotal(0)
+  , mProgress(0)
 {
 #ifdef PR_LOGGING
    if (!gMediaExportLog) {
@@ -642,6 +645,8 @@ sbMediaExportService::StartExportState()
 
         rv = mTaskWriter->WriteMediaListName(curMediaList);
         NS_ENSURE_SUCCESS(rv, rv);
+      
+        ++mProgress;
       }
 
       // Keep things clean by calling the finish state method.
@@ -663,6 +668,8 @@ sbMediaExportService::StartExportState()
       for (next = mRemovedMediaLists.begin(); next != end; ++next) {
         rv = mTaskWriter->WriteEscapedString(*next);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        ++mProgress;
       }
 
       // Keep things clean by calling the finish state method
@@ -750,6 +757,9 @@ sbMediaExportService::FinishExportState()
   LOG(("%s: Finishing export state: %i", __FUNCTION__, mExportState));
   
   nsresult rv;
+
+  rv = NotifyListeners();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
 
   mFinishedExportState = PR_TRUE;
 
@@ -1192,6 +1202,12 @@ sbMediaExportService::OnEnumeratedItem(sbIMediaList *aMediaList,
         // simply pass the found media item to the writer.
         rv = mTaskWriter->WriteAddedTrack(aMediaItem);
         NS_ENSURE_SUCCESS(rv, rv);
+        
+        ++mProgress;
+
+        rv = NotifyListeners();
+        NS_ENSURE_SUCCESS(rv, rv);
+
         break;
       }
 
@@ -1237,10 +1253,8 @@ sbMediaExportService::GetStatus(PRUint16 *aStatus)
 NS_IMETHODIMP
 sbMediaExportService::GetStatusText(nsAString & aStatusText)
 {
-  //
-  // TODO: Use me!
-  //
-  return NS_OK;
+  return SBGetLocalizedString(aStatusText,
+      NS_LITERAL_STRING("mediaexport.shutdowntaskname"));
 }
 
 NS_IMETHODIMP
@@ -1253,14 +1267,16 @@ sbMediaExportService::GetTitleText(nsAString & aTitleText)
 NS_IMETHODIMP
 sbMediaExportService::GetProgress(PRUint32 *aProgress)
 {
-  // Not used by the shutdown service
+  NS_ENSURE_ARG_POINTER(aProgress);
+  *aProgress = mProgress;
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbMediaExportService::GetTotal(PRUint32 *aTotal)
 {
-  // Not used by the shutdown service
+  NS_ENSURE_ARG_POINTER(aTotal);
+  *aTotal = mTotal;
   return NS_OK;
 }
 
@@ -1368,6 +1384,19 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
     }
   }
 
+  if (*aNeedsToRunTask) {
+    // Since we are about to run a job, calculate the total item count now.
+    mProgress = 0;
+    mTotal = mAddedMediaList.size();
+    mTotal += mRemovedMediaLists.size();
+    sbMediaListItemMapIter begin = mAddedItemsMap.begin();
+    sbMediaListItemMapIter end = mAddedItemsMap.end();
+    sbMediaListItemMapIter next;
+    for (next = begin; next != end; ++next) {
+      mTotal += next->second.size();
+    }
+  }
+
   LOG(("%s: Export service needs to run at shutdown == %s",
         __FUNCTION__, (*aNeedsToRunTask ? "true" : "false")));
 
@@ -1378,7 +1407,7 @@ NS_IMETHODIMP
 sbMediaExportService::StartTask()
 {
   LOG(("%s: Starting export service shutdown task...", __FUNCTION__));
-  
+
   // This method gets called by the shutdown service when it is our turn to
   // begin processing. Simply start the export data process here.
   return ExportSongbirdData();

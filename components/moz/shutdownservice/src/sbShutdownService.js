@@ -54,6 +54,8 @@ sbShutdownJobService.prototype =
 {
   _mTasks:          [], 
   _mTaskIndex:      0,
+  _mTotal:          0,
+  _mProgress:       0,
   _mListeners:      [],
   _mShouldShutdown: true,
   _mStatus:         Ci.sbIJobProgress.STATUS_RUNNING,
@@ -98,6 +100,8 @@ sbShutdownJobService.prototype =
 
   // sbIJobProgressListener
   onJobProgress: function(aJobProgress) {
+    this._notifyListeners();
+
     switch (aJobProgress.status) {
       case Ci.sbIJobProgress.STATUS_FAILED:
         // If the job failed - report the errors and continue on to the next
@@ -108,6 +112,9 @@ sbShutdownJobService.prototype =
         // Clean up ourselves on the current task.
         var curTask = this._mTasks[this._mTaskIndex];
         curTask.removeJobProgressListener(this);
+
+        // Update the cumulative progress count
+        this._mProgress += this._mTasks[this._mTaskIndex].total;
 
         // Process the next task.
         this._mTaskIndex++;
@@ -122,8 +129,21 @@ sbShutdownJobService.prototype =
   },
 
   get statusText() {
-    return SBFormattedString("shutdownservice.statustext",
-                             [(this._mTaskIndex + 1), this._mTasks.length]);
+    var statusText = this._mTasks[this._mTaskIndex].statusText;
+    var remainingTasks = (this._mTasks.length - this._mTaskIndex) -1;
+
+    if (statusText == "") {
+      // If the shutdown task does not provide a string, use a generic one.
+      statusText = SBString("shutdownservice.defaultstatustext"); 
+    }
+
+    if (remainingTasks == 0) {
+      return statusText; 
+    }
+    else {
+      return SBFormattedString("shutdownservice.statustext",
+                               [statusText, remainingTasks]);
+    }
   },
 
   get titleText() {
@@ -131,11 +151,11 @@ sbShutdownJobService.prototype =
   },
 
   get progress() {
-    return this._mTaskIndex * 10;
+    return this._mProgress + this._mTasks[this._mTaskIndex].progress;
   },
 
   get total() {
-    return this._mTasks.length * 10;
+    return this._mTotal;
   },
 
   get errorCount() {
@@ -168,6 +188,11 @@ sbShutdownJobService.prototype =
   },
 
   _startProcessingTasks: function() {
+    // Calculate the total metric for the job progress interface.
+    for (var i = 0; i < this._mTasks.length; i++) {
+      this._mTotal += this._mTasks[i].total;
+    }
+
     // The only open window during the shutdown service should be the Songbird
     // window. First, close down the main Songbird window.
     var winMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
@@ -195,9 +220,9 @@ sbShutdownJobService.prototype =
   },
 
   _processNextTask: function() {
-    this._notifyListeners();
-
     if (this._mTaskIndex < this._mTasks.length) {
+      this._notifyListeners();
+      
       var nextTask = this._mTasks[this._mTaskIndex];
       try {
         nextTask.addJobProgressListener(this);
@@ -215,13 +240,20 @@ sbShutdownJobService.prototype =
   },
 
   _doShutdown: function() {
-    // Notify the listener and attempt to shutdown again.
+    // Sleep for 100ms to allow the dialog to draw the complete progressbar
+    // and not close the dialog with a large chunk of "unfinished" progress.
+    this._mTaskIndex--;  // make sure to show the last task
+    this._notifyListeners();
+    this._sleep(100);
+    
+    // Notify the listener (this will close the progress dialog)
     this._mStatus = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._notifyListeners();
 
     // drop the references to the tasks
     this._mTasks.splice(0);
 
+    // Attempt to shutdown again.
     if (this._mShouldShutdown) {
       var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
                          .getService(Ci.nsIAppStartup);
@@ -240,6 +272,16 @@ sbShutdownJobService.prototype =
       catch (e) {
         Cu.reportError(e);
       }
+    }
+  },
+
+  _sleep: function(ms) {
+    var threadManager = Cc["@mozilla.org/thread-manager;1"]
+                          .getService(Ci.nsIThreadManager);
+    var mainThread = threadManager.mainThread;
+    var then = new Date().getTime(), now = then;
+    for (; now - then < ms; now = new Date().getTime()) {
+      mainThread.processNextEvent(true);
     }
   },
 
