@@ -1238,6 +1238,7 @@ EnumReadFunc(nsAString const & aKey,
   nsString currentValue;
   data->mProperties->GetPropertyValue(aKey, currentValue);
   if (!aValue.Equals(currentValue)) {
+    data->mNeedsUpdating = PR_TRUE;
     data->mChangedProperties->AppendProperty(aKey, aValue);
   }
   return PL_DHASH_NEXT;
