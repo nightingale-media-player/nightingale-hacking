@@ -34,14 +34,14 @@ include $(DEPTH)/build/autodefs.mk
 #
 
 ifndef STAGE_DIR
-STAGE_DIR = $(DEPTH)/_built_installer
+   STAGE_DIR = $(DEPTH)/_built_installer
 endif
 
 SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
 SERVER_PATH = $(SERVER_BASE)/$(SB_PLATFORM)-$(SB_ARCH)/$(SB_BRANCHNAME)
 
 ifdef DEBUG
-DEBUG_EXT = .debug
+   DEBUG_EXT = .debug
 endif
 
 UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
@@ -49,14 +49,15 @@ UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLA
 #
 # On OS X we need to diff from the 'Songbird.app' subdir.
 #
+#preedTODO fix this
 ifeq (macosx,$(SB_PLATFORM))
-TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
+   UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
 else
 ifeq (windows,$(SB_PLATFORM))
 # windows needs relative paths, all others need the full path
-TARGET_DIR=$(DEPTH)/$(DISTDIRNAME)
+   UPD_TARGET_DIR = $(DEPTH)/$(DISTDIRNAME)
 else
-TARGET_DIR=$(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
+   UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
 endif
 endif
 
@@ -64,7 +65,7 @@ endif
 # Settings for the removed-files operation
 #
 REMOVED_FILES = files-removed-from-$(SB_PLATFORM).in
-REMOVED_FILES_GEN = $(TARGET_DIR)/removed-files
+REMOVED_FILES_GEN = $(UPD_TARGET_DIR)/removed-files
 
 # MUST specify a target, no default rule
 default:: complete partial
@@ -83,7 +84,7 @@ complete-patch:: removed-files
 	MAR=$(MAR) \
     $(MOZSDK_SCRIPTS_DIR)/make_full_update.sh \
     "$(STAGE_DIR)/$(UPDATE_FILENAME_BASE).complete.mar" \
-    "$(TARGET_DIR)"
+    "$(UPD_TARGET_DIR)"
 	$(RM) -f $(REMOVED_FILES_GEN)
 
 complete-snippet::
@@ -155,7 +156,7 @@ partial-snippet::
     $(NULL)
 
 removed-files::
-	$(RM) -f $(TARGET_DIR)/removed-files
+	$(RM) -f $(UPD_TARGET_DIR)/removed-files
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) \
     $(PPDEFINES) -- $(srcdir)/$(REMOVED_FILES) > ./removed-files
 	$(INSTALL_FILE) ./removed-files $(REMOVED_FILES_GEN)
