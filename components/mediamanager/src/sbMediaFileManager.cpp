@@ -502,13 +502,11 @@ sbMediaFileManager::RemoveBadCharacters(nsString& aStringToParse)
   // should not have them.
   aStringToParse.StripChars(FILE_PATH_SEPARATOR);
 
-  // Windows does not like Spaces at the end of a file/folder name
-  aStringToParse.Trim(" ", PR_FALSE, PR_TRUE);
-
-  // Windows also does not like Space at the begining of the file/folder name
-  // and dots are bad as well since on some operating systems they represent
-  // a hidden file.
-  aStringToParse.Trim(". ", PR_TRUE, PR_FALSE);
+  // Windows does not like Spaces at the begining or end of a file/folder name
+  // Windows also does not like dots at the begining or end of the file/folder
+  // name and dots are bad as well on some other operating systems as they
+  // represent a hidden file.
+  aStringToParse.Trim(" .", PR_TRUE, PR_TRUE);
 }
 
 nsresult
