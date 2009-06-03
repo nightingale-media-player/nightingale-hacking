@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(86a4e796-5e8d-452c-8551-8078527278f6)]
+[scriptable, uuid(755552de-9478-4324-b2c4-cede52d63658)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -125,6 +125,11 @@ interface sbIDeviceEvent : nsISupports
 
   // device preferences changed
   const unsigned long EVENT_DEVICE_PREFS_CHANGED        = EVENT_DEVICE_BASE + 27;
+
+  // device transcoding states
+  const unsigned long EVENT_DEVICE_TRANSCODE_START      = EVENT_DEVICE_BASE + 28;
+  const unsigned long EVENT_DEVICE_TRANSCODE_PROGRESS   = EVENT_DEVICE_BASE + 29;
+  const unsigned long EVENT_DEVICE_TRANSCODE_END        = EVENT_DEVICE_BASE + 30;
 
   /**
    * 
