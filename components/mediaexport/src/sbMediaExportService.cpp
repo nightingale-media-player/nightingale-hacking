@@ -218,7 +218,7 @@ sbMediaExportService::Shutdown()
       // will contain the literal string "pending" when there are updates that 
       // will be applied.
       if (state.EqualsLiteral("pending")) {
-        hasPendingUpdates = PR_TRUE:
+        hasPendingUpdates = PR_TRUE;
       }
     }
 
