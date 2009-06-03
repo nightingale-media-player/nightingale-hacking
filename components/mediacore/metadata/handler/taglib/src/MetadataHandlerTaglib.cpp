@@ -215,6 +215,7 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Vote(
         || (_url.Find(".m4a", PR_TRUE) != -1)
         || (_url.Find(".m4p", PR_TRUE) != -1)
         || (_url.Find(".mp4", PR_TRUE) != -1)
+        || (_url.Find(".oga", PR_TRUE) != -1)
         || (_url.Find(".wv", PR_TRUE) != -1)
         || (_url.Find(".spx", PR_TRUE) != -1)
         || (_url.Find(".tta", PR_TRUE) != -1)
@@ -643,7 +644,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
         );
         if (NS_SUCCEEDED(result)) {
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
-          WriteMP3Image(MPEGFile, imageType, imageSpec);
+          WriteImage(MPEGFile, imageType, imageSpec);
         }
         
         // Look up the origins of this file.
@@ -690,23 +691,6 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
               //bug 10933: frame->setText(taglibURL);
             }
           }
-        }
-      } else if (fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
-                 fileExt.Equals(NS_LITERAL_CSTRING("oga"))) {
-        LOG(("Writing Ogg specific metadata"));
-        // Write ogg specific metadata
-        TagLib::Ogg::Vorbis::File* oggFile =
-                static_cast<TagLib::Ogg::Vorbis::File*>(f.file());
-
-        // Write Image Data
-        nsAutoString imageSpec;
-        result = mpMetadataPropertyArray->GetPropertyValue(
-          NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-          imageSpec
-        );
-        if (NS_SUCCEEDED(result)) {
-          PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
-          WriteOGGImage(oggFile, imageType, imageSpec);
         }
       }
       
@@ -810,7 +794,6 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   nsCString                   fileExt;
   bool                        isMP3;
   bool                        isM4A;
-  bool                        isOGG;
   nsresult                    result = NS_OK;
 
   /* Get the channel URL info. */
@@ -819,7 +802,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   NS_ENSURE_SUCCESS(result, result);
   result = mpURL->GetScheme(urlScheme);
   NS_ENSURE_SUCCESS(result, result);
-
+ 
   if (urlScheme.EqualsLiteral("file"))
   {
     /* Get the metadata file extension. */
@@ -829,9 +812,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   
     isMP3 = fileExt.Equals(NS_LITERAL_CSTRING("mp3"));
     isM4A = fileExt.Equals(NS_LITERAL_CSTRING("m4a"));
-    isOGG = fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
-            fileExt.Equals(NS_LITERAL_CSTRING("oga"));
-    if (!isMP3 && !isM4A && !isOGG) {
+    if (!isMP3 && !isM4A) {
       return NS_ERROR_NOT_IMPLEMENTED;
     }
    
@@ -878,22 +859,6 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
             static_cast<TagLib::MP4::Tag*>(pTagFile->tag()),
             aMimeType, aDataLen, aData);
       }
-    } else if (isOGG) {
-      nsAutoPtr<TagLib::Ogg::Vorbis::File> pTagFile;
-      #if XP_WIN
-        // XXX Mook: temporary hack to make tree build, reopening bug 16158
-        pTagFile = new TagLib::Ogg::Vorbis::File(NS_ConvertUTF16toUTF8(filePath).BeginReading());
-      #else
-        pTagFile = new TagLib::Ogg::Vorbis::File(filePath.BeginReading());
-      #endif
-      NS_ENSURE_STATE(pTagFile);
-
-      /* Read the metadata file. */
-      if (pTagFile->tag()) {
-        result = ReadImageOgg(
-            static_cast<TagLib::Ogg::XiphComment*>(pTagFile->tag()),
-            aType, aMimeType, aDataLen, aData);
-      }
     }
   } else {
     result = NS_ERROR_NOT_IMPLEMENTED;
@@ -927,21 +892,16 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   nsCString                   urlScheme;
   nsCString                   fileExt;
   nsresult                    result = NS_OK;
-  bool                        isMP3, isOGG;
 
   NS_ENSURE_STATE(mpURL);
 
-  LOG(("SetImageDataInternal()"));
   // TODO: write other files' metadata.
   // First check if we support this file
   result = mpURL->GetFileExtension(fileExt);
   NS_ENSURE_SUCCESS(result, result);
   
   ToLowerCase(fileExt);
-  isMP3 = fileExt.Equals(NS_LITERAL_CSTRING("mp3"));
-  isOGG = fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
-          fileExt.Equals(NS_LITERAL_CSTRING("oga"));
-  if (!isMP3 && !isOGG) {
+  if (!fileExt.Equals(NS_LITERAL_CSTRING("mp3"))) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
 
@@ -974,17 +934,9 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
     NS_ENSURE_TRUE(f.file(), NS_ERROR_FAILURE);
     NS_ENSURE_TRUE(f.file()->isOpen(), NS_ERROR_FAILURE);
     NS_ENSURE_TRUE(f.file()->isValid(), NS_ERROR_FAILURE);
-
-    /* Get the metadata file extension. */
-    if (isMP3)
-      result = WriteMP3Image(static_cast<TagLib::MPEG::File*>(f.file()),
-                             aType,
-                             aURL);
-    else if (isOGG)
-      result = WriteOGGImage(static_cast<TagLib::Ogg::Vorbis::File*>(f.file()),
-                             aType,
-                             aURL);
-
+    result = WriteImage(static_cast<TagLib::MPEG::File*>(f.file()),
+                        aType,
+                        aURL);
     // WriteSetImageDataInternal does not write the metadata to file
     if (NS_SUCCEEDED(result)) {
       // Attempt to save the metadata
@@ -1002,14 +954,13 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
 }
 
 /**
- * \brief RemoveAllImagesMP3 - Removes all of the <MPEGFile>'s images of type
+ * \brief RemoveAllImages - Removes all of the <MPEGFile>'s images of type
  *                    <imageType>.
  * \param aMPEGFile - the TagLib::MPEG::File pointer
  * \param imageType - an enum from determining the type of image like
  *                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
  */
-nsresult sbMetadataHandlerTaglib::RemoveAllImagesMP3(
-                                                  TagLib::MPEG::File* aMPEGFile,
+nsresult sbMetadataHandlerTaglib::RemoveAllImages(TagLib::MPEG::File* aMPEGFile,
                                                   PRInt32 imageType)
 {
   if (aMPEGFile->ID3v2Tag()) {
@@ -1034,124 +985,7 @@ nsresult sbMetadataHandlerTaglib::RemoveAllImagesMP3(
 }
 
 /**
- * \brief RemoveAllImagesOGG - Removes all of the <aOGGFile>'s images of type
- *                    <imageType>.
- * \param aOGGFile - the TagLib::Ogg::Vorbis::File pointer
- * \param imageType - an enum from determining the type of image like
- *                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
- */
-nsresult sbMetadataHandlerTaglib::RemoveAllImagesOGG(
-                                          TagLib::Ogg::Vorbis::File* aOGGFile,
-                                          PRInt32 imageType)
-{
-  if (aOGGFile->tag()) {
-    // Create a new FlacPicture object and leave the picture element empty
-    TagLib::FlacPicture *pic = new TagLib::FlacPicture;
-    pic->setType(TagLib::FlacPicture::Type(imageType));
-
-    List<TagLib::FlacPicture*> artworkList = aOGGFile->tag()->artwork();
-    List<TagLib::FlacPicture*>::Iterator it = artworkList.begin();
-    while (it != artworkList.end())
-    {
-      // erase all images of this type
-      if ((*it)->type() == imageType) {
-        LOG(("erasing iterator"));
-        it = artworkList.erase(it);
-      } else {
-        ++it;
-      }
-    }
-
-    // Add the artwork back to the file
-    LOG(("setting artwork"));
-    aOGGFile->tag()->setArtwork(artworkList);
-  }
-
-  return NS_OK;
-}
-
-/**
- * \brief ReadImageFile - Reads the contents of the file at <imageSpec>
- *                    into <imageData>
- * \param imageSpec - the string with the URL of the file, use "" if you wish
- *                    to remove all images of <imageType> from the metadata.
- * \param imageData - the buffer to read the image into
- * \param imageDataSize - the size of <imageData>
- * \param imageMimeType - the mime type of the image to set
- */
-nsresult sbMetadataHandlerTaglib::ReadImageFile(const nsAString &imageSpec,
-                                            PRUint8* &imageData,
-                                            PRUint32 &imageDataSize,
-                                            nsCString &imageMimeType)
-{
-  nsresult rv;
-  nsCOMPtr<nsIFile> imageFile;
-  nsCOMPtr<nsIURI> imageURI;
-  PRBool isResource;
-  nsCString cImageSpec = NS_LossyConvertUTF16toASCII(imageSpec);
-
-  { // Scope for unlock
-      nsAutoUnlock unlock(sTaglibLock);
-
-      nsCOMPtr<nsIIOService> ioservice =
-        do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Convert the imageSpec to an nsIURI
-      rv = ioservice->NewURI(cImageSpec, nsnull, nsnull,
-                             getter_AddRefs(imageURI));
-      NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = imageURI->SchemeIs("resource", &isResource);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (isResource) {
-    rv = mpResourceProtocolHandler->ResolveURI(imageURI, cImageSpec);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  // open the image file
-  rv = mpFileProtocolHandler->GetFileFromURLSpec(cImageSpec,
-          getter_AddRefs(imageFile)
-  );
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the mime type.
-  nsCOMPtr<nsIMIMEService> mimeService =
-                              do_GetService("@mozilla.org/mime;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mimeService->GetTypeFromFile(imageFile, imageMimeType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Load the actual data.
-  nsCOMPtr<nsIFileInputStream> inputStream =
-     do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = inputStream->Init(imageFile, 0x01, 0600, 0);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIBinaryInputStream> stream =
-             do_CreateInstance("@mozilla.org/binaryinputstream;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = stream->SetInputStream(inputStream);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // First length,
-  rv = inputStream->Available(&imageDataSize);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // then the data itself
-  rv = stream->ReadByteArray(imageDataSize, &imageData);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return rv;
-}
-
-/**
- * \brief WriteMP3Image - set the <MPEGFile>'s image of type
+ * \brief WriteImage - set the <MPEGFile>'s image of type
  *                    <imageType> to the contents of the file at <imageSpec>.
  * \param aMPEGFile - the TagLib::MPEG::File pointer
  * \param imageType - an enum from determining the type of image like
@@ -1159,7 +993,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageFile(const nsAString &imageSpec,
  * \param imageSpec - the string with the URL of the file, use "" if you wish
  *                    to remove all images of <imageType> from the metadata.
  */
-nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
+nsresult sbMetadataHandlerTaglib::WriteImage(TagLib::MPEG::File* aMPEGFile,
                                              PRInt32 imageType,
                                              const nsAString &imageSpec)
 {
@@ -1169,17 +1003,48 @@ nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
     // Not ID3v2 tag then abort
     return NS_ERROR_FAILURE;
   }
-
-  if (imageSpec.Length() <= 0) {
-    // No image provided so just remove existing ones.
-    rv = RemoveAllImagesMP3(aMPEGFile, imageType);
-  } else {
-    PRUint8*  imageData;
-    PRUint32  imageDataSize = 0;
+  
+  if (imageSpec.Length() > 0) {
+    nsCOMPtr<nsIFile> imageFile;
     nsCString imageMimeType;
-
-    // Read the image file contents
-    rv = ReadImageFile(imageSpec, imageData, imageDataSize, imageMimeType);
+    PRUint8*  imageData;
+    PRUint32  imageDataSize;
+    
+    // open the image file
+    rv = mpFileProtocolHandler->GetFileFromURLSpec(
+            NS_LossyConvertUTF16toASCII(imageSpec), 
+            getter_AddRefs(imageFile)
+    );
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // Get the mime type.
+    nsCOMPtr<nsIMIMEService> mimeService =
+                                do_GetService("@mozilla.org/mime;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mimeService->GetTypeFromFile(imageFile, imageMimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // Load the actual data.
+    nsCOMPtr<nsIFileInputStream> inputStream =
+       do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = inputStream->Init(imageFile, 0x01, 0600, 0);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    nsCOMPtr<nsIBinaryInputStream> stream =
+               do_CreateInstance("@mozilla.org/binaryinputstream;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    rv = stream->SetInputStream(inputStream);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // First length,
+    rv = inputStream->Available(&imageDataSize);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    // then the data itself
+    rv = stream->ReadByteArray(imageDataSize, &imageData);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Create the picture frame, and set mimetype, image type (e.g. front cover)
@@ -1192,65 +1057,15 @@ nsresult sbMetadataHandlerTaglib::WriteMP3Image(TagLib::MPEG::File* aMPEGFile,
     pic->setPicture(TagLib::ByteVector((const char *)imageData, imageDataSize));
 
     // First we have to remove any other existing frames of the same type
-    rv = RemoveAllImagesMP3(aMPEGFile, imageType);
+    rv = RemoveAllImages(aMPEGFile, imageType);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Add the frame to the file.
     aMPEGFile->ID3v2Tag()->addFrame(pic);
-  }
-
-  return rv;
-}
-
-/**
- * \brief WriteOGGImage - set the <aOGGFile>'s image of type
- *                    <imageType> to the contents of the file at <imageSpec>.
- * \param aOGGFile - the TagLib::Ogg::Vorbis::File pointer
- * \param imageType - an enum from determining the type of image like
- *                    sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
- * \param imageSpec - the string with the URL of the file, use "" if you wish
- *                    to remove all images of <imageType> from the metadata.
- */
-nsresult sbMetadataHandlerTaglib::WriteOGGImage(
-                                  TagLib::Ogg::Vorbis::File* aOGGFile,
-                                  PRInt32 imageType,
-                                  const nsAString &imageSpec)
-{
-  nsresult rv;
-
-  if (!aOGGFile->tag()) {
-    return NS_ERROR_FAILURE;
-  }
-
-  if (imageSpec.Length() <= 0) {
-    // No image provided so just remove existing ones.
-    rv = RemoveAllImagesOGG(aOGGFile, imageType);
+    
   } else {
-    PRUint8*  imageData;
-    PRUint32  imageDataSize = 0;
-    nsCString imageMimeType;
-
-    // Read the image file contents
-    rv = ReadImageFile(imageSpec, imageData, imageDataSize, imageMimeType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Create the picture frame, and set mimetype, image type (e.g. front cover)
-    // and then fill in the data.
-    LOG(("WriteOGGImage():: Creating new FlacPicture"));
-    TagLib::FlacPicture *pic = new TagLib::FlacPicture;
-    pic->setMimeType(TagLib::String(imageMimeType.BeginReading(),
-                                    TagLib::String::UTF8));
-    pic->setType(TagLib::FlacPicture::Type(imageType));
-    pic->setPicture(TagLib::ByteVector((const char *)imageData, imageDataSize));
-
-    // First we have to remove any other existing frames of the same type
-    LOG(("WriteOGGImage():: Removing all images from OGG file"));
-    rv = RemoveAllImagesOGG(aOGGFile, imageType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Add the frame to the file
-    LOG(("WriteOGGImage():: Setting the artwork"));
-    aOGGFile->tag()->addArtwork(*pic);
+    // No image provided so just remove existing ones.
+    rv = RemoveAllImages(aMPEGFile, imageType);
   }
   
   return rv;
@@ -1351,41 +1166,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageITunes(TagLib::MP4::Tag  *aTag,
   return NS_OK;
 }
 
-nsresult sbMetadataHandlerTaglib::ReadImageOgg(TagLib::Ogg::XiphComment  *aTag,
-                                               PRInt32           aType,
-                                               nsACString        &aMimeType,
-                                               PRUint32          *aDataLen,
-                                               PRUint8           **aData)
-{
-  NS_ENSURE_ARG_POINTER(aTag);
-  NS_ENSURE_ARG_POINTER(aData);
-  NS_ENSURE_ARG_POINTER(aDataLen);
-  nsCOMPtr<nsIThread> mainThread;
 
-  /*
-   * Extract the requested image from the metadata
-   */
-  if (aTag->artwork().size() > 0) {
-    List<TagLib::FlacPicture*> artwork = aTag->artwork();
-    for (List<TagLib::FlacPicture*>::Iterator it = artwork.begin();
-         it != artwork.end();
-         ++it)
-    {
-      TagLib::FlacPicture* p = *it;
-      if (p->type() == aType) {
-        *aDataLen = p->picture().size();
-
-        aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
-
-        *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
-                                                        *aDataLen));
-        NS_ENSURE_TRUE(*aData, NS_ERROR_OUT_OF_MEMORY);
-      }
-    }
-  }
-
-  return NS_OK;
-}
 /**
 * \brief Be thou informst that one's sbIMetadataChannel has just received data
 *
@@ -1567,7 +1348,6 @@ sbMetadataHandlerTaglib::sbMetadataHandlerTaglib()
 :
     mpTagLibChannelFileIOManager(nsnull),
     mpFileProtocolHandler(nsnull),
-    mpResourceProtocolHandler(nsnull),
     mpMetadataPropertyArray(nsnull),
     mpChannel(nsnull),
     mpSeekableChannel(nsnull),
@@ -1607,17 +1387,10 @@ nsresult sbMetadataHandlerTaglib::Init()
     nsCOMPtr<nsIIOService> ioservice =
       do_GetService("@mozilla.org/network/io-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-
     nsCOMPtr<nsIProtocolHandler> fileHandler;
     rv = ioservice->GetProtocolHandler("file", getter_AddRefs(fileHandler));
     NS_ENSURE_SUCCESS(rv, rv);
     mpFileProtocolHandler = do_QueryInterface(fileHandler, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIProtocolHandler> resHandler;
-    rv = ioservice->GetProtocolHandler("resource", getter_AddRefs(resHandler));
-    NS_ENSURE_SUCCESS(rv, rv);
-    mpResourceProtocolHandler = do_QueryInterface(resHandler, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     mProxiedServices =
@@ -2619,39 +2392,6 @@ PRBool sbMetadataHandlerTaglib::ReadOGGFile()
     /* Read the Xiph metadata. */
     if (NS_SUCCEEDED(result) && isValid)
         ReadXiphTags(pTagFile->tag());
-
-    if (NS_SUCCEEDED(result) && isValid) {
-      // If this is a local file, cache common album art in order to speed
-      // up any subsequent calls to GetImageData.
-      PRBool isFileURI;
-      result = mpURL->SchemeIs("file", &isFileURI);
-      NS_ENSURE_SUCCESS(result, PR_FALSE);
-      if (isFileURI) {
-        nsAutoPtr<sbAlbumArt> art(new sbAlbumArt());
-        NS_ENSURE_TRUE(art, PR_FALSE);
-        result = ReadImageOgg(
-                        static_cast<TagLib::Ogg::XiphComment*>(pTagFile->tag()),
-                        sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER,
-                        art->mimeType, &(art->dataLen), &(art->data));
-        NS_ENSURE_SUCCESS(result, PR_FALSE);
-        art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER;
-        nsAutoPtr<sbAlbumArt>* cacheSlot = mCachedAlbumArt.AppendElement();
-        NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
-        *cacheSlot = art;
-
-        art = new sbAlbumArt();
-        NS_ENSURE_TRUE(art, PR_FALSE);
-        result = ReadImageOgg(
-                        static_cast<TagLib::Ogg::XiphComment*>(pTagFile->tag()),
-                        sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER,
-                        art->mimeType, &(art->dataLen), &(art->data));
-        NS_ENSURE_SUCCESS(result, PR_FALSE);
-        art->type = sbIMetadataHandler::METADATA_IMAGE_TYPE_OTHER;
-        cacheSlot = mCachedAlbumArt.AppendElement();
-        NS_ENSURE_TRUE(cacheSlot, PR_FALSE);
-        *cacheSlot = art;
-      }
-    }
 
     /* File is invalid on any error. */
     if (NS_FAILED(result))

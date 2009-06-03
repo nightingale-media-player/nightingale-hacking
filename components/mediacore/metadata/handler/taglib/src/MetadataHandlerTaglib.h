@@ -73,7 +73,6 @@
 #include <nsIChannel.h>
 #include <nsICharsetDetectionObserver.h>
 #include <nsIFileProtocolHandler.h>
-#include <nsIResProtocolHandler.h>
 #include <nsIURL.h>
 #include <nsStringGlue.h>
 #include <nsMemory.h>
@@ -89,7 +88,6 @@
 /* TagLib imports. */
 #include <fileref.h>
 #include <mpegfile.h>
-#include <vorbisfile.h>
 #include <id3v2tag.h>
 #include <mp4itunestag.h>
 #include <apetag.h>
@@ -151,8 +149,6 @@ private:
                                 mpTagLibChannelFileIOManager;
     nsCOMPtr<nsIFileProtocolHandler>
                                 mpFileProtocolHandler;
-    nsCOMPtr<nsIResProtocolHandler>
-                                mpResourceProtocolHandler;
     nsCOMPtr<sbIMutablePropertyArray> mpMetadataPropertyArray;
     nsCOMPtr<nsIChannel>        mpChannel;
     nsCOMPtr<sbISeekableChannel>
@@ -245,27 +241,12 @@ private:
         PRInt32                     aType,
         const nsAString             &aURL);
 
-    nsresult RemoveAllImagesMP3(
+    nsresult RemoveAllImages(
         TagLib::MPEG::File          *aMPEGFile,
         PRInt32                     imageType);
 
-    nsresult RemoveAllImagesOGG(
-        TagLib::Ogg::Vorbis::File   *aMPEGFile,
-        PRInt32                     imageType);
-
-    nsresult ReadImageFile(
-        const nsAString             &imageSpec,
-        PRUint8*                    &imageData,
-        PRUint32                    &imageDataSize,
-        nsCString                   &imageMimeType);
-
-    nsresult WriteMP3Image(
+    nsresult WriteImage(
         TagLib::MPEG::File          *aFile,
-        PRInt32                     aType,
-        const nsAString             &imageSpec);
-
-    nsresult WriteOGGImage(
-        TagLib::Ogg::Vorbis::File   *aFile,
         PRInt32                     aType,
         const nsAString             &imageSpec);
 
@@ -278,13 +259,6 @@ private:
 
     nsresult ReadImageITunes(
         TagLib::MP4::Tag            *aTag,
-        nsACString                  &aMimeType,
-        PRUint32                    *aDataLen,
-        PRUint8                     **aData);
-
-    nsresult ReadImageOgg(
-        TagLib::Ogg::XiphComment    *aTag,
-        PRInt32                     aType,
         nsACString                  &aMimeType,
         PRUint32                    *aDataLen,
         PRUint8                     **aData);
