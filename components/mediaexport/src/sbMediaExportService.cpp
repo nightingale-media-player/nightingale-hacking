@@ -192,27 +192,53 @@ sbMediaExportService::Shutdown()
   nsCOMPtr<nsIUpdateManager> updateMgr =
     do_GetService("@mozilla.org/updates/update-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+ 
+  PRBool hasPendingUpdates = PR_FALSE;
   PRInt32 updateCount;
   rv = updateMgr->GetUpdateCount(&updateCount);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("%s: Found %i updates", __FUNCTION__, updateCount));
   
   if (updateCount > 0) {
-    // When there is at least one update according to the update manager, the
-    // updater will run the next time Songbird is launched. In order to assist
-    // with updates, any currently running instances of the agent need to be
-    // killed.
-    nsCOMPtr<sbIMediaExportAgentService> agentService =
-      do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
-    if (NS_SUCCEEDED(rv) && agentService) {
-      // First, kill the agent(s).
-      rv = agentService->KillActiveAgents();
-      NS_ENSURE_SUCCESS(rv, rv);
+    for (PRInt32 i = 0; i < updateCount && !hasPendingUpdates; i++) {
+      nsCOMPtr<nsIUpdate> curUpdate;
+      rv = updateMgr->GetUpdateAt(i, getter_AddRefs(curUpdate));
+      if (NS_FAILED(rv)) {
+        continue;
+      }
 
-      // Next, unregister the agent. The agent will re-register for user login
-      // the next time it is run.
-      rv = agentService->UnregisterExportAgent();
-      NS_ENSURE_SUCCESS(rv, rv);
+      nsString state;
+      rv = curUpdate->GetState(state);
+      if (NS_FAILED(rv)) {
+        continue;
+      }
+
+      // According to |nsIUpdate| in "nsIUpdateService.idl", the |state| field
+      // will contain the literal string "pending" when there are updates that 
+      // will be applied.
+      if (state.EqualsLiteral("pending")) {
+        hasPendingUpdates = PR_TRUE:
+      }
+    }
+
+    if (hasPendingUpdates) {
+      // When there is at least one update according to the update manager, the
+      // updater will run the next time Songbird is launched. In order to assist
+      // with updates, any currently running instances of the agent need to be
+      // killed.
+      nsCOMPtr<sbIMediaExportAgentService> agentService =
+        do_GetService(SB_MEDIAEXPORTAGENTSERVICE_CONTRACTID, &rv);
+      if (NS_SUCCEEDED(rv) && agentService) {
+        // First, kill the agent(s).
+        rv = agentService->KillActiveAgents();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Next, unregister the agent. The agent will re-register for user login
+        // the next time it is run.
+        rv = agentService->UnregisterExportAgent();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
   

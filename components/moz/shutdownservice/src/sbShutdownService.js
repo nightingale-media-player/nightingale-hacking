@@ -58,11 +58,13 @@ sbShutdownJobService.prototype =
   _mProgress:       0,
   _mListeners:      [],
   _mShouldShutdown: true,
+  _mShutdownFlags:  Ci.nsIAppStartup.eAttemptQuit
   _mStatus:         Ci.sbIJobProgress.STATUS_RUNNING,
 
   // nsIObserver
   observe: function(aSubject, aTopic, aData) {
     if (aTopic == "quit-application-requested") {
+
       var observerService = Cc["@mozilla.org/observer-service;1"]
                               .getService(Ci.nsIObserverService);
       // Only hault shutdown if there are tasks to be processed.
@@ -86,6 +88,12 @@ sbShutdownJobService.prototype =
         // There are tasks to run, hault shutdown for now.
         var stopShutdown = aSubject.QueryInterface(Ci.nsISupportsPRBool);
         stopShutdown.data = true;
+
+        // If the |aData| flag indicates that this is going to be a restart,
+        // append the restart flag for when we do shutdown.
+        if (aData == "restart") {
+          this._mShutdownFlags |= Ci.nsIAppStartup.eRestart;
+        }
 
         // If this notice was made by the unit test, don't shutdown once
         // all the tasks have been processed.
@@ -257,7 +265,7 @@ sbShutdownJobService.prototype =
     if (this._mShouldShutdown) {
       var appStartup = Cc["@mozilla.org/toolkit/app-startup;1"]
                          .getService(Ci.nsIAppStartup);
-      appStartup.quit(Ci.nsIAppStartup.eAttemptQuit);
+      appStartup.quit(this._mShutdownFlags);
     }
   },
 
