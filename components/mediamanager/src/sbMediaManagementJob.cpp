@@ -639,9 +639,10 @@ sbMediaManagementJob::GetNext(nsISupports **_retval)
 //
 //------------------------------------------------------------------------------
 
-/* void init (in sbIMediaList aMediaList); */
+/* void init (in sbIMediaList aMediaList,
+              [optional] in nsILocalFile aMediaDirectory); */
 NS_IMETHODIMP
-sbMediaManagementJob::Init(sbIMediaList *aMediaList)
+sbMediaManagementJob::Init(sbIMediaList *aMediaList, nsILocalFile *aMediaFolder)
 {
   TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_FALSE(mMediaList, NS_ERROR_ALREADY_INITIALIZED);
@@ -661,11 +662,22 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList)
 
   // Grab our Media Managed Folder
   mMediaFolder = nsnull;
-  rv = prefBranch->GetComplexValue(PREF_MMJOB_LOCATION,
-                                   NS_GET_IID(nsILocalFile),
-                                   getter_AddRefs(mMediaFolder));
-  if (NS_FAILED(rv) || mMediaFolder == nsnull) {
-    return NS_ERROR_NOT_AVAILABLE;
+  if (aMediaFolder) {
+    PRBool success;
+    rv = aMediaFolder->Exists(&success);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+    rv = aMediaFolder->IsDirectory(&success);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+    mMediaFolder = aMediaFolder;
+  } else {
+    rv = prefBranch->GetComplexValue(PREF_MMJOB_LOCATION,
+                                     NS_GET_IID(nsILocalFile),
+                                     getter_AddRefs(mMediaFolder));
+    if (NS_FAILED(rv) || mMediaFolder == nsnull) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
   }
 
   // Get flag to indicate if we are to copy files to the media folder
@@ -701,6 +713,9 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList)
 
   // Grab a Media File Manager component
   mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mMediaFileManager->Init(mMediaFolder);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset all the progress information

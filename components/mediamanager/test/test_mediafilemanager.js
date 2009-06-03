@@ -45,6 +45,7 @@ function onComplete(job) {
     // Manage the files
     var fileManager = Cc[SB_MEDIAFILEMANAGER]
                         .createInstance(Ci.sbIMediaFileManager);
+    fileManager.init();
     // COPY/MOVE/RENAME
     for (var i = 0; i < gTestMediaItems.length; i++) {
       var isManaged = false;

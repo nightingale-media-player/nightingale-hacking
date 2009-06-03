@@ -53,16 +53,28 @@ var mediaManagePreview = {
     // Get the UI parameters.
     var dialogPB = window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
     var mediaList = dialogPB.objects.queryElementAt(0, Ci.sbIMediaList);
+    var mediaFolder = dialogPB.objects.queryElementAt(1, Ci.nsILocalFile);
     this.job = Cc["@songbirdnest.com/Songbird/media-manager/job;1"]
                  .createInstance(Ci.sbIMediaManagementJob);
-    this.job.init(mediaList);
+    this.job.init(mediaList, mediaFolder);
     // save the result, since touching anything at all can clobber it!
     var rv = Components.lastResult;
     if (rv == Cr.NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA || mediaList.length == 0) {
       // no items
-      setTimeout(function mediaManagePreview_autoAccept() {
-        document.documentElement.acceptDialog();
-      }, 0);
+      var msg;
+      var view = LibraryUtils.mainLibrary.createView();
+      view.filterConstraint = LibraryUtils.standardFilterConstraint;
+      if (view.length == 0) {
+        msg = SBString("prefs.media_management.error.empty");
+      } else {
+        msg = SBString("prefs.media_management.error.no_preview");
+      }
+      var notifBox = document.getElementById("preview_notificationbox");
+      notifBox.appendNotification(msg,
+                                  "media_manage_error",
+                                  null,
+                                  notifBox.PRIORITY_INFO_LOW,
+                                  []);
     }
     this.job.QueryInterface(Ci.nsISimpleEnumerator);
     

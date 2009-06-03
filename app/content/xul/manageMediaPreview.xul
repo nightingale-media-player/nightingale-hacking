@@ -62,7 +62,7 @@
   <!-- Use Songbird window region. -->
   <windowregion/>
 
-  <vbox flex="1">
+  <notificationbox id="preview_notificationbox" flex="1">
     <!-- Unsupported media list. -->
     <richlistbox id="preview_listbox" flex="1" seltype="single"/>
     <richlistitem id="preview_listitem_template" collapsed="true"
@@ -88,7 +88,7 @@
              onclick="mediaManagePreview.more()"
              id="preview_more_label"/>
     </hbox>
-  </vbox>
+  </notificationbox>
 
   <!-- Import the Songbird services. -->
   <script type="application/x-javascript"

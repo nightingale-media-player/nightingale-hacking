@@ -38,7 +38,7 @@
 #include <sbStandardProperties.h>
 
 // Construct and initialize the sbMediaFileManager object.
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMediaFileManager, Init)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaFileManager)
 
 // Construct the sbMediaManagementJob object.
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMediaManagementJob)

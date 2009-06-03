@@ -118,5 +118,7 @@ private:
   // Formating properties (filename, folders, separators)
   nsTArray<nsString>                        mTrackNameConfig;
   nsTArray<nsString>                        mFolderNameConfig;
+  
+  PRBool                                    mInitialized;
 };
 

@@ -69,6 +69,7 @@ static PRLogModuleInfo* gMediaFileManagerLog = nsnull;
  * \brief Constructor of the sbMediaFileManager component.
  */
 sbMediaFileManager::sbMediaFileManager()
+  : mInitialized(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gMediaFileManagerLog) {
@@ -89,7 +90,7 @@ sbMediaFileManager::~sbMediaFileManager()
 /**
  * \brief Initialize the sbMediaFileManager component.
  */
-NS_IMETHODIMP sbMediaFileManager::Init()
+NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder)
 {
   TRACE(("%s", __FUNCTION__));
 
@@ -113,15 +114,27 @@ NS_IMETHODIMP sbMediaFileManager::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Grab our Media Managed Folder
-  // Note: prefRoot->GetComplexValue does not work here even passing "folder"
-  mMediaFolder = nsnull;
-  nsCOMPtr<nsIPrefBranch> rootPrefBranch =
-    do_QueryInterface(prefRoot, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = rootPrefBranch->GetComplexValue(PREF_MFM_LOCATION,
-                                       NS_GET_IID(nsILocalFile),
-                                       getter_AddRefs(mMediaFolder));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aMediaFolder) {
+    PRBool success;
+    rv = aMediaFolder->Exists(&success);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+    rv = aMediaFolder->IsDirectory(&success);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+    mMediaFolder = do_QueryInterface(aMediaFolder, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // Note: prefRoot->GetComplexValue does not work here even passing "folder"
+    mMediaFolder = nsnull;
+    nsCOMPtr<nsIPrefBranch> rootPrefBranch =
+      do_QueryInterface(prefRoot, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = rootPrefBranch->GetComplexValue(PREF_MFM_LOCATION,
+                                         NS_GET_IID(nsILocalFile),
+                                         getter_AddRefs(mMediaFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Get the Track File Format
   nsCString fileFormatString;
@@ -147,6 +160,8 @@ NS_IMETHODIMP sbMediaFileManager::Init()
                  NS_LITERAL_STRING(","),
                  mFolderNameConfig);
 
+  mInitialized = PR_TRUE;
+
   return NS_OK;
 }
 
@@ -166,6 +181,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aRetVal);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   
   // Assume things won't go well so that we have the right value in aRetVal
   // if we except, regardless of any previous success
@@ -304,6 +320,7 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
   
   if (aManageType == 0) {
     // No action was requested, fail altogether

@@ -30,9 +30,16 @@ interface nsIFile;
 
 interface sbIMediaItem;
 
-[scriptable, uuid(17f91812-1dd2-11b2-93a2-cc9ebb01e9fa)]
+[scriptable, uuid(1242afca-1dd2-11b2-977c-9ff6ad87c008)]
 interface sbIMediaFileManager : nsISupports
 {
+  /**
+   * Initialize the media file manager instance
+   * \param [optional] aMediaFolder the folder to organize things into
+   *        if not specified, use the value from prefs
+   */
+  void init([optional] in nsIFile aMediaFolder);
+  
   /**
    * Organization Flags:
    *  MANAGE_RENAME - This renames a file so that it matches the metadata

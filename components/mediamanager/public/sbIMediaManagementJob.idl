@@ -33,17 +33,20 @@
 #include "sbIJobProgress.idl"
 
 interface sbIMediaList;
+interface nsILocalFile;
 
-[scriptable, uuid(12a0707e-1dd2-11b2-bd17-fa3f7aa7f25b)]
+[scriptable, uuid(20fa9550-1dd2-11b2-8f5d-9215396171cf)]
 interface sbIMediaManagementJob : sbIJobProgress
 {
   /**
    * Initialze the media management job by preparing to act upon a particular
    * media list
    * \param aMediaList the media list to organize
+   * \param aMediaFolder the folder to organize things in;
+   *                     if not specified, use the value from prefs
    * \throw NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA if there are no items
    */
-  void init(in sbIMediaList aMediaList);
+  void init(in sbIMediaList aMediaList, [optional] in nsILocalFile aMediaFolder);
 
   /**
    * This will scan the list and organize the files based on the preferences,

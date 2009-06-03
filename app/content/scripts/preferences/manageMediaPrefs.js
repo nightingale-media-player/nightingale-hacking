@@ -147,7 +147,8 @@ var manageMediaPrefsPane = {
                                 "chrome://songbird/content/xul/manageMediaPreview.xul",
                                 "manage_media_preview_dialog",
                                 "chrome,centerscreen",
-                                [LibraryUtils.mainLibrary],
+                                [LibraryUtils.mainLibrary,
+                                 this._libraryFolder],
                                 null);
   },
 
@@ -266,7 +267,7 @@ var manageMediaPrefsPane = {
   /**
    * Shows a notification message after removing any other ones of the same class.
    */
-  _showErrorNotification: function(aMsg) {
+  _showErrorNotification: function(aMsg, aLevel) {
     // focus this pref pane and this tab
     var pane = document.getElementById("paneManageMedia");
     document.documentElement.showPane(pane);
@@ -278,10 +279,11 @@ var manageMediaPrefsPane = {
     while ((oldNotif = notifBox.getNotificationWithValue("media_manage_error"))) {
       notifBox.removeNotification(oldNotif);
     }
+    var level = aLevel || "PRIORITY_CRITICAL_LOW";
     notifBox.appendNotification(aMsg,
                                 "media_manage_error",
                                 null,
-                                notifBox.PRIORITY_CRITICAL_LOW,
+                                notifBox[level],
                                 []);
   },
 
