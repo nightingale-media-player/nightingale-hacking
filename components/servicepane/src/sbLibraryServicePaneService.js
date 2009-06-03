@@ -990,7 +990,8 @@ function sbLibraryServicePane__libraryAdded(aLibrary) {
   var node = this._ensureLibraryNodeExists(aLibrary);
 
   // Listen to changes in the library so that we can display new playlists
-  var filter = SBProperties.createArray([[SBProperties.mediaListName, null]]);
+  var filter = SBProperties.createArray([[SBProperties.hidden, null],
+                                         [SBProperties.mediaListName, null]]);
   aLibrary.addListener(this,
                        false,
                        Ci.sbIMediaList.LISTENER_FLAGS_ALL &
