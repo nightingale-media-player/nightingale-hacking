@@ -58,7 +58,7 @@ sbShutdownJobService.prototype =
   _mProgress:       0,
   _mListeners:      [],
   _mShouldShutdown: true,
-  _mShutdownFlags:  Ci.nsIAppStartup.eAttemptQuit
+  _mShutdownFlags:  Ci.nsIAppStartup.eAttemptQuit,
   _mStatus:         Ci.sbIJobProgress.STATUS_RUNNING,
 
   // nsIObserver
