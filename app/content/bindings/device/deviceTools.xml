@@ -166,15 +166,6 @@
             box.hidden = false;
           }
         }
-        
-        var curFirmVer =
-          document.getAnonymousElementByAttribute(this,
-                                                  "sbid",
-                                                  "sb-device-tools-cur-firmware-ver");
-        try {
-          curFirmVer.value = this.device.properties.firmwareVersion;
-        }
-        catch(e) {};
       ]]>
       </constructor>
 
@@ -220,14 +211,30 @@
       </method>
 
       <method name="resetWarnings">
-        <body>
-          <![CDATA[
+        <body><![CDATA[
           this.device.resetWarningDialogs();
-          ]]>
-        </body>
+        ]]></body>
+      </method>
+
+      <method name="_update">
+        <body><![CDATA[
+        var curFirmVer =
+          document.getAnonymousElementByAttribute(this,
+                                                  "sbid",
+                                                  "sb-device-tools-cur-firmware-ver");
+        try {
+          curFirmVer.value = this.device.properties.firmwareVersion;
+        }
+        catch(e) {};
+        ]]></body>
       </method>
 
     </implementation>
+
+    <handlers>
+      <handler event="deviceBound" 
+               action="this._update();"/>
+    </handlers>
   </binding>
 
 </bindings>
