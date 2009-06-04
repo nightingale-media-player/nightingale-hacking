@@ -449,8 +449,26 @@
 <!ENTITY device.management.tabs.music.label "Music">
 <!ENTITY device.management.tabs.tools.label "Tools">
 
-<!ENTITY device.tools.button.reset_warnings.label       "Reset warning messages">
-<!ENTITY device.tools.button.restore_settings.label     "Restore to factory settings">
+<!ENTITY device.tools.product_registration.title "Product Registration">
+<!ENTITY device.tools.product_registration.description "Want to ensure proof of purchase, additional product membership benefits, or receive safety notifications?">
+<!ENTITY device.tools.product_registration.label "Register product">
+
+<!ENTITY device.tools.update_firmware.title "Update Firmware">
+<!ENTITY device.tools.update_firmware.description "Your device is controlled by an internal program called the firmware. Newer versions of the firmware may have been released since you last connected your device to your computer.">
+<!ENTITY device.tools.update_firmware.label "Check for updated firmware">
+<!ENTITY device.tools.update_firmware.current_firmware.title "Current firmware version:">
+
+<!ENTITY device.tools.repair_device.title "Repair Device">
+<!ENTITY device.tools.repair_device.description "Restoring your device to factory settings will erase all music and data on the device.">
+<!ENTITY device.tools.repair_device.label "Restore device to factory settings">
+
+<!ENTITY device.tools.support.title "Support">
+<!ENTITY device.tools.support.description "View the latest support news, user manuals, documentation, frequently asked questions, and product information. Support services are avaialble for customers who have registered their product.">
+<!ENTITY device.tools.support.label "View support resources">
+
+<!ENTITY device.tools.reset_warnings.title "Reset warnings">
+<!ENTITY device.tools.reset_warnings.description "Resetting the warning dialogs will enable these dialogs to prompt you to confirm certain tasks you wish to accomplish.">
+<!ENTITY device.tools.reset_warnings.label "Reset warning messages">
 
 <!ENTITY openLinkCmdInDefaultBrowser.label              "Open Link In Default Web Browser">
 <!ENTITY openLinkCmdInDefaultBrowser.accesskey          "o">

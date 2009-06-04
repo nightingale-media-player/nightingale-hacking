@@ -64,12 +64,81 @@
                      class="device-tab-header-info"/>
         </xul:hbox>
 
-        <!-- Button groupbox. -->
-        <xul:groupbox pack="center" orient="vertical">
-              <xul:button label="&device.tools.button.reset_warnings.label;"
-                          oncommand="resetWarnings();"/>
-              <xul:button label="&device.tools.button.restore_settings.label;"
-                          oncommand="restoreToFactoryDefaults();"/>
+        <!-- Product Registration -->
+        <xul:groupbox tool="register" pack="center" 
+                      orient="vertical" hidden="true">
+          <xul:label value="&device.tools.product_registration.title;"/>
+          <xul:description>
+            &device.tools.product_registration.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.product_registration.label;"
+                        oncommand="registerDevice();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+        <!-- Update Firmware -->
+        <xul:groupbox tool="update" pack="center" 
+                      orient="vertical" hidden="true">
+          <xul:hbox>
+            <xul:label value="&device.tools.update_firmware.title;"/>
+            <xul:spacer flex="1"/>
+            <xul:label value="&device.tools.update_firmware.current_firmware.title;"/>
+            <xul:label sbid="sb-device-tools-cur-firmware-ver"/>
+          </xul:hbox>
+
+          <xul:description>
+            &device.tools.update_firmware.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.update_firmware.label;"
+                        oncommand="updateFirmware();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+        <!-- Repair Device -->
+        <xul:groupbox tool="repair" pack="center" 
+                      orient="vertical" hidden="true">
+          <xul:label value="&device.tools.repair_device.title;"/>
+          <xul:description>
+            &device.tools.repair_device.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.repair_device.label;"
+                        oncommand="repairDevice();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+        <!-- Support -->
+        <xul:groupbox tool="support" pack="center" 
+                      orient="vertical" hidden="true">
+          <xul:label value="&device.tools.support.title;"/>
+          <xul:description>
+            &device.tools.support.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.support.label;"
+                        oncommand="support();"/>
+          </xul:hbox>
+        </xul:groupbox>
+
+
+        <!-- Reset Warnings -->
+        <xul:groupbox tool="resetwarnings" pack="center" 
+                      orient="vertical" hidden="true">
+          <xul:label value="&device.tools.reset_warnings.title;"/>
+          <xul:description>
+            &device.tools.reset_warnings.description;
+          </xul:description>
+          <xul:hbox>
+            <xul:spacer flex="1"/>
+            <xul:button label="&device.tools.reset_warnings.label;"
+                        oncommand="resetWarnings();"/>
+          </xul:hbox>
         </xul:groupbox>
 
       </xul:vbox>
@@ -84,13 +153,46 @@
      *********************************************************************** -->
 
     <implementation>
-      <method name="resetWarnings">
+      <constructor><![CDATA[
+        var toolsAttribute = this.getAttribute("tools");
+        var toolsList = toolsAttribute.split(",");
+        
+        for(let i = 0; i < toolsList.length; ++i) {
+          let box = 
+            document.getAnonymousElementByAttribute(this,
+                                                    "tool",
+                                                     toolsList[i]);
+          if(box) {
+            box.hidden = false;
+          }
+        }
+        
+        var curFirmVer =
+          document.getAnonymousElementByAttribute(this,
+                                                  "sbid",
+                                                  "sb-device-tools-cur-firmware-ver");
+        try {
+          curFirmVer.value = this.device.properties.firmwareVersion;
+        }
+        catch(e) {};
+      ]]>
+      </constructor>
+
+      <method name="registerDevice">
         <body><![CDATA[
-          this.device.resetWarningDialogs();
-          ]]></body>
+        // XXXAus: This needs to be filled in when more of 
+        //         the device updater is completed
+        ]]></body>
       </method>
 
-      <method name="restoreToFactoryDefaults">
+      <method name="updateFirmware">
+        <body><![CDATA[
+        // XXXAus: This needs to be filled in when more of 
+        //         the device updater is completed
+        ]]></body>
+      </method>
+
+      <method name="repairDevice">
         <body><![CDATA[
           var prompter = 
               Components.classes['@songbirdnest.com/Songbird/Prompter;1']
@@ -107,7 +209,22 @@
             this.device.submitRequest(
                 Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);
           }
-          ]]></body>
+        ]]></body>
+      </method>
+
+      <method name="support">
+        <body><![CDATA[
+        // XXXAus: This needs to be filled in when more of 
+        //         the device updater is completed
+        ]]></body>
+      </method>
+
+      <method name="resetWarnings">
+        <body>
+          <![CDATA[
+          this.device.resetWarningDialogs();
+          ]]>
+        </body>
       </method>
 
     </implementation>
