@@ -1437,10 +1437,13 @@ TrackEditorInputWidget.prototype = {
     if (TrackEditor.state.isDisabled) {
       this._checkbox.disabled = true;
       this._element.setAttribute("readonly", "true");
+      this._element.setAttribute("tooltiptext", 
+                                 SBString("trackeditor.tooltip.readonly"));
     } else {
       this._checkbox.disabled = false;
       this._element.disabled = false;
       this._element.removeAttribute("readonly");
+      this._element.removeAttribute("tooltiptext");
     }
   },
   
@@ -1542,7 +1545,16 @@ TrackEditorTextbox.prototype = {
     TrackEditorInputWidget.prototype.onTrackEditorPropertyChange.call(this);
 
     var property = this.property;
-    
+
+    // Set a tooltip text for differing multi-value textboxes.
+    if (TrackEditor.state.hasMultipleValuesForProperty(this.property)) {
+      this._element.setAttribute("tooltiptext", SBString("trackeditor.tooltip.multiple"));
+    }
+    else if (this._element.getAttribute("tooltiptext") == 
+             SBString("trackeditor.tooltip.multiple")) {
+      this._element.removeAttribute("tooltiptext");
+    }
+
     // Indicate if this property has been edited
     if (TrackEditor.state.isPropertyEdited(this.property)) {
       if (!this._element.hasAttribute("edited")) {
@@ -1566,9 +1578,11 @@ TrackEditorTextbox.prototype = {
     if (TrackEditor.state.isPropertyInvalidated(this.property)) {
       if (!this._element.hasAttribute("invalid")) {
         this._element.setAttribute("invalid", "true");
+        this._element.setAttribute("tooltiptext", SBString("trackeditor.tooltip.invalid"));
       }
     } else if (this._element.hasAttribute("invalid")) {
-      this._element.removeAttribute("invalid"); 
+      this._element.removeAttribute("invalid");
+      this._element.removeAttribute("tooltiptext");
     }
   },
   
