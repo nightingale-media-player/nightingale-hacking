@@ -1157,16 +1157,48 @@ sbLocalDatabasePropertyCache::Write()
         PRUint32 dirtyPropsCount;
         rv = bag->EnumerateDirty(EnumDirtyProps, (void *) &dirtyPropertyEnumerator, &dirtyPropsCount);
         NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
 
-    // Finally, insert the new fts data for the updated items
-    // (we reuse the length from above. it hasn't changed.)
-    for (PRUint32 i = 0; i < dirtyItemCount; ++i) {
-      rv = query->AddPreparedStatement(mMediaItemsFtsAllInsertPreparedStatement);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = query->BindInt32Parameter(0, dirtyItems.mIDs[i]);
-      NS_ENSURE_SUCCESS(rv, rv);
+        // Build a new FTS data table entry by concatenating all the user-viewable properties.
+        // NOTE: This includes both top-level and not-top-level properties!
+        // TODO: Look at top level properties to see if you want them searchable!
+        nsString newFTSData;
+        nsCOMPtr<nsIStringEnumerator> bagProperties;
+        bag->GetIds(getter_AddRefs(bagProperties));
+        PRBool hasMore;
+        while (NS_SUCCEEDED(bagProperties->HasMore(&hasMore)) && hasMore) {
+          nsAutoString propertyId;
+          rv = bagProperties->GetNext(propertyId);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          PRBool isUserViewable;
+          nsCOMPtr<sbIPropertyInfo> propertyInfo;
+          rv = mPropertyManager->GetPropertyInfo(propertyId,
+                                                 getter_AddRefs(propertyInfo));
+          NS_ENSURE_SUCCESS(rv,rv);
+          rv = propertyInfo->GetUserViewable(&isUserViewable);
+          NS_ENSURE_SUCCESS(rv,rv);
+            
+          if (isUserViewable) {
+            PRUint32 propertyDBID;
+            rv = GetPropertyDBID(propertyId, &propertyDBID);
+            NS_ENSURE_SUCCESS(rv, rv);
+            nsString propertySearchable;
+            rv = bag->GetSearchablePropertyByID(propertyDBID, propertySearchable);
+            NS_ENSURE_SUCCESS(rv, rv);
+            newFTSData.Append(propertySearchable);
+            newFTSData.AppendLiteral(" ");
+          }
+        }
+
+        if (!newFTSData.IsEmpty()) {
+          rv = query->AddPreparedStatement(mMediaItemsFtsAllInsertPreparedStatement);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = query->BindInt32Parameter(0, dirtyItems.mIDs[i]);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = query->BindStringParameter(1, newFTSData);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
     }
 
     rv = query->AddQuery(NS_LITERAL_STRING("commit"));

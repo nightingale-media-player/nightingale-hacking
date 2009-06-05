@@ -280,6 +280,15 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
 
 NS_IMETHODIMP sbURIPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
+  _retval = EmptyString();
+  return NS_OK;
+}
+
+// We provide this implementation because the base class calls
+// MakeSearchable to find the MakeSortable value and though
+// we don't want URIs to be searchable, we still want to sort them.
+NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAString & _retval)
+{
   PRBool bFailed = PR_FALSE;
   nsresult rv;
   

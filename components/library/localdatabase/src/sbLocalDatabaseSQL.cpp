@@ -115,10 +115,7 @@ nsString sbLocalDatabaseSQL::MediaItemsFtsAllInsert()
 {
   nsString sql =
     NS_LITERAL_STRING("INSERT INTO resource_properties_fts_all \
-                        (rowid, alldata) \
-                       SELECT media_item_id, group_concat(obj_searchable) \
-                       FROM resource_properties \
-                       WHERE media_item_id = ? GROUP BY media_item_id");
+                        (rowid, alldata) VALUES (?, ?)");
   return sql;
 }
 

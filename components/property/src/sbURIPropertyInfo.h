@@ -40,7 +40,7 @@ class sbURIPropertyInfo : public sbPropertyInfo,
 {
 public:
   NS_DECL_ISUPPORTS
-  NS_FORWARD_SBIPROPERTYINFO_STDPROP(sbPropertyInfo::);
+  NS_FORWARD_SBIPROPERTYINFO_NOSPECIFICS(sbPropertyInfo::);
   NS_DECL_SBIURIPROPERTYINFO
 
   sbURIPropertyInfo();
@@ -52,6 +52,7 @@ public:
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD MakeSearchable(const nsAString & aValue, nsAString & _retval);
+  NS_IMETHOD MakeSortable(const nsAString & aValue, nsAString & _retval);
 
   NS_IMETHOD EnsureIOService();
 

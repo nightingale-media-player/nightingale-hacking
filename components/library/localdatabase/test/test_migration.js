@@ -28,7 +28,7 @@
  * \brief Test file
  */
  
- var latestSchemaVersion = 19;
+ var latestSchemaVersion = 20;
 
 function runTest() {
 
