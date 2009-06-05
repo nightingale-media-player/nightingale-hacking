@@ -433,24 +433,34 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
   
   nsresult rv;
 
-  PRUint16 progress;
-  rv = aJobProgress->GetStatus(&progress);
+  PRUint16 jobStatus;
+  rv = aJobProgress->GetStatus(&jobStatus);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  if (progress == sbIJobProgress::STATUS_RUNNING) {
+  if (jobStatus == sbIJobProgress::STATUS_RUNNING) {
     // still running, ignore
     return NS_OK;
   }
+
+  // Get progress and total to see if we completed.
+  PRUint32 progress;
+  PRUint32 total;
+  rv = aJobProgress->GetProgress(&progress);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aJobProgress->GetTotal(&total);
+  NS_ENSURE_SUCCESS(rv, rv);
   
-  // job complete
+  // job complete or canceled
   rv = mLibraryScanJob->RemoveJobProgressListener(this);
   mLibraryScanJob = nsnull;
   NS_ENSURE_SUCCESS(rv, rv);
 
   // mark that we've done this once so we don't redo this unncessarily
-  // the next time we start the app
-  rv = mPrefBranch->SetBoolPref(SB_PREF_MEDIA_MANAGER_COMPLETE, PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // the next time we start the app if we completed the job.
+  if (progress == total) {
+    rv = mPrefBranch->SetBoolPref(SB_PREF_MEDIA_MANAGER_COMPLETE, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   PRUint32 itemCount;
   { /* scope */
