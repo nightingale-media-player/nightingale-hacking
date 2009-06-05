@@ -248,7 +248,7 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
   
   nsresult rv;
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WIPE,
-                            nsnull, aMediaList);
+                            aMediaList);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -546,9 +546,24 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
 
 NS_IMETHODIMP
 sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
-                                             PRBool *_retval)
+                                             PRBool * /* aNoMoreForBatch */)
 {
-  NS_NOTREACHED("Playlist clearing not yet implemented");
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  // Check if we're ignoring then do nothing
+
+  if(MediaItemIgnored(aMediaList)) {
+    return NS_OK;
+  }
+  
+  // Send the wipe request
+  nsresult rv;
+  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WIPE,
+                            aMediaList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
