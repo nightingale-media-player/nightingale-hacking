@@ -1679,16 +1679,23 @@ sbMediacoreSequencer::CoreHandleNextSetup()
 
   mCoreWillHandleNext = PR_FALSE;
 
+  // If the current position is valid, get the item at the current position.
+  // Otherwise, get the current item without modifying the sequencer state.
+  nsresult rv;
   nsCOMPtr<sbIMediaItem> item;
-  nsresult rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!mPositionInvalidated) {
+    rv = GetItem(mSequence, mPosition, getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mCurrentItemIndex = mSequence[mPosition];
+    mCurrentItemIndex = mSequence[mPosition];
 
-  rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
-  NS_ENSURE_SUCCESS(rv, rv);
+    rv = mView->GetViewItemUIDForIndex(mCurrentItemIndex, mCurrentItemUID);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  mCurrentItem = item;
+    mCurrentItem = item;
+  } else {
+    item = mCurrentItem;
+  }
 
   nsCOMPtr<nsIURI> uri;
   rv = item->GetContentSrc(getter_AddRefs(uri));
@@ -2536,11 +2543,21 @@ sbMediacoreSequencer::Next()
   PRBool hasNext = PR_FALSE;
   PRUint32 length = mSequence.size();
 
-  if(mPositionInvalidated) {
-    // Our current position is invalid because we had to regenerate a
-    // sequence that didn't include the item that is currently playing.
+  if((mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) &&
+     mNextTriggeredByStreamEnd) {
+    // Repeat the item only if the next action was the result of the stream
+    // ending.  Don't touch sequencer state.  Don't even clear
+    // mPositionInvalidated.  Doing so can cause problems if the view changed.
+    hasNext = PR_TRUE;
+  }
+  else if(mPositionInvalidated) {
+    // The position of the currently playing item is invalid because we had to
+    // regenerate a sequence that didn't include the currently playing item.
+    // The next item should be at the current position instead of the current
+    // position + 1.
     mViewPosition = mSequence[mPosition];
     hasNext = PR_TRUE;
+    mPositionInvalidated = PR_FALSE;
   }
   else if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ALL &&
      mPosition + 1 >= length) {
@@ -2557,23 +2574,21 @@ sbMediacoreSequencer::Next()
   else if(mRepeatMode == sbIMediacoreSequencer::MODE_REPEAT_ONE) {
     hasNext = PR_TRUE;
 
-    if(!mNextTriggeredByStreamEnd) {
-      if(mPosition + 1 >= length) {
-        mPosition = 0;
-      }
-      else if(mPosition + 1 < length) {
-        ++mPosition;
-      }
-      mViewPosition = mSequence[mPosition];
+    // The next action was not the result of the stream ending, so act like
+    // repeat all.
+    if(mPosition + 1 >= length) {
+      mPosition = 0;
     }
+    else if(mPosition + 1 < length) {
+      ++mPosition;
+    }
+    mViewPosition = mSequence[mPosition];
   }
   else if(mPosition + 1 < length) {
     ++mPosition;
     mViewPosition = mSequence[mPosition];
     hasNext = PR_TRUE;
   }
-
-  mPositionInvalidated = PR_FALSE;
 
   // No next track, not an error.
   if(!hasNext) {
