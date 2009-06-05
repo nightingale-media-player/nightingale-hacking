@@ -239,7 +239,8 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   }
   
   if (!((aManageType & sbIMediaFileManager::MANAGE_MOVE) ||
-        (aManageType & sbIMediaFileManager::MANAGE_COPY)))
+        (aManageType & sbIMediaFileManager::MANAGE_COPY) ||
+        (aManageType & sbIMediaFileManager::MANAGE_RENAME)))
   {
     LOG(("%s: nothing to manage", __FUNCTION__));
     return NS_OK;
