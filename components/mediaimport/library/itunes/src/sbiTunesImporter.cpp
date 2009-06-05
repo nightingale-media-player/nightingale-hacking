@@ -1512,14 +1512,16 @@ nsresult sbiTunesImporter::ProcessTrackBatch() {
   rv = ProcessNewItems(trackMap,
                        getter_AddRefs(newItems));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only process created items if any new items where added.
+  if (newItems) {
+    rv = ProcessCreatedItems(newItems, trackMap);
+    NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = ProcessCreatedItems(newItems, 
-                           trackMap);
-  NS_ENSURE_SUCCESS(rv, rv);
+    std::for_each(mTrackBatch.begin(), mTrackBatch.end(), DestructiTunesTrack);
+  }
   
-  std::for_each(mTrackBatch.begin(), mTrackBatch.end(), DestructiTunesTrack);
   mTrackBatch.clear();
-  
   return NS_OK;
 }
 
