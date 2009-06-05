@@ -215,10 +215,17 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
     return NS_ERROR_INVALID_ARG;
   }
 
-  // Get the file object
+  // Get the file object and check that it exists.
   nsCOMPtr<nsIFile> itemFile;
   rv = fileUrl->GetFile(getter_AddRefs(itemFile));
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Make sure the original file exists before doing any organizing.
+  PRBool exists;
+  rv = itemFile->Exists(&exists);
+  if (NS_FAILED(rv) || !exists) {
+    return NS_ERROR_FILE_NOT_FOUND;
+  }
   
   if (aManageType & sbIMediaFileManager::MANAGE_DELETE) {
     rv = Delete(itemFile, aRetVal);
