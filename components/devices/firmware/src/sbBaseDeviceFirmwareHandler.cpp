@@ -136,8 +136,6 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
   nsresult rv = mXMLHttpRequest->GetReadyState(&state);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  printf("\n\nready state: %d\n\n", state);
-
   // Only one request at a time.
   if(state != HTTP_STATE_UNINITIALIZED && 
      state != HTTP_STATE_COMPLETED) {
