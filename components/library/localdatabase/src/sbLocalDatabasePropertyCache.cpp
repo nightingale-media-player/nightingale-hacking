@@ -1170,7 +1170,13 @@ sbLocalDatabasePropertyCache::Write()
           rv = bagProperties->GetNext(propertyId);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          PRBool isUserViewable;
+          PRBool hasProperty, isUserViewable;
+          rv = mPropertyManager->HasProperty(propertyId, &hasProperty);
+          NS_ENSURE_SUCCESS(rv, rv);
+          if (!hasProperty) {
+            continue;
+          }
+
           nsCOMPtr<sbIPropertyInfo> propertyInfo;
           rv = mPropertyManager->GetPropertyInfo(propertyId,
                                                  getter_AddRefs(propertyInfo));
