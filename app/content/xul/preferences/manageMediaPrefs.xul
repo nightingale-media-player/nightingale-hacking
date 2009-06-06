@@ -90,7 +90,7 @@
           <!-- <label id="manage_media_format_dir_label"/> -->
           <sb-properties-formatter id="manage_media_format_dir_formatter"
                preference-editable="true" maxProperties="3" trailingSeparator="true"
-               propertyCategory="songbird-media-manager-properties"
+               propertyCategory="songbird-media-manager-directory-name-properties"
                preference="manage_media_pref_library_format_dir">
             <label id="manage_media_format_dir_suffix_label"
                    value="&prefWindow.manageMedia.format.dir.suffix;"/>
@@ -102,7 +102,7 @@
         <sb-properties-formatter defaultSeparator=" - "
              id="manage_media_format_file_formatter" maxProperties="3"
              preference-editable="true" separatorEditable="true"
-             propertyCategory="songbird-media-manager-properties"
+             propertyCategory="songbird-media-manager-file-name-properties"
              preference="manage_media_pref_library_format_file">
           <label id="manage_media_format_file_suffix_label"
                  tooltiptext="&prefWindow.manageMedia.format.file.suffix.tooltip;"

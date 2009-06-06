@@ -80,7 +80,7 @@
           if (self.hasAttribute("propertyCategory")) {
             var catMgr = Cc["@mozilla.org/categorymanager;1"]
                            .getService(Ci.nsICategoryManager);
-            var catEnum = catMgr.enumerateCategory("songbird-media-manager-properties");
+            var catEnum = catMgr.enumerateCategory(self.getAttribute("propertyCategory"));
             while (catEnum.hasMoreElements()) {
               var strContainer = catEnum.getNext();
               if (!(strContainer instanceof Ci.nsISupportsCString)) {
