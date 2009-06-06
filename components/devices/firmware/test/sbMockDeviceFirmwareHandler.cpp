@@ -236,8 +236,6 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
   nsresult rv = mXMLHttpRequest->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  printf("HTTP status code: %d\n", status);  
-
   nsCOMPtr<nsIDOMDocument> document;
   rv = mXMLHttpRequest->GetResponseXML(getter_AddRefs(document));
   NS_ENSURE_SUCCESS(rv, rv);
