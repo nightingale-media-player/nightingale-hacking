@@ -1,12 +1,12 @@
+./Contents/Resources/testharness/watchfolders/files/moverename/renamedFile.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/individualMovedFile.mp3
 ./Contents/Resources/testharness/watchfolders/files/moverename/dir3/random.txt
 ./Contents/Resources/testharness/watchfolders/files/moverename/dir3/
-./Contents/Resources/testharness/watchfolders/files/moverename/renamedFile.mp3
 ./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/randomfile.txt
-./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/movedFile1.mp3
 ./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/movedFile2.mp3
+./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/movedFile1.mp3
 ./Contents/Resources/testharness/watchfolders/files/moverename/dir1/dir2/
 ./Contents/Resources/testharness/watchfolders/files/moverename/dir1/
-./Contents/Resources/testharness/watchfolders/files/moverename/individualMovedFile.mp3
 ./Contents/Resources/testharness/watchfolders/files/moverename/deletedFile.mp3
 ./Contents/Resources/testharness/watchfolders/files/moverename/
 ./Contents/Resources/testharness/watchfolders/files/
@@ -245,6 +245,7 @@
 ./Contents/Resources/lib/libcharset.dylib
 ./Contents/Resources/gst-plugins/libgstqtwrapper.so
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
+./Contents/Resources/gst-plugins/libgstflxdec.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
@@ -270,6 +271,7 @@
 ./Contents/Resources/components/sbMetadataManager.dylib
 ./Contents/Resources/components/sbMetadataImageScanner.js
 ./Contents/Resources/components/sbMetadataAlbumArtFetcher.dylib
+./Contents/Resources/components/sbITunesImporter.js
 ./Contents/Resources/components/sbGStreamer.xpt
 ./Contents/Resources/components/XPCOMUtils.jsm
 ./Contents/Resources/components/WindowUtils.jsm
