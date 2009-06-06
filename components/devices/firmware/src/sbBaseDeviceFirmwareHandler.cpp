@@ -27,17 +27,25 @@
 #include "sbBaseDeviceFirmwareHandler.h"
 
 #include <nsIIOService.h>
+#include <nsIScriptSecurityManager.h>
 
 #include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
 
 #include <sbProxiedComponentManager.h>
 
+static const PRInt32 HTTP_STATE_UNINITIALIZED = 0;
+static const PRInt32 HTTP_STATE_LOADING       = 1;
+static const PRInt32 HTTP_STATE_LOADED        = 2;
+static const PRInt32 HTTP_STATE_INTERACTIVE   = 3;
+static const PRInt32 HTTP_STATE_COMPLETED     = 4;
+
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceFirmwareHandler, 
                               sbIDeviceFirmwareHandler)
 
 sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 : mMonitor(nsnull)
+, mHandlerState(HANDLER_IDLE)
 , mFirmwareVersion(0)
 {
 }
@@ -49,13 +57,31 @@ sbBaseDeviceFirmwareHandler::~sbBaseDeviceFirmwareHandler()
   }
 }
 
+// ----------------------------------------------------------------------------
+// sbBaseDeviceFirmwareHandler
+// ----------------------------------------------------------------------------
 nsresult
 sbBaseDeviceFirmwareHandler::Init()
 {
   mMonitor = nsAutoMonitor::NewMonitor("sbBaseDeviceFirmwareHandler::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv = OnInit();
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  mXMLHttpRequest = do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIScriptSecurityManager> ssm = 
+    do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIPrincipal> principal;
+  rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mXMLHttpRequest->Init(principal, nsnull, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = OnInit();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -93,6 +119,117 @@ sbBaseDeviceFirmwareHandler::CreateProxiedURI(const nsACString &aURISpec,
 
   return NS_OK;
 }
+
+nsresult 
+sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod, 
+                                             const nsACString &aUrl,
+                                             const nsAString &aUsername /*= EmptyString()*/,
+                                             const nsAString &aPassword /*= EmptyString()*/)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mXMLHttpRequest);
+
+  NS_ENSURE_TRUE(!aMethod.IsEmpty(), NS_ERROR_INVALID_ARG);
+  NS_ENSURE_TRUE(!aUrl.IsEmpty(), NS_ERROR_INVALID_ARG);
+
+  PRInt32 state = 0;
+  nsresult rv = mXMLHttpRequest->GetReadyState(&state);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  printf("\n\nready state: %d\n\n", state);
+
+  // Only one request at a time.
+  if(state != HTTP_STATE_UNINITIALIZED && 
+     state != HTTP_STATE_COMPLETED) {
+    return NS_ERROR_ABORT;
+  }
+
+  rv = mXMLHttpRequest->SetMozBackgroundRequest(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mXMLHttpRequest->OpenRequest(aMethod, aUrl, PR_TRUE, 
+                                    aUsername, aPassword);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!mXMLHttpRequestTimer) {
+    mXMLHttpRequestTimer = do_CreateInstance("@mozilla.org/timer;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  rv = mXMLHttpRequest->Send(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mXMLHttpRequestTimer->InitWithCallback(this, 
+                                              100, 
+                                              nsITimer::TYPE_REPEATING_SLACK);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+nsresult
+sbBaseDeviceFirmwareHandler::AbortHttpRequest()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_STATE(mXMLHttpRequest);
+
+  PRInt32 state = 0;
+  nsresult rv = mXMLHttpRequest->GetReadyState(&state);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(state != HTTP_STATE_UNINITIALIZED &&
+     state != HTTP_STATE_COMPLETED) {
+    rv = mXMLHttpRequest->Abort();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if(mXMLHttpRequestTimer) {
+    rv = mXMLHttpRequestTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbBaseDeviceFirmwareHandler::CreateDeviceEvent(sbIDeviceEvent **aEvent)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+nsresult
+sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDevice *aDevice, sbIDeviceEvent *aEvent)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+sbBaseDeviceFirmwareHandler::handlerstate_t
+sbBaseDeviceFirmwareHandler::GetState()
+{
+  nsAutoMonitor mon(mMonitor);
+  return mHandlerState;
+}
+
+nsresult 
+sbBaseDeviceFirmwareHandler::SetState(handlerstate_t aState)
+{
+  NS_ENSURE_ARG_RANGE(aState, HANDLER_IDLE, HANDLER_X);
+
+  nsAutoMonitor mon(mMonitor);
+  mHandlerState = aState;
+
+  return NS_OK;
+}
+
+// ----------------------------------------------------------------------------
+// Overridable methods for users of this base class.
+// ----------------------------------------------------------------------------
 
 /*virtual*/ nsresult 
 sbBaseDeviceFirmwareHandler::OnInit()
@@ -145,7 +282,7 @@ sbBaseDeviceFirmwareHandler::OnRefreshInfo(sbIDevice *aDevice,
    *
    * This method must be asynchronous and should not block the main thread. 
    * Progress for this operation is also expected. The flow of expected events 
-   * is as follows: firmware refresh info start, firmware refresh info progress,
+   * is as follows: firmware refresh info start, N * firmware refresh info progress,
    * firmware refresh info end. See sbIDeviceEvent for more information about
    * event payload.
    *
@@ -232,6 +369,16 @@ sbBaseDeviceFirmwareHandler::OnVerifyUpdate(sbIDevice *aDevice,
 
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
+/*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnHttpRequestCompleted()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+// ----------------------------------------------------------------------------
+// sbIDeviceFirmwareHandler
+// ----------------------------------------------------------------------------
 
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetContractId(nsAString & aContractId)
@@ -399,6 +546,35 @@ sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDevice *aDevice,
 
   nsresult rv = OnVerifyUpdate(aDevice, aFirmwareUpdate, aListener);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// ----------------------------------------------------------------------------
+// nsITimerCallback
+// ----------------------------------------------------------------------------
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::Notify(nsITimer *aTimer) 
+{
+  NS_ENSURE_ARG_POINTER(aTimer);
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if(aTimer == mXMLHttpRequestTimer) {
+    NS_ENSURE_STATE(mXMLHttpRequest);
+
+    PRInt32 state = 0;
+    rv = mXMLHttpRequest->GetReadyState(&state);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(state == HTTP_STATE_COMPLETED) {
+      rv = OnHttpRequestCompleted();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnHttpRequestCompleted failed");
+
+      rv = mXMLHttpRequestTimer->Cancel();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
 
   return NS_OK;
 }

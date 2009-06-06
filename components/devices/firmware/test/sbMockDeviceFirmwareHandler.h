@@ -47,10 +47,12 @@ public:
   virtual nsresult OnVerifyUpdate(sbIDevice *aDevice, 
                                   sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
                                   sbIDeviceEventListener *aListener);
+  virtual nsresult OnHttpRequestCompleted();
 
 private:
   virtual ~sbMockDeviceFirmwareHandler();
 
 protected:
-
+  nsresult HandleRefreshInfoRequest();
+  
 };

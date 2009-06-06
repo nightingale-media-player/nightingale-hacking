@@ -52,11 +52,15 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/caps \
+                     $(MOZSDK_INCLUDE_DIR)/content \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/js \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/pref \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(NULL)
 
 DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)

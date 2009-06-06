@@ -26,17 +26,30 @@
 
 #include <sbIDeviceFirmwareHandler.h>
 
+#include <nsITimer.h>
 #include <nsIURI.h>
+#include <nsIXMLHttpRequest.h>
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <prmon.h>
 
-class sbBaseDeviceFirmwareHandler : public sbIDeviceFirmwareHandler
+#include <sbIDeviceEvent.h>
+
+class sbBaseDeviceFirmwareHandler : public sbIDeviceFirmwareHandler,
+                                    public nsITimerCallback
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSITIMERCALLBACK
   NS_DECL_SBIDEVICEFIRMWAREHANDLER
+
+  typedef enum {
+    HANDLER_IDLE = 0,
+    HANDLER_REFRESHING_INFO,
+    HANDLER_UPDATING_DEVICE,
+    HANDLER_X
+  } handlerstate_t;
 
   sbBaseDeviceFirmwareHandler();
 
@@ -50,6 +63,50 @@ public:
    */
   nsresult CreateProxiedURI(const nsACString &aURISpec, 
                             nsIURI **aURI);
+
+  /**
+   * \brief Send an HTTP request
+   *
+   * \param aMethod - The HTTP Method to use, currently we support POST and GET
+   * \param aUrl - The URL to send the request to, as a string.
+   * \param aUsername [optional] - HTTP authentication username.
+   * \param aPassword [optional] - HTTP authentication password.
+   *
+   * \note The request is always sent asynchronously.
+   *       The 'OnHttpRequestCompleted' will get called when the 
+   *       request completed. If there is a pending request, 
+   *       calling this method will fail.
+   * \throw NS_ERROR_ABORT when there is already a request pending.
+   */
+  nsresult SendHttpRequest(const nsACString &aMethod, 
+                           const nsACString &aUrl,
+                           const nsAString &aUsername = EmptyString(),
+                           const nsAString &aPassword = EmptyString());
+
+  /**
+   * \brief Abort an HTTP request
+   */
+  nsresult AbortHttpRequest();
+
+  /**
+   * \brief Create a device event
+   */
+  nsresult CreateDeviceEvent(sbIDeviceEvent **aEvent);
+
+  /**
+   * \brief Send a device event
+   */
+  nsresult SendDeviceEvent(sbIDevice *aDevice, sbIDeviceEvent *aEvent);
+
+  /**
+   * \brief Set internal state
+   */
+  handlerstate_t GetState();
+
+  /**
+   * \brief Get internal state
+   */
+  nsresult SetState(handlerstate_t aState);
 
   // override me, see cpp file for implementation notes
   virtual nsresult OnInit();
@@ -70,12 +127,15 @@ public:
   virtual nsresult OnVerifyUpdate(sbIDevice *aDevice, 
                                   sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
                                   sbIDeviceEventListener *aListener);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnHttpRequestCompleted();
 
 protected:
   virtual ~sbBaseDeviceFirmwareHandler();
 
   PRMonitor* mMonitor;
 
+  handlerstate_t mHandlerState;
   PRUint32 mFirmwareVersion;
 
   nsString mContractId;
@@ -85,4 +145,6 @@ protected:
   nsCOMPtr<nsIURI> mReleaseNotesLocation;
   nsCOMPtr<nsIURI> mResetInstructionsLocation;
 
+  nsCOMPtr<nsIXMLHttpRequest> mXMLHttpRequest;
+  nsCOMPtr<nsITimer>          mXMLHttpRequestTimer;
 };

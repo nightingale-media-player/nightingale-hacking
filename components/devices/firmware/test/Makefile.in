@@ -72,8 +72,13 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(topsrcdir)/components/moz/strings/src \
                $(topsrcdir)/components/moz/threads/src \
                $(topsrcdir)/components/property/src \
+               $(MOZSDK_INCLUDE_DIR)/caps \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/js \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/xpconnect \
                $(NULL)
 
 DYNAMIC_LIB = sbDeviceFirmwareTester$(DEBUG:%=_d)$(DLL_SUFFIX)

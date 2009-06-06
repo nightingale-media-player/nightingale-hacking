@@ -41,5 +41,5 @@ function runTest () {
   var handler = updater.getHandler(device);
   assertNotEqual(handler, null);
   
-  
+  handler.refreshInfo(device, null);
 }

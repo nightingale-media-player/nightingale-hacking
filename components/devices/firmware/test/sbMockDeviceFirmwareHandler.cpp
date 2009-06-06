@@ -27,20 +27,31 @@
 
 #include "sbMockDeviceFirmwareHandler.h"
 
+#include <nsIDOMDocument.h>
+#include <nsIDOMElement.h>
+#include <nsIDOMNode.h>
+#include <nsIDOMNodeList.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
+#include <nsISupportsUtils.h>
 #include <nsIVariant.h>
 #include <nsIWritablePropertyBag2.h>
 
+#include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <nsISupportsUtils.h>
-#include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceProperties.h>
+
+#define SB_MOCK_DEVICE_FIRMWARE_URL \
+  "http://dingo.songbirdnest.com/~aus/firmware/firmware.xml"
+#define SB_MOCK_DEVICE_RESET_URL \
+  "http://dingo.songbirdnest.com/~aus/firmware/reset.html"
+#define SB_MOCK_DEVICE_RELEASE_NOTES_URL \
+  "http://dingo.songbirdnest.com/~aus/firmware/release_notes.html"
 
 NS_IMPL_ISUPPORTS_INHERITED0(sbMockDeviceFirmwareHandler, 
                              sbBaseDeviceFirmwareHandler)
@@ -62,6 +73,19 @@ sbMockDeviceFirmwareHandler::OnInit()
   mContractId = 
     NS_LITERAL_STRING("@songbirdnest.com/Songbird/Device/Firmware/Handler/MockDevice;1");
 
+  nsCOMPtr<nsIURI> uri;
+  nsresult rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_RESET_URL),
+                                 getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  uri.swap(mResetInstructionsLocation);
+
+  rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_RELEASE_NOTES_URL),
+                        getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  uri.swap(mReleaseNotesLocation);
+
   return NS_OK;
 }
 
@@ -79,13 +103,11 @@ sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
   rv = properties->GetVendorName(vendorName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // XXXAus: Other firmware handlers will probably want to be a 
+  //         little bit more stringent.
   if(!vendorName.EqualsLiteral("ACME Inc.")) {
     return NS_OK;
   }
-
-  nsCOMPtr<nsIVariant> modelNumber;
-  rv = properties->GetModelNumber(getter_AddRefs(modelNumber));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Yep, supported!
   *_retval = PR_TRUE;
@@ -97,26 +119,16 @@ sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 sbMockDeviceFirmwareHandler::OnRefreshInfo(sbIDevice *aDevice, 
                                            sbIDeviceEventListener *aListener)
 {
-  /**
-   * Here is where you will want to refresh the info for your handler. 
-   * This includes the latest firmware version, firmware location, reset instructions
-   * and release notes locations.
-   *
-   * Always use CreateProxiedURI when creating the nsIURIs for the firmware, 
-   * reset instructions and release notes location. This will ensure
-   * that the object is thread-safe and it is created in a thread-safe manner.
-   *
-   * This method must be asynchronous and should not block the main thread. 
-   * Progress for this operation is also expected. The flow of expected events 
-   * is as follows: firmware refresh info start, firmware refresh info progress,
-   * firmware refresh info end. See sbIDeviceEvent for more information about
-   * event payload.
-   *
-   * Events must be sent to both the device and the listener (if it is specified 
-   * during the call).
-   */
+  nsresult rv = SendHttpRequest(NS_LITERAL_CSTRING("GET"), 
+                                NS_LITERAL_CSTRING(SB_MOCK_DEVICE_FIRMWARE_URL));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  rv = SetState(HANDLER_REFRESHING_INFO);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Send firmware refresh info start
+
+  return NS_OK;
 }
 
 /*virtual*/ nsresult
@@ -194,4 +206,105 @@ sbMockDeviceFirmwareHandler::OnVerifyUpdate(sbIDevice *aDevice,
    */
 
   return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnHttpRequestCompleted()
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  handlerstate_t state = GetState();
+
+  switch(state) {
+    case HANDLER_REFRESHING_INFO: {
+      rv = HandleRefreshInfoRequest();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
+    default:
+      NS_WARNING("No code!");
+  }
+
+  return NS_OK;
+}
+
+nsresult 
+sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
+{
+  PRUint32 status = 0;
+  
+  nsresult rv = mXMLHttpRequest->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  printf("HTTP status code: %d\n", status);  
+
+  nsCOMPtr<nsIDOMDocument> document;
+  rv = mXMLHttpRequest->GetResponseXML(getter_AddRefs(document));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMNodeList> rootNodeList;
+  rv = document->GetElementsByTagName(NS_LITERAL_STRING("firmware"),
+                                      getter_AddRefs(rootNodeList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 rootNodeListLength = 0;
+  rv = rootNodeList->GetLength(&rootNodeListLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Only one 'firmware' node is allowed.
+  NS_ENSURE_TRUE(rootNodeListLength == 1, NS_ERROR_FAILURE);
+
+  nsCOMPtr<nsIDOMNode> rootNode;
+  rv = rootNodeList->Item(0, getter_AddRefs(rootNode));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMNodeList> childNodes;
+  rv = rootNode->GetChildNodes(getter_AddRefs(childNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 childNodeListLength = 0;
+  rv = childNodes->GetLength(&childNodeListLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 i = 0; i < childNodeListLength; ++i) {
+    nsCOMPtr<nsIDOMNode> domNode;
+    rv = childNodes->Item(i, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMElement> element = do_QueryInterface(domNode, &rv);
+    if(NS_FAILED(rv)) {
+      continue;
+    }
+
+    nsString tagName;
+    rv = element->GetTagName(tagName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString value;
+    rv = element->GetAttribute(NS_LITERAL_STRING("value"), value);
+    if(NS_FAILED(rv)) {
+      continue;
+    }
+
+    // XXXAus: We only support 'version' and 'location' nodes
+    //         and they must have a 'value' attribute.
+    if(tagName.EqualsLiteral("version")) {
+      nsAutoMonitor mon(mMonitor);
+      mReadableFirmwareVersion = value;
+      mFirmwareVersion = 0x01000001;
+    }
+    else if(tagName.EqualsLiteral("location")) {
+      nsCOMPtr<nsIURI> uri;
+      rv = CreateProxiedURI(NS_ConvertUTF16toUTF8(value), 
+                            getter_AddRefs(uri));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoMonitor mon(mMonitor);
+      mFirmwareLocation = uri;
+    }
+  }
+
+  // XXXAus: Send firmware refresh info end
+
+  return NS_OK;
 }
