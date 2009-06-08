@@ -219,6 +219,7 @@ GST_PLUGINS_UGLY_NAMES = gstasf \
                          $(NULL)
 
 GST_PLUGINS_BAD_NAMES := gstaiffparse \
+                        gstadpcmdec \
                         gstrtpmanager \
                         gstsdpelem \
                         gstselector \
