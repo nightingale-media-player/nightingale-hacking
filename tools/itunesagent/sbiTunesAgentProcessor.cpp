@@ -281,6 +281,7 @@ sbiTunesAgentProcessor::ProcessTaskFile()
     }
     // Close the stream and remove the file
     mInputStream.close();
+    mInputStream.clear();
     RemoveTaskFile();
   }
   return sbNoError;

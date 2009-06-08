@@ -278,6 +278,7 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
         }
       }
       userPlaylist = result.pdispVal;
+      VariantClear(&result);
       break;
     }
     assert(userPlaylist.get());

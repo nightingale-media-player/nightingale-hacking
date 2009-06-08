@@ -229,7 +229,7 @@ sbiTunesAgentWindowsProcessor::RegisterForStartOnLogin() {
   
   sbError error;
   DWORD const bytes = (wcslen(exePath) + 1) * 
-                  sizeof(std::string::traits_type::char_type);
+                  sizeof(wchar_t);
   result = RegSetValueExW(runKey, 
                           WINDOWS_RUN_KEY_VALUE, 
                           0, 
