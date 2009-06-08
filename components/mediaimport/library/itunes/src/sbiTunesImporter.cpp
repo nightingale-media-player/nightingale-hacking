@@ -1214,17 +1214,39 @@ sbiTunesImporter::OnError(const nsAString & aErrorMessage, PRBool *_retval)
   return NS_OK;
 }
 
+/**
+ * This is a helper function that enumerates properties and compares the values
+ * to the property array passed to the constructor. It builds a list of
+ * properties that are different in mChangedProperties.
+ */
 struct sbiTunesImporterEnumeratePropertiesData
 {
+  /**
+   * Initialize the internal properties and the changed property array
+   */
   sbiTunesImporterEnumeratePropertiesData(sbIPropertyArray * aProperties, 
                                           nsresult * rv) :
-    mProperties(aProperties),
-    mNeedsUpdating(PR_FALSE) {
+    mProperties(aProperties) {
     mChangedProperties = do_CreateInstance("@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1", rv);
   }
+  /**
+   * Returns true if there are any changed properties
+   */
+  bool NeedsUpdating() const
+  {
+    PRUint32 length = 0;
+    // In case of error, just let length be 0
+    mChangedProperties->GetLength(&length);
+    return length != 0;
+  }
+  /**
+   * A list of properties to compare 
+   */
   nsCOMPtr<sbIPropertyArray> mProperties;
+  /**
+   * The list of properties that have changed
+   */
   nsCOMPtr<sbIMutablePropertyArray> mChangedProperties;
-  PRBool mNeedsUpdating;
 };
 
 static PLDHashOperator
@@ -1238,7 +1260,6 @@ EnumReadFunc(nsAString const & aKey,
   nsString currentValue;
   data->mProperties->GetPropertyValue(aKey, currentValue);
   if (!aValue.Equals(currentValue)) {
-    data->mNeedsUpdating = PR_TRUE;
     data->mChangedProperties->AppendProperty(aKey, aValue);
   }
   return PL_DHASH_NEXT;
@@ -1253,6 +1274,7 @@ nsresult sbiTunesImporter::ProcessUpdates() {
     if (!*iter) {
       continue;
     }
+    nsCOMPtr<nsIURI> uri;
     iTunesTrack * const track = *iter;
     nsString guid;
     rv = miTunesDBServices.GetSBIDFromITID(miTunesLibID, track->mTrackID, guid);
@@ -1273,9 +1295,34 @@ nsresult sbiTunesImporter::ProcessUpdates() {
         if (NS_SUCCEEDED(rv)) {
           sbiTunesImporterEnumeratePropertiesData data(properties, &rv);
           NS_ENSURE_SUCCESS(rv, rv);
-          
+          // Get the content URL and compare against the track URL. If
+          // we fail to get it continue on, and let the downstream code
+          // deal with it.
+          nsString contentURL;
+          NS_NAMED_LITERAL_STRING(CONTENT_URL, SB_PROPERTY_CONTENTURL);
+          rv = properties->GetPropertyValue(CONTENT_URL,
+                                            contentURL);
+          if (NS_SUCCEEDED(rv)) {
+            // Get the track URI, compare to the songbird URI, if it's changed
+            // we need to add it into the changed property array
+            track->GetTrackURI(GetOSType(), 
+                               mIOService,
+                               miTunesLibSig, 
+                               getter_AddRefs(uri));
+            nsCString trackCURI;
+            rv = uri->GetSpec(trackCURI);
+            if (NS_SUCCEEDED(rv)) {      
+              nsString const & trackURI = NS_ConvertUTF8toUTF16(trackCURI);
+              if (!trackURI.Equals(contentURL)) {
+                data.mChangedProperties->AppendProperty(CONTENT_URL,
+                                                        trackURI);
+              }
+            }
+          }
+          // Enumerate the track properties and compare them to the Songbird
+          // ones and build a property array of the ones that are different
           track->mProperties.EnumerateRead(EnumReadFunc, &data);
-          if (data.mNeedsUpdating) {
+          if (data.NeedsUpdating()) {
             rv = mediaItem->SetProperties(data.mChangedProperties);
             NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
                              "Failed to set a property on iTunes import");
