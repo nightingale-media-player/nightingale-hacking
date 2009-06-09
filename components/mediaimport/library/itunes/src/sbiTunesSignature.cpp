@@ -66,6 +66,7 @@ nsresult sbiTunesSignature::Initialize() {
   PRInt32 result;
   rv = mDBQuery->Execute(&result);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result == 0, NS_ERROR_FAILURE);
   
   rv = mDBQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -136,6 +137,7 @@ sbiTunesSignature::StoreSignature(nsAString const & aID,
   PRInt32 result;
   rv = mDBQuery->Execute(&result);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result == 0, NS_ERROR_FAILURE);
   
   rv = mDBQuery->ResetQuery();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -156,10 +158,11 @@ sbiTunesSignature::RetrieveSignature(nsAString const & aID,
   PRInt32 dbResult;
   rv = mDBQuery->Execute(&dbResult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbResult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = mDBQuery->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
   
   rv = result->GetRowCell(0, 0, aSignature);
   NS_ENSURE_SUCCESS(rv, rv);

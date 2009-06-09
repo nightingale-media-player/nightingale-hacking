@@ -766,10 +766,11 @@ sbLocalDatabaseGUIDArray::GetFirstIndexByPrefix(const nsAString& aValue,
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1167,10 +1168,11 @@ sbLocalDatabaseGUIDArray::RunLengthQuery(const nsAString& aSql,
   // Execute the length query
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1443,10 +1445,11 @@ sbLocalDatabaseGUIDArray::ReadRowRange(const nsAString& aSql,
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1774,10 +1777,11 @@ sbLocalDatabaseGUIDArray::SortRows(PRUint32 aStartIndex,
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1896,10 +1900,11 @@ sbLocalDatabaseGUIDArray::GetPrimarySortKeyPosition(const nsAString& aValue,
 
     rv = query->Execute(&dbOk);
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
     nsCOMPtr<sbIDatabaseResult> result;
     rv = query->GetResultObject(getter_AddRefs(result));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
     PRUint32 rowCount;
     rv = result->GetRowCount(&rowCount);

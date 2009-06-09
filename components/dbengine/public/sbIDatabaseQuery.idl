@@ -152,7 +152,9 @@ interface sbIDatabaseQueryCallback : nsISupports
 *
 * 3) Execution - execute(), optionally waitForCompletion()
 *
-* 4) Get Results - getResultObject()
+* 4) Get Results - getResultObject(), the returned object may be null 
+*    if there was an error. You should always check the value returned
+*    by execute. 
 *
 * 5) Reset - optionally resetQuery(), if you're going to reuse the object
 * with a new set of query strings
@@ -297,6 +299,8 @@ interface sbIDatabaseQuery : nsISupports
    * Don't get this object unless you know the query has completed executing.
    *
    * \return The results object 
+   * \note The result object may be null if there was an error during query
+   *       execution.
    */
   sbIDatabaseResult getResultObject();
 
@@ -322,6 +326,8 @@ interface sbIDatabaseQuery : nsISupports
    * \brief Execute the queries enqueued in the object
    *
    * \return The error value if synchronous, or 0 if async
+   * \retval 0 - No error
+   * \retval > 0 - Error.
    */
   long execute();
 

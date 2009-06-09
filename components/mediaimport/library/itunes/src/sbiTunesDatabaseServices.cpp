@@ -69,6 +69,7 @@ sbiTunesDatabaseServices::Initialize() {
   PRBool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
 
   NS_NAMED_LITERAL_STRING(INSERT_SQL, 
                           "INSERT OR REPLACE INTO itunes_id_map (itunes_id, songbird_id) VALUES (?, ?)");
@@ -108,6 +109,7 @@ sbiTunesDatabaseServices::MapID(nsAString const & aiTunesLibID,
   PRBool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -126,13 +128,14 @@ sbiTunesDatabaseServices::GetSBIDFromITID(nsAString const & aiTunesLibID,
   rv = mDBQuery->BindStringParameter(0, iTunesID);
   NS_ENSURE_SUCCESS(rv, rv);
    
-  PRBool dbOK;
+  PRInt32 dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
   
   nsCOMPtr<sbIDatabaseResult> result;
   rv = mDBQuery->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
   
   rv = result->GetRowCell(0, 0, aSongbirdID);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -152,6 +155,7 @@ sbiTunesDatabaseServices::RemoveSBIDEntry(nsAString const & aSongbirdID) {
   PRBool dbOK;
   rv = mDBQuery->Execute(&dbOK);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOK == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

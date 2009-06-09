@@ -789,10 +789,11 @@ sbPlaybackHistoryService::CreateAnnotationsFromEntryId(
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
@@ -1003,6 +1004,7 @@ sbPlaybackHistoryService::EnsureHistoryDatabaseAvailable()
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -1277,10 +1279,11 @@ sbPlaybackHistoryService::InsertPropertyID(const nsAString &aPropertyID,
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   nsAutoString propertyDBIDStr;
   rv = result->GetRowCell(0, 0, propertyDBIDStr);
@@ -1329,10 +1332,11 @@ sbPlaybackHistoryService::LoadPropertyIDs()
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1985,10 +1989,11 @@ sbPlaybackHistoryService::GetEntries(nsISimpleEnumerator * *aEntries)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   nsCOMPtr<nsIArray> array;
   rv = CreateEntriesFromResultSet(result, getter_AddRefs(array));
@@ -2015,10 +2020,11 @@ sbPlaybackHistoryService::GetEntryCount(PRUint64 *aEntryCount)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -2079,10 +2085,11 @@ sbPlaybackHistoryService::AddEntry(sbIPlaybackHistoryEntry *aEntry)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   nsAutoString entryIdStr;
   rv = result->GetRowCell(0, 0, entryIdStr);
@@ -2135,10 +2142,11 @@ sbPlaybackHistoryService::AddEntries(nsIArray *aEntries)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
@@ -2199,10 +2207,11 @@ sbPlaybackHistoryService::GetEntryByIndex(PRInt64 aIndex,
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
   
   rv = CreateEntryFromResultSet(result, 0, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2242,10 +2251,11 @@ sbPlaybackHistoryService::GetEntriesByIndex(PRInt64 aStartIndex,
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   rv = CreateEntriesFromResultSet(result, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2290,10 +2300,11 @@ sbPlaybackHistoryService::GetEntriesByTimestamp(PRInt64 aStartTimestamp,
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   rv = CreateEntriesFromResultSet(result, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2329,6 +2340,7 @@ sbPlaybackHistoryService::RemoveEntry(sbIPlaybackHistoryEntry *aEntry)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   rv = DoEntryRemovedCallback(aEntry);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2405,6 +2417,7 @@ sbPlaybackHistoryService::RemoveEntries(nsIArray *aEntries)
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   rv = DoEntriesRemovedCallback(aEntries);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2461,10 +2474,11 @@ sbPlaybackHistoryService::GetEntriesByAnnotation(
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   rv = CreateEntriesFromResultSet(result, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2546,10 +2560,11 @@ sbPlaybackHistoryService::GetEntriesByAnnotations(
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   rv = CreateEntriesFromResultSet(result, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2573,6 +2588,7 @@ sbPlaybackHistoryService::Clear()
   PRInt32 dbError = 0;
   rv = query->Execute(&dbError);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbError == 0, NS_ERROR_FAILURE);
 
   rv = DoEntriesClearedCallback();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2649,10 +2665,11 @@ sbPlaybackHistoryService::AddOrUpdateAnnotation(
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
@@ -2697,6 +2714,7 @@ sbPlaybackHistoryService::AddOrUpdateAnnotation(
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -2725,6 +2743,7 @@ sbPlaybackHistoryService::RemoveAnnotation(PRInt64 aEntryId,
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

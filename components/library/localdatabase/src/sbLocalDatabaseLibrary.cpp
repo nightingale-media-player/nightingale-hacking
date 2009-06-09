@@ -417,6 +417,7 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
   PRInt32 dbSuccess;
   rv = mDBQuery->Execute(&dbSuccess);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
 
   // Invalidate our guid array
   rv = mFriendLibrary->GetArray()->Invalidate();
@@ -543,10 +544,11 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
@@ -894,10 +896,11 @@ sbLocalDatabaseLibrary::GetTypeForGUID(const nsAString& aGUID,
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1012,6 +1015,7 @@ sbLocalDatabaseLibrary::DeleteDatabaseItem(const nsAString& aGuid)
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -1356,10 +1360,11 @@ sbLocalDatabaseLibrary::GetContainingLists(sbMediaItemArray* aItems,
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1432,10 +1437,11 @@ sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1693,10 +1699,11 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1783,10 +1790,11 @@ sbLocalDatabaseLibrary::GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID)
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1918,10 +1926,11 @@ sbLocalDatabaseLibrary::GetMediaItemIdForGuid(const nsAString& aGUID,
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -2508,6 +2517,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Add the new media item into cache
   nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
@@ -2577,6 +2587,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Add the new media list into cache
   nsAutoPtr<sbMediaItemInfo> newItemInfo(new sbMediaItemInfo());
@@ -2881,10 +2892,11 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -2916,6 +2928,7 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
 
     rv = query->Execute(&dbresult);
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
     // Get the newly created typeID for the factory.
     rv = query->ResetQuery();
@@ -2926,9 +2939,10 @@ sbLocalDatabaseLibrary::RegisterMediaListFactory(sbIMediaListFactory* aFactory)
 
     rv = query->Execute(&dbresult);
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
     rv = query->GetResultObject(getter_AddRefs(result));
-    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
   }
 
   nsAutoString newTypeIDString;
@@ -2975,7 +2989,6 @@ sbLocalDatabaseLibrary::Optimize()
   PRInt32 dbresult;
   rv = query->Execute(&dbresult);
   NS_ENSURE_SUCCESS(rv, rv);
-
   NS_ENSURE_TRUE(dbresult == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
@@ -3098,6 +3111,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   PRInt32 dbResult;
   rv = query->Execute(&dbResult);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbResult == 0, NS_ERROR_FAILURE);
 
   if (runAsync) {
     // Start polling the query for completion
@@ -3181,6 +3195,7 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Invalidate the cached list
   rv = GetArray()->Invalidate();
@@ -3232,10 +3247,11 @@ sbLocalDatabaseLibrary::NeedsMigration(PRBool *aNeedsMigration,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -3424,6 +3440,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     PRInt32 dbSuccess;
     rv = query->Execute(&dbSuccess);
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
   }
   else { // !isLibrary
     nsCOMPtr<sbIDatabasePreparedStatement> deletePreparedStatement;
@@ -3500,6 +3517,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     PRInt32 dbSuccess;
     rv = query->Execute(&dbSuccess);
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
   }
 
   return NS_OK;
@@ -4292,10 +4310,11 @@ sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty,
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
@@ -4356,10 +4375,11 @@ sbLocalDatabaseLibrary::NeedsReindexCollations(PRBool *aNeedsReindexCollations) 
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
@@ -4446,6 +4466,7 @@ sbLocalDatabaseLibrary::ReindexCollations() {
   PRInt32 dbOk = 0;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }

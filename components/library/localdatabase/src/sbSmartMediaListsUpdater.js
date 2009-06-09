@@ -149,7 +149,7 @@ SmartMediaListsUpdater.prototype = {
       query.addQuery("SELECT * FROM " + aTableId);
       query.execute();
       var result = query.getResultObject();
-      if (result.getRowCount() > 0) {
+      if (result && result.getRowCount() > 0) {
         for (var i = 0; i < result.getRowCount(); i++) {
           var value = result.getRowCell(i, 0);
           aFunction(value);

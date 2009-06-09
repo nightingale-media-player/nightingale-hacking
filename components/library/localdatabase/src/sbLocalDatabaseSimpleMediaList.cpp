@@ -450,6 +450,7 @@ sbSimpleMediaListInsertingEnumerationListener::OnEnumerationEnd(sbIMediaList* aM
   PRInt32 dbSuccess;
   rv = query->Execute(&dbSuccess);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
 
   // Invalidate the cached list
   rv = mFriendList->GetArray()->Invalidate();
@@ -577,6 +578,7 @@ sbSimpleMediaListRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMe
     PRInt32 dbSuccess;
     rv = mDBQuery->Execute(&dbSuccess);
     NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
   }
 
   // Invalidate the cached list
@@ -1125,6 +1127,7 @@ sbLocalDatabaseSimpleMediaList::RemoveByIndex(PRUint32 aIndex)
   PRInt32 dbSuccess;
   rv = dbQuery->Execute(&dbSuccess);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbSuccess == 0, NS_ERROR_FAILURE);
 
   rv = GetArray()->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1188,6 +1191,7 @@ sbLocalDatabaseSimpleMediaList::Clear()
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Invalidate the cached list
   rv = GetArray()->Invalidate();
@@ -1458,10 +1462,11 @@ sbLocalDatabaseSimpleMediaList::ExecuteAggregateQuery(const nsAString& aQuery,
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   nsCOMPtr<sbIDatabaseResult> result;
   rv = query->GetResultObject(getter_AddRefs(result));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(result, NS_ERROR_FAILURE);
 
   PRUint32 rowCount;
   rv = result->GetRowCount(&rowCount);
@@ -1513,6 +1518,7 @@ sbLocalDatabaseSimpleMediaList::UpdateOrdinalByIndex(PRUint32 aIndex,
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
@@ -1574,6 +1580,7 @@ sbLocalDatabaseSimpleMediaList::MoveSomeInternal(PRUint32* aFromIndexArray,
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   // Invalidate the cached list
   rv = GetArray()->Invalidate();
@@ -1647,6 +1654,7 @@ sbLocalDatabaseSimpleMediaList::DeleteItemByMediaItemId(PRUint32 aMediaItemId)
 
   rv = query->Execute(&dbOk);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
 
   return NS_OK;
 }
