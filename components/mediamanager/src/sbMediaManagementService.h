@@ -31,6 +31,7 @@
 #include <sbIMediaListListener.h>
 #include <sbIPropertyArray.h>
 
+#include <nsIDOMWindow.h>
 #include <nsIObserver.h>
 #include <nsITimer.h>
 #include <nsIPrefBranch.h>
@@ -123,6 +124,11 @@ protected:
    */
   NS_METHOD StopListening();
   
+  /**
+   * Alert the user that an error occured when managing a file
+   */
+  NS_METHOD ReportError();
+
   /**
    * helper for submitting individual items
    */

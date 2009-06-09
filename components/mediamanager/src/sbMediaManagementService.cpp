@@ -30,21 +30,27 @@
 /**
  * mozilla interfaces
  */
+#include <nsIConsoleService.h>
 #include <nsIObserverService.h>
 #include <nsIPrefBranch2.h>
 #include <nsIPrefService.h>
 #include <nsIProxyObjectManager.h>
+#include <nsIScriptError.h>
 #include <nsIThread.h>
 #include <nsITimer.h>
+#include <nsIURI.h>
 
 /**
  * songbird interfaces
  */
+#include <sbIApplicationController.h>
 #include <sbIJobProgressService.h>
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
 #include <sbIMediaFileManager.h>
 #include <sbIMediaManagementJob.h>
+#include <sbIPrompter.h>
+#include <sbStringBundle.h>
 
 /**
  * other mozilla headers
@@ -102,6 +108,7 @@ struct ProcessItemData {
   sbMediaManagementService* mediaMgmtService;
   sbIMediaFileManager* fileMan;
   sbMediaManagementService::DirtyItems_t* dirtyItems;
+  bool hadErrors;
 };
 
 NS_IMPL_THREADSAFE_ISUPPORTS5(sbMediaManagementService,
@@ -587,6 +594,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
         data.mediaMgmtService = this;
         data.fileMan = fileMan;
         data.dirtyItems = mDirtyItems.forget();
+        data.hadErrors = false;
         mDirtyItems = new DirtyItems_t;
         NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_OUT_OF_MEMORY);
         PRBool success = mDirtyItems->Init();
@@ -598,6 +606,11 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
       }
       
       PRUint32 count = data.dirtyItems->EnumerateRead(ProcessItem, &data);
+      // Check if errors occured and inform user...
+      if (data.hadErrors) {
+        rv = ReportError();
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
       data.dirtyItems->Clear();
       delete data.dirtyItems;
     }
@@ -809,6 +822,31 @@ sbMediaManagementService::StopListening()
   return NS_OK;
 }
 
+NS_METHOD
+sbMediaManagementService::ReportError()
+{
+  TRACE(("%s", __FUNCTION__));
+ 
+  sbStringBundle bundle;
+  nsString dialogTitle = bundle.Get("mediamanager.import_manage_error.title");
+  nsString dialogText = bundle.Get("mediamanager.import_manage_error.text");
+
+  nsresult rv;
+  nsCOMPtr<sbIPrompter> prompter =
+    do_CreateInstance("@songbirdnest.com/Songbird/Prompter;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prompter->Alert(nsnull,
+                       dialogTitle.BeginReading(),
+                       dialogText.BeginReading());
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
 /* static */
 PLDHashOperator
 sbMediaManagementService::ProcessItem(nsISupports* aKey,
@@ -837,11 +875,48 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
   NS_ENSURE_TRUE(item, PL_DHASH_STOP);
   PRBool success;
   rv = data->fileMan->OrganizeItem(item, aOperation, nsnull, &success);
-  if (NS_FAILED(rv)) {
-    nsresult __rv = rv;
-    NS_ENSURE_SUCCESS_BODY(rv, rv);
-  } else if (!success) {
-    NS_WARNING("%s: OrganizeItem failed with no error code");
+  if (NS_FAILED(rv) || !success) {
+    data->hadErrors = true;
+    // Log what file failed...
+    nsString message(NS_LITERAL_STRING("Unable to manage file: "));
+    
+    nsCOMPtr<nsIURI> uri;
+    rv = item->GetContentSrc(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS( rv, PL_DHASH_NEXT );
+
+    nsCString uriSpec;
+    rv = uri->GetSpec(uriSpec);
+    if (NS_SUCCEEDED(rv)) {
+      message.AppendLiteral(uriSpec.get());
+    } else {
+      message.AppendLiteral("Unknown File");
+    }
+    
+    nsCOMPtr<nsIConsoleService> consoleService =
+        do_GetService("@mozilla.org/consoleservice;1", &rv);
+    NS_ENSURE_SUCCESS( rv, PL_DHASH_NEXT );
+    nsCOMPtr<nsIScriptError> scriptError =
+        do_CreateInstance(NS_SCRIPTERROR_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS( rv, PL_DHASH_NEXT );
+    if (scriptError) {
+      rv = scriptError->Init(message.get(),
+                             EmptyString().get(),
+                             EmptyString().get(),
+                             0, // No line number
+                             0, // No column number
+                             0, // An error message.
+                             "MediaManagment:OrganizeItem");
+      if (NS_SUCCEEDED(rv)) {
+        consoleService->LogMessage(scriptError);
+      }
+    }
+
+    if (!success) {
+      NS_WARNING("%s: OrganizeItem failed with no error code");
+    } else {
+      nsresult __rv = rv;
+      NS_ENSURE_SUCCESS_BODY(rv, rv);
+    }
   }
   return PL_DHASH_NEXT;
 }
