@@ -435,6 +435,11 @@ sbiTunesImporter::Initialize()
     do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Reset flags to their default value
+  mBatchEnded = PR_FALSE;
+  mFoundChanges = PR_FALSE;
+  mUnsupportedMediaCount = 0;
+  mMissingMediaCount = 0;
   
   rv = GetMainLibrary(getter_AddRefs(mLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -558,6 +563,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
     return NS_OK;
   }
   mImportPlaylists = PR_FALSE;
+  mBatchEnded = PR_FALSE;  
   
   if (mImport) {
     PRBool const dontImportPlaylists = prefs.GetBoolPref("dont_import_playlists", PR_FALSE);
