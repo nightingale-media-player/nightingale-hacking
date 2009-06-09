@@ -73,6 +73,7 @@
 #include "sbiTunesImporterStatus.h"
 
 char const SB_ITUNES_LIBRARY_IMPORT_PREF_PREFIX[] = "library_import.itunes";
+char const SB_ITUNES_LIBRARY_IMPORTER_PREF_PREFIX[] = "songbird.library_importer.";
 
 #ifdef PR_LOGGING
 static PRLogModuleInfo* giTunesImporter = nsnull;
@@ -566,9 +567,12 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
   mBatchEnded = PR_FALSE;  
   
   if (mImport) {
-    PRBool const dontImportPlaylists = prefs.GetBoolPref("dont_import_playlists", PR_FALSE);
-    mImportPlaylists = !dontImportPlaylists;
+    sbPrefBranch userPrefs(SB_ITUNES_LIBRARY_IMPORTER_PREF_PREFIX, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mImportPlaylists = userPrefs.GetBoolPref("import_playlists", PR_FALSE);
   }
+  
   mTypeSniffer = do_CreateInstance("@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
