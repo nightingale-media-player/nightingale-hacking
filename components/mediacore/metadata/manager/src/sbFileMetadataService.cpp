@@ -46,6 +46,7 @@
 
 #include <sbILibraryManager.h>
 #include <sbIMediaItem.h>
+#include <sbProxiedComponentManager.h>
 #include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 #include <sbIDataRemote.h>
@@ -112,9 +113,10 @@ nsresult sbFileMetadataService::Init()
       "sbFileMetadataService job items lock");
   NS_ENSURE_TRUE(mJobLock, NS_ERROR_OUT_OF_MEMORY);
 
-  // Listen for library shutdown
+  // Listen for library shutdown.  The observer service must be used on the main
+  // thread.
   nsCOMPtr<nsIObserverService> obsSvc =
-    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+    do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIObserver> observer =
     do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
