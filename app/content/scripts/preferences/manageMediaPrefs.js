@@ -79,6 +79,7 @@ var manageMediaPrefsPane = {
   //----------------------------------------------------------------------------
 
   _prefs: [], // Original values for the preferences
+  _isValidManagedFolder: false,
 
   /**
    * Handles the preference pane load event.
@@ -90,8 +91,15 @@ var manageMediaPrefsPane = {
       const instantApply =
         Application.prefs.getValue("browser.preferences.instantApply", true);
       if (event.type == "dialogcancel" && !instantApply) {
-        // cancel dialog, don't do anything
-        return true;
+        if (!self._isValidManagedFolder) {
+          // The user didn't select a valid managed folder, reset this pref
+          // back to the default library folder value value.
+          var folderPrefElem = 
+            document.getElementById("manage_media_pref_library_folder");
+          Application.prefs.setValue(folderPrefElem.getAttribute("name"),
+                                     self._defaultLibraryFolder.path);
+        }
+        return true
       }
 
       if (!self._checkForValidPref(false)) {
@@ -366,6 +374,9 @@ var manageMediaPrefsPane = {
                               [file.path]));
         return false;
       }
+
+      // This is now a valid managed folder
+      this._isValidManagedFolder = true;
     }
 
     return true;
