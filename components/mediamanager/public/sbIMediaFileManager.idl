@@ -30,15 +30,19 @@ interface nsIFile;
 
 interface sbIMediaItem;
 
-[scriptable, uuid(1242afca-1dd2-11b2-977c-9ff6ad87c008)]
+[scriptable, uuid(b58a5f12-1dd1-11b2-bd18-9638edd4e441)]
 interface sbIMediaFileManager : nsISupports
 {
   /**
    * Initialize the media file manager instance
+   * For all optional arguments, defaults are taken from the prefs
    * \param [optional] aMediaFolder the folder to organize things into
-   *        if not specified, use the value from prefs
+   * \param [optional] aFileFormat the formatting string to use for the leaf name
+   * \param [optional] aDirFormat the formatting string to use for the path
    */
-  void init([optional] in nsIFile aMediaFolder);
+  void init([optional] in nsIFile aMediaFolder,
+            [optional] in ACString aFileFormat,
+            [optional] in ACString aDirFormat);
   
   /**
    * Organization Flags:

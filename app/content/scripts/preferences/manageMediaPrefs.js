@@ -142,13 +142,20 @@ var manageMediaPrefsPane = {
       return false;
     }
 
+    var dirFormat = document.getElementById("manage_media_format_dir_formatter")
+                            .value;
+    var fileFormat = document.getElementById("manage_media_format_file_formatter")
+                             .value;
+
     // show the preview
     WindowUtils.openModalDialog(window,
                                 "chrome://songbird/content/xul/manageMediaPreview.xul",
                                 "manage_media_preview_dialog",
                                 "chrome,centerscreen",
                                 [LibraryUtils.mainLibrary,
-                                 this._libraryFolder],
+                                 this._libraryFolder,
+                                 fileFormat,
+                                 dirFormat],
                                 null);
   },
 

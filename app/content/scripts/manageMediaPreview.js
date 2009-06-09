@@ -54,9 +54,11 @@ var mediaManagePreview = {
     var dialogPB = window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
     var mediaList = dialogPB.objects.queryElementAt(0, Ci.sbIMediaList);
     var mediaFolder = dialogPB.objects.queryElementAt(1, Ci.nsILocalFile);
+    var fileFormat = dialogPB.GetString(0);
+    var dirFormat = dialogPB.GetString(1);
     this.job = Cc["@songbirdnest.com/Songbird/media-manager/job;1"]
                  .createInstance(Ci.sbIMediaManagementJob);
-    this.job.init(mediaList, mediaFolder);
+    this.job.init(mediaList, mediaFolder, fileFormat, dirFormat);
     // save the result, since touching anything at all can clobber it!
     var rv = Components.lastResult;
     if (rv == Cr.NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA || mediaList.length == 0) {

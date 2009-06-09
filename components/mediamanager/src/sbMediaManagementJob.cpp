@@ -640,9 +640,14 @@ sbMediaManagementJob::GetNext(nsISupports **_retval)
 //------------------------------------------------------------------------------
 
 /* void init (in sbIMediaList aMediaList,
-              [optional] in nsILocalFile aMediaDirectory); */
+             [optional] in nsILocalFile aMediaFolder,
+             [optional] in ACString aFileFormat,
+             [optional] in ACString aDirFormat); */
 NS_IMETHODIMP
-sbMediaManagementJob::Init(sbIMediaList *aMediaList, nsILocalFile *aMediaFolder)
+sbMediaManagementJob::Init(sbIMediaList *aMediaList,
+                           nsILocalFile *aMediaFolder,
+                           const nsACString& aFileFormat,
+                           const nsACString& aDirFormat)
 {
   TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_FALSE(mMediaList, NS_ERROR_ALREADY_INITIALIZED);
@@ -715,7 +720,7 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList, nsILocalFile *aMediaFolder)
   mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mMediaFileManager->Init(mMediaFolder);
+  rv = mMediaFileManager->Init(mMediaFolder, aFileFormat, aDirFormat);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset all the progress information

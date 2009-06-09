@@ -90,7 +90,9 @@ sbMediaFileManager::~sbMediaFileManager()
 /**
  * \brief Initialize the sbMediaFileManager component.
  */
-NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder)
+NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
+                                       const nsACString& aFileFormat,
+                                       const nsACString& aDirFormat)
 {
   TRACE(("%s", __FUNCTION__));
 
@@ -138,9 +140,13 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder)
 
   // Get the Track File Format
   nsCString fileFormatString;
-  rv = mPrefBranch->GetCharPref(PREF_MFM_FILEFORMAT,
-                                getter_Copies(fileFormatString));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aFileFormat.IsEmpty()) {
+    rv = mPrefBranch->GetCharPref(PREF_MFM_FILEFORMAT,
+                                  getter_Copies(fileFormatString));
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    fileFormatString = aFileFormat;
+  }
   
   // Split the string on , character (odd entries are properties, even ones are
   // separators) and save for later.
@@ -150,9 +156,13 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder)
 
   // Get the Folder Format
   nsCString dirFormatString;
-  rv = mPrefBranch->GetCharPref(PREF_MFM_DIRFORMAT,
-                                getter_Copies(dirFormatString));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aDirFormat.IsEmpty()) {
+    rv = mPrefBranch->GetCharPref(PREF_MFM_DIRFORMAT,
+                                  getter_Copies(dirFormatString));
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    dirFormatString = aDirFormat;
+  }
   
   // Split the string on , character (odd entries are properties, even ones are
   // separators) and save for later.
