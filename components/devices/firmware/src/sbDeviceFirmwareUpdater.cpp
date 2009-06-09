@@ -28,6 +28,9 @@
 
 #include <nsISupportsPrimitives.h>
 
+#include <sbIDevice.h>
+#include <sbIDeviceEvent.h>
+#include <sbIDeviceEventTarget.h>
 #include <sbIDeviceFirmwareHandler.h>
 
 #include <nsAutoLock.h>
@@ -47,14 +50,11 @@ static PRLogModuleInfo* gDeviceFirmwareUpdater = nsnull;
 #define LOG(args)   /* nothing */
 #endif
 
-// XXX WARNING XXX 
-// If you change this value here, you have to change it 
-// in sbBaseDeviceFirmwareHandler.cpp as well!
-#define SB_DEVICE_FIRMWARE_HANLDER_CONTRACTID_ROOT \
-  "@songbirdnest.com/Songbird/Device/Firmware/Handler/"
+#define MIN_RUNNING_HANDLERS (2)
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareUpdater, 
-                              sbIDeviceFirmwareUpdater)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceFirmwareUpdater,
+                              sbIDeviceFirmwareUpdater,
+                              sbIDeviceEventListener)
 
 sbDeviceFirmwareUpdater::sbDeviceFirmwareUpdater()
 : mMonitor(nsnull)
@@ -71,6 +71,8 @@ sbDeviceFirmwareUpdater::~sbDeviceFirmwareUpdater()
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
   }
+
+  mRunningHandlers.Clear();
 }
 
 nsresult
@@ -124,6 +126,55 @@ sbDeviceFirmwareUpdater::Init()
     }
   }
 
+  PRBool success = mRunningHandlers.Init(MIN_RUNNING_HANDLERS);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  success = mHandlerStatus.Init(MIN_RUNNING_HANDLERS);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIEventTarget> threadPool = 
+    do_GetService("@songbirdnest.com/Songbird/ThreadPoolService;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  threadPool.swap(mThreadPool);
+
+  return NS_OK;
+}
+
+already_AddRefed<sbIDeviceFirmwareHandler> 
+sbDeviceFirmwareUpdater::GetRunningHandler(sbIDevice *aDevice)
+{
+  NS_ENSURE_TRUE(aDevice, nsnull);
+
+  sbIDeviceFirmwareHandler *_retval = nsnull;
+
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler;
+  if(mRunningHandlers.Get(aDevice, getter_AddRefs(handler))) {
+    handler.forget(&_retval);
+  }
+
+  return _retval;
+}
+
+nsresult
+sbDeviceFirmwareUpdater::PutRunningHandler(sbIDevice *aDevice, 
+                                           sbIDeviceFirmwareHandler *aHandler)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aHandler);
+
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler;
+  if(!mRunningHandlers.Get(aDevice, getter_AddRefs(handler))) {
+    PRBool success = mRunningHandlers.Put(aDevice, aHandler);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+#if defined PR_LOGGING
+  else {
+    NS_WARN_IF_FALSE(handler == aHandler, 
+      "Attempting to replace a running firmware handler!");
+  }
+#endif
+
   return NS_OK;
 }
 
@@ -134,7 +185,29 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler = GetRunningHandler(aDevice);
+  if(!handler) {
+    rv = GetHandler(aDevice, getter_AddRefs(handler));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // XXXAus: Check to make sure it's not busy right now?
+  }
+
+  nsCOMPtr<sbIDeviceEventTarget> eventTarget = do_QueryInterface(aDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = eventTarget->AddEventListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = PutRunningHandler(aDevice, handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handler->RefreshInfo(aDevice, aListener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -291,4 +364,83 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
   }
 
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+NS_IMETHODIMP
+sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent) 
+{
+  return NS_OK;
+}
+
+// ----------------------------------------------------------------------------
+// sbDeviceFirmwareHandlerStatus
+// ----------------------------------------------------------------------------
+  
+sbDeviceFirmwareHandlerStatus::sbDeviceFirmwareHandlerStatus()
+: mMonitor(nsnull)
+, mOperation(OP_NONE)
+, mStatus(STATUS_NONE)
+{
+}
+
+sbDeviceFirmwareHandlerStatus::~sbDeviceFirmwareHandlerStatus()
+{
+  if(mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
+}
+
+nsresult 
+sbDeviceFirmwareHandlerStatus::Init()
+{
+  mMonitor = nsAutoMonitor::NewMonitor("sbDeviceFirmwareHandlerStatus::mMonitor");
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+nsresult 
+sbDeviceFirmwareHandlerStatus::GetOperation(handleroperation_t *aOperation)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aOperation);
+
+  nsAutoMonitor mon(mMonitor);
+  *aOperation = mOperation;
+
+  return NS_OK;
+}
+
+nsresult 
+sbDeviceFirmwareHandlerStatus::SetOperation(handleroperation_t aOperation)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+  mOperation = aOperation;
+
+  return NS_OK;
+}
+
+nsresult 
+sbDeviceFirmwareHandlerStatus::GetStatus(handlerstatus_t *aStatus)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aStatus);
+  
+  nsAutoMonitor mon(mMonitor);
+  *aStatus = mStatus;
+
+  return NS_OK;
+}
+
+nsresult 
+sbDeviceFirmwareHandlerStatus::SetStatus(handlerstatus_t aStatus)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsAutoMonitor mon(mMonitor);
+  mStatus = aStatus;
+
+  return NS_OK;
 }

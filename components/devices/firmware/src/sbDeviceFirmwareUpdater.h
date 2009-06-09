@@ -26,19 +26,38 @@
 
 #include <sbIDeviceFirmwareUpdater.h>
 
+#include <nsIEventTarget.h>
+
+#include <sbIDeviceEventListener.h>
+#include <sbIDeviceFirmwareHandler.h>
+
+#include <nsClassHashtable.h>
+#include <nsCOMPtr.h>
+#include <nsHashKeys.h>
+#include <nsInterfaceHashtable.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <prmon.h>
 
-class sbDeviceFirmwareUpdater : public sbIDeviceFirmwareUpdater
+class sbDeviceFirmwareHandlerStatus;
+
+class sbDeviceFirmwareUpdater : public sbIDeviceFirmwareUpdater,
+                                public sbIDeviceEventListener
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICEFIRMWAREUPDATER
+  NS_DECL_SBIDEVICEEVENTLISTENER
 
   sbDeviceFirmwareUpdater();
 
   nsresult Init();
+
+  already_AddRefed<sbIDeviceFirmwareHandler> 
+    GetRunningHandler(sbIDevice *aDevice);
+
+  nsresult PutRunningHandler(sbIDevice *aDevice, 
+                             sbIDeviceFirmwareHandler *aHandler);
 
 private:
   virtual ~sbDeviceFirmwareUpdater();
@@ -48,6 +67,53 @@ protected:
 
   typedef nsTArray<nsCString> firmwarehandlers_t;
   firmwarehandlers_t mFirmwareHandlers;
+
+  typedef 
+    nsInterfaceHashtableMT<nsISupportsHashKey, 
+                           sbIDeviceFirmwareHandler> runninghandlers_t;
+  typedef 
+    nsClassHashtableMT<nsISupportsHashKey,
+                       sbDeviceFirmwareHandlerStatus> handlerstatus_t;
+  
+  runninghandlers_t mRunningHandlers;
+  handlerstatus_t   mHandlerStatus;
+
+  nsCOMPtr<nsIEventTarget> mThreadPool;
+};
+
+class sbDeviceFirmwareHandlerStatus
+{
+public:
+  typedef enum  {
+    STATUS_NONE = 0,
+    STATUS_WAITING_FOR_START,
+    STATUS_RUNNING,
+    STATUS_FINISHED
+  } handlerstatus_t;
+
+  typedef enum {
+    OP_NONE = 0,
+    OP_REFRESH,
+    OP_DOWNLOAD,
+    OP_UPDATE
+  } handleroperation_t;
+
+  sbDeviceFirmwareHandlerStatus();
+  ~sbDeviceFirmwareHandlerStatus();
+
+  nsresult Init();
+
+  nsresult GetOperation(handleroperation_t *aOperation);
+  nsresult SetOperation(handleroperation_t aOperation);
+
+  nsresult GetStatus(handlerstatus_t *aStatus);
+  nsresult SetStatus(handlerstatus_t aStatus);
+
+private:
+  PRMonitor* mMonitor;
+  
+  handleroperation_t mOperation;
+  handlerstatus_t    mStatus;
 };
 
 #define SB_DEVICEFIRMWAREUPDATER_DESCRIPTION               \
