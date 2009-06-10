@@ -1717,11 +1717,24 @@ var LastFmUninstallObserver = {
 				} else if (data == "item-disabled") {
 					this._disable = true;
 					lastFmNode.hidden = true;
+
+          // iterate over radio child nodes and see if we should hide the
+          // radio node
+          var hide = true;
+          var it = radioNode.childNodes;
+          while (it.hasMoreElements()) {
+            if (!it.getNext().QueryInterface(Ci.sbIServicePaneNode).hidden) {
+              hide = false;
+            }
+          }
+          radioNode.hidden = hide;
 				} else if (data == "item-cancel-action") {
 					if (this._uninstall)
 						this._uninstall = false;
-					if (this._disable)
+					if (this._disable) {
 						lastFmNode.hidden = false;
+            radioNode.hidden = false;
+          }
 				}
 			}
 		} else if (topic == "quit-application-granted") {
