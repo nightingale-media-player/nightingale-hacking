@@ -344,6 +344,17 @@ void sbGStreamerPipeline::HandleStateChangeMessage(GstMessage *message)
         gst_element_state_get_name (newstate)));
     g_free (srcname);
 
+    if (oldstate == GST_STATE_PAUSED && newstate == GST_STATE_PLAYING)
+    {
+      /* Start our timer */
+      mTimeStarted = PR_IntervalNow();
+    }
+    else if (oldstate == GST_STATE_PLAYING && newstate == GST_STATE_PAUSED)
+    {
+      mTimeRunning += GetRunningTime();
+      mTimeStarted = -1;
+    }
+
     // Dispatch START, PAUSE, STOP events
     if (pendingstate == GST_STATE_VOID_PENDING) {
       if (newstate == GST_STATE_PLAYING)
@@ -372,6 +383,26 @@ void sbGStreamerPipeline::DispatchMediacoreEvent (unsigned long type,
   NS_ENSURE_SUCCESS(rv, /* void */);
 }
 
+GstClockTime
+sbGStreamerPipeline::GetRunningTime()
+{
+  PRIntervalTime now = PR_IntervalNow();
+  PRIntervalTime interval;
+
+  if (mTimeStarted == -1)
+    return mTimeRunning;
+
+  if (now < mTimeStarted) {
+    // Wraparound occurred, deal with it.
+    PRInt64 realnow = now + 1L<<32;
+    interval = (PRIntervalTime)(realnow - mTimeStarted);
+  }
+  else {
+    interval = now - mTimeStarted;
+  }
+
+  return mTimeRunning + PR_IntervalToMilliseconds (interval) * GST_MSECOND;
+}
 
 // Forwarding functions for sbIMediacoreEventTarget interface
 

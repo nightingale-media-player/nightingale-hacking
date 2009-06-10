@@ -3,14 +3,14 @@
 # 
 # This file is part of the Songbird web player.
 #
-# Copyright(c) 2005-2008 POTI, Inc.
+# Copyright(c) 2005-2009 POTI, Inc.
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the �GPL�).
+# GNU General Public License Version 2 (the "GPL").
 # 
 # Software distributed under the License is distributed 
-# on an �AS IS� basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -22,19 +22,25 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = base \
-          gstreamer \
-          metadata \
-          manager \
-          playback \
-          transcode \
-          $(NULL)
+XPIDL_SRCS = sbITranscodeJob.idl \
+             sbITranscodeProfile.idl \
+             sbITranscodeManager.idl \
+             $(NULL)
+
+XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
+                 $(topsrcdir)/components/job/public \
+                 $(NULL)
+
+XPIDL_MODULE = sbTranscodeModule.xpt
+XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+
+LIBSONGBIRD_COMPONENT = sbTranscodeModule
 
 include $(topsrcdir)/build/rules.mk

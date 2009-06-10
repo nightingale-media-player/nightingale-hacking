@@ -132,3 +132,25 @@ interface sbIJobProgressListener : nsISupports
   void onJobProgress(in sbIJobProgress aJobProgress);
 };
 
+/**
+ * \interface sbIJobProgressTime
+ * \brief Generic interface extending sbIJobProgress that can track expected
+ *        time, etc in addition to abstract work units.
+ *
+ */
+[scriptable, uuid(2693a1e5-7e07-4730-bf3b-68e76dd95f90)]
+interface sbIJobProgressTime : sbIJobProgress
+{
+  /**
+   * \brief Time elapsed while working on this job, in milliseconds.
+   */
+  readonly attribute unsigned long elapsedTime;
+
+  /**
+   * \brief Estimated time remaining for this job to complete, in milliseconds.
+   *        May be -1 if the remaining time is indeterminate.
+   */
+  readonly attribute unsigned long remainingTime;
+
+};
+

@@ -30,9 +30,11 @@
 
 #include <sbStringUtils.h>
 #include <sbClassInfoUtils.h>
+#include <sbTArrayStringEnumerator.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsStringAPI.h>
+#include <nsArrayUtils.h>
 #include <prlog.h>
 
 #define PROGRESS_INTERVAL 200 /* milliseconds */
@@ -50,20 +52,22 @@ static PRLogModuleInfo* gGStreamerTranscode = PR_NewLogModule("sbGStreamerTransc
 #define TRACE(args) /* nothing */
 #endif /* PR_LOGGING */
 
-NS_IMPL_THREADSAFE_ISUPPORTS7(sbGStreamerTranscode,
+NS_IMPL_THREADSAFE_ISUPPORTS8(sbGStreamerTranscode,
                               nsIClassInfo,
                               sbIGStreamerPipeline,
-                              sbIGStreamerTranscode,
+                              sbITranscodeJob,
                               sbIMediacoreEventTarget,
                               sbIJobProgress,
+                              sbIJobProgressTime,
                               sbIJobCancelable,
                               nsITimerCallback)
 
-NS_IMPL_CI_INTERFACE_GETTER5(sbGStreamerTranscode,
+NS_IMPL_CI_INTERFACE_GETTER6(sbGStreamerTranscode,
                              sbIGStreamerPipeline,
-                             sbIGStreamerTranscode,
+                             sbITranscodeJob,
                              sbIMediacoreEventTarget,
                              sbIJobProgress,
+                             sbIJobProgressTime,
                              sbIJobCancelable)
 
 NS_DECL_CLASSINFO(sbGStreamerTranscode);
@@ -91,7 +95,7 @@ sbGStreamerTranscode::Notify(nsITimer *aTimer)
   return NS_OK;
 }
 
-/* sbIGStreamerTranscode interface implementation */
+/* sbITranscodeJob interface implementation */
 
 NS_IMETHODIMP
 sbGStreamerTranscode::SetSourceURI(const nsAString& aSourceURI)
@@ -122,17 +126,20 @@ sbGStreamerTranscode::GetDestURI(nsAString& aDestURI)
 }
 
 NS_IMETHODIMP
-sbGStreamerTranscode::SetTranscodePipeline(
-        const nsAString& aPipelineDescription)
+sbGStreamerTranscode::SetProfile(sbITranscodeProfile *aProfile)
 {
-  mPipelineDescription = aPipelineDescription;
+  NS_ENSURE_ARG_POINTER(aProfile);
+
+  mProfile = aProfile;
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbGStreamerTranscode::GetTranscodePipeline(nsAString& aPipelineDescription)
+sbGStreamerTranscode::GetProfile(sbITranscodeProfile **aProfile)
 {
-  aPipelineDescription = mPipelineDescription;
+  NS_ENSURE_ARG_POINTER(aProfile);
+
+  NS_IF_ADDREF(*aProfile = mProfile);
   return NS_OK;
 }
 
@@ -141,7 +148,7 @@ sbGStreamerTranscode::GetMetadata(sbIPropertyArray **aMetadata)
 {
   NS_ENSURE_ARG_POINTER(aMetadata);
 
-  *aMetadata = mMetadata;
+  NS_IF_ADDREF(*aMetadata = mMetadata);
   return NS_OK;
 }
 
@@ -152,24 +159,38 @@ sbGStreamerTranscode::SetMetadata(sbIPropertyArray *aMetadata)
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbGStreamerTranscode::BuildPipeline()
+GstElement *
+sbGStreamerTranscode::BuildTranscodePipeline(sbITranscodeProfile *aProfile)
 {
   nsCString pipelineString;
-  //GstParseContext *ctx; // Requires a newer version of gstreamer... enable
-                          // once we update.
+  nsCString pipelineDescription;
   GError *error = NULL;
+  GstElement *pipeline;
   nsresult rv;
-  GstTagList *tags;
 
-  pipelineString = BuildPipelineString();
-  if (pipelineString.IsEmpty())
-    return NS_ERROR_FAILURE;
+  rv = BuildPipelineFragmentFromProfile(aProfile, pipelineDescription);
+  NS_ENSURE_SUCCESS (rv, NULL);
+
+  rv = BuildPipelineString(pipelineDescription, pipelineString);
+  NS_ENSURE_SUCCESS (rv, NULL);
 
   //ctx = gst_parse_context_new();
   //mPipeline = gst_parse_launch_full (pipelineString.BeginReading(), ctx, 
   //        GST_PARSE_FLAG_FATAL_ERRORS, &error);
-  mPipeline = gst_parse_launch (pipelineString.BeginReading(), &error);
+  pipeline = gst_parse_launch (pipelineString.BeginReading(), &error);
+
+  return pipeline;
+}
+
+NS_IMETHODIMP
+sbGStreamerTranscode::BuildPipeline()
+{
+  NS_ENSURE_STATE (mProfile);
+
+  nsresult rv;
+  GstTagList *tags;
+
+  mPipeline = BuildTranscodePipeline(mProfile);
 
   if (!mPipeline) {
     // TODO: Report the error more usefully using the GError, and perhaps
@@ -203,6 +224,32 @@ done:
   //gst_parse_context_free (ctx);
 
   return rv;
+}
+
+NS_IMETHODIMP
+sbGStreamerTranscode::Vote(sbIMediaItem *aMediaItem,
+                           sbITranscodeProfile *aProfile, PRInt32 *aVote)
+{
+  NS_ENSURE_ARG_POINTER(aVote);
+
+  GstElement *pipeline = BuildTranscodePipeline(aProfile);
+  if (!pipeline) {
+    /* Couldn't create a pipeline for this profile; do not accept it */
+    *aVote = -1;
+  }
+  else {
+    /* For now just vote 1 for anything we can handle */
+    gst_object_unref (pipeline);
+    *aVote = 1;
+  }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerTranscode::Transcode()
+{
+  return PlayPipeline();
 }
 
 // Override base class to start the progress reporter
@@ -262,6 +309,40 @@ sbGStreamerTranscode::Cancel()
 }
 
 /* sbIJobProgress interface implementation */
+
+NS_IMETHODIMP
+sbGStreamerTranscode::GetElapsedTime(PRUint32 *aElapsedTime)
+{
+  NS_ENSURE_ARG_POINTER(aElapsedTime);
+
+  /* Get the running time, and convert to milliseconds */
+  *aElapsedTime = GetRunningTime() / GST_MSECOND;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerTranscode::GetRemainingTime(PRUint32 *aRemainingTime)
+{
+  GstClockTime duration = QueryDuration();
+  GstClockTime position = QueryPosition();
+  GstClockTime elapsed = GetRunningTime();
+
+  if (duration == GST_CLOCK_TIME_NONE || position == GST_CLOCK_TIME_NONE ||
+      elapsed == GST_CLOCK_TIME_NONE)
+  {
+    /* Unknown, so set to -1 */
+    *aRemainingTime = -1;
+  }
+  else {
+    GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,
+            position);
+    /* Convert to milliseconds */
+    *aRemainingTime = (totalTime - elapsed) / GST_MSECOND;
+  }
+
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbGStreamerTranscode::GetStatus(PRUint16 *aStatus)
@@ -340,13 +421,16 @@ sbGStreamerTranscode::GetTotal(PRUint32* aTotal)
   return NS_OK;
 }
 
-// We don't do error reporting via sbIJobProgress
+// Note that you can also get errors reported via the mediacore listener
+// interfaces.
 NS_IMETHODIMP 
 sbGStreamerTranscode::GetErrorCount(PRUint32* aErrorCount)
 {
   NS_ENSURE_ARG_POINTER(aErrorCount);
+  NS_ASSERTION(NS_IsMainThread(), 
+          "sbIJobProgress::GetErrorCount is main thread only!");
 
-  *aErrorCount = 0;
+  *aErrorCount = mErrorMessages.Length();
 
   return NS_OK;
 }
@@ -354,7 +438,18 @@ sbGStreamerTranscode::GetErrorCount(PRUint32* aErrorCount)
 NS_IMETHODIMP 
 sbGStreamerTranscode::GetErrorMessages(nsIStringEnumerator** aMessages)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aMessages);
+  NS_ASSERTION(NS_IsMainThread(),
+    "sbIJobProgress::GetProgress is main thread only!");
+
+  *aMessages = nsnull;
+
+  nsCOMPtr<nsIStringEnumerator> enumerator =
+    new sbTArrayStringEnumerator(&mErrorMessages);
+  NS_ENSURE_TRUE(enumerator, NS_ERROR_OUT_OF_MEMORY);
+
+  enumerator.forget(aMessages);
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -376,7 +471,8 @@ sbGStreamerTranscode::AddJobProgressListener(sbIJobProgressListener *aListener)
 }
 
 NS_IMETHODIMP
-sbGStreamerTranscode::RemoveJobProgressListener(sbIJobProgressListener* aListener)
+sbGStreamerTranscode::RemoveJobProgressListener(
+        sbIJobProgressListener* aListener)
 {
   NS_ENSURE_ARG_POINTER(aListener);
   NS_ASSERTION(NS_IsMainThread(), \
@@ -413,7 +509,18 @@ sbGStreamerTranscode::OnJobProgress()
 
 void sbGStreamerTranscode::HandleErrorMessage(GstMessage *message)
 {
+  GError *gerror = NULL;
+  gchar *debug = NULL;
+
   mStatus = sbIJobProgress::STATUS_FAILED;
+
+  gst_message_parse_error(message, &gerror, &debug);
+
+  mErrorMessages.AppendElement(
+      NS_ConvertUTF8toUTF16(nsDependentCString(gerror->message)));
+
+  g_error_free (gerror);
+  g_free(debug);
 
   // This will stop the pipeline and update listeners
   sbGStreamerPipeline::HandleErrorMessage (message);
@@ -495,8 +602,9 @@ sbGStreamerTranscode::StopProgressReporting()
   return NS_OK;
 }
 
-nsCString
-sbGStreamerTranscode::BuildPipelineString()
+nsresult
+sbGStreamerTranscode::BuildPipelineString(nsCString pipelineDescription,
+                                          nsACString &pipeline)
 {
   // Build a pipeline description string looking something like:
   //
@@ -508,14 +616,159 @@ sbGStreamerTranscode::BuildPipelineString()
   // We may add a configurable capsfilter later, but this might be enough for
   // the moment...
 
-  nsCString pipeline = NS_ConvertUTF16toUTF8(mSourceURI);
+  pipeline.Append(NS_ConvertUTF16toUTF8(mSourceURI));
   pipeline.AppendLiteral(" ! decodebin ! audioconvert ! audioresample ! ");
-  pipeline.Append(NS_ConvertUTF16toUTF8(mPipelineDescription));
+  pipeline.Append(pipelineDescription);
   pipeline.AppendLiteral(" ! ");
   pipeline.Append(NS_ConvertUTF16toUTF8(mDestURI));
 
   LOG(("Built pipeline string: '%s'", pipeline.BeginReading()));
 
-  return pipeline;
+  return NS_OK;
+}
+
+nsresult
+sbGStreamerTranscode::BuildPipelineFragmentFromProfile(
+        sbITranscodeProfile *aProfile, nsACString &pipelineFragment)
+{
+  NS_ENSURE_ARG_POINTER(aProfile);
+
+  nsresult rv;
+  PRUint32 type;
+  nsString container;
+  nsString audioCodec;
+  nsCString gstContainerMuxer;
+  nsCString gstAudioEncoder;
+  nsCOMPtr<nsIArray> containerProperties;
+  nsCOMPtr<nsIArray> audioProperties;
+
+  rv = aProfile->GetType(&type);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = aProfile->GetContainerFormat(container);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = aProfile->GetContainerProperties(getter_AddRefs(containerProperties));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = aProfile->GetAudioCodec(audioCodec);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = aProfile->GetAudioProperties(getter_AddRefs(audioProperties));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  if (type != sbITranscodeProfile::TRANSCODE_TYPE_AUDIO)
+    return NS_ERROR_FAILURE;
+
+  /* Each of container and audio codec is optional */
+  if (!audioCodec.IsEmpty()) {
+    rv = GetAudioCodec(audioCodec, audioProperties, gstAudioEncoder);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    pipelineFragment.Append(gstAudioEncoder);
+  }
+
+  if (!container.IsEmpty()) {
+    rv = GetContainer(container, containerProperties, gstContainerMuxer);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    pipelineFragment.AppendLiteral(" ! ");
+    pipelineFragment.Append(gstContainerMuxer);
+  }
+
+  return NS_OK;
+}
+
+struct GSTNameMap {
+  const char *name;
+  const char *gstName;
+};
+
+static struct GSTNameMap SupportedContainers[] = {
+  {"ogg", "oggmux"},
+  {"id3", "id3tag"},
+  {"asf", "asfmux"},
+  {"wav", "wavenc"}
+};
+
+nsresult
+sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
+                                   nsACString &gstMuxer)
+{
+  nsCString cont = NS_ConvertUTF16toUTF8 (container);
+
+  for (int i = 0;
+       i < sizeof (SupportedContainers)/sizeof(*SupportedContainers);
+       i++) 
+  {
+    if (strcmp (cont.BeginReading(), SupportedContainers[i].name) == 0)
+    {
+      gstMuxer.Append(SupportedContainers[i].gstName);
+      /* Ignore properties for now, we don't have any we care about yet */
+      return NS_OK;
+    }
+  }
+  
+  return NS_ERROR_FAILURE;
+}
+
+static struct GSTNameMap SupportedAudioCodecs[] = {
+  {"vorbis", "vorbisenc"},
+  {"flac", "flacenc"},
+  {"wmav2", "wmadmoenc"},
+};
+
+nsresult
+sbGStreamerTranscode::GetAudioCodec(nsAString &aCodec, nsIArray *properties,
+                                    nsACString &gstCodec)
+{
+  nsresult rv;
+  nsCString codec = NS_ConvertUTF16toUTF8 (aCodec);
+
+  for (int i = 0;
+       i < sizeof (SupportedAudioCodecs)/sizeof(*SupportedAudioCodecs);
+       i++) 
+  {
+    if (strcmp (codec.BeginReading(), SupportedAudioCodecs[i].name) == 0)
+    {
+      gstCodec.Append(SupportedAudioCodecs[i].gstName);
+
+      /* Now handle the properties */
+      PRUint32 propertiesLength = 0;
+      rv = properties->GetLength(&propertiesLength);
+      NS_ENSURE_SUCCESS (rv, rv);
+
+      for (int j = 0; j < propertiesLength; j++) {
+        nsCOMPtr<sbITranscodeProfileProperty> property = 
+            do_QueryElementAt(properties, j, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString propName;
+        rv = property->GetPropertyName(propName);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIVariant> propValue;
+        rv = property->GetValue(getter_AddRefs(propValue));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsString propValueString;
+        rv = propValue->GetAsAString(propValueString);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        /* Append the property now. Later, we might need to convert some
+           keys/values from 'generic' to gstreamer-element-specific ones,
+           but we have no examples of that yet */
+        gstCodec.AppendLiteral(" ");
+        gstCodec.Append(NS_ConvertUTF16toUTF8(propName));
+        gstCodec.AppendLiteral("=");
+        gstCodec.Append(NS_ConvertUTF16toUTF8(propValueString));
+
+      }
+
+      return NS_OK;
+    }
+  }
+  
+  return NS_ERROR_FAILURE;
 }
 

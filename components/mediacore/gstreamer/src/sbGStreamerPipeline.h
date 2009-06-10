@@ -86,8 +86,18 @@ protected:
   void DispatchMediacoreEvent (unsigned long type,
           nsIVariant *aData = NULL, sbIMediacoreError *aError = NULL);
 
+  // Get the amount of time the pipeline has been running for.
+  GstClockTime GetRunningTime();
+
   // The pipeline we're managing
   GstElement* mPipeline;
+
+  // The total time the pipeline has been running (not including the time from
+  // mTimeStarted to now, if mTimeStarted != -1)
+  GstClockTime mTimeRunning;
+
+  // The last time that the pipeline was started
+  PRIntervalTime mTimeStarted;
 
   // Protect access to the pipeline
   PRMonitor *mMonitor;

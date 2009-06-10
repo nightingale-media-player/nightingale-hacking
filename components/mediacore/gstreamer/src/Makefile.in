@@ -60,6 +60,7 @@ CPP_EXTRA_INCLUDES = \
       $(DEPTH)/components/mediacore/gstreamer/public \
       $(topsrcdir)/components/mediacore/gstreamer/src \
       $(DEPTH)/components/mediacore/metadata/manager/public \
+      $(DEPTH)/components/mediacore/transcode/public \
       $(topsrcdir)/components/moz/strings/src \
       $(topsrcdir)/components/moz/threads/src \
       $(DEPTH)/components/property/public \

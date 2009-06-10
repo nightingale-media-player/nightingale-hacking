@@ -30,26 +30,39 @@
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsITimer.h>
+#include <nsTArray.h>
+#include <nsStringGlue.h>
 
 #include <gst/gst.h>
 
-#include "sbIGStreamerTranscode.h"
+#include "sbITranscodeJob.h"
+#include "sbITranscodeProfile.h"
 #include "sbIJobProgress.h"
 #include "sbIJobCancelable.h"
 
 #include "sbGStreamerPipeline.h"
 
+// {67623837-fea5-4005-b475-e34b738635c4}
+#define SB_GSTREAMER_TRANSCODE_CID \
+	{ 0x67623837, 0xfea5, 0x4005, \
+	{ 0xb4, 0x75, 0xe3, 0x4b, 0x73, 0x86, 0x35, 0xc4 } }
+
+#define SB_GSTREAMER_TRANSCODE_CONTRACTID "@songbirdnest.com/Songbird/Mediacore/Transcode/GStreamer;1"
+#define SB_GSTREAMER_TRANSCODE_CLASSNAME  "GStreamerTranscode"
+
+
 class sbGStreamerTranscode : public sbGStreamerPipeline,
-                             public sbIGStreamerTranscode,
-                             public sbIJobProgress,
+                             public sbITranscodeJob,
+                             public sbIJobProgressTime,
                              public sbIJobCancelable,
                              public nsITimerCallback
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSICLASSINFO
-  NS_DECL_SBIGSTREAMERTRANSCODE
+  NS_DECL_SBITRANSCODEJOB
   NS_DECL_SBIJOBPROGRESS
+  NS_DECL_SBIJOBPROGRESSTIME
   NS_DECL_SBIJOBCANCELABLE
   NS_DECL_NSITIMERCALLBACK
 
@@ -74,18 +87,26 @@ private:
   nsresult StartProgressReporting();
   nsresult StopProgressReporting();
 
-  nsCString BuildPipelineString();
+  GstElement *BuildTranscodePipeline(sbITranscodeProfile *aProfile);
+  nsresult BuildPipelineString(nsCString description, nsACString &pipeline);
+  nsresult BuildPipelineFragmentFromProfile(sbITranscodeProfile *aProfile,
+          nsACString &pipelineFragment);
+  nsresult GetContainer(nsAString &container, nsIArray *properties,
+          nsACString &gstMuxer);
+  nsresult GetAudioCodec(nsAString &codec, nsIArray *properties,
+          nsACString &gstCodec);
 
-  nsCOMPtr<sbIPropertyArray>             mMetadata;
+  nsCOMPtr<sbIPropertyArray>              mMetadata;
 
-  nsString                               mSourceURI;
-  nsString                               mDestURI;
-  nsString                               mPipelineDescription;
+  nsString                                mSourceURI;
+  nsString                                mDestURI;
+  nsCOMPtr<sbITranscodeProfile>           mProfile;
 
-  PRUint16                               mStatus;
+  PRUint16                                mStatus;
+  nsTArray<nsString>                      mErrorMessages;
 
-  nsCOMArray<sbIJobProgressListener>     mProgressListeners;
-  nsCOMPtr<nsITimer>                     mProgressTimer;
+  nsCOMArray<sbIJobProgressListener>      mProgressListeners;
+  nsCOMPtr<nsITimer>                      mProgressTimer;
 
 protected:
   /* additional members */
