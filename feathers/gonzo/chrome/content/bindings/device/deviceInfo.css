@@ -128,6 +128,9 @@ sb-device-battery {
   background-position:center top;
   padding:10px 8px 0px 8px;
 }
+tabbox#device_management_box > tabpanels > tabpanel {
+  overflow-y: auto;
+}
 
 
 #device_info_dialog groupbox {
