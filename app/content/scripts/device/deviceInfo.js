@@ -3,30 +3,30 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
  */
 
-/** 
+/**
 * \file  deviceInfo.js
 * \brief Javascript source for the device info widget.
 */
@@ -41,7 +41,7 @@
 
 //------------------------------------------------------------------------------
 //
-// Device capacity imported services.
+// Device info imported services.
 //
 //------------------------------------------------------------------------------
 
@@ -56,8 +56,20 @@ if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
 // Songbird imports.
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
+
+
+//------------------------------------------------------------------------------
+//
+// Device info defs.
+//
+//------------------------------------------------------------------------------
+
+// DOM defs.
+if (typeof(XUL_NS) == "undefined")
+  var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
 
 //------------------------------------------------------------------------------
@@ -68,28 +80,29 @@ Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 
 var DIW = {
   //
-  // Default device image url
-  //
-  
-  _devImgURL:      "chrome://songbird/skin/device/icon-generic-device.png",
-  
-  //
   // Device info configuration.
   //
   //   _pollPeriodTable         Table of polling periods for device information
   //                            that needs to be polled.
+  //   _contextMenuDocURL       URL to context menu document.
   //
 
   _pollPeriodTable: { "battery": 60000 },
+  _contextMenuDocURL:
+    "chrome://songbird/content/xul/device/deviceContextMenu.xul",
 
 
   //
   // Device info object fields.
   //
   //   _widget                  Device info widget.
+  //   _contextMenuEnabled      If true, the context menu is enabled.
+  //   _contextMenuPopup        Context menu popup.
   //
 
   _widget: null,
+  _contextMenuEnabled: false,
+  _contextMenuPopup: null,
 
 
   /**
@@ -106,7 +119,10 @@ var DIW = {
     // Initialize object fields.
     this._device = this._widget.device;
     this._deviceProperties = this._device.properties;
-    
+
+    // Initialize the context menu.
+    this._initializeContextMenu();
+
     // Show specified elements.
     this._showElements();
 
@@ -115,7 +131,7 @@ var DIW = {
 
     // Update the UI.
     this._update();
-    
+
     // Watch for device changes
     this._device.QueryInterface(Ci.sbIDeviceEventTarget).addEventListener(this);
   },
@@ -132,18 +148,19 @@ var DIW = {
   finalize: function DIW_finalize() {
     // Finalize the polling services.
     this._pollingFinalize();
-    
+
     // Stop listening
     if (this._device != null) {
       this._device.QueryInterface(Ci.sbIDeviceEventTarget)
                   .removeEventListener(this);
     }
-    
+
     // Finalize the device services.
     this._deviceFinalize();
 
     // Clear object fields.
     this._widget = null;
+    this._contextMenuPopup = null;
   },
 
 
@@ -169,9 +186,8 @@ var DIW = {
 
     // Get the list of device spec row elements.
     var deviceSpecRows = this._getElement("device_spec_rows");
-    var deviceSpecRowList = deviceSpecRows.getElementsByTagNameNS
-              ("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
-               "row");
+    var deviceSpecRowList = deviceSpecRows.getElementsByTagNameNS(XUL_NS,
+                                                                  "row");
 
     // Hide all device spec rows.
     for (var i = 0; i < deviceSpecRowList.length; i++) {
@@ -282,7 +298,7 @@ var DIW = {
       case "battery" :
         this._deviceSpecUpdateBattery();
         break;
-        
+
       case "firmware_version":
         this._deviceSpecUpdateValue("firmware_version_value_label",
                                     this._getDeviceFirmwareVersion());
@@ -371,6 +387,62 @@ var DIW = {
       batteryElem.setAttribute("level", batteryLevel);
     }
   },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device info context menu services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Initialize the context menu.
+   */
+
+  _initializeContextMenu: function DIW__initializeContextMenu() {
+    // Check if the context menu is enabled.  Do nothing more if not.
+    if (this._widget.getAttribute("enable_context_menu") == "true") {
+      this._contextMenuEnabled = true;
+    } else {
+      this._contextMenuEnabled = false;
+      return;
+    }
+
+    // Get the content menu popup and clear it.
+    this._contextMenuPopup = this._getElement("context_menu_popup");
+    while (this._contextMenuPopup.hasChildNodes()) {
+      this._contextMenuPopup.removeChild(this._contextMenuPopup.firstChild);
+    }
+
+    // Import the device context menu items.
+    var deviceContextMenuDoc = DOMUtils.loadDocument(this._contextMenuDocURL);
+    DOMUtils.importChildElements(this._contextMenuPopup,
+                                 deviceContextMenuDoc,
+                                 "device_context_menu_items",
+                                 { "device-id": this._device.id });
+  },
+
+
+  /**
+   * \brief Handle the context menu event specified by aEvent.
+   *
+   * \param aEvent              Context menu event.
+   */
+
+  onContextMenu: function DIW_onContextMenu(aEvent) {
+    // Do nothing if context menu is not enabled.
+    if (!this._contextMenuEnabled)
+      return;
+
+    // Open the context menu popup.
+    this._contextMenuPopup.openPopup(null,
+                                     null,
+                                     aEvent.clientX,
+                                     aEvent.clientY,
+                                     true,
+                                     false);
+  },
+
 
   //----------------------------------------------------------------------------
   //
@@ -536,7 +608,7 @@ var DIW = {
 
   _device: null,
 
-  _deviceProperties : null, 
+  _deviceProperties : null,
 
   /**
    * \brief Finalize the device services.
@@ -552,12 +624,12 @@ var DIW = {
    *
    * \param aPropertyName name of the property to get
    * \param aDefault default to return if property not found
-   * 
+   *
    * \return string value of the property or the default if not found.
-   * 
+   *
    * \sa sbStandardDeviceProperties.h
    */
-  
+
   _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
     try {
       return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
@@ -682,7 +754,7 @@ var DIW = {
         mimeExtension = mimeService.getFromTypeAndExtension(aMimeType, null)
                                    .primaryExtension;
       } catch (err) {}
-      
+
       if (mimeExtension) {
         return SBString("device.info.mimetype." + mimeExtension, mimeExtension);
       }

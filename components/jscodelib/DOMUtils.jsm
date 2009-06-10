@@ -126,7 +126,7 @@ var DOMUtils = {
         continue;
 
       // Import the source child into the destination document.
-      dstChild = dstDoc.importNode(srcChild, true);
+      var dstChild = dstDoc.importNode(srcChild, true);
 
       // Add the child to the destination node.
       aDstNode.appendChild(dstChild);

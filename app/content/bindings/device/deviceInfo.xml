@@ -44,7 +44,7 @@
    *   The set of information displayed is specified by the CSV "devicespecs"
    * attribute.  This attribute specifies both the displayed information and the
    * ordering.
-   *   In addition various elements may be shows such as a device image or an
+   *   In addition various elements may be shown such as a device image or an
    * eject button.  The shown elements are specified by the CVS "showlist"
    * attribute.
    *
@@ -65,6 +65,10 @@
    *   eject                    Eject button.
    *   moreinfo                 More device info dialog button.
    *
+   * Attributes:
+   *   enable_context_menu      If true, enable the context menu.
+   *
+   *
    *****************************************************************************
    ************************************************************************* -->
 
@@ -79,7 +83,10 @@
 
     <content>
 
-      <xul:hbox align="center" flex="1">
+      <xul:hbox sbid="device_info_box"
+                align="center"
+                flex="1"
+                oncontextmenu="_onContextMenu(event);">
 
         <!-- Device image. -->
         <xul:image sbid="device_image"
@@ -91,7 +98,7 @@
         <!-- Device info. -->
         <xul:vbox sbid="summary_box">
 
-          <!-- Device name and eject and more info buttons. -->
+          <!-- Device name. -->
           <xul:hbox sbid="name_box" align="center">
             <xul:label sbid="device_name_label"
                        class="device-name-label"
@@ -211,7 +218,10 @@
 
         </xul:vbox> <!-- End of "summary_box". -->
 
-      </xul:hbox>
+        <!-- Context menu popup. -->
+        <xul:menupopup sbid="context_menu_popup"/>
+
+      </xul:hbox> <!-- device_info_box -->
 
 
       <xul:groupbox orient="horizontal" pack="center" align="center">
@@ -263,6 +273,20 @@
         /* Finalize the device info services. */
         DIW.finalize(this);
       ]]></destructor>
+
+
+      <!--
+       * \brief Handle the context menu event specified by aEvent.
+       *
+       * \param aEvent          Context menu event.
+       -->
+
+      <method name="_onContextMenu">
+        <parameter name="aEvent"/>
+        <body><![CDATA[
+          DIW.onContextMenu(aEvent);
+        ]]></body>
+      </method>
 
 
       <!-- *********************************************************************

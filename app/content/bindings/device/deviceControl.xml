@@ -247,8 +247,18 @@
      *********************************************************************** -->
 
     <handlers>
+
       <handler event="DOMAttrModified"
-               action="this._deviceControlWidget.bindDevice();"/>
+               action="if (this._deviceControlWidget) this._deviceControlWidget.bindDevice();"/>
+
+      <handler event="deviceBound"><![CDATA[
+        // Stop event so that is doesn't propagate beyond widget.  Even with
+        // bubbling disabled, deviceBound events will propagate to parent
+        // elements.
+        event.stopPropagation();
+        event.preventDefault();
+      ]]></handler>
+
     </handlers>
 
   </binding>

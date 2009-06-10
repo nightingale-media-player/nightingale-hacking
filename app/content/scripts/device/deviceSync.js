@@ -61,7 +61,8 @@ if (typeof(LibraryUtils) == "undefined")
 if (typeof(SBProperties) == "undefined")
   Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
-const XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+if (typeof(XUL_NS) == "undefined")
+  var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
 var DeviceSyncWidget = {
   //
