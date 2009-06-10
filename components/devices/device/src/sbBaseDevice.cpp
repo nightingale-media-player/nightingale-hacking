@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -34,6 +34,7 @@
 
 #include <prtime.h>
 
+#include <nsIFileURL.h>
 #include <nsIPropertyBag2.h>
 #include <nsITimer.h>
 #include <nsIURI.h>
@@ -46,7 +47,9 @@
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsCRT.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsIPromptService.h>
@@ -3274,3 +3277,90 @@ nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
   deviceLib.forget(aDeviceLibrary);
   return NS_OK;
 }
+
+nsresult sbBaseDevice::SetDeviceWriteContentSrc
+                         (sbIMediaItem* aWriteDstItem,
+                          nsIURI*       aContentSrcBaseURI,
+                          nsIURI*       aWriteSrcURI)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aWriteDstItem);
+  NS_ENSURE_ARG_POINTER(aContentSrcBaseURI);
+
+  // Function variables.
+  nsString         kIllegalChars =
+                     NS_ConvertASCIItoUTF16(FILE_ILLEGAL_CHARACTERS);
+  nsCOMPtr<nsIURI> writeSrcURI = aWriteSrcURI;
+  nsresult         rv;
+
+  // If no write source URI is given, get it from the write source media item.
+  if (!writeSrcURI) {
+    // Get the origin item for the write destination item.
+    nsCOMPtr<sbIMediaItem> writeSrcItem;
+    rv = sbLibraryUtils::GetOriginItem(aWriteDstItem,
+                                       getter_AddRefs(writeSrcItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the write source URI.
+    rv = writeSrcItem->GetContentSrc(getter_AddRefs(writeSrcURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Get the write source file name and replace illegal characters.
+  nsCOMPtr<nsIURL> writeSrcURL = do_QueryInterface(writeSrcURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCAutoString cWriteSrcFileName;
+  rv = writeSrcURL->GetFileName(cWriteSrcFileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString writeSrcFileName = NS_ConvertUTF8toUTF16(cWriteSrcFileName);
+  nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));
+
+  // Get a file object for the content base.
+  nsCOMPtr<nsIFileURL>
+    contentSrcBaseFileURL = do_QueryInterface(aContentSrcBaseURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIFile> contentSrcBaseFile;
+  rv = contentSrcBaseFileURL->GetFile(getter_AddRefs(contentSrcBaseFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Start the content source at the base.
+  nsCOMPtr<nsIFile> contentSrcFile;
+  rv = contentSrcBaseFile->Clone(getter_AddRefs(contentSrcFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Append file name of the write source file.
+  rv = contentSrcFile->Append(writeSrcFileName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if the content source file already exists.
+  PRBool exists;
+  rv = contentSrcFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create a unique file if content source file already exists.
+  if (exists) {
+    // Get the permissions of the content source parent.
+    PRUint32          permissions;
+    nsCOMPtr<nsIFile> parent;
+    rv = contentSrcFile->GetParent(getter_AddRefs(parent));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = parent->GetPermissions(&permissions);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Create a unique file.
+    rv = contentSrcFile->CreateUnique(nsIFile::NORMAL_FILE_TYPE, permissions);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Get the device content source URI.
+  nsCOMPtr<nsIURI> contentSrc;
+  rv = NS_NewFileURI(getter_AddRefs(contentSrc), contentSrcFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the write destination item content source.
+  rv = aWriteDstItem->SetContentSrc(contentSrc);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

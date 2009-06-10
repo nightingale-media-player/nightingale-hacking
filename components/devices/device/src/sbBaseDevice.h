@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -731,6 +731,24 @@ protected:
    */
   nsresult PromptForEjectDuringPlayback(PRBool* aEject);
   nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
+
+  /**
+   *   Set the content source for the device write destination media item
+   * specified by aWriteDstItem.  The base URI of the content source is
+   * specified by aContentSrcBaseURI.  The URI of the source of the write
+   * operation may be specified by aWriteSrcURI; if none is specified, the
+   * source information is obtained from the write destination item.
+   *
+   *   Currently, only base URI schemes of "file:" are supported.
+   *
+   * \param aWriteDstItem       Device write destination media item.
+   * \param aContentSrcBaseURI  Base URI of device content source.
+   * \param aWriteSrcURI        URI of source of write.  Defaults to null.
+   */
+
+  nsresult SetDeviceWriteContentSrc(sbIMediaItem* aWriteDstItem,
+                                    nsIURI*       aContentSrcBaseURI,
+                                    nsIURI*       aWriteSrcURI = nsnull);
 };
 
 #endif /* __SBBASEDEVICE__H__ */
