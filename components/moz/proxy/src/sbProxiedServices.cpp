@@ -80,13 +80,8 @@ sbProxiedServices::Observe(nsISupports* aSubject,
 {
   if (strcmp(aTopic, NS_XPCOM_SHUTDOWN_OBSERVER_ID) == 0) {
 
-    // Do this dance so we can warn if there are any other outstanding
-    // references to the proxied services
-    nsIUTF8ConverterService* service;
-    mUTF8ConverterService.forget(&service);
-    if (service->Release() != 0) {
-      NS_WARNING("sbProxiedServices shutdown did not dtor mUTF8ConverterService");
-    }
+    // Null out the handle to the service
+    mUTF8ConverterService = nsnull;
 
     nsCOMPtr<nsIObserverService> os =
       do_GetService("@mozilla.org/observer-service;1");
