@@ -29,10 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SHELL_EXECUTE = $(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
-
-ifeq (windows,$(SB_PLATFORM))
-
 TOOLSDIR = $(topsrcdir)/tools/win32
 
 DOXYGEN_INPUTDIRS = $(DEPTH)/../components \
@@ -45,17 +41,26 @@ DOXYGEN_OUTPUTDIR = $(DEPTH)/../documentation/sdkapi \
 DOXYGEN_STRIP_TOPSRCDIR = $(DEPTH)/.. \
                           $(NULL)
 
-SONGBIRD_DOCUMENTATION = songbird.dox.in \
-                         naturaldocsconfig/Docs.css \
-                         doxygenconfig/header.html \
+SONGBIRD_DOCUMENTATION = $(srcdir)/naturaldocsconfig/Docs.css \
+                         $(srcdir)/doxygenconfig/header.html \
                          $(NULL)
+
+SONGBIRD_PP_RESOURCES = $(srcdir)/songbird.dox.in \
+                        $(NULL)
+
+PPDEFINES += \
+ -DDOXYGEN_INPUTDIRS="$(DOXYGEN_INPUTDIRS)" \
+ -DDOXYGEN_OUTPUTDIR="$(DOXYGEN_OUTPUTDIR)" \
+ -DDOXYGEN_STRIP_TOPSRCDIR="$(DOXYGEN_STRIP_TOPSRCDIR)" \
+ $(NULL)
+
+SONGBIRD_PP_DIR = $(SONGBIRD_DOCUMENTATIONDIR)
                          
-DOXYGEN_PREPROCESS = songbird.dox \
-                     $(NULL)
-
-# Add the sdkapi to the execute chain, because we don't have SHELL_EXECUTE2
-SHELL_EXECUTE += ; $(topsrcdir)/documentation/make-sdkapi-docs.sh $(topsrcdir) $(TOOLSDIR)
-
-endif #windows
-
 include $(topsrcdir)/build/rules.mk
+
+# preedTODO: nothing should be preventing this from working on all platforms...
+libs::
+ifeq (windows,$(SB_PLATFORM))
+	$(topsrcdir)/documentation/make-webpageapi-docs.sh $(topsrcdir)
+	$(topsrcdir)/documentation/make-sdkapi-docs.sh $(topsrcdir) $(TOOLSDIR)
+endif
