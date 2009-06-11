@@ -115,29 +115,6 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
   rv = prefRoot->GetBranch(PREF_MFM_ROOT, getter_AddRefs(mPrefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Grab our Media Managed Folder
-  if (aMediaFolder) {
-    PRBool success;
-    rv = aMediaFolder->Exists(&success);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
-    rv = aMediaFolder->IsDirectory(&success);
-    NS_ENSURE_SUCCESS(rv, rv);
-    NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
-    mMediaFolder = do_QueryInterface(aMediaFolder, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    // Note: prefRoot->GetComplexValue does not work here even passing "folder"
-    mMediaFolder = nsnull;
-    nsCOMPtr<nsIPrefBranch> rootPrefBranch =
-      do_QueryInterface(prefRoot, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = rootPrefBranch->GetComplexValue(PREF_MFM_LOCATION,
-                                         NS_GET_IID(nsILocalFile),
-                                         getter_AddRefs(mMediaFolder));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   // Get the Track File Format
   nsCString fileFormatString;
   if (aFileFormat.IsEmpty()) {
@@ -172,6 +149,14 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
 
   mInitialized = PR_TRUE;
 
+  // Grab our Media Managed Folder
+  rv = CheckManagementFolder(aMediaFolder);
+  if (NS_FAILED(rv)) {
+    // We don't want to throw an error since this could be because the drive
+    // was removed, we will handle that error on the first OrganizeItem call.
+    TRACE(("%s: Unable to get management folder", __FUNCTION__));
+  }
+
   return NS_OK;
 }
 
@@ -205,7 +190,16 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   
   nsresult rv;
 
-  // First make sure that we're operating on a file
+  // First thing is to check if the Managment folder exists, we need this because
+  // all operations require that folder, we only delete from that folder and we
+  // only copy to or move in that folder. We also need to make sure we have the
+  // management folder, if not get it from the preferences.
+ 
+  // First see if we have the management folder, if not get it from preferences
+  rv = CheckManagementFolder(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now make sure that we're operating on a file
   
   // Get to the old file's path
   nsCOMPtr<nsIURI> itemUri;
@@ -347,7 +341,11 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
   
   nsresult rv;
 
-  // First make sure that we're operating on a file
+  // First see if we have the management folder, if not get it from preferences
+  rv = CheckManagementFolder(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Next make sure that we're operating on a file
   
   // Get to the old file's path
   nsCOMPtr<nsIURI> itemUri;
@@ -504,6 +502,10 @@ sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
   
+  // First see if we have the management folder, if not get it from preferences
+  rv = CheckManagementFolder(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the root of managed directory
   rv = mMediaFolder->GetPath(aPath);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -724,6 +726,58 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
 }
 
 /**
+ * \brief Check the managed folder to see if it is available.
+ * \param aMediaFolder - Optional folder to use instead of from preferences.
+ */
+nsresult
+sbMediaFileManager::CheckManagementFolder(nsIFile* aMediaFolder)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+  PRBool exists;
+
+  // If we do not already have the media folder saved then get it from either
+  // the pass in parameter or the preferences.
+  if (!mMediaFolder) {
+    if (aMediaFolder) {
+      PRBool success;
+      rv = aMediaFolder->Exists(&success);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+      rv = aMediaFolder->IsDirectory(&success);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
+      mMediaFolder = do_QueryInterface(aMediaFolder, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // Note: prefRoot->GetComplexValue does not work here even passing "folder"
+      // Get the pref branch
+      nsCOMPtr<nsIPrefService> prefRoot = 
+        do_GetService("@mozilla.org/preferences-service;1", &rv);
+      NS_ENSURE_SUCCESS (rv, rv);
+
+      nsCOMPtr<nsIPrefBranch> rootPrefBranch =
+        do_QueryInterface(prefRoot, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = rootPrefBranch->GetComplexValue(PREF_MFM_LOCATION,
+                                           NS_GET_IID(nsILocalFile),
+                                           getter_AddRefs(mMediaFolder));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Always check that the media folder exists since it could have been
+  // dissconnected or removed from the system.
+  if (mMediaFolder) {
+    rv = mMediaFolder->Exists(&exists);
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FILE_TARGET_DOES_NOT_EXIST);
+  }
+
+  return NS_OK;
+}
+
+/**
  * \brief Makes sure that a directory ends with the path separator if it can.
  * \param aDir - The string version of the directory to ensure has a trailing
  *  directory separator.
@@ -807,6 +861,10 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   *aRetVal = PR_FALSE;
 
   nsresult rv;
+
+  // First see if we have the management folder, if not get it from preferences
+  rv = CheckManagementFolder(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure the Src and Dest files are not equal
   PRBool isSrcDestSame = PR_FALSE;
@@ -947,6 +1005,10 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
   NS_ENSURE_ARG_POINTER(aDirectory);
   nsresult rv;
 
+  // First see if we have the management folder, if not get it from preferences
+  rv = CheckManagementFolder(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Make sure this folder is under the managed folder
   PRBool isManaged;
   rv = mMediaFolder->Contains(aDirectory, PR_TRUE, &isManaged);
@@ -1004,6 +1066,10 @@ sbMediaFileManager::Delete(nsIFile *aItemFile,
   // Assume things won't go well so that we have the right value in aRetVal
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
+
+  // First see if we have the management folder, if not get it from preferences
+  rv = CheckManagementFolder(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Make sure this file is under the managed folder
   PRBool isManaged = PR_FALSE;

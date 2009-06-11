@@ -111,6 +111,17 @@ private:
                                   nsString            aFileExtension,
                                   nsString&           aRetVal);
 
+  /**
+   * \brief This function checks if we have stored the media folder location
+   *   in mMediaFolder and if not gets it from the parameter or from the
+   *   preferences. It also checks to ensure that the media folder exists, this
+   *   allows us to take removeable drives and network connections into account.
+   * \param aMediaFolder - Optional parameter to use as the media folder.
+   * \note mMediaFolder will be set with this folder and checked for
+   *   existance on successful return.
+   */
+  nsresult CheckManagementFolder(nsIFile * aMediaFolder);
+
   // Hold on to the services we use very often
   nsCOMPtr<nsIPrefBranch>                   mPrefBranch;
   nsCOMPtr<nsINetUtil>                      mNetUtil;

@@ -608,6 +608,10 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
       PRUint32 count = data.dirtyItems->EnumerateRead(ProcessItem, &data);
       // Check if errors occured and inform user...
       if (data.hadErrors) {
+        // Reset the scan preference so on next run we do a full scan.
+        rv = mPrefBranch->SetBoolPref(SB_PREF_MEDIA_MANAGER_COMPLETE, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+        // Report the error to the user.
         rv = ReportError();
         NS_ENSURE_SUCCESS(rv, rv);
       }
