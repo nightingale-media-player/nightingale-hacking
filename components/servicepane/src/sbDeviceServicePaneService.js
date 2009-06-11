@@ -133,12 +133,14 @@ function sbDeviceServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow)
     DOMUtils.importChildElements(aContextMenu,
                                  this._deviceContextMenuDoc,
                                  "device_context_menu_items",
-                                 { "device-id": deviceID });
+                                 { "device-id": deviceID,
+                                   "service_pane_node_id": aNode.id });
   } else if (deviceNodeType == "library") {
     DOMUtils.importChildElements(aContextMenu,
                                  this._deviceContextMenuDoc,
                                  "device_library_context_menu_items",
-                                 { "device-id": deviceID });
+                                 { "device-id": deviceID,
+                                   "service_pane_node_id": aNode.id });
   }
 }
 

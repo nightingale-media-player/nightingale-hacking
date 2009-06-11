@@ -289,12 +289,51 @@ deviceControlWidget.prototype = {
    */
 
   _renameDevice: function deviceControlWidget__renameDevice() {
-    // Edit the playlist service pane node.
-    if (gServicePane) {
-      var devSPS = Cc["@songbirdnest.com/servicepane/device;1"]
-                     .getService(Ci.sbIDeviceServicePaneService);
-      var node = devSPS.getNodeForDevice(this._device);
-      gServicePane.startEditingNode(node);
+    // Get the service pane node associated with the widget.
+    var servicePaneNode = this._getServicePaneNode();
+
+    // Edit the service pane node if specified.  Otherwise, present a rename
+    // dialog.
+    if (servicePaneNode && (typeof(gServicePane) != "undefined")) {
+      gServicePane.startEditingNode(servicePaneNode);
+    } else {
+      // Get the device friendly name.
+      var friendlyName = null;
+      try { friendlyName = this._device.properties.friendlyName; } catch(ex) {}
+
+      // Get the device vendor/model name.
+      var vendorModelName = "";
+      var vendorName = null;
+      var modelNumber = null;
+      try { vendorName = this._device.properties.vendorName; } catch(ex) {}
+      try { modelNumber = this._device.properties.modelNumber; } catch(ex) {}
+      if (!modelNumber)
+        modelNumber = SBString("device.default.model.number");
+      if (vendorName)
+        vendorModelName += vendorName + " ";
+      vendorModelName += modelNumber;
+
+      // Prompt user for new name.
+      var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                            .getService(Ci.nsIPromptService);
+      var newName = { value: friendlyName };
+      var ok = promptService.prompt
+                 (window,
+                  SBString("device.dialog.rename.title"),
+                  SBFormattedString("device.dialog.rename.message",
+                                    [vendorModelName]),
+                  newName,
+                  null,
+                  {});
+
+      // Set new device name.
+      if (ok) {
+        try {
+          this._device.properties.friendlyName = newName.value;
+        } catch (ex) {
+          Cu.reportError("Cannot write device name.\n");
+        }
+      }
     }
   },
 
@@ -610,6 +649,27 @@ deviceControlWidget.prototype = {
     }
 
     return element;
+  },
+
+
+  /**
+   * Return the service pane node associated with the widget.
+   *
+   * \return                    Service pane node associated with widget.
+   */
+
+  _getServicePaneNode: function deviceControlWidget__getServicePaneNode() {
+    // Get the service pane node ID.
+    var servicePaneNodeID = this._widget.getAttribute("service_pane_node_id");
+    if (!servicePaneNodeID)
+      return null;
+
+    // Get the service pane node.
+    var servicePaneService = Cc["@songbirdnest.com/servicepane/service;1"]
+                               .getService(Ci.sbIServicePaneService);
+    servicePaneNode = servicePaneService.getNode(servicePaneNodeID);
+
+    return servicePaneNode;
   }
 };
 
