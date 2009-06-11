@@ -613,6 +613,22 @@
 <!ENTITY albumart.displaypane.selected.menu.clear "Clear">
 <!ENTITY albumart.coverpreview.title "Album Art">
 
+<!-- Album Art preferences pane entities. -->
+<!ENTITY albumartpreferences.prefpane.label "Album Artwork">
+<!ENTITY albumartpreferences.prefpane.enablewrite.label "Write Album Artwork to Meta Data">
+<!ENTITY albumartpreferences.prefpane.enablewrite.tooltip "This will allow Songbird to embed artwork in compatible tags for media files.">
+
+<!ENTITY albumartpreferences.prefpane.search_file_names.label "Search file names:">
+<!ENTITY albumartpreferences.prefpane.search_file_names.empty "Enter comma-separated list of filenames here">
+<!ENTITY albumartpreferences.prefpane.search_file_ext.label "Search file extensions:">
+<!ENTITY albumartpreferences.prefpane.search_file_ext.empty "Enter comma-separated list of extensions here">
+
+<!ENTITY albumartpreferences.prefpane.priorities.label "Fetcher Priorities">
+<!ENTITY albumartpreferences.prefpane.fetcherlist.tooltip "Order the list of fetcher you wish to use first at the top.">
+<!ENTITY albumartpreferences.prefpane.priorities.up "Up">
+<!ENTITY albumartpreferences.prefpane.priorities.down "Down">
+<!ENTITY albumartpreferences.prefpane.priorities.reset "Reset">
+
 <!-- Wizard entities. -->
 <!ENTITY wizard.button.back.label      "Go Back">
 <!ENTITY wizard.button.back.accesskey  "B">
