@@ -692,7 +692,21 @@
             var strContext = songbirdStrings.GetStringFromName
                                                ("playlist.type." + contextKey);
           }
-          var strMsg = songbirdStrings.formatStringFromName(STRINGROOT + "message", [strContext], 1);
+
+          var removedItemsInfo;
+          if (numSelected == 1) {
+            var selectedMediaItem =
+                  this.mediaListView.selection.currentMediaItem;
+            removedItemsInfo = selectedMediaItem.getProperty
+                                                   (SBProperties.trackName);
+          } else {
+            removedItemsInfo = numSelected;
+          }
+
+          var strMsg = songbirdStrings.formatStringFromName
+                                         (STRINGROOT + "message",
+                                          [removedItemsInfo, strContext],
+                                          2);
           
           var strCheck = songbirdStrings.GetStringFromName("dialog.confirm.dontaskme");
           var removeStr = songbirdStrings.GetStringFromName(STRINGROOT_BTN + "remove");
