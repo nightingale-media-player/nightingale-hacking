@@ -59,6 +59,8 @@ DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 LIBSONGBIRD_COMPONENT = SongbirdTranscodeComponent
 
+SONGBIRD_COMPONENTS = $(srcdir)/sbTranscodeUtils.js
+
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

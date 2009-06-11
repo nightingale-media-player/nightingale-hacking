@@ -32,6 +32,7 @@
 
 interface nsIArray;
 interface nsIVariant;
+interface nsIFile;
 
 /**
  * \interface sbITranscodeProfile sbITranscodeProfile.h
@@ -102,5 +103,19 @@ interface sbITranscodeProfileProperty : nsISupports
 
   /* \brief The current value of this property (initially the default) */
   attribute nsIVariant value;
+};
+
+/**
+ * \interface sbITranscodeProfileLoader
+ * \brief An object that can create an sbITranscodeProfile from an XML
+ *        description file.
+ *       
+ * \sa sbITranscodeJob
+ */
+[scriptable, uuid(18950502-f9e6-49e6-be38-d454dfd6cb81)]
+interface sbITranscodeProfileLoader : nsISupports
+{
+  /* \brief Load a profile from the given XML profile description */
+  sbITranscodeProfile loadProfile(in nsIFile aFile);
 };
 
