@@ -52,6 +52,7 @@ var SB_MM_PREF_MOVE = "songbird.media_management.library.move";
 var SB_MM_PREF_RENAME = "songbird.media_management.library.rename";
 var SB_MM_PREF_FMTDIR = "songbird.media_management.library.format.dir";
 var SB_MM_PREF_FMTFILE = "songbird.media_management.library.format.file";
+var SB_MM_PADTRACKNUM = "songbird.media_management.library.pad_track_num";
 
 // An array of what our test results should be
 var gResultInformation = [
@@ -86,6 +87,18 @@ var gResultInformation = [
   { originalFileName: "TestFile6.mp3",
     expectedFileName: "1 - Sample.mp3",
     expectedFolder:   "Managed/Unknown Artist/Unit Test Classics",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
+
+  { originalFileName: "TestFile7.mp3",
+    expectedFileName: "01 - Sample7.mp3",
+    expectedFolder:   "Managed/Songbird/Unit Test Classics",
+    expectedAction:   Ci.sbIMediaFileManager.MANAGE_COPY |
+                      Ci.sbIMediaFileManager.MANAGE_RENAME },
+
+  { originalFileName: "TestFile8.mp3",
+    expectedFileName: "11 - Sample8.mp3",
+    expectedFolder:   "Managed/Songbird/Unit Test Classics",
     expectedAction:   Ci.sbIMediaFileManager.MANAGE_MOVE |
                       Ci.sbIMediaFileManager.MANAGE_RENAME }
 ];
@@ -112,7 +125,8 @@ function saveMediaManagerPreferences () {
     rename: false,
     formatDir: "",
     formatFile: "",
-    enabled: false
+    enabled: false,
+    padTrackNum: false
   };
 
   var prefBranch = Cc["@mozilla.org/preferences-service;1"]
@@ -134,6 +148,7 @@ function saveMediaManagerPreferences () {
   gOriginalPrefs.rename = Application.prefs.getValue(SB_MM_PREF_RENAME, false);
   gOriginalPrefs.formatDir = Application.prefs.getValue(SB_MM_PREF_FMTDIR, "");
   gOriginalPrefs.formatFile = Application.prefs.getValue(SB_MM_PREF_FMTFILE, "");
+  gOriginalPrefs.padTrackNum = Application.prefs.getValue(SB_MM_PADTRACKNUM, false);
 }
 
 /**
@@ -161,6 +176,7 @@ function restoreMediaManagerPreferences() {
   prefBranch.setBoolPref(SB_MM_PREF_RENAME, gOriginalPrefs.rename);
   prefBranch.setCharPref(SB_MM_PREF_FMTDIR, gOriginalPrefs.formatDir);
   prefBranch.setCharPref(SB_MM_PREF_FMTFILE, gOriginalPrefs.formatFile);
+  prefBranch.setBoolPref(SB_MM_PADTRACKNUM, gOriginalPrefs.padTrackNum);
 }
 
 /**
@@ -190,6 +206,7 @@ function setupMediaManagerPreferences () {
   prefBranch.setBoolPref(SB_MM_PREF_COPY, true);
   prefBranch.setBoolPref(SB_MM_PREF_MOVE, true);
   prefBranch.setBoolPref(SB_MM_PREF_RENAME, true);
+  prefBranch.setBoolPref(SB_MM_PADTRACKNUM, true);
   prefBranch.setCharPref(SB_MM_PREF_FMTDIR,
                          SB_NS + "artistName," +
                          separator + "," +

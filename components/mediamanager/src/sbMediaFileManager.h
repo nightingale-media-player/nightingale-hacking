@@ -54,6 +54,7 @@
 #define PREF_MFM_DIRFORMAT    "format.dir"
 #define PREF_MFM_FILEFORMAT   "format.file"
 #define PREF_MFM_DEFPROPERTY  "default.property."
+#define PREF_MFM_PADTRACKNUM  "pad_track_num"
 
 // String keys
 #define STRING_MFM_UNKNOWNPROP  "mediamanager.nonexistingproperty"
@@ -89,6 +90,10 @@ protected:
   nsresult CheckDirectoryForDeletion(nsIFile *aItemFile);
   
   nsresult NormalizeDir(nsString &aDir);
+
+  nsresult ZeroPadTrackNumber(const nsAString & aTrackNumStr,
+                              const nsAString & aTotalTrackCountStr,
+                              nsString & aOutString);
   
 private:
   

@@ -667,6 +667,29 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
           RemoveBadCharacters(propertyValue);
         }
 
+        // Handle track number padding if the user has turned on the pref.
+        // NOTE: Don't bother checking result value.
+        PRBool shouldPadTrackNum = PR_FALSE;
+        mPrefBranch->GetBoolPref(PREF_MFM_PADTRACKNUM, &shouldPadTrackNum);
+        if (shouldPadTrackNum &&
+            configValue.EqualsLiteral(SB_PROPERTY_TRACKNUMBER))
+        {
+          // Get the number of tracks for this mediaitem.
+          // NOTE: Don't worry about checking the return value.
+          nsString numTracksStr;
+          aMediaItem->GetProperty(
+              NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS),
+              numTracksStr);
+
+          nsString formattedProperty;
+          rv = ZeroPadTrackNumber(propertyValue,
+                                  numTracksStr,
+                                  formattedProperty);
+          if (NS_SUCCEEDED(rv)) {
+            propertyValue = formattedProperty;
+          }
+        }
+
         // We need to check the Track Name property for an extension at the end
         // and remove it if it exists.
         if (!aFileExtension.IsEmpty() &&
@@ -716,6 +739,46 @@ nsresult sbMediaFileManager::NormalizeDir(nsString &aDir)
     aDir.Append(separator);
   }
   return NS_OK;
+}
+
+/**
+ * \brief Format a track number to pad for zeros against the total track count.
+ * \param aTrackNumStr The track number property as a string.
+ * \param aTotalTrackCountStr The total tracks property as a string
+ * \param aOutString The out-param for the formatted string.
+ *
+ * Example: 2 of 10 tracks will return "02"
+ *          2 of 100 tracks will return "002"
+ */
+nsresult
+sbMediaFileManager::ZeroPadTrackNumber(const nsAString & aTrackNumStr,
+                                       const nsAString & aTotalTrackCountStr,
+                                       nsString & aOutString)
+{
+  nsresult rv;
+  nsString format(aTrackNumStr);
+  nsString totalStr(aTotalTrackCountStr);
+
+  PRInt32 padCount = 0;
+
+  // Determine if padding is needed and how many zeros to pad with.
+  if (format.Length() < totalStr.Length()) {
+    padCount = totalStr.Length() - format.Length();
+  }
+  else if (totalStr.Length() == 0) {
+    // Fallback and use at least a default of two (2) zeros if there isn't
+    // any data for the total track count.
+    padCount = 2 - format.Length();
+  }
+
+  if (padCount > 0) {
+    for (PRInt32 i = 0; i < padCount; i++) {
+      format.Insert(NS_LITERAL_STRING("0").get(), 0, 1);
+    }
+  }
+
+  aOutString = format;
+  return rv;
 }
 
 /**
