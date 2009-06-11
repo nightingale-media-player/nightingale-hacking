@@ -41,6 +41,8 @@ sbDeviceStatus::sbDeviceStatus()
   /* member initializers and constructor code */
   mCurrentState = sbIDevice::STATE_IDLE;
   mCurrentSubState = sbIDevice::STATE_IDLE;
+  mElapsedTime = 0;
+  mRemainingTime = -1; // Default to unknown
 }
 
 sbDeviceStatus::~sbDeviceStatus()
@@ -179,6 +181,36 @@ NS_IMETHODIMP
 sbDeviceStatus::SetMediaList(sbIMediaList * aMediaList)
 {
   mList = aMediaList;
+  return NS_OK;
+}
+
+/* attribute unsigned long elapsedTime; */
+NS_IMETHODIMP
+sbDeviceStatus::GetElapsedTime(PRUint32 *aElapsedTime)
+{
+  NS_ENSURE_ARG_POINTER(aElapsedTime);
+  *aElapsedTime = mElapsedTime;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbDeviceStatus::SetElapsedTime(PRUint32 aElapsedTime)
+{
+  mElapsedTime = aElapsedTime;
+  return NS_OK;
+}
+
+/* attribute unsigned long remainingTime; */
+NS_IMETHODIMP
+sbDeviceStatus::GetRemainingTime(PRUint32 *aRemainingTime)
+{
+  NS_ENSURE_ARG_POINTER(aRemainingTime);
+  *aRemainingTime = mRemainingTime;
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbDeviceStatus::SetRemainingTime(PRUint32 aRemainingTime)
+{
+  mRemainingTime = aRemainingTime;
   return NS_OK;
 }
 

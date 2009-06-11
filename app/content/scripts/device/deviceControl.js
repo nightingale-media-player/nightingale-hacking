@@ -480,6 +480,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "sync")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_UPDATING) &&
              this._getStateAttribute(attrVal, aAttrName, "update")) {}
+    else if ((this._currentState == Ci.sbIDevice.STATE_TRANSCODE) &&
+             this._getStateAttribute(attrVal, aAttrName, "transcode")) {}
     else if ((this._currentState != Ci.sbIDevice.STATE_IDLE) &&
              this._getStateAttribute(attrVal, aAttrName, "busy")) {}
     else if ((this._currentState == Ci.sbIDevice.STATE_IDLE) &&

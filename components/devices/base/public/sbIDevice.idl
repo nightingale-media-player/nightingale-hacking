@@ -164,7 +164,8 @@ interface sbIDevice : nsISupports
   const unsigned long STATE_BUSY            = 11; // Busy with unspecified
                                                   // operation
   const unsigned long STATE_CANCEL          = 12; // In process of canceling operation
-  
+  const unsigned long STATE_TRANSCODE       = 13; // Transcoding a file.
+
   const unsigned long STATE_USER            = 0x20000000;
 
   const unsigned long REQUEST_FLAG_USER  = 0x80000000;

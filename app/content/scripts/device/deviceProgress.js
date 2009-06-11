@@ -151,6 +151,16 @@ var DPWCfg = {
       canBeCompleted: true,
       showProgress: true,
       updateBusy: true
+    },
+    
+    /* Transcode */
+    {
+      state: Ci.sbIDevice.STATE_TRANSCODE,
+      localeSuffix: "transcoding",
+      progressMeterDetermined: true,
+      canBeCompleted: true,
+      showProgress: true,
+      updateBusy: true
     }
   ]
 };
@@ -441,10 +451,20 @@ var DPW = {
     // Update the sub-operation progress text.
     if (mediaItem || !operationNeedsMediaItem) {
       localeKey = "device.status.progress_footer_" + subOperationLocaleSuffix;
-      this._progressText2Label.value =
-             SBFormattedString(localeKey,
-                               [ itemName, itemArtist, itemAlbum ],
-                               "");
+      var params = [];
+      params.push(itemName);
+      params.push(itemArtist);
+      params.push(itemAlbum);
+      
+      // Add some special info for transcoding...
+      if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
+        if (deviceStatus.remainingTime == -1) {
+          params.push("Unknown");
+        } else {
+          params.push(deviceStatus.remainingTime);
+        }
+      }
+      this._progressText2Label.value = SBFormattedString(localeKey, params, "");
     } else {
       this._progressText2Label.value = "";
     }
@@ -727,6 +747,9 @@ var DPW = {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MOUNTING_END:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_START:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
         this._update();
       break;
     }

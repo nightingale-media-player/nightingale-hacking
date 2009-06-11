@@ -69,6 +69,7 @@
    *   mount                    Device is mounting.
    *   sync                     Device is syncing content.
    *   update                   Device is updating content.
+   *   transcode                Device is transcoding content.
    *   busy                     Device is busy.
    *   idle                     Device is idle.
    *   mgmt_not_manual          Device is not configured for manual management.

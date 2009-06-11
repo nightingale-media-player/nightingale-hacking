@@ -40,7 +40,7 @@ interface sbIMediaList;
  * Holds the current status of a device, idle, syncing, etc with all the
  * relevent information.
  */
-[scriptable, uuid(7b2026c4-9193-4cbd-818a-0d07abaec854)]
+[scriptable, uuid(48cb3191-0687-45cc-b47f-8463ebf77bcb)]
 interface sbIDeviceStatus: nsISupports {
   /**
    * \brief The current overall state of the device.
@@ -84,6 +84,23 @@ interface sbIDeviceStatus: nsISupports {
    * Current Item being processed
    */
   attribute sbIMediaItem mediaItem;
+  
+  /**
+   * These are for showing an estimated time of completion for an operation,
+   * like copying, transcoding, etc. Generally it will be for a single item
+   * operation, like copying a file to the device.
+   */
+  
+  /**
+   * \brief Time elapsed while working on this task, in milliseconds.
+   */
+  attribute unsigned long elapsedTime;
+
+  /**
+   * \brief Estimated time remaining for this task to complete, in milliseconds.
+   *        May be -1 if the remaining time is indeterminate.
+   */
+  attribute unsigned long remainingTime;
   
   /**
    * Current List being processed
