@@ -864,12 +864,7 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
       }
     } else if (isM4A) {
       nsAutoPtr<TagLib::MP4::File> pTagFile;
-      #if XP_WIN
-        // XXX Mook: temporary hack to make tree build, reopening bug 16158
-        pTagFile = new TagLib::MP4::File(NS_ConvertUTF16toUTF8(filePath).BeginReading());
-      #else
-        pTagFile = new TagLib::MP4::File(filePath.BeginReading());
-      #endif
+      pTagFile = new TagLib::MP4::File(filePath.BeginReading());
       NS_ENSURE_STATE(pTagFile);
 
       /* Read the metadata file. */
