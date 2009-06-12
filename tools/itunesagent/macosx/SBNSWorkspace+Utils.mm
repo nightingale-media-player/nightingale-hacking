@@ -33,8 +33,6 @@
 #include <vector>
 #include <string>
 
-typedef std::vector<kinfo_proc>     sbKINFOVector;
-typedef sbKINFOVector::iterator     sbKINFOVectorIter;
 typedef std::vector<pid_t>          sbPIDVector;
 typedef sbPIDVector::const_iterator sbPIDVectorIter;
 
@@ -57,16 +55,13 @@ GetPidName(pid_t aPid)
   size_t dataLength = 0;
   if (sysctl(mib, 3, NULL, &dataLength, NULL, 0) >= 0) {
     // Get the full path of the executable.
-    std::string processPath;
-    processPath.resize(dataLength);
-
-    if (sysctl(mib, 3, &processPath[0], &dataLength, NULL, 0) >= 0) {
+    char processPathStr[dataLength];
+    if (sysctl(mib, 3, &processPathStr[0], &dataLength, NULL, 0) >= 0) {
       // Find the last part of the path to get the executable name.
-      size_t endIndex = processPath.find('\0');
-      size_t lastSlashIndex = processPath.rfind('/', endIndex);
+      std::string processPath(processPathStr);
+      size_t lastSlashIndex = processPath.rfind('/');
       if (lastSlashIndex != std::string::npos) {
-        processName = processPath.substr(lastSlashIndex + 1,
-                                         endIndex - lastSlashIndex - 1);
+        processName = processPath.substr(lastSlashIndex + 1);
       }
     }
   }
@@ -74,12 +69,11 @@ GetPidName(pid_t aPid)
   return processName;
 }
 
-sbPIDVector
-GetActiveProcessesByName(const std::string & aProcessName)
+BOOL
+GetActiveProcessesByName(const std::string & aProcessName,
+                         sbPIDVector & aOutVector)
 {
-  sbPIDVector processVector;
-
-  int mib[] = {
+  static int mib[] = {
     CTL_KERN,
     KERN_PROC,
     KERN_PROC_UID,
@@ -89,33 +83,39 @@ GetActiveProcessesByName(const std::string & aProcessName)
   // Get the size of the kinfo_proc array buffer.
   size_t bufferLength = 0;
   if (sysctl(mib, 4, NULL, &bufferLength, NULL, 0) < 0) {
-    return processVector;
+    return NO;
   }
 
-  // Set the size of the vector storage.
-  sbKINFOVector kinfoVector;
-  kinfoVector.resize(bufferLength / sizeof(struct kinfo_proc));
-  
-  // Get the lists of processes using the buffer space.
-  if (sysctl(mib, 4, &kinfoVector[0], &bufferLength, NULL, 0) < 0) {
-    return processVector;
+  // Create a buffer large enough to hold the list of |kinfo_proc| structs.
+  struct kinfo_proc *kp = (struct kinfo_proc *)malloc(bufferLength);
+  if (kp == NULL) {
+    return NO;
   }
 
-  // Now find any matching process names.
-  sbKINFOVectorIter begin = kinfoVector.begin();
-  sbKINFOVectorIter end = kinfoVector.end();
-  sbKINFOVectorIter next;
-  for (next = begin; next != end; ++next) {
+  // Get the full list of |kinfo_proc| structs using the newly created buffer.
+  if (sysctl(mib, 4, kp, &bufferLength, NULL, 0) < 0) {
+    free(kp);
+    return NO;
+  }
+
+  int entries = bufferLength / sizeof(struct kinfo_proc);
+  if (entries == 0) {
+    free(kp);
+    return NO;
+  }
+
+  for (int i = entries; i >= 0; i--) {
     // Don't bother appending the current process ID.
-    if ((*next).kp_proc.p_pid != getpid()) {
-      std::string curProcessName = GetPidName((*next).kp_proc.p_pid);
+    if ((&kp[i])->kp_proc.p_pid != getpid()) {
+      std::string curProcessName = GetPidName((&kp[i])->kp_proc.p_pid);
       if (curProcessName.compare(aProcessName) == 0) {
-        processVector.push_back((*next).kp_proc.p_pid);
+        aOutVector.push_back((&kp[i])->kp_proc.p_pid);
       }
     }
   }
-
-  return processVector;
+ 
+  free(kp);
+  return YES;
 }
 
 inline void
@@ -130,17 +130,17 @@ SigKill(pid_t aPid)
 
 + (BOOL)isProcessAlreadyRunning:(NSString *)aProcessName
 {
-  sbPIDVector const & processes = 
-    GetActiveProcessesByName([aProcessName UTF8String]); 
-  return processes.size() > 0;
+  sbPIDVector processes;
+  return GetActiveProcessesByName([aProcessName UTF8String], processes) && 
+         processes.size() > 0;
 }
 
 + (void)killAllRunningProcesses:(NSString *)aProcessName
 {
-  sbPIDVector const & processes = 
-    GetActiveProcessesByName([aProcessName UTF8String]);
-  
-  std::for_each(processes.begin(), processes.end(), SigKill);
+  sbPIDVector processes;
+  if (GetActiveProcessesByName([aProcessName UTF8String], processes)) {
+    std::for_each(processes.begin(), processes.end(), SigKill);
+  }
 }
 
 @end

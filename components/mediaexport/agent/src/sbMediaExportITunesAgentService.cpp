@@ -34,10 +34,96 @@
 #include <CoreServices/CoreServices.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include "nsILocalFileMac.h"
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <signal.h>
+#include <vector>
+#include <string>
 #elif XP_WIN
 #include <windows.h>
 #endif
 
+#ifdef XP_MACOSX
+//------------------------------------------------------------------------------
+// BSD System Process Helper methods
+
+typedef std::vector<pid_t>          sbPIDVector;
+typedef sbPIDVector::const_iterator sbPIDVectorIter;
+
+std::string
+GetPidName(pid_t aPid)
+{
+  std::string processName;
+
+  int mib[] = {
+    CTL_KERN,
+    KERN_PROCARGS,
+    aPid
+  };
+
+  // Get the size of the buffer needed for the process name.
+  size_t dataLength = 0;
+  if (sysctl(mib, 3, NULL, &dataLength, NULL, 0) >= 0) {
+    // Get the full path of the execYESutable.
+    char processPathStr[dataLength];
+    if (sysctl(mib, 3, &processPathStr[0], &dataLength, NULL, 0) >= 0) {
+      // Find the last part of the path to get the executable name.
+      std::string processPath(processPathStr);
+      size_t lastSlashIndex = processPath.rfind('/');
+      if (lastSlashIndex != std::string::npos) {
+        processName = processPath.substr(lastSlashIndex + 1);
+      }
+    }
+  }
+
+  return processName;
+}
+
+nsresult
+GetActiveProcessesByName(const std::string & aProcessName,
+                         sbPIDVector & aOutVector)
+{
+  static int mib[] = {
+    CTL_KERN,
+    KERN_PROC,
+    KERN_PROC_UID,
+    geteuid()
+  };
+
+  // Get the size of the kinfo_proc array buffer.
+  size_t bufferLength = 0;
+  if (sysctl(mib, 4, NULL, &bufferLength, NULL, 0) < 0) {
+    return NS_ERROR_FAILURE;
+  }
+
+  // Create a buffer large enough to hold the list of |kinfo_proc| structs.
+  struct kinfo_proc *kp = (struct kinfo_proc *)malloc(bufferLength);
+  NS_ENSURE_TRUE(kp != NULL, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the full list of |kinfo_proc| structs using the newly created buffer.
+  if (sysctl(mib, 4, kp, &bufferLength, NULL, 0) < 0) {
+    free(kp);
+    return NS_ERROR_FAILURE;
+  }
+
+  PRInt32 entries = bufferLength / sizeof(struct kinfo_proc);
+  if (entries == 0) {
+    free(kp);
+    return NS_ERROR_FAILURE;
+  }
+
+  for (PRInt32 i = entries; i >= 0; i--) {
+    std::string curProcessName = GetPidName((&kp[i])->kp_proc.p_pid);
+    if (curProcessName.compare(aProcessName) == 0) {
+      aOutVector.push_back((&kp[i])->kp_proc.p_pid);
+    }
+  }
+
+  free(kp);
+  return NS_OK;
+}
+
+#endif
 
 NS_IMPL_ISUPPORTS1(sbMediaExportITunesAgentService,
                    sbIMediaExportAgentService)
@@ -164,37 +250,9 @@ sbMediaExportITunesAgentService::GetIsAgentRunning(PRBool *aIsRunning)
   *aIsRunning = PR_FALSE;
 
 #ifdef XP_MACOSX
-  // Look for the bundle ID in the running processes
-  ProcessSerialNumber curProcessSerialNum = { 0, kNoProcess };
-
-  // Loop through all the users processes to see if a match is found to the
-  // passed in bundle identifer.
-  while (GetNextProcess(&curProcessSerialNum) == noErr) {
-    UInt32 flags = kProcessDictionaryIncludeAllInformationMask;
-    CFDictionaryRef curProcessDictRef =
-      ProcessInformationCopyDictionary(&curProcessSerialNum, flags);
-
-    // If there was trouble getting a dict ref for this process, just continue.
-    if (!curProcessDictRef) {
-      continue;
-    }
-    
-    // Check to see if this process is the itunes agent bundle ID.
-    CFStringRef curBundleIDRef;
-    if (CFDictionaryGetValueIfPresent(curProcessDictRef,
-                                      kCFBundleIdentifierKey,
-                                      (const void **)&curBundleIDRef))
-    {
-      if (CFStringCompare(curBundleIDRef, 
-                          CFSTR("org.songbirdnest.songbirditunesagent"),
-                          0) == kCFCompareEqualTo)
-      {
-        *aIsRunning = PR_TRUE;
-        break;
-      }
-    }
-  }
-
+  sbPIDVector processes;
+  nsresult rv = GetActiveProcessesByName("songbirditunesagent", processes);
+  *aIsRunning = NS_SUCCEEDED(rv) && processes.size() > 0;
 #elif XP_WIN
   // The windows agent uses a mutex handle to prevent duplicate agents 
   // from running. Simply check for the mutex to find out if the agent
