@@ -556,6 +556,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
 
     if (!urlScheme.EqualsLiteral("file"))
     {
+      LOG(("%s: can't write to scheme %s", __FUNCTION__, urlScheme.get()));
       return NS_ERROR_NOT_IMPLEMENTED;
     }
      
@@ -730,6 +731,7 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
       if (f.save()) {
         result = NS_OK;
       } else {
+        LOG(("%s: failed to save!", __FUNCTION__));
         result = NS_ERROR_FAILURE;      
       }
     }
@@ -1439,7 +1441,7 @@ nsresult sbMetadataHandlerTaglib::ReadImageOgg(TagLib::Ogg::XiphComment  *aTag,
       if (p->type() == aType) {
         *aDataLen = p->picture().size();
 
-        aMimeType.Assign(p->mimeType().toCString(), p->mimeType().length());
+        aMimeType.Assign(p->mimeType().toCString());
 
         *aData = static_cast<PRUint8 *>(nsMemory::Clone(p->picture().data(),
                                                         *aDataLen));
