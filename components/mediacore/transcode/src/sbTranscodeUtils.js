@@ -44,7 +44,10 @@ TranscodeBatchJob.prototype = {
   classID:          Components.ID("{53cca1c6-03b1-475f-960e-adb99d9b742f}"),
   contractID:       "@songbirdnest.com/Songbird/Transcode/BatchJob;1",
   QueryInterface:   XPCOMUtils.generateQI(
-          [Ci.sbITranscodeBatchJob, Ci.sbIJobProgress, Ci.sbIJobCancelable]),
+          [Ci.sbITranscodeBatchJob,
+           Ci.sbIJobProgress,
+           Ci.sbIJobCancelable,
+           Ci.sbIJobProgressTime]),
 
   _profile         : null,
   _numSimultaneous : 1,
@@ -60,6 +63,8 @@ TranscodeBatchJob.prototype = {
 
   _statusText      : SBString("transcode.batch.running"),
   _titleText       : SBString("transcode.batch.title"),
+
+  _startTime       : -1,
 
   // sbITranscodeBatch implementation
 
@@ -102,6 +107,7 @@ TranscodeBatchJob.prototype = {
       throw new Error("No profile set");
 
     this._nextIndex = 0;
+    this._startTime = Date.now();
 
     for (var i = 0; i < this._numSimultaneous; i++) {
       this._nextTranscode();
@@ -167,6 +173,21 @@ TranscodeBatchJob.prototype = {
     if (index >= 0) {
       this._listeners.splice(index, 1);
     }
+  },
+
+  // sbIJobProgressTime implementation
+
+  get elapsedTime() {
+    if (this._startTime < 0)
+      return -1;
+
+    return Date.now() - this._startTime;
+  },
+
+  get remainingTime() {
+    var fractionDone = this.progress / this.total;
+
+    return this.elapsedTime / fractionDone;
   },
 
   // sbIJobCancelable implementation 
