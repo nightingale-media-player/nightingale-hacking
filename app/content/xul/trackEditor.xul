@@ -366,6 +366,12 @@
   </hbox>
 
   <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditorState.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditorWidgets.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditorWidgetAlbumArtwork.js" />
+  <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/trackEditor.js" />
   <script type="application/x-javascript" 
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />

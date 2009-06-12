@@ -344,43 +344,35 @@ sbLocalDatabaseMediaItem::GetUserEditable(PRBool* aUserEditable)
     if (isList.IsEmpty() ||
         isList.EqualsLiteral("0")) {
       
-      // If not a list, assume we can't write unless proven otherwise.
+      // If not a list, assume we can write unless proven otherwise.
       // Don't NS_ENSURE_SUCCESS, since failure == not editable.
-      *aUserEditable = PR_FALSE;
+      *aUserEditable = PR_TRUE;
       
       nsRefPtr<nsIURI> uri;
       rv = this->GetContentSrc(getter_AddRefs(uri));
       
       if (NS_SUCCEEDED(rv)) {
-        // Check the scheme for mtp, if it's mtp then it's editable
-        nsCAutoString scheme;
-        rv = uri->GetScheme(scheme);
-        if (NS_SUCCEEDED(rv) && scheme.EqualsLiteral("x-mtp")) {
-          *aUserEditable = PR_TRUE;
-        }
-        else {
-          nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
+        nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
   
-          // File must be local and writable
+        // File must be local and writable
+        if (NS_SUCCEEDED(rv)) {
+          nsCOMPtr<nsIFile> file;
+          rv = fileUrl->GetFile(getter_AddRefs(file));
           if (NS_SUCCEEDED(rv)) {
-            nsCOMPtr<nsIFile> file;
-            rv = fileUrl->GetFile(getter_AddRefs(file));
-            if (NS_SUCCEEDED(rv)) {
-              PRBool exists;
-              rv = file->Exists(&exists);
-              NS_ENSURE_SUCCESS(rv, rv);
-  
-              PRBool isWritable = PR_FALSE;
-              if (exists) {
-                rv = file->IsWritable(&isWritable);
-                if (NS_FAILED(rv)) {
-                  isWritable = PR_FALSE;
-                }
+            PRBool exists;
+            rv = file->Exists(&exists);
+            NS_ENSURE_SUCCESS(rv, rv);
+            
+            PRBool isWritable = PR_FALSE;
+            if (exists) {
+              rv = file->IsWritable(&isWritable);
+              if (NS_FAILED(rv)) {
+                isWritable = PR_FALSE;
               }
-              *aUserEditable = isWritable && exists;
             }
+            *aUserEditable = isWritable && exists;
           }
-        }        
+        }
       }
     }
   }
