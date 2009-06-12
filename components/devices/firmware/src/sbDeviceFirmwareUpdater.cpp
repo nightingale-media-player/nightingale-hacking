@@ -217,8 +217,7 @@ sbDeviceFirmwareUpdater::GetHandlerStatus(sbIDeviceFirmwareHandler *aHandler)
   sbDeviceFirmwareHandlerStatus *_retval = nsnull;
 
   if(!mHandlerStatus.Get(aHandler, &_retval)) {
-    nsAutoPtr<sbDeviceFirmwareHandlerStatus> status = 
-      new sbDeviceFirmwareHandlerStatus;
+    nsAutoPtr<sbDeviceFirmwareHandlerStatus> status(new sbDeviceFirmwareHandlerStatus);
 
     nsresult rv = status->Init();
     NS_ENSURE_SUCCESS(rv, nsnull);
