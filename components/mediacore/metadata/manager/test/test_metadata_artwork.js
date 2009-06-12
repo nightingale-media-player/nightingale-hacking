@@ -74,7 +74,7 @@ function getImageData(imageFileName) {
   var bis = Cc["@mozilla.org/binaryinputstream;1"].
             createInstance(Ci.nsIBinaryInputStream);
   bis.setInputStream(inputStream);
-  var newImageData= bis.readByteArray(size);
+  var newImageData = bis.readByteArray(size);
 
   return [newMimeType, newImageData];
 }
@@ -104,7 +104,7 @@ function testWrite(testFileName, shouldPass) {
                          newImageFile.spec);
   } catch (err) {
     if (shouldPass) {
-      assertEqual(true, false, "Test write:" + err);
+      doThrow("Test write:" + err);
     }
   }
   
@@ -120,21 +120,20 @@ function testWrite(testFileName, shouldPass) {
     if (shouldPass) {
       assertEqual(testMimeType.value,
                   imageMimeType,
-                  "Mimetype not equal");
-      assertEqual(compareArray(imageData, testImageData),
-                  true,
-                  "Image data not equal");
+                  "Mimetype not equal: " + testFileName);
+      assertTrue(compareArray(imageData, testImageData),
+                 "Image data not equal: " + testFileName);
     } else {
       assertNotEqual(testMimeType.value,
                      imageMimeType,
-                     "Mimetype is equal when it should not be");
-      assertNotEqual(compareArray(imageData, testImageData),
-                     true,
-                     "Image data is equal and should not be");
+                     "Mimetype is equal when it should not be: " + testFileName);
+      log("reference image length: " + imageData.length + " embedded image length: " + testImageData.length);
+      assertFalse(compareArray(imageData, testImageData),
+                  "Image data is equal and should not be: " + testFileName);
     }
   } catch(err) {
     if (shouldPass) {
-      assertEqual(true, false, "Test read: " + err);
+      doThrow("Test read: " + err);
     }
   }
 }
@@ -168,11 +167,11 @@ function testRead() {
                                             .METADATA_IMAGE_TYPE_OTHER,
                                             mimeTypeOutparam,
                                             outSize);
-      assertEqual(true, (outSize.value > 0));
+      assertTrue(outSize.value > 0);
       assertNotEqual(mimeTypeOutparam.value, null);
       assertNotEqual(imageData, "");
     } catch (err) {
-      assertEqual(true, false);
+      doThrow("Caught exception: " + err);
     }
 
     // Try grabbing some other artwork that is not there
@@ -220,5 +219,6 @@ function runTest () {
 
   // Now for writing an image to metadata
   testWrite("MP3_ID3v24.mp3", true);
-  testWrite("Ogg_Vorbis.ogg", false);
+  testWrite("Ogg_Vorbis.ogg", true);
+  testWrite("TrueAudio.tta", false);
 }

@@ -35,3 +35,12 @@
   }
 })();
 removeTempFolder();
+(function tail_callback(){
+  for each (var callback in gTailCallback) {
+    try {
+      callback();
+    } catch (e) {
+      log(e);
+    }
+  }
+})();

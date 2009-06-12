@@ -32,6 +32,7 @@ Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 var gFilesToClose = [];
+var gTailCallback = [];
 
 function newFileURI(file) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
