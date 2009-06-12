@@ -154,6 +154,8 @@
 
     <implementation>
       <constructor><![CDATA[
+        Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
+
         var toolsAttribute = this.getAttribute("tools");
         var toolsList = toolsAttribute.split(",");
         
@@ -178,9 +180,14 @@
 
       <method name="updateFirmware">
         <body><![CDATA[
-        // XXXAus: This needs to be filled in when more of 
-        //         the device updater is completed
-        ]]></body>
+          WindowUtils.openModalDialog
+            (window,
+             "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+             "device_firmware_dialog",
+             "chrome,centerscreen",
+             [ "", this.device ],
+             null);
+         ]]></body>
       </method>
 
       <method name="repairDevice">

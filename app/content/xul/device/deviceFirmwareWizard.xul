@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/firstRunWizard.css"
+                 type="text/css"?>
+
+<!DOCTYPE window [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %brandDTD;
+  %songbirdDTD;
+]>
+
+<!-- First-run wizard. -->
+<wizard
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="device_firmware_wizard"
+  type="songbird"
+  title="&device.firmware.wizard.title;"
+  onload="deviceFirmwareWizard.doLoad();"
+  onunload="deviceFirmwareWizard.doUnload();"
+  onwizardfinish="return deviceFirmwareWizard.doFinish();"
+  onwizardcancel="deviceFirmwareWizard.doCancel();"
+>
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Check for updated firmware page. -->
+  <wizardpage id="device_firmware_check"
+              pageid="device_firmware_wizard_check_page"
+              next="first_run_welcome_page"
+              label="&device.firmware.wizard.check.page.title;"
+              hideback="true"
+              hidenext="true"
+              onpageshow="deviceFirmwareWizard.doPageShow();">
+    <deck id="device_firmware_wizard_check_deck" selectedIndex="0">
+      <vbox id="device_firmware_wizard_check_progress_box"
+            flex="1">
+        <label value="&device.firmware.wizard.check.progress.title;"/>
+        <progressmeter id="device_firmware_wizard_check_progress"
+                       mode="undetermined" />
+      </vbox>
+      <vbox id="device_firmware_wizard_check_new_box"
+            hidden="1"
+            flex="1">
+        <description id="device_firmware_wizard_check_newver_description"/>
+        <description>
+          &device.firmware.wizard.check.install.description;
+        </description>
+      </vbox>
+      <vbox id="device_firmware_wizard_check_already_box">
+        <description>
+          &device.firmware.wizard.check.already.description;
+        </description>
+      </vbox>
+    </deck>
+  </wizardpage>
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Songbird services. -->
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/switchLocale.js"/>
+
+  <!-- Import the device firmware wizard services. -->
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/device/deviceFirmwareWizard.js"/>
+  
+</wizard>

@@ -39,7 +39,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(daa205d1-15a9-40f9-86be-d9aa1812461d)]
+[scriptable, uuid(11af75c3-daee-43bc-b259-97f7d3ee21a6)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -90,42 +90,46 @@ interface sbIDeviceFirmwareHandler : nsISupports
    */
   boolean canUpdate(in sbIDevice aDevice);
 
+  /**
+   * \brief Bind the handler to a device
+   * \warning This can only be called once, all subsequent calls
+   *          to this method will return NS_ERROR_ALREADY_INITIALIZED.
+   * \throw NS_ERROR_ALREADY_INITIALIZED when handler is already bound.
+   */
+  void bind(in sbIDevice aDevice, in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Unbind the handler
+   */
+  void unbind();
+
+  /**
+   * \brief Cancel the current operation
+   */
+  void cancel();
+
   /** 
    * \brief Refresh the firmware location, version, readable version, 
    *        notes, and instructions.
-   * \param aDevice - The device
-   * \param aListener [optional] - Device listener to recieve events
    */
-  void refreshInfo(in sbIDevice aDevice,
-                   in sbIDeviceEventListener aListener);
+  void refreshInfo();
 
   /**
    * \brief Perform a firmware update on the specified device
-   * \param aDevice - The device to update
    * \param aFirmwareUpdate - The firmware update to apply
-   * \param aListener [optional] - Device listener to recieve events
    */
-  void update(in sbIDevice aDevice, 
-              in sbIDeviceFirmwareUpdate aFirmwareUpdate,
-              in sbIDeviceEventListener aListener);
+  void update(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
 
   /**
    * \brief Verify the firmware already on the device
-   * \param aDevice - The device to verify
-   * \param aListener [optional] - Device listener to recieve events
    */
-  void verifyDevice(in sbIDevice aDevice, 
-                    in sbIDeviceEventListener aListener);
+  void verifyDevice();
   
   /**
    * \brief Verify the firmware update image
-   * \param aDevice - The device associated with this firmware update
    * \param aFirmwareUpdate - The firmware update to verify
-   * \param aListener [optional] - Device listener to recieve events
    */
-  void verifyUpdate(in sbIDevice aDevice,
-                    in sbIDeviceFirmwareUpdate aFirmwareUpdate, 
-                    in sbIDeviceEventListener aListener);
+  void verifyUpdate(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
 };
 
 %{C++

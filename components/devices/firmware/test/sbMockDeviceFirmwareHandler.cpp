@@ -46,6 +46,8 @@
 #include <sbIDevice.h>
 #include <sbIDeviceProperties.h>
 
+#include <sbVariantUtils.h>
+
 #define SB_MOCK_DEVICE_FIRMWARE_URL \
   "http://dingo.songbirdnest.com/~aus/firmware/firmware.xml"
 #define SB_MOCK_DEVICE_RESET_URL \
@@ -116,8 +118,13 @@ sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbMockDeviceFirmwareHandler::OnRefreshInfo(sbIDevice *aDevice, 
-                                           sbIDeviceEventListener *aListener)
+sbMockDeviceFirmwareHandler::OnCancel()
+{
+  return NS_OK;
+}
+
+/*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnRefreshInfo()
 {
   nsresult rv = SendHttpRequest(NS_LITERAL_CSTRING("GET"), 
                                 NS_LITERAL_CSTRING(SB_MOCK_DEVICE_FIRMWARE_URL));
@@ -126,15 +133,15 @@ sbMockDeviceFirmwareHandler::OnRefreshInfo(sbIDevice *aDevice,
   rv = SetState(HANDLER_REFRESHING_INFO);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Send firmware refresh info start
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_START, 
+                       nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 /*virtual*/ nsresult
-sbMockDeviceFirmwareHandler::OnUpdate(sbIDevice *aDevice, 
-                                      sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                      sbIDeviceEventListener *aListener)
+sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   /**
    * Here is where you will want to actually perform the firmware update
@@ -158,8 +165,7 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbMockDeviceFirmwareHandler::OnVerifyDevice(sbIDevice *aDevice, 
-                                            sbIDeviceEventListener *aListener)
+sbMockDeviceFirmwareHandler::OnVerifyDevice()
 {
   /**
    * Here is where you will want to verify the firmware on the device itself
@@ -183,9 +189,7 @@ sbMockDeviceFirmwareHandler::OnVerifyDevice(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbMockDeviceFirmwareHandler::OnVerifyUpdate(sbIDevice *aDevice, 
-                                            sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                            sbIDeviceEventListener *aListener)
+sbMockDeviceFirmwareHandler::OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   /**
    * Here is where you should provide a way to verify the firmware update
@@ -233,6 +237,8 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
 {
   PRUint32 status = 0;
   
+  // XXXAus: Check device pref to see if we should simulate a failure!
+
   nsresult rv = mXMLHttpRequest->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -302,7 +308,18 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     }
   }
 
-  // XXXAus: Send firmware refresh info end
+  // XXXAus: Looks like we have an update location and version.
+  //         Figure out if we should say there is an update available
+  //         or not by comparing current device firmware version
+  //         and the one we got from the web service.
+
+  // XXXAus: For now just pretend like it's always new.
+  nsCOMPtr<nsIVariant> data = 
+    sbNewVariant(PR_TRUE, nsIDataType::VTYPE_BOOL).get();
+
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_END, 
+                       data);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

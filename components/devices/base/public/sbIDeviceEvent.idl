@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(755552de-9478-4324-b2c4-cede52d63658)]
+[scriptable, uuid(60de6048-ad90-421c-bb99-b63f953fb8c8)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -146,6 +146,18 @@ interface sbIDeviceEvent : nsISupports
    */
   const unsigned long EVENT_MANAGER_BASE = 0x40060000;
 
+  const unsigned long EVENT_FIRMWARE_BASE = 0x40080000;
+  /**
+   * \brief Check for update start
+   * \note <code>data</code> is null for this event.
+   */
+  const unsigned long EVENT_FIRMWARE_CFU_START  = EVENT_FIRMWARE_BASE + 1;
+  /**
+   * \brief Check for update end
+   * \note <code>data</code> is a boolean indicating if there is an update 
+   *       available for download (true) or not (false).
+   */
+  const unsigned long EVENT_FIRMWARE_CFU_END    = EVENT_FIRMWARE_BASE + 2;
   /**
    * 
    */

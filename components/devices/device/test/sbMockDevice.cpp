@@ -30,11 +30,11 @@
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsIVariant.h>
+#include <nsIWritablePropertyBag.h>
 #include <nsIWritablePropertyBag2.h>
 
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
-#include <nsISupportsUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
@@ -326,7 +326,30 @@ NS_IMETHODIMP sbMockDevice::GetContent(sbIDeviceContent * *aContent)
 /* readonly attribute nsIPropertyBag2 parameters; */
 NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv;
+
+  nsCOMPtr<nsIWritablePropertyBag> writeBag =
+        do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIWritableVariant> deviceType = 
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Pretend like we're an MTP device
+  rv = deviceType->SetAsAString(NS_LITERAL_STRING("MTP"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = writeBag->SetProperty(NS_LITERAL_STRING("DeviceType"), 
+                             deviceType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIPropertyBag2> propBag = do_QueryInterface(writeBag, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  propBag.forget(aParameters);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
@@ -365,6 +388,38 @@ NS_IMETHODIMP sbMockDevice::GetProperties(sbIDeviceProperties * *theProperties)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = properties->InitFirmwareVersion(NS_LITERAL_STRING("1.0.0.0"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIWritablePropertyBag> writeBag =
+        do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIWritableVariant> freeSpace = 
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = freeSpace->SetAsString("17179869184");
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = writeBag->SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/device/1.0#freeSpace"), 
+                               freeSpace);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIWritableVariant> totalUsedSpace = 
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = totalUsedSpace->SetAsString("4294967296");
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = writeBag->SetProperty(NS_LITERAL_STRING("http://songbirdnest.com/device/1.0#totalUsedSpace"),
+                               totalUsedSpace);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIPropertyBag2> propBag = do_QueryInterface(writeBag, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = properties->InitDeviceProperties(propBag);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = properties->InitDone();

@@ -41,7 +41,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(3bc09de3-5db9-4534-8c23-355f3488cfa4)]
+[scriptable, uuid(23bb5db3-9184-4e2a-addc-1bfa5278ffaf)]
 interface sbIDeviceFirmwareUpdater : nsISupports
 {
   /**
@@ -65,7 +65,8 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    * \note The flow of events for this method is the following: 
    *       firmware download start, N * firmware download progress, 
    *       firmware download end. 
-   * \note The end event will contain an sbIDeviceFirmwareUpdate.
+   * \note The end event will contain an sbIDeviceFirmwareUpdate, or null if there
+   *       is no update available.
    * \note Any error event that occurs will cancel this operation.
    */
   void downloadUpdate(in sbIDevice aDevice, 
@@ -100,6 +101,12 @@ interface sbIDeviceFirmwareUpdater : nsISupports
   void applyUpdate(in sbIDevice aDevice,
                    in sbIDeviceFirmwareUpdate aFirmwareUpdate,
                    in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Auto update the device
+   */
+  void autoUpdate(in sbIDevice aDevice,
+                  in sbIDeviceEventListener aListener);
 
   /**
    * \brief Verify the firmware on the specified device
@@ -143,4 +150,14 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    *        for the specified device
    */
   sbIDeviceFirmwareHandler getHandler(in sbIDevice aDevice);
+
+  /**
+   * \brief Get the running firmware handlerfor the specified device
+   */
+  sbIDeviceFirmwareHandler getActiveHandler(in sbIDevice aDevice);
+
+  /**
+   * \brief Cancel the current operation
+   */
+  void cancel(in sbIDevice aDevice);
 };

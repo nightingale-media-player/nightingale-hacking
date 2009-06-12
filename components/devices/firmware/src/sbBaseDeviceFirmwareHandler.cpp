@@ -32,6 +32,8 @@
 #include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
 
+#include <sbIDeviceEventTarget.h>
+
 #include <sbProxiedComponentManager.h>
 
 static const PRInt32 HTTP_STATE_UNINITIALIZED = 0;
@@ -79,6 +81,9 @@ sbBaseDeviceFirmwareHandler::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mXMLHttpRequest->Init(principal, nsnull, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mXMLHttpRequest->SetMozBackgroundRequest(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = OnInit();
@@ -142,9 +147,6 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
     return NS_ERROR_ABORT;
   }
 
-  rv = mXMLHttpRequest->SetMozBackgroundRequest(PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = mXMLHttpRequest->OpenRequest(aMethod, aUrl, PR_TRUE, 
                                     aUsername, aPassword);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -190,21 +192,79 @@ sbBaseDeviceFirmwareHandler::AbortHttpRequest()
 }
 
 nsresult 
-sbBaseDeviceFirmwareHandler::CreateDeviceEvent(sbIDeviceEvent **aEvent)
+sbBaseDeviceFirmwareHandler::CreateDeviceEvent(PRUint32 aType,
+                                               nsIVariant *aData, 
+                                               sbIDeviceEvent **aEvent)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_STATE(mDevice);
+  nsCOMPtr<sbIDevice> device = mDevice;
+  mon.Exit();
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbIDeviceManager2> deviceManager = 
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceManager->CreateEvent(aType, aData, device, aEvent);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent, 
+                                             PRBool aAsync /*= PR_TRUE*/)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aEvent);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsCOMPtr<sbIDeviceEventListener> listener = mListener;
+
+  NS_ENSURE_STATE(mDevice);
+  nsCOMPtr<sbIDeviceEventTarget> target = do_QueryInterface(mDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Exit();
+
+  PRBool dispatched = PR_FALSE;
+  rv = target->DispatchEvent(aEvent, aAsync, &dispatched);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_WARN_IF_FALSE(dispatched, "Event not dispatched");
+
+  if(listener) {
+    rv = listener->OnDeviceEvent(aEvent);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Error while calling listener.");
+  }
+
+  return NS_OK;
 }
 
-nsresult
-sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDevice *aDevice, sbIDeviceEvent *aEvent)
+nsresult 
+sbBaseDeviceFirmwareHandler::SendDeviceEvent(PRUint32 aType, 
+                                             nsIVariant *aData,
+                                             PRBool aAsync /*= PR_TRUE*/)
 {
-  NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(aEvent);
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsCOMPtr<sbIDeviceEvent> deviceEvent;
+  nsresult rv = CreateDeviceEvent(aType, aData, getter_AddRefs(deviceEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  rv = SendDeviceEvent(deviceEvent, aAsync);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 sbBaseDeviceFirmwareHandler::handlerstate_t
@@ -238,7 +298,12 @@ sbBaseDeviceFirmwareHandler::OnInit()
    * the values you need: mContractId.
    *
    * You should end up with a string that looks something like this:
-   * "@yourdomain.com/Songbird/Device/Firmware/Handler/Acme Portable Player 900x"
+   * "@yourdomain.com/FirmwareHandler/AcmePortablePlayer900x;1"
+   * 
+   * The ';1' at the end of the contract id is the implementation version
+   * of the object. If you ever update your object and break or modify
+   * behavior, make sure to increment that number to ensure no one
+   * gets nasty surprises when creating your handler.
    *
    * The other values only need to be set when OnRefreshInfo is called.
    * These values are: mFirmwareVersion, mReadableFirmwareVersion, mFirmwareLocation
@@ -266,8 +331,18 @@ sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnRefreshInfo(sbIDevice *aDevice, 
-                                           sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::OnCancel()
+{
+  /**
+   * Cancel whatever operation is happening. This is a synchronous call.
+   * After this call returns, your object will be destroyed.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnRefreshInfo()
 {
   /**
    * Here is where you will want to refresh the info for your handler. 
@@ -292,9 +367,7 @@ sbBaseDeviceFirmwareHandler::OnRefreshInfo(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnUpdate(sbIDevice *aDevice, 
-                                      sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                      sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   /**
    * Here is where you will want to actually perform the firmware update
@@ -318,8 +391,7 @@ sbBaseDeviceFirmwareHandler::OnUpdate(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnVerifyDevice(sbIDevice *aDevice, 
-                                            sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::OnVerifyDevice()
 {
   /**
    * Here is where you will want to verify the firmware on the device itself
@@ -343,9 +415,7 @@ sbBaseDeviceFirmwareHandler::OnVerifyDevice(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
-sbBaseDeviceFirmwareHandler::OnVerifyUpdate(sbIDevice *aDevice, 
-                                            sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                            sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   /**
    * Here is where you should provide a way to verify the firmware update
@@ -485,64 +555,97 @@ sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbBaseDeviceFirmwareHandler::RefreshInfo(sbIDevice *aDevice, 
-                                         sbIDeviceEventListener *aListener)
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
+                                  sbIDeviceEventListener *aListener)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aListener);
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = OnRefreshInfo(aDevice, aListener);
+  NS_ENSURE_FALSE(mDevice, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_FALSE(mListener, NS_ERROR_ALREADY_INITIALIZED);
+
+  mDevice = aDevice;
+  mListener = aListener;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::Unbind()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  
+  nsAutoMonitor mon(mMonitor);
+
+  mDevice = nsnull;
+  mListener = nsnull;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::Cancel()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsresult rv = OnCancel();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP 
-sbBaseDeviceFirmwareHandler::Update(sbIDevice *aDevice, 
-                                    sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                    sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::RefreshInfo()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = OnRefreshInfo();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = OnUpdate(aDevice, aFirmwareUpdate, aListener);
+  nsresult rv = OnUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP 
-sbBaseDeviceFirmwareHandler::VerifyDevice(sbIDevice *aDevice, 
-                                          sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::VerifyDevice()
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aDevice);
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = OnVerifyDevice(aDevice, aListener);
+  nsresult rv = OnVerifyDevice();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 NS_IMETHODIMP 
-sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDevice *aDevice, 
-                                          sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                          sbIDeviceEventListener *aListener)
+sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aDevice);
 
   nsAutoMonitor mon(mMonitor);
 
-  nsresult rv = OnVerifyUpdate(aDevice, aFirmwareUpdate, aListener);
+  nsresult rv = OnVerifyUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

@@ -34,7 +34,10 @@
 #include <nsStringGlue.h>
 #include <prmon.h>
 
+#include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
+#include <sbIDeviceEventListener.h>
+#include <sbIDeviceManager.h>
 
 class sbBaseDeviceFirmwareHandler : public sbIDeviceFirmwareHandler,
                                     public nsITimerCallback
@@ -91,12 +94,21 @@ public:
   /**
    * \brief Create a device event
    */
-  nsresult CreateDeviceEvent(sbIDeviceEvent **aEvent);
+  nsresult CreateDeviceEvent(PRUint32 aType, 
+                             nsIVariant *aData, 
+                             sbIDeviceEvent **aEvent);
 
   /**
    * \brief Send a device event
    */
-  nsresult SendDeviceEvent(sbIDevice *aDevice, sbIDeviceEvent *aEvent);
+  nsresult SendDeviceEvent(sbIDeviceEvent *aEvent, PRBool aAsync = PR_TRUE);
+
+  /**
+   * \brief Send a device event
+   */
+  nsresult SendDeviceEvent(PRUint32 aType,
+                           nsIVariant *aData,
+                           PRBool aAsync = PR_TRUE);
 
   /**
    * \brief Set internal state
@@ -114,19 +126,15 @@ public:
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
   // override me, see cpp file for implementation notes
-  virtual nsresult OnRefreshInfo(sbIDevice *aDevice, 
-                                 sbIDeviceEventListener *aListener);
+  virtual nsresult OnCancel();
   // override me, see cpp file for implementation notes
-  virtual nsresult OnUpdate(sbIDevice *aDevice, 
-                            sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                            sbIDeviceEventListener *aListener);
+  virtual nsresult OnRefreshInfo();
   // override me, see cpp file for implementation notes
-  virtual nsresult OnVerifyDevice(sbIDevice *aDevice, 
-                                  sbIDeviceEventListener *aListener);
+  virtual nsresult OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
   // override me, see cpp file for implementation notes
-  virtual nsresult OnVerifyUpdate(sbIDevice *aDevice, 
-                                  sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                  sbIDeviceEventListener *aListener);
+  virtual nsresult OnVerifyDevice();
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
   // override me, see cpp file for implementation notes
   virtual nsresult OnHttpRequestCompleted();
 
@@ -134,6 +142,9 @@ protected:
   virtual ~sbBaseDeviceFirmwareHandler();
 
   PRMonitor* mMonitor;
+
+  nsCOMPtr<sbIDevice> mDevice;
+  nsCOMPtr<sbIDeviceEventListener> mListener;
 
   handlerstate_t mHandlerState;
   PRUint32 mFirmwareVersion;

@@ -37,16 +37,11 @@ public:
   virtual nsresult OnInit();
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
-  virtual nsresult OnRefreshInfo(sbIDevice *aDevice, 
-                                 sbIDeviceEventListener *aListener);
-  virtual nsresult OnUpdate(sbIDevice *aDevice, 
-                            sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                            sbIDeviceEventListener *aListener);
-  virtual nsresult OnVerifyDevice(sbIDevice *aDevice, 
-                                  sbIDeviceEventListener *aListener);
-  virtual nsresult OnVerifyUpdate(sbIDevice *aDevice, 
-                                  sbIDeviceFirmwareUpdate *aFirmwareUpdate, 
-                                  sbIDeviceEventListener *aListener);
+  virtual nsresult OnCancel();
+  virtual nsresult OnRefreshInfo();
+  virtual nsresult OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
+  virtual nsresult OnVerifyDevice();
+  virtual nsresult OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
   virtual nsresult OnHttpRequestCompleted();
 
 private:

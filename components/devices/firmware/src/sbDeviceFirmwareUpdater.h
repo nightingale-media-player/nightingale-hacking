@@ -56,8 +56,15 @@ public:
   already_AddRefed<sbIDeviceFirmwareHandler> 
     GetRunningHandler(sbIDevice *aDevice);
 
+  already_AddRefed<sbIDeviceFirmwareHandler>
+    GetRunningHandler(sbIDevice *aDevice, 
+                      sbIDeviceEventListener *aListener,
+                      PRBool aCreate);
+
   nsresult PutRunningHandler(sbIDevice *aDevice, 
                              sbIDeviceFirmwareHandler *aHandler);
+
+  sbDeviceFirmwareHandlerStatus* GetHandlerStatus(sbIDeviceFirmwareHandler *aHandler);
 
 private:
   virtual ~sbDeviceFirmwareUpdater();
@@ -109,11 +116,16 @@ public:
   nsresult GetStatus(handlerstatus_t *aStatus);
   nsresult SetStatus(handlerstatus_t aStatus);
 
+  PRBool IsAutoUpdate();
+  void IsAutoUpdate(PRBool aAutoUpdate);
+
 private:
   PRMonitor* mMonitor;
   
   handleroperation_t mOperation;
   handlerstatus_t    mStatus;
+
+  PRPackedBool mIsAutoUpdate;
 };
 
 #define SB_DEVICEFIRMWAREUPDATER_DESCRIPTION               \

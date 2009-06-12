@@ -41,5 +41,34 @@ function runTest () {
   var handler = updater.getHandler(device);
   assertNotEqual(handler, null);
   
-  handler.refreshInfo(device, null);
+  var listener = {
+    op: "", 
+    onDeviceEvent: function(aEvent) {
+      log("event type: " + aEvent.type);
+      log("event origin: " + aEvent.origin);
+      log("event target: " + aEvent.target);
+      
+      var data = aEvent.data;
+      log("event data: " + data);
+    
+      switch(this.op) {
+        case "cfu":
+          if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
+            log("is update available: " + data);
+            testFinished();
+          }
+        break;
+        
+        default:
+          log("unknown operation");
+      }
+    }
+  };
+  
+  log("Testing 'checkForUpdate'");
+  listener.op = "cfu";
+  updater.checkForUpdate(device, listener);
+  testPending();
+  
+  return;
 }
