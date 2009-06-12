@@ -31,7 +31,7 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
                  type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/firstRunWizard.css"
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceFirmwareWizard.css"
                  type="text/css"?>
 
 <!DOCTYPE window [
@@ -79,12 +79,16 @@
                        mode="undetermined" />
       </vbox>
       <vbox id="device_firmware_wizard_check_new_box"
-            hidden="1"
             flex="1">
         <description id="device_firmware_wizard_check_newver_description"/>
         <description>
           &device.firmware.wizard.check.install.description;
         </description>
+        <sb-closable-box id="device_firmware_wizard_release_notes_box" label="&device.firmware.wizard.check.release_notes.label;">
+          <browser id="device_firmware_wizard_release_notes_browser"
+                   flex="1" 
+                   type="content"/>
+        </sb-closable-box>
       </vbox>
       <vbox id="device_firmware_wizard_check_already_box">
         <description>

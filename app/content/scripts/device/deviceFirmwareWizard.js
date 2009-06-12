@@ -125,6 +125,9 @@ var deviceFirmwareWizard = {
     this._wizardElem = document.getElementById("device_firmware_wizard");
     this._domEventListenerSet = new DOMEventListenerSet();
 
+    var browserBox = document.getElementById("device_firmware_wizard_release_notes_box");
+    this._domEventListenerSet.add(browserBox, "collapse", this._handleBrowserCollapse, true, false);
+
     this._wizardElem.canAdvance = true;
     this._wizardElem.canRewind = true;
 
@@ -139,6 +142,17 @@ var deviceFirmwareWizard = {
     if (this._domEventListenerSet)
       this._domEventListenerSet.removeAll();
     this._domEventListenerSet = null;
+  },
+  
+  _handleBrowserCollapse: function deviceFirmwareWizard__handleBrowserCollapse(aEvent) {
+    // XXXAus: Errr, that isn't the right way to do it, but it works for now.
+    //         Ideally there should be no hardcoded width and height values in
+    //         here. And no hardcoded multipliers either!
+    if(aEvent.detail == false) {
+      var height = window.innerHeight;
+      height *= 2.6;
+      window.resizeTo(window.innerWidth, height);
+    }
   },
 
   _handleDeviceEvent: function deviceFirmwareWizard__handleDeviceEvent(aEvent) {
@@ -180,6 +194,9 @@ var deviceFirmwareWizard = {
         this.wizardElem.currentPage.setAttribute("showback", "true");
         this.wizardElem.currentPage.setAttribute("shownext", "true");
                   
+        var browser = document.getElementById("device_firmware_wizard_release_notes_browser");
+        browser.setAttribute("src", handler.releaseNotesLocation.spec);
+        
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_new_box");
       }
@@ -188,5 +205,8 @@ var deviceFirmwareWizard = {
           document.getElementById("device_firmware_wizard_check_already_box");
       }      
     }
+  },
+  
+  _handleDownloadFirmware: function deviceFirmwareWizard__handleDownloadFirmware(aEvent) {
   }
 };

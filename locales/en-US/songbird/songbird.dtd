@@ -425,6 +425,7 @@
 <!ENTITY device.firmware.wizard.check.progress.title      "Checking for updated firmware...">
 <!ENTITY device.firmware.wizard.check.install.description "Installing the updated firmware should take less than 10 minutes. You can always perform the update at a later time.">
 <!ENTITY device.firmware.wizard.check.already.description "The firmware for your device is already up to date.">
+<!ENTITY device.firmware.wizard.check.release_notes.label "Release Notes">
 
 <!ENTITY device.info.model.label            "Model">
 <!ENTITY device.info.capacity.label         "Capacity">

@@ -94,7 +94,8 @@
       */
      -->
 
-    <method name="toggleOpenClose"><body><![CDATA[
+    <method name="toggleOpenClose"><body>
+        <![CDATA[
       // Toggle the twisty state.
       var twisty = document.getAnonymousElementByAttribute(this,
                                                            "sbid",
@@ -108,14 +109,23 @@
       var contentBox = document.getAnonymousElementByAttribute(this,
                                                                "sbid",
                                                                "content");
+      var collapsed = false;
       if (twisty.getAttribute("open") == "true") {
         contentBox.hidden = false;
       } else {
         contentBox.hidden = true;
+        collapsed = true;
       }
 
       // Update window size.
       window.sizeToContent();
+      
+      var event = document.createEvent("Event");
+      
+      event.initEvent("collapse", true, true);
+      event.detail = collapsed;
+      
+      contentBox.dispatchEvent(event);
     ]]></body></method>
 
     </implementation>
