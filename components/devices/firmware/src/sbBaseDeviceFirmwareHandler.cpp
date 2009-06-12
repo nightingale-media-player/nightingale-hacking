@@ -561,7 +561,6 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
-  NS_ENSURE_ARG_POINTER(aListener);
 
   nsAutoMonitor mon(mMonitor);
 

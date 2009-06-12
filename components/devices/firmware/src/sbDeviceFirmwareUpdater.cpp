@@ -508,6 +508,7 @@ sbDeviceFirmwareUpdater::Cancel(sbIDevice *aDevice)
     NS_ENSURE_SUCCESS(rv, rv);
 
     mRunningHandlers.Remove(aDevice);
+    mHandlerStatus.Remove(handler);
   }
 
   return NS_OK;
@@ -579,6 +580,15 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
 
     default:
       NS_WARNING("Unsupported operation");
+  }
+
+  rv = handlerStatus->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(status == sbDeviceFirmwareHandlerStatus::STATUS_FINISHED &&
+     !handlerStatus->IsAutoUpdate()) {
+    mRunningHandlers.Remove(device);
+    mHandlerStatus.Remove(handler);
   }
 
   return NS_OK;

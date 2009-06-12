@@ -67,8 +67,17 @@ function runTest () {
   
   log("Testing 'checkForUpdate'");
   listener.op = "cfu";
-  updater.checkForUpdate(device, listener);
-  testPending();
   
+  var eventTarget = device.QueryInterface(Ci.sbIDeviceEventTarget);
+  eventTarget.addEventListener(listener);
+  
+  try {
+    updater.checkForUpdate(device, null);
+    testPending();
+  }
+  finally {
+    eventTarget.removeEventListener(listener);
+  }
+ 
   return;
 }
