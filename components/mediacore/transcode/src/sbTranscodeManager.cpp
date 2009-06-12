@@ -37,6 +37,7 @@
 
 #include <nsStringGlue.h>
 #include <nsISimpleEnumerator.h>
+#include <nsArrayUtils.h>
 
 /* Global transcode manager (singleton) */
 sbTranscodeManager *gTranscodeManager = nsnull;
@@ -126,7 +127,7 @@ sbTranscodeManager::GetTranscoderForMediaItem(sbIMediaItem *aMediaItem,
 
   for (contractlist_t::iterator contractid = m_ContractList.begin();
        contractid != m_ContractList.end();
-       contractid++ )
+       ++contractid )
   {
     nsCOMPtr<sbITranscodeJob> handler = do_CreateInstance(
             (*contractid).get(), &rv);
@@ -152,5 +153,50 @@ sbTranscodeManager::GetTranscoderForMediaItem(sbIMediaItem *aMediaItem,
   }
   else 
     return NS_ERROR_FAILURE;
+}
+
+NS_IMETHODIMP
+sbTranscodeManager::GetTranscodeProfiles(nsIArray **_retval)
+{
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> array =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (contractlist_t::iterator contractid = m_ContractList.begin();
+       contractid != m_ContractList.end();
+       ++contractid )
+  {
+    nsCOMPtr<sbITranscodeJob> handler = do_CreateInstance(
+            (*contractid).get(), &rv);
+
+    if(NS_SUCCEEDED(rv) && handler)
+    {
+      nsCOMPtr<nsIArray> profiles;
+      PRUint32 length;
+
+      rv = handler->GetAvailableProfiles(getter_AddRefs(profiles));
+      NS_ENSURE_SUCCESS (rv, rv);
+
+      rv = profiles->GetLength(&length);
+      NS_ENSURE_SUCCESS (rv, rv);
+
+      for (PRUint32 i = 0; i < length; i++) {
+        nsCOMPtr<sbITranscodeProfile> profile =
+            do_QueryElementAt(profiles, i, &rv);
+        NS_ENSURE_SUCCESS (rv, rv);
+
+        rv = array->AppendElement(profile, PR_FALSE);
+        NS_ENSURE_SUCCESS (rv, rv);
+      }
+    }
+  }
+
+  nsCOMPtr<nsIArray> arr = do_QueryInterface(array, &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  arr.forget(_retval);
+
+  return NS_OK;
 }
 

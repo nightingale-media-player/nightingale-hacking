@@ -1,0 +1,15 @@
+<profile>
+  <type>audio</type>
+  <description>MP3</description>
+  <mimetype>audio/mpeg</mimetype>
+
+  <container>
+    <type>id3</type>
+  </container>
+
+  <audio>
+    <type>mp3</type>
+    <property name="bitrate" type="int" min="32000" max="256000" default="192000"/>
+  </audio>
+</profile>
+

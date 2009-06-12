@@ -86,6 +86,11 @@ interface sbITranscodeJob : nsISupports
    */
   attribute sbITranscodeProfile profile;
 
+  /**
+   * \brief Get an array of all sbITranscodeProfiles that can be used with
+   *        this job.
+   */
+  readonly attribute nsIArray availableProfiles;
 
   /**
    * \brief Vote to be the handler returned for the given url

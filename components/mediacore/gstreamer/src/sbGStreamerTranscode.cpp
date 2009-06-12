@@ -35,6 +35,12 @@
 #include <nsThreadUtils.h>
 #include <nsStringAPI.h>
 #include <nsArrayUtils.h>
+#include <nsNetUtil.h>
+
+#include <nsIFile.h>
+#include <nsIURI.h>
+#include <nsIFileURL.h>
+
 #include <prlog.h>
 
 #define PROGRESS_INTERVAL 200 /* milliseconds */
@@ -770,5 +776,81 @@ sbGStreamerTranscode::GetAudioCodec(nsAString &aCodec, nsIArray *properties,
   }
   
   return NS_ERROR_FAILURE;
+}
+
+NS_IMETHODIMP
+sbGStreamerTranscode::GetAvailableProfiles(nsIArray * *aAvailableProfiles)
+{
+  if (mAvailableProfiles) {
+    NS_IF_ADDREF (*aAvailableProfiles = mAvailableProfiles);
+    return NS_OK;
+  }
+
+  /* If we haven't already cached it, then figure out what we have */
+
+  nsresult rv;
+  PRBool hasMoreElements;
+  nsCOMPtr<nsISimpleEnumerator> dirEnum;
+
+  nsCOMPtr<nsIURI> profilesDirURI;
+  rv = NS_NewURI(getter_AddRefs(profilesDirURI),
+          NS_LITERAL_STRING("resource://app/gstreamer/encode-profiles"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> profilesDirFileURL =
+      do_QueryInterface(profilesDirURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> profilesDir;
+  rv = profilesDirFileURL->GetFile(getter_AddRefs(profilesDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> array =
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITranscodeProfileLoader> profileLoader = 
+      do_CreateInstance("@songbirdnest.com/Songbird/Transcode/ProfileLoader;1",
+              &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  rv = profilesDir->GetDirectoryEntries(getter_AddRefs(dirEnum));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  while (PR_TRUE) {
+    rv = dirEnum->HasMoreElements(&hasMoreElements);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!hasMoreElements)
+      break;
+
+    nsCOMPtr<nsIFile> file;
+    rv = dirEnum->GetNext(getter_AddRefs(file));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbITranscodeProfile> profile;
+
+    rv = profileLoader->LoadProfile(file, getter_AddRefs(profile));
+    if (NS_FAILED(rv))
+      continue;
+
+    GstElement *pipeline = BuildTranscodePipeline(profile);
+    if (!pipeline) {
+      // Not able to use this profile; don't return it.
+      continue;
+    }
+
+    // Don't actually want the pipeline, discard it.
+    gst_object_unref (pipeline);
+
+    rv = array->AppendElement(profile, PR_FALSE);
+    NS_ENSURE_SUCCESS (rv, rv);
+  }
+
+  mAvailableProfiles = do_QueryInterface(array, &rv);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  NS_ADDREF(*aAvailableProfiles = mAvailableProfiles);
+
+  return NS_OK;
 }
 

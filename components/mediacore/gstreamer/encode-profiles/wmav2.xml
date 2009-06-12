@@ -1,0 +1,15 @@
+<profile>
+  <type>audio</type>
+  <description>Windows Media Audio (WMA version 2)</description>
+  <mimetype>audio/x-ms-wma</mimetype>
+
+  <container>
+    <type>asf</type>
+  </container>
+
+  <audio>
+    <type>wmav2</type>
+    <property name="bitrate" type="int" min="32000" max="256000" default="128000"/>
+  </audio>
+</profile>
+

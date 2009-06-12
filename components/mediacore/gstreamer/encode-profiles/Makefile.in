@@ -22,16 +22,18 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = stub \
-          content \
-          encode-profiles \
-          $(NULL)
-
 include $(topsrcdir)/build/rules.mk
+
+DESTDIR = $(SONGBIRD_DISTDIR)/gstreamer/encode-profiles
+
+export::
+	$(MKDIR) $(DESTDIR)
+	$(CP) $(srcdir)/*.xml $(DESTDIR)
+

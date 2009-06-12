@@ -1,0 +1,17 @@
+<profile>
+  <type>audio</type>
+  <description>FLAC (Free Lossless Audio Codec)</description>
+  <mimetype>audio/x-flac</mimetype>
+
+  <!-- No container used 
+  <container>
+    <type></type>
+  </container>
+    -->
+
+  <audio>
+    <type>flac</type>
+    <!-- No properties at the moment either -->
+  </audio>
+</profile>
+

@@ -56,6 +56,12 @@ interface sbITranscodeManager : nsISupports
   sbITranscodeJob getTranscoderForMediaItem(in sbIMediaItem aMediaItem,
                                             in sbITranscodeProfile aProfile);
 
+  /**
+   * \brief Get an array of all the sbITranscodeProfiles available and usable.
+   *
+   */
+  nsIArray getTranscodeProfiles();
+
 };
 
 %{C++

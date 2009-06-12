@@ -108,6 +108,8 @@ private:
   nsCOMArray<sbIJobProgressListener>      mProgressListeners;
   nsCOMPtr<nsITimer>                      mProgressTimer;
 
+  nsCOMPtr<nsIArray>                      mAvailableProfiles; 
+
 protected:
   /* additional members */
 };

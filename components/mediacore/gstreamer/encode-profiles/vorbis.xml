@@ -1,0 +1,17 @@
+<profile>
+  <type>audio</type>
+  <description>Ogg Vorbis</description>
+  <!-- We use the mime types that we use for device capabilities, even when
+       these aren't the most accurate option available -->
+  <mimetype>application/ogg</mimetype>
+
+  <container>
+    <type>ogg</type>
+  </container>
+
+  <audio>
+    <type>vorbis</type>
+    <property name="bitrate" type="int" min="32000" max="256000" default="96000"/>
+  </audio>
+</profile>
+
