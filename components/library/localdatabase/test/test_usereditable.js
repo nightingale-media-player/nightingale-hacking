@@ -80,11 +80,11 @@ function runTest () {
   file = file.parent;
   file.append("file-that-doesnt-exist.mp3");
   item.contentSrc = newFileURI(file);
-  assertTrue(!item.userEditable);
+  assertTrue(!item.userEditable, "Non-existent files are read-only.");
   
   // Set the item to a remote file and confirm that isn't user editable
   item.contentSrc = newURI("http://example.com/foo.mp3");
-  assertTrue(!item.userEditable);
+  assertTrue(item.userEditable, "Remote files are user editable.");
 }
 
 
