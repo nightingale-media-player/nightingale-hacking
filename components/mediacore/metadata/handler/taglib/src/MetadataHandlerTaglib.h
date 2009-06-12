@@ -269,6 +269,11 @@ private:
         PRInt32                     aType,
         const nsAString             &imageSpec);
 
+    nsresult WriteMP4Image(
+        TagLib::MP4::File           *aFile,
+        PRInt32                     aType,
+        const nsAString             &imageSpec);
+
     nsresult ReadImageID3v2(
         TagLib::ID3v2::Tag          *aTag,
         PRInt32                     aType,

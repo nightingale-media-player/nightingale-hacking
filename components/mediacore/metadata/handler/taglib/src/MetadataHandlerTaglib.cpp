@@ -708,6 +708,22 @@ nsresult sbMetadataHandlerTaglib::WriteInternal(
           PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
           WriteOGGImage(oggFile, imageType, imageSpec);
         }
+      } else if (fileExt.EqualsLiteral("mp4") ||
+                 fileExt.EqualsLiteral("m4a")) {
+        LOG(("Writing MPEG-4 specific metadata"));
+        // Write MP4 specific metadata
+        TagLib::MP4::File* oggFile = static_cast<TagLib::MP4::File*>(f.file());
+
+        // Write Image Data
+        nsAutoString imageSpec;
+        result = mpMetadataPropertyArray->GetPropertyValue(
+          NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+          imageSpec
+        );
+        if (NS_SUCCEEDED(result)) {
+          PRInt32 imageType = METADATA_IMAGE_TYPE_FRONTCOVER;
+          WriteMP4Image(oggFile, imageType, imageSpec);
+        }
       }
       
       // Attempt to save the metadata
@@ -922,7 +938,9 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   nsCString                   urlScheme;
   nsCString                   fileExt;
   nsresult                    result = NS_OK;
-  bool                        isMP3, isOGG;
+  bool                        isMP3;
+  bool                        isOGG;
+  bool                        isMP4;
 
   NS_ENSURE_STATE(mpURL);
 
@@ -933,10 +951,12 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   NS_ENSURE_SUCCESS(result, result);
   
   ToLowerCase(fileExt);
-  isMP3 = fileExt.Equals(NS_LITERAL_CSTRING("mp3"));
-  isOGG = fileExt.Equals(NS_LITERAL_CSTRING("ogg")) ||
-          fileExt.Equals(NS_LITERAL_CSTRING("oga"));
-  if (!isMP3 && !isOGG) {
+  isMP3 = fileExt.EqualsLiteral("mp3");
+  isOGG = fileExt.EqualsLiteral("ogg") ||
+          fileExt.EqualsLiteral("oga");
+  isMP4 = fileExt.EqualsLiteral("mp4") ||
+          fileExt.EqualsLiteral("m4a");
+  if (!isMP3 && !isOGG && !isMP4) {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
 
@@ -977,6 +997,10 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
                              aURL);
     else if (isOGG)
       result = WriteOGGImage(static_cast<TagLib::Ogg::Vorbis::File*>(f.file()),
+                             aType,
+                             aURL);
+    else if (isMP4)
+      result = WriteMP4Image(static_cast<TagLib::MP4::File*>(f.file()),
                              aType,
                              aURL);
 
@@ -1249,6 +1273,51 @@ nsresult sbMetadataHandlerTaglib::WriteOGGImage(
   }
   
   return rv;
+}
+
+/**
+ * \brief WriteMP4Image - set the <aMP4File>'s image
+ * \param aMP4File  - the TagLib::MP4::File pointer
+ * \param imageType - Must be sbIMetadataHandler::METADATA_IMAGE_TYPE_FRONTCOVER
+ * \param imageSpec - the string with the URL of the file, use "" if you wish
+ *                    to remove all images of <imageType> from the metadata.
+ */
+nsresult sbMetadataHandlerTaglib::WriteMP4Image(
+                                  TagLib::MP4::File* aMP4File,
+                                  PRInt32 imageType,
+                                  const nsAString &imageSpec)
+{
+  LOG(("%s: setting to image %s",
+       __FUNCTION__,
+       NS_ConvertUTF16toUTF8(imageSpec).get()));
+  nsresult rv;
+
+  NS_ENSURE_TRUE(aMP4File->tag(), NS_ERROR_FAILURE);
+  NS_ENSURE_TRUE(imageType == METADATA_IMAGE_TYPE_FRONTCOVER,
+                 NS_ERROR_NOT_IMPLEMENTED);
+  
+  TagLib::ByteVector data;
+
+  if (imageSpec.IsEmpty()) {
+    // No image provided so just remove existing ones.
+    LOG(("%s: clearing image", __FUNCTION__));
+    data = TagLib::ByteVector::null;
+  } else {
+    PRUint8*  imageData;
+    PRUint32  imageDataSize = 0;
+    nsCString imageMimeType;
+
+    // Read the image file contents
+    rv = ReadImageFile(imageSpec, imageData, imageDataSize, imageMimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG(("%s: setting image to %u bytes", __FUNCTION__, imageDataSize));
+    data.setData((const char*)imageData, imageDataSize);
+  }
+
+  static_cast<TagLib::MP4::Tag*>(aMP4File->tag())->setCover(data);
+  
+  return NS_OK;
 }
 
 /**
