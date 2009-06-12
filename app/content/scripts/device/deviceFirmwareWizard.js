@@ -88,7 +88,19 @@ var deviceFirmwareWizard = {
         throw new Error("not reached");
     }
   },
-
+  
+  doBack: function deviceFirmwareWizard_onBack(aEvent) {
+  },
+  
+  doNext: function deviceFirmwareWizard_onNext(aEvent) {
+  },
+  
+  doExtra1: function deviceFirmwareWizard_onExtra1(aEvent) {
+  },
+  
+  doExtra2: function deviceFirmwareWizard_onExtra2(aEvent) {
+  },
+  
   onDeviceEvent: function deviceFirmwareWizard_onDeviceEvent(aEvent) {
     this._handleDeviceEvent(aEvent);
   },
@@ -112,6 +124,9 @@ var deviceFirmwareWizard = {
 
     this._wizardElem = document.getElementById("device_firmware_wizard");
     this._domEventListenerSet = new DOMEventListenerSet();
+
+    this._wizardElem.canAdvance = true;
+    this._wizardElem.canRewind = true;
 
     this._initialized = true;
   },
@@ -150,6 +165,20 @@ var deviceFirmwareWizard = {
                                      [handler.latestFirmwareReadableVersion]);
                                      
         newVerDesc.appendChild(document.createTextNode(text));
+        
+        var remindMeLaterButton = this.wizardElem.getButton("back");
+        var installNewFirmwareButton = this.wizardElem.getButton("next");
+        
+        remindMeLaterButton.label = 
+          SBString("device.firmware.wizard.check.remind_me_later.label");
+        remindMeLaterButton.accessKey = null;
+        
+        installNewFirmwareButton.label = 
+          SBString("device.firmware.wizard.check.install.label");
+        installNewFirmwareButton.accessKey = null;
+        
+        this.wizardElem.currentPage.setAttribute("showback", "true");
+        this.wizardElem.currentPage.setAttribute("shownext", "true");
                   
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_new_box");

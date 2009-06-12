@@ -386,7 +386,7 @@ sbWizardPageSvc.prototype = {
           nextButton.getAttribute("hidewizardbutton") == "true";
     if (!finishButton.hidden && !finishButton.disabled && !hideFinishButton)
       finishButton.focus();
-    else if (!nextButton.hidden && !nextButton.disbled && !hideNextButton)
+    else if (!nextButton.hidden && !nextButton.disabled && !hideNextButton)
       nextButton.focus();
   },
 

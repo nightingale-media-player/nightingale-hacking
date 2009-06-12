@@ -51,6 +51,8 @@
   title="&device.firmware.wizard.title;"
   onload="deviceFirmwareWizard.doLoad();"
   onunload="deviceFirmwareWizard.doUnload();"
+  onwizardback="deviceFirmwareWizard.doBack();" 
+  onwizardnext="deviceFirmwareWizard.doNext();" 
   onwizardfinish="return deviceFirmwareWizard.doFinish();"
   onwizardcancel="deviceFirmwareWizard.doCancel();"
 >

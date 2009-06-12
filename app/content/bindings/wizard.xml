@@ -347,7 +347,9 @@
           <xul:button class="wizard-button"
                       dlgtype="extra1"
                       hidden="true"/>
-          <xul:button class="wizard-button" dlgtype="extra2" hidden="true"/>
+          <xul:button class="wizard-button" 
+                      dlgtype="extra2" 
+                      hidden="true"/>
           <xul:button label="&wizard.button.cancel.label;"
                       class="wizard-button"
                       dlgtype="cancel"/>
