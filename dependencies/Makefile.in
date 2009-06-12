@@ -220,11 +220,21 @@ GST_PLUGINS_UGLY_NAMES = gstasf \
 
 GST_PLUGINS_BAD_NAMES := gstaiffparse \
                         gstadpcmdec \
+                        gstid3tag \
                         gstrtpmanager \
                         gstsdpelem \
                         gstselector \
                         gstmozillasrc \
                         $(NULL)
+
+
+# Include asfmux only if it's present in the vendor binaries.
+# It's not open source, so it might not be.
+ASFMUX_NAME = $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/$(LIB_PREFIX)gstasfmux$(DLL_SUFFIX)
+
+ifneq (,$(wildcard $(ASFMUX_NAME)))
+GST_PLUGINS_BAD_NAMES += gstasfmux
+endif
 
 ifeq (windows,$(SB_PLATFORM))
 
@@ -233,6 +243,7 @@ GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
                           $(NULL)
 
 GST_PLUGINS_BAD_NAMES += gstacmmp3dec \
+                         gstdmoenc \
                          gstqtaudiowrapper \
                          gstqtvideowrapper \
                          gstdshowdecwrapper \
