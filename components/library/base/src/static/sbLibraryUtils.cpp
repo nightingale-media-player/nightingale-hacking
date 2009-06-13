@@ -264,9 +264,20 @@ nsresult sbLibraryUtils::GetOriginItem(/* in */ sbIMediaItem*   aItem,
   return NS_OK;
 }
 
+inline
+nsCOMPtr<nsIIOService> GetIOService(nsresult & rv) 
+{
+  // Get the IO service.
+  if (NS_IsMainThread()) { 
+    return do_GetIOService(&rv);
+  }
+  return do_ProxiedGetService(NS_IOSERVICE_CONTRACTID, &rv);
+}
+
 /* static */
 nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
-                                       nsIURI** _retval)
+                                       nsIURI** _retval,
+                                       nsIIOService * aIOService)
 {
   NS_ENSURE_ARG_POINTER(aURI);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -289,7 +300,10 @@ nsresult sbLibraryUtils::GetContentURI(nsIURI*  aURI,
     ToLowerCase(spec);
 
     // Regenerate the URI.
-    nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
+    nsCOMPtr<nsIIOService> ioService = aIOService ? aIOService : 
+                                                    GetIOService(rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
     rv = ioService->NewURI(spec, nsnull, nsnull, getter_AddRefs(uri));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -312,7 +326,7 @@ nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
   nsresult rv;
 
   // Get the IO service.
-  nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
+  nsCOMPtr<nsIIOService> ioService = GetIOService(rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Note that NewFileURI is broken on Linux when dealing with
@@ -351,7 +365,7 @@ nsresult sbLibraryUtils::GetFileContentURI(nsIFile* aFile,
   }
 
   // Convert URI to a content URI.
-  return GetContentURI(uri, _retval);
+  return GetContentURI(uri, _retval, ioService);
 }
 
 /**

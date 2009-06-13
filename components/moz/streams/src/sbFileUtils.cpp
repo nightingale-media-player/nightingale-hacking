@@ -98,6 +98,45 @@ nsresult sbOpenInputStream(nsIFile * aFile, nsIInputStream ** aStream)
   return NS_OK;
 }
 
+nsresult sbOpenOutputStream(nsIFile * aFile, nsIOutputStream ** aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+  NS_ENSURE_ARG_POINTER(aFile);
+
+  nsresult rv;
+  nsCOMPtr<nsIFileOutputStream> fileStream =
+    do_CreateInstance(NS_LOCALFILEOUTPUTSTREAM_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = fileStream->Init(aFile, -1, -1, 0);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIOutputStream> stream = do_QueryInterface(fileStream, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  stream.forget(aStream);
+
+  return NS_OK;
+}
+
+nsresult sbOpenOutputStream(nsAString const & aPath, nsIOutputStream ** aStream)
+{
+  NS_ENSURE_ARG_POINTER(aStream);
+
+  nsresult rv;
+  nsCOMPtr<nsILocalFile> file = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = file->InitWithPath(aPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbOpenOutputStream(file, aStream);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
 nsresult sbReadFile(nsIFile * aFile, nsACString &aBuffer)
 {
   NS_ENSURE_ARG_POINTER(aFile);

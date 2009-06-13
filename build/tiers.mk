@@ -64,6 +64,7 @@ tier_componentsbase_dirs = \
    components/filesystemevents \
    components/watchfolder \
    components/controller \
+   components/devices \
    $(NULL)
 
 tier_componentsall_dirs = \

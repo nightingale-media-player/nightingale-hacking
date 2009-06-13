@@ -39,6 +39,7 @@
 
 class sbIMediaItem;
 class sbILibrary;
+class nsIIOService;
 
 class sbLibraryBatchHelper
 {
@@ -123,11 +124,13 @@ public:
    *        library content URI's.
    *
    * \param aURI                URI for which to get content URI.
+   * \param aIOService          Optional IO service object
    *
    * \return                    Library content URI.
    */
-  static nsresult GetContentURI(/* in */ nsIURI*   aURI,
-                                /* out */ nsIURI** _retval);
+  static nsresult GetContentURI(/* in  */ nsIURI*   aURI,
+                                /* out */ nsIURI** _retval,
+                                /* in  */ nsIIOService * aIOService = nsnull);
 
   /**
    * \brief Return a library content URI for the file specified by aFile.
@@ -136,10 +139,10 @@ public:
    *        of nsIIOService.newFileURI for generating library content URI's.
    *
    * \param aFile               File for which to get content URI.
-   *
+   * 
    * \return                    Library content URI.
    */
-  static nsresult GetFileContentURI(/* in */ nsIFile*  aFile,
+  static nsresult GetFileContentURI(/* in  */ nsIFile*  aFile,
                                     /* out */ nsIURI** _retval);
   
   static nsresult GetItemsByProperty(sbIMediaList * aMediaList,

@@ -31,10 +31,11 @@
 
 class nsIFile;
 class nsIInputStream;
+class nsIOutputStream;
 class nsIURI;
 
 /**
- * Helper functions to open a stream given a file path
+ * Helper function to open a stream given a file path
  */
 nsresult sbOpenInputStream(nsAString const & aPath, nsIInputStream ** aStream);
 
@@ -48,6 +49,16 @@ nsresult sbOpenInputStream(nsIURI * aURI, nsIInputStream ** aStream);
  */
 nsresult sbOpenInputStream(nsIFile * aFile, nsIInputStream ** aStream);
 
+/**
+ * Helper function to open an output stream given a file
+ */
+nsresult sbOpenOutputStream(nsIFile * aFile, nsIOutputStream ** aStream);
+
+/**
+ * Helper function to open an output stream given a file path
+ */
+nsresult sbOpenOutputStream(nsAString const & aPath,
+                            nsIOutputStream ** aStream);
 /**
  * Read a file into a buffer
  */

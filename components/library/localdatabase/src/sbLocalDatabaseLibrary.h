@@ -65,6 +65,8 @@ class sbLibraryInsertingEnumerationListener;
 class sbLibraryRemovingEnumerationListener;
 class sbLocalDatabaseMediaListView;
 class sbLocalDatabasePropertyCache;
+class nsIPrefBranch;
+class nsIURI;
 
 typedef nsCOMArray<sbIMediaItem> sbMediaItemArray;
 typedef nsCOMArray<sbIMediaList> sbMediaListArray;
@@ -398,6 +400,8 @@ private:
   // This monitor protects calls to GetMediaItem.
   PRMonitor *mMonitor;
 
+  nsCOMPtr<nsIPrefBranch> mFolderPrefs;
+  
   // Hashtable that holds all the copy listeners.
   nsInterfaceHashtableMT<nsISupportsHashKey, 
                          sbILocalDatabaseLibraryCopyListener> mCopyListeners;
@@ -407,6 +411,12 @@ private:
   // precompiled queries for library stats
   nsCOMPtr<sbIDatabaseQuery> mStatisticsSumQuery;
   nsCOMPtr<sbIDatabasePreparedStatement> mStatisticsSumPreparedStatement;
+
+  nsresult FindMusicFolderURI(nsIURI ** aMusicFolderURI);
+  
+  nsresult SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
+                             nsAString const & aSourceItemGUID,
+                             sbIMediaItem * aDestinationItem);
 };
 
 /**
