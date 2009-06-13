@@ -446,3 +446,13 @@ function assertArraysEqual(a1, a2) {
     assertEqual(a1[i], a2[i], "data mismatch at index " + i);
   }
 } 
+
+// assert the equality of two unordered sets, represnted as JS arrays
+function assertSetsEqual(s1, s2) {
+  assertEqual(s1.length, s2.length, "sets are different lengths");
+  for (var i=0; i<s1.length; i++) {
+    assertTrue(s2.indexOf(s1[i]) >= 0,
+               "set 1 member " + s1[i] + " not in set 2");
+  }
+}
+

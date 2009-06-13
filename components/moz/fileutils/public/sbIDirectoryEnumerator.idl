@@ -31,13 +31,13 @@
 /**
  * \interface sbIDirectoryEnumerator
  *
- *   This interface provides support for enumerating directory contents in a
- * depth first fashion.
+ *   This interface provides support for enumerating directory contents.  The
+ * order of the enumeration is not determinate.
  *
  * "@songbirdnest.com/Songbird/DirectoryEnumerator;1"
  * Use create instance with this component.
  *
- * XXXeps should add breadth first support.
+ * XXXeps should add depth/breadth first support.
  */
 
 interface nsIFile;

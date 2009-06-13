@@ -226,6 +226,9 @@ var testDirectoryEnumerator = {
    */
 
   _testExistence: function testDirectoryEnumerator__testExistence() {
+    // Log progress.
+    dump("Running existence test.");
+
     // Test that the directory enumerator component is available.
     var directoryEnumerator;
     try {
@@ -249,6 +252,9 @@ var testDirectoryEnumerator = {
 
   _testEnumeration:
     function testDirectoryEnumerator__testEnumeration(aTestConfig) {
+    // Log progress.
+    dump("Running enumeration test " + aTestConfig.name + "\n");
+
     // Create the test directory.
     var testDir = this._createTestDir(this.testDir);
 
@@ -269,7 +275,8 @@ var testDirectoryEnumerator = {
     while (directoryEnumerator.hasMoreElements()) {
       result.push(directoryEnumerator.getNext().leafName);
     }
-    assertArraysEqual(result, aTestConfig.expectedResult);
+    dump("Result: " + result + "\n");
+    assertSetsEqual(result, aTestConfig.expectedResult);
 
     // Delete the test directory.
     testDir.remove(true);
