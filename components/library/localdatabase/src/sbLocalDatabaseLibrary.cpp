@@ -2549,10 +2549,14 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
 
   nsString sourceLibraryGUID;
-  aProperties->GetPropertyValue(PROP_LIBRARY, sourceLibraryGUID);
+  if (aProperties) {
+    aProperties->GetPropertyValue(PROP_LIBRARY, sourceLibraryGUID);
+  }
   
   nsString sourceGUID;
-  aProperties->GetPropertyValue(PROP_ITEM, sourceGUID);
+  if (aProperties) {
+    aProperties->GetPropertyValue(PROP_ITEM, sourceGUID);
+  }
   
   // Set up properties for the new item
   rv = SetDefaultItemProperties(mediaItem, aProperties);
