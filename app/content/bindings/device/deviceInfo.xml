@@ -61,7 +61,7 @@
    *
    * Show elements:
    *   image                    Device image.
-   *   name                     User set device friendly name.
+   *   name                     Human-readable device name.
    *   eject                    Eject button.
    *   moreinfo                 More device info dialog button.
    *

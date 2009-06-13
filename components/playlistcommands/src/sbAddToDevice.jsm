@@ -386,10 +386,10 @@ addToDeviceHelper.prototype = {
         devices.push(device);
     }
     // order of devices returned by the registrar is undefined, 
-    // so sort by device friendly name
+    // so sort by device name
     function deviceSorter(x, y) {
-      var friendlyNameX = x.properties.friendlyName;
-      var friendlyNameY = y.properties.friendlyName;
+      var nameX = x.name;
+      var nameY = y.name;
       if (x < y) return -1;
       if (y < x) return 1;
       return 0;
@@ -400,7 +400,7 @@ addToDeviceHelper.prototype = {
     for (var d in devices) {
       var libraryguid;
       var device = devices[d];
-      var devicename = device.properties.friendlyName;
+      var devicename = device.name;
       var isEnabled = false;
       if (!devicename) 
         devicename = "Unnamed Device";

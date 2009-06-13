@@ -574,7 +574,7 @@ var DIW = {
   _update: function DIW__update() {
     // Update the device name label.
     var devNameLabel = this._getElement("device_name_label");
-    var devName = this._getDeviceFriendlyName();
+    var devName = this._getDeviceName();
     if (devNameLabel.value != devName)
         devNameLabel.value = devName;
 
@@ -645,11 +645,12 @@ var DIW = {
    */
 
   _getDeviceModel: function DIW__getDeviceModel() {
-    try {
-      return this._deviceProperties.modelNumber;
-    } catch (err) {
-      return SBString("device.info.unknown");
-    }
+    var modelNumber = null;
+    try { modelNumber = this._deviceProperties.modelNumber; } catch(err) {}
+    if (modelNumber == null)
+      modelNumber = SBString("device.info.unknown");
+
+    return modelNumber;
   },
 
 
@@ -670,17 +671,34 @@ var DIW = {
 
 
   /**
-   * \brief Return the device friendly name.
+   * \brief Return the human-readable device name.
    *
-   * \return Device friendly name.
+   * \return Human-readable device name.
+   */
+
+  _getDeviceName: function DIW__getDeviceName() {
+    var name = null;
+    try { name = this._device.name; } catch(err) {}
+    if (name == null)
+      name = SBString("device.info.unknown");
+
+    return name;
+  },
+
+
+  /**
+   * \brief Return the user set device friendly name.
+   *
+   * \return User set device friendly name.
    */
 
   _getDeviceFriendlyName: function DIW__getDeviceFriendlyName() {
-    try {
-      return this._deviceProperties.friendlyName;
-    } catch (err) {
-      return SBString("device.info.unknown");
-    }
+    var friendlyName = null;
+    try { friendlyName = this._deviceProperties.friendlyName; } catch(err) {}
+    if (friendlyName == null)
+      friendlyName = SBString("device.info.unknown");
+
+    return friendlyName;
   },
 
 
@@ -691,11 +709,12 @@ var DIW = {
    */
 
   _getDeviceSerialNumber: function DIW__getDeviceSerialNumber() {
-    try {
-      return this._deviceProperties.serialNumber;
-    } catch (err) {
-      return SBString("device.info.unknown");
-    }
+    var serialNumber = null;
+    try { serialNumber = this._deviceProperties.serialNumber; } catch(err) {}
+    if (serialNumber == null)
+      serialNumber = SBString("device.info.unknown");
+
+    return serialNumber;
   },
 
 
@@ -706,19 +725,22 @@ var DIW = {
    */
 
   _getDeviceVendor: function DIW__getDeviceVendor() {
-    try {
-      return this._deviceProperties.vendorName;
-    } catch (err) {
-      return SBString("device.info.unknown");
-    }
+    var vendorName = null;
+    try { vendorName = this._deviceProperties.vendorName; } catch(err) {}
+    if (vendorName == null)
+      vendorName = SBString("device.info.unknown");
+
+    return vendorName;
   },
 
   _getDeviceFirmwareVersion: function DIW__getDeviceFirmwareVersion() {
-    try {
-      return this._deviceProperties.firmwareVersion;
-    } catch (err) {
-      return SBString("device.info.unknown");
-    }
+    var firmwareVersion = null;
+    try { firmwareVersion = this._deviceProperties.firmwareVersion; }
+    catch(err) {}
+    if (firmwareVersion == null)
+      firmwareVersion = SBString("device.info.unknown");
+
+    return firmwareVersion;
   },
 
   /**
