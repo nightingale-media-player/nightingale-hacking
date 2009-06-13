@@ -809,7 +809,6 @@ sbMediaFileManager::ZeroPadTrackNumber(const nsAString & aTrackNumStr,
                                        const nsAString & aTotalTrackCountStr,
                                        nsString & aOutString)
 {
-  nsresult rv;
   nsString format(aTrackNumStr);
   nsString totalStr(aTotalTrackCountStr);
 
@@ -832,7 +831,7 @@ sbMediaFileManager::ZeroPadTrackNumber(const nsAString & aTrackNumStr,
   }
 
   aOutString = format;
-  return rv;
+  return NS_OK;
 }
 
 /**
