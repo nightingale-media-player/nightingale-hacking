@@ -44,8 +44,9 @@
 
 #define AGENT_ITUNES_SLEEP_INTERVAL 5000
 
-
-static const NSString *kAgentBundleId = @"org.songbirdnest.songbirditunesagent";
+static const NSString *kAgentBundleId =
+  [NSString stringWithFormat:@"%s.%s", STRINGIZE(SB_APP_BUNDLE_BASENAME),
+                                       STRINGIZE(SB_SIMPLE_PROGRAM)];
 
 
 //------------------------------------------------------------------------------
@@ -109,7 +110,10 @@ GetSongbirdAgentURL()
     // This usually happens because the Finder does not look for additional
     // applications inside of another .app. To fix this, simply register
     // the path to the agent based on the parent apps path.
-    NSString *parentAppBundleID = @"org.songbirdnest.songbird";
+    NSString *parentAppBundleID = 
+      [NSString stringWithFormat:@"%s.songbird", 
+                                 STRINGIZE(SB_APP_BUNDLE_BASENAME)];
+
     NSString *songbirdURL =
       [workspace absolutePathForAppBundleWithIdentifier:parentAppBundleID];
 

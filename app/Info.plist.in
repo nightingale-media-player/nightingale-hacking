@@ -682,7 +682,7 @@
   <key>CFBundleIconFile</key>
   <string>songbird.icns</string>
   <key>CFBundleIdentifier</key>
-  <string>org.songbirdnest.songbird</string>
+  <string>@SB_APP_BUNDLE_BASENAME@.songbird</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>

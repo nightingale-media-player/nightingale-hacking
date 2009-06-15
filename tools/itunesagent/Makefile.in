@@ -88,6 +88,7 @@ ifeq (macosx,$(SB_PLATFORM))
    CMM_EXTRA_DEFS += -DSB_APPNAME=$(SB_APPNAME) \
                      -DSB_PROFILE_VERSION=$(SB_PROFILE_VERSION) \
                      -DSB_SIMPLE_PROGRAM=$(SIMPLE_PROGRAM) \
+                     -DSB_APP_BUNDLE_BASENAME=$(SB_APP_BUNDLE_BASENAME) \
                      $(NULL)
 
    C_INCLUDES = $(srcdir) \

@@ -12,7 +12,7 @@
 	<key>CFBundleIconFile</key>
 	<string>songbird.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.songbirdnest.songbirditunesagent</string>
+	<string>@SB_APP_BUNDLE_BASENAME@.songbirditunesagent</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
