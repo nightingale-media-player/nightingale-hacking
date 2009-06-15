@@ -3336,7 +3336,6 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
 
   if(!aExcludeLists) {
     // Clear our caches
-    mMediaItemTable.Clear();
     mMediaListTable.Clear();
 
     rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items"));
@@ -3346,6 +3345,8 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
     rv = query->AddQuery(NS_LITERAL_STRING("DELETE FROM media_items WHERE is_list = 0"));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  mMediaItemTable.Clear();
 
   PRInt32 dbOk;
   rv = query->Execute(&dbOk);
