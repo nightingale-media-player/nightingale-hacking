@@ -852,7 +852,7 @@ sbMediaManagementJob::GetErrorCount(PRUint32* aCount)
   sbErrorMapIter it;
   sbErrorMapIter end = mErrorMap.end();
   for (it = mErrorMap.begin(); it != end; ++it) {
-    *aCount += 1 + it->second.second.size();
+    *aCount += it->second.first;
   }
   TRACE(("%s - found %n errors", __FUNCTION__, aCount));
   return NS_OK;
