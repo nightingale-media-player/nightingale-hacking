@@ -287,7 +287,7 @@ var DIW = {
 
       case "access" :
         this._deviceSpecUpdateValue("access_value_label",
-                                    this._getDeviceAccessCompatibility());
+                                    this._getDeviceAccessCompatibilityDesc());
         break;
 
       case "playback_formats" :
@@ -584,6 +584,12 @@ var DIW = {
     if (devIconURL && (devImage.src != devIconURL))
       devImage.src = devIconURL;
 
+    // If the device is read-only, then unhide the read-only lock icon
+    var lockImage = this._getElement("device_image_ro");
+    var accessCompatibility = this._getDeviceAccessCompatibility();
+    if (accessCompatibility == "ro")
+      lockImage.hidden = false;
+
     // Update the device specs.
     this._deviceSpecUpdateAll();
   },
@@ -744,7 +750,7 @@ var DIW = {
   },
 
   /**
-   * \brief Return the device access compatibility.
+   * \brief Return the device access compatibility 
    *
    * \return Device access compatibility.
    */
@@ -754,6 +760,17 @@ var DIW = {
           this._getDeviceProperty
                  ("http://songbirdnest.com/device/1.0#accessCompatibility",
                   SBString("device.info.unknown"));
+    return accessCompatibility;
+  },
+
+  /**
+   * \brief Return the device access compatibility in a descriptive manner.
+   *
+   * \return Device access compatibility.
+   */
+
+  _getDeviceAccessCompatibilityDesc: function DIW__getDeviceAccessCompatibilityDesc() {
+    var accessCompatibility = this._getDeviceAccessCompatibility();
     if (accessCompatibility == "ro")
       accessCompatibility = SBString("device.info.read_only");
     else if (accessCompatibility == "rw")

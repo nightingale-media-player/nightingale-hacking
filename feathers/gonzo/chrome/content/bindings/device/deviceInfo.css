@@ -60,6 +60,14 @@ Imported by bindings.css or directly into feathers.
   padding:0px !important;
 }
 
+.device-image-ro
+{
+  height: 16px;
+  width: 16px;
+  background-image: url("chrome://songbird/skin/device/read-only.png");
+  background-repeat: no-repeat;
+  background-position: bottom right;
+}
 
 .eject-button {
   list-style-image:url("chrome://songbird/skin/device/button-eject.png");

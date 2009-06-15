@@ -50,6 +50,7 @@ const gPrefs = Cc['@mozilla.org/preferences-service;1'].getService(Ci.nsIPrefBra
 
 const NC='http://home.netscape.com/NC-rdf#';
 const SP='http://songbirdnest.com/rdf/servicepane#';
+const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 
 const STRINGBUNDLE='chrome://songbird/locale/songbird.properties';
 
@@ -147,9 +148,52 @@ ServicePaneNode.prototype.__defineSetter__ ('url', function (aValue) {
   this.setAttributeNS(NC,'URL', aValue); });
 
 ServicePaneNode.prototype.__defineGetter__ ('image', function () {
-  return this.getAttributeNS(NC,'Icon'); })
+  return this.getAttributeNS(NC,'Icon');
+})
 ServicePaneNode.prototype.__defineSetter__ ('image', function (aValue) {
-  this.setAttributeNS(NC,'Icon', aValue); });
+  var self = this;
+  if ((this.getAttributeNS(DEVICESP_NS, "deviceNodeType") == "device") &&
+      (this.properties.split(/\s/).indexOf("read-only") >= 0))
+  {
+    // Create a read-only representation of the device icon
+    // Since we need a document to create the canvas element from, we'll
+    // grab the appShellService's hidden window
+    var appShellService = Cc["@mozilla.org/appshell/appShellService;1"]
+                            .getService(Ci.nsIAppShellService);
+    var parentDoc = appShellService.hiddenWindow.docShell
+                    .QueryInterface(Ci.nsIInterfaceRequestor)
+                    .getInterface(Ci.nsIDOMWindow).document;
+    var canvas = parentDoc.createElementNS(
+                     "http://www.w3.org/1999/xhtml", 'canvas');
+    canvas.width = 16;
+    canvas.height = 16;
+    var ctx = canvas.getContext('2d');
+
+    // Create the Image elements and draw them to the canvas
+    var deviceImage = parentDoc.createElementNS(
+                     "http://www.w3.org/1999/xhtml", 'img');
+    var roImage = parentDoc.createElementNS(
+                     "http://www.w3.org/1999/xhtml", 'img');
+    roImage.onload = function() {
+      ctx.drawImage(roImage, 0, 0);
+
+      // Get the data URI representation of the canvas:
+      var dataURI= canvas.toDataURL("image/png", "");
+
+      self.setAttributeNS(NC,'Icon', dataURI);
+    }
+    deviceImage.onload = function() {
+      ctx.drawImage(deviceImage, 0, 0);
+      roImage.src = "chrome://songbird/skin/service-pane/read-only.png";
+    }
+
+    // Set the source for the images, thus loading them
+    this.setAttributeNS(NC,'Icon', aValue);
+    deviceImage.src = aValue;
+  } else {
+    this.setAttributeNS(NC,'Icon', aValue);
+  }
+});
 
 ServicePaneNode.prototype.__defineGetter__ ('name', function () {
   return this.getAttributeNS(NC,'Name'); })

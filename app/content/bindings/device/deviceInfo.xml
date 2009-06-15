@@ -89,11 +89,19 @@
                 oncontextmenu="_onContextMenu(event);">
 
         <!-- Device image. -->
-        <xul:image sbid="device_image"
-                   class="device-image"
-                   showid="image"
-                   alt="Generic device icon"
-                   hidden="true"/>
+        <xul:stack sbid="device_image_stack">
+          <xul:image sbid="device_image"
+                     class="device-image"
+                     showid="image"
+                     alt="&device.info.icon.device;"
+                     hidden="true"/>
+          <xul:image sbid="device_image_ro"
+                     class="device-image-ro"
+                     showid="image"
+                     alt="&device.info.icon.readonly;"
+                     flex="0"
+                     hidden="true"/>
+        </xul:stack>
 
         <!-- Device info. -->
         <xul:vbox sbid="summary_box">
