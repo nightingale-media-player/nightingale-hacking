@@ -326,7 +326,6 @@ sbMediaManagementJob::ProcessNextItem()
       SaveError(rv, mNextJobItem);
     }
     
-    UpdateProgress();
 
     rv = FindNextItem(getter_AddRefs(mNextJobItem));
     if (NS_FAILED(rv)) {
@@ -335,6 +334,13 @@ sbMediaManagementJob::ProcessNextItem()
         NS_ENSURE_SUCCESS_BODY(rv, rv);
       #endif
       SaveError(rv, nsnull);
+    }
+
+    if (mNextJobItem) {
+      // Update progress only if we have more to do since
+      // we will also call UpdateProgress when we finish the
+      // loop.
+      UpdateProgress();
     }
   }
   
