@@ -258,7 +258,7 @@ deviceErrorMonitor.prototype = {
         this._removeDevice(device);
       break;
     
-      // And error has occured, we need to store it for later
+      // An error has occured, we need to store it for later
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
         this._logError(aDeviceEvent,
                        SBString("device.error.access_denied"));
@@ -278,6 +278,16 @@ deviceErrorMonitor.prototype = {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE:
         this._logError(aDeviceEvent,
                        SBString("device.error.unsupported_type"));
+      break;
+      
+      // Transcode errors use the data property to pass a sbIMediacoreError
+      // component for error details. We need to extract it and store for later.
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_ERROR:
+        // Grab the extended error info (an sbIMediacoreError object)
+        var coreError = aDeviceEvent.data.QueryInterface(Ci.sbIMediacoreError);
+        if (coreError) {
+          this._logError(aDeviceEvent, coreError.message);
+        }
       break;
 
     }
