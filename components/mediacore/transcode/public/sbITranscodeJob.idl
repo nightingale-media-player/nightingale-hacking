@@ -113,6 +113,12 @@ interface sbITranscodeJob : nsISupports
   PRInt32 vote( in sbIMediaItem aMediaItem, in sbITranscodeProfile aProfile );
 
   /**
+   * \brief Conservatively estimate the output size in bytes, given an input
+   *        duration in milliseconds, and the currently-set profile.
+   */
+  PRInt64 estimateOutputSize(in PRInt32 inputDuration);
+
+  /**
    * \brief Start the transcoding operation
    *
    * Caller should monitor progress via sbIJobProgress

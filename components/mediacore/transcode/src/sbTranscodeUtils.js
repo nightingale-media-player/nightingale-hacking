@@ -355,6 +355,7 @@ TranscodeProfileLoader.prototype = {
       QueryInterface: XPCOMUtils.generateQI(
           [Components.interfaces.sbITranscodeProfile]),
 
+      id              : null,
       description     : null,
       type            : 0,
       containerFormat : null,
@@ -370,25 +371,28 @@ TranscodeProfileLoader.prototype = {
 
 
     // The document element should be 'profile'. Check this.
-    if (element.nodeName != "profile")
+    if (element.localName != "profile")
       throw new Error("Not a profile");
 
      var children = element.childNodes;
      for (var i = 0; i < children.length; i++) 
      {
-       if (children[i].nodeName == "type") {
+       if (children[i].localName == "type") {
          profile.type = this.getType(children[i]);
        }
-       else if (children[i].nodeName == "description") {
+       else if (children[i].localName == "description") {
          profile.description = children[i].textContent;
        }
-       else if (children[i].nodeName == "container") {
+       else if (children[i].localName == "id") {
+         profile.id = children[i].textContent;
+       }
+       else if (children[i].localName == "container") {
          this.processContainer(profile, children[i]);
        }
-       else if (children[i].nodeName == "audio") {
+       else if (children[i].localName == "audio") {
          this.processAudioCodec(profile, children[i]);
        }
-       else if (children[i].nodeName == "video") {
+       else if (children[i].localName == "video") {
          this.processVideoCodec(profile, children[i]);
        }
      }
@@ -438,9 +442,9 @@ TranscodeProfileLoader.prototype = {
     var children = aContainer.childNodes;
     for (var i = 0; i < children.length; i++) 
     {
-      if (children[i].nodeName == "type")
+      if (children[i].localName == "type")
          aProfile.containerFormat = children[i].textContent; 
-      else if (children[i].nodeName == "property")
+      else if (children[i].localName == "property")
         properties.push(this.processProperty(children[i]));
     }
 
@@ -454,9 +458,9 @@ TranscodeProfileLoader.prototype = {
     var children = aAudioCodec.childNodes;
     for (var i = 0; i < children.length; i++) 
     {
-      if (children[i].nodeName == "type")
+      if (children[i].localName == "type")
          aProfile.audioCodec = children[i].textContent; 
-      else if (children[i].nodeName == "property")
+      else if (children[i].localName == "property")
         properties.push(this.processProperty(children[i]));
     }
 
@@ -470,9 +474,9 @@ TranscodeProfileLoader.prototype = {
     var children = aVideoCodec.childNodes;
     for (var i = 0; i < children.length; i++) 
     {
-      if (children[i].nodeName == "type")
+      if (children[i].localName == "type")
          aProfile.videoCodec = children[i].textContent; 
-      else if (children[i].nodeName == "property")
+      else if (children[i].localName == "property")
         properties.push(this.processProperty(children[i]));
     }
 

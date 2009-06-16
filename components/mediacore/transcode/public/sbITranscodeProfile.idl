@@ -48,6 +48,14 @@ interface sbITranscodeProfile : nsISupports
   const unsigned long TRANSCODE_TYPE_VIDEO = 2;
   const unsigned long TRANSCODE_TYPE_AUDIO_VIDEO = 3;
 
+  /*
+   * \brief An opaque string uniquely identifying this profile.
+   *
+   * Generally this would be stored in preferences, etc in order to fetch the
+   * same profile later.
+   */
+  readonly attribute AString id;
+
   /* \brief A human-readable description of what this profile is for 
    *
    * Example: "MP3 Audio"

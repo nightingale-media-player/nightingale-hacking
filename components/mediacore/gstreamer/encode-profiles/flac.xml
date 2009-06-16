@@ -1,5 +1,6 @@
 <profile>
   <type>audio</type>
+  <id>484b0182-645f-4ea7-a992-59d5c098dea2</id>
   <description>FLAC (Free Lossless Audio Codec)</description>
   <mimetype>audio/x-flac</mimetype>
 

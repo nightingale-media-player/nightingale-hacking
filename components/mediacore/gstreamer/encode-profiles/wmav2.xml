@@ -1,5 +1,6 @@
 <profile>
   <type>audio</type>
+  <id>dca5af47-1670-4d97-b4aa-30da20ac3d93</id>
   <description>Windows Media Audio (WMA version 2)</description>
   <mimetype>audio/x-ms-wma</mimetype>
 

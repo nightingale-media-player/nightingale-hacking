@@ -685,6 +685,79 @@ sbGStreamerTranscode::BuildPipelineFragmentFromProfile(
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbGStreamerTranscode::EstimateOutputSize(PRInt32 inputDuration,
+        PRInt64 *_retval)
+{
+  /* It's pretty hard to do anything really accurate here.
+     Note that we're currently ONLY doing audio transcoding, which simplifies
+     things.
+     Current approach
+      - Calculate bitrate of audio.
+         - if there's a bitrate property, assume it's in bits per second, and is
+           roughly accurate
+         - otherwise, assume we're encoding to a lossless format such as FLAC.
+           Typically, those get an average compression ratio of a little better
+           than 0.6 (for 44.1kHz 16-bit stereo content). Assume that's what
+           we have; this will sometimes be WAY off, but we can't really do
+           any better.
+      - Calculate size of audio data based on this and the duration
+      - Add 5% for container/etc overhead.
+   */
+  NS_ENSURE_STATE (mProfile);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  PRUint32 bitrate = 0;
+  nsresult rv;
+  nsCOMPtr<nsIArray> audioProperties;
+
+  rv = mProfile->GetAudioProperties(getter_AddRefs(audioProperties));
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  PRUint32 propertiesLength = 0;
+  rv = audioProperties->GetLength(&propertiesLength);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  for (int j = 0; j < propertiesLength; j++) {
+    nsCOMPtr<sbITranscodeProfileProperty> property = 
+        do_QueryElementAt(audioProperties, j, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString propName;
+    rv = property->GetPropertyName(propName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (propName.EqualsLiteral("bitrate")) {
+      nsCOMPtr<nsIVariant> propValue;
+      rv = property->GetValue(getter_AddRefs(propValue));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 bitrate;
+      rv = propValue->GetAsUint32(&bitrate);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      break;
+    }
+  }
+
+  if (bitrate == 0) {
+    // No bitrate found; assume something like FLAC as above. This is bad; how
+    // can we do better though?
+    bitrate = 0.6 * (44100 * 2 * 16);
+  }
+
+  /* Calculate size from duration (in ms) and bitrate (in bits/second) */
+  PRUint64 size = (PRUint64)inputDuration * bitrate / 8 / 1000;
+
+  /* Add 5% for container overhead, etc. */
+  size += (size/20);
+
+  *_retval = size;
+
+  return NS_OK;
+}
+
+
 struct GSTNameMap {
   const char *name;
   const char *gstName;
