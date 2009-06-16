@@ -79,7 +79,11 @@ function getImageData(imageFileName) {
   return [newMimeType, newImageData];
 }
 
-function testWrite(testFileName, shouldPass) {
+function testWrite(testFileName, shouldPass, artType) {
+  if (typeof(artType) == "undefined") {
+    artType = Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_OTHER;
+  }
+
   // Grab the test file
   var writeFile = testFolder.clone();
   writeFile.append(testFileName);
@@ -100,8 +104,7 @@ function testWrite(testFileName, shouldPass) {
 
   try {
     var newImageFile = newFileURI( imageFile );
-    handler.setImageData(Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_OTHER,
-                         newImageFile.spec);
+    handler.setImageData(artType, newImageFile.spec);
   } catch (err) {
     if (shouldPass) {
       doThrow("Test write:" + err);
@@ -112,10 +115,7 @@ function testWrite(testFileName, shouldPass) {
     // now grab it from the same file and compare the results
     var testMimeType = {};
     var testDataSize = {};
-    var testImageData = handler.getImageData(Ci.sbIMetadataHandler
-                                          .METADATA_IMAGE_TYPE_OTHER,
-                                          testMimeType,
-                                          testDataSize);
+    var testImageData = handler.getImageData(artType, testMimeType, testDataSize);
     
     if (shouldPass) {
       assertEqual(testMimeType.value,
@@ -220,5 +220,7 @@ function runTest () {
   // Now for writing an image to metadata
   testWrite("MP3_ID3v24.mp3", true);
   testWrite("Ogg_Vorbis.ogg", true);
+  testWrite("MPEG4_Audio_Apple_Lossless_NoArt.m4a", true,
+            Ci.sbIMetadataHandler.METADATA_IMAGE_TYPE_FRONTCOVER);
   testWrite("TrueAudio.tta", false);
 }
