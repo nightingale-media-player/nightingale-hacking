@@ -474,9 +474,7 @@ sbMetadataHandlerWMA::GetImageData(PRInt32 aType,
     return rv;
   }
 
-  // can't use WMFSDK, try WMP instead
-  // this typically occurs with DRMed media files because the WMF path
-  // has no way to specify that we don't want to access the streams
+  // can't use WMFSDK, try WMP instead.
   rv = ReadAlbumArtWMP(m_FilePath, aMimeType, aDataLen, aData);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -861,10 +859,6 @@ sbMetadataHandlerWMA::CreateWMPMediaItem(const nsAString& aFilePath,
   hr = settings->put_autoStart(PR_FALSE);
   COM_ENSURE_SUCCESS(hr);
 
-  VARIANT_BOOL mute = PR_TRUE;
-  hr = settings->put_mute(mute);
-  COM_ENSURE_SUCCESS(hr);
-
   CComBSTR uiMode(_T("invisible"));
   hr = player->put_uiMode(uiMode);
   COM_ENSURE_SUCCESS(hr);
@@ -909,8 +903,8 @@ NS_METHOD
 sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
                                          PRInt32* _retval)
 {
-  CComPtr<IWMSyncReader> reader;
-  HRESULT hr = WMCreateSyncReader(NULL, 0, &reader);
+  CComPtr<IWMMetadataEditor> reader;
+  HRESULT hr = WMCreateEditor(&reader);
   COM_ENSURE_SUCCESS(hr);
 
   nsAutoString filePath(aFilePath);
@@ -1046,10 +1040,10 @@ sbMetadataHandlerWMA::ReadAlbumArtWMFSDK(const nsAString &aFilePath,
                                          PRUint32        *aDataLen,
                                          PRUint8        **aData)
 {
-  CComPtr<IWMSyncReader> reader;
-  HRESULT hr = WMCreateSyncReader(NULL, 0, &reader);
+  CComPtr<IWMMetadataEditor> reader;
+  HRESULT hr = WMCreateEditor(&reader);
   COM_ENSURE_SUCCESS(hr);
-
+  
   nsAutoString filePath(aFilePath);
 
   // This will fail for all protected files, so silence the warning
