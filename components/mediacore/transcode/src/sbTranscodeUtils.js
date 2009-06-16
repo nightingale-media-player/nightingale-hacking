@@ -47,7 +47,9 @@ TranscodeBatchJob.prototype = {
           [Ci.sbITranscodeBatchJob,
            Ci.sbIJobProgress,
            Ci.sbIJobCancelable,
-           Ci.sbIJobProgressTime]),
+           Ci.sbIJobProgressTime,
+           Ci.sbIMediacoreEventTarget,
+           Ci.sbIMediacoreEventListener]),
 
   _profile         : null,
   _numSimultaneous : 1,
@@ -58,13 +60,15 @@ TranscodeBatchJob.prototype = {
   _jobs            : [],
 
   _errors          : [],
-  _listeners       : [],
+  _joblisteners    : [],
   _jobStatus       : Ci.sbIJobProgress.STATUS_RUNNING,
 
   _statusText      : SBString("transcode.batch.running"),
   _titleText       : SBString("transcode.batch.title"),
 
   _startTime       : -1,
+
+  _eventlisteners  : [],
 
   // sbITranscodeBatch implementation
 
@@ -162,16 +166,16 @@ TranscodeBatchJob.prototype = {
   addJobProgressListener :
       function TranscodeBatchJob_addJobProgressListener(aListener) 
   {
-    this._listeners.push(aListener);
+    this._joblisteners.push(aListener);
   },
 
   removeJobProgressListener :
       function TranscodeBatchJob_removeJobProgressListener(aListener) 
   {
-    var index = this._listeners.indexOf(aListener);
+    var index = this._joblisteners.indexOf(aListener);
 
     if (index >= 0) {
-      this._listeners.splice(index, 1);
+      this._joblisteners.splice(index, 1);
     }
   },
 
@@ -211,12 +215,50 @@ TranscodeBatchJob.prototype = {
     }
   },
 
+  // sbIMediacoreEventTarget implementation
+  dispatchEvent : function TranscodeBatchJob_dispatchEvent(aEvent, aAsync)
+  {
+    // Iterate over a copy of the listeners array to avoid problems with
+    // removal while we're iterating.
+    var listeners = [].concat(this._eventlisteners);
+    for (var i = 0; i < listeners.length; i++) {
+      try {
+        listeners[i].onMediacoreEvent(aEvent);
+      }
+      catch (e) {
+        Cu.reportError(e);
+      }
+    }
+  },
+
+  addListener : function TranscodeBatchJob_addListener(aListener)
+  {
+    this._eventlisteners.push(aListener);
+  },
+
+  removeListener :
+      function TranscodeBatchJob_removeListener(aListener) 
+  {
+    var index = this._eventlisteners.indexOf(aListener);
+
+    if (index >= 0) {
+      this._eventlisteners.splice(index, 1);
+    }
+  },
+
+  // sbIMediacoreEventListener implementation
+  onMediacoreEvent : function TranscodeBatchJob_onMediacoreEvent(aEvent)
+  {
+    // Just forward to our listeners.
+    this.dispatchEvent(aEvent, false);
+  },
+
   // internals
 
   _updateListeners : function TranscodeBatchJob__updateListeners() {
     // Iterate over a copy of the listeners array to avoid problems with
     // removal while we're iterating.
-    var listeners = [].concat(this._listeners);
+    var listeners = [].concat(this._joblisteners);
     for (var i = 0; i < listeners.length; i++) {
       try {
         listeners[i].onJobProgress(this);
@@ -311,6 +353,7 @@ TranscodeBatchJob.prototype = {
         {
           // Then it's done!
           job.removeJobProgressListener(this);
+          job.removeListener(self);
 
           self._itemDone(job);
         }
@@ -319,6 +362,8 @@ TranscodeBatchJob.prototype = {
     };
 
     transcoder.addJobProgressListener(listener);
+    transcoder.addListener(this);
+
     this._jobs.push(transcoder);
 
     transcoder.transcode();
