@@ -276,7 +276,7 @@ try
                          theSongbirdStrings);
 
       // Initialize the filepicker with our text, a parent and the mode.
-      fp.init(window, sel, nsIFilePicker.modeOpen);
+      fp.init(window, sel, nsIFilePicker.modeOpenMultiple);
 
       var playlistfiles = SBString("open.playlistfiles", "Playlist Files",
                                    theSongbirdStrings);
@@ -314,7 +314,14 @@ try
       var fp_status = fp.show();
       if ( fp_status == nsIFilePicker.returnOK )
       {
-        SBOpenPlaylistURI(fp.fileURL, fp.file.leafName);
+        var aFile, aURI, allFiles = fp.files;
+        var ioService = Components.classes["@mozilla.org/network/io-service;1"]
+                          .getService(Components.interfaces.nsIIOService)
+        while(allFiles.hasMoreElements()) {
+          aFile = allFiles.getNext().QueryInterface(Components.interfaces.nsIFile);
+          aURI = ioService.newFileURI(aFile);
+          SBOpenPlaylistURI(aURI, aFile.leafName);
+        }
       }
     }
     catch(err)
