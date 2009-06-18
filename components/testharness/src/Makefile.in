@@ -29,6 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+DISABLE_IMPLICIT_NAMING = 1
+
 DYNAMIC_LIB = sbTestHarness
 
 CPP_SRCS = sbLeakCanary.cpp \
