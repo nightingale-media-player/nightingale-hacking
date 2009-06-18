@@ -170,21 +170,12 @@ else
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
-   DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit
+   DYNAMIC_LIB_EXTRA_FLAGS = -framework AppKit \
+                             -mmacosx-version-min=10.4 \
+                             $(NULL)
 endif
-
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbAboutGStreamer.js \
                       $(NULL)
-
-# preedTODO: detanglify this; should either be a component for all platforms
-# or not at all.
-ifeq (macosx,$(SB_PLATFORM))
-   IS_COMPONENT = 1
-endif
-
-# We use the stub loader to load this dll, so stick it in the lib directory
-#SONGBIRD_LIB = $(CURDIR)/$(DYNAMIC_LIB) \
-#               $(NULL)
 
 include $(topsrcdir)/build/rules.mk
