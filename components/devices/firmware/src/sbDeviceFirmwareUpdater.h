@@ -87,8 +87,13 @@ protected:
     nsClassHashtableMT<nsISupportsHashKey,
                        sbDeviceFirmwareHandlerStatus> handlerstatus_t;
 
+  typedef
+    nsInterfaceHashtableMT<nsISupportsHashKey,
+                           sbIFileDownloaderListener> downloaders_t;
+
   runninghandlers_t mRunningHandlers;
   handlerstatus_t   mHandlerStatus;
+  downloaders_t     mDownloaders;
 
   nsCOMPtr<nsIEventTarget> mThreadPool;
 };

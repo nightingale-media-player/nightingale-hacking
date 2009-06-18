@@ -24,6 +24,9 @@
 //
 */
 
+#ifndef __SB_BASEDEVICEFIRMWAREHANDLER_H__
+#define __SB_BASEDEVICEFIRMWAREHANDLER_H__
+
 #include <sbIDeviceFirmwareHandler.h>
 
 #include <nsITimer.h>
@@ -159,3 +162,5 @@ protected:
   nsCOMPtr<nsIXMLHttpRequest> mXMLHttpRequest;
   nsCOMPtr<nsITimer>          mXMLHttpRequestTimer;
 };
+
+#endif /*__SB_BASEDEVICEFIRMWAREHANDLER_H__*/

@@ -74,8 +74,6 @@ sbDeviceFirmwareUpdater::~sbDeviceFirmwareUpdater()
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
   }
-
-  mRunningHandlers.Clear();
 }
 
 nsresult
@@ -133,6 +131,9 @@ sbDeviceFirmwareUpdater::Init()
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   success = mHandlerStatus.Init(MIN_RUNNING_HANDLERS);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  success = mDownloaders.Init(MIN_RUNNING_HANDLERS);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIEventTarget> threadPool = 
@@ -346,8 +347,19 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   rv = downloader->Start();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXXAus: Save ref to downloader so we can cancel it if the cancel
-  //         is called during download of firmware
+  nsCOMPtr<sbIFileDownloaderListener> listener;
+  if(mDownloaders.Get(aDevice, getter_AddRefs(listener))) {
+    sbDeviceFirmwareDownloader *downloader = 
+      reinterpret_cast<sbDeviceFirmwareDownloader *>(listener.get());
+    
+    rv = downloader->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mDownloaders.Remove(aDevice);
+  }
+
+  PRBool success = mDownloaders.Put(aDevice, downloader);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
   return NS_OK;
 }
@@ -435,6 +447,15 @@ sbDeviceFirmwareUpdater::FinalizeUpdate(sbIDevice *aDevice)
 
   mRunningHandlers.Remove(aDevice);
   mHandlerStatus.Remove(handler);
+
+  nsCOMPtr<sbIFileDownloaderListener> listener;
+  if(mDownloaders.Get(aDevice, getter_AddRefs(listener))) {
+    sbDeviceFirmwareDownloader *downloader = 
+      reinterpret_cast<sbDeviceFirmwareDownloader *>(listener.get());
+    
+    nsresult rv = downloader->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

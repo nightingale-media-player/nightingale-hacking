@@ -444,7 +444,7 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!exists) {
-    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0644);
+    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -452,7 +452,7 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!isDirectory) {
-    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0644);
+    rv = cacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -532,7 +532,7 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice()
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!exists) {
-    rv = deviceCacheDir->Create(nsIFile::DIRECTORY_TYPE, 0644);
+    rv = deviceCacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -540,7 +540,7 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice()
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!isDirectory) {
-    rv = deviceCacheDir->Create(nsIFile::DIRECTORY_TYPE, 0644);
+    rv = deviceCacheDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -641,7 +641,7 @@ sbDeviceFirmwareDownloader::Cancel()
   NS_ENSURE_STATE(mDownloader);
 
   nsresult rv = mDownloader->Cancel();
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't cancel download");
 
   nsCOMPtr<sbIFileDownloaderListener> grip(this);
   rv = mDownloader->SetListener(nsnull);
