@@ -33,10 +33,7 @@ SUBDIRS = \
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbLibraryManager
-ifdef DEBUG
-target := $(addsuffix _d,$(target))
-endif
+DYNAMIC_LIB = sbLibraryManager
 
 CPP_SRCS = sbLibraryConstraints.cpp \
            sbLibraryManager.cpp \
@@ -57,23 +54,13 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
                $(MOZSDK_INCLUDE_DIR)/rdf \
                $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  components/library/base/src/static/sbLibraryUtils \
+  components/moz/strings/src/sbMozStringUtils \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdLibraryManager

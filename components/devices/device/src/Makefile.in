@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceCore$(DEBUG:%=_d)
+STATIC_LIB = sbDeviceCore
 
 CPP_SRCS = sbBaseDevice.cpp \
            sbDeviceUtils.cpp \
@@ -57,10 +57,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(NULL)
-
-STATIC_LIB = $(target_name)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js \
                       $(srcdir)/sbDeviceErrorMonitor.js \

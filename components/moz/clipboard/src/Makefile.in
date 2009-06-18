@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbClipboardHelper_d
-else
-target_name = sbClipboardHelper
-endif
+DYNAMIC_LIB = sbClipboardHelper
 
 CPP_SRCS = sbClipboardHelper.cpp \
            sbClipboardHelperModule.cpp \
@@ -52,17 +48,6 @@ CPP_INCLUDES = $(DEPTH)/components/moz/clipboard/public \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/mimetype \
                $(NULL)
-
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = xpcomglue_s \
-                            xpcom \
-                            nspr4 \
-                            $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 IS_COMPONENT = 1
 

@@ -32,12 +32,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbLibraryUtils$(DEBUG:%=_d)
+STATIC_LIB = sbLibraryUtils
 
 CPP_SRCS = \
-  sbLibraryUtils.cpp \
-  sbMediaListEnumSingleItemHelper.cpp \
-  $(NULL)
+   sbLibraryUtils.cpp \
+   sbMediaListEnumSingleItemHelper.cpp \
+   $(NULL)
 
 CPP_EXTRA_INCLUDES = \
   $(DEPTH)/components/library/base/public \
@@ -52,9 +52,5 @@ CPP_EXTRA_INCLUDES = \
   $(MOZSDK_INCLUDE_DIR)/pref \
   $(MOZSDK_INCLUDE_DIR)/rdf \
   $(NULL)
-
-STATIC_LIB = $(target)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 include $(topsrcdir)/build/rules.mk

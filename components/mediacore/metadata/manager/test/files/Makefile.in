@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = metadatamanager/files
 
+#preedTODO: fix this; should be $(wildcard) so we get actual files here
 SONGBIRD_TESTS = $(srcdir)/*.mp3 \
                  $(srcdir)/*.wma \
                  $(srcdir)/*.flac \

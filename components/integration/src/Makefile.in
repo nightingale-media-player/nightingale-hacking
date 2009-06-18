@@ -33,6 +33,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js
 
+#preedTODO Fix this; remove nested ifs.
 ifeq ($(SB_PLATFORM), windows)
 SUBDIRS = win32
 else

@@ -29,7 +29,7 @@ VPATH = @srcdir@ @top_srcdir@/components/mediacore/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediacoreManager$(DEBUG:%=_d)
+DYNAMIC_LIB = sbMediacoreManager
 
 CPP_SRCS = sbMediacoreManager.cpp \
            sbMediacoreManagerModule.cpp \
@@ -78,23 +78,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
 DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
-ifdef DEBUG
-moz_utils = sbMozStringUtils_d
-else
-moz_utils = sbMozStringUtils
-endif
-
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
-                              $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += \
+   components/moz/strings/src/sbMozStringUtils \
+   components/moz/threads/src/sbMozThreads \
+   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediacoreManager
 

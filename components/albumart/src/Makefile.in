@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbAlbumArt_d
-else
-target_name = sbAlbumArt
-endif
+DYNAMIC_LIB = sbAlbumArt
 
 CPP_SRCS = \
   sbAlbumArtCommon.cpp \
@@ -62,30 +58,13 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/albumart/public \
                $(MOZSDK_INCLUDE_DIR)/dom \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4 \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             unicharutil_external_s \
-                            xpcomglue_s \
-                            xpcom \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
-
-ifdef DEBUG
-moz_stringutils = sbMozStringUtils_d
-moz_threads = sbMozThreads_d
-else
-moz_stringutils = sbMozStringUtils
-moz_threads = sbMozThreads
-endif
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_stringutils) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/$(moz_threads) \
+  components/moz/strings/src/sbMozStringUtils \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbLastFmAlbumArtFetcher.js \

@@ -28,13 +28,7 @@ VPATH = @srcdir@ @srcdir@/..
 
 include $(DEPTH)/build/autodefs.mk
 
-
-ifdef DEBUG
-target_name = sbIntegration_d$(DLL_SUFFIX)
-else
-target_name = sbIntegration$(DLL_SUFFIX)
-endif
-
+DYNAMIC_LIB = sbIntegration
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                $(DEPTH)/components/dataremote/public \
@@ -59,16 +53,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4  \
-                            xpcom \
-                            xpcomglue_s \
-                            $(NULL)
-
-DYNAMIC_LIB_EXTRA_IMPORTS += ole32 \
-                             $(NULL)
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4  \
+                            ole32 \
+									 $(NULL)
 
 CPP_SRCS = MultiMonitor.cpp \
            WindowMinMax.cpp \
@@ -85,9 +72,6 @@ CPP_SRCS += NativeWindowFromNode.cpp \
             WindowLayer.cpp \
             IntegrationComponent.cpp \
             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
 

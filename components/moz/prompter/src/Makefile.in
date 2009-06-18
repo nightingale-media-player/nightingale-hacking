@@ -29,12 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbPrompter_d
-else
-target_name = sbPrompter
-endif
-
 CPP_SRCS = sbPrompter.cpp \
            sbPrompterModule.cpp \
            $(NULL)
@@ -46,17 +40,9 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/prompter/public \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4 \
-                            xpcomglue_s \
-                            xpcom \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
+DYNAMIC_LIB = sbPrompter
 
 IS_COMPONENT = 1
 

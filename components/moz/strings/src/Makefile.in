@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbMozStringUtils_d
-else
-target_name = sbMozStringUtils
-endif
+STATIC_LIB = sbMozStringUtils
 
 CPP_SRCS = sbTArrayStringEnumerator.cpp \
            sbStringBundle.cpp \
@@ -47,15 +43,15 @@ CPP_EXTRA_INCLUDES = \
                $(MOZSDK_INCLUDE_DIR)/intl \
                $(NULL)
 
-STATIC_LIB = $(target_name)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 # preedTODO: fix this hack
 libs::
 ifeq (macosx,$(SB_PLATFORM))
-	$(LN) -sf $(target_name)$(LIB_SUFFIX) lib$(target_name)$(LIB_SUFFIX)
+	$(LN) -sf $(OUR_STATIC_LIB) lib$(OUR_STATIC_LIB)
 endif
+
+clean::
+	$(RM) lib$(OUR_STATIC_LIB)
+
 
 include $(topsrcdir)/build/rules.mk
 

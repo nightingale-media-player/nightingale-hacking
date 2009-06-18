@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediaSniffer
-
 CPP_SRCS = \
   sbMediaSniffer.cpp \
   sbMediaSnifferModule.cpp \
@@ -43,18 +41,10 @@ CPP_EXTRA_INCLUDES = \
   $(MOZSDK_INCLUDE_DIR)/uriloader \
   $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
+DYNAMIC_LIB = sbMediaSniffer
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = \
-  plds4 \
-  nspr4 \
-  xpcom \
-  xpcomglue_s \
-  $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
 
 LIBSONGBIRD_COMPONENT = sbMediaSniffer
 

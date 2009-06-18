@@ -29,17 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbMozThreads_d
-else
-target_name = sbMozThreads
-endif
+STATIC_LIB = sbMozThreads
 
 CPP_SRCS = sbProxiedComponentManager.cpp \
            $(NULL)
-
-STATIC_LIB = $(target_name)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 include $(topsrcdir)/build/rules.mk

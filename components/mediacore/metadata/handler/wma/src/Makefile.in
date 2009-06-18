@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbMetadataHandlerWMA_d
-else
-target_name = sbMetadataHandlerWMA
-endif
+DYNAMIC_LIB = sbMetadataHandlerWMA
 
 CPP_SRCS = MetadataHandlerWMA.cpp \
            MetadataHandlerWMAComponent.cpp \
@@ -53,27 +49,17 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            unicharutil_external_s \
+DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
                             WMVCORE \
                             wininet \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 IS_COMPONENT = 1
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/streams/src/sbMozStreams$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  components/moz/streams/src/sbMozStreams \
+  components/moz/strings/src/sbMozStringUtils \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 include $(topsrcdir)/build/rules.mk

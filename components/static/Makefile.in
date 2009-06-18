@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbComponents
+DYNAMIC_LIB = sbComponents
 
 CPP_SRCS = \
   nsStaticComponents.cpp \
@@ -40,12 +40,9 @@ CPP_EXTRA_INCLUDES = \
   $(MOZSDK_INCLUDE_DIR)/necko \
   $(NULL)
 
-DYNAMIC_LIB = $(target)$(DEBUG:%:_d)$(DLL_SUFFIX)
+DYNAMIC_LIB_EXTRA_OBJS = $(shell cat link-libs)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
-    $(shell cat link-libs)
-
-DYNAMIC_LIB_EXTRA_IMPORTS = \
+DYNAMIC_LIB_IMPORTS = \
   xpcomglue_s \
   $(shell cat link-imports) \
   $(NULL)

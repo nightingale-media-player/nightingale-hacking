@@ -29,32 +29,25 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = devicebase_d
-else
-target_name = devicebase
-endif
+STATIC_LIB = devicebase
 
 CPP_SRCS = DeviceBase.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
-               $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/library/localdatabase/public \
-               $(topsrcdir)/components/library/localdatabase/src \
-               $(DEPTH)/components/property/public \
-               $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR)/docshell \
-               $(MOZSDK_INCLUDE_DIR)/rdf \
-               $(MOZSDK_INCLUDE_DIR)/rdfutil \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
-
-STATIC_LIB = $(target_name)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+CPP_EXTRA_INCLUDES = \
+ $(DEPTH)/components/devicesobsolete/base/public \
+ $(DEPTH)/components/dbengine/public \
+ $(DEPTH)/components/library/base/public \
+ $(DEPTH)/components/library/localdatabase/public \
+ $(topsrcdir)/components/library/localdatabase/src \
+ $(DEPTH)/components/property/public \
+ $(topsrcdir)/components/property/src \
+ $(MOZSDK_INCLUDE_DIR)/docshell \
+ $(MOZSDK_INCLUDE_DIR)/rdf \
+ $(MOZSDK_INCLUDE_DIR)/rdfutil \
+ $(MOZSDK_INCLUDE_DIR)/necko \
+ $(MOZSDK_INCLUDE_DIR)/unicharutil \
+ $(MOZSDK_IDL_DIR) \
+ $(NULL)
 
 include $(topsrcdir)/build/rules.mk

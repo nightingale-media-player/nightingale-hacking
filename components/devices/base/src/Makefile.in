@@ -61,21 +61,16 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(NULL)
 
-DYNAMIC_LIB = sbDeviceBase$(DEBUG:%=_d)$(DLL_SUFFIX)
+DYNAMIC_LIB = sbDeviceBase
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcomglue_s \
-                            xpcom \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
-                              $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += \
+   components/library/base/src/static/sbLibraryUtils \
+   components/moz/strings/src/sbMozStringUtils \
+   components/moz/threads/src/sbMozThreads \
+   $(NULL)
 
 IS_COMPONENT = 1
 

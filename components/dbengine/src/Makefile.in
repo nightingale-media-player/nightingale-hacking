@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbDBEngine_d
-else
-target_name = sbDBEngine
-endif
+DYNAMIC_LIB = sbDBEngine
 
 # preedTODO investigate
 ifeq (windows,$(SB_PLATFORM))
@@ -76,7 +72,7 @@ endif
 endif
 
 ifeq (macosx, $(SB_PLATFORM))
-export MACOSX_DEPLOYMENT_TARGET=10.4
+   export MACOSX_DEPLOYMENT_TARGET=10.4
 endif
 
 ifdef SB_SQLITE_DEBUG
@@ -144,53 +140,47 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
                             
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-                              $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
-                              $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += \
+   components/moz/strings/src/sbMozStringUtils \
+   components/moz/threads/src/sbMozThreads \
+   $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_STATIC_IMPORTS += unicharutil_external_s
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS +=  unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_IMPORTS +=  unicharutil_external_s
 endif
 
 ifeq (linux,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s 
-  DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver \
-                             $(PTHREAD_LIBS) \
-                             $(GLIB_LIBS) \
-                             $(NULL)
-  CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
-                     $(NULL)
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s 
+   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-version-script,$(srcdir)/hide-sqlite.ver \
+                              $(PTHREAD_LIBS) \
+                              $(GLIB_LIBS) \
+                              $(NULL)
+   CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
+                      $(NULL)
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
-  DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver \
-                             $(PTHREAD_LIBS) \
-                             $(GLIB_LIBS) \
-                             -lm \
-                             $(NULL)
-  CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
-                       $(NULL)
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_FLAGS += -M $(srcdir)/hide-sqlite.ver \
+                              $(PTHREAD_LIBS) \
+                              $(GLIB_LIBS) \
+                              -lm \
+                              $(NULL)
+   CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
+                      $(NULL)
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation -framework Cocoa
+   DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
+	                           -framework Cocoa
 endif
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdDatabaseEngineComponent
 

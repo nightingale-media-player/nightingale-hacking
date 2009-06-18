@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbWatchFolderService
-ifdef DEBUG
-target := $(addsuffix _d,$(target))
-endif
-
+DYNAMIC_LIB = sbWatchFolderService
 
 CPP_SRCS = sbWatchFolderService.cpp \
            sbWatchFolderComponent.cpp \
@@ -62,23 +58,13 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
                $(MOZSDK_INCLUDE_DIR)/xulapp \
                $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcomglue_s \
-                            xpcom \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
-  $(NULL)
+   components/moz/strings/src/sbMozStringUtils \
+   components/moz/threads/src/sbMozThreads \
+   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdWatchFolderComponent 
 

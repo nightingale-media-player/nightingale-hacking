@@ -56,8 +56,13 @@ SUBDIRS += windows/tests \
            $(NULL)
 endif # SB_PLATFORM = windows
 
-SIMPLE_PROGRAM = disthelper$(BIN_SUFFIX)
-SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+# This executable gets called by the updater, so having a _d in the debug
+# version will make it impossible to use a debug disthelper and test udpates
+# end-to-end; so, disable naming.
+
+DISABLE_IMPLICIT_NAMING = 1
+
+SIMPLE_PROGRAM = disthelper
 
 FINAL_TARGET = $(SONGBIRD_DISTDIR)
 

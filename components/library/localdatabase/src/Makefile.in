@@ -29,7 +29,7 @@ VPATH = @srcdir@ @top_srcdir@/components/library/base/src/
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbLocalDatabaseLibrary
+DYNAMIC_LIB = sbLocalDatabaseLibrary
 
 XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
                  $(NULL)
@@ -121,21 +121,13 @@ CPP_EXTRA_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
                 $(NULL)
 endif
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4 \
-                            xpcom \
-                            xpcomglue_s \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  components/moz/strings/src/sbMozStringUtils \
+  components/library/base/src/static/sbLibraryUtils \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))

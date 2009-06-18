@@ -51,6 +51,9 @@ ifeq (,$(DISABLE_IMPLICIT_SUBDIRS))
    endif
 endif
 
+# Right now this system is not compatible with parallel make.
+.NOTPARALLEL: all clean libs export
+
 ###############################################################################
 
 LOOP_OVER_SUBDIRS = \
@@ -62,6 +65,34 @@ ifneq (,$(OBJS)$(XPIDLSRCS)$(SDK_XPIDLSRCS)$(SIMPLE_PROGRAMS))
    MAKE_DIRS += $(MDDEPDIR)
    GARBAGE_DIRS += $(MDDEPDIR)
 endif
+
+ifdef DYNAMIC_LIB
+   ifneq (,$(DISABLE_IMPLICIT_NAMING))
+      OUR_DYNAMIC_LIB = $(DYNAMIC_LIB)
+   else
+      OUR_DYNAMIC_LIB = $(DYNAMIC_LIB)$(DEBUG:%=_d)$(DLL_SUFFIX)
+   endif
+endif
+
+ifdef STATIC_LIB
+   ifneq (,$(DISABLE_IMPLICIT_NAMING))
+      OUR_STATIC_LIB = $(STATIC_LIB)
+   else
+      OUR_STATIC_LIB = $(STATIC_LIB)$(DEBUG:%=_d)$(LIB_SUFFIX)
+   endif
+endif
+
+ifdef SIMPLE_PROGRAM
+   ifneq (,$(DISABLE_IMPLICIT_NAMING))
+      OUR_SIMPLE_PROGRAM = $(SIMPLE_PROGRAM)
+   else
+      OUR_SIMPLE_PROGRAM = $(SIMPLE_PROGRAM)$(DEBUG:%=_d)$(BIN_SUFFIX)
+   endif
+endif
+
+# SUBMAKEFILES: List of Makefiles for next level down.
+#   This is used to update or create the Makefiles before invoking them.
+SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
 
 ###############################################################################
 
@@ -81,17 +112,37 @@ endif
 
 ALL_TRASH = \
    $(GARBAGE) \
+   $(COMPILER_GARBAGE) \
    $(XPIDL_HEADERS) $(XPIDL_TYPELIBS) $(XPIDL_MODULE) \
-   $(DYNAMIC_LIB_OBJS) \
-   $(OBJS:.$(OBJ_SUFFIX)=.s) $(OBJS:.$(OBJ_SUFFIX)=.ii) \
-   $(OBJS:.$(OBJ_SUFFIX)=.i) \
-   $(SIMPLE_PROGRAM) $(SIMPLE_PROGRAM_OBJS) \
+   $(OUR_DYNAMIC_LIB_OBJS) $(OUR_DYNAMIC_LIB) \
+   $(OUR_DYNAMIC_LIB_OBJS:$(OBJ_SUFFIX)=.s) \
+   $(OUR_DYNAMIC_LIB_OBJS:$(OBJ_SUFFIX)=.i) \
+   $(OUR_STATIC_LIB_OBJS) $(OUR_STATIC_LIB) \
+   $(OUR_STATIC_LIB_OBJS:$(OBJ_SUFFIX)=.s) \
+   $(OUR_STATIC_LIB_OBJS:$(OBJ_SUFFIX)=.i) \
    $(GENERATED_PP_DEPS) \
+   $(SIMPLE_PROGRAM_OBJS) $(SIMPLE_PROGRAM) \
    LOGS TAGS a.out
 
+ifeq (windows,$(SB_PLATFORM))
+   ALL_TRASH += \
+    $(OUR_DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
+    $(OUR_DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
+    $(OUR_DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
+    $(OUR_DYNAMIC_LIB).manifest \
+    $(OUR_SIMPLE_PROGRAM:$(BIN_SUFFIX)=.pdb) \
+    $(OUR_SIMPLE_PROGRAM:$(BIN_SUFFIX)=.lib) \
+    $(OUR_SIMPLE_PROGRAM:$(BIN_SUFFIX)=.exp) \
+    $(OUR_SIMPLE_PROGRAM).manifest \
+    $(NULL)
+endif
+
 clean:: $(SUBMAKEFILES)
-	-$(RM) -f $(ALL_TRASH)
+	-$(RM) $(ALL_TRASH)
 	+$(LOOP_OVER_SUBDIRS)
+
+distclean:: FORCE
+	$(RM) -r $(SONGBIRD_DISTDIR)
 
 export_tier_%:
 	@echo "TIER PASS: $* export"
@@ -131,49 +182,17 @@ export:: $(SUBMAKEFILES) $(SUBDIRS)
 ## preedTODO: hacky; fix this.
 MAKE_JAR_DEP = $(if $(JAR_MANIFEST),make_jar)
 
-libs:: $(HOST_LIBRARY) $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM) $(SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(STATIC_LIB) $(DYNAMIC_LIB) $(JAR_MANIFEST) $(MAKE_JAR_DEP) copy_sb_tests make_xpi
+libs:: $(OUR_STATIC_LIB) $(OUR_DYNAMIC_LIB) $(OUR_SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(JAR_MANIFEST) $(MAKE_JAR_DEP) copy_sb_tests make_xpi
 ifndef NO_DIST_INSTALL
-   ifdef LIBRARY
-      ifdef EXPORT_LIBRARY # Stage libs that will be linked into a static build
-         ifdef IS_COMPONENT
-	         $(INSTALL) $(IFLAGS1) $(LIBRARY) $(DEPTH)/staticlib/components
-         else
-	         $(INSTALL) $(IFLAGS1) $(LIBRARY) $(DEPTH)/staticlib
-         endif
-      endif # EXPORT_LIBRARY
-      ifdef DIST_INSTALL
-         ifdef IS_COMPONENT
-            $(error Shipping static component libs makes no sense.)
-         else
-	         $(INSTALL) $(IFLAGS1) $(LIBRARY) $(DIST)/lib
-         endif
-      endif # DIST_INSTALL
-   endif # LIBRARY
-   ifdef SHARED_LIBRARY
-      ifdef IS_COMPONENT
-	      $(INSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(FINAL_TARGET)/components
-         $(ELF_DYNSTR_GC) $(FINAL_TARGET)/components/$(SHARED_LIBRARY)
-      else # ! IS_COMPONENT
-         ifneq (,$(filter OS2 WINNT WINCE,$(OS_ARCH)))
-	         $(INSTALL) $(IFLAGS2) $(IMPORT_LIBRARY) $(DIST)/lib
-         else
-	         $(INSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(DIST)/lib
-         endif
-	      $(INSTALL) $(IFLAGS2) $(SHARED_LIBRARY) $(FINAL_TARGET)
-      endif # IS_COMPONENT
-   endif # SHARED_LIBRARY
-   ifdef PROGRAM
-	   $(INSTALL) $(IFLAGS2) $(PROGRAM) $(FINAL_TARGET)
-   endif
    ifdef SIMPLE_PROGRAM
-	   $(INSTALL_PROG) $(SIMPLE_PROGRAM) $(FINAL_TARGET)
+	   $(INSTALL_PROG) $(OUR_SIMPLE_PROGRAM) $(FINAL_TARGET)
    endif
    ifndef EXTENSION_STAGE_DIR
    ifdef DYNAMIC_LIB
       ifdef IS_COMPONENT
-	      $(INSTALL_PROG) $(DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)/
+	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)/
       else
-	      $(INSTALL_PROG) $(DYNAMIC_LIB) $(SONGBIRD_LIBDIR)/
+	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_LIBDIR)/
       endif
    endif
    endif
@@ -186,10 +205,6 @@ include $(topsrcdir)/build/oldrules.mk
 #------------------------------------------------------------------------------
 # Rules for Makefile generation
 #------------------------------------------------------------------------------
-
-# SUBMAKEFILES: List of Makefiles for next level down.
-#   This is used to update or create the Makefiles before invoking them.
-SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
 
 makefiles: $(SUBMAKEFILES)
 	+$(LOOP_OVER_SUBDIRS)
@@ -257,7 +272,6 @@ ifeq (windows,$(SB_PLATFORM))
 else
    COMPILER_OUTPUT_FLAG = -o $@
 endif
-
 
 #------------------------------------------------------------------------------
 # rules for C++ compilation
@@ -432,6 +446,232 @@ endif
 %.s: %.c
 	$(CC) $(COMPILER_OUTPUT_FLAG) $(CFLAGS_ASSEMBLER) $(OUR_C_FLAGS) $(OUR_C_DEFS) $(OUR_C_INCLUDES) $<
 
+#------------------------------------------------------------------------------
+# Rules for dynamic (.so/.dylib/.dll) library generation
+#------------------------------------------------------------------------------
+# DYNAMIC_LIB                - the name of a lib to generate
+# DYNAMIC_LIB_OBJS           - an override to the defaut list of object files 
+#                              to link into the shared lib
+#
+# DYNAMIC_LIB_EXTRA_OBJS     - a list of extra objects to add to the library
+#
+# DYNAMIC_LIB_IMPORT_PATHS   - an overide to the default list of libs to link
+# DYNAMIC_LIB_IMPORT_EXTRA_PATHS   - a list of paths to search for libs
+#
+# DYNAMIC_LIB_IMPORTS        - an override to the default list of libs to link
+# DYNAMIC_LIB_EXTRA_IMPORTS  - an additional list of libs to link in
+# DYNAMIC_LIB_STATIC_IMPORTS - a list of static libs to link in
+#
+# DYNAMIC_LIB_FLAGS          - an override to the default linker flags
+# DYNAMIC_LIB_EXTRA_FLAGS    - a list of additional flags to pass to the linker
+#
+# DISABLE_IMPLICIT_LIBNAME   - disables the automatic generation of the 
+#                              library name; DYNAMIC_LIB is used directly
+
+DEFAULT_DYNAMIC_LIBS_IMPORTS = xpcomglue_s \
+                               nspr4 \
+                               xpcom \
+                               $(DEFAULT_LIBS) \
+                               $(NULL)
+
+DEFAULT_DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
+
+ifdef DYNAMIC_LIB # {
+
+ifdef DYNAMIC_LIB_OBJS
+   OUR_DYNAMIC_LIB_OBJS = $(DYNAMIC_LIB_OBJS)
+else
+   OUR_DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+                          $(C_SRCS:.c=$(OBJ_SUFFIX)) \
+                          $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
+                          $(DYNAMIC_LIB_EXTRA_OBJS) \
+                          $(NULL)
+endif
+
+ifdef DYNAMIC_LIB_FLAGS
+   OUR_LD_FLAGS = $(DYNAMIC_LIB_FLAGS)
+else
+   OUR_LD_FLAGS = $(LDFLAGS) $(LDFLAGS_DLL) $(DYNAMIC_LIB_EXTRA_FLAGS)
+
+   ifeq (macosx,$(SB_PLATFORM))
+      OUR_LD_FLAGS += -isysroot $(SB_MACOSX_SDK) -Wl,-syslibroot,$(SB_MACOSX_SDK)
+       ifdef IS_COMPONENT
+          OUR_LD_FLAGS += -bundle
+       else 
+          OUR_LD_FLAGS += -dynamiclib -install_name @executable_path/$(OUR_DYNAMIC_LIB) -compatibility_version 1 -current_version 1
+       endif
+   endif
+endif
+
+ifdef DYNAMIC_LIB_IMPORT_PATHS
+   OUR_LINKER_PATHS_LIST = $(DYNAMIC_LIB_IMPORT_PATHS)
+else
+   OUR_LINKER_PATHS_LIST = $(DEFAULT_DYNAMIC_LIB_IMPORT_PATHS) $(DYNAMIC_LIB_IMPORT_EXTRA_PATHS)
+endif
+
+ifneq (,$(OUR_LINKER_PATHS_LIST))
+   OUR_LINKER_PATHS = $(addsuffix $(LDFLAGS_PATH_SUFFIX),\
+                       $(addprefix $(LDFLAGS_PATH_PREFIX),\
+                       $(foreach dir,$(OUR_LINKER_PATHS_LIST),\
+                       $(call normalizepath,$(dir)))))
+else
+   OUR_LINKER_PATHS = $(NULL)
+endif
+
+ifdef DYNAMIC_LIB_IMPORTS
+   OUR_LD_IMPORT_LIST = $(DYNAMIC_LIB_IMPORTS)
+else
+   OUR_LD_IMPORT_LIST = $(DEFAULT_DYNAMIC_LIBS_IMPORTS) \
+    $(foreach i, \
+    $(DYNAMIC_LIB_EXTRA_IMPORTS), \
+    $(if $(filter sb%,$i), \
+    $i$(DEBUG:%=_d), \
+    $i)) 
+endif
+
+OUR_LD_STATIC_IMPORT_LIST = $(foreach import, \
+                             $(DYNAMIC_LIB_STATIC_IMPORTS), \
+                             $(if $(wildcard $(dir $(import))), \
+                             $(import)$(LIB_SUFFIX), \
+                             $(addprefix $(SONGBIRD_OBJDIR)/, \
+                             $(import)$(DEBUG:%=_d)$(LIB_SUFFIX))))
+
+OUR_LD_IMPORTS = $(OUR_LD_STATIC_IMPORT_LIST) \
+                  $(addsuffix $(LDFLAGS_IMPORT_SUFFIX),\
+                  $(addprefix $(LDFLAGS_IMPORT_PREFIX),\
+                  $(OUR_LD_IMPORT_LIST)))
+
+OUR_LINKER_OUTPUT = $(LDFLAGS_OUT_PREFIX)$@$(LDFLAGS_OUT_SUFFIX)
+
+$(OUR_DYNAMIC_LIB): $(OUR_DYNAMIC_LIB_OBJS)
+ifdef FORCE_RANLIB
+	$(RANLIB) $(OUR_LINKER_OUTPUT) $(FORCE_RANLIB)
+endif
+	$(LD) $(OUR_LINKER_OUTPUT) $(OUR_LD_FLAGS) $(OUR_LINKER_PATHS) $(OUR_DYNAMIC_LIB_OBJS) $(OUR_LD_IMPORTS)
+endif # } DYNAMIC_LIB
+
+#------------------------------------------------------------------------------
+# Rules for static (.a/.lib) library generation
+#------------------------------------------------------------------------------
+# STATIC_LIB                - the name of a lib to generate
+# STATIC_LIB_OBJS           - an override to the defaut list of object files 
+#                             to link into the lib
+# STATIC_LIB_FLAGS          - an overide t the default list of flags to
+#                             pass to the static linker
+# STATIC_LIB_EXTRA_FLAGS    - additional flags to pass to the linker
+#
+# STATIC_LIB_EXTRA_OBJS     - a list of extra objects to add to the library
+#
+
+ifdef STATIC_LIB
+
+ifdef STATIC_LIB_FLAGS
+   OUR_LINKER_FLAGS = $(STATIC_LIB_FLAGS)
+else
+   OUR_LINKER_FLAGS = $(ARFLAGS) $(ARFLAGS_LIB) $(STATIC_LIB_EXTRA_FLAGS)
+endif
+
+OUR_LINKER_OUTPUT = $(ARFLAGS_OUT_PREFIX)$@$(ARFLAGS_OUT_SUFFIX)
+
+ifdef STATIC_LIB_OBJS
+   OUR_STATIC_LIB_OBJS = $(STATIC_LIB_OBJS)
+else
+   OUR_STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+                         $(C_SRCS:.c=$(OBJ_SUFFIX)) \
+                         $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
+                         $(STATIC_LIB_EXTRA_OBJS) \
+                         $(NULL)
+endif
+
+$(OUR_STATIC_LIB): $(OUR_STATIC_LIB_OBJS)
+ifdef USING_RANLIB
+	$(RM) $@
+endif
+	$(AR) $(OUR_LINKER_FLAGS) $(OUR_LINKER_OUTPUT) $(OUR_STATIC_LIB_OBJS)
+ifdef USING_RANLIB
+	$(RANLIB) $(OUR_LINKER_OUTPUT)
+endif
+
+endif
+
+
+#------------------------------------------------------------------------------
+# Rules for creating simple programs
+#------------------------------------------------------------------------------
+#
+#  A target for creating a simple program, consisting of a list of object
+#  to link into a program.
+# SIMPLE_PROGRAM - the name of a dll to link
+# SIMPLE_PROGRAM_OBJS - the object files to link into the dll
+# SIMPLE_PROGRAM_IMPORT_PATHS - a list of paths to search for libs
+# SIMPLE_PROGRAM_IMPORTS - an override to the default list of libs to link
+# SIMPLE_PROGRAM_EXTRA_IMPORTS - an additional list of libs to link
+# SIMPLE_PROGRAM_STATIC_IMPORTS - a list of static libs to link
+# SIMPLE_PROGRAM_FLAGS - an override to the default linker flags
+# SIMPLE_PROGRAM_EXTRA_FLAGS - a list of additional flags to pass to the linker
+
+ifdef SIMPLE_PROGRAM
+
+ifneq (,$(STATIC_LIB)$(DYNAMIC_LIB))
+   $(error SIMPLE_PROGRAM cannot be specified together with DYNAMIC_LIB or STATIC_LIB)
+endif # STATIC_LIB || DYNAMIC_LIB
+
+CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
+
+ifdef SIMPLE_PROGRAM_FLAGS
+   OUR_SIMPLE_PROGRAM_FLAGS = $(SIMPLE_PROGRAM_FLAGS)
+else
+   OUR_SIMPLE_PROGRAM_FLAGS = $(LDFLAGS) $(LDFLAGS_BIN) $(SIMPLE_PROGRAM_EXTRA_FLAGS)
+endif
+
+ifdef SIMPLE_PROGRAM_IMPORTS
+   OUR_SIMPLE_PROGRAM_IMPORTS_LIST = $(SIMPLE_PROGRAM_IMPORTS)
+else
+   OUR_SIMPLE_PROGRAM_IMPORTS_LIST = $(SIMPLE_PROGRAM_DEFAULT_LIBS) $(SIMPLE_PROGRAM_EXTRA_IMPORTS)
+endif
+
+ifdef SIMPLE_PROG_OBJS
+   OUR_SIMPLE_PROGRAM_OBJS = $(SIMPLE_PROGRAM_OBJS)
+else
+   OUR_SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)) \
+                             $(C_SRCS:.c=$(OBJ_SUFFIX)) \
+                             $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
+                             $(SIMPLE_PROGRAM_EXTRA_OBJS) \
+                             $(NULL)
+endif
+
+ifdef SIMPLE_PROGRAM_IMPORTS
+   OUR_SIMPLE_PROGRAM_IMPORTS_LIST = $(SIMPLE_PROGRAM_IMPORTS)
+else
+   OUR_SIMPLE_PROGRAM_IMPORTS_LIST = $(DEFAULT_LIBS) $(SIMPLE_PROGRAM_EXTRA_IMPORTS)
+endif
+
+ifdef SIMPLE_PROGRAM_STATIC_IMPORTS
+   ifeq (windows,$(SB_PLATFORM))
+      OUR_SIMPLE_PROGRAM_IMPORTS_LIST += $(SIMPLE_PROGRAM_STATIC_IMPORTS)
+   else
+      OUR_SIMPLE_PROGRAM_OBJS += $(addsuffix $(LIB_SUFFIX),$(SIMPLE_PROGRAM_STATIC_IMPORTS))
+   endif
+endif
+
+OUR_LINKER_IMPORTS = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), \
+                      $(addprefix $(LDFLAGS_IMPORT_PREFIX), \
+                      $(OUR_SIMPLE_PROGRAM_IMPORTS_LIST)))
+
+ifdef SIMPLE_PROGRAM_IMPORT_PATHS
+   OUR_SIMPLE_PROGRAM_LINKER_PATHS = $(addsuffix $(LDFLAGS_PATH_SUFFIX), \
+                                      $(addprefix $(LDFLAGS_PATH_PREFIX), \
+                                      $(foreach dir, \
+                                      $(SIMPLE_PROGRAM_IMPORT_PATHS),\
+                                      $(call normalizepath,$(dir)))))
+endif
+
+OUR_SIMPLE_PROGRAM_OUT = $(LDFLAGS_OUT_PREFIX)$@$(LDFLAGS_OUT_SUFFIX)
+
+$(OUR_SIMPLE_PROGRAM): $(OUR_SIMPLE_PROGRAM_OBJS)
+	$(LD) $(OUR_SIMPLE_PROGRAM_OUT) $(OUR_SIMPLE_PROGRAM_FLAGS) $(OUR_SIMPLE_PROGRAM_LINKER_PATHS) $(OUR_SIMPLE_PROGRAM_OBJS) $(OUR_LINKER_IMPORTS)
+
+endif
 
 #------------------------------------------------------------------------------
 # Rules for pre-processed resources
@@ -487,8 +727,6 @@ export:: $(GENERATED_PP_DEPS)
 
 #########################
 
-.PHONY: $(SUBDIRS) FORCE libs export
-
 echo-variable-%:
 	@echo $($*)
 
@@ -501,9 +739,6 @@ echo-subdirs:
 echo-module:
 	@echo $(MODULE)
 
-echo-requires:
-	@echo $(REQUIRES)
-
 FORCE:
 
 # Cancel these implicit rules
@@ -512,6 +747,8 @@ FORCE:
 
 %: RCS/%,v
 
+%: RCS/%
+
 %: s.%
 
 %: SCCS/s.%
@@ -519,7 +756,9 @@ FORCE:
 # Re-define the list of default suffixes, so gmake won't have to churn through
 # hundreds of built-in suffix rules for stuff we don't need.
 
-.SUFFIXES:
+#.SUFFIXES:
+
+.PHONY: $(SUBDIRS) FORCE libs export
 
 include $(topsrcdir)/build/file-autotargets.mk
 

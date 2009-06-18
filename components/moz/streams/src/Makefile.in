@@ -29,22 +29,14 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbMozStreams_d
-else
-target_name = sbMozStreams
-endif
+STATIC_LIB = sbMozStreams
 
 CPP_SRCS = sbFileObjectStreams.cpp \
            sbFileUtils.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(MOZSDK_INCLUDE_DIR)/necko \
-               $(topsrcdir)/components/include \
-               $(NULL)
-
-STATIC_LIB = $(target_name)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+                     $(topsrcdir)/components/include \
+                     $(NULL)
 
 include $(topsrcdir)/build/rules.mk

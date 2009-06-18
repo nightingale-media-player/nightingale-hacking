@@ -29,13 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbBrowserAPI_d
-moz_utils = sbMozStringUtils_d
-else
-target_name = sbBrowserAPI
-moz_utils = sbMozStringUtils
-endif
+DYNAMIC_LIB = sbBrowserAPI
 
 CPP_SRCS = sbRemoteAPIModule.cpp \
            sbRemoteAPIService.cpp \
@@ -109,27 +103,20 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/remoteapi/public \
                $(MOZSDK_INCLUDE_DIR)/xpconnect \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+DYNAMIC_LIB_STATIC_IMPORTS = \
+   components/moz/strings/src/sbMozStringUtils
+   $(NULL)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_STATIC_IMPORTS = $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4  \
-                            xpcomglue_s \
-                            xpcom \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4  \
                             $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += js3250
+   DYNAMIC_LIB_EXTRA_IMPORTS += js3250
 else
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
 LIBSONGBIRD_COMPONENT = SongbirdRemoteAPIModule
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 IS_COMPONENT = 1
 

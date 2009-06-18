@@ -32,7 +32,6 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = base \
           manager \
           download \
-#          wm \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk

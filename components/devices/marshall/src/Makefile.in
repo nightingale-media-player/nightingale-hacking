@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceMarshall$(DEBUG:%=_d)
+STATIC_LIB = sbDeviceMarshall
 
 CPP_SRCS = sbBaseDeviceMarshall.cpp \
            $(NULL)
@@ -49,9 +49,5 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/manager/public \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
-
-STATIC_LIB = sbDeviceMarshall$(DEBUG:%=_d)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
 
 include $(topsrcdir)/build/rules.mk

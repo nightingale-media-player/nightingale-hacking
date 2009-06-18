@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceController$(DEBUG:%=_d)
-
 CPP_SRCS = sbBaseDeviceController.cpp \
            $(NULL)
 
@@ -42,8 +40,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                $(NULL)
 
-STATIC_LIB = sbDeviceController$(DEBUG:%=_d)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+STATIC_LIB = sbDeviceController
 
 include $(topsrcdir)/build/rules.mk

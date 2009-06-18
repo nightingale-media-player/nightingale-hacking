@@ -29,10 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediaExport
-ifdef DEBUG
-target := $(addsuffix _d,$(target))
-endif
+DYNAMIC_LIB = sbMediaExport
 
 CPP_SRCS = sbMediaExportPrefController.cpp \
            sbMediaExportTaskWriter.cpp \
@@ -57,24 +54,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
                $(MOZSDK_INCLUDE_DIR)/update \
                $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
-                           $(NULL)
-
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  components/moz/strings/src/sbMozStringUtils \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediaExport 

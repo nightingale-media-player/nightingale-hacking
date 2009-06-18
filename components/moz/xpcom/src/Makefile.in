@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbxpcom$(DEBUG:%=_d)
-
 CPP_SRCS = sbCOMArray.cpp \
            sbArray.cpp \
            sbXPCOMModule.cpp \
@@ -48,19 +46,12 @@ CPP_EXTRA_INCLUDES = \
 
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
+
 LIBSONGBIRD_COMPONENT = SongbirdXPCOMLib
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
+DYNAMIC_LIB = sbxpcom
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 include $(topsrcdir)/build/rules.mk

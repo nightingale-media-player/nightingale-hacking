@@ -32,11 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 GST_VERSION=0.10
 GLIB_VERSION=2.0
 
-MODULE := sbMetadataGstreamer
-
-ifdef DEBUG
-MODULE := $(addsuffix _d,$(MODULE))
-endif
+STATIC_LIB = sbMetadataGstreamer
 
 CPP_SRCS = sbGStreamerMetadataHandler.cpp \
            $(NULL)
@@ -78,10 +74,5 @@ else
                         $(NULL)
   endif
 endif
-
-STATIC_LIB = $(MODULE)$(LIB_SUFFIX)
-
-STATIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))) \
-                   $(NULL)
 
 include $(topsrcdir)/build/rules.mk

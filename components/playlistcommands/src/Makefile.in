@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbPlaylistCommands_d
-else
-target_name = sbPlaylistCommands
-endif
+DYNAMIC_LIB = sbPlaylistCommands
 
 CPP_SRCS = PlaylistCommandsManager.cpp \
            PlaylistCommandsComponent.cpp \
@@ -50,22 +46,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/playlistcommands/public \
                $(MOZSDK_IDL_DIR) \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
 ifeq ($(SB_PLATFORM), macosx)
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdPlaylistCommandsComponent
 

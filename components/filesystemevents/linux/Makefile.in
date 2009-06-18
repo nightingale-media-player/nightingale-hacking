@@ -29,10 +29,7 @@ VPATH = @srcdir@ @srcdir@/.. @top_srcdir@/components/filesystemevents/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbLinuxFileSystemEvents
-ifdef DEBUG
-target := $(addsuffix _d,$(target))
-endif
+DYNAMIC_LIB = sbLinuxFileSystemEvents
 
 CPP_SRCS = sbLinuxFileSystemWatcher.cpp \
            $(NULL)
@@ -62,24 +59,16 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
 CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
                      $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcomglue_s \
-                            xpcom \
                             $(NULL)
 
 DYNAMIC_LIB_EXTRA_FLAGS = $(GLIB_LIBS) \
                           $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/streams/src/sbMozStreams$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  components/moz/strings/src/sbMozStringUtils \
+  components/moz/streams/src/sbMozStreams \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdFileSystem

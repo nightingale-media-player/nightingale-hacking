@@ -57,8 +57,12 @@ SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
                                version \
                                $(NULL)
 
+# Since this is debug-only, we don't need tests.exe coming out as tests_d.exe;
+# turn that feature off.
+DISABLE_IMPLICIT_NAMING = 1
+
 SIMPLE_PROGRAM = tests$(BIN_SUFFIX)
-SIMPLE_PROGRAM_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+
 
 NO_DIST_INSTALL = 1
 

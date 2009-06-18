@@ -29,7 +29,7 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbPlaybackHistoryService$(DEBUG:%=_d)
+DYNAMIC_LIB = sbPlaybackHistoryService
 
 CPP_SRCS = sbPlaybackHistoryEntry.cpp \
            sbPlaybackHistoryService.cpp \
@@ -57,22 +57,13 @@ CPP_EXTRA_INCLUDES = \
       $(MOZSDK_IDL_DIR) \
       $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4 \
-                            xpcomglue_s \
-                            xpcom \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+   components/moz/strings/src/sbMozStringUtils \
+   components/moz/threads/src/sbMozThreads \
+	$(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdPlaybackHistoryServiceModule
 IS_COMPONENT = 1

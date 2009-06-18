@@ -29,31 +29,18 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbMozVariant_d
-else
-target_name = sbMozVariant
-endif
-
 CPP_SRCS = sbVariant.cpp \
            sbVariantUtilsModule.cpp \
            $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
+DYNAMIC_LIB = sbMozVariant
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
 ifeq (solaris,$(SB_PLATFORM))
-DYNAMIC_LIB_EXTRA_IMPORTS += m
+   DYNAMIC_LIB_EXTRA_IMPORTS += m
 endif
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 IS_COMPONENT = 1
 

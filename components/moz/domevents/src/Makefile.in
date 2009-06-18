@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbDOMEventUtils_d
-else
-target_name = sbDOMEventUtils
-endif
+DYNAMIC_LIB = sbDOMEventUtils
 
 CPP_SRCS = sbDOMEventWrapper.cpp \
            sbDOMEventUtilsModule.cpp \
@@ -46,17 +42,6 @@ CPP_INCLUDES = $(DEPTH)/components/moz/domevents/public \
                $(MOZSDK_INCLUDE_DIR)/nspr \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(NULL)
-
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            xpcom \
-                            xpcomglue_s \
-                            $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 IS_COMPONENT = 1
 

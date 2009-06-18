@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbProxiedServices_d
-else
-target_name = sbProxiedServices
-endif
+DYNAMIC_LIB = sbProxiedServices
 
 CPP_SRCS = sbProxiedServices.cpp \
            sbProxiedServicesModule.cpp \
@@ -45,17 +41,6 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/proxy/public \
                $(MOZSDK_INCLUDE_DIR)/chardet \
                $(MOZSDK_INCLUDE_DIR)/uconv \
                $(NULL)
-
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            xpcom \
-                            xpcomglue_s \
-                            $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 IS_COMPONENT = 1
 

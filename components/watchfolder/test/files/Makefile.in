@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 tasks: prepare all
 
+#preedTODO: fix this
 prepare:: 
 	$(MKDIR) $(SONGBIRD_TESTSDIR)/watchfolders/files
 

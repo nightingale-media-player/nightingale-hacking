@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbiTunesMediaImport$(DEBUG:%=_d)
+DYNAMIC_LIB = sbiTunesMediaImport
 
 CPP_SRCS = sbiTunesXMLParser.cpp \
            sbiTunesDatabaseServices.cpp \
@@ -70,34 +70,24 @@ CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
                
 IS_COMPONENT = 1
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(notdir $(CPP_SRCS:.cpp=$(OBJ_SUFFIX)))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(DEPS_DIR)/wpdsdk/Lib/x86/ \
-                           $(DEPTH)/components/moz/streams/src \
-                           $(DEPTH)/components/moz/strings/components/src \
-                           $(DEPTH)/components/moz/strings/src \
-                           $(DEPTH)/components/library/base/src/static \
-                           $(NULL)
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS = \
+ $(DEPS_DIR)/wpdsdk/Lib/x86/ \
+ $(DEPTH)/components/moz/streams/src \
+ $(DEPTH)/components/moz/strings/components/src \
+ $(DEPTH)/components/moz/strings/src \
+ $(DEPTH)/components/library/base/src/static \
+ $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  $(SONGBIRD_OBJDIR)/components/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/streams/src/sbMozStreams$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-  $(SONGBIRD_OBJDIR)/components/moz/threads/src/sbMozThreads$(DEBUG:%=_d) \
+  components/library/base/src/static/sbLibraryUtils \
+  components/moz/streams/src/sbMozStreams \
+  components/moz/strings/src/sbMozStringUtils \
+  components/moz/threads/src/sbMozThreads \
   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdiTunesImporterComponent
-
-SONGBIRD_COMPONENTS = $(DYNAMIC_LIB) \
-                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

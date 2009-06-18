@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbTestHarness
+DYNAMIC_LIB = sbTestHarness
 
 CPP_SRCS = sbLeakCanary.cpp \
            sbTestHarnessModule.cpp \
@@ -38,34 +38,25 @@ CPP_SRCS = sbLeakCanary.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/testharness/public \
-               $(MOZSDK_INCLUDE_DIR)/locale \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_IDL_DIR) \
-               $(topsrcdir)/components/moz/strings/src \
-               $(NULL)
+                     $(MOZSDK_INCLUDE_DIR)/locale \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_IDL_DIR) \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+DYNAMIC_LIB_STATIC_IMPORTS = \
+   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils \
+   $(NULL)
 
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4 \
-                            xpcom \
-                            xpcomglue_s \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
-                            
-DYNAMIC_LIB_STATIC_IMPORTS =  $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-                              $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
-ifeq ($(SB_PLATFORM), windows)
+ifeq ($(SB_PLATFORM),windows)
   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
                                $(NULL)
 endif
 
-ifeq ($(SB_PLATFORM), macosx)
+ifeq ($(SB_PLATFORM),macosx)
   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 

@@ -29,11 +29,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 
-ifdef DEBUG
-target_name = sbIntegration_d$(DLL_SUFFIX)
-else
-target_name = sbIntegration$(DLL_SUFFIX)
-endif
+DYNAMIC_LIB = sbIntegration
 
 CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(DEPTH)/components/dataremote/public \
@@ -60,8 +56,6 @@ CMM_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
-DYNAMIC_LIB = $(target_name)
-
 CMM_SRCS = NativeWindowFromNode.mm \
            sbNativeWindowManager.mm \
            IntegrationComponent.mm \
@@ -69,20 +63,13 @@ CMM_SRCS = NativeWindowFromNode.mm \
            sbMacAppDelegate.mm \
            $(NULL)
 
-DYNAMIC_LIB_OBJS = $(patsubst %.mm,%$(OBJ_SUFFIX),$(notdir $(CMM_SRCS)))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            xpcom \
-                            xpcomglue_s \
-                            $(NULL)
-
 ifdef DEBUG
-DYNAMIC_LIB_EXTRA_FLAGS = -framework ExceptionHandling
+   DYNAMIC_LIB_EXTRA_FLAGS = -framework ExceptionHandling
 endif
-DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation -framework Cocoa -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
+DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
+                           -framework Cocoa \
+                           -Wl,-syslibroot,$(SB_MACOSX_SDK)
 
 LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
 

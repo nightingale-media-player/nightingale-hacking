@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-target := sbMediacoreBase$(DEBUG:%=_d)
+DYNAMIC_LIB = sbMediacoreBase
 
 CPP_SRCS = sbBaseMediacore.cpp \
            sbBaseMediacoreMultibandEqualizer.cpp \
@@ -50,22 +50,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(NULL)
 
-DYNAMIC_LIB = $(target)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
-
-moz_utils = sbMozStringUtils$(DEBUG:%=_d)
-
-DYNAMIC_LIB_STATIC_IMPORTS += $(SONGBIRD_OBJDIR)/components/moz/strings/src/$(moz_utils)
+DYNAMIC_LIB_STATIC_IMPORTS += \
+   components/moz/strings/src/sbMozStringUtils \
+   $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediacoreBase
 

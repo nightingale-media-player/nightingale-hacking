@@ -29,11 +29,7 @@ VPATH = @srcdir@ @top_srcdir@/components/moz/threads/src
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbMetadataModule_d
-else
-target_name = sbMetadataModule
-endif
+DYNAMIC_LIB = sbMetadataModule
 
 CPP_SRCS = sbMetadataManager.cpp \
            sbMetadataChannel.cpp \
@@ -87,22 +83,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/albumart/public \
                $(topsrcdir)/components/sqlbuilder/src \
                $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
 
 ifeq ($(SB_PLATFORM), macosx)
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \

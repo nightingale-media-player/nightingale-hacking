@@ -29,7 +29,7 @@ VPATH = @srcdir@ @top_srcdir@/components/devices/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
-target_name = sbDeviceManager2$(DEBUG:%=_d)
+DYNAMIC_LIB = sbDeviceManager2
 
 CPP_SRCS = sbDeviceManagerModule.cpp \
            sbDeviceManager.cpp \
@@ -56,25 +56,18 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
 
 COMPONENTS_OBJDIR = $(SONGBIRD_OBJDIR)/components
 DYNAMIC_LIB_STATIC_IMPORTS = \
-    $(COMPONENTS_OBJDIR)/devices/device/src/sbDeviceCore$(DEBUG:%=_d) \
-    $(COMPONENTS_OBJDIR)/library/base/src/static/sbLibraryUtils$(DEBUG:%=_d) \
-    $(COMPONENTS_OBJDIR)/moz/strings/src/sbMozStringUtils$(DEBUG:%=_d) \
-    $(COMPONENTS_OBJDIR)/moz/threads/src/sbMozThreads$(DEBUG:%=_d)
+    components/devices/device/src/sbDeviceCore \
+    components/library/base/src/static/sbLibraryUtils \
+    components/moz/strings/src/sbMozStringUtils \
+    components/moz/threads/src/sbMozThreads \
+    $(NULL)
 
 #XXX Mook : Temporary hack pending bug 7150 (proper static lib)
 CPP_EXTRA_INCLUDES += $(topsrcdir)/components/include \
-                $(NULL)
-
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
+                      $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdDeviceManager2
 IS_COMPONENT = 1
