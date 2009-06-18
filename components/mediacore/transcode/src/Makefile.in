@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbTranscodeModule_d
-else
-target_name = sbTranscodeModule
-endif
+DYNAMIC_LIB = sbTranscodeModule
 
 CPP_SRCS = sbTranscodeManager.cpp \
            sbTranscodeModule.cpp \
@@ -44,18 +40,8 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/property/public \
                      $(NULL)
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdTranscodeComponent
 

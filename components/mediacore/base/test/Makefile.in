@@ -59,16 +59,10 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
                $(topsrcdir)/components/mediacore/base/src \
                $(NULL)
                
-DYNAMIC_LIB = sbTestMediacoreBase$(DEBUG:%=_d)$(DLL_SUFFIX)
+DYNAMIC_LIB = sbTestMediacoreBase
                
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            nspr4 \
-                            xpcom \
-                            xpcomglue_s \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 IS_COMPONENT = 1
 

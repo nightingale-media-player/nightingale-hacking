@@ -29,9 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+# We always want this to be simply sbTestHarness, even in debug builds
 DISABLE_IMPLICIT_NAMING = 1
 
-DYNAMIC_LIB = sbTestHarness
+DYNAMIC_LIB = sbTestHarness$(DLL_SUFFIX)
 
 CPP_SRCS = sbLeakCanary.cpp \
            sbTestHarnessModule.cpp \

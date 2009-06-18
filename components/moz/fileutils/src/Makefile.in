@@ -29,11 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifdef DEBUG
-target_name = sbFileUtils_d
-else
-target_name = sbFileUtils
-endif
+DYNAMIC_LIB = sbFileUtils
 
 CPP_SRCS = sbDirectoryEnumerator.cpp \
            sbFileUtilsModule.cpp \
@@ -41,17 +37,8 @@ CPP_SRCS = sbDirectoryEnumerator.cpp \
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/fileutils/public
 
-DYNAMIC_LIB = $(target_name)$(DLL_SUFFIX)
-
-DYNAMIC_LIB_OBJS = $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-DYNAMIC_LIB_EXTRA_IMPORTS = nspr4 \
-                            plds4 \
-                            xpcomglue_s \
-                            xpcom \
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
 IS_COMPONENT = 1
 include $(topsrcdir)/build/rules.mk
