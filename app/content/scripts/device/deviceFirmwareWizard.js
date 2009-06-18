@@ -70,6 +70,7 @@ var deviceFirmwareWizard = {
 
   doCancel: function deviceFirmwareWizard_doCancel() {
     this._deviceFirmwareUpdater.cancel(this._device);
+    return true;
   },
 
   doPageShow: function deviceFirmwareWizard_doPageShow() {
@@ -80,8 +81,26 @@ var deviceFirmwareWizard = {
     
     switch(currentPage.id) {
       case "device_firmware_check":
-        this._currentOperation = "cfu";
-        this._deviceFirmwareUpdater.autoUpdate(this._device, this);
+        this._currentOperation = "checkforupdate";
+        this._deviceFirmwareUpdater.checkForUpdate(this._device, this);
+      break;
+      
+      case "device_firmware_download":
+        this._currentOperation = "download";
+        this._deviceFirmwareUpdater.downloadUpdate(this._device, false, this);
+      break;
+      
+      case "device_firmware_install":
+        this._currentOperation = "install";
+        
+        var cancelButton = this.wizardElem.getButton("cancel");
+        cancelButton.disabled = true;
+        
+        this._deviceFirmwareUpdater.applyUpdate(this._device, this);
+      break;
+      
+      case "device_firmware_update_complete":
+        this._currentOperation = "complete";
       break;
       
       default:
@@ -90,9 +109,14 @@ var deviceFirmwareWizard = {
   },
   
   doBack: function deviceFirmwareWizard_onBack(aEvent) {
+    this._deviceFirmwareUpdater.cancel(this._device);
+    window.close();
+    
+    return false;
   },
   
   doNext: function deviceFirmwareWizard_onNext(aEvent) {
+    return true;
   },
   
   doExtra1: function deviceFirmwareWizard_onExtra1(aEvent) {
@@ -136,6 +160,8 @@ var deviceFirmwareWizard = {
 
 
   _finalize: function deviceFirmwareWizard__finalize() {
+    this._deviceFirmwareUpdater.finalizeUpdate(this._device);
+  
     this._device = null;
     this._deviceFirmwareUpdater = null;
     
@@ -157,8 +183,19 @@ var deviceFirmwareWizard = {
 
   _handleDeviceEvent: function deviceFirmwareWizard__handleDeviceEvent(aEvent) {
     switch(this._currentOperation) {
-      case "cfu":
+      case "checkforupdate":
         this._handleCheckForUpdate(aEvent);
+      break;
+      
+      case "download":
+        this._handleDownloadFirmware(aEvent);
+      break;
+      
+      case "install":
+        this._handleApplyUpdate(aEvent);
+      break;
+      
+      case "complete":
       break;
       
       default:
@@ -208,5 +245,18 @@ var deviceFirmwareWizard = {
   },
   
   _handleDownloadFirmware: function deviceFirmwareWizard__handleDownloadFirmware(aEvent) {
+    var progressMeter = 
+      document.getElementById("device_firmware_wizard_download_progress");
+      
+    if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_PROGRESS) {
+      progressMeter.value = aEvent.data;
+    }
+    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_END) {
+      this.wizardElem.goTo("device_firmware_wizard_install_page");
+    }
+  },
+  
+  _handleApplyUpdate: function deviceFirmwareWizard__handleApplyUpdate(aEvent) {
+  
   }
 };

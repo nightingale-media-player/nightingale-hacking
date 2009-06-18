@@ -38,6 +38,8 @@
 #include <nsComponentManagerUtils.h>
 #include <prlog.h>
 
+#include "sbDeviceFirmwareDownloader.h"
+
 /**
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbDeviceFirmwareUpdater:5
@@ -245,7 +247,21 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
     GetRunningHandler(aDevice, aListener, PR_TRUE);
 
-  // XXXAus: Check to make sure it's not busy right now?
+  nsAutoMonitor mon(mMonitor);
+  
+  sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
+  NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
+
+  sbDeviceFirmwareHandlerStatus::handlerstatus_t status = 
+    sbDeviceFirmwareHandlerStatus::STATUS_NONE;
+  rv = handlerStatus->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(status != sbDeviceFirmwareHandlerStatus::STATUS_NONE &&
+     status != sbDeviceFirmwareHandlerStatus::STATUS_FINISHED) {
+    return NS_ERROR_FAILURE;
+  }
+
 
   nsCOMPtr<sbIDeviceEventTarget> eventTarget = do_QueryInterface(aDevice, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -255,11 +271,6 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
 
   rv = PutRunningHandler(aDevice, handler);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsAutoMonitor mon(mMonitor);
-  
-  sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
-  NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
 
   rv = handlerStatus->SetOperation(sbDeviceFirmwareHandlerStatus::OP_REFRESH);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -285,7 +296,60 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
+    GetRunningHandler(aDevice, aListener, PR_TRUE);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
+  NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
+
+  sbDeviceFirmwareHandlerStatus::handlerstatus_t status = 
+    sbDeviceFirmwareHandlerStatus::STATUS_NONE;
+  rv = handlerStatus->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(status != sbDeviceFirmwareHandlerStatus::STATUS_NONE &&
+     status != sbDeviceFirmwareHandlerStatus::STATUS_FINISHED) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsCOMPtr<sbIDeviceEventTarget> eventTarget = do_QueryInterface(aDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = eventTarget->AddEventListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = PutRunningHandler(aDevice, handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handlerStatus->SetOperation(sbDeviceFirmwareHandlerStatus::OP_DOWNLOAD);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Exit();
+
+  nsRefPtr<sbDeviceFirmwareDownloader> downloader;
+  NS_NEWXPCOM(downloader, sbDeviceFirmwareDownloader);
+  NS_ENSURE_TRUE(downloader, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = downloader->Init(aDevice,
+                        aListener,
+                        handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Firmware Downloader is responsible for sending all necessary events.
+  rv = downloader->Start();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // XXXAus: Save ref to downloader so we can cancel it if the cancel
+  //         is called during download of firmware
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -330,7 +394,7 @@ sbDeviceFirmwareUpdater::AutoUpdate(sbIDevice *aDevice,
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
     GetRunningHandler(aDevice, aListener, PR_TRUE);
 
-  // XXXAus: Check to make sure it's not busy right now?
+  // XXXAus: Check to make sure it's not busy right now
 
   nsAutoMonitor mon(mMonitor);
 
@@ -341,6 +405,36 @@ sbDeviceFirmwareUpdater::AutoUpdate(sbIDevice *aDevice,
   NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
 
   handlerStatus->IsAutoUpdate(PR_TRUE);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceFirmwareUpdater::ContinueUpdate(sbIDevice *aDevice)
+{
+  LOG(("[sbDeviceFirmwareUpdater] - ContinueUpdate"));
+  
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+NS_IMETHODIMP
+sbDeviceFirmwareUpdater::FinalizeUpdate(sbIDevice *aDevice)
+{
+  LOG(("[sbDeviceFirmwareUpdater] - FinalizeUpdate"));
+  
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler = GetRunningHandler(aDevice);
+  NS_ENSURE_TRUE(handler, NS_OK);
+
+  nsAutoMonitor mon(mMonitor);
+
+  mRunningHandlers.Remove(aDevice);
+  mHandlerStatus.Remove(handler);
 
   return NS_OK;
 }
@@ -507,6 +601,9 @@ sbDeviceFirmwareUpdater::Cancel(sbIDevice *aDevice)
     nsresult rv = handler->Cancel();
     NS_ENSURE_SUCCESS(rv, rv);
 
+    rv = handler->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mRunningHandlers.Remove(aDevice);
     mHandlerStatus.Remove(handler);
   }
@@ -548,6 +645,8 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
   rv = handlerStatus->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool removeListener = PR_FALSE;
+
   switch(operation) {
     case sbDeviceFirmwareHandlerStatus::OP_REFRESH: {
       LOG(("[sbDeviceFirmwareUpdater] - OP_REFRESH"));
@@ -561,6 +660,8 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
               status == sbDeviceFirmwareHandlerStatus::STATUS_RUNNING) {
         rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_FINISHED);
         NS_ENSURE_SUCCESS(rv, rv);
+
+        removeListener = PR_TRUE;
       }
       else {
         // XXXAus: Abort!
@@ -570,6 +671,19 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
 
     case sbDeviceFirmwareHandlerStatus::OP_DOWNLOAD: {
       LOG(("[sbDeviceFirmwareUpdater] - OP_DOWNLOAD"));
+
+      if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_START &&
+         status == sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START) {
+        rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_RUNNING);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END &&
+              status == sbDeviceFirmwareHandlerStatus::STATUS_RUNNING) {
+        rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_FINISHED);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        removeListener = PR_TRUE;
+      }
     }
     break;
 
@@ -582,13 +696,15 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
       NS_WARNING("Unsupported operation");
   }
 
-  rv = handlerStatus->GetStatus(&status);
-  NS_ENSURE_SUCCESS(rv, rv);
+  mon.Exit();
 
-  if(status == sbDeviceFirmwareHandlerStatus::STATUS_FINISHED &&
-     !handlerStatus->IsAutoUpdate()) {
-    mRunningHandlers.Remove(device);
-    mHandlerStatus.Remove(handler);
+  if(removeListener) {
+    nsCOMPtr<sbIDeviceEventTarget> eventTarget = 
+      do_QueryInterface(device, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = eventTarget->RemoveEventListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

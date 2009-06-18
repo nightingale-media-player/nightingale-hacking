@@ -102,6 +102,11 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
                           const nsAString& aOldChars,
                           const PRUnichar aNewChar);
 
+void 
+nsCString_ReplaceChars(nsACString& aOldString,
+                       const nsACString& aOldChars,
+                       const char aNewChar);
+
 /**
  * Searches a string for any occurences of the substring and replaces
  * it with the replacement string. Modifies the string in-place.

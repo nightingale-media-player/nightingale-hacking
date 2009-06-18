@@ -184,6 +184,20 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
   }
 }
 
+void 
+nsCString_ReplaceChars(nsACString& aOldString,
+                       const nsACString& aOldChars,
+                       const char aNewChar)
+{
+  PRUint32 length = aOldString.Length();
+  for (PRUint32 index = 0; index < length; index++) {
+    char currentChar = aOldString.CharAt(index);
+    PRInt32 oldCharsIndex = aOldChars.FindChar(currentChar);
+    if (oldCharsIndex > -1)
+      aOldString.Replace(index, 1, aNewChar);
+  }
+}
+
 void nsString_ReplaceSubstring(/* inout */ nsAString &aString,
                                const nsAString &aOldString,
                                const nsAString &aNewString)

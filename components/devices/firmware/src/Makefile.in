@@ -31,7 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 target_name = sbDeviceFirmwareUpdater$(DEBUG:%=_d)
 
-CPP_SRCS = sbDeviceFirmwareModule.cpp \
+CPP_SRCS = sbDeviceFirmwareDownloader.cpp \
+           sbDeviceFirmwareModule.cpp \
            sbDeviceFirmwareUpdate.cpp \
            sbDeviceFirmwareUpdater.cpp \
            sbBaseDeviceFirmwareHandler.cpp \
@@ -41,6 +42,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/device/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/moz/filedownloader/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/moz/strings/components/public \
                      $(DEPTH)/components/moz/windowwatcher/public \
@@ -59,6 +61,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(MOZSDK_INCLUDE_DIR)/js \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/uconv \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(NULL)

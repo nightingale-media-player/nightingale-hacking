@@ -38,10 +38,11 @@
  */
 
 interface nsIFile;
+interface nsIRequest;
 interface nsIURI;
 interface sbIFileDownloaderListener;
 
-[scriptable, uuid(743a7901-baec-4da3-ad92-08ba975effd5)]
+[scriptable, uuid(eb164d3f-cc1a-43a9-a8aa-d47486767bf7)]
 interface sbIFileDownloader : nsISupports
 {
   /**
@@ -131,6 +132,13 @@ interface sbIFileDownloader : nsISupports
    */
 
   void cancel();
+
+  /**
+   * \brief The request object used during the file download.
+   * \note The object is only available after calling start and becomes invalid
+   *       when calling cancel.
+   */
+  readonly attribute nsIRequest request;
 };
 
 

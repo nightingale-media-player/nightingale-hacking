@@ -245,6 +245,7 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
   nsCOMPtr<nsIDOMDocument> document;
   rv = mXMLHttpRequest->GetResponseXML(getter_AddRefs(document));
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(document, NS_ERROR_FAILURE);
 
   nsCOMPtr<nsIDOMNodeList> rootNodeList;
   rv = document->GetElementsByTagName(NS_LITERAL_STRING("firmware"),

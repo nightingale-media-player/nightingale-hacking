@@ -265,7 +265,13 @@ sbFileDownloader.prototype = {
   cancel: function sbFileDownloader_cancel() {
     // Cancel the file download.
     this._webBrowserPersist.cancelSave();
+    this.request = null;
   },
+  
+  /**
+   * \brief The request used during the transfer.
+   */
+  request: null,
 
 
   //----------------------------------------------------------------------------
@@ -301,6 +307,10 @@ sbFileDownloader.prototype = {
                                                          aRequest,
                                                          aStateFlags,
                                                          aStatus) {
+    if (!this.request) {
+      this.request = aRequest;
+    }
+                                                         
     // Check for completion.
     if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
       // Mark completion.

@@ -41,7 +41,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(23bb5db3-9184-4e2a-addc-1bfa5278ffaf)]
+[scriptable, uuid(ceac033d-548b-424c-9898-4ded3fe4562a)]
 interface sbIDeviceFirmwareUpdater : nsISupports
 {
   /**
@@ -107,6 +107,16 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    */
   void autoUpdate(in sbIDevice aDevice,
                   in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Continue the auto-update process
+   */
+  void continueUpdate(in sbIDevice aDevice);
+
+  /**
+   * \brief Finalize the auto-update process
+   */
+  void finalizeUpdate(in sbIDevice aDevice);
 
   /**
    * \brief Verify the firmware on the specified device

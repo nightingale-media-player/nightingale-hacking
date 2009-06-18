@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(60de6048-ad90-421c-bb99-b63f953fb8c8)]
+[scriptable, uuid(89aea192-4827-455f-a501-e0221c9685dd)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -162,6 +162,22 @@ interface sbIDeviceEvent : nsISupports
    *       available for download (true) or not (false).
    */
   const unsigned long EVENT_FIRMWARE_CFU_END    = EVENT_FIRMWARE_BASE + 2;
+  /**
+   * \brief Firmware download start
+   * \note <code>data</code> is null for this event.
+   */
+  const unsigned long EVENT_FIRMWARE_DOWNLOAD_START     = EVENT_FIRMWARE_BASE + 3;
+  /**
+   * \brief Firmware download progress
+   * \note <code>data</code> is the progress in percent.
+   */
+  const unsigned long EVENT_FIRMWARE_DOWNLOAD_PROGRESS  = EVENT_FIRMWARE_BASE + 4;
+  /**
+   * \brief Firmware download end
+   * \note <code>data</code> is an sbIDeviceFirmwareUpdate object upon success.
+   *       If there is an error during the download, the data will be null.
+   */
+  const unsigned long EVENT_FIRMWARE_DOWNLOAD_END       = EVENT_FIRMWARE_BASE + 5;
   /**
    * 
    */

@@ -59,21 +59,46 @@ function runTest () {
           }
         break;
         
+        case "du": {
+          if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_START) {
+            log("firmware update download start");
+          }
+          else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_PROGRESS) {
+            log("firmware update download progress: " + data);
+          }
+          if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_END) {
+            var firmwareData = data.QueryInterface(Ci.sbIDeviceFirmwareUpdate);
+            log("firmware update version: " + firmwareData.firmwareReadableVersion);
+            log("firmware update file path: " + firmwareData.firmwareImageFile.path);
+            testFinished();
+          }
+        }
+        break;
+        
         default:
           log("unknown operation");
+          testFinished();
       }
     }
   };
   
-  log("Testing 'checkForUpdate'");
-  listener.op = "cfu";
-  
-  var eventTarget = device.QueryInterface(Ci.sbIDeviceEventTarget);
-  eventTarget.addEventListener(listener);
-  
   try {
+    log("Testing 'checkForUpdate'");
+    listener.op = "cfu";
+    
+    var eventTarget = device.QueryInterface(Ci.sbIDeviceEventTarget);
+    eventTarget.addEventListener(listener);
+    
     updater.checkForUpdate(device, null);
     testPending();
+      
+    log("Testing 'downloadUpdate'");
+    listener.op = "du";
+    
+    updater.downloadUpdate(device, false, null);
+    testPending();
+      
+    updater.finalizeUpdate(device);
   }
   finally {
     eventTarget.removeEventListener(listener);

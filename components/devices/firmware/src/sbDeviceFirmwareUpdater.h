@@ -24,12 +24,16 @@
 //
 */
 
+#ifndef __SB_DEVICEFIRMWAREUPDATER_H__
+#define __SB_DEVICEFIRMWAREUPDATER_H__
+
 #include <sbIDeviceFirmwareUpdater.h>
 
 #include <nsIEventTarget.h>
 
 #include <sbIDeviceEventListener.h>
 #include <sbIDeviceFirmwareHandler.h>
+#include <sbIFileDownloader.h>
 
 #include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
@@ -40,6 +44,7 @@
 #include <prmon.h>
 
 class sbDeviceFirmwareHandlerStatus;
+class sbDeviceFirmwareDownloader;
 
 class sbDeviceFirmwareUpdater : public sbIDeviceFirmwareUpdater,
                                 public sbIDeviceEventListener
@@ -77,11 +82,11 @@ protected:
 
   typedef 
     nsInterfaceHashtableMT<nsISupportsHashKey, 
-                           sbIDeviceFirmwareHandler> runninghandlers_t;
+                           sbIDeviceFirmwareHandler>  runninghandlers_t;
   typedef 
     nsClassHashtableMT<nsISupportsHashKey,
                        sbDeviceFirmwareHandlerStatus> handlerstatus_t;
-  
+
   runninghandlers_t mRunningHandlers;
   handlerstatus_t   mHandlerStatus;
 
@@ -138,3 +143,5 @@ private:
 { /* {9a84d24f-b02b-42bc-a2cb-b4792023aa70} */             \
   0x9a84d24f, 0xb02b, 0x42bc,                              \
   { 0xa2, 0xcb, 0xb4, 0x79, 0x20, 0x23, 0xaa, 0x70 } }
+
+#endif /*__SB_DEVICEFIRMWAREUPDATER_H__*/

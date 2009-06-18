@@ -24,6 +24,9 @@
 //
 */
 
+#ifndef __SB_DEVICEFIRMWAREUPDATE_H__
+#define __SB_DEVICEFIRMWAREUPDATE_H__
+
 #include <sbIDeviceFirmwareUpdate.h>
 
 #include <nsIFile.h>
@@ -61,3 +64,5 @@ protected:
 { /* {c5dc91bb-1b27-431e-8f93-0112022a9548} */             \
   0xc5dc91bb, 0x1b27, 0x431e,                              \
   { 0x8f, 0x93, 0x1, 0x12, 0x2, 0x2a, 0x95, 0x48 } }
+
+#endif /*__SB_DEVICEFIRMWAREUPDATE_H__*/

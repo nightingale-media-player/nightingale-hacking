@@ -25,6 +25,9 @@
 //
 */
 
+#ifndef __SB_MOCKDEVICEFIRMWAREHANDLER_H__
+#define __SB_MOCKDEVICEFIRMWAREHANDLER_H__
+
 #include "sbBaseDeviceFirmwareHandler.h"
 
 class sbMockDeviceFirmwareHandler : public sbBaseDeviceFirmwareHandler
@@ -51,3 +54,5 @@ protected:
   nsresult HandleRefreshInfoRequest();
   
 };
+
+#endif /*__SB_MOCKDEVICEFIRMWAREHANDLER_H__*/

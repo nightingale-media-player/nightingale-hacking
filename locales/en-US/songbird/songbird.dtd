@@ -426,6 +426,11 @@
 <!ENTITY device.firmware.wizard.check.install.description "Installing the updated firmware should take less than 10 minutes. You can always perform the update at a later time.">
 <!ENTITY device.firmware.wizard.check.already.description "The firmware for your device is already up to date.">
 <!ENTITY device.firmware.wizard.check.release_notes.label "Release Notes">
+<!ENTITY device.firmware.wizard.no_disconnect_warning     "Please do not disconnect your device or interact with it in any way while its firmware is going to be updated.">
+<!ENTITY device.firmware.wizard.download.title  "Downloading new firmware...">
+<!ENTITY device.firmware.wizard.install.title   "Installing firmware...">
+
+<!ENTITY device.firmware.wizard.complete.description "Your device has been updated with the newest firmware available.">
 
 <!ENTITY device.info.icon.device            "Generic device icon">
 <!ENTITY device.info.icon.readonly          "Read-only lock icon">
