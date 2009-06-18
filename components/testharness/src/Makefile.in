@@ -45,7 +45,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/testharness/public \
                      $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS = \
-   $(SONGBIRD_OBJDIR)/components/moz/strings/src/sbMozStringUtils \
+   components/moz/strings/src/sbMozStringUtils \
    $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
