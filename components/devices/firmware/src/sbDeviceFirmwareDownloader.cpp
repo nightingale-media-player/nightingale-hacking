@@ -32,7 +32,7 @@
 #include <nsIMultiPartChannel.h>
 #include <nsIProperties.h>
 #include <nsIPropertyBag2.h>
-#include <nsITextToSubUri.h>
+#include <nsITextToSubURI.h>
 #include <nsIURL.h>
 #include <nsIUTF8ConverterService.h>
 #include <nsIVariant.h>
