@@ -88,14 +88,24 @@
             <xul:label sbid="sb-device-tools-cur-firmware-ver"/>
           </xul:hbox>
 
-          <xul:description>
-            &device.tools.update_firmware.description;
-          </xul:description>
-          <xul:hbox>
-            <xul:spacer flex="1"/>
-            <xul:button label="&device.tools.update_firmware.label;"
-                        oncommand="updateFirmware();"/>
-          </xul:hbox>
+          <xul:vbox>
+            <xul:description>
+              &device.tools.update_firmware.description;
+            </xul:description>
+            <xul:groupbox sbid="sb-device-tools-busy-device-warning"
+                          orient="vertical" 
+                          pack="center" 
+                          hidden="true">
+              <xul:description sbid="sb-device-tools-busy-device-warning-desc"
+                               class="dev-tools-busy-warning" />
+            </xul:groupbox>
+            <xul:hbox>
+              <xul:spacer flex="1"/>
+              <xul:button sbid="sb-device-tools-update-firmware-button" 
+                          label="&device.tools.update_firmware.label;"
+                          oncommand="updateFirmware();"/>
+            </xul:hbox>
+          </xul:vbox>
         </xul:groupbox>
 
         <!-- Repair Device -->
@@ -168,8 +178,27 @@
             box.hidden = false;
           }
         }
+        
+        this.device = null;
+        this._busyCheckTimer = null;
+        this._currentFirmwareVersion = null;
+        this._busyWarningBox = null;
+        this._busyWarningDesc = null;
+        this._busyWarningText = null;
+        this._updateFirmwareButton = null;
       ]]>
       </constructor>
+
+      <destructor><![CDATA[
+        if(this.device) {
+          this.device = null;
+        }
+        
+        if(this._busyCheckTimer) {
+          clearInterval(this._busyCheckTimer);
+        }
+      ]]>
+      </destructor>
 
       <method name="registerDevice">
         <body><![CDATA[
@@ -184,7 +213,7 @@
             (window,
              "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
              "device_firmware_dialog",
-             "chrome,centerscreen",
+             "chrome",
              [ "", this.device ],
              null);
          ]]></body>
@@ -224,18 +253,72 @@
       </method>
 
       <method name="_update">
-        <body><![CDATA[
-        var curFirmVer =
-          document.getAnonymousElementByAttribute(this,
-                                                  "sbid",
-                                                  "sb-device-tools-cur-firmware-ver");
-        try {
-          curFirmVer.value = this.device.properties.firmwareVersion;
+        <body>
+          <![CDATA[
+        if(!this._currentFirmwareVersion) {
+          this._currentFirmwareVersion =
+            document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-cur-firmware-ver");
         }
-        catch(e) {};
+
+        if(!this._busyWarningBox) {
+          this._busyWarningBox= 
+            document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-busy-device-warning");
+        }
+
+        if(!this._busyWarningDesc) {
+          this._busyWarningDesc = 
+            document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-busy-device-warning-desc");
+        }
+        
+        if(!this._updateFirmwareButton) {
+          this._updateFirmwareButton = 
+            document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-update-firmware-button");
+        }
+        
+        try {
+          this._currentFirmwareVersion.value = this.device.properties.firmwareVersion;
+        }
+        catch(e) {
+          this._currentFirmwareVersion.value = SBString("device.info.unknown");
+        }
+        
+        if(this.device.isBusy) {
+          if(this._busyWarningText) {
+            this._busyWarningDesc.removeChild(this._busyWarningText);
+            this._busyWarningText = null;
+          }
+          var warningDesc = SBFormattedString('device.tools.update_firmware.busy_warning', 
+                                              [this.device.name]);
+          this._busyWarningText = document.createTextNode(warningDesc);
+          this._busyWarningDesc.appendChild(this._busyWarningText);
+          this._busyWarningBox.hidden = false;
+          this._updateFirmwareButton.disabled = true;
+        }
+        else {
+          this._busyWarningBox.hidden = true;
+          this._updateFirmwareButton.disabled = false;
+        }
+        
+        this._startBusyCheck();
         ]]></body>
       </method>
 
+      <method name="_startBusyCheck">
+        <body><![CDATA[
+          if(!this._busyCheckTimer) {
+            var self = this;
+            this._busyCheckTimer = setInterval(function() { self._update(); }, 1000);
+          }
+        ]]></body>
+      </method>
     </implementation>
 
     <handlers>

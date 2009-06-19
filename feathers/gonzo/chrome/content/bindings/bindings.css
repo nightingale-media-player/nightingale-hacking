@@ -60,6 +60,7 @@ For more information, see:
 @import url(device/deviceInfo.css);
 @import url(device/deviceProgress.css);
 @import url(device/deviceSync.css);
+@import url(device/deviceTools.css);
 @import url(dialog.css);
 @import url(displayPane.css);
 @import url(equalizer.css);

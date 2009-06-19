@@ -477,7 +477,26 @@ NS_IMETHODIMP sbMockDevice::Eject()
 
 NS_IMETHODIMP sbMockDevice::GetIsBusy(PRBool *aIsBusy)
 {
-  return sbBaseDevice::GetIsBusy(aIsBusy);
+  nsCOMPtr<nsIVariant> busyVariant;
+  nsresult rv = 
+    GetPreference(NS_LITERAL_STRING("testing.busy"), 
+                  getter_AddRefs(busyVariant));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint16 dataType = 0;
+  rv = busyVariant->GetDataType(&dataType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(dataType == nsIDataType::VTYPE_BOOL) {
+    rv = busyVariant->GetAsBool(aIsBusy);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = sbBaseDevice::GetIsBusy(aIsBusy);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbMockDevice::GetCanDisconnect(PRBool *aCanDisconnect)
