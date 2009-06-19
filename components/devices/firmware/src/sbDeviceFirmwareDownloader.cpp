@@ -29,6 +29,7 @@
 #include <nsIFile.h>
 #include <nsIHttpChannel.h>
 #include <nsIIOService.h>
+#include <nsILocalFile.h>
 #include <nsIMultiPartChannel.h>
 #include <nsIProperties.h>
 #include <nsIPropertyBag2.h>
@@ -42,6 +43,7 @@
 #include <nsCRT.h>
 #include <nsHashKeys.h>
 #include <nsServiceManagerUtils.h>
+#include <nsXPCOM.h>
 #include <prmem.h>
 
 #include <sbIDeviceEventTarget.h>
@@ -52,6 +54,10 @@
 #include <sbVariantUtils.h>
 
 #include "sbDeviceFirmwareUpdate.h"
+
+#define FIRMWARE_FILE_PREF      "firmware.cache.file"
+#define FIRMWARE_VERSION_PREF   "firmware.cache.version"
+#define FIRMWARE_READABLE_PREF  "firmware.cache.readableVersion"
 
 static PRInt32 
 codetovalue( unsigned char c )
@@ -564,7 +570,49 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice()
 PRBool 
 sbDeviceFirmwareDownloader::IsAlreadyInCache()
 {
-  return PR_FALSE;
+  NS_ENSURE_STATE(mDevice);
+  NS_ENSURE_STATE(mDeviceCacheDir);
+  NS_ENSURE_STATE(mHandler);
+
+  nsCOMPtr<nsIVariant> firmwareVersion;
+  nsresult rv = 
+    mDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF),
+                           getter_AddRefs(firmwareVersion));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRUint32 prefVersion = 0;
+  rv = firmwareVersion->GetAsUint32(&prefVersion);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRUint32 handlerVersion = 0;
+  rv = mHandler->GetLatestFirmwareVersion(&handlerVersion);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  if(prefVersion < handlerVersion) {
+    return PR_FALSE;
+  }
+
+  nsCOMPtr<nsIVariant> firmwareFilePath;
+   rv = mDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
+                               getter_AddRefs(firmwareFilePath));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString filePath;
+  rv = firmwareFilePath->GetAsAString(filePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsILocalFile> localFile;
+  rv = NS_NewLocalFile(filePath, PR_FALSE, getter_AddRefs(localFile));
+
+  PRBool exists = PR_FALSE;
+  rv = localFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!exists) {
+    return PR_FALSE;
+  }
+
+  return PR_TRUE;
 }
 
 nsresult 
@@ -572,7 +620,29 @@ sbDeviceFirmwareDownloader::GetCachedFile(nsIFile **aFile)
 {
   NS_ENSURE_ARG_POINTER(aFile);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<nsIVariant> firmwareFilePath;
+  nsresult rv = mDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
+                                       getter_AddRefs(firmwareFilePath));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString filePath;
+  rv = firmwareFilePath->GetAsAString(filePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsILocalFile> localFile;
+  rv = NS_NewLocalFile(filePath, PR_FALSE, getter_AddRefs(localFile));
+
+  PRBool exists = PR_FALSE;
+  rv = localFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!exists) {
+    return NS_ERROR_FAILURE;
+  }
+
+  NS_ADDREF(*aFile = localFile);                            
+
+  return NS_OK;
 }
 
 nsresult 
@@ -627,8 +697,15 @@ sbDeviceFirmwareDownloader::Start()
                               firmwareVersion);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    nsCOMPtr<nsIVariant> progress = sbNewVariant((PRUint32) 100).get();
+    rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_PROGRESS,
+                         progress);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> firmwareUpdateVariant = 
+      sbNewVariant(firmwareUpdate).get();
     rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END,
-                         nsnull);
+                         firmwareUpdateVariant);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -761,6 +838,28 @@ sbDeviceFirmwareDownloader::HandleComplete()
 
   rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END, 
                        data);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> firmwareVersionVariant = 
+    sbNewVariant(firmwareVersion).get();
+  rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF), 
+                              firmwareVersionVariant);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> firmwareReadableVariant = 
+    sbNewVariant(firmwareReadableVersion).get();
+  rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_READABLE_PREF),
+                              firmwareReadableVariant);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString firmwareFilePath;
+  rv = file->GetPath(firmwareFilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIVariant> firmwareFileVariant = 
+    sbNewVariant(firmwareFilePath).get();
+  rv = mDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
+                              firmwareFileVariant);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIFileDownloaderListener> grip(this);
