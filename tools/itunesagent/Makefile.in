@@ -33,7 +33,7 @@ ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
    $(error The Songbird iTunes agent can only be built on Win32 and Mac)
 endif
 
-SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
+SIMPLE_PROGRAM = songbirditunesagent
 
 CPP_SRCS = main.cpp \
            sbError.cpp \
