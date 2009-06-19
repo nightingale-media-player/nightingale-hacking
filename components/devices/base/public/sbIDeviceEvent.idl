@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(89aea192-4827-455f-a501-e0221c9685dd)]
+[scriptable, uuid(25ee5861-0f36-4762-9ff9-a1c1e7cf8495)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -134,6 +134,10 @@ interface sbIDeviceEvent : nsISupports
   // device transcoding errors (the data variant will hold a sbIMediacoreError)
   const unsigned long EVENT_DEVICE_TRANSCODE_ERROR      = EVENT_DEVICE_BASE + 31;
   
+  // device library events
+  const unsigned long EVENT_DEVICE_LIBRARY_ADDED        = EVENT_DEVICE_BASE + 32;
+  const unsigned long EVENT_DEVICE_LIBRARY_REMOVED      = EVENT_DEVICE_BASE + 33;
+
 
   /**
    * 
