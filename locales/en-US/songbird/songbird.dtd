@@ -484,6 +484,10 @@
 <!ENTITY device.tools.reset_warnings.description "Resetting the warning dialogs will enable these dialogs to prompt you to confirm certain tasks you wish to accomplish.">
 <!ENTITY device.tools.reset_warnings.label "Reset warning messages">
 
+<!ENTITY device.dialog.setup.title "Device Setup">
+<!ENTITY device.dialog.setup.sync.checkbox.label "Automatically sync songs and playlists to this device">
+<!ENTITY device.dialog.setup.sync.checkbox.description "&brandShortName; will automatically transfer songs and playlists from your Library to the device everytime the device is connected or a change is made to your Library.">
+
 <!ENTITY openLinkCmdInDefaultBrowser.label              "Open Link In Default Web Browser">
 <!ENTITY openLinkCmdInDefaultBrowser.accesskey          "o">
 <!ENTITY openPageCmdInDefaultBrowser.label              "Open Page In Default Web Browser">

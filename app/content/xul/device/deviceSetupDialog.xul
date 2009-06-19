@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceSetup.css"
+                 type="text/css"?>
+
+<!DOCTYPE window [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<!-- ***************************************************************************
+ *
+ * Device setup dialog box.
+ *
+ *   This dialog box presents a dialog for specifying the initial setup of a
+ * device.
+ *   A single dialog box argument of type sbIDevice is passed in.
+ *
+ *************************************************************************** -->
+
+<!-- Device setup dialog box. -->
+<dialog
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="device_setup_dialog"
+  hidechrome="true"
+  flex="1"
+  type="songbird"
+  title="&device.dialog.setup.title;"
+  buttons="accept"
+  ondialogaccept="if (deviceSetupDialog.onAccept()) onExit();"
+  onload="deviceSetupDialog.onLoad();">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <!-- Use Songbird window region. -->
+  <windowregion/>
+
+  <!-- Setup dialog container box. -->
+  <vbox id="setupContainer">
+    <label id="setup_name_header"/>
+    <textbox id="setup_name_textbox"/>
+    <checkbox id="setup_sync_checkbox"
+              label="&device.dialog.setup.sync.checkbox.label;"/>
+    <description id="setup_sync_description" class="indent">
+      &device.dialog.setup.sync.checkbox.description;
+    </description>
+  </vbox>
+
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Songbird services. -->
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <!-- Device setup dialog services. -->
+  <script><![CDATA[
+    //
+    // Defs.
+    //
+
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+
+    // Songbird imports.
+    Cu.import("resource://app/jsmodules/StringUtils.jsm");
+
+
+    //
+    // Device setup dialog services object.
+    //
+
+    var deviceSetupDialog = {
+      //
+      // Object fields.
+      //
+      //   _device              sbIDevice object.
+      //
+
+      _device: null,
+
+
+      //------------------------------------------------------------------------
+      //
+      // Public functions.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * Handle load events.
+       */
+
+      onLoad: function deviceSetupDialog_onLoad() {
+        // Get the dialog parameters.
+        this._device = window.arguments[0].QueryInterface(Ci.sbIDevice);
+
+        // Set the device name textbox header.
+        var productName = SBString("device.default.product.name");
+        try { productName = this._device.productName; } catch (ex) {}
+        var setupNameHeaderElem = document.getElementById("setup_name_header");
+        setupNameHeaderElem.value =
+          SBFormattedString("device.dialog.setup.name.header", [ productName ]);
+
+        // Set the default device name textbox value.
+        var setupNameTextboxElem =
+              document.getElementById("setup_name_textbox");
+        setupNameTextboxElem.value = productName;
+
+        // Set the default sync value.
+        var setupSyncCheckbox = document.getElementById("setup_sync_checkbox");
+        setupSyncCheckbox.checked = true;
+      },
+
+
+      /**
+       * Handle dialog accept events.
+       *
+       * \return true if accepted.
+       */
+
+      onAccept: function deviceSetupDialog_onAccept() {
+        // Set the device name.
+        var setupNameTextboxElem =
+              document.getElementById("setup_name_textbox");
+        this._device.properties.friendlyName = setupNameTextboxElem.value;
+
+        // Set the sync preference.
+        var deviceLibrary = this._device.content.libraries
+                                .queryElementAt(0, Ci.sbIDeviceLibrary);
+        var setupSyncCheckbox = document.getElementById("setup_sync_checkbox");
+        if (setupSyncCheckbox.checked)
+          deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
+        else
+          deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
+
+        return true;
+      }
+    };
+  ]]></script>
+
+</dialog>
+

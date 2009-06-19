@@ -45,13 +45,19 @@ interface sbIDeviceStatus;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(5e65f09a-b47c-41f7-bb4e-0174a3a956eb)]
+[scriptable, uuid(8d3f5053-3797-46d2-84d1-da001d73fc73)]
 interface sbIDevice : nsISupports
 {
   /**
    * A human-readable name identifying the device. Optional.
    */
   readonly attribute AString name;
+
+  /**
+   * A human-readable name identifying the device product (e.g., vendor and
+   * model number). Optional.
+   */
+  readonly attribute AString productName;
 
   /**
    * The id of the controller that created the device.

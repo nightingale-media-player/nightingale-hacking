@@ -749,6 +749,12 @@ protected:
   nsresult SetDeviceWriteContentSrc(sbIMediaItem* aWriteDstItem,
                                     nsIURI*       aContentSrcBaseURI,
                                     nsIURI*       aWriteSrcURI = nsnull);
+
+  /**
+   * Present the user with a dialog for the initial device setup.
+   */
+
+  nsresult SetupDevice();
 };
 
 #endif /* __SBBASEDEVICE__H__ */

@@ -183,6 +183,12 @@ nsresult SBGetLocalizedString(nsAString&             aString,
                               const char*            aDefault = nsnull,
                               class nsIStringBundle* aStringBundle = nsnull);
 
+nsresult SBGetLocalizedFormattedString(nsAString&                aString,
+                                       const nsAString&          aKey,
+                                       const nsTArray<nsString>& aParams,
+                                       const nsAString&          aDefault,
+                                       class nsIStringBundle*    aStringBundle);
+
 /**
  * Class used to create localized strings.
  *
@@ -213,6 +219,44 @@ public:
   {
     nsString stringValue;
     SBGetLocalizedString(stringValue, aKey, aDefault, aStringBundle);
+    Assign(stringValue);
+  }
+
+  SBLocalizedString(const char*               aKey,
+                    const nsTArray<nsString>& aParams,
+                    const char*               aDefault = nsnull,
+                    class nsIStringBundle*    aStringBundle = nsnull)
+  {
+    // Get the key and default arguments.
+    nsString key;
+    key.AssignLiteral(aKey);
+    nsString default;
+    if (aDefault)
+      default.AssignLiteral(aDefault);
+    else
+      default.SetIsVoid(PR_TRUE);
+
+    // Set string value.
+    nsString stringValue;
+    SBGetLocalizedFormattedString(stringValue,
+                                  key,
+                                  aParams,
+                                  default,
+                                  aStringBundle);
+    Assign(stringValue);
+  }
+
+  SBLocalizedString(const nsAString&          aKey,
+                    const nsTArray<nsString>& aParams,
+                    const nsAString&          aDefault,
+                    class nsIStringBundle*    aStringBundle = nsnull)
+  {
+    nsString stringValue;
+    SBGetLocalizedFormattedString(stringValue,
+                                  aKey,
+                                  aParams,
+                                  aDefault,
+                                  aStringBundle);
     Assign(stringValue);
   }
 };

@@ -52,6 +52,7 @@
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <nsIDOMWindow.h>
 #include <nsIPromptService.h>
 
 #include <sbIDeviceContent.h>
@@ -3359,6 +3360,28 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
 
   // Set the write destination item content source.
   rv = aWriteDstItem->SetContentSrc(contentSrc);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SetupDevice()
+{
+  nsresult rv;
+
+  // Present the setup device dialog.
+  nsCOMPtr<sbIPrompter>
+    prompter = do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIDOMWindow> dialogWindow;
+  rv = prompter->OpenDialog
+         (nsnull,
+          NS_LITERAL_STRING
+            ("chrome://songbird/content/xul/device/deviceSetupDialog.xul"),
+          NS_LITERAL_STRING("DeviceSetup"),
+          NS_LITERAL_STRING("chrome,centerscreen,modal=yes,titlebar=no"),
+          NS_ISUPPORTS_CAST(sbIDevice*, this),
+          getter_AddRefs(dialogWindow));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

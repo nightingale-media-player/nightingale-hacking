@@ -78,6 +78,13 @@ NS_IMETHODIMP sbMockDevice::GetName(nsAString & aName)
   return NS_OK;
 }
 
+/* readonly attribute AString productName; */
+NS_IMETHODIMP sbMockDevice::GetProductName(nsAString & aProductName)
+{
+  aProductName.AssignLiteral("Mock Device");
+  return NS_OK;
+}
+
 /* readonly attribute nsIDPtr controllerId; */
 NS_IMETHODIMP sbMockDevice::GetControllerId(nsID * *aControllerId)
 {

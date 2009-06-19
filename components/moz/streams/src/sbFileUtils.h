@@ -27,7 +27,11 @@
 #ifndef SBFILEUTILS_H_
 #define SBFILEUTILS_H_
 
+#include <nsCOMPtr.h>
+#include <nsIInputStream.h>
+#include <nsIOutputStream.h>
 #include <nsStringGlue.h>
+#include <sbMemoryUtils.h>
 
 class nsIFile;
 class nsIInputStream;
@@ -70,6 +74,20 @@ nsresult sbReadFile(nsIFile * aFile, nsACString &aBuffer);
 nsresult
 sbConsumeStream(nsIInputStream *aSource, PRUint32 aMaxCount,
                 nsACString &aBuffer);
+
+//
+// Auto-disposal class wrappers.
+//
+//   sbAutoInputStream          Wrapper to auto-close an input stream.
+//   sbAutoOutputStream         Wrapper to auto-close an output stream.
+//
+
+SB_AUTO_NULL_CLASS(sbAutoInputStream,
+                   nsCOMPtr<nsIInputStream>,
+                   mValue->Close());
+SB_AUTO_NULL_CLASS(sbAutoOutputStream,
+                   nsCOMPtr<nsIOutputStream>,
+                   mValue->Close());
 
 
 #endif /* SBFILEUTILS_H_ */

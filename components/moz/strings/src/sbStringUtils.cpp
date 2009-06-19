@@ -31,6 +31,7 @@
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
 #include <nsServiceManagerUtils.h>
+#include <sbMemoryUtils.h>
 
 PRInt32
 nsString_FindCharInSet(const nsAString& aString,
@@ -356,12 +357,11 @@ nsCString_Split(const nsACString&    aString,
   } while (delimiterIndex < stringLength);
 }
 
-
 /**
  * Get and return in aString the localized string with the key specified by aKey
  * using the string bundle specified by aStringBundle.  If the string cannot be
- * found, return the default string specified by aDefault; if aDefault is not
- * specified, return aKey.
+ * found, return the default string specified by aDefault; if aDefault is void,
+ * return aKey.
  *
  * If aStringBundle is not specified, use the main Songbird string bundle.
  *
@@ -434,5 +434,71 @@ SBGetLocalizedString(nsAString&             aString,
     defaultString = SBVoidString();
 
   return SBGetLocalizedString(aString, key, defaultString, aStringBundle);
+}
+
+/**
+ *   Get and return in aString the formatted localized string with the key
+ * specified by aKey using the format parameters specified by aParams and the
+ * string bundle specified by aStringBundle.  If the string cannot be found,
+ * return the default string specified by aDefault; if aDefault is void, return
+ * aKey.
+ *   If aStringBundle is not specified, use the main Songbird string bundle.
+ *
+ * \param aString               Returned localized string.
+ * \param aKey                  Localized string key.
+ * \param aParams               Format params array.
+ * \param aDefault              Optional default string.
+ * \param aStringBundle         Optional string bundle.
+ */
+
+nsresult
+SBGetLocalizedFormattedString(nsAString&                aString,
+                              const nsAString&          aKey,
+                              const nsTArray<nsString>& aParams,
+                              const nsAString&          aDefault,
+                              class nsIStringBundle*    aStringBundle)
+{
+  nsresult rv;
+
+  // Set default result.
+  if (!aDefault.IsVoid())
+    aString = aDefault;
+  else
+    aString = aKey;
+
+  // Get the string bundle.
+  nsCOMPtr<nsIStringBundle> stringBundle = aStringBundle;
+
+  // If no string bundle was provided, get the default string bundle.
+  if (!stringBundle) {
+    nsCOMPtr<nsIStringBundleService> stringBundleService =
+      do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = stringBundleService->CreateBundle(SB_STRING_BUNDLE_URL,
+                                           getter_AddRefs(stringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Convert the parameter array to a new array and set the new array up for
+  // auto-disposal.
+  PRUint32 paramCount = aParams.Length();
+  const PRUnichar** params = static_cast<const PRUnichar**>
+                               (NS_Alloc(paramCount * sizeof(PRUnichar*)));
+  NS_ENSURE_TRUE(params, NS_ERROR_OUT_OF_MEMORY);
+  sbAutoNSTypePtr<const PRUnichar*> autoParams(params);
+  for (PRUint32 i = 0; i < paramCount; i++) {
+    params[i] = aParams[i].get();
+  }
+
+  // Get the string from the bundle.
+  nsAutoString stringValue;
+  rv = stringBundle->FormatStringFromName(aKey.BeginReading(),
+                                          params,
+                                          paramCount,
+                                          getter_Copies(stringValue));
+  NS_ENSURE_SUCCESS(rv, rv);
+  aString = stringValue;
+
+  return NS_OK;
 }
 

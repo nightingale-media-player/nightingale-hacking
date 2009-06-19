@@ -150,7 +150,9 @@ public:                                                                        \
   }                                                                            \
   operator bool()                                                              \
   {                                                                            \
-    return (aIsValid);                                                         \
+    if (!(aIsValid))                                                           \
+      return PR_FALSE;                                                         \
+    return PR_TRUE;                                                            \
   }                                                                            \
 private:                                                                       \
   aType mValue;                                                                \
