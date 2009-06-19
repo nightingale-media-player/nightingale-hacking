@@ -153,22 +153,25 @@ BaseDeviceHelper.prototype = {
                     (messageKeyPrefix + ".message",
                      [ aDevice.name,
                        StorageFormatter.format(aSpaceNeeded),
-                       StorageFormatter.format(aSpaceAvailable),
-                       SBString("brandShortName", "Songbird", branding) ]);
+                       StorageFormatter.format(aSpaceAvailable) ]);
 
+    var buttonFlags = (Ci.nsIPromptService.BUTTON_POS_0 *
+                       Ci.nsIPromptService.BUTTON_TITLE_IS_STRING) +
+                      (Ci.nsIPromptService.BUTTON_POS_1 *
+                       Ci.nsIPromptService.BUTTON_TITLE_CANCEL);
     var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                      .getService(Ci.sbIPrompter);
     var neverPromptAgain = { value: false };
     var abortRequest = prompter.confirmEx
-                                  (aParent,
-                                   SBString(messageKeyPrefix + ".title"),
-                                   message,
-                                   Ci.nsIPromptService.STD_YES_NO_BUTTONS,
-                                   null,
-                                   null,
-                                   null,
-                                   null,
-                                   neverPromptAgain);
+                         (aParent,
+                          SBString(messageKeyPrefix + ".title"),
+                          message,
+                          buttonFlags,
+                          SBString(messageKeyPrefix + ".confirm_button"),
+                          null,
+                          null,
+                          null,
+                          neverPromptAgain);
 
     return !abortRequest;
   },
