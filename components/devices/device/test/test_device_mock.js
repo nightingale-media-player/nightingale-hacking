@@ -33,7 +33,7 @@ function runTest () {
   var device = Components.classes["@songbirdnest.com/Songbird/Device/DeviceTester/MockDevice;1"]
                          .createInstance(Components.interfaces.sbIDevice);
   assertEqual(device.name, "Bob's Mock Device");
-  assertEqual(device.productame, "Mock Device");
+  assertEqual(device.productName, "Mock Device");
   
   assertEqual("" + device.id, "" + device.id, "device ID not equal");
   assertEqual("" + device.controllerId, "" + device.controllerId, "controller ID not equal");
