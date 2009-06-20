@@ -230,18 +230,18 @@ public:
     // Get the key and default arguments.
     nsString key;
     key.AssignLiteral(aKey);
-    nsString default;
+    nsString _default;
     if (aDefault)
-      default.AssignLiteral(aDefault);
+      _default.AssignLiteral(aDefault);
     else
-      default.SetIsVoid(PR_TRUE);
+      _default.SetIsVoid(PR_TRUE);
 
     // Set string value.
     nsString stringValue;
     SBGetLocalizedFormattedString(stringValue,
                                   key,
                                   aParams,
-                                  default,
+                                  _default,
                                   aStringBundle);
     Assign(stringValue);
   }
