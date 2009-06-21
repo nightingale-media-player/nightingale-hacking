@@ -436,6 +436,15 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
                              getter_AddRefs(localDataDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if(!localDataDir) {
+    rv = directoryService->Get(NS_APP_USER_PROFILE_50_DIR,
+                               NS_GET_IID(nsIFile),
+                               getter_AddRefs(localDataDir));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_ENSURE_TRUE(localDataDir, NS_ERROR_UNEXPECTED);
+
   nsCOMPtr<nsIFile> cacheDir;
   rv = localDataDir->Clone(getter_AddRefs(cacheDir));
   NS_ENSURE_SUCCESS(rv, rv);
