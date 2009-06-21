@@ -886,7 +886,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString firmwareFilePath;
-  rv = file->GetPath(firmwareFilePath);
+  rv = firmwareFile->GetPath(firmwareFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<nsIVariant> firmwareFileVariant = 
