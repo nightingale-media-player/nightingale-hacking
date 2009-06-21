@@ -833,7 +833,19 @@ sbDeviceFirmwareDownloader::HandleComplete()
   rv = mDownloader->GetDestinationFile(getter_AddRefs(file));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = file->MoveTo(mDeviceCacheDir, NS_ConvertUTF8toUTF16(filename));
+  NS_ConvertUTF8toUTF16 filename16(filename);
+  rv = file->MoveTo(mDeviceCacheDir, filename16);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString firmwarePath;
+  rv = mDeviceCacheDir->GetPath(firmwarePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsILocalFile> firmwareFile;
+  rv = NS_NewLocalFile(firmwarePath, PR_FALSE, getter_AddRefs(firmwareFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = firmwareFile->Append(filename16);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
@@ -849,7 +861,7 @@ sbDeviceFirmwareDownloader::HandleComplete()
   rv = mHandler->GetLatestFirmwareReadableVersion(firmwareReadableVersion);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = firmwareUpdate->Init(file, 
+  rv = firmwareUpdate->Init(firmwareFile, 
                             firmwareReadableVersion, 
                             firmwareVersion);
   NS_ENSURE_SUCCESS(rv, rv);
