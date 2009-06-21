@@ -26,10 +26,24 @@
 
 #include "sbDeviceFirmwareUpdate.h"
 
-#include <nsAutoLock.h>
+#include <nsIClassInfoImpl.h>
+#include <nsIProgrammingLanguage.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareUpdate, 
-                              sbIDeviceFirmwareUpdate)
+#include <nsAutoLock.h>
+#include <nsMemory.h>
+
+NS_IMPL_THREADSAFE_ADDREF(sbDeviceFirmwareUpdate)
+NS_IMPL_THREADSAFE_RELEASE(sbDeviceFirmwareUpdate)
+
+NS_IMPL_QUERY_INTERFACE2_CI(sbDeviceFirmwareUpdate,
+                            sbIDeviceFirmwareUpdate,
+                            nsIClassInfo)
+
+NS_IMPL_CI_INTERFACE_GETTER1(sbDeviceFirmwareUpdate,
+                             sbIDeviceFirmwareUpdate)
+
+NS_DECL_CLASSINFO(sbDeviceFirmwareUpdate)
+NS_IMPL_THREADSAFE_CI(sbDeviceFirmwareUpdate)
 
 sbDeviceFirmwareUpdate::sbDeviceFirmwareUpdate()
 : mMonitor(nsnull)

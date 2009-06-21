@@ -83,6 +83,7 @@ private:
   nsCOMPtr<sbIDeviceEventListener>    mListener;
   nsCOMPtr<sbIDeviceFirmwareHandler>  mHandler;
   nsCOMPtr<sbIFileDownloader>         mDownloader;
+  PRPackedBool                        mIsBusy;
 };
 
 #endif /*__SB_DEVICEFIRMWAREDOWNLOADER_H__*/

@@ -103,12 +103,6 @@ interface sbIDeviceFirmwareUpdater : nsISupports
                    in sbIDeviceEventListener aListener);
 
   /**
-   * \brief Auto update the device
-   */
-  void autoUpdate(in sbIDevice aDevice,
-                  in sbIDeviceEventListener aListener);
-
-  /**
    * \brief Continue the auto-update process
    */
   void continueUpdate(in sbIDevice aDevice);

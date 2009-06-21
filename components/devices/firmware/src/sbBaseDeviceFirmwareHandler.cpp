@@ -31,6 +31,7 @@
 
 #include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 
 #include <sbIDeviceEventTarget.h>
 
@@ -568,7 +569,16 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
   NS_ENSURE_FALSE(mListener, NS_ERROR_ALREADY_INITIALIZED);
 
   mDevice = aDevice;
-  mListener = aListener;
+  
+  if(aListener) {
+    nsCOMPtr<nsIThread> target = do_GetMainThread();
+    nsresult rv = do_GetProxyForObject(target, 
+      NS_GET_IID(sbIDeviceEventListener), 
+      aListener, 
+      NS_PROXY_ALWAYS | NS_PROXY_ASYNC, 
+      getter_AddRefs(mListener));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

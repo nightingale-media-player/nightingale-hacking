@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(25ee5861-0f36-4762-9ff9-a1c1e7cf8495)]
+[scriptable, uuid(f5099b3b-1e5c-413d-bb45-2b90e2ae84c9)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -173,7 +173,7 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_FIRMWARE_DOWNLOAD_START     = EVENT_FIRMWARE_BASE + 3;
   /**
    * \brief Firmware download progress
-   * \note <code>data</code> is the progress in percent.
+   * \note <code>data</code> is the progress in percent (0 to 100).
    */
   const unsigned long EVENT_FIRMWARE_DOWNLOAD_PROGRESS  = EVENT_FIRMWARE_BASE + 4;
   /**
@@ -182,6 +182,40 @@ interface sbIDeviceEvent : nsISupports
    *       If there is an error during the download, the data will be null.
    */
   const unsigned long EVENT_FIRMWARE_DOWNLOAD_END       = EVENT_FIRMWARE_BASE + 5;
+  /**
+   * \brief Firmware update start
+   */
+  const unsigned long EVENT_FIRMWARE_UPDATE_START     = EVENT_FIRMWARE_BASE + 6;
+  /**
+   * \brief Firmware update end
+   */
+  const unsigned long EVENT_FIRMWARE_UPDATE_END       = EVENT_FIRMWARE_BASE + 7;
+  /**
+   * \brief Firmware write to device start
+   */
+  const unsigned long EVENT_FIRMWARE_WRITE_START    = EVENT_FIRMWARE_BASE + 8;
+  /**
+   * \brief Firmware write to device start
+   */
+  const unsigned long EVENT_FIRMWARE_WRITE_PROGRESS = EVENT_FIRMWARE_BASE + 9;
+  /**
+   * \brief Firmware write to device start
+   */
+  const unsigned long EVENT_FIRMWARE_WRITE_END      = EVENT_FIRMWARE_BASE + 10;
+
+  /**
+   * \brief Firmware verify device start
+   */
+  const unsigned long EVENT_FIRMWARE_VERIFY_START    = EVENT_FIRMWARE_BASE + 11;
+  /**
+   * \brief Firmware verify device progress
+   */
+  const unsigned long EVENT_FIRMWARE_VERIFY_PROGRESS = EVENT_FIRMWARE_BASE + 11;
+  /**
+   * \brief Firmware verify device end
+   */
+  const unsigned long EVENT_FIRMWARE_VERIFY_END      = EVENT_FIRMWARE_BASE + 11;
+
   /**
    * 
    */

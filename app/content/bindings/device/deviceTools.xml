@@ -213,7 +213,7 @@
             (window,
              "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
              "device_firmware_dialog",
-             "chrome",
+             "",
              [ "", this.device ],
              null);
          ]]></body>

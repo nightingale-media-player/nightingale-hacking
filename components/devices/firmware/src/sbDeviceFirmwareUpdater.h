@@ -30,9 +30,11 @@
 #include <sbIDeviceFirmwareUpdater.h>
 
 #include <nsIEventTarget.h>
+#include <nsIRunnable.h>
 
 #include <sbIDeviceEventListener.h>
 #include <sbIDeviceFirmwareHandler.h>
+#include <sbIDeviceFirmwareUpdate.h>
 #include <sbIFileDownloader.h>
 
 #include <nsClassHashtable.h>
@@ -126,16 +128,30 @@ public:
   nsresult GetStatus(handlerstatus_t *aStatus);
   nsresult SetStatus(handlerstatus_t aStatus);
 
-  PRBool IsAutoUpdate();
-  void IsAutoUpdate(PRBool aAutoUpdate);
-
 private:
   PRMonitor* mMonitor;
   
   handleroperation_t mOperation;
   handlerstatus_t    mStatus;
+};
 
-  PRPackedBool mIsAutoUpdate;
+class sbDeviceFirmwareUpdaterRunner : public nsIRunnable
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIRUNNABLE
+
+  sbDeviceFirmwareUpdaterRunner();
+
+  nsresult Init(sbIDeviceFirmwareUpdate *aUpdate, 
+                sbIDeviceFirmwareHandler *aHandler);
+
+private:
+  virtual ~sbDeviceFirmwareUpdaterRunner();
+
+protected:
+  nsCOMPtr<sbIDeviceFirmwareUpdate>   mFirmwareUpdate;
+  nsCOMPtr<sbIDeviceFirmwareHandler>  mHandler;
 };
 
 #define SB_DEVICEFIRMWAREUPDATER_DESCRIPTION               \

@@ -51,10 +51,11 @@
   title="&device.firmware.wizard.title;"
   onload="deviceFirmwareWizard.doLoad();"
   onunload="deviceFirmwareWizard.doUnload();"
+  onclose="return deviceFirmwareWizard.doClose();" 
   onwizardback="deviceFirmwareWizard.doBack();" 
   onwizardnext="deviceFirmwareWizard.doNext();" 
   onwizardfinish="return deviceFirmwareWizard.doFinish();"
-  onwizardcancel="deviceFirmwareWizard.doCancel();"
+  onwizardcancel="return deviceFirmwareWizard.doCancel();"
 >
 
   <!-- *************************************************************************
@@ -137,10 +138,11 @@
   
   <!-- Firmware update complete page. -->
   <wizardpage id="device_firmware_update_complete"
-              pageid="device_firmware_wizard_download_page"
+              pageid="device_firmware_wizard_complete_page"
               label=""
               hideback="true"
               hidenext="true"
+              hidecancel="true" 
               showfinish="true"
               onpageshow="deviceFirmwareWizard.doPageShow();">
     <description>

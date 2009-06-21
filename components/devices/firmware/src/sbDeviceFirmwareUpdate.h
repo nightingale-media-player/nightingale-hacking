@@ -29,16 +29,19 @@
 
 #include <sbIDeviceFirmwareUpdate.h>
 
+#include <nsIClassInfo.h>
 #include <nsIFile.h>
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 #include <prmon.h>
 
-class sbDeviceFirmwareUpdate : public sbIDeviceFirmwareUpdate
+class sbDeviceFirmwareUpdate : public sbIDeviceFirmwareUpdate,
+                               public nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSICLASSINFO
   NS_DECL_SBIDEVICEFIRMWAREUPDATE
 
   sbDeviceFirmwareUpdate();

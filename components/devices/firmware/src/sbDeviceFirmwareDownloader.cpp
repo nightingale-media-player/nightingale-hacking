@@ -401,6 +401,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareDownloader,
                               sbIFileDownloaderListener)
 
 sbDeviceFirmwareDownloader::sbDeviceFirmwareDownloader()
+: mIsBusy(PR_FALSE)
 {
 }
 
@@ -652,6 +653,9 @@ sbDeviceFirmwareDownloader::Start()
   NS_ENSURE_STATE(mDevice);
   NS_ENSURE_STATE(mHandler);
   NS_ENSURE_STATE(mDeviceCacheDir);
+  NS_ENSURE_FALSE(mIsBusy, NS_ERROR_FAILURE);
+
+  mIsBusy = PR_TRUE;
 
   nsresult rv = NS_ERROR_UNEXPECTED;
   PRBool inCache = IsAlreadyInCache();
@@ -707,6 +711,8 @@ sbDeviceFirmwareDownloader::Start()
     rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_END,
                          firmwareUpdateVariant);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    mIsBusy = PR_FALSE;
   }
 
   return NS_OK;
@@ -717,8 +723,14 @@ sbDeviceFirmwareDownloader::Cancel()
 {
   NS_ENSURE_STATE(mDownloader);
 
-  nsresult rv = mDownloader->Cancel();
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't cancel download");
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  
+  if(mIsBusy) {
+    rv = mDownloader->Cancel();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't cancel download");
+    
+    mIsBusy = PR_FALSE;
+  }
 
   nsCOMPtr<sbIFileDownloaderListener> grip(this);
   rv = mDownloader->SetListener(nsnull);
@@ -865,6 +877,8 @@ sbDeviceFirmwareDownloader::HandleComplete()
   nsCOMPtr<sbIFileDownloaderListener> grip(this);
   rv = mDownloader->SetListener(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mIsBusy = PR_FALSE;
 
   return NS_OK;
 }

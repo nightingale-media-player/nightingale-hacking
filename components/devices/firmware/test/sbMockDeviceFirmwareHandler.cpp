@@ -31,6 +31,8 @@
 #include <nsIDOMElement.h>
 #include <nsIDOMNode.h>
 #include <nsIDOMNodeList.h>
+#include <nsIInputStream.h>
+#include <nsIInputStreamPump.h>
 #include <nsIPrefBranch.h>
 #include <nsIPrefService.h>
 #include <nsISupportsUtils.h>
@@ -40,10 +42,12 @@
 #include <nsAutoLock.h>
 #include <nsCOMPtr.h>
 #include <nsComponentManagerUtils.h>
+#include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
 
 #include <sbIDevice.h>
+#include <sbIDeviceFirmwareUpdate.h>
 #include <sbIDeviceProperties.h>
 
 #include <sbVariantUtils.h>
@@ -55,8 +59,9 @@
 #define SB_MOCK_DEVICE_RELEASE_NOTES_URL \
   "http://dingo.songbirdnest.com/~aus/firmware/release_notes.html"
 
-NS_IMPL_ISUPPORTS_INHERITED0(sbMockDeviceFirmwareHandler, 
-                             sbBaseDeviceFirmwareHandler)
+NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler, 
+                             sbBaseDeviceFirmwareHandler,
+                             nsIStreamListener)
 
 SB_DEVICE_FIRMWARE_HANLDER_REGISTERSELF_IMPL(sbMockDeviceFirmwareHandler,
                                              "Songbird Device Firmware Tester - Mock Device Firmware Handler")
@@ -143,25 +148,27 @@ sbMockDeviceFirmwareHandler::OnRefreshInfo()
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
-  /**
-   * Here is where you will want to actually perform the firmware update
-   * on the device. The firmware update object will contain the local 
-   * location for the firmware image. It also contains the version of the 
-   * firmware image. 
-   *
-   * The implementation of this method must be asynchronous and not block
-   * the main thread. The flow of expected events is as follows:
-   * firmware update start, firmware write start, firmware write progress, 
-   * firmware write end, firmware verify start, firmware verify progress, 
-   * firmware verify end, firmware update end.
-   *
-   * See sbIDeviceEvent for more infomation about event payload.
-   *
-   * Events must be sent to both the device and the listener (if it is specified 
-   * during the call).
-   */
+  nsCOMPtr<nsIFile> firmwareFile;
+  nsresult rv = 
+    aFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(firmwareFile));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsCOMPtr<nsIInputStream> inputStream;
+  rv = NS_NewLocalFileInputStream(getter_AddRefs(inputStream), firmwareFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIInputStreamPump> inputStreamPump;
+  rv = NS_NewInputStreamPump(getter_AddRefs(inputStreamPump), 
+                             inputStream, -1, -1, 0, 0, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_START, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = inputStreamPump->AsyncRead(this, firmwareFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 /*virtual*/ nsresult
@@ -321,6 +328,77 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
   rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_CFU_END, 
                        data);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+// -----------------------------------------------------------------------------
+// nsIStreamListener
+// -----------------------------------------------------------------------------
+NS_IMETHODIMP
+sbMockDeviceFirmwareHandler::OnStartRequest(nsIRequest *aRequest, 
+                                            nsISupports *aContext)
+{
+  nsresult rv = 
+    SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_WRITE_START, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
+                                             nsISupports *aContext,
+                                             nsIInputStream *aStream,
+                                             PRUint32 aOffset,
+                                             PRUint32 aCount)
+{
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIFile> firmwareFile = do_QueryInterface(aContext, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 availableBytes = 0;
+  rv = aStream->Available(&availableBytes);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  char *buffer = 
+    reinterpret_cast<char *>(NS_Alloc(availableBytes * sizeof(char)));
+  NS_ENSURE_TRUE(buffer, NS_ERROR_OUT_OF_MEMORY);
+
+  PRUint32 readBytes = 0;
+  rv = aStream->Read(buffer, availableBytes, &readBytes);
+  
+  NS_Free(buffer);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 fileSize = 0;
+  rv = firmwareFile->GetFileSize(&fileSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 progress = static_cast<PRUint32>(aOffset * 100 / fileSize);
+
+  nsCOMPtr<nsIVariant> progressVariant = sbNewVariant(progress).get();
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_WRITE_PROGRESS, progressVariant);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PR_Sleep(PR_MillisecondsToInterval(50));
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockDeviceFirmwareHandler::OnStopRequest(nsIRequest *aRequest,
+                                           nsISupports *aContext,
+                                           nsresult aResultCode)
+{
+  nsresult rv = 
+    SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_WRITE_END, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_END, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(aResultCode), "Request failed.");
 
   return NS_OK;
 }

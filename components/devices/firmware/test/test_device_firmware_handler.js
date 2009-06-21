@@ -43,6 +43,7 @@ function runTest () {
   
   var listener = {
     op: "", 
+    firmwareUpdate: null,
     onDeviceEvent: function(aEvent) {
       log("event type: " + aEvent.type);
       log("event origin: " + aEvent.origin);
@@ -67,11 +68,31 @@ function runTest () {
             log("firmware update download progress: " + data);
           }
           if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_END) {
-            var firmwareData = data.QueryInterface(Ci.sbIDeviceFirmwareUpdate);
-            log("firmware update version: " + firmwareData.firmwareReadableVersion);
-            log("firmware update file path: " + firmwareData.firmwareImageFile.path);
+            this.firmwareUpdate = data.QueryInterface(Ci.sbIDeviceFirmwareUpdate);
+            log("firmware update version: " + this.firmwareUpdate.firmwareReadableVersion);
+            log("firmware update file path: " + this.firmwareUpdate.firmwareImageFile.path);
             testFinished();
           }
+        }
+        break;
+        
+        case "au": {
+          if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_START) {
+            log("firmware apply update start");
+          }
+          else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_START) {
+            log("firmware write start");
+          }
+          else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRWMARE_WRITE_PROGRESS) {
+            log("firmware write progress: " + data);
+          }
+          else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_END) {
+            log("firmware write end");
+          }
+          else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_END) {
+            log("firmware apply update end");
+            testFinished();
+          }          
         }
         break;
         
@@ -96,6 +117,12 @@ function runTest () {
     listener.op = "du";
     
     updater.downloadUpdate(device, false, null);
+    testPending();
+    
+    log("Testing 'applyUpdate'");
+    listener.op = "au";
+    
+    updater.applyUpdate(device, listener.firmwareUpdate, null);
     testPending();
       
     updater.finalizeUpdate(device);

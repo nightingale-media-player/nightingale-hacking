@@ -389,34 +389,53 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
-}
-
-NS_IMETHODIMP
-sbDeviceFirmwareUpdater::AutoUpdate(sbIDevice *aDevice,
-                                    sbIDeviceEventListener *aListener)
-{
-  LOG(("[sbDeviceFirmwareUpdater] - AutoUpdate"));
-
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-  NS_ENSURE_ARG_POINTER(aDevice);
-  
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
     GetRunningHandler(aDevice, aListener, PR_TRUE);
 
-  // XXXAus: Check to make sure it's not busy right now
-
   nsAutoMonitor mon(mMonitor);
-
-  rv = CheckForUpdate(aDevice, aListener);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
   NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
 
-  handlerStatus->IsAutoUpdate(PR_TRUE);
+  sbDeviceFirmwareHandlerStatus::handlerstatus_t status = 
+    sbDeviceFirmwareHandlerStatus::STATUS_NONE;
+  rv = handlerStatus->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(status != sbDeviceFirmwareHandlerStatus::STATUS_NONE &&
+     status != sbDeviceFirmwareHandlerStatus::STATUS_FINISHED) {
+    return NS_ERROR_FAILURE;
+  }
+
+
+  nsCOMPtr<sbIDeviceEventTarget> eventTarget = do_QueryInterface(aDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = eventTarget->AddEventListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = PutRunningHandler(aDevice, handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handlerStatus->SetOperation(sbDeviceFirmwareHandlerStatus::OP_UPDATE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Exit();
+
+  nsRefPtr<sbDeviceFirmwareUpdaterRunner> runner;
+  NS_NEWXPCOM(runner, sbDeviceFirmwareUpdaterRunner);
+  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = runner->Init(aFirmwareUpdate, handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mThreadPool->Dispatch(runner, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -710,6 +729,19 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
 
     case sbDeviceFirmwareHandlerStatus::OP_UPDATE: {
       LOG(("[sbDeviceFirmwareUpdater] - OP_UPDATE"));
+      
+      if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_START &&
+         status == sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START) {
+          rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_RUNNING);
+          NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_END &&
+              status == sbDeviceFirmwareHandlerStatus::STATUS_RUNNING) {
+          rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_FINISHED);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          removeListener = PR_TRUE;
+      }
     }
     break;
 
@@ -739,7 +771,6 @@ sbDeviceFirmwareHandlerStatus::sbDeviceFirmwareHandlerStatus()
 : mMonitor(nsnull)
 , mOperation(OP_NONE)
 , mStatus(STATUS_NONE)
-, mIsAutoUpdate(PR_FALSE)
 {
 }
 
@@ -805,22 +836,42 @@ sbDeviceFirmwareHandlerStatus::SetStatus(handlerstatus_t aStatus)
   return NS_OK;
 }
 
-PRBool 
-sbDeviceFirmwareHandlerStatus::IsAutoUpdate()
+// -----------------------------------------------------------------------------
+// sbDeviceFirmwareUpdaterRunner
+// -----------------------------------------------------------------------------
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareUpdaterRunner,
+                              nsIRunnable);
+
+sbDeviceFirmwareUpdaterRunner::sbDeviceFirmwareUpdaterRunner()
 {
-  NS_ENSURE_TRUE(mMonitor, PR_FALSE);
-  nsAutoMonitor mon(mMonitor);
-  
-  return mIsAutoUpdate;
 }
 
-void 
-sbDeviceFirmwareHandlerStatus::IsAutoUpdate(PRBool aAutoUpdate)
+/*virtual*/
+sbDeviceFirmwareUpdaterRunner::~sbDeviceFirmwareUpdaterRunner()
 {
-  NS_ENSURE_TRUE(mMonitor, /*void*/);
-  
-  nsAutoMonitor mon(mMonitor);
-  mIsAutoUpdate = aAutoUpdate;
+}
 
-  return;
+nsresult
+sbDeviceFirmwareUpdaterRunner::Init(sbIDeviceFirmwareUpdate *aUpdate, 
+                                    sbIDeviceFirmwareHandler *aHandler)
+{
+  NS_ENSURE_ARG_POINTER(aUpdate);
+  NS_ENSURE_ARG_POINTER(aHandler);
+
+  mFirmwareUpdate = aUpdate;
+  mHandler = aHandler;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceFirmwareUpdaterRunner::Run()
+{
+  NS_ENSURE_STATE(mHandler);
+  NS_ENSURE_STATE(mFirmwareUpdate);
+
+  nsresult rv = mHandler->Update(mFirmwareUpdate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
