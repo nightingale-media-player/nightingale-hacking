@@ -30,6 +30,8 @@ interface nsIUTF8StringEnumerator;
 
 /**
  * \interface sbIContentTypeFormat
+ * \note This interface is obsolete and should not be used. See 
+ *       sbIAudioFormatType, sbIImageFormatType, etc.
  * \note Implementations of this interface must be threadsafe.
  *
  * \note the formats may be either a content type or a GUID.  This will be

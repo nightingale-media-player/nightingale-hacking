@@ -53,7 +53,9 @@ class nsIPrefBranch;
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
 class sbBaseDeviceMediaListListener;
+class sbIDeviceCapabilitiesRegistrar;
 class sbIDeviceLibrary;
+class sbITranscodeProfile;
 
 /* Property used to force a sync diff. */
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
@@ -152,7 +154,7 @@ public:
     TransferRequest() : spaceEnsured(PR_FALSE) {}
     ~TransferRequest(){} /* we're refcounted, no manual deleting! */
   };
-
+  
 public:
   /* selected methods from sbIDevice */
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
@@ -418,8 +420,10 @@ protected:
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
-
+  nsCOMPtr<sbIDeviceCapabilitiesRegistrar> mCapabilitiesRegistrar;
+  PRUint32 mCapabilitiesRegistrarType;
 protected:
+
   /**
    * Default per track storage overhead.  10000 is enough for one 8K block plus
    * extra media database or filesystem overhead.
@@ -730,6 +734,12 @@ protected:
    * \param aEject [out, retval]  Should the device be ejected?
    */
   nsresult PromptForEjectDuringPlayback(PRBool* aEject);
+  
+  /**
+   * Returns the primary library for the device
+   * 
+   * \param aDeviceLibrary out parameter receiving the primary library object
+   */
   nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
 
   /**
@@ -745,7 +755,6 @@ protected:
    * \param aContentSrcBaseURI  Base URI of device content source.
    * \param aWriteSrcURI        URI of source of write.  Defaults to null.
    */
-
   nsresult SetDeviceWriteContentSrc(sbIMediaItem* aWriteDstItem,
                                     nsIURI*       aContentSrcBaseURI,
                                     nsIURI*       aWriteSrcURI = nsnull);
@@ -755,7 +764,30 @@ protected:
    */
 
   nsresult SetupDevice();
+  /**
+   * Calls any registered device capabilities augmenter.
+   * \param aCapabilities Capabilities object to augment.
+   */
+  nsresult RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities);
+  
+  /**
+   * Process the capabilities registrars to find out which ones are interested
+   * in us.
+   */
+  nsresult ProcessCapabilitiesRegistrars();
+  
+  /**
+   * Returns the profile for the given media item
+   * \brief aMediaItem The media item to find the profile for
+   * \brief aProfile the profile found or may be null if no transcoding
+   *                 is needed.
+   * \note NS_ERROR_NOT_AVAILABLE is returned if no suitable profile is found
+   *       but transcoding is needed
+   */
+  nsresult FindTranscodeProfile(sbIMediaItem * aMediaItem,
+                                sbITranscodeProfile ** aProfile);
 };
+
 
 #endif /* __SBBASEDEVICE__H__ */
 

@@ -35,7 +35,7 @@
 
 class sbLocalDatabasePropertyCache;
 class sbIPropertyManager;
-class sbPropertyData;
+struct sbPropertyData;
 
 /**
  * This holds the collection of properties usually related to a media item.

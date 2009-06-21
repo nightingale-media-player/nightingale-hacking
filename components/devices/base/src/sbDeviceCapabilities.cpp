@@ -54,9 +54,14 @@ sbDeviceCapabilities::sbDeviceCapabilities() :
 isInitialized(false)
 {
   nsresult rv = mContentTypes.Init();
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize mContentTypes");
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  
   rv = mSupportedFormats.Init();
-  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to initialize mSupportedFormats");
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  
+  rv = mFormatTypes.Init();
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  
 #ifdef PR_LOGGING
   if (!gDeviceCapabilitiesLog) {
     gDeviceCapabilitiesLog = PR_NewLogModule("sbDeviceCapabilities");
@@ -87,7 +92,6 @@ sbDeviceCapabilities::SetFunctionTypes(PRUint32 *aFunctionTypes,
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
-  PRUint32 arrayCounter;
   for (PRUint32 arrayCounter = 0; arrayCounter < aFunctionTypesCount; ++arrayCounter) {
     mFunctionTypes.AppendElement(aFunctionTypes[arrayCounter]);
   }
@@ -114,6 +118,7 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
                                       PRUint32 *aContentTypes,
                                       PRUint32 aContentTypesCount)
 {
+  NS_ENSURE_ARG_POINTER(aContentTypes);
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   nsTArray<PRUint32> * nContentTypes = new nsTArray<PRUint32>(aContentTypesCount);
@@ -132,6 +137,7 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
                                  const char * *aFormats,
                                  PRUint32 aFormatsCount)
 {
+  NS_ENSURE_ARG_POINTER(aFormats);
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   nsTArray<nsCString> * nFormats = new nsTArray<nsCString>(aFormatsCount);
@@ -146,9 +152,22 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
 }
 
 NS_IMETHODIMP
+sbDeviceCapabilities::AddFormatType(nsAString const & aFormat, 
+                                    nsISupports * aFormatType)
+{
+  NS_ENSURE_ARG_POINTER(aFormatType);
+  
+  PRBool const added = mFormatTypes.Put(aFormat, aFormatType);
+  NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceCapabilities::GetSupportedFunctionTypes(PRUint32 *aArrayCount,
                                                 PRUint32 **aFunctionTypes)
 {
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aFunctionTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mFunctionTypes.Length();
@@ -169,6 +188,8 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
                                                PRUint32 *aArrayCount,
                                                PRUint32 **aContentTypes)
 {
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aContentTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   
   nsTArray<PRUint32>* contentTypes;
@@ -198,6 +219,8 @@ sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
                                           PRUint32 *aArrayCount,
                                           char ***aSupportedFormats)
 {
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aSupportedFormats);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
   
   nsTArray<nsCString>* supportedFormats;
@@ -227,6 +250,8 @@ NS_IMETHODIMP
 sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
                                          PRUint32 **aSupportedEvents)
 {
+  NS_ENSURE_ARG_POINTER(aArrayCount);
+  NS_ENSURE_ARG_POINTER(aSupportedEvents);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
   PRUint32 arrayLen = mSupportedEvents.Length();
@@ -241,6 +266,345 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
 
   *aArrayCount = arrayLen;
   *aSupportedEvents = outArray;
+  return NS_OK;
+}
+
+/**
+ * Returns the list of constraints for the format
+ */
+NS_IMETHODIMP
+sbDeviceCapabilities::GetFormatType(nsAString const & aFormat,
+                                    nsISupports ** aFormatType) {
+  NS_ENSURE_ARG_POINTER(aFormatType);
+  
+  return mFormatTypes.Get(aFormat, aFormatType) ? NS_OK : 
+                                                  NS_ERROR_NOT_AVAILABLE;
+}
+
+/*******************************************************************************
+ * sbImageSize
+ */
+
+NS_IMPL_ISUPPORTS1(sbImageSize, sbIImageSize)
+
+sbImageSize::~sbImageSize()
+{
+  /* destructor code */
+}
+
+NS_IMETHODIMP  
+sbImageSize::Initialize(PRInt32 aWidth, 
+                        PRInt32 aHeight) {
+  mWidth = aWidth;
+  mHeight = aHeight;
+  
+  return NS_OK;
+}
+
+/* readonly attribute long width; */
+NS_IMETHODIMP 
+sbImageSize::GetWidth(PRInt32 *aWidth)
+{
+  NS_ENSURE_ARG_POINTER(aWidth);
+  
+  *aWidth = mWidth;
+  return NS_OK;
+}
+
+/* readonly attribute long height; */
+NS_IMETHODIMP 
+sbImageSize::GetHeight(PRInt32 *aHeight)
+{
+  NS_ENSURE_ARG_POINTER(aHeight);
+  
+  *aHeight = mHeight;
+  return NS_OK;
+}
+
+/*******************************************************************************
+ * sbDevCapRange
+ */
+
+NS_IMPL_ISUPPORTS1(sbDevCapRange, sbIDevCapRange)
+
+sbDevCapRange::~sbDevCapRange()
+{
+  /* destructor code */
+}
+
+NS_IMETHODIMP sbDevCapRange::Initialize(PRInt32 aMin, 
+                                        PRInt32 aMax,
+                                        PRInt32 aStep) {
+  mMin = aMin;
+  mMax = aMax;
+  mStep = aStep;
+  mValues.Clear();
+  return NS_OK;
+}
+
+/* readonly attribute nsIArray values; */
+NS_IMETHODIMP 
+sbDevCapRange::GetValue(PRUint32 aIndex, PRInt32 * aValue)
+{
+  NS_ENSURE_ARG_POINTER(aValue);
+  
+  *aValue = mValues[aIndex];
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapRange::AddValue(PRInt32 aValue) 
+{
+  NS_ENSURE_TRUE(mValues.AppendElement(aValue), NS_ERROR_OUT_OF_MEMORY);
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDevCapRange::GetValueCount(PRUint32 * aCount)
+{
+  NS_ENSURE_ARG_POINTER(aCount);
+  
+  *aCount = mValues.Length();
+  return NS_OK;
+}
+
+/* readonly attribute long min; */
+NS_IMETHODIMP 
+sbDevCapRange::GetMin(PRInt32 *aMin)
+{
+  NS_ENSURE_ARG_POINTER(aMin);
+  
+  *aMin = mMin;
+  return NS_OK;
+}
+
+/* readonly attribute long max; */
+NS_IMETHODIMP 
+sbDevCapRange::GetMax(PRInt32 *aMax)
+{
+  NS_ENSURE_ARG_POINTER(aMax);
+  
+  *aMax = mMax;
+  return NS_OK;
+}
+
+/* readonly attribute long step; */
+NS_IMETHODIMP 
+sbDevCapRange::GetStep(PRInt32 *aStep)
+{
+  NS_ENSURE_ARG_POINTER(aStep);
+  
+  *aStep = mStep;
+  return NS_OK;
+}
+
+/*******************************************************************************
+ * sbFormatTypeConstraint
+ */
+
+NS_IMPL_ISUPPORTS1(sbFormatTypeConstraint, sbIFormatTypeConstraint)
+
+
+sbFormatTypeConstraint::~sbFormatTypeConstraint()
+{
+  /* destructor code */
+}
+
+NS_IMETHODIMP 
+sbFormatTypeConstraint::Initialize(nsAString const & aConstraintName,
+                                   nsIVariant * aMinValue,
+                                   nsIVariant * aMaxValue) {
+  NS_ENSURE_ARG_POINTER(aMinValue);
+  NS_ENSURE_ARG_POINTER(aMaxValue);
+  
+  mConstraintName = aConstraintName;
+  mMinValue = aMinValue;
+  mMaxValue = aMaxValue;
+  return NS_OK;
+}
+
+/* readonly attribute AString constraintName; */
+NS_IMETHODIMP 
+sbFormatTypeConstraint::GetConstraintName(nsAString & aConstraintName)
+{
+  aConstraintName = mConstraintName;
+  return NS_OK;
+}
+
+/* readonly attribute nsIVariant constraintMinValue; */
+NS_IMETHODIMP 
+sbFormatTypeConstraint::GetConstraintMinValue(nsIVariant * *aConstraintMinValue)
+{
+  NS_ENSURE_ARG_POINTER(aConstraintMinValue);
+  
+  *aConstraintMinValue = mMinValue.get();
+  NS_IF_ADDREF(*aConstraintMinValue);
+  return NS_OK;
+}
+
+/* readonly attribute nsIVariant constraintMaxValue; */
+NS_IMETHODIMP 
+sbFormatTypeConstraint::GetConstraintMaxValue(nsIVariant * *aConstraintMaxValue)
+{
+  NS_ENSURE_ARG_POINTER(aConstraintMaxValue);
+  
+  *aConstraintMaxValue = mMaxValue.get();
+  NS_IF_ADDREF(*aConstraintMaxValue);
+  return NS_OK;
+}
+
+/*******************************************************************************
+ * Image format type implementation
+ */
+
+/* Implementation file */
+NS_IMPL_ISUPPORTS1(sbImageFormatType, sbIImageFormatType)
+
+sbImageFormatType::~sbImageFormatType()
+{
+  /* destructor code */
+}
+
+NS_IMETHODIMP
+sbImageFormatType::Initialize(nsACString const & aImageFormat,
+                              nsIArray * aSupportedExplicitSizes,
+                              sbIDevCapRange * aSupportedWidths,
+                              sbIDevCapRange * aSupportedHeights) {
+  NS_ENSURE_ARG_POINTER(aSupportedExplicitSizes);
+  NS_ENSURE_ARG_POINTER(aSupportedWidths);
+  NS_ENSURE_ARG_POINTER(aSupportedHeights);
+  
+  mImageFormat = aImageFormat;
+  mSupportedExplicitSizes = aSupportedExplicitSizes;
+  mSupportedWidths = aSupportedWidths;
+  mSupportedHeights = aSupportedHeights;
+  return NS_OK;
+}
+
+/* readonly attribute ACString imageFormat; */
+NS_IMETHODIMP 
+sbImageFormatType::GetImageFormat(nsACString & aImageFormat)
+{
+  aImageFormat = mImageFormat;
+  return NS_OK;
+}
+
+/* readonly attribute nsIArray supportedExplicitSizes; */
+NS_IMETHODIMP 
+sbImageFormatType::GetSupportedExplicitSizes(nsIArray * *aSupportedExplicitSizes)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedExplicitSizes);
+  
+  *aSupportedExplicitSizes = mSupportedExplicitSizes;
+  NS_IF_ADDREF(*aSupportedExplicitSizes);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedWidths; */
+NS_IMETHODIMP 
+sbImageFormatType::GetSupportedWidths(sbIDevCapRange * *aSupportedWidths)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedWidths);
+  
+  *aSupportedWidths = mSupportedWidths;
+  NS_IF_ADDREF(*aSupportedWidths);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedHeights; */
+NS_IMETHODIMP 
+sbImageFormatType::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedHeights);
+  
+  *aSupportedHeights = mSupportedHeights;
+  NS_IF_ADDREF(*aSupportedHeights);
+  return NS_OK;
+}
+
+/*******************************************************************************
+ * Audio format type
+ */
+
+/* Implementation file */
+NS_IMPL_ISUPPORTS1(sbAudioFormatType, sbIAudioFormatType)
+
+sbAudioFormatType::~sbAudioFormatType()
+{
+  /* destructor code */
+}
+
+NS_IMETHODIMP 
+sbAudioFormatType::Initialize(nsACString const & aContainerFormat,
+                              nsACString const & aAudioCodec,
+                              sbIDevCapRange * aSupportedBitrates,
+                              sbIDevCapRange * aSupportedSampleRates,
+                              sbIDevCapRange * aSupportedChannels,
+                              nsIArray * aFormatSpecificConstraints) {
+  mContainerFormat = aContainerFormat;
+  mAudioCodec = aAudioCodec;
+  mSupportedBitrates = aSupportedBitrates;
+  mSupportedSampleRates = aSupportedSampleRates;
+  mSupportedChannels = aSupportedChannels;
+  mFormatSpecificConstraints = aFormatSpecificConstraints;
+  
+  return NS_OK;
+}
+
+/* readonly attribute ACString containerFormat; */
+NS_IMETHODIMP 
+sbAudioFormatType::GetContainerFormat(nsACString & aContainerFormat)
+{
+  aContainerFormat = mContainerFormat;
+  return NS_OK;
+}
+
+/* readonly attribute ACString audioCodec; */
+NS_IMETHODIMP 
+sbAudioFormatType::GetAudioCodec(nsACString & aAudioCodec)
+{
+  aAudioCodec = mAudioCodec;
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedBitrates; */
+NS_IMETHODIMP 
+sbAudioFormatType::GetSupportedBitrates(sbIDevCapRange * *aSupportedBitrates)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedBitrates);
+  *aSupportedBitrates = mSupportedBitrates;
+  NS_IF_ADDREF(*aSupportedBitrates);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedSampleRates; */
+NS_IMETHODIMP 
+sbAudioFormatType::GetSupportedSampleRates(sbIDevCapRange * *aSupportedSampleRates)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedSampleRates);
+  *aSupportedSampleRates = mSupportedSampleRates;
+  NS_IF_ADDREF(*aSupportedSampleRates);
+  return NS_OK;
+}
+
+/* readonly attribute sbIDevCapRange supportedChannels; */
+NS_IMETHODIMP 
+sbAudioFormatType::GetSupportedChannels(sbIDevCapRange * *aSupportedChannels)
+{
+  NS_ENSURE_ARG_POINTER(aSupportedChannels);
+  *aSupportedChannels = mSupportedChannels;
+  NS_IF_ADDREF(*aSupportedChannels);
+  return NS_OK;
+}
+
+/* readonly attribute nsIArray formatSpecificConstraints; */
+NS_IMETHODIMP 
+sbAudioFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConstraints)
+{
+  NS_ENSURE_ARG_POINTER(aFormatSpecificConstraints);
+  *aFormatSpecificConstraints = mFormatSpecificConstraints;
+  NS_IF_ADDREF(*aFormatSpecificConstraints);
   return NS_OK;
 }
 

@@ -54,8 +54,10 @@
 #include <nsThreadUtils.h>
 #include <nsIDOMWindow.h>
 #include <nsIPromptService.h>
+#include <nsISupportsPrimitives.h>
 
 #include <sbIDeviceContent.h>
+#include <sbIDeviceCapabilitiesRegistrar.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
@@ -66,6 +68,7 @@
 #include <sbIMediaList.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
+#include <sbITranscodeManager.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbPrefBranch.h>
 #include <sbStringBundle.h>
@@ -295,7 +298,8 @@ sbBaseDevice::sbBaseDevice() :
   mLastRequestPriority(PR_INT32_MIN),
   mAbortCurrentRequest(PR_FALSE),
   mIgnoreMediaListCount(0),
-  mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD)
+  mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
+  mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -3387,3 +3391,124 @@ nsresult sbBaseDevice::SetupDevice()
   return NS_OK;
 }
 
+nsresult 
+sbBaseDevice::ProcessCapabilitiesRegistrars() 
+{
+  // If we haven't built the registrars then do so
+  if (mCapabilitiesRegistrarType != sbIDeviceCapabilitiesRegistrar::NONE) {
+    return NS_OK;
+  }
+
+  nsresult rv;
+  nsCOMPtr<nsICategoryManager> catMgr =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> enumerator;
+  rv = catMgr->EnumerateCategory(SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY,
+                                 getter_AddRefs(enumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Enumerate the registrars and find the highest scoring one (Greatest type)
+  PRBool hasMore;
+  rv = enumerator->HasMoreElements(&hasMore);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  while(hasMore) {
+    nsCOMPtr<nsISupports> supports;
+    rv = enumerator->GetNext(getter_AddRefs(supports));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsISupportsCString> data = do_QueryInterface(supports, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCString entryName;
+    rv = data->GetData(entryName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    char * contractId;
+    rv = catMgr->GetCategoryEntry(SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY, 
+                                  entryName.get(), 
+                                  &contractId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceCapabilitiesRegistrar> capabilitiesRegistrar =
+      do_CreateInstance(contractId, &rv);
+    NS_Free(contractId);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool interested;
+    rv = capabilitiesRegistrar->InterestedInDevice(this, &interested);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (interested) {
+      PRUint32 type;
+      rv = capabilitiesRegistrar->GetType(&type);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (type >= mCapabilitiesRegistrarType) {
+        mCapabilitiesRegistrar = capabilitiesRegistrar;
+      }
+    }
+    
+    rv = enumerator->HasMoreElements(&hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
+}
+
+/**
+ * The capabilities cannot be cached because the capabilities are not preserved
+ * on all devices.
+ */
+nsresult 
+sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities) 
+{
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  
+  nsresult rv;
+  
+  rv = ProcessCapabilitiesRegistrars();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (mCapabilitiesRegistrar) {
+    rv = mCapabilitiesRegistrar->AddCapabilities(this, aCapabilities);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
+                                   sbITranscodeProfile ** aProfile) 
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aProfile);
+  
+  nsresult rv;
+  
+  rv = ProcessCapabilitiesRegistrars();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbITranscodeManager> tcManager = 
+    do_GetService(SONGBIRD_TRANSCODEMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIArray> profiles;
+  rv = tcManager->GetTranscodeProfiles(getter_AddRefs(profiles));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (mCapabilitiesRegistrar) {
+    // This may return NS_ERROR_NOT_AVAILABLE or null if no transcoding is
+    // required
+    rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, 
+                                               profiles, 
+                                               aProfile);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // No acceptable transcoding profile available
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+  
+  return NS_OK;
+}

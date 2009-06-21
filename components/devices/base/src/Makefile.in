@@ -30,7 +30,6 @@ VPATH = @srcdir@ @top_srcdir@/components/moz/strings/src/
 include $(DEPTH)/build/autodefs.mk
 
 CPP_SRCS = sbBaseDeviceEventTarget.cpp \
-           sbContentTypeFormat.cpp \
            sbDeviceBaseModule.cpp \
            sbDeviceContent.cpp \
            sbDeviceCompatibility.cpp \

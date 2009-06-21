@@ -36,15 +36,18 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
-#include "sbContentTypeFormat.h"
 #include "sbDeviceProperties.h"
 #include "sbDeviceCapabilities.h"
 #include "sbDeviceStatus.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbContentTypeFormat);
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbAudioFormatType);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceCapabilities);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceProperties);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbDeviceStatus);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbFormatTypeConstraint);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageFormatType);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbImageSize);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbDevCapRange);
 
 static nsModuleComponentInfo sbDeviceBaseComponents[] =
 {
@@ -63,18 +66,46 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
   },
 
   {
-    SONGBIRD_CONTENTTYPEFORMAT_CLASSNAME,
-    SONGBIRD_CONTENTTYPEFORMAT_CID,
-    SONGBIRD_CONTENTTYPEFORMAT_CONTRACTID,
-    sbContentTypeFormatConstructor
-  },
-
-  {
     SONGBIRD_DEVICESTATUS_CLASSNAME,
     SONGBIRD_DEVICESTATUS_CID,
     SONGBIRD_DEVICESTATUS_CONTRACTID,
     sbDeviceStatusConstructor
-  }
+  },
+  {
+    SB_IAUDIOFORMATTYPE_CLASSNAME,
+    SB_IAUDIOFORMATTYPE_CID,
+    SB_IAUDIOFORMATTYPE_CONTRACTID,
+    sbAudioFormatTypeConstructor
+  },
+  
+  {
+    SB_IFORMATTYPECONSTRAINT_CLASSNAME,
+    SB_IFORMATTYPECONSTRAINT_CID,
+    SB_IFORMATTYPECONSTRAINT_CONTRACTID,
+    sbFormatTypeConstraintConstructor
+  },
+
+  {
+    SB_IIMAGEFORMATTYPE_CLASSNAME,
+    SB_IIMAGEFORMATTYPE_CID,
+    SB_IIMAGEFORMATTYPE_CONTRACTID,
+    sbFormatTypeConstraintConstructor
+  },
+
+  {
+    SB_IMAGESIZE_CLASSNAME,
+    SB_IMAGESIZE_CID,
+    SB_IMAGESIZE_CONTRACTID,
+    sbImageSizeConstructor
+  },
+
+  {
+    SB_IDEVCAPRANGE_CLASSNAME,
+    SB_IDEVCAPRANGE_CID,
+    SB_IDEVCAPRANGE_CONTRACTID,
+    sbDevCapRangeConstructor
+  },
+
 };
 
 NS_IMPL_NSGETMODULE(SongbirdDeviceBaseComps, sbDeviceBaseComponents)
