@@ -432,6 +432,9 @@
 
 <!ENTITY device.firmware.wizard.complete.description "Your device has been updated with the newest firmware available.">
 
+<!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can be installed only when your device is idle.">
+<!ENTITY device.firmware.wizard.retry.description "Please try again after your device has completed its current operation.">
+
 <!ENTITY device.info.icon.device            "Generic device icon">
 <!ENTITY device.info.icon.readonly          "Read-only lock icon">
 <!ENTITY device.info.model.label            "Model">

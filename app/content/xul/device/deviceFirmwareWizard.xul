@@ -90,14 +90,34 @@
                    type="content"/>
         </sb-closable-box>
       </vbox>
-      <vbox id="device_firmware_wizard_check_already_box">
+      <vbox id="device_firmware_wizard_check_already_box"
+            flex="1">
         <description>
           &device.firmware.wizard.check.already.description;
         </description>
       </vbox>
     </deck>
   </wizardpage>
-  
+
+  <!-- Busy device page -->
+  <wizardpage id="device_firmware_busy_device"
+            pageid="device_firmware_busy_device_page"
+            label=""
+            showcancel="true"
+            hideback="true"
+            hidefinish="true"
+            shownext="true"
+            onpageshow="deviceFirmwareWizard.doPageShow();">
+    <vbox>
+      <description>
+        &device.firmware.wizard.busy.description;
+      </description>
+      <description>
+        &device.firmware.wizard.retry.description;
+      </description>
+    </vbox>
+  </wizardpage>
+
   <!-- Download firmware page. -->
   <wizardpage id="device_firmware_download"
               pageid="device_firmware_wizard_download_page"
@@ -149,8 +169,6 @@
       &device.firmware.wizard.complete.description;
     </description>    
   </wizardpage>
-              
-  
 
   <!-- *************************************************************************
    *

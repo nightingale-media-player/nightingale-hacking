@@ -67,9 +67,20 @@ var deviceFirmwareWizard = {
   },
 
   doFinish: function deviceFirmwareWizard_doFinish() {
+    // Looks like we were actually busy and we need to retry.
+    if(this._currentOperation == "busy") {
+      alert('busy');
+      var self = this;
+      setTimeout(function() { self.wizardElem.goTo("device_firmware_download_page"); }, 0);
+      return false;
+    }
+
+    return true;
   },
 
   doCancel: function deviceFirmwareWizard_doCancel() {
+    // If we are in the process of installing the firmware we have
+    // to disable the cancel operation on the wizard.
     if(this._currentOperation == "install") {
       return false;
     }
@@ -98,11 +109,20 @@ var deviceFirmwareWizard = {
       break;
       
       case "device_firmware_download":
-        this._currentOperation = "download";
         var self = this;
-        setTimeout(function() {
-            self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
+        
+        if(this._device.isBusy) {
+          this._currentOperation = "busy";
+          setTimeout(function() { 
+            self.wizardElem.goTo("device_firmware_busy_device_page");
             }, 0);
+        }
+        else {
+          this._currentOperation = "download";
+          setTimeout(function() {
+              self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
+              }, 0);
+        }
       break;
       
       case "device_firmware_install":
@@ -119,6 +139,13 @@ var deviceFirmwareWizard = {
       
       case "device_firmware_update_complete":
         this._currentOperation = "complete";
+      break;
+      
+      case "device_firmware_busy_device":
+        var retryButton = this.wizardElem.getButton("next");
+        retryButton.label = 
+          SBString("device.firmware.wizard.retry.button");
+        retryButton.accessKey = null;
       break;
       
       default:
@@ -138,9 +165,11 @@ var deviceFirmwareWizard = {
   },
   
   doExtra1: function deviceFirmwareWizard_onExtra1(aEvent) {
+    return true;
   },
   
   doExtra2: function deviceFirmwareWizard_onExtra2(aEvent) {
+    return true;
   },
   
   onDeviceEvent: function deviceFirmwareWizard_onDeviceEvent(aEvent) {
@@ -149,7 +178,6 @@ var deviceFirmwareWizard = {
 
   update: function deviceFirmwareWizard_update() {
   },
-
 
   _initialize: function deviceFirmwareWizard__initialize() {
     if (this._initialized)
@@ -170,7 +198,6 @@ var deviceFirmwareWizard = {
     var browserBox = document.getElementById("device_firmware_wizard_release_notes_box");
     this._domEventListenerSet.add(browserBox, "collapse", this._handleBrowserCollapse, true, false);
 
-    this._wizardElem.canAdvance = true;
     this._wizardElem.canRewind = true;
 
     this._initialized = true;
@@ -212,12 +239,6 @@ var deviceFirmwareWizard = {
       case "install":
         this._handleApplyUpdate(aEvent);
       break;
-      
-      case "complete":
-      break;
-      
-      default:
-        throw new Error("not reached");
     }
   },
   
@@ -241,6 +262,7 @@ var deviceFirmwareWizard = {
         remindMeLaterButton.label = 
           SBString("device.firmware.wizard.check.remind_me_later.label");
         remindMeLaterButton.accessKey = null;
+        remindMeLaterButton.disabled = false;
         
         installNewFirmwareButton.label = 
           SBString("device.firmware.wizard.check.install.label");
