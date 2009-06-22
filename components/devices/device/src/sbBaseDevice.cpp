@@ -104,6 +104,7 @@ static PRLogModuleInfo* gBaseDeviceLog = nsnull;
                                           SB_PROPERTY_RATING   " 80"        \
 
 #define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device."
+#define PREF_DEVICE_LIBRARY_BASE "library."
 #define PREF_WARNING "warning."
 
 #define BATCH_TIMEOUT 100 /* number of milliseconds to wait for batching */
@@ -299,7 +300,9 @@ sbBaseDevice::sbBaseDevice() :
   mAbortCurrentRequest(PR_FALSE),
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
-  mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE)
+  mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE),
+  mPreferenceLock(nsnull),
+  mMusicLimitPercent(100)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -315,10 +318,16 @@ sbBaseDevice::sbBaseDevice() :
 
   mRequestBatchTimerLock = nsAutoLock::NewLock(__FILE__ "::mRequestBatchTimerLock");
   NS_ASSERTION(mRequestBatchTimerLock, "Failed to allocate request batch timer lock");
+
+  mPreferenceLock = nsAutoLock::NewLock(__FILE__ "::mPreferenceLock");
+  NS_ASSERTION(mPreferenceLock, "Failed to allocate preference lock");
 }
 
 sbBaseDevice::~sbBaseDevice()
 {
+  if (mPreferenceLock)
+    nsAutoLock::DestroyLock(mPreferenceLock);
+
   if (mRequestMonitor)
     nsAutoMonitor::DestroyMonitor(mRequestMonitor);
 
@@ -826,6 +835,9 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (hasChanged) {
+    // apply the preference
+    ApplyPreference(aPrefName, aPrefValue);
+
     // fire the pref change event
     nsCOMPtr<sbIDeviceManager2> devMgr =
       do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
@@ -1141,6 +1153,61 @@ void sbBaseDevice::FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib)
 
   // Finalize the device library.
   aDevLib->Finalize();
+}
+
+nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevLib);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device content.
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the library to the device content.
+  rv = content->AddLibrary(aDevLib);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Send a device library added event.
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_LIBRARY_ADDED,
+                         sbNewVariant(aDevLib));
+
+  // Apply the library preferences.
+  rv = ApplyLibraryPreference(aDevLib, SBVoidString(), nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::RemoveLibrary(sbIDeviceLibrary* aDevLib)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevLib);
+
+  // Function variables.
+  nsresult rv;
+
+  // Send a device library removed event.
+  nsAutoString guid;
+  rv = aDevLib->GetGuid(guid);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get device library.");
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_LIBRARY_REMOVED,
+                         sbNewVariant(guid));
+
+  // Get the device content.
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Remove the device library from the device content.
+  rv = content->RemoveLibrary(aDevLib);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 nsresult sbBaseDevice::ListenToList(sbIMediaList* aList)
@@ -1614,12 +1681,21 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
   rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // get the free space and the music used space
+  // get the free space
   PRInt64 freeSpace;
   rv = deviceProperties->GetPropertyAsInt64
                            (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
                             &freeSpace);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // apply limit to the total space available for music
+  if (ownerLibrary) {
+    PRInt64 freeMusicSpace;
+    rv = GetMusicFreeSpace(ownerLibrary, &freeMusicSpace);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (freeSpace >= freeMusicSpace)
+      freeSpace = freeMusicSpace;
+  }
 
   // get the management type
   PRUint32 mgmtType;
@@ -1919,6 +1995,91 @@ nsresult sbBaseDevice::Init()
   return InitDevice();
 }
 
+nsresult
+sbBaseDevice::GetMusicFreeSpace(sbILibrary* aLibrary,
+                                PRInt64*    aFreeMusicSpace)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aFreeMusicSpace);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the available music space.
+  PRInt64 musicAvailableSpace;
+  rv = GetMusicAvailableSpace(aLibrary, &musicAvailableSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the device properties.
+  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
+  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the music used space.
+  PRInt64 musicUsedSpace;
+  rv = deviceProperties->GetPropertyAsInt64
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
+          &musicUsedSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return result.
+  if (musicAvailableSpace >= musicUsedSpace)
+    *aFreeMusicSpace = musicAvailableSpace - musicUsedSpace;
+  else
+    *aFreeMusicSpace = 0;
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
+                                     PRInt64*    aMusicAvailableSpace)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMusicAvailableSpace);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device properties.
+  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
+  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the total capacity.
+  PRInt64 capacity;
+  rv = deviceProperties->GetPropertyAsInt64
+                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_CAPACITY),
+                            &capacity);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Compute the amount of available music space.
+  PRInt64 musicAvailableSpace;
+  if (mMusicLimitPercent < 100) {
+    musicAvailableSpace = (capacity * mMusicLimitPercent) /
+                          static_cast<PRInt64>(100);
+  } else {
+    musicAvailableSpace = capacity;
+  }
+
+  // Return results.
+  *aMusicAvailableSpace = musicAvailableSpace;
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// Device preference services.
+//
+//------------------------------------------------------------------------------
+
 NS_IMETHODIMP sbBaseDevice::SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled)
 {
   nsresult rv;
@@ -2053,6 +2214,214 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   prefBranch.forget(aPrefBranch);
 
   return rv;
+}
+
+nsresult sbBaseDevice::ApplyPreference(const nsAString& aPrefName,
+                                       nsIVariant*      aPrefValue)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aPrefValue);
+
+  // Function variables.
+  nsresult rv;
+
+  // Check if it's a library preference.
+  PRBool isLibraryPreference = GetIsLibraryPreference(aPrefName);
+
+  // Apply preference.
+  if (isLibraryPreference) {
+    // Get the library preference info.
+    nsCOMPtr<sbIDeviceLibrary> library;
+    nsAutoString               libraryPrefBase;
+    nsAutoString               libraryPrefName;
+    rv = GetPreferenceLibrary(aPrefName,
+                              getter_AddRefs(library),
+                              libraryPrefBase);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = GetLibraryPreferenceName(aPrefName, libraryPrefBase, libraryPrefName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Apply the library preference.
+    rv = ApplyLibraryPreference(library, libraryPrefName, aPrefValue);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+PRBool sbBaseDevice::GetIsLibraryPreference(const nsAString& aPrefName)
+{
+  return StringBeginsWith(aPrefName,
+                          NS_LITERAL_STRING(PREF_DEVICE_LIBRARY_BASE));
+}
+
+nsresult sbBaseDevice::GetPreferenceLibrary(const nsAString&   aPrefName,
+                                            sbIDeviceLibrary** aLibrary,
+                                            nsAString&         aLibraryPrefBase)
+{
+  // Function variables.
+  nsresult rv;
+
+  // Get the device content.
+  nsCOMPtr<sbIDeviceContent> content;
+  rv = GetContent(getter_AddRefs(content));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIArray> libraryList;
+  rv = content->GetLibraries(getter_AddRefs(libraryList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Search the libraries for a match.  Return results if found.
+  PRUint32 libraryCount;
+  rv = libraryList->GetLength(&libraryCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+  for (PRUint32 i = 0; i < libraryCount; i++) {
+    // Get the next library.
+    nsCOMPtr<sbIDeviceLibrary> library = do_QueryElementAt(libraryList, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the library info.
+    nsAutoString guid;
+    rv = library->GetGuid(guid);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Return library if it matches pref.
+    nsAutoString libraryPrefBase;
+    rv = GetLibraryPreferenceBase(library, libraryPrefBase);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (StringBeginsWith(aPrefName, libraryPrefBase)) {
+      if (aLibrary)
+        library.forget(aLibrary);
+      aLibraryPrefBase.Assign(libraryPrefBase);
+      return NS_OK;
+    }
+  }
+
+  // Library not found.
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult sbBaseDevice::GetLibraryPreference(sbIDeviceLibrary* aLibrary,
+                                            const nsAString&  aLibraryPrefName,
+                                            nsIVariant**      aPrefValue)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the library preference base.
+  nsAutoString libraryPrefBase;
+  rv = GetLibraryPreferenceBase(aLibrary, libraryPrefBase);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return GetLibraryPreference(libraryPrefBase, aLibraryPrefName, aPrefValue);
+}
+
+nsresult sbBaseDevice::GetLibraryPreference(const nsAString& aLibraryPrefBase,
+                                            const nsAString& aLibraryPrefName,
+                                            nsIVariant**     aPrefValue)
+{
+  // Get the full preference name.
+  nsAutoString prefName(aLibraryPrefBase);
+  prefName.Append(aLibraryPrefName);
+
+  return GetPreference(prefName, aPrefValue);
+}
+
+nsresult sbBaseDevice::ApplyLibraryPreference
+                         (sbIDeviceLibrary* aLibrary,
+                          const nsAString&  aLibraryPrefName,
+                          nsIVariant*       aPrefValue)
+{
+  nsresult rv;
+
+  // Operate under the preference lock.
+  nsAutoLock preferenceLock(mPreferenceLock);
+
+  // Get the library pref base.
+  nsAutoString prefBase;
+  rv = GetLibraryPreferenceBase(aLibrary, prefBase);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If no preference name is specified, read and apply all library preferences.
+  PRBool applyAll = PR_FALSE;
+  if (aLibraryPrefName.IsEmpty())
+    applyAll = PR_TRUE;
+
+  // Apply music limit preference.
+  if (applyAll || aLibraryPrefName.EqualsLiteral("music_limit_percent")) {
+    // Get the preference value.
+    nsCOMPtr<nsIVariant> prefValue = aPrefValue;
+    if (applyAll || !prefValue) {
+      rv = GetLibraryPreference(prefBase,
+                                NS_LITERAL_STRING("music_limit_percent"),
+                                getter_AddRefs(prefValue));
+      if (NS_FAILED(rv))
+        prefValue = nsnull;
+    }
+
+    // Apply the preference value.
+    if (prefValue) {
+      PRUint32 musicLimitPercent;
+      rv = prefValue->GetAsUint32(&musicLimitPercent);
+      if (NS_SUCCEEDED(rv))
+        mMusicLimitPercent = musicLimitPercent;
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::GetLibraryPreferenceName
+                         (const nsAString& aPrefName,
+                          nsAString&       aLibraryPrefName)
+{
+  nsresult rv;
+
+  // Get the preference library preference base.
+  nsAutoString               libraryPrefBase;
+  rv = GetPreferenceLibrary(aPrefName, nsnull, libraryPrefBase);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return GetLibraryPreferenceName(aPrefName, libraryPrefBase, aLibraryPrefName);
+}
+
+nsresult sbBaseDevice::GetLibraryPreferenceName
+                         (const nsAString&  aPrefName,
+                          const nsAString&  aLibraryPrefBase,
+                          nsAString&        aLibraryPrefName)
+{
+  // Validate pref name.
+  NS_ENSURE_TRUE(StringBeginsWith(aPrefName, aLibraryPrefBase),
+                 NS_ERROR_ILLEGAL_VALUE);
+
+  // Extract the library preference name.
+  aLibraryPrefName.Assign(StringHead(aPrefName, aLibraryPrefBase.Length()));
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::GetLibraryPreferenceBase(sbIDeviceLibrary* aLibrary,
+                                                nsAString&        aPrefBase)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aLibrary);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the library info.
+  nsAutoString guid;
+  rv = aLibrary->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Produce the library preference base.
+  aPrefBase.Assign(NS_LITERAL_STRING(PREF_DEVICE_LIBRARY_BASE));
+  aPrefBase.Append(guid);
+  aPrefBase.AppendLiteral(".");
+
+  return NS_OK;
 }
 
 //------------------------------------------------------------------------------
@@ -2701,9 +3070,19 @@ sbBaseDevice::SyncGetSyncAvailableSpace(sbILibrary* aLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
   musicUsedSpace += trackCount * mPerTrackOverhead;
 
-  // Return the total available space for syncing as the free space plus the
+  // Determine the total available space for syncing as the free space plus the
   // space used for music.
-  *aAvailableSpace = freeSpace + musicUsedSpace;
+  PRInt64 availableSpace = freeSpace + musicUsedSpace;
+
+  // Apply limit to the total space available for music.
+  PRInt64 musicAvailableSpace;
+  rv = GetMusicAvailableSpace(aLibrary, &musicAvailableSpace);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (availableSpace >= musicAvailableSpace)
+    availableSpace = musicAvailableSpace;
+
+  // Return results.
+  *aAvailableSpace = availableSpace;
 
   return NS_OK;
 }

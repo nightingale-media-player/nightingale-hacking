@@ -256,6 +256,18 @@ public:
   void FinalizeDeviceLibrary(sbIDeviceLibrary* aDevLib);
 
   /**
+   * Add the library specified by aDevLib to the device content.
+   * @param aDevLib the device library to add.
+   */
+  nsresult AddLibrary(sbIDeviceLibrary* aDevLib);
+
+  /**
+   * Remove the library specified by aDevLib from the device content.
+   * @param aDevLib the device library to remove.
+   */
+  nsresult RemoveLibrary(sbIDeviceLibrary* aDevLib);
+
+  /**
    * Called when a media list has been added to the device library
    * @param aList the media list to listen for modifications
    */
@@ -422,6 +434,8 @@ protected:
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
   nsCOMPtr<sbIDeviceCapabilitiesRegistrar> mCapabilitiesRegistrar;
   PRUint32 mCapabilitiesRegistrarType;
+  PRLock*  mPreferenceLock;
+  PRUint32 mMusicLimitPercent;
 protected:
 
   /**
@@ -476,8 +490,150 @@ protected:
    */
   void WaitForBatchEndCallback();
 
+  /**
+   * Return in aFreeMusicSpace the amount of available music space that is free
+   * for use in the library specified by aLibrary.  This value may be limited to
+   * a value less than the total free space.
+   *
+   * \param aLibrary            Library for which to get space.
+   * \param aFreeMusicSpace     Returned free music space.
+   */
+  nsresult GetMusicFreeSpace(sbILibrary* aLibrary,
+                             PRInt64*    aFreeMusicSpace);
+
+  /**
+   * Return in aMusicAvailableSpace the amount of all available music space in
+   * the library specified by aLibrary.  This value may be limited to a value
+   * less than the total capacity of the library.
+   */
+  nsresult GetMusicAvailableSpace(sbILibrary* aLibrary,
+                                  PRInt64*    aMusicAvailableSpace);
+
+  //----------------------------------------------------------------------------
+  //
+  // Device preference services.
+  //
+  //----------------------------------------------------------------------------
+
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
+
+  /**
+   * Apply the preference specified by aPrefName with the value specified by
+   * aPrefValue.  Update device state and take any actions appropriate for the
+   * preference value.
+   *
+   * \param aPrefName           Name of preference to apply.
+   * \param aPrefValue          Value of preference.
+   */
+  virtual nsresult ApplyPreference(const nsAString& aPrefName,
+                                   nsIVariant*      aPrefValue);
+
+  /**
+   * Return true if the preference specified by aPrefName is a library
+   * preference.
+   *
+   * \param aPrefName           Name of preference.
+   * \return                    True if preference is a library preference.
+   */
+  PRBool GetIsLibraryPreference(const nsAString& aPrefName);
+
+  /**
+   * Return in aLibrary, if not null, the library corresponding to the library
+   * preference specified by aPrefName.  Return the library pref base in
+   * aLibraryPrefBase.
+   *
+   * \param aPrefName           Name of library preference.
+   * \param aLibrary            Optionally returned preference library.
+   * \param aLibraryPrefBase    Library preference base.
+   * \return NS_ERROR_NOT_AVAILABLE
+   *                            Preference is not a library preference or
+   *                            library is not available.
+   */
+  nsresult GetPreferenceLibrary(const nsAString&   aPrefName,
+                                sbIDeviceLibrary** aLibrary,
+                                nsAString&         aLibraryPrefBase);
+
+  /**
+   * Return in aPrefValue the value of the library preference specified by the
+   * library preference name aLibraryPrefName for the library specified by
+   * aLibrary.  The library preference name is relative ot the library
+   * preference base.
+   *
+   * \param aLibrary            Library for which to get preference.
+   * \param aLibraryPrefName    Library preference name to get.
+   * \param aPrefValue          Returned preference value.
+   */
+  nsresult GetLibraryPreference(sbIDeviceLibrary* aLibrary,
+                                const nsAString&  aLibraryPrefName,
+                                nsIVariant**      aPrefValue);
+
+  /**
+   * Return in aPrefValue the value of the library preference specified by the
+   * library preference base aLibraryPrefBase and library preference name
+   * aLibraryPrefName.
+   *
+   * \param aLibraryPrefBase    Library preference base.
+   * \param aLibraryPrefName    Library preference name.
+   * \param aPrefValue          Returned preference value.
+   */
+  nsresult GetLibraryPreference(const nsAString& aLibraryPrefBase,
+                                const nsAString& aLibraryPrefName,
+                                nsIVariant**     aPrefValue);
+
+  /**
+   * Apply the preference specified by the library preference name
+   * aLibraryPrefName with the value specified by aPrefValue for the library
+   * specified by aLibrary.  If aPrefValue is null, read the current preference
+   * value and apply it.  If aLibraryPrefName is empty, read and apply all
+   * library preferences.
+   *
+   * \param aLibrary            Library for which to apply preference.
+   * \param aLibraryPrefName    Library preference name.
+   * \param aPrefValue          Library preference value.
+   */
+  virtual nsresult ApplyLibraryPreference(sbIDeviceLibrary* aLibrary,
+                                          const nsAString&  aLibraryPrefName,
+                                          nsIVariant*       aPrefValue);
+
+  /**
+   * Return in aLibraryPrefName the library preference name for the preference
+   * with the device preference name aPrefName.
+   *
+   * \param aPrefName           Device preference name.
+   * \param aLibraryPrefName    Returned library preference name.
+   */
+  nsresult GetLibraryPreferenceName(const nsAString& aPrefName,
+                                    nsAString&       aLibraryPrefName);
+
+  /**
+   * Return in aLibraryPrefName the library preference name for the preference
+   * with the device preference name aPrefName.  The library preference base is
+   * specified by aLibraryPrefBase.
+   *
+   * \param aPrefName           Device preference name.
+   * \param aLibraryPrefBase    Library preference base.
+   * \param aLibraryPrefName    Returned library preference name.
+   */
+  nsresult GetLibraryPreferenceName(const nsAString&  aPrefName,
+                                    const nsAString&  aLibraryPrefBase,
+                                    nsAString&        aLibraryPrefName);
+
+  /**
+   * Return in aPrefBase the library preference base for the library specified
+   * by aLibrary.
+   *
+   * \param aLibrary            Library for which to get preference base.
+   * \param aPrefBase           Returned library preference base.
+   */
+  nsresult GetLibraryPreferenceBase(sbIDeviceLibrary* aLibrary,
+                                    nsAString&        aPrefBase);
+
+  //----------------------------------------------------------------------------
+  //
+  // Device sync services.
+  //
+  //----------------------------------------------------------------------------
 
   /**
    * Check if device is linked to the local sync partner.  If it is, return true
