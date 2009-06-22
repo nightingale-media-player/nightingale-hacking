@@ -2397,7 +2397,7 @@ nsresult sbBaseDevice::GetLibraryPreferenceName
                  NS_ERROR_ILLEGAL_VALUE);
 
   // Extract the library preference name.
-  aLibraryPrefName.Assign(StringHead(aPrefName, aLibraryPrefBase.Length()));
+  aLibraryPrefName.Assign(Substring(aPrefName, aLibraryPrefBase.Length()));
 
   return NS_OK;
 }
