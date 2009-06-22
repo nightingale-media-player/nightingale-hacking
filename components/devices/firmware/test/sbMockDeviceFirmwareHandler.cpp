@@ -58,6 +58,10 @@
   "http://dingo.songbirdnest.com/~aus/firmware/reset.html"
 #define SB_MOCK_DEVICE_RELEASE_NOTES_URL \
   "http://dingo.songbirdnest.com/~aus/firmware/release_notes.html"
+#define SB_MOCK_DEVICE_SUPPORT_URL \
+  "http://dingo.songbirdnest.com/~aus/firmware/support.html"
+#define SB_MOCK_DEVICE_REGISTER_URL \
+  "http://dingo.songbirdnest.com/~aus/firmware/register.html"
 
 NS_IMPL_ISUPPORTS_INHERITED1(sbMockDeviceFirmwareHandler, 
                              sbBaseDeviceFirmwareHandler,
@@ -314,6 +318,25 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
       nsAutoMonitor mon(mMonitor);
       mFirmwareLocation = uri;
     }
+  }
+
+  // XXXAus: Populate the fake support and register locations.
+  {
+    nsCOMPtr<nsIURI> uri;
+    nsresult rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_SUPPORT_URL),
+                                   getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoMonitor mon(mMonitor);
+    uri.swap(mSupportLocation);
+    mon.Exit();
+
+    rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_REGISTER_URL),
+                          getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mon.Enter();
+    uri.swap(mRegisterLocation);
   }
 
   // XXXAus: Looks like we have an update location and version.

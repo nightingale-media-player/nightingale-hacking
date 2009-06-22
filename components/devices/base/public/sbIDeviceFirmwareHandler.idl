@@ -39,7 +39,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(11af75c3-daee-43bc-b259-97f7d3ee21a6)]
+[scriptable, uuid(63ad8728-e27b-4e3c-8212-6caf7b9badfc)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -81,6 +81,21 @@ interface sbIDeviceFirmwareHandler : nsISupports
    *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute nsIURI resetInstructionsLocation;
+
+  /**
+   * \brief Device Customer Support URL.
+   * \note This value is not valid until is is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute nsIURI customerSupportLocation;
+
+  /**
+   * \brief Location where one can perform owner registration with the 
+   *        device manufacturer.
+   * \note This value is not valid until is is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute nsIURI registerLocation;
 
   /** 
    * \brief Check to see if this handler can update the specified device

@@ -158,6 +158,8 @@ protected:
   nsCOMPtr<nsIURI> mFirmwareLocation;
   nsCOMPtr<nsIURI> mReleaseNotesLocation;
   nsCOMPtr<nsIURI> mResetInstructionsLocation;
+  nsCOMPtr<nsIURI> mSupportLocation;
+  nsCOMPtr<nsIURI> mRegisterLocation;
 
   nsCOMPtr<nsIXMLHttpRequest> mXMLHttpRequest;
   nsCOMPtr<nsITimer>          mXMLHttpRequestTimer;

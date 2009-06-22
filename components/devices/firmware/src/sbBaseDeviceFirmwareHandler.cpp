@@ -466,10 +466,11 @@ sbBaseDeviceFirmwareHandler::GetLatestFirmwareLocation(nsIURI * *aLatestFirmware
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aLatestFirmwareLocation);
 
+  *aLatestFirmwareLocation = nsnull;
+
   nsAutoMonitor mon(mMonitor);
   
   if(!mFirmwareLocation) {
-    *aLatestFirmwareLocation = nsnull;
     return NS_ERROR_NOT_AVAILABLE;
   }
 
@@ -508,10 +509,11 @@ sbBaseDeviceFirmwareHandler::GetReleaseNotesLocation(nsIURI * *aReleaseNotesLoca
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aReleaseNotesLocation);
 
+  *aReleaseNotesLocation = nsnull;
+
   nsAutoMonitor mon(mMonitor);
   
   if(!mReleaseNotesLocation) {
-    *aReleaseNotesLocation = nsnull;
     return NS_ERROR_NOT_AVAILABLE;
   }
 
@@ -527,14 +529,55 @@ sbBaseDeviceFirmwareHandler::GetResetInstructionsLocation(nsIURI * *aResetInstru
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aResetInstructionsLocation);
 
+  *aResetInstructionsLocation = nsnull;
+
   nsAutoMonitor mon(mMonitor);
   
   if(!mResetInstructionsLocation) {
-    *aResetInstructionsLocation = nsnull;
     return NS_ERROR_NOT_AVAILABLE;
   }
 
   nsresult rv = mResetInstructionsLocation->Clone(aResetInstructionsLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbBaseDeviceFirmwareHandler::GetCustomerSupportLocation(nsIURI * *aSupportLocation)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aSupportLocation);
+  
+  *aSupportLocation = nsnull;
+
+  nsAutoMonitor mon(mMonitor);
+  
+  if(!mSupportLocation) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsresult rv = mSupportLocation->Clone(aSupportLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbBaseDeviceFirmwareHandler::GetRegisterLocation(nsIURI * *aRegisterLocation)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aRegisterLocation);
+
+  *aRegisterLocation = nsnull;
+
+  nsAutoMonitor mon(mMonitor);
+  
+  if(!mRegisterLocation) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsresult rv = mRegisterLocation->Clone(aRegisterLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
