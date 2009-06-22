@@ -55,6 +55,7 @@ CPP_EXTRA_INCLUDES = \
       $(topsrcdir)/components/mediacore/gstreamer/src \
       $(DEPTH)/components/mediacore/metadata/manager/public \
       $(DEPTH)/components/mediacore/transcode/public \
+      $(DEPTH)/components/moz/strings/components/public \
       $(topsrcdir)/components/moz/strings/src \
       $(topsrcdir)/components/moz/threads/src \
       $(DEPTH)/components/property/public \
@@ -115,6 +116,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = \
       gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+      gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
       $(NULL)
 
 DYNAMIC_LIB_IMPORT_EXTRA_PATHS = \

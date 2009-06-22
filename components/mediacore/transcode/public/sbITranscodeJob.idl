@@ -33,6 +33,7 @@
 #include "sbITranscodeProfile.idl"
 
 interface sbIMediaItem;
+interface nsIInputStream;
 
 /**
  * \interface sbITranscodeJob sbITranscodeJob.h
@@ -62,6 +63,13 @@ interface sbITranscodeJob : nsISupports
    */
   attribute sbIPropertyArray metadata;
 
+  /**
+   * \brief An input stream for the encoded image.
+   *
+   * If an image is desired in the encoded file (e.g. album art cover),
+   * set this to an input stream that the encoded image can be read from.
+   */
+  attribute nsIInputStream  metadataImage;
 
   /**
    * \brief The source URI to transcode from.

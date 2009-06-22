@@ -113,6 +113,24 @@ interface sbITranscodeProfileProperty : nsISupports
   attribute nsIVariant value;
 };
 
+
+/**
+ * \interface sbITranscodeImageProfile sbITranscodeImageProfile.h
+ * \brief An object defining the format to transcode a still image to.
+ */
+[scriptable, uuid(b7a3803f-d53b-48ce-a975-5454de152021)]
+interface sbITranscodeImageProfile : nsISupports
+{
+  /* Mime type of the image (image/jpeg, image/png, etc.) */
+  attribute AString mimetype;
+
+  /* Width of the image in pixels */
+  attribute unsigned long width;
+
+  /* Height of the image in pixels */
+  attribute unsigned long height;
+};
+
 /**
  * \interface sbITranscodeProfileLoader
  * \brief An object that can create an sbITranscodeProfile from an XML

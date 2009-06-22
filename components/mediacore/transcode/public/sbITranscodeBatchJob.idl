@@ -73,6 +73,14 @@ interface sbITranscodeBatchJob : nsISupports
   attribute sbITranscodeProfile profile;
 
   /**
+   * \brief Profile to use for album art in the target file
+   *
+   * Any album art will be transcoded to match this profile before adding
+   * to the target file.
+   */ 
+  attribute sbITranscodeImageProfile imageProfile;
+
+  /**
    * \brief Array of sbITranscodeBatchJobItems to transcode.
    */
   attribute nsIArray items;

@@ -95,8 +95,10 @@ private:
           nsACString &gstMuxer);
   nsresult GetAudioCodec(nsAString &codec, nsIArray *properties,
           nsACString &gstCodec);
+  nsresult AddImageToTagList(GstTagList *aTags, nsIInputStream *aStream);
 
   nsCOMPtr<sbIPropertyArray>              mMetadata;
+  nsCOMPtr<nsIInputStream>                mImageStream;
 
   nsString                                mSourceURI;
   nsString                                mDestURI;

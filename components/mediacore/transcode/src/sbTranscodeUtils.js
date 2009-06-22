@@ -32,9 +32,17 @@ const Cu = Components.utils;
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
-const PR_RDONLY = -1;
-const PR_FLAGS_DEFAULT = -1;
+const IOFLAGS_DEFAULT = -1;
+const PERMISSIONS_DEFAULT = -1;
+const FLAGS_DEFAULT = 0;
+
+const PR_RDONLY = 0x01;
+const PR_IRUSR = 0400;
+const PR_IWUSR = 0200;
+
+const BUFFERSIZE = 1024;
 
 function TranscodeBatchJob() {
 }
@@ -52,6 +60,7 @@ TranscodeBatchJob.prototype = {
            Ci.sbIMediacoreEventListener]),
 
   _profile         : null,
+  _imageProfile    : null,
   _numSimultaneous : 1,
   _items           : [],
 
@@ -79,6 +88,17 @@ TranscodeBatchJob.prototype = {
   get profile() {
     return this._profile;
   },
+
+  set imageProfile(aImageProfile) {
+    this._imageProfile = aImageProfile;
+  },
+
+  get imageProfile() {
+    return this._imageProfile;
+  },
+
+  set items(aItems) {
+    this._items = ArrayConverter.JSArray(aItems);
 
   set items(aItems) {
     this._items = ArrayConverter.JSArray(aItems);
@@ -344,6 +364,45 @@ TranscodeBatchJob.prototype = {
     transcoder.sourceURI = uri.spec;
     transcoder.destURI = destUri.spec;
     transcoder.metadata = mediaItem.getProperties();
+    transcoder.metadataImage = null;
+
+    var imageURLspec = mediaItem.getProperty(SBProperties.primaryImageURL);
+    if (imageURLspec) {
+      var ioservice = Cc["@mozilla.org/network/io-service;1"].
+          getService(Ci.nsIIOService);
+      var uri = ioservice.newURI(imageURLspec, null, null);
+      if (uri.schemeIs("resource")) {
+        var resourceProtocolHandler = ioservice.getProtocolHandler("resource");
+        imageURLspec = resourceProtocolHandler.resolveURI(uri);
+      }
+
+      var fileProtocolHandler = ioservice.getProtocolHandler("file");
+      var file = fileProtocolHandler.getFileFromURLSpec(imageURLspec);
+
+      if (this._imageProfile != null) {
+        var imageTranscoder =
+            Cc["@songbirdnest.com/Songbird/Transcode/Image;1"].
+            createInstance(Ci.sbITranscodeImage);
+        var mimeService = Cc["@mozilla.org/mime;1"].
+            getService(Ci.nsIMIMEService);
+
+        var srcMimeType = mimeService.getTypeFromFile(file);
+        var destMimeType = this._imageProfile.mimetype;
+        var destWidth = this._imageProfile.width;
+        var destHeight = this._imageProfile.height;
+
+        transcoder.metadataImage = imageTranscode.transcodeImage(
+                file, srcMimeType, destMimeType, destWidth, destHeight);
+      }
+      else {
+        // No transcoding profile; just provide the file as-is.
+        var inputStream = Cc["@mozilla.org/network/file-input-stream;1"]
+                          .createInstance(Ci.nsIFileInputStream);
+        inputStream.init(file,
+                IOFLAGS_DEFAULT, PERMISSIONS_DEFAULT, FLAGS_DEFAULT);
+        transcoder.metadataImage = inputStream;
+      }
+    }
 
     var self = this;
 
@@ -388,7 +447,7 @@ TranscodeProfileLoader.prototype = {
     var fileStream = Cc["@mozilla.org/network/file-input-stream;1"]
                       .createInstance(Ci.nsIFileInputStream);
 
-    fileStream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
+    fileStream.init(aFile, IOFLAGS_DEFAULT, PERMISSIONS_DEFAULT, FLAGS_DEFAULT);
 
     var doc = domParser.parseFromStream(fileStream,
                                         null,
@@ -529,9 +588,41 @@ TranscodeProfileLoader.prototype = {
   }
 } // TranscodeProfileLoader.prototype
 
+function TranscodeImage() {
+}
+
+TranscodeImage.prototype = {
+  classDescription: "Songbird still image transcoder",
+  classID:          Components.ID("{a7ee65ee-7fbf-4a40-ad5e-609e8a10646e}"),
+  contractID:       "@songbirdnest.com/Songbird/Transcode/Image;1",
+  QueryInterface:   XPCOMUtils.generateQI([Ci.sbITranscodeImage]),
+  
+  transcodeImage : function TranscodeImage_transcodeImage(
+          aInputFile, aInputMimeType, aOutputMimeType, aWidth, aHeight)
+  {
+    var imgtools = Cc["@mozilla.org/image/tools;1"].getService(Ci.imgITools);
+
+    var fileStream = Cc["@mozilla.org/network/file-input-stream;1"].
+        createInstance(Ci.nsIFileInputStream);
+    fileStream.init(aInputFile, PR_RDONLY, PR_IRUSR | PR_IWUSR, 0600, 0);
+
+    var inputStream = Cc["@mozilla.org/network/buffered-input-stream;1"].
+        createInstance(Ci.nsIBufferedInputStream);
+    bis.init(fileStream, BUFFERSIZE);
+
+    var outParam = { value: null };
+    imgtools.decodeImageData(inputStream, aInputMimeType, outParam);
+    var container = outParam.value;
+
+    return imgtools.encodeScaledImage(container, aOutputMimeType,
+            aWidth, aHeight);
+  }
+}
+
 function NSGetModule(compMgr, fileSpec) {
   return XPCOMUtils.generateModule(
           [TranscodeProfileLoader,
-           TranscodeBatchJob]);
+           TranscodeBatchJob,
+           TranscodeImage]);
 }
 

@@ -40,6 +40,9 @@
 #include <nsIFile.h>
 #include <nsIURI.h>
 #include <nsIFileURL.h>
+#include <nsIBinaryInputStream.h>
+
+#include <gst/tag/tag.h>
 
 #include <prlog.h>
 
@@ -165,6 +168,22 @@ sbGStreamerTranscode::SetMetadata(sbIPropertyArray *aMetadata)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbGStreamerTranscode::GetMetadataImage(nsIInputStream **aImageStream)
+{
+  NS_ENSURE_ARG_POINTER(aImageStream);
+
+  NS_IF_ADDREF(*aImageStream = mImageStream);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbGStreamerTranscode::SetMetadataImage(nsIInputStream *aImageStream)
+{
+  mImageStream = aImageStream;
+  return NS_OK;
+}
+
 GstElement *
 sbGStreamerTranscode::BuildTranscodePipeline(sbITranscodeProfile *aProfile)
 {
@@ -188,6 +207,39 @@ sbGStreamerTranscode::BuildTranscodePipeline(sbITranscodeProfile *aProfile)
   return pipeline;
 }
 
+nsresult
+sbGStreamerTranscode::AddImageToTagList(GstTagList *aTags,
+        nsIInputStream *aStream)
+{
+  PRUint32 imageDataLen;
+  PRUint8 *imageData;
+  nsresult rv;
+
+  nsCOMPtr<nsIBinaryInputStream> stream =
+             do_CreateInstance("@mozilla.org/binaryinputstream;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = stream->SetInputStream(aStream);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aStream->Available(&imageDataLen);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = stream->ReadByteArray(imageDataLen, &imageData);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  GstBuffer *imagebuf = gst_tag_image_data_to_image_buffer (
+          imageData, imageDataLen, GST_TAG_IMAGE_TYPE_FRONT_COVER);
+  if (!imagebuf)
+    return NS_ERROR_FAILURE;
+
+  gst_tag_list_add (aTags, GST_TAG_MERGE_APPEND, GST_TAG_IMAGE,
+          imagebuf, NULL);
+  gst_buffer_unref (imagebuf);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbGStreamerTranscode::BuildPipeline()
 {
@@ -206,6 +258,11 @@ sbGStreamerTranscode::BuildPipeline()
   }
 
   tags = ConvertPropertyArrayToTagList(mMetadata);
+
+  if (mImageStream) {
+    // Ignore return value here, failure is not critical.
+    AddImageToTagList (tags, mImageStream);
+  }
 
   if (tags) {
     // Find all the tag setters in the pipeline
