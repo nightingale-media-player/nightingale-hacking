@@ -37,6 +37,7 @@ STATIC_LIB = sbLibraryUtils
 CPP_SRCS = \
    sbLibraryUtils.cpp \
    sbMediaListEnumSingleItemHelper.cpp \
+   sbMediaListEnumArrayHelper.cpp \
    $(NULL)
 
 CPP_EXTRA_INCLUDES = \
