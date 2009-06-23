@@ -75,6 +75,8 @@ Cu.import("resource://app/jsmodules/WindowUtils.jsm");
  *                              operation.
  *   canBeCompleted             If true, operation can be completed and should
  *                              be set for last completed operation.
+ *   showIdleMessage            If true, and this was the last completed
+ *                              operation, then reflect that in the idle msg.
  *   showProgress               If true, progress should be displayed for
  *                              operation.
  *   updateIdle                 If true, update UI for an idle operation.
@@ -96,6 +98,7 @@ var DPWCfg = {
       localeSuffix: "syncing",
       progressMeterUndetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
       showProgress: true,
       updateBusy: true
     },
@@ -106,6 +109,7 @@ var DPWCfg = {
       localeSuffix: "copying",
       progressMeterDetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
       needsMediaItem: true,
       showProgress: true,
       updateBusy: true
@@ -117,6 +121,7 @@ var DPWCfg = {
       localeSuffix: "deleting",
       progressMeterDetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
       needsMediaItem: true,
       showProgress: true,
       updateBusy: true
@@ -351,14 +356,26 @@ var DPW = {
    */
 
   _updateProgressIdle: function DPW__updateProgressIdle() {
-    this._idleLabel.value =
-         SBString("device.status.progress_ok_to_disconnect", "");
+    var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
+    if (oInfo.showIdleMessage) {
+      var key = "device.status.progress_complete_" + oInfo.localeSuffix;
+      var deviceErrorMonitor =
+          Cc["@songbirdnest.com/device/error-monitor-service;1"]
+            .getService(Ci.sbIDeviceErrorMonitor);
+      if (deviceErrorMonitor.deviceHasErrors(this._device))
+          key += "_errors";
+      this._idleLabel.value = SBFormattedString(key,
+                                                [ this._totalItems.intValue ],
+                                                "");
+    } else {
+        this._idleLabel.value = SBString("device.status.progress_complete", "");
+    }
+
+    // Clear the list of errors
+    this._clearDeviceErrors();
 
     // Set to no longer show progress.
     this._showProgress = false;
-
-    // XXXstevel fix bug 16895 and make this context aware, and then
-    // clear the list of errors with _finish()
   },
 
 
