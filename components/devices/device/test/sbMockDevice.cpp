@@ -343,7 +343,7 @@ NS_IMETHODIMP sbMockDevice::GetParameters(nsIPropertyBag2 * *aParameters)
     do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Pretend like we're an MTP device
+  // Pretend like we're an MTP device.
   rv = deviceType->SetAsAString(NS_LITERAL_STRING("MTP"));
   NS_ENSURE_SUCCESS(rv, rv);
 

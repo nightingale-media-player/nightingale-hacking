@@ -435,6 +435,11 @@
 <!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can be installed only when your device is idle.">
 <!ENTITY device.firmware.wizard.retry.description "Please try again after your device has completed its current operation.">
 
+<!ENTITY device.firmware.wizard.check.error.description    "There was an error while checking for new firmware. Please verify your network connection and try again.">
+<!ENTITY device.firmware.wizard.download.error.description "There was an error while downloading the new firmware. Please verify your network connection and try again.">
+<!ENTITY device.firmware.wizard.install.error.description  "There was an error while installing the new firmware on your device. Please reconnect the device and try again.">
+<!ENTITY device.firmware.wizard.support.description        "Support resources such as FAQs and troubleshooting tips can be found at">
+
 <!ENTITY device.info.icon.device            "Generic device icon">
 <!ENTITY device.info.icon.readonly          "Read-only lock icon">
 <!ENTITY device.info.model.label            "Model">
@@ -482,7 +487,7 @@
 <!ENTITY device.tools.repair_device.label "Restore device to factory settings">
 
 <!ENTITY device.tools.support.title "Support">
-<!ENTITY device.tools.support.description "View the latest support news, user manuals, documentation, frequently asked questions, and product information. Support services are avaialble for customers who have registered their product.">
+<!ENTITY device.tools.support.description "View the latest support news, user manuals, documentation, frequently asked questions, and product information. Support services are available for customers who have registered their product.">
 <!ENTITY device.tools.support.label "View support resources">
 
 <!ENTITY device.tools.reset_warnings.title "Reset warnings">

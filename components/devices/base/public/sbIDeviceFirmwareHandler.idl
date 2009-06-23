@@ -107,6 +107,9 @@ interface sbIDeviceFirmwareHandler : nsISupports
 
   /**
    * \brief Bind the handler to a device
+   * \param aDevice - The device you wish to bind to
+   * \param [optional] aListener - Optional event listener 
+   *        to also send events to, may be null.
    * \warning This can only be called once, all subsequent calls
    *          to this method will return NS_ERROR_ALREADY_INITIALIZED.
    * \throw NS_ERROR_ALREADY_INITIALIZED when handler is already bound.

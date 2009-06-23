@@ -286,6 +286,21 @@ sbBaseDeviceFirmwareHandler::SetState(handlerstate_t aState)
   return NS_OK;
 }
 
+nsresult 
+sbBaseDeviceFirmwareHandler::CheckForError(const nsresult &aResult, 
+                                           PRUint32 aEventType,
+                                           nsIVariant *aData /*= nsnull*/)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  if(NS_FAILED(aResult)) {
+    nsresult rv = SendDeviceEvent(aEventType, aData);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return aResult;
+}
+
 // ----------------------------------------------------------------------------
 // Overridable methods for users of this base class.
 // ----------------------------------------------------------------------------
@@ -673,7 +688,7 @@ sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 
   nsresult rv = OnUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   return NS_OK;
 }
 

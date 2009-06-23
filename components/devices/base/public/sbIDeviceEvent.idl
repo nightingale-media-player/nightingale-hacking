@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(f5099b3b-1e5c-413d-bb45-2b90e2ae84c9)]
+[scriptable, uuid(dec21386-7ef5-4efb-ac79-eac3032ac488)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -154,7 +154,11 @@ interface sbIDeviceEvent : nsISupports
    */
   const unsigned long EVENT_MANAGER_BASE = 0x40060000;
 
+  /**
+   * \brief Base Firmware Event Value, this event is never sent.
+   */
   const unsigned long EVENT_FIRMWARE_BASE = 0x40080000;
+
   /**
    * \brief Check for update start
    * \note <code>data</code> is null for this event.
@@ -210,11 +214,45 @@ interface sbIDeviceEvent : nsISupports
   /**
    * \brief Firmware verify device progress
    */
-  const unsigned long EVENT_FIRMWARE_VERIFY_PROGRESS = EVENT_FIRMWARE_BASE + 11;
+  const unsigned long EVENT_FIRMWARE_VERIFY_PROGRESS = EVENT_FIRMWARE_BASE + 12;
   /**
    * \brief Firmware verify device end
    */
-  const unsigned long EVENT_FIRMWARE_VERIFY_END      = EVENT_FIRMWARE_BASE + 11;
+  const unsigned long EVENT_FIRMWARE_VERIFY_END      = EVENT_FIRMWARE_BASE + 13;
+
+  /**
+   * \brief Base value for firmware errors, this event is never sent.
+   */
+  const unsigned long EVENT_FIRMWARE_ERROR_BASE      = 0x40100000;
+  /**
+   * \brief Generic error
+   * \note <code>data> is null for this event.
+   */
+  const unsigned long EVENT_FIRMWARE_ERROR_UNKNOWN  = EVENT_FIRMWARE_ERROR_BASE + 1;
+  /**
+   * \brief Check for update error.
+   * \note <code>data</code> is null for this event.
+   * \note The <code>data</code> for this event is likely to change in the future.
+   */
+  const unsigned long EVENT_FIRMWARE_CFU_ERROR      = EVENT_FIRMWARE_ERROR_BASE + 2;
+  /**
+   * \brief Firmware download error.
+   * \note <code>data</code> is null for this event. 
+   * \note The <code>data</code> for this event is likely to change in the future.
+   */
+  const unsigned long EVENT_FIRMWARE_DOWNLOAD_ERROR = EVENT_FIRMWARE_ERROR_BASE + 3;
+  /**
+   * \brief Firmware update error.
+   * \note <code>data</code> is null for this event.
+   * \note The <code>data</code> for this event is likely to change in the future.
+   */
+  const unsigned long EVENT_FIRMWARE_UPDATE_ERROR  = EVENT_FIRMWARE_ERROR_BASE + 4;
+    /**
+   * \brief Firmware write error.
+   * \note <code>data</code> is null for this event.
+   * \note The <code>data</code> for this event is likely to change in the future.
+   */
+  const unsigned long EVENT_FIRMWARE_WRITE_ERROR  = EVENT_FIRMWARE_ERROR_BASE + 5;
 
   /**
    * 

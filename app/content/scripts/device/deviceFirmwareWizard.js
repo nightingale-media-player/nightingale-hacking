@@ -75,6 +75,9 @@ var deviceFirmwareWizard = {
       return false;
     }
 
+    this._deviceFirmwareUpdater.cancel(this._device);
+    window.close();
+
     return true;
   },
 
@@ -100,15 +103,33 @@ var deviceFirmwareWizard = {
     var currentPage = this.wizardElem.currentPage;
     
     switch(currentPage.id) {
-      case "device_firmware_check":
+      case "device_firmware_check": {
         this._currentOperation = "checkforupdate";
         var self = this;
         setTimeout(function() {
             self._deviceFirmwareUpdater.checkForUpdate(self._device, self);
           }, 0);
+      }
       break;
       
-      case "device_firmware_download":
+      case "device_firwmare_check_error": {
+        this._currentOperation = "checkforupdate_error";
+        
+        let okButton = this.wizardElem.getButton("next");
+        okButton.label = SBString("window.ok");
+        okButton.accessKey = SBString("window.ok.accessKey");
+        
+        let supportLink = 
+          document.getElementById("device_firmware_check_error_link");
+        let handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
+        
+        let supportLinkValue = handler.customerSupportLocation.spec;
+        supportLink.value = supportLinkValue;
+        supportLink.href = supportLinkValue;
+      }
+      break;
+      
+      case "device_firmware_download": {
         var self = this;
         
         if(this._device.isBusy) {
@@ -123,29 +144,67 @@ var deviceFirmwareWizard = {
               self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
               }, 0);
         }
+      }
       break;
       
-      case "device_firmware_install":
+      case "device_firmware_download_error": {
+        this._currentOperation = "download_error";
+        
+        let okButton = this.wizardElem.getButton("next");
+        okButton.label = SBString("window.ok");
+        okButton.accessKey = SBString("window.ok.accessKey");
+        
+        let supportLink = 
+          document.getElementById("device_firmware_download_error_link");
+        let handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
+        
+        let supportLinkValue = handler.customerSupportLocation.spec;
+        supportLink.value = supportLinkValue;
+        supportLink.href = supportLinkValue;
+      }
+      break;
+      
+      case "device_firmware_install": {
         this._currentOperation = "install";
         
-        var cancelButton = this.wizardElem.getButton("cancel");
+        let cancelButton = this.wizardElem.getButton("cancel");
         cancelButton.disabled = true;
         
         var self = this;
         setTimeout(function() {
             self._deviceFirmwareUpdater.applyUpdate(self._device, self._firmwareUpdate, self);
             }, 0);
+      }
       break;
       
-      case "device_firmware_update_complete":
+      case "device_firmware_install_error": {
+        this._currentOperation = "install_error";
+        
+        let okButton = this.wizardElem.getButton("next");
+        okButton.label = SBString("window.ok");
+        okButton.accessKey = SBString("window.ok.accessKey");
+        
+        let supportLink = 
+          document.getElementById("device_firmware_install_error_link");
+        let handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
+        
+        let supportLinkValue = handler.customerSupportLocation.spec;
+        supportLink.value = supportLinkValue;
+        supportLink.href = supportLinkValue;
+      }
+      break;
+      
+      case "device_firmware_update_complete": {
         this._currentOperation = "complete";
+      }
       break;
       
-      case "device_firmware_busy_device":
-        var retryButton = this.wizardElem.getButton("next");
+      case "device_firmware_busy_device": {
+        let retryButton = this.wizardElem.getButton("next");
         retryButton.label = 
           SBString("device.firmware.wizard.retry.button");
         retryButton.accessKey = null;
+      }
       break;
       
       default:
@@ -161,6 +220,14 @@ var deviceFirmwareWizard = {
   },
   
   doNext: function deviceFirmwareWizard_onNext(aEvent) {
+    if(this._currentOperation && 
+       this._currentOperation.substring(-5, 5) == "error") {
+      this._deviceFirmwareUpdater.cancel(this._device);
+      window.close();
+      
+      return false;
+    }
+    
     return true;
   },
   
@@ -282,6 +349,9 @@ var deviceFirmwareWizard = {
           document.getElementById("device_firmware_wizard_check_already_box");
       }      
     }
+    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
+      this.wizardElem.goTo("device_firmware_wizard_check_error_page");
+    }
   },
   
   _handleDownloadFirmware: function deviceFirmwareWizard__handleDownloadFirmware(aEvent) {
@@ -294,6 +364,9 @@ var deviceFirmwareWizard = {
     else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_END) {
       this._firmwareUpdate = aEvent.data.QueryInterface(Ci.sbIDeviceFirmwareUpdate);
       this.wizardElem.goTo("device_firmware_wizard_install_page");
+    }
+    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_ERROR) {
+      this.wizardElem.goTo("device_firmware_wizard_download_error_page");
     }
   },
   
@@ -311,6 +384,10 @@ var deviceFirmwareWizard = {
     }
     else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_END) {
       this.wizardElem.goTo("device_firmware_wizard_complete_page");
+    }
+    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_ERROR ||
+            aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_ERROR) {
+      this.wizardElem.goTo("device_firmware_install_error_page");
     }
   }
 };

@@ -774,8 +774,20 @@ sbDeviceFirmwareDownloader::HandleComplete()
   NS_ENSURE_STATE(mDownloader);
   NS_ENSURE_STATE(mDevice);
 
+  PRBool success = PR_FALSE;
+  nsresult rv = mDownloader->GetSucceeded(&succeeded);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!succeeded) {
+    rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_ERROR, 
+                         nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+  
   nsCOMPtr<nsIRequest> request;
-  nsresult rv = mDownloader->GetRequest(getter_AddRefs(request));
+  rv = mDownloader->GetRequest(getter_AddRefs(request));
   NS_ENSURE_TRUE(request, NS_ERROR_UNEXPECTED);
   
   nsCString contentDisposition;  

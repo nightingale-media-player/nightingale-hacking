@@ -152,6 +152,32 @@ sbMockDeviceFirmwareHandler::OnRefreshInfo()
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
+  {
+    nsCOMPtr<nsIVariant> shouldFailVariant;
+    nsresult rv = 
+      mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.update.fail"), 
+                             getter_AddRefs(shouldFailVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType = 0;
+    rv = shouldFailVariant->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool shouldFail = PR_FALSE;
+    if(dataType == nsIDataType::VTYPE_BOOL) {
+      rv = shouldFailVariant->GetAsBool(&shouldFail);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(shouldFail) {
+      rv = CheckForError(NS_ERROR_FAILURE, 
+                         sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_ERROR);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+  }
+
   nsCOMPtr<nsIFile> firmwareFile;
   nsresult rv = 
     aFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(firmwareFile));
@@ -339,6 +365,31 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
     uri.swap(mRegisterLocation);
   }
 
+  {
+    nsCOMPtr<nsIVariant> shouldFailVariant;
+    rv = mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.cfu.fail"),
+                                getter_AddRefs(shouldFailVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType = 0;
+    rv = shouldFailVariant->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool shouldFail = PR_FALSE;
+    if(dataType == nsIDataType::VTYPE_BOOL) {
+      rv = shouldFailVariant->GetAsBool(&shouldFail);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(shouldFail) {
+      rv = CheckForError(NS_ERROR_FAILURE, 
+                         sbIDeviceEvent::EVENT_FIRMWARE_CFU_ERROR);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_ERROR_FAILURE;
+    }
+  }
+
   // XXXAus: Looks like we have an update location and version.
   //         Figure out if we should say there is an update available
   //         or not by comparing current device firmware version
@@ -406,6 +457,33 @@ sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
 
   PR_Sleep(PR_MillisecondsToInterval(50));
 
+  {
+    nsCOMPtr<nsIVariant> shouldFailVariant;
+    nsresult rv = 
+      mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.write.fail"),
+                             getter_AddRefs(shouldFailVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType = 0;
+    rv = shouldFailVariant->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool shouldFail = PR_FALSE;
+    if(dataType == nsIDataType::VTYPE_BOOL) {
+      rv = shouldFailVariant->GetAsBool(&shouldFail);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if(shouldFail) {
+      rv = CheckForError(NS_ERROR_FAILURE, 
+                         sbIDeviceEvent::EVENT_FIRMWARE_WRITE_ERROR);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_ERROR_FAILURE;
+    }
+  }
+
+
   return NS_OK;
 }
 
@@ -415,13 +493,14 @@ sbMockDeviceFirmwareHandler::OnStopRequest(nsIRequest *aRequest,
                                            nsresult aResultCode)
 {
   nsresult rv = 
-    SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_WRITE_END, nsnull);
+    CheckForError(aResultCode, sbIDeviceEvent::EVENT_FIRMWARE_WRITE_ERROR);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_WRITE_END, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_END, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(aResultCode), "Request failed.");
 
   return NS_OK;
 }

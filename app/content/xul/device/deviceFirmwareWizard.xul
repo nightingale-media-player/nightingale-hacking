@@ -67,9 +67,9 @@
   <!-- Check for updated firmware page. -->
   <wizardpage id="device_firmware_check"
               pageid="device_firmware_wizard_check_page"
-              label="&device.firmware.wizard.check.page.title;"
               hideback="true"
               hidenext="true"
+              next="device_firmware_wizard_download_page" 
               onpageshow="deviceFirmwareWizard.doPageShow();">
     <deck id="device_firmware_wizard_check_deck" selectedIndex="0">
       <vbox id="device_firmware_wizard_check_progress_box"
@@ -84,7 +84,8 @@
         <description>
           &device.firmware.wizard.check.install.description;
         </description>
-        <sb-closable-box id="device_firmware_wizard_release_notes_box" label="&device.firmware.wizard.check.release_notes.label;">
+        <sb-closable-box id="device_firmware_wizard_release_notes_box" 
+                         label="&device.firmware.wizard.check.release_notes.label;">
           <browser id="device_firmware_wizard_release_notes_browser"
                    flex="1" 
                    type="content"/>
@@ -99,10 +100,24 @@
     </deck>
   </wizardpage>
 
+  <wizardpage id="device_firwmare_check_error"
+              pageid="device_firmware_wizard_check_error_page"
+              hidecancel="true" 
+              hideback="true"
+              shownext="true"
+              hidefinish="true"
+              onpageshow="deviceFirmwareWizard.doPageShow();">
+    <description>
+      &device.firmware.wizard.check.error.description;
+    </description>
+    <description>
+      &device.firmware.wizard.support.description; <label id="device_firmware_check_error_link" class="text-link" />
+    </description>
+  </wizardpage>
+
   <!-- Busy device page -->
   <wizardpage id="device_firmware_busy_device"
             pageid="device_firmware_busy_device_page"
-            label=""
             showcancel="true"
             hideback="true"
             hidefinish="true"
@@ -121,9 +136,9 @@
   <!-- Download firmware page. -->
   <wizardpage id="device_firmware_download"
               pageid="device_firmware_wizard_download_page"
-              label="" 
               hideback="true"
               hidenext="true"
+              next="device_firmware_wizard_install_page" 
               onpageshow="deviceFirmwareWizard.doPageShow();">
     <vbox flex="1">
       <label value="&device.firmware.wizard.download.title;"/>
@@ -136,13 +151,31 @@
       </groupbox>
     </vbox>
   </wizardpage>
+
+  <!-- Download Error Page. -->
+  <wizardpage id="device_firmware_download_error"
+              pageid="device_firmware_download_error_page"
+              hidecancel="true"
+              hideback="true"
+              showfinish="true"
+              hidenext="true" 
+              onpageshow="deviceFirmwareWizard.doPageShow();">
+    <vbox>
+      <description>
+        &device.firmware.wizard.download.error.description;
+      </description>
+      <description>
+        &device.firmware.wizard.support.description; <label id="device_firmware_download_error_link" class="text-link" />
+      </description>
+    </vbox>
+  </wizardpage>
   
   <!-- Installing firmware page. -->
   <wizardpage id="device_firmware_install"
               pageid="device_firmware_wizard_install_page"
-              label=""
               hideback="true"
               hidenext="true"
+              hidefinish="true" 
               onpageshow="deviceFirmwareWizard.doPageShow();">
     <vbox flex="1">
       <label value="&device.firmware.wizard.install.title;"/>
@@ -156,10 +189,27 @@
     </vbox>
   </wizardpage>
   
+  <!-- Install Error Page. -->
+  <wizardpage id="device_firmware_install_error"
+              pageid="device_firmware_install_error_page"
+              hidecancel="true"
+              hideback="true"
+              shownext="true" 
+              hidefinish="true"
+              onpageshow="deviceFirmwareWizard.doPageShow();">
+    <vbox>
+      <description>
+        &device.firmware.wizard.install.error.description;
+      </description>
+      <description>
+        &device.firmware.wizard.support.description; <label id="device_firmware_install_error_link" class="text-link" />
+      </description>
+    </vbox>
+  </wizardpage>
+
   <!-- Firmware update complete page. -->
   <wizardpage id="device_firmware_update_complete"
               pageid="device_firmware_wizard_complete_page"
-              label=""
               hideback="true"
               hidenext="true"
               hidecancel="true" 

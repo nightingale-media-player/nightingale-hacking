@@ -123,6 +123,17 @@ public:
    */
   nsresult SetState(handlerstate_t aState);
 
+  /**
+   * \brief Check nsresult value, send error event if 
+   *        nsresult value is an error.
+   * \param aResult - The result to check
+   * \param aEventType - The event to send in the case where aResult
+   *                     is an error.
+   */
+  nsresult CheckForError(const nsresult &aResult, 
+                         PRUint32 aEventType,
+                         nsIVariant *aData = nsnull);
+
   // override me, see cpp file for implementation notes
   virtual nsresult OnInit();
   // override me, see cpp file for implementation notes
