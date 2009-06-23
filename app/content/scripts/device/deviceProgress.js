@@ -200,8 +200,9 @@ var DPW = {
   //   _cancelButton            Cancel button element.
   //   _finishButton            Finish button element.
   //   _progressMeter           Progress meter element.
-  //   _progressText1Label      Progress text 1 label element.
-  //   _progressText2Label      Progress text 2 label element.
+  //   _progressTextLabel       Progress text label element.
+  //   _idleLabel               Idle text label element.
+  //   _idleBox                 Idle box holding idle text.
   //
 
   _cfg: DPWCfg,
@@ -219,10 +220,9 @@ var DPW = {
   _cancelButton: null,
   _finishButton: null,
   _progressMeter: null,
-  _progressText1Label: null,
+  _progressTextLabel: null,
   _idleLabel: null,
   _idleBox: null,
-  _progressText2Label: null,
 
 
   /**
@@ -249,10 +249,9 @@ var DPW = {
     this._cancelButton = this._getElement("cancel_operation_button");
     this._finishButton = this._getElement("finish_progress_button");
     this._progressMeter = this._getElement("progress_meter");
-    this._progressText1Label = this._getElement("progress_text1_label");
+    this._progressTextLabel = this._getElement("progress_text_label");
     this._idleBox = this._getElement("idle_box");
     this._idleLabel = this._getElement("idle_label");
-    this._progressText2Label = this._getElement("progress_text2_label");
 
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
@@ -295,9 +294,8 @@ var DPW = {
     this._cancelButton = null;
     this._finishButton = null;
     this._progressMeter = null;
-    this._progressText1Label = null;
+    this._progressTextLabel = null;
     this._idleLabel = null;
-    this._progressText2Label = null;
   },
 
 
@@ -456,9 +454,10 @@ var DPW = {
 
     // Update the operation progress text.
     localeKey = "device.status.progress_header_" + operationLocaleSuffix;
-    this._progressText1Label.value =
+    this._progressTextLabel.value =
            SBFormattedString(localeKey, [ curItemIndex, totalItems ], "");
 
+/*
     // Update the sub-operation progress text.
     if (mediaItem || !operationNeedsMediaItem) {
       localeKey = "device.status.progress_footer_" + subOperationLocaleSuffix;
@@ -479,6 +478,7 @@ var DPW = {
     } else {
       this._progressText2Label.value = "";
     }
+*/
   },
 
 
@@ -583,7 +583,7 @@ var DPW = {
 
   _finish: function DPW__finish() {
     // Clear errors.
-    this._progressText1Label.removeAttribute("error");
+    this._progressTextLabel.removeAttribute("error");
     try {
       var deviceErrorMonitor =
             Cc["@songbirdnest.com/device/error-monitor-service;1"]
@@ -715,12 +715,12 @@ var DPW = {
   },
 
   _checkForErrors: function DPW__checkForErrors() {
-    this._progressText1Label.removeAttribute("error");
+    this._progressTextLabel.removeAttribute("error");
     try {
       var deviceErrorMonitor = Cc["@songbirdnest.com/device/error-monitor-service;1"]
                                  .getService(Ci.sbIDeviceErrorMonitor);
       var hasErrors = deviceErrorMonitor.deviceHasErrors(this._device);
-      this._progressText1Label.setAttribute("error", hasErrors);
+      this._progressTextLabel.setAttribute("error", hasErrors);
       if (hasErrors) {
         this._progressInfoBox.hidden = false;
         this._idleBox.hidden = true;
