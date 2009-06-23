@@ -759,6 +759,9 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
 #device_management_tabs {
   background-color: rgb(220,220,220);
 }
+#device_management_tabs > tab[selected] {
+  border-bottom: none;
+}
 /* label for the legend that shows total file size */
 .capacity_value_label {
   color:rgb(131,131,131);

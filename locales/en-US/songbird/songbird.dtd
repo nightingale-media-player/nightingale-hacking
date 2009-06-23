@@ -439,6 +439,7 @@
 <!ENTITY device.info.icon.readonly          "Read-only lock icon">
 <!ENTITY device.info.model.label            "Model">
 <!ENTITY device.info.capacity.label         "Capacity">
+<!ENTITY device.info.product.label          "Product">
 <!ENTITY device.info.friendly_name.label    "Name">
 <!ENTITY device.info.serial_number.label    "Serial Number">
 <!ENTITY device.info.vendor.label           "Manufacturer">
@@ -465,6 +466,7 @@
 
 <!ENTITY device.management.tabs.music.label "Music">
 <!ENTITY device.management.tabs.tools.label "Tools">
+<!ENTITY device.management.tabs.settings.label "Settings">
 
 <!ENTITY device.tools.product_registration.title "Product Registration">
 <!ENTITY device.tools.product_registration.description "Want to ensure proof of purchase, additional product membership benefits, or receive safety notifications?">

@@ -39,9 +39,11 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
-.device-progress-groupbox {
-  
+.device-progress-box {
+  background: transparent;
+  padding: 8px 12px 8px 12px;
 }
+
 .device-progress-button {
 /*  -moz-box-flex: 1;*/
 }
@@ -65,7 +67,6 @@ Imported by bindings.css or directly into feathers.
 }
 .dev-progress-text1-label,
 .dev-progress-text2-label {
-  max-width:200px;
   margin:0px;
 }
 

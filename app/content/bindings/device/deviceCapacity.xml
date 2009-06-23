@@ -62,7 +62,8 @@
       <xul:vbox flex="1">
 
         <!-- Capacity bar. -->
-        <xul:stack>
+        <xul:stack sbid="device-capacity-bar" hidden="false"
+                   hideid="bar">
 
           <!-- Capacity bar boxes. -->
           <xul:hbox sbid="device-cap-bar-box"
@@ -98,7 +99,10 @@
 
         <!-- Capacity legend. -->
         <xul:hbox sbid="device-cap-legend-box"
-                  class="device-capacity-legend-box">
+                  class="device-capacity-legend-box"
+                  hidden="false"
+                  pack="end"
+                  hideid="legend">
           <xul:sb-device-capacity-legend type="music"
                                          class="device-capacity-legend-music"
                                          label="&device.capacity.music.label;"/>
@@ -146,7 +150,7 @@
 
       <destructor> <![CDATA[
         /* Finalize the device capacity services. */
-        DCW.finalize(this);
+        this.DCW.finalize(this);
       ]]></destructor>
 
 
@@ -171,10 +175,10 @@
                                 (Components.interfaces.mozIJSSubScriptLoader);
 
         /* Import the device capacity services. */
-        if (typeof(DCW) == "undefined") {
+        if (typeof(this.DCW) == "undefined") {
           jsLoader.loadSubScript
             ("chrome://songbird/content/scripts/device/deviceCapacity.js",
-             null);
+             this);
         }
       ]]></body></method>
 
@@ -190,8 +194,8 @@
     <handlers>
       <handler event="deviceBound"><![CDATA[
         /* Re-initialize the device capacity services. */
-        DCW.finalize(this);
-        DCW.initialize(this);
+        this.DCW.finalize(this);
+        this.DCW.initialize(this);
         ]]></handler>
     </handlers>
 

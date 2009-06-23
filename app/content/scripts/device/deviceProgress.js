@@ -191,6 +191,7 @@ var DPW = {
   //
   //   _progressInfoBox         Device progress info.
   //   _syncButton              Sync button element.
+  //   _idleBox                 Idle message & spacer.
   //   _cancelButton            Cancel button element.
   //   _finishButton            Finish button element.
   //   _progressMeter           Progress meter element.
@@ -214,6 +215,8 @@ var DPW = {
   _finishButton: null,
   _progressMeter: null,
   _progressText1Label: null,
+  _idleLabel: null,
+  _idleBox: null,
   _progressText2Label: null,
 
 
@@ -242,6 +245,8 @@ var DPW = {
     this._finishButton = this._getElement("finish_progress_button");
     this._progressMeter = this._getElement("progress_meter");
     this._progressText1Label = this._getElement("progress_text1_label");
+    this._idleBox = this._getElement("idle_box");
+    this._idleLabel = this._getElement("idle_label");
     this._progressText2Label = this._getElement("progress_text2_label");
 
     // Initialize object fields.
@@ -280,11 +285,13 @@ var DPW = {
     this._deviceID = null;
     this._operationInfoTable = null;
     this._progressInfoBox = null;
+    this._idleBox = null;
     this._syncButton   = null;
     this._cancelButton = null;
     this._finishButton = null;
     this._progressMeter = null;
     this._progressText1Label = null;
+    this._idleLabel = null;
     this._progressText2Label = null;
   },
 
@@ -324,6 +331,7 @@ var DPW = {
     // Hide or show progress.
     var hideProgress = !this._showProgress;
     this._progressInfoBox.hidden = hideProgress;
+    this._idleBox.hidden = !hideProgress;
     if (hideProgress) {
       cancelButtonHidden = true;
       finishButtonHidden = true;
@@ -343,28 +351,14 @@ var DPW = {
    */
 
   _updateProgressIdle: function DPW__updateProgressIdle() {
-    var localeSuffix;
-    var localeKey;
+    this._idleLabel.value =
+         SBString("device.status.progress_ok_to_disconnect", "");
 
-    // Get the current operation and last completed event operation info.
-    var currentOperationInfo = this._getOperationInfo(this._device.state);
-    var lastCompletedEventOperationInfo =
-          this._getOperationInfo(this._lastCompletedEventOperation);
+    // Set to no longer show progress.
+    this._showProgress = false;
 
-    // Update the operation progress meter.
-    this._progressMeter.setAttribute("mode", "determined");
-    this._progressMeter.value = 0;
-
-    // Update the operation progress text.
-    localeSuffix = lastCompletedEventOperationInfo.localeSuffix;
-    localeKey = "device.status.progress_complete_" + localeSuffix;
-    this._progressText1Label.value =
-      SBFormattedString(localeKey, [ this._totalItems.intValue ], "");
-
-    // Update the sub-operation progress text.
-    localeSuffix = currentOperationInfo.localeSuffix;
-    localeKey = "device.status.progress_footer_" + localeSuffix;
-    this._progressText2Label.value = SBString(localeKey, "");
+    // XXXstevel fix bug 16895 and make this context aware, and then
+    // clear the list of errors with _finish()
   },
 
 
@@ -712,6 +706,7 @@ var DPW = {
       this._progressText1Label.setAttribute("error", hasErrors);
       if (hasErrors) {
         this._progressInfoBox.hidden = false;
+        this._idleBox.hidden = true;
       }
     } catch (err) {
       Cu.reportError(err);

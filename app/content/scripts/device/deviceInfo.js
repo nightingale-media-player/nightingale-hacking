@@ -126,6 +126,9 @@ var DIW = {
     // Show specified elements.
     this._showElements();
 
+    // Hide labels if needed
+    this._hideLabels();
+
     // Initialize the device spec rows.
     this._deviceSpecInitialize();
 
@@ -270,6 +273,10 @@ var DIW = {
         this._deviceSpecUpdateModelCapacity();
         break;
 
+      case "product_capacity" :
+        this._deviceSpecUpdateProductCapacity();
+        break;
+
       case "friendly_name" :
         this._deviceSpecUpdateValue("friendly_name_value_label",
                                     this._getDeviceFriendlyName());
@@ -357,6 +364,32 @@ var DIW = {
 
     // Upate the device model/capacity.
     this._deviceSpecUpdateValue("model_capacity_value_label", devModelCapValue);
+  },
+
+
+  /**
+   * \brief Update the device spec product/capacity row.
+   */
+
+  _deviceSpecUpdateProductCapacity: function
+                                    DIW__deviceSpecUpdateProductCapacity() {
+    // Get the device product name
+    var devProductValue = this._getDeviceProduct();
+
+    // Get the device capacity.
+    var capacity = "";
+    try {
+      capacity = this._device.properties.properties.getPropertyAsAString
+                   ("http://songbirdnest.com/device/1.0#capacity");
+      capacity = StorageFormatter.format(capacity);
+    } catch (ex) {};
+
+    var devProductCapValue = SBFormattedString("device.info.product_cap",
+                             [ devProductValue, capacity ]);
+ 
+    // Upate the device model/capacity.
+    this._deviceSpecUpdateValue("product_capacity_value_label",
+                                devProductCapValue);
   },
 
 
@@ -548,6 +581,25 @@ var DIW = {
   //----------------------------------------------------------------------------
 
   /**
+   * \brief Hide labels if the hidelabels attribute is set.
+   */
+
+  _hideLabels: function DIW__hideLabels() {
+    if (this._widget.getAttribute("hidelabels")) {
+      // Hide the labels
+      var gridRows = this._getElement("device_spec_rows");
+
+      // Each child of the <rows> is a <row> where the firstChild is
+      // the label for product/model/etc.
+      var rowElements = gridRows.getElementsByTagNameNS(XUL_NS, "row");
+      for each (var row in rowElements) {
+        if (row.firstChild)
+          row.firstChild.hidden = true;
+      }
+    }
+  },
+
+  /**
    * \brief Show the elements specified by the "showlist" attribute".
    */
 
@@ -562,6 +614,8 @@ var DIW = {
     for (var i = 0; i < showList.length; i++) {
       var element = this._getShowElement(showList[i]);
       element.hidden = false;
+      if (element.parentNode.hidden)
+        element.parentNode.hidden = false;
     }
   },
 
@@ -657,6 +711,20 @@ var DIW = {
       modelNumber = SBString("device.info.unknown");
 
     return modelNumber;
+  },
+
+  /**
+   * \brief Return the device product name.
+   *
+   * \return Device product name.
+   */
+
+  _getDeviceProduct: function DIW__getDeviceProduct() {
+    var productName = null;
+    try { productName = this._device.productName; } catch(err) {}
+    if (productName == null)
+      productName = SBString("device.info.unknown");
+    return productName;
   },
 
 
@@ -863,6 +931,7 @@ var DIW = {
       case "model" :
       case "capacity" :
       case "model_capacity" :
+      case "product_capacity" :
       case "friendly_name" :
       case "serial_number" :
       case "vendor" :

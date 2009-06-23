@@ -50,6 +50,15 @@ Imported by bindings.css or directly into feathers.
   font-size:100%;
 }
 
+#info_box {
+  padding-top: 15px;
+}
+
+#overall_device_info_box .device-name-label,
+#overall_device_info_box .device-specs-grid-label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
 
 
 .device-image {
@@ -84,10 +93,6 @@ Imported by bindings.css or directly into feathers.
 .eject-button > .button-box > label,
 .more-info-button > .button-box > label {
   display:none !important;
-}
-
-.device-specs-grid-label {
-  
 }
 
 sb-device-battery {
@@ -134,7 +139,7 @@ sb-device-battery {
   background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar.png');
   background-repeat:repeat-x;
   background-position:center top;
-  padding:10px 8px 0px 8px;
+  /* padding:10px 8px 0px 8px; */
 }
 tabbox#device_management_box > tabpanels > tabpanel {
   overflow-y: auto;
@@ -147,7 +152,7 @@ tabbox#device_management_box > tabpanels > tabpanel {
 
 
 #info_progress_box {
-  
+  padding:10px 8px 0px 8px;
 }
 
 

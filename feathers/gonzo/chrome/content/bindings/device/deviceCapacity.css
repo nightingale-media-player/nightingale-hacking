@@ -54,11 +54,10 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-legend-box {
   margin-top:4px;
-
 }
 
 #device_capacity {
-  margin:4px;
+  margin:4px 5px 4px 5px;
 }
 
 .device-capacity-bar-box {

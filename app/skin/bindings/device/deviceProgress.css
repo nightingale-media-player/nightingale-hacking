@@ -38,9 +38,6 @@ Imported by bindings.css or directly into feathers.
 
 *******************************************************************************
 */
-
-
-.device-progress-groupbox,
 .device-progressmeter,
 .dev-progress-text1-label,
 .dev-progress-text2-label {
@@ -58,11 +55,11 @@ Imported by bindings.css or directly into feathers.
 }
 
 .dev-progress-text1-label[error="true"] {
- background-image:url('chrome://songbird/skin/device/device-progress-error.png');
- background-position:right center;
- background-repeat:no-repeat;
- padding-right:18px;
- cursor: pointer;
+  background-image:url('chrome://songbird/skin/device/device-progress-error.png');
+  background-position:right center;
+  background-repeat:no-repeat;
+  padding-right:18px;
+  cursor: pointer;
 }
 
 .dev-progress-text2-label {

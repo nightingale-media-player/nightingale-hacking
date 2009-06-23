@@ -116,6 +116,22 @@ var DCW = {
     this._deviceProperties = this._device.properties;
     this._capTable = {};
 
+    // Shortcuts to elements
+    this._capacityBar = this._getElement("device-capacity-bar");
+    this._capacityLegend = this._getElement("device-cap-legend-box");
+
+    // Get the list of elements to hide.
+    var hideListAttr = this._widget.getAttribute("hidelist");
+    if (hideListAttr) {
+      var hideList = this._widget.getAttribute("hidelist").split(",");
+
+      // Hide the specified elements.
+      for (var i = 0; i < hideList.length; i++) {
+        var element = this._getHideElement(hideList[i]);
+        element.hidden = true;
+      }
+    }
+
     // Update the UI.
     this._update();
 
@@ -141,6 +157,20 @@ var DCW = {
     this._widget = null;
   },
 
+
+  /**
+   * \brief Return the hide element with the hide ID specified by aHideID.
+   *
+   * \param aHideID             Element hide ID.
+   *
+   * \return Hide element.
+   */
+
+  _getHideElement: function DIW__getHideElement(aHideID) {
+    return document.getAnonymousElementByAttribute(this._widget,
+                                                   "hideid",
+                                                   aHideID);
+  },
 
   //----------------------------------------------------------------------------
   //
@@ -180,7 +210,8 @@ var DCW = {
     var capTable = this._getDeviceCapacity();
 
     // Check if update is needed.  Do nothing more if not.
-    var needsUpdate;
+    var needsUpdate = false;
+
     for (var cap in capTable) {
       if (capTable[cap] != this._capTable[cap]) {
         needsUpdate = true;
@@ -192,8 +223,10 @@ var DCW = {
 
     // Update the capacity.
     this._capTable = capTable;
-    this._updateCapBars();
-    this._updateCapLegends();
+    if (!this._capacityBar.hidden)
+      this._updateCapBars();
+    if (!this._capacityLegend.hidden)
+      this._updateCapLegends();
   },
 
 

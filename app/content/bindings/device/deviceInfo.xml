@@ -67,6 +67,8 @@
    *
    * Attributes:
    *   enable_context_menu      If true, enable the context menu.
+   *   hidelabels               If true, the labels (e.g. "Product", "Model",
+   *                            etc. are hidden)
    *
    *
    *****************************************************************************
@@ -116,7 +118,7 @@
           </xul:hbox>
 
           <!-- Device specs. -->
-          <xul:grid sbid="device_specs_grid">
+          <xul:grid sbid="device_specs_grid" class="device-specs-grid">
 
             <!-- Grid columns. -->
             <xul:columns>
@@ -126,6 +128,14 @@
 
             <!-- Grid rows. -->
             <xul:rows sbid="device_spec_rows">
+              <!-- Product name/capacity row. -->
+              <xul:row devicespec="product_capacity">
+                <xul:label sbid="product_capacity_label"
+                           class="device-specs-grid-label"
+                           value="&device.info.product.label;"/>
+                <xul:label sbid="product_capacity_value_label"
+                           class="device-specs-grid-label"/>
+              </xul:row>
 
               <!-- Model row. -->
               <xul:row devicespec="model">
@@ -232,7 +242,8 @@
       </xul:hbox> <!-- device_info_box -->
 
 
-      <xul:groupbox orient="horizontal" pack="center" align="center">
+      <xul:groupbox orient="horizontal" pack="center" align="center"
+                    sbid="buttons_groupbox" hidden="true">
         <xul:button sbid="more_info_button"
                     class="more-info-button"
                     showid="moreinfo"
