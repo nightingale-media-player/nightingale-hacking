@@ -99,6 +99,7 @@ TranscodeBatchJob.prototype = {
 
   set items(aItems) {
     this._items = ArrayConverter.JSArray(aItems);
+  },
 
   set items(aItems) {
     this._items = ArrayConverter.JSArray(aItems);
