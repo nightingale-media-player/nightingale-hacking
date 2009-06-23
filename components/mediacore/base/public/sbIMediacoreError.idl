@@ -29,7 +29,43 @@
 [scriptable, uuid(ef15b3dd-bccc-4e1b-8c4d-3ef8d63bfd0d)]
 interface sbIMediacoreError : nsISupports
 {
-  const unsigned long UNINITIALIZED = 0;
+  const unsigned long UNINITIALIZED                   = 0;
+  // A general error which doesn't fit in any other category.
+  const unsigned long FAILED                          = 1;
+
+  // General file access errors, reading, writing, etc.
+  
+  // Source file was not found.
+  const unsigned long SB_RESOURCE_NOT_FOUND               = 10;
+  // Unable to read from or write to a RESOURCE.
+  const unsigned long SB_RESOURCE_READ                    = 11;
+  const unsigned long SB_RESOURCE_WRITE                   = 12;
+  // Unable to open a RESOURCE in read, write or both modes.
+  const unsigned long SB_RESOURCE_OPEN_READ               = 13;
+  const unsigned long SB_RESOURCE_OPEN_WRITE              = 14;
+  const unsigned long SB_RESOURCE_OPEN_READ_WRITE         = 15;
+  // Unable to close the RESOURCE.
+  const unsigned long SB_RESOURCE_CLOSE                   = 16;
+  // Unable to seek in the RESOURCE (could be truncated)
+  const unsigned long SB_RESOURCE_SEEK                    = 17;
+  // Unable to write to destination due to no space left.
+  const unsigned long SB_RESOURCE_NO_SPACE_LEFT           = 18;
+
+  // Transcoding errors, used when transcoding an item from one format to
+  // another (like for devices that can no play ogg but can play mp3).
+  
+  // Unable to determine the type of the media to transcode from.
+  const unsigned long SB_TRANS_TYPE_NOT_FOUND         = 51;
+  // We do not handle this type of media to transcode from.
+  const unsigned long SB_TRANS_WRONG_TYPE             = 52;
+  // We do not have a codec to decode/encode this media for transcoding.
+  const unsigned long SB_TRANS_CODEC_NOT_FOUND        = 53;
+  // Unable to decode the media.
+  const unsigned long SB_TRANS_DECODE                 = 54;
+  // Unable to encode the media.
+  const unsigned long SB_TRANS_ENCODE                 = 55;
+  // The media is in the wrong format (Wrong capabilities for example).
+  const unsigned long SB_TRANS_FORMAT                 = 56;
 
   /**
    * \brief Error code.
