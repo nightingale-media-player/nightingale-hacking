@@ -346,6 +346,20 @@ long TagLibChannelFileIO::length()
     return (mChannelSize);
 }
 
+FileIO* TagLibChannelFileIO::tempFile()
+{
+  // temporary files are not supported (since we shouldn't be using this
+  // for any writable files; we should be using TagLib::LocalFileIO instead)
+  return NULL;
+}
+
+bool TagLibChannelFileIO::closeTempFile( bool overwrite )
+{
+  // temporary files are not supported (since we shouldn't be using this
+  // for any writable files; we should be using TagLib::LocalFileIO instead)
+  return false;
+}
+
 
 /* *****************************************************************************
  *

@@ -148,6 +148,17 @@ public:
 
     virtual long length();
 
+    /*!
+    * Return a temporary file to use, creating it if necessary
+    */
+    virtual FileIO* tempFile();
+
+    /*!
+    * Close any previously allocated temporary files
+    * \param overwrite If true, will attempt to replace this file
+    */
+    virtual bool closeTempFile( bool overwrite );
+
 protected:
     virtual void truncate(
         long                        length);
