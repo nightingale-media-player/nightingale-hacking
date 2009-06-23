@@ -1710,7 +1710,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
       PRBool abort;
       rv = sbDeviceUtils::QueryUserSpaceExceeded
                             (this,
-                             mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL,
+                             ownerLibrary,
                              totalLength,
                              freeSpace,
                              &abort);
@@ -2667,7 +2667,7 @@ sbBaseDevice::EnsureSpaceForSync(TransferRequest* aRequest,
     // Ask the user what action to take.
     PRBool abort;
     rv = sbDeviceUtils::QueryUserSpaceExceeded(this,
-                                               PR_TRUE,
+                                               dstLib,
                                                totalSyncSize,
                                                availableSpace,
                                                &abort);
@@ -2831,12 +2831,8 @@ sbBaseDevice::SyncCreateSyncMediaList(sbILibrary*    aSrcLib,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Produce the sync media list name.
-  sbStringBundle bundle;
-  nsTArray<nsString> formatParams;
-  formatParams.AppendElement(deviceName);
-  nsString listName =
-             bundle.Format("device.error.not_enough_freespace.playlist_name",
-                           formatParams);
+  nsString listName = SBLocalizedString
+                        ("device.error.not_enough_freespace.playlist_name");
 
   // Set the sync media list name.
   rv = syncMediaList->SetName(listName);

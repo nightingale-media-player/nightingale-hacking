@@ -82,41 +82,21 @@ BaseDeviceHelper.prototype = {
       return true;
     
     // need to ask the user
-    const bundleSvc = Cc["@mozilla.org/intl/stringbundle;1"]
-                        .getService(Ci.nsIStringBundleService);
-    const branding = bundleSvc.createBundle("chrome://branding/locale/brand.properties");
-    const bundle = bundleSvc.createBundle("chrome://songbird/locale/songbird.properties");
-    
-    function L10N(aKey, aDefault, aBundle) {
-      var stringBundle = aBundle || bundle;
-      var retval = aDefault || aKey;
-      try {
-        retval = stringBundle.GetStringFromName(aKey);
-      } catch (e){
-        Components.utils.reportError(e);
-      }
-      return retval;
-    }
-    
-    var isManualMgmt = (aLibrary.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
-    var messageKeyPrefix = "device.error.not_enough_freespace.prompt." +
-                           (isManualMgmt ? "manual" : "sync");
-    
+    var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
+
     var messageParams = [
       device.name,
       StorageFormatter.format(aSpaceNeeded),
-      StorageFormatter.format(spaceRemaining),
-      L10N("brandShortName", "Songbird", branding)
+      StorageFormatter.format(spaceRemaining)
     ];
-    var message = bundle.formatStringFromName(messageKeyPrefix + ".message",
-                                              messageParams,
-                                              messageParams.length);
+    var message = SBFormattedString(messageKeyPrefix + ".message",
+                                    messageParams);
     
     const prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
                        .getService(Ci.sbIPrompter);
     var neverPromptAgain = { value: false };
     var abortRequest = prompter.confirmEx(null, /* parent */
-                                          L10N(messageKeyPrefix + ".title"),
+                                          SBString(messageKeyPrefix + ".title"),
                                           message,
                                           Ci.nsIPromptService.STD_YES_NO_BUTTONS,
                                           null, null, null, /* button text */
@@ -128,26 +108,19 @@ BaseDeviceHelper.prototype = {
 /*
   boolean queryUserSpaceExceeded(in nsIDOMWindow       aParent,
                                  in sbIDevice          aDevice,
-                                 in boolean            aSyncDeviceOperation,
+                                 in sbIDeviceLibrary   aLibrary,
                                  in unsigned long long aSpaceNeeded,
                                  in unsigned long long aSpaceAvailable);
  */
   queryUserSpaceExceeded: function BaseDeviceHelper_queryUserSpaceExceeded
                                      (aParent,
                                       aDevice,
-                                      aSyncDeviceOperation,
+                                      aLibrary,
                                       aSpaceNeeded,
                                       aSpaceAvailable,
                                       aAbort)
   {
-    // get the branding string bundle
-    var bundleSvc = Cc["@mozilla.org/intl/stringbundle;1"]
-                      .getService(Ci.nsIStringBundleService);
-    var branding = bundleSvc.createBundle
-                               ("chrome://branding/locale/brand.properties");
-
-    var messageKeyPrefix = "device.error.not_enough_freespace.prompt." +
-                           (aSyncDeviceOperation ? "sync" : "manual");
+    var messageKeyPrefix = this._getMessageKeyPrefix(aLibrary);
 
     var message = SBFormattedString
                     (messageKeyPrefix + ".message",
@@ -174,6 +147,27 @@ BaseDeviceHelper.prototype = {
                           neverPromptAgain);
 
     return !abortRequest;
+  },
+
+  _getMessageKeyPrefix:
+    function BaseDeviceHelper__getMessageKeyPrefix(aLibrary) {
+    var messageKeyPrefix = "device.error.not_enough_freespace.prompt.";
+    switch (aLibrary.mgmtType)
+    {
+      case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL :
+        messageKeyPrefix += "sync";
+        break;
+
+      case Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS :
+        messageKeyPrefix += "sync_playlists";
+        break;
+
+      default :
+        messageKeyPrefix += "manual";
+        break;
+    }
+
+    return messageKeyPrefix;
   },
 
   contractID: "@songbirdnest.com/Songbird/Device/Base/Helper;1",

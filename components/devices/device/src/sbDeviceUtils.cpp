@@ -56,18 +56,19 @@ public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBICALLWITHWINDOWCALLBACK
 
-  nsresult Query(sbIDevice* aDevice,
-                 PRBool     aSync,
-                 PRInt64    aSpaceNeeded,
-                 PRInt64    aSpaceAvailable,
-                 PRBool*    aAbort);
+  nsresult Query(sbIDevice*        aDevice,
+                 sbIDeviceLibrary* aLibrary,
+                 PRInt64           aSpaceNeeded,
+                 PRInt64           aSpaceAvailable,
+                 PRBool*           aAbort);
 
 private:
-  nsCOMPtr<sbIDevice> mDevice;
-  PRBool              mSync;
-  PRInt64             mSpaceNeeded;
-  PRInt64             mSpaceAvailable;
-  PRBool*             mAbort;
+  nsCOMPtr<sbIDevice>        mDevice;
+  nsCOMPtr<sbIDeviceLibrary> mLibrary;
+  PRBool                     mSync;
+  PRInt64                    mSpaceNeeded;
+  PRInt64                    mSpaceAvailable;
+  PRBool*                    mAbort;
 };
 
 /*static*/
@@ -361,13 +362,14 @@ nsresult sbDeviceUtils::GetOriginMediaItemByDevicePersistentId
 
 /* static */
 nsresult sbDeviceUtils::QueryUserSpaceExceeded
-                          (/* in */  sbIDevice* aDevice,
-                           /* in */  PRBool     aSync,
-                           /* in */  PRInt64    aSpaceNeeded,
-                           /* in */  PRInt64    aSpaceAvailable,
-                           /* out */ PRBool*    aAbort)
+                          (/* in */  sbIDevice*        aDevice,
+                           /* in */  sbIDeviceLibrary* aLibrary,
+                           /* in */  PRInt64           aSpaceNeeded,
+                           /* in */  PRInt64           aSpaceAvailable,
+                           /* out */ PRBool*           aAbort)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aLibrary);
   NS_ENSURE_ARG_POINTER(aAbort);
 
   nsresult rv;
@@ -376,7 +378,7 @@ nsresult sbDeviceUtils::QueryUserSpaceExceeded
   nsRefPtr<sbDeviceUtilsQueryUserSpaceExceeded> query;
   query = new sbDeviceUtilsQueryUserSpaceExceeded();
   NS_ENSURE_TRUE(query, NS_ERROR_OUT_OF_MEMORY);
-  rv = query->Query(aDevice, aSync, aSpaceNeeded, aSpaceAvailable, aAbort);
+  rv = query->Query(aDevice, aLibrary, aSpaceNeeded, aSpaceAvailable, aAbort);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -408,7 +410,7 @@ sbDeviceUtilsQueryUserSpaceExceeded::HandleWindowCallback(nsIDOMWindow* aWindow)
   PRBool proceed;
   rv = deviceHelper->QueryUserSpaceExceeded(aWindow,
                                             mDevice,
-                                            mSync,
+                                            mLibrary,
                                             mSpaceNeeded,
                                             mSpaceAvailable,
                                             &proceed);
@@ -421,17 +423,17 @@ sbDeviceUtilsQueryUserSpaceExceeded::HandleWindowCallback(nsIDOMWindow* aWindow)
 }
 
 nsresult
-sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice* aDevice,
-                                           PRBool     aSync,
-                                           PRInt64    aSpaceNeeded,
-                                           PRInt64    aSpaceAvailable,
-                                           PRBool*    aAbort)
+sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
+                                           sbIDeviceLibrary* aLibrary,
+                                           PRInt64           aSpaceNeeded,
+                                           PRInt64           aSpaceAvailable,
+                                           PRBool*           aAbort)
 {
   nsresult rv;
 
   // get the query parameters
   mDevice = aDevice;
-  mSync = aSync;
+  mLibrary = aLibrary;
   mSpaceNeeded = aSpaceNeeded;
   mSpaceAvailable = aSpaceAvailable;
   mAbort = aAbort;

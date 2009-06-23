@@ -41,7 +41,7 @@ interface sbIDeviceLibrary;
  *
  * Helper routines for device implementations
  */
-[scriptable, uuid(02e33a75-be25-4bd1-bf9d-030d0ee0346c)]
+[scriptable, uuid(50670cd2-b060-4be9-975e-602c7665e5f0)]
 interface sbIDeviceHelper : nsISupports
 {
   /**
@@ -62,22 +62,23 @@ interface sbIDeviceHelper : nsISupports
 
   /**
    * Ask the user what action to take in response to an operation space exceeded
-   * event for the device specified by aDevice.  Use the window specified by
-   * aParent as a dialog parent.  If aSync is true, the operation is a sync
-   * device operation.  The amount of space needed for the operation is
-   * specified by aSpaceNeeded and the amount available by aSpaceAvailable.
-   * Return true if user chooses to proceed with operation.
+   * event for the device specified by aDevice and device library specified by
+   * aLibrary.  Use the window specified by aParent as a dialog parent.  The
+   * amount of space needed for the operation is specified by aSpaceNeeded and
+   * the amount available by aSpaceAvailable.  Return true if user chooses to
+   * proceed with operation.
    *
    * \param aParent the parent window for dialogs
    * \param aDevice target device of operation
-   * \param aSync True if operation is a sync device operation
+   * \param aLibrary target device library of operation
    * \param aSpaceNeeded Space needed by operation
    * \param aSpaceAvailable Space available to operation
    * \return True if operation should proceed (even partially), false if not
    */
   boolean queryUserSpaceExceeded(in nsIDOMWindow       aParent,
                                  in sbIDevice          aDevice,
-                                 in boolean            aSyncDeviceOperation,
+                                 in sbIDeviceLibrary   aLibrary,
                                  in unsigned long long aSpaceNeeded,
                                  in unsigned long long aSpaceAvailable);
 };
+

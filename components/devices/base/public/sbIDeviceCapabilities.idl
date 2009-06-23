@@ -379,9 +379,8 @@ interface sbIDeviceCapabilities : nsISupports
   nsISupports getFormatType(in AString aFormat);
    
   /**
-   * Returns a collection of 
-  /**
-   * An array of nsISupportsPRUint32 values defined in sbIDeviceEvent.idl
+   * Returns an array of nsISupportsPRUint32 values defined in
+   * sbIDeviceEvent.idl
    */
   void getSupportedEvents(out unsigned long aArrayCount,
                           [retval, array, size_is(aArrayCount)]
