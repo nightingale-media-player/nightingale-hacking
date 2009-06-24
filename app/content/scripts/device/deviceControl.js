@@ -464,13 +464,15 @@ deviceControlWidget.prototype = {
     var readOnly = this._isReadOnly();
     var mgmtType = this._deviceLibrary.mgmtType;
     var supportsReformat = this._device.supportsReformat;
+    var supportsPlaylist = this._supportsPlaylist();
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
         (this._currentMgmtType == mgmtType) &&
-        (this._currentSupportsReformat == supportsReformat)) {
+        (this._currentSupportsReformat == supportsReformat) &&
+        (this._currentSupportsPlaylist == supportsPlaylist)) {
       return;
     }
 
@@ -479,6 +481,7 @@ deviceControlWidget.prototype = {
     this._currentReadOnly = readOnly;
     this._currentMgmtType = mgmtType;
     this._currentSupportsReformat = supportsReformat;
+    this._currentSupportsPlaylist = supportsPlaylist;
 
     // Update widget attributes.
     var updateAttributeList = [];
@@ -497,6 +500,38 @@ deviceControlWidget.prototype = {
     }
   },
 
+  /**
+   * Check the device capabilities to see if it supports playlists.
+   * Device implementations may respond to CONTENT_PLAYLIST for either 
+   * FUNCTION_DEVICE or FUNCTION_AUDIO_PLAYBACK.
+   */
+  _supportsPlaylist: function deviceControlWidget__supportsPlaylist() {
+    var capabilities = this._device.capabilities;
+    var sbIDC = Ci.sbIDeviceCapabilities;
+    try {
+      var contentTypes = capabilities.
+        getSupportedContentTypes(sbIDC.FUNCTION_DEVICE, {});
+      for (var i in contentTypes) {
+        if (contentTypes[i] == sbIDC.CONTENT_PLAYLIST) {
+          return true;
+        }
+      }
+    } catch (e) {}
+
+    try {
+      var contentTypes = capabilities
+        .getSupportedContentTypes(sbIDC.FUNCTION_AUDIO_PLAYBACK, {});
+      for (var i in contentTypes) {
+        if (contentTypes[i] == sbIDC.CONTENT_PLAYLIST) {
+          return true;
+        }
+      }
+    } catch (e) {}
+
+    // couldn't find PLAYLIST support in either the DEVICE 
+    // or AUDIO_PLAYBACK category
+    return false;
+  },
 
   /**
    * Update the widget attribute specified by aAttrName to reflect changes to
@@ -537,6 +572,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._currentSupportsReformat && 
              this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}
+    else if (this._currentSupportsPlaylist && 
+             this._getStateAttribute(attrVal, aAttrName, "supports_playlist")) {}
     else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
     else this._getStateAttribute(attrVal, aAttrName, null);
 
