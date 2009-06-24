@@ -33,7 +33,11 @@ ifneq (,$(filter-out macosx windows,$(SB_PLATFORM)))
    $(error The Songbird iTunes agent can only be built on Win32 and Mac)
 endif
 
-SIMPLE_PROGRAM = songbirditunesagent
+# The agent launching code relies on a specific name.
+# See bug 16930.
+DISABLE_IMPLICIT_NAMING = 1
+
+SIMPLE_PROGRAM = songbirditunesagent$(BIN_SUFFIX)
 
 CPP_SRCS = main.cpp \
            sbError.cpp \
