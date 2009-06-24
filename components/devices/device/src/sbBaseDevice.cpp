@@ -66,6 +66,7 @@
 #include <sbILibraryDiffingService.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbIMediaFileManager.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
 #include <sbITranscodeManager.h>
@@ -103,9 +104,14 @@ static PRLogModuleInfo* gBaseDeviceLog = nsnull;
                                           SB_PROPERTY_GENRE " 53 "          \
                                           SB_PROPERTY_RATING   " 80"        \
 
+// preference names
 #define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device."
 #define PREF_DEVICE_LIBRARY_BASE "library."
 #define PREF_WARNING "warning."
+#define PREF_ORGANIZE_PREFIX "media_management."
+#define PREF_ORGANIZE_ENABLED "media_management.enabled"
+#define PREF_ORGANIZE_DIR_FORMAT "media_management.format.dir"
+#define PREF_ORGANIZE_FILE_FORMAT "media_management.format.file"
 
 #define BATCH_TIMEOUT 100 /* number of milliseconds to wait for batching */
 
@@ -321,6 +327,10 @@ sbBaseDevice::sbBaseDevice() :
 
   mPreferenceLock = nsAutoLock::NewLock(__FILE__ "::mPreferenceLock");
   NS_ASSERTION(mPreferenceLock, "Failed to allocate preference lock");
+
+  // the typical case is 1 library per device
+  PRBool success = mOrganizeLibraryPrefs.Init(1);
+  NS_ASSERTION(success, "Failed to initialize organize prefs hashtable");
 }
 
 sbBaseDevice::~sbBaseDevice()
@@ -1078,8 +1088,7 @@ nsresult sbBaseDevice::CreateDeviceLibrary(const nsAString& aId,
   nsresult rv = InitializeDeviceLibrary(devLib, aId, aLibraryLocation);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = devLib->QueryInterface(NS_GET_IID(sbIDeviceLibrary),
-                              reinterpret_cast<void**>(_retval));
+  rv = CallQueryInterface(devLib.get(), _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -2368,6 +2377,117 @@ nsresult sbBaseDevice::ApplyLibraryPreference
       if (NS_SUCCEEDED(rv))
         mMusicLimitPercent = musicLimitPercent;
     }
+  }
+  return ApplyLibraryOrganizePreference(aLibrary,
+                                        aLibraryPrefName,
+                                        prefBase,
+                                        aPrefValue);
+}
+
+nsresult sbBaseDevice::ApplyLibraryOrganizePreference
+                         (sbIDeviceLibrary* aLibrary,
+                          const nsAString&  aLibraryPrefName,
+                          const nsAString&  aLibraryPrefBase,
+                          nsIVariant*       aPrefValue)
+{
+  nsresult rv;
+  PRBool applyAll = aLibraryPrefName.IsEmpty();
+
+  if (!applyAll && !StringBeginsWith(aLibraryPrefName,
+                                     NS_LITERAL_STRING(PREF_ORGANIZE_PREFIX)))
+  {
+    return NS_OK;
+  }
+
+  nsString prefBase(aLibraryPrefBase);
+  if (prefBase.IsEmpty()) {
+    // Get the library pref base.
+    rv = GetLibraryPreferenceBase(aLibrary, prefBase);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsString guidString;
+  rv = aLibrary->GetGuid(guidString);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsID libraryGuid;
+  PRBool success = 
+    libraryGuid.Parse(NS_LossyConvertUTF16toASCII(guidString).get());
+  NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
+
+  nsAutoPtr<OrganizeData> libraryDataReleaser;
+  OrganizeData* libraryData;
+  PRBool found = mOrganizeLibraryPrefs.Get(libraryGuid, &libraryData);
+  if (!found) {
+    libraryData = new OrganizeData;
+    libraryDataReleaser = libraryData;
+  }
+  NS_ENSURE_TRUE(libraryData, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the preference value.
+  nsCOMPtr<nsIVariant> prefValue = aPrefValue;
+
+  if (applyAll ||
+      aLibraryPrefName.EqualsLiteral(PREF_ORGANIZE_ENABLED))
+  {
+    if (applyAll || !prefValue) {
+      rv = GetLibraryPreference(prefBase,
+                                NS_LITERAL_STRING(PREF_ORGANIZE_ENABLED),
+                                getter_AddRefs(prefValue));
+      if (NS_FAILED(rv))
+        prefValue = nsnull;
+    }
+    if (prefValue) {
+      PRUint16 dataType;
+      rv = prefValue->GetDataType(&dataType);
+      if (NS_SUCCEEDED(rv) && dataType == nsIDataType::VTYPE_BOOL) {
+        rv = prefValue->GetAsBool(&libraryData->organizeEnabled);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+  if (applyAll ||
+      aLibraryPrefName.EqualsLiteral(PREF_ORGANIZE_DIR_FORMAT))
+  {
+    if (applyAll || !prefValue) {
+      rv = GetLibraryPreference(prefBase,
+                                NS_LITERAL_STRING(PREF_ORGANIZE_DIR_FORMAT),
+                                getter_AddRefs(prefValue));
+      if (NS_FAILED(rv))
+        prefValue = nsnull;
+    }
+    if (prefValue) {
+      PRUint16 dataType;
+      rv = prefValue->GetDataType(&dataType);
+      if (NS_SUCCEEDED(rv) && dataType != nsIDataType::VTYPE_EMPTY) {
+        rv = prefValue->GetAsACString(libraryData->dirFormat);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+  if (applyAll || 
+      aLibraryPrefName.EqualsLiteral(PREF_ORGANIZE_FILE_FORMAT))
+  {
+    if (applyAll || !prefValue) {
+      rv = GetLibraryPreference(prefBase,
+                                NS_LITERAL_STRING(PREF_ORGANIZE_FILE_FORMAT),
+                                getter_AddRefs(prefValue));
+      if (NS_FAILED(rv))
+        prefValue = nsnull;
+    }
+    if (prefValue) {
+      PRUint16 dataType;
+      rv = prefValue->GetDataType(&dataType);
+      if (NS_SUCCEEDED(rv) && dataType != nsIDataType::VTYPE_EMPTY) {
+        rv = prefValue->GetAsACString(libraryData->fileFormat);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
+  if (!found) {
+    success = mOrganizeLibraryPrefs.Put(libraryGuid, libraryData);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+    libraryDataReleaser.forget();
   }
 
   return NS_OK;
@@ -3686,31 +3806,79 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Get the write source file name and replace illegal characters.
-  nsCOMPtr<nsIURL> writeSrcURL = do_QueryInterface(writeSrcURI, &rv);
+  // Check if the item needs to be organized
+  nsCOMPtr<sbILibrary> destLibrary;
+  rv = aWriteDstItem->GetLibrary(getter_AddRefs(destLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCAutoString cWriteSrcFileName;
-  rv = writeSrcURL->GetFileName(cWriteSrcFileName);
+  nsString destLibGuidStr;
+  rv = destLibrary->GetGuid(destLibGuidStr);
   NS_ENSURE_SUCCESS(rv, rv);
-  nsAutoString writeSrcFileName = NS_ConvertUTF8toUTF16(cWriteSrcFileName);
-  nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));
+  nsID destLibGuid;
+  PRBool success = 
+    destLibGuid.Parse(NS_LossyConvertUTF16toASCII(destLibGuidStr).get());
+  OrganizeData* organizeData = nsnull;
+  if (success) {
+    success = mOrganizeLibraryPrefs.Get(destLibGuid, &organizeData);
+  }
 
-  // Get a file object for the content base.
-  nsCOMPtr<nsIFileURL>
-    contentSrcBaseFileURL = do_QueryInterface(aContentSrcBaseURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIFile> contentSrcBaseFile;
-  rv = contentSrcBaseFileURL->GetFile(getter_AddRefs(contentSrcBaseFile));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Start the content source at the base.
   nsCOMPtr<nsIFile> contentSrcFile;
-  rv = contentSrcBaseFile->Clone(getter_AddRefs(contentSrcFile));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (success && organizeData->organizeEnabled) {
+    nsCOMPtr<nsIFileURL> baseFileUrl = 
+      do_QueryInterface(aContentSrcBaseURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> baseFile;
+    rv = baseFileUrl->GetFile(getter_AddRefs(baseFile));
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  // Append file name of the write source file.
-  rv = contentSrcFile->Append(writeSrcFileName);
-  NS_ENSURE_SUCCESS(rv, rv);
+    // Get the managed path
+    nsCOMPtr<sbIMediaFileManager> fileMgr = 
+      do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fileMgr->Init(baseFile, 
+                       organizeData->fileFormat, organizeData->dirFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = fileMgr->GetManagedPath(aWriteDstItem, 
+                                 sbIMediaFileManager::MANAGE_COPY |
+                                   sbIMediaFileManager::MANAGE_MOVE,
+                                 getter_AddRefs(contentSrcFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIFile> parentDir;
+    rv = contentSrcFile->GetParent(getter_AddRefs(parentDir));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = parentDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
+    if (rv != NS_ERROR_FILE_ALREADY_EXISTS) {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+  } else {
+    // Get the write source file name and replace illegal characters.
+    nsCOMPtr<nsIURL> writeSrcURL = do_QueryInterface(writeSrcURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCAutoString cWriteSrcFileName;
+    rv = writeSrcURL->GetFileName(cWriteSrcFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoString writeSrcFileName = NS_ConvertUTF8toUTF16(cWriteSrcFileName);
+    nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));
+
+    // Get a file object for the content base.
+    nsCOMPtr<nsIFileURL>
+      contentSrcBaseFileURL = do_QueryInterface(aContentSrcBaseURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> contentSrcBaseFile;
+    rv = contentSrcBaseFileURL->GetFile(getter_AddRefs(contentSrcBaseFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Start the content source at the base.
+    rv = contentSrcBaseFile->Clone(getter_AddRefs(contentSrcFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Append file name of the write source file.
+    rv = contentSrcFile->Append(writeSrcFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Check if the content source file already exists.
   PRBool exists;
@@ -3734,7 +3902,8 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
 
   // Get the device content source URI.
   nsCOMPtr<nsIURI> contentSrc;
-  rv = NS_NewFileURI(getter_AddRefs(contentSrc), contentSrcFile);
+  rv = sbLibraryUtils::GetFileContentURI(contentSrcFile, 
+                                         getter_AddRefs(contentSrc));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the write destination item content source.

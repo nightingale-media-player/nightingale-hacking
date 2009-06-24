@@ -36,6 +36,7 @@
 #include "sbDeviceLibrary.h"
 
 #include <nsAutoPtr.h>
+#include <nsClassHashtable.h>
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsDataHashtable.h>
@@ -438,6 +439,16 @@ protected:
   PRUint32 mCapabilitiesRegistrarType;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
+
+  // cache data for media management preferences
+  typedef struct OrganizeData_t {
+    PRBool    organizeEnabled;
+    nsCString dirFormat;
+    nsCString fileFormat;
+    OrganizeData_t() : organizeEnabled(PR_FALSE) {}
+  } OrganizeData;
+  nsClassHashtableMT<nsIDHashKey, OrganizeData> mOrganizeLibraryPrefs;
+
 protected:
 
   /**
@@ -597,6 +608,24 @@ protected:
   virtual nsresult ApplyLibraryPreference(sbIDeviceLibrary* aLibrary,
                                           const nsAString&  aLibraryPrefName,
                                           nsIVariant*       aPrefValue);
+
+  /**
+   * Apply the preference for library organization specified by the library
+   * preference name aLibraryPrefName with the value specified by aPrefValue
+   * for the library specified by aLibrary.  If aPrefValue is null, read the
+   * current preference value and apply it.  If aLibraryPrefName is empty,
+   * read and apply all library organization preferences.
+   *
+   * \see ApplyLibraryPreference
+   * \param aLibrary            Library for which to apply preference.
+   * \param aLibraryPrefName    Library preference name.
+   * \param aLibraryPrefBase    [optional] Library preference base.
+   * \param aPrefValue          Library preference value.
+   */
+  virtual nsresult ApplyLibraryOrganizePreference(sbIDeviceLibrary* aLibrary,
+                                                  const nsAString&  aLibraryPrefName,
+                                                  const nsAString&  aLibraryPrefBase,
+                                                  nsIVariant*       aPrefValue);
 
   /**
    * Return in aLibraryPrefName the library preference name for the preference
