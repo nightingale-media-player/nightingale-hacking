@@ -51,21 +51,18 @@ interface sbIMediacoreError : nsISupports
   // Unable to write to destination due to no space left.
   const unsigned long SB_RESOURCE_NO_SPACE_LEFT           = 18;
 
-  // Transcoding errors, used when transcoding an item from one format to
-  // another (like for devices that can no play ogg but can play mp3).
+  // Errors with the actual stream contents, decoders, encoders, etc.
   
-  // Unable to determine the type of the media to transcode from.
-  const unsigned long SB_TRANS_TYPE_NOT_FOUND         = 51;
-  // We do not handle this type of media to transcode from.
-  const unsigned long SB_TRANS_WRONG_TYPE             = 52;
-  // We do not have a codec to decode/encode this media for transcoding.
-  const unsigned long SB_TRANS_CODEC_NOT_FOUND        = 53;
+  // Unable to determine the type of the media
+  const unsigned long SB_STREAM_TYPE_NOT_FOUND         = 51;
+  // We do not handle this type of media 
+  const unsigned long SB_STREAM_WRONG_TYPE             = 52;
+  // We do not have a codec to decode/encode this media.
+  const unsigned long SB_STREAM_CODEC_NOT_FOUND        = 53;
   // Unable to decode the media.
-  const unsigned long SB_TRANS_DECODE                 = 54;
+  const unsigned long SB_STREAM_DECODE                 = 54;
   // Unable to encode the media.
-  const unsigned long SB_TRANS_ENCODE                 = 55;
-  // The media is in the wrong format (Wrong capabilities for example).
-  const unsigned long SB_TRANS_FORMAT                 = 56;
+  const unsigned long SB_STREAM_ENCODE                 = 55;
 
   /**
    * \brief Error code.
