@@ -186,10 +186,16 @@
         this._busyWarningDesc = null;
         this._busyWarningText = null;
         this._updateFirmwareButton = null;
+        this._registerURI = null;
       ]]>
       </constructor>
 
       <destructor><![CDATA[
+        var firmwareUpdater = 
+          Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+                    .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
+        firmwareUpdater.finalizeUpdate(this.device);
+
         if(this.device) {
           this.device = null;
         }
@@ -202,8 +208,12 @@
 
       <method name="registerDevice">
         <body><![CDATA[
-        // XXXAus: This needs to be filled in when more of 
-        //         the device updater is completed
+          if (this._registerURI != null) {
+            var protocolSvc = 
+              Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                        .getService(Ci.nsIExternalProtocolService);
+             protocolSvc.loadURI(this._registerURI);
+          }
         ]]></body>
       </method>
 
@@ -289,7 +299,7 @@
         catch(e) {
           this._currentFirmwareVersion.value = SBString("device.info.unknown");
         }
-        
+
         if(this.device.isBusy) {
           if(this._busyWarningText) {
             this._busyWarningDesc.removeChild(this._busyWarningText);
@@ -319,11 +329,34 @@
           }
         ]]></body>
       </method>
+
+      <method name="_propertyLookup">
+        <body><![CDATA[
+          var firmwareUpdater =
+            Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+                      .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
+
+          // Update the device for product registration fun.
+          var self = this;
+          var deviceListener = {
+            onDeviceEvent: function(aEvent) {
+              if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
+                var curFirmHandler = firmwareUpdater.getActiveHandler(self.device);
+                self._registerURI = curFirmHandler.registerLocation;
+              }
+            }
+          };
+
+          // Now check for an update.
+          firmwareUpdater.checkForUpdate(this.device, deviceListener);
+        ]]></body>
+      </method>
+
     </implementation>
 
     <handlers>
       <handler event="deviceBound" 
-               action="this._update();"/>
+               action="this._update(); this._propertyLookup();"/>
     </handlers>
   </binding>
 
