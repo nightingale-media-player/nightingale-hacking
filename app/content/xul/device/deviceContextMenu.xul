@@ -53,15 +53,12 @@
       <menuseparator/>
 
       <menuitem/><sb-device-sync-cancel-command bindelem="prev"/>
-      <menuitem/><sb-device-new-playlist-command bindelem="prev"/>
 
       <menuseparator/>
 
       <menuitem/><sb-device-rename-command bindelem="prev"/>
 
-      <menuseparator/>
-
-      <menuitem/><sb-device-eject-command bindelem="prev"/>
+      <menuitem/><sb-device-format-command bindelem="prev"/>
 
     </box>
 

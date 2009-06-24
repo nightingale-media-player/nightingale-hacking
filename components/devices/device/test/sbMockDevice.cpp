@@ -597,3 +597,17 @@ NS_IMETHODIMP sbMockDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
+
+
+/* void Format(); */
+NS_IMETHODIMP sbMockDevice::Format()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+/* readonly attribute boolean supportsReformat; */
+NS_IMETHODIMP sbMockDevice::GetSupportsReformat(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE;
+  return NS_OK;
+}

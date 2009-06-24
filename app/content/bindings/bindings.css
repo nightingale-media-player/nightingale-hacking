@@ -478,6 +478,10 @@ sb-device-eject-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-eject-command");
 }
 
+sb-device-format-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-format-command");
+}
+
 sb-device-get-info-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-get-info-command");
 }

@@ -290,6 +290,31 @@
     </content>
   </binding>
 
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device format command widget.
+   *
+   *   This widget implements a device format command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-format-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         bindforward="parent"
+         label="&command.device.formatdevice;"
+         accesskey="&command.device.formatdevice.accesskey;"
+         action="format"
+         listentodevice="true"
+         disabled_default="remove_attribute"
+         disabled_busy="true"
+         hidden_default="true"
+         hidden_supports_reformat="remove_attribute"/>
+    </content>
+  </binding>
 
   <!-- *************************************************************************
    *****************************************************************************

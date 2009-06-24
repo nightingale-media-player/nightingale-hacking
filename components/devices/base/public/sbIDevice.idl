@@ -45,7 +45,7 @@ interface sbIDeviceStatus;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(8d3f5053-3797-46d2-84d1-da001d73fc73)]
+[scriptable, uuid(23bad010-5ee9-11de-8a39-0800200c9a66)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -148,6 +148,12 @@ interface sbIDevice : nsISupports
   readonly attribute sbIDeviceStatus currentStatus;
   
   /**
+   * Does the implementation of this sbIDevice provide support for
+   * reformatting the current device?
+   */
+  readonly attribute boolean supportsReformat;
+
+  /**
    * Whether the device is busy, idle, syncing, mounting, etc.
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_READ_*
    * @see sbIDeviceEvent::EVENT_DEVICE_MEDIA_WRITE_*
@@ -171,6 +177,7 @@ interface sbIDevice : nsISupports
                                                   // operation
   const unsigned long STATE_CANCEL          = 12; // In process of canceling operation
   const unsigned long STATE_TRANSCODE       = 13; // Transcoding a file.
+  const unsigned long STATE_FORMATTING       = 14; // Formatting the device.
 
   const unsigned long STATE_USER            = 0x20000000;
 
@@ -215,6 +222,11 @@ interface sbIDevice : nsISupports
    * Eject device.
    */
   void eject();
+
+  /**
+   * Format device.
+   */
+  void format();
 
   /* Set the enabled state on a named warning dialog */
   void setWarningDialogEnabled(in AString aWarning, in boolean aEnabled);

@@ -243,6 +243,10 @@ deviceControlWidget.prototype = {
         this._device.eject();
         break;
 
+      case "format" :
+        this._device.format();
+        break;
+
       case "get_info" :
         this._getDeviceInfo();
         break;
@@ -459,12 +463,14 @@ deviceControlWidget.prototype = {
     var state = this._device.state;
     var readOnly = this._isReadOnly();
     var mgmtType = this._deviceLibrary.mgmtType;
+    var supportsReformat = this._device.supportsReformat;
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
         (this._currentState == state) &&
         (this._currentReadOnly == readOnly) &&
-        (this._currentMgmtType == mgmtType)) {
+        (this._currentMgmtType == mgmtType) &&
+        (this._currentSupportsReformat == supportsReformat)) {
       return;
     }
 
@@ -472,6 +478,7 @@ deviceControlWidget.prototype = {
     this._currentState = state;
     this._currentReadOnly = readOnly;
     this._currentMgmtType = mgmtType;
+    this._currentSupportsReformat = supportsReformat;
 
     // Update widget attributes.
     var updateAttributeList = [];
@@ -479,6 +486,7 @@ deviceControlWidget.prototype = {
     this._updateAttribute("action", updateAttributeList);
     this._updateAttribute("disabled", updateAttributeList);
     this._updateAttribute("label", updateAttributeList);
+    this._updateAttribute("hidden", updateAttributeList);
 
     // Update bound element attributes.
     if (this._boundElem != this._widget) {
@@ -527,6 +535,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "idle")) {}
     else if ((this._currentMgmtType != Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) &&
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
+    else if (this._currentSupportsReformat && 
+             this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}
     else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}
     else this._getStateAttribute(attrVal, aAttrName, null);
 

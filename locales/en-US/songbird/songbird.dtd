@@ -413,6 +413,8 @@
 <!ENTITY command.device.canceldeviceupdate.accesskey    "C">
 <!ENTITY command.device.ejectdevice                     "Eject">
 <!ENTITY command.device.ejectdevice.accesskey           "E">
+<!ENTITY command.device.formatdevice                    "Format">
+<!ENTITY command.device.formatdevice.accesskey          "F">
 <!ENTITY command.device.getdeviceinfo                   "Get Info">
 <!ENTITY command.device.getdeviceinfo.accesskey         "I">
 <!ENTITY command.device.renamedevice                    "Rename">

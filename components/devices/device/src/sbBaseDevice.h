@@ -163,6 +163,8 @@ public:
   NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
   NS_IMETHOD SyncLibraries(void);
+  NS_IMETHOD Format(void);
+  NS_IMETHOD GetSupportsReformat(PRBool *_retval);
 
 public:
   sbBaseDevice();

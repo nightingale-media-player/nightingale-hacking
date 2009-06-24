@@ -3885,5 +3885,17 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     return NS_ERROR_NOT_AVAILABLE;
   }
   
+}
+
+/* void Format(); */
+NS_IMETHODIMP sbBaseDevice::Format()
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+/* readonly attribute boolean supportsReformat; */
+NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE;
   return NS_OK;
 }
