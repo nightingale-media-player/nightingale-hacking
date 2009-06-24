@@ -40,7 +40,6 @@ CPP_SRCS = sbGStreamerMetadataHandler.cpp \
 CPP_EXTRA_INCLUDES = \
       $(topsrcdir)/components/include \
       $(DEPTH)/components/mediacore/metadata/manager/public \
-      $(topsrcdir)/components/mediacore/base/src \
       $(DEPTH)/components/property/public \
       $(topsrcdir)/components/property/src \
       $(DEPTH)/components/mediacore/base/public \

@@ -37,7 +37,6 @@
 #include <nsIStringBundle.h>
 
 #include <sbIPropertyArray.h>
-#include <sbMediacoreError.h>
 
 #include <gst/gst.h>
 
@@ -53,12 +52,6 @@ public:
 };
 GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
                                       gpointer data);
-
-/* Get a mediacore error from the gstreamer error. The error string may include
-   a reference to a filename or URI; if so the string aResource will be used
- */
-nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
-        sbIMediacoreError **_retval);
 
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 

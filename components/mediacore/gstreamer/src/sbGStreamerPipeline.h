@@ -92,10 +92,6 @@ protected:
   // The pipeline we're managing
   GstElement* mPipeline;
 
-  // A string describing the resource (filename, URI, etc) being processed
-  // by the pipeline. Only used for informational purposes (error messages, etc)
-  nsString mResourceDisplayName;
-
   // The total time the pipeline has been running (not including the time from
   // mTimeStarted to now, if mTimeStarted != -1)
   GstClockTime mTimeRunning;
