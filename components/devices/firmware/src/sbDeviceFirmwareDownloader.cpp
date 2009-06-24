@@ -775,10 +775,10 @@ sbDeviceFirmwareDownloader::HandleComplete()
   NS_ENSURE_STATE(mDevice);
 
   PRBool success = PR_FALSE;
-  nsresult rv = mDownloader->GetSucceeded(&succeeded);
+  nsresult rv = mDownloader->GetSucceeded(&success);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(!succeeded) {
+  if(!success) {
     rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_ERROR, 
                          nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
