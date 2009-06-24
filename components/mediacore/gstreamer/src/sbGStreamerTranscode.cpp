@@ -110,6 +110,9 @@ NS_IMETHODIMP
 sbGStreamerTranscode::SetSourceURI(const nsAString& aSourceURI)
 {
   mSourceURI = aSourceURI;
+
+  // Use the source URI as the resource name too.
+  mResourceDisplayName = mSourceURI;
   return NS_OK;
 }
 

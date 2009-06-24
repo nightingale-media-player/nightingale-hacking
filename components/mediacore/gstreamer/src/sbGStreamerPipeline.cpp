@@ -273,7 +273,7 @@ void sbGStreamerPipeline::HandleErrorMessage(GstMessage *message)
   GError *gerror = NULL;
   gchar *debug = NULL;
   nsString errormessage;
-  nsCOMPtr<sbMediacoreError> error;
+  nsCOMPtr<sbIMediacoreError> error;
   nsresult rv;
 
   gst_message_parse_error(message, &gerror, &debug);
@@ -281,12 +281,9 @@ void sbGStreamerPipeline::HandleErrorMessage(GstMessage *message)
   LOG(("Error message: %s [%s]", GST_STR_NULL (gerror->message), 
               GST_STR_NULL (debug)));
 
-  // Create and dispatch an error event. 
-  NS_NEWXPCOM(error, sbMediacoreError);
-  NS_ENSURE_TRUE(error, /* void */);
-
-  CopyUTF8toUTF16(nsDependentCString(gerror->message), errormessage);
-  error->Init(0, errormessage); // XXX: Use a proper error code once they exist
+  rv = GetMediacoreErrorFromGstError(gerror, mResourceDisplayName,
+          getter_AddRefs(error));
+  NS_ENSURE_SUCCESS(rv, /* void */);
 
   DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
 

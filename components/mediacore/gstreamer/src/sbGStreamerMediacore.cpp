@@ -25,6 +25,7 @@
 */
 
 #include "sbGStreamerMediacore.h"
+#include "sbGStreamerMediacoreUtils.h"
 
 #include <nsIFile.h>
 #include <nsIFileURL.h>
@@ -1144,7 +1145,7 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
 {
   GError *gerror = NULL;
   nsString errormessage;
-  nsCOMPtr<sbMediacoreError> error;
+  nsCOMPtr<sbIMediacoreError> error;
   nsCOMPtr<sbIMediacoreEvent> event;
   gchar *debugMessage;
   nsresult rv;
@@ -1155,11 +1156,9 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   
   if (!mHasSeenError) {
     // Create and dispatch an error event. 
-    NS_NEWXPCOM(error, sbMediacoreError);
-    NS_ENSURE_TRUE(error, /* void */);
-
-    CopyUTF8toUTF16(nsDependentCString(gerror->message), errormessage);
-    error->Init(0, errormessage); // XXX: Use a proper error code once they exist
+    rv = GetMediacoreErrorFromGstError(gerror,
+            NS_ConvertUTF8toUTF16(mCurrentUri), getter_AddRefs(error));
+    NS_ENSURE_SUCCESS(rv, /* void */);
 
     DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
     mHasSeenError = PR_TRUE;
