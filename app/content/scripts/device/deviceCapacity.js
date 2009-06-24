@@ -98,7 +98,13 @@ var DCW = {
   _deviceProperties : null,
   _updateInterval: null,
   _capTable: null,
+  _panel: null,
 
+  _panelElements: [ "device-cap-bar-music-box",
+                    "device-cap-bar-video-box",
+                    "device-capacity-legend-music",
+                    "device-capacity-legend-video"
+                  ],
 
   /**
    * \brief Initialize the device capacity services for the device capacity
@@ -132,6 +138,15 @@ var DCW = {
       }
     }
 
+    // Hook up the panel to the right boxes
+    var panelId = this._widget.getAttribute("panel");
+    this._panel = document.getElementById(this._widget.getAttribute("panel"));
+    for each (var elId in this._panelElements) {
+      var el = this._getElement(elId);
+      if (el)
+        el.addEventListener("click", this._openCapacityPanel, false);
+    }
+
     // Update the UI.
     this._update();
 
@@ -153,10 +168,28 @@ var DCW = {
       this._updateInterval = null;
     }
 
+    try {
+      for each (var elId in this._panelElements) {
+        var el = this._getElement(elId);
+        if (el)
+          el.removeEventListener("click", this._openCapacityPanel, false);
+      }
+    } catch (e) {
+      dump("Failed to remove event listener: " + e + "\n");
+    }
+
     // Clear object fields.
     this._widget = null;
   },
 
+  /**
+   * \brief Open the capacity panel
+   *
+   * \param aEvent             The event triggering this popup
+   */
+  _openCapacityPanel: function DIW__openCapacityPanel(aEvent) {
+    DCW._panel.openPopup(aEvent.target);
+  },
 
   /**
    * \brief Return the hide element with the hide ID specified by aHideID.

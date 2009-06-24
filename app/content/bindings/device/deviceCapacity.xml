@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -69,14 +69,20 @@
           <xul:hbox sbid="device-cap-bar-box"
                     class="device-capacity-bar-box"
                     flex="1">
-            <xul:hbox type="music" class="device-capacity-music"/>
-            <xul:hbox type="video" class="device-capacity-video"/>
+            <xul:hbox sbid="device-cap-bar-music-box"
+                      type="music"
+                      class="device-capacity-music"/>
+            <xul:hbox sbid="device-cap-bar-video-box"
+                      type="video"
+                      class="device-capacity-video"/>
             <xul:hbox type="other" class="device-capacity-other"/>
             <xul:hbox type="free" class="device-capacity-free"/>
           </xul:hbox>
 
           <!-- Capacity bar notches. -->
-          <xul:hbox class="device-capacity-bar-notches" flex="1">
+          <xul:hbox class="device-capacity-bar-notches"
+                    flex="1"
+                    mousethrough="always">
             <xul:hbox flex="1"/>
             <xul:hbox flex="1"/>
             <xul:hbox flex="1"/>
@@ -89,7 +95,8 @@
             <xul:hbox flex="1"/>
           </xul:hbox>
 
-          <xul:hbox class="device-capacity-bar-caps hook" flex="1">
+          <xul:hbox class="device-capacity-bar-caps hook" flex="1"
+                    mousethrough="always">
             <xul:hbox class="left" />
             <xul:spacer class="middle" flex="1" />
             <xul:hbox class="right" />
@@ -103,10 +110,12 @@
                   hidden="false"
                   pack="end"
                   hideid="legend">
-          <xul:sb-device-capacity-legend type="music"
+          <xul:sb-device-capacity-legend sbid="device-capacity-legend-music"
+                                         type="music"
                                          class="device-capacity-legend-music"
                                          label="&device.capacity.music.label;"/>
-          <xul:sb-device-capacity-legend type="video"
+          <xul:sb-device-capacity-legend sbid="device-capacity-legend-video"
+                                         type="video"
                                          class="device-capacity-legend-video"
                                          label="&device.capacity.video.label;"/>
           <xul:sb-device-capacity-legend type="other"
