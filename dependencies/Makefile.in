@@ -60,9 +60,11 @@ ifeq ($(SB_PLATFORM)_$(SB_USE_JEMALLOC),windows_)
     SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*.manifest
   endif # _MSC_VER==1400
 
-else ifneq ($(SB_PLATFORM),windows)
+else
+ifneq ($(SB_PLATFORM),windows)
   SONGBIRD_DIST += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX)
   SONGBIRD_XULRUNNER += $(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/*$(DLL_SUFFIX) 
+endif
 endif
 
 # Copy these immaterial of whether --disable-jemalloc is specified for 
