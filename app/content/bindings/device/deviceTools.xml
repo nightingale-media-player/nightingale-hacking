@@ -187,6 +187,7 @@
         this._busyWarningText = null;
         this._updateFirmwareButton = null;
         this._registerURI = null;
+        this._customerSupportLocation = null;
       ]]>
       </constructor>
 
@@ -251,8 +252,12 @@
 
       <method name="support">
         <body><![CDATA[
-        // XXXAus: This needs to be filled in when more of 
-        //         the device updater is completed
+          if (this._customerSupportLocation != null) {
+            var protocolSvc = 
+              Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
+                        .getService(Ci.nsIExternalProtocolService);
+             protocolSvc.loadURI(this._customerSupportLocation);
+          }
         ]]></body>
       </method>
 
@@ -343,6 +348,7 @@
               if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
                 var curFirmHandler = firmwareUpdater.getActiveHandler(self.device);
                 self._registerURI = curFirmHandler.registerLocation;
+                self._customerSupportLocation = curFirmHandler.customerSupportLocation;
               }
             }
           };
