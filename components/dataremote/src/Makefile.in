@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-JAR_MANIFEST = jar.mn
+JAR_MANIFEST = jar.mn.in
 
 DYNAMIC_LIB = sbdataremote
 

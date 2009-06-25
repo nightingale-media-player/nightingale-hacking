@@ -33,7 +33,10 @@ VPATH     = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = chrome components defaults
+SUBDIRS = chrome \
+          components \
+          defaults \
+          $(NULL)
 
 EXTENSION_NAME = concerts
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
@@ -44,10 +47,8 @@ EXTENSION_VER := 0.2.4pre
 EXTENSION_MIN_VER := 1.3.0a
 EXTENSION_MAX_VER := 1.3.0b1
 
-XPI_NAME = $(EXTENSION_BUILD_ID)
-
-CREATEDIRS = $(EXTENSION_STAGE_DIR) $(SONGBIRD_COMPONENTSDIR) $(SONGBIRD_PREFERENCESDIR)
+CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
+             $(SONGBIRD_PREFERENCESDIR) \
+             $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-
-export:: create_dirs

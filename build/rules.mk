@@ -41,6 +41,13 @@ include $(topsrcdir)/build/config.mk
 # define the tiers of the application
 include $(topsrcdir)/build/tiers.mk
 
+# Provide working dependencies for the Mac vendor-binaries bits we use in the
+# build
+ifeq (macosx,$(SB_PLATFORM))
+  SB_DYLD_LIBRARY_PATH = $(DEPS_DIR)/libIDL/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib:$(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib
+  export DYLD_LIBRARY_PATH = $(SB_DYLD_LIBRARY_PATH)
+endif
+
 # Since public, src, and test are directories used throughout the tree
 # we automatically add them to SUBDIRS _unless_ it's requested that we don't
 ifeq (,$(DISABLE_IMPLICIT_SUBDIRS))
@@ -53,6 +60,25 @@ endif
 
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL: all clean libs export
+
+#------------------------------------------------------------------------------
+# Redefine these file locations when building extensions
+#------------------------------------------------------------------------------
+
+ifdef EXTENSION_STAGE_DIR
+   SONGBIRD_CHROMEDIR = $(EXTENSION_STAGE_DIR)/chrome
+   SONGBIRD_COMPONENTSDIR = $(EXTENSION_STAGE_DIR)/components
+   SONGBIRD_DEFAULTSDIR = $(EXTENSION_STAGE_DIR)/defaults
+   SONGBIRD_PREFERENCESDIR = $(EXTENSION_STAGE_DIR)/defaults/preferences
+   SONGBIRD_PLUGINSDIR = $(EXTENSION_STAGE_DIR)/plugins
+   SONGBIRD_SEARCHPLUGINSDIR = $(EXTENSION_STAGE_DIR)/searchplugins
+   SONGBIRD_SCRIPTSDIR = $(EXTENSION_STAGE_DIR)/scripts
+   SONGBIRD_JSMODULESDIR = $(EXTENSION_STAGE_DIR)/jsmodules
+endif
+
+ifdef SONGBIRD_TEST_COMPONENT
+   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
+endif
 
 ###############################################################################
 
@@ -99,13 +125,20 @@ SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
 ifdef TIERS
    SUBDIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_dirs))
 
-default all alldep:: create_dirs $(SUBMAKEFILES)
+# The $(CREATEDIRS) dependency may look a bit out of place, but it's required
+# because the top-level makefile not only defines a bunch of tiers (i.e. this
+# branch of the ifdef), but also sets up the dist (and other) directories; if
+# we make CREATEDIRS only a dependency of export (which we do below), we'll
+# move on to processing the tiers before we've created the directories,
+# and all sorts of stuff will fail.
+
+default all alldep:: $(SUBMAKEFILES) $(APP_DIST_DIRS)
 	$(EXIT_ON_ERROR) \
 	$(foreach tier,$(TIERS),$(MAKE) tier_$(tier); ) true
 
 else
 
-default all:: create_dirs
+default all:: 
 	$(MAKE) export
 	$(MAKE) libs
 endif
@@ -122,6 +155,7 @@ ALL_TRASH = \
    $(OUR_STATIC_LIB_OBJS:$(OBJ_SUFFIX)=.i) \
    $(GENERATED_PP_DEPS) \
    $(SIMPLE_PROGRAM_OBJS) $(SIMPLE_PROGRAM) \
+	$(JAR_MANIFEST) \
    LOGS TAGS a.out
 
 ifeq (windows,$(SB_PLATFORM))
@@ -145,13 +179,11 @@ distclean:: FORCE
 	$(RM) -r $(SONGBIRD_DISTDIR)
 
 export_tier_%:
-	@echo "TIER PASS: $* export"
-	$(EXIT_ON_ERROR) \
+	@$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) export; ) true
 
 libs_tier_%:
-	@echo "TIER PASS: $* libs"
-	$(EXIT_ON_ERROR) \
+	@$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
 # This dependency listing is technically incorrect, in that it states that
@@ -172,22 +204,30 @@ $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(ti
 libs:: $(SUBMAKEFILES) $(SUBDIRS)
 	+$(LOOP_OVER_SUBDIRS)
 
-export:: $(SUBMAKEFILES) $(SUBDIRS)
+export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(SUBDIRS)
 	+$(LOOP_OVER_SUBDIRS)
+
+## 
+## Handle application and component directory creation
+##
+$(APP_DIST_DIRS) $(CREATEDIRS): %: FORCE
+	$(if $(wildcard $@),,$(MKDIR) $@)
 
 ##
 ## Program handling for libs and export targets
 ##
 
-## preedTODO: hacky; fix this.
-MAKE_JAR_DEP = $(if $(JAR_MANIFEST),make_jar)
-
-libs:: $(OUR_STATIC_LIB) $(OUR_DYNAMIC_LIB) $(OUR_SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS) $(JAR_MANIFEST) $(MAKE_JAR_DEP) copy_sb_tests make_xpi
+libs:: $(OUR_STATIC_LIB) $(OUR_DYNAMIC_LIB) $(OUR_SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS)
 ifndef NO_DIST_INSTALL
    ifdef SIMPLE_PROGRAM
 	   $(INSTALL_PROG) $(OUR_SIMPLE_PROGRAM) $(FINAL_TARGET)
    endif
-   ifndef EXTENSION_STAGE_DIR
+   ifneq (,$(SB_ENABLE_TESTS))
+      ifneq (,$(SONGBIRD_TESTS))
+	      $(MKDIR) $(SONGBIRD_TEST_COMPONENT_DIR)
+	      $(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TEST_COMPONENT_DIR)
+      endif 
+   endif 
    ifdef DYNAMIC_LIB
       ifdef IS_COMPONENT
 	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)/
@@ -195,12 +235,7 @@ ifndef NO_DIST_INSTALL
 	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_LIBDIR)/
       endif
    endif
-   endif
 endif # !NO_DIST_INSTALL
-
-include $(topsrcdir)/build/oldrules.mk
-
-## oldrules.mk translations ##
 
 #------------------------------------------------------------------------------
 # Rules for Makefile generation
@@ -258,9 +293,7 @@ endif
 
 libs:: $(XPIDL_TYPELIBS) $(XPIDL_MODULE)
 ifneq (,$(XPIDL_MODULE))
-ifndef XPI_NAME
 	$(INSTALL_FILE) $(XPIDL_MODULE) $(SONGBIRD_COMPONENTSDIR)
-endif
 endif
 
 #------------------------------------------------------------------------------
@@ -725,6 +758,292 @@ $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
 
 export:: $(GENERATED_PP_DEPS)
 
+#------------------------------------------------------------------------------
+# Rules for chrome jar files
+#------------------------------------------------------------------------------
+#
+# JAR_MANIFEST - The manifest file to use for creating the jar; if this file 
+#                ends with '.in,' it will be pre-processed first.
+#
+# FORCE_JARS - Force use of JAR files.
+#
+# FLAT_JARS - Force use of flat JARs.
+#
+# MAKE_JAR_FLAGS - An override tot he flags passed to the make-jars.pl command
+#
+# MAKE_JAR_EXTRA_FLAGS - Extra flags to pass to the make-jars.pl command
+#
+# JAR_TARGET_DIR - An overide to the directory to create the jar in.
+#
+
+ifdef EXTENSION_STAGE_DIR
+   JAR_IS_EXTENSION = 1
+endif
+
+# Extension jars need to go to the extensions subdirectory of the xulrunner
+# folder. Otherwise everything goes into the chrome directory.
+
+# We use flat jars (i.e. plain directories) if we have DEBUG defined and
+# FORCE_JARS is _not_defined. Also use flat jars if in a release build and
+# PREVENT_JARS is defined.
+
+ifdef DEBUG
+   ifneq (1,$(FORCE_JARS))
+      USING_FLAT_JARS = 1
+   endif
+else
+   ifeq (1,$(FLAT_JARS))
+      USING_FLAT_JARS = 1
+   endif
+endif
+
+# Allow this to be overridden
+ifdef JAR_TARGET_DIR
+   OUR_JAR_TARGET_DIR = $(JAR_TARGET_DIR)
+else
+   ifeq (1,$(JAR_IS_EXTENSION))
+      OUR_JAR_TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)/chrome
+   else
+      OUR_JAR_TARGET_DIR = $(SONGBIRD_CHROMEDIR)
+   endif
+endif
+
+ifdef MAKE_JARS_FLAGS
+   OUR_MAKE_JARS_FLAGS = $(MAKE_JARS_FLAGS)
+else
+   OUR_MAKE_JARS_FLAGS = -s $(srcdir) \
+                         -t $(topsrcdir) \
+                         -j $(OUR_JAR_TARGET_DIR) \
+                         -z $(ZIP) \
+                         -p $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+                         -v \
+								 $(EXTRA_MAKE_JARS_FLAGS) \
+                         $(NULL)
+   ifdef USING_FLAT_JARS
+      OUR_MAKE_JARS_FLAGS += -f flat -d $(OUR_JAR_TARGET_DIR)
+   else
+      OUR_MAKE_JARS_FLAGS += -d $(OUR_JAR_TARGET_DIR)/stage
+      ALL_TRASH += $(OUR_JAR_TARGET_DIR)/stage
+   endif
+
+   ifdef JAR_IS_EXTENSION
+      OUR_MAKE_JARS_FLAGS += -e
+   endif
+endif
+
+ifdef USING_FLAT_JARS
+   PPDEFINES += -DUSING_FLAT_JARS=$(USING_FLAT_JARS)
+endif
+
+# Check to see if the manifest file exists in the source dir. If not then we're
+# going to assume it needs to be generated through preprocessing. The
+# postprocessed file will be generated in the object directory.
+
+ifeq (.in,$(suffix $(strip $(JAR_MANIFEST))))
+   OUR_JAR_MN = $(patsubst %.in,%,$(strip $(JAR_MANIFEST)))
+   OUR_JAR_MN_IN = $(strip $(JAR_MANIFEST))
+   ALL_TRASH += $(OUR_JAR_MN)
+else
+   OUR_JAR_MN = $(srcdir)/$(strip $(JAR_MANIFEST))
+   OUR_JAR_MN_IN = 
+endif
+
+ifdef JAR_MANIFEST
+   ifneq (1,$(words $(strip JAR_MANIFEST)))
+      $(error Cannot specify multiple JAR_MANIFESTs. Bailing...)
+   endif
+endif
+
+# We want the preprocessor to run every time regrdless of whether or not
+# $(OUR_JAR_MN_IN) has changed because defines may change as well.
+$(OUR_JAR_MN): FORCE
+ifneq (,$(OUR_JAR_MN_IN))
+	$(RM) $(OUR_JAR_MN)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(PPDEFINES) -- \
+    $(srcdir)/$(OUR_JAR_MN_IN) | \
+    $(PERL) $(SCRIPTS_DIR)/expand-jar-mn.pl $(srcdir) > $(OUR_JAR_MN)
+endif
+
+# preedTODO: when we have a JAR_MANIFEST, actually look at it to figure out
+# what the real dependency should be.
+libs:: $(if $(JAR_MANIFEST),$(OUR_JAR_MN)) $(CHROME_DEPS)
+ifdef JAR_MANIFEST
+	$(MKDIR) $(OUR_JAR_TARGET_DIR)
+	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
+    $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN)
+	$(RM) -r $(OUR_JAR_TARGET_DIR)/stage
+endif
+
+#------------------------------------------------------------------------------
+# Rules for creating XPIs
+#------------------------------------------------------------------------------
+
+# XPI_NAME - The base name (no extension) of the XPI to create. To do this you
+#            must also set the following variables:
+#
+#              EXTENSION_STAGE_DIR - dir where the XPIs contents reside
+#              EXTENSION_NAME - name of the extension (coolthing)
+#
+#            You must have 'install.rdf' in your src directory OR you can use
+#            the preprocessor to create one. To do that either name your input
+#            file 'install.rdf.in' or specify its name with the following:
+#
+#              INSTALL_RDF -  the name of the input file that will be passed to
+#                             the preprocessor to create 'install.rdf'
+#
+#            If you use the preprocessor you may want to also set the
+#            following variables:
+#
+#              EXTENSION_UUID    - uuid of the extension
+#                                  (e.g. "coolthing@example.com")
+#              EXTENSION_ARCH    - arch string describing the build machine
+#                                  (e.g. "WINNT_x86-msvc" or "Darwin_x86-gcc4")
+#              EXTENSION_VER     - extension version
+#                                  (e.g. "1.2.3")
+#              EXTENSION_MIN_VER - minimum version of application needed for 
+#                                  extension (e.g. "0.7pre")
+#              EXTENSION_MAX_VER - maximum version of application needed for 
+#                                  extension (e.g. "0.7.*")
+#
+#            If you want to also install the contents of the XPI to the
+#            extensions directory then you may set the following variable:
+#
+#              INSTALL_EXTENSION - whether or not to install the XPI
+#
+#            Note that INSTALL_EXTENSION requires that EXTENSION_UUID be set
+#
+#            You may override this variable if you want the output of the
+#            extension build process to output your xpi to a different location
+#            than standard. Defaults to OBJDIR/xpi-stage/EXTENSION_NAME. You
+#            wouldn't normally want to do this.
+#
+#              EXTENSION_DIR - dir where the final XPI should be moved
+#
+
+# set a specific location for the output if it doesn't already exist
+EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(EXTENSION_NAME)
+EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
+
+ifdef EXTENSION_VER
+   ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
+      OUR_EXTENSION_VER = $(EXTENSION_VER)+dev
+   else
+      OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
+   endif
+endif
+
+ifdef EXTENSION_NAME
+   ifndef INSTALL_RDF
+	   # The notdir is because this is to check if these files exist, but
+		# we have to do in the srcdir; but we really only want the file name
+      POSSIBLE_INSTALL_RDF = $(notdir $(wildcard $(srcdir)/install.rdf))
+      POSSIBLE_INSTALL_RDF_IN = $(notdir $(wildcard $(srcdir)/install.rdf.in))
+
+      ifneq (,$(POSSIBLE_INSTALL_RDF))
+         INSTALL_RDF = $(POSSIBLE_INSTALL_RDF)
+      endif
+      ifneq (,$(POSSIBLE_INSTALL_RDF_IN))
+         INSTALL_RDF = $(POSSIBLE_INSTALL_RDF_IN)
+      endif
+   endif
+
+   ifeq (,$(INSTALL_RDF))
+      $(error Could not detect an install.rdf; set it explicitily using INSTALL_RDF)
+   endif
+
+   ifeq (.in,$(suffix $(strip $(INSTALL_RDF))))
+      OUR_INSTALL_RDF = $(patsubst %.in,%,$(strip $(INSTALL_RDF)))
+      OUR_INSTALL_RDF_IN = $(strip $(srcdir)/$(INSTALL_RDF))
+      ALL_TRASH += $(OUR_INSTALL_RDF)
+   else
+      OUR_INSTALL_RDF = $(strip $(srcdir)/$(INSTALL_RDF))
+      OUR_INSTALL_RDF_IN =
+   endif
+
+   ifdef XPI_NAME
+      OUR_XPI_NAME = $(XPI_NAME)
+   else
+      ifdef EXTENSION_ARCH
+         OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
+      else
+         OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug)
+      endif
+   endif
+endif
+
+#preedTODO; set INSTALL_EXTENSION to 1 if debug, unless that's disabled
+
+$(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
+	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
+    $(ACDEFINES) $(PPDEFINES) \
+    -DEXTENSION_ARCH="$(EXTENSION_ARCH)" \
+    -DEXTENSION_UUID="$(EXTENSION_UUID)" \
+    -DEXTENSION_VER="$(OUR_EXTENSION_VER)" \
+    -DEXTENSION_MIN_VER="$(EXTENSION_MIN_VER)" \
+    -DEXTENSION_MAX_VER="$(EXTENSION_MAX_VER)" \
+    -DEXTENSION_NAME=$(EXTENSION_NAME) -- \
+    $(OUR_INSTALL_RDF_IN) > $(OUR_INSTALL_RDF)
+
+# Check for an extension license; default file name is "LICENSE" in the root
+# directory of the extension. You can override this by setting EXTENSION_LICENSE
+# in the extension's Makefile
+
+export:: $(if $(EXTENSION_NAME), $(OUR_INSTALL_RDF))
+ifdef EXTENSION_NAME
+	$(MKDIR) $(EXTENSION_STAGE_DIR)
+endif
+
+libs:: $(if $(EXTENSION_NAME), $(SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
+ifdef EXTENSION_NAME
+	@echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
+	$(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
+	$(INSTALL_FILE) $(OUR_INSTALL_RDF) $(EXTENSION_STAGE_DIR)/install.rdf
+   ifneq (,$(EXTENSION_LICENSE))
+	   $(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
+   endif
+	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).xpi.tmp *
+	$(MKDIR) $(EXTENSION_DIR)
+	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).xpi.tmp \
+    $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
+   ifdef INSTALL_EXTENSION
+	   $(MKDIR) $(SONGBIRD_EXTENSIONSDIR)
+	   $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	   $(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+   endif
+endif
+
+
+ifdef EXTENSION_NAME
+   ALL_TRASH += $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi \
+                $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
+                $(EXTENSION_STAGE_DIR) \
+                $(NULL)
+endif
+
+#------------------------------------------------------------------------------
+# Utilities
+#------------------------------------------------------------------------------
+
+# from mozilla/config/rules.mk (the Java rules section)
+# note that an extra slash was added between root-path and non-root-path to
+# account for non-standard mount points in msys
+# (C:/ vs C:/foo with missing trailing slash)
+# Cygwin and MSYS have their own special path form, but manifest tool expects
+# them to be in the DOS form (i.e. e:/builds/...).  This function
+# does the appropriate conversion on Windows, but is a noop on other systems.
+ifeq (windows,$(SB_PLATFORM))
+   # We use 'pwd -W' to get DOS form of the path.  However, since the given path
+   # could be a file or a non-existent path, we cannot call 'pwd -W' directly
+   # on the path.  Instead, we extract the root path (i.e. "c:/"), call 'pwd -W'
+   # on it, then merge with the rest of the path.
+   root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\1|")
+   non-root-path = $(shell echo $(1) | sed -e "s|\(/[^/]*\)/\?\(.*\)|\2|")
+   normalizepath = $(if $(filter /%,$(1)),$(shell cd $(call root-path,$(1)) && pwd -W)/$(call non-root-path,$(1)),$(1))
+else
+   normalizepath = $(1)
+endif
+
+
 #########################
 
 echo-variable-%:
@@ -735,9 +1054,6 @@ echo-tiers:
 
 echo-subdirs:
 	@echo $(SUBDIRS)
-
-echo-module:
-	@echo $(MODULE)
 
 FORCE:
 
@@ -756,7 +1072,7 @@ FORCE:
 # Re-define the list of default suffixes, so gmake won't have to churn through
 # hundreds of built-in suffix rules for stuff we don't need.
 
-#.SUFFIXES:
+.SUFFIXES:
 
 .PHONY: $(SUBDIRS) FORCE libs export
 

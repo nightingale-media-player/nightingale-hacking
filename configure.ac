@@ -38,7 +38,6 @@ AC_CANONICAL_SYSTEM
 
 OBJDIRNAME="compiled"
 DISTDIRNAME="dist"
-SDKDIRNAME="sdk"
 
 #
 # Defaults, we should probably add more as time permits.
@@ -49,7 +48,6 @@ SB_ENABLE_TEST_HARNESS=
 
 AC_SUBST(OBJDIRNAME)
 AC_SUBST(DISTDIRNAME)
-AC_SUBST(SDKDIRNAME)
 
 #
 # Check for --enable-debug

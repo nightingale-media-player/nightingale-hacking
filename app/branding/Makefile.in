@@ -56,6 +56,6 @@ ifneq (macosx,$(SB_PLATFORM))
     $(ICON_TARGET_DIR)/$(ICON_TARGET_NAME).$(ICON_EXTENSION)
 endif
 
-JAR_MANIFEST = jar.mn
+JAR_MANIFEST = jar.mn.in
 
 include $(topsrcdir)/build/rules.mk

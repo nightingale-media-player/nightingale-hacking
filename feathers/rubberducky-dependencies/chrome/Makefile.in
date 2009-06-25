@@ -31,7 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/feathers/rubberducky-dependencies/.xpistage
 
-JAR_MANIFEST = jar.mn
+JAR_MANIFEST = jar.mn.in
 JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 
 include $(topsrcdir)/build/rules.mk

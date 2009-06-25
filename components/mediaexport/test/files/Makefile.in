@@ -29,12 +29,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-tasks: prepare all
+MEDIAEXPORT_TESTDIR = $(SONGBIRD_TESTSDIR)/mediaexport/files
 
-prepare:: 
-	$(MKDIR) $(SONGBIRD_TESTSDIR)/mediaexport/files
-
-CLONEDIR = $(SONGBIRD_TESTSDIR)/mediaexport/files
+export::
+ifeq (1,$(SB_ENABLE_TEST_HARNESS))
+	$(MKDIR) $(MEDIAEXPORT_TESTDIR)
+	$(INSTALL_FILE) $(wildcard $(srcdir)/*.mp3) $(MEDIAEXPORT_TESTDIR)
+endif
 
 include $(topsrcdir)/build/rules.mk
 

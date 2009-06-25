@@ -36,9 +36,20 @@ SONGBIRD_TESTS = $(srcdir)/head_watchfolders.js \
                  $(srcdir)/test_moverename.js \
                  $(NULL)
 
-SUBDIRS = $(NULL)
-ifdef SB_ENABLE_TESTS 
-  SUBDIRS = files
+
+WATCHFOLDER_TESTDIR = $(SONGBIRD_TESTSDIR)/watchfolders/files
+
+WATCHFOLDER_TEST_FILE_ROOT = $(srcdir)/files
+
+WATCHFOLDER_TEST_FILES := $(shell cd $(WATCHFOLDER_TEST_FILE_ROOT) && \
+ $(FIND) . -type f \
+ ! -path '*.svn*' \
+ ! -name 'Makefile.in')
+
+export::
+ifeq (1,$(SB_ENABLE_TESTS))
+	$(MKDIR) $(WATCHFOLDER_TESTDIR)
+	cd $(WATCHFOLDER_TEST_FILE_ROOT) && $(CP) -P -f -p --parents $(WATCHFOLDER_TEST_FILES) $(WATCHFOLDER_TESTDIR)
 endif
 
 include $(topsrcdir)/build/rules.mk

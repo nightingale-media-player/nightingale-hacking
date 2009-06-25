@@ -39,47 +39,13 @@ TIERS = base \
         branding \
         $(NULL)
 
-CREATEDIRS = $(SONGBIRD_CHROMEDIR) \
-             $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_DEFAULTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(SONGBIRD_PLUGINSDIR) \
-             $(SONGBIRD_SCRIPTSDIR) \
-             $(SONGBIRD_XULRUNNERDIR) \
-             $(SONGBIRD_SDKINCLUDEDIR) \
-             $(SONGBIRD_JSMODULESDIR) \
-             $(SONGBIRD_LIBDIR) \
-             $(SONGBIRD_SEARCHPLUGINSDIR) \
-             $(SONGBIRD_PROFILEDIR) \
-             $(NULL)
-
 ifdef SB_ENABLE_TESTS
-   CREATEDIRS += $(SONGBIRD_TESTSDIR)
    TIERS += unittests
 endif
 
 ifdef SB_ENABLE_STATIC
    TIERS += static
 endif
-
-ifeq (macosx,$(SB_PLATFORM))
-  CREATEDIRS += $(SONGBIRD_MACOS)
-endif
-
-
-#SUBDIRS = build \
-#          dependencies \
-#          bindings \
-#          app \
-#          components \
-#          feathers \
-#          locales \
-#          extensions \
-#          tools \
-#          $(SONGBIRD_BRANDING_DIR) \
-#          $(NULL)
-
-#SUBDIRDEPS = components : bindings
 
 ifdef HAS_EXTRAS
    TIERS += extras
@@ -98,13 +64,13 @@ ifdef SB_ENABLE_BREAKPAD
    BREAKPAD_ARCHIVE_PATH = $(SONGBIRD_OBJDIR)
    BREAKPAD_ARCHIVE_FILENAME = symbols-$(SB_BUILD_ID).zip
    MAKE_SYM_STORE_ARGS = --vcs-info
+   DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms$(BIN_SUFFIX)
    # After XR repins...
    # MAKE_SYM_STORE_ARGS = --vcs-info -V
 
    ifeq ($(SB_PLATFORM),windows)
       # we want to copy PDB files on Windows
       MAKE_SYM_STORE_ARGS += -c
-      DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms.exe
       # PDB files don't get moved to dist, so we need to scan the whole objdir
       MAKE_SYM_STORE_PATH = ./
    endif
@@ -117,12 +83,10 @@ ifdef SB_ENABLE_BREAKPAD
       endif
 
       MAKE_SYM_STORE_ARGS += -a $(BREAKPAD_ARCH)
-      DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms
       MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/Songbird.app/Contents/Resources/components
    endif
 
    ifeq ($(SB_PLATFORM),linux)
-      DUMP_SYMS_BIN = $(MOZSDK_BIN_DIR)/dump_syms
       MAKE_SYM_STORE_PATH = $(SONGBIRD_OBJDIR)/dist/components
    endif
 endif #SB_ENABLE_BREAKPAD
