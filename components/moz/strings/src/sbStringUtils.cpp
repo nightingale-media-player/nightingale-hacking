@@ -31,6 +31,7 @@
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
 #include <nsServiceManagerUtils.h>
+#include <sbIStringBundleService.h>
 #include <sbMemoryUtils.h>
 
 PRInt32
@@ -391,7 +392,7 @@ SBGetLocalizedString(nsAString&             aString,
   // If no string bundle was provided, get the default string bundle.
   if (!stringBundle) {
     nsCOMPtr<nsIStringBundleService> stringBundleService =
-      do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
+      do_GetService(SB_STRINGBUNDLESERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = stringBundleService->CreateBundle(SB_STRING_BUNDLE_URL,
                                            getter_AddRefs(stringBundle));
@@ -472,7 +473,7 @@ SBGetLocalizedFormattedString(nsAString&                aString,
   // If no string bundle was provided, get the default string bundle.
   if (!stringBundle) {
     nsCOMPtr<nsIStringBundleService> stringBundleService =
-      do_GetService("@mozilla.org/intl/stringbundle;1", &rv);
+      do_GetService(SB_STRINGBUNDLESERVICE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = stringBundleService->CreateBundle(SB_STRING_BUNDLE_URL,
                                            getter_AddRefs(stringBundle));

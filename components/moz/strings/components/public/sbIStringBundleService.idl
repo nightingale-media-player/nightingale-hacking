@@ -47,7 +47,7 @@
 
 interface nsIStringBundle;
 
-[scriptable, uuid(27f23743-59e4-47f4-a6e4-4338c104cb12)]
+[scriptable, uuid(fd613e37-5cd0-43ed-af74-f18191f634f8)]
 interface sbIStringBundleService : nsISupports
 {
   /**
@@ -62,18 +62,6 @@ interface sbIStringBundleService : nsISupports
    */
 
   readonly attribute nsIStringBundle brandBundle;
-
-
-  /**
-   * \brief Create a thread-safe string bundle for the bundle with the URL spec
-   *        specified by aURLSpec.
-   *
-   * \param aURLSpec            URL spec of string bundle.
-   *
-   * \return                    Thread-safe string bundle.
-   */
-
-  nsIStringBundle createBundle(in string aURLSpec);
 };
 
 

@@ -321,7 +321,7 @@ function SBStringGetBrandBundle() {
 // the Songbird string bundle utility object looks up a string, it will look in
 // the top-level string bundle and all included string bundles.  The included
 // string bundles can include additional string bundles too.
-//   To include a bundle string in another budle string, encapsulate the
+//   To include a bundle string in another bundle string, encapsulate the
 // included bundle string in "&" and ";", much like XML entities.  Use "&amp;"
 // for a literal "&".
 //
@@ -546,7 +546,7 @@ SBStringBundle.prototype = {
 
 
   /*
-   * Apply and string bundle substitutions to the string specified by aString.
+   * Apply any string bundle substitutions to the string specified by aString.
    *
    * \param aString               String to which to apply substitutions.
    */

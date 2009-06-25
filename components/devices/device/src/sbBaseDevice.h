@@ -265,6 +265,13 @@ public:
   nsresult AddLibrary(sbIDeviceLibrary* aDevLib);
 
   /**
+   * Check the library access (read-only vs. read-write) of the device library
+   * specified by aDevLib and prompt the user if needed.
+   * @param aDevLib the device library to check.
+   */
+  nsresult CheckAccess(sbIDeviceLibrary* aDevLib);
+
+  /**
    * Remove the library specified by aDevLib from the device content.
    * @param aDevLib the device library to remove.
    */

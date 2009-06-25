@@ -55,6 +55,7 @@
 #include <nsIDOMWindow.h>
 #include <nsIPromptService.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIWritablePropertyBag.h>
 
 #include <sbIDeviceContent.h>
 #include <sbIDeviceCapabilitiesRegistrar.h>
@@ -1172,6 +1173,10 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   // Function variables.
   nsresult rv;
 
+  // Check library access.
+  rv = CheckAccess(aDevLib);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the device content.
   nsCOMPtr<sbIDeviceContent> content;
   rv = GetContent(getter_AddRefs(content));
@@ -1188,6 +1193,118 @@ nsresult sbBaseDevice::AddLibrary(sbIDeviceLibrary* aDevLib)
   // Apply the library preferences.
   rv = ApplyLibraryPreference(aDevLib, SBVoidString(), nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevLib);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device properties.
+  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
+  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
+  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the access compatibility.
+  nsAutoString accessCompatibility;
+  rv = deviceProperties->GetPropertyAsAString
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY),
+          accessCompatibility);
+  if (NS_FAILED(rv))
+    accessCompatibility.Truncate();
+
+  // Do nothing more if access is not read-only.
+  if (!accessCompatibility.Equals(NS_LITERAL_STRING("ro")))
+    return NS_OK;
+
+  // Prompt user.
+  // Get a prompter.
+  nsCOMPtr<sbIPrompter>
+    prompter = do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Determine whether the access can be changed.
+  PRBool canChangeAccess = PR_FALSE;
+  rv = deviceProperties->GetPropertyAsBool
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY_MUTABLE),
+          &canChangeAccess);
+  if (NS_FAILED(rv))
+    canChangeAccess = PR_FALSE;
+
+  // Get the device name.
+  nsAutoString deviceName;
+  rv = GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the prompt title.
+  nsAutoString title = SBLocalizedString
+                         ("device.dialog.read_only_device.title");
+
+  // Get the prompt message.
+  nsAutoString       msg;
+  nsTArray<nsString> params;
+  params.AppendElement(deviceName);
+  if (canChangeAccess) {
+    msg = SBLocalizedString("device.dialog.read_only_device.can_change.msg",
+                            params);
+  } else {
+    msg = SBLocalizedString("device.dialog.read_only_device.cannot_change.msg",
+                            params);
+  }
+
+  // Configure the buttons.
+  PRUint32 buttonFlags = 0;
+  PRUint32 changeAccessButtonIndex = -1;
+  if (canChangeAccess) {
+    PRUint32 changeAccessButtonIndex = 0;
+    buttonFlags += nsIPromptService::BUTTON_POS_0 *
+                   nsIPromptService::BUTTON_TITLE_IS_STRING;
+    buttonFlags += nsIPromptService::BUTTON_POS_1 *
+                   nsIPromptService::BUTTON_TITLE_IS_STRING;
+  } else {
+    buttonFlags += nsIPromptService::BUTTON_POS_0 *
+                   nsIPromptService::BUTTON_TITLE_OK;
+  }
+
+  // Get the button labels.
+  nsAutoString buttonLabel0 =
+    SBLocalizedString("device.dialog.read_only_device.change");
+  nsAutoString buttonLabel1 =
+    SBLocalizedString("device.dialog.read_only_device.dont_change");
+
+  // Prompt user.
+  PRInt32 buttonPressed;
+  rv = prompter->ConfirmEx(nsnull,             // Parent window.
+                           title.get(),
+                           msg.get(),
+                           buttonFlags,
+                           buttonLabel0.get(),
+                           buttonLabel1.get(),
+                           nsnull,             // Button 2 label.
+                           nsnull,             // Check message.
+                           nsnull,             // Check result.
+                           &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Change access if user selected to do so.
+  if (canChangeAccess && (buttonPressed == changeAccessButtonIndex)) {
+    // Set the access compatibility property to read-write.
+    nsCOMPtr<nsIWritablePropertyBag>
+      writeDeviceProperties = do_QueryInterface(deviceProperties, &rv);
+    accessCompatibility = NS_LITERAL_STRING("rw");
+    NS_ENSURE_SUCCESS(rv, rv);
+    writeDeviceProperties->SetProperty
+      (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY),
+       sbNewVariant(accessCompatibility));
+  }
 
   return NS_OK;
 }

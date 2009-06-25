@@ -373,7 +373,10 @@ sbStringBundle::LoadBundle(const char* aURI)
 
   // Create the string bundle.
   nsCOMPtr<nsIStringBundle> bundle;
-  rv = mStringBundleService->CreateBundle(aURI, getter_AddRefs(bundle));
+  nsCOMPtr<nsIStringBundleService>
+    stringBundleService = do_QueryInterface(mStringBundleService, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = stringBundleService->CreateBundle(aURI, getter_AddRefs(bundle));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Load the string bundle.
