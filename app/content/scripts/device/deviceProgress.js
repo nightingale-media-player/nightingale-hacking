@@ -164,6 +164,8 @@ var DPWCfg = {
       localeSuffix: "transcoding",
       progressMeterDetermined: true,
       canBeCompleted: true,
+      showIdleMessage: true,
+      needsMediaItem: true,
       showProgress: true,
       updateBusy: true
     }
@@ -387,7 +389,6 @@ var DPW = {
     // Get the device status.
     var deviceStatus = this._device.currentStatus;
     var operation = deviceStatus.currentState;
-    var subOperation = deviceStatus.currentSubState;
     var curItemIndex = this._curItemIndex.intValue;
     var totalItems = this._totalItems.intValue;
 
@@ -395,41 +396,6 @@ var DPW = {
     var operationInfo = this._getOperationInfo(operation);
     var operationLocaleSuffix = operationInfo.localeSuffix;
     var operationNeedsMediaItem = operationInfo.needsMediaItem;
-
-    // Get the sub-operation info.  If not syncing, use the main operation as
-    // the sub-operation.
-    if (operation != Ci.sbIDevice.STATE_SYNCING)
-      subOperation = operation;
-    var subOperationInfo = this._getOperationInfo(subOperation);
-    var subOperationLocaleSuffix = subOperationInfo.localeSuffix;
-
-    // If syncing, prepend the sync operation locale suffix to the sub-operation
-    // locale suffix.
-    if (operation == Ci.sbIDevice.STATE_SYNCING) {
-      subOperationLocaleSuffix =
-        operationInfo.localeSuffix + "_" + subOperationInfo.localeSuffix;
-    }
-
-    // Get the operation media item info.
-    var mediaItem = deviceStatus.mediaItem;
-    var mediaItemML = null;
-    var itemName;
-    var itemArtist;
-    var itemAlbum;
-    if (mediaItem) {
-      try { mediaItemML = mediaItem.QueryInterface(Ci.sbIMediaList); }
-      catch (ex) {}
-    }
-    if (mediaItemML) {
-      itemName = mediaItemML.name;
-    } else if (mediaItem) {
-      itemName = mediaItem.getProperty(SBProperties.trackName);
-      itemArtist = mediaItem.getProperty(SBProperties.artistName);
-      itemAlbum = mediaItem.getProperty(SBProperties.albumName);
-    }
-    itemName = itemName ? itemName : "";
-    itemArtist = itemArtist ? itemArtist : "";
-    itemAlbum = itemAlbum ? itemAlbum : "";
 
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {
@@ -457,28 +423,6 @@ var DPW = {
     this._progressTextLabel.value =
            SBFormattedString(localeKey, [ curItemIndex, totalItems ], "");
 
-/*
-    // Update the sub-operation progress text.
-    if (mediaItem || !operationNeedsMediaItem) {
-      localeKey = "device.status.progress_footer_" + subOperationLocaleSuffix;
-      var params = [];
-      params.push(itemName);
-      params.push(itemArtist);
-      params.push(itemAlbum);
-      
-      // Add some special info for transcoding...
-      if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
-        if (deviceStatus.remainingTime == -1) {
-          params.push("Unknown");
-        } else {
-          params.push(deviceStatus.remainingTime);
-        }
-      }
-      this._progressText2Label.value = SBFormattedString(localeKey, params, "");
-    } else {
-      this._progressText2Label.value = "";
-    }
-*/
   },
 
 
