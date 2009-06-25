@@ -778,10 +778,19 @@ sbDeviceFirmwareDownloader::HandleComplete()
   nsresult rv = mDownloader->GetSucceeded(&success);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Oops, looks like we didn't succeed downloading the firmware update.
+  // Signal the error and exit early (no need to actually return an error, 
+  // the event indicates the operation was aborted).
   if(!success) {
     rv = SendDeviceEvent(sbIDeviceEvent::EVENT_FIRMWARE_DOWNLOAD_ERROR, 
                          nsnull);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIFileDownloaderListener> grip(this);
+    rv = mDownloader->SetListener(nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mIsBusy = PR_FALSE;
 
     return NS_OK;
   }

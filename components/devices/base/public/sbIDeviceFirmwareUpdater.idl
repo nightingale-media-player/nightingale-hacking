@@ -109,6 +109,10 @@ interface sbIDeviceFirmwareUpdater : nsISupports
 
   /**
    * \brief Finalize the auto-update process
+   * \note This method needs to be called regardless
+   *       of if the update process succeeds or not.
+   *       If you do not call this method you will 
+   *       leak the firmware handler associated with the device.
    */
   void finalizeUpdate(in sbIDevice aDevice);
 
@@ -152,11 +156,12 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    * \return The device firmware handler
    * \throw NS_ERROR_NOT_AVAILABLE when there is no firmware handler available
    *        for the specified device
+   * \note This returns a new instance of a handler.
    */
   sbIDeviceFirmwareHandler getHandler(in sbIDevice aDevice);
 
   /**
-   * \brief Get the running firmware handlerfor the specified device
+   * \brief Get the running firmware handler for the specified device
    */
   sbIDeviceFirmwareHandler getActiveHandler(in sbIDevice aDevice);
 

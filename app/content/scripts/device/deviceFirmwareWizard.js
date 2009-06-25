@@ -48,6 +48,7 @@ var deviceFirmwareWizard = {
   _deviceFirmwareUpdater: null,
   _wizardElem: null,
   
+  _currentMode: null,
   _currentOperation: null,
   _firmwareUpdate: null,
 
@@ -69,7 +70,6 @@ var deviceFirmwareWizard = {
   doFinish: function deviceFirmwareWizard_doFinish() {
     // Looks like we were actually busy and we need to retry.
     if(this._currentOperation == "busy") {
-      alert('busy');
       var self = this;
       setTimeout(function() { self.wizardElem.goTo("device_firmware_download_page"); }, 0);
       return false;
@@ -254,7 +254,6 @@ var deviceFirmwareWizard = {
       window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
 
     this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
-
     this._deviceFirmwareUpdater = 
       Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
         .getService(Ci.sbIDeviceFirmwareUpdater);

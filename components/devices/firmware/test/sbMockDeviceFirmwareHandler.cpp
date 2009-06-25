@@ -483,7 +483,6 @@ sbMockDeviceFirmwareHandler::OnDataAvailable(nsIRequest *aRequest,
     }
   }
 
-
   return NS_OK;
 }
 

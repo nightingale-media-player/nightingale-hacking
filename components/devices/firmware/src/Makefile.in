@@ -82,5 +82,8 @@ else
 endif
 
 IS_COMPONENT = 1
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbDeviceFirmwareAutoCheckForUpdate.js \
+                      $(NULL)
                       
 include $(topsrcdir)/build/rules.mk
