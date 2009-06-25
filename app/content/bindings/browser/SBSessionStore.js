@@ -279,7 +279,25 @@ var SBSessionStore = {
             LOG("not first tab, always _blank");
             location = "_blank";
           }
-          newTab = aTabBrowser.loadURI(url, null, null, null, location);
+
+          // don't load device pages for a device that isn't mounted
+          var uri = ios.newURI(url, null, null);
+          if (uri.scheme == 'chrome' && uri.path.indexOf("?device-id")) {
+            var deviceId = uri.path.match(/\?device-id=\{([0-9a-z\-]+)\}/);
+            if (deviceId) {
+              deviceId = deviceId[1];
+
+              var deviceMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+              try {
+                deviceMgr.getDevice(Components.ID(deviceId));
+                // It's a valid device, so go ahead and open up the chrome page
+                newTab = aTabBrowser.loadURI(url, null, null, null, location);
+              } catch (e) {
+                // It's invalid, don't do anything
+              }
+            }
+          }
         }
 
         // Load the first url into the current tab and subsequent 
