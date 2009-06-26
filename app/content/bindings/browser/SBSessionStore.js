@@ -282,7 +282,7 @@ var SBSessionStore = {
 
           // don't load device pages for a device that isn't mounted
           var uri = ios.newURI(url, null, null);
-          if (uri.scheme == 'chrome' && uri.path.indexOf("?device-id")) {
+          if (uri.scheme == 'chrome' && (uri.path.indexOf("?device-id") >= 0)) {
             var deviceId = uri.path.match(/\?device-id=\{([0-9a-z\-]+)\}/);
             if (deviceId) {
               deviceId = deviceId[1];
@@ -297,6 +297,9 @@ var SBSessionStore = {
                 // It's invalid, don't do anything
               }
             }
+          } else {
+            // It's not a device page, so go ahead and load it like normal
+            newTab = aTabBrowser.loadURI(url, null, null, null, location);
           }
         }
 
