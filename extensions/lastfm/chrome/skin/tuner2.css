@@ -27,6 +27,11 @@ div.lightbox-bkg {
 	z-index: 501;
 }
 
+div#wrapper-box {
+  position: relative;
+  height: 100%;
+}
+
 div#login-box, div#subscriber-box {
 	position: absolute;
 	width: 100%;

@@ -105,7 +105,6 @@ var LastfmTuner = {
 		$("#right-nav-last-fm").slideDown("slow");
 
 		if (LastfmTuner.svc.subscriber) {
-			dump("hiding subscriber error\n");
 			$("#subscriber-page").hide();
 		}
 	},
@@ -157,7 +156,6 @@ var LastfmTuner = {
 		
 		// if not logged in, show the login lightbox
 		$("#login-page").show();
-		dump("hiding subscriber error\n");
 		$("#subscriber-page").hide();
 	},
 	showLogin: function() {
@@ -929,12 +927,18 @@ var LastfmTuner = {
 	
 // Adjust height of explorer area
 $(window).resize(function(e) {
-	var height = $('body')[0].scrollHeight - $('#header')[0].scrollHeight;
+  var bodyHeight = $('body')[0].scrollHeight;
+	var height = bodyHeight - $('#header')[0].scrollHeight;
 	var height2 = $('#left-content')[0].scrollHeight;
 	//dump("Height: " + height + " or " + height2 + "\n");
 	if (height2 > height)
 		height = height2;
 	$('#right-nav').css({"min-height":height});
+
+  height = $('#content')[0].scrollHeight + $('#header')[0].scrollHeight;
+  $("#wrapper-box").css({"height":bodyHeight, "max-height":bodyHeight});
+  $("#login-page").css({"min-height":height});
+  $("#subscriber-page").css({"min-height":height});
 });
 
 $(document).ready(function() {
@@ -1001,6 +1005,7 @@ $(document).ready(function() {
 					LastfmTuner.drawSingleArtist(station.stationInfo);
 			});
 			e.slideDown("slow", function() {
+        dump("start artists done -resize window\n");
 				$(window).resize()
 			});
 		});
@@ -1020,6 +1025,7 @@ $(document).ready(function() {
 				LastfmTuner.drawSingleTag(station.stationInfo);
 		});
 		e.slideDown("slow", function() {
+        dump("start tags done -resize window\n");
 			$(window).resize();
 		});
 	});

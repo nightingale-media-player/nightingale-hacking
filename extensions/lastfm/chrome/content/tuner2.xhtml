@@ -18,40 +18,44 @@
 
 <body>
 	<div id="subscriber-page">
-		<div class="lightbox-bkg" />
-		<div id="subscriber-box">
-			<p>
-			<div id="subscriber-text">
-				<img src="chrome://sb-lastfm/skin/grad_white.png" />
-				<p>&lastfm.radio.subscriber.help;</p>
-				<p>
-					<xul:button class="subscriber-button"
-					label="&lastfm.radio.subscriber.button;"
-					onclick="gBrowser.loadOneTab('http://www.last.fm/subscribe')"
-					/>
-				</p>
-				</div>
-			</p>
-		</div>
+    <div class="lightbox-bkg" />
+    <div id="wrapper-box">
+      <div id="subscriber-box">
+        <p>
+        <div id="subscriber-text">
+          <img src="chrome://sb-lastfm/skin/grad_white.png" />
+          <p>&lastfm.radio.subscriber.help;</p>
+          <p>
+            <xul:button class="subscriber-button"
+            label="&lastfm.radio.subscriber.button;"
+            onclick="gBrowser.loadOneTab('http://www.last.fm/subscribe')"
+            />
+          </p>
+          </div>
+        </p>
+      </div>
+    </div>
 	</div>
 	<div id="login-page">
-		<div class="lightbox-bkg" />
-		<div id="login-box">
-			<p>
-			<div id="login-text">
-				<img src="chrome://sb-lastfm/skin/grad_white.png" />
-				<p>&lastfm.radio.login.help;</p>
-				<p>
-					<xul:button class="login-button"
-					label="&lastfm.login.button;"
-					onclick="LastfmTuner.showLogin()" />
-					<xul:button class="register-button"
-					label="&lastfm.radio.register;"
-					onclick="gBrowser.loadOneTab('http://www.last.fm/join')" />
-				</p>
-				</div>
-			</p>
-		</div>
+    <div class="lightbox-bkg" />
+    <div id="wrapper-box">
+      <div id="login-box">
+        <p>
+        <div id="login-text">
+          <img src="chrome://sb-lastfm/skin/grad_white.png" />
+          <p>&lastfm.radio.login.help;</p>
+          <p>
+            <xul:button class="login-button"
+            label="&lastfm.login.button;"
+            onclick="LastfmTuner.showLogin()" />
+            <xul:button class="register-button"
+            label="&lastfm.radio.register;"
+            onclick="gBrowser.loadOneTab('http://www.last.fm/join')" />
+          </p>
+          </div>
+        </p>
+      </div>
+    </div>
 	</div>
 	<div id="header">
 		<div id="header-top">
