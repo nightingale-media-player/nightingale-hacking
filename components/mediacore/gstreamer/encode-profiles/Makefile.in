@@ -29,11 +29,17 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+GST_ENCODING_PROFILES = $(srcdir)/flac.xml \
+                        $(srcdir)/mp3.xml \
+                        $(srcdir)/vorbis.xml \
+                        $(srcdir)/wmav2.xml \
+                        $(NULL)
+
+GST_ENCODE_PROFILES_DISTDIR = $(SONGBIRD_DISTDIR)/gstreamer/encode-profiles
+
+CREATEDIRS = $(GST_ENCODE_PROFILES_DISTDIR)
+
 include $(topsrcdir)/build/rules.mk
 
-DESTDIR = $(SONGBIRD_DISTDIR)/gstreamer/encode-profiles
-
 export::
-	$(MKDIR) $(DESTDIR)
-	$(CP) $(srcdir)/*.xml $(DESTDIR)
-
+	$(INSTALL_FILE) $(GST_ENCODING_PROFILES) $(GST_ENCODE_PROFILES_DISTDIR)

@@ -78,6 +78,9 @@ endif
 
 ifdef SONGBIRD_TEST_COMPONENT
    SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT)
+   ifdef SB_ENABLE_TESTS
+      APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
+   endif
 endif
 
 ###############################################################################
@@ -222,12 +225,6 @@ ifndef NO_DIST_INSTALL
    ifdef SIMPLE_PROGRAM
 	   $(INSTALL_PROG) $(OUR_SIMPLE_PROGRAM) $(FINAL_TARGET)
    endif
-   ifneq (,$(SB_ENABLE_TESTS))
-      ifneq (,$(SONGBIRD_TESTS))
-	      $(MKDIR) $(SONGBIRD_TEST_COMPONENT_DIR)
-	      $(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TEST_COMPONENT_DIR)
-      endif 
-   endif 
    ifdef DYNAMIC_LIB
       ifdef IS_COMPONENT
 	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)/
@@ -236,6 +233,17 @@ ifndef NO_DIST_INSTALL
       endif
    endif
 endif # !NO_DIST_INSTALL
+
+##
+## Unit test handling 
+##
+
+libs:: $(SONGBIRD_TESTS)
+ifdef SB_ENABLE_TESTS
+   ifneq (,$(SONGBIRD_TEST_COMPONENT_DIR))
+	   $(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TEST_COMPONENT_DIR)
+   endif
+endif
 
 #------------------------------------------------------------------------------
 # Rules for Makefile generation
