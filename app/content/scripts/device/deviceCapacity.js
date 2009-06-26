@@ -346,10 +346,10 @@ var DCW = {
   
   _getDeviceProperty: function DIW__getDeviceProperty(aPropertyName, aDefault) {
     try {
-      return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
-    } catch (err) {
-      return aDefault;
-    }
+      if (this._deviceProperties.properties.hasKey(aPropertyName))
+        return this._deviceProperties.properties.getPropertyAsAString(aPropertyName);
+    } catch (ex) { }
+    return aDefault;
   },
 
   /**

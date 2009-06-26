@@ -538,6 +538,10 @@ sb-device-tools {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceTools.xml#sb-device-tools");
 }
 
+sb-device-management {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceMediaManagement.xml#sb-device-management");
+}
+
 sb-rating {
   -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-rating");
 }

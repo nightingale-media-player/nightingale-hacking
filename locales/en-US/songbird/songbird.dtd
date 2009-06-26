@@ -471,6 +471,12 @@
 <!ENTITY device.sync.sync_selected.label "Selected playlists:">
 <!ENTITY device.sync.manual.label "Manually manage">
 
+<!ENTITY device.settings.header.label "Settings">
+<!ENTITY device.settings.disk.label "Disk Management">
+<!ENTITY device.settings.disk.limit.label "Limit the amount of disk space used for music">
+<!ENTITY device.settings.disk.management.label "Customize directory structure">
+<!ENTITY device.settings.disk.management.filename "Song files">
+
 <!ENTITY device.management.tabs.music.label "Music">
 <!ENTITY device.management.tabs.tools.label "Tools">
 <!ENTITY device.management.tabs.settings.label "Settings">

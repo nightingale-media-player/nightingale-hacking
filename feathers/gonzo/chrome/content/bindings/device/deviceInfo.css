@@ -178,3 +178,8 @@ sb-device-info > groupbox,
 radiogroup radiogroup {
   margin:4px;
 }
+
+sb-properties-formatter > hbox > vbox > textbox
+{
+  width: 1em;
+}
