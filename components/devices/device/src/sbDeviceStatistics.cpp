@@ -47,6 +47,9 @@
 #include <sbIDeviceCapabilities.h>
 #include <sbStandardProperties.h>
 
+// Mozilla imports.
+#include <prprf.h>
+
 
 //------------------------------------------------------------------------------
 //
