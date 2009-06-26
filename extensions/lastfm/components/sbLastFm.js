@@ -1089,6 +1089,7 @@ function sbLastFm_radioPlay(station) {
   if (SBDataGetStringValue("lastfm.radio.station") == "" &&
 		  !SBDataGetBoolValue("lastfm.radio.requesting"))
   {
+    dump("saving previous shuffle/repeat modes\n");
 	  this.prevShuffleMode = this._mediacoreManager.sequencer.mode;
 	  this.prevRepeatMode = this._mediacoreManager.sequencer.repeatMode;
   }
@@ -1580,24 +1581,22 @@ function sbLastFm_onMediacoreEvent(aEvent) {
   switch(aEvent.type) {
     case Ci.sbIMediacoreEvent.STREAM_END:
     case Ci.sbIMediacoreEvent.STREAM_STOP:
+      SBDataSetStringValue('lastfm.radio.station', '');
       this.onStop();
 
-	  // reset the shuffle and repeat modes to the previous setting
-	  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
-	  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
+      // reset the shuffle and repeat modes to the previous setting
+      if (this.radio_playing) {
+        this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
+        this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
+      }
       break;
     case Ci.sbIMediacoreEvent.VIEW_CHANGE:
+      if (this.radio_playing) {
+        this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
+        this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
+      }
       this.radio_playing = (aEvent.data.mediaList == this.radio_mediaList);
-	  
-	  /*
-	  // reset the shuffle and repeat modes to the previous setting
-	  if (!this.radio_playing) {
-		  dump("resetting here too\n");
-		  this._mediacoreManager.sequencer.mode = this.prevShuffleMode;
-		  this._mediacoreManager.sequencer.repeatMode = this.prevRepeatMode;
-	  }
-	  */
-      break;
+	    break;
     case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE:
       if (this.radio_playing) {
         SBDataSetStringValue('lastfm.radio.station', this.station_name);
