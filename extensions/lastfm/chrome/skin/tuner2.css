@@ -27,7 +27,7 @@ div.lightbox-bkg {
 	z-index: 501;
 }
 
-div#wrapper-box {
+div.wrapper-box {
   position: relative;
   height: 100%;
 }

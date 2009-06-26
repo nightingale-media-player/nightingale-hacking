@@ -936,7 +936,7 @@ $(window).resize(function(e) {
 	$('#right-nav').css({"min-height":height});
 
   height = $('#content')[0].scrollHeight + $('#header')[0].scrollHeight;
-  $("#wrapper-box").css({"height":bodyHeight, "max-height":bodyHeight});
+  $(".wrapper-box").css({"height":bodyHeight, "max-height":bodyHeight});
   $("#login-page").css({"min-height":height});
   $("#subscriber-page").css({"min-height":height});
 });
@@ -1005,7 +1005,6 @@ $(document).ready(function() {
 					LastfmTuner.drawSingleArtist(station.stationInfo);
 			});
 			e.slideDown("slow", function() {
-        dump("start artists done -resize window\n");
 				$(window).resize()
 			});
 		});
@@ -1025,7 +1024,6 @@ $(document).ready(function() {
 				LastfmTuner.drawSingleTag(station.stationInfo);
 		});
 		e.slideDown("slow", function() {
-        dump("start tags done -resize window\n");
 			$(window).resize();
 		});
 	});
