@@ -35,11 +35,15 @@
 #define SB_DEVICE_PROPERTY_FREE_SPACE             "http://songbirdnest.com/device/1.0#freeSpace"
 #define SB_DEVICE_PROPERTY_MANUFACTURER           "http://songbirdnest.com/device/1.0#manufacturer"
 #define SB_DEVICE_PROPERTY_MODEL                  "http://songbirdnest.com/device/1.0#model"
+#define SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT       "http://songbirdnest.com/device/1.0#musicItemCount"
+#define SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME  "http://songbirdnest.com/device/1.0#musicTotalPlayTime"
 #define SB_DEVICE_PROPERTY_MUSIC_USED_SPACE       "http://songbirdnest.com/device/1.0#musicUsedSpace"
 #define SB_DEVICE_PROPERTY_NAME                   "http://songbirdnest.com/device/1.0#name"
 #define SB_DEVICE_PROPERTY_POWER_SOURCE           "http://songbirdnest.com/device/1.0#powerSource"
 #define SB_DEVICE_PROPERTY_SERIAL_NUMBER          "http://songbirdnest.com/device/1.0#serialNumber"
 #define SB_DEVICE_PROPERTY_TOTAL_USED_SPACE       "http://songbirdnest.com/device/1.0#totalUsedSpace"
+#define SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT       "http://songbirdnest.com/device/1.0#videoItemCount"
+#define SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME  "http://songbirdnest.com/device/1.0#videoTotalPlayTime"
 #define SB_DEVICE_PROPERTY_VIDEO_USED_SPACE       "http://songbirdnest.com/device/1.0#videoUsedSpace"
 
 #endif /* __SB_STANDARD_DEVICE_PROPERTIES_H__ */

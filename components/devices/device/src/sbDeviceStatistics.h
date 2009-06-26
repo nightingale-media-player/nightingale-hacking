@@ -5,7 +5,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -28,145 +28,173 @@
 #ifndef SBDEVICESTATISTICS_H_
 #define SBDEVICESTATISTICS_H_
 
+/**
+ * \file  sbDeviceStatistics.h
+ * \brief Songbird Device Statistics Definitions.
+ */
+
+//------------------------------------------------------------------------------
+//
+// Device statistics imported services.
+//
+//------------------------------------------------------------------------------
+
+// Songbird imports.
+#include <sbIDeviceLibrary.h>
+#include <sbIMediaListListener.h>
+
+// Mozilla imports.
 #include <nsAutoLock.h>
+#include <nsCOMPtr.h>
+
+
+//------------------------------------------------------------------------------
+//
+// Device statistics services classes.
+//
+//------------------------------------------------------------------------------
 
 /**
- * Keeps track of the used statistics on the device
+ * Keeps track of the used statistics on the device.
  */
-class sbDeviceStatistics
-{
-public:
-  /**
-   * Initialize the stats to 0 and create the loc
-   */
-	sbDeviceStatistics() : mAudioUsed(0),
-	                       mVideoUsed(0),
-	                       mOtherUsed(0),
-	                       mStatLock(nsAutoLock::NewLock(__FILE__ "::mStatLock"))
-  {
-	}
-	/**
-	 * Free the lock
-	 */
-	~sbDeviceStatistics()
-	{
-	  nsAutoLock::DestroyLock(mStatLock);
-	  mStatLock = nsnull;
-	}
-	/**
-	 * Return the audio used in bytes
-	 */
-	PRUint64 AudioUsed() const
-	{
-	  nsAutoLock lock(mStatLock);
-	  return mAudioUsed;
-	}
-	/**
-	 * Return the video used in bytes
-	 */
-	PRUint64 VideoUsed() const
-	{
-    nsAutoLock lock(mStatLock);
-	  return mVideoUsed;
-	}
-	/**
-	 * Return content that is not video or audio in bytes
-	 */
-	PRUint64 OtherUsed() const
-	{
-    nsAutoLock lock(mStatLock);
-	  return mOtherUsed;
-	}
-  /**
-   * Returns the number of bytes used by all content
-   */
-  PRUint64 TotalUsed()
-  {
-    nsAutoLock lock(mStatLock);
-    return mAudioUsed + mVideoUsed + mOtherUsed;
-  }
-	/**
-	 * Set the amount of audio used in bytes
-	 */
-  void SetAudioUsed(PRUint64 audio)
-  {
-    nsAutoLock lock(mStatLock);
-    mAudioUsed = audio;
-  }
-  /**
-   * Set the amount of video used in bytes
-   */
-  void SetVideoUsed(PRUint64 video)
-  {
-    nsAutoLock lock(mStatLock);
-    mVideoUsed = video;
-  }
-  /**
-   * Set the amount of other content in bytes
-   */
-  void SetOtherUsed(PRUint64 other)
-  {
-    nsAutoLock lock(mStatLock);
-    mOtherUsed = other;
-  }
-  /**
-   * Adds bytes to the audio used stat
-   */
-  void AddAudioUsed(PRUint64 audio)
-	{
-    nsAutoLock lock(mStatLock);
-	  mAudioUsed += audio;
-	}
-  /**
-   * Adds bytes to the video used stat
-   */
-  void AddVideoUsed(PRUint64 video)
-  {
-    nsAutoLock lock(mStatLock);
-    mVideoUsed += video;
-  }
-  /**
-   * Adds bytes to the other content used stat
-   */
-  void AddOtherUsed(PRUint64 other)
-  {
-    nsAutoLock lock(mStatLock);
-    mOtherUsed += other;
-  }
-  /**
-   * Subtracts bytes from the audio used stat
-   */
-  void SubAudioUsed(PRUint64 audio)
-  {
-    nsAutoLock lock(mStatLock);
-    mAudioUsed -= audio;
-  }
-  /**
-   * Subtracts bytes from the video used stat
-   */
-  void SubVideoUsed(PRUint64 video)
-  {
-    nsAutoLock lock(mStatLock);
-    mVideoUsed -= video;
-  }
-  /**
-   * Subtracts bytes from the other content used stat
-   */
-  void SubOtherUsed(PRUint64 other)
-  {
-    nsAutoLock lock(mStatLock);
-    mOtherUsed -= other;
-  }
-private:
-  PRUint64 mAudioUsed;
-  PRUint64 mVideoUsed;
-  PRUint64 mOtherUsed;
-  PRLock * mStatLock;
 
-  /**
-   * Prevent derivation
-   */
+class sbDeviceStatistics : public sbIMediaListEnumerationListener
+{
+  //----------------------------------------------------------------------------
+  //
+  // Public interface.
+  //
+  //----------------------------------------------------------------------------
+
+public:
+
+  //
+  // Implemented interfaces.
+  //
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+
+
+  //
+  // Public device statistics services.
+  //
+
+  static nsresult New(class sbBaseDevice*  aDevice,
+                      sbDeviceStatistics** aDeviceStatistics);
+
+  nsresult AddLibrary(sbIDeviceLibrary* aLibrary);
+
+  nsresult RemoveLibrary(sbIDeviceLibrary* aLibrary);
+
+  nsresult AddItem(sbIMediaItem* aMediaItem);
+
+  nsresult RemoveItem(sbIMediaItem* aMediaItem);
+
+  nsresult RemoveAllItems(sbIDeviceLibrary* aLibrary);
+
+
+  //
+  // Setter/getter services.
+  //
+
+  // Audio count.
+  PRUint32 AudioCount();
+
+  void SetAudioCount(PRUint32 aAudioCount);
+
+  void AddAudioCount(PRInt32 aAddAudioCount);
+
+  // Audio used.
+  PRUint64 AudioUsed();
+
+  void SetAudioUsed(PRUint64 aAudioUsed);
+
+  void AddAudioUsed(PRInt64 aAddAudioUsed);
+
+  // Audio play time.
+  PRUint64 AudioPlayTime();
+
+  void SetAudioPlayTime(PRUint64 aAudioPlayTime);
+
+  void AddAudioPlayTime(PRInt64 aAddAudioPlayTime);
+
+  // Video count.
+  PRUint32 VideoCount();
+
+  void SetVideoCount(PRUint32 aVideoCount);
+
+  void AddVideoCount(PRInt32 aAddVideoCount);
+
+  // Video used.
+  PRUint64 VideoUsed();
+
+  void SetVideoUsed(PRUint64 aVideoUsed);
+
+  void AddVideoUsed(PRInt64 aAddVideoUsed);
+
+  // Video play time.
+  PRUint64 VideoPlayTime();
+
+  void SetVideoPlayTime(PRUint64 aVideoPlayTime);
+
+  void AddVideoPlayTime(PRInt64 aAddVideoPlayTime);
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Private interface.
+  //
+  //----------------------------------------------------------------------------
+
+private:
+
+  //
+  // mDevice                    Device for statistics.  Used to maintain a
+  //                            device reference.
+  // mBaseDevice                Base device for statistics.  Used to interface
+  //                            to base device class.
+  //
+  // mStatLock                  Lock used for serializing access to statistics.
+  // mAudioCount                Count of the number of audio items.
+  // mAudioUsed                 Count of the number of bytes used for audio.
+  // mAudioPlayTime             Total audio playback time in microseconds.
+  // mVideoCount                Count of the number of video items.
+  // mVideoUsed                 Count of the number of bytes used for video.
+  // mVideoPlayTime             Total video playback time in microseconds.
+  //
+
+  nsCOMPtr<sbIDevice>           mDevice;
+  class sbBaseDevice*           mBaseDevice;
+
+  PRLock *                      mStatLock;
+  PRUint32                      mAudioCount;
+  PRUint64                      mAudioUsed;
+  PRUint64                      mAudioPlayTime;
+  PRUint32                      mVideoCount;
+  PRUint64                      mVideoUsed;
+  PRUint64                      mVideoPlayTime;
+
+
+  //
+  // Private device statistics services.
+  //
+
+  sbDeviceStatistics();
+
+  virtual ~sbDeviceStatistics();
+
+  nsresult Initialize(class sbBaseDevice* aDevice);
+
+  nsresult ClearLibraryStatistics(sbIDeviceLibrary* aLibrary);
+
+  nsresult UpdateForItem(sbIMediaItem* aMediaItem,
+                         PRBool        aItemAdded);
+
+
+  // Prevent derivation.
   sbDeviceStatistics(sbDeviceStatistics const &) {}
 };
 
-#endif /*SBDEVICESTATISTICS_H_*/
+#endif /* SBDEVICESTATISTICS_H_ */
+

@@ -58,6 +58,7 @@
 #include <nsIWritablePropertyBag.h>
 
 #include <sbIDeviceContent.h>
+#include <sbIDeviceCapabilities.h>
 #include <sbIDeviceCapabilitiesRegistrar.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceHelper.h>
@@ -1493,6 +1494,20 @@ sbBaseDevice::DeleteItem(sbIMediaList *aLibrary, sbIMediaItem *aItem)
 }
 
 nsresult
+sbBaseDevice::GetItemContentType(sbIMediaItem* aMediaItem,
+                                 PRUint32*     aContentType)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aContentType);
+
+  // Return results.  Assume all media items are audio.
+  *aContentType = sbIDeviceCapabilities::CONTENT_AUDIO;
+
+  return NS_OK;
+}
+
+nsresult
 sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
                                     nsIPropertyBag2 *aRequestParameters,
                                     TransferRequest **aTransferRequest)
@@ -2117,8 +2132,22 @@ nsresult sbBaseDevice::Init()
                             getter_AddRefs(mBatchEndTimer));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get a device statistics instance.
+  rv = sbDeviceStatistics::New(this, getter_AddRefs(mDeviceStatistics));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Initialize the device properties.
+  rv = InitializeProperties();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Perform derived class intialization
-  return InitDevice();
+  rv = InitDevice();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Perform initial properties update.
+  UpdateProperties();
+
+  return NS_OK;
 }
 
 nsresult
@@ -2199,6 +2228,100 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
 
   return NS_OK;
 }
+
+//------------------------------------------------------------------------------
+//
+// Device properties services.
+//
+//------------------------------------------------------------------------------
+
+nsresult
+sbBaseDevice::InitializeProperties()
+{
+  return NS_OK;
+}
+
+
+/**
+ * Update the device properties.
+ */
+
+nsresult
+sbBaseDevice::UpdateProperties()
+{
+  nsresult rv;
+
+  // Update the device statistics properties.
+  rv = UpdateStatisticsProperties();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+
+/**
+ * Update the device property specified by aName.
+ *
+ * \param aName                 Name of property to update.
+ */
+
+nsresult
+sbBaseDevice::UpdateProperty(const nsAString& aName)
+{
+  return NS_OK;
+}
+
+
+/**
+ * Update the device statistics properties.
+ */
+
+nsresult
+sbBaseDevice::UpdateStatisticsProperties()
+{
+  nsresult rv;
+
+  // Get the device properties.
+  nsCOMPtr<sbIDeviceProperties>    baseDeviceProperties;
+  nsCOMPtr<nsIPropertyBag2>        roDeviceProperties;
+  nsCOMPtr<nsIWritablePropertyBag> deviceProperties;
+  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = baseDeviceProperties->GetProperties(getter_AddRefs(roDeviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  deviceProperties = do_QueryInterface(roDeviceProperties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update the statistics properties.
+  //XXXeps should use base properties class and use SetPropertyInternal
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_ITEM_COUNT),
+          sbNewVariant(mDeviceStatistics->AudioCount()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_USED_SPACE),
+          sbNewVariant(mDeviceStatistics->AudioUsed()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MUSIC_TOTAL_PLAY_TIME),
+          sbNewVariant(mDeviceStatistics->AudioPlayTime()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT),
+          sbNewVariant(mDeviceStatistics->VideoCount()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_USED_SPACE),
+          sbNewVariant(mDeviceStatistics->VideoUsed()));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceProperties->SetProperty
+         (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME),
+          sbNewVariant(mDeviceStatistics->VideoPlayTime()));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 
 //------------------------------------------------------------------------------
 //
@@ -2660,6 +2783,7 @@ nsresult sbBaseDevice::GetLibraryPreferenceBase(sbIDeviceLibrary* aLibrary,
 
   return NS_OK;
 }
+
 
 //------------------------------------------------------------------------------
 //

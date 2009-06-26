@@ -338,12 +338,18 @@ public:
   nsresult DeleteItem(sbIMediaList *aLibrary, sbIMediaItem *aItem);
 
   /**
-   * Return our statistics collector
+   * Return in aContentType the type of content contained in the media item
+   * specified by aMediaItem.  The content type values are as defined in
+   * sbIDeviceCapabilities.
+   *
+   * Sub-classes may override this method to provide custom content type
+   * determination.
+   *
+   * \param aMediaItem          Media item for which to get content type.
+   * \param aContentType        Returned content type.
    */
-  sbDeviceStatistics & DeviceStatistics()
-  {
-    return mDeviceStatistics;
-  }
+  virtual nsresult GetItemContentType(sbIMediaItem* aMediaItem,
+                                      PRUint32*     aContentType);
 
   nsresult CreateTransferRequest(PRUint32 aRequest,
                                  nsIPropertyBag2 *aRequestParameters,
@@ -388,6 +394,7 @@ public:
 
 protected:
   friend class sbBaseDeviceInitHelper;
+  friend class sbDeviceStatistics;
   /**
    * Base class initialization this will call the InitDevice first then
    * do the intialization needed by the sbDeviceBase
@@ -434,7 +441,7 @@ protected:
   PRInt32 mLastRequestPriority; // to make sure peek returns the same
   PRLock *mStateLock;
   PRUint32 mState;
-  sbDeviceStatistics mDeviceStatistics;
+  nsRefPtr<sbDeviceStatistics> mDeviceStatistics;
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
@@ -528,6 +535,36 @@ protected:
    */
   nsresult GetMusicAvailableSpace(sbILibrary* aLibrary,
                                   PRInt64*    aMusicAvailableSpace);
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device properties services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * Initialize the device properties.
+   */
+  virtual nsresult InitializeProperties();
+
+  /**
+   * Update the device properties.
+   */
+  virtual nsresult UpdateProperties();
+
+  /**
+   * Update the device property specified by aName.
+   *
+   * \param aName                 Name of property to update.
+   */
+  virtual nsresult UpdateProperty(const nsAString& aName);
+
+  /**
+   * Update the device statistics properties.
+   */
+  virtual nsresult UpdateStatisticsProperties();
+
 
   //----------------------------------------------------------------------------
   //
@@ -666,6 +703,7 @@ protected:
    */
   nsresult GetLibraryPreferenceBase(sbIDeviceLibrary* aLibrary,
                                     nsAString&        aPrefBase);
+
 
   //----------------------------------------------------------------------------
   //
