@@ -67,12 +67,19 @@ sbLastFmProtocol.prototype.newChannel =
 function sbLastFmProtocol_newChannel(aURI) {
   /* ask the sbLastFm service to start playback */
   var svc = Cc['@songbirdnest.com/lastfm;1'].getService(Ci.sbILastFmRadio);
-  svc.radioPlay(aURI.spec);
-
-  /* create dummy nsIChannel instance */
-  var ios = Components.classes['@mozilla.org/network/io-service;1']
-    .getService(Ci.nsIIOService);
-  return ios.newChannel('javascript:void', null, null);
+  if (svc.radioPlay(aURI.spec)) {
+    /* create dummy nsIChannel instance */
+    var ios = Components.classes['@mozilla.org/network/io-service;1']
+      .getService(Ci.nsIIOService);
+    return ios.newChannel('javascript:void', null, null);
+  } else {
+    var path = aURI.path.replace(/^\/\//, "");
+    dump("failed to play: " + path + "\n");
+    /*  failed for some reason, spin over to the web equivalent */
+    var ios = Components.classes['@mozilla.org/network/io-service;1']
+      .getService(Ci.nsIIOService);
+    return ios.newChannel('http://last.fm/listen/' + path, null, null);
+  }
 }
 
 sbLastFmProtocol.prototype.allowPort = 

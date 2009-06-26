@@ -679,6 +679,7 @@ function sbLastFm_cancelLogin() {
 sbLastFm.prototype.logout =
 function sbLastFm_logout() {
   this.session = null;
+  this.sk = null;
   this.nowplaying_url = null;
   this.submission_url = null;
   this.loggedIn = false;
@@ -1070,7 +1071,18 @@ function sbLastFm_saveRecentStation(name, stationUrl, url, sImageUrl,
 // begin last.fm radio playback of a particular station
 sbLastFm.prototype.radioPlay =
 function sbLastFm_radioPlay(station) {
-  // FIXME: make sure we've got a radio session active...
+  // Ensure we have a session authenticated, and that the user is a
+  // subscriber
+  if (!this.sk) {
+    // not logged in
+    dump("not logged in\n");
+    return false;
+  }
+  if (!this._subscriber) {
+    // not a subscriber
+    dump("not a subscriber\n");
+    return false;
+  }
   
   // See if we're already playing a station.  If not, save the shuffle/repeat
   // settings since we reset them later on in the success handler
@@ -1155,6 +1167,7 @@ function sbLastFm_radioPlay(station) {
       function radioStation_failure() {
 		  dump("FAIL FAIL FAIL to authenticate.\n");
       });
+  return true;
 }
 
 
@@ -1548,17 +1561,16 @@ function sbLastFm_observe(subject, topic, data) {
     this.scrobble();
   }
   else if (topic == "http-on-modify-request") {
-	var channel = subject.QueryInterface(Ci.nsIHttpChannel);
-	var uri = channel.URI;
-	if (uri.host == "www.last.fm" || uri.host == "last.fm") {
-		var r = uri.path.match(/^\/?listen\/(.*)/);
-		if (r) {
-			var radio = "lastfm://" + r[1];
-			dump("TUNING INTO: " + radio + "\n");
-			channel.cancel(Components.results.NS_BINDING_ABORTED);
-			this.radioPlay(radio);
-		}
-	}
+    var channel = subject.QueryInterface(Ci.nsIHttpChannel);
+    var uri = channel.URI;
+    if (uri.host == "www.last.fm" || uri.host == "last.fm") {
+      var r = uri.path.match(/^\/?listen\/(.*)/);
+      if (r && this._subscriber && this.sk) {
+        var radio = "lastfm://" + r[1];
+        channel.cancel(Components.results.NS_BINDING_ABORTED);
+        this.radioPlay(radio);
+      }
+    }
   }
 }
 
