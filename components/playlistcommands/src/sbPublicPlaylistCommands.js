@@ -36,6 +36,7 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Cu.import("resource://app/jsmodules/sbAddToPlaylist.jsm");
 Cu.import("resource://app/jsmodules/sbAddToDevice.jsm");
+Cu.import("resource://app/jsmodules/sbAddToLibrary.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/DropHelper.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
@@ -601,6 +602,7 @@ PublicPlaylistCommands.prototype = {
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_REVEAL, this.m_cmd_Reveal);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTODEVICE, SBPlaylistCommand_AddToDevice);
+      this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
       this.m_mgr.publish(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
@@ -817,6 +819,35 @@ PublicPlaylistCommands.prototype = {
       // Register these commands to the download playlist
 
       this.m_mgr.registerPlaylistCommandsMediaItem(downloadListGUID, "", this.m_downloadCommands);
+
+      // --------------------------------------------------------------------------
+      // Construct and publish the device library commands
+      // --------------------------------------------------------------------------
+
+      this.m_deviceLibraryCommands = new PlaylistCommandsBuilder();
+
+      this.m_deviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_edit",
+                                                    this.m_cmd_Edit);
+      this.m_deviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_reveal",
+                                                    this.m_cmd_Reveal);
+
+      this.m_deviceLibraryCommands.appendSeparator(null, "default_commands_separator_1");
+      
+      this.m_deviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_addtolibrary",
+                                                    SBPlaylistCommand_AddToLibrary);
+      
+      this.m_deviceLibraryCommands.appendSeparator(null, "default_commands_separator_2");
+
+      this.m_deviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_remove",
+                                                    this.m_cmd_Remove);
+      this.m_deviceLibraryCommands.setVisibleCallback(plCmd_ShowDefaultInToolbarCheck);
+
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,
+                         this.m_deviceLibraryCommands);
 
       // --------------------------------------------------------------------------
       // Construct and publish the download toolbar commands

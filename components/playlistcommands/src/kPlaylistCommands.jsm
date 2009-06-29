@@ -59,6 +59,7 @@ var kPlaylistCommands = {
   MEDIAITEM_SMARTPLAYLIST        : "{9a8b43d3-161a-4eb6-92b4-d96ad53497fc}",
 
   MEDIALIST_DEFAULT              : "{26c21ce7-bcdf-4857-86d4-82c9747c907f}",
-  MEDIALIST_DOWNLOADPLAYLIST     : "{3d6125f1-e5cf-4c08-9c83-697ddf5809cb}"
+  MEDIALIST_DOWNLOADPLAYLIST     : "{3d6125f1-e5cf-4c08-9c83-697ddf5809cb}",
+  MEDIALIST_DEVICE_LIBRARY       : "devicelibrary@playlistcommands.songbirdnest.com"
 }
 
