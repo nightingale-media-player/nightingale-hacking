@@ -63,6 +63,7 @@
 #include <sbIDeviceManager.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
+#include <sbIPrompter.h>
 #include <sbIPropertyArray.h>
 
 /* songbird headers */
@@ -73,6 +74,7 @@
 #include <sbPropertiesCID.h>
 #include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
 
@@ -304,19 +306,13 @@ sbDeviceLibrary::SetMgmtTypePref(PRUint32 aMgmtType)
 {
   nsresult rv;
 
-  // Get the preference key
+  // Get the preference key.
   nsString prefKey;
   rv = GetMgmtTypePrefKey(prefKey);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIWritableVariant> var =
-    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = var->SetAsInt32(aMgmtType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDevice->SetPreference(prefKey, var);
+  // Set the preference.
+  rv = mDevice->SetPreference(prefKey, sbNewVariant(aMgmtType));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -754,6 +750,81 @@ sbDeviceLibrary::GetSyncListsPrefKey(nsAString& aPrefKey)
   return NS_OK;
 }
 
+nsresult
+sbDeviceLibrary::ConfirmSwitchFromManualToSync(PRBool* aCancelSwitch)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aCancelSwitch);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device name.
+  nsString deviceName;
+  rv = mDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a prompter.
+  nsCOMPtr<sbIPrompter> prompter =
+                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the prompt title.
+  nsAString const& title =
+    SBLocalizedString("device.dialog.sync_confirmation.change_mode.title");
+
+  // Get the prompt message.
+  nsTArray<nsString> formatParams;
+  formatParams.AppendElement(deviceName);
+  nsAString const& message =
+    SBLocalizedString("device.dialog.sync_confirmation.change_mode.msg",
+                      formatParams);
+
+  // Configure the buttons.
+  PRUint32 buttonFlags = 0;
+
+  // Configure the no button as button 1.
+  nsAString const& noButton =
+    SBLocalizedString("device.dialog.sync_confirmation.change_mode.no_button");
+  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING);
+
+  // Configure the sync button as button 0.
+  nsAString const& syncButton = SBLocalizedString
+    ("device.dialog.sync_confirmation.change_mode.sync_button");
+  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING) +
+                 nsIPromptService::BUTTON_POS_0_DEFAULT;
+  PRInt32 grantModeChangeIndex = 0;
+
+  // XXX lone> see mozbug 345067, there is no way to tell the prompt service
+  // what code to return when the titlebar's X close button is clicked, it is
+  // always 1, so we have to make the No button the second button.
+
+  // Query the user to determine whether the device management mode should be
+  // changed from manual to sync.
+  PRInt32 buttonPressed;
+  rv = prompter->ConfirmEx(nsnull,
+                           title.BeginReading(),
+                           message.BeginReading(),
+                           buttonFlags,
+                           syncButton.BeginReading(),
+                           noButton.BeginReading(),
+                           nsnull,                      // No button 2.
+                           nsnull,                      // No check message.
+                           nsnull,                      // No check result.
+                           &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if the management mode switch was cancelled.
+  if (buttonPressed == grantModeChangeIndex)
+    *aCancelSwitch = PR_FALSE;
+  else
+    *aCancelSwitch = PR_TRUE;
+
+  return NS_OK;
+}
+
 /**
  * sbIDeviceLibrary
  */
@@ -815,6 +886,18 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   // figure out the old pref first
   rv = GetMgmtType(&origMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // If switching from manual management mode to sync mode, confirm with user
+  // before proceeding.  Do nothing more if switch is cancelled.
+  if ((origMgmtType == sbIDeviceLibrary::MGMT_TYPE_MANUAL) &&
+      ((aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) ||
+       (aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS))) {
+    PRBool cancelSwitch;
+    rv = ConfirmSwitchFromManualToSync(&cancelSwitch);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (cancelSwitch)
+      return NS_OK;
+  }
 
   rv = SetMgmtTypePref(aMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);

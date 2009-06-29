@@ -1263,9 +1263,9 @@ nsresult sbBaseDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
 
   // Configure the buttons.
   PRUint32 buttonFlags = 0;
-  PRUint32 changeAccessButtonIndex = -1;
+  PRInt32 changeAccessButtonIndex = -1;
   if (canChangeAccess) {
-    PRUint32 changeAccessButtonIndex = 0;
+    changeAccessButtonIndex = 0;
     buttonFlags += nsIPromptService::BUTTON_POS_0 *
                    nsIPromptService::BUTTON_TITLE_IS_STRING;
     buttonFlags += nsIPromptService::BUTTON_POS_1 *
@@ -2880,28 +2880,28 @@ nsresult sbBaseDevice::SyncRequestPartnerChange(PRBool* aPartnerChangeGranted)
   }
 
   // Get the prompt title.
-  nsAString const& title = bundle.Get("device.dialog.sync_confirmation.title");
+  nsAString const& title =
+    bundle.Get("device.dialog.sync_confirmation.change_library.title");
 
   // Get the prompt message.
   nsTArray<nsString> formatParams;
   formatParams.AppendElement(deviceName);
-  formatParams.AppendElement(libraryName);
   nsAString const& message =
-                     bundle.Format("device.dialog.sync_confirmation.msg",
-                                   formatParams);
+    bundle.Format("device.dialog.sync_confirmation.change_library.msg",
+                  formatParams);
 
   // Configure the buttons.
   PRUint32 buttonFlags = 0;
 
   // Configure the no button as button 1.
   nsAString const& noButton =
-                     bundle.Get("device.dialog.sync_confirmation.no_button");
+    bundle.Get("device.dialog.sync_confirmation.change_library.no_button");
   buttonFlags += (nsIPromptService::BUTTON_POS_1 *
                   nsIPromptService::BUTTON_TITLE_IS_STRING);
 
   // Configure the sync button as button 0.
   nsAString const& syncButton =
-                     bundle.Get("device.dialog.sync_confirmation.sync_button");
+    bundle.Get("device.dialog.sync_confirmation.change_library.sync_button");
   buttonFlags += (nsIPromptService::BUTTON_POS_0 *
                   nsIPromptService::BUTTON_TITLE_IS_STRING) +
                  nsIPromptService::BUTTON_POS_0_DEFAULT;

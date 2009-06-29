@@ -60,6 +60,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(DEPTH)/components/devices/device/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/moz/prompter/public \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/devices/base/src \
                $(topsrcdir)/components/devices/device/src \
@@ -70,6 +71,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/test \
                $(topsrcdir)/components/property/src \
                $(MOZSDK_INCLUDE_DIR)/necko \
                $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(NULL)
 
 DYNAMIC_LIB = sbDeviceDeviceTester

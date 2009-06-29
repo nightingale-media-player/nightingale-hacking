@@ -193,6 +193,14 @@ private:
   nsresult GetSyncListsPrefKey(nsAString& aPrefKey);
 
   /**
+   * \brief Confirm with the user a switch from manual to sync mode.  If user
+   *        cancels the switch, return true in aCancelSwitch.
+   *
+   * \param aCancelSwitch       Returned true if user canceled switch.
+   */
+  nsresult ConfirmSwitchFromManualToSync(PRBool* aCancelSwitch);
+
+  /**
    * \brief Create a library for a device instance.
    *
    * Creating a library provides you with storage for all data relating

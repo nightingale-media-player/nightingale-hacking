@@ -159,15 +159,21 @@ var DeviceSyncWidget = {
     // Dispatch processing of action.
     switch (aEvent.target.getAttribute("action")) {
       case "cancel" :
-        /* Re-read and apply the music preferences. */
+        // Re-read and apply the music preferences.
         this.musicPrefsRead();
         this.musicPrefsApply();
         break;
 
       case "save" :
-        /* Extract and write the preferences. */
+        // Extract and write the preferences.
         this.musicPrefsExtract();
         this.musicPrefsWrite();
+
+        // Re-read and apply the preferences in case the user cancels a switch
+        // to sync mode.
+        this.musicPrefsRead();
+        this.musicPrefsApply();
+
         break;
 
       default :
