@@ -81,43 +81,43 @@ endif
 PPDEFINES += -DSB_UPDATE_CHANNEL="$(SB_UPDATE_CHANNEL)"
 
 ifdef FORCE_JARS
-PPDEFINES += -DFORCE_JARS="$(FORCE_JARS)"
+   PPDEFINES += -DFORCE_JARS="$(FORCE_JARS)"
 endif
 
 ifdef PREVENT_JARS
-PPDEFINES += -DFPREVENT_JARS="$(PREVENT_JARS)"
+   PPDEFINES += -DFPREVENT_JARS="$(PREVENT_JARS)"
 endif
 
 ifdef MAKE_INSTALLER
-PPDEFINES += -DMAKE_INSTALLER="$(MAKE_INSTALLER)"
+   PPDEFINES += -DMAKE_INSTALLER="$(MAKE_INSTALLER)"
 endif
 
 ifdef SONGBIRD_OFFICIAL
-PPDEFINES += -DSONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)"
+   PPDEFINES += -DSONGBIRD_OFFICIAL="$(SONGBIRD_OFFICIAL)"
 endif
 
 ifdef SB_ENABLE_TESTS
-PPDEFINES += -DSB_ENABLE_TESTS=1
+   PPDEFINES += -DSB_ENABLE_TESTS=1
 endif
 
 ifdef SB_ENABLE_TEST_HARNESS
-PPDEFINES += -DSB_ENABLE_TEST_HARNESS=1
+   PPDEFINES += -DSB_ENABLE_TEST_HARNESS=1
 endif
 
 ifdef SB_ENABLE_BREAKPAD
-PPDEFINES += -DSB_ENABLE_BREAKPAD=1
+   PPDEFINES += -DSB_ENABLE_BREAKPAD=1
 endif
 
 ifdef SB_USER_EULA_FILE
-PPDEFINES += -DSB_USER_EULA_FILE="$(SB_USER_EULA_FILE)"
+   PPDEFINES += -DSB_USER_EULA_FILE="$(SB_USER_EULA_FILE)"
 endif
 
 ifdef SB_USER_ABOUT_FILE
-PPDEFINES += -DSB_USER_ABOUT_FILE="$(SB_USER_ABOUT_FILE)"
+   PPDEFINES += -DSB_USER_ABOUT_FILE="$(SB_USER_ABOUT_FILE)"
 endif
 
 ifdef SB_USER_ABOUTCOLON_FILE
-PPDEFINES += -DSB_USER_ABOUTCOLON_FILE="$(SB_USER_ABOUTCOLON_FILE)"
+   PPDEFINES += -DSB_USER_ABOUTCOLON_FILE="$(SB_USER_ABOUTCOLON_FILE)"
 endif
 
 # core wrappers to enable
@@ -131,24 +131,27 @@ PPDEFINES += $(if $(MEDIA_CORE_WMP), -DMEDIA_CORE_WMP=1) \
 PPDEFINES += $(if $(_MSC_VER), -D_MSC_VER=$(_MSC_VER))
 
 # define default extension architecture
-ifeq (windows,$(SB_PLATFORM))
-    EXTENSION_ARCH = WINNT_x86-msvc
-endif
 
-ifeq (macosx,$(SB_PLATFORM))
-    ifeq (i686,$(SB_ARCH))
-        EXTENSION_ARCH = Darwin_x86-gcc3
-    else
-        EXTENSION_ARCH = Darwin_$(SB_ARCH)-gcc3
-    endif
-endif
+ifndef EXTENSION_ARCH
+   ifeq (windows,$(SB_PLATFORM))
+      EXTENSION_ARCH = WINNT_x86-msvc
+   endif
 
-ifeq (linux,$(SB_PLATFORM))
-    ifeq (i686,$(SB_ARCH))
-        EXTENSION_ARCH = Linux_x86-gcc3
-    else
-        EXTENSION_ARCH = Linux_$(SB_ARCH)-gcc3
-    endif
+   ifeq (macosx,$(SB_PLATFORM))
+      ifeq (i686,$(SB_ARCH))
+         EXTENSION_ARCH = Darwin_x86-gcc3
+       else
+         EXTENSION_ARCH = Darwin_$(SB_ARCH)-gcc3
+      endif
+   endif
+
+   ifeq (linux,$(SB_PLATFORM))
+      ifeq (i686,$(SB_ARCH))
+         EXTENSION_ARCH = Linux_x86-gcc3
+      else
+         EXTENSION_ARCH = Linux_$(SB_ARCH)-gcc3
+      endif
+   endif
 endif
 
 THISMAKEFILE = $(CURDIR)/Makefile

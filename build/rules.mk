@@ -217,7 +217,7 @@ export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(OUR_SUBDIRS)
 ## 
 ## Handle application and component directory creation
 ##
-$(APP_DIST_DIRS) $(CREATEDIRS): %: FORCE
+$(sort $(APP_DIST_DIRS) $(CREATEDIRS)): %: FORCE
 	$(if $(wildcard $@),,$(MKDIR) $@)
 
 ##
@@ -975,10 +975,10 @@ ifdef EXTENSION_NAME
    ifdef XPI_NAME
       OUR_XPI_NAME = $(XPI_NAME)
    else
-      ifdef EXTENSION_ARCH
-         OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
-      else
+      ifeq (noarch,$(strip $(EXTENSION_ARCH)))
          OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug)
+      else
+         OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
       endif
    endif
 endif

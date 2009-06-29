@@ -42,6 +42,7 @@ SUBDIRS = chrome \
 EXTENSION_NAME = mashTape
 EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage
+EXTENSION_ARCH = noarch 
 
 EXTENSION_VER = 0.2.10pre
 EXTENSION_MIN_VER = 1.3.0a

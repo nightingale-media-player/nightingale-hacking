@@ -38,6 +38,8 @@ EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 EXTENSION_STAGE_DIR = ./.xpistage
 EXTENSION_BUILD_ID = $(EXTENSION_NAME)-$(EXTENSION_VER)
 
+EXTENSION_ARCH = noarch
+
 # NOTE: 7digital versioning should match Songbird versioning for sanity and fun
 EXTENSION_VER = $(SB_MILESTONE)
 EXTENSION_MIN_VER = 1.3.0a
