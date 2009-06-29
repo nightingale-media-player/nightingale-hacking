@@ -51,11 +51,15 @@ endif
 # Since public, src, and test are directories used throughout the tree
 # we automatically add them to SUBDIRS _unless_ it's requested that we don't
 ifeq (,$(DISABLE_IMPLICIT_SUBDIRS))
-   SUBDIRS += $(if $(wildcard $(srcdir)/public), public)
-   SUBDIRS += $(if $(wildcard $(srcdir)/src), src)
+   OUR_SUBDIRS = $(NULL)
+   OUR_SUBDIRS += $(if $(wildcard $(srcdir)/public), public)
+   OUR_SUBDIRS += $(if $(wildcard $(srcdir)/src), src)
+   OUR_SUBDIRS += $(SUBDIRS)
    ifdef SB_ENABLE_TESTS
-      SUBDIRS += $(if $(wildcard $(srcdir)/test), test)
+      OUR_SUBDIRS += $(if $(wildcard $(srcdir)/test), test)
    endif
+else
+   OUR_SUBDIRS = $(SUBDIRS)
 endif
 
 # Right now this system is not compatible with parallel make.
@@ -87,7 +91,7 @@ endif
 
 LOOP_OVER_SUBDIRS = \
    @$(EXIT_ON_ERROR) \
-   $(foreach dir,$(SUBDIRS), $(MAKE) -C $(dir) $@; ) true
+   $(foreach dir,$(OUR_SUBDIRS), $(MAKE) -C $(dir) $@; ) true
 
 # MAKE_DIRS: List of directories to build while looping over directories.
 ifneq (,$(OBJS)$(XPIDLSRCS)$(SDK_XPIDLSRCS)$(SIMPLE_PROGRAMS))
@@ -121,12 +125,12 @@ endif
 
 # SUBMAKEFILES: List of Makefiles for next level down.
 #   This is used to update or create the Makefiles before invoking them.
-SUBMAKEFILES += $(addsuffix /Makefile, $(SUBDIRS))
+SUBMAKEFILES += $(addsuffix /Makefile, $(OUR_SUBDIRS))
 
 ###############################################################################
 
 ifdef TIERS
-   SUBDIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_dirs))
+   OUR_SUBDIRS += $(foreach tier,$(TIERS),$(tier_$(tier)_dirs))
 
 # The $(CREATEDIRS) dependency may look a bit out of place, but it's required
 # because the top-level makefile not only defines a bunch of tiers (i.e. this
@@ -158,7 +162,7 @@ ALL_TRASH = \
    $(OUR_STATIC_LIB_OBJS:$(OBJ_SUFFIX)=.i) \
    $(GENERATED_PP_DEPS) \
    $(SIMPLE_PROGRAM_OBJS) $(SIMPLE_PROGRAM) \
-	$(JAR_MANIFEST) \
+   $(JAR_MANIFEST) \
    LOGS TAGS a.out
 
 ifeq (windows,$(SB_PLATFORM))
@@ -182,11 +186,11 @@ distclean:: FORCE
 	$(RM) -r $(SONGBIRD_DISTDIR)
 
 export_tier_%:
-	@$(EXIT_ON_ERROR) \
+	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) export; ) true
 
 libs_tier_%:
-	@$(EXIT_ON_ERROR) \
+	$(EXIT_ON_ERROR) \
     $(foreach dir,$(tier_$*_dirs),$(MAKE) -C $(dir) libs; ) true
 
 # This dependency listing is technically incorrect, in that it states that
@@ -204,10 +208,10 @@ $(foreach tier,$(TIERS),tier_$(tier)):: $(foreach tier,$(TIERS),$(if $(tier_$(ti
 ## SUBDIRS handling for libs and export targets
 ##
 
-libs:: $(SUBMAKEFILES) $(SUBDIRS)
+libs:: $(SUBMAKEFILES) $(OUR_SUBDIRS)
 	+$(LOOP_OVER_SUBDIRS)
 
-export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(SUBDIRS)
+export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(OUR_SUBDIRS)
 	+$(LOOP_OVER_SUBDIRS)
 
 ## 
@@ -1001,7 +1005,7 @@ ifdef EXTENSION_NAME
 	$(MKDIR) $(EXTENSION_STAGE_DIR)
 endif
 
-libs:: $(if $(EXTENSION_NAME), $(SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
+libs:: $(if $(EXTENSION_NAME), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef EXTENSION_NAME
 	@echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
 	$(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
@@ -1061,7 +1065,10 @@ echo-tiers:
 	@echo $(TIERS)
 
 echo-subdirs:
-	@echo $(SUBDIRS)
+	@echo SUBDIRS: $(SUBDIRS)
+ifneq ($(SUBDIRS),$(OUR_SUBDIRS))
+	@echo OUR_SUBDIRS: $(OUR_SUBDIRS)
+endif
 
 FORCE:
 
@@ -1082,7 +1089,7 @@ FORCE:
 
 .SUFFIXES:
 
-.PHONY: $(SUBDIRS) FORCE libs export
+.PHONY: $(OUR_SUBDIRS) FORCE libs export
 
 include $(topsrcdir)/build/file-autotargets.mk
 
