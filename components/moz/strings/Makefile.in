@@ -29,9 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-#XXXeps must explicitly add src first because components depends upon it
-SUBDIRS = src \
-          components \
+SUBDIRS = components \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
