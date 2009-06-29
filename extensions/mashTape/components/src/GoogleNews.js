@@ -45,11 +45,11 @@ GoogleNews.prototype = {
 			if (this.status == 200) {
 				var results = new Array();
 				var x = new XML(this.responseText.replace(
-						'<?xml version="1.0" encoding="UTF-8"?>', ""));
-				var atomns = new Namespace('http://purl.org/atom/ns#');
+						/<\?xml version="1.0"[^>]*>/, ""));
+				var atomns = new Namespace('http://www.w3.org/2005/Atom');
 				for each (var entry in x..atomns::entry) {
 					var dateObj = new Date();
-					dateObj.setISO8601(entry.atomns::issued);
+					dateObj.setISO8601(entry.atomns::updated);
 
 					var content = entry.atomns::content.toString();
 					content = content.replace(
