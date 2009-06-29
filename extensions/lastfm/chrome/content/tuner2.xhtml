@@ -28,7 +28,8 @@
           <p>
             <xul:button class="subscriber-button"
             label="&lastfm.radio.subscriber.button;"
-            onclick="gBrowser.loadOneTab('http://www.last.fm/subscribe')"
+            onclick="LastfmTuner.loadPage('http://www.last.fm/subscribe',
+                                          'subscribe')"
             />
           </p>
           </div>
@@ -50,7 +51,9 @@
             onclick="LastfmTuner.showLogin()" />
             <xul:button class="register-button"
             label="&lastfm.radio.register;"
-            onclick="gBrowser.loadOneTab('http://www.last.fm/join')" />
+            onclick="LastfmTuner.loadPage('http://www.last.fm/join',
+                                          'register')"
+            />
           </p>
           </div>
         </p>
