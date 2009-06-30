@@ -96,7 +96,22 @@
           <xul:spacer sbid="progress_spacer" flex="1" />
         </xul:hbox>
 
-        <xul:vbox pack="center" class="dev-progress-button-box">
+        <xul:hbox pack="center" class="dev-progress-button-box">
+          <!-- Eject button. -->
+          <xul:hbox sbid="ejectinfo_button_box" hidden="true">
+            <xul:button sbid="more_info_button"
+                        class="more-info-button"
+                        showid="moreinfo" />
+            <xul:sb-device-get-info-command bindelem="prev"
+                                            xbl:inherits="device-id"/>
+
+            <xul:button sbid="eject_button"
+                        class="eject-button"
+                        showid="eject" />
+            <xul:sb-device-eject-command bindelem="prev"
+                                         xbl:inherits="device-id"/>
+          </xul:hbox>
+
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
                       class="device-progress-button"/>
@@ -114,7 +129,7 @@
                       label="&window.ok;"
                       action="finish"
                       oncommand="DPW.onAction(event);"/>
-        </xul:vbox>
+        </xul:hbox>
 
       </xul:hbox>
 
