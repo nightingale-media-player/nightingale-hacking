@@ -1052,7 +1052,7 @@ $(document).ready(function() {
 	LastfmTuner.onLoggedInStateChanged();
 	if (LastfmTuner.svc.loggedIn) {
 		LastfmTuner.onProfileUpdated();
-		LastfmTuner.onLoginSucceeded();
+		//LastfmTuner.onLoginSucceeded();
 	}
 	
 	if (LastfmTuner.svc.sk)
