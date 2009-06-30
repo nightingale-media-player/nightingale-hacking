@@ -100,7 +100,8 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      preparingOnIdle: true
     },
 
     /* Copy. */
@@ -167,7 +168,8 @@ var DPWCfg = {
       showIdleMessage: true,
       needsMediaItem: true,
       showProgress: true,
-      updateBusy: true
+      updateBusy: true,
+      preparingOnIdle: true
     }
   ]
 };
@@ -393,6 +395,7 @@ var DPW = {
     // Get the device status.
     var deviceStatus = this._device.currentStatus;
     var operation = deviceStatus.currentState;
+    var substate = deviceStatus.currentSubState;
     var curItemIndex = this._curItemIndex.intValue;
     var totalItems = this._totalItems.intValue;
 
@@ -422,8 +425,16 @@ var DPW = {
       this._progressMeter.value = 0;
     }
 
+    // If we're preparing to sync or transcode (indicated by an idle substate)
+    // then show the preparing label
+    if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
+    {
+      localeKey = "device.status.progress_preparing_" + operationLocaleSuffix;
+    } else {
+      localeKey = "device.status.progress_header_" + operationLocaleSuffix;
+    }
+
     // Update the operation progress text.
-    localeKey = "device.status.progress_header_" + operationLocaleSuffix;
     this._progressTextLabel.value =
            SBFormattedString(localeKey, [ curItemIndex, totalItems ], "");
 
@@ -697,6 +708,8 @@ var DPW = {
    onDeviceEvent : function DPW_onDeviceEvent(aEvent) {
     switch (aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        var state = this._device.state;
+        var substate = this._device.currentStatus.currentSubState;
         this._handleStateChanged(aEvent);
         break;
 
