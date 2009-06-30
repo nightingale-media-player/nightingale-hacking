@@ -27,6 +27,8 @@
 #ifndef __SB_STANDARD_DEVICE_PROPERTIES_H__
 #define __SB_STANDARD_DEVICE_PROPERTIES_H__
 
+#define SB_DEVICE_PROPERTY_BASE                   "http://songbirdnest.com/device/1.0#"
+
 #define SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY   "http://songbirdnest.com/device/1.0#accessCompatibility"
 #define SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY_MUTABLE "http://songbirdnest.com/device/1.0#accessCompatibilityMutable"
 #define SB_DEVICE_PROPERTY_BATTERY_LEVEL          "http://songbirdnest.com/device/1.0#batteryLevel"
