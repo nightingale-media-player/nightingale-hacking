@@ -160,6 +160,7 @@ interface sbIDevice : nsISupports
    * @see STATE_*
    */
   readonly attribute unsigned long state;
+  readonly attribute unsigned long previousState;
 
   const unsigned long STATE_IDLE            = 0;  // Not doing anything
   const unsigned long STATE_SYNCING         = 1;  // Performing a sync

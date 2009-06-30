@@ -276,6 +276,9 @@ var DPW = {
     this._curItemIndex = createDataRemote(
                     this._deviceID + ".status.workcount", null);
 
+    // Update the last completed operation
+    this._lastCompletedEventOperation = this._device.previousState;
+
     // Simulate a device state changed event to initialize the operation state
     // and update the UI.
     this._handleStateChanged({ data: this._device.state });

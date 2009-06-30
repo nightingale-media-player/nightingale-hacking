@@ -322,6 +322,9 @@ sbBaseDevice::sbBaseDevice() :
   mStateLock = nsAutoLock::NewLock(__FILE__ "::mStateLock");
   NS_ASSERTION(mStateLock, "Failed to allocate state lock");
 
+  mPreviousStateLock = nsAutoLock::NewLock(__FILE__ "::mPreviousStateLock");
+  NS_ASSERTION(mPreviousStateLock, "Failed to allocate state lock");
+
   mRequestMonitor = nsAutoMonitor::NewMonitor(__FILE__ "::mRequestMonitor");
   NS_ASSERTION(mRequestMonitor, "Failed to allocate request monitor");
 
@@ -343,6 +346,9 @@ sbBaseDevice::~sbBaseDevice()
 
   if (mStateLock)
     nsAutoLock::DestroyLock(mStateLock);
+
+  if (mPreviousStateLock)
+    nsAutoLock::DestroyLock(mPreviousStateLock);
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -1101,6 +1107,26 @@ NS_IMETHODIMP sbBaseDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 }
 
 /* readonly attribute unsigned long state; */
+NS_IMETHODIMP sbBaseDevice::GetPreviousState(PRUint32 *aState)
+{
+  NS_ENSURE_ARG_POINTER(aState);
+  NS_ENSURE_TRUE(mPreviousStateLock, NS_ERROR_NOT_INITIALIZED);
+  nsAutoLock lock(mPreviousStateLock);
+  *aState = mPreviousState;
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
+{
+  // set state, checking if it changed
+  NS_ENSURE_TRUE(mPreviousStateLock, NS_ERROR_NOT_INITIALIZED);
+  nsAutoLock lock(mPreviousStateLock);
+  if (mPreviousState != aState) {
+    mPreviousState = aState;
+  }
+}
+
+/* readonly attribute unsigned long state; */
 NS_IMETHODIMP sbBaseDevice::GetState(PRUint32 *aState)
 {
   NS_ENSURE_ARG_POINTER(aState);
@@ -1115,15 +1141,21 @@ nsresult sbBaseDevice::SetState(PRUint32 aState)
 
   nsresult rv;
   PRBool stateChanged = PR_FALSE;
+  PRUint32 prevState;
 
   // set state, checking if it changed
   {
     NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
     nsAutoLock lock(mStateLock);
+    prevState = mState;
     if (mState != aState) {
       mState = aState;
       stateChanged = PR_TRUE;
     }
+    // Update the previous state - we set it outside of the if loop, so
+    // even if the current state isn't changing, the previous state still
+    // gets updated to the correct previous state.
+    SetPreviousState(prevState);
   }
 
   // send state changed event.  do it outside of lock in case event handler gets

@@ -163,6 +163,7 @@ public:
   NS_IMETHOD GetIsBusy(PRBool *aIsBusy);
   NS_IMETHOD GetCanDisconnect(PRBool *aCanDisconnect);
   NS_IMETHOD GetState(PRUint32 *aState);
+  NS_IMETHOD GetPreviousState(PRUint32 *aState);
   NS_IMETHOD SyncLibraries(void);
   NS_IMETHOD Format(void);
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
@@ -238,6 +239,12 @@ public:
    * @param aState new device state
    */
   nsresult SetState(PRUint32 aState);
+
+  /**
+   * Set the device's previous state
+   * @param aState new device state
+   */
+  nsresult SetPreviousState(PRUint32 aState);
 
   /**
    * Create a local database library for the device.  The library must be
@@ -446,6 +453,8 @@ protected:
   PRInt32 mLastRequestPriority; // to make sure peek returns the same
   PRLock *mStateLock;
   PRUint32 mState;
+  PRLock *mPreviousStateLock;
+  PRUint32 mPreviousState;
   nsRefPtr<sbDeviceStatistics> mDeviceStatistics;
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
