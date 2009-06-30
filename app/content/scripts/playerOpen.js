@@ -727,6 +727,16 @@ function SBDeleteMediaList(aMediaList)
       var songbirdStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
       var strTitle = SBString(STRINGROOT + "title");
       var strMsg = SBFormattedString(STRINGROOT + "message", [mediaList.name]);
+
+      var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                            .getService(Ci.sbIDeviceManager2);
+      var selectedDevice =
+        deviceManager.getDeviceForItem(mediaList);
+      if (!selectedDevice &&
+          (deviceManager.marshalls.length > 0)) {
+        strMsg += "\n\n" + songbirdStrings.GetStringFromName("playlist.confirmremoveitem.devicewarning");
+      }
+
       var strCheck = SBString(STRINGROOT + "check");
       
       var r = promptService.confirmEx(window, 
