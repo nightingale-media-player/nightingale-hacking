@@ -116,7 +116,7 @@ var deviceFirmwareWizard = {
         this._currentOperation = "checkforupdate_error";
         
         let okButton = this.wizardElem.getButton("next");
-        okButton.label = SBString("window.ok");
+        okButton.label = SBString("window.ok.label");
         okButton.accessKey = SBString("window.ok.accessKey");
         
         let supportLink = 
@@ -151,7 +151,7 @@ var deviceFirmwareWizard = {
         this._currentOperation = "download_error";
         
         let okButton = this.wizardElem.getButton("next");
-        okButton.label = SBString("window.ok");
+        okButton.label = SBString("window.ok.label");
         okButton.accessKey = SBString("window.ok.accessKey");
         
         let supportLink = 
@@ -181,7 +181,7 @@ var deviceFirmwareWizard = {
         this._currentOperation = "install_error";
         
         let okButton = this.wizardElem.getButton("next");
-        okButton.label = SBString("window.ok");
+        okButton.label = SBString("window.ok.label");
         okButton.accessKey = SBString("window.ok.accessKey");
         
         let supportLink = 
