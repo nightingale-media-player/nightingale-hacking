@@ -132,8 +132,6 @@ public:
     static const PRInt32 PRIORITY_DEFAULT = 0x1000000;
     PRInt32 priority;                /* priority for the request (lower first) */
 
-    PRBool spaceEnsured;             /* true if enough free space is ensured for
-                                          request */
     PRInt64 timeStamp;               /* time stamp of when request was
                                           enqueued */
     PRUint32 batchID;                /* ID of request batch */
@@ -152,10 +150,12 @@ public:
 
     /* Don't allow manual construction/destruction, but allow sub-classing. */
   protected:
-    TransferRequest() : spaceEnsured(PR_FALSE) {}
+    TransferRequest() {}
     ~TransferRequest(){} /* we're refcounted, no manual deleting! */
   };
-  
+
+  typedef std::list<nsRefPtr<TransferRequest> > Batch;
+
 public:
   /* selected methods from sbIDevice */
   NS_IMETHOD GetPreference(const nsAString & aPrefName, nsIVariant **_retval);
@@ -184,6 +184,15 @@ public:
   /* remove the next request to be processed; note that _retval will be null
      while returning NS_OK if there are no requests left */
   nsresult PopRequest(TransferRequest** _retval);
+
+  /**
+   * Returns the next batch. This may be a single request if the next request
+   * is not part of a batch.
+   * \param aWait denotes whether the caller needs to wait for the batch to
+   *              complete.
+   * \param aBatch A collection that receives the batch items found.
+   */
+  nsresult PopRequest(Batch & aBatch);
 
   /* get a reference to the next request without removing it; note that _retval
    * will be null while returning NS_OK if there are no requests left
@@ -394,7 +403,9 @@ public:
 
 protected:
   friend class sbBaseDeviceInitHelper;
+  friend class sbDeviceEnsureSpaceForWrite;
   friend class sbDeviceStatistics;
+  
   /**
    * Base class initialization this will call the InitDevice first then
    * do the intialization needed by the sbDeviceBase
@@ -408,8 +419,7 @@ private:
   /**
    * Helper for PopRequest / PeekRequest
    */
-  nsresult GetFirstRequest(PRBool aRemove, TransferRequest** _retval);
-
+  nsresult GetFirstRequest(bool aRemove, TransferRequest** _retval);
 protected:
   /* to block the background thread from transferring files while the batch
      has not completed; if a delay is active, either the request monitor OR
@@ -417,14 +427,8 @@ protected:
      while the removal lock is behind held.  No actions (including pushing
      additional requests) may be performed while the request monitor is held. */
   PRMonitor * mRequestMonitor;
-  nsRefPtr<TransferRequest> mRequestBatchStart;
-  nsCOMPtr<nsITimer> mRequestBatchTimer;
   nsCOMPtr<nsITimer> mBatchEndTimer;
   PRInt32 mNextBatchID;
-  /**
-   * Protects the mRequestBatchTimer checking and setting
-   */
-  PRLock * mRequestBatchTimerLock;
 
 public:
   /**
@@ -436,6 +440,7 @@ public:
    */
   typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
 protected:
+  
   TransferRequestQueueMap mRequests;
   PRUint32 mLastTransferID;
   PRInt32 mLastRequestPriority; // to make sure peek returns the same
@@ -445,7 +450,7 @@ protected:
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
-
+  
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
@@ -453,17 +458,17 @@ protected:
   PRUint32 mCapabilitiesRegistrarType;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
-
+  
+  
   // cache data for media management preferences
-  typedef struct OrganizeData_t {
+  struct OrganizeData {
     PRBool    organizeEnabled;
     nsCString dirFormat;
     nsCString fileFormat;
-    OrganizeData_t() : organizeEnabled(PR_FALSE) {}
-  } OrganizeData;
+    OrganizeData() : organizeEnabled(PR_FALSE) {}
+  };
   nsClassHashtableMT<nsIDHashKey, OrganizeData> mOrganizeLibraryPrefs;
 
-protected:
 
   /**
    * Default per track storage overhead.  10000 is enough for one 8K block plus
@@ -477,29 +482,19 @@ protected:
   static const PRUint32 SYNC_PLAYLIST_MARGIN_PCT = 1;
 
   /**
-   * Make sure that there is enough free space to complete the write request
-   * specified by aRequest, taking batches into consideration.  If only a
-   * partial batch has been enqueued, return true in aWait, indicating that the
-   * caller should wait to process requests.  ProcessRequest will be called when
-   * the batch is complete.
-   * If not enough free space is available, ask the user what to do.
-   * Remove requests from the queue to make room.  Set the request spaceEnsured
-   * flag for requests that are ensured space on the device.
+   * Make sure that there is enough free space for the batch. If there is not
+   * enough space for all the items in the batch and the user does not abort
+   * the operation, items in the batch will be removed.
+   * 
+   * What items get removed depends on the current sync mode. If we're in
+   * manual sync then the last items not fitting will be removed. If we're are
+   * in an automatic sync mode then a random subset of items will be removed
+   * from the batch.
    *
-   * \param aRequest the request to check size for
-   * \param aWait if true, caller should wait to process further requests
+   * \param aBatch The batch to ensure space for. This collection may be 
+   *               modified on return.
    */
-  nsresult EnsureSpaceForWrite(TransferRequest* aRequest,
-                               PRBool*          aWait);
-
- /**
-   * Go through the given queue to make sure that there is enough free space
-   * to complete the write requests.  If not, and the user agrees, attempt to
-   * transfer a subset.
-   *
-   * \param aQueue the queue to check size for
-   */
-  virtual nsresult EnsureSpaceForWrite(TransferRequestQueue& aQueue);
+  nsresult EnsureSpaceForWrite(Batch & aBatch);
 
   /**
    * Wait for the end of a request batch to be enqueued.
@@ -1018,6 +1013,14 @@ protected:
    */
   nsresult FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                 sbITranscodeProfile ** aProfile);
+  /**
+   * Gets the first request. This does not lock request queue
+   * Iterator
+   */
+  nsresult FindFirstRequest(
+    TransferRequestQueueMap::iterator & aMapIter,
+    TransferRequestQueue::iterator & aQueueIter,
+    bool aRemove);
 };
 
 

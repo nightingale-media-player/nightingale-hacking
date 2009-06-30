@@ -78,6 +78,7 @@
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
 
+#include "sbDeviceEnsureSpaceForWrite.h"
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
 #include "sbDeviceUtils.h"
@@ -92,7 +93,7 @@
  *   NSPR_LOG_MODULES=sbBaseDevice:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gBaseDeviceLog = nsnull;
+PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #endif
 
 #undef LOG
@@ -115,7 +116,7 @@ static PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define PREF_ORGANIZE_DIR_FORMAT "media_management.format.dir"
 #define PREF_ORGANIZE_FILE_FORMAT "media_management.format.file"
 
-#define BATCH_TIMEOUT 100 /* number of milliseconds to wait for batching */
+#define BATCH_TIMEOUT 200 /* number of milliseconds to wait for batching */
 
 NS_IMPL_THREADSAFE_ISUPPORTS0(sbBaseDevice::TransferRequest)
 
@@ -324,9 +325,6 @@ sbBaseDevice::sbBaseDevice() :
   mRequestMonitor = nsAutoMonitor::NewMonitor(__FILE__ "::mRequestMonitor");
   NS_ASSERTION(mRequestMonitor, "Failed to allocate request monitor");
 
-  mRequestBatchTimerLock = nsAutoLock::NewLock(__FILE__ "::mRequestBatchTimerLock");
-  NS_ASSERTION(mRequestBatchTimerLock, "Failed to allocate request batch timer lock");
-
   mPreferenceLock = nsAutoLock::NewLock(__FILE__ "::mPreferenceLock");
   NS_ASSERTION(mPreferenceLock, "Failed to allocate preference lock");
 
@@ -345,9 +343,6 @@ sbBaseDevice::~sbBaseDevice()
 
   if (mStateLock)
     nsAutoLock::DestroyLock(mStateLock);
-
-  if (mRequestBatchTimerLock)
-    nsAutoLock::DestroyLock(mRequestBatchTimerLock);
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -525,28 +520,25 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
   return ProcessRequest();
 }
 
-nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
-                                       sbBaseDevice::TransferRequest** _retval)
+nsresult sbBaseDevice::FindFirstRequest(
+  TransferRequestQueueMap::iterator & aMapIter,
+  TransferRequestQueue::iterator & aQueueIter,
+  bool aRemove)
 {
-  NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor reqMon(mRequestMonitor);
-
   // Note: we shouldn't remove any empty queues from the map either, if we're
   // not going to pop the request.
 
   // try to find the last peeked request
-  TransferRequestQueueMap::iterator mapIt =
+  aMapIter =
     mRequests.find(mLastRequestPriority);
-  if (mapIt == mRequests.end()) {
-    mapIt = mRequests.begin();
+  if (aMapIter == mRequests.end()) {
+    aMapIter = mRequests.begin();
   }
 
-  while (mapIt != mRequests.end()) {
+  while (aMapIter != mRequests.end()) {
     // always pop the request from the first queue
 
-    TransferRequestQueue& queue = mapIt->second;
+    TransferRequestQueue& queue = aMapIter->second;
 
     #if DEBUG
       CheckRequestBatch(queue.begin(), queue.end());
@@ -555,62 +547,132 @@ nsresult sbBaseDevice::GetFirstRequest(PRBool aRemove,
     if (queue.empty()) {
       if (aRemove) {
         // this queue is empty, remove it
-        mRequests.erase(mapIt);
-        mapIt = mRequests.begin();
+        mRequests.erase(aMapIter);
+        aMapIter = mRequests.begin();
       } else {
         // go to the next queue
-        ++mapIt;
+        ++aMapIter;
       }
       continue;
     }
 
-    nsRefPtr<TransferRequest> request = queue.front();
+    aQueueIter = queue.begin();
 
-    if (aRemove) {
-      // we want to pop the request
-      queue.pop_front();
-      if (queue.empty()) {
-        mRequests.erase(mapIt);
-        mapIt = mRequests.begin();
-      } else {
-        #if DEBUG
-          CheckRequestBatch(queue.begin(), queue.end());
-        #endif
-      }
-      // forget the last seen priority
-      mLastRequestPriority = PR_INT32_MIN;
-    } else {
-      // record the last seen priority
-      mLastRequestPriority = mapIt->first;
-    }
+    mLastRequestPriority = aMapIter->first;
 
-    request.forget(_retval);
     return NS_OK;
   }
   // there are no queues left
   mLastRequestPriority = PR_INT32_MIN;
-  *_retval = nsnull;
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult sbBaseDevice::GetFirstRequest(bool aRemove,
+                                       sbBaseDevice::TransferRequest** retval)
+{
+  NS_ENSURE_ARG_POINTER(retval);
+  NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor reqMon(mRequestMonitor);
+
+  TransferRequestQueueMap::iterator mapIter;
+  TransferRequestQueue::iterator queueIter;
+  nsresult rv = FindFirstRequest(mapIter, queueIter, aRemove);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // there are no queues left
+    mLastRequestPriority = PR_INT32_MIN;
+    *retval = nsnull;
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aRemove) {
+    mapIter->second.erase(queueIter);
+  }
+  *retval = queueIter->get();
+  NS_ADDREF(*retval);
+  
   return NS_OK;
 }
 
 nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
 {
-  nsCOMPtr<nsIThread> thread;
-  if (mRequestBatchTimer) {
-    NS_GetCurrentThread(getter_AddRefs(thread));
-    do {
-      // Wait for an event before checking to see if the timer has fired
-      NS_ProcessNextEvent(thread, PR_INTERVAL_NO_TIMEOUT);
+  return GetFirstRequest(true, _retval);
+}
 
-    } while (mRequestBatchTimer);
+nsresult sbBaseDevice::PopRequest(sbBaseDevice::Batch & aBatch) {
+  
+  aBatch.clear();
+  nsAutoMonitor reqMon(mRequestMonitor);
+  
+  TransferRequestQueueMap::iterator mapIter;
+  TransferRequestQueue::iterator queueIter;
+  
+  nsresult rv = FindFirstRequest(mapIter,
+                                 queueIter,
+                                 false);
+  // If nothing was found then just return with an empty batch
+  if (rv == NS_ERROR_NOT_AVAILABLE || queueIter == mapIter->second.end()) {
+    LOG(("No requests found\n"));
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  TransferRequestQueue & queue = mapIter->second;
+
+  nsRefPtr<TransferRequest> & request = *queueIter;
+  // If this isn't countable or isn't part of  batch then just return it
+  if (!request->IsCountable() || request->batchID == 0) {
+    LOG(("Single non-batch request found\n"));
+    aBatch.push_back(*queueIter);
+    queue.erase(queueIter);
+    return NS_OK;
+  }
+  
+  typedef std::vector<TransferRequestQueue::iterator> BatchIters;
+  BatchIters batchIters;
+  batchIters.reserve(queue.size());
+  
+  // find the end of the batch and keep track of the matching batch entries
+  TransferRequestQueue::iterator const queueEnd = queue.end();
+  PRUint32 batchID = (*queueIter)->batchID;
+  for (;queueIter != queueEnd; ++queueIter) {
+    // skip requests that are not a part of a batch
+    if ((*queueIter)->batchID == batchID) {
+      batchIters.push_back(queueIter);
+    }
   }
 
-  return GetFirstRequest(PR_TRUE, _retval);
+  // See if we found anything
+  if (!batchIters.empty()) {
+    BatchIters::iterator begin = batchIters.begin();
+    PRTime const now = PR_Now();
+    // Is the batch complete (batch timeout expired)
+    if (now - (**begin)->timeStamp < BATCH_TIMEOUT * PR_USEC_PER_MSEC) {
+      // Update the last batch timestamp
+      LOG(("Waiting on batch complete\n"));
+      // Leave the request monitor else we'll deadlock waiting
+      reqMon.Exit();
+      rv = WaitForBatchEnd();
+      NS_ENSURE_SUCCESS(rv, rv);
+      return NS_OK;
+    }
+  }
+
+  BatchIters::iterator const batchItersEnd = batchIters.end();
+  for (BatchIters::iterator iter = batchIters.begin();
+       iter != batchItersEnd;
+       ++iter) {
+    TransferRequestQueue::iterator const requestQueueIter = *iter;
+    aBatch.push_back(*requestQueueIter);
+    queue.erase(requestQueueIter);
+  }
+  return NS_OK;
 }
 
 nsresult sbBaseDevice::PeekRequest(sbBaseDevice::TransferRequest** _retval)
 {
-  return GetFirstRequest(PR_FALSE, _retval);
+  return GetFirstRequest(false, _retval);
 }
 
 template <class T>
@@ -1595,125 +1657,6 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   return DispatchEvent(deviceEvent, aAsync, nsnull);
 }
 
-// by COM rules, we are only guaranteed that comparing nsISupports* is valid
-struct COMComparator {
-  bool operator()(nsISupports* aLeft, nsISupports* aRight) const {
-    return nsCOMPtr<nsISupports>(do_QueryInterface(aLeft)) <
-             nsCOMPtr<nsISupports>(do_QueryInterface(aRight));
-  }
-};
-
-struct EnsureSpaceForWriteRemovalHelper {
-  EnsureSpaceForWriteRemovalHelper(std::set<sbIMediaItem*,COMComparator>& aItemsToRemove)
-    : mItemsToRemove(aItemsToRemove.begin(), aItemsToRemove.end())
-  {
-  }
-
-  bool operator() (nsRefPtr<sbBaseDevice::TransferRequest> & aRequest) {
-    // remove all requests where either the item or the list is to be removed
-    return (mItemsToRemove.end() != mItemsToRemove.find(aRequest->item) ||
-            mItemsToRemove.end() != mItemsToRemove.find(aRequest->list));
-  }
-
-  std::set<sbIMediaItem*, COMComparator> mItemsToRemove;
-};
-
-nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequest* aRequest,
-                                           PRBool*          aWait)
-{
-  NS_ENSURE_ARG_POINTER(aRequest);
-  NS_ENSURE_ARG_POINTER(aWait);
-
-  nsresult rv;
-
-  // default to not wait
-  *aWait = PR_FALSE;
-
-  // non-write and playlist requests are always ensured space
-  if ((aRequest->type != TransferRequest::REQUEST_WRITE) ||
-      (aRequest->IsPlaylist())) {
-    aRequest->spaceEnsured = PR_TRUE;
-    return NS_OK;
-  }
-
-  nsAutoMonitor monitor(mRequestMonitor);
-
-  // get the request's queue
-  TransferRequestQueue& queue = mRequests[aRequest->priority];
-
-  // find the end of the batch
-  nsRefPtr<TransferRequest> batchEndRequest;
-  TransferRequestQueue::iterator batchEndIter;
-  PRUint32 batchID = aRequest->batchID;
-  for (batchEndIter = queue.begin();
-       batchEndIter != queue.end();
-       batchEndIter++) {
-    // get the next request
-    TransferRequest* request = *batchEndIter;
-
-    // check for the target request
-    if (request == aRequest) {
-      batchEndRequest = request;
-      continue;
-    }
-
-    // skip requests that are not a part of a batch
-    if (!request->batchID)
-      continue;
-
-    // if part of same batch, move the batch end; otherwise, exit loop
-    if (request->batchID == batchID)
-      batchEndRequest = request;
-    else
-      break;
-  }
-
-  // if the request at the end of the batch was not found, the specified request
-  // is not in the queue, and that's a failure
-  NS_ENSURE_TRUE(batchEndRequest, NS_ERROR_FAILURE);
-
-  // if complete batch is not yet in queue, wait
-  if ((PR_Now() - batchEndRequest->timeStamp) <
-      (BATCH_TIMEOUT * PR_USEC_PER_MSEC)) {
-
-    // Leave the request monitor else we'll deadlock waiting
-    monitor.Exit();
-    rv = WaitForBatchEnd();
-    NS_ENSURE_SUCCESS(rv, rv);
-    *aWait = PR_TRUE;
-    return NS_OK;
-  }
-
-  // ensure space for the write batch starting at the beginning of the queue
-  mRequestBatchStart = *(queue.begin());
-  rv = EnsureSpaceForWrite(queue);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
-}
-
-/**
- * This class is basically the monitor counter part to the sbAutoUnlock class
- * It leaves the monitor on construction and reenters it on destruction.
- */
-class sbAutoMonitorUnlock : private nsAutoUnlockBase
-{
-public:
-  sbAutoMonitorUnlock(PRMonitor *monitor) :
-      nsAutoUnlockBase(monitor),
-      mMonitor(monitor)
-  {
-    NS_ASSERTION(mMonitor, "sbAutoUnlockMonitor must be passed a valid monitor");
-      PR_ExitMonitor(mMonitor);
-  }
-
-  ~sbAutoMonitorUnlock() {
-      PR_EnterMonitor(mMonitor);
-  }
-private:
-   PRMonitor *mMonitor;
-};
-
 template <class T>
 inline
 T find_iterator(T start, T end, T target)
@@ -1724,320 +1667,17 @@ T find_iterator(T start, T end, T target)
   return start;
 }
 
-nsresult sbBaseDevice::EnsureSpaceForWrite(TransferRequestQueue& aQueue)
+nsresult sbBaseDevice::EnsureSpaceForWrite(Batch & aBatch)
 {
   LOG(("                        sbBaseDevice::EnsureSpaceForWrite++\n"));
 
-  // We will possibly want to remove some writes.  Unfortunately, this may be
-  // followed by some other actions (add-to-list, etc.) dealing with those items.
-  // and yet we need to keep everything that does get executed in the same order
-  // as the original queue.
-  // So, we keep a std::map where the key is all media items to be written
-  // (since writing the same item twice should not result in the space being
-  // used twice).  For convenience later, the value is the size of the file.
-
   nsresult rv;
-  std::map<sbIMediaItem*, PRInt64> itemsToWrite; // not owning
-  // all items in itemsToWrite should have a reference from the request queue
-  // XXX Mook: Do we need to be holding nsISupports* instead?
 
-  // we have a batch that has some sort of write
-  // check to see if it will all fit on the device
-  TransferRequestQueue::iterator batchStart = aQueue.begin();
-  TransferRequestQueue::iterator end = aQueue.end();
-
-  // shift batchStart to where we last were
-  while (batchStart != end && *batchStart != mRequestBatchStart)
-    ++batchStart;
-
-  // get the total size of the request
-  PRInt64 contentLength, totalLength = 0;
-  nsCOMPtr<sbIDeviceLibrary> ownerLibrary;
-
-  TransferRequestQueue::iterator request;
-  for (request = batchStart; request != end; ++request) {
-    if ((*request)->type != TransferRequest::REQUEST_WRITE)
-      continue;
-
-    nsCOMPtr<sbILibrary> requestLib =
-      do_QueryInterface((*request)->list, &rv);
-    if (NS_FAILED(rv) || !requestLib) {
-      // this is an add to playlist request, don't worry about size
-      continue;
-    }
-
-    if (!ownerLibrary) {
-      rv = sbDeviceUtils::GetDeviceLibraryForItem(this,
-                                                  (*request)->list,
-                                                  getter_AddRefs(ownerLibrary));
-      NS_ENSURE_SUCCESS(rv, rv);
-      NS_ENSURE_STATE(ownerLibrary);
-    } else {
-      #if DEBUG
-        nsCOMPtr<sbIDeviceLibrary> newLibrary;
-        rv = sbDeviceUtils::GetDeviceLibraryForItem(this,
-                                                    (*request)->list,
-                                                    getter_AddRefs(newLibrary));
-        NS_ENSURE_SUCCESS(rv, rv);
-        NS_ENSURE_STATE(newLibrary);
-        NS_ENSURE_STATE(SameCOMIdentity(ownerLibrary, newLibrary));
-      #endif /* DEBUG */
-    }
-    if (itemsToWrite.end() != itemsToWrite.find((*request)->item)) {
-      // this item is already in the set, don't worry about it
-      continue;
-    }
-
-    // Have to unlock for GetContentLength since it updates the length
-    // if it's not on the item
-    {
-      sbAutoMonitorUnlock unlock(mRequestMonitor);
-
-      rv = sbLibraryUtils::GetContentLength((*request)->item,
-                                            &contentLength);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    contentLength += mPerTrackOverhead;
-
-    totalLength += contentLength;
-    LOG(("r(%08x) i(%08x) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
-         (void*) *request, (void*) (*request)->item, contentLength));
-
-    itemsToWrite[(*request)->item] = contentLength;
-  }
-
-  LOG(("                        sbBaseDevice::EnsureSpaceForWrite - %u items = %lld bytes\n",
-       itemsToWrite.size(), totalLength));
-
-  if (itemsToWrite.size() < 1) {
-    // there were no items to write (they were all add to playlist requests)
-    return NS_OK;
-  }
-
-  // get the device properties
-  nsCOMPtr<sbIDeviceProperties> baseDeviceProperties;
-  nsCOMPtr<nsIPropertyBag2>     deviceProperties;
-  rv = GetProperties(getter_AddRefs(baseDeviceProperties));
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = baseDeviceProperties->GetProperties(getter_AddRefs(deviceProperties));
+  sbDeviceEnsureSpaceForWrite esfw(this, aBatch);
+  
+  rv = esfw.EnsureSpace();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // get the free space
-  PRInt64 freeSpace;
-  rv = deviceProperties->GetPropertyAsInt64
-                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FREE_SPACE),
-                            &freeSpace);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // apply limit to the total space available for music
-  if (ownerLibrary) {
-    PRInt64 freeMusicSpace;
-    rv = GetMusicFreeSpace(ownerLibrary, &freeMusicSpace);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if (freeSpace >= freeMusicSpace)
-      freeSpace = freeMusicSpace;
-  }
-
-  // get the management type
-  PRUint32 mgmtType;
-  PRBool continueWrite = PR_TRUE;
-  { // Unlock so we don't deadlock with prefs branch and UI logic
-    sbAutoMonitorUnlock unlock(mRequestMonitor);
-    rv = ownerLibrary->GetMgmtType(&mgmtType);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // if not enough free space is available, ask user what to do
-    if (freeSpace < totalLength) {
-      PRBool abort;
-      rv = sbDeviceUtils::QueryUserSpaceExceeded
-                            (this,
-                             ownerLibrary,
-                             totalLength,
-                             freeSpace,
-                             &abort);
-      NS_ENSURE_SUCCESS(rv, rv);
-      continueWrite = !abort;
-    }
-  }
-
-  LOG(("                        sbBaseDevice::EnsureSpaceForWrite - %u items = %lld bytes / free %lld bytes\n",
-       itemsToWrite.size(), totalLength, freeSpace));
-
-  // there are three cases to go from here:
-  // (1) fill up the device, with whatever fits, in random order (sync)
-  // (2) fill up the device, with whatever fits, in given order (manual)
-  // (3) user chose to abort
-
-  // In the (1) case, if we first shuffle the list, it becomes case (2)
-  // and case (2) is just case (3) with fewer files to remove
-
-  // copy the set of items into a orderable list
-  std::vector<sbIMediaItem*> itemList;
-  std::map<sbIMediaItem*, PRInt64>::iterator itemsBegin = itemsToWrite.begin(),
-                                             itemsEnd = itemsToWrite.end(),
-                                             itemsNext;
-  for (itemsNext = itemsBegin; itemsNext != itemsEnd; ++itemsNext) {
-    itemList.push_back(itemsNext->first);
-  }
-  // and a set of items we can't fit
-  std::set<sbIMediaItem*, COMComparator> itemsToRemove;
-
-  if (!continueWrite) {
-    // we need to remove everything
-    itemsToRemove.insert(itemList.begin(), itemList.end());
-    itemList.clear();
-  } else {
-    if (mgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL) {
-      // shuffle the list
-      std::random_shuffle(itemList.begin(), itemList.end());
-    }
-
-    // fit as much of the list as possible
-    std::vector<sbIMediaItem*>::iterator begin = itemList.begin(),
-                                         end = itemList.end(),
-                                         next;
-    PRInt64 bytesRemaining = freeSpace;
-    for (next = begin; next != end; ++next) {
-      if (bytesRemaining > itemsToWrite[*next]) {
-        // this will fit
-        bytesRemaining -= itemsToWrite[*next];
-      } else {
-        // won't fit, remove it
-        itemsToRemove.insert(*next);
-        *next = nsnull; /* wipe out the sbIMediaItem* */
-      }
-    }
-  }
-
-  // locate all the items we don't want to copy. remove these items after loop
-  // because removal can add requests to the queue and potentially invalidate
-  // the iterators
-  TransferRequestQueue requestItemRemoveQueue;
-  std::set<sbIMediaItem*,COMComparator>::iterator removalEnd = itemsToRemove.end();
-  for (request = batchStart; request != end; ++request) {
-    if ((*request)->type != TransferRequest::REQUEST_WRITE ||
-        removalEnd == itemsToRemove.find((*request)->item))
-    {
-      // not a write we don't want
-      (*request)->spaceEnsured = PR_TRUE;
-      continue;
-    }
-
-    requestItemRemoveQueue.push_back(*request);
-
-    // tell the user about it
-    nsCOMPtr<nsIWritableVariant> var =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = var->SetAsISupports((*request)->item);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_NOT_ENOUGH_FREESPACE,
-                                var,
-                                PR_TRUE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  { // Unlock so we don't deadlock during the Remove call when it pushes removes
-    sbAutoMonitorUnlock unlock(mRequestMonitor);
-    // remove all the items we don't want to copy from the songbird device library
-    TransferRequestQueue::iterator requestItemRemoveIter =
-                                     requestItemRemoveQueue.begin();
-    TransferRequestQueue::iterator requestItemRemoveEnd =
-                                     requestItemRemoveQueue.end();
-    for (; requestItemRemoveIter != requestItemRemoveEnd;
-           requestItemRemoveIter++) {
-      rv = (*requestItemRemoveIter)->list->Remove((*requestItemRemoveIter)->item);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  // remove the requests from the queue; however, since removing any one item
-  // will invalidate the iterators, we first shift all the valid ones to the
-  // start of the queue, then remove all the unwanted ones in a batch.  Good
-  // thing nsRefPtr has useful assignment.
-  // while doing this, we also use this as an opportunity to fix the batch
-  // counts.
-  { /* scope */
-    TransferRequestQueue::iterator
-      batchStart, // the start of the current batch
-      nextFree,   // the place to insert the next item
-      nextItem,   // the next item to examine
-      queueEnd = aQueue.end();
-    batchStart = nextFree = nextItem = aQueue.begin();
-    /* the request queue:
-      -------------------------------------------------------------------------
-         ^- batch start    ^- next free          ^- next item        queue end-^
-     */
-    int lastType = 0; /* reserved */
-    PRUint32 batchSize = 0;
-    for (;; ++nextItem) {
-      /* sanity checking; not really needed */
-      NS_ASSERTION(find_iterator(batchStart, queueEnd, nextFree) != queueEnd, "invalid iterator state");
-      NS_ASSERTION(find_iterator(nextFree, queueEnd, nextItem) != queueEnd, "invalid iterator state");
-      NS_ASSERTION(find_iterator(nextItem, queueEnd, queueEnd) == queueEnd, "invalid iterator state");
-
-      bool remove = (nextItem != queueEnd) &&
-                      (removalEnd != itemsToRemove.find((*nextItem)->item) ||
-                       removalEnd != itemsToRemove.find((*nextItem)->list));
-
-      if (remove) {
-        // go to the next item; don't fix up batch counts, so that we end up
-        // merging requests
-        continue;
-      }
-
-      int newType = 0;
-      if (nextItem != queueEnd) {
-        newType = (*nextItem)->IsCountable() ? (*nextItem)->type : 0;
-      } else {
-        // at the end of queue; force a type change
-        newType = lastType + 1;
-      }
-      if ((lastType != 0) &&
-          (newType != 0) &&
-          (lastType != newType))
-      {
-        // the request type changed; need to fix up the batch counts
-        PRUint32 batchIndex = 1;
-        for (; batchStart != nextFree; ++batchStart) {
-          if ((*batchStart)->IsCountable()) {
-            NS_ASSERTION((*batchStart)->type == lastType,
-                         "Unexpected item type");
-            (*batchStart)->batchIndex = batchIndex;
-            (*batchStart)->batchCount = batchSize;
-            ++batchIndex;
-          }
-        }
-        NS_ASSERTION(batchIndex == batchSize + 1,
-                     "Unexpected ending batch index");
-        batchSize = 0;
-      }
-
-      if (nextItem == queueEnd) {
-        // end of queue
-        break;
-      }
-
-      if (newType != 0) {
-        // this is a countable request, possibly of a different type
-        lastType = newType;
-        ++batchSize;
-      }
-
-      if (nextFree != nextItem) {
-        // shift the request, if necessary
-        *nextFree = *nextItem;
-      }
-
-      ++nextFree;
-    }
-
-    LOG(("                        sbBaseDevice::EnsureSpaceForWrite - erasing %u items", std::distance(queueEnd, nextFree)));
-    aQueue.erase(nextFree, queueEnd);
-  }
-
-  LOG(("                        sbBaseDevice::EnsureSpaceForWrite--\n"));
   return NS_OK;
 }
 

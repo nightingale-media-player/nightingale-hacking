@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 STATIC_LIB = sbDeviceCore
 
 CPP_SRCS = sbBaseDevice.cpp \
+           sbDeviceEnsureSpaceForWrite.cpp \
            sbDeviceStatistics.cpp \
            sbDeviceUtils.cpp \
            sbLibraryListenerHelpers.cpp \
