@@ -131,8 +131,7 @@ PPDEFINES += $(if $(MEDIA_CORE_WMP), -DMEDIA_CORE_WMP=1) \
 PPDEFINES += $(if $(_MSC_VER), -D_MSC_VER=$(_MSC_VER))
 
 # define default extension architecture
-
-ifndef EXTENSION_ARCH
+ifndef EXTENSION_NO_BINARY_COMPONENTS
    ifeq (windows,$(SB_PLATFORM))
       EXTENSION_ARCH = WINNT_x86-msvc
    endif

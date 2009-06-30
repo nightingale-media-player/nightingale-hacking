@@ -975,7 +975,7 @@ ifdef EXTENSION_NAME
    ifdef XPI_NAME
       OUR_XPI_NAME = $(XPI_NAME)
    else
-      ifeq (noarch,$(strip $(EXTENSION_ARCH)))
+      ifdef EXTENSION_NO_BINARY_COMPONENTS
          OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug)
       else
          OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
