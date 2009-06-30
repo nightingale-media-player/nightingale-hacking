@@ -41,8 +41,6 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-const ARTWORK_NO_COVER = "chrome://songbird/skin/album-art/drop-target.png";
-
 
 /******************************************************************************
  *
