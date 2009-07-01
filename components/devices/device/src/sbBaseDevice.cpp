@@ -592,11 +592,13 @@ nsresult sbBaseDevice::GetFirstRequest(bool aRemove,
   }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (aRemove) {
-    mapIter->second.erase(queueIter);
-  }
   *retval = queueIter->get();
   NS_ADDREF(*retval);
+  
+  if (aRemove) {
+    mapIter->second.erase(queueIter);
+    mLastRequestPriority = PR_INT32_MIN;
+  }
   
   return NS_OK;
 }
@@ -3961,12 +3963,10 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                                profiles, 
                                                aProfile);
     NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
   }
-  else {
-    // No acceptable transcoding profile available
-    return NS_ERROR_NOT_AVAILABLE;
-  }
-  
+  // No acceptable transcoding profile available
+  return NS_ERROR_NOT_AVAILABLE;
 }
 
 /* void Format(); */
