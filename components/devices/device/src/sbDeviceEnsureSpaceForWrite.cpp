@@ -145,7 +145,7 @@ sbDeviceEnsureSpaceForWrite::BuildItemsToWrite() {
 
     mTotalLength += contentLength;
     LOG(("r(%p) i(%p) sbBaseDevice::EnsureSpaceForWrite - size %lld\n",
-         request, request->item, contentLength));
+         (void*)request, (void*)(request->item), contentLength));
 
     mItemsToWrite[request->item] = BatchLink(++order, contentLength, iter);
   }
