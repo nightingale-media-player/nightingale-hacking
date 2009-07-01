@@ -144,7 +144,7 @@ do_GetProxyForObject(nsIEventTarget * aTarget,
                      void ** aProxyObject)
 {
   return do_GetProxyForObject(aTarget,
-                              T::COMTypeInfo<int>::kIID,
+                              NS_GET_TEMPLATE_IID(T),
                               aObj,
                               aProxyType,
                               aProxyObject);
