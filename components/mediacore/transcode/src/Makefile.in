@@ -31,17 +31,38 @@ include $(DEPTH)/build/autodefs.mk
 
 DYNAMIC_LIB = sbTranscodeModule
 
-CPP_SRCS = sbTranscodeManager.cpp \
+CPP_SRCS = sbTranscodeAlbumArt.cpp \
+           sbTranscodeManager.cpp \
            sbTranscodeModule.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/transcode/public \
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
+                     $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/mediacore/metadata/manager/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/imglib2 \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/mimetype \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
+                              components/moz/threads/src/sbMozThreads \
+
 
 LIBSONGBIRD_COMPONENT = SongbirdTranscodeComponent
 

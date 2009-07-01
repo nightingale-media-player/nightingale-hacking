@@ -29,7 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbITranscodeJob.idl \
+XPIDL_SRCS = sbITranscodeAlbumArt.idl \
+             sbITranscodeJob.idl \
              sbITranscodeBatchJob.idl \
              sbITranscodeImage.idl \
              sbITranscodeProfile.idl \

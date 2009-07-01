@@ -31,9 +31,11 @@
 
 #include <nsIGenericFactory.h>
 #include "sbTranscodeManager.h"
+#include "sbTranscodeAlbumArt.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbTranscodeManager,
         sbTranscodeManager::GetSingleton)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeAlbumArt);
 
 static nsModuleComponentInfo components[] =
 {
@@ -42,6 +44,12 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_TRANSCODEMANAGER_CID,
     SONGBIRD_TRANSCODEMANAGER_CONTRACTID,
     sbTranscodeManagerConstructor
+  },
+  {
+    SONGBIRD_TRANSCODEALBUMART_CLASSNAME,
+    SONGBIRD_TRANSCODEALBUMART_CID,
+    SONGBIRD_TRANSCODEALBUMART_CONTRACTID,
+    sbTranscodeAlbumArtConstructor
   }
 };
 
