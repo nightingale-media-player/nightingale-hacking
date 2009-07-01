@@ -32,7 +32,6 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS += base \
            $(NULL)
 
-# preedTODO : fix this
 ifeq (windows,$(SB_PLATFORM))
    SUBDIRS += win32
 endif

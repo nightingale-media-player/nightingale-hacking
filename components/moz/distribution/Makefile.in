@@ -29,15 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# don't use SONGBIRD_JSMODULES because we need to rename the file too
+include $(topsrcdir)/build/rules.mk
 
 libs:: $(SONGBIRD_JSMODULESDIR)/Distribution.jsm
 
 $(SONGBIRD_JSMODULESDIR)/Distribution.jsm: $(topsrcdir)/dependencies/vendor/mozbrowser/components/distribution.js
-ifeq (,$(wildcard $(SONGBIRD_JSMODULESDIR)))
-	$(MKDIR) $(SONGBIRD_JSMODULESDIR)
-endif
 	$(INSTALL_FILE) $< $@
-
-include $(topsrcdir)/build/rules.mk
-

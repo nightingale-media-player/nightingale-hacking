@@ -22,10 +22,10 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -33,7 +33,6 @@ XPIDL_SRCS = sbILastFmWebServices.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLastFm.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 EXTENSION_STAGE_DIR = ../.xpistage
 

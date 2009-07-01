@@ -27,11 +27,10 @@ topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-SUBDIRS = \
-  static \
-  $(NULL)
-
 include $(DEPTH)/build/autodefs.mk
+
+SUBDIRS = static \
+          $(NULL)
 
 DYNAMIC_LIB = sbLibraryManager
 
@@ -43,25 +42,25 @@ CPP_SRCS = sbLibraryConstraints.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/property/public \
-               $(topsrcdir)/components/library/base/src/static/ \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/library/base/src \
-               $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/rdf \
-               $(NULL)
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/library/base/src/static/ \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/rdf \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/library/base/src/static/sbLibraryUtils \
-  components/moz/strings/src/sbMozStringUtils \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdLibraryManager
 

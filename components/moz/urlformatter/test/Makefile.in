@@ -31,8 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = urlformatter
 
-SONGBIRD_TESTS = \
-                 $(srcdir)/head_urlformatter.js \
+SONGBIRD_TESTS = $(srcdir)/head_urlformatter.js \
                  $(srcdir)/test_updateparams.js \
                  $(NULL)
 

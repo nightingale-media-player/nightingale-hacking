@@ -35,28 +35,24 @@ CPP_SRCS = sbMediaExportITunesAgentComponent.cpp \
            sbMediaExportITunesAgentService.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/mediaexport/public \
-               $(topsrcdir)/components/include \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(MOZSDK_INCLUDE_DIR)/string \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediaexport/public \
+                     $(topsrcdir)/components/include \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  # Needed for nsILocalFileMac.h
-  CPP_INCLUDES += /Developer/Headers/FlatCarbon \
-                  $(NULL)
+   # Needed for nsILocalFileMac.h
+   CPP_EXTRA_INCLUDES += /Developer/Headers/FlatCarbon \
+                         $(NULL)
  
-  DYNAMIC_LIB_EXTRA_FLAGS += -mmacosx-version-min=10.4 \
-                             -framework ApplicationServices \
-                             -framework CoreServices \
-                             $(NULL)
+   DYNAMIC_LIB_EXTRA_FLAGS += -mmacosx-version-min=10.4 \
+                              -framework ApplicationServices \
+                              -framework CoreServices \
+                              $(NULL)
 endif
 
 LIBSONGBIRD_COMPONENT = SongbirdMediaExportITunesAgentComponent

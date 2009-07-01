@@ -33,7 +33,7 @@ SUBDIRS = taglib \
           $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-  SUBDIRS += wma
+   SUBDIRS += wma
 endif
 
 include $(topsrcdir)/build/rules.mk

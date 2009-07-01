@@ -29,9 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = \
-                 $(NULL)
-
 XPIDL_SRCS = sbIServicePaneService.idl \
              sbIBookmarks.idl \
              sbIDeviceServicePaneService.idl \
@@ -39,7 +36,6 @@ XPIDL_SRCS = sbIServicePaneService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbServicePane.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbServicePane
 

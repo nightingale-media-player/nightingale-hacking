@@ -33,7 +33,6 @@ XPIDL_SRCS = sbIDeviceMarshall.idl \
              $(NULL)
 
 XPIDL_MODULE = sbDeviceMarshall.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbDeviceMarshall
 

@@ -1,12 +1,10 @@
+#preedTODO: add copyright
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
-
-# the name of our component
-target_name = mashTape
 
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Amazon.js \
                           $(srcdir)/Digg.js \

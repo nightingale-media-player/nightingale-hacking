@@ -35,13 +35,10 @@ CPP_SRCS = sbDOMEventWrapper.cpp \
            sbDOMEventUtilsModule.cpp \
            $(NULL)
 
-CPP_INCLUDES = $(DEPTH)/components/moz/domevents/public \
-               $(MOZSDK_INCLUDE_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/content \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/nspr \
-               $(MOZSDK_INCLUDE_DIR)/xpcom \
-               $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/moz/domevents/public \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(NULL)
 
 IS_COMPONENT = 1
 

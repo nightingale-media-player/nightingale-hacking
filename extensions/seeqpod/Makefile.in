@@ -22,10 +22,10 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../..
+DEPTH = ../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -43,9 +43,6 @@ EXTENSION_MIN_VER = 1.3.0a
 EXTENSION_MAX_VER = 1.3.0b1
 EXTENSION_UUID = {ab4bf7ab-0100-b748-a82c-a0a467773cca}
 
-#JAR_MANIFEST = jar.mn
-#JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
+CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)
 
 include $(topsrcdir)/build/rules.mk
-
-CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)

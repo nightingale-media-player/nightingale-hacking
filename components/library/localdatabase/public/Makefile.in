@@ -51,7 +51,6 @@ XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
                  $(NULL)
 
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbLocalDatabaseLibrary
 

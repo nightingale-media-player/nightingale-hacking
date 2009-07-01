@@ -298,6 +298,11 @@ $(XPIDL_TYPELIBS): %.xpt: %.idl
 # xpt_link clobbers the file in the process of trying to link it, and 
 # fails anyway.
 
+# Allow the makefile to explicitely overide the xpts they want linked, but most
+# every consumer wants the default behavior ("all of them").
+
+XPIDL_MODULE_TYPELIBS ?= $(XPIDL_TYPELIBS)
+
 $(XPIDL_MODULE): $(XPIDL_MODULE_TYPELIBS)
 ifneq ($(strip $(XPIDL_MODULE)),$(strip $(XPIDL_MODULE_TYPELIBS)))
 	$(XPTLINK) $(XPIDL_MODULE) $(XPIDL_MODULE_TYPELIBS)
@@ -983,7 +988,11 @@ ifdef EXTENSION_NAME
    endif
 endif
 
-#preedTODO; set INSTALL_EXTENSION to 1 if debug, unless that's disabled
+ifdef DEBUG
+   ifneq (1,$(DISABLE_EXTENSION_DEBUG_INSTALLATION))
+      INSTALL_EXTENSION = 1
+   endif
+endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \

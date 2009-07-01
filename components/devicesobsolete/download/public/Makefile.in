@@ -36,7 +36,6 @@ XPIDL_SRCS = sbIDownloadDevice.idl \
              $(NULL)
 
 XPIDL_MODULE = sbDownloadDevice.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbDownloadDevice
 

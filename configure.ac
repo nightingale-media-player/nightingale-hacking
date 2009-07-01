@@ -453,6 +453,8 @@ AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
 
 AC_CHECK_PROGS(TAR, ${TAR} gtar tar)
 
+AC_CHECK_PROGS(TOUCH, ${TOUCH} touch, "")
+
 AC_CHECK_PROG(UNZIP, unzip, unzip)
 if test -z "$UNZIP"; then AC_MSG_ERROR(Unzip not found); fi
 
@@ -605,7 +607,7 @@ case "$SB_PLATFORM" in
                     if test -z "$MSMANIFEST_TOOL_VERSION"; then
                             AC_MSG_WARN([Unknown version of the Microsoft (R) Manifest Tool.])
                     fi
-                    MSMANIFEST_TOOL=1
+                    MSMANIFEST_TOOL="mt"
                     unset MSMT_TOOL
             else
                     AC_MSG_ERROR([Microsoft (R) Manifest Tool must be in your \$PATH.])

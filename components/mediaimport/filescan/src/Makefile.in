@@ -36,32 +36,32 @@ CPP_SRCS = sbFileScan.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/mediaimport/filescan/public \
-               $(topsrcdir)/components/include \
-               $(MOZSDK_INCLUDE_DIR)/rdf \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/xultmpl \
-               $(MOZSDK_INCLUDE_DIR)/content \
-               $(MOZSDK_INCLUDE_DIR)/widget \
-               $(MOZSDK_INCLUDE_DIR)/layout \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(DEPTH)/components/mediaimport/filescan/public \
+                     $(topsrcdir)/components/include \
+                     $(MOZSDK_INCLUDE_DIR)/rdf \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/xultmpl \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/widget \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs \
-                               unicharutil_external_s \
-                               $(NULL)
+   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs \
+                                unicharutil_external_s \
+                                $(NULL)
 endif
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 LIBSONGBIRD_COMPONENT = SongbirdFileScanComponent

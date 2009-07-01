@@ -34,7 +34,6 @@ XPIDL_SRCS = sbIMediaExportAgentService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMediaExportService.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbMediaExportService
 

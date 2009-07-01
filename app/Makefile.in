@@ -54,11 +54,8 @@ SUBDIRS = branding \
           $(NULL)
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
+
 include $(topsrcdir)/build/rules.mk
 
-autoreg:
-	touch $(SONGBIRD_DISTDIR)/.autoreg
-
-libs:: autoreg
-
-.PHONY: autoreg
+libs::
+	$(TOUCH) $(SONGBIRD_DISTDIR)/.autoreg

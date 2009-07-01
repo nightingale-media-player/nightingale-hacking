@@ -22,10 +22,10 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../..
+DEPTH = ../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
@@ -40,10 +40,5 @@ EXTENSION_UUID = $(EXTENSION_NAME)@extensions.mook.moz.googlepages.com
 EXTENSION_DIR  = .
 # where do we want to build it into (over there)
 EXTENSION_STAGE_DIR = ./.xpistage
-
-# Set this to 1 to install the extension
-ifdef DEBUG
-   INSTALL_EXTENSION = 1
-endif
 
 include $(topsrcdir)/build/rules.mk

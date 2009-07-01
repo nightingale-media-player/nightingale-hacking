@@ -34,20 +34,19 @@ STATIC_LIB = devicebase
 CPP_SRCS = DeviceBase.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = \
- $(DEPTH)/components/devicesobsolete/base/public \
- $(DEPTH)/components/dbengine/public \
- $(DEPTH)/components/library/base/public \
- $(DEPTH)/components/library/localdatabase/public \
- $(topsrcdir)/components/library/localdatabase/src \
- $(DEPTH)/components/property/public \
- $(topsrcdir)/components/property/src \
- $(MOZSDK_INCLUDE_DIR)/docshell \
- $(MOZSDK_INCLUDE_DIR)/rdf \
- $(MOZSDK_INCLUDE_DIR)/rdfutil \
- $(MOZSDK_INCLUDE_DIR)/necko \
- $(MOZSDK_INCLUDE_DIR)/unicharutil \
- $(MOZSDK_IDL_DIR) \
- $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/devicesobsolete/base/public \
+                     $(DEPTH)/components/dbengine/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(topsrcdir)/components/library/localdatabase/src \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/docshell \
+                     $(MOZSDK_INCLUDE_DIR)/rdf \
+                     $(MOZSDK_INCLUDE_DIR)/rdfutil \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 include $(topsrcdir)/build/rules.mk

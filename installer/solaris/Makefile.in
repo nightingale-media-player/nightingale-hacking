@@ -26,6 +26,7 @@ DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
+
 include $(DEPTH)/build/autodefs.mk
 
 ifdef SONGBIRD_OFFICIAL
@@ -49,9 +50,9 @@ SONGBIRD_DIST = $(topsrcdir)/TRADEMARK.txt \
                 $(NULL)
 
 SHELL_EXECUTE = $(topsrcdir)/installer/$(SB_PLATFORM)/make-installer.sh \
-                  $(SB_PLATFORM)-$(SB_ARCH) \
-                  $(SB_MILESTONE) \
-                  $(SB_BUILD_NUMBER) \
-                  $(INSTALLER_README)
+                $(SB_PLATFORM)-$(SB_ARCH) \
+                $(SB_MILESTONE) \
+                $(SB_BUILD_NUMBER) \
+                $(INSTALLER_README)
 
 include $(topsrcdir)/build/rules.mk

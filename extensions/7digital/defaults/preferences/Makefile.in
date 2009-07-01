@@ -23,10 +23,10 @@
 #
 
 
-DEPTH     = ../../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -37,9 +37,5 @@ EXTENSION_STAGE_DIR = ../../.xpistage
 
 include $(topsrcdir)/build/rules.mk
 
-libs:: extinstall
-
-extinstall:
+libs::
 	$(INSTALL_FILE) $(EXTRA_SCRIPT_COMPONENTS) $(SONGBIRD_PREFERENCESDIR)
-
-.PHONY: extinstall

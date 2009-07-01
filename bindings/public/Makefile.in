@@ -36,7 +36,6 @@ XPIDL_SRCS = sbITabBrowser.idl \
              $(NULL)
 
 XPIDL_MODULE = sbWidgets.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbWidgets
 

@@ -70,15 +70,15 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/moz/strings/src/sbMozStringUtils \
-  components/library/base/src/static/sbLibraryUtils \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+ components/moz/strings/src/sbMozStringUtils \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 IS_COMPONENT = 1

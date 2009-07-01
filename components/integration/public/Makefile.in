@@ -40,7 +40,6 @@ XPIDL_SRCS = IWindowCloak.idl \
              $(NULL)
              
 XPIDL_MODULE = sbIntegration.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbIntegration
 

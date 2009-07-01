@@ -36,18 +36,18 @@ CPP_SRCS = MetadataHandlerWMA.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
-               $(DEPS_DIR)/wmpsdk/include \
-               $(DEPTH)/components/property/public \
-               $(topsrcdir)/components/moz/include \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/streams/src \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threads/src/ \
-               $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(DEPS_DIR)/wmpsdk/include \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/moz/include \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/streams/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src/ \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
                             WMVCORE \
@@ -57,9 +57,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
 IS_COMPONENT = 1
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/moz/streams/src/sbMozStreams \
-  components/moz/strings/src/sbMozStringUtils \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+ components/moz/streams/src/sbMozStreams \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 include $(topsrcdir)/build/rules.mk

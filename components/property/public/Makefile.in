@@ -41,7 +41,6 @@ XPIDL_SRCS = sbIPropertyArray.idl \
              $(NULL)
 
 XPIDL_MODULE = sbProperties.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbProperties
 

@@ -22,58 +22,56 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../../../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
-
-GST_VERSION=0.10
-GLIB_VERSION=2.0
 
 STATIC_LIB = sbMetadataGstreamer
 
 CPP_SRCS = sbGStreamerMetadataHandler.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = \
-      $(topsrcdir)/components/include \
-      $(DEPTH)/components/mediacore/metadata/manager/public \
-      $(topsrcdir)/components/mediacore/base/src \
-      $(DEPTH)/components/property/public \
-      $(topsrcdir)/components/property/src \
-      $(DEPTH)/components/mediacore/base/public \
-      $(DEPTH)/components/mediacore/gstreamer/public \
-      $(topsrcdir)/components/mediacore/gstreamer/src \
-      $(MOZSDK_INCLUDE_DIR)/dom \
-      $(MOZSDK_INCLUDE_DIR)/intl \
-      $(MOZSDK_INCLUDE_DIR)/necko \
-      $(NULL)
+CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
+                     $(DEPTH)/components/mediacore/metadata/manager/public \
+                     $(topsrcdir)/components/mediacore/base/src \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/property/src \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediacore/gstreamer/public \
+                     $(topsrcdir)/components/mediacore/gstreamer/src \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(NULL)
 
 ifdef MEDIA_CORE_GST_SYSTEM
-  CPP_EXTRA_FLAGS = -DGST_SYSTEM=1 \
-                    $(GSTREAMER_CFLAGS) \
-                    $(NULL)
-
-  CPP_RAW_INCLUDES = $(GSTREAMER_CFLAGS) \
-                     $(GLIB_CFLAGS) \
+   CPP_EXTRA_FLAGS = -DGST_SYSTEM=1 \
+                     $(GSTREAMER_CFLAGS) \
                      $(NULL)
-else
-  CPP_EXTRA_INCLUDES += $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
-                       $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
-                       $(NULL)
 
-  ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
-    # macosx or windows
-    CPP_EXTRA_INCLUDES += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
-                          $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+   CPP_RAW_INCLUDES = $(GSTREAMER_CFLAGS) \
+                      $(GLIB_CFLAGS) \
+                      $(NULL)
+else
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+    $(NULL)
+
+   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+      # macosx or windows
+      CPP_EXTRA_INCLUDES += \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+       $(NULL)
+   else
+      # everything else
+      CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
                           $(NULL)
-  else
-    # everything else
-    CPP_RAW_INCLUDES += $(GLIB_CFLAGS) \
-                        $(NULL)
-  endif
+   endif
 endif
 
 include $(topsrcdir)/build/rules.mk

@@ -33,8 +33,5 @@ XPIDL_SRCS = sbIDirectoryImportService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbDirectoryImportService.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
-
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk

@@ -33,12 +33,12 @@ CPP_SRCS = sbBaseDeviceController.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/controller/public \
-               $(DEPTH)/components/devices/manager/public \
-               $(DEPTH)/components/devices/marshall/public \
-               $(topsrcdir)/components/devices/base/src \
-               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(NULL)
+                     $(DEPTH)/components/devices/controller/public \
+                     $(DEPTH)/components/devices/manager/public \
+                     $(DEPTH)/components/devices/marshall/public \
+                     $(topsrcdir)/components/devices/base/src \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(NULL)
 
 STATIC_LIB = sbDeviceController
 

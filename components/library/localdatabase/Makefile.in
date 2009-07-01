@@ -33,7 +33,7 @@ SUBDIRS = content \
           $(NULL)
 
 ifdef SB_ENABLE_LIBRARY_PERF
-  SUBDIRS += perf
+   SUBDIRS += perf
 endif
 
 include $(topsrcdir)/build/rules.mk

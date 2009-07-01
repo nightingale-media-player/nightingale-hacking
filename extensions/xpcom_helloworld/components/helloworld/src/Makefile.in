@@ -37,9 +37,9 @@ CPP_SRCS = sbHelloWorldModule.cpp \
 # include the headers generated from our IDL, plus bits of the XULRunner SDK
 # that we're using
 CPP_EXTRA_INCLUDES = \
-   $(DEPTH)/extensions/xpcom_helloworld/components/helloworld/public \
-   $(MOZSDK_IDL_DIR) \
-   $(NULL)
+ $(DEPTH)/extensions/xpcom_helloworld/components/helloworld/public \
+ $(MOZSDK_IDL_DIR) \
+ $(NULL)
 
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
@@ -49,18 +49,15 @@ IS_COMPONENT = 1
 DYNAMIC_LIB = sbHelloWorld
 
 ifeq ($(SB_PLATFORM), windows)
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               $(NULL)
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
+                                $(NULL)
 endif
 
 ifeq ($(SB_PLATFORM), macosx)
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
 # put this in our staging directory
 EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/xpcom_helloworld/.xpistage
 
 include $(topsrcdir)/build/rules.mk
-
-libs::
-	$(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_COMPONENTSDIR)

@@ -1,3 +1,4 @@
+# preedTODO: add copyright.
 DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
@@ -9,8 +10,5 @@ TARGET_COMPONENTS_DIR = ../.xpistage/modules
 
 include $(topsrcdir)/build/rules.mk
 
-libs:: extinstall
-
-extinstall:
-	$(MKDIR) $(TARGET_COMPONENTS_DIR)
-	$(INSTALL_FILE) $(srcdir)/*.jsm $(TARGET_COMPONENTS_DIR)
+SONGBIRD_COMPONENTS = $(srcdir)/mtUtils.js
+                      $(NULL)

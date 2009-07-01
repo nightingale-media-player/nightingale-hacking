@@ -25,7 +25,8 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @top_srcdir@/components/mediacore/base/src
+VPATH = @srcdir@ \
+        @top_srcdir@/components/mediacore/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -79,9 +80,9 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-   components/moz/strings/src/sbMozStringUtils \
-   components/moz/threads/src/sbMozThreads \
-   $(NULL)
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediacoreManager
 

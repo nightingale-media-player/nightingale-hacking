@@ -46,11 +46,9 @@ WATCHFOLDER_TEST_FILES := $(shell cd $(WATCHFOLDER_TEST_FILE_ROOT) && \
  ! -path '*.svn*' \
  ! -name 'Makefile.in')
 
-export::
-ifeq (1,$(SB_ENABLE_TESTS))
-	$(MKDIR) $(WATCHFOLDER_TESTDIR)
-	cd $(WATCHFOLDER_TEST_FILE_ROOT) && $(CP) -P -f -p --parents $(WATCHFOLDER_TEST_FILES) $(WATCHFOLDER_TESTDIR)
-endif
+CREATEDIRS = $(WATCHFOLDER_TESTDIR)
 
 include $(topsrcdir)/build/rules.mk
 
+export::
+	cd $(WATCHFOLDER_TEST_FILE_ROOT) && $(CP) -P -f -p --parents $(WATCHFOLDER_TEST_FILES) $(WATCHFOLDER_TESTDIR)

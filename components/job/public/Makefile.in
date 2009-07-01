@@ -37,7 +37,6 @@ XPIDL_SRCS = sbIJobProgress.idl \
              $(NULL)
 
 XPIDL_MODULE = sbJob.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbJob
 

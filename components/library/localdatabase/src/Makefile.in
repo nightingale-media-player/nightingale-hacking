@@ -25,7 +25,8 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @top_srcdir@/components/library/base/src/
+VPATH = @srcdir@ \
+        @top_srcdir@/components/library/base/src/
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -34,17 +35,19 @@ DYNAMIC_LIB = sbLocalDatabaseLibrary
 XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
                  $(NULL)
 
-XPIDL_HEADER_SRCS = $(DEPTH)/components/mediacore/base/public/sbIMediacoreEvent.idl \
-                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventTarget.idl \
-                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventListener.idl \
-                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreManager.idl \
-                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreSequencer.idl \
-                    $(DEPTH)/components/mediacore/base/public/sbIMediacoreStatus.idl \
-                    $(NULL)
+XPIDL_HEADER_SRCS = \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreEvent.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventTarget.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreEventListener.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreManager.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreSequencer.idl \
+ $(DEPTH)/components/mediacore/base/public/sbIMediacoreStatus.idl \
+ $(NULL)
 
 # preedTODO: fix the basename call
-XPIDL_EXTRA_FLAGS = -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
-                    $(NULL)                     
+XPIDL_EXTRA_FLAGS = \
+ -o $(DEPTH)/components/mediacore/base/public/`basename $(@:.h=)` \
+ $(NULL)                     
 
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
@@ -80,60 +83,60 @@ CPP_SRCS = sbLocalDatabaseModule.cpp \
 CPP_SRCS += sbLibraryChangeset.cpp
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/job/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/library/localdatabase/public \
-               $(DEPTH)/components/mediacore/base/public \
-               $(DEPTH)/components/metrics/public \
-               $(DEPTH)/components/moz/strings/components/public \
-               $(DEPTH)/components/playlistplayback/public \
-               $(DEPTH)/components/property/public \
-               $(DEPTH)/components/sqlbuilder/public \
-               $(MOZSDK_IDL_DIR) \
-               $(MOZSDK_INCLUDE_DIR)/appcomps \
-               $(MOZSDK_INCLUDE_DIR)/content \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
-               $(MOZSDK_INCLUDE_DIR)/gfx \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/layout \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(SQLITE_DIR)/include \
-               $(topsrcdir)/components/dbengine/src \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/library/base/src \
-               $(topsrcdir)/components/library/base/src/static \
-               $(topsrcdir)/components/library/localdatabase/src \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threadpoolservice/src \
-               $(topsrcdir)/components/moz/threads/src \
-               $(topsrcdir)/components/property/src \
-               $(topsrcdir)/components/sqlbuilder/src \
-               $(NULL)
+                     $(DEPTH)/components/devices/base/public \
+                     $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/metrics/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/playlistplayback/public \
+                     $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/sqlbuilder/public \
+                     $(MOZSDK_IDL_DIR) \
+                     $(MOZSDK_INCLUDE_DIR)/appcomps \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(SQLITE_DIR)/include \
+                     $(topsrcdir)/components/dbengine/src \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/library/localdatabase/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threadpoolservice/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/property/src \
+                     $(topsrcdir)/components/sqlbuilder/src \
+                     $(NULL)
 
 ifdef DEBUG
-CPP_EXTRA_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
-                $(MOZSDK_INCLUDE_DIR)/js \
-                $(NULL)
+   CPP_EXTRA_INCLUDES += $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                         $(MOZSDK_INCLUDE_DIR)/js \
+                         $(NULL)
 endif
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/moz/strings/src/sbMozStringUtils \
-  components/library/base/src/static/sbLibraryUtils \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+ components/moz/strings/src/sbMozStringUtils \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 LIBSONGBIRD_COMPONENT = SongbirdLocalDatabaseLibraryModule

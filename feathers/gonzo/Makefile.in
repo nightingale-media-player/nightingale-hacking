@@ -48,10 +48,6 @@ RESOURCES_PPFLAGS = -DEXTENSION_VER=$(EXTENSION_VER) \
 
 include $(topsrcdir)/build/rules.mk
 
-libs:: extinstall
-
-extinstall :
+libs::
 	@$(MKDIR) $(EXTENSION_DIR)
 	$(INSTALL_FILE) $(srcdir)/chrome.manifest $(EXTENSION_DIR)
-
-.PHONY : extinstall

@@ -37,9 +37,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# the name of our component
-target_name = Songkick
-
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Songkick.js \
                           $(NULL)
 

@@ -31,11 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = $(NULL)
 
-# XXXMook: TODO: rename this once deviceobsolete is gone
-
-#XPIDL_MODULE = sbDeviceManager2.xpt
-#XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
-
 LIBSONGBIRD_COMPONENT = sbDeviceManager
 
 include $(topsrcdir)/build/rules.mk

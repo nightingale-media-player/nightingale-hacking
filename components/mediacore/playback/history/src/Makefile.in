@@ -22,10 +22,10 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../../../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -36,34 +36,32 @@ CPP_SRCS = sbPlaybackHistoryEntry.cpp \
            sbPlaybackHistoryModule.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = \
-      $(DEPTH)/components/dbengine/public \
-      $(topsrcdir)/components/dbengine/src \
-      $(topsrcdir)/components/include \
-      $(DEPTH)/components/mediacore/base/public \
-      $(DEPTH)/components/mediacore/playback/history/public \
-      $(DEPTH)/components/metrics/public \
-      $(DEPTH)/components/library/base/public \
-      $(topsrcdir)/components/library/base/src \
-      $(topsrcdir)/components/moz/strings/src \
-      $(topsrcdir)/components/moz/xpcom/src \
-      $(topsrcdir)/components/moz/threads/src \
-      $(DEPTH)/components/property/public \
-      $(topsrcdir)/components/property/src \
-      $(DEPTH)/components/sqlbuilder/public \
-      $(topsrcdir)/components/sqlbuilder/src \
-      $(MOZSDK_INCLUDE_DIR)/necko \
-      $(MOZSDK_INCLUDE_DIR)/pref \
-      $(MOZSDK_IDL_DIR) \
-      $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
+                     $(topsrcdir)/components/dbengine/src \
+                     $(topsrcdir)/components/include \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediacore/playback/history/public \
+                     $(DEPTH)/components/metrics/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(topsrcdir)/components/library/base/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/property/src \
+                     $(DEPTH)/components/sqlbuilder/public \
+                     $(topsrcdir)/components/sqlbuilder/src \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-DYNAMIC_LIB_STATIC_IMPORTS += \
-   components/moz/strings/src/sbMozStringUtils \
-   components/moz/threads/src/sbMozThreads \
-	$(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
+                              components/moz/threads/src/sbMozThreads \
+                              $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdPlaybackHistoryServiceModule
 IS_COMPONENT = 1

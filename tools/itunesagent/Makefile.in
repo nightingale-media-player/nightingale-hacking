@@ -25,7 +25,8 @@
 DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @srcdir@/$(SB_PLATFORM)
+VPATH = @srcdir@ \
+        @srcdir@/$(SB_PLATFORM)
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -63,25 +64,26 @@ ifeq (windows,$(SB_PLATFORM))
                                   $(NULL)
 
    CPP_INCLUDES += $(srcdir)/windows \
-                $(DEPS_DIR)/private \
-                $(NULL)
+                   $(DEPS_DIR)/private \
+                   $(NULL)
                                                
-CPP_SRCS += sbIDispatchPtr.cpp \
-            sbiTunesAgentAppWatcher.cpp \
-            sbiTunesAgentWindowsProcessor.cpp \
-            sbiTunesLibrary.cpp \
-            winmain.cpp \
-            $(NULL)
+   CPP_SRCS += sbIDispatchPtr.cpp \
+               sbiTunesAgentAppWatcher.cpp \
+               sbiTunesAgentWindowsProcessor.cpp \
+               sbiTunesLibrary.cpp \
+               winmain.cpp \
+               $(NULL)
 
-endif # SB_PLATFORM = windows
+   FINAL_TARGET = $(SONGBIRD_DISTDIR)
+endif
 
-ifeq (macosx,$(SB_PLATFORM))
+ifeq (macosx,$(SB_PLATFORM)) # {
    include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 
    CMM_INCLUDES += $(srcdir) \
-                $(srcdir)/macosx \
-                $(MOZSDK_INCLUDE_DIR) \
-                $(NULL)
+                   $(srcdir)/macosx \
+                   $(MOZSDK_INCLUDE_DIR) \
+                   $(NULL)
 
    CMM_SRCS += sbiTunesAgentMacProcessor.mm \
                sbiTunesLibrary.mm \
@@ -109,24 +111,13 @@ ifeq (macosx,$(SB_PLATFORM))
                            -framework Carbon \
                            -Wl,-syslibroot,$(SB_MACOSX_SDK_10_4)
 
-   SIMPLE_PROGRAM_OBJS += $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
-                          $(C_SRCS:.c=$(OBJ_SUFFIX)) \
-                          $(NULL)
-
    MAC_APP_DIR = $(SONGBIRD_DISTDIR)/$(SIMPLE_PROGRAM).app
 
    SONGBIRD_PP_DIR = $(CURDIR)
    SONGBIRD_PP_RESOURCES = $(srcdir)/$(SB_PLATFORM)/Info.plist.in
    PPDEFINES += $(SB_BRANDING_DEFINES) 
-endif # SB_PLATFORM = macosx
-
-SIMPLE_PROGRAM_OBJS += $(CPP_SRCS:.cpp=$(OBJ_SUFFIX))
-
-ifeq (macosx,$(SB_PLATFORM))
    FINAL_TARGET = $(MAC_APP_DIR)/Contents/MacOS/
-else
-   FINAL_TARGET = $(SONGBIRD_DISTDIR)
-endif
+endif # }
 
 include $(topsrcdir)/build/rules.mk
 
@@ -138,7 +129,7 @@ ifeq (macosx,$(SB_PLATFORM))
 	# would require a bunch of other infra work
 	$(MKDIR) $(MAC_APP_DIR)
 	$(CP) -R $(srcdir)/$(SB_PLATFORM)/appskeleton/* $(MAC_APP_DIR)
-	$(FIND) $(MAC_APP_DIR) -depth -type d -name '.svn' -exec rm -rf {} \;
+	$(FIND) $(MAC_APP_DIR) -depth -type d -name '.svn' -exec $(RM) -r {} \;
 	$(INSTALL_FILE) $(CURDIR)/Info.plist $(MAC_APP_DIR)/Contents/
 	$(INSTALL_FILE) $(topsrcdir)/app/branding/songbird.icns $(MAC_APP_DIR)/Contents/Resources
 endif

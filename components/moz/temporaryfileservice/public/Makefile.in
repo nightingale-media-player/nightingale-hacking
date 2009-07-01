@@ -33,7 +33,6 @@ XPIDL_SRCS = sbITemporaryFileService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbTemporaryFileService.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbTemporaryFileService
 

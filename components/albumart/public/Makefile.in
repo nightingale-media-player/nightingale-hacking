@@ -29,9 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = \
-                 $(NULL)
-
 XPIDL_SRCS = sbIAlbumArtFetcherSet.idl \
              sbIAlbumArtFetcher.idl \
              sbIAlbumArtListener.idl \
@@ -40,7 +37,6 @@ XPIDL_SRCS = sbIAlbumArtFetcherSet.idl \
              $(NULL)
 
 XPIDL_MODULE = sbAlbumArt.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbAlbumArt
 

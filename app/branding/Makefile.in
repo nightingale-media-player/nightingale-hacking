@@ -29,33 +29,30 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ICON_TARGET_DIR = $(SONGBIRD_CHROMEDIR)/icons/default
-ICON_SOURCE_NAME = songbird
-ICON_TARGET_NAME = default
-
 ifeq (windows,$(SB_PLATFORM))
-   ICON_EXTENSION = ico
+   ICON_EXTENSION = .ico
 endif
 ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
-   ICON_EXTENSION = xpm
+   ICON_EXTENSION = .xpm
 endif
 ifeq (macosx,$(SB_PLATFORM))
-   ICON_EXTENSION = icns
+   ICON_EXTENSION = .icns
 endif
-
-libs:: install-icons
 
 ifeq (macosx,$(SB_PLATFORM))
-   SONGBIRD_DIST = $(srcdir)/songbird.icns
+   ICON_TGT_DIR = $(SONGBIRD_DIST)
+else
+   ICON_TGT_DIR = $(SONGBIRD_CHROMEDIR)/icons/default
 endif
 
-install-icons:: 
-ifneq (macosx,$(SB_PLATFORM))
-	$(MKDIR) $(ICON_TARGET_DIR)
-	$(INSTALL_FILE) $(srcdir)/songbird.$(ICON_EXTENSION) \
-    $(ICON_TARGET_DIR)/$(ICON_TARGET_NAME).$(ICON_EXTENSION)
-endif
+ICON_SRC_NAME = songbird$(ICON_EXTENSION)
+ICON_TGT_NAME = default$(ICON_EXTENSION)
+
+CREATEDIRS = $(ICON_TGT_DIR)
 
 JAR_MANIFEST = jar.mn.in
 
 include $(topsrcdir)/build/rules.mk
+
+export::
+	$(INSTALL_FILE) $(srcdir)/$(ICON_SRC_NAME) $(ICON_TGT_DIR)/$(ICON_TGT_NAME)

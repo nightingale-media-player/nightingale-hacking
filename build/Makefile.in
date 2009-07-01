@@ -35,6 +35,7 @@ AWK_EXPR = '/\#define MOZILLA_VERSION_U/ { gsub(/"/, "", $$3); print $$3 }'
 export:: sbBuildInfo.mk
 
 export SONGBIRD_OFFICIAL
+
 sbBuildInfo.mk: FORCE
 	$(RM) -f $@
 	$(PYTHON) $(srcdir)/make-buildinfo.py -i $(srcdir)/$@.in -o $@ \

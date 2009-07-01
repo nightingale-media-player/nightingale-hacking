@@ -25,7 +25,9 @@
 DEPTH = ../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @srcdir@/$(SB_PLATFORM)
+VPATH = @srcdir@ \
+        @srcdir@/$(SB_PLATFORM)
+
 include $(DEPTH)/build/autodefs.mk
 
 CPP_SRCS = main.cpp \
@@ -43,18 +45,20 @@ SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
                               $(NULL)
 
 ifeq ($(SB_PLATFORM),windows)
-SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
-                               version \
-                               $(NULL)
-CPP_SRCS += icon.cpp \
-            versioninfo.cpp \
-            commands.cpp \
-            winmain.cpp \
-            $(NULL)
+   SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
+                                  version \
+                                  $(NULL)
+   CPP_SRCS += icon.cpp \
+               versioninfo.cpp \
+               commands.cpp \
+               winmain.cpp \
+               $(NULL)
 
-SUBDIRS += windows/tests \
-           $(NULL)
-endif # SB_PLATFORM = windows
+   ifneq (,$(SB_ENABLE_TESTS))
+      SUBDIRS += windows/tests
+   endif
+endif
+
 
 # This executable gets called by the updater, so having a _d in the debug
 # version will make it impossible to use a debug disthelper and test udpates

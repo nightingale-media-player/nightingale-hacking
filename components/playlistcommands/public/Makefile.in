@@ -34,7 +34,6 @@ XPIDL_SRCS = sbIPlaylistCommands.idl \
              $(NULL)
 
 XPIDL_MODULE = sbPlaylistCommands.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbPlaylistCommands
 

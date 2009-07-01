@@ -40,7 +40,6 @@ XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
                  $(NULL)
 
 XPIDL_MODULE = sbMetadataModule.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbMetadataModule
 

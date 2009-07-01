@@ -34,6 +34,5 @@ XPIDL_SRCS = sbITagLibChannelFileIOManager.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMetadataHandlerTaglib.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 include $(topsrcdir)/build/rules.mk

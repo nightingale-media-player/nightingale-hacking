@@ -52,13 +52,13 @@ UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLA
 #preedTODO fix this
 ifeq (macosx,$(SB_PLATFORM))
    UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
-else
+endif
 ifeq (windows,$(SB_PLATFORM))
 # windows needs relative paths, all others need the full path
    UPD_TARGET_DIR = $(DEPTH)/$(DISTDIRNAME)
-else
-   UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
 endif
+ifeq (linux$(SB_PLATFORM))
+   UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
 endif
 
 #
@@ -114,9 +114,9 @@ complete-snippet::
 #
 
 ifeq (.mar,$(suffix $(SRC_BUILD)))
-PARTIAL_PATCH_TASK = partial-patch-unwrap
+   PARTIAL_PATCH_TASK = partial-patch-unwrap
 else
-PARTIAL_PATCH_TASK = partial-patch-no-unwrap
+   PARTIAL_PATCH_TASK = partial-patch-no-unwrap
 endif
 
 partial-patch:: $(PARTIAL_PATCH_TASK)

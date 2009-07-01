@@ -43,30 +43,30 @@ CPP_SRCS = sbiTunesXMLParser.cpp \
 
            
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
-               $(DEPTH)/components/albumart/public \
-               $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/dataremote/public \
-               $(DEPTH)/components/job/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/library/localdatabase/public \
-               $(DEPTH)/components/moz/strings/components/public \
-               $(DEPTH)/components/mediacore/base/public \
-               $(DEPTH)/components/mediaimport/library/base/public \
-               $(DEPTH)/components/mediaimport/library/itunes/public \
-               $(DEPTH)/components/property/public \
-               $(DEPTH)/components/testharness/public \
-               $(topsrcdir)/components/library/base/src/static \
-               $(topsrcdir)/components/moz/streams/src \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threads/src \
-               $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/uconv \
-               $(MOZSDK_INCLUDE_DIR)/xml \
-               $(MOZSDK_INCLUDE_DIR)/xulapp \
-               $(NULL)
+                     $(DEPTH)/components/albumart/public \
+                     $(DEPTH)/components/dbengine/public \
+                     $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediaimport/library/base/public \
+                     $(DEPTH)/components/mediaimport/library/itunes/public \
+                     $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/testharness/public \
+                     $(topsrcdir)/components/library/base/src/static \
+                     $(topsrcdir)/components/moz/streams/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/uconv \
+                     $(MOZSDK_INCLUDE_DIR)/xml \
+                     $(MOZSDK_INCLUDE_DIR)/xulapp \
+                     $(NULL)
                
 IS_COMPONENT = 1
 
@@ -82,11 +82,11 @@ DYNAMIC_LIB_IMPORT_EXTRA_PATHS = \
  $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/library/base/src/static/sbLibraryUtils \
-  components/moz/streams/src/sbMozStreams \
-  components/moz/strings/src/sbMozStringUtils \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/streams/src/sbMozStreams \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdiTunesImporterComponent
 

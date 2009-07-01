@@ -36,33 +36,33 @@ CPP_SRCS = DownloadDevice.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/src\
-               $(DEPTH)/components/devicesobsolete/base/public \
-               $(DEPTH)/components/devicesobsolete/download/public \
-               $(DEPTH)/components/dataremote/public \
-               $(DEPTH)/components/job/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/library/localdatabase/public \
-               $(DEPTH)/components/mediacore/metadata/manager/public \
-               $(DEPTH)/components/property/public \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/property/src \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/layout \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/uconv \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/uriloader \
-               $(MOZSDK_INCLUDE_DIR)/webbrowserpersist \
-               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(DEPTH)/components/devicesobsolete/base/public \
+                     $(DEPTH)/components/devicesobsolete/download/public \
+                     $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/metadata/manager/public \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/uconv \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/uriloader \
+                     $(MOZSDK_INCLUDE_DIR)/webbrowserpersist \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS = \
-   components/devicesobsolete/base/src/devicebase \
-   components/moz/strings/src/sbMozStringUtils \
-   $(NULL)
+ components/devicesobsolete/base/src/devicebase \
+ components/moz/strings/src/sbMozStringUtils \
+ $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
@@ -76,8 +76,8 @@ ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
 endif
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
-                               $(NULL)
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s \
+                                $(NULL)
 endif
 
 JS_COMPONENTS = $(srcdir)/sbAutoDownloader.js \

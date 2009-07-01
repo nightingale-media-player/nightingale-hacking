@@ -31,34 +31,35 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = metadatamanager/files
 
-#preedTODO: fix this; should be $(wildcard) so we get actual files here
-SONGBIRD_TESTS = $(srcdir)/*.mp3 \
-                 $(srcdir)/*.wma \
-                 $(srcdir)/*.flac \
-                 $(srcdir)/*.mpc \
-                 $(srcdir)/*.m4a \
-                 $(srcdir)/*.ogg \
-                 $(srcdir)/*.oga \
-                 $(srcdir)/*.aac \
-                 $(srcdir)/*.spx \
-                 $(srcdir)/*.tta \
-                 $(srcdir)/*.wav \
-                 $(srcdir)/*.wv \
-                 $(srcdir)/*.png \
-                 $(NULL)
-#                 $(srcdir)/*.ogv \
-#                 $(srcdir)/*.ogm \
-#                 $(srcdir)/*.ogx \
-#                 $(srcdir)/*.mov \
-#                 $(srcdir)/*.m4p \
-#                 $(srcdir)/*.m4v \
-#                 $(srcdir)/*.wmv \
-#                 $(srcdir)/*.asf \
-#                 $(srcdir)/*.asx \
-#                 $(srcdir)/*.avi \
+TEST_FILE_EXTENSIONS = mp3 \
+                       wma \
+                       flac \
+                       mpc \
+                       m4a \
+                       ogg \
+                       oga \
+                       aac \
+                       spx \
+                       tta \
+                       wav \
+                       wv \
+                       png \
+                       $(NULL)
 
+# Future file extensions to test (video)
+#                 ogv \
+#                 ogm \
+#                 ogx \
+#                 mov \
+#                 m4p \
+#                 m4v \
+#                 wmv \
+#                 asf \
+#                 asx \
+#                 avi \
+#                 $(NULL)
 
-
+SONGBIRD_TESTS = $(foreach e,$(TEST_FILE_EXTENSIONS),$(wildcard $(srcdir)/*.$e))
 
 include $(topsrcdir)/build/rules.mk
 

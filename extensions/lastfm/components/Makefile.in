@@ -1,19 +1,17 @@
-DEPTH     = ../../..
+#preedTODO: add copyright
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbLastFm.js $(srcdir)/sbLastFmProtocol.js
+EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbLastFm.js \
+                          $(srcdir)/sbLastFmProtocol.js \
+                          $(NULL)
 
 TARGET_COMPONENTS_DIR = ../.xpistage/components
 
+SONGBIRD_COMPONENTS += $(EXTRA_SCRIPT_COMPONENTS)
+
 include $(topsrcdir)/build/rules.mk
-
-libs:: extinstall
-
-extinstall:
-	$(MKDIR) $(TARGET_COMPONENTS_DIR)
-	$(INSTALL_FILE) $(EXTRA_SCRIPT_COMPONENTS) $(TARGET_COMPONENTS_DIR)
-

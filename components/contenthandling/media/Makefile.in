@@ -29,17 +29,15 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-CPP_SRCS = \
-  sbMediaSniffer.cpp \
-  sbMediaSnifferModule.cpp \
-  $(NULL)
+CPP_SRCS = sbMediaSniffer.cpp \
+           sbMediaSnifferModule.cpp \
+           $(NULL)
 
-CPP_EXTRA_INCLUDES = \
-  $(DEPTH)/components/mediacore/base/public \
-  $(DEPTH)/components/mediaimport/playlist/public \
-  $(MOZSDK_INCLUDE_DIR)/necko \
-  $(MOZSDK_INCLUDE_DIR)/uriloader \
-  $(NULL)
+CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediaimport/playlist/public \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/uriloader \
+                     $(NULL)
 
 DYNAMIC_LIB = sbMediaSniffer
 
@@ -49,8 +47,8 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 LIBSONGBIRD_COMPONENT = sbMediaSniffer
 
 SONGBIRD_COMPONENTS = \
-  $(COMPONENTS_DIR)/contenthandling/media/sbMediaContentListener.js \
-  $(NULL)
+ $(COMPONENTS_DIR)/contenthandling/media/sbMediaContentListener.js \
+ $(NULL)
 
 IS_COMPONENT = 1
 

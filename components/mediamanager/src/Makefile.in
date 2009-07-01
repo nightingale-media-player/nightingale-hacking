@@ -38,45 +38,45 @@ CPP_SRCS = sbMediaManagerModule.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediamanager/public \
-               $(DEPTH)/components/library/base/public \
-               $(DEPTH)/components/property/public \
-               $(DEPTH)/components/job/public \
-               $(DEPTH)/components/watchfolder/public \
-               $(DEPTH)/components/controller/public \
-               $(DEPTH)/components/mediacore/metadata/manager/public \
-               $(DEPTH)/components/moz/strings/components/public \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threads/src \
-               $(DEPTH)/components/moz/prompter/public \
-               $(topsrcdir)/components/property/src \
-               $(topsrcdir)/components/library/base/src/static \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/xpconnect \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(NULL)
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/property/public \
+                     $(DEPTH)/components/job/public \
+                     $(DEPTH)/components/watchfolder/public \
+                     $(DEPTH)/components/controller/public \
+                     $(DEPTH)/components/mediacore/metadata/manager/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(DEPTH)/components/moz/prompter/public \
+                     $(topsrcdir)/components/property/src \
+                     $(topsrcdir)/components/library/base/src/static \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (macosx,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 endif
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
+   DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
-  DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/library/base/src/static/sbLibraryUtils \
-  components/moz/strings/src/sbMozStringUtils \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediaManager
 

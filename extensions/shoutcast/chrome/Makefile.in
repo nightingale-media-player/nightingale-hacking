@@ -22,10 +22,10 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
@@ -33,6 +33,7 @@ include $(DEPTH)/build/autodefs.mk
 EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/shoutcast/.xpistage
 
 JAR_MANIFEST = jar.mn.in
+
 # and put it into our extension stage directory
 JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 

@@ -38,25 +38,26 @@ CPP_SRCS = MetadataHandlerTaglib.cpp \
            TaglibChannelFileIOManager.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediacore/metadata/manager/public \
-               $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
-               $(DEPTH)/components/albumart/public \
-               $(DEPTH)/components/property/public \
-               $(DEPTH)/components/moz/proxy/public \
-               $(topsrcdir)/components/mediacore/metadata/manager/src \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threads/src \
-               $(topsrcdir)/components/property/src \
-               $(topsrcdir)/components/include \
-               $(srcdir) \
-               $(MOZSDK_INCLUDE_DIR)/crashreporter \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/mimetype \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/chardet \
-               $(MOZSDK_INCLUDE_DIR)/uconv \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+CPP_EXTRA_INCLUDES = \
+ $(DEPTH)/components/mediacore/metadata/manager/public \
+ $(DEPTH)/components/mediacore/metadata/handler/taglib/public \
+ $(DEPTH)/components/albumart/public \
+ $(DEPTH)/components/property/public \
+ $(DEPTH)/components/moz/proxy/public \
+ $(topsrcdir)/components/mediacore/metadata/manager/src \
+ $(topsrcdir)/components/moz/strings/src \
+ $(topsrcdir)/components/moz/threads/src \
+ $(topsrcdir)/components/property/src \
+ $(topsrcdir)/components/include \
+ $(srcdir) \
+ $(MOZSDK_INCLUDE_DIR)/crashreporter \
+ $(MOZSDK_INCLUDE_DIR)/necko \
+ $(MOZSDK_INCLUDE_DIR)/mimetype \
+ $(MOZSDK_INCLUDE_DIR)/unicharutil \
+ $(MOZSDK_INCLUDE_DIR)/chardet \
+ $(MOZSDK_INCLUDE_DIR)/uconv \
+ $(MOZSDK_IDL_DIR) \
+ $(NULL)
 
 CPP_EXTRA_DEFS = -DTAGLIB_STATIC_LIB \
                  $(NULL)
@@ -66,25 +67,25 @@ DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
                             $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
-   components/moz/strings/src/sbMozStringUtils \
-   components/moz/threads/src/sbMozThreads \
-   $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag_s \
-   $(NULL)
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag_s \
+ $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-  DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib
-else # SB_PLATFORM == windows
-  DYNAMIC_LIB_EXTRA_IMPORTS += z
-endif # SB_PLATFORM == windows
+   DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib
+else 
+   DYNAMIC_LIB_EXTRA_IMPORTS += z
+endif
 
 ifeq (linux,$(SB_PLATFORM))
-  # Search in xulrunner directory at runtime for shared libraries.
-  DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
+   # Search in xulrunner directory at runtime for shared libraries.
+   DYNAMIC_LIB_EXTRA_FLAGS += -Wl,-rpath,\$$ORIGIN/../xulrunner
 endif
 
 ifeq (solaris,$(SB_PLATFORM))
-  # Search in xulrunner directory at runtime for shared libraries.
-  DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
+   # Search in xulrunner directory at runtime for shared libraries.
+   DYNAMIC_LIB_EXTRA_FLAGS += -R'$$ORIGIN/../xulrunner'
 endif
 
 CPP_EXTRA_INCLUDES += $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/include/taglib \

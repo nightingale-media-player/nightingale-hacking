@@ -33,7 +33,6 @@ XPIDL_SRCS = sbIFileDownloader.idl \
              $(NULL)
 
 XPIDL_MODULE = sbFileDownloader.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbFileDownloader
 

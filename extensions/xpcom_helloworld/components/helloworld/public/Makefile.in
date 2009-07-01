@@ -35,7 +35,6 @@ XPIDL_SRCS = sbIHelloWorld.idl \
 
 # into this xpt (an xpt is like a compiled IDL read at runtime)
 XPIDL_MODULE = sbHelloWorld.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 # and put it into the extension
 EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/xpcom_helloworld/.xpistage

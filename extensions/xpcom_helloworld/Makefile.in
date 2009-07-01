@@ -22,10 +22,10 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../..
+DEPTH = ../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
@@ -46,11 +46,6 @@ EXTENSION_STAGE_DIR = ./.xpistage
 EXTENSION_VER = 1.0.0
 EXTENSION_MIN_VER = 1.3.0a
 EXTENSION_MAX_VER = 1.3.0b1
-
-# Set this to 1 to install the extension
-ifdef DEBUG
-   INSTALL_EXTENSION = 1
-endif
 
 CREATEDIRS = $(SONGBIRD_COMPONENTSDIR)
 

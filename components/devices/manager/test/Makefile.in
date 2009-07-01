@@ -35,8 +35,8 @@ CPP_SRCS = sbDeviceEventTesterModule.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
-               $(DEPTH)/components/devices/manager/public \
-               $(NULL)
+                     $(DEPTH)/components/devices/manager/public \
+                     $(NULL)
 
 DYNAMIC_LIB = sbDeviceEventTester
 
@@ -47,8 +47,7 @@ IS_COMPONENT = 1
 
 SONGBIRD_TEST_COMPONENT = devicemanager
 
-SONGBIRD_TESTS = \
-                 $(srcdir)/test_controller_registrar.js \
+SONGBIRD_TESTS = $(srcdir)/test_controller_registrar.js \
                  $(srcdir)/test_device_registrar.js \
                  $(srcdir)/test_event_target.js \
                  $(NULL)

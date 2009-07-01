@@ -35,9 +35,12 @@ SONGBIRD_TESTS = $(srcdir)/head_mediaexportservice.js \
                  $(srcdir)/test_mediaexportservice.js \
                  $(NULL)
 
-SUBDIRS = $(NULL)
-ifdef SB_ENABLE_TESTS 
-  SUBDIRS = files
+MEDIAEXPORT_TESTDIR = $(SONGBIRD_TESTSDIR)/mediaexport/files
+
+export::
+ifeq (1_1,$(SB_ENABLE_TESTS)_$(SB_ENABLE_TEST_HARNESS))
+	$(MKDIR) $(MEDIAEXPORT_TESTDIR)
+	$(INSTALL_FILE) $(wildcard $(srcdir)/files/*.mp3) $(MEDIAEXPORT_TESTDIR)
 endif
 
 include $(topsrcdir)/build/rules.mk

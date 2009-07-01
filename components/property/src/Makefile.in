@@ -73,29 +73,26 @@ CPP_SRCS = sbPropertyManager.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/property/public \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/enumeration/src \
-               $(topsrcdir)/components/include \
-               $(DEPTH)/components/intl/public \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/layout \
-               $(MOZSDK_INCLUDE_DIR)/locale \
-               $(MOZSDK_INCLUDE_DIR)/places \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/enumeration/src \
+                     $(topsrcdir)/components/include \
+                     $(DEPTH)/components/intl/public \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/locale \
+                     $(MOZSDK_INCLUDE_DIR)/places \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq (solaris,$(SB_PLATFORM))
-  DYNAMIC_LIB_EXTRA_IMPORTS += m
+   DYNAMIC_LIB_EXTRA_IMPORTS += m
 endif
-
-DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
-                           $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \

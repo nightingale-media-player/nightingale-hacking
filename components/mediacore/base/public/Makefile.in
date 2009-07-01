@@ -55,7 +55,6 @@ XPIDL_SRCS = sbIMediacore.idl \
              $(NULL)
 
 XPIDL_MODULE = sbMediacoreBase.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbMediacoreBase
 

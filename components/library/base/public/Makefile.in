@@ -59,7 +59,6 @@ XPIDL_SRCS = sbICascadeFilterSet.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLibraryBase.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbLibraryBase
 

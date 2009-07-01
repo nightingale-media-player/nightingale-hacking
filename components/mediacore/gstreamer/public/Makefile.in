@@ -22,26 +22,24 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = \
-    sbIGStreamerService.idl \
-    sbIGStreamerMediacore.idl \
-    sbIGStreamerRTPStreamer.idl \
-    sbIGStreamerPipeline.idl \
-    $(NULL)
+XPIDL_SRCS = sbIGStreamerService.idl \
+             sbIGStreamerMediacore.idl \
+             sbIGStreamerRTPStreamer.idl \
+             sbIGStreamerPipeline.idl \
+             $(NULL)
 
 XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
                  $(topsrcdir)/components/mediacore/transcode/public \
                  $(NULL)
 
 XPIDL_MODULE = sbGStreamerMediacore.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 include $(topsrcdir)/build/rules.mk
 

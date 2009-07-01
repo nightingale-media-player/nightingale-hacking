@@ -28,10 +28,10 @@
 #   Daniel Glazman <daniel.glazman@disruptive-innovations.com>
 #   Matthew Gertner <matthew@allpeers.com>
 
-DEPTH     = ../../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 

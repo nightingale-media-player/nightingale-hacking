@@ -36,9 +36,14 @@ SONGBIRD_TESTS = $(srcdir)/head_mediamanager.js \
                  $(srcdir)/test_mediafilemanager.js \
                  $(srcdir)/test_mediamanagementjob.js \
                  $(srcdir)/test_mediamanagementjobenum.js \
+                 $(srcdir)/files/TestFile1.mp3 \
+                 $(srcdir)/files/TestFile2.mp3 \
+                 $(srcdir)/files/TestFile3.mp3 \
+                 $(srcdir)/files/TestFile4.mp3 \
+                 $(srcdir)/files/TestFile5.mp3 \
+                 $(srcdir)/files/TestFile6.mp3 \
+                 $(srcdir)/files/TestFile7.mp3 \
+                 $(srcdir)/files/TestFile8.mp3 \
                  $(NULL)
-
-SUBDIRS = files \
-          $(NULL)
 
 include $(topsrcdir)/build/rules.mk

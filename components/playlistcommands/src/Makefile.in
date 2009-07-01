@@ -36,21 +36,21 @@ CPP_SRCS = PlaylistCommandsManager.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/playlistcommands/public \
-               $(MOZSDK_INCLUDE_DIR)/rdf \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/xultmpl \
-               $(MOZSDK_INCLUDE_DIR)/content \
-               $(MOZSDK_INCLUDE_DIR)/widget \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(MOZSDK_INCLUDE_DIR)/rdf \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/xultmpl \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/widget \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 ifeq ($(SB_PLATFORM), macosx)
-  DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
+   DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
 
 LIBSONGBIRD_COMPONENT = SongbirdPlaylistCommandsComponent

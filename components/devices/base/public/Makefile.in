@@ -53,7 +53,6 @@ XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
 
 # XXXMook: TODO: rename this once deviceobsolete is gone
 XPIDL_MODULE = sbDeviceBase2.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbDeviceBase
 

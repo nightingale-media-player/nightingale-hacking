@@ -33,7 +33,6 @@ XPIDL_SRCS = sbISQLBuilder.idl \
              $(NULL)
 
 XPIDL_MODULE = sbSQLBuilder.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbSQLBuilder
 

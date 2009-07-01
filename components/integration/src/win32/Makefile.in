@@ -24,38 +24,39 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @srcdir@/..
+VPATH = @srcdir@ \
+        @srcdir@/..
 
 include $(DEPTH)/build/autodefs.mk
 
 DYNAMIC_LIB = sbIntegration
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
-               $(DEPTH)/components/dataremote/public \
-               $(DEPTH)/components/devicesobsolete/manager/public \
-               $(DEPTH)/components/devicesobsolete/base/public \
-               $(DEPTH)/components/devicesobsolete/cd/public \
-               $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
-               $(COMPONENTS_DIR)/integration/src/win32 \
-               $(COMPONENTS_DIR)/devicesobsolete/base/src \
-               $(COMPONENTS_DIR)/devicesobsolete/cd/src \
-               $(MOZSDK_INCLUDE_DIR)/dom \
-               $(MOZSDK_INCLUDE_DIR)/gfx \
-               $(MOZSDK_INCLUDE_DIR)/accessibility \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/xultmpl \
-               $(MOZSDK_INCLUDE_DIR)/content \
-               $(MOZSDK_INCLUDE_DIR)/widget \
-               $(MOZSDK_INCLUDE_DIR)/docshell \
-               $(MOZSDK_INCLUDE_DIR)/layout \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/webbrwsr \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/devicesobsolete/manager/public \
+                     $(DEPTH)/components/devicesobsolete/base/public \
+                     $(DEPTH)/components/devicesobsolete/cd/public \
+                     $(DEPTH)/components/devicesobsolete/usb_mass_storage/public \
+                     $(COMPONENTS_DIR)/integration/src/win32 \
+                     $(COMPONENTS_DIR)/devicesobsolete/base/src \
+                     $(COMPONENTS_DIR)/devicesobsolete/cd/src \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/accessibility \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/xultmpl \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/widget \
+                     $(MOZSDK_INCLUDE_DIR)/docshell \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/webbrwsr \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4  \
                             ole32 \
-									 $(NULL)
+                            $(NULL)
 
 CPP_SRCS = MultiMonitor.cpp \
            WindowMinMax.cpp \
@@ -66,7 +67,7 @@ CPP_SRCS = MultiMonitor.cpp \
            sbNativeWindowManager.cpp \
            $(NULL)
 
-# From current_directory/..
+# From ..
 CPP_SRCS += NativeWindowFromNode.cpp \
             WindowCloak.cpp \
             WindowLayer.cpp \

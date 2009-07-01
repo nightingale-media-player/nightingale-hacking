@@ -29,14 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = \
-                 $(NULL)
-
 XPIDL_SRCS = sbILastFmWebServices.idl \
              $(NULL)
 
 XPIDL_MODULE = sbWebServicesLastFm.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbWebServicesLastFm
 

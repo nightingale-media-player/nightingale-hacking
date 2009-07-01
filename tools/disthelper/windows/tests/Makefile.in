@@ -25,7 +25,11 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @srcdir@/.. @srcdir@/../..
+VPATH = @srcdir@ \
+        @srcdir@/.. \
+        @srcdir@/../.. \
+        $(NULL)
+
 include $(DEPTH)/build/autodefs.mk
 
 CPP_SRCS = main.cpp \
@@ -62,7 +66,6 @@ SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
 DISABLE_IMPLICIT_NAMING = 1
 
 SIMPLE_PROGRAM = tests$(BIN_SUFFIX)
-
 
 NO_DIST_INSTALL = 1
 

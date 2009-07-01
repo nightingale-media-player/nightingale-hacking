@@ -25,7 +25,9 @@
 DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@ @srcdir@/.. @top_srcdir@/components/filesystemevents/base/src
+VPATH = @srcdir@ \
+        @srcdir@/.. \
+        @top_srcdir@/components/filesystemevents/base/src
 
 include $(DEPTH)/build/autodefs.mk
 
@@ -47,17 +49,17 @@ CPP_SRCS += sbBaseFileSystemWatcher.cpp \
             $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/filesystemevents/base/public \
-               $(topsrcdir)/components/filesystemevents \
-               $(topsrcdir)/components/filesystemevents/base/src \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/streams/src \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(topsrcdir)/components/filesystemevents \
+                     $(topsrcdir)/components/filesystemevents/base/src \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/streams/src \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
-                     $(NULL)
+                   $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
@@ -65,11 +67,10 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_EXTRA_FLAGS = $(GLIB_LIBS) \
                           $(NULL)
 
-DYNAMIC_LIB_STATIC_IMPORTS += \
-  components/moz/strings/src/sbMozStringUtils \
-  components/moz/streams/src/sbMozStreams \
-  components/moz/threads/src/sbMozThreads \
-  $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
+                              components/moz/streams/src/sbMozStreams \
+                              components/moz/threads/src/sbMozThreads \
+                              $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdFileSystem
 

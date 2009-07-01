@@ -36,7 +36,6 @@ XPIDL_SRCS = sbIDatabaseEngine.idl \
              $(NULL)
 
 XPIDL_MODULE = sbDatabaseEngine.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbDatabaseEngine
 

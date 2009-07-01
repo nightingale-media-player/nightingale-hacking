@@ -37,8 +37,7 @@ SONGBIRD_TESTS = $(srcdir)/test_mediapages.js \
 # If tests are enabled, build a stub extension in order
 # to verify the install.rdf reader.
 ifneq (,$(SB_ENABLE_TESTS))
-SUBDIRS = test-extension \
-          $(NULL)
+   SUBDIRS = test-extension
 endif
 
 include $(topsrcdir)/build/rules.mk

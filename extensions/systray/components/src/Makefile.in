@@ -35,63 +35,59 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# the name of our component
-target_name = systray
-
 # ~= mozilla build system's REQUIRES
-EXTRA_CPP_INCLUDES = \
-                     widget        \
-                     appshell      \
-                     docshell      \
-                     dom           \
-                     gfx           \
-                     imglib2       \
-                     necko         \
-                     content       \
-                     layout        \
-                     xuldoc        \
-                     locale        \
-                     thebes        \
+EXTRA_CPP_INCLUDES = widget \
+                     appshell \
+                     docshell \
+                     dom \
+                     gfx \
+                     imglib2 \
+                     necko \
+                     content \
+                     layout \
+                     xuldoc \
+                     locale \
+                     thebes \
                      $(NULL)
 
 CPP_SRCS = trayModule.cpp \
            $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-  CPP_SRCS +=  nsWindowUtilWin.cpp         \
-               nsSystemTrayServiceWin.cpp  \
-               nsImageToBitmap.cpp         \
-               $(NULL)
+   CPP_SRCS +=  nsWindowUtilWin.cpp \
+                nsSystemTrayServiceWin.cpp \
+                nsImageToBitmap.cpp \
+                $(NULL)
 
-  CPP_EXTRA_DEFS += -DnsString_h___ \
-                    -DnsAString_h___ \
-                    -DnsStringFwd_h___ \
-                    -DMOZ_INTERNAL_API \
-                    -DnsAFlatCString=nsACString \
-                    $(NULL)
-
-  CPP_EXTRA_FLAGS += -wd4311 -wd4312 -wd4244
-endif # SB_PLATFORM = windows
+   CPP_EXTRA_DEFS += -DnsString_h___ \
+                     -DnsAString_h___ \
+                     -DnsStringFwd_h___ \
+                     -DMOZ_INTERNAL_API \
+                     -DnsAFlatCString=nsACString \
+                     $(NULL)
+ 
+   CPP_EXTRA_FLAGS += -wd4311 \
+                      -wd4312 \
+                      -wd4244 \
+                      $(NULL)
+endif 
 
 ifeq (linux,$(SB_PLATFORM))
-  CPP_SRCS += nsSystemTrayServiceGTK.cpp \
-              nsSystemTrayIconGTK.cpp \
-              nsWindowUtilGTK.cpp \
-             $(NULL)
+   CPP_SRCS += nsSystemTrayServiceGTK.cpp \
+               nsSystemTrayIconGTK.cpp \
+               nsWindowUtilGTK.cpp \
+               $(NULL)
   
-  CPP_EXTRA_FLAGS += $(GTK_CFLAGS) \
-                     $(NULL)
+   CPP_EXTRA_FLAGS += $(GTK_CFLAGS) \
+                      $(NULL)
 
-  DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
-                            $(NULL)
-
-endif # SB_PLATFORM = linux
+   DYNAMIC_LIB_EXTRA_FLAGS = $(GTK_LIBS) \
+                             $(NULL)
+endif
 
 ifeq (,$(filter $(MOZ_WIDGET_TOOLKIT),windows gtk2))
-  CPPSRCS +=    \
-    nsSystemTrayService.cpp     \
-    $(NULL)
-endif # stub impl
+   CPPSRCS += nsSystemTrayService.cpp
+endif
 
 CPP_EXTRA_INCLUDES = ../public \
                      $(addprefix $(MOZSDK_INCLUDE_DIR)/,$(EXTRA_CPP_INCLUDES)) \

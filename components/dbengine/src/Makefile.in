@@ -32,52 +32,44 @@ include $(DEPTH)/build/autodefs.mk
 DYNAMIC_LIB = sbDBEngine
 
 # preedTODO investigate
-ifeq (windows,$(SB_PLATFORM))
-C_FLAGS = -nologo \
-          -W3 \
-          -WL \
-          -Zi \
-          -GS \
-          -c \
-          -TC \
-          -FI "mozilla-config.h" \
-          -FI "xpcom/xpcom-config.h" \
-          $(NULL)
-
-C_EXTRA_DEFS += -DOS_WIN=1 \
-                $(NULL)
-
-ARFLAGS = -NOLOGO \
-          -MACHINE:X86 \
-          -SUBSYSTEM:WINDOWS \
-          $(NULL)
-
-ifdef DEBUG
-  C_FLAGS += -Od \
+ifeq (windows,$(SB_PLATFORM)) #{ windows
+   C_FLAGS = -nologo \
+             -W3 \
+             -WL \
+             -Zi \
+             -GS \
+             -c \
+             -TC \
+             -FI "mozilla-config.h" \
+             -FI "xpcom/xpcom-config.h" \
              $(NULL)
-else
-  C_FLAGS += -Ox \
+
+   C_EXTRA_DEFS += -DOS_WIN=1 \
+                   $(NULL)
+
+   ARFLAGS = -NOLOGO \
+             -MACHINE:X86 \
+             -SUBSYSTEM:WINDOWS \
              $(NULL)
-endif
 
-ifneq ($(SB_USE_JEMALLOC),1)
-  ifdef DEBUG
-    C_FLAGS += -MTd
-  else
-    C_FLAGS += -MT
-  endif
-endif
+   ifdef DEBUG
+      C_FLAGS += -Od
+   else
+      C_FLAGS += -Ox
+   endif
 
-
-endif
+   ifneq (1,$(SB_USE_JEMALLOC))
+      C_FLAGS += -MT$(DEBUG:%=d)
+   endif
+endif #} windows
 
 ifeq (macosx, $(SB_PLATFORM))
    export MACOSX_DEPLOYMENT_TARGET=10.4
 endif
 
 ifdef SB_SQLITE_DEBUG
-  C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
-                  $(NULL)
+   C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
+                   $(NULL)
 endif
 
 C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
@@ -91,18 +83,18 @@ C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
                 $(NULL)
 
 ifeq (macosx, $(SB_PLATFORM))
-  C_EXTRA_DEFS += -DSQLITE_ENABLE_LOCKING_STYLE=1 \
-                  $(NULL)
+   C_EXTRA_DEFS += -DSQLITE_ENABLE_LOCKING_STYLE=1 \
+                   $(NULL)
 endif
 
 # If this is gcc, suppress some warnings when we compile sqlite
-ifeq (gcc, $(CC))
-  CFLAGS += -Wno-conversion \
-            -Wno-pointer-arith \
-            -Wno-cast-align \
-            -Wno-uninitialized \
-            -Wno-unused \
-            $(NULL)
+ifeq (gcc,$(CC))
+   C_EXTRA_FLAGS += -Wno-conversion \
+                    -Wno-pointer-arith \
+                    -Wno-cast-align \
+                    -Wno-uninitialized \
+                    -Wno-unused \
+                    $(NULL)
 endif
 
 C_SRCS = sqlite3.c \
@@ -120,33 +112,32 @@ CPP_SRCS = DatabaseEngineComponent.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(srcdir) \
-               $(DEPTH)/components/dbengine/public \
-               $(DEPTH)/components/moz/strings/components/public \
-               $(DEPTH)/components/moz/prompter/public \
-               $(DEPTH)/components/metrics/public \
-               $(topsrcdir)/components/include \
-               $(topsrcdir)/components/intl/src \
-               $(topsrcdir)/components/moz/strings/src \
-               $(topsrcdir)/components/moz/threadpoolservice/src \
-               $(topsrcdir)/components/moz/threads/src \
-               $(MOZSDK_INCLUDE_DIR)/appcomps \
-               $(MOZSDK_INCLUDE_DIR)/necko \
-               $(MOZSDK_INCLUDE_DIR)/xpconnect \
-               $(MOZSDK_INCLUDE_DIR)/unicharutil \
-               $(MOZSDK_INCLUDE_DIR)/locale \
-               $(MOZSDK_INCLUDE_DIR)/intl \
-               $(MOZSDK_INCLUDE_DIR)/pref \
-               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-               $(MOZSDK_IDL_DIR) \
-               $(NULL)
+                     $(DEPTH)/components/dbengine/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(DEPTH)/components/moz/prompter/public \
+                     $(DEPTH)/components/metrics/public \
+                     $(topsrcdir)/components/include \
+                     $(topsrcdir)/components/intl/src \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threadpoolservice/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(MOZSDK_INCLUDE_DIR)/appcomps \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
+                     $(MOZSDK_INCLUDE_DIR)/locale \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
                             
-DYNAMIC_LIB_STATIC_IMPORTS += \
-   components/moz/strings/src/sbMozStringUtils \
-   components/moz/threads/src/sbMozThreads \
-   $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
+                              components/moz/threads/src/sbMozThreads \
+                              $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_STATIC_IMPORTS += unicharutil_external_s
@@ -179,7 +170,8 @@ endif
 
 ifeq (macosx,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
-	                           -framework Cocoa
+                              -framework Cocoa \
+                              $(NULL)
 endif
 
 LIBSONGBIRD_COMPONENT = SongbirdDatabaseEngineComponent

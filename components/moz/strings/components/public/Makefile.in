@@ -34,7 +34,6 @@ XPIDL_SRCS = sbIStringBundleService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbStrings.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbStrings
 

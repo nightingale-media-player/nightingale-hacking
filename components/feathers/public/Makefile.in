@@ -36,10 +36,7 @@ XPIDL_SRCS = sbIFeathersManager.idl \
              $(NULL)
 
 XPIDL_MODULE = sbFeathers.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbFeathers
-
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk

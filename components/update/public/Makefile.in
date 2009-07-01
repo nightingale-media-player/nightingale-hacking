@@ -36,7 +36,6 @@ XPIDL_SRCS = sbIAddOnBundleUpdateService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbUpdate.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbUpdate
 

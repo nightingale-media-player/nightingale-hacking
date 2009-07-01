@@ -33,10 +33,7 @@ XPIDL_SRCS = sbIDisplayPanes.idl \
              $(NULL)
 
 XPIDL_MODULE = sbDisplayPanes.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbDisplayPanes
-
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk

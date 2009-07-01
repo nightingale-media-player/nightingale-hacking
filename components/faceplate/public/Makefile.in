@@ -35,10 +35,7 @@ XPIDL_SRCS = sbIFaceplatePane.idl \
              $(NULL)
 
 XPIDL_MODULE = sbFaceplate.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbFaceplate
-
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
 
 include $(topsrcdir)/build/rules.mk

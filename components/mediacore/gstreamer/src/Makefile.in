@@ -1,12 +1,14 @@
-DEPTH     = ../../../..
+#preedTODO: add copyright
+DEPTH  = ../../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@ @top_srcdir@/components/mediacore/base/src/
+srcdir = @srcdir@
+VPATH = @srcdir@ \
+        @top_srcdir@/components/mediacore/base/src/
 
 include $(DEPTH)/build/autodefs.mk
 
-GST_VERSION=0.10
-GLIB_VERSION=2.0
+GST_VERSION = 0.10
+GLIB_VERSION = 2.0
 
 DYNAMIC_LIB = sbGStreamerMediacore
 
@@ -46,59 +48,60 @@ ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
    CPP_SRCS += sbGStreamerPlatformGDK.cpp
 endif
 
-CPP_EXTRA_INCLUDES = \
-      $(topsrcdir)/components/include \
-      $(DEPTH)/components/library/base/public \
-      $(DEPTH)/components/mediacore/base/public \
-      $(topsrcdir)/components/mediacore/base/src \
-      $(DEPTH)/components/mediacore/gstreamer/public \
-      $(topsrcdir)/components/mediacore/gstreamer/src \
-      $(DEPTH)/components/mediacore/metadata/manager/public \
-      $(DEPTH)/components/mediacore/transcode/public \
-      $(DEPTH)/components/moz/strings/components/public \
-      $(topsrcdir)/components/moz/strings/src \
-      $(topsrcdir)/components/moz/threads/src \
-      $(DEPTH)/components/property/public \
-      $(topsrcdir)/components/property/src \
-      $(DEPTH)/components/job/public \
-      $(MOZSDK_INCLUDE_DIR)/layout \
-      $(MOZSDK_INCLUDE_DIR)/gfx \
-      $(MOZSDK_INCLUDE_DIR)/widget \
-      $(MOZSDK_INCLUDE_DIR)/content \
-      $(MOZSDK_INCLUDE_DIR)/necko \
-      $(MOZSDK_INCLUDE_DIR)/locale \
-      $(MOZSDK_INCLUDE_DIR)/dom \
-      $(MOZSDK_INCLUDE_DIR)/docshell \
-      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
-      $(MOZSDK_INCLUDE_DIR)/appshell \
-      $(MOZSDK_INCLUDE_DIR)/intl \
-      $(MOZSDK_INCLUDE_DIR)/pref \
-      $(MOZSDK_INCLUDE_DIR)/xpconnect \
-      $(MOZSDK_INCLUDE_DIR)/xulapp \
-      $(MOZSDK_IDL_DIR) \
-      $(NULL)
+CPP_EXTRA_INCLUDES = $(topsrcdir)/components/include \
+                     $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/mediacore/base/public \
+                     $(topsrcdir)/components/mediacore/base/src \
+                     $(DEPTH)/components/mediacore/gstreamer/public \
+                     $(topsrcdir)/components/mediacore/gstreamer/src \
+                     $(DEPTH)/components/mediacore/metadata/manager/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
+                     $(DEPTH)/components/moz/strings/components/public \
+                     $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/threads/src \
+                     $(DEPTH)/components/property/public \
+                     $(topsrcdir)/components/property/src \
+                     $(DEPTH)/components/job/public \
+                     $(MOZSDK_INCLUDE_DIR)/layout \
+                     $(MOZSDK_INCLUDE_DIR)/gfx \
+                     $(MOZSDK_INCLUDE_DIR)/widget \
+                     $(MOZSDK_INCLUDE_DIR)/content \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/locale \
+                     $(MOZSDK_INCLUDE_DIR)/dom \
+                     $(MOZSDK_INCLUDE_DIR)/docshell \
+                     $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/appshell \
+                     $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
+                     $(MOZSDK_INCLUDE_DIR)/xpconnect \
+                     $(MOZSDK_INCLUDE_DIR)/xulapp \
+                     $(MOZSDK_IDL_DIR) \
+                     $(NULL)
 
 ifdef MEDIA_CORE_GST_SYSTEM
-  CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
+   CPP_EXTRA_FLAGS = -DGST_SYSTEM=1
 
-  CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
+   CPP_RAW_INCLUDES += $(GSTREAMER_CFLAGS) \
                        $(GTK_CFLAGS) \
                        $(NULL)
 else
-  CPP_EXTRA_INCLUDES += $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
-                        $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
-                       $(NULL)
+   CPP_EXTRA_INCLUDES += \
+    $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+    $(DEPS_DIR)/gst-plugins-base/$(SB_CONFIGURATION)/include/gstreamer-$(GST_VERSION) \
+    $(NULL)
 
-  ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
-    # macosx or windows
-    CPP_EXTRA_INCLUDES += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
-                          $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+   ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
+      # macosx or windows
+      CPP_EXTRA_INCLUDES += \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-$(GLIB_VERSION) \
+       $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-$(GLIB_VERSION)/include \
+       $(NULL)
+   else
+      # everything else
+      CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
                           $(NULL)
-  else
-    # everything else
-    CPP_RAW_INCLUDES += $(GTK_CFLAGS) \
-                        $(NULL)
-  endif
+   endif
 endif
 
 ifeq (macosx, $(SB_PLATFORM))
@@ -107,41 +110,38 @@ endif
 
 # The dynamic gstreamer libs on windows have "-0" appended to their names
 ifeq (windows,$(SB_PLATFORM))
-  GST_LIB_SUFFIX = -0
+   GST_LIB_SUFFIX = -0
 endif
 
-DYNAMIC_LIB_EXTRA_IMPORTS = \
-      plds4 \
-      gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-      gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-      gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-      gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-      gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-      $(NULL)
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            gstpbutils-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstinterfaces-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstbase-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gstsdp-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            gsttag-$(GST_VERSION)$(GST_LIB_SUFFIX) \
+                            $(NULL)
 
-DYNAMIC_LIB_IMPORT_EXTRA_PATHS = \
-      $(DEPTH)/components/moz/strings/src \
-      $(NULL)
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \
+                                 $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS = \
-      components/moz/strings/src/sbMozStringUtils \
-      components/moz/threads/src/sbMozThreads \
-      $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d) \
-      $(NULL)
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d) \
+ $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only
 ifdef MEDIA_CORE_GST_SYSTEM
-  CPP_EXTRA_FLAGS += $(GSTREAMER_CFLAGS) \
-                     $(NULL)
+   CPP_EXTRA_FLAGS += $(GSTREAMER_CFLAGS) \
+                      $(NULL)
 
-  DYNAMIC_LIB_EXTRA_FLAGS = $(GSTREAMER_LIBS) \
-                            $(GTK_LIBS) \
-                            -lX11 \
-                            $(NULL)
+   DYNAMIC_LIB_EXTRA_FLAGS = $(GSTREAMER_LIBS) \
+                             $(GTK_LIBS) \
+                             -lX11 \
+                             $(NULL)
 else
-
    DYNAMIC_LIB_EXTRA_IMPORTS += gstreamer-$(GST_VERSION)$(GST_LIB_SUFFIX) \
-                                 $(NULL)
+                                $(NULL)
 
    DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
     $(DEPS_DIR)/gstreamer/$(SB_CONFIGURATION)/lib \
@@ -149,26 +149,26 @@ else
     $(NULL)
 
    ifeq (,$(filter-out macosx windows,$(SB_PLATFORM)))
-    # macosx or windows
-    DYNAMIC_LIB_EXTRA_IMPORTS += intl \
-                                 iconv \
-                                 glib-$(GLIB_VERSION) \
-                                 gmodule-$(GLIB_VERSION) \
-                                 gobject-$(GLIB_VERSION) \
-                                 gthread-$(GLIB_VERSION) \
-                                 $(NULL)
+      # macosx or windows
+      DYNAMIC_LIB_EXTRA_IMPORTS += intl \
+                                   iconv \
+                                   glib-$(GLIB_VERSION) \
+                                   gmodule-$(GLIB_VERSION) \
+                                   gobject-$(GLIB_VERSION) \
+                                   gthread-$(GLIB_VERSION) \
+                                   $(NULL)
 
-    DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
+      DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
        $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib \
        $(DEPS_DIR)/libiconv/$(SB_CONFIGURATION)/lib \
        $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib \
        $(NULL)
-  else
-    # everything else
-    DYNAMIC_LIB_EXTRA_FLAGS += $(GTK_LIBS) \
-                               -lX11 \
-                               $(NULL)
-  endif
+   else
+       # everything else
+       DYNAMIC_LIB_EXTRA_FLAGS += $(GTK_LIBS) \
+                                  -lX11 \
+                                  $(NULL)
+   endif
 endif
 
 ifeq (macosx,$(SB_PLATFORM))
