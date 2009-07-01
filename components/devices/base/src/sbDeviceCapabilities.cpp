@@ -399,6 +399,20 @@ sbDevCapRange::GetStep(PRInt32 *aStep)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
+  NS_ENSURE_ARG_POINTER(aInRange);
+  
+  if (mValues.Length() > 0) {
+    *aInRange = mValues.Contains(aValue);
+  }
+  else {
+    *aInRange = aValue <= mMax && aValue >= mMin &&
+               (mStep == 0 || ((aValue - mMin) % mStep == 0));
+  }
+  return NS_OK;
+}
+
 /*******************************************************************************
  * sbFormatTypeConstraint
  */

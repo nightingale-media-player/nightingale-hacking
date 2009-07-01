@@ -63,7 +63,7 @@ interface sbIImageSize : nsISupports
  * \note Ranges of supported values (for image/video sizes, bitrates, etc.)
  *
  */
-[scriptable, uuid(dbe196ba-391f-4feb-aea2-45dccd2c247b)]
+[scriptable, uuid(8A62D336-9489-46f3-BB16-AED90DA7F775)]
 interface sbIDevCapRange : nsISupports
 {
   void Initialize(in long aMin,
@@ -99,6 +99,8 @@ interface sbIDevCapRange : nsISupports
   /* \brief If non-zero, the range is not continuous, but instead only
      increments of 'step' are permitted */
   readonly attribute long step;
+  
+  boolean IsValueInRange(in long aValue);
 };
 
 %{C++

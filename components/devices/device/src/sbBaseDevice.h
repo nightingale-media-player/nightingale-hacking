@@ -436,7 +436,7 @@ protected:
   PRMonitor * mRequestMonitor;
   nsCOMPtr<nsITimer> mBatchEndTimer;
   PRInt32 mNextBatchID;
-
+  Batch mCurrentBatch;
 public:
   /**
    * The request queue type

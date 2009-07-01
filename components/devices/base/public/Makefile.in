@@ -29,8 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = sbIContentTypeFormat.idl \
-             sbIDevice.idl \
+XPIDL_SRCS = sbIDevice.idl \
              sbIDeviceCapabilities.idl \
              sbIDeviceCapabilitiesRegistrar.idl \
              sbIDeviceCompatibility.idl \

@@ -136,4 +136,18 @@ do_GetProxyForObject(nsIEventTarget *target,
   return rv;
 }
 
+template <class T>
+inline nsresult
+do_GetProxyForObject(nsIEventTarget * aTarget,
+                     T * aObj,
+                     PRInt32 aProxyType,
+                     void ** aProxyObject)
+{
+  return do_GetProxyForObject(aTarget,
+                              T::COMTypeInfo<int>::kIID,
+                              aObj,
+                              aProxyType,
+                              aProxyObject);
+}
+
 #endif /* __SB_PROXIEDCOMPONENTMANAGER_H__ */

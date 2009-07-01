@@ -74,6 +74,7 @@
 #include <sbITranscodeManager.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbPrefBranch.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
 #include <sbVariantUtils.h>
@@ -3950,19 +3951,11 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   rv = ProcessCapabilitiesRegistrars();
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsCOMPtr<sbITranscodeManager> tcManager = 
-    do_GetService(SONGBIRD_TRANSCODEMANAGER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<nsIArray> profiles;
-  rv = tcManager->GetTranscodeProfiles(getter_AddRefs(profiles));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
   if (mCapabilitiesRegistrar) {
     // This may return NS_ERROR_NOT_AVAILABLE or null if no transcoding is
     // required
     rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, 
-                                               profiles, 
+                                               this,
                                                aProfile);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
