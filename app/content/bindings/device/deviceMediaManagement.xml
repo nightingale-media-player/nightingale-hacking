@@ -45,7 +45,8 @@
    *****************************************************************************
    ************************************************************************* -->
 
-  <binding id="sb-device-management">
+  <binding id="sb-device-management"
+           extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
 
     <!-- ***********************************************************************
      *
@@ -63,8 +64,12 @@
         <xul:caption label="&device.settings.disk.label;"/>
         <xul:vbox>
           <xul:checkbox sbid="space_limit_enable"
-                        label="&device.settings.disk.limit.label;"/>
-          <xul:scale sbid="space_limit" class="indent" min="0" max="100"/>
+                        oncommand="toggleLimitSpaceCheckbox();"/>
+
+          <xul:spacer height="5"/>
+          <xul:scale sbid="space_limit"
+                     class="indent" min="0" max="100"/>
+          <xul:spacer height="10" flex="1"/>
         </xul:vbox>
         <xul:vbox>
           <xul:checkbox sbid="mgmt_enable"
@@ -98,6 +103,11 @@
                  this.libraryID;
         </getter>
       </property>
+      <property name="_devicePrefRoot" readonly="true">
+        <getter>
+          return "library." + this.libraryID;
+        </getter>
+      </property>
       <property name="_formatDirPrefName" readonly="true">
         <getter>
           return "songbird.device." +
@@ -126,6 +136,22 @@
         </getter>
       </property>
 
+      <property name="_scale" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         "space_limit");
+        </getter>
+      </property>
+
+      <property name="_limitSpaceCheckbox" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         "space_limit_enable");
+        </getter>
+      </property>
+
       <!--
        * constructor
        *
@@ -134,7 +160,13 @@
 
       <constructor> <![CDATA[
       {
+        Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
         this.reset();
+
+        var self = this;
+        this._scale.addEventListener("change",
+                                     function() { self.onSpaceLimitChanged() },
+                                     false);
       }
       ]]></constructor>
 
@@ -147,6 +179,9 @@
 
       <destructor> <![CDATA[
       {
+        if (this.device) {
+          this.device = null;
+        }
       }
       ]]></destructor>
 
@@ -161,6 +196,9 @@
             document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable");
           Application.prefs.setValue(enabledPrefName,
                                      enabledCheckbox.checked);
+
+          // Save the device's storage settings
+          this._saveStorageScaleSetting();
         ]]></body>
       </method>
 
@@ -180,9 +218,75 @@
             self._formatter.value = Application.prefs.getValue(formatDirPrefName,
                                                                defaultValue);
           }, 0, this);
+
+          // Set the scale to the device's current value.
+          var self = this;
+          setTimeout(function() { self._resetStorageScale(); }, 100);
         ]]></body>
       </method>
 
+      <method name="toggleLimitSpaceCheckbox">
+        <body><![CDATA[
+          this._scale.disabled = !this._limitSpaceCheckbox.checked;
+        ]]></body>
+      </method>
+
+      <method name="onSpaceLimitChanged">
+        <body><![CDATA[
+          // Get the device capacity.
+          var capacity = 0;
+          try {
+            capacity = this.device.properties.properties.getPropertyAsInt64
+              ("http://songbirdnest.com/device/1.0#capacity");
+          } catch (ex) {};
+
+          var limitPercentage = parseInt(this._scale.getAttribute("value"));
+          if (capacity > 0) {
+            capacity = ((capacity * limitPercentage) / 100);
+          }
+
+          capacity = StorageFormatter.format(capacity);
+
+          this._limitSpaceCheckbox.label =
+            SBFormattedString("device.settings.limit_disk_space",
+                              [this._scale.getAttribute("value"),
+                               capacity]);
+        ]]></body>
+      </method>
+
+      <method name="_resetStorageScale">
+        <body><![CDATA[
+          var spaceSettingsVariant =
+            this.device.getPreference(
+                this._devicePrefRoot + ".music_limit_percent");
+
+          var percentValue = 100;
+          if (spaceSettingsVariant) {
+            percentValue = spaceSettingsVariant;
+          }
+          this._scale.setAttribute("value", percentValue);
+
+          var shouldLimit =
+            this.device.getPreference(
+                this._devicePrefRoot + ".use_music_limit_percent");
+
+          this._scale.disabled = !shouldLimit;
+          this._limitSpaceCheckbox.checked = shouldLimit;
+        ]]></body>
+      </method>
+
+      <method name="_saveStorageScaleSetting">
+        <body><![CDATA[
+          var percentValue = this._scale.getAttribute("value");
+          this.device.setPreference(
+              this._devicePrefRoot + ".music_limit_percent",
+              parseInt(percentValue));
+
+          this.device.setPreference(
+              this._devicePrefRoot + ".use_music_limit_percent",
+              this._limitSpaceCheckbox.checked);
+        ]]></body>
+      </method>
 
     </implementation>
 

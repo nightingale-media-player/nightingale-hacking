@@ -2273,25 +2273,27 @@ nsresult sbBaseDevice::ApplyLibraryPreference
     applyAll = PR_TRUE;
 
   // Apply music limit preference.
-  if (applyAll || aLibraryPrefName.EqualsLiteral("music_limit_percent")) {
-    // Get the preference value.
-    nsCOMPtr<nsIVariant> prefValue = aPrefValue;
-    if (applyAll || !prefValue) {
-      rv = GetLibraryPreference(prefBase,
-                                NS_LITERAL_STRING("music_limit_percent"),
-                                getter_AddRefs(prefValue));
-      if (NS_FAILED(rv))
-        prefValue = nsnull;
-    }
-
-    // Apply the preference value.
-    if (prefValue) {
-      PRUint32 musicLimitPercent;
-      rv = prefValue->GetAsUint32(&musicLimitPercent);
-      if (NS_SUCCEEDED(rv))
+  if (applyAll ||
+      aLibraryPrefName.EqualsLiteral("music_limit_percent") ||
+      aLibraryPrefName.EqualsLiteral("use_music_limit_percent"))
+  {
+    // First ensure that the music limit percentage pref is enabled.
+    PRBool shouldLimitMusicSpace = PR_FALSE;
+    rv = GetShouldLimitMusicSpace(prefBase, &shouldLimitMusicSpace);
+    if (NS_SUCCEEDED(rv) && shouldLimitMusicSpace) {
+      PRUint32 musicLimitPercent = 100;
+      rv = GetMusicLimitSpacePercent(prefBase, &musicLimitPercent);
+      if (NS_SUCCEEDED(rv)) {
+        // Finally, apply the preference value.
         mMusicLimitPercent = musicLimitPercent;
+      }
+    }
+    else {
+      // Music space limiting is disabled, set the limit percent to 100%.
+      mMusicLimitPercent = 100;
     }
   }
+
   return ApplyLibraryOrganizePreference(aLibrary,
                                         aLibraryPrefName,
                                         prefBase,
@@ -3967,6 +3969,40 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   }
   // No acceptable transcoding profile available
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+nsresult
+sbBaseDevice::GetShouldLimitMusicSpace(const nsAString & aPrefBase,
+                                       PRBool *aOutShouldLimitSpace)
+{
+  NS_ENSURE_ARG_POINTER(aOutShouldLimitSpace);
+  *aOutShouldLimitSpace = PR_FALSE;
+
+  nsresult rv;
+  nsCOMPtr<nsIVariant> shouldEnableVar;
+  rv = GetLibraryPreference(aPrefBase,
+                            NS_LITERAL_STRING("use_music_limit_percent"),
+                            getter_AddRefs(shouldEnableVar));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return shouldEnableVar->GetAsBool(aOutShouldLimitSpace);
+}
+
+nsresult
+sbBaseDevice::GetMusicLimitSpacePercent(const nsAString & aPrefBase,
+                                        PRUint32 *aOutLimitPercentage)
+{
+  NS_ENSURE_ARG_POINTER(aOutLimitPercentage);
+  *aOutLimitPercentage = 100;  // always default to 100
+
+  nsresult rv;
+  nsCOMPtr<nsIVariant> prefValue;
+  rv = GetLibraryPreference(aPrefBase,
+                            NS_LITERAL_STRING("music_limit_percent"),
+                            getter_AddRefs(prefValue));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return prefValue->GetAsUint32(aOutLimitPercentage);
 }
 
 /* void Format(); */

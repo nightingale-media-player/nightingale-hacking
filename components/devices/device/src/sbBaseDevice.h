@@ -1030,6 +1030,27 @@ protected:
     TransferRequestQueueMap::iterator & aMapIter,
     TransferRequestQueue::iterator & aQueueIter,
     bool aRemove);
+
+  /**
+   * Returns if the device pref to enable music space limiting is turned on.
+   * \param aPrefBase The device preference root.
+   * \param aOutShouldLimitSpace The outparam for setting if the device is
+   *                             currently set for music space limiting.
+   * WARNING: This method expects to be under the |mPreferenceLock| when called.
+   */
+  nsresult GetShouldLimitMusicSpace(const nsAString & aPrefBase,
+                                    PRBool *aOutShouldLimitSpace);
+
+  /**
+   * Return the current limited music space as a percentage that the device's
+   * pref is currently set to.
+   * \param aPrefBase The device preference root.
+   * \param aOutLimitPercentage The outparam for setting the music limit
+   *                            percentage value.
+   * WARNING: This method expects to be under the |mPreferenceLock| when called.
+   */
+  nsresult GetMusicLimitSpacePercent(const nsAString & aPrefBase,
+                                     PRUint32 *aOutLimitPercentage);
 };
 
 

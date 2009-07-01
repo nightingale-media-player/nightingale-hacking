@@ -473,7 +473,6 @@
 
 <!ENTITY device.settings.header.label "Settings">
 <!ENTITY device.settings.disk.label "Disk Management">
-<!ENTITY device.settings.disk.limit.label "Limit the amount of disk space used for music">
 <!ENTITY device.settings.disk.management.label "Customize directory structure">
 <!ENTITY device.settings.disk.management.filename "Song files">
 

@@ -108,6 +108,9 @@ var DeviceSettingsPane = {
       widget.setAttribute("device-id", deviceID);
       widget.setAttribute("library-id", library.guid);
       container.appendChild(widget);
+
+      widget.device = device;
+
       this._mediaManagementWidgets.push(widget);
     }
   },
