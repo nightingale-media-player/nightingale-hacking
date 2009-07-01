@@ -1730,10 +1730,8 @@
               }
               if ( length > 0 ) {
                 // display media list length
-                var displayFormat = SBString("faceplate.itemsformat." + length,
-                        SBString("faceplate.itemsformat", "%s items"));
-
-                displayValue = displayFormat.replace('%s', length);
+                displayValue = SBFormattedCountString("faceplate.itemsformat",
+                                                      length, [ length ], "");
               }
             }
             label.setAttribute('value', displayValue);
