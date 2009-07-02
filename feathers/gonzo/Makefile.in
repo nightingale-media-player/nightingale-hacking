@@ -30,7 +30,7 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 EXTENSION_UUID = gonzo@songbirdnest.com
-EXTENSION_DIR  = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+EXTENSION_DIR = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 
 EXTENSION_VER = $(SB_MILESTONE)
 EXTENSION_MIN_VER = 1.3.0a
@@ -46,8 +46,9 @@ RESOURCES_PPFLAGS = -DEXTENSION_VER=$(EXTENSION_VER) \
                     -DEXTENSION_MAX_VER=$(EXTENSION_MAX_VER) \
                     $(NULL)
 
+CREATEDIRS = $(EXTENSION_DIR)
+
 include $(topsrcdir)/build/rules.mk
 
 libs::
-	@$(MKDIR) $(EXTENSION_DIR)
 	$(INSTALL_FILE) $(srcdir)/chrome.manifest $(EXTENSION_DIR)

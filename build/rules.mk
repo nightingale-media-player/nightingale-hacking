@@ -988,10 +988,10 @@ ifdef EXTENSION_NAME
    endif
 endif
 
+# Installation of the extension is automatic for debug builds; this can be
+# overriden, of course
 ifdef DEBUG
-   ifneq (1,$(DISABLE_EXTENSION_DEBUG_INSTALLATION))
-      INSTALL_EXTENSION = 1
-   endif
+   INSTALL_EXTENSION ?= 1
 endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
@@ -1026,7 +1026,7 @@ ifdef EXTENSION_NAME
 	$(MKDIR) $(EXTENSION_DIR)
 	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).xpi.tmp \
     $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
-   ifdef INSTALL_EXTENSION
+   ifeq (1,$(INSTALL_EXTENSION))
 	   $(MKDIR) $(SONGBIRD_EXTENSIONSDIR)
 	   $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
 	   $(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
