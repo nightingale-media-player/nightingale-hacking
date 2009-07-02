@@ -244,6 +244,23 @@ PRBool sbBaseDevice::TransferRequest::IsCountable() const
          type != sbIDevice::REQUEST_UPDATE;
 }
 
+void sbBaseDevice::TransferRequest::SetTranscodeProfile(sbITranscodeProfile * aProfile)
+{
+  // Addref then release on the odd chance we're getting reassigned the same
+  // value
+  NS_IF_ADDREF(aProfile);
+  NS_IF_RELEASE(transcodeProfile);
+  transcodeProfile = aProfile;
+}
+
+sbBaseDevice::TransferRequest::TransferRequest() : transcodeProfile(nsnull)
+{
+}
+
+sbBaseDevice::TransferRequest::~TransferRequest()
+{
+  NS_IF_RELEASE(transcodeProfile);
+}
 
 /**
  * Utility function to check a transfer request queue for proper batching

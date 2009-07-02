@@ -45,8 +45,9 @@
 #include <prlock.h>
 
 #include <sbILibraryChangeset.h>
-#include "sbIMediaItem.h"
-#include "sbIMediaList.h"
+#include <sbIMediaItem.h>
+#include <sbIMediaList.h>
+
 #include "sbDeviceStatistics.h"
 
 class nsIPrefBranch;
@@ -120,6 +121,11 @@ public:
     nsCOMPtr<sbIMediaItem> item;     /* the item this request pertains to */
     nsCOMPtr<sbIMediaList> list;     /* the list this request is to act on */
     nsCOMPtr<nsISupports>  data;     /* optional data that may or may not be used by a type of request */
+    sbITranscodeProfile * transcodeProfile; /* Transcode profile to use if available
+                                               this is manually ref counted so
+                                               we don't have all of our consumers
+                                               have to include the transcode profile
+                                               directory */
     PRUint32 index;                  /* the index in the list for this action */
     PRUint32 otherIndex;             /* any secondary index needed */
     PRUint32 batchCount;             /* the number of items in this batch
@@ -146,12 +152,18 @@ public:
      * otherwise returns PR_FALSE
      */
     PRBool IsCountable() const;
+    
+    /**
+     * Sets the transcode profile for the request
+     */
+    void SetTranscodeProfile(sbITranscodeProfile * aProfile);
+    
     static TransferRequest * New();
 
     /* Don't allow manual construction/destruction, but allow sub-classing. */
   protected:
-    TransferRequest() {}
-    ~TransferRequest(){} /* we're refcounted, no manual deleting! */
+    TransferRequest();
+    ~TransferRequest(); /* we're refcounted, no manual deleting! */
   };
 
   typedef std::list<nsRefPtr<TransferRequest> > Batch;

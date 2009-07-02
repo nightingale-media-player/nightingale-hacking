@@ -194,10 +194,8 @@ function jobFinished() {
     
     gServer.stop();
     
-  } catch (e) {
-    log("ERROR: " + e);
-    gServer.stop();
-    assertEqual(true, false);
+  } finally {
+   gServer.stop();
   }
   
   testFinished(); 
