@@ -40,24 +40,19 @@ endif
 SERVER_BASE = http://download.songbirdnest.com/songbird/$(SB_UPDATE_CHANNEL)
 SERVER_PATH = $(SERVER_BASE)/$(SB_PLATFORM)-$(SB_ARCH)/$(SB_BRANCHNAME)
 
-ifdef DEBUG
-   DEBUG_EXT = .debug
-endif
-
-UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG_EXT)
+UPDATE_FILENAME_BASE = $(SB_APPNAME)_$(SB_MILESTONE)-$(SB_BUILD_NUMBER)_$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=.debug)
 
 #
 # On OS X we need to diff from the 'Songbird.app' subdir.
 #
-#preedTODO fix this
 ifeq (macosx,$(SB_PLATFORM))
    UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)/$(MACOSX_APPBUNDLE)
 endif
 ifeq (windows,$(SB_PLATFORM))
-# windows needs relative paths, all others need the full path
+   # windows needs relative paths, all others need the full path
    UPD_TARGET_DIR = $(DEPTH)/$(DISTDIRNAME)
 endif
-ifeq (linux$(SB_PLATFORM))
+ifeq (linux,$(SB_PLATFORM))
    UPD_TARGET_DIR = $(SONGBIRD_OBJDIR)/$(DISTDIRNAME)
 endif
 
