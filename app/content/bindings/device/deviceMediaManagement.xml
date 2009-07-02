@@ -28,7 +28,12 @@
 -->
 
 <!-- Import external definitions. -->
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!DOCTYPE window [
+  <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  %brandDTD;
+  %songbirdDTD;
+]>
 
 <bindings
       xmlns="http://www.mozilla.org/xbl"
@@ -64,56 +69,67 @@
         - "device-id"
         - "library-id"
         -->
-      <xul:groupbox flex="1">
-        <xul:caption label="&device.settings.disk.label;"/>
-        <xul:vbox>
-          <xul:checkbox sbid="space_limit_enable"
-                        oncommand="toggleLimitSpaceCheckbox();"/>
+      <xul:vbox flex="1">
+        <xul:groupbox flex="1" sbid="transcoding-groupbox">
+          <xul:caption label="&device.settings.music.transcoding.label;"/>
+          <xul:description>
+            &device.settings.music.transcoding.desc1;
+          </xul:description>
+          <xul:description>
+            &device.settings.music.transcoding.desc2;
+          </xul:description>
+        </xul:groupbox>
+        <xul:groupbox flex="1">
+          <xul:caption label="&device.settings.disk.label;"/>
+          <xul:vbox>
+            <xul:checkbox sbid="space_limit_enable"
+                          oncommand="toggleLimitSpaceCheckbox();"/>
 
-          <xul:spacer height="5"/>
-          <xul:stack class="indent-margins">
-            <xul:hbox class="notch-box" sbid="notch-hbox">
-              <xul:hbox flex="1"/>
-              <xul:hbox flex="1"/>
-              <xul:hbox flex="1"/>
-              <xul:hbox flex="1" class="end"/>
+            <xul:spacer height="5"/>
+            <xul:stack class="indent-margins">
+              <xul:hbox class="notch-box" sbid="notch-hbox">
+                <xul:hbox flex="1"/>
+                <xul:hbox flex="1"/>
+                <xul:hbox flex="1"/>
+                <xul:hbox flex="1" class="end"/>
+              </xul:hbox>
+
+              <xul:scale sbid="space_limit" flex="1" min="0" max="100"/>
+            </xul:stack>
+
+            <xul:hbox class="indent-margins" flex="1">
+              <xul:hbox flex="1">
+                <xul:description flex="1"
+                                 sbid="notch-0percent-description"
+                                 class="notch-0percent-description">
+                  &device.settings.disk.0percent.label;
+                </xul:description>
+              </xul:hbox>
+              <xul:hbox  flex="1">
+                <xul:description flex="1"
+                                 sbid="notch-100percent-description"
+                                 class="notch-100percent-description">
+                  &device.settings.disk.100percent.label;
+                </xul:description>
+              </xul:hbox>
             </xul:hbox>
 
-            <xul:scale sbid="space_limit" flex="1" min="0" max="100"/>
-          </xul:stack>
-
-          <xul:hbox class="indent-margins" flex="1">
-            <xul:hbox flex="1">
-              <xul:description flex="1"
-                               sbid="notch-0percent-description"
-                               class="notch-0percent-description">
-                &device.settings.disk.0percent.label;
-              </xul:description>
+            <xul:spacer height="10" flex="1"/>
+          </xul:vbox>
+          <xul:vbox>
+            <xul:checkbox sbid="mgmt_enable"
+                          label="&device.settings.disk.management.label;"/>
+            <xul:hbox class="indent">
+              <xul:sb-properties-formatter sbid="mgmt_dir_format"
+                  maxProperties="3" trailingSeparator="true"
+                  propertyCategory="songbird-media-manager-directory-name-properties">
+                <xul:label value="&device.settings.disk.management.filename;"/>
+              </xul:sb-properties-formatter>
+              <xul:spacer flex="1"/>
             </xul:hbox>
-            <xul:hbox  flex="1">
-              <xul:description flex="1"
-                               sbid="notch-100percent-description"
-                               class="notch-100percent-description">
-                &device.settings.disk.100percent.label;
-              </xul:description>
-            </xul:hbox>
-          </xul:hbox>
-
-          <xul:spacer height="10" flex="1"/>
-        </xul:vbox>
-        <xul:vbox>
-          <xul:checkbox sbid="mgmt_enable"
-                        label="&device.settings.disk.management.label;"/>
-          <xul:hbox class="indent">
-            <xul:sb-properties-formatter sbid="mgmt_dir_format"
-                maxProperties="3" trailingSeparator="true"
-                propertyCategory="songbird-media-manager-directory-name-properties">
-              <xul:label value="&device.settings.disk.management.filename;"/>
-            </xul:sb-properties-formatter>
-            <xul:spacer flex="1"/>
-          </xul:hbox>
-        </xul:vbox>
-      </xul:groupbox>
+          </xul:vbox>
+        </xul:groupbox>
+      </xul:vbox>
     </content>
 
 
@@ -208,6 +224,15 @@
         </getter>
       </property>
 
+      <property name="_transcodingGroupbox" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(
+                   this,
+                   "sbid",
+                   "transcoding-groupbox");
+        </getter>
+      </property>
+
       <!--
        * constructor
        *
@@ -217,6 +242,16 @@
       <constructor> <![CDATA[
       {
         Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
+
+        // Only show the transcoding groupbox for windows right now:
+        // see bug 16247.
+        var sysInfo =
+          Components.classes["@mozilla.org/system-info;1"]
+                    .getService(Components.interfaces.nsIPropertyBag2);
+        if (sysInfo.getProperty("name") != "WINNT") {
+          this._transcodingGroupbox.style.visibility = "collapse";
+        }
+
         this.reset();
 
         var self = this;
