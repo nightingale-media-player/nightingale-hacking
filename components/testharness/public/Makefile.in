@@ -25,15 +25,18 @@
 DEPTH = ../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ \
+        $(MOZJSHTTPD_DIR)
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_SRCS = nsIHttpServer.idl \
-             sbILeakCanary.idl \
+XPIDL_SRCS = sbILeakCanary.idl \
              sbITestHarness.idl \
              sbITimingService.idl \
              $(NULL)
+
+# From MOZJSHTTPD_DIR
+XPIDL_SRCS += nsIHttpServer.idl
 
 XPIDL_MODULE = sbTestHarness.xpt
 
