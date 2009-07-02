@@ -70,18 +70,19 @@ endif
 #------------------------------------------------------------------------------
 
 ifdef EXTENSION_STAGE_DIR
-   SONGBIRD_CHROMEDIR = $(EXTENSION_STAGE_DIR)/chrome
-   SONGBIRD_COMPONENTSDIR = $(EXTENSION_STAGE_DIR)/components
-   SONGBIRD_DEFAULTSDIR = $(EXTENSION_STAGE_DIR)/defaults
-   SONGBIRD_PREFERENCESDIR = $(EXTENSION_STAGE_DIR)/defaults/preferences
-   SONGBIRD_PLUGINSDIR = $(EXTENSION_STAGE_DIR)/plugins
-   SONGBIRD_SEARCHPLUGINSDIR = $(EXTENSION_STAGE_DIR)/searchplugins
-   SONGBIRD_SCRIPTSDIR = $(EXTENSION_STAGE_DIR)/scripts
-   SONGBIRD_JSMODULESDIR = $(EXTENSION_STAGE_DIR)/jsmodules
+   OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
+   SONGBIRD_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
+   SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_STAGE_DIR)/components
+   SONGBIRD_DEFAULTSDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults
+   SONGBIRD_PREFERENCESDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults/preferences
+   SONGBIRD_PLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/plugins
+   SONGBIRD_SEARCHPLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/searchplugins
+   SONGBIRD_SCRIPTSDIR = $(OUR_EXTENSION_STAGE_DIR)/scripts
+   SONGBIRD_JSMODULESDIR = $(OUR_EXTENSION_STAGE_DIR)/jsmodules
 endif
 
 ifdef SONGBIRD_TEST_COMPONENT
-   SONGBIRD_TEST_COMPONENT_DIR = $(strip $(SONGBIRD_TESTSDIR)/$(SONGBIRD_TEST_COMPONENT))
+   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(strip $(SONGBIRD_TEST_COMPONENT))
    ifdef SB_ENABLE_TESTS
       APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
    endif
@@ -938,7 +939,7 @@ endif
 #
 
 # set a specific location for the output if it doesn't already exist
-EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(EXTENSION_NAME)
+EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(strip $(EXTENSION_NAME))
 EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
 
 ifdef EXTENSION_VER
@@ -950,6 +951,7 @@ ifdef EXTENSION_VER
 endif
 
 ifdef EXTENSION_NAME
+   OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
    ifndef INSTALL_RDF
 	   # The notdir is because this is to check if these files exist, but
 		# we have to do in the srcdir; but we really only want the file name
@@ -981,9 +983,9 @@ ifdef EXTENSION_NAME
       OUR_XPI_NAME = $(XPI_NAME)
    else
       ifdef EXTENSION_NO_BINARY_COMPONENTS
-         OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug)
+         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug)
       else
-         OUR_XPI_NAME = $(EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
+         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
       endif
    endif
 endif
