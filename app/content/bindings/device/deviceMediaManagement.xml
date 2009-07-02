@@ -48,6 +48,10 @@
   <binding id="sb-device-management"
            extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
 
+    <resources>
+      <stylesheet src="chrome://songbird-bindings/skin/device/deviceMediaManagement.css"/>
+    </resources>
+
     <!-- ***********************************************************************
      *
      * Content.
@@ -67,8 +71,34 @@
                         oncommand="toggleLimitSpaceCheckbox();"/>
 
           <xul:spacer height="5"/>
-          <xul:scale sbid="space_limit"
-                     class="indent" min="0" max="100"/>
+          <xul:stack class="indent-margins">
+            <xul:hbox class="notch-box" sbid="notch-hbox">
+              <xul:hbox flex="1"/>
+              <xul:hbox flex="1"/>
+              <xul:hbox flex="1"/>
+              <xul:hbox flex="1" class="end"/>
+            </xul:hbox>
+
+            <xul:scale sbid="space_limit" flex="1" min="0" max="100"/>
+          </xul:stack>
+
+          <xul:hbox class="indent-margins" flex="1">
+            <xul:hbox flex="1">
+              <xul:description flex="1"
+                               sbid="notch-0percent-description"
+                               class="notch-0percent-description">
+                &device.settings.disk.0percent.label;
+              </xul:description>
+            </xul:hbox>
+            <xul:hbox  flex="1">
+              <xul:description flex="1"
+                               sbid="notch-100percent-description"
+                               class="notch-100percent-description">
+                &device.settings.disk.100percent.label;
+              </xul:description>
+            </xul:hbox>
+          </xul:hbox>
+
           <xul:spacer height="10" flex="1"/>
         </xul:vbox>
         <xul:vbox>
@@ -152,6 +182,32 @@
         </getter>
       </property>
 
+      <property name="_notchHbox" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(this,
+                                                         "sbid",
+                                                         "notch-hbox");
+        </getter>
+      </property>
+
+      <property name="_zeroPercentDescription" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(
+                   this,
+                   "sbid",
+                   "notch-0percent-description");
+        </getter>
+      </property>
+
+      <property name="_hundrenPercentDescription" readonly="true">
+        <getter>
+          return document.getAnonymousElementByAttribute(
+                   this,
+                   "sbid",
+                   "notch-100percent-description");
+        </getter>
+      </property>
+
       <!--
        * constructor
        *
@@ -228,6 +284,7 @@
       <method name="toggleLimitSpaceCheckbox">
         <body><![CDATA[
           this._scale.disabled = !this._limitSpaceCheckbox.checked;
+          this._updateNotchDisabledState();
         ]]></body>
       </method>
 
@@ -272,6 +329,32 @@
 
           this._scale.disabled = !shouldLimit;
           this._limitSpaceCheckbox.checked = shouldLimit;
+          this._updateNotchDisabledState();
+        ]]></body>
+      </method>
+
+      <method name="_updateNotchDisabledState">
+        <body><![CDATA[
+          // Update the CSS class on the notch boxes.
+          for (var i = 0; i < this._notchHbox.childNodes.length; i++) {
+            var curChildNode = this._notchHbox.childNodes.item(i);
+            if (this._scale.disabled) {
+              curChildNode.setAttribute("disabled", "true");
+            }
+            else {
+              curChildNode.removeAttribute("disabled");
+            }
+          }
+
+          // Enable/disable the percentage labels
+          if (this._scale.disabled) {
+            this._zeroPercentDescription.setAttribute("disabled", "true");
+            this._hundrenPercentDescription.setAttribute("disabled", "true");
+          }
+          else {
+            this._zeroPercentDescription.removeAttribute("disabled");
+            this._hundrenPercentDescription.removeAttribute("disabled");
+          }
         ]]></body>
       </method>
 

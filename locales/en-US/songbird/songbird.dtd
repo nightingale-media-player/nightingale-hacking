@@ -476,6 +476,9 @@
 <!ENTITY device.settings.disk.management.label "Customize directory structure">
 <!ENTITY device.settings.disk.management.filename "Song files">
 
+<!ENTITY device.settings.disk.100percent.label "100&#37;">
+<!ENTITY device.settings.disk.0percent.label "0&#37;">
+
 <!ENTITY device.management.tabs.music.label "Music">
 <!ENTITY device.management.tabs.tools.label "Tools">
 <!ENTITY device.management.tabs.settings.label "Settings">
