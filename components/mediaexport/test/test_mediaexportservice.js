@@ -28,7 +28,7 @@ Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 
-var TEST_FILES = newAppRelativeFile("testharness/mediaexport/files"); 
+var TEST_FILES = newAppRelativeFile("testharness/mediaexportservice/files"); 
 
 
 function runTest()

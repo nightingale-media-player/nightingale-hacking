@@ -32,6 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbSeeqPod.js
                           $(NULL)
 
+EXTENSION_STAGE_DIR = ../../.xpistage
+
 SONGBIRD_COMPONENTS += $(EXTRA_SCRIPT_COMPONENTS)
 
 include $(topsrcdir)/build/rules.mk

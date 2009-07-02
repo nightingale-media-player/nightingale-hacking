@@ -36,14 +36,27 @@ SONGBIRD_TESTS = $(srcdir)/head_mediamanager.js \
                  $(srcdir)/test_mediafilemanager.js \
                  $(srcdir)/test_mediamanagementjob.js \
                  $(srcdir)/test_mediamanagementjobenum.js \
-                 $(srcdir)/files/TestFile1.mp3 \
-                 $(srcdir)/files/TestFile2.mp3 \
-                 $(srcdir)/files/TestFile3.mp3 \
-                 $(srcdir)/files/TestFile4.mp3 \
-                 $(srcdir)/files/TestFile5.mp3 \
-                 $(srcdir)/files/TestFile6.mp3 \
-                 $(srcdir)/files/TestFile7.mp3 \
-                 $(srcdir)/files/TestFile8.mp3 \
                  $(NULL)
 
+MEDIA_MANAGER_TEST_FILES = $(srcdir)/files/TestFile1.mp3 \
+                           $(srcdir)/files/TestFile2.mp3 \
+                           $(srcdir)/files/TestFile3.mp3 \
+                           $(srcdir)/files/TestFile4.mp3 \
+                           $(srcdir)/files/TestFile5.mp3 \
+                           $(srcdir)/files/TestFile6.mp3 \
+                           $(srcdir)/files/TestFile7.mp3 \
+                           $(srcdir)/files/TestFile8.mp3 \
+                           $(NULL)
+
+MEDIA_MANAGER_TEST_FILES_DIR = $(SONGBIRD_TEST_COMPONENT_DIR)/files
+
+ifeq (1,$(SB_ENABLE_TESTS))
+   CREATEDIRS = $(MEDIA_MANAGER_TEST_FILES_DIR)
+endif
+
 include $(topsrcdir)/build/rules.mk
+
+export::
+ifeq (1,$(SB_ENABLE_TESTS))
+	$(INSTALL_FILE) $(MEDIA_MANAGER_TEST_FILES) $(MEDIA_MANAGER_TEST_FILES_DIR)
+endif

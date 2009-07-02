@@ -35,14 +35,23 @@ SONGBIRD_TESTS = $(srcdir)/head_mediaexportservice.js \
                  $(srcdir)/test_mediaexportservice.js \
                  $(NULL)
 
-MEDIAEXPORT_TESTDIR = $(SONGBIRD_TESTSDIR)/mediaexport/files
+MEDIAEXPORT_TEST_FILES = $(srcdir)/files/one.mp3 \
+                         $(srcdir)/files/two.mp3 \
+                         $(srcdir)/files/three.mp3 \
+                         $(srcdir)/files/four.mp3 \
+                         $(srcdir)/files/five.mp3 \
+                         $(srcdir)/files/six.mp3 \
+                         $(NULL)
 
-export::
-ifeq (1_1,$(SB_ENABLE_TESTS)_$(SB_ENABLE_TEST_HARNESS))
-	$(MKDIR) $(MEDIAEXPORT_TESTDIR)
-	$(INSTALL_FILE) $(wildcard $(srcdir)/files/*.mp3) $(MEDIAEXPORT_TESTDIR)
+MEDIAEXPORT_TEST_FILES_DIR = $(SONGBIRD_TEST_COMPONENT_DIR)/files
+
+ifeq (1,$(SB_ENABLE_TESTS))
+   CREATEDIRS = $(MEDIAEXPORT_TEST_FILES_DIR)
 endif
 
 include $(topsrcdir)/build/rules.mk
 
-
+export::
+ifeq (1,$(SB_ENABLE_TESTS))
+	$(INSTALL_FILE) $(MEDIAEXPORT_TEST_FILES) $(MEDIAEXPORT_TEST_FILES_DIR)
+endif
