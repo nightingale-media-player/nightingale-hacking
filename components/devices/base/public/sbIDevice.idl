@@ -178,7 +178,8 @@ interface sbIDevice : nsISupports
                                                   // operation
   const unsigned long STATE_CANCEL          = 12; // In process of canceling operation
   const unsigned long STATE_TRANSCODE       = 13; // Transcoding a file.
-  const unsigned long STATE_FORMATTING       = 14; // Formatting the device.
+  const unsigned long STATE_FORMATTING      = 14; // Formatting the device.
+  const unsigned long STATE_SYNC_PREPARING  = 15;  // Preparing to sync
 
   const unsigned long STATE_USER            = 0x20000000;
 

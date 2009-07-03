@@ -96,12 +96,23 @@ var DPWCfg = {
     {
       state: Ci.sbIDevice.STATE_SYNCING,
       localeSuffix: "syncing",
-      progressMeterUndetermined: true,
+      progressMeterDetermined: true,
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
       preparingOnIdle: true
+    },
+
+    /* Sync preparation. */
+    {
+      state: Ci.sbIDevice.STATE_SYNC_PREPARING,
+      localeSuffix: "sync_preparing",
+      progressMeterUndetermined: true,
+      canBeCompleted: true,
+      showIdleMessage: true,
+      showProgress: true,
+      updateBusy: true
     },
 
     /* Copy. */
