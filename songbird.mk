@@ -33,18 +33,18 @@ OBJDIR_DEPTH = ..
 
 CWD := $(shell pwd)
 ifeq "$(CWD)" "/"
-CWD := /.
+  CWD := /.
 endif
 
 ROOTDIR   := $(shell dirname $(CWD))
 TOPSRCDIR := $(CWD)
 _AUTOCONF_TOOLS_DIR = $(TOPSRCDIR)/build/autoconf
 
-CONFIGURE    = $(TOPSRCDIR)/configure
+CONFIGURE = $(TOPSRCDIR)/configure
 ALLMAKEFILES = $(TOPSRCDIR)/allmakefiles.sh
-CONFIGUREAC  = $(TOPSRCDIR)/configure.ac
-OBJDIR       = $(TOPSRCDIR)/$(OBJDIRNAME)
-DISTDIR      = $(OBJDIR)/$(DISTDIRNAME)
+CONFIGUREAC = $(TOPSRCDIR)/configure.ac
+OBJDIR = $(TOPSRCDIR)/$(OBJDIRNAME)
+DISTDIR = $(OBJDIR)/$(DISTDIRNAME)
 CONFIGSTATUS = $(OBJDIR)/config.status
 
 CONFIGURE_ARGS = $(NULL)
@@ -56,6 +56,7 @@ CONFIGURE_ARGS = $(NULL)
 SONGBIRDCONFIG_MAKEFILE_LOADER := $(TOPSRCDIR)/build/autoconf/songbirdconfig2client-mk
 SONGBIRDCONFIG_CONFIGURE_LOADER := $(TOPSRCDIR)/build/autoconf/songbirdconfig2configure
 SONGBIRDCONFIG_FINDER := $(TOPSRCDIR)/build/autoconf/songbirdconfig-find
+
 run_for_make_options := \
   $(shell cd $(ROOTDIR); \
      $(SONGBIRDCONFIG_MAKEFILE_LOADER) $(TOPSRCDIR) $(TOPSRCDIR)/.songbirdconfig.mk > \
@@ -70,79 +71,79 @@ CONFIGURE_ARGS = $(SONGBIRDCONFIG_CONFIGURE_OPTIONS) \
 #    example:  make -f songbird.mk debug
 #    - $(MAKECMDGOALS) would contain debug
 ifeq (debug,$(MAKECMDGOALS))
-DEBUG = 1
+   DEBUG = 1
 endif
 
 # Global, debug/release build options
 # building installer is off by default
 ifdef SB_ENABLE_INSTALLER
-CONFIGURE_ARGS += --enable-installer
+   CONFIGURE_ARGS += --enable-installer
 endif
 
 ifdef SONGBIRD_OFFICIAL
-CONFIGURE_ARGS += --enable-official
+   CONFIGURE_ARGS += --enable-official
 endif
 
 ifdef SONGBIRD_NIGHTLY
-CONFIGURE_ARGS += --enable-nightly
+   CONFIGURE_ARGS += --enable-nightly
 endif
 
 ifdef SB_UPDATE_CHANNEL
-CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
+   CONFIGURE_ARGS += --enable-update-channel=$(SB_UPDATE_CHANNEL)
 endif
 
 # debug build options
 ifdef DEBUG
-CONFIGURE_ARGS += --enable-debug
-# debug builds turn off jars by default, unless SB_ENABLE_JARS is set
-ifdef SB_ENABLE_JARS
-CONFIGURE_ARGS += --enable-jars
+   CONFIGURE_ARGS += --enable-debug
+   # debug builds turn off jars by default, unless SB_ENABLE_JARS is set
+   ifdef SB_ENABLE_JARS
+      CONFIGURE_ARGS += --enable-jars
+   endif
+   # turn off tests if you really want
+   ifndef SB_DISABLE_TESTS
+      CONFIGURE_ARGS += --enable-tests
+   endif
 endif
-# turn off tests if you really want
-ifndef SB_DISABLE_TESTS
-CONFIGURE_ARGS += --enable-tests
-endif
-endif  # ifdef DEBUG
 
 # release build options
 ifndef DEBUG
-# release builds have jars by default, unless SB_DISABLE_JARS is set
-ifdef SB_DISABLE_JARS
-CONFIGURE_ARGS += --disable-jars
+   # release builds have jars by default, unless SB_DISABLE_JARS is set
+   ifdef SB_DISABLE_JARS
+      CONFIGURE_ARGS += --disable-jars
+   endif
+   # release builds don't have tests by default
+   ifdef SB_ENABLE_TESTS
+      CONFIGURE_ARGS += --enable-tests
+   endif
 endif
-# release builds don't have tests by default
-ifdef SB_ENABLE_TESTS
-CONFIGURE_ARGS += --enable-tests
-endif
-endif #ifndef DEBUG
 
 # choose core wrappers to enable
 ifdef SB_NO_MEDIA_CORE
-CONFIGURE_ARGS += --with-media-core=none
+   CONFIGURE_ARGS += --with-media-core=none
 endif #SB_NO_MEDIA_CORE
 
 # breakpad support
 ifdef SB_ENABLE_BREAKPAD
-CONFIGURE_ARGS += --enable-breakpad
+   CONFIGURE_ARGS += --enable-breakpad
 endif
 
 # force installation of wmp core, so it's bundled with the application.
 ifdef SB_FORCE_MEDIA_CORE_WMP
-CONFIGURE_ARGS += --with-media-core=windowsmedia \
-                  --with-force-media-core=windowsmedia \
-                  $(NULL)
-endif #SB_FORCE_MEDIA_CORE_WMP
+   CONFIGURE_ARGS += --with-media-core=windowsmedia \
+                     --with-force-media-core=windowsmedia \
+                     $(NULL)
+endif
 
 # force installation of qt core, so it's bundled with the application.
 ifdef SB_FORCE_MEDIA_CORE_QT
-CONFIGURE_ARGS += --with-media-core=qt \
-                  --with-force-media-core=qt \
-                  $(NULL)
-endif #SB_FORCE_MEDIA_CORE_QT
+   CONFIGURE_ARGS += --with-media-core=qt \
+                     --with-force-media-core=qt \
+                     $(NULL)
+endif
 
 # compiler environment checks
 ifdef SB_DISABLE_COMPILER_ENVIRONMENT_CHECKS
-CONFIGURE_ARGS += --disable-compiler-environment-checks
+   CONFIGURE_ARGS += --disable-compiler-environment-checks
 endif
 
 #
@@ -201,9 +202,9 @@ ifndef SB_DISABLE_PKG_AUTODEPS
                        $(p)_dep_checkout))
 
    $(foreach p,\
-	 $(SB_DEP_PKGS),\
-	 $(if $($(1)_DEP_SVNURL),\
-	 $(info Using user-defined SVN url for $1 dependency operations)))
+    $(SB_DEP_PKGS),\
+    $(if $($(1)_DEP_SVNURL),\
+    $(info Using user-defined SVN url for $1 dependency operations)))
    
    $(foreach p,\
     $(SB_DEP_PKGS),\
@@ -228,8 +229,8 @@ $(CONFIGSTATUS): $(CONFIGURE) $(SB_DEP_PKG_LIST) $(OBJDIR) $(DISTDIR)
 
 $(CONFIGURE): $(CONFIGURE_PREREQS)
 	cd $(TOPSRCDIR) && \
-   $(AUTOCONF) && \
-   $(RM) -rf $(TOPSRCDIR)/autom4te.cache/ 
+    $(AUTOCONF) && \
+    $(RM) -rf $(TOPSRCDIR)/autom4te.cache/ 
 
 songbird_output:
 	@echo $(SONGBIRD_MESSAGE)
@@ -245,7 +246,7 @@ $(OBJDIR) $(DISTDIR):
 makefiles: $(OBJDIR) $(DISTDIR)
 	@touch configure
 	cd $(OBJDIR) && \
-   $(CONFIGURE) $(CONFIGURE_ARGS)
+    $(CONFIGURE) $(CONFIGURE_ARGS)
 
 run_configure: $(CONFIGSTATUS)
 	cd $(OBJDIR) && \
