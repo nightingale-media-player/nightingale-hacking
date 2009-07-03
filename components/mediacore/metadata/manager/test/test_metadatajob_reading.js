@@ -84,6 +84,8 @@ function runTest () {
   // Make a copy of everything in the test file folder
   // so that our changes don't interfere with other tests
   var testFolder = getCopyOfFolder(newAppRelativeFile(gFileLocation), "_temp_reading_files");
+
+  sleep(2000);
   
   // Make a file with a unicode filename.  This would be checked in, except
   // the windows build system can't handle unicode filenames.
