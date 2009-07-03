@@ -171,11 +171,11 @@ ifeq (windows,$(SB_PLATFORM))
     $(OUR_DYNAMIC_LIB:$(DLL_SUFFIX)=.pdb) \
     $(OUR_DYNAMIC_LIB:$(DLL_SUFFIX)=.lib) \
     $(OUR_DYNAMIC_LIB:$(DLL_SUFFIX)=.exp) \
-    $(OUR_DYNAMIC_LIB).manifest \
+    $(if $(OUR_DYNAMIC_LIB),$(OUR_DYNAMIC_LIB).manifest) \
     $(OUR_SIMPLE_PROGRAM:$(BIN_SUFFIX)=.pdb) \
     $(OUR_SIMPLE_PROGRAM:$(BIN_SUFFIX)=.lib) \
     $(OUR_SIMPLE_PROGRAM:$(BIN_SUFFIX)=.exp) \
-    $(OUR_SIMPLE_PROGRAM).manifest \
+    $(if $(OUR_SIMPLE_PROGRAM),$(OUR_SIMPLE_PROGRAM).manifest) \
     $(NULL)
 endif
 
@@ -237,7 +237,7 @@ ifndef NO_DIST_INSTALL
 	      $(INSTALL_PROG) $(OUR_DYNAMIC_LIB) $(SONGBIRD_LIBDIR)/
       endif
    endif
-endif # !NO_DIST_INSTALL
+endif
 
 ##
 ## Unit test handling 
@@ -819,11 +819,10 @@ endif
 ifdef JAR_TARGET_DIR
    OUR_JAR_TARGET_DIR = $(JAR_TARGET_DIR)
 else
-   ifeq (1,$(JAR_IS_EXTENSION))
-      OUR_JAR_TARGET_DIR = $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)/chrome
-   else
-      OUR_JAR_TARGET_DIR = $(SONGBIRD_CHROMEDIR)
-   endif
+   # If this is an extension, the switch above on EXTENSION_STAGE_DIR redefines
+   # all of the SONGBIRD_*DIR variables, so this will still be correct for
+   # extensions.
+   OUR_JAR_TARGET_DIR = $(SONGBIRD_CHROMEDIR)
 endif
 
 ifdef MAKE_JARS_FLAGS
@@ -835,7 +834,7 @@ else
                          -z $(ZIP) \
                          -p $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
                          -v \
-								 $(EXTRA_MAKE_JARS_FLAGS) \
+                         $(EXTRA_MAKE_JARS_FLAGS) \
                          $(NULL)
    ifdef USING_FLAT_JARS
       OUR_MAKE_JARS_FLAGS += -f flat -d $(OUR_JAR_TARGET_DIR)
@@ -938,10 +937,6 @@ endif
 #              EXTENSION_DIR - dir where the final XPI should be moved
 #
 
-# set a specific location for the output if it doesn't already exist
-EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(strip $(EXTENSION_NAME))
-EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
-
 ifdef EXTENSION_VER
    ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
       OUR_EXTENSION_VER = $(EXTENSION_VER)+dev
@@ -952,9 +947,14 @@ endif
 
 ifdef EXTENSION_NAME
    OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
+
+   # set a specific location for the output if it doesn't already exist
+   EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
+   EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
+
    ifndef INSTALL_RDF
-	   # The notdir is because this is to check if these files exist, but
-		# we have to do in the srcdir; but we really only want the file name
+      # The notdir is because this is to check if these files exist, but
+      # we have to do in the srcdir; but we really only want the file name
       POSSIBLE_INSTALL_RDF = $(notdir $(wildcard $(srcdir)/install.rdf))
       POSSIBLE_INSTALL_RDF_IN = $(notdir $(wildcard $(srcdir)/install.rdf.in))
 
@@ -1004,7 +1004,7 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
     -DEXTENSION_VER="$(OUR_EXTENSION_VER)" \
     -DEXTENSION_MIN_VER="$(EXTENSION_MIN_VER)" \
     -DEXTENSION_MAX_VER="$(EXTENSION_MAX_VER)" \
-    -DEXTENSION_NAME=$(EXTENSION_NAME) -- \
+    -DEXTENSION_NAME=$(OUR_EXTENSION_NAME) -- \
     $(OUR_INSTALL_RDF_IN) > $(OUR_INSTALL_RDF)
 
 # Check for an extension license; default file name is "LICENSE" in the root
