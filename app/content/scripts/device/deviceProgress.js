@@ -442,7 +442,6 @@ var DPW = {
     }
 
     params = [ curItemIndex, totalItems ];
-    dump("\n\noperation=" + operation + " substate=" + substate + "\n\n");
     // If we're preparing to sync or transcode (indicated by an idle substate)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
