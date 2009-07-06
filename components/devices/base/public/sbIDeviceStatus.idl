@@ -66,7 +66,7 @@ interface sbIDeviceStatus: nsISupports {
   attribute AString currentOperation;
 
   /**
-   * Sets the current progress as a percent. Done is 100.0.
+   * Sets the current progress as a percent. Done is 1.0.
    */
   attribute double progress;
 

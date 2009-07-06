@@ -43,6 +43,7 @@ sbDeviceStatus::sbDeviceStatus()
   mCurrentSubState = sbIDevice::STATE_IDLE;
   mElapsedTime = 0;
   mRemainingTime = -1; // Default to unknown
+  mCurrentProgress = -1;
 }
 
 sbDeviceStatus::~sbDeviceStatus()
@@ -122,10 +123,16 @@ sbDeviceStatus::GetProgress(double *aProgress)
   *aProgress = (curProgress / 100.0 - 0.5);
   return NS_OK;
 }
+
 NS_IMETHODIMP
 sbDeviceStatus::SetProgress(double aProgress)
 {
-  return mProgressRemote->SetIntValue(static_cast<PRInt64>(aProgress * 100.0 + 0.5));
+  PRInt64 const newProgress = aProgress * 100.00 + 0.5;
+  if (newProgress != mCurrentProgress) {
+    mCurrentProgress = newProgress;
+    return mProgressRemote->SetIntValue(newProgress);
+  }
+  return NS_OK;
 }
 
 /* attribute PRUint32 workItemProgress; */

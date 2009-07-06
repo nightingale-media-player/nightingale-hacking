@@ -286,7 +286,9 @@ var DPW = {
                     this._deviceID + ".status.totalcount", null);
     this._curItemIndex = createDataRemote(
                     this._deviceID + ".status.workcount", null);
-
+    this._itemProgress = createDataRemote(
+                    this._deviceID + ".status.progress", null);
+                    
     // Update the last completed operation
     this._lastCompletedEventOperation = this._device.previousState;
 
@@ -439,18 +441,26 @@ var DPW = {
       this._progressMeter.value = 0;
     }
 
+    params = [ curItemIndex, totalItems ];
+    dump("\n\noperation=" + operation + " substate=" + substate + "\n\n");
     // If we're preparing to sync or transcode (indicated by an idle substate)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
     {
       localeKey = "device.status.progress_preparing_" + operationLocaleSuffix;
+    } if (operation == Ci.sbIDevice.STATE_SYNCING && 
+          substate == Ci.sbIDevice.STATE_TRANSCODE) {
+      params[2] = SBFormattedString(
+        "device.status.progress_header_transcoding_percent_complete",
+        [this._itemProgress.intValue]);              
+      localeKey = "device.status.progress_header_transcoding";
     } else {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
     }
 
     // Update the operation progress text.
     this._progressTextLabel.value =
-           SBFormattedString(localeKey, [ curItemIndex, totalItems ], "");
+           SBFormattedString(localeKey, params , "");
 
   },
 

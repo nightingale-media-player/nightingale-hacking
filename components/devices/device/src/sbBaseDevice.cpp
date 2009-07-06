@@ -1144,6 +1144,7 @@ nsresult sbBaseDevice::SetPreviousState(PRUint32 aState)
   if (mPreviousState != aState) {
     mPreviousState = aState;
   }
+  return NS_OK;
 }
 
 /* readonly attribute unsigned long state; */
@@ -2670,6 +2671,20 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Apply changes to the destination library.
   nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = SetState(STATE_SYNCING);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<sbIDeviceStatus> status;
+  rv = GetCurrentStatus(getter_AddRefs(status));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = status->SetCurrentState(STATE_SYNCING);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = status->SetCurrentSubState(STATE_SYNCING);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   rv = SyncApplyChanges(dstLib, changeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
