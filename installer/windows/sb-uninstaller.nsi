@@ -67,6 +67,23 @@ SectionEnd
 Function un.RemoveBrandingRegistryKeys
    SetShellVarContext all
 
+   ;
+   ; Remove AutoPlay registry keys.
+   ;
+
+   ; Remove the volume device arrival handler from the PlayMusicFilesOnArrival
+   ; event.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival"
+   DeleteRegValue HKLM $0 "${AutoPlayVolumeDeviceArrivalHandlerName}"
+
+   ; Remove the volume device arrival handler.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayVolumeDeviceArrivalHandlerName}"
+   DeleteRegKey HKLM $0
+
+   ; Remove the manage volume device ProgID.
+   StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}"
+   DeleteRegKey HKLM $0
+
    ; Read where start menu shortcuts are installed
    ReadRegStr $R0 HKLM $RootAppRegistryKey ${MuiStartmenupageRegName}
 

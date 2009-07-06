@@ -143,6 +143,36 @@ Function InstallBrandingRegistryKeys
    ReadRegStr $R0 HKLM ${MuiStartmenupageRegKey} ${MuiStartmenupageRegName}
    WriteRegStr HKLM $RootAppRegistryKey "${MuiStartmenupageRegName}" $R0
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
+
+   ;
+   ; AutoPlay v2 registration.
+   ;
+   ; See http://msdn.microsoft.com/en-us/magazine/cc301341.aspx
+   ;     http://social.msdn.microsoft.com/Forums/en-US/netfxbcl/thread/8341c15b-04ef-438e-ab1e-276186fd2177/
+   ;
+   ;   AutoPlay support for MSC devices is provided by registering a handler to
+   ; handle PlayMusicFilesOnArrival events for volume-based devices as described
+   ; in "http://msdn.microsoft.com/en-us/magazine/cc301341.aspx".
+   ;
+
+   ; Register a manage volume device ProgID to launch Songbird.
+   StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}\shell\manage\command"
+   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} --autoplay-manage-volume-device"
+
+   ; Register a volume device arrival handler to invoke the manage volume
+   ; device ProgID.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayVolumeDeviceArrivalHandlerName}"
+   WriteRegStr HKLM $0 "" ""
+   WriteRegStr HKLM $0 "Action" "${AutoPlayManageDeviceAction}"
+   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
+   WriteRegStr HKLM $0 "InvokeProgID" "${AutoPlayVolumeDeviceArrivalHandlerProgID}"
+   WriteRegStr HKLM $0 "InvokeVerb" "manage"
+   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
+
+   ; Register to handle PlayMusicFilesOnArrival events using the volume
+   ; device arrival handler.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival"
+   WriteRegStr HKLM $0 "${AutoPlayVolumeDeviceArrivalHandlerName}" ""
 FunctionEnd 
 
 Section "Desktop Icon"
