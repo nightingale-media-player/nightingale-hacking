@@ -177,13 +177,17 @@
                                              (Ci.nsIDialogParamBlock);
         this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
         var errorItems = dialogPB.objects.queryElementAt(1, Ci.nsIArray);
+        var operation = dialogPB.GetString(1);
 
         // Decode the options.
         this._options = {};
         this._options.listLabel = SBString("device.error.dialog.listbox.caption");
-        this._options.windowTitle = SBString("device.error.dialog.title");
-        this._options.errorMsg = SBBrandedFormattedString
-                                   ("device.error.dialog.msg",
+
+        this._options.windowTitle = SBString("device.error.dialog." +
+                                             operation + ".title");
+        this._options.errorMsg = SBFormattedCountString(
+                                    "device.error.dialog." + operation + ".msg",
+                                    errorItems.length,
                                     [ errorItems.length,
                                       this._getDeviceFriendlyName() ]);
         this._options.showAgainMsg = SBString("device.error.dialog.enable");

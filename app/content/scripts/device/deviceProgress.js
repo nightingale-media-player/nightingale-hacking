@@ -613,12 +613,13 @@ var DPW = {
               .getService(Ci.sbIDeviceErrorMonitor);
       if (deviceErrorMonitor.deviceHasErrors(this._device)) {
         var errorItems = deviceErrorMonitor.getErrorsForDevice(this._device);
+        var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
         WindowUtils.openModalDialog
           (window,
            "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
            "device_error_dialog",
            "chrome,centerscreen",
-           [ "", this._device, errorItems ],
+           [ "", this._device, errorItems, oInfo.localeSuffix ],
            null);
 
         // Clear the errors and re-update the UI now that the user has seen them
