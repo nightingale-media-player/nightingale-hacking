@@ -238,6 +238,7 @@ var DPW = {
   _progressMeter: null,
   _progressTextLabel: null,
   _idleLabel: null,
+  _idleErrorsLabel: null,
   _idleBox: null,
 
 
@@ -269,6 +270,7 @@ var DPW = {
     this._progressTextLabel = this._getElement("progress_text_label");
     this._idleBox = this._getElement("idle_box");
     this._idleLabel = this._getElement("idle_label");
+    this._idleErrorsLabel = this._getElement("idle_errors_label");
 
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
@@ -319,6 +321,7 @@ var DPW = {
     this._progressMeter = null;
     this._progressTextLabel = null;
     this._idleLabel = null;
+    this._idleErrorLabel = null;
   },
 
 
@@ -384,17 +387,18 @@ var DPW = {
       var deviceErrorMonitor =
           Cc["@songbirdnest.com/device/error-monitor-service;1"]
             .getService(Ci.sbIDeviceErrorMonitor);
-      if (deviceErrorMonitor.deviceHasErrors(this._device))
-          key += "_errors";
+      if (deviceErrorMonitor.deviceHasErrors(this._device)) {
+        key += "_errors";
+        this._idleErrorsLabel.hidden = false;
+      } else {
+        this._idleErrorsLabel.hidden = true;
+      }
       this._idleLabel.value = SBFormattedString(key,
                                                 [ this._totalItems.intValue ],
                                                 "");
     } else {
-        this._idleLabel.value = SBString("device.status.progress_complete", "");
+      this._idleLabel.value = SBString("device.status.progress_complete", "");
     }
-
-    // Clear the list of errors
-    this._clearDeviceErrors();
 
     // Set to no longer show progress.
     this._showProgress = false;
@@ -567,10 +571,7 @@ var DPW = {
     // Clear errors.
     this._progressTextLabel.removeAttribute("error");
     try {
-      var deviceErrorMonitor =
-            Cc["@songbirdnest.com/device/error-monitor-service;1"]
-              .getService(Ci.sbIDeviceErrorMonitor);
-      deviceErrorMonitor.clearErrorsForDevice(this._device);
+      this._clearDeviceErrors();
       this._checkForErrors(this._device);
     } catch (err) {
       Cu.reportError(err);
@@ -620,9 +621,10 @@ var DPW = {
            [ "", this._device, errorItems ],
            null);
 
-        // Clear the errors now that the user has seen them
-        deviceErrorMonitor.clearErrorsForDevice(this._device);
+        // Clear the errors and re-update the UI now that the user has seen them
+        this._clearDeviceErrors();
         this._checkForErrors(this._device);
+        this._update();
       }
     } catch (err) {
       Cu.reportError(err);
@@ -717,6 +719,7 @@ var DPW = {
       var deviceErrorMonitor = Cc["@songbirdnest.com/device/error-monitor-service;1"]
                                  .getService(Ci.sbIDeviceErrorMonitor);
       deviceErrorMonitor.clearErrorsForDevice(this._device);
+      this._idleErrorsLabel.hidden = true;
     } catch (err) {
       Cu.reportError(err);
     }
@@ -747,7 +750,7 @@ var DPW = {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
         this._update();
-      break;
+        break;
     }
   },
 

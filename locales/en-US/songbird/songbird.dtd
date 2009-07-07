@@ -338,6 +338,7 @@
 <!ENTITY umsd.video.video_path_browse_msg   "Select the device directory in which to place video files." >
 <!ENTITY umsd.video.video_ext_desc          "Copy video files with the following extensions to the device:" >
 
+<!ENTITY device.error.dialog.link           "View Error Details" >
 
 <!ENTITY restartbox.restartnow        "Restart Now" >
 <!ENTITY restartbox.restartonplaybackend "Restart on End of Playback" >

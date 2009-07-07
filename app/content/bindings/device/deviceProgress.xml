@@ -91,7 +91,16 @@
           <xul:label sbid="idle_label"
                      crop="end"
                      class="dev-progress-idle-label"
-                     flex="1" />
+                     flex="0" />
+
+          <xul:label sbid="idle_errors_label"
+                     crop="end"
+                     class="dev-progress-idle-label text-link"
+                     hidden="true"
+                     action="show_errors"
+                     onclick="DPW.onAction(event);"
+                     value="&device.error.dialog.link;"
+                     flex="0" />
 
           <xul:spacer sbid="progress_spacer" flex="1" />
         </xul:hbox>
