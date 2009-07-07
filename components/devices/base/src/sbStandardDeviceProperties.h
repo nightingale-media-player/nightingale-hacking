@@ -43,6 +43,7 @@
 #define SB_DEVICE_PROPERTY_NAME                   "http://songbirdnest.com/device/1.0#name"
 #define SB_DEVICE_PROPERTY_POWER_SOURCE           "http://songbirdnest.com/device/1.0#powerSource"
 #define SB_DEVICE_PROPERTY_SERIAL_NUMBER          "http://songbirdnest.com/device/1.0#serialNumber"
+#define SB_DEVICE_PROPERTY_SUPPORTS_AUTO_LAUNCH   "http://songbirdnest.com/device/1.0#supportsAutoLaunch"
 #define SB_DEVICE_PROPERTY_TOTAL_USED_SPACE       "http://songbirdnest.com/device/1.0#totalUsedSpace"
 #define SB_DEVICE_PROPERTY_VIDEO_ITEM_COUNT       "http://songbirdnest.com/device/1.0#videoItemCount"
 #define SB_DEVICE_PROPERTY_VIDEO_TOTAL_PLAY_TIME  "http://songbirdnest.com/device/1.0#videoTotalPlayTime"

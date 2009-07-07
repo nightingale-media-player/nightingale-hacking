@@ -65,14 +65,16 @@
 
         <observes element="deviceIDBroadcaster"
                   attribute="device-id"
-                  onbroadcast="DeviceSettingsPane.refreshMediaManagement(event)"/>
+                  onbroadcast="DeviceSettingsPane.refreshDeviceSettings(event)"/>
 
         <!-- XXX To be populated in the future by:
         * bug 16247 (automatic/manual transcoding)
         * bug 16248 (quota for music)
-        * bug 16250 (auto-open Songbird)
-        * bug 16251 (check for new firmware automatically)
         -->
+
+        <!-- General device settings. -->
+        <sb-device-general-settings id="device_general_settings"
+                                    observes="deviceIDBroadcaster"/>
 
         <!-- will get folder view settings inserted programatticaly -->
 

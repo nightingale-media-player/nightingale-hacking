@@ -63,18 +63,31 @@ if (typeof(XUL_NS) == "undefined")
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
 
 var DeviceSettingsPane = {
+  _deviceManagementWidgets: [],
   _mediaManagementWidgets: [],
 
   save: function DeviceSettingsPane_save() {
-    for each (let widget in this._mediaManagementWidgets) {
+    for each (let widget in this._deviceManagementWidgets) {
       widget.save();
     }
   },
 
   reset: function DeviceSettingsPane_reset() {
-    for each (let widget in this._mediaManagementWidgets) {
+    for each (let widget in this._deviceManagementWidgets) {
       widget.reset();
     }
+  },
+
+  refreshDeviceSettings:
+    function DeviceSettingsPane_refreshDeviceSettings(aEvent) {
+    // Add device general settings widget if it hasn't been already.
+    var deviceGeneralSettings =
+          document.getElementById("device_general_settings");
+    if (this._deviceManagementWidgets.indexOf(deviceGeneralSettings) < 0)
+      this._deviceManagementWidgets.push(deviceGeneralSettings);
+
+    // Refresh the media management.
+    this.refreshMediaManagement(aEvent);
   },
 
   refreshMediaManagement: function DeviceSettingsPane_refreshMediaManagement(aEvent) {
@@ -87,6 +100,10 @@ var DeviceSettingsPane = {
         seenLibraries[widget.libraryID] = true;
         continue;
       }
+      let deviceManagementWidgetsIndex =
+            this._deviceManagementWidgets.indexOf(widget);
+      if (deviceManagementWidgetsIndex >= 0)
+        this._deviceManagementWidgets.splice(deviceManagementWidgetsIndex, 1);
       this._mediaManagementWidgets.splice(idx, 1);
       ++idx;
     }
@@ -111,7 +128,8 @@ var DeviceSettingsPane = {
 
       widget.device = device;
 
+      this._deviceManagementWidgets.push(widget);
       this._mediaManagementWidgets.push(widget);
     }
-  },
+  }
 };
