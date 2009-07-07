@@ -34,9 +34,14 @@
  *
  *   The sbIPrompter interface provides an nsIPromptService to environments
  * without a default window (e.g., XPCOM components).  For all methods that take
- * a parent window as an argument, the parent may be set to null.  This
- * interface allows a parent window type to be set to be used as the parent
- * window in these cases.
+ * a parent window as an argument, the parent may be set to null.
+ *   If a parent window is set to null, this interface will use a window of the
+ * type specified by parentWindowType.  If no parent window type is specified,
+ * this interface uses a default type (e.g., "Songbird:Main").  If a window of
+ * the specified type is not available, this interface finds an appropriate
+ * default window to use.
+ *   This interface allows a parent window type to be set to be used as the
+ * parent window in these cases.
  *   In addition, the sbIPrompter interface can be set to wait for a parent
  * window to be available before calling the nsIPromptService methods.  If the
  * parent window type is not available and wait for window is false, dialogs are

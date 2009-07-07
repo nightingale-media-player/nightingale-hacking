@@ -46,6 +46,7 @@ SUBDIRS = strings \
           xpcom \
           streams \
           shutdownservice \
+          system \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
