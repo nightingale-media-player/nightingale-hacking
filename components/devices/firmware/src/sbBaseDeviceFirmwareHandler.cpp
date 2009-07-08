@@ -32,10 +32,27 @@
 #include <nsAutoLock.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <prlog.h>
 
 #include <sbIDeviceEventTarget.h>
 
 #include <sbProxiedComponentManager.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbBaseDeviceFirmwareHandler:5
+ */
+#ifdef PR_LOGGING
+  static PRLogModuleInfo* gBaseDeviceFirmwareHandlerLog = nsnull;
+# define TRACE(args) PR_LOG(gBaseDeviceFirmwareHandlerLog, PR_LOG_DEBUG, args)
+# define LOG(args)   PR_LOG(gBaseDeviceFirmwareHandlerLog, PR_LOG_WARN, args)
+# ifdef __GNUC__
+#   define __FUNCTION__ __PRETTY_FUNCTION__
+# endif /* __GNUC__ */
+#else
+# define TRACE(args) /* nothing */
+# define LOG(args)   /* nothing */
+#endif
 
 static const PRInt32 HTTP_STATE_UNINITIALIZED = 0;
 static const PRInt32 HTTP_STATE_LOADING       = 1;
@@ -51,6 +68,12 @@ sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 , mHandlerState(HANDLER_IDLE)
 , mFirmwareVersion(0)
 {
+#ifdef PR_LOGGING
+  if(!gBaseDeviceFirmwareHandlerLog) {
+    gBaseDeviceFirmwareHandlerLog =
+      PR_NewLogModule("sbBaseDeviceFirmwareHandler");
+  }
+#endif
 }
 
 sbBaseDeviceFirmwareHandler::~sbBaseDeviceFirmwareHandler()
@@ -66,6 +89,7 @@ sbBaseDeviceFirmwareHandler::~sbBaseDeviceFirmwareHandler()
 nsresult
 sbBaseDeviceFirmwareHandler::Init()
 {
+  TRACE(("[%s]", __FUNCTION__));
   mMonitor = nsAutoMonitor::NewMonitor("sbBaseDeviceFirmwareHandler::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
@@ -97,6 +121,7 @@ nsresult
 sbBaseDeviceFirmwareHandler::CreateProxiedURI(const nsACString &aURISpec,
                                               nsIURI **aURI)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aURI);
 
@@ -132,6 +157,7 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
                                              const nsAString &aUsername /*= EmptyString()*/,
                                              const nsAString &aPassword /*= EmptyString()*/)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mXMLHttpRequest);
 
@@ -145,8 +171,12 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
   // Only one request at a time.
   if(state != HTTP_STATE_UNINITIALIZED && 
      state != HTTP_STATE_COMPLETED) {
+    TRACE(("[%s] - can't do parallel requests (in state %08x)", __FUNCTION__, state));
     return NS_ERROR_ABORT;
   }
+  
+  TRACE(("[%s] - sending %s request to %s", __FUNCTION__,
+         nsCString(aMethod).get(), nsCString(aUrl).get()));
 
   rv = mXMLHttpRequest->OpenRequest(aMethod, aUrl, PR_TRUE, 
                                     aUsername, aPassword);
@@ -171,6 +201,7 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
 nsresult
 sbBaseDeviceFirmwareHandler::AbortHttpRequest()
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_STATE(mXMLHttpRequest);
 
@@ -197,6 +228,7 @@ sbBaseDeviceFirmwareHandler::CreateDeviceEvent(PRUint32 aType,
                                                nsIVariant *aData, 
                                                sbIDeviceEvent **aEvent)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   NS_ENSURE_ARG_POINTER(aEvent);
@@ -222,6 +254,7 @@ nsresult
 sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent, 
                                              PRBool aAsync /*= PR_TRUE*/)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aEvent);
 
@@ -256,6 +289,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(PRUint32 aType,
                                              nsIVariant *aData,
                                              PRBool aAsync /*= PR_TRUE*/)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   
   nsCOMPtr<sbIDeviceEvent> deviceEvent;
@@ -271,6 +305,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(PRUint32 aType,
 sbBaseDeviceFirmwareHandler::handlerstate_t
 sbBaseDeviceFirmwareHandler::GetState()
 {
+  TRACE(("[%s]", __FUNCTION__));
   nsAutoMonitor mon(mMonitor);
   return mHandlerState;
 }
@@ -278,6 +313,7 @@ sbBaseDeviceFirmwareHandler::GetState()
 nsresult 
 sbBaseDeviceFirmwareHandler::SetState(handlerstate_t aState)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_ARG_RANGE(aState, HANDLER_IDLE, HANDLER_X);
 
   nsAutoMonitor mon(mMonitor);
@@ -291,6 +327,7 @@ sbBaseDeviceFirmwareHandler::CheckForError(const nsresult &aResult,
                                            PRUint32 aEventType,
                                            nsIVariant *aData /*= nsnull*/)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   if(NS_FAILED(aResult)) {
@@ -308,6 +345,7 @@ sbBaseDeviceFirmwareHandler::CheckForError(const nsresult &aResult,
 /*virtual*/ nsresult 
 sbBaseDeviceFirmwareHandler::OnInit()
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Here is where you will want to initialize yourself for the first time.
    * This should include setting the following member variables to the
@@ -336,6 +374,7 @@ sbBaseDeviceFirmwareHandler::OnInit()
 sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice, 
                                          PRBool *_retval)
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Here is where you will want to verify the incoming sbIDevice object
    * to determine if your handler can support updating the firmware on
@@ -349,6 +388,7 @@ sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnCancel()
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Cancel whatever operation is happening. This is a synchronous call.
    * After this call returns, your object will be destroyed.
@@ -360,6 +400,7 @@ sbBaseDeviceFirmwareHandler::OnCancel()
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnRefreshInfo()
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Here is where you will want to refresh the info for your handler. 
    * This includes the latest firmware version, firmware location, reset instructions
@@ -385,6 +426,7 @@ sbBaseDeviceFirmwareHandler::OnRefreshInfo()
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Here is where you will want to actually perform the firmware update
    * on the device. The firmware update object will contain the local 
@@ -409,6 +451,7 @@ sbBaseDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnVerifyDevice()
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Here is where you will want to verify the firmware on the device itself
    * to ensure that it is not corrupt. Whichever method you use will most likely
@@ -433,6 +476,7 @@ sbBaseDeviceFirmwareHandler::OnVerifyDevice()
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
+  TRACE(("[%s]", __FUNCTION__));
   /**
    * Here is where you should provide a way to verify the firmware update
    * image itself to make sure that it is not corrupt in any way.
@@ -457,6 +501,7 @@ sbBaseDeviceFirmwareHandler::OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUp
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnHttpRequestCompleted()
 {
+  TRACE(("[%s]", __FUNCTION__));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
@@ -467,6 +512,7 @@ sbBaseDeviceFirmwareHandler::OnHttpRequestCompleted()
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetContractId(nsAString & aContractId)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
@@ -478,6 +524,7 @@ sbBaseDeviceFirmwareHandler::GetContractId(nsAString & aContractId)
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetLatestFirmwareLocation(nsIURI * *aLatestFirmwareLocation)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aLatestFirmwareLocation);
 
@@ -498,6 +545,7 @@ sbBaseDeviceFirmwareHandler::GetLatestFirmwareLocation(nsIURI * *aLatestFirmware
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetLatestFirmwareVersion(PRUint32 *aLatestFirmwareVersion)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aLatestFirmwareVersion);
 
@@ -510,6 +558,7 @@ sbBaseDeviceFirmwareHandler::GetLatestFirmwareVersion(PRUint32 *aLatestFirmwareV
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetLatestFirmwareReadableVersion(nsAString & aLatestFirmwareReadableVersion)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
@@ -521,6 +570,7 @@ sbBaseDeviceFirmwareHandler::GetLatestFirmwareReadableVersion(nsAString & aLates
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetReleaseNotesLocation(nsIURI * *aReleaseNotesLocation)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aReleaseNotesLocation);
 
@@ -541,6 +591,7 @@ sbBaseDeviceFirmwareHandler::GetReleaseNotesLocation(nsIURI * *aReleaseNotesLoca
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetResetInstructionsLocation(nsIURI * *aResetInstructionsLocation)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aResetInstructionsLocation);
 
@@ -561,6 +612,7 @@ sbBaseDeviceFirmwareHandler::GetResetInstructionsLocation(nsIURI * *aResetInstru
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetCustomerSupportLocation(nsIURI * *aSupportLocation)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aSupportLocation);
   
@@ -581,6 +633,7 @@ sbBaseDeviceFirmwareHandler::GetCustomerSupportLocation(nsIURI * *aSupportLocati
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetRegisterLocation(nsIURI * *aRegisterLocation)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aRegisterLocation);
 
@@ -602,6 +655,7 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::CanUpdate(sbIDevice *aDevice, 
                                        PRBool *_retval)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -618,6 +672,7 @@ NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
                                   sbIDeviceEventListener *aListener)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aDevice);
 
@@ -644,6 +699,7 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
 NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Unbind()
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   
   nsAutoMonitor mon(mMonitor);
@@ -657,6 +713,7 @@ sbBaseDeviceFirmwareHandler::Unbind()
 NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Cancel()
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv = OnCancel();
@@ -668,6 +725,7 @@ sbBaseDeviceFirmwareHandler::Cancel()
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::RefreshInfo()
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
@@ -681,6 +739,7 @@ sbBaseDeviceFirmwareHandler::RefreshInfo()
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
@@ -695,6 +754,7 @@ sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::VerifyDevice()
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
@@ -708,6 +768,7 @@ sbBaseDeviceFirmwareHandler::VerifyDevice()
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
   nsAutoMonitor mon(mMonitor);
@@ -725,6 +786,7 @@ sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpda
 NS_IMETHODIMP
 sbBaseDeviceFirmwareHandler::Notify(nsITimer *aTimer) 
 {
+  TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aTimer);
   nsresult rv = NS_ERROR_UNEXPECTED;
 

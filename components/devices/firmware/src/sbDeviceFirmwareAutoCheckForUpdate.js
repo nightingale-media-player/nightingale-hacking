@@ -39,7 +39,7 @@ function DEBUG(msg) {
   return;
 
   function repr(x) {
-    if (x == undefined) {
+    if (typeof(x) == "undefined") {
       return 'undefined';
     } else if (x == null) {
       return 'null';
@@ -62,7 +62,7 @@ function DEBUG(msg) {
       return x.toSource();
     }
   }
-  dump('DEBUG '+DEBUG.caller.name);
+  dump('sbDeviceFirmwareAutocheckForUpdate:: '+DEBUG.caller.name);
   if (msg == undefined) {
     // when nothing is passed in, print the arguments
     dump('(');
