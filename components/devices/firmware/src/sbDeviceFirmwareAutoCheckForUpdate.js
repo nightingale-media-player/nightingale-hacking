@@ -155,7 +155,9 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
       let device = this._queue[0];
       this._queueItem = device;
       // Check for update
-      this._deviceFirmwareUpdater.checkForUpdate(device, this);
+      if (device.getPreference("firmware.update.enabled")) {
+        this._deviceFirmwareUpdater.checkForUpdate(device, this);
+      }
     }
     else if(this._queueItem && 
             this._queueItemSuccess) {

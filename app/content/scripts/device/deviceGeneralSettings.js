@@ -174,8 +174,9 @@ deviceGeneralSettingsSvc.prototype = {
     }
 
     // Determine whether the device supports auto-firmware update checks.
-    //XXX eps just set to false for now
-    this._autoFirmwareCheckSupported = false;
+    var updater = Cc['@songbirdnest.com/Songbird/Device/Firmware/Updater;1']
+                    .getService(Ci.sbIDeviceFirmwareUpdater);
+    this._autoFirmwareCheckSupported = updater.hasHandler(this._device);
   },
 
 
@@ -228,14 +229,14 @@ deviceGeneralSettingsSvc.prototype = {
     if (this._autoFirmwareCheckSupported &&
         (allSettings || (aSettingID == "auto_firmware_check_checkbox"))) {
       // Get the device auto-firmware check setting.  Use a default if no
-      // setting set.
-      //XXX just set default value for now.
-      var autoFirmwareCheckEnabled = false;
+      // setting set.  (no pref = null, so it defaults to false)
+      var autoFirmwareCheckEnabled =
+        this._device.getPreference("firmware.update.enabled");
 
       // Set the UI setting.
       var autoFirmwareCheckCheckbox =
             this._getElement("auto_firmware_check_checkbox");
-      autoFirmwareCheckCheckbox.checked = autoFirmwareCheckEnabled;
+      autoFirmwareCheckCheckbox.checked = !!autoFirmwareCheckEnabled;
     }
   },
 
@@ -273,7 +274,8 @@ deviceGeneralSettingsSvc.prototype = {
       var autoFirmwareCheckEnabled = autoFirmwareCheckCheckbox.checked;
 
       // Set the device setting.
-      //XXXeps don't do anything for now
+      this._device.setPreference("firmware.update.enabled",
+                                 autoFirmwareCheckEnabled);
     }
   },
 
