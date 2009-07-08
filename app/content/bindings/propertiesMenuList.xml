@@ -71,8 +71,13 @@
               {
                 return;
               }
-              self.appendItem(propertyInfo.displayName, propertyID);
+              var item = self.appendItem(propertyInfo.displayName, propertyID);
               alreadyAdded[propertyInfo.id] = true;
+              if (self.hasAttribute("value") &&
+                  self.getAttribute("value") == propertyID)
+              {
+                self.selectedItem = item;
+              }
             }
           }
         }
@@ -425,6 +430,7 @@
                 menulist.setAttribute("propertyCategory",
                                       this.getAttribute("propertyCategory"));
               }
+              menulist.setAttribute("value", val);
               menulist.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
               let menuContainer = document.createElement("vbox");
               menuContainer.appendChild(menulist);
@@ -441,13 +447,6 @@
               }
               hbox.insertBefore(menuContainer, childVbox);
               this._children.push(menuContainer);
-              menulist.selectedIndex = 0;
-              for (let i = 0; i < menulist.itemCount; ++i) {
-                if (menulist.getItemAtIndex(i).value == val) {
-                  menulist.selectedIndex = i;
-                  break;
-                }
-              }
               ++self._controlsCount;
             }
             // make the "add property" pseudo-separator
