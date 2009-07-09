@@ -943,13 +943,9 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
       do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIDeviceEvent> event;
-    rv = devMgr->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED,
-                             nsnull, nsnull, getter_AddRefs(event));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool success;
-    rv = this->DispatchEvent(event, PR_FALSE, &success);
+    rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_PREFS_CHANGED,
+                                sbNewVariant(aPrefName),
+                                PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

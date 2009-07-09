@@ -34,6 +34,7 @@ const Cr = Components.results;
 const NS_QUIT_APPLICATION_GRANTED_TOPIC = "quit-application-granted";
 const NS_TIMER_CALLBACK_TOPIC           = "timer-callback";
 const SB_FINAL_UI_STARTUP_TOPIC         = "final-ui-startup";
+const SB_TIMER_MANAGER_PREFIX           = "songbird-device-firmware-update-";
 
 function DEBUG(msg) {
   return;
@@ -63,7 +64,7 @@ function DEBUG(msg) {
     }
   }
   dump('sbDeviceFirmwareAutocheckForUpdate:: '+DEBUG.caller.name);
-  if (msg == undefined) {
+  if (typeof(msg) == "undefined") {
     // when nothing is passed in, print the arguments
     dump('(');
     for (var i=0; i<DEBUG.caller.length; i++) {
@@ -91,30 +92,42 @@ function sbDeviceFirmwareAutoCheckForUpdate() {
   obs.addObserver(this, SB_FINAL_UI_STARTUP_TOPIC, false);
 }
 
+/** a cached reference to the device firmware update service */
 sbDeviceFirmwareAutoCheckForUpdate.prototype._deviceFirmwareUpdater = null;
+/** a cached reference to the device manager service */
 sbDeviceFirmwareAutoCheckForUpdate.prototype._deviceManager = null;
+/** a set where the keys are the ids of devices that have registered timers */
+sbDeviceFirmwareAutoCheckForUpdate.prototype._registeredDevices = {};
+/** the queue of devices currently needing a firmware update check */
 sbDeviceFirmwareAutoCheckForUpdate.prototype._queue = [];
+/** the device currenly being checked for a firmware update */
 sbDeviceFirmwareAutoCheckForUpdate.prototype._queueItem = null;
+/** whether the current item in the queue has been successfully checked */
 sbDeviceFirmwareAutoCheckForUpdate.prototype._queueItemSuccess = false;
+/** timer used to manage firmware update queue */
 sbDeviceFirmwareAutoCheckForUpdate.prototype._timer = null;
+/** the timer manager service (long-running timer service) */
+sbDeviceFirmwareAutoCheckForUpdate.prototype._timerManager = null;
 
 sbDeviceFirmwareAutoCheckForUpdate.prototype.classDescription =
     'Songbird Device Firmware Auto Check For Update';
 sbDeviceFirmwareAutoCheckForUpdate.prototype.classID =
     Components.ID("{2137a87f-2ade-448b-a093-bad4f6649fa3}");
-sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID = '@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1';
+sbDeviceFirmwareAutoCheckForUpdate.prototype.contractID =
+    '@songbirdnest.com/Songbird/Device/Firmware/AutoCheckForUpdate;1';
 sbDeviceFirmwareAutoCheckForUpdate.prototype.flags = Ci.nsIClassInfo.SINGLETON;
 sbDeviceFirmwareAutoCheckForUpdate.prototype.interfaces =
     [Ci.nsISupports, Ci.nsIClassInfo, Ci.nsIObserver, Ci.sbIDeviceEventListener];
-sbDeviceFirmwareAutoCheckForUpdate.prototype.getHelperForLanguage = function(x) { return null; }
+sbDeviceFirmwareAutoCheckForUpdate.prototype.getHelperForLanguage = Function();
 sbDeviceFirmwareAutoCheckForUpdate.prototype.getInterfaces =
-function sbDeviceFirmwareAutoCheckForUpdate_getInterfaces(count, array) {
-  array.value = this.interfaces;
-  count.value = array.value.length;
+function sbDeviceFirmwareAutoCheckForUpdate_getInterfaces(count) {
+  count.value = this.interfaces.length;
+  return this.interfaces;
 }
 sbDeviceFirmwareAutoCheckForUpdate.prototype.QueryInterface =
     XPCOMUtils.generateQI(sbDeviceFirmwareAutoCheckForUpdate.prototype.interfaces);
 
+/** nsIObserver */
 sbDeviceFirmwareAutoCheckForUpdate.prototype.observe =
 function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
   DEBUG();
@@ -137,6 +150,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
     this._deviceManager.addEventListener(this);
     
   } else if (topic == NS_QUIT_APPLICATION_GRANTED_TOPIC) {
+    // cleanup
     obs.removeObserver(this, NS_QUIT_APPLICATION_GRANTED_TOPIC);
 
     if(this._deviceManager) {
@@ -146,8 +160,19 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
     if (this._timer) {
       this._clearTimer();
     }
-    
+
+    if (this._timerManager) {
+      for (let id in this._registeredDevices) {
+        this._unregisterTimer(id);
+      }
+    }
+
+    if (this._queueItem && this._deviceFirmwareUpdater) {
+      this._deviceFirmwareUpdater.finalizeUpdate(this._queueItem);
+    }
+
   } else if (topic == NS_TIMER_CALLBACK_TOPIC) {
+    DEBUG(this._queue.length + " items, top is " + this._queueItem);
     if(this._queue.length &&
        !this._queueItem) {
       // Queue has items in it and we're not currently processing an item.
@@ -185,41 +210,70 @@ function sbDeviceFirmwareAutoCheckForUpdate_observe(subject, topic, data) {
       this._queueItemSuccess = false;
     }
     else if(!this._queue.length &&
-            this._timer){
+            this._timer) {
       // Queue is empty, clear timer.
-      this._clearTimer();
+      this._timer.cancel();
+      this._timer = null;
     }
   }
 }
 
+sbDeviceFirmwareAutoCheckForUpdate.prototype.notify =
+function sbDeviceFirmwareAutoCheckForUpdate_notify(aDevice) {
+  DEBUG();
+  if (!this._timer) {
+    // set up the timer
+    this._timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
+    this._timer.init(this, 5000, Ci.nsITimer.TYPE_REPEATING_SLACK);
+  }
+  if (this._queue.indexOf(aDevice) < 0) {
+    this._queue.push(aDevice);
+  }
+}
+
+/** sbIDeviceEventListener */
 sbDeviceFirmwareAutoCheckForUpdate.prototype.onDeviceEvent =
 function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
   //DEBUG();
   var device = null;
-  
+
   switch(aEvent.type) {
     case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
       device = aEvent.data.QueryInterface(Ci.sbIDevice);
-      this._queue.push(device);
-      this._setUpTimer();
+      if (device.getPreference("firmware.update.enabled")) {
+        this._registerTimer(device);
+      }
     }
     break;
-    
+
     case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED: {
       // Device removed, if in queue, remove it, also finalize any update attempt.
       device = aEvent.data.QueryInterface(Ci.sbIDevice);
+      this._unregisterTimer(device);
       let index = this._queue.indexOf(device);
-      if(index > -1) {
-        this._queue.splice(index, 1);
+      if (index < 0) {
+        break;
       }
-      if(this._queueItem) {
+      this._queue.splice(index, 1);
+      if(this._queueItem == device) {
+        // currently attempting this item
         this._deviceFirmwareUpdater.finalizeUpdate(this._queueItem);
         this._queueItem = null;
         this._queueItemSuccess = false;
-      }   
+      }
     }
     break;
-    
+
+    case Ci.sbIDeviceEvent.EVENT_DEVICE_PREFS_CHANGED: {
+      device = aEvent.origin.QueryInterface(Ci.sbIDevice);
+      if (device.getPreference("firmware.update.enabled")) {
+        this._registerTimer(device);
+      } else {
+        this._unregisterTimer(device);
+      }
+    }
+    break;
+
     case Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END: {
       this._queueItemSuccess = aEvent.data;
     }
@@ -236,21 +290,50 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
   }
 }
 
-sbDeviceFirmwareAutoCheckForUpdate.prototype._setUpTimer =
-function sbDeviceFirmwareAutoCheckForUpdate__setUpTimer() {
+/**
+ * Registers a device with the timer manager
+ */
+sbDeviceFirmwareAutoCheckForUpdate.prototype._registerTimer =
+function sbDeviceFirmwareAutoCheckForUpdate__registerTimer(aDevice) {
   DEBUG();
-  if (!this._timer) {
-    // set up the timer
-    this._timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
-    this._timer.init(this, 5000, Ci.nsITimer.TYPE_REPEATING_SLACK);
+  if (!this._timerManager) {
+    this._timerManager = Cc['@mozilla.org/updates/timer-manager;1']
+                           .getService(Ci.nsIUpdateTimerManager);
   }
+  let self = this;
+  let callback = function(aTimer) {
+    self.notify(aDevice);
+  };
+  let interval = aDevice.getPreference("firmware.update.interval");
+  if (!interval) {
+    interval = 60 * 60 * 24 * 7; // default to 7 days
+  }
+  this._timerManager.registerTimer(SB_TIMER_MANAGER_PREFIX + aDevice.id,
+                                   callback,
+                                   interval);
+  this._registeredDevices[aDevice.id] = true;
 }
-sbDeviceFirmwareAutoCheckForUpdate.prototype._clearTimer =
-function sbDeviceFirmwareAutoCheckForUpdate__clearTimer() {
+/**
+ * Unegisters a with the timer manager for the given device
+ */
+sbDeviceFirmwareAutoCheckForUpdate.prototype._unregisterTimer =
+function sbDeviceFirmwareAutoCheckForUpdate__unregisterTimer(aDevice) {
   DEBUG();
-  if (this._timer) {
-    this._timer.cancel();
-    this._timer = null;
+  let id = aDevice;
+  if ("id" in aDevice) {
+    id = aDevice.id;
+  }
+  if (!this._registeredDevices[id]) {
+    // this device was never registerd. probably means update was disabled.
+    return;
+  }
+  delete this._registeredDevices[id];
+  // we can't actually unregister timers; instead, we can register it for
+  // a really long time (here, 136 years) and hope it doesn't get called
+  if (this._timerManager) {
+    this._timerManager.registerTimer(SB_TIMER_MANAGER_PREFIX + id,
+                                     null,
+                                     -1);
   }
 }
 
