@@ -3804,13 +3804,27 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
     }
 
   } else {
-    // Get the write source file name and replace illegal characters.
+    // Get the write source file name, unescape it, and replace illegal characters.
     nsCOMPtr<nsIURL> writeSrcURL = do_QueryInterface(writeSrcURI, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
+
     nsCAutoString cWriteSrcFileName;
     rv = writeSrcURL->GetFileName(cWriteSrcFileName);
     NS_ENSURE_SUCCESS(rv, rv);
-    nsAutoString writeSrcFileName = NS_ConvertUTF8toUTF16(cWriteSrcFileName);
+
+    // First, unescape it
+    nsCAutoString cUnescapedWriteSrcFileName; 
+    nsCOMPtr<nsINetUtil> netUtil = 
+                       do_GetService("@mozilla.org/network/util;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = netUtil->UnescapeString(cWriteSrcFileName,
+                                 nsINetUtil::ESCAPE_ALL,
+                                 cUnescapedWriteSrcFileName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsAutoString writeSrcFileName = 
+                        NS_ConvertUTF8toUTF16(cUnescapedWriteSrcFileName);
+
+    // replace illegal characters
     nsString_ReplaceChar(writeSrcFileName, kIllegalChars, PRUnichar('_'));
 
     // Get a file object for the content base.
