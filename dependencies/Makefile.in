@@ -380,7 +380,7 @@ GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/li
                       $(FLAC) \
                       $(NULL)
 
-   endif #} macosx
+   endif #}macosx
    ifneq (,$(filter-out macosx windows,$(SB_PLATFORM))) #{
 
       GST_PLUGINS_BASE_NAMES += gstalsa \
@@ -488,8 +488,12 @@ GARBAGE += $(SONGBIRD_XULRUNNERDIR)
 include $(topsrcdir)/build/rules.mk
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 
+# The find is address the fact that for some reason, the XR tarballs all have
+# the group (!!?) writeble bit set; other than that, perms seem plausible; see
+# bug 12013 and bug 17086.
 export::
-	$(TAR) -z -x -f $(XULRUNNER_DIR)/xulrunner.tar.gz -C $(SONGBIRD_XULRUNNERDIR)
+	$(TAR) -z -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.gz --mode=g-w -C $(SONGBIRD_XULRUNNERDIR)
+	$(FIND) $(SONGBIRD_XULRUNNERDIR) -exec $(CHMOD) g-w {} \;
 
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
 
@@ -532,5 +536,5 @@ ifeq (windows,$(SB_PLATFORM)) #{
 	rc -v -fo songbird.res songbird.rc
 	$(RESHACKER_BIN) -addoverwrite $(SONGBIRD_XR_STUB_DIR)/songbird.exe, \
 	 $(SONGBIRD_XR_STUB_DIR)/songbird.exe, songbird.res, VersionInfo,1,1033
-endif # } windows
-	$(CHMOD) +x $(SONGBIRD_STUB)
+endif # }windows
+	$(CHMOD) 0755 $(SONGBIRD_STUB)

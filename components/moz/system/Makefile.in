@@ -22,17 +22,15 @@
 # END SONGBIRD GPL
 #
 
-DEPTH     = ../../..
+DEPTH = ../../..
 topsrcdir = @top_srcdir@
-srcdir    = @srcdir@
-VPATH     = @srcdir@
+srcdir = @srcdir@
+VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq ($(SB_PLATFORM), windows)
-  SUBDIRS = windows
-else
-  SUBDIRS =
+ifeq (windows,$(SB_PLATFORM))
+   SUBDIRS = windows
 endif
 
 include $(topsrcdir)/build/rules.mk

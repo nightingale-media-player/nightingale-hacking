@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbAboutRedirector.js \
                       $(srcdir)/sbSongbirdProtocol.js \
-                      $(srcdir)/sbAboutCredits.js
+                      $(srcdir)/sbAboutCredits.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk

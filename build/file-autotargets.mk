@@ -132,7 +132,7 @@ $(SONGBIRD_XULRUNNERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD
 	$(INSTALL) $^ $(SONGBIRD_XULRUNNERDIR)/$(@F)
 
 $(SONGBIRD_CHROMEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CHROME))),$(addprefix $$d,%)))
-	$(INSTALL) $^ $(SONGBIRD_CHROMEDIR)/$(@F)
+	$(INSTALL_FILE) $^ $(SONGBIRD_CHROMEDIR)/$(@F)
 
 $(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_SEARCHPLUGINS))),$(addprefix $$d,%)))
 	$(INSTALL_FILE) $^ $(SONGBIRD_SEARCHPLUGINSDIR)/$(@F)
@@ -155,11 +155,23 @@ $(SONGBIRD_SEARCHPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONG
 $(SONGBIRD_PROFILEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_PROFILE))),$(addprefix $$d,%)))
 	$(INSTALL_FILE) $^ $(SONGBIRD_PROFILEDIR)/$(@F)
 
+ifdef COMPONENTSDIR_MODE
+   COMPONENTSDIR_INSTALL = $(INSTALL) -m $(COMPONENTSDIR_MODE)
+else
+   COMPONENTSDIR_INSTALL = $(INSTALL_FILE)
+endif
+
 $(SONGBIRD_COMPONENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_COMPONENTS))),$(addprefix $$d,%)))
-	$(INSTALL_PROG) $^ $(SONGBIRD_COMPONENTSDIR)/$(@F)
+	$(COMPONENTSDIR_INSTALL) $^ $(SONGBIRD_COMPONENTSDIR)/$(@F)
+
+ifdef DISTDIR_MODE
+   DISTDIR_INSTALL = $(INSTALL) -m $(DISTDIR_MODE)
+else
+   DISTDIR_INSTALL = $(INSTALL_FILE)
+endif
 
 $(SONGBIRD_DISTDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_DIST))),$(addprefix $$d,%)))
-	$(INSTALL) $^ $(SONGBIRD_DISTDIR)/$(@F)
+	$(DISTDIR_INSTALL) $^ $(SONGBIRD_DISTDIR)/$(@F)
 
 $(SONGBIRD_CONTENTSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CONTENTS))),$(addprefix $$d,%)))
 	$(INSTALL_FILE) $^ $(SONGBIRD_CONTENTSDIR)/$(@F)

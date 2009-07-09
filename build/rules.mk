@@ -65,6 +65,13 @@ endif
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL: all clean libs export
 
+ifdef SONGBIRD_TEST_COMPONENT
+   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(strip $(SONGBIRD_TEST_COMPONENT))
+   ifdef SB_ENABLE_TESTS
+      APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
+   endif
+endif
+
 #------------------------------------------------------------------------------
 # Redefine these file locations when building extensions
 #------------------------------------------------------------------------------
@@ -79,13 +86,7 @@ ifdef EXTENSION_STAGE_DIR
    SONGBIRD_SEARCHPLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/searchplugins
    SONGBIRD_SCRIPTSDIR = $(OUR_EXTENSION_STAGE_DIR)/scripts
    SONGBIRD_JSMODULESDIR = $(OUR_EXTENSION_STAGE_DIR)/jsmodules
-endif
-
-ifdef SONGBIRD_TEST_COMPONENT
-   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(strip $(SONGBIRD_TEST_COMPONENT))
-   ifdef SB_ENABLE_TESTS
-      APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
-   endif
+   APP_DIST_DIRS = $(NULL)
 endif
 
 ###############################################################################
@@ -180,7 +181,7 @@ ifeq (windows,$(SB_PLATFORM))
 endif
 
 clean:: $(SUBMAKEFILES)
-	-$(RM) $(ALL_TRASH)
+	-$(RM) -r $(ALL_TRASH)
 	+$(LOOP_OVER_SUBDIRS)
 
 distclean:: FORCE
@@ -219,7 +220,7 @@ export:: $(SUBMAKEFILES) $(APP_DIST_DIRS) $(CREATEDIRS) $(OUR_SUBDIRS)
 ## Handle application and component directory creation
 ##
 $(sort $(APP_DIST_DIRS) $(CREATEDIRS)): %: FORCE
-	$(if $(wildcard $@),,$(MKDIR) $@)
+	$(if $(wildcard $@),,$(MKDIR_APP) $@)
 
 ##
 ## Program handling for libs and export targets
@@ -759,11 +760,16 @@ ifndef SONGBIRD_PP_DIR
    SONGBIRD_PP_DIR = $(CURDIR)
 endif
 
+ifndef SONGBIRD_PP_MODE
+   # default to a file
+   SONGBIRD_PP_MODE = 644
+endif
+
 GENERATED_PP_DEPS = $(addprefix $(SONGBIRD_PP_DIR)/,$(foreach f,$(SONGBIRD_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
 
 $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
    ifeq (,$(wildcard $(SONGBIRD_PP_DIR)))
-	   $(MKDIR) $(SONGBIRD_PP_DIR)
+	   $(MKDIR_APP) $(SONGBIRD_PP_DIR)
    endif
 	@for item in $(SONGBIRD_PP_RESOURCES); do \
       target=$(SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
@@ -772,6 +778,7 @@ $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
       $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
        $(ACDEFINES) $(RESOURCES_PPFLAGS) \
        $(PPDEFINES) -- $$item > $$target; \
+      $(if $(SONGBIRD_PP_MODE),$(CHMOD) $(SONGBIRD_PP_MODE) $$target; ) \
    done
 
 export:: $(GENERATED_PP_DEPS)
@@ -885,7 +892,7 @@ endif
 # what the real dependency should be.
 libs:: $(if $(JAR_MANIFEST),$(OUR_JAR_MN)) $(CHROME_DEPS)
 ifdef JAR_MANIFEST
-	$(MKDIR) $(OUR_JAR_TARGET_DIR)
+	$(MKDIR_APP) $(OUR_JAR_TARGET_DIR)
 	$(PERL) -I$(MOZSDK_SCRIPTS_DIR) $(MOZSDK_SCRIPTS_DIR)/make-jars.pl \
     $(OUR_MAKE_JARS_FLAGS) -- $(ACDEFINES) $(PPDEFINES) < $(OUR_JAR_MN)
 	$(RM) -r $(OUR_JAR_TARGET_DIR)/stage
@@ -1006,6 +1013,7 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
     -DEXTENSION_MAX_VER="$(EXTENSION_MAX_VER)" \
     -DEXTENSION_NAME=$(OUR_EXTENSION_NAME) -- \
     $(OUR_INSTALL_RDF_IN) > $(OUR_INSTALL_RDF)
+	$(CHMOD) 0644 $(OUR_INSTALL_RDF)
 
 # Check for an extension license; default file name is "LICENSE" in the root
 # directory of the extension. You can override this by setting EXTENSION_LICENSE
@@ -1013,7 +1021,7 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 
 export:: $(if $(EXTENSION_NAME), $(OUR_INSTALL_RDF))
 ifdef EXTENSION_NAME
-	$(MKDIR) $(EXTENSION_STAGE_DIR)
+	$(MKDIR_APP) $(EXTENSION_STAGE_DIR)
 endif
 
 libs:: $(if $(EXTENSION_NAME), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
@@ -1025,13 +1033,13 @@ ifdef EXTENSION_NAME
 	   $(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
    endif
 	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).xpi.tmp *
-	$(MKDIR) $(EXTENSION_DIR)
+	$(MKDIR_APP) $(EXTENSION_DIR)
 	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).xpi.tmp \
     $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
    ifeq (1,$(INSTALL_EXTENSION))
-	   $(MKDIR) $(SONGBIRD_EXTENSIONSDIR)
+	   $(MKDIR_APP) $(SONGBIRD_EXTENSIONSDIR)
 	   $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
-	   $(CP) -rf $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	   $(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
    endif
 endif
 

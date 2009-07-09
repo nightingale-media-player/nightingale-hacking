@@ -41,6 +41,8 @@ EXTENSION_DIR  = .
 # where do we want to build it into (over there)
 EXTENSION_STAGE_DIR = ./.xpistage
 
+EXTENSION_NO_BINARY_COMPONENTS = 1
+
 EXTENSION_VER = 2.0.3pre
 EXTENSION_MIN_VER = 1.3.0a
 EXTENSION_MAX_VER = 1.3.0b1

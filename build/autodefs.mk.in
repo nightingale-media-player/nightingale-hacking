@@ -162,6 +162,7 @@ SONGBIRD_XULRUNNERDIR = $(topsrcdir)/@OBJDIRNAME@/@DISTDIRNAME@@MACOSX_FRAMEWORK
 APP_DIST_DIRS = $(SONGBIRD_CHROMEDIR) \
                 $(SONGBIRD_COMPONENTSDIR) \
                 $(SONGBIRD_DEFAULTSDIR) \
+                $(SONGBIRD_EXTENSIONSDIR) \
                 $(SONGBIRD_GSTPLUGINSDIR) \
                 $(SONGBIRD_JSMODULESDIR) \
                 $(SONGBIRD_LIBDIR) \
@@ -212,6 +213,11 @@ LD = @LD@
 LN = @LN@
 MD5SUM = @MD5SUM@
 MKDIR = @MKDIR@ -p
+# Use MKDIR_APP to create a directory that is intended to be shipped; we use
+# intstall -d here because mkdir -p -m N only applies the -m to the _last_
+# directory part, not any of the other directories it creates along the way;
+# lame, Lame, LAME; hats off to Mook for suggesting this.
+MKDIR_APP = $(INSTALL) -d -m 755
 MV = @MV@
 MSMANIFEST_TOOL = @MSMANIFEST_TOOL@
 PERL = @PERL@

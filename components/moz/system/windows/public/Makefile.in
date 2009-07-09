@@ -33,7 +33,6 @@ XPIDL_SRCS = sbIWindowsAutoPlayService.idl \
              $(NULL)
 
 XPIDL_MODULE = sbWindowsSystem.xpt
-XPIDL_MODULE_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
 
 LIBSONGBIRD_COMPONENT = sbWindowsSystem
 

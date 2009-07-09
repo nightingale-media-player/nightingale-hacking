@@ -46,6 +46,8 @@ RESOURCES_PPFLAGS = -DEXTENSION_VER=$(EXTENSION_VER) \
                     -DEXTENSION_MAX_VER=$(EXTENSION_MAX_VER) \
                     $(NULL)
 
+EXTENSION_NO_BINARY_COMPONENTS = 1
+
 CREATEDIRS = $(EXTENSION_DIR)
 
 include $(topsrcdir)/build/rules.mk
