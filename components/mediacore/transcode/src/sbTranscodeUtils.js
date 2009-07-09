@@ -33,6 +33,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 
 const IOFLAGS_DEFAULT = -1;
 const PERMISSIONS_DEFAULT = -1;
@@ -95,10 +96,6 @@ TranscodeBatchJob.prototype = {
 
   get imageProfile() {
     return this._imageProfile;
-  },
-
-  set items(aItems) {
-    this._items = ArrayConverter.JSArray(aItems);
   },
 
   set items(aItems) {
@@ -296,8 +293,33 @@ TranscodeBatchJob.prototype = {
       var index = this._nextIndex++;
 
       try {
-        this._startTranscode(
-                this._items[index].QueryInterface(Ci.sbITranscodeBatchJobItem));
+        var tbjItem;
+        try {
+          // Try grabbing the item off the _items queue and assume it's an
+          // sbITranscodeBatchJobItem
+          tbjItem = this._items[index]
+                        .QueryInterface(Ci.sbITranscodeBatchJobItem);
+        } catch (e) {
+          // It's not a transcodeBatchJobItem, so it's probably a mediaitem.
+          // Need to take the item (which is in the device library) and wrap
+          // it in an sbITranscodeBatchJobItem to pass to the transcoder
+          var deviceItem = this._items[index].QueryInterface(Ci.sbIMediaItem);
+          tbjItem = new Object;
+
+          // Need to map this back to the main library media item
+          var libGuid = deviceItem.getProperty(SBProperties.originLibraryGuid);
+          var itemGuid = deviceItem.getProperty(SBProperties.originItemGuid);
+          var originLib = LibraryUtils.manager.getLibrary(libGuid);
+          tbjItem.mediaItem = originLib.getMediaItem(itemGuid);
+
+          // Need to get the destination file (nsIFile)
+          tbjItem.destinationFile = deviceItem.contentSrc.QueryInterface(
+                                               Ci.nsIFileURL).file;
+          tbjItem.QueryInterface = XPCOMUtils.generateQI(
+                                              [Ci.sbITranscodeBatchJobItem]);
+          tbjItem.QueryInterface(Ci.sbITranscodeBatchJobItem);
+        }
+        this._startTranscode(tbjItem);
       } catch (e) {
         // Go onto the next media item after reporting the error
         this._errors.push(SBString("transcode.file.notsupported"));
