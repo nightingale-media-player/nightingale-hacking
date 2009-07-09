@@ -21,6 +21,7 @@
 !define WindowClass           "SongbirdMessageWindow"
 !define DDEApplication        "Songbird"
 !define AppRegName            "Songbird"
+!define InstallerMutexName    "${BrandShortName}InstallerMutex"
 
 !define DefaultDistributionName "PartnerId"
 !define DistHelperEXE         "disthelper.exe"
@@ -33,12 +34,15 @@
 !define XULRunnerEXE          "xulrunner.exe"
 !define XULRunnerDir          "xulrunner"
 
+!define SubApplicationWait    2000
+!define QuitApplicationWait   3000
+
 ;
 ; AutoPlay settings.
 ;
 ;   Change AutoPlayBaseName to configure a separate AutoPlay installation.
 ;
-!define AutoPlayBaseName                         "Songbird"
+!define AutoPlayBaseName                         "${BrandShortName}"
 !define AutoPlayManageVolumeDeviceProgID         "${AutoPlayBaseName}.ManageVolumeDevice"
 !define AutoPlayVolumeDeviceArrivalHandlerName   "${AutoPlayBaseName}ManageVolumeDeviceOnArrival"
 !define AutoPlayVolumeDeviceArrivalHandlerProgID "${AutoPlayManageVolumeDeviceProgID}"
@@ -102,7 +106,7 @@
 
 # Strings
 
-!define ForceQuitMessage            "@SB_APPNAME@ is currently running and will be forced to quit."
+!define ForceQuitMessage            "${BrandShortName} is currently running and will be forced to quit."
 
 !define UninstallMessageSameFolder  "The selected installation folder contains an older version of ${BrandShortName}. Do you wish to uninstall it and replace it with ${BrandShortName} ${AppVersion}?"
 
@@ -111,6 +115,15 @@
 !define DirectoryNotEmptyMessage    "The selected installation folder is not empty.$\n$\nThis can cause problems with your ${BrandShortName} installation.$\n$\nAre you sure you want to install into this directory?"
 
 !define AbortInstallMessage         "Are you sure you want to cancel installation of ${BrandShortName}?"
+
+!define AppKillFailureMessage       "Failed to shut down the running instance of ${BrandShortName}.$\n$\nPlease quit ${BrandShortName} before running this installer."
+
+!define InstallerRunningMesg    "The ${BrandShortName} installer or uninstaller is already running."
+
+!define DetailPrintQuitApp "Requesting ${BrandShortName} application shutdown..."
+!define DetailPrintKillApp "Forcefully terminating ${BrandShortName} application..."
+!define DetailPrintQuitAppWait "Waiting for requested application to shutdown..."
+!define DetailPrintQuitAgentWait "Requesting ${BrandShortName} agent shutdown..."
 
 !define TakeSurveyMessage "We're sorry to see that you uninstalled ${BrandShortName}.$\n$\nWill you consider helping us make ${BrandShortName} better by taking a quick anonymous survey to help us improve the product?$\nIt shouldn't take more than 30 seconds to complete."
 !define UnintallSurveyURL http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d

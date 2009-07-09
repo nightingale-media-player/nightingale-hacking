@@ -62,40 +62,60 @@
 
 !macro CloseApp un
 Function ${un}CloseApp
-loop:
+checkApp:
    ${nsProcess::FindProcess} "${FileMainEXE}" $0
 
    ${If} $0 == 0
+      IfSilent exit
       MessageBox MB_OKCANCEL|MB_ICONQUESTION "${ForceQuitMessage}" IDCANCEL exit
 
       FindWindow $1 "${WindowClass}"
-      IntCmp $1 0 +4
-      System::Call 'user32::PostMessage(i r17, i ${WM_QUIT}, i 0, i 0)'
+      ; If we can't find the window, but the process is running, just kill
+      ; the app.
+      IntCmp $1 0 killApp
+      DetailPrint "${DetailPrintQuitApp}"
+      System::Call 'user32::PostMessage(i, i, i, i) v ($1, ${WM_QUIT}, 0, 0)'
     
-      ; The amount of time to wait for the app to shutdown before prompting
-      ; again
-      Sleep 5000
+      DetailPrint "${DetailPrintQuitAppWait}"
+      sleep ${QuitApplicationWait}
 
       ${nsProcess::FindProcess} "${FileMainEXE}" $0
 
       ${If} $0 == 0
+      killApp:
+         DetailPrint "${DetailPrintKillApp}"
          ${nsProcess::KillProcess} "${FileMainEXE}" $1
          ${If} $1 == 0
-            goto end
+            ; We sleep here, just in case the Bird kicked off the agent before
+            ; quitting.
+            DetailPrint "${DetailPrintQuitAppWait}"
+            sleep ${QuitApplicationWait}
+            goto checkAgent
          ${Else}
+            MessageBox MB_OK|MB_ICONSTOP "${AppKillFailureMessage}"
             goto exit
          ${EndIf}
-      ${Else}
-         goto end
       ${EndIf}
-    
-      sleep 2000
-      goto loop
-    
-  ${Else}
-      goto end
   ${EndIf}
-  
+
+checkAgent:
+   ${nsProcess::FindProcess} "${AgentEXE}" $0
+
+   ${If} $0 == 0
+      DetailPrint "${DetailPrintQuitAgent}"
+      ExecWait '$INSTDIR\${AgentEXE} --kill'
+      DetailPrint "${DetailPrintQuitAppWait}"
+      sleep ${SubApplicationWait}
+      ${nsProcess::FindProcess} "${AgentEXE}" $0
+
+      ${If} $0 == 0
+         IfSilent exit
+         MessageBox MB_OK|MB_ICONSTOP "${AppKillFailureMessage}"
+         goto exit
+      ${EndIf}
+   ${EndIf}
+   Goto end
+ 
 exit:
    ${nsProcess::Unload}
    Quit
@@ -191,6 +211,14 @@ FunctionEnd
    !insertmacro ${un}GetOptions
 
    Function ${un}CommonInstallerInit
+      System::Call 'kernel32::CreateMutexA(i, i, t) v (0, 0, "${InstallerMutexName}") ?e'
+      Pop $R0
+      ${If} $R0 != 0
+         IfSilent +2
+         MessageBox MB_OK|MB_ICONSTOP "${InstallerRunningMesg}"
+         Abort
+      ${EndIf}
+
       StrCpy $UnpackMode ${FALSE}
       StrCpy $DistributionMode ${FALSE}
       StrCpy $DistributionName ${DefaultDistributionName}
