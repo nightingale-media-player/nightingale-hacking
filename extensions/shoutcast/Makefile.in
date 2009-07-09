@@ -46,6 +46,6 @@ EXTENSION_VER = 0.7.7pre
 EXTENSION_MIN_VER = 1.3.0a
 EXTENSION_MAX_VER = 1.3.0b1
 
-include $(topsrcdir)/build/rules.mk
-
 CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)
+
+include $(topsrcdir)/build/rules.mk

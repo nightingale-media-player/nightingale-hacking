@@ -47,6 +47,8 @@ EXTENSION_VER = 2.0.3pre
 EXTENSION_MIN_VER = 1.3.0a
 EXTENSION_MAX_VER = 1.3.0b1
 
+XPI_NAME = $(EXTENSION_NAME).xpi
+
 # For now we are going to continue supporting Rubberducky.
 # This probably won't be the case for 1.0
 INSTALL_EXTENSION = 1

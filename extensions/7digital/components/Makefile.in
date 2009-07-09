@@ -5,12 +5,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sb7Digital.js
+SONGBIRD_COMPONENTS = $(srcdir)/sb7Digital.js
 
-TARGET_COMPONENTS_DIR = ../.xpistage/components
+EXTENSION_STAGE_DIR = ../.xpistage
 
 include $(topsrcdir)/build/rules.mk
-
-libs::
-	$(INSTALL_FILE) $(EXTRA_SCRIPT_COMPONENTS) $(TARGET_COMPONENTS_DIR)
-

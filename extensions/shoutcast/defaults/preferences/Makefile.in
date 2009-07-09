@@ -30,12 +30,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/prefs.js \
-                          $(NULL)
+SONGBIRD_PREFS = $(srcdir)/prefs.js \
+                 $(NULL)
 
 EXTENSION_STAGE_DIR = ../../.xpistage
-
-SONGBIRD_PREFERENCES += $(EXTRA_SCRIPT_COMPONENTS)
 
 include $(topsrcdir)/build/rules.mk
 

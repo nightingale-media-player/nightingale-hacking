@@ -987,12 +987,12 @@ ifdef EXTENSION_NAME
    endif
 
    ifdef XPI_NAME
-      OUR_XPI_NAME = $(XPI_NAME)
+      OUR_XPI_NAME = $(strip $(XPI_NAME))
    else
       ifdef EXTENSION_NO_BINARY_COMPONENTS
-         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug)
+         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug).xpi
       else
-         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug)
+         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug).xpi
       endif
    endif
 endif
@@ -1026,16 +1026,16 @@ endif
 
 libs:: $(if $(EXTENSION_NAME), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef EXTENSION_NAME
-	@echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
-	$(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
+	@echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+	$(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME)
 	$(INSTALL_FILE) $(OUR_INSTALL_RDF) $(EXTENSION_STAGE_DIR)/install.rdf
    ifneq (,$(EXTENSION_LICENSE))
 	   $(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
    endif
-	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).xpi.tmp *
+	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).tmp *
 	$(MKDIR_APP) $(EXTENSION_DIR)
-	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).xpi.tmp \
-    $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi
+	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).tmp \
+    $(EXTENSION_DIR)/$(OUR_XPI_NAME)
    ifeq (1,$(INSTALL_EXTENSION))
 	   $(MKDIR_APP) $(SONGBIRD_EXTENSIONSDIR)
 	   $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
@@ -1045,7 +1045,7 @@ endif
 
 
 ifdef EXTENSION_NAME
-   ALL_TRASH += $(EXTENSION_DIR)/$(OUR_XPI_NAME).xpi \
+   ALL_TRASH += $(EXTENSION_DIR)/$(OUR_XPI_NAME) \
                 $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
                 $(EXTENSION_STAGE_DIR) \
                 $(NULL)

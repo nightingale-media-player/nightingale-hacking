@@ -6,9 +6,13 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-TARGET_COMPONENTS_DIR = ../.xpistage/modules
+EXTENSION_STAGE_DIR = ../.xpistage
+
+MT_MODULES_DIR = $(EXTENSION_STAGE_DIR)/modules
+
+CREATEDIRS = $(MT_MODULES_DIR)
 
 include $(topsrcdir)/build/rules.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/mtUtils.js
-                      $(NULL)
+export::
+	$(INSTALL_FILE) $(srcdir)/mtUtils.jsm $(MT_MODULES_DIR)

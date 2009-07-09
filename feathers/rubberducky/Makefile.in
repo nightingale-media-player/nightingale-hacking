@@ -47,6 +47,8 @@ EXTENSION_VER = 2.2.3pre
 EXTENSION_MIN_VER = 1.3.0a
 EXTENSION_MAX_VER = 1.3.0b1
 
+XPI_NAME = $(EXTENSION_NAME).xpi
+
 # We build rubberducky but do not install it.
 # It will be available on the addon site
 INSTALL_EXTENSION = 0
