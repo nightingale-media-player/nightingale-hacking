@@ -66,13 +66,15 @@ int main(int argc, LPTSTR *argv) {
 
   LPTSTR ininame;
   tstring distIni;
+  bool usingFallback = false;
   if (argc > 2) {
     ininame = argv[2];
   } else {
     ininame = _tgetenv(_T("DISTHELPER_DISTINI"));
     if (!ininame) {
-      DebugMessage("No ini file specified");
-      return DH_ERROR_USER;
+      DebugMessage("No ini file specified; using fallback");
+      ininame = _T("songbird.ini");
+      usingFallback = true;
     }
   }
   distIni = GetDistributionDirectory(ininame);
@@ -86,8 +88,10 @@ int main(int argc, LPTSTR *argv) {
           destAppIniName(ResolvePathName("$/application.ini"));
   srcAppIniName.append(_T("application.ini"));
   
-  /// check for the application.ini versions, except during uninstall
-  if (ConvertUTFnToUTF8(argv[1]) != "uninstall") {
+  /// check for the application.ini versions
+  // we don't do this during uninstall (because there is no new file), nor
+  // if we're using fallback (because there's no distribution)
+  if (ConvertUTFnToUTF8(argv[1]) != "uninstall" && !usingFallback) {
     IniFile_t srcAppIni, destAppIni;
     result = ReadIniFile(srcAppIniName.c_str(), srcAppIni);
     if (result) {
@@ -126,6 +130,14 @@ int main(int argc, LPTSTR *argv) {
   result = ReadIniFile(distIni.c_str(), iniFile);
   if (result) {
     LogMessage("Failed to read INI file %S: %i", distIni.c_str(), result);
+    if (usingFallback) {
+      // we're using the fallback, the fact that distini (really, songbird.ini)
+      // is missing is not fatal, just means we have nothing to do
+      LogMessage("Squelching error due to fallback distribution.ini");
+      return DH_ERROR_OK;
+    }
+    // we're in the distribution case, expecting a custom ini file here but
+    // we didn't get one?
     ShowFatalError("Failed to read INI file %s: %i", distIni.c_str(), result);
     return result;
   }
