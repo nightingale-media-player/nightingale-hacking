@@ -48,4 +48,6 @@ EXTENSION_MAX_VER = 1.3.0b1
 
 CREATEDIRS = $(SONGBIRD_PREFERENCESDIR)
 
+INSTALL_EXTENSION = 0
+
 include $(topsrcdir)/build/rules.mk
