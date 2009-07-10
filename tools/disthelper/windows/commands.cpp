@@ -176,12 +176,12 @@ int CommandDeleteFile(std::string aFile, bool aRecursive) {
 }
 
 int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& aArgs) {
-  std::string arg(" \"");
+  tstring arg(_T(" \""));
   std::vector<std::string>::const_iterator it, end = aArgs.end();
   for (it = aArgs.begin(); it < end; ++it) {
     DebugMessage("<%s>", it->c_str());
-    arg.append(*it);
-    arg.append("\" \"");
+    arg.append(FilterSubstitution(ConvertUTF8toUTFn(*it)));
+    arg.append(_T("\" \""));
   }
   arg.erase(arg.length() - 2);  // remove the excess quote at the end
                                 // if no args, comeletely earses the string
@@ -190,10 +190,35 @@ int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& 
   HINSTANCE hInst = ::ShellExecuteW(NULL,
                                     L"open",
                                     ConvertUTF8ToUTF16(aExecutable).c_str(),
-                                    ConvertUTF8ToUTF16(arg).c_str(),
+                                    arg.c_str(),
                                     NULL,
                                     SW_SHOWDEFAULT);
   return ((ULONG_PTR)hInst > 32 ? DH_ERROR_OK : DH_ERROR_UNKNOWN);
+}
+
+tstring FilterSubstitution(tstring aString) {
+  tstring result = aString;
+  tstring::size_type start = 0, end = tstring::npos;
+  while (true) {
+    start = result.find(tstring::value_type('$'), start);
+    if (start == tstring::npos) {
+      break;
+    }
+    end = result.find(tstring::value_type('$'), start + 1);
+    if (end == tstring::npos) {
+      break;
+    }
+    tstring variable = result.substr(start + 1, end - 1);
+    if (variable == _T("APPDIR")) {
+      tstring appdir = GetAppDirectory();
+      DebugMessage("AppDir: %s", appdir.c_str());
+      result.replace(start, end-start+1, appdir);
+      start += appdir.length();
+      continue;
+    }
+    start = end + 1;
+  }
+  return result;
 }
 
 std::vector<std::string> ParseCommandLine(const std::string& aCommandLine) {

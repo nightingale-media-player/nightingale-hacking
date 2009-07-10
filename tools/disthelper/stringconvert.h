@@ -50,8 +50,9 @@
 typedef std::basic_string<TCHAR, std::char_traits<TCHAR>,
                           std::allocator<TCHAR> > tstring;
 
-std::wstring ConvertUTF8ToUTF16(const std::string& src);
+std::wstring ConvertUTF8ToUTF16(const std::string&  src);
 std::string  ConvertUTF16ToUTF8(const std::wstring& src);
+tstring      ConvertUTF8toUTFn (const std::string&  src);
 
 std::wstring ConvertUTFnToUTF16(const std::wstring& src);
 std::wstring ConvertUTFnToUTF16(const std::string&  src);

@@ -1,0 +1,9 @@
+#filter substitution
+[steps:update]
+0001=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.ManageVolumeDevice\shell\manage\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe --autoplay-manage-volume-device"
+0002=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Action" /t REG_SZ /d "Manage device"
+0003=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe"
+0004=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeProgID" /t REG_SZ /d "@SB_APPNAME@.ManageVolumeDevice"
+0005=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeVerb" /t REG_SZ /d "manage"
+0006=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Provider" /t REG_SZ /d "@SB_APPNAME@"
+0007=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival" /v "@SB_APPNAME@ManageVolumeDeviceOnArrival" /t REG_SZ /d ""

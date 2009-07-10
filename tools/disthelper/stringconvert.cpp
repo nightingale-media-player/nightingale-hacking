@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#include <string>
+#include "stringconvert.h"
 
 // table of number of bytes given a UTF8 lead char
 static const int UTF8_SIZE[] = {
@@ -114,6 +114,14 @@ std::string ConvertUTF16ToUTF8(const std::wstring& src) {
   }
   return result;
   #undef GET_BITS
+}
+
+tstring ConvertUTF8toUTFn(const std::string& src) {
+  #if defined(XP_WIN) && defined(_UNICODE)
+    return ConvertUTF8ToUTF16(src);
+  #else
+    return src;
+  #endif
 }
 
 std::wstring ConvertUTFnToUTF16(const std::wstring& src) {

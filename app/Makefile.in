@@ -36,8 +36,12 @@ SONGBIRD_DIST = $(srcdir)/blocklist.xml \
                 $(NULL)
 
 # application.ini handling
-SONGBIRD_PP_RESOURCES = $(srcdir)/application.ini.in
-SONGBIRD_DIST += $(CURDIR)/application.ini
+SONGBIRD_PP_RESOURCES = $(srcdir)/application.ini.in \
+                        $(srcdir)/songbird.ini.in \
+                        $(NULL)
+SONGBIRD_DIST += $(CURDIR)/application.ini \
+                 $(CURDIR)/songbird.ini \
+                 $(NULL)
 
 PPDEFINES += $(SB_BRANDING_DEFINES)
 

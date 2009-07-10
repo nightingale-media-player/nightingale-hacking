@@ -157,7 +157,8 @@ int main(int argc, LPTSTR *argv) {
     if (result) {
       LogMessage("Failed to copy distribution.ini file %S", distIni.c_str());
     }
-  } else if (section != "steps:uninstall") { /* don't copy on uninstall */
+  } else if (section != "steps:uninstall" && !usingFallback) {
+    // don't copy on uninstall or using the fallback
     IniFile_t destDistIni;
     std::string destDistPath = GetLeafName(ConvertUTFnToUTF8(distIni));
     destDistPath.insert(0, "$/distribution/");
