@@ -600,10 +600,13 @@ ServicePaneService.prototype.shutdown = function ServicePaneService_shutdown() {
   // remove ourselves as an RDF observer
   this._dataSource.RemoveObserver(this);
 
+  // finalize the data source saver
+  this._dsSaver.finalize();
+  this._dsSaver = null;
+
   this._dataSource = null;
   this._dataSourceWrapped = null;
   this._root = null;
-  this._dsSaver = null;
 
   DEBUG('ServicePaneService.shutdown() ends');
 }
@@ -1226,9 +1229,6 @@ function dsSaver(ds, frequency) {
   this.timer = Cc['@mozilla.org/timer;1'].createInstance(Ci.nsITimer);
   this.timer.init(this, frequency, Ci.nsITimer.TYPE_REPEATING_SLACK);
 
-  Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
-      .addObserver(this, 'quit-application', false);
-
   this.ds.AddObserver(this);
 }
 dsSaver.prototype = {
@@ -1238,6 +1238,14 @@ dsSaver.prototype = {
       this.dirty = false;
     }
   },
+
+  finalize: function dsSaver_finalize() {
+    this.save();
+    this.ds.RemoveObserver(this);
+    this.timer.cancel();
+    this.timer = null;
+  },
+
   /* nsISupports */
   QueryInterface: function dsSaver_QueryInterface(iid) {
     if (!iid.equals(Ci.nsIRDFObserver) &&
@@ -1256,15 +1264,6 @@ dsSaver.prototype = {
           this.save();
         }
         break;
-      case 'quit-application':
-        this.save();
-        Cc['@mozilla.org/observer-service;1'].getService(Ci.nsIObserverService)
-          .removeObserver(this, 'quit-application');
-        this.ds.RemoveObserver(this);
-        this.timer.cancel();
-        this.timer = null;
-        break;
-      default:
     }
   },
 
