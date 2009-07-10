@@ -817,7 +817,7 @@ ifdef DEBUG
       USING_FLAT_JARS = 1
    endif
 else
-   ifeq (1,$(FLAT_JARS))
+   ifeq (1,$(PREVENT_JARS))
       USING_FLAT_JARS = 1
    endif
 endif
