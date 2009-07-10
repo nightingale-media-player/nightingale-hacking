@@ -45,7 +45,7 @@
 #define AGENT_ITUNES_SLEEP_INTERVAL 5000
 
 static const NSString *kAgentBundleId =
-  [NSString stringWithFormat:@"%s.%s", STRINGIZE(SB_APP_BUNDLE_BASENAME),
+  [[NSString alloc] initWithFormat:@"%s.%s", STRINGIZE(SB_APP_BUNDLE_BASENAME),
                                        STRINGIZE(SB_SIMPLE_PROGRAM)];
 
 
