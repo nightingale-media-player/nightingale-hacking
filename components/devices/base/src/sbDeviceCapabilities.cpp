@@ -93,7 +93,9 @@ sbDeviceCapabilities::SetFunctionTypes(PRUint32 *aFunctionTypes,
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < aFunctionTypesCount; ++arrayCounter) {
-    mFunctionTypes.AppendElement(aFunctionTypes[arrayCounter]);
+    if (mFunctionTypes.IndexOf(aFunctionTypes[arrayCounter]) == -1) {
+      mFunctionTypes.AppendElement(aFunctionTypes[arrayCounter]);
+    }
   }
 
   return NS_OK;
@@ -106,7 +108,9 @@ sbDeviceCapabilities::SetEventTypes(PRUint32 *aEventTypes,
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < aEventTypesCount; ++arrayCounter) {
-    mSupportedEvents.AppendElement(aEventTypes[arrayCounter]);
+    if (mSupportedEvents.IndexOf(aEventTypes[arrayCounter]) == -1) {
+      mSupportedEvents.AppendElement(aEventTypes[arrayCounter]);
+    }
   }
 
   return NS_OK;
@@ -121,14 +125,22 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
   NS_ENSURE_ARG_POINTER(aContentTypes);
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
-  nsTArray<PRUint32> * nContentTypes = new nsTArray<PRUint32>(aContentTypesCount);
-  
+  nsTArray<PRUint32> * nContentTypes = nsnull;
+  PRBool const found = mContentTypes.Get(aFunctionType, &nContentTypes);
+  if (!found) {
+    nContentTypes = new nsTArray<PRUint32>(aContentTypesCount);
+  }
+  NS_ASSERTION(nContentTypes, "nContentTypes should not be null");
   for (PRUint32 arrayCounter = 0; arrayCounter < aContentTypesCount; ++arrayCounter) {
-    nContentTypes->AppendElement(aContentTypes[arrayCounter]);
+    if (nContentTypes->IndexOf(aContentTypes[arrayCounter]) == -1) {
+      nContentTypes->AppendElement(aContentTypes[arrayCounter]);
+    }
   }
   
-  mContentTypes.Put(aFunctionType, nContentTypes);
-
+  if (!found) {
+    mContentTypes.Put(aFunctionType, nContentTypes);
+  }
+  
   return NS_OK;
 }
 
@@ -140,13 +152,22 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
   NS_ENSURE_ARG_POINTER(aFormats);
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
-  nsTArray<nsCString> * nFormats = new nsTArray<nsCString>(aFormatsCount);
-  
+  nsTArray<nsCString> * nFormats = nsnull;
+  PRBool const found = mSupportedFormats.Get(aContentType, &nFormats);
+  if (!found) {
+    nFormats = new nsTArray<nsCString>(aFormatsCount);
+  }
+  NS_ASSERTION(nFormats, "nFormats should not be null");
   for (PRUint32 arrayCounter = 0; arrayCounter < aFormatsCount; ++arrayCounter) {
-    nFormats->AppendElement(aFormats[arrayCounter]);
+    nsCString format(aFormats[arrayCounter]);
+    if (nFormats->IndexOf(format) == -1) {
+      nFormats->AppendElement(aFormats[arrayCounter]);
+    }
   }
   
-  mSupportedFormats.Put(aContentType, nFormats);
+  if (!found) {
+    mSupportedFormats.Put(aContentType, nFormats);
+  }
 
   return NS_OK;
 }

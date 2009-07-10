@@ -89,7 +89,7 @@ static nsModuleComponentInfo sbDeviceBaseComponents[] =
     SB_IIMAGEFORMATTYPE_CLASSNAME,
     SB_IIMAGEFORMATTYPE_CID,
     SB_IIMAGEFORMATTYPE_CONTRACTID,
-    sbFormatTypeConstraintConstructor
+    sbImageFormatTypeConstructor
   },
 
   {
