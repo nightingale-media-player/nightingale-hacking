@@ -40,7 +40,6 @@ NOARCH_EXTENSIONS = shoutcast \
                     concerts \
                     mashTape \
                     7digital \
-                    seeqpod \
                     $(NULL)
 
 # Right now, all of these addons are so-called "noarch" addons; because
