@@ -484,21 +484,26 @@ var shoutcastUninstallObserver = {
     var librarySPS = Cc['@songbirdnest.com/servicepane/library;1']
       .getService(Ci.sbILibraryServicePaneService);
 		
-    // Very long convoluted way to get the favourites node
-    var libGuid = scPrefs.getCharPref("templib.guid");
-    var libraryManager =
-        Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-        .getService(Ci.sbILibraryManager);
-    var tempLib = libraryManager.getLibrary(libGuid);
+    // wrap in a try/catch in case the user hasn't initialised any
+    // of the libraries or favourites node
+    try {
+      // Very long convoluted way to get the favourites node
+      var libGuid = scPrefs.getCharPref("templib.guid");
+      var libraryManager =
+          Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+          .getService(Ci.sbILibraryManager);
+      var tempLib = libraryManager.getLibrary(libGuid);
 
-    // Get our favourites list
-    var a = tempLib.getItemsByProperty(
-        SBProperties.customType, "radio_favouritesList");
-    var favesList = a.queryElementAt(0, Ci.sbIMediaList);
+      // Get our favourites list
+      var a = tempLib.getItemsByProperty(
+          SBProperties.customType, "radio_favouritesList");
+      var favesList = a.queryElementAt(0, Ci.sbIMediaList);
 
-    // Actually get the favourites node now
-    var favouritesNode = librarySPS.getNodeForLibraryResource(
-        favesList);
+      // Actually get the favourites node now
+      var favouritesNode = librarySPS.getNodeForLibraryResource(
+          favesList);
+    } catch (e) {
+    }
 
 		if (topic == "em-action-requested") {
 			// Extension has been flagged to be uninstalled
@@ -542,7 +547,7 @@ var shoutcastUninstallObserver = {
 				// Remove only the Shoutcast node 
 				SPS.removeNode(shoutcastNode);
 
-				if (scPrefs.prefHasUserValue("templib.guid")) {
+				if (scPrefs.prefHasUserValue("templib.guid") && favouritesNode) {
           // Remove the favourites node
 					SPS.removeNode(favouritesNode);
 				}
@@ -584,15 +589,19 @@ var shoutcastUninstallObserver = {
 				scPrefs.deleteBranch("");
 				
 				// Unregister radioLib & favourites libraries
-				var libMgr = Cc['@songbirdnest.com/Songbird/library/Manager;1']
-					.getService(Ci.sbILibraryManager);
-				var radioLib = libMgr.getLibrary(radioLibGuid);
-				var tempLib = libMgr.getLibrary(tempLibGuid);
-				radioLib.clear();
-				tempLib.clear();
-				libMgr.unregisterLibrary(radioLib);
-				libMgr.unregisterLibrary(tempLib);
-				dump("unregistered Shoutcast libraries\n");
+        try {
+          var libMgr = Cc['@songbirdnest.com/Songbird/library/Manager;1']
+            .getService(Ci.sbILibraryManager);
+          var radioLib = libMgr.getLibrary(radioLibGuid);
+          var tempLib = libMgr.getLibrary(tempLibGuid);
+          radioLib.clear();
+          tempLib.clear();
+          libMgr.unregisterLibrary(radioLib);
+          libMgr.unregisterLibrary(tempLib);
+          dump("unregistered Shoutcast libraries\n");
+        } catch (e) {
+          // silently ignore exceptions
+        }
 			}
 			this.unregister();
 		}
