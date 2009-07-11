@@ -612,12 +612,12 @@ nsresult sbBaseDevice::GetFirstRequest(bool aRemove,
 
   *retval = queueIter->get();
   NS_ADDREF(*retval);
-  
+
   if (aRemove) {
     mapIter->second.erase(queueIter);
     mLastRequestPriority = PR_INT32_MIN;
   }
-  
+
   return NS_OK;
 }
 
@@ -627,13 +627,13 @@ nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
 }
 
 nsresult sbBaseDevice::PopRequest(sbBaseDevice::Batch & aBatch) {
-  
+
   aBatch.clear();
   nsAutoMonitor reqMon(mRequestMonitor);
-  
+
   TransferRequestQueueMap::iterator mapIter;
   TransferRequestQueue::iterator queueIter;
-  
+
   nsresult rv = FindFirstRequest(mapIter,
                                  queueIter,
                                  false);
@@ -654,11 +654,11 @@ nsresult sbBaseDevice::PopRequest(sbBaseDevice::Batch & aBatch) {
     queue.erase(queueIter);
     return NS_OK;
   }
-  
+
   typedef std::vector<TransferRequestQueue::iterator> BatchIters;
   BatchIters batchIters;
   batchIters.reserve(queue.size());
-  
+
   // find the end of the batch and keep track of the matching batch entries
   TransferRequestQueue::iterator const queueEnd = queue.end();
   PRUint32 batchID = (*queueIter)->batchID;
@@ -1723,7 +1723,7 @@ nsresult sbBaseDevice::EnsureSpaceForWrite(Batch & aBatch)
   nsresult rv;
 
   sbDeviceEnsureSpaceForWrite esfw(this, aBatch);
-  
+
   rv = esfw.EnsureSpace();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2341,7 +2341,7 @@ nsresult sbBaseDevice::ApplyLibraryOrganizePreference
   rv = aLibrary->GetGuid(guidString);
   NS_ENSURE_SUCCESS(rv, rv);
   nsID libraryGuid;
-  PRBool success = 
+  PRBool success =
     libraryGuid.Parse(NS_LossyConvertUTF16toASCII(guidString).get());
   NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
 
@@ -2395,7 +2395,7 @@ nsresult sbBaseDevice::ApplyLibraryOrganizePreference
       }
     }
   }
-  if (applyAll || 
+  if (applyAll ||
       aLibraryPrefName.EqualsLiteral(PREF_ORGANIZE_FILE_FORMAT))
   {
     if (applyAll || !prefValue) {
@@ -2667,20 +2667,20 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   // Apply changes to the destination library.
   nsCOMPtr<sbIDeviceLibrary> dstLib = do_QueryInterface(aRequest->list, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = SetState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIDeviceStatus> status;
   rv = GetCurrentStatus(getter_AddRefs(status));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = status->SetCurrentState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = status->SetCurrentSubState(STATE_SYNCING);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = SyncApplyChanges(dstLib, changeset);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3760,7 +3760,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
   rv = destLibrary->GetGuid(destLibGuidStr);
   NS_ENSURE_SUCCESS(rv, rv);
   nsID destLibGuid;
-  PRBool success = 
+  PRBool success =
     destLibGuid.Parse(NS_LossyConvertUTF16toASCII(destLibGuidStr).get());
   OrganizeData* organizeData = nsnull;
   if (success) {
@@ -3769,7 +3769,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
 
   nsCOMPtr<nsIFile> contentSrcFile;
   if (success && organizeData->organizeEnabled) {
-    nsCOMPtr<nsIFileURL> baseFileUrl = 
+    nsCOMPtr<nsIFileURL> baseFileUrl =
       do_QueryInterface(aContentSrcBaseURI, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<nsIFile> baseFile;
@@ -3777,15 +3777,15 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Get the managed path
-    nsCOMPtr<sbIMediaFileManager> fileMgr = 
+    nsCOMPtr<sbIMediaFileManager> fileMgr =
       do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = fileMgr->Init(baseFile, 
+    rv = fileMgr->Init(baseFile,
                        organizeData->fileFormat, organizeData->dirFormat);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = fileMgr->GetManagedPath(aWriteDstItem, 
+    rv = fileMgr->GetManagedPath(aWriteDstItem,
                                  sbIMediaFileManager::MANAGE_COPY |
                                    sbIMediaFileManager::MANAGE_MOVE,
                                  getter_AddRefs(contentSrcFile));
@@ -3809,15 +3809,15 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
     NS_ENSURE_SUCCESS(rv, rv);
 
     // First, unescape it
-    nsCAutoString cUnescapedWriteSrcFileName; 
-    nsCOMPtr<nsINetUtil> netUtil = 
+    nsCAutoString cUnescapedWriteSrcFileName;
+    nsCOMPtr<nsINetUtil> netUtil =
                        do_GetService("@mozilla.org/network/util;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     rv = netUtil->UnescapeString(cWriteSrcFileName,
                                  nsINetUtil::ESCAPE_ALL,
                                  cUnescapedWriteSrcFileName);
     NS_ENSURE_SUCCESS(rv, rv);
-    nsAutoString writeSrcFileName = 
+    nsAutoString writeSrcFileName =
                         NS_ConvertUTF8toUTF16(cUnescapedWriteSrcFileName);
 
     // replace illegal characters
@@ -3862,7 +3862,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
 
   // Get the device content source URI.
   nsCOMPtr<nsIURI> contentSrc;
-  rv = sbLibraryUtils::GetFileContentURI(contentSrcFile, 
+  rv = sbLibraryUtils::GetFileContentURI(contentSrcFile,
                                          getter_AddRefs(contentSrc));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3895,8 +3895,8 @@ nsresult sbBaseDevice::SetupDevice()
   return NS_OK;
 }
 
-nsresult 
-sbBaseDevice::ProcessCapabilitiesRegistrars() 
+nsresult
+sbBaseDevice::ProcessCapabilitiesRegistrars()
 {
   // If we haven't built the registrars then do so
   if (mCapabilitiesRegistrarType != sbIDeviceCapabilitiesRegistrar::NONE) {
@@ -3931,8 +3931,8 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
     NS_ENSURE_SUCCESS(rv, rv);
 
     char * contractId;
-    rv = catMgr->GetCategoryEntry(SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY, 
-                                  entryName.get(), 
+    rv = catMgr->GetCategoryEntry(SB_DEVICE_CAPABILITIES_REGISTRAR_CATEGORY,
+                                  entryName.get(),
                                   &contractId);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3952,7 +3952,7 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
         mCapabilitiesRegistrar = capabilitiesRegistrar;
       }
     }
-    
+
     rv = enumerator->HasMoreElements(&hasMore);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -3963,42 +3963,48 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
  * The capabilities cannot be cached because the capabilities are not preserved
  * on all devices.
  */
-nsresult 
-sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities) 
+nsresult
+sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
 {
   NS_ENSURE_ARG_POINTER(aCapabilities);
-  
+
   nsresult rv;
-  
+
   rv = ProcessCapabilitiesRegistrars();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (mCapabilitiesRegistrar) {
     rv = mCapabilitiesRegistrar->AddCapabilities(this, aCapabilities);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   return NS_OK;
 }
 
 nsresult
 sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
-                                   sbITranscodeProfile ** aProfile) 
+                                   sbITranscodeProfile ** aProfile)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aProfile);
-  
+
   nsresult rv;
-  
+
   rv = ProcessCapabilitiesRegistrars();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (mCapabilitiesRegistrar) {
+    nsCOMPtr<nsIThread> mainThread;
+    NS_GetMainThread(getter_AddRefs(mainThread));
+    nsCOMPtr<sbIDeviceCapabilitiesRegistrar> proxy;
+    rv = do_GetProxyForObject(mainThread,
+                              mCapabilitiesRegistrar.get(),
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(proxy));
+
     // This may return NS_ERROR_NOT_AVAILABLE or null if no transcoding is
     // required
-    rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, 
-                                               this,
-                                               aProfile);
+    rv = proxy->ChooseProfile(aMediaItem, this, aProfile);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }

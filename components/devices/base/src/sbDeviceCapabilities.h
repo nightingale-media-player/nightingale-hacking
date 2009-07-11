@@ -30,6 +30,7 @@
 #include <sbIDeviceCapabilities.h>
 
 #include <nsIArray.h>
+#include <nsIClassInfo.h>
 #include <nsCOMPtr.h>
 #include <nsClassHashtable.h>
 #include <nsInterfaceHashtable.h>
@@ -37,11 +38,12 @@
 #include "nsMemory.h"
 #include <nsIVariant.h>
 
-class sbDeviceCapabilities : public sbIDeviceCapabilities
+class sbDeviceCapabilities : public sbIDeviceCapabilities, nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICECAPABILITIES
+  NS_DECL_NSICLASSINFO
 
   sbDeviceCapabilities();
 
@@ -63,11 +65,12 @@ protected:
 /**
  * Implementation of @see sbIImageSize
  */
-class sbImageSize : public sbIImageSize
+class sbImageSize : public sbIImageSize, nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIIMAGESIZE
+  NS_DECL_NSICLASSINFO
 
   sbImageSize() :
     mWidth(0),
@@ -83,13 +86,14 @@ private:
 /**
  * Implementation of @see sbIDevCapRange
  */
-class sbDevCapRange : public sbIDevCapRange
+class sbDevCapRange : public sbIDevCapRange, nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVCAPRANGE
+  NS_DECL_NSICLASSINFO
 
-  sbDevCapRange() : mMin(0), 
+  sbDevCapRange() : mMin(0),
                     mMax(0),
                     mStep(0),
                     mValues(nsnull) {}
@@ -106,17 +110,18 @@ private:
 /**
  * Implementation of @see sbIFormatTypeConstraint
  */
-class sbFormatTypeConstraint : public sbIFormatTypeConstraint
+class sbFormatTypeConstraint : public sbIFormatTypeConstraint, nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIFORMATTYPECONSTRAINT
+  NS_DECL_NSICLASSINFO
 
 private:
   ~sbFormatTypeConstraint();
-  
+
   typedef nsCOMPtr<nsIVariant> Value;
-  
+
   nsString mConstraintName;
   Value mMinValue;
   Value mMaxValue;
@@ -125,19 +130,20 @@ private:
 /**
  * Implementation of @see sbIImageFormatType
  */
-class sbImageFormatType : public sbIImageFormatType
+class sbImageFormatType : public sbIImageFormatType, nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIIMAGEFORMATTYPE
+  NS_DECL_NSICLASSINFO
 
 private:
   ~sbImageFormatType();
- 
+
   typedef nsCOMPtr<nsIArray> Sizes;
   typedef nsCOMPtr<sbIDevCapRange> Widths;
   typedef nsCOMPtr<sbIDevCapRange> Heights;
-  
+
   nsCString mImageFormat;
   Sizes mSupportedExplicitSizes;
   Widths mSupportedWidths;
@@ -147,11 +153,12 @@ private:
 /**
  * Implementation of @see sbAudioFormatType
  */
-class sbAudioFormatType : public sbIAudioFormatType
+class sbAudioFormatType : public sbIAudioFormatType, nsIClassInfo
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBIAUDIOFORMATTYPE
+  NS_DECL_NSICLASSINFO
 
 private:
   ~sbAudioFormatType();
@@ -160,7 +167,7 @@ private:
   typedef nsCOMPtr<sbIDevCapRange> SampleRates;
   typedef nsCOMPtr<sbIDevCapRange> SupportedChannels;
   typedef nsCOMPtr<nsIArray> FormatConstraints;
-  
+
   nsCString mContainerFormat;
   nsCString mAudioCodec;
   Bitrates mSupportedBitrates;

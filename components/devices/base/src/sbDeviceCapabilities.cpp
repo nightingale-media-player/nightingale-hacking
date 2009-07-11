@@ -26,12 +26,23 @@
 
 #include "sbDeviceCapabilities.h"
 
+#include <nsIClassInfoImpl.h>
 #include <nsIMutableArray.h>
+#include <nsIProgrammingLanguage.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsArrayUtils.h>
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceCapabilities, sbIDeviceCapabilities)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceCapabilities,
+                              sbIDeviceCapabilities,
+                              nsIClassInfo)
+
+NS_IMPL_CI_INTERFACE_GETTER2(sbDeviceCapabilities,
+                             sbIDeviceCapabilities,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbDeviceCapabilities)
+NS_IMPL_THREADSAFE_CI(sbDeviceCapabilities)
 
 #include <prlog.h>
 #include <prprf.h>
@@ -55,13 +66,13 @@ isInitialized(false)
 {
   nsresult rv = mContentTypes.Init();
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   rv = mSupportedFormats.Init();
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   rv = mFormatTypes.Init();
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
 #ifdef PR_LOGGING
   if (!gDeviceCapabilitiesLog) {
     gDeviceCapabilitiesLog = PR_NewLogModule("sbDeviceCapabilities");
@@ -136,11 +147,11 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
       nContentTypes->AppendElement(aContentTypes[arrayCounter]);
     }
   }
-  
+
   if (!found) {
     mContentTypes.Put(aFunctionType, nContentTypes);
   }
-  
+
   return NS_OK;
 }
 
@@ -164,7 +175,7 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
       nFormats->AppendElement(aFormats[arrayCounter]);
     }
   }
-  
+
   if (!found) {
     mSupportedFormats.Put(aContentType, nFormats);
   }
@@ -173,11 +184,11 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
 }
 
 NS_IMETHODIMP
-sbDeviceCapabilities::AddFormatType(nsAString const & aFormat, 
+sbDeviceCapabilities::AddFormatType(nsAString const & aFormat,
                                     nsISupports * aFormatType)
 {
   NS_ENSURE_ARG_POINTER(aFormatType);
-  
+
   PRBool const added = mFormatTypes.Put(aFormat, aFormatType);
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
   return NS_OK;
@@ -194,7 +205,7 @@ sbDeviceCapabilities::GetSupportedFunctionTypes(PRUint32 *aArrayCount,
   PRUint32 arrayLen = mFunctionTypes.Length();
   PRUint32* outArray = (PRUint32*)nsMemory::Alloc(arrayLen * sizeof(PRUint32));
   NS_ENSURE_TRUE(outArray, NS_ERROR_OUT_OF_MEMORY);
-  
+
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
     outArray[arrayCounter] = mFunctionTypes[arrayCounter];
   }
@@ -212,7 +223,7 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
   NS_ENSURE_ARG_POINTER(aArrayCount);
   NS_ENSURE_ARG_POINTER(aContentTypes);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsTArray<PRUint32>* contentTypes;
 
   if (!mContentTypes.Get(aFunctionType, &contentTypes)) {
@@ -225,11 +236,11 @@ sbDeviceCapabilities::GetSupportedContentTypes(PRUint32 aFunctionType,
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
-  
+
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
     outArray[arrayCounter] = contentTypes->ElementAt(arrayCounter);
   }
-  
+
   *aArrayCount = arrayLen;
   *aContentTypes = outArray;
   return NS_OK;
@@ -243,7 +254,7 @@ sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
   NS_ENSURE_ARG_POINTER(aArrayCount);
   NS_ENSURE_ARG_POINTER(aSupportedFormats);
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsTArray<nsCString>* supportedFormats;
 
   if (!mSupportedFormats.Get(aContentType, &supportedFormats)) {
@@ -256,7 +267,7 @@ sbDeviceCapabilities::GetSupportedFormats(PRUint32 aContentType,
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
-  
+
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
     nsCString const & format = supportedFormats->ElementAt(arrayCounter);
     outArray[arrayCounter] = ToNewCString(format);
@@ -280,7 +291,7 @@ sbDeviceCapabilities::GetSupportedEvents(PRUint32 *aArrayCount,
   if (!outArray) {
     return NS_ERROR_OUT_OF_MEMORY;
   }
-  
+
   for (PRUint32 arrayCounter = 0; arrayCounter < arrayLen; arrayCounter++) {
     outArray[arrayCounter] = mSupportedEvents[arrayCounter];
   }
@@ -297,8 +308,8 @@ NS_IMETHODIMP
 sbDeviceCapabilities::GetFormatType(nsAString const & aFormat,
                                     nsISupports ** aFormatType) {
   NS_ENSURE_ARG_POINTER(aFormatType);
-  
-  return mFormatTypes.Get(aFormat, aFormatType) ? NS_OK : 
+
+  return mFormatTypes.Get(aFormat, aFormatType) ? NS_OK :
                                                   NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -306,38 +317,44 @@ sbDeviceCapabilities::GetFormatType(nsAString const & aFormat,
  * sbImageSize
  */
 
-NS_IMPL_ISUPPORTS1(sbImageSize, sbIImageSize)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbImageSize, sbIImageSize, nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbImageSize,
+                             sbIImageSize,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbImageSize)
+NS_IMPL_THREADSAFE_CI(sbImageSize)
 
 sbImageSize::~sbImageSize()
 {
   /* destructor code */
 }
 
-NS_IMETHODIMP  
-sbImageSize::Initialize(PRInt32 aWidth, 
+NS_IMETHODIMP
+sbImageSize::Initialize(PRInt32 aWidth,
                         PRInt32 aHeight) {
   mWidth = aWidth;
   mHeight = aHeight;
-  
+
   return NS_OK;
 }
 
 /* readonly attribute long width; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbImageSize::GetWidth(PRInt32 *aWidth)
 {
   NS_ENSURE_ARG_POINTER(aWidth);
-  
+
   *aWidth = mWidth;
   return NS_OK;
 }
 
 /* readonly attribute long height; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbImageSize::GetHeight(PRInt32 *aHeight)
 {
   NS_ENSURE_ARG_POINTER(aHeight);
-  
+
   *aHeight = mHeight;
   return NS_OK;
 }
@@ -346,14 +363,20 @@ sbImageSize::GetHeight(PRInt32 *aHeight)
  * sbDevCapRange
  */
 
-NS_IMPL_ISUPPORTS1(sbDevCapRange, sbIDevCapRange)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDevCapRange, sbIDevCapRange, nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbDevCapRange,
+                             sbIDevCapRange,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbDevCapRange)
+NS_IMPL_THREADSAFE_CI(sbDevCapRange)
 
 sbDevCapRange::~sbDevCapRange()
 {
   /* destructor code */
 }
 
-NS_IMETHODIMP sbDevCapRange::Initialize(PRInt32 aMin, 
+NS_IMETHODIMP sbDevCapRange::Initialize(PRInt32 aMin,
                                         PRInt32 aMax,
                                         PRInt32 aStep) {
   mMin = aMin;
@@ -364,20 +387,20 @@ NS_IMETHODIMP sbDevCapRange::Initialize(PRInt32 aMin,
 }
 
 /* readonly attribute nsIArray values; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDevCapRange::GetValue(PRUint32 aIndex, PRInt32 * aValue)
 {
   NS_ENSURE_ARG_POINTER(aValue);
-  
+
   *aValue = mValues[aIndex];
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDevCapRange::AddValue(PRInt32 aValue) 
+sbDevCapRange::AddValue(PRInt32 aValue)
 {
   NS_ENSURE_TRUE(mValues.AppendElement(aValue), NS_ERROR_OUT_OF_MEMORY);
-  
+
   return NS_OK;
 }
 
@@ -385,37 +408,37 @@ NS_IMETHODIMP
 sbDevCapRange::GetValueCount(PRUint32 * aCount)
 {
   NS_ENSURE_ARG_POINTER(aCount);
-  
+
   *aCount = mValues.Length();
   return NS_OK;
 }
 
 /* readonly attribute long min; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDevCapRange::GetMin(PRInt32 *aMin)
 {
   NS_ENSURE_ARG_POINTER(aMin);
-  
+
   *aMin = mMin;
   return NS_OK;
 }
 
 /* readonly attribute long max; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDevCapRange::GetMax(PRInt32 *aMax)
 {
   NS_ENSURE_ARG_POINTER(aMax);
-  
+
   *aMax = mMax;
   return NS_OK;
 }
 
 /* readonly attribute long step; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDevCapRange::GetStep(PRInt32 *aStep)
 {
   NS_ENSURE_ARG_POINTER(aStep);
-  
+
   *aStep = mStep;
   return NS_OK;
 }
@@ -423,7 +446,7 @@ sbDevCapRange::GetStep(PRInt32 *aStep)
 NS_IMETHODIMP
 sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
   NS_ENSURE_ARG_POINTER(aInRange);
-  
+
   if (mValues.Length() > 0) {
     *aInRange = mValues.Contains(aValue);
   }
@@ -438,21 +461,28 @@ sbDevCapRange::IsValueInRange(PRInt32 aValue, PRBool * aInRange) {
  * sbFormatTypeConstraint
  */
 
-NS_IMPL_ISUPPORTS1(sbFormatTypeConstraint, sbIFormatTypeConstraint)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbFormatTypeConstraint,
+                              sbIFormatTypeConstraint,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbFormatTypeConstraint,
+                             sbIFormatTypeConstraint,
+                             nsIClassInfo)
 
+NS_DECL_CLASSINFO(sbFormatTypeConstraint)
+NS_IMPL_THREADSAFE_CI(sbFormatTypeConstraint)
 
 sbFormatTypeConstraint::~sbFormatTypeConstraint()
 {
   /* destructor code */
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbFormatTypeConstraint::Initialize(nsAString const & aConstraintName,
                                    nsIVariant * aMinValue,
                                    nsIVariant * aMaxValue) {
   NS_ENSURE_ARG_POINTER(aMinValue);
   NS_ENSURE_ARG_POINTER(aMaxValue);
-  
+
   mConstraintName = aConstraintName;
   mMinValue = aMinValue;
   mMaxValue = aMaxValue;
@@ -460,7 +490,7 @@ sbFormatTypeConstraint::Initialize(nsAString const & aConstraintName,
 }
 
 /* readonly attribute AString constraintName; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbFormatTypeConstraint::GetConstraintName(nsAString & aConstraintName)
 {
   aConstraintName = mConstraintName;
@@ -468,22 +498,22 @@ sbFormatTypeConstraint::GetConstraintName(nsAString & aConstraintName)
 }
 
 /* readonly attribute nsIVariant constraintMinValue; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbFormatTypeConstraint::GetConstraintMinValue(nsIVariant * *aConstraintMinValue)
 {
   NS_ENSURE_ARG_POINTER(aConstraintMinValue);
-  
+
   *aConstraintMinValue = mMinValue.get();
   NS_IF_ADDREF(*aConstraintMinValue);
   return NS_OK;
 }
 
 /* readonly attribute nsIVariant constraintMaxValue; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbFormatTypeConstraint::GetConstraintMaxValue(nsIVariant * *aConstraintMaxValue)
 {
   NS_ENSURE_ARG_POINTER(aConstraintMaxValue);
-  
+
   *aConstraintMaxValue = mMaxValue.get();
   NS_IF_ADDREF(*aConstraintMaxValue);
   return NS_OK;
@@ -494,7 +524,15 @@ sbFormatTypeConstraint::GetConstraintMaxValue(nsIVariant * *aConstraintMaxValue)
  */
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(sbImageFormatType, sbIImageFormatType)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbImageFormatType,
+                              sbIImageFormatType,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbImageFormatType,
+                             sbIImageFormatType,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbImageFormatType)
+NS_IMPL_THREADSAFE_CI(sbImageFormatType)
 
 sbImageFormatType::~sbImageFormatType()
 {
@@ -509,7 +547,7 @@ sbImageFormatType::Initialize(nsACString const & aImageFormat,
   NS_ENSURE_ARG_POINTER(aSupportedExplicitSizes);
   NS_ENSURE_ARG_POINTER(aSupportedWidths);
   NS_ENSURE_ARG_POINTER(aSupportedHeights);
-  
+
   mImageFormat = aImageFormat;
   mSupportedExplicitSizes = aSupportedExplicitSizes;
   mSupportedWidths = aSupportedWidths;
@@ -518,7 +556,7 @@ sbImageFormatType::Initialize(nsACString const & aImageFormat,
 }
 
 /* readonly attribute ACString imageFormat; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbImageFormatType::GetImageFormat(nsACString & aImageFormat)
 {
   aImageFormat = mImageFormat;
@@ -526,33 +564,33 @@ sbImageFormatType::GetImageFormat(nsACString & aImageFormat)
 }
 
 /* readonly attribute nsIArray supportedExplicitSizes; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbImageFormatType::GetSupportedExplicitSizes(nsIArray * *aSupportedExplicitSizes)
 {
   NS_ENSURE_ARG_POINTER(aSupportedExplicitSizes);
-  
+
   *aSupportedExplicitSizes = mSupportedExplicitSizes;
   NS_IF_ADDREF(*aSupportedExplicitSizes);
   return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedWidths; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbImageFormatType::GetSupportedWidths(sbIDevCapRange * *aSupportedWidths)
 {
   NS_ENSURE_ARG_POINTER(aSupportedWidths);
-  
+
   *aSupportedWidths = mSupportedWidths;
   NS_IF_ADDREF(*aSupportedWidths);
   return NS_OK;
 }
 
 /* readonly attribute sbIDevCapRange supportedHeights; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbImageFormatType::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
 {
   NS_ENSURE_ARG_POINTER(aSupportedHeights);
-  
+
   *aSupportedHeights = mSupportedHeights;
   NS_IF_ADDREF(*aSupportedHeights);
   return NS_OK;
@@ -563,14 +601,22 @@ sbImageFormatType::GetSupportedHeights(sbIDevCapRange * *aSupportedHeights)
  */
 
 /* Implementation file */
-NS_IMPL_ISUPPORTS1(sbAudioFormatType, sbIAudioFormatType)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbAudioFormatType,
+                              sbIAudioFormatType,
+                              nsIClassInfo)
+NS_IMPL_CI_INTERFACE_GETTER2(sbAudioFormatType,
+                             sbIAudioFormatType,
+                             nsIClassInfo)
+
+NS_DECL_CLASSINFO(sbAudioFormatType)
+NS_IMPL_THREADSAFE_CI(sbAudioFormatType)
 
 sbAudioFormatType::~sbAudioFormatType()
 {
   /* destructor code */
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::Initialize(nsACString const & aContainerFormat,
                               nsACString const & aAudioCodec,
                               sbIDevCapRange * aSupportedBitrates,
@@ -583,12 +629,12 @@ sbAudioFormatType::Initialize(nsACString const & aContainerFormat,
   mSupportedSampleRates = aSupportedSampleRates;
   mSupportedChannels = aSupportedChannels;
   mFormatSpecificConstraints = aFormatSpecificConstraints;
-  
+
   return NS_OK;
 }
 
 /* readonly attribute ACString containerFormat; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::GetContainerFormat(nsACString & aContainerFormat)
 {
   aContainerFormat = mContainerFormat;
@@ -596,7 +642,7 @@ sbAudioFormatType::GetContainerFormat(nsACString & aContainerFormat)
 }
 
 /* readonly attribute ACString audioCodec; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::GetAudioCodec(nsACString & aAudioCodec)
 {
   aAudioCodec = mAudioCodec;
@@ -604,7 +650,7 @@ sbAudioFormatType::GetAudioCodec(nsACString & aAudioCodec)
 }
 
 /* readonly attribute sbIDevCapRange supportedBitrates; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::GetSupportedBitrates(sbIDevCapRange * *aSupportedBitrates)
 {
   NS_ENSURE_ARG_POINTER(aSupportedBitrates);
@@ -614,7 +660,7 @@ sbAudioFormatType::GetSupportedBitrates(sbIDevCapRange * *aSupportedBitrates)
 }
 
 /* readonly attribute sbIDevCapRange supportedSampleRates; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::GetSupportedSampleRates(sbIDevCapRange * *aSupportedSampleRates)
 {
   NS_ENSURE_ARG_POINTER(aSupportedSampleRates);
@@ -624,7 +670,7 @@ sbAudioFormatType::GetSupportedSampleRates(sbIDevCapRange * *aSupportedSampleRat
 }
 
 /* readonly attribute sbIDevCapRange supportedChannels; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::GetSupportedChannels(sbIDevCapRange * *aSupportedChannels)
 {
   NS_ENSURE_ARG_POINTER(aSupportedChannels);
@@ -634,7 +680,7 @@ sbAudioFormatType::GetSupportedChannels(sbIDevCapRange * *aSupportedChannels)
 }
 
 /* readonly attribute nsIArray formatSpecificConstraints; */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbAudioFormatType::GetFormatSpecificConstraints(nsIArray * *aFormatSpecificConstraints)
 {
   NS_ENSURE_ARG_POINTER(aFormatSpecificConstraints);
