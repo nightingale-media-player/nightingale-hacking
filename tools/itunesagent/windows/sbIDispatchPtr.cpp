@@ -77,6 +77,17 @@ HRESULT sbIDispatchPtr::VarArgs::Append(std::wstring const & aArg) {
   return S_OK;
 }
 
+HRESULT sbIDispatchPtr::VarArgs::Append(long & aLong)
+{
+  assert(mVariantCount < mVariants.size());
+  assert(!mParamsReversed);
+
+  VARIANTARG & arg = mVariants[mVariantCount++];
+  arg.lVal = aLong;
+  arg.vt = VT_I4;
+  return S_OK;
+}
+
 HRESULT sbIDispatchPtr::VarArgs::Append(VARIANTARG & aVar) {
   assert(mVariantCount < mVariants.size());
   assert(!mParamsReversed);
@@ -179,8 +190,14 @@ HRESULT sbIDispatchPtr::GetProperty(wchar_t const * aPropertyName,
   HRESULT hr = GetProperty(aPropertyName, var);
   if (SUCCEEDED(hr)) {
     if (var.vt == VT_DISPATCH) {
-      *aPtr = var.pdispVal;
-      (*aPtr)->AddRef();
+      if (var.pdispVal) {
+        *aPtr = var.pdispVal;
+        (*aPtr)->AddRef();
+        VariantClear(&var);
+      }
+      else {
+        hr = DISP_E_MEMBERNOTFOUND;
+      }
     }
     else {
       hr = DISP_E_TYPEMISMATCH;
@@ -198,11 +215,51 @@ HRESULT sbIDispatchPtr::GetProperty(wchar_t const * aPropertyName,
   if (SUCCEEDED(hr)) {
     if (var.vt == VT_BOOL) {
       aBool = var.pboolVal ? true : false;
+      VariantClear(&var);
     }
     else {
       hr = DISP_E_TYPEMISMATCH;
     }
   }
+  return hr;
+}
+
+HRESULT sbIDispatchPtr::GetProperty(wchar_t const * aPropertyName,
+                                    long & aLong)
+{
+  VARIANTARG var;
+  VariantClear(&var);
+
+  HRESULT hr = GetProperty(aPropertyName, var);
+  if (SUCCEEDED(hr)) {
+    if (var.vt == VT_I4) {
+      aLong = var.lVal;
+      VariantClear(&var);
+    }
+    else {
+      hr = DISP_E_TYPEMISMATCH;
+    }
+  }
+  return hr;
+}
+
+HRESULT sbIDispatchPtr::GetProperty(wchar_t const * aPropertyName,
+                                    std::wstring & aString)
+{
+  VARIANTARG var;
+  VariantClear(&var);
+
+  HRESULT hr = GetProperty(aPropertyName, var);
+  if (SUCCEEDED(hr)) {
+    if (var.vt == VT_BSTR) {
+      aString = std::wstring(var.bstrVal);
+      VariantClear(&var);
+    }
+    else {
+      hr = DISP_E_TYPEMISMATCH;
+    }
+  }
+  
   return hr;
 }
 

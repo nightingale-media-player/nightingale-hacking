@@ -69,6 +69,11 @@ public:
      * Appends a string argument as a BSTR
      */
     HRESULT Append(std::wstring const & aArg);
+
+    /**
+     * Appends a long integer argument.
+     */
+    HRESULT Append(long & aLong);
     
     /**
      * Appends an IDispatch object argument
@@ -197,6 +202,14 @@ public:
    * Returns a boolean property
    */
   HRESULT GetProperty(wchar_t const * aPropertyName, bool & aBool);
+  /**
+   * Returns a std::wstring property.
+   */
+  HRESULT GetProperty(wchar_t const * aPropertyName, std::wstring & aString);
+  /**
+   * Returns a long property.
+   */
+  HRESULT GetProperty(wchar_t const * aPropertyName, long & aLong);
   /**
    * Sets a property value
    */

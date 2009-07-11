@@ -255,32 +255,95 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
     }
   }
   else {
+    HRESULT hr;
+    bool found = false;
     sbIDispatchPtr userPlaylist;
+
+    // See if there is an existing entry already under the Songbird folder
+    // playlist.
+    long playlistCount = 0;
     for (;;) {
+      hr = mSongbirdPlaylists.GetProperty(L"Count", playlistCount);
+      if (COMBusyError(hr)) {
+        continue;
+      }
+      else if (FAILED(hr)) {
+        return sbError("Failed to get the number of playlists!");
+      }
+      else {
+        break;
+      }
+    }
+
+    long index = 1;
+    while (index < playlistCount) {
       sbIDispatchPtr::VarArgs args(1);
-      args.Append(aSource);
+      args.Append(index);
       VARIANTARG result;
       VariantInit(&result);
-      HRESULT hr = mSongbirdPlaylists.Invoke(L"ItemByName", 
-                                             args, 
-                                             result, 
-                                             DISPATCH_PROPERTYGET);
+      hr = mSongbirdPlaylists.Invoke(L"Item",
+                                     args,
+                                     result,
+                                     DISPATCH_PROPERTYGET);
       if (COMBusyError(hr)) {
         continue;
       }
       else if (FAILED(hr) || !IsIDispatch(result)) {
-        VariantClear(&result);
-        sbIDispatchPtr::VarArgs args(1);
-        args.Append(aSource);
-        hr = mSongbirdPlaylist.Invoke(L"CreatePlaylist", args, result);
-        if (FAILED(hr)) {
-          return MakeCOMError(hr, "creating a playlist");
+        return MakeCOMError(hr, "Getting a playlist by index");
+      }
+
+      sbIDispatchPtr curPlaylist = result.pdispVal;
+      
+      // Get the name of the playlist
+      std::wstring listName;
+      hr = curPlaylist.GetProperty(L"Name", listName);
+      if (COMBusyError(hr)) {
+        continue;
+      }
+      else if (FAILED(hr)) {
+        return MakeCOMError(hr, "Trying to get the playlists name!");
+      }
+
+      if (listName.compare(aSource) == 0) {
+        // Now check to see if this playlist's parent is the 
+        // Songbird folder list.
+        sbIDispatchPtr parentPlaylist;
+        hr = curPlaylist.GetProperty(L"Parent", &parentPlaylist);
+        if (COMBusyError(hr)) {
+          continue;
+        }
+        else if (SUCCEEDED(hr)) {
+          // Get the parent list, ensure that it is the Songbird folder before
+          // appending it to the list of cached Songbird playlists.
+          std::wstring parentListName;
+          hr = parentPlaylist.GetProperty(L"Name", parentListName);
+          if (SUCCEEDED(hr) &&
+              parentListName.compare(SB_ITUNES_PLAYLIST_NAME) == 0)
+          {
+            found = true;
+            userPlaylist = curPlaylist;
+            break;
+          }
         }
       }
-      userPlaylist = result.pdispVal;
-      VariantClear(&result);
-      break;
+    
+      index++;
     }
+    // If the requested source was not found in the cached playlists folder,
+    // create it now.
+    if (!found) {
+      VARIANTARG result;
+      VariantClear(&result);
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(aSource);
+      hr = mSongbirdPlaylist.Invoke(L"CreatePlaylist", args, result);
+      if (FAILED(hr)) {
+        return MakeCOMError(hr, "creating a playlist");
+      }
+
+      userPlaylist = result.pdispVal;
+    }
+
     assert(userPlaylist.get());
     for (;;) {
       VARIANTARG var;
