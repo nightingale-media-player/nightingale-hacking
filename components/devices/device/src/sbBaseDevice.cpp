@@ -74,6 +74,7 @@
 #include <sbITranscodeManager.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbPrefBranch.h>
+#include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -3240,6 +3241,41 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   return NS_OK;
 }
 
+SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, nsMemory::Free(mValue), mValue = nsnull);
+
+static bool
+ArePlaylistsSupported(sbIDevice * aDevice) {
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  nsresult rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, false);
+
+  bool supported = false;
+  PRUint32 * functionTypes;
+  PRUint32 functionTypesLength;
+  rv = capabilities->GetSupportedFunctionTypes(&functionTypesLength,
+                                               &functionTypes);
+  NS_ENSURE_SUCCESS(rv, false);
+  sbAutoNSMemoryPtr functionTypesPtr(functionTypes);
+  for (PRUint32 functionType = 0;
+       !supported && functionType < functionTypesLength;
+       ++functionType) {
+    PRUint32 * contentTypes;
+    PRUint32 contentTypesLength;
+    rv = capabilities->GetSupportedContentTypes(functionTypes[functionType],
+                                                &contentTypesLength,
+                                                &contentTypes);
+    NS_ENSURE_SUCCESS(rv, false);
+    sbAutoNSMemoryPtr contentTypesPtr(contentTypes);
+    PRUint32 * const end = contentTypes + contentTypesLength;
+    PRUint32 const CONTENT_PLAYLIST =
+      static_cast<PRUint32>(sbIDeviceCapabilities::CONTENT_PLAYLIST);
+    supported = std::find(contentTypes,
+                          end,
+                          CONTENT_PLAYLIST) != end;
+  }
+  return supported;
+}
+
 nsresult
 sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                sbILibraryChangeset* aChangeset)
@@ -3262,6 +3298,8 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  bool const playlistsSupported = ArePlaylistsSupported(this);
+
   // Get the list of all changes.
   nsCOMPtr<nsIArray> changeList;
   PRUint32           changeCount;
@@ -3283,6 +3321,17 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     PRUint32 operation;
     rv = change->GetOperation(&operation);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add item to add media list list or add item list.
+    PRBool itemIsList;
+    rv = change->GetItemIsList(&itemIsList);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // if this is a playlist and they're not supported ignore the change
+    if (itemIsList && !playlistsSupported) {
+      continue;
+    }
+
     switch (operation)
     {
       case sbIChangeOperation::DELETED:
@@ -3302,10 +3351,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
           rv = change->GetSourceItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
 
-          // Add item to add media list list or add item list.
-          PRBool itemIsList;
-          rv = change->GetItemIsList(&itemIsList);
-          NS_ENSURE_SUCCESS(rv, rv);
           if (itemIsList) {
             nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem,
                                                                  &rv);
@@ -3322,9 +3367,6 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
         {
           // If the change is to a media list, add it to the media list change
           // list.
-          PRBool itemIsList;
-          rv = change->GetItemIsList(&itemIsList);
-          NS_ENSURE_SUCCESS(rv, rv);
           if (itemIsList) {
             success = mediaListChangeList.AppendObject(change);
             NS_ENSURE_SUCCESS(success, NS_ERROR_FAILURE);
