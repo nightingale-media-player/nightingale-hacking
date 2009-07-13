@@ -446,25 +446,30 @@ var DPW = {
     }
 
     params = [ curItemIndex, totalItems ];
+    
     // If we're preparing to sync or transcode (indicated by an idle substate)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
     {
       localeKey = "device.status.progress_preparing_" + operationLocaleSuffix;
-    } if (operation == Ci.sbIDevice.STATE_SYNCING && 
-          substate == Ci.sbIDevice.STATE_TRANSCODE) {
+    } if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
       params[2] = SBFormattedString(
         "device.status.progress_header_transcoding_percent_complete",
-        [this._itemProgress.intValue]);              
+        [this._itemProgress.intValue]);
       localeKey = "device.status.progress_header_transcoding";
+    } else if (operation == Ci.sbIDevice.STATE_SYNCING && 
+               substate == Ci.sbIDevice.STATE_TRANSCODE) {
+      params[2] = SBFormattedString(
+        "device.status.progress_header_transcoding_percent_complete",
+        [this._itemProgress.intValue]);
+      localeKey = "device.status.progress_header_transcoding_syncing";
     } else {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
     }
 
     // Update the operation progress text.
     this._progressTextLabel.value =
-           SBFormattedString(localeKey, params , "");
-
+           SBFormattedString(localeKey, params , "");           
   },
 
 
