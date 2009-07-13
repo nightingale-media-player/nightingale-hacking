@@ -39,7 +39,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(63ad8728-e27b-4e3c-8212-6caf7b9badfc)]
+[scriptable, uuid(81b40aa2-1dd2-11b2-9a75-9c5080cc7042)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -96,6 +96,14 @@ interface sbIDeviceFirmwareHandler : nsISupports
    *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute nsIURI registerLocation;
+
+  /** 
+   * \brief Check to see if this handler supports the given device
+   * \param aDevice - The device
+   * \note No events need to be sent for this method. It should be a synchronous
+   *       operation. But, do try and be as quick about it as possible.
+   */
+  boolean canHandleDevice(in sbIDevice aDevice);
 
   /** 
    * \brief Check to see if this handler can update the specified device

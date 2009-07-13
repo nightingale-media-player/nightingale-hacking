@@ -247,6 +247,13 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
     GetRunningHandler(aDevice, aListener, PR_TRUE);
+  
+  NS_ENSURE_TRUE(handler, NS_ERROR_UNEXPECTED);
+  
+  PRBool canUpdate;
+  rv = handler->CanUpdate(aDevice, &canUpdate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(canUpdate, NS_ERROR_NOT_IMPLEMENTED);
 
   nsAutoMonitor mon(mMonitor);
   
@@ -591,7 +598,7 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
     }
 
     PRBool canHandleDevice = PR_FALSE;
-    rv = handler->CanUpdate(aDevice, &canHandleDevice);
+    rv = handler->CanHandleDevice(aDevice, &canHandleDevice);
     if(NS_FAILED(rv)) {
       continue;
     }

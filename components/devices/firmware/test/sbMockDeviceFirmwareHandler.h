@@ -43,6 +43,8 @@ public:
   sbMockDeviceFirmwareHandler();
 
   virtual nsresult OnInit();
+  virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 
+                                     PRBool *_retval);
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
   virtual nsresult OnCancel();

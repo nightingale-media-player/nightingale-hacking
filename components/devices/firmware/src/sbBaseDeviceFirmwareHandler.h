@@ -137,6 +137,9 @@ public:
   // override me, see cpp file for implementation notes
   virtual nsresult OnInit();
   // override me, see cpp file for implementation notes
+  virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 
+                                     PRBool *_retval);
+  // override me, see cpp file for implementation notes
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
   // override me, see cpp file for implementation notes

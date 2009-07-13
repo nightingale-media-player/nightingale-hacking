@@ -371,6 +371,23 @@ sbBaseDeviceFirmwareHandler::OnInit()
 }
 
 /*virtual*/ nsresult 
+sbBaseDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice, 
+                                               PRBool *_retval)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(_retval);
+  /**
+   * Here is where you will want to verify the incoming sbIDevice object
+   * to determine if your handler can support it in some way. _retval should be
+   * set to either PR_TRUE (yes, use this handler for the device) or PR_FALSE
+   * (let some other handler try).
+   */
+
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
 sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice, 
                                          PRBool *_retval)
 {
@@ -621,7 +638,7 @@ sbBaseDeviceFirmwareHandler::GetCustomerSupportLocation(nsIURI * *aSupportLocati
   nsAutoMonitor mon(mMonitor);
   
   if(!mSupportLocation) {
-    return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
 
   nsresult rv = mSupportLocation->Clone(aSupportLocation);
@@ -642,10 +659,27 @@ sbBaseDeviceFirmwareHandler::GetRegisterLocation(nsIURI * *aRegisterLocation)
   nsAutoMonitor mon(mMonitor);
   
   if(!mRegisterLocation) {
-    return NS_ERROR_NOT_AVAILABLE;
+    return NS_OK;
   }
 
   nsresult rv = mRegisterLocation->Clone(aRegisterLocation);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbBaseDeviceFirmwareHandler::CanHandleDevice(sbIDevice *aDevice, 
+                                               PRBool *_retval)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = OnCanHandleDevice(aDevice, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

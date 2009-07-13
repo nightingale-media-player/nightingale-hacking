@@ -170,10 +170,7 @@
         var toolsList = toolsAttribute.split(",");
         
         for(let i = 0; i < toolsList.length; ++i) {
-          let box = 
-            document.getAnonymousElementByAttribute(this,
-                                                    "tool",
-                                                     toolsList[i]);
+          let box = this._getToolBox(toolsList[i]);
           if(box) {
             box.hidden = false;
           }
@@ -353,9 +350,37 @@
             }
           };
 
-          // Now check for an update.
-          firmwareUpdater.checkForUpdate(this.device, deviceListener);
+          // Now hide irrelevant tool boxes, and check for an update
+          try {
+            var firmHandler = firmwareUpdater.getHandler(self.device);
+            if (firmHandler && firmHandler.registerLocation == null) {
+              this._getToolBox("register").collapsed = true;
+            }
+            if (firmHandler && firmHandler.canUpdate(self.device)) {
+              firmwareUpdater.checkForUpdate(this.device, deviceListener);
+            } else {
+              this._getToolBox("update").collapsed = true;
+            }
+            if (firmHandler && firmHandler.customerSupportLocation == null) {
+              this._getToolBox("support").collapsed = true;
+            }
+          } catch (e if ("result" in e && e.result == Components.results.NS_ERROR_NOT_AVAILABLE)) {
+            // no handler
+            for each (let id in ["support", "update", "register"]) {
+              this._getToolBox(id).collapsed = true;
+            }
+          } catch (e) {
+            Components.utils.reportError(e);
+            throw(e);
+          }
         ]]></body>
+      </method>
+      
+      <method name="_getToolBox">
+        <parameter name="aID"/>
+        <body>
+          return document.getAnonymousElementByAttribute(this, "tool", aID);
+        </body>
       </method>
 
     </implementation>

@@ -101,9 +101,10 @@ sbMockDeviceFirmwareHandler::OnInit()
 }
 
 /*virtual*/ nsresult 
-sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice, 
-                                         PRBool *_retval)
+sbMockDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice, 
+                                              PRBool *_retval)
 {
+  NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
 
   nsCOMPtr<sbIDeviceProperties> properties;
@@ -123,6 +124,18 @@ sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
   // Yep, supported!
   *_retval = PR_TRUE;
 
+  return NS_OK;
+}
+
+/*virtual*/ nsresult 
+sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice, 
+                                         PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  // we can update all devices we support
+  nsresult rv = OnCanHandleDevice(aDevice, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
 
