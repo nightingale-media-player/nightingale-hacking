@@ -142,6 +142,15 @@ public:
                                           enqueued */
     PRUint32 batchID;                /* ID of request batch */
 
+    /* Write request fields. */
+    PRBool contentSrcSet;            /* if true, the content source URI for the
+                                        destination item has been set */
+    PRBool destinationMediaPresent;  /* if true, the destination media is
+                                        present on the device (e.g., it's been
+                                        copied or transcoded to the device) */
+    PRBool needsTranscoding;         /* if true, write item media needs to be
+                                        transcoded */
+
     NS_DECL_ISUPPORTS
     /**
      * Returns PR_TRUE if the request is for a playlist and PR_FALSE otherwise
@@ -225,6 +234,16 @@ public:
 
   /* clear the request queue */
   nsresult ClearRequests(const nsAString &aDeviceID);
+
+  /**
+   * Return in aRequestType the request type of the request batch specified by
+   * aBatch.
+   *
+   * \param aBatch              Request batch.
+   * \param aRequestType        Batch request type.
+   */
+  nsresult BatchGetRequestType(sbBaseDevice::Batch& aBatch,
+                               int*                 aRequestType);
 
   /**
    * Internally set preference specified by aPrefName to the value specified by

@@ -253,7 +253,11 @@ void sbBaseDevice::TransferRequest::SetTranscodeProfile(sbITranscodeProfile * aP
   transcodeProfile = aProfile;
 }
 
-sbBaseDevice::TransferRequest::TransferRequest() : transcodeProfile(nsnull)
+sbBaseDevice::TransferRequest::TransferRequest() :
+  transcodeProfile(nsnull),
+  contentSrcSet(PR_FALSE),
+  destinationMediaPresent(PR_FALSE),
+  needsTranscoding(PR_FALSE)
 {
 }
 
@@ -852,6 +856,19 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
                              PR_TRUE);
     }
   }
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
+                                           int*                 aRequestType)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG(!aBatch.empty());
+  NS_ENSURE_ARG_POINTER(aRequestType);
+
+  // Use the type of the first batch request as the batch request type.
+  *aRequestType = aBatch.front()->type;
 
   return NS_OK;
 }

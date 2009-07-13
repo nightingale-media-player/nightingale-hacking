@@ -46,6 +46,11 @@ const PR_IWUSR = 0200;
 const BUFFERSIZE = 1024;
 
 function TranscodeBatchJob() {
+  this._items = [];
+  this._jobs = [];
+  this._errors = [];
+  this._joblisteners = [];
+  this._eventlisteners = [];
 }
 
 TranscodeBatchJob.prototype = {
@@ -63,14 +68,14 @@ TranscodeBatchJob.prototype = {
   _profile         : null,
   _imageProfile    : null,
   _numSimultaneous : 1,
-  _items           : [],
+  _items           : null,
 
   _nextIndex       : 0,
   _itemsCompleted  : 0,
-  _jobs            : [],
+  _jobs            : null,
 
-  _errors          : [],
-  _joblisteners    : [],
+  _errors          : null,
+  _joblisteners    : null,
   _jobStatus       : Ci.sbIJobProgress.STATUS_RUNNING,
 
   _statusText      : SBString("transcode.batch.running"),
@@ -78,7 +83,7 @@ TranscodeBatchJob.prototype = {
 
   _startTime       : -1,
 
-  _eventlisteners  : [],
+  _eventlisteners  : null,
 
   // sbITranscodeBatch implementation
 
@@ -395,7 +400,9 @@ TranscodeBatchJob.prototype = {
           getService(Ci.nsIIOService);
       var uri = ioservice.newURI(imageURLspec, null, null);
       if (uri.schemeIs("resource")) {
-        var resourceProtocolHandler = ioservice.getProtocolHandler("resource");
+        var resourceProtocolHandler =
+              ioservice.getProtocolHandler("resource")
+                       .QueryInterface(Ci.nsIResProtocolHandler);
         imageURLspec = resourceProtocolHandler.resolveURI(uri);
       }
 

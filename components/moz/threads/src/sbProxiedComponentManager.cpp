@@ -64,7 +64,7 @@ sbProxiedComponentManagerRunnable::Run()
   }
 
   mResult = pom->GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-                                   NS_GET_IID(nsISupports),
+                                   mIID,
                                    supports,
                                    NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                                    getter_AddRefs(mSupports));
@@ -76,7 +76,7 @@ nsresult
 sbCreateProxiedComponent::operator()(const nsIID& aIID, void** aInstancePtr) const
 {
   nsRefPtr<sbProxiedComponentManagerRunnable> runnable =
-    new sbProxiedComponentManagerRunnable(mIsService, mCID, mContractID);
+    new sbProxiedComponentManagerRunnable(mIsService, mCID, mContractID, aIID);
   if (!runnable) {
     *aInstancePtr = 0;
     if (mErrorPtr)
@@ -99,12 +99,7 @@ sbCreateProxiedComponent::operator()(const nsIID& aIID, void** aInstancePtr) con
     return runnable->mResult;
   }
 
-  rv = runnable->mSupports->QueryInterface(aIID, aInstancePtr);
-  if (NS_FAILED(rv)) {
-    if (mErrorPtr)
-      *mErrorPtr = rv;
-    return rv;
-  }
+  runnable->mSupports.forget(reinterpret_cast<nsISupports**>(aInstancePtr));
 
   if (mErrorPtr)
     *mErrorPtr = runnable->mResult;

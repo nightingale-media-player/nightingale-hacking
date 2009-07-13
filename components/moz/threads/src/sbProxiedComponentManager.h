@@ -44,14 +44,17 @@ public:
 
   sbProxiedComponentManagerRunnable(PRBool aIsService,
                                     const nsCID& aCID,
-                                    const char* aContractID) :
+                                    const char* aContractID,
+                                    const nsIID& aIID) :
     mIsService(aIsService),
     mCID(aCID),
-    mContractID(aContractID) {}
+    mContractID(aContractID),
+    mIID(aIID) {}
 
   PRBool mIsService;
   const nsCID& mCID;
   const char* mContractID;
+  const nsIID& mIID;
   nsCOMPtr<nsISupports> mSupports;
   nsresult mResult;
 };
