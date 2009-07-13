@@ -22,7 +22,7 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../../../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
@@ -68,7 +68,7 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/playlistplayback/public \
                      $(DEPTH)/components/moz/prompter/public \
-                     $(DEPTH)/extras/extensions/ipod2/components/public \
+                     $(DEPTH)/extensions/ipod/components/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/devices/controller/src \
                      $(topsrcdir)/components/devices/device/src \

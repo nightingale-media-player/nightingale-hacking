@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 DEFAULT_EXTENSIONS = xpcom_helloworld \
                      AlbumArt \
+                     ipod \
                      $(NULL)
 
 # AlbumArt is not on the list because it's used internally by the bird, so
