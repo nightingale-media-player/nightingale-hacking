@@ -60,7 +60,6 @@
 
       <menuseparator/>
 
-      <menuitem/><sb-device-format-command bindelem="prev"/>
       <menuitem/><sb-device-eject-command bindelem="prev"/>
 
     </box>

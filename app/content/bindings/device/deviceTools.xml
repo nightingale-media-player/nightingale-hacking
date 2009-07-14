@@ -111,6 +111,18 @@
         <!-- Repair Device -->
         <xul:groupbox tool="repair" pack="center" 
                       orient="vertical" hidden="true">
+          <xul:vbox sbid="sb-device-tools-format" hidden="true">
+            <xul:label value="&device.tools.format_device.title;"/>
+            <xul:description>
+              &device.tools.format_device.description;
+            </xul:description>
+            <xul:hbox>
+              <xul:spacer flex="1"/>
+              <xul:button label="&device.tools.format_device.label;"
+                          oncommand="formatDevice();"/>
+            </xul:hbox>
+          </xul:vbox>
+
           <xul:label value="&device.tools.repair_device.title;"/>
           <xul:description>
             &device.tools.repair_device.description;
@@ -227,6 +239,23 @@
          ]]></body>
       </method>
 
+      <method name="formatDevice">
+        <body><![CDATA[
+          var prompter =
+              Components.classes['@songbirdnest.com/Songbird/Prompter;1']
+              .getService(Components.interfaces.sbIPrompter);
+
+          var confirmed = prompter.confirm(window,
+              SBString('device.dialog.format.title'),
+              SBFormattedString('device.dialog.format.message',
+                [this.device.name]));
+
+          if (confirmed) {
+           this.device.format();
+          }
+        ]]></body>
+      </method>
+
       <method name="repairDevice">
         <body><![CDATA[
           var prompter = 
@@ -302,6 +331,12 @@
           this._currentFirmwareVersion.value = SBString("device.info.unknown");
         }
 
+        if (!this.formatBox && this.device.supportsReformat) {
+          this.formatBox = document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-format");
+          this.formatBox.hidden = false;
+        }
         if(this.device.isBusy) {
           if(this._busyWarningText) {
             this._busyWarningDesc.removeChild(this._busyWarningText);
