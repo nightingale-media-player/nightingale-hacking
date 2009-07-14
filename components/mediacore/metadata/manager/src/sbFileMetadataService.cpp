@@ -115,8 +115,13 @@ nsresult sbFileMetadataService::Init()
 
   // Listen for library shutdown.  The observer service must be used on the main
   // thread.
-  nsCOMPtr<nsIObserverService> obsSvc =
-    do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  nsCOMPtr<nsIObserverService> obsSvc;
+  if (NS_IsMainThread()) {
+    obsSvc = do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  }
+  else {
+    obsSvc = do_ProxiedGetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  }
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIObserver> observer =
     do_QueryInterface(NS_ISUPPORTS_CAST(nsIObserver*, this), &rv);
