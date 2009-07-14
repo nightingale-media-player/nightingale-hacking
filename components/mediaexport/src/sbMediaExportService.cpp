@@ -56,21 +56,18 @@
 PRLogModuleInfo *gMediaExportLog = nsnull;
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS7(sbMediaExportService,
+NS_IMPL_THREADSAFE_ISUPPORTS6(sbMediaExportService,
                               sbIMediaExportService,
                               nsIClassInfo,
                               nsIObserver,
                               sbIMediaListListener,
-                              sbIMediaListEnumerationListener,
                               sbIJobProgress,
                               sbIShutdownJob)
 
-NS_IMPL_CI_INTERFACE_GETTER7(sbMediaExportService,
+NS_IMPL_CI_INTERFACE_GETTER5(sbMediaExportService,
                              sbIMediaExportService,
                              nsIClassInfo,
                              nsIObserver,
-                             sbIMediaListListener,
-                             sbIMediaListEnumerationListener,
                              sbIJobProgress,
                              sbIShutdownJob)
 
@@ -81,9 +78,6 @@ NS_IMPL_THREADSAFE_CI(sbMediaExportService)
 
 sbMediaExportService::sbMediaExportService()
   : mIsRunning(PR_FALSE)
-  , mEnumState(eNone)
-  , mExportState(eNone)
-  , mFinishedExportState(PR_FALSE)
   , mTotal(0)
   , mProgress(0)
 {
@@ -152,18 +146,39 @@ sbMediaExportService::InitInternal()
   rv = ListenToMediaList(mainLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // In order to listen to all of the current playlists, a non-blocking
-  // enumerate lookup is needed.
+  // Find and listen to all playlists as needed.
   if (mPrefController->GetShouldExportPlaylists() ||
       mPrefController->GetShouldExportSmartPlaylists())
   {
-    mEnumState = eAllMediaLists;
-    rv = mainLibrary->EnumerateItemsByProperty(
+    nsCOMPtr<nsIArray> foundPlaylists;
+    rv = mainLibrary->GetItemsByProperty(
         NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
         NS_LITERAL_STRING("1"),
-        this,
-        sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
+        getter_AddRefs(foundPlaylists));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length;
+    rv = foundPlaylists->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIMediaList> curMediaList;
+      rv = foundPlaylists->QueryElementAt(i,
+                                          NS_GET_IID(sbIMediaList),
+                                          getter_AddRefs(curMediaList));
+      if (NS_FAILED(rv) || !curMediaList) {
+        NS_WARNING("ERROR: Could not get the current playlist from an array!");
+        continue;
+      }
+
+      PRBool shouldWatch = PR_FALSE;
+      rv = GetShouldWatchMediaList(curMediaList, &shouldWatch);
+      if (NS_SUCCEEDED(rv) && shouldWatch) {
+        rv = ListenToMediaList(curMediaList);
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                         "ERROR: Could not start listening to a media list!");
+      }
+    }
   }
 
   return NS_OK;
@@ -451,7 +466,7 @@ sbMediaExportService::GetShouldWatchMediaList(sbIMediaList *aMediaList,
 void
 sbMediaExportService::WriteExportData()
 {
-  nsresult rv = BeginExportData();
+  nsresult rv = WriteChangesToTaskFile();
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                    "ERROR: Could not begin exporting songbird data!");
 }
@@ -466,56 +481,60 @@ sbMediaExportService::ProxyNotifyListeners()
 }
 
 nsresult
-sbMediaExportService::BeginExportData()
+sbMediaExportService::WriteChangesToTaskFile()
 {
-  LOG(("%s: Starting to export data", __FUNCTION__));
+  LOG(("%s: Writing recorded media changes to task file", __FUNCTION__));
   nsresult rv;
 
-  // Only write out tasks if there is some data to export. This prevents
-  // creating a blank task file.
-  if (mAddedItemsMap.size() > 0 || 
+  if (mAddedItemsMap.size() > 0 ||
       mAddedMediaList.size() > 0 ||
       mRemovedMediaLists.size() > 0)
   {
+    LOG(("%s: Starting to export data", __FUNCTION__));
+
+    // The order of exported data looks like this
+    // 1.) Added media lists
+    // 2.) Removed media lists
+    // 3.) Medialist added items
+
     mTaskWriter = new sbMediaExportTaskWriter();
     NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_OUT_OF_MEMORY);
 
     rv = mTaskWriter->Init();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mFinishedExportState = PR_FALSE;
-    mExportState = eNone;
+    // Export media lists first
+    if (mPrefController->GetShouldExportAnyPlaylists()) {
+      rv = WriteAddedMediaLists();
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    // Reset the mediaitems map iter
-    mCurExportListIter = mAddedItemsMap.end();
+      rv = NotifyListeners();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
 
-    // Start the export:
-    rv = DetermineNextExportState();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  // If there isn't any data, cleanup and do any post export operations 
-  // (such as start the agent if needed).
-  else {
-    rv = FinishExportData();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  
-  return NS_OK;
-}
+      rv = WriteRemovedMediaLists();
+      NS_ENSURE_SUCCESS(rv, rv);
 
-nsresult
-sbMediaExportService::FinishExportData()
-{
-  LOG(("%s: Done exporting data", __FUNCTION__));
-  nsresult rv;
-  if (mTaskWriter) {
+      rv = NotifyListeners();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
+    }
+
+    // Export media items next
+    if (mPrefController->GetShouldExportTracks()) {
+      rv = WriteAddedMediaItems();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = NotifyListeners();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
+
     rv = mTaskWriter->Finish();
     NS_ENSURE_SUCCESS(rv, rv);
-  }
+  } // end should write data.
 
-  // Clean up the recording structures.
-  mAddedItemsMap.clear();
+  LOG(("%s: Done exporting data", __FUNCTION__));
+
   mAddedMediaList.clear();
+  mAddedItemsMap.clear();
   mRemovedMediaLists.clear();
 
   mStatus = sbIJobProgress::STATUS_SUCCEEDED;
@@ -536,315 +555,146 @@ sbMediaExportService::FinishExportData()
 }
 
 nsresult
-sbMediaExportService::DetermineNextExportState()
+sbMediaExportService::WriteAddedMediaLists()
 {
-  LOG(("%s: Determining next state (cur state: %i)", 
-        __FUNCTION__, mExportState));
-  
+  LOG(("%s: Writing added media lists", __FUNCTION__));
+
+  NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
+
   nsresult rv;
+  rv = mTaskWriter->WriteAddedMediaListsHeader();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // The order of exported data looks like this
-  // 1.) Added media lists
-  // 2.) Removed media lists
-  // 3.) Medialist added items
+  sbStringListIter begin = mAddedMediaList.begin();
+  sbStringListIter end = mAddedMediaList.end();
+  sbStringListIter next;
 
-  PRBool shouldFinish = PR_FALSE;
-  
-  // If the current export task has finished, increment to the next state.
-  if (mFinishedExportState) {
-    switch (mExportState) {
-      case eAddedMediaLists:
-        mExportState = eRemovedMediaLists;
-        break;
-
-      case eRemovedMediaLists:
-        mExportState = eAddedMediaItems;
-        break;
-      
-      case eAddedMediaItems:
-        shouldFinish = PR_TRUE;
-        break;
-
-      default:
-        // Make compiler happy
-        NS_WARNING("ERROR: export state not handled in switch statement!");
-        break;
-    }
-  }
-  
-  // Loop until we find the next task that needs to be processed.
-  PRBool foundTask = PR_FALSE;
-  while (!foundTask && !shouldFinish) {
-    switch (mExportState) {
-      case eNone:
-        mExportState = eAddedMediaLists;
-        break;
-
-      case eAddedMediaLists:
-        // First check to see if any playlists are being exported
-        if (mPrefController->GetShouldExportAnyPlaylists()) {
-          // Ensure that there are added medialists to process
-          if (mAddedMediaList.size() > 0) {
-            foundTask = PR_TRUE;
-          }
-          else {
-            mExportState = eRemovedMediaLists;
-          }
-        }
-        // Playlists are currently not being exported, jump down to
-        // look for added mediaitems.
-        else {
-          mExportState = eAddedMediaItems;
-        }
-        break;
-
-      case eRemovedMediaLists:
-        // First double check to ensure that playlists are being exported
-        if (mPrefController->GetShouldExportAnyPlaylists() &&
-            mRemovedMediaLists.size() > 0) 
-        {
-          foundTask = PR_TRUE;
-        }
-        // Playlists are currently not being exported - or there has not
-        // been any removed medialists. Move on to added mediaitems.
-        else {
-          mExportState = eAddedMediaItems;
-        }
-        break;
-
-      case eAddedMediaItems:
-        if (mPrefController->GetShouldExportTracks() && 
-            mAddedItemsMap.size() > 0) 
-        {
-          foundTask = PR_TRUE;
-        }
-        else {
-          shouldFinish = PR_TRUE;
-        }
-        break;
-
-      default:
-        // Safety-net, just break and finish the export state.
-        shouldFinish = PR_TRUE;
-        NS_WARNING("ERROR: export state not handled in switch statement!");
-        break;
-    }
-  }
-
-  if (shouldFinish) {
-    rv = FinishExportData();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    rv = StartExportState();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  
-  return NS_OK;
-}
-
-nsresult
-sbMediaExportService::StartExportState()
-{
-  LOG(("%s: Starting export state: %i", __FUNCTION__, mExportState));
-  nsresult rv;
-
-  mFinishedExportState = PR_FALSE;
-
-  switch (mExportState) {
-    case eAddedMediaLists:
-    {
-      rv = mTaskWriter->WriteAddedMediaListsHeader();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      sbStringListIter begin = mAddedMediaList.begin();
-      sbStringListIter end = mAddedMediaList.end();
-      sbStringListIter next;
-      for (next = begin; next != end; ++next) {
-        // Get the current media list by guid.
-        nsCOMPtr<sbIMediaList> curMediaList;
-        rv = GetMediaListByGuid(*next, getter_AddRefs(curMediaList));
-        if (NS_FAILED(rv) || !curMediaList) {
-          NS_WARNING("ERROR: Could not get a media list by GUID!");
-          continue;
-        }
-
-        rv = mTaskWriter->WriteMediaListName(curMediaList);
-        NS_ENSURE_SUCCESS(rv, rv);
-      
-        ++mProgress;
-      }
-
-      // Keep things clean by calling the finish state method.
-      rv = FinishExportState();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      break;
+  for (next = begin; next != end; ++next) {
+    nsCOMPtr<sbIMediaList> curMediaList;
+    rv = GetMediaListByGuid(*next, getter_AddRefs(curMediaList));
+    if (NS_FAILED(rv) || !curMediaList) {
+      NS_WARNING("ERROR: Could not get a media list by GUID!");
+      continue;
     }
 
-    case eRemovedMediaLists:
-    {
-      // Removed playlists are fun because their name doesn't need to be
-      // looked up.
-      rv = mTaskWriter->WriteRemovedMediaListsHeader();
-      NS_ENSURE_SUCCESS(rv, rv);
+    rv = mTaskWriter->WriteMediaListName(curMediaList);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "ERROR: Could not write the added media list name!");
 
-      sbStringListIter end = mRemovedMediaLists.end();
-      sbStringListIter next;
-      for (next = mRemovedMediaLists.begin(); next != end; ++next) {
-        rv = mTaskWriter->WriteEscapedString(*next);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        ++mProgress;
-      }
-
-      // Keep things clean by calling the finish state method
-      rv = FinishExportState();
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      break;
-    }
-
-    case eAddedMediaItems:
-    {
-      if (mCurExportListIter == mAddedItemsMap.end()) {
-        // If the |mCurExportListIter| iterator is currently null, then
-        // this is the first time
-        mCurExportListIter = mAddedItemsMap.begin();
-        LOG(("%s: There are %i media lists with added media items.",
-              __FUNCTION__, mAddedItemsMap.size()));
-      }
-      
-      // Lookup the name of the current media item.
-      nsCOMPtr<sbILibrary> mainLibrary;
-      rv = GetMainLibrary(getter_AddRefs(mainLibrary));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // If this is the main library, we don't have to lookup the mediaitem
-      nsString mainLibraryGuid;
-      rv = mainLibrary->GetGuid(mainLibraryGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsString curExportListGuid(mCurExportListIter->first);
-
-      LOG(("%s: Getting ready to lookup medialist guid '%s'",
-            __FUNCTION__, NS_ConvertUTF16toUTF8(curExportListGuid).get()));
-
-      if (mainLibraryGuid.Equals(curExportListGuid)) {
-        LOG(("%s: This GUID is the main library!", __FUNCTION__));
-        mCurExportMediaList = mainLibrary;
-        mExportState = eMediaListAddedItems;
-        // Fall through to process below -
-      }
-      else {
-        LOG(("%s: This GUID is not the main library!", __FUNCTION__));
-        // This is not the main library, lookup the list name.
-        NS_NAMED_LITERAL_STRING(guidProperty, SB_PROPERTY_GUID);
-        rv = mainLibrary->EnumerateItemsByProperty(
-            guidProperty,
-            curExportListGuid,
-            this,
-            sbIMediaList::ENUMERATIONTYPE_SNAPSHOT);
-        NS_ENSURE_SUCCESS(rv, rv);
-        break;
-      }
-    }
-
-    case eMediaListAddedItems:
-    {
-      // In the previous step (eAddedMediaItems), the process looked up the
-      // medialist to process next and stores it in |mCurExportMediaList|.
-      // Use this list to lookup all the recorded media items by GUID.
-
-      // First, write out the name of the medialist with the task write.
-      rv = mTaskWriter->WriteAddedMediaItemsListHeader(mCurExportMediaList);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      // Now enumerate mediaitems by the recorded guid.
-      rv = EnumerateItemsByGuids(mCurExportListIter->second, 
-                                 mCurExportMediaList);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      break;
-    }
-
-    default:
-      // Make compiler happy
-      NS_WARNING("ERROR: export state not handled in switch statement!");
-      break;
+    ++mProgress;
   }
 
   return NS_OK;
 }
 
 nsresult
-sbMediaExportService::FinishExportState()
+sbMediaExportService::WriteRemovedMediaLists()
 {
-  LOG(("%s: Finishing export state: %i", __FUNCTION__, mExportState));
-  
+  LOG(("%s: Writing removed media lists", __FUNCTION__));
+
+  NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
+
   nsresult rv;
+  rv = mTaskWriter->WriteRemovedMediaListsHeader();
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = NotifyListeners();
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
+  sbStringListIter begin = mRemovedMediaLists.begin();
+  sbStringListIter end = mRemovedMediaLists.end();
+  sbStringListIter next;
 
-  mFinishedExportState = PR_TRUE;
+  for (next = begin; next != end; ++next) {
+    rv = mTaskWriter->WriteEscapedString(*next);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "ERROR: Could not write the removed media list name!");
 
-  switch (mExportState) {
-    case eAddedMediaLists:
-    case eRemovedMediaLists:
-      // These two states handle all the export data in the start task method.
-      // Simply setup the move to the next export state.
-      rv = DetermineNextExportState();
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
+    ++mProgress;
+  }
 
-    case eAddedMediaItems:
-    {
-      // Now that the medialist has been looked up, begin processing all
-      // of the recorded media items for it.
-      mExportState = eMediaListAddedItems;
-      mFinishedExportState = PR_FALSE;
-      
-      rv = StartExportState();
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
+  return NS_OK;
+}
+
+nsresult
+sbMediaExportService::WriteAddedMediaItems()
+{
+  LOG(("%s: Writing %i media lists with added media items",
+        __FUNCTION__, mAddedItemsMap.size()));
+
+  NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
+
+  nsresult rv;
+  nsCOMPtr<sbILibrary> mainLibrary;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString mainLibraryGuid;
+  rv = mainLibrary->GetGuid(mainLibraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbMediaListItemMapIter begin = mAddedItemsMap.begin();
+  sbMediaListItemMapIter end = mAddedItemsMap.end();
+  sbMediaListItemMapIter next;
+
+  for (next = begin; next != end; ++next) {
+    nsString curMediaListGuid(next->first);
+    nsCOMPtr<sbIMediaList> curParentList;
+
+    // If the current medialist is the main library, don't bother looking it
+    // up through enumeration.
+    if (curMediaListGuid.Equals(mainLibraryGuid)) {
+      curParentList = mainLibrary;
     }
-  
-    case eMediaListAddedItems:
-    {
-#ifdef PR_LOGGING
-      nsString mediaListGuid;
-      rv = mCurExportMediaList->GetGuid(mediaListGuid);
-      NS_ENSURE_SUCCESS(rv, rv);
-      LOG(("%s: Done exporting items for medialist '%s'",
-            __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListGuid).get()));
-#endif
-      
-      ++mCurExportListIter;
-      mCurExportMediaList = nsnull;
+    else {
+      // Lookup the media list by GUID.
+      rv = GetMediaListByGuid(curMediaListGuid, getter_AddRefs(curParentList));
+      if (NS_FAILED(rv) || !curParentList) {
+        NS_WARNING("ERROR: Could not look up a media list by guid!");
+        continue;
+      }
+    }
 
-      if (mCurExportListIter == mAddedItemsMap.end()) {
-        LOG(("%s: Done exporting all the added mediaitems!", __FUNCTION__));
-        // All of the items have been processed - and this is the last state
-        // of the export, finish up the service.
-        rv = DetermineNextExportState();
-        NS_ENSURE_SUCCESS(rv, rv);
-        break;
+    rv = mTaskWriter->WriteAddedMediaItemsListHeader(curParentList);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("ERROR: Could not write the media item list header!");
+      continue;
+    }
+
+    nsCOMPtr<nsIArray> addedMediaItems;
+    rv = EnumerateItemsByGuids(next->second,
+                               curParentList,
+                               getter_AddRefs(addedMediaItems));
+    if (NS_FAILED(rv) || !addedMediaItems) {
+      NS_WARNING("ERROR: Could not enumerate media items by guid!");
+      continue;
+    }
+
+    PRUint32 length;
+    rv = addedMediaItems->GetLength(&length);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("ERROR: Could not get the length of a nsIArray!");
+      continue;
+    }
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIMediaItem> curAddedMediaItem;
+      rv = addedMediaItems->QueryElementAt(i,
+                                           NS_GET_IID(sbIMediaItem),
+                                           getter_AddRefs(curAddedMediaItem));
+      if (NS_FAILED(rv) || !curAddedMediaItem) {
+        NS_WARNING("Could not get a mediaitem from an nsIArray!");
+        continue;
       }
 
-      // Switch back to the parent mediaitems enum
-      mExportState = eAddedMediaItems;
-      mFinishedExportState = PR_FALSE;
+      rv = mTaskWriter->WriteAddedTrack(curAddedMediaItem);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                       "ERROR: Could not write added media item!");
 
-      rv = StartExportState();
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
+      ++mProgress;
+
+      // Go ahead and notify the listener after each write.
+      rv = NotifyListeners();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                       "ERROR: Could not notify the listeners!");
     }
-
-    default:
-      // Make compiler happy
-      NS_WARNING("ERROR: export state not handled in switch statement!");
-      break;
   }
 
   return NS_OK;
@@ -875,9 +725,11 @@ sbMediaExportService::GetMediaListByGuid(const nsAString & aItemGuid,
 
 nsresult
 sbMediaExportService::EnumerateItemsByGuids(sbStringList & aGuidStringList,
-                                            sbIMediaList *aMediaList)
+                                            sbIMediaList *aMediaList,
+                                            nsIArray **aRetVal)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aRetVal);
 
   nsresult rv;
   
@@ -904,11 +756,7 @@ sbMediaExportService::EnumerateItemsByGuids(sbStringList & aGuidStringList,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  PRUint16 enumType = sbIMediaList::ENUMERATIONTYPE_SNAPSHOT;
-  rv = aMediaList->EnumerateItemsByProperties(properties, this, enumType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return NS_OK;
+  return aMediaList->GetItemsByProperties(properties, aRetVal);
 }
 
 nsresult
@@ -1166,102 +1014,6 @@ NS_IMETHODIMP
 sbMediaExportService::OnBatchEnd(sbIMediaList *aMediaList)
 {
   LOG(("%s: Media List Batch End!", __FUNCTION__));
-  return NS_OK;
-}
-
-//------------------------------------------------------------------------------
-// sbIMediaListEnumerationListener
-
-NS_IMETHODIMP
-sbMediaExportService::OnEnumerationBegin(sbIMediaList *aMediaList,
-                                         PRUint16 *aRetVal)
-{
-  LOG(("%s: mEnumState == %i", __FUNCTION__, mEnumState));
-  
-  NS_ENSURE_ARG_POINTER(aRetVal);
-  *aRetVal = sbIMediaListEnumerationListener::CONTINUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbMediaExportService::OnEnumeratedItem(sbIMediaList *aMediaList,
-                                       sbIMediaItem *aMediaItem,
-                                       PRUint16 *aRetVal)
-{
-  LOG(("%s: mEnumState == %i, mExportState == %i", 
-        __FUNCTION__, mEnumState, mExportState));
-  
-  NS_ENSURE_ARG_POINTER(aMediaItem);
-  NS_ENSURE_ARG_POINTER(aRetVal);
-  
-  *aRetVal = sbIMediaListEnumerationListener::CONTINUE;
-  nsresult rv;
-
-  // If |mExportState| isn't set, than the service is looking up all of the
-  // medialists to figure out if they need to be watched.
-  if (mExportState == eNone && mEnumState == eAllMediaLists) {
-    nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool shouldWatch = PR_FALSE;
-    rv = GetShouldWatchMediaList(itemAsList, &shouldWatch);
-
-    if (shouldWatch) {
-      rv = ListenToMediaList(itemAsList);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-  }
-  else {
-    // The service is currently looking up export data, push data to the task
-    // writer as appropriate.
-    switch (mExportState) {
-      case eAddedMediaItems:
-      {
-        mCurExportMediaList = do_QueryInterface(aMediaItem, &rv);
-        NS_ENSURE_SUCCESS(rv, rv);
-        break;
-      }
-
-      case eMediaListAddedItems:
-      {
-        // The task writer is alreay set in exporting media items mode,
-        // simply pass the found media item to the writer.
-        rv = mTaskWriter->WriteAddedTrack(aMediaItem);
-        NS_ENSURE_SUCCESS(rv, rv);
-        
-        ++mProgress;
-
-        rv = NotifyListeners();
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        break;
-      }
-
-      default:
-        // Make compiler happy
-        NS_WARNING("ERROR: export state not handled in switch statement!");
-        break;
-    }
-  }
-
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbMediaExportService::OnEnumerationEnd(sbIMediaList *aMediaList,
-                                       nsresult aStatusCode)
-{
-  LOG(("%s: mEnumState == %i", __FUNCTION__, mEnumState));
-  nsresult rv;
-  
-  // If the export state is currently running, it was most likely waiting for
-  // a media resource lookup. Finish the current export state.
-  if (mExportState != eNone) {
-    rv = FinishExportState();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  mEnumState = eNone;
   return NS_OK;
 }
 

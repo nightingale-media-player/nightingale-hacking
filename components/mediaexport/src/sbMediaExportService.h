@@ -50,25 +50,11 @@ typedef std::map<nsString, sbStringList>    sbMediaListItemMap;
 typedef sbMediaListItemMap::value_type      sbMediaListItemMapPair;
 typedef sbMediaListItemMap::iterator        sbMediaListItemMapIter;
 
-//
-// \brief Enum for keeping track of what specific type of data that the 
-//        enumerated property lookup is currently running for.
-//
-typedef enum {
-  eNone                = 0,
-  eAllMediaLists       = 1,
-  eAddedMediaLists     = 2,
-  eRemovedMediaLists   = 3,
-  eAddedMediaItems    = 4,
-  eMediaListAddedItems = 5,
-} EEnumerationLookupState;
-
 
 class sbMediaExportService : public sbIMediaExportService,
                              public nsIClassInfo,
                              public nsIObserver,
                              public sbIMediaListListener,
-                             public sbIMediaListEnumerationListener,
                              public sbIShutdownJob,
                              public sbMediaExportPrefListener
 {
@@ -93,7 +79,6 @@ public:
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
   NS_DECL_SBIMEDIALISTLISTENER
-  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBISHUTDOWNJOB
 
@@ -118,20 +103,18 @@ protected:
   // Background thread method to notify the listeners on the main thread.
   void ProxyNotifyListeners();
 
-  // Start/Stop entry points for the entire export process
-  nsresult BeginExportData();
-  nsresult FinishExportData();
-
-  // Start/stop entry points for each specific data export types.
-  nsresult DetermineNextExportState();
-  nsresult StartExportState();
-  nsresult FinishExportState();
+  // Methods for writing the task file
+  nsresult WriteChangesToTaskFile();
+  nsresult WriteAddedMediaLists();
+  nsresult WriteRemovedMediaLists();
+  nsresult WriteAddedMediaItems();
 
   // Lookup mediaitems by a guid list.
   nsresult GetMediaListByGuid(const nsAString & aItemGuid,
                               sbIMediaList **aMediaList);
   nsresult EnumerateItemsByGuids(sbStringList & aGuidStringList,
-                                 sbIMediaList *aMediaList);
+                                 sbIMediaList *aMediaList,
+                                 nsIArray **aRetVal);
 
   // Notify job progress listeners.
   nsresult NotifyListeners();
@@ -145,14 +128,9 @@ private:
   sbStringList                           mAddedMediaList;
   sbStringList                           mRemovedMediaLists;
   PRBool                                 mIsRunning;
-  EEnumerationLookupState                mEnumState;
 
   // Exporting stuff:
   nsRefPtr<sbMediaExportTaskWriter>  mTaskWriter;
-  EEnumerationLookupState            mExportState;
-  sbMediaListItemMapIter             mCurExportListIter;
-  nsCOMPtr<sbIMediaList>             mCurExportMediaList;
-  PRBool                             mFinishedExportState;
   
   // sbIJobProgress / sbIShutdownJob stuff:
   nsCOMArray<sbIJobProgressListener> mJobListeners;
