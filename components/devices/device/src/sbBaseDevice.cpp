@@ -3811,6 +3811,36 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Convert our nsIURI to an nsIFileURL
+  nsCOMPtr<nsIFileURL> writeSrcFileURL = do_QueryInterface(writeSrcURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now get the nsIFile
+  nsCOMPtr<nsIFile> writeSrcFile;
+  rv = writeSrcFileURL->GetFile(getter_AddRefs(writeSrcFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now check to make sure the source file actually exists
+  PRBool fileExists = PR_FALSE;
+  rv = writeSrcFile->Exists(&fileExists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!fileExists) {
+    // Create the device error event and dispatch it
+    nsCOMPtr<nsIVariant> var = sbNewVariant(aWriteDstItem).get();
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+                           var, PR_TRUE);
+
+    // Remove item from library
+    nsCOMPtr<sbILibrary> destLibrary;
+    rv = aWriteDstItem->GetLibrary(getter_AddRefs(destLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = DeleteItem(destLibrary, aWriteDstItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
   // Check if the item needs to be organized
   nsCOMPtr<sbILibrary> destLibrary;
   rv = aWriteDstItem->GetLibrary(getter_AddRefs(destLibrary));
