@@ -291,33 +291,6 @@ sbMediacoreTypeSniffer::IsValidMediaURL(nsIURI *aURL,
   return NS_OK;
 }
 
-NS_IMETHODIMP
-sbMediacoreTypeSniffer::IsValidAudioURL(nsIURI *aURL, PRBool *aRetVal)
-{
-  NS_ENSURE_ARG_POINTER(aURL);
-  NS_ENSURE_ARG_POINTER(aRetVal);
-
-  *aRetVal = PR_TRUE;
-
-  nsCString fileExtension;
-  nsresult rv = GetFileExtensionFromURI(aURL, fileExtension);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!fileExtension.IsEmpty()) {
-    nsAutoMonitor mon(mMonitor);
-
-    if (mAudioExtensions.GetEntry(fileExtension)) {
-      return NS_OK;
-    }
-
-    *aRetVal = PR_FALSE;
-  }
-
-  // Assume that this URL is not an audio file.
-  *aRetVal = PR_FALSE;
-  return NS_OK;
-}
-
 NS_IMETHODIMP 
 sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL, 
                                         PRBool *_retval)
@@ -325,7 +298,7 @@ sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
   NS_ENSURE_ARG_POINTER(aURL);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  *_retval = PR_TRUE;
+  *_retval = PR_FALSE;
 
   nsCString fileExtension;
   nsresult rv = GetFileExtensionFromURI(aURL, fileExtension);
@@ -333,7 +306,7 @@ sbMediacoreTypeSniffer::IsValidVideoURL(nsIURI *aURL,
 
   // The quick and easy way. Verify against file extension if available.
   if(!fileExtension.IsEmpty()) {
-
+    
     nsAutoMonitor mon(mMonitor);
 
     if(mVideoExtensions.GetEntry(fileExtension)) {
@@ -391,32 +364,6 @@ sbMediacoreTypeSniffer::IsValidPlaylistURL(nsIURI *aURL,
   // Looks like we'll have to crack open the file or connect to the server
   // to have a look at the content type.
 
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbMediacoreTypeSniffer::IsValidImageURL(nsIURI *aURL, PRBool *aRetVal)
-{
-  NS_ENSURE_ARG_POINTER(aURL);
-  NS_ENSURE_ARG_POINTER(aRetVal);
-
-  *aRetVal = PR_TRUE;
-
-  nsCString fileExtension;
-  nsresult rv = GetFileExtensionFromURI(aURL, fileExtension);
-
-  if (!fileExtension.IsEmpty()) {
-    nsAutoMonitor mon(mMonitor);
-
-    if (mImageExtensions.GetEntry(fileExtension)) {
-      return NS_OK;
-    }
-
-    *aRetVal = PR_FALSE;
-  }
-
-  // Assume that this URL is not an image file.
-  *aRetVal = PR_FALSE;
   return NS_OK;
 }
 

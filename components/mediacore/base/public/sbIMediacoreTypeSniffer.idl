@@ -29,7 +29,7 @@
 interface nsIURI;
 interface nsIStringEnumerator;
 
-[scriptable, uuid(37A33F1D-42D3-4A25-BF28-EF5ED8B461C4)]
+[scriptable, uuid(413f558f-b580-431b-98c2-7b18fd0e1e0f)]
 interface sbIMediacoreTypeSniffer : nsISupports
 {
   /**
@@ -63,45 +63,23 @@ interface sbIMediacoreTypeSniffer : nsISupports
    * \return false if the URL does not point to media content
    */
   boolean isValidMediaURL(in nsIURI aURL);
-
-  /**
-   * \brief Check to see if an url points to audio content
-   * This checks for a number of known file extensions to see
-   *   if the URL contains them and is therefore audio.
-   *
-   * \param aURL - the URL to check
-   * \return true if the URL points to audio content
-   * \return false if the URL does not point to audio content
-   */
-  boolean isValidAudioURL(in nsIURI aURL);
-
+ 
   /**
    * \brief Check to see if an url points to video content
    * This checks for a number of known file extensions to see
    *   if the URL contains them and is therefore video.
-   *
+   * 
    * \param aURL - the URL to check
    * \return true if the URL points to video content
    * \return false if the URL does not point to video content
    */
   boolean isValidVideoURL(in nsIURI aURL);
-
-  /**
-   * \brief Check to see if an url points to image content
-   * This checks for a number of known file extensions to see
-   *   if the URL contains them and is therefore image.
-   *
-   * \param aURL - the URL to check
-   * \return true if the URL points to image content
-   * \return false if the URL does not point to image content
-   */
-  boolean isValidImageURL(in nsIURI aURL);
-
+ 
   /**
    * \brief Check to see if an url points to a playlist
    * This checks for a number of known file extensions to see
    *   if the URL contains them and is therefore a playlist.
-   *
+   * 
    * \param aURL - the URL to check
    * \return true if the URL points to a playlist
    * \return false if the URL does not point a playlist
