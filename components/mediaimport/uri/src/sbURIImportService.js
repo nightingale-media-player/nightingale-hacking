@@ -207,10 +207,13 @@ sbURIImportService.prototype =
       var typeSniffer = 
         Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
           .createInstance(Ci.sbIMediacoreTypeSniffer);
+      var Application = Cc["@mozilla.org/fuel/application;1"]
+                          .getService(Ci.fuelIApplication);
 
       var isValidMediaURL = typeSniffer.isValidMediaURL(aURI);
-      if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)) {
-        isValidMediaURL = typeSniffer.isValidVideoURL(aURI);
+      if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)
+          && typeSniffer.isValidVideoURL(aURI)) {
+        isValidMediaURL = false;
       }
 
       if (isValidMediaURL) {
