@@ -252,12 +252,12 @@ sbIPDDevice::ReqHandleRequestAdded()
               NS_WARNING("Invalid request type.");
               break;
           }
+          // Something may have advanced the iter so need to check for end
+          if (iter != end) {
+            mCurrentBatch.erase(iter);
+            iter = mCurrentBatch.begin();
+          }
         }
-      }
-      // Something may have advanced the iter so need to check for end
-      if (iter != end) {
-        mCurrentBatch.erase(iter);
-        iter = mCurrentBatch.begin();
       }
     }
     
