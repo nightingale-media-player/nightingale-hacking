@@ -306,6 +306,12 @@ protected:
 
   void Finalize();
 
+  //
+  // Internal iPod device properties services.
+  //
+
+  virtual nsresult InitializeProperties();
+
 
   //----------------------------------------------------------------------------
   //

@@ -1228,12 +1228,6 @@ sbIPDDevice::Initialize()
   mSBMainML = do_QueryInterface(mSBMainLib, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Create and initialize the device properties.
-  mProperties = new sbIPDProperties(this);
-  NS_ENSURE_TRUE(mProperties, NS_ERROR_OUT_OF_MEMORY);
-  rv = mProperties->Initialize();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create the device ID.  This depends upon some of the device properties.
   rv = CreateDeviceID(&mDeviceID);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1319,6 +1313,24 @@ sbIPDDevice::Finalize()
   mSBMainLib = nsnull;
   mSBMainML = nsnull;
   mIPodEventHandler = nsnull;
+}
+
+
+/**
+ * Init the device properties.
+ */
+
+nsresult
+sbIPDDevice::InitializeProperties()
+{
+  // Create and initialize the device properties.
+  nsresult rv;
+  mProperties = new sbIPDProperties(this);
+  NS_ENSURE_TRUE(mProperties, NS_ERROR_OUT_OF_MEMORY);
+  rv = mProperties->Initialize();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return sbBaseDevice::InitializeProperties();
 }
 
 
