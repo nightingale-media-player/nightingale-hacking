@@ -207,8 +207,13 @@ sbURIImportService.prototype =
       var typeSniffer = 
         Cc["@songbirdnest.com/Songbird/Mediacore/TypeSniffer;1"]
           .createInstance(Ci.sbIMediacoreTypeSniffer);
-                            
-      if (typeSniffer.isValidMediaURL(aURI)) {
+
+      var isValidMediaURL = typeSniffer.isValidMediaURL(aURI);
+      if (!Application.prefs.getValue("songbird.mediascan.enableVideoImporting", true)) {
+        isValidMediaURL = typeSniffer.isValidVideoURL(aURI);
+      }
+
+      if (isValidMediaURL) {
         // check whether the item already exists in the library 
         // for the target list
         var item = 
@@ -222,7 +227,7 @@ sbURIImportService.prototype =
                                          SBProperties.originURL,
                                          aURI.spec);
         }
-        
+
         // if the item didnt exist before, create it now
         var itemAdded = false;
         if (!item) {
