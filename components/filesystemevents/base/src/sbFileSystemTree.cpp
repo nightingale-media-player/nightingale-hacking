@@ -330,6 +330,11 @@ sbFileSystemTree::Update(const nsAString & aPath)
     nsAutoLock rootLock(mRootNodeLock);
     rv = GetNode(aPath, mRootNode, getter_AddRefs(pathNode));
   }
+  if (NS_FAILED(rv)) {
+    TRACE(("%s: Could not update the tree at path '%s'!!!",
+          __FUNCTION__, NS_ConvertUTF16toUTF8(aPath).get()));
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbNodeChangeArray pathChangesArray;

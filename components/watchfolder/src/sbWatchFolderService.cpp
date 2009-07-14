@@ -364,9 +364,14 @@ sbWatchFolderService::SetEventPumpTimer()
 nsresult
 sbWatchFolderService::ProcessEventPaths()
 {
+  TRACE(("%s: Processing the observed event paths", __FUNCTION__));
+  TRACE(("%s: mRemovedPaths.size() == %i", __FUNCTION__, mRemovedPaths.size()));
+  TRACE(("%s: mAddedPaths.size() == %i", __FUNCTION__, mAddedPaths.size()));
+  TRACE(("%s: mChangedPaths.size() == %i", __FUNCTION__, mChangedPaths.size()));
+
   // For now, just process remove, added, and changed paths.
   nsresult rv;
-  
+
   // If possible, try to guess moves and renames and avoid
   // just removing and re-adding
   if (mRemovedPaths.size() > 0 && mAddedPaths.size() > 0) {
@@ -392,6 +397,9 @@ nsresult
 sbWatchFolderService::HandleEventPathList(sbStringSet & aEventPathSet,
                                           EProcessType aProcessType)
 {
+  LOG(("%s: Processing event path list [aEventPathSet.size == %i]",
+    __FUNCTION__, aEventPathSet.size()));
+
   if (aEventPathSet.empty()) {
     return NS_OK;
   }
@@ -408,6 +416,9 @@ sbWatchFolderService::HandleEventPathList(sbStringSet & aEventPathSet,
 nsresult
 sbWatchFolderService::ProcessAddedPaths()
 {
+  LOG(("%s: Processing the added file paths... [mAddedPaths.size == %i]",
+    __FUNCTION__, mAddedPaths.size()));
+
   if (mAddedPaths.empty()) {
     return NS_OK;
   }
@@ -1031,7 +1042,9 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
   PRUint32 length;
   rv = mEnumeratedMediaItems->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
+  LOG(("%s: Found %i media items during enumeration", __FUNCTION__, length));
+
   if (length > 0) {
     if (mCurrentProcessType == eRemoval) {
       // Remove the found items from the library.
@@ -1055,7 +1068,6 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
 
     } 
     else if (mCurrentProcessType == eMoveOrRename) {
-
       // Try to detect move/rename
       nsCOMPtr<sbIWFMoveRenameHelper9000> helper =
         do_GetService("@songbirdnest.com/Songbird/MoveRenameHelper;1", &rv);
@@ -1069,6 +1081,36 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
       rv = helper->Process(mEnumeratedMediaItems, uriArray);
       NS_ENSURE_SUCCESS(rv, rv);
     }  
+  }
+  else if (mCurrentProcessType == eMoveOrRename) {
+    // If no items where found during the move or rename enumeration lookup
+    // (i.e. no removed items where found) - add the items that still exist.
+    // This usually happens when the a directory changes very fast and none
+    // of the removed items actually exist in the library.
+    sbStringSet addedPathsCopy = mAddedPaths;
+    sbStringSetIter begin = addedPathsCopy.begin();
+    sbStringSetIter end = addedPathsCopy.end();
+    sbStringSetIter next;
+    for (next = begin; next != end; ++next) {
+      nsCOMPtr<nsILocalFile> curFile =
+        do_CreateInstance("@mozilla.org/file/local;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curFile->InitWithPath(*next);
+      if (NS_FAILED(rv)) {
+        NS_WARNING("ERROR: Could not init a nsILocalFile with a path!");
+        continue;
+      }
+
+      PRBool doesExist = PR_FALSE;
+      rv = curFile->Exists(&doesExist);
+      if (NS_FAILED(rv) || !doesExist) {
+        mAddedPaths.erase(*next);
+      }
+    }
+
+    rv = ProcessAddedPaths();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   
   rv = mEnumeratedMediaItems->Clear();
