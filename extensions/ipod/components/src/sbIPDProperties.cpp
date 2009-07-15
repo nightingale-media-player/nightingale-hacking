@@ -190,7 +190,7 @@ sbIPDProperties::SetFriendlyName(const nsAString& aFriendlyName)
   return SetPropertyAsAString(NS_LITERAL_STRING("FriendlyName"), aFriendlyName);
 }
 
-  
+
 /**
  * A string identifying the vendor of a device. Included in the hash code.
  */
@@ -198,10 +198,10 @@ sbIPDProperties::SetFriendlyName(const nsAString& aFriendlyName)
 NS_IMETHODIMP
 sbIPDProperties::GetVendorName(nsAString& aVendorName)
 {
-  return GetPropertyAsAString(NS_LITERAL_STRING("DeviceManufacturer"),
+  return GetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
                               aVendorName);
 }
-  
+
 
 /**
  * Model number for the device. Can be set in any appropriate format, but
@@ -211,10 +211,10 @@ sbIPDProperties::GetVendorName(nsAString& aVendorName)
 NS_IMETHODIMP
 sbIPDProperties::GetModelNumber(nsIVariant** aModelNumber)
 {
-  return GetProperty(NS_LITERAL_STRING("ModelNo"), aModelNumber);
+  return GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL), aModelNumber);
 }
 
-  
+
 /**
  * Serial number for the device. Can be set in any appropriate format, but
  * will be converted to a string and included in the hash code.
@@ -223,7 +223,8 @@ sbIPDProperties::GetModelNumber(nsIVariant** aModelNumber)
 NS_IMETHODIMP
 sbIPDProperties::GetSerialNumber(nsIVariant** aSerialNumber)
 {
-  return GetProperty(NS_LITERAL_STRING("SerialNo"), aSerialNumber);
+  return GetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
+                     aSerialNumber);
 }
 
 NS_IMETHODIMP
@@ -243,7 +244,7 @@ sbIPDProperties::GetUri(nsIURI** aUri)
 {
   return NS_ERROR_FAILURE;
 }
-  
+
 
 /**
  * The preferred icon to be displayed to the user.
@@ -257,10 +258,10 @@ sbIPDProperties::GetIconUri(nsIURI** aIconUri)
                                 NS_GET_IID(nsIURI),
                                 (void**) aIconUri);
 }
-  
 
-/** 
- * All of the properties available for a device. 
+
+/**
+ * All of the properties available for a device.
  * Should only contain objects that implement nsIProperty!
  */
 
@@ -386,25 +387,28 @@ sbIPDProperties::Initialize()
   nsAutoString              property;
   rv = mDevice->GetParameters(getter_AddRefs(parameters));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = parameters->GetPropertyAsAString(NS_LITERAL_STRING("DeviceManufacturer"),
-                                        property);
+  rv = parameters->GetPropertyAsAString
+                      (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                       property);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mProperties2->SetPropertyAsAString
-                       (NS_LITERAL_STRING("DeviceManufacturer"),
+                       (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
                         property);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = parameters->GetPropertyAsAString(NS_LITERAL_STRING("ModelNo"),
-                                        property);
+  rv = parameters->GetPropertyAsAString
+                     (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                      property);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mProperties2->SetPropertyAsAString
-                       (NS_LITERAL_STRING("ModelNo"),
+                       (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
                         property);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = parameters->GetPropertyAsAString(NS_LITERAL_STRING("SerialNo"),
-                                        property);
+  rv = parameters->GetPropertyAsAString
+                      (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
+                       property);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = mProperties2->SetPropertyAsAString
-                       (NS_LITERAL_STRING("SerialNo"),
+                       (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
                         property);
   NS_ENSURE_SUCCESS(rv, rv);
 

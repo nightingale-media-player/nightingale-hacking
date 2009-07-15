@@ -55,6 +55,7 @@
 #include <sbIMediaListView.h>
 #include <sbLibraryListenerHelpers.h>
 #include <sbStandardProperties.h>
+#include <sbStandardDeviceProperties.h>
 #include <sbProxyUtils.h>
 #include <sbStringUtils.h>
 
@@ -499,23 +500,27 @@ sbIPDDevice::GetProductName(nsAString& aProductName)
 
   // Get the vendor name.
   nsAutoString vendorName;
-  rv = mProperties->HasKey(NS_LITERAL_STRING("DeviceManufacturer"), &hasKey);
+  rv = mProperties->HasKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                           &hasKey);
   NS_ENSURE_SUCCESS(rv, rv);
   if (hasKey) {
     // Get the vendor name.
     rv = mProperties->GetPropertyAsAString
-                        (NS_LITERAL_STRING("DeviceManufacturer"), vendorName);
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                         vendorName);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Get the device model number, using a default if one is not available.
   nsAutoString modelNumber;
-  rv = mProperties->HasKey(NS_LITERAL_STRING("ModelNo"), &hasKey);
+  rv = mProperties->HasKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                           &hasKey);
   NS_ENSURE_SUCCESS(rv, rv);
   if (hasKey) {
     // Get the model number.
-    rv = mProperties->GetPropertyAsAString(NS_LITERAL_STRING("ModelNo"),
-                                           modelNumber);
+    rv = mProperties->GetPropertyAsAString
+                            (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                             modelNumber);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   if (modelNumber.IsEmpty()) {
@@ -1439,7 +1444,7 @@ sbIPDDevice::CapabilitiesConnect()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the device content types.
-  PRUint32 contentTypeList[] = { sbIDeviceCapabilities::CONTENT_AUDIO, 
+  PRUint32 contentTypeList[] = { sbIDeviceCapabilities::CONTENT_AUDIO,
                                  sbIDeviceCapabilities::CONTENT_PLAYLIST };
   rv = mCapabilities->AddContentTypes
                         (sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK,
@@ -1531,15 +1536,17 @@ sbIPDDevice::CreateDeviceID(nsID* aDeviceID)
   rv = AddNSIDHash(buffer,
                    offset,
                    parameters,
-                   NS_LITERAL_STRING("DeviceManufacturer"));
+                   NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER));
   NS_WARN_IF_FALSE
     (NS_SUCCEEDED(rv),
      "Couldn't add the device manufaturer to the device ID hash.");
-  rv = AddNSIDHash(buffer, offset, parameters, NS_LITERAL_STRING("ModelNo"));
+  rv = AddNSIDHash(buffer, offset, parameters,
+                   NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL));
   NS_WARN_IF_FALSE
     (NS_SUCCEEDED(rv),
       "Couldn't add the device model number to the device ID hash.");
-  rv = AddNSIDHash(buffer, offset, parameters, NS_LITERAL_STRING("SerialNo"));
+  rv = AddNSIDHash(buffer, offset, parameters,
+                   NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER));
   NS_WARN_IF_FALSE
     (NS_SUCCEEDED(rv),
      "Couldn't add the device serial number to the device ID hash.");

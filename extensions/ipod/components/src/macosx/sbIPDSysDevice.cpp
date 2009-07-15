@@ -30,7 +30,7 @@
 //
 //------------------------------------------------------------------------------
 
-/** 
+/**
  * \file  sbIPDSysDevice.cpp
  * \brief Songbird iPod System Dependent Device Source.
  */
@@ -51,6 +51,9 @@
 #include <nsIPropertyBag.h>
 #include <nsIPropertyBag2.h>
 #include <nsIWritablePropertyBag.h>
+
+// Songbird imports
+#include <sbStandardDeviceProperties.h>
 
 
 //------------------------------------------------------------------------------
@@ -138,17 +141,18 @@ sbIPDSysDevice::Initialize()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the device manufacturer and model number properties.
-  rv = writeProperties->SetProperty(NS_LITERAL_STRING("DeviceManufacturer"),
-                                    sbIPDVariant("Apple").get());
+  rv = writeProperties->SetProperty
+                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                            sbIPDVariant("Apple").get());
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = writeProperties->SetProperty(NS_LITERAL_STRING("ModelNo"),
+  rv = writeProperties->SetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
                                     sbIPDVariant("iPod").get());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the Firewire GUID property.
   nsAutoString firewireGUID;
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = properties->GetPropertyAsAString(NS_LITERAL_STRING("FirewireGUID"), 
+  rv = properties->GetPropertyAsAString(NS_LITERAL_STRING("FirewireGUID"),
                                         firewireGUID);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -162,8 +166,9 @@ sbIPDSysDevice::Initialize()
 
   // Add the device serial number property.
   //XXXeps use Firewire GUID for now.
-  rv = writeProperties->SetProperty(NS_LITERAL_STRING("SerialNo"),
-                                    sbIPDVariant(firewireGUID).get());
+  rv = writeProperties->SetProperty
+                           (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
+                            sbIPDVariant(firewireGUID).get());
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the iPod device object.

@@ -545,8 +545,6 @@ sbImageFormatType::Initialize(nsACString const & aImageFormat,
                               sbIDevCapRange * aSupportedWidths,
                               sbIDevCapRange * aSupportedHeights) {
   NS_ENSURE_ARG_POINTER(aSupportedExplicitSizes);
-  NS_ENSURE_ARG_POINTER(aSupportedWidths);
-  NS_ENSURE_ARG_POINTER(aSupportedHeights);
 
   mImageFormat = aImageFormat;
   mSupportedExplicitSizes = aSupportedExplicitSizes;

@@ -3895,6 +3895,7 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
       NS_ENSURE_SUCCESS(rv, rv);
       if (type >= mCapabilitiesRegistrarType) {
         mCapabilitiesRegistrar = capabilitiesRegistrar;
+        mCapabilitiesRegistrarType = type;
       }
     }
 
