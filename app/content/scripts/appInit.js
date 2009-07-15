@@ -725,17 +725,19 @@ function initExtensionManagerPermissions() {
       let prefValue = prefBranch.getCharPref(prefName);
       let values = prefValue.split(",");
       for each (let value in values) {
-        value = value.replace(" ", "", "g");
-        value = httpPrefix + value;
-        let uri = null;
-        try {
-          uri = ioService.newURI(value, null, null);
-          permissionManager.add(uri, 
-                                permissionType, 
-                                Ci.nsIPermissionManager.ALLOW_ACTION);
-        }
-        catch(e) {
-          Cu.reportError(e);
+        if (value.length > 0) {
+          value = value.replace(" ", "", "g");
+          value = httpPrefix + value;
+          let uri = null;
+          try {
+            uri = ioService.newURI(value, null, null);
+            permissionManager.add(uri, 
+                                  permissionType, 
+                                  Ci.nsIPermissionManager.ALLOW_ACTION);
+          }
+          catch(e) {
+            Cu.reportError(e);
+          }
         }
       }
       
