@@ -56,7 +56,42 @@
 #include <nsIProxyObjectManager.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <prlog.h>
 
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbWindowWatcher:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gWindowWatcherLog = nsnull;
+#define TRACE(args) PR_LOG(gWindowWatcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gWindowWatcherLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
+
+//------------------------------------------------------------------------------
+//
+// Songbird window watcher preprocessor definitions.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * \brief The DOM event to use to figure out when the window has completed
+ *        loading and has an useful size.  On Windows, the first resize event is
+ *        fired at around the time that is available; on Mac, that happens too
+ *        early, but sb-overlay-load happens after that and has what we need.
+ *        (Of course, sb-overlay-load fires first on Windows, so we can't use
+ *        that.)
+ */
+#if XP_WIN
+#define SB_DOM_WINDOW_READY_EVENT "resize"
+#elif XP_MACOSX
+#define SB_DOM_WINDOW_READY_EVENT "sb-overlay-load"
+#else
+#define SB_DOM_WINDOW_READY_EVENT "sb-overlay-load"
+#endif
 
 //------------------------------------------------------------------------------
 //
@@ -334,6 +369,8 @@ sbWindowWatcher::Observe(nsISupports*     aSubject,
 {
   nsresult rv;
 
+  TRACE(("%s: observing %s", __FUNCTION__, aTopic));
+
   /* Dispatch processing of event. */
   if (!strcmp(aTopic, "domwindowopened")) {
     rv = OnDOMWindowOpened(aSubject, aData);
@@ -442,6 +479,10 @@ sbWindowWatcher::sbWindowWatcher() :
   mIsShuttingDown(PR_FALSE),
   mServicingCallWithWindowList(PR_FALSE)
 {
+  #if PR_LOGGING
+    if (!gWindowWatcherLog)
+      gWindowWatcherLog= PR_NewLogModule("sbWindowWatcher");
+  #endif /* PR_LOGGING */
 }
 
 
@@ -620,7 +661,8 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   // Listen for the end of window overlay load events.
-  rv = windowEventTarget->AddEventListener(NS_LITERAL_STRING("sb-overlay-load"),
+  NS_NAMED_LITERAL_STRING(DOM_WINDOW_READY_EVENT, SB_DOM_WINDOW_READY_EVENT);
+  rv = windowEventTarget->AddEventListener(DOM_WINDOW_READY_EVENT,
                                            eventListener,
                                            PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -657,10 +699,10 @@ sbWindowWatcher::RemoveWindow(nsIDOMWindow* aWindow)
 
   // Remove listener for the end of window overlay load events.
   if (windowInfo) {
-    rv = windowInfo->eventTarget->RemoveEventListener
-                                    (NS_LITERAL_STRING("sb-overlay-load"),
-                                     windowInfo->eventListener,
-                                     PR_TRUE);
+    NS_NAMED_LITERAL_STRING(DOM_WINDOW_READY_EVENT, SB_DOM_WINDOW_READY_EVENT);
+    rv = windowInfo->eventTarget->RemoveEventListener(DOM_WINDOW_READY_EVENT,
+                                                      windowInfo->eventListener,
+                                                      PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -903,6 +945,18 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(event);
 
+  #if PR_LOGGING
+  {
+    nsString type;
+    nsresult rv = event->GetType(type);
+    if (NS_SUCCEEDED(rv)) {
+      TRACE(("%s: got event %s",
+             __FUNCTION__,
+             NS_ConvertUTF16toUTF8(type).get()));
+    }
+  }
+  #endif
+
   // Function variables.
   nsresult rv;
 
@@ -917,8 +971,16 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Dispatch processing of event.
-  if (eventType.LowerCaseEqualsLiteral("sb-overlay-load"))
+  if (eventType.LowerCaseEqualsLiteral(SB_DOM_WINDOW_READY_EVENT)) {
+    nsCOMPtr<nsIDOMEventTarget> target;
+    rv = event->GetTarget(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_NAMED_LITERAL_STRING(DOM_WINDOW_READY_EVENT,
+                            SB_DOM_WINDOW_READY_EVENT);
+    rv = target->RemoveEventListener(DOM_WINDOW_READY_EVENT, this, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
     mSBWindowWatcher->OnWindowReady(mWindow);
+  }
 
   return NS_OK;
 }
