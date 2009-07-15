@@ -747,30 +747,6 @@ protected:
   //----------------------------------------------------------------------------
 
   /**
-   * Check if device is linked to the local sync partner.  If it is, return true
-   * in aIsLinkedLocally; otherwise, return false.  If aRequestPartnerChange is
-   * true and the device is not linked locally, make a request to the user to
-   * change the device sync partner to the local sync partner.
-   *
-   * \param aRequestPartnerChange   Request that the sync partner be changed to
-   *                                the local sync partner.
-   * \param aIsLinkedLocally        Returned true if the device is linked to the
-   *                                local sync partner.
-   */
-  nsresult SyncCheckLinkedPartner(PRBool  aRequestPartnerChange,
-                                  PRBool* aIsLinkedLocally);
-
-  /**
-   * Make a request to the user to change the device sync partner to the local
-   * sync partner.  If the user grants the request, return true in
-   * aPartnerChangeGranted; otherwise, return true.
-   *
-   * \param aPartnerChangeGranted   Returned true if the user granted the
-   *                                request.
-   */
-  nsresult SyncRequestPartnerChange(PRBool* aPartnerChangeGranted);
-
-  /**
    * Handle the sync request specified by aRequest.
    *
    * \param aRequest              Request data record.

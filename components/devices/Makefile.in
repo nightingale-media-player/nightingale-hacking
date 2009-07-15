@@ -29,9 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = base \
+SUBDIRS = device \
+          base \
           controller \
-          device \
           manager \
           marshall \
           firmware \

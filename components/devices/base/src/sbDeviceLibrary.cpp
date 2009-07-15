@@ -68,6 +68,7 @@
 
 /* songbird headers */
 #include <sbDeviceLibraryHelpers.h>
+#include <sbDeviceUtils.h>
 #include <sbLibraryUtils.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbMemoryUtils.h>
@@ -892,9 +893,33 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
   if ((origMgmtType == sbIDeviceLibrary::MGMT_TYPE_MANUAL) &&
       ((aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) ||
        (aMgmtType == sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS))) {
-    PRBool cancelSwitch;
-    rv = ConfirmSwitchFromManualToSync(&cancelSwitch);
+    // Check if device is linked to a local sync partner.
+    PRBool isLinkedLocally;
+    rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
+                                               PR_FALSE,
+                                               &isLinkedLocally);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // Confirm either link partner switch or manual to sync mode switch.
+    PRBool cancelSwitch = PR_TRUE;
+    if (!isLinkedLocally) {
+      // Request that the link partner be changed.
+      rv = sbDeviceUtils::SyncCheckLinkedPartner(mDevice,
+                                                 PR_TRUE,
+                                                 &isLinkedLocally);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Cancel switch if link partner was not changed.
+      if (!isLinkedLocally)
+        cancelSwitch = PR_TRUE;
+      else
+        cancelSwitch = PR_FALSE;
+    } else {
+      rv = ConfirmSwitchFromManualToSync(&cancelSwitch);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // Do nothing more is switch canceled.
     if (cancelSwitch)
       return NS_OK;
   }

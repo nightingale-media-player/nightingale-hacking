@@ -147,7 +147,7 @@ sbIPDDevice::SyncFromDevice()
   // Check if the iPod is linked to the Songbird library and do nothing if not
   // linked.
   PRBool isLinked;
-  rv = SyncCheckLinkedPartner(PR_FALSE, &isLinked);
+  rv = sbDeviceUtils::SyncCheckLinkedPartner(this, PR_FALSE, &isLinked);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!isLinked)
     return NS_OK;

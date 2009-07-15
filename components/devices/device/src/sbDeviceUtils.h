@@ -151,6 +151,35 @@ public:
                      /* in */  PRInt64           aSpaceNeeded,
                      /* in */  PRInt64           aSpaceAvailable,
                      /* out */ PRBool*           aAbort);
+
+  /**
+   * Check if the device specified by aDevice is linked to the local sync
+   * partner.  If it is, return true in aIsLinkedLocally; otherwise, return
+   * false.  If aRequestPartnerChange is true and the device is not linked
+   * locally, make a request to the user to change the device sync partner to
+   * the local sync partner.
+   *
+   * \param aDevice                 Device to check.
+   * \param aRequestPartnerChange   Request that the sync partner be changed to
+   *                                the local sync partner.
+   * \param aIsLinkedLocally        Returned true if the device is linked to the
+   *                                local sync partner.
+   */
+  static nsresult SyncCheckLinkedPartner(sbIDevice* aDevice,
+                                         PRBool     aRequestPartnerChange,
+                                         PRBool*    aIsLinkedLocally);
+
+  /**
+   * Make a request of the user to change the sync partner of the device
+   * specified by aDevice to the local sync partner.  If the user grants the
+   * request, return true in aPartnerChangeGranted; otherwise, return false.
+   *
+   * \param aDevice                 Device.
+   * \param aPartnerChangeGranted   Returned true if the user granted the
+   *                                request.
+   */
+  static nsresult SyncRequestPartnerChange(sbIDevice* aDevice,
+                                           PRBool*    aPartnerChangeGranted);
 };
 
 

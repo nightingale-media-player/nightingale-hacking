@@ -45,10 +45,12 @@
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
+#include <sbIPrompter.h>
 #include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
+#include <sbVariantUtils.h>
 
 class sbDeviceUtilsQueryUserSpaceExceeded : public sbICallWithWindowCallback
 {
@@ -384,6 +386,159 @@ nsresult sbDeviceUtils::QueryUserSpaceExceeded
   return NS_OK;
 }
 
+/* static */
+nsresult sbDeviceUtils::SyncCheckLinkedPartner(sbIDevice* aDevice,
+                                               PRBool     aRequestPartnerChange,
+                                               PRBool*    aIsLinkedLocally)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aIsLinkedLocally);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device sync partner ID and determine if the device is linked to a
+  // sync partner.
+  PRBool               deviceIsLinked;
+  nsCOMPtr<nsIVariant> deviceSyncPartnerIDVariant;
+  nsAutoString         deviceSyncPartnerID;
+  rv = aDevice->GetPreference(NS_LITERAL_STRING("SyncPartner"),
+                              getter_AddRefs(deviceSyncPartnerIDVariant));
+  if (NS_SUCCEEDED(rv)) {
+    rv = deviceSyncPartnerIDVariant->GetAsAString(deviceSyncPartnerID);
+    NS_ENSURE_SUCCESS(rv, rv);
+    deviceIsLinked = PR_TRUE;
+  } else {
+    deviceIsLinked = PR_FALSE;
+  }
+
+  // Get the local sync partner ID.
+  nsAutoString localSyncPartnerID;
+  rv = GetMainLibraryId(localSyncPartnerID);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if device is linked to local sync partner.
+  PRBool isLinkedLocally = PR_FALSE;
+  if (deviceIsLinked)
+    isLinkedLocally = deviceSyncPartnerID.Equals(localSyncPartnerID);
+
+  // If device is not linked locally, request that its sync partner be changed.
+  if (!isLinkedLocally && aRequestPartnerChange) {
+    // Request that the device sync partner be changed.
+    PRBool partnerChangeGranted;
+    rv = SyncRequestPartnerChange(aDevice, &partnerChangeGranted);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Change the sync partner if the request was granted.
+    if (partnerChangeGranted) {
+      rv = aDevice->SetPreference(NS_LITERAL_STRING("SyncPartner"),
+                                  sbNewVariant(localSyncPartnerID));
+      NS_ENSURE_SUCCESS(rv, rv);
+      isLinkedLocally = PR_TRUE;
+    }
+  }
+
+  // Return results.
+  *aIsLinkedLocally = isLinkedLocally;
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::SyncRequestPartnerChange
+                          (sbIDevice* aDevice,
+                           PRBool*    aPartnerChangeGranted)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aPartnerChangeGranted);
+
+  // Function variables.
+  nsresult rv;
+
+  // Get the device name.
+  nsString deviceName;
+  rv = aDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the main library name.
+  nsCOMPtr<sbILibrary> mainLibrary;
+  nsString             libraryName;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mainLibrary->GetName(libraryName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get a prompter that waits for a window.
+  nsCOMPtr<sbIPrompter> prompter =
+                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Ensure that the library name is not empty.
+  if (libraryName.IsEmpty()) {
+    libraryName = SBLocalizedString("servicesource.library");
+  }
+
+  // Get the prompt title.
+  nsAString const& title =
+    SBLocalizedString("device.dialog.sync_confirmation.change_library.title");
+
+  // Get the prompt message.
+  nsTArray<nsString> formatParams;
+  formatParams.AppendElement(deviceName);
+  nsAString const& message =
+    SBLocalizedString("device.dialog.sync_confirmation.change_library.msg",
+                      formatParams);
+
+  // Configure the buttons.
+  PRUint32 buttonFlags = 0;
+
+  // Configure the no button as button 1.
+  nsAString const& noButton =
+    SBLocalizedString
+      ("device.dialog.sync_confirmation.change_library.no_button");
+  buttonFlags += (nsIPromptService::BUTTON_POS_1 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING);
+
+  // Configure the sync button as button 0.
+  nsAString const& syncButton =
+    SBLocalizedString
+      ("device.dialog.sync_confirmation.change_library.sync_button");
+  buttonFlags += (nsIPromptService::BUTTON_POS_0 *
+                  nsIPromptService::BUTTON_TITLE_IS_STRING) +
+                 nsIPromptService::BUTTON_POS_0_DEFAULT;
+  PRInt32 grantPartnerChangeIndex = 0;
+
+  // XXX lone> see mozbug 345067, there is no way to tell the prompt service
+  // what code to return when the titlebar's X close button is clicked, it is
+  // always 1, so we have to make the No button the second button.
+
+  // Query the user to determine whether the device sync partner should be
+  // changed to the local partner.
+  PRInt32 buttonPressed;
+  rv = prompter->ConfirmEx(nsnull,
+                           title.BeginReading(),
+                           message.BeginReading(),
+                           buttonFlags,
+                           syncButton.BeginReading(),
+                           noButton.BeginReading(),
+                           nsnull,                      // No button 2.
+                           nsnull,                      // No check message.
+                           nsnull,                      // No check result.
+                           &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if partner change request was granted.
+  if (buttonPressed == grantPartnerChangeIndex)
+    *aPartnerChangeGranted = PR_TRUE;
+  else
+    *aPartnerChangeGranted = PR_FALSE;
+
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //
