@@ -94,8 +94,12 @@
     </vbox>
 
     <!-- Unsupported media list. -->
-    <sb-closable-box id="error_listbox_box">
-      <listbox id="error_listbox" flex="1"/>
+    <sb-closable-box id="errors_box">
+      <vbox id="errors_grid_box">
+        <grid>
+          <rows id="errors_rows" />
+        </grid>
+      </vbox>
     </sb-closable-box>
 
     <!-- Dialog enable checkbox. -->
@@ -207,9 +211,9 @@
           }
         }
 
-        // Set the media listbox box label.
-        var listboxBoxElem = document.getElementById("error_listbox_box");
-        listboxBoxElem.setAttribute("label", this._options.listLabel);
+        // Set the box label.
+        var boxElem = document.getElementById("errors_box");
+        boxElem.setAttribute("label", this._options.listLabel);
 
         // Set the dialog message.
         var dialogMsgTextNode = document.createTextNode(this._options.errorMsg);
@@ -224,8 +228,8 @@
         var windowTitle = document.getElementById('dialog-titlebar');
         windowTitle.title = this._options.windowTitle;
 
-        // Fill the unsupported media listbox.
-        var listboxElem = document.getElementById("error_listbox");
+        // Fill the unsupported media tree.
+        var rows = document.getElementById("errors_rows");
         for (var i = 0; i < errorItems.length; i++) {
           var errorDetail;
           try {
@@ -235,15 +239,37 @@
             errorDetail = SBString("device.error.dialog.unknown_error");
           }
 
-          // Add the error to the listbox.
-          listboxElem.appendItem(errorDetail);
+          // Add the error to the tree.
+          var row = document.createElement("row");
+          var label = document.createElement("label");
+          label.setAttribute("value", errorDetail);
+          row.appendChild(label);
+          rows.appendChild(row);
         }
 
-        // Set the number of device error listbox rows.
+        // This is kind of janky.  Horizontal scrolling on listboxes and
+        // richlistboxes seems to have issues.  h.scrolling on a tree works
+        // but you have to explicitly set the treecol width to a specific value
+        // larger than the greatest width of a treeitem label value, which we
+        // can't know since we're populating them dynamically.... hence this
+        // solution of using a grid.  We can get the computed style of the label
+        // to determine its height and set the height of the vbox accordingly.
+        // Totally janky, and hopefully someday the platform will provide a
+        // better way of doing a horizontally scrolling listbox. :(
+
+        // Set the max height of the errors to show
+        // Get the height of the first row
+        var labelStyle = document.defaultView.getComputedStyle(
+                                rows.firstChild.firstChild, null);
+        var rowHeight = labelStyle.getPropertyValue("line-height") + 4;
+
+        // Set the number of device error tree rows.
         var numRows = errorItems.length;
         if (numRows > this._options.maxRows)
           numRows = this._options.maxRows;
-        listboxElem.setAttribute("rows", numRows + 1);
+        var vbox = document.getElementById("errors_grid_box");
+        var newHeight = numRows * parseInt(rowHeight) + 20;
+        vbox.style.height = newHeight + "px";
 
         // Show the dialog enable checkbox.
         if (this._options.allowDisable) {

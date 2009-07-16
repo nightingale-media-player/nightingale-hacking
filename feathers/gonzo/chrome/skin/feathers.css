@@ -850,6 +850,31 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   width: 440px;
 }
 
+
+
+/******************************************************************************
+> DEVICE ERROR DIALOG
+******************************************************************************/
+#device_error_dialog > sb-sys-outer-frame > .dialog-content-box {
+  overflow: visible;
+  width: 440px;
+}
+
+#infoContainer > #errors_box > #errors_grid_box {
+  overflow: auto;
+  height: 100px;
+  width: 440px;
+  background-color:rgb(255,255,255);
+  border: 1px solid rgb(131,131,131);
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+#infoContainer > #errors_box > #errors_grid_box > grid > rows > row > label {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
 /******************************************************************************
 > SMART PLAYLIST EDITOR
 
