@@ -278,15 +278,14 @@
 
       <method name="save">
         <body> <![CDATA[
-          var formatDirPrefName =
-            this._prefRoot + ".media_management.library.format.dir";
-          Application.prefs.setValue(formatDirPrefName, this._formatter.value);
-
-          var enabledPrefName = this._prefRoot + ".media_management.enabled";
+          this.device.setPreference(this._devicePrefRoot + 
+                                      ".media_management.library.format.dir", 
+                                    this._formatter.value);
           var enabledCheckbox =
             document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable");
-          Application.prefs.setValue(enabledPrefName,
-                                     enabledCheckbox.checked);
+          this.device.setPreference(this._devicePrefRoot +
+                                      ".media_management.library.enabled",
+                                    enabledCheckbox.checked);
 
           // Save the device's storage settings
           this._saveStorageScaleSetting();
@@ -295,7 +294,7 @@
 
       <method name="reset">
         <body> <![CDATA[
-          var enabledPrefName = this._prefRoot + ".media_management.enabled";
+          var enabledPrefName = this._prefRoot + ".media_management.library.enabled";
           document.getAnonymousElementByAttribute(this, "sbid", "mgmt_enable")
                   .checked =
                     Application.prefs.getValue(enabledPrefName, false);

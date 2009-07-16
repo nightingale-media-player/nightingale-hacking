@@ -113,10 +113,10 @@ PRLogModuleInfo* gBaseDeviceLog = nsnull;
 #define PREF_DEVICE_PREFERENCES_BRANCH "songbird.device."
 #define PREF_DEVICE_LIBRARY_BASE "library."
 #define PREF_WARNING "warning."
-#define PREF_ORGANIZE_PREFIX "media_management."
-#define PREF_ORGANIZE_ENABLED "media_management.enabled"
-#define PREF_ORGANIZE_DIR_FORMAT "media_management.format.dir"
-#define PREF_ORGANIZE_FILE_FORMAT "media_management.format.file"
+#define PREF_ORGANIZE_PREFIX "media_management.library."
+#define PREF_ORGANIZE_ENABLED "media_management.library.enabled"
+#define PREF_ORGANIZE_DIR_FORMAT "media_management.library.format.dir"
+#define PREF_ORGANIZE_FILE_FORMAT "media_management.library.format.file"
 
 #define BATCH_TIMEOUT 200 /* number of milliseconds to wait for batching */
 
