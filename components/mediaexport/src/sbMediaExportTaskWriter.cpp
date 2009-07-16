@@ -186,20 +186,15 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylist(sbIMediaList *aMediaList)
   LOG(("%s Writing header '%s'",
         __FUNCTION__, TASKFILE_UPDATEDSMARTPLAYLIST_HEADER));
 
-  mOutputStream << "["
-                << TASKFILE_UPDATEDSMARTPLAYLIST_HEADER
-                << "]"
-                << std::endl;
+  nsresult rv;
 
   // The updated smartlist section needs to have the URI of every track that
   // is currently in the smart list.
-  mCurOutputIndex = 0;
 
   nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
     new sbMediaListEnumArrayHelper();
   NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv;
   rv = enumHelper->New();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -214,6 +209,30 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylist(sbIMediaList *aMediaList)
   PRUint32 length = 0;
   rv = mediaItems->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  if (length == 0) {
+    // Nothing in the list to output, just return.
+    return NS_OK;
+  }
+
+  nsString mediaListName;
+  rv = aMediaList->GetName(mediaListName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString escaped;
+  rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(mediaListName),
+                              nsINetUtil::ESCAPE_URL_PATH,
+                              escaped);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mOutputStream << "["
+                << TASKFILE_UPDATEDSMARTPLAYLIST_HEADER
+                << ":"
+                << escaped.get()
+                << "]"
+                << std::endl;
+
+  mCurOutputIndex = 0;
 
   for (PRUint32 i = 0; i < length; i++) {
     nsCOMPtr<sbIMediaItem> curMediaItem;
