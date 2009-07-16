@@ -113,7 +113,8 @@ public:
       /* move an item in one playlist */
       REQUEST_MOVE          = sbIDevice::REQUEST_MOVE,
       REQUEST_UPDATE        = sbIDevice::REQUEST_UPDATE,
-      REQUEST_NEW_PLAYLIST  = sbIDevice::REQUEST_NEW_PLAYLIST
+      REQUEST_NEW_PLAYLIST  = sbIDevice::REQUEST_NEW_PLAYLIST,
+      REQUEST_FORMAT        = sbIDevice::REQUEST_FORMAT
    };
 
     int type;                        /* one of the REQUEST_* constants,

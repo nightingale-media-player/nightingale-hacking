@@ -181,6 +181,16 @@ var DPWCfg = {
       showProgress: true,
       updateBusy: true,
       preparingOnIdle: true
+    },
+
+    /* Format. */
+    {
+      state: Ci.sbIDevice.STATE_FORMATTING,
+      localeSuffix: "formatting",
+      progressMeterUndetermined: true,
+      canBeCompleted: true,
+      showProgress: true,
+      updateBusy: true
     }
   ]
 };
@@ -755,6 +765,9 @@ var DPW = {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_START:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_PROGRESS:
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_END:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_START:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_PROGRESS:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FORMATTING_END:
         this._update();
         break;
     }

@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(dec21386-7ef5-4efb-ac79-eac3032ac488)]
+[scriptable, uuid(612a7c18-1dd2-11b2-90ba-e44388de1c21)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -138,6 +138,10 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_LIBRARY_ADDED        = EVENT_DEVICE_BASE + 32;
   const unsigned long EVENT_DEVICE_LIBRARY_REMOVED      = EVENT_DEVICE_BASE + 33;
 
+  // device formatting events
+  const unsigned long EVENT_DEVICE_FORMATTING_START    = EVENT_DEVICE_BASE + 34;
+  const unsigned long EVENT_DEVICE_FORMATTING_PROGRESS = EVENT_DEVICE_BASE + 35;
+  const unsigned long EVENT_DEVICE_FORMATTING_END      = EVENT_DEVICE_BASE + 36;
 
   /**
    * 

@@ -45,7 +45,7 @@ interface sbIDeviceStatus;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(23bad010-5ee9-11de-8a39-0800200c9a66)]
+[scriptable, uuid(d2172a50-e39c-4655-aa35-1eaf89ee9021)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -206,6 +206,9 @@ interface sbIDevice : nsISupports
   /* reset the device to its factory state */
   const unsigned long REQUEST_FACTORY_RESET = REQUEST_FLAG_WRITE + 8;
   
+  /* format the device media */
+  const unsigned long REQUEST_FORMAT        = REQUEST_FLAG_WRITE + 9;
+
   /**
    * 
    */

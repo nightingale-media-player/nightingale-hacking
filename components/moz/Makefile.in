@@ -35,6 +35,7 @@ SUBDIRS = strings \
           domevents \
           filedownloader \
           fileutils \
+          process \
           prompter \
           proxy \
           temporaryfileservice \
