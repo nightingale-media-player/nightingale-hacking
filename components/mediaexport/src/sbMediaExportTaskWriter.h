@@ -67,6 +67,12 @@ public:
   nsresult WriteRemovedMediaListsHeader();
 
   //
+  // \brief Write the header for the "updated smart playlist" exported data.
+  // \param aMediaList The media list that has been updated.
+  //
+  nsresult WriteUpdatedSmartPlaylist(sbIMediaList *aMediaList);
+
+  //
   // \brief Write the header for the "added media items" exported data.
   // \param aMediaList The parent media list of the added media items.
   //

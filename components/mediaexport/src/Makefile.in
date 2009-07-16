@@ -38,6 +38,7 @@ CPP_SRCS = sbMediaExportPrefController.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
+                     $(DEPTH)/components/library/localdatabase/public \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/job/public \
                      $(DEPTH)/components/moz/strings/components/public \
@@ -60,6 +61,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
+ components/library/base/src/static/sbLibraryUtils \
  $(NULL)
 
 LIBSONGBIRD_COMPONENT = SongbirdMediaExport 

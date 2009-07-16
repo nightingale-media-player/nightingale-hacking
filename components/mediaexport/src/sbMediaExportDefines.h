@@ -53,13 +53,14 @@ typedef sbStringList::const_iterator        sbStringListIter;
 //
 // NOTE: When changing these values, please reflect the changes in the unittest!
 //
-#define TASKFILE_NAME                     "songbird_export.task"
-#define TASKFILE_SCHEMAVERSION            "1"
-#define TASKFILE_SCHEMAVERSION_HEADER     "schema-version"
-#define TASKFILE_ADDEDMEDIALISTS_HEADER   "added-medialists"
-#define TASKFILE_REMOVEDMEDIALISTS_HEADER "removed-medialists"
-#define TASKFILE_ADDEDMEDIAITEMS_HEADER   "added-mediaitems"
-#define SHUTDOWN_NAME                     "songbird_export.shutdown"
+#define TASKFILE_NAME                        "songbird_export.task"
+#define TASKFILE_SCHEMAVERSION               "1"
+#define TASKFILE_SCHEMAVERSION_HEADER        "schema-version"
+#define TASKFILE_ADDEDMEDIALISTS_HEADER      "added-medialists"
+#define TASKFILE_REMOVEDMEDIALISTS_HEADER    "removed-medialists"
+#define TASKFILE_ADDEDMEDIAITEMS_HEADER      "added-mediaitems"
+#define TASKFILE_UPDATEDSMARTPLAYLIST_HEADER "updated-smartplaylist"
+#define SHUTDOWN_NAME                        "songbird_export.shutdown"
 
 //------------------------------------------------------------------------------
 // Media export service XPCOM info

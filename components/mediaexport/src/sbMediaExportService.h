@@ -34,6 +34,7 @@
 #include <sbIPropertyArray.h>
 #include <nsIObserver.h>
 #include <sbIMediaListListener.h>
+#include <sbILocalDatabaseSmartMediaList.h>
 #include <nsIComponentManager.h>
 #include <nsIGenericFactory.h>
 #include <nsIFile.h>
@@ -50,11 +51,16 @@ typedef std::map<nsString, sbStringList>    sbMediaListItemMap;
 typedef sbMediaListItemMap::value_type      sbMediaListItemMapPair;
 typedef sbMediaListItemMap::iterator        sbMediaListItemMapIter;
 
+typedef std::map<nsString, nsString>        sbSmartMediaListMap;
+typedef sbSmartMediaListMap::value_type     sbSmartMediaListMapPair;
+typedef sbSmartMediaListMap::iterator       sbSmartMediaListMapIter;
+
 
 class sbMediaExportService : public sbIMediaExportService,
                              public nsIClassInfo,
                              public nsIObserver,
                              public sbIMediaListListener,
+                             public sbILocalDatabaseSmartMediaListListener,
                              public sbIShutdownJob,
                              public sbMediaExportPrefListener
 {
@@ -79,6 +85,7 @@ public:
   NS_DECL_NSICLASSINFO
   NS_DECL_NSIOBSERVER
   NS_DECL_SBIMEDIALISTLISTENER
+  NS_DECL_SBILOCALDATABASESMARTMEDIALISTLISTENER
   NS_DECL_SBIJOBPROGRESS
   NS_DECL_SBISHUTDOWNJOB
 
@@ -94,7 +101,7 @@ protected:
 
   // Media list listening utility methods
   nsresult ListenToMediaList(sbIMediaList *aMediaList);
-  nsresult GetShouldWatchMediaList(sbIMediaList *aMediaList, 
+  nsresult GetShouldWatchMediaList(sbIMediaList *aMediaList,
                                    PRBool *aShouldWatch);
 
   // Background thread method to Write export data to disk.
@@ -108,6 +115,7 @@ protected:
   nsresult WriteAddedMediaLists();
   nsresult WriteRemovedMediaLists();
   nsresult WriteAddedMediaItems();
+  nsresult WriteUpdatedSmartPlaylists();
 
   // Lookup mediaitems by a guid list.
   nsresult GetMediaListByGuid(const nsAString & aItemGuid,
@@ -119,14 +127,20 @@ protected:
   // Notify job progress listeners.
   nsresult NotifyListeners();
 
+  // Returns true if there is some observed changes that have not been
+  // exported yet.
+  PRBool GetHasRecordedChanges();
+
 private:
   // Core and changed item stuff:
   nsRefPtr<sbMediaExportPrefController>  mPrefController;
   nsCOMPtr<sbIMutablePropertyArray>      mFilteredProperties;
   nsCOMArray<sbIMediaList>               mObservedMediaLists;
+  nsCOMArray<sbILocalDatabaseSmartMediaList> mObservedSmartMediaLists;
   sbMediaListItemMap                     mAddedItemsMap;
   sbStringList                           mAddedMediaList;
   sbStringList                           mRemovedMediaLists;
+  sbStringList                           mUpdatedSmartMediaLists;
   PRBool                                 mIsRunning;
 
   // Exporting stuff:

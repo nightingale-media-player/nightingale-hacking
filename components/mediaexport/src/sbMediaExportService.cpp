@@ -56,11 +56,12 @@
 PRLogModuleInfo *gMediaExportLog = nsnull;
 #endif
 
-NS_IMPL_THREADSAFE_ISUPPORTS6(sbMediaExportService,
+NS_IMPL_THREADSAFE_ISUPPORTS7(sbMediaExportService,
                               sbIMediaExportService,
                               nsIClassInfo,
                               nsIObserver,
                               sbIMediaListListener,
+                              sbILocalDatabaseSmartMediaListListener,
                               sbIJobProgress,
                               sbIShutdownJob)
 
@@ -284,12 +285,36 @@ sbMediaExportService::StopListeningMediaLists()
       nsString listGuid;
       rv = curMediaList->GetGuid(listGuid);
       NS_ENSURE_SUCCESS(rv, rv);
-      LOG(("%s: Removing listener for media list '%s",
+      LOG(("%s: Removing listener for media list '%s'",
             __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
 #endif 
     }
 
+    // Remove smart media list listener references from all the observed smart
+    // media lists.
+    for (PRInt32 i = 0; i < mObservedSmartMediaLists.Count(); i++) {
+      nsCOMPtr<sbILocalDatabaseSmartMediaList> curSmartList =
+        mObservedSmartMediaLists[i];
+      if (!curSmartList) {
+        NS_WARNING("Could not get a smart media list reference!");
+        continue;
+      }
+
+      rv = curSmartList->RemoveSmartMediaListListener(this);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+          "Could not remove the smart media list listener!");
+
+#if PR_LOGGING
+      nsString listGuid;
+      rv = curSmartList->GetGuid(listGuid);
+      NS_ENSURE_SUCCESS(rv, rv);
+      LOG(("%s: Removing listener for smart media list '%s'",
+            __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
+#endif
+    }
+
     mObservedMediaLists.Clear();
+    mObservedSmartMediaLists.Clear();
 
     // Clean up the exported data lists
     mAddedItemsMap.clear();
@@ -353,43 +378,62 @@ sbMediaExportService::ListenToMediaList(sbIMediaList *aMediaList)
         __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
 #endif
 
-  if (!mFilteredProperties) {
-    mFilteredProperties = 
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mFilteredProperties->SetStrict(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Content URL
-    rv = mFilteredProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
-        EmptyString());
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // GUID
-    rv = mFilteredProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_GUID),
-        EmptyString());
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Playlist Name
-    rv = mFilteredProperties->AppendProperty(
-        NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
-        EmptyString());
-    NS_ENSURE_SUCCESS(rv, rv); 
-  }
-
-  PRUint32 flags = sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                   sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
-                   sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                   sbIMediaList::LISTENER_FLAGS_LISTCLEARED;
-
-  rv = aMediaList->AddListener(this, PR_FALSE, flags, nsnull);
+  nsString listType;
+  rv = aMediaList->GetType(listType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ENSURE_TRUE(mObservedMediaLists.AppendObject(aMediaList),
-                 NS_ERROR_FAILURE);
+  if (listType.EqualsLiteral("smart")) {
+    // Listen to rebuild notices only for smart playlists.
+    nsCOMPtr<sbILocalDatabaseSmartMediaList> smartList =
+      do_QueryInterface(aMediaList, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = smartList->AddSmartMediaListListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(mObservedSmartMediaLists.AppendObject(smartList),
+                   NS_ERROR_FAILURE);
+  }
+  else {
+    // Use the regular medialist listener hook for regular playlists.
+    if (!mFilteredProperties) {
+      mFilteredProperties =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = mFilteredProperties->SetStrict(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Content URL
+      rv = mFilteredProperties->AppendProperty(
+          NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+          EmptyString());
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // GUID
+      rv = mFilteredProperties->AppendProperty(
+          NS_LITERAL_STRING(SB_PROPERTY_GUID),
+          EmptyString());
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Playlist Name
+      rv = mFilteredProperties->AppendProperty(
+          NS_LITERAL_STRING(SB_PROPERTY_MEDIALISTNAME),
+          EmptyString());
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    PRUint32 flags = sbIMediaList::LISTENER_FLAGS_ITEMADDED |
+                     sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                     sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
+                     sbIMediaList::LISTENER_FLAGS_LISTCLEARED;
+
+    rv = aMediaList->AddListener(this, PR_FALSE, flags, nsnull);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    NS_ENSURE_TRUE(mObservedMediaLists.AppendObject(aMediaList),
+                   NS_ERROR_FAILURE);
+  }
 
   return NS_OK;
 }
@@ -486,10 +530,7 @@ sbMediaExportService::WriteChangesToTaskFile()
   LOG(("%s: Writing recorded media changes to task file", __FUNCTION__));
   nsresult rv;
 
-  if (mAddedItemsMap.size() > 0 ||
-      mAddedMediaList.size() > 0 ||
-      mRemovedMediaLists.size() > 0)
-  {
+  if (GetHasRecordedChanges()) {
     LOG(("%s: Starting to export data", __FUNCTION__));
 
     // The order of exported data looks like this
@@ -516,6 +557,14 @@ sbMediaExportService::WriteChangesToTaskFile()
 
       rv = NotifyListeners();
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
+
+      if (mPrefController->GetShouldExportSmartPlaylists()) {
+        rv = WriteUpdatedSmartPlaylists();
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = NotifyListeners();
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not notify listeners!");
+      }
     }
 
     // Export media items next
@@ -557,6 +606,10 @@ sbMediaExportService::WriteChangesToTaskFile()
 nsresult
 sbMediaExportService::WriteAddedMediaLists()
 {
+  if (mAddedMediaList.size() == 0) {
+    return NS_OK;
+  }
+
   LOG(("%s: Writing added media lists", __FUNCTION__));
 
   NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
@@ -590,6 +643,10 @@ sbMediaExportService::WriteAddedMediaLists()
 nsresult
 sbMediaExportService::WriteRemovedMediaLists()
 {
+  if (mRemovedMediaLists.size() == 0) {
+    return NS_OK;
+  }
+
   LOG(("%s: Writing removed media lists", __FUNCTION__));
 
   NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
@@ -616,6 +673,10 @@ sbMediaExportService::WriteRemovedMediaLists()
 nsresult
 sbMediaExportService::WriteAddedMediaItems()
 {
+  if (mAddedItemsMap.size() == 0) {
+    return NS_OK;
+  }
+
   LOG(("%s: Writing %i media lists with added media items",
         __FUNCTION__, mAddedItemsMap.size()));
 
@@ -637,19 +698,10 @@ sbMediaExportService::WriteAddedMediaItems()
   for (next = begin; next != end; ++next) {
     nsString curMediaListGuid(next->first);
     nsCOMPtr<sbIMediaList> curParentList;
-
-    // If the current medialist is the main library, don't bother looking it
-    // up through enumeration.
-    if (curMediaListGuid.Equals(mainLibraryGuid)) {
-      curParentList = mainLibrary;
-    }
-    else {
-      // Lookup the media list by GUID.
-      rv = GetMediaListByGuid(curMediaListGuid, getter_AddRefs(curParentList));
-      if (NS_FAILED(rv) || !curParentList) {
-        NS_WARNING("ERROR: Could not look up a media list by guid!");
-        continue;
-      }
+    rv = GetMediaListByGuid(curMediaListGuid, getter_AddRefs(curParentList));
+    if (NS_FAILED(rv) || !curParentList) {
+      NS_WARNING("ERROR: Could not look up a media list by guid!");
+      continue;
     }
 
     rv = mTaskWriter->WriteAddedMediaItemsListHeader(curParentList);
@@ -701,6 +753,41 @@ sbMediaExportService::WriteAddedMediaItems()
 }
 
 nsresult
+sbMediaExportService::WriteUpdatedSmartPlaylists()
+{
+  if (mUpdatedSmartMediaLists.size() == 0) {
+    return NS_OK;
+  }
+
+  LOG(("%s: Writing updated smart playlists", __FUNCTION__));
+
+  NS_ENSURE_TRUE(mTaskWriter, NS_ERROR_UNEXPECTED);
+
+  nsresult rv;
+  sbStringListIter begin = mUpdatedSmartMediaLists.begin();
+  sbStringListIter end = mUpdatedSmartMediaLists.end();
+  sbStringListIter next;
+  for (next = begin; next != end; ++next) {
+    // Get the smart playlist as a medialist to write the update header with
+    // the task writer. NOTE: This guid is always going to be a smart list guid.
+    nsCOMPtr<sbIMediaList> curSmartMediaList;
+    rv = GetMediaListByGuid(*next, getter_AddRefs(curSmartMediaList));
+    if (NS_FAILED(rv) || !curSmartMediaList) {
+      NS_WARNING("ERROR: Could not get a smart list by GUID!");
+      continue;
+    }
+
+    rv = mTaskWriter->WriteUpdatedSmartPlaylist(curSmartMediaList);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("ERROR: Could not write the updated smartlist header!");
+      continue;
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
 sbMediaExportService::GetMediaListByGuid(const nsAString & aItemGuid,
                                          sbIMediaList **aMediaList)
 {
@@ -712,12 +799,25 @@ sbMediaExportService::GetMediaListByGuid(const nsAString & aItemGuid,
   rv = GetMainLibrary(getter_AddRefs(mainLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaItem> mediaItem;
-  rv = mainLibrary->GetItemByGuid(aItemGuid, getter_AddRefs(mediaItem));
+  nsString mainLibraryGuid;
+  rv = mainLibrary->GetGuid(mainLibraryGuid);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(mediaItem, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMediaList> itemAsList;
+
+  // If this is the main library GUID, return that.
+  if (mainLibraryGuid.Equals(aItemGuid)) {
+    itemAsList = do_QueryInterface(mainLibrary, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    nsCOMPtr<sbIMediaItem> mediaItem;
+    rv = mainLibrary->GetItemByGuid(aItemGuid, getter_AddRefs(mediaItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    itemAsList = do_QueryInterface(mediaItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   itemAsList.swap(*aMediaList);
   return NS_OK;
@@ -788,6 +888,15 @@ sbMediaExportService::NotifyListeners()
   return NS_OK;
 }
 
+PRBool
+sbMediaExportService::GetHasRecordedChanges()
+{
+  return mAddedItemsMap.size() > 0 ||
+         mAddedMediaList.size() > 0 ||
+         mRemovedMediaLists.size() > 0 ||
+         mUpdatedSmartMediaLists.size() > 0;
+}
+
 //------------------------------------------------------------------------------
 // sbIMediaExportService
 
@@ -795,16 +904,7 @@ NS_IMETHODIMP
 sbMediaExportService::GetHasPendingChanges(PRBool *aHasPendingChanges)
 {
   NS_ENSURE_ARG_POINTER(aHasPendingChanges);
-
-  *aHasPendingChanges = PR_FALSE;
-
-  // Only export data if there was any recorded activity.
-  if (mAddedItemsMap.size() > 0 || 
-      mAddedMediaList.size() > 0 ||
-      mRemovedMediaLists.size() > 0)
-  {
-    *aHasPendingChanges = PR_TRUE;
-  }
+  *aHasPendingChanges = GetHasRecordedChanges();
 
   LOG(("%s: Media-export service has pending changes == %s",
         __FUNCTION__, (*aHasPendingChanges ? "true" : "false")));
@@ -955,19 +1055,43 @@ sbMediaExportService::OnAfterItemRemoved(sbIMediaList *aMediaList,
       // If this is a list that is currently being observed by this service,
       // then remove the listener hook and add the list name to the removed
       // media lists string list.
-      PRInt32 index = mObservedMediaLists.IndexOf(itemAsList);
-      if (index > -1) {
-        nsString listName;
-        rv = itemAsList->GetName(listName);
+
+      nsString type;
+      rv = itemAsList->GetType(type);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (type.EqualsLiteral("smart")) {
+        nsCOMPtr<sbILocalDatabaseSmartMediaList> itemAsSmartList =
+          do_QueryInterface(itemAsList, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        mRemovedMediaLists.push_back(listName);
+        PRInt32 index = mObservedSmartMediaLists.IndexOf(itemAsSmartList);
+        if (index > -1) {
+          nsString listName;
+          rv = itemAsList->GetName(listName);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = itemAsList->RemoveListener(this);
-        NS_ENSURE_SUCCESS(rv, rv);
+          rv = itemAsSmartList->RemoveSmartMediaListListener(this);
+          NS_ENSURE_SUCCESS(rv, rv);
 
-        NS_WARN_IF_FALSE(mObservedMediaLists.RemoveObjectAt(index),
-            "Could not remove the media list from the observed lists array!");
+          mRemovedMediaLists.push_back(listName);
+        }
+      }
+      else {
+        PRInt32 index = mObservedMediaLists.IndexOf(itemAsList);
+        if (index > -1) {
+          nsString listName;
+          rv = itemAsList->GetName(listName);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          mRemovedMediaLists.push_back(listName);
+
+          rv = itemAsList->RemoveListener(this);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          NS_WARN_IF_FALSE(mObservedMediaLists.RemoveObjectAt(index),
+              "Could not remove the media list from the observed lists array!");
+        }
       }
     }
   }
@@ -1014,6 +1138,26 @@ NS_IMETHODIMP
 sbMediaExportService::OnBatchEnd(sbIMediaList *aMediaList)
 {
   LOG(("%s: Media List Batch End!", __FUNCTION__));
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// sbILocalDatabaseSmartMediaListListener
+
+NS_IMETHODIMP
+sbMediaExportService::OnRebuild(sbILocalDatabaseSmartMediaList *aSmartMediaList)
+{
+  NS_ENSURE_ARG_POINTER(aSmartMediaList);
+
+  nsresult rv;
+  nsString listGuid;
+  rv = aSmartMediaList->GetGuid(listGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("%s: Observing updated smart media list for '%s'",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
+
+  mUpdatedSmartMediaLists.push_back(listGuid);
   return NS_OK;
 }
 
@@ -1167,6 +1311,7 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
     mProgress = 0;
     mTotal = mAddedMediaList.size();
     mTotal += mRemovedMediaLists.size();
+    mTotal += mUpdatedSmartMediaLists.size();
     sbMediaListItemMapIter begin = mAddedItemsMap.begin();
     sbMediaListItemMapIter end = mAddedItemsMap.end();
     sbMediaListItemMapIter next;
