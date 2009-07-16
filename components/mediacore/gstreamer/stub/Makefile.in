@@ -27,7 +27,7 @@ IS_COMPONENT = 1
 
 GST_LIBS_FILE = gst_libs.txt
 
-ALL_TRASH += $(GST_LIBS_FILE)
+GARBAGE += $(GST_LIBS_FILE)
 
 include $(topsrcdir)/build/rules.mk
 
