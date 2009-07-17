@@ -258,6 +258,16 @@ public:
                       sbWindowWatcher*               aSBWindowWatcher,
                       nsIDOMWindow*                  aWindow);
 
+  /**
+   * Listen for the given event on the DOM window associated with this listener
+   */
+  nsresult AddEventListener(const char* aEventName);
+
+  /**
+   * Clear all event listeners
+   */
+  nsresult ClearEventListeners();
+
   //----------------------------------------------------------------------------
   //
   // Private interface.
@@ -270,11 +280,15 @@ private:
   // mWeakSBWindowWatcher       Weak Songbird window watcher reference.
   // mSBWindowWatcher           Songbird window watcher.
   // mWindow                    Window for which to handle events.
+  // mEventTarget               The event target to listen to
+  // mOutstandingEvents         The names of events that still have to occur
   //
 
   nsCOMPtr<nsIWeakReference>    mWeakSBWindowWatcher;
   sbWindowWatcher*              mSBWindowWatcher;
   nsCOMPtr<nsIDOMWindow>        mWindow;
+  nsCOMPtr<nsIDOMEventTarget>   mEventTarget;
+  nsTArray<nsString>            mOutstandingEvents;
 
 
   //

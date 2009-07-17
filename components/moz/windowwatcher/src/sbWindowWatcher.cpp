@@ -54,6 +54,7 @@
 #include <nsIDOMElement.h>
 #include <nsIDOMEvent.h>
 #include <nsIProxyObjectManager.h>
+#include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <prlog.h>
@@ -76,22 +77,6 @@ static PRLogModuleInfo* gWindowWatcherLog = nsnull;
 // Songbird window watcher preprocessor definitions.
 //
 //------------------------------------------------------------------------------
-
-/**
- * \brief The DOM event to use to figure out when the window has completed
- *        loading and has an useful size.  On Windows, the first resize event is
- *        fired at around the time that is available; on Mac, that happens too
- *        early, but sb-overlay-load happens after that and has what we need.
- *        (Of course, sb-overlay-load fires first on Windows, so we can't use
- *        that.)
- */
-#if XP_WIN
-#define SB_DOM_WINDOW_READY_EVENT "resize"
-#elif XP_MACOSX
-#define SB_DOM_WINDOW_READY_EVENT "sb-overlay-load"
-#else
-#define SB_DOM_WINDOW_READY_EVENT "sb-overlay-load"
-#endif
 
 //------------------------------------------------------------------------------
 //
@@ -660,12 +645,15 @@ sbWindowWatcher::AddWindow(nsIDOMWindow* aWindow)
   success = mWindowList.AppendObject(aWindow);
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
-  // Listen for the end of window overlay load events.
-  NS_NAMED_LITERAL_STRING(DOM_WINDOW_READY_EVENT, SB_DOM_WINDOW_READY_EVENT);
-  rv = windowEventTarget->AddEventListener(DOM_WINDOW_READY_EVENT,
-                                           eventListener,
-                                           PR_TRUE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Listen for when the window has opened completely.
+  // Due to annoying platform differences, we need to figure out when the
+  // _last_ of a combination of events to occur (but the first instance of each)
+  const char* DOM_WINDOW_READY_EVENT_TYPES[] = {  "resize", "sb-overlay-load" };
+
+  for (int i = 0; i < NS_ARRAY_LENGTH(DOM_WINDOW_READY_EVENT_TYPES); ++i) {
+    rv = eventListener->AddEventListener(DOM_WINDOW_READY_EVENT_TYPES[i]);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -699,10 +687,7 @@ sbWindowWatcher::RemoveWindow(nsIDOMWindow* aWindow)
 
   // Remove listener for the end of window overlay load events.
   if (windowInfo) {
-    NS_NAMED_LITERAL_STRING(DOM_WINDOW_READY_EVENT, SB_DOM_WINDOW_READY_EVENT);
-    rv = windowInfo->eventTarget->RemoveEventListener(DOM_WINDOW_READY_EVENT,
-                                                      windowInfo->eventListener,
-                                                      PR_TRUE);
+    rv = windowInfo->eventListener->ClearEventListeners();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -971,15 +956,16 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Dispatch processing of event.
-  if (eventType.LowerCaseEqualsLiteral(SB_DOM_WINDOW_READY_EVENT)) {
+  if (mOutstandingEvents.Contains(eventType)) {
     nsCOMPtr<nsIDOMEventTarget> target;
     rv = event->GetTarget(getter_AddRefs(target));
     NS_ENSURE_SUCCESS(rv, rv);
-    NS_NAMED_LITERAL_STRING(DOM_WINDOW_READY_EVENT,
-                            SB_DOM_WINDOW_READY_EVENT);
-    rv = target->RemoveEventListener(DOM_WINDOW_READY_EVENT, this, PR_TRUE);
+    rv = target->RemoveEventListener(eventType, this, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
-    mSBWindowWatcher->OnWindowReady(mWindow);
+    mOutstandingEvents.RemoveElement(eventType);
+    if (mOutstandingEvents.IsEmpty()) {
+      mSBWindowWatcher->OnWindowReady(mWindow);
+    }
   }
 
   return NS_OK;
@@ -1057,9 +1043,63 @@ sbWindowWatcherEventListener::Initialize()
                               (getter_AddRefs(mWeakSBWindowWatcher));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the window event target.
+  nsCOMPtr<nsIDOMWindow2> window2 = do_QueryInterface(mWindow, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = window2->GetWindowRoot(getter_AddRefs(mEventTarget));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
+
+/**
+ * Listen for the given event on the DOM window associated with this listener
+ */
+
+nsresult
+sbWindowWatcherEventListener::AddEventListener(const char* aEventName)
+{
+  nsresult rv;
+
+  NS_ENSURE_TRUE(mEventTarget, NS_ERROR_NOT_INITIALIZED);
+
+  NS_ConvertASCIItoUTF16 eventName(aEventName);
+
+  if (mOutstandingEvents.Contains(eventName)) {
+    return NS_OK;
+  }
+
+  rv = mEventTarget->AddEventListener(eventName, this, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mOutstandingEvents.AppendElement(eventName);
+
+  return NS_OK;
+}
+
+/**
+ * Clear all event listeners associated with this listener
+ */
+
+nsresult
+sbWindowWatcherEventListener::ClearEventListeners()
+{
+  nsresult rv;
+
+  NS_ENSURE_TRUE(mEventTarget, NS_ERROR_NOT_INITIALIZED);
+
+  for (PRUint32 i = mOutstandingEvents.Length() - 1; i != PRUint32(-1); --i) {
+    rv = mEventTarget->RemoveEventListener(mOutstandingEvents[i],
+                                           this,
+                                           PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    mOutstandingEvents.RemoveElementAt(i);
+  }
+  NS_ASSERTION(mOutstandingEvents.IsEmpty(),
+               "unexpected outstanding listeners!");
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
