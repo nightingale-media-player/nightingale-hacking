@@ -385,7 +385,7 @@
 
            var view = mm.sequencer.view;
 
-           if (view != null) {
+           if (view != null && view.tree != null) {
              view.treeView.selection.currentIndex = 0;
            }
 
