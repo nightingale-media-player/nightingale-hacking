@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -161,8 +161,12 @@ deviceControlWidget.prototype = {
     this._device = this._widget.device;
 
     // Get the bound device library.
-    this._deviceLibrary = this._device.content.libraries
-                              .queryElementAt(0, Ci.sbIDeviceLibrary);
+    if (this._device.content.libraries.length > 0) {
+      this._deviceLibrary = this._device.content.libraries
+                                .queryElementAt(0, Ci.sbIDeviceLibrary);
+    } else {
+      this._deviceLibrary = null;
+    }
 
     // Get the bound element.
     this._getBoundElem();
@@ -435,6 +439,10 @@ deviceControlWidget.prototype = {
   _isReadOnly: function deviceControlWidget__isReadOnly() {
     var readOnly;
 
+    // Treat device as read-only if it doesn't have a library.
+    if (!this._deviceLibrary)
+      return true;
+
     // Set to read-only if not in manual management mode.
     if (this._deviceLibrary.mgmtType == Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL)
       readOnly = false;
@@ -462,9 +470,13 @@ deviceControlWidget.prototype = {
     // Get the device state.
     var state = this._device.state;
     var readOnly = this._isReadOnly();
-    var mgmtType = this._deviceLibrary.mgmtType;
     var supportsReformat = this._device.supportsReformat;
     var supportsPlaylist = this._supportsPlaylist();
+
+    // Get the management type for the device library.  Default to manual if no
+    // device library.
+    var mgmtType = (this._deviceLibrary ? this._deviceLibrary.mgmtType
+                                        : Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL);
 
     // Do nothing if no device state changed and update is not forced.
     if (!aForce &&
