@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Популярные исполнители на Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Популярные теги на Last.fm">
 <!ENTITY lastfm.radio.register "Регистрация">
+<!ENTITY lastfm.radio.subscriber.button "Подписка">
+<!ENTITY lastfm.radio.subscriber.help "Чтобы слушать радио на Last.fm, вы должны быть подписчиком.">
 <!ENTITY lastfm.radio.search "Поиск">
 <!ENTITY lastfm.radio.library "Библиотека">
 <!ENTITY lastfm.radio.loved "Любимые треки">

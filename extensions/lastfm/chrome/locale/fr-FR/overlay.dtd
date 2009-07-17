@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Top Artistes sur Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Top Tags sur Last.fm">
 <!ENTITY lastfm.radio.register "S&apos;inscrire">
+<!ENTITY lastfm.radio.subscriber.button "Souscrire">
+<!ENTITY lastfm.radio.subscriber.help "Pour pouvoir écouter une Radio Last.fm, vous devez souscrire au service.">
 <!ENTITY lastfm.radio.search "Recherche">
 <!ENTITY lastfm.radio.library "Bibliothèque">
 <!ENTITY lastfm.radio.loved "Coups de coeur">

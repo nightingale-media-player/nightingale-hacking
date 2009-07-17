@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Top artiesten op Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Top tags op Last.fm">
 <!ENTITY lastfm.radio.register "Registreren">
+<!ENTITY lastfm.radio.subscriber.button "Inschrijven">
+<!ENTITY lastfm.radio.subscriber.help "Om naar de Last.fm-radio te kunnen luisteren moet u ingeschreven zijn.">
 <!ENTITY lastfm.radio.search "Zoeken">
 <!ENTITY lastfm.radio.library "Bibliotheek">
 <!ENTITY lastfm.radio.loved "Favoriete liedjes">

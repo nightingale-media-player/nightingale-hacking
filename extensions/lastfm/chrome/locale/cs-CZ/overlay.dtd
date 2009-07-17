@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Nejoblíbenější umělci na Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Nejoblíbenější štítky na Last.fm">
 <!ENTITY lastfm.radio.register "Registrovat">
+<!ENTITY lastfm.radio.subscriber.button "Předplatit">
+<!ENTITY lastfm.radio.subscriber.help "Pro poslech rádia Last.fm musíte být předplatitel.">
 <!ENTITY lastfm.radio.search "Hledat">
 <!ENTITY lastfm.radio.library "Knihovna">
 <!ENTITY lastfm.radio.loved "Milované skladby">

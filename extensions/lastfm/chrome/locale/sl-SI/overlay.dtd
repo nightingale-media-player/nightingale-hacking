@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Naj-izvajalci na Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Naj-značke na Last.fm">
 <!ENTITY lastfm.radio.register "Registriraj">
+<!ENTITY lastfm.radio.subscriber.button "Naroči se">
+<!ENTITY lastfm.radio.subscriber.help "Če želite poslušati radio Last.fm, morate biti naročnik.">
 <!ENTITY lastfm.radio.search "Išči">
 <!ENTITY lastfm.radio.library "Knjižnica">
 <!ENTITY lastfm.radio.loved "Priljubljeni posnetki">

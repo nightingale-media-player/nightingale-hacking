@@ -1,4 +1,4 @@
-<!ENTITY lastfm.menu.login  "Log in to Last.fm...">
+<!ENTITY lastfm.menu.login "Log in to Last.fm...">
 <!ENTITY lastfm.menu.logout "Log out of Last.fm">
 <!ENTITY lastfm.menu.enable "Enable scrobbling">
 <!ENTITY lastfm.signup.label "Sign up for Last.fm">
@@ -8,9 +8,8 @@
 <!ENTITY lastfm.profile.caption "Profile">
 <!ENTITY lastfm.profile.scrobble "Scrobble my tracks">
 <!ENTITY lastfm.profile.logout "Log out">
-
 <!ENTITY lastfm.radio "Last.fm Radio">
-<!ENTITY lastfm.radio.login.help "In order to listen to Last.fm Radio, you need to be logged into Last.fm and be a Last.fm subscriber.  If you don't already have a Last.fm account, you can register for one.">
+<!ENTITY lastfm.radio.login.help "In order to listen to Last.fm Radio, you need to be logged into Last.fm and be a Last.fm subscriber.  If you don&apos;t already have a Last.fm account, you can register for one.">
 <!ENTITY lastfm.radio.start "Not sure where to start?  Try a search, or check out what others are listening to.">
 <!ENTITY lastfm.radio.start.top.artists "Top Artists on Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "Top Tags on Last.fm">

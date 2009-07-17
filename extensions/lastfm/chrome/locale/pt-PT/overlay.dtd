@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Os Artistas mais populares no Last.fm">
 <!ENTITY lastfm.radio.start.top.tags "As Tags mais populares no Last.fm">
 <!ENTITY lastfm.radio.register "Registo">
+<!ENTITY lastfm.radio.subscriber.button "Subscrever">
+<!ENTITY lastfm.radio.subscriber.help "Para ouvir a Rádio do Last.fm, tem de ser um subscritor.">
 <!ENTITY lastfm.radio.search "Busca">
 <!ENTITY lastfm.radio.library "Biblioteca">
 <!ENTITY lastfm.radio.loved "Faixas Amadas">
@@ -32,3 +34,7 @@
 <!ENTITY lastfm.radio.highest_rated_artists "Os Seus Artistas Mais Bem Pontuados">
 <!ENTITY lastfm.radio.popular_genres "Os Seus Géneros Populares">
 <!ENTITY lastfm.radio.play "Reproduzir">
+<!ENTITY lastfm.tags.enter_new "Introduza as novas tags (separadas por vírgula)">
+<!ENTITY lastfm.tags.add_fail "Não se conseguiu adicionar as tags!">
+<!ENTITY lastfm.tags.user "As Suas Tags:">
+<!ENTITY lastfm.tags.global "Tags Gerais do Last.fm:">

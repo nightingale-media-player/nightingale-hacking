@@ -5,7 +5,7 @@
 <!ENTITY lastfm.login.button "Bejelentkezés">
 <!ENTITY lastfm.loggingin.label "Bejelentkezés folyamatban...">
 <!ENTITY lastfm.cancel.button "Mégsem">
-<!ENTITY lastfm.profile.caption "Profíl">
+<!ENTITY lastfm.profile.caption "Profil">
 <!ENTITY lastfm.profile.scrobble "Göngyölítsd a zeneszámaimat">
 <!ENTITY lastfm.profile.logout "Kijelentkezés">
 <!ENTITY lastfm.radio "Last.fm Rádió">
@@ -14,6 +14,8 @@
 <!ENTITY lastfm.radio.start.top.artists "Legkedveltebb Előadók a Last.fm-en">
 <!ENTITY lastfm.radio.start.top.tags "Legkedveltebb Címkék a Last.fm-en">
 <!ENTITY lastfm.radio.register "Regisztrálás">
+<!ENTITY lastfm.radio.subscriber.button "Előfizetés">
+<!ENTITY lastfm.radio.subscriber.help "Ahhoz hogy hallgathasd a Last.fm Rádiót, elő kell fizetned rá.">
 <!ENTITY lastfm.radio.search "Keresés">
 <!ENTITY lastfm.radio.library "Könyvtár">
 <!ENTITY lastfm.radio.loved "Szeretett Zeneszámok">
