@@ -3683,7 +3683,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
   if (!fileExists) {
     // Create the device error event and dispatch it
     nsCOMPtr<nsIVariant> var = sbNewVariant(aWriteDstItem).get();
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_ERROR_UNEXPECTED,
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_FILE_MISSING,
                            var, PR_TRUE);
 
     // Remove item from library

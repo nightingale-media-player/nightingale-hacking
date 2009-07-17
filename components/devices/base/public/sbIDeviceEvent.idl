@@ -34,7 +34,7 @@ interface sbIDeviceEventTarget;
  * \interface sbIDeviceEvent
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(612a7c18-1dd2-11b2-90ba-e44388de1c21)]
+[scriptable, uuid(d0f62a6e-1dd1-11b2-8346-f092d8707b42)]
 interface sbIDeviceEvent : nsISupports
 {
   /**
@@ -143,6 +143,8 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_FORMATTING_PROGRESS = EVENT_DEVICE_BASE + 35;
   const unsigned long EVENT_DEVICE_FORMATTING_END      = EVENT_DEVICE_BASE + 36;
 
+  // file that you were trying to transfer is missing
+  const unsigned long EVENT_DEVICE_FILE_MISSING        = EVENT_DEVICE_BASE + 37;
   /**
    * 
    */

@@ -275,6 +275,10 @@ deviceErrorMonitor.prototype = {
         this._logError(aDeviceEvent,
                        SBString("device.error.unexpected"));
       break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_FILE_MISSING:
+        this._logError(aDeviceEvent,
+                       SBString("device.error.file_missing"));
+      break;
       case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_WRITE_UNSUPPORTED_TYPE:
         this._logError(aDeviceEvent,
                        SBString("device.error.unsupported_type"));
