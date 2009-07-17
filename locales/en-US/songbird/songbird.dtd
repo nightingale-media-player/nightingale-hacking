@@ -452,7 +452,7 @@
 <!ENTITY device.info.serial_number.label    "Serial Number">
 <!ENTITY device.info.vendor.label           "Manufacturer">
 <!ENTITY device.info.access.label           "Access Compatibility">
-<!ENTITY device.info.playback_formats.label "Playback Formats">
+<!ENTITY device.info.playback_formats.label "File Formats">
 <!ENTITY device.info.battery.label          "Battery">
 <!ENTITY device.info.firmware_version.label "Firmware Version">
 
