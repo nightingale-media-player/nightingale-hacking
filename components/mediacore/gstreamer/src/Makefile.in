@@ -7,9 +7,6 @@ VPATH = @srcdir@ \
 
 include $(DEPTH)/build/autodefs.mk
 
-GST_VERSION = 0.10
-GLIB_VERSION = 2.0
-
 DYNAMIC_LIB = sbGStreamerMediacore
 
 SUBDIRS = metadata
@@ -41,7 +38,7 @@ CPP_SRCS += sbBaseMediacore.cpp \
 ifeq (windows,$(SB_PLATFORM))
    CPP_SRCS += sbGStreamerPlatformWin32.cpp
 endif
-ifeq (macosx, $(SB_PLATFORM))
+ifeq (macosx,$(SB_PLATFORM))
    CMM_SRCS += sbGStreamerPlatformOSX.mm
 endif
 ifneq (,$(filter linux solaris,$(SB_PLATFORM)))
@@ -104,7 +101,7 @@ else
    endif
 endif
 
-ifeq (macosx, $(SB_PLATFORM))
+ifeq (macosx,$(SB_PLATFORM))
    CMM_EXTRA_INCLUDES = $(CPP_EXTRA_INCLUDES)
 endif
 
