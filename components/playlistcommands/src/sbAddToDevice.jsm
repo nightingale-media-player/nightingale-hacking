@@ -531,10 +531,13 @@ addToDeviceHelper.prototype = {
     return this;
   },
   
-  // trap event for device added/removed, and refresh the commands
+  // trap event for device library added/removed, and refresh the commands
+  // we trap the library add/remove (instead of the plain device add/remove)
+  // since we check the library count in makeListOfDevices(), so we need to
+  // make sure we don't run before the libraries have been added to the device
   onDeviceEvent: function addToDeviceHelper_onDeviceEvent(aEvent) {
-    if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_ADDED ||
-        aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_REMOVED) {
+    if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_ADDED ||
+        aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_DEVICE_LIBRARY_REMOVED) {
       this.onUpdateEvent();
     }
   }
