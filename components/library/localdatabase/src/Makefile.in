@@ -32,8 +32,8 @@ include $(DEPTH)/build/autodefs.mk
 
 DYNAMIC_LIB = sbLocalDatabaseLibrary
 
-XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
+                       $(NULL)
 
 XPIDL_HEADER_SRCS = \
  $(DEPTH)/components/mediacore/base/public/sbIMediacoreEvent.idl \

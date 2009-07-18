@@ -46,9 +46,9 @@ XPIDL_SRCS = sbILocalDatabaseAsyncGUIDArray.idl \
              sbILibraryStatistics.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
-                 $(topsrcdir)/components/job/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \
+                       $(topsrcdir)/components/job/public \
+                       $(NULL)
 
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt
 

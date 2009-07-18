@@ -29,9 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = \
-                 $(NULL)
-
 XPIDL_SRCS = sbIAddOnBundleUpdateService.idl \
              $(NULL)
 

@@ -39,8 +39,8 @@ include $(DEPTH)/build/autodefs.mk
 #             sbIMockDeviceFirmwareHandler.idl \
 #             $(NULL)
 
-#XPIDL_INCLUDES = $(topsrcdir)/components/devices/base/public \
-#                 $(NULL)
+#XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/devices/base/public \
+#                       $(NULL)
 
 #XPIDL_MODULE = DeviceFirmwareTester.xpt
 

@@ -48,8 +48,8 @@ XPIDL_SRCS = sbIDevice.idl \
              sbIDeviceStatus.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/library/base/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \
+                       $(NULL)
 
 # XXXMook: TODO: rename this once deviceobsolete is gone
 XPIDL_MODULE = sbDeviceBase2.xpt

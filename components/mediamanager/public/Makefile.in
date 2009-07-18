@@ -35,8 +35,8 @@ XPIDL_SRCS = sbIMediaManagementJob.idl \
              sbIMediaManagementService.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/job/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/job/public \
+                       $(NULL)
 
 XPIDL_MODULE = sbMediaManager.xpt
 

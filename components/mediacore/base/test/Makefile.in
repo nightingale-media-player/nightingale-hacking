@@ -34,8 +34,8 @@ SONGBIRD_TEST_COMPONENT = mediacorebase
 XPIDL_SRCS = sbITestMediacoreEventCreator.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/mediacore/base/public \
+                       $(NULL)
 
 XPIDL_MODULE = sbTestMediacoreBase.xpt
 

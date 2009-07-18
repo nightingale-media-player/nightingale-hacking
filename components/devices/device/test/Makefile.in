@@ -34,8 +34,8 @@ XPIDL_SRCS = sbDeviceDeviceTesterInterfaces.idl \
              sbIMockDevice.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/devices/base/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/devices/base/public \
+                       $(NULL)
 
 XPIDL_MODULE = DeviceDeviceTester.xpt
 

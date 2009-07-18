@@ -35,9 +35,9 @@ XPIDL_SRCS = sbIMetadataHandler.idl \
              sbIFileMetadataService.idl \
              $(NULL)
 
-XPIDL_INCLUDES = $(topsrcdir)/components/property/public \
-                 $(topsrcdir)/components/job/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/property/public \
+                       $(topsrcdir)/components/job/public \
+                       $(NULL)
 
 XPIDL_MODULE = sbMetadataModule.xpt
 

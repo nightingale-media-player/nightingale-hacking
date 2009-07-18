@@ -279,21 +279,29 @@ $(SUBMAKEFILES): % : $(srcdir)/%.in
 # XPIDL_EXTRA_FLAGS - additional flags to send to XPIDL
 #
 
-XPIDL_INCLUDES += $(MOZSDK_IDL_DIR) \
-                  $(srcdir) \
-                  $(NULL)
+XPIDL_DEFAULT_INCLUDES = $(MOZSDK_IDL_DIR) \
+                         $(srcdir) \
+                         $(NULL)
 
-XPIDL_HEADERS = $(XPIDL_SRCS:.idl=.h)
+ifdef XPIDL_INCLUDES
+   OUR_XPIDL_INCLUDES = $(XPIDL_INCLUDES)
+else
+   OUR_XPIDL_INCLUDES = $(XPIDL_DEFAULT_INCLUDES) \
+                        $(XPIDL_EXTRA_INCLUDES) \
+                        $(NULL)
+endif
+
+XPIDL_HEADERS ?= $(XPIDL_SRCS:.idl=.h)
 
 $(XPIDL_HEADERS): %.h: %.idl
-	$(XPIDL) -m header $(addprefix -I,$(XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) $<
+	$(XPIDL) -m header $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) $<
 
 export:: $(XPIDL_HEADERS)
 
-XPIDL_TYPELIBS = $(XPIDL_SRCS:.idl=.xpt)
+XPIDL_TYPELIBS ?= $(XPIDL_SRCS:.idl=.xpt)
 
 $(XPIDL_TYPELIBS): %.xpt: %.idl
-	$(XPIDL) -m typelib $(addprefix -I,$(XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -e $@ $<
+	$(XPIDL) -m typelib $(addprefix -I,$(OUR_XPIDL_INCLUDES)) $(XPIDL_EXTRA_FLAGS) -e $@ $<
 
 # The ifneq() check is in here because if the collected typelibs are the same 
 # (single file) as XPIDL_MODULE, there's no reason to run xpt_link on them.
@@ -524,12 +532,11 @@ endif
 DEFAULT_DYNAMIC_LIBS_IMPORTS = xpcomglue_s \
                                nspr4 \
                                xpcom \
-                               $(DEFAULT_LIBS) \
                                $(NULL)
 
 DEFAULT_DYNAMIC_LIB_IMPORT_PATHS = $(MOZSDK_LIB_DIR)
 
-ifdef DYNAMIC_LIB # {
+ifdef DYNAMIC_LIB #{
 
 ifdef DYNAMIC_LIB_OBJS
    OUR_DYNAMIC_LIB_OBJS = $(DYNAMIC_LIB_OBJS)
@@ -579,7 +586,8 @@ else
     $(DYNAMIC_LIB_EXTRA_IMPORTS), \
     $(if $(filter sb%,$i), \
     $i$(DEBUG:%=_d), \
-    $i)) 
+    $i)) \
+    $(DEFAULT_LIBS)
 endif
 
 OUR_LD_STATIC_IMPORT_LIST = $(foreach import, \
@@ -601,7 +609,7 @@ ifdef FORCE_RANLIB
 	$(RANLIB) $(OUR_LINKER_OUTPUT) $(FORCE_RANLIB)
 endif
 	$(LD) $(OUR_LINKER_OUTPUT) $(OUR_LD_FLAGS) $(OUR_LINKER_PATHS) $(OUR_DYNAMIC_LIB_OBJS) $(OUR_LD_IMPORTS)
-endif # } DYNAMIC_LIB
+endif # }DYNAMIC_LIB
 
 #------------------------------------------------------------------------------
 # Rules for static (.a/.lib) library generation
@@ -616,7 +624,7 @@ endif # } DYNAMIC_LIB
 # STATIC_LIB_EXTRA_OBJS     - a list of extra objects to add to the library
 #
 
-ifdef STATIC_LIB
+ifdef STATIC_LIB #{
 
 ifdef STATIC_LIB_FLAGS
    OUR_LINKER_FLAGS = $(STATIC_LIB_FLAGS)
@@ -645,7 +653,7 @@ ifdef USING_RANLIB
 	$(RANLIB) $(OUR_LINKER_OUTPUT)
 endif
 
-endif
+endif #} STATIC_LIB
 
 
 #------------------------------------------------------------------------------
@@ -667,7 +675,7 @@ ifdef SIMPLE_PROGRAM
 
 ifneq (,$(STATIC_LIB)$(DYNAMIC_LIB))
    $(error SIMPLE_PROGRAM cannot be specified together with DYNAMIC_LIB or STATIC_LIB)
-endif # STATIC_LIB || DYNAMIC_LIB
+endif
 
 CPP_EXTRA_FLAGS += $(CFLAGS_STATIC_LIBC)
 
@@ -675,12 +683,6 @@ ifdef SIMPLE_PROGRAM_FLAGS
    OUR_SIMPLE_PROGRAM_FLAGS = $(SIMPLE_PROGRAM_FLAGS)
 else
    OUR_SIMPLE_PROGRAM_FLAGS = $(LDFLAGS) $(LDFLAGS_BIN) $(SIMPLE_PROGRAM_EXTRA_FLAGS)
-endif
-
-ifdef SIMPLE_PROGRAM_IMPORTS
-   OUR_SIMPLE_PROGRAM_IMPORTS_LIST = $(SIMPLE_PROGRAM_IMPORTS)
-else
-   OUR_SIMPLE_PROGRAM_IMPORTS_LIST = $(SIMPLE_PROGRAM_DEFAULT_LIBS) $(SIMPLE_PROGRAM_EXTRA_IMPORTS)
 endif
 
 ifdef SIMPLE_PROG_OBJS
@@ -758,7 +760,9 @@ ifndef PP_RESOURCES_STRIP_SUFFIX
 endif
 
 ifndef SONGBIRD_PP_DIR
-   SONGBIRD_PP_DIR = $(CURDIR)
+   OUR_SONGBIRD_PP_DIR = $(CURDIR)
+else
+   OUR_SONGBIRD_PP_DIR = $(strip $(SONGBIRD_PP_DIR))
 endif
 
 ifndef SONGBIRD_PP_MODE
@@ -766,14 +770,14 @@ ifndef SONGBIRD_PP_MODE
    SONGBIRD_PP_MODE = 644
 endif
 
-GENERATED_PP_DEPS = $(addprefix $(SONGBIRD_PP_DIR)/,$(foreach f,$(SONGBIRD_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
+GENERATED_PP_DEPS = $(addprefix $(OUR_SONGBIRD_PP_DIR)/,$(foreach f,$(SONGBIRD_PP_RESOURCES),$(patsubst %$(PP_RESOURCES_STRIP_SUFFIX),%,$(notdir $f))))
 
 $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
-   ifeq (,$(wildcard $(SONGBIRD_PP_DIR)))
-	   $(MKDIR_APP) $(SONGBIRD_PP_DIR)
+   ifeq (,$(wildcard $(OUR_SONGBIRD_PP_DIR)))
+	   $(MKDIR_APP) $(OUR_SONGBIRD_PP_DIR)
    endif
 	@for item in $(SONGBIRD_PP_RESOURCES); do \
-      target=$(SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
+      target=$(OUR_SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
       echo Preprocessing $$item into $$target...; \
       $(RM) -f $$target; \
       $(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
