@@ -88,15 +88,31 @@ sbDirectoryEnumerator::Enumerate(nsIFile* aDirectory)
   // Operate under the enumerator lock.
   nsAutoLock autoLock(mEnumeratorLock);
 
-  // Get the entries in the directory.
+  // Ensure directory exists and is a directory.
+  PRBool exists;
+  PRBool isDirectory;
+  rv = aDirectory->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(exists, NS_ERROR_FILE_NOT_FOUND);
+  rv = aDirectory->IsDirectory(&isDirectory);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(isDirectory, NS_ERROR_FILE_NOT_DIRECTORY);
+
+  // Get the entries in the directory.  If file not found is returned, the
+  // directory is empty.
   nsCOMPtr<nsISimpleEnumerator> entriesEnum;
   rv = aDirectory->GetDirectoryEntries(getter_AddRefs(entriesEnum));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (rv == NS_ERROR_FILE_NOT_FOUND)
+    entriesEnum = nsnull;
+  else
+    NS_ENSURE_SUCCESS(rv, rv);
 
   // Initialize the entries enumeration stack.
   mEntriesEnumStack.Clear();
-  success = mEntriesEnumStack.AppendObject(entriesEnum);
-  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  if (entriesEnum) {
+    success = mEntriesEnumStack.AppendObject(entriesEnum);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   // Scan for the next file.
   rv = ScanForNextFile();
@@ -383,10 +399,15 @@ sbDirectoryEnumerator::ScanForNextFile()
     NS_ENSURE_SUCCESS(rv, rv);
     PRUint32 depth = mEntriesEnumStack.Count();
     if (isDirectory && !((mMaxDepth > 0) && (depth >= mMaxDepth))) {
+      // Get the directory entries.  If file not found is returned, the
+      // directory is empty.
       rv = file->GetDirectoryEntries(getter_AddRefs(entriesEnum));
-      NS_ENSURE_SUCCESS(rv, rv);
-      success = mEntriesEnumStack.AppendObject(entriesEnum);
-      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+      if (rv != NS_ERROR_FILE_NOT_FOUND)
+        NS_ENSURE_SUCCESS(rv, rv);
+      if (NS_SUCCEEDED(rv)) {
+        success = mEntriesEnumStack.AppendObject(entriesEnum);
+        NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+      }
     }
   }
 
