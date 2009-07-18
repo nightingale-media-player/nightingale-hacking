@@ -49,7 +49,7 @@ LIBSONGBIRD_COMPONENT = SongbirdDataRemoteLib
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-SONGBIRD_COMPONENTS = $(COMPONENTS_DIR)/dataremote/src/sbDataRemote.js \
+SONGBIRD_COMPONENTS = $(topsrcdir)/components/dataremote/src/sbDataRemote.js \
                       $(NULL)
 
 include $(topsrcdir)/build/rules.mk

@@ -29,7 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = $(COMPONENTS_DIR)/devicesobsolete/base/public \
+XPIDL_INCLUDES = $(topsrcdir)/components/devicesobsolete/base/public \
                  $(NULL)
 
 XPIDL_SRCS = sbIWMDevice.idl \

@@ -47,7 +47,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 LIBSONGBIRD_COMPONENT = sbMediaSniffer
 
 SONGBIRD_COMPONENTS = \
- $(COMPONENTS_DIR)/contenthandling/media/sbMediaContentListener.js \
+ $(topsrcdir)/components/contenthandling/media/sbMediaContentListener.js \
  $(NULL)
 
 IS_COMPONENT = 1

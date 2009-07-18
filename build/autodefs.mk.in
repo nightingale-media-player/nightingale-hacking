@@ -104,11 +104,8 @@ HAVE_FLUENDO_MP3 = @HAVE_FLUENDO_MP3@
 # Commonly used directories
 #
 
-APP_DIR= $(topsrcdir)/app
-BUILD_DIR = $(topsrcdir)/build
 DEPS_DIR = $(topsrcdir)/@SB_DEPENDENCIES_DIR@
 XULRUNNER_DIR = $(DEPS_DIR)/xulrunner/@SB_CONFIGURATION@
-COMPONENTS_DIR = $(topsrcdir)/components
 SCRIPTS_DIR = $(topsrcdir)/tools/scripts
 
 #

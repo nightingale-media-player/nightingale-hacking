@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-XPIDL_INCLUDES = $(COMPONENTS_DIR)/devices/base/public \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/devices/base/public \
+                       $(NULL)
 
 XPIDL_SRCS = sbIIPDDeviceEvent.idl \
              $(NULL)
