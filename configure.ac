@@ -73,7 +73,7 @@ AC_SUBST(SB_CONFIGURATION)
 #
 
 AC_ARG_ENABLE(jars,
-              [  --enable-jars           create jar files (default=yes)])
+              [  --enable-jars           create jar files (default=yes,debug=no])
 if test "$enable_jars" == "yes"; then
   FORCE_JARS=1
 fi
