@@ -319,6 +319,32 @@
   <!-- *************************************************************************
    *****************************************************************************
    *
+   * Device ignore command widget.
+   *
+   *   This widget implements a device ignore command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-ignore-command">
+    <content>
+      <xul:sb-device-control
+         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         bindforward="parent"
+         label="&command.device.ignoredevice;"
+         accesskey="&command.device.ignoredevice.accesskey;"
+         action="ignore"
+         listentodevice="true"
+         disabled_default="remove_attribute"
+         disabled_busy="true"
+         hidden_default="true"
+         hidden_msc="remove_attribute"/>
+    </content>
+  </binding>
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
    * Device get info command widget.
    *
    *   This widget implements a device get info command.

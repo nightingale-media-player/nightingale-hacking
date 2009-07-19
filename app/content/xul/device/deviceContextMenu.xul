@@ -57,6 +57,7 @@
       <menuseparator/>
 
       <menuitem/><sb-device-rename-command bindelem="prev"/>
+      <menuitem/><sb-device-ignore-command bindelem="prev"/>
 
       <menuseparator/>
 

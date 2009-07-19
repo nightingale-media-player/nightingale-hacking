@@ -834,6 +834,9 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
 
       mAbortCurrentRequest = PR_TRUE;
       mRequests.clear();
+
+      rv = SetState(STATE_IDLE);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
   }
 

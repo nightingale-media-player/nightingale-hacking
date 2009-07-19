@@ -251,6 +251,10 @@ deviceControlWidget.prototype = {
         this._device.format();
         break;
 
+      case "ignore" :
+        this._ignoreDevice();
+        break;
+
       case "get_info" :
         this._getDeviceInfo();
         break;
@@ -345,6 +349,42 @@ deviceControlWidget.prototype = {
     }
   },
 
+  /**
+   * Ignore device
+   * First, explain to the user what is happening, then
+   * add the device to the blacklist, and "eject" it.
+   */
+  _ignoreDevice: function deviceControlWidget__ignoreDevice() {
+    var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                                  .getService(Ci.nsIPromptService);
+
+    window.focus();
+    var buttonPressed = promptService.confirmEx(window,
+                          SBString('device.dialog.setup.ignoreDeviceTitle'),
+                          SBString('device.dialog.setup.ignoreDevice'),
+                          promptService.STD_YES_NO_BUTTONS,
+                          null, null, null,
+                          null, {});
+    // don't set the pref unless they press OK
+    acceptedBlacklist = (buttonPressed == 0);
+    if (acceptedBlacklist) {
+      var ignoreList = Application.prefs
+                                  .getValue("songbird.device.ignorelist", "");
+      // Append a separator if necessary.
+      if (ignoreList != "") {
+        ignoreList += ";";
+      }
+      ignoreList += this._device.id;
+      Application.prefs.setValue("songbird.device.ignorelist", ignoreList);
+
+      // Remove the device from the application
+      var manager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                      .getService(Ci.sbIDeviceManager2);
+      var controller = manager.getController(this._device.controllerId);
+      controller.releaseDevice(this._device);
+    }
+    return acceptedBlacklist;
+  },
 
   /**
    * Get the device information and show it to the user.
@@ -472,6 +512,7 @@ deviceControlWidget.prototype = {
     var readOnly = this._isReadOnly();
     var supportsReformat = this._device.supportsReformat;
     var supportsPlaylist = this._supportsPlaylist();
+    var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
 
     // Get the management type for the device library.  Default to manual if no
     // device library.
@@ -484,7 +525,8 @@ deviceControlWidget.prototype = {
         (this._currentReadOnly == readOnly) &&
         (this._currentMgmtType == mgmtType) &&
         (this._currentSupportsReformat == supportsReformat) &&
-        (this._currentSupportsPlaylist == supportsPlaylist)) {
+        (this._currentSupportsPlaylist == supportsPlaylist) &&
+        (this._currentMsc == msc)) {
       return;
     }
 
@@ -494,6 +536,7 @@ deviceControlWidget.prototype = {
     this._currentMgmtType = mgmtType;
     this._currentSupportsReformat = supportsReformat;
     this._currentSupportsPlaylist = supportsPlaylist;
+    this._currentMsc = msc;
 
     // Update widget attributes.
     var updateAttributeList = [];
@@ -584,6 +627,8 @@ deviceControlWidget.prototype = {
              this._getStateAttribute(attrVal, aAttrName, "mgmt_not_manual")) {}
     else if (this._currentSupportsReformat && 
              this._getStateAttribute(attrVal, aAttrName, "supports_reformat")) {}
+    else if (this._currentMsc &&
+             this._getStateAttribute(attrVal, aAttrName, "msc")) {}
     else if (this._currentSupportsPlaylist && 
              this._getStateAttribute(attrVal, aAttrName, "supports_playlist")) {}
     else if (this._getStateAttribute(attrVal, aAttrName, "default")) {}

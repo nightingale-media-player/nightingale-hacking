@@ -64,8 +64,10 @@
   flex="1"
   type="songbird"
   title="&device.dialog.setup.title;"
-  buttons="accept"
+  buttons="extra1,accept"
+  buttonlabelextra1="&device.dialog.setup.ignore.button;"
   ondialogaccept="if (deviceSetupDialog.onAccept()) onExit();"
+  ondialogextra1="if (deviceSetupDialog.onIgnore()) onExit();"
   onload="deviceSetupDialog.onLoad();">
 
   <!-- *************************************************************************
@@ -86,6 +88,7 @@
     <description id="setup_sync_description" class="indent">
       &device.dialog.setup.sync.checkbox.description;
     </description>
+    <label value="&device.dialog.setup.explainIgnore;"/>
   </vbox>
 
 
@@ -191,9 +194,48 @@
           deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
 
         return true;
+      },
+
+     /**
+       * Handle blacklisting the device.
+       * Due to the infrequency of this action and the potential for
+       * inexplicable behavior if the user clicks this button we will
+       * not make the prompt optional.
+       *
+       * \return true if the device is confirmed for blacklisting.
+       */
+      onIgnore: function deviceSetupDialog_onIgnore() {
+        var promptService = Cc["@mozilla.org/embedcomp/prompt-service;1"]
+                              .getService(Ci.nsIPromptService);
+
+        window.focus();
+        var buttonPressed = promptService.confirmEx(window,
+                             SBString('device.dialog.setup.ignoreDeviceTitle'),
+                             SBString('device.dialog.setup.ignoreDevice'),
+                             promptService.STD_YES_NO_BUTTONS,
+                             null, null, null,
+                             null, {});
+        // don't set the pref unless they press OK
+        acceptedBlacklist = (buttonPressed == 0);
+        if (acceptedBlacklist) {
+          var ignoreList = Application.prefs.getValue(
+                                            "songbird.device.ignorelist", "");
+          // Append a separator if necessary.
+          if (ignoreList != "") {
+            ignoreList += ";";
+          }
+          ignoreList += this._device.id;
+          Application.prefs.setValue("songbird.device.ignorelist", ignoreList);
+
+          // Remove the device.
+          var manager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+          var controller = manager.getController(this._device.controllerId);
+          controller.releaseDevice(this._device);
+        }
+        return acceptedBlacklist;
       }
     };
   ]]></script>
 
 </dialog>
-

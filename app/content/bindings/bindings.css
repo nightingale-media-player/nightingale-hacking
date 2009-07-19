@@ -482,6 +482,10 @@ sb-device-format-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-format-command");
 }
 
+sb-device-ignore-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-ignore-command");
+}
+
 sb-device-general-settings {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceGeneralSettings.xml#sb-device-general-settings");
 }
