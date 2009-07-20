@@ -440,7 +440,7 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
     } else {
       TRACE(("%s: Adding %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
       WORD index;
-      hr = header->AddAttribute(0xFFFF,
+      hr = header->AddAttribute(0,
                                 kMetadataKeys[i].wmpName,
                                 &index,
                                 kMetadataKeys[i].type,
