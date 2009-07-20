@@ -54,6 +54,10 @@
       return ret;                                              \
     }
 
+#define SB_ENSURE_ERRORHANDLER(error)                          \
+  if (error && !ErrorHandler(error)) {                         \
+    return error;                                              \
+  }
 
 /**
  * This is the base class for the iTunes agent processor.
@@ -66,7 +70,7 @@ class sbiTunesAgentProcessor
 {
 public:
   static int const BATCH_SIZE = 10;
-  
+
   /**
    * Clean up any resources
    */
@@ -97,7 +101,8 @@ public:
    * Adds a track to the iTunes database given a path
    */
   sbError AddTrack(std::string const & aSource,
-                   std::string const & aPath);
+                   std::string const & aPath,
+                   const char *aMethod);
 
   /**
    * Reports the error, returns true if app should continue
@@ -149,12 +154,22 @@ protected:
   /**
    * Removes a playlist from the iTunes database
    */
-  virtual sbError RemovePlaylist(std::string const & aPlaylist)=0;
+  virtual sbError RemovePlaylist(std::string const & aPlaylist) = 0;
   
   /**
    * Creates a playlist (Recreates it if it already exists)
    */
   virtual sbError CreatePlaylist(std::string const & aPlaylistName) = 0;
+
+  /**
+   * Clear the contents of a Songbird playlist.
+   */
+  virtual sbError ClearPlaylist(std::string const & aPlaylistName) = 0;
+
+  /**
+   * TODO Add a comment here please.
+   */
+  sbError ProcessPendingTrackBatch();
   
   /**
    * Retrieve the path to the task file
@@ -220,6 +235,7 @@ private:
   std::ifstream  mInputStream;
   Tracks         mTrackBatch;
   std::string    mLastSource;
+  std::string    mLastMethod;
 };
 
 //------------------------------------------------------------------------------

@@ -95,7 +95,12 @@ protected:
   /**
    * Creates a playlist (Recreates it if it already exists)
    */
-  sbError CreatePlaylist(std::string const & aPlaylistName);
+  virtual sbError CreatePlaylist(std::string const & aPlaylistName);
+
+  /**
+   * Clears the contents of a Songbird playlist.
+   */
+  virtual sbError ClearPlaylist(std::string const & aPlaylistName);
 
   /**
    * Performs any initialization necessary. Optional to implement

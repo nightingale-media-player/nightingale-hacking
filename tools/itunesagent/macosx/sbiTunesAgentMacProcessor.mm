@@ -446,6 +446,23 @@ sbiTunesAgentMacProcessor::CreatePlaylist(std::string const & aPlaylistName)
   return error;
 }
 
+sbError
+sbiTunesAgentMacProcessor::ClearPlaylist(std::string const & aListName)
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Simply remove and create a new playlist.
+  sbError error;
+  error = RemovePlaylist(aListName);
+  SB_ENSURE_SUCCESS(error, error);
+
+  error = CreatePlaylist(aListName);
+  SB_ENSURE_SUCCESS(error, error);
+
+  [pool release];
+  return sbNoError;
+}
+
 bool
 sbiTunesAgentMacProcessor::OpenTaskFile(std::ifstream & aStream)
 {

@@ -144,6 +144,18 @@ sbiTunesAgentWindowsProcessor::CreatePlaylist(
   return miTunesLibrary.CreatePlaylist(ConvertUTF8ToUTF16(aPlaylistName));
 }
 
+sbError
+sbiTunesAgentWindowsProcessor::ClearPlaylist(std::string const & aListName) {
+  sbError error;
+  error = RemovePlaylist(aListName);
+  SB_ENSURE_SUCCESS(error, error);
+
+  error = CreatePlaylist(aListName);
+  SB_ENSURE_SUCCESS(error, error);
+
+  return sbNoError;
+}
+
 bool sbiTunesAgentWindowsProcessor::ErrorHandler(sbError const & aError) {
   std::wstring path(GetSongbirdPath());
   path += AGENT_ERROR_FILENAME;

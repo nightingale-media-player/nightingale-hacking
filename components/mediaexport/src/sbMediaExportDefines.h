@@ -48,6 +48,11 @@ typedef sbStringList::const_iterator        sbStringListIter;
   "songbird.library_exporter.start_agent"
 
 //------------------------------------------------------------------------------
+// Misc constants
+
+const PRUint32 LISTENER_NOTIFY_ITEM_DELTA = 10;
+
+//------------------------------------------------------------------------------
 // Task file constants
  
 //

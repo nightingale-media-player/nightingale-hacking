@@ -54,6 +54,7 @@ protected:
                             Tracks const & aPaths);
   virtual sbError RemovePlaylist(std::string const & aPlaylistName);
   virtual sbError CreatePlaylist(std::string const & aPlaylistName);
+  virtual sbError ClearPlaylist(std::string const & aPlaylistName);
   virtual bool OpenTaskFile(std::ifstream & aStream);
   virtual void Log(std::string const & aMsg);
   virtual bool ShouldShutdown();

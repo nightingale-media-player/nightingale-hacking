@@ -50,6 +50,9 @@
 #include <nsIUpdateService.h>
 #include <nsDirectoryServiceUtils.h>
 #include <sbStringUtils.h>
+#include <sbMediaListEnumArrayHelper.h>
+#include <nsAutoPtr.h>
+#include <nsArrayUtils.h>
 
 
 #ifdef PR_LOGGING
@@ -163,10 +166,8 @@ sbMediaExportService::InitInternal()
     NS_ENSURE_SUCCESS(rv, rv);
 
     for (PRUint32 i = 0; i < length; i++) {
-      nsCOMPtr<sbIMediaList> curMediaList;
-      rv = foundPlaylists->QueryElementAt(i,
-                                          NS_GET_IID(sbIMediaList),
-                                          getter_AddRefs(curMediaList));
+      nsCOMPtr<sbIMediaList> curMediaList =
+        do_QueryElementAt(foundPlaylists, i, &rv);
       if (NS_FAILED(rv) || !curMediaList) {
         NS_WARNING("ERROR: Could not get the current playlist from an array!");
         continue;
@@ -719,34 +720,10 @@ sbMediaExportService::WriteAddedMediaItems()
       continue;
     }
 
-    PRUint32 length;
-    rv = addedMediaItems->GetLength(&length);
-    if (NS_FAILED(rv)) {
-      NS_WARNING("ERROR: Could not get the length of a nsIArray!");
-      continue;
-    }
-
-    for (PRUint32 i = 0; i < length; i++) {
-      nsCOMPtr<sbIMediaItem> curAddedMediaItem;
-      rv = addedMediaItems->QueryElementAt(i,
-                                           NS_GET_IID(sbIMediaItem),
-                                           getter_AddRefs(curAddedMediaItem));
-      if (NS_FAILED(rv) || !curAddedMediaItem) {
-        NS_WARNING("Could not get a mediaitem from an nsIArray!");
-        continue;
-      }
-
-      rv = mTaskWriter->WriteAddedTrack(curAddedMediaItem);
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                       "ERROR: Could not write added media item!");
-
-      ++mProgress;
-
-      // Go ahead and notify the listener after each write.
-      rv = NotifyListeners();
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                       "ERROR: Could not notify the listeners!");
-    }
+    // Print out all the tracks in the media list.
+    rv = WriteMediaItemsArray(addedMediaItems);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "ERROR: Could not write out the media items!");
   }
 
   return NS_OK;
@@ -777,11 +754,84 @@ sbMediaExportService::WriteUpdatedSmartPlaylists()
       continue;
     }
 
-    rv = mTaskWriter->WriteUpdatedSmartPlaylist(curSmartMediaList);
+    nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
+      new sbMediaListEnumArrayHelper();
+    NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = enumHelper->New();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = curSmartMediaList->EnumerateAllItems(
+        enumHelper,
+        sbIMediaList::ENUMERATIONTYPE_LOCKING);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIArray> mediaItems;
+    rv = enumHelper->GetMediaItemsArray(getter_AddRefs(mediaItems));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = mediaItems->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (length == 0) {
+      continue;
+    }
+
+    rv = mTaskWriter->WriteUpdatedSmartPlaylistHeader(curSmartMediaList);
     if (NS_FAILED(rv)) {
       NS_WARNING("ERROR: Could not write the updated smartlist header!");
       continue;
     }
+
+    // Print out all the tracks in the media list.
+    rv = WriteMediaItemsArray(mediaItems);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "ERROR: Could not write out the media items!");
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaExportService::WriteMediaItemsArray(nsIArray *aItemsArray)
+{
+  NS_ENSURE_ARG_POINTER(aItemsArray);
+
+  PRUint32 length = 0;
+  nsresult rv = aItemsArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 addedItemDelta = 0;
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIMediaItem> curMediaItem =
+      do_QueryElementAt(aItemsArray, i, &rv);
+    if (NS_FAILED(rv) || !curMediaItem) {
+      NS_WARNING("ERROR: Could not get a mediaitem from an array!");
+      continue;
+    }
+
+    rv = mTaskWriter->WriteAddedTrack(curMediaItem);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "ERROR: Could not write a smartlist mediaitem!");
+
+    ++mProgress;
+    ++addedItemDelta;
+
+    // Go ahead and notify the listener after each write.
+    if (addedItemDelta == LISTENER_NOTIFY_ITEM_DELTA) {
+      rv = NotifyListeners();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+          "ERROR: Could not notify the listeners!");
+      addedItemDelta = 0;
+    }
+  }
+
+  if (addedItemDelta > 0) {
+    rv = NotifyListeners();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "ERROR: Could not notify the listeners!");
   }
 
   return NS_OK;
@@ -856,7 +906,20 @@ sbMediaExportService::EnumerateItemsByGuids(sbStringList & aGuidStringList,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  return aMediaList->GetItemsByProperties(properties, aRetVal);
+  nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
+    new sbMediaListEnumArrayHelper();
+  NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = enumHelper->New();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aMediaList->EnumerateItemsByProperties(
+      properties,
+      enumHelper,
+      sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return enumHelper->GetMediaItemsArray(aRetVal);
 }
 
 nsresult
@@ -1157,7 +1220,13 @@ sbMediaExportService::OnRebuild(sbILocalDatabaseSmartMediaList *aSmartMediaList)
   LOG(("%s: Observing updated smart media list for '%s'",
         __FUNCTION__, NS_ConvertUTF16toUTF8(listGuid).get()));
 
-  mUpdatedSmartMediaLists.push_back(listGuid);
+  sbStringListIter result = std::find(mUpdatedSmartMediaLists.begin(),
+                                      mUpdatedSmartMediaLists.end(),
+                                      listGuid);
+  if (result == mUpdatedSmartMediaLists.end()) {
+    mUpdatedSmartMediaLists.push_back(listGuid);
+  }
+
   return NS_OK;
 }
 
@@ -1311,7 +1380,22 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
     mProgress = 0;
     mTotal = mAddedMediaList.size();
     mTotal += mRemovedMediaLists.size();
-    mTotal += mUpdatedSmartMediaLists.size();
+
+    sbStringListIter listBegin = mUpdatedSmartMediaLists.begin();
+    sbStringListIter listEnd = mUpdatedSmartMediaLists.end();
+    sbStringListIter listNext;
+    for (listNext = listBegin; listNext != listEnd; ++listNext) {
+      nsCOMPtr<sbIMediaList> curUpdatedList;
+      rv = GetMediaListByGuid(*listNext, getter_AddRefs(curUpdatedList));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 length;
+      rv = curUpdatedList->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mTotal += length;
+    }
+
     sbMediaListItemMapIter begin = mAddedItemsMap.begin();
     sbMediaListItemMapIter end = mAddedItemsMap.end();
     sbMediaListItemMapIter next;

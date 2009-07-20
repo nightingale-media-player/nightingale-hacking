@@ -116,6 +116,7 @@ protected:
   nsresult WriteRemovedMediaLists();
   nsresult WriteAddedMediaItems();
   nsresult WriteUpdatedSmartPlaylists();
+  nsresult WriteMediaItemsArray(nsIArray *aItemsArray);
 
   // Lookup mediaitems by a guid list.
   nsresult GetMediaListByGuid(const nsAString & aItemGuid,

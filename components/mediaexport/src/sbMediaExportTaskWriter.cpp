@@ -33,8 +33,6 @@
 #include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <sbStandardProperties.h>
-#include <sbMediaListEnumArrayHelper.h>
-#include <nsAutoPtr.h>
 
 
 /*
@@ -179,7 +177,7 @@ sbMediaExportTaskWriter::WriteRemovedMediaListsHeader()
 }
 
 nsresult
-sbMediaExportTaskWriter::WriteUpdatedSmartPlaylist(sbIMediaList *aMediaList)
+sbMediaExportTaskWriter::WriteUpdatedSmartPlaylistHeader(sbIMediaList *aMediaList)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
@@ -187,33 +185,6 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylist(sbIMediaList *aMediaList)
         __FUNCTION__, TASKFILE_UPDATEDSMARTPLAYLIST_HEADER));
 
   nsresult rv;
-
-  // The updated smartlist section needs to have the URI of every track that
-  // is currently in the smart list.
-
-  nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
-    new sbMediaListEnumArrayHelper();
-  NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = enumHelper->New();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = aMediaList->EnumerateAllItems(enumHelper,
-                                     sbIMediaList::ENUMERATIONTYPE_LOCKING);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIArray> mediaItems;
-  rv = enumHelper->GetMediaItemsArray(getter_AddRefs(mediaItems));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 length = 0;
-  rv = mediaItems->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (length == 0) {
-    // Nothing in the list to output, just return.
-    return NS_OK;
-  }
 
   nsString mediaListName;
   rv = aMediaList->GetName(mediaListName);
@@ -231,23 +202,6 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylist(sbIMediaList *aMediaList)
                 << escaped.get()
                 << "]"
                 << std::endl;
-
-  mCurOutputIndex = 0;
-
-  for (PRUint32 i = 0; i < length; i++) {
-    nsCOMPtr<sbIMediaItem> curMediaItem;
-    rv = mediaItems->QueryElementAt(i,
-                                    NS_GET_IID(sbIMediaItem),
-                                    getter_AddRefs(curMediaItem));
-    if (NS_FAILED(rv) || !curMediaItem) {
-      NS_WARNING("ERROR: Could not get a mediaitem from an array!");
-      continue;
-    }
-
-    rv = WriteAddedTrack(curMediaItem);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "ERROR: Could not write a smartlist mediaitem!");
-  }
 
   mCurOutputIndex = 0;
   return NS_OK;

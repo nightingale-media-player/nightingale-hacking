@@ -35,6 +35,7 @@
 char const * const ADDED_MEDIA_ITEMS = "added-mediaitems";
 char const * const ADDED_PLAYLISTS = "added-medialists";
 char const * const DELETED_PLAYLISTS = "removed-medialists";
+char const * const UPDATED_SMARTPLAYLIST = "updated-smartplaylist";
 char const * const SCHEMA_VERSION = "schema-version";
 
 //------------------------------------------------------------------------------
@@ -128,17 +129,25 @@ ParseTask(std::string const & aTask,
 }
  
 sbError sbiTunesAgentProcessor::AddTrack(std::string const & aSource,
-                                         std::string const & aPath) 
+                                         std::string const & aPath,
+                                         const char *aMethod)
 {
   if (mLastSource.empty()) {
     mLastSource = aSource;
+
+    // If the last method is empty, and the passed in method is the "updated
+    // smart playlist method", the existing list needs to be cleared.
+    if (mLastMethod.empty() && strcmp(aMethod, UPDATED_SMARTPLAYLIST) == 0) {
+      mLastMethod = aMethod;
+      // Clear out the smart list
+      sbError const & error = ClearPlaylist(aSource);
+      SB_ENSURE_ERRORHANDLER(error);
+    }
   }
   else if (mLastSource != aSource || mTrackBatch.size() >= mBatchSize) {
-    sbError const & error = AddTracks(mLastSource,
-                                      mTrackBatch);
-    if (error && !ErrorHandler(error)) {
-      return error;
-    }
+    sbError const & error = AddTracks(mLastSource, mTrackBatch);
+    SB_ENSURE_ERRORHANDLER(error);
+
     mLastSource = aSource;
     mTrackBatch.clear();
   }
@@ -201,53 +210,42 @@ sbiTunesAgentProcessor::ProcessTaskFile()
         }
         std::string::size_type const equalSign = line.find('=');
         if (equalSign != std::string::npos) {
-          std::string const & key = Strip(line.substr(0, equalSign));
-          std::string const & value = Unescape(
-                  Strip(line.substr(equalSign + 1)));
+          std::string const & value =
+            Unescape(Strip(line.substr(equalSign + 1)));
+
           // We've been told to add the track
           if (action == ADDED_MEDIA_ITEMS) {
-            sbError const & error = AddTrack(source, value);
-            if (error && !ErrorHandler(error)) {
-              return error;
-            }
+            sbError const & error = AddTrack(source, value, ADDED_MEDIA_ITEMS);
+            SB_ENSURE_ERRORHANDLER(error);
           }
           else if (action == ADDED_PLAYLISTS) {
-            if (!mTrackBatch.empty()) {
-              sbError const & error = AddTracks(mLastSource, mTrackBatch);
-              if (error && !ErrorHandler(error)) {
-                return error;
-              }
-              mLastSource.clear();
-              mTrackBatch.clear();
-            }
-            sbError const & error = CreatePlaylist(value);
-            if (error && !ErrorHandler(error)) {
-              return error;
-            }
+            sbError error = ProcessPendingTrackBatch();
+            SB_ENSURE_ERRORHANDLER(error);
+
+            error = CreatePlaylist(value);
+            SB_ENSURE_ERRORHANDLER(error);
           }
           // We've been told to remove the playlist
           else if (action == DELETED_PLAYLISTS) {
-            if (!mTrackBatch.empty()) {
-              sbError const & error = AddTracks(mLastSource, mTrackBatch);
-              if (error && !ErrorHandler(error)) {
-                return error;
-              }
-              mLastSource.clear();
-              mTrackBatch.clear();
-            }
-            sbError const & error = RemovePlaylist(value);
-            if (error && !ErrorHandler(error)) {
-              return error;
-            }
+            sbError error = ProcessPendingTrackBatch();
+            SB_ENSURE_ERRORHANDLER(error);
+
+            error = RemovePlaylist(value);
+            SB_ENSURE_ERRORHANDLER(error);
+          }
+          else if (action == UPDATED_SMARTPLAYLIST) {
+            sbError const & error = AddTrack(source,
+                                             value,
+                                             UPDATED_SMARTPLAYLIST);
+            SB_ENSURE_ERRORHANDLER(error);
           }
           else {
             std::ostringstream msg;
             msg << action << " is an invalid action , ignoring line " 
                 << lineno;
             sbError error(msg.str());
-            if (!ErrorHandler(error)) {
-              return error;
-            }
+            SB_ENSURE_ERRORHANDLER(error);
+
             action.clear();
           }
         }
@@ -258,9 +256,7 @@ sbiTunesAgentProcessor::ProcessTaskFile()
             msg << action 
                 << " is an invalid action , ignoring line " << lineno;
             sbError error(msg.str());
-            if (!ErrorHandler(error)) {
-              return error;
-            }
+            SB_ENSURE_ERRORHANDLER(error);
           }
         }
       }
@@ -272,12 +268,8 @@ sbiTunesAgentProcessor::ProcessTaskFile()
       }
     }
     if (!mTrackBatch.empty()) {
-      sbError const & error = AddTracks(mLastSource, mTrackBatch);
-      if (error) {
-        ErrorHandler(error);
-      }
-      mLastSource.clear();
-      mTrackBatch.clear();
+      sbError const & error = ProcessPendingTrackBatch();
+      SB_ENSURE_ERRORHANDLER(error);
     }
     // Close the stream and remove the file
     mInputStream.close();
@@ -286,3 +278,21 @@ sbiTunesAgentProcessor::ProcessTaskFile()
   }
   return sbNoError;
 }
+
+sbError
+sbiTunesAgentProcessor::ProcessPendingTrackBatch()
+{
+  mLastSource.clear();
+  mLastMethod.clear();
+  
+  if (mTrackBatch.empty()) {
+    return sbNoError;
+  }
+
+  sbError const & error = AddTracks(mLastSource, mTrackBatch);
+  SB_ENSURE_ERRORHANDLER(error);
+
+  mTrackBatch.clear();
+  return sbNoError;
+}
+
