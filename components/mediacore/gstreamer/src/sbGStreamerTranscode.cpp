@@ -826,7 +826,7 @@ struct GSTNameMap {
 static struct GSTNameMap SupportedContainers[] = {
   {"ogg", "oggmux"},
   {"id3", "id3tag"},
-  {"asf", "asfmux"},
+  {"asf", "sbasfmux"},
   {"wav", "wavenc"}
 };
 
