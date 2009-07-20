@@ -53,6 +53,7 @@
 #include <sbMediaListEnumArrayHelper.h>
 #include <nsAutoPtr.h>
 #include <nsArrayUtils.h>
+#include <algorithm>
 
 
 #ifdef PR_LOGGING
