@@ -533,6 +533,7 @@ sbWindowWatcher::Init()
 void
 sbWindowWatcher::Finalize()
 {
+  TRACE(("%s", __FUNCTION__));
   // Ensure this instance is shut down.
   Shutdown();
 
@@ -958,11 +959,16 @@ sbWindowWatcherEventListener::HandleEvent(nsIDOMEvent* event)
   // Dispatch processing of event.
   if (mOutstandingEvents.Contains(eventType)) {
     nsCOMPtr<nsIDOMEventTarget> target;
-    rv = event->GetTarget(getter_AddRefs(target));
+    rv = event->GetCurrentTarget(getter_AddRefs(target));
     NS_ENSURE_SUCCESS(rv, rv);
     rv = target->RemoveEventListener(eventType, this, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
     mOutstandingEvents.RemoveElement(eventType);
+    TRACE(("%s: removed event %s listener %p from %p",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(eventType).get(),
+           this,
+           target));
     if (mOutstandingEvents.IsEmpty()) {
       mSBWindowWatcher->OnWindowReady(mWindow);
     }
@@ -1012,9 +1018,7 @@ sbWindowWatcherEventListener::New
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Return results.
-  NS_ADDREF(*aListener = listener);
-
-  return NS_OK;
+  return CallQueryInterface(listener.get(), aListener);
 }
 
 
@@ -1074,6 +1078,11 @@ sbWindowWatcherEventListener::AddEventListener(const char* aEventName)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mOutstandingEvents.AppendElement(eventName);
+  TRACE(("%s: Added event %s listener %p to %p",
+         __FUNCTION__,
+         aEventName,
+         this,
+         mEventTarget));
 
   return NS_OK;
 }
@@ -1087,9 +1096,19 @@ sbWindowWatcherEventListener::ClearEventListeners()
 {
   nsresult rv;
 
+  TRACE(("%s: clearing %p from %p",
+         __FUNCTION__,
+         this,
+         mEventTarget));
+
   NS_ENSURE_TRUE(mEventTarget, NS_ERROR_NOT_INITIALIZED);
 
   for (PRUint32 i = mOutstandingEvents.Length() - 1; i != PRUint32(-1); --i) {
+    TRACE(("%s: Removing event %s listener %p from %p",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(mOutstandingEvents[i]).get(),
+           this,
+           mEventTarget));
     rv = mEventTarget->RemoveEventListener(mOutstandingEvents[i],
                                            this,
                                            PR_TRUE);

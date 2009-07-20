@@ -149,7 +149,14 @@ private:
   class WindowInfo
   {
   public:
-    WindowInfo() : isReady(PR_FALSE) {}
+    WindowInfo() : isReady(PR_FALSE)
+    {
+      MOZ_COUNT_CTOR(WindowInfo);
+    }
+    ~WindowInfo()
+    {
+      MOZ_COUNT_DTOR(WindowInfo);
+    }
 
     nsCOMPtr<nsIDOMWindow>      window;
     nsCOMPtr<nsIDOMEventTarget> eventTarget;
