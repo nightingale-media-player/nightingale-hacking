@@ -346,7 +346,11 @@ sbMediaManagementService::OnItemAdded(sbIMediaList *aMediaList,
 {
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE; /* keep listening to messages */
-  return this->QueueItem(aMediaItem, sbIMediaFileManager::MANAGE_COPY);
+  // need to use copy + move so that the file ends up in the correct directory
+  // instead of the root of the management directory
+  return this->QueueItem(aMediaItem,
+                         sbIMediaFileManager::MANAGE_COPY |
+                         sbIMediaFileManager::MANAGE_MOVE);
 }
 
 /* boolean onBeforeItemRemoved (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
@@ -863,16 +867,17 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
     reinterpret_cast<ProcessItemData*>(aClosure);
   PRUint32 opMask = data->mediaMgmtService->mManageMode;
 
-  if (!(aOperation & opMask)) {
+  aOperation &= opMask;
+  if ((aOperation & sbIMediaFileManager::MANAGE_COPY) ||
+      (aOperation & sbIMediaFileManager::MANAGE_MOVE))
+  {
+    /* on copy and move, also rename if enabled */
+    aOperation |= (opMask & sbIMediaFileManager::MANAGE_RENAME);
+  }
+
+  if (!aOperation) {
     // we don't want to manage this
     return PL_DHASH_NEXT;
-  }
-  
-  switch (aOperation) {
-    /* on copy and move, also rename if enabled */
-    case sbIMediaFileManager::MANAGE_COPY:
-    case sbIMediaFileManager::MANAGE_MOVE:
-      aOperation |= (opMask & sbIMediaFileManager::MANAGE_RENAME);
   }
 
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey);
