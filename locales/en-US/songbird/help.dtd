@@ -62,6 +62,7 @@
 <!ENTITY help.keyboard.name.volume.mute         "Mute Volume" >
 <!ENTITY help.keyboard.name.volume.max          "Max Volume" >
 <!ENTITY help.keyboard.name.jumpto              "Jump To Window" >
+<!ENTITY help.keyboard.name.equalizer           "Open the Equalizer" >
 <!ENTITY help.keyboard.name.new.playlist        "New Playlist" >
 <!ENTITY help.keyboard.name.new.smartplaylist   "New Smart Playlist" >
 <!ENTITY help.keyboard.name.import              "Import Media" >
