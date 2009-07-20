@@ -106,15 +106,16 @@
         </xul:stack>
 
         <!-- Device info. -->
-        <xul:vbox sbid="summary_box">
+        <xul:vbox sbid="summary_box" flex="1">
 
           <!-- Device name. -->
-          <xul:hbox sbid="name_box" align="center">
+          <xul:hbox sbid="name_box" align="center" flex="1">
             <xul:label sbid="device_name_label"
                        class="device-name-label"
                        showid="name"
                        crop="end"
-                       hidden="true"/>
+                       hidden="true"
+                       flex="1"/>
           </xul:hbox>
 
           <!-- Device specs. -->
