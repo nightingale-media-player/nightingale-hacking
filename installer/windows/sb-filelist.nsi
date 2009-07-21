@@ -73,6 +73,7 @@
    # Gstreamer stuff
    File /r lib
    File /r gst-plugins
+   File /r gstreamer
 
    # We only need to do this if we're not using jemalloc...
    !ifndef UsingJemalloc
@@ -149,6 +150,7 @@
    RMDir /r $INSTDIR\scripts
    RMDir /r $INSTDIR\lib
    RMDir /r $INSTDIR\gst-plugins
+   RMDir /r $INSTDIR\gstreamer
    RMDir /r $INSTDIR\${XULRunnerDir}
 
    ; Remove uninstaller
