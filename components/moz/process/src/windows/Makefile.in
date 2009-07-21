@@ -22,24 +22,21 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-ifeq (windows,$(SB_PLATFORM))
-  SUBDIRS = windows
-endif
+SIMPLE_PROGRAM = RunWithoutConsoleWindow
 
-STATIC_LIB = sbMozProcess
+FINAL_TARGET = $(SONGBIRD_DISTDIR)
 
-CPP_SRCS = sbProcess.cpp \
+CPP_SRCS = RunWithoutConsoleWindow.cpp \
            $(NULL)
 
-CPP_EXTRA_INCLUDES = $(srcdir) \
-                     $(topsrcdir)/components/include
+CPP_EXTRA_INCLUDES = $(srcdir)
 
 include $(topsrcdir)/build/rules.mk
 
