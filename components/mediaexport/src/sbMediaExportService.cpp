@@ -1321,7 +1321,7 @@ sbMediaExportService::GetNeedsToRunTask(PRBool *aNeedsToRunTask)
   rv = GetHasPendingChanges(aNeedsToRunTask);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (!*aNeedsToRunTask) {
+  if (!*aNeedsToRunTask && mPrefController->GetShouldExportAnyMedia()) {
     // Since there isn't any pending changes, check to see if the agent should
     // be started. Only start the agent if it is not running and there is at 
     // least one pending export task file on disk.
