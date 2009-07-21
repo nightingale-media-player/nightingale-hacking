@@ -10,17 +10,17 @@
 //
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the GPL).
-// 
+//
 // Software distributed under the License is distributed
 // on an AS IS basis, WITHOUT WARRANTY OF ANY KIND, either
 // express or implied. See the GPL for the specific language
 // governing rights and limitations.
-// 
+//
 // You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
 // or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 //=END SONGBIRD GPL
 */
 
@@ -123,19 +123,19 @@ sbIPDDevice::ReqHandleRequestAdded()
   // the request thread, so locking is not required.
   if (mIsHandlingRequests)
     return NS_OK;
-  
+
   mIsHandlingRequests = PR_TRUE;
   sbIPDAutoFalse autoIsHandlingRequests(&mIsHandlingRequests);
 
   if (mCurrentBatch.empty()) {
     rv = PopRequest(mCurrentBatch);
     NS_ENSURE_SUCCESS(rv, rv);
-  }  
+  }
   // If batch is empty just exit. We're probably waiting for it to complete.
   if (mCurrentBatch.empty()) {
     return NS_OK;
   }
-  
+
   // Set up to automatically set the state to STATE_IDLE on exit.  Any device
   // operation must change the state to not be idle.  This ensures that the
   // device is not prematurely removed (e.g., ejected) while the device content
@@ -151,12 +151,12 @@ sbIPDDevice::ReqHandleRequestAdded()
     // If we're not waiting and the batch isn't empty process the batch
     while (!mCurrentBatch.empty()) {
       bool ensuredSpaceForWrite = false;
-      
+
       // Process each request in the batch
       Batch::iterator const end = mCurrentBatch.end();
       Batch::iterator iter = mCurrentBatch.begin();
       while (iter != end) {
-        
+
         // Check for abort.
         NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
@@ -174,21 +174,21 @@ sbIPDDevice::ReqHandleRequestAdded()
 
             case TransferRequest::REQUEST_WRITE : {
               if (!ensuredSpaceForWrite) {
-              
+
                 // Force update of storage statistics before checking for space.
                 StatsUpdate(PR_TRUE);
-  
+
                 // Check for space for request.  Assume space is ensured on error
                 // and attempt the write.
                 rv = EnsureSpaceForWrite(mCurrentBatch);
                 NS_ENSURE_SUCCESS(rv, rv);
-                
+
                 ensuredSpaceForWrite = true;
-                
+
                 // Reset the iter and request in case the first item was removed
                 iter = mCurrentBatch.begin();
               }
-              
+
               // Handle request if space has been ensured for it.
               if (iter != end) {
                 request = iter->get();
@@ -203,54 +203,59 @@ sbIPDDevice::ReqHandleRequestAdded()
               mIPDStatus->ChangeStatus(STATE_DELETING);
               ReqHandleDelete(request);
               break;
-  
+
             case TransferRequest::REQUEST_WIPE :
               mIPDStatus->ChangeStatus(STATE_DELETING);
               ReqHandleWipe(request);
               break;
-              
+
             case TransferRequest::REQUEST_NEW_PLAYLIST :
               mIPDStatus->ChangeStatus(STATE_BUSY);
               ReqHandleNewPlaylist(request);
               break;
-  
+
             case TransferRequest::REQUEST_UPDATE :
               mIPDStatus->ChangeStatus(STATE_UPDATING);
               ReqHandleUpdate(request);
               break;
-  
+
             case TransferRequest::REQUEST_MOVE :
               mIPDStatus->ChangeStatus(STATE_BUSY);
               ReqHandleMovePlaylistTrack(request);
               break;
-  
+
             case TransferRequest::REQUEST_SYNC :
               mIPDStatus->ChangeStatus(STATE_SYNCING);
               HandleSyncRequest(request);
               break;
-  
+
             case sbIDevice::REQUEST_FACTORY_RESET :
               mIPDStatus->ChangeStatus(STATE_BUSY);
               ReqHandleFactoryReset(request);
               break;
-  
+
             case REQUEST_WRITE_PREFS :
               mIPDStatus->ChangeStatus(STATE_BUSY);
               ReqHandleWritePrefs(request);
               break;
-  
+
             case REQUEST_SET_PROPERTY :
               mIPDStatus->ChangeStatus(STATE_BUSY);
               ReqHandleSetProperty(request);
               break;
-  
+
             case REQUEST_SET_PREF :
               ReqHandleSetPref(request);
               break;
-  
+
             default :
               NS_WARNING("Invalid request type.");
               break;
+          }
+          if (ReqAbortActive()) {
+            // If we're aborting iterators will be invalid, need to exit loop
+            // to get the next batch if any.
+            break;
           }
           // Something may have advanced the iter so need to check for end
           if (iter != end) {
@@ -260,7 +265,7 @@ sbIPDDevice::ReqHandleRequestAdded()
         }
       }
     }
-    
+
     rv = PopRequest(mCurrentBatch);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -290,7 +295,7 @@ sbIPDDevice::ReqHandleMount(TransferRequest* aRequest)
   nsresult rv;
 
   // Update status and set for auto-failure.
-  mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_MOUNT, 
+  mIPDStatus->OperationStart(sbIPDStatus::OPERATION_TYPE_MOUNT,
       aRequest->batchIndex, aRequest->batchCount);
   sbAutoStatusOperationFailure autoStatus(mIPDStatus);
 

@@ -162,12 +162,12 @@ public:
      * otherwise returns PR_FALSE
      */
     PRBool IsCountable() const;
-    
+
     /**
      * Sets the transcode profile for the request
      */
     void SetTranscodeProfile(sbITranscodeProfile * aProfile);
-    
+
     static TransferRequest * New();
 
     /* Don't allow manual construction/destruction, but allow sub-classing. */
@@ -444,7 +444,7 @@ protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
   friend class sbDeviceStatistics;
-  
+
   /**
    * Base class initialization this will call the InitDevice first then
    * do the intialization needed by the sbDeviceBase
@@ -479,7 +479,7 @@ public:
    */
   typedef std::map<PRInt32, TransferRequestQueue> TransferRequestQueueMap;
 protected:
-  
+
   TransferRequestQueueMap mRequests;
   PRUint32 mLastTransferID;
   PRInt32 mLastRequestPriority; // to make sure peek returns the same
@@ -491,7 +491,7 @@ protected:
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
-  
+
   nsRefPtr<sbBaseDeviceLibraryListener> mLibraryListener;
   nsRefPtr<sbDeviceBaseLibraryCopyListener> mLibraryCopyListener;
   nsDataHashtableMT<nsISupportsHashKey, nsRefPtr<sbBaseDeviceMediaListListener> > mMediaListListeners;
@@ -499,8 +499,8 @@ protected:
   PRUint32 mCapabilitiesRegistrarType;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
-  
-  
+
+
   // cache data for media management preferences
   struct OrganizeData {
     PRBool    organizeEnabled;
@@ -526,13 +526,13 @@ protected:
    * Make sure that there is enough free space for the batch. If there is not
    * enough space for all the items in the batch and the user does not abort
    * the operation, items in the batch will be removed.
-   * 
+   *
    * What items get removed depends on the current sync mode. If we're in
    * manual sync then the last items not fitting will be removed. If we're are
    * in an automatic sync mode then a random subset of items will be removed
    * from the batch.
    *
-   * \param aBatch The batch to ensure space for. This collection may be 
+   * \param aBatch The batch to ensure space for. This collection may be
    *               modified on return.
    */
   nsresult EnsureSpaceForWrite(Batch & aBatch);
@@ -978,10 +978,10 @@ protected:
    * \param aEject [out, retval]  Should the device be ejected?
    */
   nsresult PromptForEjectDuringPlayback(PRBool* aEject);
-  
+
   /**
    * Returns the primary library for the device
-   * 
+   *
    * \param aDeviceLibrary out parameter receiving the primary library object
    */
   nsresult GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary);
@@ -1013,13 +1013,13 @@ protected:
    * \param aCapabilities Capabilities object to augment.
    */
   nsresult RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities);
-  
+
   /**
    * Process the capabilities registrars to find out which ones are interested
    * in us.
    */
   nsresult ProcessCapabilitiesRegistrars();
-  
+
   /**
    * Returns the profile for the given media item
    * \brief aMediaItem The media item to find the profile for
@@ -1059,6 +1059,30 @@ protected:
    */
   nsresult GetMusicLimitSpacePercent(const nsAString & aPrefBase,
                                      PRUint32 *aOutLimitPercentage);
+  /**
+   * This iterates over the transfer requests and removes the Songbird library
+   * items that were created for the requests.
+   * \param iter Starting point of the requests
+   * \param end Typical iteration end point (1 past the last item)
+   */
+  template <class T>
+  nsresult RemoveLibraryItems(T iter, T end)
+  {
+    while (iter != end) {
+      nsRefPtr<sbBaseDevice::TransferRequest> request = *iter;
+      // If this is a request that adds an item to the device we need to remove
+      // it from the device since it never was copied
+      if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
+        if (request->list && request->item) {
+          nsresult rv = DeleteItem(request->list, request->item);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+      ++iter;
+    }
+    return NS_OK;
+  }
+
 };
 
 

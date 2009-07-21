@@ -769,29 +769,6 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
 
 typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> > sbBaseDeviceTransferRequests;
 
-/**
- * This iterates over the transfer requests and removes the Songbird library
- * items that were created for the requests.
- */
-static nsresult RemoveLibraryItems(sbBaseDeviceTransferRequests const & items, sbBaseDevice *aBaseDevice)
-{
-  sbBaseDeviceTransferRequests::const_iterator const end = items.end();
-  for (sbBaseDeviceTransferRequests::const_iterator iter = items.begin();
-       iter != end;
-       ++iter) {
-    nsRefPtr<sbBaseDevice::TransferRequest> request = *iter;
-    // If this is a request that adds an item to the device we need to remove
-    // it from the device since it never was copied
-    if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
-      if (request->list && request->item) {
-        nsresult rv = aBaseDevice->DeleteItem(request->list, request->item);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-  }
-  return NS_OK;
-}
-
 nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
 {
   nsresult rv;
@@ -808,6 +785,12 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
       rv = SetState(STATE_CANCEL);
       NS_ENSURE_SUCCESS(rv, rv);
 
+      Batch::iterator const batchEnd = mCurrentBatch.end();
+      for (Batch::iterator batchIter = mCurrentBatch.begin();
+           batchIter != batchEnd;
+           ++batchIter) {
+        requests.push_back(*batchIter);
+      }
       // Save off the library items that are pending to avoid any
       // potential reenterancy issues when deleting them.
       TransferRequestQueueMap::const_iterator mapIt = mRequests.begin(),
@@ -844,7 +827,7 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   // because that involves proxying to the main thread
 
   if (!requests.empty()) {
-    rv = RemoveLibraryItems(requests, this);
+    rv = RemoveLibraryItems(requests.begin(), requests.end());
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (request) {
