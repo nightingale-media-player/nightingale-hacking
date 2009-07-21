@@ -45,7 +45,7 @@
     <em:name>iPod Device Support</em:name>
     <em:iconURL>chrome://ipod/skin/em-icon.png</em:iconURL>
     <em:description>Adds support for iPod devices.</em:description>
-    <em:creator>POTI</em:creator>
+    <em:creator>@SB_VENDOR@</em:creator>
     <em:version>@EXTENSION_VER@</em:version>
 
     <em:type>2</em:type>

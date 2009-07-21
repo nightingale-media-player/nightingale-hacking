@@ -958,6 +958,10 @@ ifdef EXTENSION_VER
 endif
 
 ifdef EXTENSION_NAME
+   # We include branding.mk here to get the branding defines to add to the
+   # preprocessor call for install.rdf.in, if any
+   include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
+
    OUR_EXTENSION_NAME = $(strip $(EXTENSION_NAME))
 
    # set a specific location for the output if it doesn't already exist
@@ -1010,7 +1014,7 @@ endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl \
-    $(ACDEFINES) $(PPDEFINES) \
+    $(ACDEFINES) $(PPDEFINES) $(SB_BRANDING_DEFINES) \
     -DEXTENSION_ARCH="$(EXTENSION_ARCH)" \
     -DEXTENSION_UUID="$(EXTENSION_UUID)" \
     -DEXTENSION_VER="$(OUR_EXTENSION_VER)" \

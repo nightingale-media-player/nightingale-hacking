@@ -36,7 +36,7 @@
     <em:name>Album Art Extras</em:name>
     <em:iconURL>chrome://albumart/skin/icon-albumart.png</em:iconURL>
     <em:description>Album Art Extras for Songbird.</em:description>
-    <em:creator>POTI</em:creator>
+    <em:creator>@SB_VENDOR@</em:creator>
     <em:version>@EXTENSION_VER@</em:version>
     <em:homepageURL>http://www.songbirdnest.com/</em:homepageURL>
 

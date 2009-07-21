@@ -23,7 +23,7 @@
     <!-- a description of the extension - appears in Addons Manager -->
     <em:description>An extension that contains a C++ Hello World component</em:description>
     <!-- the creator of the extension - appears in the extension's About box -->
-    <em:creator>POTI</em:creator>
+    <em:creator>@SB_VENDOR@</em:creator>
     <!-- the home page of the extension - accessible from the Addons Manager -->
     <em:homepageURL>http://www.songbirdnest.com/</em:homepageURL>
     <!-- the version of the extension - used in extension updates -->

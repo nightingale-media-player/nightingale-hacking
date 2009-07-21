@@ -18,7 +18,7 @@
     <em:id>7digital@songbirdnest.com</em:id>
     <em:name>7digital Music Store</em:name>
     <em:description>Integration with the 7digital music store</em:description>
-    <em:creator>Songbird</em:creator>
+    <em:creator>@SB_VENDOR@</em:creator>
     <em:contributor>Ian McKellar</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
     <em:type>2</em:type>
