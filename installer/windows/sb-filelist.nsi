@@ -43,6 +43,7 @@
    File ${FileMainEXE}
    File ${DistHelperEXE}
    File ${AgentEXE}
+   File ${RunWithoutConsoleWindowEXE}
    !ifdef IncludeLib
       File ${CRuntime}
       File ${CPPRuntime}
@@ -106,6 +107,7 @@
    Delete $INSTDIR\${FileMainEXE}
    Delete $INSTDIR\${DistHelperEXE}
    Delete $INSTDIR\${AgentEXE}
+   Delete $INSTDIR\${RunWithoutConsoleWindowEXE}
    !ifndef UsingJemalloc
       Delete $INSTDIR\${CRuntime}
       Delete $INSTDIR\${CPPRuntime}
