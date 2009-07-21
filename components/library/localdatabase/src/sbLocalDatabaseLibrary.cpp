@@ -50,6 +50,7 @@
 #include <sbIDatabaseResult.h>
 #include <sbIDevice.h>
 #include <sbIDeviceManager.h>
+#include <sbIDownloadDevice.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
@@ -2590,12 +2591,14 @@ sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
   
   nsresult rv;
   
-  static char const SB_DOWNLOAD_FOLDER_PREF[] = 
+  static char const SB_MEDIA_MANAGEMENT_PREF[] =
+    "songbird.media_management.library.folder";
+  static char const SB_MEDIA_MANAGEMENT_ENABLE_PREF[] =
+    "songbird.media_management.library.enabled";
+  static char const SB_DOWNLOAD_FOLDER_PREF[] =
     "songbird.download.music.folder";
-  static char const SB_WATCH_FOLDER_ENABLE_PREF[] = 
-    "songbird.watch_folder.enable";
-  static char const SB_WATCH_FOLDER_PATH_PREF[] = 
-    "songbird.watch_folder.path";
+  NS_NAMED_LITERAL_STRING(SB_DOWNLOAD_DEVICE_CATEGORY,
+                          "Songbird Download Device");
 
   if (!mFolderPrefs) {
     mFolderPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1", 
@@ -2605,13 +2608,13 @@ sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
   
   PRBool enabled = PR_FALSE;
   // Ignore error, treat as eanbled false
-  mFolderPrefs->GetBoolPref(SB_WATCH_FOLDER_ENABLE_PREF, &enabled);
+  mFolderPrefs->GetBoolPref(SB_MEDIA_MANAGEMENT_ENABLE_PREF, &enabled);
 
   nsCOMPtr<nsISupportsString> supportsString;
   
   if (enabled) {
     // Failure is OK, supportsString will just be null
-    mFolderPrefs->GetComplexValue(SB_WATCH_FOLDER_PATH_PREF,
+    mFolderPrefs->GetComplexValue(SB_MEDIA_MANAGEMENT_PREF,
                                   NS_GET_IID(nsISupportsString),
                                   getter_AddRefs(supportsString));
   }
@@ -2621,17 +2624,28 @@ sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
                                   NS_GET_IID(nsISupportsString),
                                   getter_AddRefs(supportsString));
   }
-  NS_ENSURE_TRUE(supportsString, NS_ERROR_NOT_AVAILABLE);
-  
-  nsString folderPath;
-  rv = supportsString->GetData(folderPath);
+  nsCOMPtr<nsILocalFile> folderPathFile;
 
-  nsCOMPtr<nsILocalFile> folderPathFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (supportsString) {
+    nsString folderPath;
+    rv = supportsString->GetData(folderPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+    folderPathFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = folderPathFile->InitWithPath(folderPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // use default value; if any of this fails, the function doesn't work at all
+    nsCOMPtr<sbIDownloadDeviceHelper> deviceHelper =
+      do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> downloadDir;
+    rv = deviceHelper->GetDefaultMusicFolder(getter_AddRefs(downloadDir));
+    NS_ENSURE_SUCCESS(rv, rv);
+    folderPathFile = do_QueryInterface(downloadDir, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-  rv = folderPathFile->InitWithPath(folderPath);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
   nsCOMPtr<nsIURI> folderPathURI;
   sbLibraryUtils::GetFileContentURI(folderPathFile, 
                                     aMusicFolderURI);

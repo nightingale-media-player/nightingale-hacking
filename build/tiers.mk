@@ -65,6 +65,7 @@ tier_componentsbase_dirs = \
    components/watchfolder \
    components/controller \
    components/devices \
+   components/devicesobsolete \
    components/mediamanager \
    $(NULL)
 
@@ -73,7 +74,6 @@ tier_componentsall_dirs = \
    components/bundle \
    components/commandline \
    components/contenthandling \
-   components/devicesobsolete \
    components/displaypanes \
    components/draganddrop \
    components/faceplate \

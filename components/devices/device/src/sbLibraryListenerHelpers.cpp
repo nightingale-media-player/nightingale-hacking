@@ -28,12 +28,32 @@
 #include "sbLibraryListenerHelpers.h"
 
 #include <pratom.h>
+#include <prlog.h>
 
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIOrderableMediaList.h"
 #include "sbBaseDevice.h"
 #include "sbLibraryUtils.h"
+
+#include <nsIURI.h>
+
+//
+// To log this module, set the following environment variable:
+//   NSPR_LOG_MODULES=sbLibraryListenerHelpers:5
+//
+
+#ifdef PR_LOGGING
+  static PRLogModuleInfo* gLibraryListenerHelpersLog = nsnull;
+# define TRACE(args) PR_LOG(gLibraryListenerHelpersLog, PR_LOG_DEBUG, args)
+# define LOG(args)   PR_LOG(gLibraryListenerHelpersLog, PR_LOG_WARN, args)
+# ifdef __GNUC__
+#   define __FUNCTION__ __PRETTY_FUNCTION__
+# endif /* __GNUC__ */
+#else
+# define TRACE(args) /* nothing */
+# define LOG(args)   /* nothing */
+#endif
 
 nsresult 
 sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
@@ -111,6 +131,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener,
 sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener() 
 : mDevice(nsnull)
 {
+#ifdef PR_LOGGING
+  if (!gLibraryListenerHelpersLog)
+    gLibraryListenerHelpersLog = PR_NewLogModule("sbLibraryListenerHelpers");
+#endif
 }
 
 sbBaseDeviceLibraryListener::~sbBaseDeviceLibraryListener()
@@ -379,7 +403,10 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
 sbDeviceBaseLibraryCopyListener::sbDeviceBaseLibraryCopyListener()
 : mDevice(nsnull)
 {
-
+#ifdef PR_LOGGING
+  if (!gLibraryListenerHelpersLog)
+    gLibraryListenerHelpersLog = PR_NewLogModule("sbLibraryListenerHelpers");
+#endif
 }
 
 sbDeviceBaseLibraryCopyListener::~sbDeviceBaseLibraryCopyListener()
@@ -405,6 +432,34 @@ sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
   NS_ENSURE_ARG_POINTER(aDestItem);
 
   nsresult rv;
+
+  #if PR_LOGGING
+  nsCOMPtr<nsIURI> srcURI, destURI;
+  nsCString srcSpec, destSpec;
+  nsCOMPtr<sbILibrary> srcLib, destLib;
+  nsString srcLibId, destLibId;
+  rv = aSourceItem->GetContentSrc(getter_AddRefs(srcURI));
+  if (NS_SUCCEEDED(rv)) {
+    rv = srcURI->GetSpec(srcSpec);
+  }
+  rv = aSourceItem->GetLibrary(getter_AddRefs(srcLib));
+  if (NS_SUCCEEDED(rv)) {
+    rv = srcLib->GetGuid(srcLibId);
+  }
+  rv = aDestItem->GetContentSrc(getter_AddRefs(destURI));
+  if (NS_SUCCEEDED(rv)) {
+    rv = destURI->GetSpec(destSpec);
+  }
+  rv = aDestItem->GetLibrary(getter_AddRefs(destLib));
+  if (NS_SUCCEEDED(rv)) {
+    rv = destLib->GetGuid(destLibId);
+  }
+  TRACE(("%s: %s::%s -> %s::%s",
+         __FUNCTION__,
+         NS_ConvertUTF16toUTF8(srcLibId).get(), srcSpec.get(),
+         NS_ConvertUTF16toUTF8(destLibId).get(), destSpec.get()));
+  #endif
+
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_READ,
                             aSourceItem, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
