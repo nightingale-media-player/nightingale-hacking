@@ -124,6 +124,7 @@
 !define DetailPrintKillApp "Forcefully terminating ${BrandShortName} application..."
 !define DetailPrintQuitAppWait "Waiting for requested application to shutdown..."
 !define DetailPrintQuitAgentWait "Requesting ${BrandShortName} agent shutdown..."
+!define DetailPrintQuitAgent "Requesting ${BrandShortName} agent shutdown..."
 
 !define TakeSurveyMessage "We're sorry to see that you uninstalled ${BrandShortName}.$\n$\nWill you consider helping us make ${BrandShortName} better by taking a quick anonymous survey to help us improve the product?$\nIt shouldn't take more than 30 seconds to complete."
 !define UnintallSurveyURL http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d

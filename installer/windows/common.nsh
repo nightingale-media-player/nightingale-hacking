@@ -237,11 +237,18 @@ FunctionEnd
       IfErrors +2 0
          StrCpy $UnpackMode ${TRUE}
 
-      ${${un}GetOptions} $R0 "/DIST=" $0
+      ${${un}GetOptions} $R0 "/DIST" $0
       IfErrors +4 0
          StrCpy $DistributionMode ${TRUE}
          StrCpy $InstallerType "dist"
-         StrCpy $DistributionName $0
+         StrCpy $DistributionName $0 "" 1 # strip the "=" from argument's "=foo"
+
+      ${If} $DistributionMode == ${TRUE}
+         ${If} $DistributionName == ""
+            DetailPrint "In dist mode, but empty dist name; aborting..."
+            Abort
+         ${EndIf}
+      ${EndIf}
 
       ${${un}GetOptions} $R0 "/DEBUG" $0
       IfErrors +2 0
