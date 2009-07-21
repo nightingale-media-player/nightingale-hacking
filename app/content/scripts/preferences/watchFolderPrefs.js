@@ -95,6 +95,20 @@ var watchFolderPrefsPane = {
         event.stopPropagation();
         return false;
       }
+      var watchFolderEnablePrefElem =
+            document.getElementById("watch_folder_enable_pref");
+      var watchFolderEnabelCheckbox =
+            document.getElementById("watch_folder_enable_checkbox");
+      if (watchFolderEnabelCheckbox.checked &&
+          (!watchFolderEnablePrefElem.valueFromPreferences))
+      {
+        var watchFolderPathPrefElem =
+              document.getElementById("watch_folder_path_pref");
+        var watchFolderDir = Cc["@mozilla.org/file/local;1"]
+                               .createInstance(Ci.nsILocalFile);
+        watchFolderDir.initWithPath(watchFolderPathPrefElem.value);
+        self._rescan(watchFolderDir);
+      }
     }
     window.addEventListener('dialogaccept', forceCheck, true);
     window.addEventListener('dialogcancel', forceCheck, true);
