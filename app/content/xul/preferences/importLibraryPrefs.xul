@@ -148,7 +148,8 @@
         <caption label="&import_library.prefs.path_group_caption;"/>
 
         <!-- Library path box. -->
-        <hbox id="import_library_path_box">
+        <hbox id="import_library_path_box"
+              observes="import_tracks_itunes_broadcaster">
 
           <!-- Library path text box. -->
           <label value="&import_library.library_file_label;"/>

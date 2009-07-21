@@ -240,7 +240,9 @@ var importLibraryPrefsUI = {
    * \param aEvent              Import Library command event.
    */
   doImportCommand: function importLibraryPrefsUI_doIMportCommand(aEvent) {
-    // TODO: disable the button when the command is not happy
+    document.getElementById("import_playlists_itunes_pref")
+            .valueFromPreferences =
+      document.getElementById("import_playlists_itunes_checkbox").checked;
 
     // Get the default library importer.  Do nothing if none available.
     var libraryImporterManager =
