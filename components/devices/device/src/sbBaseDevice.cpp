@@ -3663,11 +3663,17 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
     nsCOMPtr<sbIMediaItem> writeSrcItem;
     rv = sbLibraryUtils::GetOriginItem(aWriteDstItem,
                                        getter_AddRefs(writeSrcItem));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Get the write source URI.
-    rv = writeSrcItem->GetContentSrc(getter_AddRefs(writeSrcURI));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv)) {
+      // If there is not an existing origin for the write item, use the URI
+      // of |aWriteDstItem|.
+      rv = aWriteDstItem->GetContentSrc(getter_AddRefs(writeSrcURI));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      // Get the write source URI.
+      rv = writeSrcItem->GetContentSrc(getter_AddRefs(writeSrcURI));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
 
   // Convert our nsIURI to an nsIFileURL
