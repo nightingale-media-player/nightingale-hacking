@@ -567,7 +567,7 @@ function SBScanMedia( aParentWindow, aScanDirectory )
     }  
     var directoryArray = ArrayConverter.nsIArray([scanDirectory]);
     var job = importer.import(directoryArray);
-    SBJobUtils.showProgressDialog(job, window);
+    SBJobUtils.showProgressDialog(job, window, /* no delay */ 0);
     return job;
   }
   return null; /* no job - but unreachable */
