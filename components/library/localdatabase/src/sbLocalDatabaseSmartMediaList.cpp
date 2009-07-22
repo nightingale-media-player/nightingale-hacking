@@ -897,7 +897,7 @@ sbLocalDatabaseSmartMediaList::Rebuild()
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsAutoMonitor monitor(mListenersMonitor);
-  for (PRUint32 i=0;i<mListeners.Count();i++)
+  for (PRInt32 i=0;i<mListeners.Count();i++)
     mListeners.ObjectAt(i)->OnRebuild(this);
 
   return NS_OK;

@@ -834,7 +834,7 @@ sbLocalDatabaseQuery::AddFilters()
       do {
         pos = nsString_FindCharInSet(stripped, "*-", pos);
         if(pos != -1) {
-          if(pos + 1 < stripped.Length() &&
+          if(static_cast<PRUint32>(pos) + 1 < stripped.Length() &&
              stripped[pos + 1] != '*' && 
              stripped[pos + 1] != '-' &&
              stripped[pos + 1] != ' ') {

@@ -1825,8 +1825,6 @@ sbLocalDatabaseLibrary::Shutdown()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Shutdown()", this));
 
-  nsresult rv;
-
   // Pump events until all of our async queries have returned.
   PRUint32 timerCount = (PRUint32)mBatchCreateTimers.Count();
   if (timerCount) {
@@ -1840,7 +1838,7 @@ sbLocalDatabaseLibrary::Shutdown()
         LOG((LOG_SUBMESSAGE_SPACE "processing events for %u milliseconds",
              SHUTDOWN_ASYNC_GRANULARITY_MS));
 #ifdef DEBUG
-        rv =
+        nsresult rv =
 #endif
         NS_ProcessPendingEvents(currentThread,
                                 PR_MillisecondsToInterval(SHUTDOWN_ASYNC_GRANULARITY_MS));

@@ -855,7 +855,7 @@ nsresult sbSeekableChannel::MergeSegments(
 
         /* Reallocate the segment buffer to merge to. */
         pToSegment->buffer =
-            (char *) nsMemory::Realloc(pToSegment->buffer, mergedLength);
+            (char *) nsMemory::Realloc(pToSegment->buffer, static_cast<PRSize>(mergedLength));
         if (!pToSegment->buffer)
             result = NS_ERROR_OUT_OF_MEMORY;
 
@@ -864,7 +864,7 @@ nsresult sbSeekableChannel::MergeSegments(
         {
             memcpy(pToSegment->buffer + pToSegment->length,
                    pFromSegment->buffer + mergeFromOffset,
-                   pFromSegment->length - mergeFromOffset);
+                   static_cast<PRSize>(pFromSegment->length - mergeFromOffset));
             pToSegment->length = mergedLength;
         }
     }

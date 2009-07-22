@@ -1966,7 +1966,6 @@ NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetStatusText(nsAString& aText)
 /* readonly attribute AString titleText; */
 NS_IMETHODIMP sbLocalDatabaseSortInvalidateJob::GetTitleText(nsAString& aText)
 {
-  nsresult rv;
   aText = mTitleText;
   return NS_OK;
 }

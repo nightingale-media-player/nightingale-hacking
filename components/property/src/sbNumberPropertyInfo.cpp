@@ -463,7 +463,7 @@ NS_IMETHODIMP sbNumberPropertyInfo::SetMinFloatValue(PRFloat64 aMinFloatValue)
   sbSimpleAutoLock lock(mMinMaxValueLock);
 
   if(!mHasSetMinValue) {
-    mMinValue = aMinFloatValue;
+    mMinFloatValue = aMinFloatValue;
     mHasSetMinValue = PR_TRUE;
     return NS_OK;
   }
@@ -483,7 +483,7 @@ NS_IMETHODIMP sbNumberPropertyInfo::SetMaxFloatValue(PRFloat64 aMaxFloatValue)
   sbSimpleAutoLock lock(mMinMaxValueLock);
 
   if(!mHasSetMaxValue) {
-    mMaxValue = aMaxFloatValue;
+    mMaxFloatValue = aMaxFloatValue;
     mHasSetMaxValue = PR_TRUE;
     return NS_OK;
   }

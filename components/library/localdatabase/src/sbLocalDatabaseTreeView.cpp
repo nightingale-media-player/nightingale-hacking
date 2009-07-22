@@ -607,7 +607,7 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
         mGuidWorkArray.SetCapacity(length);
         mGuidWorkArray.Reset();
         for (PRInt32 row = first;
-             row <= static_cast<PRUint32>(last) && row < mArrayLength;
+             row <= last && static_cast<PRUint32>(row) < mArrayLength;
              row++) {
 
           // Skip the fake row and any row's we have already cached

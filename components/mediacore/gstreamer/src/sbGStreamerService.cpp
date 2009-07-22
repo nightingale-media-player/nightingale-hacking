@@ -145,7 +145,6 @@ sbGStreamerService::Init()
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
   NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
   PRBool systemGst;
-  PRBool pluginPathExists;
   PRBool hasMore;
   PRBool first = PR_TRUE;
   nsString pluginPaths;
@@ -190,6 +189,7 @@ sbGStreamerService::Init()
     pluginPaths = EmptyString();
 #else
     // 1. Read the existing GST_PLUGIN_PATH (if any)
+    PRBool pluginPathExists;
     rv = envSvc->Exists(kGstPluginPath, &pluginPathExists);
     NS_ENSURE_SUCCESS(rv, rv);
     if (pluginPathExists) {

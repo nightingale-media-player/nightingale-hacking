@@ -401,8 +401,6 @@ NS_IMETHODIMP MediaItemArrayCreator::OnEnumeratedItem(sbIMediaList*,
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
 
-  nsresult rv;
-
   PRBool const added = mMediaItems.AppendObject(aItem);
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
 

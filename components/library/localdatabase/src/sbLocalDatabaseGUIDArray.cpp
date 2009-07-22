@@ -367,7 +367,7 @@ sbLocalDatabaseGUIDArray::AddSort(const nsAString& aProperty,
       NS_ENSURE_SUCCESS(rv, rv);
 
       // for all secondary sort properties, add the sort to mSorts
-      for (PRInt32 i=0; i<secondarySortPropertyCount; i++) {
+      for (PRUint32 i=0; i<secondarySortPropertyCount; i++) {
         nsCOMPtr<sbIProperty> property;
         rv = secondarySortProperties->GetPropertyAt(i, getter_AddRefs(property));
         // we cannot support secondary sort on toplevel properties, so skip them

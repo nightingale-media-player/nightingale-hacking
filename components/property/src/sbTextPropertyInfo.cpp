@@ -172,7 +172,7 @@ NS_IMETHODIMP sbTextPropertyInfo::Validate(const nsAString & aValue, PRBool *_re
 {
   NS_ENSURE_ARG_POINTER(_retval);
 
-  PRInt32 len = aValue.Length();
+  PRUint32 len = aValue.Length();
   sbSimpleAutoLock lock(mMinMaxLock);
 
   *_retval = PR_TRUE;
@@ -208,7 +208,7 @@ NS_IMETHODIMP sbTextPropertyInfo::Format(const nsAString & aValue, nsAString & _
     }
   }
 
-  PRInt32 len = aValue.Length();
+  PRUint32 len = aValue.Length();
 
   {
     sbSimpleAutoLock lock(mMinMaxLock);
@@ -316,7 +316,7 @@ NS_IMETHODIMP sbTextPropertyInfo::MakeSearchable(const nsAString & aValue, nsASt
 
   _retval = outVal;
 
-  PRInt32 len = aValue.Length();
+  PRUint32 len = aValue.Length();
 
   PR_Lock(mMinMaxLock);
 

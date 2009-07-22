@@ -382,7 +382,7 @@ sbGStreamerTranscode::GetElapsedTime(PRUint32 *aElapsedTime)
   NS_ENSURE_ARG_POINTER(aElapsedTime);
 
   /* Get the running time, and convert to milliseconds */
-  *aElapsedTime = GetRunningTime() / GST_MSECOND;
+  *aElapsedTime = static_cast<PRUint32>(GetRunningTime() / GST_MSECOND);
 
   return NS_OK;
 }
@@ -404,7 +404,8 @@ sbGStreamerTranscode::GetRemainingTime(PRUint32 *aRemainingTime)
     GstClockTime totalTime = gst_util_uint64_scale (elapsed, duration,
             position);
     /* Convert to milliseconds */
-    *aRemainingTime = (totalTime - elapsed) / GST_MSECOND;
+    *aRemainingTime = 
+     static_cast<PRUint32>((totalTime - elapsed) / GST_MSECOND);
   }
 
   return NS_OK;
@@ -778,7 +779,7 @@ sbGStreamerTranscode::EstimateOutputSize(PRInt32 inputDuration,
   rv = audioProperties->GetLength(&propertiesLength);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  for (int j = 0; j < propertiesLength; j++) {
+  for (PRUint32 j = 0; j < propertiesLength; j++) {
     nsCOMPtr<sbITranscodeProfileProperty> property = 
         do_QueryElementAt(audioProperties, j, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -803,7 +804,7 @@ sbGStreamerTranscode::EstimateOutputSize(PRInt32 inputDuration,
   if (bitrate == 0) {
     // No bitrate found; assume something like FLAC as above. This is bad; how
     // can we do better though?
-    bitrate = 0.6 * (44100 * 2 * 16);
+    bitrate = static_cast<PRUint32>(0.6 * (44100 * 2 * 16));
   }
 
   /* Calculate size from duration (in ms) and bitrate (in bits/second) */
@@ -877,7 +878,7 @@ sbGStreamerTranscode::GetAudioCodec(nsAString &aCodec, nsIArray *properties,
       rv = properties->GetLength(&propertiesLength);
       NS_ENSURE_SUCCESS (rv, rv);
 
-      for (int j = 0; j < propertiesLength; j++) {
+      for (PRUint32 j = 0; j < propertiesLength; j++) {
         nsCOMPtr<sbITranscodeProfileProperty> property = 
             do_QueryElementAt(properties, j, &rv);
         NS_ENSURE_SUCCESS(rv, rv);

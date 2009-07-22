@@ -826,9 +826,9 @@ nsresult sbMetadataHandlerTaglib::GetImageDataInternal(
   nsCString                   urlSpec;
   nsCString                   urlScheme;
   nsCString                   fileExt;
-  bool                        isMP3;
-  bool                        isM4A;
-  bool                        isOGG;
+  PRBool                      isMP3;
+  PRBool                      isM4A;
+  PRBool                      isOGG;
   nsresult                    result = NS_OK;
 
   /* Get the channel URL info. */
@@ -940,9 +940,9 @@ nsresult sbMetadataHandlerTaglib::SetImageDataInternal(
   nsCString                   urlScheme;
   nsCString                   fileExt;
   nsresult                    result = NS_OK;
-  bool                        isMP3;
-  bool                        isOGG;
-  bool                        isMP4;
+  PRBool                      isMP3;
+  PRBool                      isOGG;
+  PRBool                      isMP4;
 
   NS_ENSURE_STATE(mpURL);
 

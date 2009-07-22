@@ -998,10 +998,9 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
         NS_WARNING("get_duration failed!");
         continue;
       }
-      PRUint64 result;
-      LL_MUL(result, duration, PR_USEC_PER_SEC);
+      double result = duration * PR_USEC_PER_SEC;
 
-      AppendInt(metadataValue, result);
+      AppendInt(metadataValue, static_cast<PRUint64>(result));
       metadataValueType = 1;
     }
     else {
@@ -1215,7 +1214,7 @@ sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
     rv = file->GetFileSize(&fileSize);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    sbAutoNSTypePtr<PRUint8> fileData = (PRUint8*)NS_Alloc(fileSize);
+    sbAutoNSTypePtr<PRUint8> fileData = (PRUint8*)NS_Alloc(static_cast<PRSize>(fileSize));
     NS_ENSURE_TRUE(fileData, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<nsIFileInputStream> fileStream =
