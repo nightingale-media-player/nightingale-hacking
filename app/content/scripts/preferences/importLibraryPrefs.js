@@ -254,7 +254,10 @@ var importLibraryPrefsUI = {
     var libraryFilePath = this._getPrefElem("library_file_path_pref").value;
 
     var job = libraryImporter.import(libraryFilePath, "songbird", false);
-    SBJobUtils.showProgressDialog(job, window);
+
+    // Pass a timeout of 0 so the dialog opens immediately, and don't make
+    // it modal so it won't block the dirty playlist dialog
+    SBJobUtils.showProgressDialog(job, window, 0, true);
   },
 
   /**
