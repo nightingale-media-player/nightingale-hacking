@@ -471,7 +471,7 @@ function runTest() {
     onPlaylistsComplete : function () {
       ++this.onPlaylistsCompleteCount;
       assertEqual(this.topLevelPropertyCount, 7, "Top level properties do not match");
-      assertEqual(this.onTrackCount, 3, "Invalid track count");
+      assertEqual(this.onTrackCount, 2, "Invalid track count");
       assertEqual(this.onTracksCompleteCount, 1, "Invalid track complete count");
       assertEqual(this.onPlaylistCount, 14, "Invalid playlist count");
       assertEqual(this.onPlaylistsCompleteCount, 1, "Invalid playlist complete count");

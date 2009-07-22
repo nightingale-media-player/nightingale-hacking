@@ -457,8 +457,9 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
         if (isMovieProp.IsEmpty()) {
           rv = mListener->OnTrack(mProperties);
           NS_ENSURE_SUCCESS(rv, rv);
-          mProperties->Clear();
         }
+
+        mProperties->Clear();
       }
       break;
       case PLAYLIST: {  // We're leaving a playlist so notify
