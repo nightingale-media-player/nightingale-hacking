@@ -263,6 +263,7 @@ LastFm.onLoad = function() {
           } else {
             /* otherwise, ban */
             LastFm._service.loveBan(gMM.sequencer.currentItem, false);
+            gMM.sequencer.next();
           }
         }, false);
     this._faceplate.appendChild(this._faceplateBan);
