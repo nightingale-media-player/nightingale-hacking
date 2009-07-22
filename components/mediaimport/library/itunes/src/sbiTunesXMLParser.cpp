@@ -450,9 +450,15 @@ NS_IMETHODIMP sbiTunesXMLParser::EndElement(const nsAString & uri,
                      // Then go back to track collection
         mState = TRACKS_COLLECTION;
         LOG(("onTrack\n"));
-        rv = mListener->OnTrack(mProperties);
-        NS_ENSURE_SUCCESS(rv, rv);
-        mProperties->Clear();
+
+        // Don't bother with this item if it has the "Movie" property.
+        nsString isMovieProp;
+        mProperties->Get(NS_LITERAL_STRING("Movie"), isMovieProp);
+        if (isMovieProp.IsEmpty()) {
+          rv = mListener->OnTrack(mProperties);
+          NS_ENSURE_SUCCESS(rv, rv);
+          mProperties->Clear();
+        }
       }
       break;
       case PLAYLIST: {  // We're leaving a playlist so notify
