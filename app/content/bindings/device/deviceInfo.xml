@@ -291,7 +291,7 @@
 
       <destructor> <![CDATA[
         /* Finalize the device info services. */
-        DIW.finalize(this);
+        this.DIW.finalize(this);
       ]]></destructor>
 
 
@@ -304,7 +304,7 @@
       <method name="_onContextMenu">
         <parameter name="aEvent"/>
         <body><![CDATA[
-          DIW.onContextMenu(aEvent);
+          this.DIW.onContextMenu(aEvent);
         ]]></body>
       </method>
 
@@ -330,10 +330,10 @@
                                 (Components.interfaces.mozIJSSubScriptLoader);
 
         /* Import the device info services. */
-        if (typeof(DIW) == "undefined") {
+        if (typeof(this.DIW) == "undefined") {
           jsLoader.loadSubScript
                      ("chrome://songbird/content/scripts/device/deviceInfo.js",
-                      null);
+                      this);
         }
       ]]></body></method>
 
@@ -349,8 +349,8 @@
     <handlers>
       <handler event="deviceBound"><![CDATA[
         /* Re-initialize the device info services. */
-        DIW.finalize(this);
-        DIW.initialize(this);
+        this.DIW.finalize(this);
+        this.DIW.initialize(this);
       ]]></handler>
     </handlers>
 

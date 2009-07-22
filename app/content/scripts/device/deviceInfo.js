@@ -630,7 +630,7 @@ var DIW = {
     var devNameLabel = this._getElement("device_name_label");
     var devName = this._getDeviceName();
     if (devNameLabel.value != devName)
-        devNameLabel.value = devName;
+      devNameLabel.value = devName;
 
     // Update the device image.
     var devImage = this._getElement("device_image");
