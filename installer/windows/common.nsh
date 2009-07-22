@@ -102,8 +102,9 @@ checkAgent:
    ${nsProcess::FindProcess} "${AgentEXE}" $0
 
    ${If} $0 == 0
+      ReadRegStr $2 HKLM $RootAppRegistryKey "InstallDir" 
       DetailPrint "${DetailPrintQuitAgent}"
-      ExecWait '$INSTDIR\${AgentEXE} --kill'
+      ExecWait '$2\${AgentEXE} --kill'
       DetailPrint "${DetailPrintQuitAppWait}"
       sleep ${SubApplicationWait}
       ${nsProcess::FindProcess} "${AgentEXE}" $0

@@ -29,7 +29,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SIMPLE_PROGRAM = RunWithoutConsoleWindow
+DISABLE_IMPLICIT_NAMING = 1
+
+SIMPLE_PROGRAM = RunWithoutConsoleWindow$(BIN_SUFFIX)
 
 FINAL_TARGET = $(SONGBIRD_DISTDIR)
 
