@@ -75,6 +75,7 @@ sb7Digital.prototype = {
   _observerTopics: [
     'quit-application-granted', // the application is shutting down
     'em-action-requested',      // the extension manager is doing something
+    'songbird-main-window-presented' // app is done starting up the ui
   ],
   _observerService: null,
 
@@ -109,14 +110,8 @@ function sb7Digital_initialize() {
     .getService(Ci.nsIBrowserSearchService);
   this._servicePaneService = Cc['@songbirdnest.com/servicepane/service;1']
     .getService(Ci.sbIServicePaneService);
-  this._servicePaneService.init();
   this._ioService = Cc['@mozilla.org/network/io-service;1']
     .getService(Ci.nsIIOService);
-
-  // If we need to install ourselves, then let's do that
-  if (!Application.prefs.getValue(PREF_CONFIGURED, false)) {
-    this.install();
-  }
 }
 // nsIObserver
 sb7Digital.prototype.observe =
@@ -157,12 +152,17 @@ function sb7Digital_observe(subject, topic, data) {
 
     this._firstRunTimer.cancel();
     this._firstRunTimer = null;
+  } else if (topic == 'songbird-main-window-presented' &&
+      !Application.prefs.getValue(PREF_CONFIGURED, false)) {
+    // If we need to install ourselves, then let's do that
+    this.install();
   }
 }
 
 // install 7digital music store integration
 sb7Digital.prototype.install =
 function sb7Digital_install() {
+  this._servicePaneService.init();
   // install ourselves into the service pane
   try {
     // find the 7digital node
@@ -241,6 +241,7 @@ function sb7Digital_install() {
 // uninstall 7digital music store integration
 sb7Digital.prototype.uninstall =
 function sb7Digital_uninstall() {
+  this._servicePaneService.init();
   // remove ourselves from the service pane
   try {
     // find the 7digital node
