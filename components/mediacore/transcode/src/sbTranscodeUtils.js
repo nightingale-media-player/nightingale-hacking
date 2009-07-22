@@ -133,6 +133,9 @@ TranscodeBatchJob.prototype = {
     if (this._profile == null)
       throw new Error("No profile set");
 
+    this._errors = [];
+    this._jobStatus = Ci.sbIJobProgress.STATUS_RUNNING;
+    this._itemsCompleted = 0;
     this._nextIndex = 0;
     this._startTime = Date.now();
 
