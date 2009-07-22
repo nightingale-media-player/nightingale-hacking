@@ -135,7 +135,7 @@ void sbFileScanQuery::init() {
   PRBool success = m_Extensions.Init();
   NS_ASSERTION(success, "FileScanQuery.m_Extensions failed to be initialized");
   PR_Unlock(m_pExtensionsLock);
-}  
+}
 
 //-----------------------------------------------------------------------------
 /*virtual*/ sbFileScanQuery::~sbFileScanQuery()
@@ -177,7 +177,7 @@ NS_IMETHODIMP sbFileScanQuery::SetDirectory(const nsAString &strDirectory)
   PR_Lock(m_pDirectoryLock);
   if (!m_pFileStack) {
     nsresult rv;
-    m_pFileStack = 
+    m_pFileStack =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   }
   m_strDirectory = strDirectory;
@@ -288,7 +288,7 @@ NS_IMETHODIMP sbFileScanQuery::AddFilePath(const nsAString &strFilePath)
   string->SetData(strFilePath);
   nsresult rv = m_pFileStack->AppendElement(string, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("sbFileScanQuery::AddFilePath(%s)\n", 
+  LOG(("sbFileScanQuery::AddFilePath(%s)\n",
        NS_LossyConvertUTF16toASCII(strFilePath).get()));
   return NS_OK;
 } //AddFilePath
@@ -308,7 +308,7 @@ NS_IMETHODIMP sbFileScanQuery::GetFilePath(PRUint32 nIndex, nsAString &_retval)
     NS_ENSURE_SUCCESS(rv, rv);
     path->GetData(_retval);
   }
-  
+
   return NS_OK;
 } //GetFilePath
 
@@ -340,9 +340,10 @@ NS_IMETHODIMP sbFileScanQuery::GetLastFileFound(nsAString &_retval)
   PRUint32 length;
   m_pFileStack->GetLength(&length);
   if (length > 0) {
-    nsCOMPtr<nsISupportsString> path;
-    m_pFileStack->QueryElementAt(length - 1, NS_GET_IID(nsISupportsString),
-                                 getter_AddRefs(path));
+    nsresult rv;
+    nsCOMPtr<nsISupportsString> path =
+      do_QueryElementAt(m_pFileStack, length - 1, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
     path->GetData(_retval);
   }
   else {
@@ -399,10 +400,10 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
 
     for (PRUint32 i = aStartIndex; i <= aEndIndex; i++) {
-      nsCOMPtr<nsISupportsString> uriSpec;
-      m_pFileStack->QueryElementAt(i, 
-                                   NS_GET_IID(nsISupportsString), 
-                                   getter_AddRefs(uriSpec));
+      nsCOMPtr<nsISupportsString> uriSpec = do_QueryElementAt(m_pFileStack, i);
+      if (!uriSpec) {
+        continue;
+      }
       rv = array->AppendElement(uriSpec, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
 #if PR_LOGGING
@@ -415,7 +416,7 @@ NS_IMETHODIMP sbFileScanQuery::GetResultRangeAsURIStrings(PRUint32 aStartIndex,
     NS_ADDREF(*_retval = array);
   }
   LOG(("sbFileScanQuery:: fetched URIs %d through %d\n", aStartIndex, aEndIndex));
-  
+
   return NS_OK;
 }
 
@@ -552,10 +553,6 @@ NS_IMETHODIMP sbFileScan::ScanDirectory(const nsAString &strDirectory, PRBool bR
   nsresult rv;
   nsCOMPtr<nsILocalFile> pFile =
     do_CreateInstance("@mozilla.org/file/local;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIIOService> pIOService =
-    do_GetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbILibraryUtils> pLibraryUtils =
@@ -727,8 +724,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   PRInt32 nFoundCount = 0;
 
   nsresult ret = NS_ERROR_UNEXPECTED;
-  nsCOMPtr<nsILocalFile> pFile = do_GetService("@mozilla.org/file/local;1");
-  nsCOMPtr<nsIIOService> pIOService = do_GetService("@mozilla.org/network/io-service;1");
+  nsCOMPtr<nsILocalFile> pFile = do_CreateInstance("@mozilla.org/file/local;1");
 
   nsCOMPtr<sbILibraryUtils> pLibraryUtils =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
