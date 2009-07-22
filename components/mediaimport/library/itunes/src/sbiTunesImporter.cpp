@@ -535,7 +535,13 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
   NS_ENSURE_TRUE(NS_IsMainThread(), NS_ERROR_FAILURE);
   
   nsresult rv;
-  
+
+  // reset members
+  mFoundChanges = PR_FALSE;
+  mMissingMediaCount = 0;
+  mTrackCount = 0;
+  mUnsupportedMediaCount = 0;
+
   mLibraryPath = aLibFilePath;
   mImport = aCheckForChanges ? PR_FALSE : PR_TRUE;
   sbPrefBranch prefs(SB_ITUNES_LIBRARY_IMPORT_PREF_PREFIX, &rv);
