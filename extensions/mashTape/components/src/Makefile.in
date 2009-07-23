@@ -7,17 +7,12 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Amazon.js \
-                          $(srcdir)/Digg.js \
                           $(srcdir)/Flickr.js \
                           $(srcdir)/GoogleBlogs.js \
-                          $(srcdir)/GoogleNews.js \
                           $(srcdir)/HypeM.js \
                           $(srcdir)/Info.js \
-                          $(srcdir)/MTV.js \
                           $(srcdir)/SmugMug.js \
                           $(srcdir)/Wikipedia.js \
-                          $(srcdir)/YahooMusic.js \
-                          $(srcdir)/YahooNews.js \
                           $(srcdir)/YouTube.js \
                           $(srcdir)/mashTapeManager.js \
                           $(NULL)
