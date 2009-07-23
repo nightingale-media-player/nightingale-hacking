@@ -72,10 +72,11 @@ const HANDSHAKE_FAILURE_OTHER = false;
 // different phases of Last.fm login
 const AUTH_PHASE_HANDSHAKE = 1;
 const AUTH_PHASE_TOKEN_REQUEST = 2;
-const AUTH_PHASE_WEB_LOGIN = 3;
-const AUTH_PHASE_APP_APPROVE = 4;
-const AUTH_PHASE_SESSION_REQUEST = 5;
-const AUTH_PHASE_USER_INFO = 6;
+const AUTH_PHASE_WEB_LOGIN_GEO = 3;
+const AUTH_PHASE_WEB_LOGIN = 4;
+const AUTH_PHASE_APP_APPROVE = 5;
+const AUTH_PHASE_SESSION_REQUEST = 6;
+const AUTH_PHASE_USER_INFO = 7;
 
 // how often should we try to scrobble again?
 const TIMER_INTERVAL = (5*60*1000); // every five minutes sounds lovely
@@ -210,6 +211,11 @@ function POST(url, params, onload, onerror) {
     // we're always sending url encoded parameters
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     // send url encoded parameters
+    /*
+    dump("POST:\n");
+    dump("\tdata: " + urlencode(params) + "\n");
+    dump("\turl: " + url + "\n");
+    */
     xhr.send(urlencode(params));
     // pass the XHR back to the caller
   } catch(e) {
@@ -217,6 +223,30 @@ function POST(url, params, onload, onerror) {
     onerror(xhr);
   }
   return xhr;
+}
+
+function logStringToFile(path, text, comment) {
+  dump("Logging " + comment + " to " + path + "\n");
+  var file = Cc["@mozilla.org/file/local;1"]
+                  .createInstance(Ci.nsILocalFile);
+  file.initWithPath(path);
+  var foStream = Cc["@mozilla.org/network/file-output-stream;1"]
+                  .createInstance(Ci.nsIFileOutputStream);
+
+  // use 0x02 | 0x10 to open file for appending.
+  foStream.init(file, 0x02 | 0x08 | 0x20, 0666, 0); 
+  // write, create, truncate
+  // In a c file operation, we have no need to set file mode with or operation,
+  // directly using "r" or "w" usually.
+
+  // if you are sure there will never ever be any non-ascii text in data you
+  // can also call foStream.writeData directly
+  var converter = Cc["@mozilla.org/intl/converter-output-stream;1"]
+                    .createInstance(Ci.nsIConverterOutputStream);
+  converter.init(foStream, "UTF-8", 0, 0);
+  converter.writeString(text);
+  converter.close(); // this closes foStream
+  dump("Done logging\n");
 }
 
 // An object to track listeners
@@ -338,6 +368,9 @@ function sbLastFm() {
 			break;
 		case AUTH_PHASE_TOKEN_REQUEST:
 			phase = "authorisation token request";
+			break;
+		case AUTH_PHASE_WEB_LOGIN_GEO:
+			phase = "last.fm geo-detection for weblogin";
 			break;
 		case AUTH_PHASE_WEB_LOGIN:
 			phase = "last.fm website login";
@@ -649,6 +682,11 @@ function sbLastFm_cancelLogin() {
 			if (this._token_xhr)
 				this._token_xhr.abort();
 			break;
+		case AUTH_PHASE_WEB_LOGIN_GEO:
+			phase = "last.fm geo-specific website login";
+			if (this._weblogin_xhr)
+				this._weblogin_xhr.abort();
+			break;
 		case AUTH_PHASE_WEB_LOGIN:
 			phase = "last.fm website login";
 			if (this._weblogin_xhr)
@@ -937,19 +975,49 @@ function sbLastFm_webLogin(success, failure) {
 	var postdata = new Object;
 	postdata["username"] = this.username;
 	postdata["password"] = this.password;
-	postdata["refererKey"] = "";
-	postdata["backto"] = "http://www.last.fm/";
-	postdata["login"] = "Come on in";
-	this.login_phase = AUTH_PHASE_WEB_LOGIN;
-	this._weblogin_xhr = POST("https://www.last.fm/login/", postdata,
-		function(xhr) {
-			if (typeof(success) == "function")
-				success();
-		},
-		function(xhr) {
-			if (typeof(failure) == "function")
-				failure();
-		});
+
+  // Need to determine which Last.fm geo site they get redirected to
+  // Hit up www.last.fm/login and let's see where we get redirected to
+	this.login_phase = AUTH_PHASE_WEB_LOGIN_GEO;
+  this._weblogin_xhr = POST("http://last.fm/login", null,
+      function(xhr) {
+        var loginURL = decodeURI(xhr.channel.URI.spec);
+        dump("Geo login URL: " + loginURL + "\n");
+
+        if (loginURL.match(/backto/)) {
+          // if the user isn't already web authenticated against the
+          // geo-specific last.fm homepage, then they'll get directed to
+          // last.fm/login/... backto=... where they'll login against the
+          // main US last.fm site and get redirected to a successCallback
+          // on the geo-specific site
+          // so parse the geo base domain out of that successCallback
+          self.geoBaseDomain = loginURL.replace(/^.*backto=http%3A%2F%2F/, "")
+                                       .replace(/%2F.*$/, "");
+        } else {
+          // if the user is already authenticated, then they just immediately
+          // get redirected over to that geo-specific homepage
+          // (www.lastfm.fr/home for example), so just parse the TLD out of
+          // that
+          var loginURI = newURI(loginURL);
+          var eTLDService = Cc["@mozilla.org/network/effective-tld-service;1"]
+                              .getService(Ci.nsIEffectiveTLDService);
+          self.geoBaseDomain = "www." + eTLDService.getBaseDomain(loginURI);
+        }
+        dump("Geo base domain: " + self.geoBaseDomain + "\n");
+
+        this.login_phase = AUTH_PHASE_WEB_LOGIN;
+        self._weblogin_xhr = POST(loginURL, postdata,
+          function(xhr) {
+            if (typeof(success) == "function")
+              success();
+          },
+          function(xhr) {
+            if (typeof(failure) == "function")
+              failure();
+          });
+      },
+      function(xhr) {
+      });
 }
 
 // tune the current radio session into a particular lastfm:// uri
@@ -1207,6 +1275,7 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
   cookieMgr.remove(".last.fm", "Session", "/", false);
   cookieMgr.remove(".last.fm", "s_cc", "/", false);
   cookieMgr.remove(".last.fm", "s_sq", "/", false);
+  cookieMgr.remove(".last.fm", "wwwlang", "/", false);
   cookieMgr.remove(".last.fm", "__qcb", "/", false);
   cookieMgr.remove(".last.fm", "TREA", "/", false);
   cookieMgr.remove(".last.fm", "s_nr", "/", false);
@@ -1218,73 +1287,81 @@ sbLastFm.prototype.apiAuth = function sbLastFm_apiAuth(onSuccess, onFailure) {
 
   // get a lastfm desktop session
   var self = this;
-  this.login_phase = AUTH_PHASE_TOKEN_REQUEST;
-  this._token_xhr = this.apiCall('auth.getToken', {
-  }, function response(success, xml, xmlText) {
-    if (!success) {
-		dump("auth.getToken: FAILED TO AUTHENTICATE: " + xmlText + "\n\n");
-		return;
-	}
-
-	var authtoken = xml.getElementsByTagName('token');
-	if (authtoken.length != 1) {
-		dump("auth.getToken: FAILED TO FIND TOKEN: " + xmlText + "\n\n");
-		return;
-	}
-	authtoken = authtoken[0].textContent;
-	dump("auth.getToken SUCCESS: " + authtoken + "\n");
-
-	self.webLogin(function success() {
+	this.webLogin(function success() {
 		dump("webLogin SUCCESS\n");
-		var authurl = "http://www.last.fm/api/grantAccess";
-		var post_params = new Object();
-		post_params["api_key"] = API_KEY;
-		post_params["token"] = authtoken;
-		self.login_phase = AUTH_PHASE_APP_APPROVE;
-		this._appauth_xhr = POST(authurl, post_params, function success(xhr) {
-			dump("api grantAccess SUCCESS\n");
-			self.login_phase = AUTH_PHASE_SESSION_REQUEST;
-			this._session_xhr = self.apiCall('auth.getSession', {
-				token: authtoken
-				}, function response(success, xml, xmlText) {
-					if (!success) {
-						dump("auth.getSession: FAILED TO AUTHENTICATE: " +
-							xmlText + "\n\n");
-						return;
-					}
-					var keys = xml.getElementsByTagName("key");
-					if (keys.length != 1) {
-						dump("auth.getSession: FAILED TO AUTH. TOKEN: " +
-							xmlText + "\n\n");
-						return;
-					}
-					self.sk = keys[0].textContent;
-					dump("auth.getSession: AUTHENTICATED\n");
-					dump("session key: " + self.sk + "\n");
-					Application.prefs.setValue('extensions.lastfm.session_key',
-						self.sk);
-					var subscribers = xml.getElementsByTagName("subscriber");
-					if (subscribers.length == 1)
-						self._subscriber = (subscribers[0].textContent == "1");
-					if (Application.prefs.getValue(
-								"extensions.lastfm.subscriber_override", false))
-						self._subscriber = true;
-					dump("subscriber: " + self._subscriber + "\n");
-					self.listeners.each(function(l) {
-						l.onAuthorisationSuccess();
-					});
 
-					if (typeof(onSuccess) == "function")
-						onSuccess();
-			});
-		}, function failure(xhr) {
-			dump("api grantAccess: FAILED TO AUTHENTICATE: " +
+    self.login_phase = AUTH_PHASE_TOKEN_REQUEST;
+    self._token_xhr = self.apiCall('auth.getToken', { },
+      function response(success, xml, xmlText) {
+        if (!success) {
+          dump("auth.getToken: FAILED TO AUTHENTICATE: " + xmlText + "\n\n");
+          return;
+        }
+
+        var authtoken = xml.getElementsByTagName('token');
+        if (authtoken.length != 1) {
+          dump("auth.getToken: FAILED TO FIND TOKEN: " + xmlText + "\n\n");
+          return;
+        }
+        authtoken = authtoken[0].textContent;
+        dump("auth.getToken SUCCESS: " + authtoken + "\n");
+
+        var authurl = "http://" + self.geoBaseDomain + "/api/grantAccess";
+        dump("api grantAccess URL: " + authurl + "\n");
+        var post_params = new Object();
+        post_params["referer"] = "http://www.last.fm/api/auth?api_key=" +
+              API_KEY + "&token=" + authtoken;
+        post_params["api_key"] = API_KEY;
+        post_params["token"] = authtoken;
+        self.login_phase = AUTH_PHASE_APP_APPROVE;
+        self._appauth_xhr = POST(authurl, post_params, function success(xhr) {
+          dump("api grantAccess SUCCESS\n");
+
+          self.login_phase = AUTH_PHASE_SESSION_REQUEST;
+          self._session_xhr = self.apiCall('auth.getSession', {
+              token: authtoken
+            },
+            function response(success, xml, xmlText) {
+              if (!success) {
+                dump("auth.getSession: FAILED TO AUTHENTICATE: " +
+                  xmlText + "\n\n");
+                return;
+              }
+              var keys = xml.getElementsByTagName("key");
+              if (keys.length != 1) {
+                dump("auth.getSession: FAILED TO AUTH. TOKEN: " +
+                  xmlText + "\n\n");
+                return;
+              }
+              self.sk = keys[0].textContent;
+              dump("auth.getSession: AUTHENTICATED\n");
+              dump("session key: " + self.sk + "\n");
+              Application.prefs.setValue('extensions.lastfm.session_key',
+                self.sk);
+              var subscribers = xml.getElementsByTagName("subscriber");
+              if (subscribers.length == 1)
+                self._subscriber = (subscribers[0].textContent == "1");
+              if (Application.prefs.getValue(
+                    "extensions.lastfm.subscriber_override", false))
+                self._subscriber = true;
+              dump("subscriber: " + self._subscriber + "\n");
+              self.listeners.each(function(l) {
+                l.onAuthorisationSuccess();
+              });
+
+              if (typeof(onSuccess) == "function")
+                onSuccess();
+            });
+        }, function failure(xhr) {
+          dump("api grantAccess: FAILED TO AUTHENTICATE: " +
 					xhr.responseText + "\n\n");
-		});
-	}, function failure() {
-		dump("webLogin FAILED\n");
-	});
-  });
+        });
+    }, function failure() {   // auth.getToken failure
+      dump("webLogin FAILED\n");
+    }); // auth.getToken api call
+  }, function() {
+    dump("weblogin FAILURE\n");
+  }); // weblogin
 }
 
 
