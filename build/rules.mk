@@ -951,7 +951,7 @@ endif
 
 ifdef EXTENSION_VER
    ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-      OUR_EXTENSION_VER = $(EXTENSION_VER)+dev
+      OUR_EXTENSION_VER = $(EXTENSION_VER)+dev-$(shell date +%Y%m%d%H%M)
    else
       OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
    endif
