@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -429,13 +429,19 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
       }
     }
     if (indicesCount > 0) {
-      TRACE(("%s: Modifying %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
-      hr = header->ModifyAttribute(0xFFFF,
-                                   *(indices.get()),
-                                   kMetadataKeys[i].type,
-                                   NULL,
-                                   data,
-                                   dataLength);
+      if (dataLength == 0) {
+        TRACE(("%s: Deleting %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
+        hr = header->DeleteAttribute(0xFFFF,
+                                     *(indices.get()));
+      } else {
+        TRACE(("%s: Modifying %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
+        hr = header->ModifyAttribute(0xFFFF,
+                                     *(indices.get()),
+                                     kMetadataKeys[i].type,
+                                     NULL,
+                                     data,
+                                     dataLength);
+      }
       COM_ENSURE_SUCCESS(hr);
     } else {
       TRACE(("%s: Adding %S\n", __FUNCTION__, kMetadataKeys[i].wmpName));
