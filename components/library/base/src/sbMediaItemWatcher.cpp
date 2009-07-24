@@ -299,6 +299,24 @@ sbMediaItemWatcher::OnItemMoved(sbIMediaList* aMediaList,
 
 
 /**
+ * \brief Called before a media item is cleared.
+ * \param sbIMediaList aMediaList The list that is getting cleared.
+ * \return True if you do not want any further onItemMoved notifications
+ *         for the current batch.  If there is no current batch, the return
+ *         value is ignored.
+ */
+
+NS_IMETHODIMP
+sbMediaItemWatcher::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                        PRBool*       _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+
+/**
  * \Brief Called when a media list is cleared.
  * \return True if you do not want any further onListCleared notifications
  *         for the current batch.  If there is no current batch, the return

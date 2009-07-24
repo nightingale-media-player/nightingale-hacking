@@ -1695,6 +1695,23 @@ NS_IMETHODIMP sbDownloadDevice::OnListCleared(
     return (NS_OK);
 }
 
+/**
+ * \brief Called before a media list is cleared.
+ * \return True if you do not want any further onListCleared notifications
+ *         for the current batch.  If there is no current batch, the return
+ *         value is ignored.
+ */
+
+NS_IMETHODIMP sbDownloadDevice::OnBeforeListCleared(
+    sbIMediaList                *aMediaList,
+    PRBool                      *_retval)
+{
+    /* Validate parameters. */
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    *_retval = PR_FALSE;
+    return (NS_OK);
+}
 
 NS_IMETHODIMP
 sbDownloadDevice::CreatePlaylists(const nsAString &aDeviceIdentifier,

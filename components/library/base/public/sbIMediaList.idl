@@ -54,7 +54,7 @@ interface sbIPropertyArray;
  *
  * \sa List of "see also" interfaces
  */
-[scriptable, uuid(7007a3dd-e298-4fbf-aee1-263a0a42b8ba)]
+[scriptable, uuid(b980ef53-c00e-45db-9ce6-70326a2641b5)]
 interface sbIMediaList : sbIMediaItem
 {
   /*
@@ -944,10 +944,11 @@ interface sbIMediaList : sbIMediaItem
   const unsigned long LISTENER_FLAGS_BEFOREITEMREMOVED = 1 << 1;
   const unsigned long LISTENER_FLAGS_AFTERITEMREMOVED  = 1 << 2;
   const unsigned long LISTENER_FLAGS_ITEMUPDATED       = 1 << 3;
-  const unsigned long LISTENER_FLAGS_LISTCLEARED       = 1 << 4;
-  const unsigned long LISTENER_FLAGS_BATCHBEGIN        = 1 << 5;
-  const unsigned long LISTENER_FLAGS_BATCHEND          = 1 << 6;
-  const unsigned long LISTENER_FLAGS_ITEMMOVED         = 1 << 7;
+  const unsigned long LISTENER_FLAGS_BEFORELISTCLEARED = 1 << 4;
+  const unsigned long LISTENER_FLAGS_LISTCLEARED       = 1 << 5;
+  const unsigned long LISTENER_FLAGS_BATCHBEGIN        = 1 << 6;
+  const unsigned long LISTENER_FLAGS_BATCHEND          = 1 << 7;
+  const unsigned long LISTENER_FLAGS_ITEMMOVED         = 1 << 8;
   const unsigned long LISTENER_FLAGS_ALL               = 0xffffffff;
 
  /**

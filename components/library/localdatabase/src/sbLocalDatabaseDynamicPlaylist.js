@@ -537,6 +537,12 @@ function sbLocalDatabaseDynamicPlaylistService_onItemMoved(aMediaList,
 {
 }
 
+
+sbLocalDatabaseDynamicPlaylistService.prototype.onBeforeListCleared =
+function sbLocalDatabaseDynamicPlaylistService_onBeforeListCleared(aMediaList)
+{
+}
+
 sbLocalDatabaseDynamicPlaylistService.prototype.onListCleared =
 function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
 {

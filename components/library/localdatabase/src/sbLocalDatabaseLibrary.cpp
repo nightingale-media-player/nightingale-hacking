@@ -3321,6 +3321,9 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
 
   sbAutoBatchHelper batchHelper(*this);
 
+  // Notify the library's listeners that the library is about to be cleared
+  NotifyListenersBeforeListCleared(SB_IMEDIALIST_CAST(this));
+
   nsresult rv = mPropertyCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3336,6 +3339,9 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
   for (PRInt32 i = 0; i < lists.Count(); i++) {
     nsCOMPtr<sbILocalDatabaseSimpleMediaList> simple =
       do_QueryInterface(lists[i], &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = simple->NotifyListenersBeforeListCleared(lists[i]);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = simple->NotifyListenersListCleared(lists[i]);

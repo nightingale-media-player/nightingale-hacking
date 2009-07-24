@@ -438,7 +438,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                          sbIMediaList::LISTENER_FLAGS_ITEMADDED |
                          sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
                          sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                         sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                         sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED,
                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -1339,6 +1339,17 @@ sbDeviceLibrary::OnItemMoved(sbIMediaList *aMediaList,
                                   aFromIndex,
                                   aToIndex,
                                   aNoMoreForBatch));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceLibrary::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                     PRBool* aNoMoreForBatch)
+{
+  TRACE(("sbDeviceLibrary[0x%x] - OnListCleared", this));
+
+  SB_NOTIFY_LISTENERS(OnBeforeListCleared(aMediaList,
+                                    aNoMoreForBatch));
   return NS_OK;
 }
 

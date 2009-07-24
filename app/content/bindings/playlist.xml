@@ -491,6 +491,7 @@
     onBeforeItemRemoved: function(list, item, index) {},
     onAfterItemRemoved: function(list, item, index) {},
     onItemMoved: function(list, item, index) {},
+    onBeforeListCleared: function(list) {},
     onListCleared: function(list) {},
     onBatchBegin: function(list) {},
     onBatchEnd: function(list) {},

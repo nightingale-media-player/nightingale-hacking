@@ -700,6 +700,10 @@ addToPlaylistHelper.prototype = {
     return true;
   },
 
+  onBeforeListCleared: function onBeforeListCleared(list) {
+    return true;
+  },
+
   onListCleared: function onListCleared(list) {
     // If we are in a batch, ignore future notifications
     if (!this._inbatch) {

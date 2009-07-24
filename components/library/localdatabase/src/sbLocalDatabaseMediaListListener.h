@@ -177,6 +177,9 @@ protected:
                                 PRUint32 aFromIndex,
                                 PRUint32 aToIndex);
 
+  // Enumerate listeners and call OnBeforeListCleared
+  void NotifyListenersBeforeListCleared(sbIMediaList* aList);
+
   // Enumerate listeners and call OnListCleared
   void NotifyListenersListCleared(sbIMediaList* aList);
 

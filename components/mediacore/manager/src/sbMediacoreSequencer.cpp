@@ -3296,6 +3296,18 @@ sbMediacoreSequencer::OnItemMoved(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP
+sbMediacoreSequencer::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                    PRBool* aNoMoreForBatch)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  // Don't care
+  *aNoMoreForBatch = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbMediacoreSequencer::OnListCleared(sbIMediaList *aMediaList,
                                     PRBool *_retval)
 {

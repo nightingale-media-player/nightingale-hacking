@@ -328,6 +328,7 @@ SmartMediaListsUpdater.prototype = {
   // These do not get called since we don't ask for them, but still implement
   // the complete interface
   // --------------------------------------------------------------------------
+  onBeforeListCleared: function(list) {},
   onBeforeItemRemoved: function(list, item, index) {},
   onItemMoved: function(list, item, index) {},
   

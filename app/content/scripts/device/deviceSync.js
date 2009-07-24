@@ -330,6 +330,16 @@ var DeviceSyncWidget = {
     return false;
   },
 
+  /**
+   * \brief Called before a media list is cleared.
+   * \return True if you do not want any further onListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+
+  onBeforeListCleared: function DeviceSyncWidget_onBeforeListCleared(aMediaList) {
+    return true;
+  },
 
   /**
    * \brief Called when a media list is cleared.

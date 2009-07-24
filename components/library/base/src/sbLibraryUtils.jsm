@@ -412,6 +412,12 @@ LibraryUtils.RemovalMonitor.prototype = {
 
     return false;
   },
+  onBeforeListCleared: function RemovalMonitor_onBeforeListCleared(aMediaList)
+  {
+    //dump("RemovalMonitor: RemovalMonitor.onBeforeListCleared()\n");
+
+    return true;
+  },
   onListCleared: function RemovalMonitor_onListCleared(aMediaList)
   {
     //dump("RemovalMonitor: RemovalMonitor.onListCleared()\n");
@@ -619,6 +625,9 @@ LibraryUtils.GlobalMediaListListener = function(aListener,
     },
     onItemMoved: function(aMediaList, aFromIndex, aToIndex) { 
       return this.cb.listener.onItemMoved(aMediaList, aFromIndex, aToIndex); 
+    },
+    onBeforeListCleared: function(aMediaList) { 
+      return this.cb.listener.onBeforeListCleared(aMediaList); 
     },
     onListCleared: function(aMediaList) { 
       return this.cb.listener.onListCleared(aMediaList); 

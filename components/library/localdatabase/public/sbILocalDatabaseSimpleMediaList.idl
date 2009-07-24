@@ -41,7 +41,7 @@ interface sbIPropertyArray;
  * \interface sbILocalDatabaseMediaListCopyListener
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(feca42a6-f060-4041-8f97-5b750074432f)]
+[scriptable, uuid(deee7fde-ddd4-4a23-9d13-ded73807b060)]
 interface sbILocalDatabaseMediaListCopyListener : nsISupports
 {
   void onItemCopied(in sbIMediaItem aSourceItem, 
@@ -97,6 +97,12 @@ interface sbILocalDatabaseSimpleMediaList : nsISupports
   void notifyListenersAfterItemRemoved(in sbIMediaList aList,
                                        in sbIMediaItem aItem,
                                        in unsigned long aIndex);
+
+  /**
+   * \brief Notify the simple media list's listeners that it has about to be
+   *        cleared
+   */
+  void notifyListenersBeforeListCleared(in sbIMediaList aList);
 
   /**
    * \brief Notify the simple media list's listeners that it has been cleared

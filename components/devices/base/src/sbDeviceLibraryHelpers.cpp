@@ -302,6 +302,17 @@ sbLibraryUpdateListener::OnListCleared(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP
+sbLibraryUpdateListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                             PRBool *_retval)
+{
+  NS_NOTREACHED("Why are we here?");
+  if (_retval) {
+    *_retval = PR_TRUE; /* stop */
+  }
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLibraryUpdateListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
   return NS_OK;
@@ -486,6 +497,16 @@ sbPlaylistSyncListener::OnItemMoved(sbIMediaList *aMediaList,
     *_retval = PR_FALSE; /* don't stop */
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbPlaylistSyncListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                            PRBool *_retval)
+{
+  if (_retval) {
+    *_retval = PR_TRUE; /* stop */
+  }
   return NS_OK;
 }
 

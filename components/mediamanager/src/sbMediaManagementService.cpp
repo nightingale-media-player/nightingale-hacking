@@ -405,6 +405,16 @@ sbMediaManagementService::OnItemMoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
+/* boolean onBeforeListCleared (in sbIMediaList aMediaList); */
+NS_IMETHODIMP
+sbMediaManagementService::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                              PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE; /* skip all further OnListCleared */
+  return NS_OK;
+}
+
 /* boolean onListCleared (in sbIMediaList aMediaList); */
 NS_IMETHODIMP
 sbMediaManagementService::OnListCleared(sbIMediaList *aMediaList,

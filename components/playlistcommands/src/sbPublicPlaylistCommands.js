@@ -1727,6 +1727,10 @@ function plCmd_DownloadInit(aContext, aHost) {
       return this.onMediaListChanged();
     },
 
+    onBeforeListCleared: function(aMediaList) {
+      return true;
+    },
+
     onListCleared: function(aMediaList) {
       return this.onMediaListChanged();
     },

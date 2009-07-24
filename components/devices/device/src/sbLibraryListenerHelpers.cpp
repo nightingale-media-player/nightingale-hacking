@@ -123,6 +123,61 @@ nsresult sbBaseIgnore::UnignoreMediaItem(sbIMediaItem * aItem) {
   return NS_OK;
 }
 
+/**
+ * Enumerator class that populates the array it is given
+ */
+class MediaItemContentSrcArrayCreator : public sbIMediaListEnumerationListener
+{
+public:
+  MediaItemContentSrcArrayCreator(nsIMutableArray* aURIs) : 
+    mURIs(aURIs)
+   {}
+  NS_DECL_ISUPPORTS
+  NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
+private:
+  nsCOMPtr<nsIMutableArray> mURIs;
+};
+
+NS_IMPL_ISUPPORTS1(MediaItemContentSrcArrayCreator,
+                   sbIMediaListEnumerationListener)
+
+NS_IMETHODIMP
+MediaItemContentSrcArrayCreator::OnEnumerationBegin(sbIMediaList*,
+                                                    PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+MediaItemContentSrcArrayCreator::OnEnumeratedItem(sbIMediaList*,
+                                                  sbIMediaItem* aItem,
+                                                  PRUint16 *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsCOMPtr<nsIURI> uri;
+  rv = aItem->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = mURIs->AppendElement(uri, PR_FALSE);
+  NS_ENSURE_TRUE(rv, rv);
+
+  *_retval = sbIMediaListEnumerationListener::CONTINUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+MediaItemContentSrcArrayCreator::OnEnumerationEnd(sbIMediaList*,
+                                                  nsresult)
+{
+  return NS_OK;
+}
+
 //sbBaseDeviceLibraryListener class.
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener, 
                               sbIDeviceLibraryListener,
@@ -264,15 +319,51 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
 
   *aNoMoreForBatch = PR_FALSE;
   
-  /* yay, we're going to wipe the device! */
+  return NS_OK;
+}
+NS_IMETHODIMP
+sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                 PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
+  nsresult rv;
+  
+  /* yay, we're going to wipe the device! */
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
-  
-  nsresult rv;
-  rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WIPE,
-                            aMediaList);
+
+  // We capture the list of content that's going to be deleted here
+  // and hand it over to the device as an nsIArray<nsIURIs> through 
+  // the TransferRequest's data member.
+  nsCOMPtr<nsIMutableArray> uris =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<MediaItemContentSrcArrayCreator> creator = 
+                                  new MediaItemContentSrcArrayCreator(uris);
+  rv = aMediaList->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                                            NS_LITERAL_STRING("0"),
+                                            creator,
+                                            sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<sbBaseDevice::TransferRequest> req = sbBaseDevice::TransferRequest::New();
+  NS_ENSURE_TRUE(req, NS_ERROR_OUT_OF_MEMORY);
+  req->type = sbBaseDevice::TransferRequest::REQUEST_WIPE;
+  req->item = aMediaList;
+  req->list = nsnull;
+  req->index = PR_UINT32_MAX;
+  req->otherIndex = PR_UINT32_MAX;
+  req->priority = sbBaseDevice::TransferRequest::PRIORITY_DEFAULT;
+
+  // the important bit
+  req->data = uris;
+
+  rv = mDevice->PushRequest(req);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -596,6 +687,13 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
     *_retval = PR_FALSE; /* don't stop */
   }
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceMediaListListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                   PRBool *_retval)
+{
   return NS_OK;
 }
 

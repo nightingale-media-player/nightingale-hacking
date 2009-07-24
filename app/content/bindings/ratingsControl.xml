@@ -262,6 +262,9 @@
             
             onItemMoved: function(aMediaList, aFromIndex, aToIndex) {
             },
+
+            onBeforeListCleared: function(aMediaList) {
+            },
             
             onListCleared: function(aMediaList) {
             },

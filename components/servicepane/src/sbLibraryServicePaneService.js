@@ -1864,6 +1864,9 @@ function sbLibraryServicePane_onItemMoved(aMediaList,
                                           aFromIndex,
                                           aToIndex) {
 }
+sbLibraryServicePane.prototype.onBeforeListCleared =
+function sbLibraryServicePane_onBeforeListCleared(aMediaList) {
+}
 sbLibraryServicePane.prototype.onListCleared =
 function sbLibraryServicePane_onListCleared(aMediaList) {
   if (this._batch.isActive()) {

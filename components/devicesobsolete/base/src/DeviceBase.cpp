@@ -517,6 +517,17 @@ sbDeviceBaseLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP 
+sbDeviceBaseLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
+                                                 PRBool* aNoMoreForBatch)
+{
+  /* Validate parameters. */
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  *aNoMoreForBatch = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
 sbDeviceBaseLibraryListener::OnListCleared(sbIMediaList *aMediaList,
                                            PRBool* aNoMoreForBatch)
 {

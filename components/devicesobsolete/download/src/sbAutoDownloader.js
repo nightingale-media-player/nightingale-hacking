@@ -215,6 +215,10 @@ sbAutoDownloader.prototype.onItemMoved =
 function sbAutoDownloader_onItemMoved(aMediaList, aFromIndex, aToIndex) {
   DEBUG();
 }
+sbAutoDownloader.prototype.onBeforeListCleared =
+function sbAutoDownloader_onBeforeListCleared(aMediaList) {
+  DEBUG();
+}
 sbAutoDownloader.prototype.onListCleared =
 function sbAutoDownloader_onListCleared(aMediaList) {
   DEBUG();

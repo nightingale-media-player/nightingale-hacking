@@ -1182,6 +1182,13 @@ sbMediaExportService::OnItemMoved(sbIMediaList *aMediaList,
   LOG(("%s: Media Item Moved!", __FUNCTION__));
   return NS_OK;
 }
+NS_IMETHODIMP 
+sbMediaExportService::OnBeforeListCleared(sbIMediaList *aMediaList, 
+                                    PRBool *aRetVal)
+{
+  LOG(("%s: Media List Before Cleared!", __FUNCTION__));
+  return NS_OK;
+}
 
 NS_IMETHODIMP 
 sbMediaExportService::OnListCleared(sbIMediaList *aMediaList, 

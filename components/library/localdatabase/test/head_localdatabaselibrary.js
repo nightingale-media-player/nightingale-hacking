@@ -248,6 +248,10 @@ TestMediaListListener.prototype = {
   onBatchEnd: function onBatchEnd(list) {
     this._batchEndList = list;
   },
+  // XXX: implement the tests for this function
+  onBeforeListCleared: function onBeforeListCleared() {
+    return this._retval;
+  },
   onListCleared: function onListCleared() {
     this._listCleared = true;
     return this._retval;

@@ -44,7 +44,7 @@ interface sbIPropertyArray;
 *
 * \sa sbIMediaList
 */
-[scriptable, uuid(a99bcdbf-166d-409a-8375-f617944397c2)]
+[scriptable, uuid(9a692dd8-7711-43d1-a9d9-a7a87bdc918e)]
 interface sbIMediaListListener : nsISupports
 {
   /**
@@ -112,6 +112,14 @@ interface sbIMediaListListener : nsISupports
   boolean onItemMoved(in sbIMediaList aMediaList,
                       in unsigned long aFromIndex,
                       in unsigned long aToIndex);
+
+  /**
+   * \Brief Called before a media list is cleared.
+   * \return True if you do not want any further onBeforeListCleared notifications
+   *         for the current batch.  If there is no current batch, the return
+   *         value is ignored.
+   */
+  boolean onBeforeListCleared(in sbIMediaList aMediaList);
 
   /**
    * \Brief Called when a media list is cleared.

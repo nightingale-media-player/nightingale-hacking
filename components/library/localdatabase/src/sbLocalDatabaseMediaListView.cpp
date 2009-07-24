@@ -1598,6 +1598,19 @@ sbLocalDatabaseMediaListView::OnItemMoved(sbIMediaList* aMediaList,
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseMediaListView::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                                  PRBool* aNoMoreForBatch)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
+
+  // Don't care
+
+  *aNoMoreForBatch = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseMediaListView::OnListCleared(sbIMediaList* aMediaList,
                                             PRBool* aNoMoreForBatch)
 {

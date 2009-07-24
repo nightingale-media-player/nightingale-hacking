@@ -1182,6 +1182,12 @@ sbLocalDatabaseSimpleMediaList::Clear()
   nsresult rv;
   PRInt32 dbOk;
 
+  nsCOMPtr<sbIMediaList> mediaList =
+    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(mediaList);
+
   nsCOMPtr<sbIDatabaseQuery> query;
   rv = MakeStandardQuery(getter_AddRefs(query));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1195,10 +1201,6 @@ sbLocalDatabaseSimpleMediaList::Clear()
 
   // Invalidate the cached list
   rv = GetArray()->Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbIMediaList> mediaList =
-    do_QueryInterface(NS_ISUPPORTS_CAST(sbILocalDatabaseSimpleMediaList*, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
@@ -1235,6 +1237,7 @@ sbLocalDatabaseSimpleMediaList::NotifyContentChanged()
     sbAutoBatchHelper batchHelper(*this);
 
     // First, notify listeners that the list has been cleared
+    sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(mediaList);
     sbLocalDatabaseMediaListListener::NotifyListenersListCleared(mediaList);
 
     // Then send an ITEMADDED notification for each item that we now have in the list
@@ -1416,6 +1419,15 @@ sbLocalDatabaseSimpleMediaList::NotifyListenersAfterItemRemoved(sbIMediaList* aL
   sbLocalDatabaseMediaListListener::NotifyListenersAfterItemRemoved(aList,
                                                                     aItem,
                                                                     aIndex);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseSimpleMediaList::NotifyListenersBeforeListCleared(sbIMediaList* aList)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+
+  sbLocalDatabaseMediaListListener::NotifyListenersBeforeListCleared(aList);
   return NS_OK;
 }
 
