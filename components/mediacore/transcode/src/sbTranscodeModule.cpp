@@ -32,10 +32,12 @@
 #include <nsIGenericFactory.h>
 #include "sbTranscodeManager.h"
 #include "sbTranscodeAlbumArt.h"
+#include "sbTranscodeBatchJobItem.h"
 
 NS_GENERIC_FACTORY_SINGLETON_CONSTRUCTOR(sbTranscodeManager,
         sbTranscodeManager::GetSingleton)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeAlbumArt);
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbTranscodeBatchJobItem);
 
 static nsModuleComponentInfo components[] =
 {
@@ -50,6 +52,12 @@ static nsModuleComponentInfo components[] =
     SONGBIRD_TRANSCODEALBUMART_CID,
     SONGBIRD_TRANSCODEALBUMART_CONTRACTID,
     sbTranscodeAlbumArtConstructor
+  },
+  {
+    SONGBIRD_TRANSCODEBATCHJOBITEM_CLASSNAME,
+    SONGBIRD_TRANSCODEBATCHJOBITEM_CID,
+    SONGBIRD_TRANSCODEBATCHJOBITEM_CONTRACTID,
+    sbTranscodeBatchJobItemConstructor
   }
 };
 

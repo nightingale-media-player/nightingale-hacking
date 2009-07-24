@@ -1004,6 +1004,15 @@ protected:
                                     nsIURI*       aWriteSrcURI = nsnull);
 
   /**
+   * Determine the content source for the device write destination, as above,
+   * but return it in aContentSrc, rather than setting it on the media item.
+   */
+  nsresult GetDeviceWriteContentSrc(sbIMediaItem* aWriteDstItem,
+                          nsIURI*       aContentSrcBaseURI,
+                          nsIURI*       aWriteSrcURI,
+                          nsIURI **     aContentSrc);
+
+  /**
    * Present the user with a dialog for the initial device setup.
    */
 

@@ -50,6 +50,22 @@ interface sbITranscodeBatchJobItem : nsISupports
   attribute nsIFile destinationFile;
 };
 
+%{C++
+#define SONGBIRD_TRANSCODEBATCHJOBITEM_DESCRIPTION          \
+  "Songbird Transcode Batch Job Item Component"
+#define SONGBIRD_TRANSCODEBATCHJOBITEM_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Transcode/BatchJobItem;1"
+#define SONGBIRD_TRANSCODEBATCHJOBITEM_CLASSNAME               \
+  "Songbird Batch Job Item"
+#define SONGBIRD_TRANSCODEBATCHJOBITEM_CID                     \
+{ /* 59d47492-e0c5-4cb5-8276-3fd61f33c3b6 */              \
+  0x59d47492,                                             \
+  0xe0c5,                                                 \
+  0x4cb5,                                                 \
+  {0x82, 0x76, 0x3f, 0xd6, 0x1f, 0x33, 0xc3, 0xb6}        \
+}
+%}
+
 /**
  * \interface sbITranscodeBatchJob
  * \brief An object that manages transcoding a set of streams to a common

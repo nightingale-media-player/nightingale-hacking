@@ -3625,14 +3625,16 @@ nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
   return NS_OK;
 }
 
-nsresult sbBaseDevice::SetDeviceWriteContentSrc
+nsresult sbBaseDevice::GetDeviceWriteContentSrc
                          (sbIMediaItem* aWriteDstItem,
                           nsIURI*       aContentSrcBaseURI,
-                          nsIURI*       aWriteSrcURI)
+                          nsIURI*       aWriteSrcURI,
+                          nsIURI **     aContentSrc)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aWriteDstItem);
   NS_ENSURE_ARG_POINTER(aContentSrcBaseURI);
+  NS_ENSURE_ARG_POINTER(aContentSrc);
 
   // Function variables.
   nsString         kIllegalChars =
@@ -3803,6 +3805,20 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
                                          getter_AddRefs(contentSrc));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  contentSrc.forget(aContentSrc);
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::SetDeviceWriteContentSrc
+                         (sbIMediaItem* aWriteDstItem,
+                          nsIURI*       aContentSrcBaseURI,
+                          nsIURI*       aWriteSrcURI)
+{
+  nsCOMPtr<nsIURI> contentSrc;
+  nsresult rv = GetDeviceWriteContentSrc(aWriteDstItem, 
+                                         aContentSrcBaseURI,
+                                         aWriteSrcURI,
+                                         getter_AddRefs(contentSrc));
   // Set the write destination item content source.
   rv = aWriteDstItem->SetContentSrc(contentSrc);
   NS_ENSURE_SUCCESS(rv, rv);
