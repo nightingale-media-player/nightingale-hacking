@@ -78,7 +78,6 @@ deviceErrorMonitor.prototype = {
   _xpcom_categories: deviceErrorMonitorConfig.categoryList,
 
   // Internal properties
-  _deviceManagerSvc: null,
   _deviceList: [],
   _sbStrings: null,
   
@@ -88,9 +87,9 @@ deviceErrorMonitor.prototype = {
    * \brief Initialize the deviceErrorMonitor service.
    */
   _init: function deviceErrorMonitor__init() {
-    this._deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                               .getService(Ci.sbIDeviceManager2);
-    this._deviceManagerSvc.addEventListener(this);
+    var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                             .getService(Ci.sbIDeviceManager2);
+    deviceManagerSvc.addEventListener(this);
     var sbs = Cc["@mozilla.org/intl/stringbundle;1"]
                 .getService(Ci.nsIStringBundleService);
     this._sbStrings = sbs.createBundle("chrome://songbird/locale/songbird.properties");
@@ -100,7 +99,9 @@ deviceErrorMonitor.prototype = {
    * \brief Shutdown (cleanup) the deviceErrorMonitorService.
    */
   _shutdown: function deviceErrorMonitor__shutdown() {
-    this._deviceManagerSvc.removeEventListener(this);
+    var deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                             .getService(Ci.sbIDeviceManager2);
+    deviceManagerSvc.removeEventListener(this);
     while(this._deviceList.length > 0) {
       if (this._deviceList[0].device) {
         this._removeDevice(this._deviceList[0].device);
@@ -301,7 +302,7 @@ deviceErrorMonitor.prototype = {
   observe: function deviceErrorMonitor_observer(subject, topic, data) {
     var obsSvc = Cc['@mozilla.org/observer-service;1']
                    .getService(Ci.nsIObserverService);
-                   
+
     switch (topic) {
       case 'quit-application':
         obsSvc.removeObserver(this, 'quit-application');
