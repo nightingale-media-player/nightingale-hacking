@@ -640,6 +640,9 @@
 <!ENTITY import_library.dirty_playlist_dialog.note         "Note: Merge and replace cannot be undone.">
 <!ENTITY import_library.dirty_playlist_dialog.apply_all    "Apply selection to all playlists">
 
+<!-- Watch folder general description. -->
+<!ENTITY watch_folder.prefs.general_description "Do not enable Watch Folders on the same directory as your Manage Music folder. Doing so will create duplicates in your library.">
+
 <!-- Watch folder preference entities. -->
 <!ENTITY watch_folder.prefs.title                  "Watch Folders">
 <!ENTITY watch_folder.prefs.settings_group_caption "Watch Folder Settings">

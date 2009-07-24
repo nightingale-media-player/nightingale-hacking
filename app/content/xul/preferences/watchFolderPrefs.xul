@@ -126,6 +126,10 @@
           </hbox>
   
         </groupbox>
+
+        <groupbox>
+          <description>&watch_folder.prefs.general_description;</description>
+        </groupbox>
       </notificationbox>
 
     </tabpanel> <!-- watch_folder_tabpanel -->

@@ -1,4 +1,8 @@
 <!-- Songbird-specific preferences entities -->
+<!-- Media Management general description -->
+<!ENTITY prefWindow.manageMedia.generalDescription.p1 "Managed Mode will reorganize all of the music in your Songbird library. This cannot be undone.">
+<!ENTITY prefWindow.manageMedia.generalDescription.p2 "Enable Managed Mode and dismiss this window to start the management process.">
+<!ENTITY prefWindow.manageMedia.generalDescription.p3 "Do not manage music into your Watch Folder directory if you are also using Watch Folders. Doing so will create duplicates in your library.">
 
 <!-- Media Management entities -->
 <!ENTITY prefWindow.manageMedia.label                 "Manage Music">

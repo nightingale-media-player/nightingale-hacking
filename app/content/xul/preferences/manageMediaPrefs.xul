@@ -123,6 +123,13 @@
                 label="&prefWindow.manageMedia.enable.preview.label;"
                 oncommand="return manageMediaPrefsPane.doDisplayPreview();"/>
       </hbox>
+
+      <groupbox>
+        <description>&prefWindow.manageMedia.generalDescription.p1;</description>
+        <description>&prefWindow.manageMedia.generalDescription.p2;</description>
+        <description>&prefWindow.manageMedia.generalDescription.p3;</description>
+      </groupbox>
+      
     </notificationbox>
 
   </prefpane>
