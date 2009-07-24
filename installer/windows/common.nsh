@@ -218,25 +218,25 @@ FunctionEnd
       StrCpy $InstallerMode ${InstallerBuildMode}
       StrCpy $InstallerType ${InstallerBuildType}
 
-      ${${un}GetParameters} $R0
+      ${${un}GetParameters} $R1
       ClearErrors
 
-      ${${un}GetOptions} $R0 "/NOMUTEX" $0
+      ${${un}GetOptions} $R1 "/NOMUTEX" $0
       IfErrors +2 0
-        StrCpy $0 ${TRUE}
+         StrCpy $0 ${TRUE}
          
       ${If} $0 == ""
-        ReadEnvStr $0 SB_INSTALLER_NOMUTEX
+         ReadEnvStr $0 SB_INSTALLER_NOMUTEX
       ${EndIf}
       
       ${If} $0 == ""
-        System::Call 'kernel32::CreateMutexA(i, i, t) v (0, 0, "${InstallerMutexName}") ?e'
-        Pop $R0
-        ${If} $R0 != 0
-           IfSilent +2
-           MessageBox MB_OK|MB_ICONSTOP "${InstallerRunningMesg}"
-           Abort
-        ${EndIf}
+         System::Call 'kernel32::CreateMutexA(i, i, t) v (0, 0, "${InstallerMutexName}") ?e'
+         Pop $R0
+         ${If} $R0 != 0
+            IfSilent +2
+            MessageBox MB_OK|MB_ICONSTOP "${InstallerRunningMesg}"
+            Abort
+         ${EndIf}
       ${EndIf}
       ClearErrors
 
@@ -244,17 +244,17 @@ FunctionEnd
       # centralize the option parsing (and other options do make sense for
       # the uninstaller), so we basically just ignore the option, even if
       # it somehow gets set.
-      ${${un}GetOptions} $R0 "/UNPACK" $0
+      ${${un}GetOptions} $R1 "/UNPACK" $0
       IfErrors +2 0
          StrCpy $UnpackMode ${TRUE}
          
       ReadEnvStr $0 SB_INSTALLER_UNPACK
       ${If} $0 != ""
-        StrCpy $UnpackMode ${TRUE}
+         StrCpy $UnpackMode ${TRUE}
       ${EndIf}
       ClearErrors
 
-      ${${un}GetOptions} $R0 "/DIST" $0
+      ${${un}GetOptions} $R1 "/DIST" $0
       IfErrors +4 0
          StrCpy $DistributionMode ${TRUE}
          StrCpy $InstallerType "dist"
@@ -264,7 +264,7 @@ FunctionEnd
       ${If} $0 != ""
          StrCpy $DistributionMode ${TRUE}
          StrCpy $InstallerType "dist"
-         StrCpy $DistributionName $0
+         StrCpy $DistributionName $0 # no strip; env vars don't have "=" in it
       ${EndIf}
       ClearErrors
 
@@ -275,13 +275,13 @@ FunctionEnd
          ${EndIf}
       ${EndIf}
 
-      ${${un}GetOptions} $R0 "/DEBUG" $0
+      ${${un}GetOptions} $R1 "/DEBUG" $0
       IfErrors +2 0
          StrCpy $InstallerMode "debug"
          
       ReadEnvStr $0 SB_INSTALLER_DEBUG
       ${If} $0 != ""
-        StrCpy $InstallerMode "debug"
+         StrCpy $InstallerMode "debug"
       ${EndIf}
       ClearErrors
 

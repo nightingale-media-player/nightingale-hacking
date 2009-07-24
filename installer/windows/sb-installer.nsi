@@ -386,9 +386,9 @@ Function .onInit
 
    Call CommonInstallerInit
 
-   ; Explain this; include details about why it's nightly only, and the
-   ; differences in RootAppRegistryKey
-   ${If} $InstallerType != "nightly"
-      Call PreviousInstallationCheck
+   ${If} $UnpackMode != ${TRUE} 
+      ${If} $InstallerType != "nightly"
+         Call PreviousInstallationCheck
+      ${EndIf}
    ${EndIf}
 FunctionEnd
