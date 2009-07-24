@@ -383,7 +383,7 @@ sbLibraryImporterManager.prototype = {
         this._handleLibraryManagerReady();
         break;
 
-      case "quit-application" :
+      case "songbird-library-manager-before-shutdown" :
         this._handleAppQuit();
         break;
 
@@ -472,7 +472,7 @@ sbLibraryImporterManager.prototype = {
     if (!this._observerSvc) {
       this._observerSvc = Cc["@mozilla.org/observer-service;1"]
                             .getService(Ci.nsIObserverService);
-      this._observerSvc.addObserver(this, "quit-application", false);
+      this._observerSvc.addObserver(this, "songbird-library-manager-before-shutdown", false);
       this._observerSvc.addObserver(this, "profile-after-change", false);
       this._observerSvc.addObserver(this,
                                     "songbird-library-manager-ready",
@@ -528,7 +528,7 @@ sbLibraryImporterManager.prototype = {
 
   _finalize: function sbLibraryImporterManager__finalize() {
     // Remove observers.
-    this._observerSvc.removeObserver(this, "quit-application");
+    this._observerSvc.removeObserver(this, "songbird-library-manager-before-shutdown");
     this._observerSvc.removeObserver(this, "profile-after-change");
     this._observerSvc.removeObserver(this, "songbird-library-manager-ready");
 
@@ -607,6 +607,7 @@ sbLibraryImporterManager.prototype = {
 
       // Finalize the library importer.
       libraryImporter.finalize();
+      libraryImporter = null;
     }
   },
 
