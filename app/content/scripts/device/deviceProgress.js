@@ -222,7 +222,7 @@ var DPW = {
   //   _progressInfoBox         Device progress info.
   //   _syncButton              Sync button element.
   //   _idleBox                 Idle message & spacer.
-  //   _cancelButton            Cancel button element.
+  //   _cancelButtonBox         Cancel button box element.
   //   _finishButton            Finish button element.
   //   _progressMeter           Progress meter element.
   //   _progressTextLabel       Progress text label element.
@@ -242,7 +242,7 @@ var DPW = {
 
   _progressInfoBox: null,
   _syncButton: null,
-  _cancelButton: null,
+  _cancelButtonBox: null,
   _ejectInfoButtons: null,
   _finishButton: null,
   _progressMeter: null,
@@ -274,7 +274,7 @@ var DPW = {
     this._progressInfoBox  = this._getElement("progress_information_box");
     this._syncButton       = this._getElement("sync_operation_button");
     this._ejectInfoButtons = this._getElement("ejectinfo_button_box");
-    this._cancelButton = this._getElement("cancel_operation_button");
+    this._cancelButtonBox = this._getElement("cancel_operation_box");
     this._finishButton = this._getElement("finish_progress_button");
     this._progressMeter = this._getElement("progress_meter");
     this._progressTextLabel = this._getElement("progress_text_label");
@@ -326,7 +326,7 @@ var DPW = {
     this._idleBox = null;
     this._syncButton   = null;
     this._ejectInfoButtons = null;
-    this._cancelButton = null;
+    this._cancelButtonBox = null;
     this._finishButton = null;
     this._progressMeter = null;
     this._progressTextLabel = null;
@@ -380,8 +380,11 @@ var DPW = {
     this._syncButton.hidden = this._showProgress;
     this._ejectInfoButtons.hidden = this._showProgress;
 
-    // Set cancel and hide button hidden property.
-    this._cancelButton.hidden = cancelButtonHidden;
+    // Set cancel and hide button hidden property.  The device cancel command
+    // widget automatically hides/shows itself depending upon the device state.
+    // Thus, the cancel button is hidden by hiding an enclosing box so as not to
+    // interfere with the internal cancel hiding logic.
+    this._cancelButtonBox.hidden = cancelButtonHidden;
     this._finishButton.hidden = finishButtonHidden;
   },
 

@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -71,6 +71,7 @@
    *   sync                     Device is syncing content.
    *   update                   Device is updating content.
    *   transcode                Device is transcoding content.
+   *   format                   Device is being formatted.
    *   busy                     Device is busy.
    *   idle                     Device is idle.
    *   mgmt_not_manual          Device is not configured for manual management.
@@ -466,7 +467,9 @@
    *
    * Device cancel command widget.
    *
-   *   This widget implements a device cancel command.
+   *   This widget implements a device cancel command.  It disables itself if
+   * the device is in the middle of a cancel.  It hides itself if the device is
+   * in the middle of a format.
    *
    *****************************************************************************
    ************************************************************************* -->
@@ -478,6 +481,8 @@
                              listentodevice="true"
                              label="&command.device.cancel;"
                              accesskey="&command.device.cancel.accesskey;"
+                             hidden_default="remove_attribute"
+                             hidden_format="true"
                              disabled_default="remove_attribute"
                              disabled_cancel="true"
                              action="cancel"/>

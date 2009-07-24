@@ -6,7 +6,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -127,10 +127,12 @@
           <xul:sb-device-sync-command bindelem="prev" xbl:inherits="device-id"/>
 
           <!-- Cancel device operation button. -->
-          <xul:button sbid="cancel_operation_button"
-                      class="device-progress-button"/>
-          <xul:sb-device-cancel-command bindelem="prev"
-                                        xbl:inherits="device-id"/>
+          <xul:box sbid="cancel_operation_box">
+            <xul:button sbid="cancel_operation_button"
+                        class="device-progress-button"/>
+            <xul:sb-device-cancel-command bindelem="prev"
+                                          xbl:inherits="device-id"/>
+          </xul:box>
 
           <!-- Finish progress button. -->
           <xul:button sbid="finish_progress_button"
