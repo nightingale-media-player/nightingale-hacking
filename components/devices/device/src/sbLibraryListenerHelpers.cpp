@@ -302,6 +302,16 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   
   nsresult rv;
   
+  /* If the item is hidden, then it wasn't transferred to the device (which
+     will clear the hidden property once the transfer is complete), so don't
+     delete it
+   */
+  nsString hiddenValue;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                               hiddenValue);
+  if (NS_SUCCEEDED(rv) && hiddenValue.Equals(NS_LITERAL_STRING("1")))
+    return NS_OK;
+
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_DELETE,
                             aMediaItem, aMediaList, aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
