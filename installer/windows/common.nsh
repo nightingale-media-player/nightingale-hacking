@@ -212,14 +212,6 @@ FunctionEnd
    !insertmacro ${un}GetOptions
 
    Function ${un}CommonInstallerInit
-      System::Call 'kernel32::CreateMutexA(i, i, t) v (0, 0, "${InstallerMutexName}") ?e'
-      Pop $R0
-      ${If} $R0 != 0
-         IfSilent +2
-         MessageBox MB_OK|MB_ICONSTOP "${InstallerRunningMesg}"
-         Abort
-      ${EndIf}
-
       StrCpy $UnpackMode ${FALSE}
       StrCpy $DistributionMode ${FALSE}
       StrCpy $DistributionName ${DefaultDistributionName}
@@ -227,7 +219,25 @@ FunctionEnd
       StrCpy $InstallerType ${InstallerBuildType}
 
       ${${un}GetParameters} $R0
+      ClearErrors
 
+      ${${un}GetOptions} $R0 "/NOMUTEX" $0
+      IfErrors +2 0
+        StrCpy $0 ${TRUE}
+         
+      ${If} $0 == ""
+        ReadEnvStr $0 SB_INSTALLER_NOMUTEX
+      ${EndIf}
+      
+      ${If} $0 == ""
+        System::Call 'kernel32::CreateMutexA(i, i, t) v (0, 0, "${InstallerMutexName}") ?e'
+        Pop $R0
+        ${If} $R0 != 0
+           IfSilent +2
+           MessageBox MB_OK|MB_ICONSTOP "${InstallerRunningMesg}"
+           Abort
+        ${EndIf}
+      ${EndIf}
       ClearErrors
 
       # This really doesn't make sense for the uninstaller, but we want to
@@ -237,12 +247,26 @@ FunctionEnd
       ${${un}GetOptions} $R0 "/UNPACK" $0
       IfErrors +2 0
          StrCpy $UnpackMode ${TRUE}
+         
+      ReadEnvStr $0 SB_INSTALLER_UNPACK
+      ${If} $0 != ""
+        StrCpy $UnpackMode ${TRUE}
+      ${EndIf}
+      ClearErrors
 
       ${${un}GetOptions} $R0 "/DIST" $0
       IfErrors +4 0
          StrCpy $DistributionMode ${TRUE}
          StrCpy $InstallerType "dist"
          StrCpy $DistributionName $0 "" 1 # strip the "=" from argument's "=foo"
+
+      ReadEnvStr $0 SB_INSTALLER_DIST
+      ${If} $0 != ""
+         StrCpy $DistributionMode ${TRUE}
+         StrCpy $InstallerType "dist"
+         StrCpy $DistributionName $0
+      ${EndIf}
+      ClearErrors
 
       ${If} $DistributionMode == ${TRUE}
          ${If} $DistributionName == ""
@@ -254,6 +278,12 @@ FunctionEnd
       ${${un}GetOptions} $R0 "/DEBUG" $0
       IfErrors +2 0
          StrCpy $InstallerMode "debug"
+         
+      ReadEnvStr $0 SB_INSTALLER_DEBUG
+      ${If} $0 != ""
+        StrCpy $InstallerMode "debug"
+      ${EndIf}
+      ClearErrors
 
       Call ${un}SetRootRegistryKey
 

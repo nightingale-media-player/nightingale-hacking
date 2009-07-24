@@ -329,9 +329,12 @@ FunctionEnd
 
 Function CallUninstaller
    Exch $0
-   ExecWait '$0\${FileUninstallEXE} /S _?=$0'
-   Delete '$0\${FileUninstallEXE}'
+   Push $1
+   System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("SB_INSTALLER_NOMUTEX", "1").r1'
+   ExecWait '"$0\${FileUninstallEXE}" /S _?=$0'
+   Delete $0\${FileUninstallEXE}
    RMDir $0
+   Pop $1
    Pop $0
 FunctionEnd
 
