@@ -134,7 +134,7 @@ NS_INTERFACE_MAP_BEGIN(sbDeviceLibrary)
   NS_INTERFACE_MAP_ENTRY(sbILocalDatabaseMediaListCopyListener)
   NS_INTERFACE_MAP_ENTRY_AMBIGUOUS(nsISupports, sbIDeviceLibrary)
 NS_INTERFACE_MAP_END
-  
+
 NS_IMPL_CI_INTERFACE_GETTER6(sbDeviceLibrary,
                              nsIClassInfo,
                              sbIDeviceLibrary,
@@ -183,7 +183,7 @@ sbDeviceLibrary::~sbDeviceLibrary()
   if(mLock) {
     nsAutoLock::DestroyLock(mLock);
   }
-  
+
   TRACE(("DeviceLibrary[0x%.8x] - Destructed", this));
 }
 
@@ -234,7 +234,7 @@ sbDeviceLibrary::Finalize()
 
   if (deviceLibrary)
     UnregisterDeviceLibrary(deviceLibrary);
-  
+
   // let go of the owner device
   mDevice = nsnull;
 
@@ -274,25 +274,25 @@ NS_IMETHODIMP sbPlaylistAttachListenerEnumerator::OnEnumeratedItem(sbIMediaList*
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mListener, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsresult rv;
-  
+
   // check if the list has a custom type
   nsString customType;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
                           customType);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  if (customType.IsEmpty() || 
+
+  if (customType.IsEmpty() ||
       customType.EqualsLiteral("simple")) {
     nsCOMPtr<sbIMediaList> list(do_QueryInterface(aItem, &rv));
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     rv = mListener->ListenToPlaylist(list);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
-  
+
   return NS_OK;
 }
 
@@ -365,16 +365,16 @@ sbDeviceLibrary::SetSyncPlaylistListPref(nsIArray *aPlaylistList)
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                      nsIURI *aDeviceDatabaseURI)
 {
   nsresult rv;
-  nsCOMPtr<sbILibraryFactory> libraryFactory = 
+  nsCOMPtr<sbILibraryFactory> libraryFactory =
     do_GetService(SB_LOCALDATABASE_LIBRARYFACTORY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIWritablePropertyBag2> libraryProps = 
+  nsCOMPtr<nsIWritablePropertyBag2> libraryProps =
     do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -389,7 +389,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   }
   else {
     //No preferred database location, fetch default location.
-    rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR, 
+    rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR,
       getter_AddRefs(libraryFile));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -411,7 +411,7 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = libraryProps->SetPropertyAsInterface(NS_LITERAL_STRING("databaseFile"), 
+  rv = libraryProps->SetPropertyAsInterface(NS_LITERAL_STRING("databaseFile"),
                                             libraryFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -441,11 +441,11 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                          sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED,
                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbILibrary> mainLib;
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // get the current is synced locally state
   rv = GetIsSyncedLocally(&mLastIsSyncedLocally);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -468,8 +468,13 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
     rv = GetSyncPlaylistList(getter_AddRefs(syncPlaylists));
     NS_ENSURE_SUCCESS(rv,rv);
   }
+  // Check to see if playlists are supported, and if not ignore
+  bool const ignorePlaylists = !sbDeviceUtils::ArePlaylistsSupported(mDevice);
   mMainLibraryListener =
-    new sbLibraryUpdateListener(mDeviceLibrary, mgmtType, syncPlaylists);
+    new sbLibraryUpdateListener(mDeviceLibrary,
+                                mgmtType,
+                                syncPlaylists,
+                                ignorePlaylists);
   NS_ENSURE_TRUE(mMainLibraryListener, NS_ERROR_OUT_OF_MEMORY);
 
   mMainLibraryListenerFilter = do_CreateInstance
@@ -492,13 +497,13 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
 
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> simpleList;
   simpleList = do_QueryInterface(list, &rv);
-  
+
   if(NS_SUCCEEDED(rv)) {
     rv = simpleList->SetCopyListener(this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    NS_WARN_IF_FALSE(rv, 
+    NS_WARN_IF_FALSE(rv,
       "Failed to get sbILocalDatabaseSimpleMediaList interface. Copy Listener disabled.");
   }
 
@@ -512,28 +517,28 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbDeviceLibrary::RegisterDeviceLibrary(sbILibrary* aDeviceLibrary)
 {
   NS_ENSURE_ARG_POINTER(aDeviceLibrary);
-  
+
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
-  libraryManager = 
+  libraryManager =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->RegisterLibrary(aDeviceLibrary, PR_FALSE);
 }
 
-nsresult 
+nsresult
 sbDeviceLibrary::UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary)
 {
   NS_ENSURE_ARG_POINTER(aDeviceLibrary);
 
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
-  libraryManager = 
+  libraryManager =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -846,7 +851,7 @@ sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
   nsCOMPtr<nsIVariant> var;
   rv = mDevice->GetPreference(prefKey, getter_AddRefs(var));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // check if a value exists
   PRUint16 dataType;
   rv = var->GetDataType(&dataType);
@@ -860,12 +865,12 @@ sbDeviceLibrary::GetMgmtType(PRUint32 *aMgmtType)
     PRInt32 mgmtType;
     rv = var->GetAsInt32(&mgmtType);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     // Double check that it is a valid number
     NS_ENSURE_ARG_RANGE(mgmtType,
                         sbIDeviceLibrary::MGMT_TYPE_MANUAL,
                         sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
-    
+
     *aMgmtType = mgmtType;
   }
   return NS_OK;
@@ -878,12 +883,12 @@ sbDeviceLibrary::SetMgmtType(PRUint32 aMgmtType)
 
   nsresult rv;
   PRUint32 origMgmtType = sbIDeviceLibrary::MGMT_TYPE_MANUAL;
-  
+
   // Check we are setting to a valid number
   NS_ENSURE_ARG_RANGE(aMgmtType,
                       sbIDeviceLibrary::MGMT_TYPE_MANUAL,
                       sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS);
-  
+
   // figure out the old pref first
   rv = GetMgmtType(&origMgmtType);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -955,7 +960,7 @@ sbDeviceLibrary::GetSyncPlaylistList(nsIArray **_retval)
   nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbILibraryManager> libManager =
       do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1068,42 +1073,42 @@ NS_IMETHODIMP
 sbDeviceLibrary::Sync()
 {
   nsresult rv;
-  
+
   nsCOMPtr<sbIDevice> device;
   rv = GetDevice(getter_AddRefs(device));
   NS_ENSURE_SUCCESS(rv, rv);
   NS_ASSERTION(device,
                "sbDeviceLibrary::GetDevice returned success with no device");
-  
+
   nsCOMPtr<sbILibraryManager> libraryManager =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbILibrary> mainLib;
   rv = libraryManager->GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   #if DEBUG
     // sanity check that we're using the right device
     { /* scope */
       nsCOMPtr<sbIDeviceContent> content;
       rv = device->GetContent(getter_AddRefs(content));
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       nsCOMPtr<nsIArray> libraries;
       rv = content->GetLibraries(getter_AddRefs(libraries));
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       PRUint32 libraryCount;
       rv = libraries->GetLength(&libraryCount);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       PRBool found = PR_FALSE;
       for (PRUint32 index = 0; index < libraryCount; ++index) {
         nsCOMPtr<sbIDeviceLibrary> library =
           do_QueryElementAt(libraries, index, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
-        
+
         if (SameCOMIdentity(NS_ISUPPORTS_CAST(sbILibrary*, this), library)) {
           found = PR_TRUE;
           break;
@@ -1113,22 +1118,22 @@ sbDeviceLibrary::Sync()
                    "sbDeviceLibrary has device that doesn't hold this library");
     }
   #endif /* DEBUG */
-  
+
   nsCOMPtr<nsIWritablePropertyBag2> requestParams =
     do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
                                              mainLib);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
                                              NS_ISUPPORTS_CAST(sbIMediaList*, this));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = device->SubmitRequest(sbIDevice::REQUEST_SYNC, requestParams);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -1252,7 +1257,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnBatchBegin(sbIMediaList* aMediaList)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnBatchBegin", this));
-  
+
   SB_NOTIFY_LISTENERS(OnBatchBegin(aMediaList));
   return NS_OK;
 }
@@ -1261,7 +1266,7 @@ NS_IMETHODIMP
 sbDeviceLibrary::OnBatchEnd(sbIMediaList* aMediaList)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnBatchEnd", this));
-  
+
   SB_NOTIFY_LISTENERS(OnBatchEnd(aMediaList));
   return NS_OK;
 }
@@ -1273,7 +1278,7 @@ sbDeviceLibrary::OnItemAdded(sbIMediaList* aMediaList,
                              PRBool* aNoMoreForBatch)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemAdded", this));
-  
+
   SB_NOTIFY_LISTENERS(OnItemAdded(aMediaList,
                                   aMediaItem,
                                   aIndex,
@@ -1365,7 +1370,7 @@ sbDeviceLibrary::OnListCleared(sbIMediaList *aMediaList,
 }
 
 NS_IMETHODIMP
-sbDeviceLibrary::OnItemCopied(sbIMediaItem *aSourceItem, 
+sbDeviceLibrary::OnItemCopied(sbIMediaItem *aSourceItem,
                               sbIMediaItem *aDestItem)
 {
   TRACE(("sbDeviceLibrary[0x%x] - OnItemCopied", this));
@@ -1405,7 +1410,7 @@ NS_IMETHODIMP sbDeviceLibrary::OnDeviceEvent(sbIDeviceEvent* aEvent)
 /*
  * See sbILibrary
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
                                  sbIPropertyArray *aProperties,
                                  PRBool aAllowDuplicates,
@@ -1425,7 +1430,7 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
                               NS_PROXY_SYNC,
                               getter_AddRefs(lib));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     return lib->CreateMediaItem(aContentUri,
                                 aProperties,
                                 aAllowDuplicates,
@@ -1438,7 +1443,7 @@ sbDeviceLibrary::CreateMediaItem(nsIURI *aContentUri,
 /*
  * See sbILibrary
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
                                            sbIPropertyArray *aProperties,
                                            sbIMediaItem **aResultItem,
@@ -1458,7 +1463,7 @@ sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
                               NS_PROXY_SYNC,
                               getter_AddRefs(lib));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     return lib->CreateMediaItemIfNotExist(aContentUri,
                                 aProperties,
                                 aResultItem,
@@ -1471,13 +1476,13 @@ sbDeviceLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
 /*
  * See sbILibrary
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::CreateMediaList(const nsAString & aType,
                                  sbIPropertyArray *aProperties,
                                  sbIMediaList **_retval)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
-  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeCreateMediaList(aType, 
+  SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeCreateMediaList(aType,
                                                              aProperties,
                                                              &mShouldProcceed));
   if (mPerformAction) {
@@ -1511,7 +1516,7 @@ sbDeviceLibrary::ClearItems()
 /*
  * See sbIMediaList
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::Add(sbIMediaItem *aMediaItem)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
@@ -1526,7 +1531,7 @@ sbDeviceLibrary::Add(sbIMediaItem *aMediaItem)
 /*
  * See sbIMediaList
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::AddAll(sbIMediaList *aMediaList)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
@@ -1542,7 +1547,7 @@ sbDeviceLibrary::AddAll(sbIMediaList *aMediaList)
 /*
  * See sbIMediaList
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
@@ -1558,7 +1563,7 @@ sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
 /*
  * See sbIMediaList
  */
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbDeviceLibrary::Clear(void)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");

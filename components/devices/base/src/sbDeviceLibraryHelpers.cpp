@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -48,16 +48,18 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbLibraryUpdateListener, sbIMediaListListener)
 
 sbLibraryUpdateListener::sbLibraryUpdateListener(sbILibrary * aTargetLibrary,
                                                  PRUint32 aMgmtType,
-                                                 nsIArray * aPlaylistsList)
+                                                 nsIArray * aPlaylistsList,
+                                                 bool aIgnorePlaylists)
   : mTargetLibrary(aTargetLibrary),
-    mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary))
+    mPlaylistListener(new sbPlaylistSyncListener(aTargetLibrary)),
+    mIgnorePlaylists(aIgnorePlaylists)
 {
   SetSyncMode(aMgmtType, aPlaylistsList);
 }
 
 void sbLibraryUpdateListener::SetSyncMode(PRUint32 aMgmtType,
                                           nsIArray * aPlaylistsList) {
-  NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS && 
+  NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS &&
                  aPlaylistsList == nsnull,
                "Sync Management type isn't playlists but playlists were supplied");
   NS_ASSERTION(aMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_PLAYLISTS ||
@@ -82,19 +84,19 @@ nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainLis
   nsCOMPtr<sbILibrary> mainLib;
   rv = GetMainLibrary(getter_AddRefs(mainLib));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRBool equals;
   NS_ASSERTION(NS_SUCCEEDED(mainLib->Equals(listLib, &equals)) && equals,
                "ShouldListenToPlaylist called with a non-mainlibrary playlist");
-  
+
 #endif
-  
+
   PRBool listenToChanges = (mMgmtType != sbIDeviceLibrary::MGMT_TYPE_MANUAL);
-  // If we're supposed to be listening and only interested in certain playlists 
+  // If we're supposed to be listening and only interested in certain playlists
   // check that list
   if (listenToChanges &&
     mMgmtType != sbIDeviceLibrary::MGMT_TYPE_SYNC_ALL) {
-      
+
     listenToChanges = PR_FALSE;
 
     nsAutoString playlistItemGuid;
@@ -110,7 +112,7 @@ nsresult sbLibraryUpdateListener::ShouldListenToPlaylist(sbIMediaList * aMainLis
       playlist = do_QueryElementAt(mPlaylistsList, index, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      // If we found it, indicate that we want to listen for changes to 
+      // If we found it, indicate that we want to listen for changes to
       // this playlist
       PRBool equals;
       nsresult rv = aMainList->Equals(playlist, &equals);
@@ -134,7 +136,7 @@ nsresult sbLibraryUpdateListener::ListenToPlaylist(sbIMediaList * aMainMediaList
   nsCOMPtr<sbILibrary> mediaListLib;
   aMainMediaList->GetLibrary(getter_AddRefs(mediaListLib));
   PRBool debugEquals;
-  NS_ASSERTION(NS_SUCCEEDED(mediaListLib->Equals(mTargetLibrary, &debugEquals)) &&  debugEquals, 
+  NS_ASSERTION(NS_SUCCEEDED(mediaListLib->Equals(mTargetLibrary, &debugEquals)) &&  debugEquals,
                "ListToPlaylist should only be passed playlists belonging to its target");
 #endif
   nsresult rv = aMainMediaList->AddListener(mPlaylistListener,
@@ -159,34 +161,36 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPlaylistListener, NS_ERROR_OUT_OF_MEMORY);
-  
+
 #if DEBUG
   nsCOMPtr<sbIMediaItem> debugDeviceItem;
   GetSyncItemInLibrary(aMediaItem,
                        mTargetLibrary,
                        getter_AddRefs(debugDeviceItem));
-  NS_ASSERTION(!debugDeviceItem, 
+  NS_ASSERTION(!debugDeviceItem,
                "sbLibraryUpdateListener::OnItemAdded: Item was already added to the library");
-#endif 
+#endif
 
-  nsresult rv = mTargetLibrary->Add(aMediaItem);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  // See if this is a playlist being added, if so we need to listen to it
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
-  if (list) {
-    PRBool shouldListen;
-    rv = ShouldListenToPlaylist(list, shouldListen);
+  if (!list || !mIgnorePlaylists) {
+    nsresult rv = mTargetLibrary->Add(aMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    if (shouldListen) {
-      ListenToPlaylist(list);
+
+    // See if this is a playlist being added, if so we need to listen to it
+    if (list) {
+      PRBool shouldListen;
+      rv = ShouldListenToPlaylist(list, shouldListen);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (shouldListen) {
+        ListenToPlaylist(list);
+      }
     }
   }
   if (_retval) {
     *_retval = PR_FALSE; /* keep going */
   }
-  
+
   return NS_OK;
 }
 
@@ -200,7 +204,12 @@ sbLibraryUpdateListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPlaylistListener, NS_ERROR_OUT_OF_MEMORY);
-  
+
+  // If this is a list and we're ignoring lists then just leave
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list && mIgnorePlaylists) {
+    return NS_OK;
+  }
   nsresult rv;
   nsCOMPtr<sbIMediaItem> targetListAsItem;
   rv = GetSyncItemInLibrary(aMediaItem,
@@ -210,8 +219,7 @@ sbLibraryUpdateListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   if (targetListAsItem) {
     rv = mTargetLibrary->Remove(targetListAsItem);
     NS_ENSURE_SUCCESS(rv, rv);
-    
-    nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+
     if (list) {
       // Remove it, we don't care about errors
       rv = list->RemoveListener(mPlaylistListener);
@@ -220,7 +228,7 @@ sbLibraryUpdateListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   }
   else
     NS_WARNING("sbLibraryUpdateListener::OnBeforeItemRemoved - Item doesn't exist");
-  
+
   if (_retval) {
     *_retval = PR_FALSE; /* keep going */
   }
@@ -237,7 +245,7 @@ sbLibraryUpdateListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   if (_retval) {
     *_retval = PR_TRUE; /* stop */
   }
-  
+
   return NS_OK;
 }
 
@@ -252,7 +260,12 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aProperties);
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPlaylistListener, NS_ERROR_OUT_OF_MEMORY);
-  
+
+  // If this is a list and we're ignore lists then just leave
+  nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
+  if (list && mIgnorePlaylists) {
+    return NS_OK;
+  }
   nsresult rv;
   nsCOMPtr<sbIMediaItem> targetItem;
   rv = GetSyncItemInLibrary(aMediaItem,
@@ -264,7 +277,7 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
     nsCOMPtr<sbIPropertyArray> newProps;
     rv = aMediaItem->GetProperties(aProperties, getter_AddRefs(newProps));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = targetItem->SetProperties(newProps);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -272,7 +285,7 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
   if (_retval) {
     *_retval = PR_FALSE; /* keep going */
   }
-  
+
   return NS_OK;
 }
 
@@ -283,7 +296,7 @@ sbLibraryUpdateListener::OnItemMoved(sbIMediaList *aMediaList,
                                      PRBool *_retval)
 {
   NS_NOTREACHED("Why are we here?");
-  
+
   if (_retval) {
     *_retval = PR_TRUE; /* STOP */
   }
@@ -340,7 +353,7 @@ sbPlaylistSyncListener::~sbPlaylistSyncListener()
   StopListeningToPlaylists();
 }
 
-void sbPlaylistSyncListener::StopListeningToPlaylists() {  
+void sbPlaylistSyncListener::StopListeningToPlaylists() {
   PRUint32 length = mMediaLists.Count();
   for (PRUint32 index = 0; index < length; ++index) {
     mMediaLists[index]->RemoveListener(this);
@@ -377,13 +390,13 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
                               getter_AddRefs(deviceMediaListAsItem));
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(deviceMediaListAsItem, NS_ERROR_FAILURE);
-    
+
     nsCOMPtr<sbIMediaList> deviceMediaList =
       do_QueryInterface(deviceMediaListAsItem, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Null case is handled
-    nsCOMPtr<sbIOrderableMediaList> orderedList = 
+    nsCOMPtr<sbIOrderableMediaList> orderedList =
       do_QueryInterface(deviceMediaListAsItem);
 
     PRUint32 length;
@@ -398,7 +411,7 @@ sbPlaylistSyncListener::OnItemAdded(sbIMediaList *aMediaList,
     }
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   if (_retval) {
     *_retval = PR_FALSE; /* don't stop */
   }
@@ -429,14 +442,14 @@ sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   NS_ENSURE_TRUE(mTargetLibrary, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
-  
+
   nsCOMPtr<sbIMediaItem> targetListAsItem;
   rv = GetSyncItemInLibrary(aMediaList,
                             mTargetLibrary,
                             getter_AddRefs(targetListAsItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIMediaList> deviceMediaList = 
+  nsCOMPtr<sbIMediaList> deviceMediaList =
     do_QueryInterface(targetListAsItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -445,10 +458,10 @@ sbPlaylistSyncListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   rv = deviceMediaList->GetItemByIndex(aIndex, getter_AddRefs(debugItem));
   NS_ENSURE_SUCCESS(rv, rv);
   PRBool debugEquals;
-  NS_ASSERTION(NS_SUCCEEDED(debugItem->Equals(targetListAsItem, 
+  NS_ASSERTION(NS_SUCCEEDED(debugItem->Equals(targetListAsItem,
                                                &debugEquals)) && debugEquals,
                             "Item not the correct item in the playlist");
-#endif  
+#endif
   rv = deviceMediaList->RemoveByIndex(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -487,7 +500,7 @@ sbPlaylistSyncListener::OnItemMoved(sbIMediaList *aMediaList,
                             getter_AddRefs(deviceMediaList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<sbIOrderableMediaList> orderedMediaList = 
+  nsCOMPtr<sbIOrderableMediaList> orderedMediaList =
     do_QueryInterface(deviceMediaList);
   if (orderedMediaList) {
     rv = orderedMediaList->MoveBefore(aFromIndex, aToIndex);

@@ -3083,41 +3083,6 @@ sbBaseDevice::SyncProduceChangeset(TransferRequest*      aRequest,
   return NS_OK;
 }
 
-SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, nsMemory::Free(mValue), mValue = nsnull);
-
-static bool
-ArePlaylistsSupported(sbIDevice * aDevice) {
-  nsCOMPtr<sbIDeviceCapabilities> capabilities;
-  nsresult rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
-  NS_ENSURE_SUCCESS(rv, false);
-
-  bool supported = false;
-  PRUint32 * functionTypes;
-  PRUint32 functionTypesLength;
-  rv = capabilities->GetSupportedFunctionTypes(&functionTypesLength,
-                                               &functionTypes);
-  NS_ENSURE_SUCCESS(rv, false);
-  sbAutoNSMemoryPtr functionTypesPtr(functionTypes);
-  for (PRUint32 functionType = 0;
-       !supported && functionType < functionTypesLength;
-       ++functionType) {
-    PRUint32 * contentTypes;
-    PRUint32 contentTypesLength;
-    rv = capabilities->GetSupportedContentTypes(functionTypes[functionType],
-                                                &contentTypesLength,
-                                                &contentTypes);
-    NS_ENSURE_SUCCESS(rv, false);
-    sbAutoNSMemoryPtr contentTypesPtr(contentTypes);
-    PRUint32 * const end = contentTypes + contentTypesLength;
-    PRUint32 const CONTENT_PLAYLIST =
-      static_cast<PRUint32>(sbIDeviceCapabilities::CONTENT_PLAYLIST);
-    supported = std::find(contentTypes,
-                          end,
-                          CONTENT_PLAYLIST) != end;
-  }
-  return supported;
-}
-
 nsresult
 sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                sbILibraryChangeset* aChangeset)
@@ -3140,7 +3105,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  bool const playlistsSupported = ArePlaylistsSupported(this);
+  bool const playlistsSupported = sbDeviceUtils::ArePlaylistsSupported(this);
 
   // Get the list of all changes.
   nsCOMPtr<nsIArray> changeList;
@@ -3815,7 +3780,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
                           nsIURI*       aWriteSrcURI)
 {
   nsCOMPtr<nsIURI> contentSrc;
-  nsresult rv = GetDeviceWriteContentSrc(aWriteDstItem, 
+  nsresult rv = GetDeviceWriteContentSrc(aWriteDstItem,
                                          aContentSrcBaseURI,
                                          aWriteSrcURI,
                                          getter_AddRefs(contentSrc));

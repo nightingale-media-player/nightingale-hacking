@@ -2,30 +2,32 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
 // Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
 
 #include "sbDeviceUtils.h"
+
+#include <algorithm>
 
 #include <nsArrayUtils.h>
 #include <nsAutoPtr.h>
@@ -39,12 +41,14 @@
 #include <nsIURL.h>
 
 #include "sbBaseDevice.h"
+#include "sbIDeviceCapabilities.h"
 #include "sbIDeviceContent.h"
 #include "sbIDeviceHelper.h"
 #include "sbIDeviceLibrary.h"
 #include "sbIMediaItem.h"
 #include "sbIMediaList.h"
 #include "sbIMediaListListener.h"
+#include <sbMemoryUtils.h>
 #include <sbIPrompter.h>
 #include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
@@ -81,9 +85,9 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
   NS_ENSURE_ARG_POINTER(aParent);
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   nsresult rv;
-  
+
   nsString kIllegalChars = NS_ConvertASCIItoUTF16(FILE_ILLEGAL_CHARACTERS);
   kIllegalChars.AppendLiteral(FILE_PATH_SEPARATOR);
 
@@ -99,7 +103,7 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
     rv = file->Append(propValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                           propValue);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -108,30 +112,30 @@ nsresult sbDeviceUtils::GetOrganizedPath(/* in */ nsIFile *aParent,
     rv = file->Append(propValue);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   nsCOMPtr<nsIURI> itemUri;
   rv = aItem->GetContentSrc(getter_AddRefs(itemUri));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIURL> itemUrl = do_QueryInterface(itemUri, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCString fileCName;
   rv = itemUrl->GetFileName(fileCName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsString fileName = NS_ConvertUTF8toUTF16(fileCName);
   nsString_ReplaceChar(fileName, kIllegalChars, PRUnichar('_'));
   rv = file->Append(fileName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   file.swap(*_retval);
-  
+
   return NS_OK;
 }
 
 /**
- * \class Device Utilities: Media List enumeration listener that 
+ * \class Device Utilities: Media List enumeration listener that
  *        marks all items in a library with a property
  */
 class sbDeviceUtilsBulkSetPropertyEnumerationListener :
@@ -208,9 +212,9 @@ nsresult sbDeviceUtils::DeleteByProperty(sbIMediaList *aMediaList,
                                          nsAString const & aValue)
 {
   nsresult rv;
-  
+
   NS_ASSERTION(aMediaList, "Attempting to delete null media list");
-  
+
   nsCOMPtr<nsIArray> array;
   rv = aMediaList->GetItemsByProperty(aProperty,
                                       aValue,
@@ -220,7 +224,7 @@ nsresult sbDeviceUtils::DeleteByProperty(sbIMediaList *aMediaList,
     nsCOMPtr<nsISimpleEnumerator> enumerator;
     rv = array->Enumerate(getter_AddRefs(enumerator));
     NS_ENSURE_SUCCESS(rv, rv);
-  
+
     return aMediaList->RemoveSome(enumerator);
   }
   // No items is not an error
@@ -247,36 +251,36 @@ nsresult sbDeviceUtils::GetDeviceLibraryForItem(sbIDevice* aDevice,
   NS_ASSERTION(aDevice, "Getting device library with no device");
   NS_ASSERTION(aItem, "Getting device library for nothing");
   NS_ASSERTION(_retval, "null retval");
-  
+
   nsresult rv;
-  
+
   nsCOMPtr<sbILibrary> ownerLibrary;
   rv = aItem->GetLibrary(getter_AddRefs(ownerLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // mediaItem.library is not a sbIDeviceLibrary, test GUID :(
   nsCOMPtr<sbIDeviceContent> content;
   rv = aDevice->GetContent(getter_AddRefs(content));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIArray> libraries;
   rv = content->GetLibraries(getter_AddRefs(libraries));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRUint32 libraryCount;
   rv = libraries->GetLength(&libraryCount);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   for (PRUint32 index = 0; index < libraryCount; ++index) {
     nsCOMPtr<sbIDeviceLibrary> deviceLib =
       do_QueryElementAt(libraries, index, &rv);
     if (NS_FAILED(rv))
       continue;
-    
+
     PRBool equalsLibrary;
     rv = ownerLibrary->Equals(deviceLib, &equalsLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     if (equalsLibrary) {
       deviceLib.forget(_retval);
       return NS_OK;
@@ -538,6 +542,41 @@ nsresult sbDeviceUtils::SyncRequestPartnerChange
     *aPartnerChangeGranted = PR_FALSE;
 
   return NS_OK;
+}
+
+SB_AUTO_CLASS(sbAutoNSMemoryPtr, void*, !!mValue, nsMemory::Free(mValue), mValue = nsnull);
+
+bool sbDeviceUtils::ArePlaylistsSupported(sbIDevice * aDevice)
+{
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  nsresult rv = aDevice->GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, false);
+
+  bool supported = false;
+  PRUint32 * functionTypes;
+  PRUint32 functionTypesLength;
+  rv = capabilities->GetSupportedFunctionTypes(&functionTypesLength,
+                                               &functionTypes);
+  NS_ENSURE_SUCCESS(rv, false);
+  sbAutoNSMemoryPtr functionTypesPtr(functionTypes);
+  for (PRUint32 functionType = 0;
+       !supported && functionType < functionTypesLength;
+       ++functionType) {
+    PRUint32 * contentTypes;
+    PRUint32 contentTypesLength;
+    rv = capabilities->GetSupportedContentTypes(functionTypes[functionType],
+                                                &contentTypesLength,
+                                                &contentTypes);
+    NS_ENSURE_SUCCESS(rv, false);
+    sbAutoNSMemoryPtr contentTypesPtr(contentTypes);
+    PRUint32 * const end = contentTypes + contentTypesLength;
+    PRUint32 const CONTENT_PLAYLIST =
+      static_cast<PRUint32>(sbIDeviceCapabilities::CONTENT_PLAYLIST);
+    supported = std::find(contentTypes,
+                          end,
+                          CONTENT_PLAYLIST) != end;
+  }
+  return supported;
 }
 
 //------------------------------------------------------------------------------
