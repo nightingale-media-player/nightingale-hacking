@@ -965,6 +965,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_REVEAL, this.m_cmd_Reveal);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOPLAYLIST, SBPlaylistCommand_AddToPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTODEVICE, SBPlaylistCommand_AddToDevice);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_ADDTOLIBRARY, SBPlaylistCommand_AddToLibrary);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_COPYTRACKLOCATION, this.m_cmd_CopyTrackLocation);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SHOWDOWNLOADPLAYLIST, this.m_cmd_ShowDownloadPlaylist);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_PAUSERESUMEDOWNLOAD, this.m_cmd_PauseResumeDownload);
@@ -987,7 +988,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEFAULT, this.m_serviceTreeDefaultCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
-
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,this.m_deviceLibraryCommands);
 
     // Un-register download playlist commands
 
@@ -1072,6 +1073,7 @@ PublicPlaylistCommands.prototype = {
     this.m_downloadToolbarCommands.shutdown();
     this.m_downloadCommandsServicePane.shutdown();
     this.m_serviceTreeDefaultCommands.shutdown();
+    this.m_deviceLibraryCommands.shutdown();
 
     g_dataRemoteService = null;
 
