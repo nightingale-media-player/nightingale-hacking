@@ -921,14 +921,9 @@ sbFileSystemTree::GetTreeChanges(sbFileSystemNode *aOldRootNode,
         // context stack so that the next batch of children can be compared.
         oldNodeChildSnapshot.erase(found->first);
 
-        // If the current child has children, push a new node context to 
-        // process.
+        // Push the current node into the node context.
         nsRefPtr<sbFileSystemNode> curChildNode(next->second);
-        if (curChildNode->GetChildren() && 
-            curChildNode->GetChildren()->size() > 0)
-        {
-          nodeContextStack.push(NodeContext(curChildPath, curChildNode));
-        }
+        nodeContextStack.push(NodeContext(curChildPath, curChildNode));
       }
     }
 
