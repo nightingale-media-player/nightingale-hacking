@@ -185,10 +185,10 @@ function FaceplateManager() {
                       .getService(Components.interfaces.nsIObserverService);
   
   // We want to wait till profile-after-change to initialize
-  os.addObserver(this, 'profile-after-change', false);
+  os.addObserver(this, 'songbird-library-manager-ready', false);
 
   // We need to unhook things on shutdown
-  os.addObserver(this, "quit-application", false);
+  os.addObserver(this, "songbird-library-manager-before-shutdown", false);
   
   this._listeners = [];
   this._panes = {};
@@ -384,13 +384,14 @@ FaceplateManager.prototype = {
   observe: function(subject, topic, data) {
     var os      = Components.classes["@mozilla.org/observer-service;1"]
                       .getService(Components.interfaces.nsIObserverService);
+
     switch (topic) {
-    case "profile-after-change":
-      os.removeObserver(this, "profile-after-change");
+    case "songbird-library-manager-ready":
+      os.removeObserver(this, "songbird-library-manager-ready");
       this._init();
       break;
-    case "quit-application":
-      os.removeObserver(this, "quit-application");
+    case "songbird-library-manager-before-shutdown":
+      os.removeObserver(this, "songbird-library-manager-before-shutdown");
       this._deinit();
       break;
     // When playback begins for the first time, jump
