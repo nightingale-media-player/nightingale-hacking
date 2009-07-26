@@ -351,6 +351,7 @@ sbDeviceEnsureSpaceForWrite::RemoveExtraItems() {
     }
   }
   rv = RemoveItemsFromLibrary(itemsToRemove.begin(), itemsToRemove.end());
+  SBUpdateBatchCounts(mBatch);
   
   return NS_OK;
 }

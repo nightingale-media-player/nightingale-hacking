@@ -449,17 +449,19 @@ T SBFindLastCountable(T begin, T end)
 /**
  * Updates the batch count for the request items associated with this batch
  */
+
 template <class T>
-void SBUpdateBatchCounts(T batchEnd, T queueBegin, PRUint32 aBatchCount, int aBatchID)
+void SBUpdateBatchCounts(T        batchEnd,
+                         T        queueBegin,
+                         PRUint32 aBatchCount,
+                         PRUint32 aBatchID)
 {
   // Reverse iterator from the end of the batch to the beginning and
   // bump the batch count, skipping the non-countable stuff
   for (;(!(*batchEnd)->IsCountable() || (*batchEnd)->batchID == aBatchID);
        --batchEnd) {
     if ((*batchEnd)->IsCountable()) {
-      NS_ASSERTION((*batchEnd)->batchCount == aBatchCount - 1,
-                   "Unexpected batch count in old request");
-      ++((*batchEnd)->batchCount);
+      (*batchEnd)->batchCount = aBatchCount;
     }
     // Bail at beginning
     // Can't test in for statement since we'd miss the last one
@@ -467,6 +469,20 @@ void SBUpdateBatchCounts(T batchEnd, T queueBegin, PRUint32 aBatchCount, int aBa
       break;
     }
   }
+}
+
+void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch)
+{
+  // Get the batch end.  Do nothing if batch is empty.
+  sbBaseDevice::Batch::iterator batchEnd = aBatch.end();
+  if (batchEnd == aBatch.begin())
+    return;
+
+  // Update the batch counts.
+  SBUpdateBatchCounts(--batchEnd,
+                      aBatch.begin(),
+                      aBatch.size(),
+                      (*(aBatch.begin()))->batchID);
 }
 
 nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)

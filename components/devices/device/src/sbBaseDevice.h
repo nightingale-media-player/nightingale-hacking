@@ -1094,6 +1094,7 @@ protected:
 
 };
 
+void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
 
 #endif /* __SBBASEDEVICE__H__ */
 
