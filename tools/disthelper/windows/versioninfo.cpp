@@ -70,9 +70,9 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
        headerSize(0), // size of everything up to first string
        tailerSize(0); // to start of relevant StringTable
   HANDLE updateRes(NULL);
-  
+
   tstring executableName(ResolvePathName(aExecutable));
-  
+
   // get the source data block...
   DWORD dummy;
   DWORD sourceSize = GetFileVersionInfoSize(executableName.c_str(), &dummy);
@@ -111,7 +111,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     }
     sourceSize = newSize;
   }
-  
+
   // figure out the translations
   LPSTR translationBuffer;
   UINT translationLength;
@@ -123,7 +123,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     goto CLEANUP;
   }
   // end of strings = translationBuffer - 0x40
-  
+
   LPSTR stringFileInfoBuffer;
   UINT stringFileInfoLength;
   success = VerQueryValue(sourceData, _T("\\StringFileInfo"),
@@ -208,6 +208,11 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
       goto CLEANUP;
     }
     std::wstring key(buffer, keyLength - 1);
+    // Remove additional trailing nulls
+    std::wstring::size_type firstNull = key.find(L'\0');
+    if (firstNull != std::wstring::npos) {
+      key.erase(firstNull);
+    }
     buffer += keyLength;
     buffer = (LPCWSTR)(((ULONG_PTR)buffer + 3) & ~3); // round up to multiple of 4 bytes = 32 bits
     if ((char*)buffer + valueLength * sizeof(std::wstring::value_type) >
@@ -217,9 +222,9 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
       goto CLEANUP;
     }
     std::wstring value(buffer, valueLength - 1);
-    
+
     stringData[key] = stringData_t(value, type, structLength);
-    
+
     structLength = (structLength + 3) & ~3; // round up to multiple of 4 bytes = 32 bits
     stringTableNext += structLength;
   }
@@ -295,7 +300,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     result = DH_ERROR_WRITE;
     goto CLEANUP;
   }
-  
+
   success = UpdateResource(updateRes, RT_VERSION, MAKEINTRESOURCE(1),
                            MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US),
                            newdata, headerSize + newSize + tailerSize);
