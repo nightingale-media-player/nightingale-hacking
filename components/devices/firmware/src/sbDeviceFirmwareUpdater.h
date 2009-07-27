@@ -30,6 +30,7 @@
 #include <sbIDeviceFirmwareUpdater.h>
 
 #include <nsIEventTarget.h>
+#include <nsIObserver.h>
 #include <nsIRunnable.h>
 
 #include <sbIDeviceEventListener.h>
@@ -49,16 +50,19 @@ class sbDeviceFirmwareHandlerStatus;
 class sbDeviceFirmwareDownloader;
 
 class sbDeviceFirmwareUpdater : public sbIDeviceFirmwareUpdater,
-                                public sbIDeviceEventListener
+                                public sbIDeviceEventListener,
+                                public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS
+  NS_DECL_NSIOBSERVER
   NS_DECL_SBIDEVICEFIRMWAREUPDATER
   NS_DECL_SBIDEVICEEVENTLISTENER
 
   sbDeviceFirmwareUpdater();
 
   nsresult Init();
+  nsresult Shutdown();
 
   already_AddRefed<sbIDeviceFirmwareHandler> 
     GetRunningHandler(sbIDevice *aDevice);
@@ -77,7 +81,15 @@ private:
   virtual ~sbDeviceFirmwareUpdater();
 
 protected:
-  PRMonitor* mMonitor;
+  template<class T>
+  static NS_HIDDEN_(PLDHashOperator)
+    EnumerateIntoArrayISupportsKey(nsISupports *aKey,
+                                   T* aData,
+                                   void* aArray);
+
+protected:
+  PRMonitor*    mMonitor;
+  PRPackedBool  mIsShutdown;
 
   typedef nsTArray<nsCString> firmwarehandlers_t;
   firmwarehandlers_t mFirmwareHandlers;

@@ -26,15 +26,19 @@
 
 #include "sbDeviceFirmwareUpdater.h"
 
+#include <nsIMutableArray.h>
+#include <nsIObserverService.h>
 #include <nsISupportsPrimitives.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceEventTarget.h>
 #include <sbIDeviceFirmwareHandler.h>
+#include <sbILibraryManager.h>
 
 #include <nsAutoLock.h>
 #include <nsAutoPtr.h>
+#include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <prlog.h>
 
@@ -61,6 +65,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceFirmwareUpdater,
 
 sbDeviceFirmwareUpdater::sbDeviceFirmwareUpdater()
 : mMonitor(nsnull)
+, mIsShutdown(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if(!gDeviceFirmwareUpdater) {
@@ -141,6 +146,71 @@ sbDeviceFirmwareUpdater::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   threadPool.swap(mThreadPool);
+
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = observerService->AddObserver(this, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC,
+                                    PR_FALSE);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to add library manager observer");
+
+  return NS_OK;
+}
+
+nsresult
+sbDeviceFirmwareUpdater::Shutdown()
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
+
+  nsAutoMonitor mon(mMonitor);
+  
+  // Even if we fail to shutdown we will report ourselves as shutdown.
+  // This is done on purpose to avoid new operations coming into play
+  // during the shutdown sequence under error conditions.
+  mIsShutdown = PR_TRUE;
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIMutableArray> mutableArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mRunningHandlers.EnumerateRead(sbDeviceFirmwareUpdater::EnumerateIntoArrayISupportsKey,
+                                 mutableArray.get());
+
+  PRUint32 length = 0;
+  rv = mutableArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
+      do_QueryElementAt(mutableArray, current, &rv);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Bad object in hashtable!");
+    if(NS_FAILED(rv)) {
+      continue;
+    }
+
+    sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
+    NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
+
+    sbDeviceFirmwareHandlerStatus::handlerstatus_t status = 
+      sbDeviceFirmwareHandlerStatus::STATUS_NONE;
+    rv = handlerStatus->GetStatus(&status);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(status == sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START ||
+       status == sbDeviceFirmwareHandlerStatus::STATUS_RUNNING) {
+
+      rv = handler->Cancel();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+        "Failed to cancel, may not shutdown cleanly!");
+    }
+  }
+
+  mRunningHandlers.Clear();
+  mHandlerStatus.Clear();
+  mDownloaders.Clear();
 
   return NS_OK;
 }
@@ -241,6 +311,7 @@ sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - CheckForUpdate"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
@@ -302,6 +373,7 @@ sbDeviceFirmwareUpdater::DownloadUpdate(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - DownloadUpdate"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
@@ -379,6 +451,7 @@ sbDeviceFirmwareUpdater::VerifyUpdate(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - VerifyUpdate"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
@@ -393,6 +466,7 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - ApplyUpdate"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
@@ -453,6 +527,7 @@ sbDeviceFirmwareUpdater::ContinueUpdate(sbIDevice *aDevice)
   LOG(("[sbDeviceFirmwareUpdater] - ContinueUpdate"));
   
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -464,6 +539,7 @@ sbDeviceFirmwareUpdater::FinalizeUpdate(sbIDevice *aDevice)
   LOG(("[sbDeviceFirmwareUpdater] - FinalizeUpdate"));
   
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsCOMPtr<sbIDeviceFirmwareHandler> handler = GetRunningHandler(aDevice);
@@ -493,6 +569,7 @@ sbDeviceFirmwareUpdater::VerifyDevice(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - VerifyDevice"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
   return NS_ERROR_NOT_IMPLEMENTED;
@@ -504,6 +581,7 @@ sbDeviceFirmwareUpdater::RegisterHandler(sbIDeviceFirmwareHandler *aFirmwareHand
   LOG(("[sbDeviceFirmwareUpdater] - RegisterHandler"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aFirmwareHandler);
 
   nsString contractId;
@@ -527,6 +605,7 @@ sbDeviceFirmwareUpdater::UnregisterHandler(sbIDeviceFirmwareHandler *aFirmwareHa
   LOG(("[sbDeviceFirmwareUpdater] - UnregisterHandler"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aFirmwareHandler);
 
   nsString contractId;
@@ -553,6 +632,7 @@ sbDeviceFirmwareUpdater::HasHandler(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - HasHandler"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -574,6 +654,7 @@ sbDeviceFirmwareUpdater::GetHandler(sbIDevice *aDevice,
   LOG(("[sbDeviceFirmwareUpdater] - GetHandler"));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -622,6 +703,7 @@ sbDeviceFirmwareUpdater::GetActiveHandler(sbIDevice *aDevice,
                                           sbIDeviceFirmwareHandler **_retval)
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(_retval);
 
@@ -638,6 +720,7 @@ NS_IMETHODIMP
 sbDeviceFirmwareUpdater::Cancel(sbIDevice *aDevice) 
 {
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
 
   nsAutoMonitor mon(mMonitor);
@@ -764,6 +847,56 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = eventTarget->RemoveEventListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+template<class T>
+PLDHashOperator appendElementToArray(T* aData, void* aArray)
+{
+  nsIMutableArray *array = (nsIMutableArray*)aArray;
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports = do_QueryInterface(aData, &rv);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  rv = array->AppendElement(aData, false);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
+
+  return PL_DHASH_NEXT;
+}
+
+template<class T>
+PLDHashOperator sbDeviceFirmwareUpdater::EnumerateIntoArrayISupportsKey(
+  nsISupports* aKey,
+  T* aData,
+  void* aArray)
+{
+  TRACE(("sbDeviceFirmwareUpdater[0x%x] - EnumerateIntoArray (nsISupports)"));
+  return appendElementToArray(aData, aArray);
+}
+
+// ----------------------------------------------------------------------------
+// nsIObserver
+// ----------------------------------------------------------------------------
+NS_IMETHODIMP
+sbDeviceFirmwareUpdater::Observe(nsISupports* aSubject,
+                                 const char* aTopic,
+                                 const PRUnichar* aData)
+{
+  LOG(("[sbDeviceFirmwareUpdater] - Observe: %s", this, aTopic));
+
+  nsresult rv;
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (strcmp(aTopic, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC) == 0) {
+    rv = observerService->RemoveObserver(this, SB_LIBRARY_MANAGER_SHUTDOWN_TOPIC);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to remove shutdown observer");
+
+    rv = Shutdown();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
