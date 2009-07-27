@@ -685,6 +685,11 @@ sbMediacoreSequencer::UnbindDataRemotes()
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  if (mDataRemoteMetadataDurationStr) {
+    rv = mDataRemoteMetadataDurationStr->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if (mDataRemoteMetadataPosition) {
     rv = mDataRemoteMetadataPosition->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -716,6 +721,11 @@ sbMediacoreSequencer::UnbindDataRemotes()
 
   if (mDataRemotePlaylistRepeat) {
     rv = mDataRemotePlaylistRepeat->Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mDataRemoteFaceplateRemainingTime) {
+    rv = mDataRemoteFaceplateRemainingTime->Unbind();
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
