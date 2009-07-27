@@ -60,8 +60,9 @@ static const PRInt32 HTTP_STATE_LOADED        = 2;
 static const PRInt32 HTTP_STATE_INTERACTIVE   = 3;
 static const PRInt32 HTTP_STATE_COMPLETED     = 4;
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceFirmwareHandler, 
-                              sbIDeviceFirmwareHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceFirmwareHandler,
+                              sbIDeviceFirmwareHandler,
+                              nsITimerCallback)
 
 sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 : mMonitor(nsnull)
@@ -190,7 +191,11 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
   rv = mXMLHttpRequest->Send(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = mXMLHttpRequestTimer->InitWithCallback(this, 
+  nsCOMPtr<nsITimerCallback> callback =
+    do_QueryInterface(NS_ISUPPORTS_CAST(nsITimerCallback*, this), &rv);
+  NS_ASSERTION(NS_SUCCEEDED(rv),
+               "sbBaseDeviceFirmwareHandler doesn't implement nsITimerCallback!");
+  rv = mXMLHttpRequestTimer->InitWithCallback(callback,
                                               100, 
                                               nsITimer::TYPE_REPEATING_SLACK);
   NS_ENSURE_SUCCESS(rv, rv);
