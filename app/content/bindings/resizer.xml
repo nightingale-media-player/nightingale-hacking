@@ -49,8 +49,6 @@
     <handlers>
       <handler event="mousedown">
         <![CDATA[
-        event.preventDefault();
-
         // trying to tell the window manager how small it's allowed to 
         // resize this window
         var cstyle = window.getComputedStyle(document.documentElement, '');
@@ -76,6 +74,7 @@
 
         if (this._service.supportsResizeDrag) {
           this._service.beginResizeDrag(window, event, direction);
+          event.preventDefault();
         }
         ]]>
       </handler>
