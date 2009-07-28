@@ -27,6 +27,8 @@
 !define DistHelperEXE         "disthelper.exe"
 !define AgentEXE              "songbirditunesagent.exe"
 
+!define DistHelperLog         "disthelper.log"
+
 !define ApplicationIni        "application.ini"
 !define UpdaterIni            "updater.ini"
 !define AddedFilesList        "added-files"

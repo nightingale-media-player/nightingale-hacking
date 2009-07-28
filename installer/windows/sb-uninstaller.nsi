@@ -42,17 +42,24 @@ Section "Uninstall"
 
    ${If} ${TRUE} == $DistributionMode
       System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("DISTHELPER_DISTINI", "$INSTDIR\distribution\distribution.ini").r0'
+   ${EndIf}
 
-      ; We don't really bother checking if we failed here because there's a) not
-      ; much we can do about it if so, and b) disthelper.exe will just return
-      ; failure if it can't find a distribution.ini set anywhere
-      ;StrCmp $0 0 error
-      ;
-      ; Before doing any uninstallation activities, execute disthelper.exe to 
-      ; allow it to do any pre-uninstallation cleanup; it needs a
-      ; distribution.ini; hrm... wonder how it's going to get that...
-      ExecWait '$INSTDIR\${DistHelperEXE} uninstall'
-   ${Else}
+   ; Before doing any uninstallation activities, execute disthelper.exe to 
+   ; allow it to do any pre-uninstallation cleanup; it does this (obviously)
+   ; in distribution mode, but now that we have a songbird.ini for our own
+   ; tasks, we need to always call it.
+   ;
+   ; We don't really bother checking if we failed here because there's not
+   ; much we can do about it; we do save off the logfile if it hasn't been
+   ; deleted (disthelper will delete the logfile itself if everything is 
+   ; successful) for later inspection/debugging
+
+   ExecWait '"$INSTDIR\${DistHelperEXE}" uninstall' $0
+   DetailPrint "$INSTDIR\${DistHelperEXE} exit: $0"
+   IfFileExists "$INSTDIR\${DistHelperLog}" 0 +2
+      Rename "$INSTDIR\${DistHelperLog}" "$TEMP\${DistHelperLog}"
+
+   ${If} $DistributionMode != ${TRUE}
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
