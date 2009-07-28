@@ -15,4 +15,5 @@
 .\testharness\watchfolders\files\
 .\testharness\watchfolders\
 .\testharness\
+.\songbird.ini
 .\songbirditunesagent.exe

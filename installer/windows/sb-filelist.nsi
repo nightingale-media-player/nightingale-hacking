@@ -58,6 +58,7 @@
    File TRADEMARK.txt
    File README.txt
    File blocklist.xml
+   File songbird.ini
   
    ; List of directories to install
    File /r chrome
@@ -126,6 +127,7 @@
    Delete $INSTDIR\TRADEMARK.txt
    Delete $INSTDIR\README.txt
    Delete $INSTDIR\blocklist.xml
+   Delete $INSTDIR\songbird.ini
   
    ; These files are created by the application
    Delete $INSTDIR\*.chk
