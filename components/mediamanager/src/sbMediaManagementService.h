@@ -152,6 +152,11 @@ protected:
   NS_METHOD AddPropertiesToFilter(const char *aKeyName,
                                   sbIMutablePropertyArray *aFilter);
 
+  /**
+   * Checks if this is a media item we should process (not a list, not hidden, etc)
+   */
+  NS_METHOD IsValidMediaItem(sbIMediaItem *aMediaItem, PRBool *_retval);
+
 private:
   virtual ~sbMediaManagementService();
 

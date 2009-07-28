@@ -57,6 +57,8 @@
  */
 #include <prtime.h>
 #include <nsAutoLock.h>
+#include <nsIFileURL.h>
+#include <nsILocalFile.h>
 #include <nsISupportsUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
@@ -67,6 +69,7 @@
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
 #include <sbProxyUtils.h>
+#include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 
 /**
@@ -892,6 +895,16 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
 
   nsCOMPtr<sbIMediaItem> item = do_QueryInterface(aKey);
   NS_ENSURE_TRUE(item, PL_DHASH_STOP);
+
+  // Check if this is a valid media item skip to next if not
+  PRBool isValid = PR_FALSE;
+  rv = data->mediaMgmtService->IsValidMediaItem(item, &isValid);
+  NS_ENSURE_SUCCESS(rv, PL_DHASH_NEXT);
+  if (!isValid) {
+    // This is not a valid media item so skip.
+    return PL_DHASH_NEXT;
+  }
+
   PRBool success;
   rv = data->fileMan->OrganizeItem(item, aOperation, nsnull, &success);
   if (NS_FAILED(rv) || !success) {
@@ -1014,6 +1027,66 @@ sbMediaManagementService::CreatePropertyFilter(sbIMutablePropertyArray* aFilter)
   rv = AddPropertiesToFilter(SB_PREF_MEDIA_MANAGER_FMTDIR, aFilter);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  return NS_OK;
+}
+
+NS_METHOD
+sbMediaManagementService::IsValidMediaItem(sbIMediaItem *aMediaItem,
+                                           PRBool *_retval)
+{
+  nsresult rv;
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE; // Default to this not being a valid item
+
+  // First check if it is a list
+  nsAutoString isList;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), isList);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isList.IsEmpty() && isList.EqualsLiteral("1")) {
+    // retval is false so return
+    return NS_OK;
+  }
+
+  // Now check the hidden property
+  nsAutoString isHidden;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), isHidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!isHidden.IsEmpty() && isHidden.EqualsLiteral("1")) {
+    // retval is false so return
+    return NS_OK;
+  }
+
+  // Check if this is a local file, and exists
+  nsRefPtr<nsIURI> uri;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> fileUrl = do_QueryInterface(uri, &rv);
+  if (NS_FAILED(rv)) {
+    // Not a local file, not valid media item
+    // retval is false so return
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileUrl->GetFile(getter_AddRefs(file));
+  if (NS_FAILED(rv)) {
+    // Not a local file, not valid media item
+    // retval is false so return
+    return NS_OK;
+  }
+
+  PRBool exists;
+  rv = file->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!exists) {
+    // Local file does not exist so this is not a valid media item
+    // retval is false so return
+    return NS_OK;
+  }
+
+  // All checks passed this is a valid item
+  *_retval = PR_TRUE;
   return NS_OK;
 }
 
