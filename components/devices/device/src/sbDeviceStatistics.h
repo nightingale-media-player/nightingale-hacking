@@ -150,10 +150,9 @@ public:
 private:
 
   //
-  // mDevice                    Device for statistics.  Used to maintain a
-  //                            device reference.
   // mBaseDevice                Base device for statistics.  Used to interface
-  //                            to base device class.
+  //                            to base device class.  Don't keep a reference to
+  //                            the device to avoid a cycle.
   //
   // mStatLock                  Lock used for serializing access to statistics.
   // mAudioCount                Count of the number of audio items.
@@ -164,7 +163,6 @@ private:
   // mVideoPlayTime             Total video playback time in microseconds.
   //
 
-  nsCOMPtr<sbIDevice>           mDevice;
   class sbBaseDevice*           mBaseDevice;
 
   PRLock *                      mStatLock;

@@ -502,9 +502,7 @@ sbDeviceStatistics::Initialize(class sbBaseDevice* aDevice)
   // Function variables.
   nsresult rv;
 
-  // Get the device, ensuring to hold a reference to it.
-  mDevice = do_QueryInterface(NS_ISUPPORTS_CAST(sbIDevice*, aDevice), &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Get the device.
   mBaseDevice = aDevice;
 
   // Create the statistics lock.
