@@ -68,6 +68,9 @@ if (typeof(Cu) == "undefined")
 //------------------------------------------------------------------------------
 
 var watchFolderPrefsPane = {
+
+  // set to true when the folder path has changed
+  // will also be set if watch folders was toggled disabled -> enabled
   folderPathChanged: false,
 
   //----------------------------------------------------------------------------
@@ -95,18 +98,25 @@ var watchFolderPrefsPane = {
         event.stopPropagation();
         return false;
       }
-      var watchFolderEnablePrefElem =
-            document.getElementById("watch_folder_enable_pref");
-      var watchFolderEnabelCheckbox =
+      var watchFolderEnableCheckbox =
             document.getElementById("watch_folder_enable_checkbox");
-      if (watchFolderEnabelCheckbox.checked &&
-          (!watchFolderEnablePrefElem.valueFromPreferences))
-      {
-        var watchFolderPathPrefElem =
-              document.getElementById("watch_folder_path_pref");
+      var watchFolderPathPrefElem =
+            document.getElementById("watch_folder_path_pref");
+      var shouldPrompt = self.folderPathChanged;
+
+      // should never prompt for watch folder rescan if it's not enabled
+      shouldPrompt &= watchFolderEnableCheckbox.checked;
+
+      if (shouldPrompt) {
+        // offer to rescan with the _new_ watch dir, taking into account that
+        // instantApply may be off
         var watchFolderDir = Cc["@mozilla.org/file/local;1"]
                                .createInstance(Ci.nsILocalFile);
-        watchFolderDir.initWithPath(watchFolderPathPrefElem.value);
+        var watchFolderPathTextboxElem =
+          document.getElementById("watch_folder_path_textbox");
+        var watchFolderPath =
+          watchFolderPathPrefElem.getElementValue(watchFolderPathTextboxElem);
+        watchFolderDir.initWithPath(watchFolderPath);
         self._rescan(watchFolderDir);
       }
     }
@@ -167,14 +177,8 @@ var watchFolderPrefsPane = {
     // Update the watch folder path.
     if ((result == Ci.nsIFilePicker.returnOK) &&
         (filePicker.file.isDirectory())) {
-      var shouldAskForImport = 
-        filePicker.file.path != watchFolderPathPrefElem.value;
       watchFolderPathPrefElem.value = filePicker.file.path;
       this.onPathChanged(aEvent);
-      
-      if (shouldAskForImport) {
-        this._rescan(filePicker.file);
-      }
     }
   },
   
@@ -182,9 +186,7 @@ var watchFolderPrefsPane = {
    * Handle the command event specified by aEvent
    */
   onPathChanged: function watchFolderPrefsPane_onPathChanged(aEvent) {
-    if (aEvent.target.id == "watch_folder_enable_checkbox") {
-      this.folderPathChanged = true;
-    }
+    this.folderPathChanged = true;
     // everything's good, remember to apply the enabled pref if it was
     // originally checked but not saved
     var watchFolderEnableCheckboxElem =
