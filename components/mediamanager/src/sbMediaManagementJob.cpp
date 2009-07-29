@@ -421,7 +421,7 @@ sbMediaManagementJob::ProcessItem(sbMediaManagementJobItem* aJobItem)
   rv = do_GetProxyForObject(mainThread,
                             NS_GET_IID(sbIMediaItem),
                             item,
-                            NS_PROXY_SYNC,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedItem));
   NS_ENSURE_SUCCESS(rv, rv);
     

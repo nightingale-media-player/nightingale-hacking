@@ -102,7 +102,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
   rv = do_GetProxyForObject(target,
                             NS_GET_IID(nsIURI),
                             imageURI,
-                            NS_PROXY_SYNC,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedURI));
 
   PRBool isResource;
@@ -120,7 +120,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIResProtocolHandler),
                               resourceProtocolHandler,
-                              NS_PROXY_SYNC,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(proxiedResourceProtocolHandler));
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -138,7 +138,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
   rv = do_GetProxyForObject(target,
                             NS_GET_IID(nsIFileProtocolHandler),
                             fileProtocolHandler,
-                            NS_PROXY_SYNC,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedFileProtocolHandler));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -450,7 +450,7 @@ sbTranscodeAlbumArt::ConvertArt()
   rv = do_GetProxyForObject(target,
                             NS_GET_IID(sbIJobProgress),
                             job,
-                            NS_PROXY_SYNC,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedJob));
   NS_ENSURE_SUCCESS(rv, rv);
 
