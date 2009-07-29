@@ -68,7 +68,7 @@
  */
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
-#include <sbProxyUtils.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 
@@ -547,7 +547,11 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
       do_GetService("@songbirdnest.com/Songbird/JobProgressService;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = do_GetProxyForObject(target,
                               NS_GET_IID(sbIJobProgressService),
                               jobProgressSvc,
                               NS_PROXY_SYNC | NS_PROXY_ALWAYS,

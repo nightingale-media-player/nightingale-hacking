@@ -226,8 +226,12 @@ sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,
   if (!NS_IsMainThread()) {
     LOG(("sbFileMetadataService[0x%.8x] proxying main thread StartJob()",
          this));
+    nsCOMPtr<nsIThread> target;
+    rv = NS_GetMainThread(getter_AddRefs(target));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<sbIFileMetadataService> proxy;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    rv = do_GetProxyForObject(target,
                               NS_GET_IID(sbIFileMetadataService),
                               static_cast<sbIFileMetadataService*>(this),
                               nsIProxyObjectManager::INVOKE_SYNC,

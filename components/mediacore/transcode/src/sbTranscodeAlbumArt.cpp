@@ -41,8 +41,8 @@
 #include <imgITools.h>
 #include <nsComponentManagerUtils.h>
 #include <nsTArray.h>
+#include <nsThreadUtils.h>
 
-#include <sbProxyUtils.h>
 #include <sbStandardProperties.h>
 #include <sbProxiedComponentManager.h>
 #include <sbTArrayStringEnumerator.h>
@@ -88,13 +88,18 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
       do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  cImageSpec = NS_LossyConvertUTF16toASCII(imageSpec);
   nsCOMPtr<nsIURI> imageURI;
   rv = ioservice->NewURI(cImageSpec, nsnull, nsnull,
           getter_AddRefs(imageURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIURI> proxiedURI;
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+  rv = do_GetProxyForObject(target,
                             NS_GET_IID(nsIURI),
                             imageURI,
                             NS_PROXY_SYNC,
@@ -112,7 +117,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
         do_QueryInterface(resHandler, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
     nsCOMPtr<nsIResProtocolHandler> proxiedResourceProtocolHandler;
-    rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+    rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIResProtocolHandler),
                               resourceProtocolHandler,
                               NS_PROXY_SYNC,
@@ -122,9 +127,6 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
     rv = proxiedResourceProtocolHandler->ResolveURI(imageURI, cImageSpec);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else {
-    cImageSpec = NS_LossyConvertUTF16toASCII(imageSpec);
-  }
 
   nsCOMPtr<nsIProtocolHandler> fileHandler;
   rv = ioservice->GetProtocolHandler("file", getter_AddRefs(fileHandler));
@@ -133,7 +135,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
       do_QueryInterface(fileHandler, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   nsCOMPtr<nsIFileProtocolHandler> proxiedFileProtocolHandler;
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
+  rv = do_GetProxyForObject(target,
                             NS_GET_IID(nsIFileProtocolHandler),
                             fileProtocolHandler,
                             NS_PROXY_SYNC,
@@ -440,12 +442,16 @@ sbTranscodeAlbumArt::ConvertArt()
 
   // The job progress object returnned from the this should only be used
   // from the main thread, so proxy.
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIJobProgress> proxiedJob;
-  rv = SB_GetProxyForObject(NS_PROXY_TO_MAIN_THREAD,
-          NS_GET_IID(sbIJobProgress),
-          job,
-          NS_PROXY_SYNC,
-          getter_AddRefs(proxiedJob));
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIJobProgress),
+                            job,
+                            NS_PROXY_SYNC,
+                            getter_AddRefs(proxiedJob));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Wait until the metadata reading completes.  Poll instead of using

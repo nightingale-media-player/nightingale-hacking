@@ -3,14 +3,16 @@
 # Note: this file is for personal testing only, and is not used 
 # in the automated perf testing environment
 #
-LIBRARY_DIR=/builds/songbird/libraries/
-RESULTS_FILE=/builds/songbird/dbperf_results.txt
+LIBRARY_DIR="D:\\Media\SongbirdTestLibraries\\"
+RESULTS_FILE="D:\\Media\\SongbirdTestLibraries\\dbperf_results.txt"
 
-LIBRARY_FILES="test_5000.db test_10000.db test_25000.db test_50000.db"
+LIBRARY_FILES="test_standard_trunk.db"
 PERF_TESTS="guidarray guidarray_multisort guidarray_distinct guidarray_default_view guidarray_library_enumerate guidarray_search guidarray_search_distinct guidarray_filtering propertycache"
 
+#PERF_TESTS="guidarray"
+
 # Stupid mac compatibility
-alias seq=gseq
+#alias seq=gseq
 
 for library_file in $LIBRARY_FILES; do
   for perf_test in $PERF_TESTS; do

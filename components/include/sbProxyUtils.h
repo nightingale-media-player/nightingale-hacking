@@ -29,8 +29,12 @@
 
 #include <nsIEventTarget.h>
 #include <nsIProxyObjectManager.h>
+
+#include <nscore.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCIDInternal.h>
+
+NS_DEPRECATED
 
 /**
  * \brief Returns a proxy for the given object.
@@ -48,6 +52,9 @@ SB_GetProxyForObject(nsIEventTarget *target,
   nsCOMPtr<nsIProxyObjectManager> proxyObjMgr =
     do_GetService(NS_XPCOMPROXY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_WARNING("The use of SB_GetProxyForObject is DEPRECATED! "
+             "Please see components/moz/threads/src/sbProxiedComponentManager.h instead!");
 
   return proxyObjMgr->GetProxyForObject(target, aIID, aObj, proxyType,
                                         aProxyObject);

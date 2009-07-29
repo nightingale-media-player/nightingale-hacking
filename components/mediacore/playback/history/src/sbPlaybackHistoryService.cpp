@@ -43,6 +43,7 @@
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
 #include <nsNetUtil.h>
+#include <nsThreadUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsXPCOMCID.h>
 
@@ -64,7 +65,6 @@
 #include <sbLibraryCID.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
-#include <sbProxyUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbSQLBuilderCID.h>
 #include <sbStringUtils.h>
@@ -2603,12 +2603,16 @@ sbPlaybackHistoryService::AddListener(sbIPlaybackHistoryListener *aListener)
 
   // Make a proxy for the listener that will always send callbacks to the
   // current thread.
+  nsCOMPtr<nsIThread> target;
+  nsresult rv = NS_GetCurrentThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIPlaybackHistoryListener> proxy;
-  nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
-                                     NS_GET_IID(sbIPlaybackHistoryListener),
-                                     aListener,
-                                     NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                                     getter_AddRefs(proxy));
+  rv = do_GetProxyForObject(target,
+                            NS_GET_IID(sbIPlaybackHistoryListener),
+                            aListener,
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(proxy));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the proxy to the hash table, using the listener as the key.
