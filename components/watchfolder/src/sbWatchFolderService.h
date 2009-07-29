@@ -27,12 +27,12 @@
 #ifndef sbWatchFolderService_h_
 #define sbWatchFolderService_h_
 
+#include "sbWatchFolderPrefMgr.h"
 #include <sbIWatchFolderService.h>
 #include <sbIFileSystemWatcher.h>
 #include <sbIFileSystemListener.h>
 #include <sbILibrary.h>
 #include <nsITimer.h>
-#include <nsIObserver.h>
 #include <nsIComponentManager.h>
 #include <nsIGenericFactory.h>
 #include <nsIFile.h>
@@ -48,12 +48,14 @@
 #include <set>
 #include <map>
 
+
 class sbWatchFolderService : public sbIWatchFolderService,
                              public sbIFileSystemListener,
                              public sbIMediaListEnumerationListener,
-                             public nsITimerCallback,
-                             public nsIObserver
+                             public nsITimerCallback
 {
+  friend class sbWatchFolderPrefMgr;
+
 public:
   sbWatchFolderService();
   virtual ~sbWatchFolderService();
@@ -63,7 +65,6 @@ public:
   NS_DECL_SBIFILESYSTEMLISTENER
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
   NS_DECL_NSITIMERCALLBACK
-  NS_DECL_NSIOBSERVER
 
   nsresult Init();
 
@@ -188,6 +189,31 @@ protected:
   nsresult DecrementIgnoredPathCount(const nsAString & aFilePath, 
                                      PRBool *aIsIgnoredPath);
 
+  //----------------------------------------------------------------------------
+  // Pref Changes
+
+  //
+  // \brief Callback method when the app has started up and the watch folder
+  //        service should startup.
+  //
+  nsresult OnAppStartup();
+
+  //
+  // \brief Callback method when the app is about to shutdown and the watch
+  //        folder service should shutdown.
+  //
+  nsresult OnAppShutdown();
+
+  //
+  // \brief Callback method when the watchfolder path changes.
+  //
+  nsresult OnWatchFolderPathChanged(const nsAString & aNewPath);
+
+  //
+  // \brief Callback method when the watch folder enable pref has changed.
+  //
+  nsresult OnEnableWatchFolderChanged(PRBool aShouldEnable);
+
 private:
   nsCOMPtr<sbIFileSystemWatcher> mFileSystemWatcher;
   nsCOMPtr<sbILibrary>           mMainLibrary;
@@ -197,6 +223,7 @@ private:
   nsCOMPtr<nsITimer>             mStartupDelayTimer;
   nsCOMPtr<nsITimer>             mFlushFSWatcherTimer;
   nsCOMPtr<nsIMutableArray>      mEnumeratedMediaItems;
+  nsRefPtr<sbWatchFolderPrefMgr> mPrefMgr;
   sbStringSet                    mChangedPaths;
   sbStringSet                    mDelayedChangedPaths;
   sbStringSet                    mAddedPaths;

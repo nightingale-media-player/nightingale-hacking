@@ -26,6 +26,7 @@
 
 #include "sbWatchFolderService.h"
 #include "sbWatchFolderServiceCID.h"
+#include "sbWatchFolderDefines.h"
 #include <sbIWFMoveRenameHelper9000.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
@@ -53,41 +54,16 @@
 #include <nsIXULRuntime.h>
 #include <prlog.h>
 
-#define PREF_WATCHFOLDER_ROOT        "songbird.watch_folder."
-#define PREF_WATCHFOLDER_ENABLE      "songbird.watch_folder.enable"
-#define PREF_WATCHFOLDER_PATH        "songbird.watch_folder.path"
-#define PREF_WATCHFOLDER_SESSIONGUID "songbird.watch_folder.sessionguid"
 
-#define STARTUP_TIMER_DELAY      3000
-#define FLUSH_FS_WATCHER_DELAY   1000
-#define CHANGE_DELAY_TIMER_DELAY 30000
-#define EVENT_PUMP_TIMER_DELAY   500
-
-/**
- * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbWatchFolderService:5
- */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gWatchFoldersLog = nsnull;
-#define TRACE(args) PR_LOG(gWatchFoldersLog, PR_LOG_DEBUG, args)
-#define LOG(args)   PR_LOG(gWatchFoldersLog, PR_LOG_WARN, args)
-#else
-#define TRACE(args) /* nothing */
-#define LOG(args)   /* nothing */
-#endif /* PR_LOGGING */
-#ifdef __GNUC__
-#define __FUNCTION__ __PRETTY_FUNCTION__
-#endif /* __GNUC__ */
+PRLogModuleInfo* gWatchFoldersLog = nsnull;
+#endif
 
-
-//------------------------------------------------------------------------------
-
-NS_IMPL_ISUPPORTS5(sbWatchFolderService,
+NS_IMPL_ISUPPORTS4(sbWatchFolderService,
                    sbIWatchFolderService,
                    sbIFileSystemListener,
                    sbIMediaListEnumerationListener,
-                   nsITimerCallback,
-                   nsIObserver)
+                   nsITimerCallback)
 
 sbWatchFolderService::sbWatchFolderService()
 {
@@ -97,12 +73,12 @@ sbWatchFolderService::sbWatchFolderService()
   mChangeDelayTimerIsSet = PR_FALSE;
   mShouldProcessEvents = PR_FALSE;
   mCurrentProcessType = eNone;
-  
-  #ifdef PR_LOGGING
+
+#ifdef PR_LOGGING
    if (!gWatchFoldersLog) {
-     gWatchFoldersLog = PR_NewLogModule("sbWatchFolderService");
+     gWatchFoldersLog = PR_NewLogModule("sbWatchFoldersComponent");
    }
-  #endif
+#endif
 }
 
 sbWatchFolderService::~sbWatchFolderService()
@@ -149,16 +125,11 @@ sbWatchFolderService::Init()
   // initialization in |InitInternal()|.
   mServiceState = eDisabled;
 
-  // Setup the final-ui-startup launching...
-  nsCOMPtr<nsIObserverService> observerService =
-    do_GetService("@mozilla.org/observer-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Setup the pref watcher class.
+  mPrefMgr = new sbWatchFolderPrefMgr();
+  NS_ENSURE_TRUE(mPrefMgr, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = observerService->AddObserver(this, "quit-application-granted", PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Delay starting up until "final-ui-startup"
-  rv = observerService->AddObserver(this, "final-ui-startup", PR_FALSE);
+  rv = mPrefMgr->Init(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -329,7 +300,7 @@ sbWatchFolderService::SetStartupDelayTimer()
   }
 
   LOG(("%s: arming up startup delay timer [%08x]",
-       __FUNCTION__, mStartupDelayTimer));
+       __FUNCTION__, mStartupDelayTimer.get()));
   return mStartupDelayTimer->InitWithCallback(this,
                                               STARTUP_TIMER_DELAY,
                                               nsITimer::TYPE_ONE_SHOT);
@@ -346,7 +317,9 @@ sbWatchFolderService::SetEventPumpTimer()
       mShouldProcessEvents = PR_FALSE;
     }
     else {
-      LOG(("%s: arming event pump timer [%08x]", __FUNCTION__, mEventPumpTimer));
+      LOG(("%s: arming event pump timer [%08x]",
+            __FUNCTION__, mEventPumpTimer.get()));
+
       nsresult rv =
         mEventPumpTimer->InitWithCallback(this,
                                           EVENT_PUMP_TIMER_DELAY,
@@ -736,6 +709,162 @@ sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath,
   return NS_OK;
 }
 
+nsresult
+sbWatchFolderService::OnAppStartup()
+{
+  nsresult rv = SetStartupDelayTimer();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::OnAppShutdown()
+{
+  nsresult rv;
+  if (mServiceState == eWatching) {
+    rv = StopWatchingFolder();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  if (mStartupDelayTimer) {
+    rv = mStartupDelayTimer->Cancel();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    LOG(("%s: app is shutting down, aborting startup delay timer [%08x]",
+          __FUNCTION__, mStartupDelayTimer.get()));
+  }
+
+  // kill the file system watcher to prevent a reference loop
+  mFileSystemWatcher = nsnull;
+
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::OnWatchFolderPathChanged(const nsAString & aNewWatchPath)
+{
+  LOG(("%s: OnWatchFolderPathChanged( %s )",
+        __FUNCTION__,
+        NS_ConvertUTF16toUTF8(aNewWatchPath).get()));
+
+  if (mWatchPath.Equals(aNewWatchPath)) {
+    return NS_OK;
+  }
+
+  nsresult rv;
+  nsCOMPtr<nsIPrefBranch2> prefBranch =
+      do_GetService("@mozilla.org/preferences-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mWatchPath = aNewWatchPath;
+
+  if (mServiceState == eWatching) {
+    TRACE(("%s: already watching, stopping...", __FUNCTION__));
+    NS_ENSURE_STATE(mFileSystemWatcher);
+
+    // The service is currently running with a file system watcher
+    // that is currently active. The watcher needs to be stopped (
+    // without saving a session) and re-started once it has
+    // successfully shutdown.
+
+    // Remove the pref since the watch folder service does not want
+    // to load the old session.
+    PRBool hasSavedSessionGUID;
+    rv = prefBranch->PrefHasUserValue(PREF_WATCHFOLDER_SESSIONGUID,
+                                      &hasSavedSessionGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (hasSavedSessionGUID) {
+      rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    if (!mFileSystemWatcherGUID.IsEmpty()) {
+      // Clear any previously stored data from the session that might
+      // be stored in the users profile.
+      rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
+      if (NS_FAILED(rv)) {
+        // Just warn if deleting the previous session fails.
+        NS_WARNING("Could not delete old session data!");
+      }
+
+      mFileSystemWatcherGUID.Truncate();
+    }
+
+    // Set a flag to re-setup a file system watcher once the current
+    // one has shutdown.
+    mShouldReinitWatcher = PR_TRUE;
+
+    // The service is no longer watching
+    mServiceState = eStarted;
+
+    // Flush all event paths, reset flags, and stop the watcher.
+    mAddedPaths.clear();
+    mRemovedPaths.clear();
+    mChangedPaths.clear();
+    mDelayedChangedPaths.clear();
+
+    rv = mFileSystemWatcher->StopWatching(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (mServiceState == eDisabled && !mWatchPath.IsEmpty()) {
+    // The service has not started up internally, but the watch path
+    // has changed. If the service has been set to be enabled, start
+    // the delayed internal startup.
+    PRBool shouldEnable = PR_FALSE;
+    rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE,
+        &shouldEnable);
+    if (NS_SUCCEEDED(rv) && shouldEnable) {
+      TRACE(("%s: not watching yet, arming...", __FUNCTION__));
+      // Now that the service state is disabled, the watch path has
+      // been set, and the service should enable - it is time to
+      // start the delayed internal init.
+      rv = SetStartupDelayTimer();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbWatchFolderService::OnEnableWatchFolderChanged(PRBool aShouldEnable)
+{
+  LOG(("%s: OnEnableWatchFolderChanged( aShouldEnable=%s )",
+        __FUNCTION__,
+        (aShouldEnable ? "true" : "false")));
+
+  nsresult rv;
+
+  // Stop watching since the service is watching and the pref was toggled
+  // to not watch.
+  if (mServiceState == eWatching && !aShouldEnable) {
+    rv = StopWatchingFolder();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Start watching since the service is not watching and the pref was
+  // toggled to start watching.
+  else if (mServiceState == eStarted && aShouldEnable) {
+    rv = StartWatchingFolder();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // The service has not yet attempted to start up and was just turned on.
+  // Start the timer if the service is in a disabled state, the watch path
+  // has been defined, and the service should enable.
+  else if (mServiceState == eDisabled &&
+           !mWatchPath.IsEmpty() &&
+           aShouldEnable)
+  {
+    rv = SetStartupDelayTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 // sbIWatchFolderService
 
@@ -842,7 +971,8 @@ sbWatchFolderService::OnWatcherStarted()
   // Process any event received before the watcher has started. These will
   // be all the events from comparing the de-serialized session to the current
   // filesystem state.
-  LOG(("%s: arming event pump timer [%08x]", __FUNCTION__, mEventPumpTimer));
+  LOG(("%s: arming event pump timer [%08x]",
+        __FUNCTION__, mEventPumpTimer.get()));
   rv = mEventPumpTimer->InitWithCallback(this,
                                         EVENT_PUMP_TIMER_DELAY,
                                         nsITimer::TYPE_ONE_SHOT);
@@ -1131,7 +1261,7 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
   // Handle startup delay (internally init)
   if (aTimer == mStartupDelayTimer) {
     LOG(("%s: startup delay timer [%08x] fired",
-         __FUNCTION__, mStartupDelayTimer));
+         __FUNCTION__, mStartupDelayTimer.get()));
     rv = InitInternal();
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1156,7 +1286,8 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
       mEventPumpTimerIsSet = PR_FALSE;
     }
     else {
-      LOG(("%s: arming event pump timer [%08x]", __FUNCTION__, mEventPumpTimer));
+      LOG(("%s: arming event pump timer [%08x]",
+            __FUNCTION__, mEventPumpTimer.get()));
       rv = mEventPumpTimer->InitWithCallback(this,
                                              EVENT_PUMP_TIMER_DELAY,
                                              nsITimer::TYPE_ONE_SHOT);
@@ -1172,194 +1303,6 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
     NS_ENSURE_SUCCESS(rv, rv);
 
     mChangeDelayTimerIsSet = PR_FALSE;
-  }
-
-  return NS_OK;
-}
-
-//------------------------------------------------------------------------------
-// nsIObserver
-
-NS_IMETHODIMP
-sbWatchFolderService::Observe(nsISupports *aSubject,
-                              const char *aTopic,
-                              const PRUnichar *aData)
-{
-  NS_ENSURE_ARG_POINTER(aTopic);
-  
-  LOG(("%s: observing %s", __FUNCTION__, aTopic));
-
-  nsresult rv;
-  if (strcmp("final-ui-startup", aTopic) == 0) {
-    // Now is the time to start listening to the pref branch.
-    nsCOMPtr<nsIPrefBranch2> prefBranch =
-      do_GetService("@mozilla.org/preferences-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = prefBranch->AddObserver(PREF_WATCHFOLDER_ROOT, this, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Now that the UI has finally started up, pause shortly before
-    // internally setting up the component.
-    rv = SetStartupDelayTimer();
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else if (strcmp("quit-application-granted", aTopic) == 0) {
-    if (mServiceState == eWatching) {
-      rv = StopWatchingFolder();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    nsCOMPtr<nsIObserverService> observerService =
-      do_GetService("@mozilla.org/observer-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = observerService->RemoveObserver(this, "final-ui-startup");
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = observerService->RemoveObserver(this, "quit-application-granted");
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIPrefBranch2> prefBranch =
-      do_GetService("@mozilla.org/preferences-service;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = prefBranch->RemoveObserver(PREF_WATCHFOLDER_ROOT, this);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    if (mStartupDelayTimer) {
-      rv = mStartupDelayTimer->Cancel();
-      NS_ENSURE_SUCCESS(rv, rv);
-      
-      LOG(("%s: quit application granted, aborting startup delay timer [%08x]",
-           __FUNCTION__, mStartupDelayTimer));
-    }
-
-  // kill the file system watcher to prevent a reference loop
-  mFileSystemWatcher = nsnull;
-
-  }
-  // Handle pref changing which effects the execution of this service.
-  else if (strcmp(NS_PREFBRANCH_PREFCHANGE_TOPIC_ID, aTopic) == 0) {
-    nsCOMPtr<nsIPrefBranch2> prefBranch = do_QueryInterface(aSubject, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString changedPrefName(aData);
-    if (changedPrefName.Equals(NS_LITERAL_STRING(PREF_WATCHFOLDER_ENABLE))) {
-      PRBool shouldEnable = PR_FALSE;
-      rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE, &shouldEnable);
-
-      // Stop watching since the service is watching and the pref was toggled
-      // to not watch.
-      if (mServiceState == eWatching && !shouldEnable) {
-        rv = StopWatchingFolder();
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // Start watching since the service is not watching and the pref was
-      // toggled to start watching.
-      else if (mServiceState == eStarted && shouldEnable) {
-        rv = StartWatchingFolder();
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // The service has not yet attempted to start up and was just turned on.
-      // Start the timer if the service is in a disabled state, the watch path
-      // has been defined, and the service should enable.
-      else if (mServiceState == eDisabled &&
-               !mWatchPath.IsEmpty() &&
-               shouldEnable)
-      {
-        rv = SetStartupDelayTimer();
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-    }
-    else if (changedPrefName.Equals(NS_LITERAL_STRING(PREF_WATCHFOLDER_PATH))) {
-      nsCOMPtr<nsISupportsString> supportsString;
-      rv = prefBranch->GetComplexValue(PREF_WATCHFOLDER_PATH,
-                                       NS_GET_IID(nsISupportsString),
-                                       getter_AddRefs(supportsString));
-      if (NS_SUCCEEDED(rv)) {
-        nsString newWatchPath;
-        rv = supportsString->GetData(newWatchPath);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (!newWatchPath.Equals(mWatchPath)) {
-          TRACE(("%s: changing watch path from [%s] to [%s]",
-                 __FUNCTION__,
-                 NS_ConvertUTF16toUTF8(mWatchPath).get(),
-                 NS_ConvertUTF16toUTF8(newWatchPath).get()));
-          mWatchPath = newWatchPath;
-
-          if (mServiceState == eWatching) {
-            TRACE(("%s: already watching, stopping...", __FUNCTION__));
-            NS_ENSURE_STATE(mFileSystemWatcher);
-            // The service is currently running with a file system watcher
-            // that is currently active. The watcher needs to be stopped (
-            // without saving a session) and re-started once it has
-            // successfully shutdown.
-
-            // Remove the pref since the watch folder service does not want
-            // to load the old session.
-            PRBool hasSavedSessionGUID;
-            rv = prefBranch->PrefHasUserValue(PREF_WATCHFOLDER_SESSIONGUID,
-                                              &hasSavedSessionGUID);
-            NS_ENSURE_SUCCESS(rv, rv);
-            if (hasSavedSessionGUID) {
-              rv = prefBranch->ClearUserPref(PREF_WATCHFOLDER_SESSIONGUID);
-              NS_ENSURE_SUCCESS(rv, rv);
-            }
-
-            if (!mFileSystemWatcherGUID.IsEmpty()) {
-              // Clear any previously stored data from the session that might
-              // be stored in the users profile.
-              rv = mFileSystemWatcher->DeleteSession(mFileSystemWatcherGUID);
-              if (NS_FAILED(rv)) {
-                // Just warn if deleting the previous session fails.
-                NS_WARNING("Could not delete old session data!");
-              }
-
-              mFileSystemWatcherGUID.Truncate();
-            }
-
-            // Set a flag to re-setup a file system watcher once the current
-            // one has shutdown.
-            mShouldReinitWatcher = PR_TRUE;
-
-            // The service is no longer watching
-            mServiceState = eStarted;
-
-            // Flush all event paths, reset flags, and stop the watcher.
-            mAddedPaths.clear();
-            mRemovedPaths.clear();
-            mChangedPaths.clear();
-            mDelayedChangedPaths.clear();
-
-            rv = mFileSystemWatcher->StopWatching(PR_FALSE);
-            NS_ENSURE_SUCCESS(rv, rv);
-          }
-
-          else if (mServiceState == eDisabled &&
-                   !mWatchPath.IsEmpty())
-          {
-            // The service has not started up internally, but the watch path
-            // has changed. If the service has been set to be enabled, start
-            // the delayed internal startup.
-            PRBool shouldEnable = PR_FALSE;
-            rv = prefBranch->GetBoolPref(PREF_WATCHFOLDER_ENABLE,
-                                         &shouldEnable);
-            if (NS_SUCCEEDED(rv) && shouldEnable) {
-              TRACE(("%s: not watching yet, arming...", __FUNCTION__));
-              // Now that the service state is disabled, the watch path has
-              // been set, and the service should enable - it is time to
-              // start the delayed internal init.
-              rv = SetStartupDelayTimer();
-              NS_ENSURE_SUCCESS(rv, rv);
-            }
-          }
-        }
-      }
-    }
   }
 
   return NS_OK;
