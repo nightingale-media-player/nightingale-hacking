@@ -64,10 +64,8 @@
   flex="1"
   type="songbird"
   title="&device.dialog.setup.title;"
-  buttons="extra1,accept"
-  buttonlabelextra1="&device.dialog.setup.ignore.button;"
+  buttons="accept"
   ondialogaccept="if (deviceSetupDialog.onAccept()) onExit();"
-  ondialogextra1="if (deviceSetupDialog.onIgnore()) onExit();"
   onload="deviceSetupDialog.onLoad();">
 
   <!-- *************************************************************************
@@ -88,7 +86,16 @@
     <description id="setup_sync_description" class="indent">
       &device.dialog.setup.sync.checkbox.description;
     </description>
-    <label value="&device.dialog.setup.explainIgnore;"/>
+    <hbox>
+      <label id="device-dialog-ignore-before-text"
+             value="&device.dialog.setup.explainIgnore.beforeText;"/>
+      <label id="device-dialog-ignore-link-text"
+             class="text-link"
+             onclick="if (deviceSetupDialog.onIgnore()) onExit();"
+             value="&device.dialog.setup.explainIgnore.linkText;"/>
+      <label id="device-dialog-ignore-after-text"
+             value="&device.dialog.setup.explainIgnore.afterText;"/>
+    </hbox>
   </vbox>
 
 
