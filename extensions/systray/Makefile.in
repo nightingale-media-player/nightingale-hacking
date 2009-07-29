@@ -41,4 +41,8 @@ EXTENSION_DIR  = .
 # where do we want to build it into (over there)
 EXTENSION_STAGE_DIR = ./.xpistage
 
+EXTENSION_VER = 0.0.1a
+EXTENSION_MIN_VER = $(SB_MILESTONE)
+EXTENSION_MAX_VER = $(SB_MILESTONE)
+
 include $(topsrcdir)/build/rules.mk

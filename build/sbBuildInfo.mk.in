@@ -14,6 +14,15 @@ SB_BRANCHNAME=trunk
 SB_PROFILE_VERSION=2
 SB_MOZILLA_VERSION=
 
+# These are here to centralize our handling of these versions, since we
+# use them; we make a slight distinction between JS-only and binary extensions
+# for historical policy reasons; that's likely to change if/when we get
+# nightly addon update/1st run bundles working
+SB_BINARY_EXTENSION_MIN_VER=1.4.0a
+SB_BINARY_EXTENSION_MAX_VER=1.4.0b1
+SB_JSONLY_EXTENSION_MIN_VER=1.4.0a
+SB_JSONLY_EXTENSION_MAX_VER=1.4.0b1
+
 # Why is there no RepoRevisionClient, you ask? We have to treat client-pull
 # revisions slightly differently, because we modify the repo itself whenever
 # we do a build (bookend-build.py). The svn revision given below is done via
