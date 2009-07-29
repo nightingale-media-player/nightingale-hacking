@@ -1,5 +1,6 @@
 # Manifest of files added to Win32 via the Mozilla update process; used by
-# the NSIS uninstaller to delete them
+# the NSIS uninstaller to delete them; please run this through sort -rn before
+# committing (but keep this comment up top)!
 .\updater.ini
 .\testharness\watchfolders\files\moverename\renamedFile.mp3
 .\testharness\watchfolders\files\moverename\individualMovedFile.mp3
@@ -15,5 +16,11 @@
 .\testharness\watchfolders\files\
 .\testharness\watchfolders\
 .\testharness\
-.\songbird.ini
 .\songbirditunesagent.exe
+.\songbird.ini
+.\gstreamer\encode-profiles\wmav2.xml
+.\gstreamer\encode-profiles\vorbis.xml
+.\gstreamer\encode-profiles\mp3.xml
+.\gstreamer\encode-profiles\flac.xml
+.\gstreamer\encode-profiles\
+.\gstreamer\
