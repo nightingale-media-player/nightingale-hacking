@@ -735,8 +735,9 @@ sbWatchFolderService::OnAppShutdown()
           __FUNCTION__, mStartupDelayTimer.get()));
   }
 
-  // kill the file system watcher to prevent a reference loop
+  // Prevent reference loops and leaks.
   mFileSystemWatcher = nsnull;
+  mPrefMgr = nsnull;
 
   return NS_OK;
 }
