@@ -79,8 +79,7 @@
 
           <!-- Metrics collection checkbox. -->
           <xul:checkbox anonid="metrics_checkbox"
-                        label="&first_run.feedback.metrics.label;"
-                        checked="true"/>
+                        label="&first_run.feedback.metrics.label;"/>
           <xul:description class="indent sb-first-run-checkbox-description">
             &first_run.feedback.metrics.description;
           </xul:description>
@@ -117,6 +116,15 @@
      *********************************************************************** -->
 
     <implementation>
+      <constructor><![CDATA[
+        var metricsChecked = 
+          Application.prefs.getValue("app.metrics.checkedByDefault", true);
+        var metricsCheckbox = 
+          document.getAnonymousElementByAttribute(this,
+                                                  "anonid",
+                                                  "metrics_checkbox");
+        metricsCheckbox.checked = metricsChecked;
+      ]]></constructor>
 
       <!--
        * Save the user settings in the first-run wizard page.
