@@ -234,7 +234,7 @@ sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(sbIFileMetadataService),
                               static_cast<sbIFileMetadataService*>(this),
-                              nsIProxyObjectManager::INVOKE_SYNC,
+                              NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(proxy));
     NS_ENSURE_SUCCESS(rv, rv);
     // Can't call StartJob via proxy, since it is not
