@@ -3929,17 +3929,10 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mCapabilitiesRegistrar) {
-    nsCOMPtr<nsIThread> mainThread;
-    NS_GetMainThread(getter_AddRefs(mainThread));
-    nsCOMPtr<sbIDeviceCapabilitiesRegistrar> proxy;
-    rv = do_GetProxyForObject(mainThread,
-                              mCapabilitiesRegistrar.get(),
-                              NS_PROXY_ALWAYS | NS_PROXY_SYNC,
-                              getter_AddRefs(proxy));
 
     // This may return NS_ERROR_NOT_AVAILABLE or null if no transcoding is
     // required
-    rv = proxy->ChooseProfile(aMediaItem, this, aProfile);
+    rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, this, aProfile);
     NS_ENSURE_SUCCESS(rv, rv);
     return NS_OK;
   }

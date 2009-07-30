@@ -40,10 +40,11 @@ interface nsIFile;
  *       
  * \sa sbITranscodeJob
  */
-[scriptable, uuid(27bc8de0-5a16-4812-a9a0-486779b69b17)]
+[scriptable, uuid(b019a181-3a6e-45aa-a802-9dc05446ee78)]
 interface sbITranscodeProfile : nsISupports
 {
   // Types of transcode profile.
+  const unsigned long TRANSCODE_TYPE_UKNOWN = 0;
   const unsigned long TRANSCODE_TYPE_AUDIO = 1;
   const unsigned long TRANSCODE_TYPE_VIDEO = 2;
   const unsigned long TRANSCODE_TYPE_AUDIO_VIDEO = 3;
@@ -54,18 +55,18 @@ interface sbITranscodeProfile : nsISupports
    * Generally this would be stored in preferences, etc in order to fetch the
    * same profile later.
    */
-  readonly attribute AString id;
+  attribute AString id;
 
   /* \brief A human-readable description of what this profile is for 
    *
    * Example: "MP3 Audio"
    */
-  readonly attribute AString description;
+  attribute AString description;
 
   /* \brief Type of transcoding profile; should be one of the TRANSCODE_TYPE_*
      constants
    */
-  readonly attribute unsigned long type;
+  attribute unsigned long type;
 
   /* \brief The container format to put the transcoded media in (if any).
 
@@ -77,7 +78,7 @@ interface sbITranscodeProfile : nsISupports
      Note that 'tag' formats such as id3 are considered as container formats
      here for simplicity.
    */
-  readonly attribute AString containerFormat;
+  attribute AString containerFormat;
 
   /* \brief The audio codec to use (if any).
      
@@ -86,17 +87,29 @@ interface sbITranscodeProfile : nsISupports
    
      May be an empty string to indicate that raw audio should be stored.
    */
-  readonly attribute AString audioCodec;
+  attribute AString audioCodec;
 
   /* \brief The video codec to use (if any). e.g "wmv3", "h264", "theora"
    */
-  readonly attribute AString videoCodec;
+  attribute AString videoCodec;
 
   attribute nsIArray audioProperties;
   attribute nsIArray videoProperties;
 
   attribute nsIArray containerProperties;
 };
+
+%{C++
+#define SONGBIRD_TRANSCODEPROFILE_DESCRIPTION             \
+  "Songbird Transcode Profile Component"
+#define SONGBIRD_TRANSCODEPROFILE_CONTRACTID              \
+  "@songbirdnest.com/Songbird/Transcode/Profile;1"
+#define SONGBIRD_TRANSCODEPROFILE_CLASSNAME               \
+  "Songbird Transcode Profile"
+#define SONGBIRD_TRANSCODEPROFILE_CID                     \
+  {0xdc50c9ab, 0x63ec, 0x4d6a, {0xa9, 0xd1, 0x79, 0x07, 0xbc, 0xe3, 0x33, 0x24}}
+
+%}
 
 [scriptable, uuid(49f32e88-a71e-4a1e-b502-1e809572ede0)]
 interface sbITranscodeProfileProperty : nsISupports

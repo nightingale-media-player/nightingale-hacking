@@ -40,6 +40,9 @@ interface sbITranscodeProfile;
  * profile to use. This allows maximum flexibility for device manufactures
  * to control the formats stored on their devices.
  * The registrar types gives us a way to allow overriding registrars.
+ *
+ * Implementations are to be thread safe. ChooseProfile is the only method that
+ * currently changes the object's state.
  */
 [scriptable, uuid(1B59F37C-3178-4804-8622-EE7F0EBAE838)]
 interface sbIDeviceCapabilitiesRegistrar : nsISupports
@@ -87,7 +90,7 @@ interface sbIDeviceCapabilitiesRegistrar : nsISupports
    * \brief Choose a profile for a given media item
    * \param aMediaItem The media item to find the profile for
    * \return The profile chosen, returns NS_ERROR_NOT_AVAILABLE if a suitable
-   *         profile was not found
+   *         profile was not found. This profile should be treated as read-only
    */
    sbITranscodeProfile ChooseProfile(in sbIMediaItem aMediaItem,
                                      in sbIDevice aDevice);                                     
