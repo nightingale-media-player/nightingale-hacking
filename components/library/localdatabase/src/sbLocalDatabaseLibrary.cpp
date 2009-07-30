@@ -373,11 +373,10 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
 
   nsCOMPtr<sbIDatabasePreparedStatement> deleteItemPreparedStatement;
   rv = mDBQuery->PrepareQuery(
-                      NS_LITERAL_STRING("DELETE FROM media_items WHERE guid = ?"), 
+                      NS_LITERAL_STRING("DELETE FROM media_items WHERE guid = ?"),
                       getter_AddRefs(deleteItemPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 j = 0;
   PRUint32 totalOffset = 1;
   PRUint32 count = mNotificationList.Count();
 
@@ -396,8 +395,8 @@ sbLibraryRemovingEnumerationListener::OnEnumerationEnd(sbIMediaList* aMediaList,
     // as well but they do it more sanely. What we are doing here is only
     // possible because the items are guaranteed to be in the right order
     // because of how they are fetched!
-    j = i + 1;
-    if(mNotificationIndexes[j] > mNotificationIndexes[i]) {
+    PRUint32 const j = i + 1;
+    if(j < count && mNotificationIndexes[j] > mNotificationIndexes[i]) {
       mNotificationIndexes[j] -= totalOffset++;
     }
 
@@ -512,7 +511,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
 
   // Check version and migrate if needed.
   PRBool needsMigration = PR_FALSE;
-  
+
   PRUint32 fromVersion = 0;
   PRUint32 toVersion = 0;
 
@@ -523,12 +522,12 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
     rv = MigrateLibrary(fromVersion, toVersion);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   // Check locale and reindex collated indices if needed
   PRBool needsReindexCollations = PR_FALSE;
   rv = NeedsReindexCollations(&needsReindexCollations);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (needsReindexCollations) {
     rv = ReindexCollations();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -625,7 +624,7 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
 
   InitializeLibraryStatistics();
-  
+
   // See if the user has specified a different analyze count limit. We don't
   // care if any of this fails.
   nsCOMPtr<nsIPrefBranch> prefBranch =
@@ -652,12 +651,12 @@ sbLocalDatabaseLibrary::Init(const nsAString& aDatabaseGuid,
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   // Library initialized, ensure others can get notifications
-  nsCOMPtr<sbILocalDatabaseMediaItem> item = 
+  nsCOMPtr<sbILocalDatabaseMediaItem> item =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbILibrary *, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   item->SetSuppressNotifications(PR_FALSE);
-  
+
   return NS_OK;
 }
 
@@ -675,7 +674,7 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
     (guid, created, updated, content_url, hidden, media_list_type_id, is_list) \
     values (?, ?, ?, ?, ?, ?, ?)"), getter_AddRefs(mCreateMediaItemPreparedStatement));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   query->PrepareQuery(NS_LITERAL_STRING("\
     SELECT _mlt.type \
     FROM media_items as _mi \
@@ -683,7 +682,7 @@ nsresult sbLocalDatabaseLibrary::CreateQueries()
     WHERE _mi.guid = ?"),
     getter_AddRefs(mGetTypeForGUID));
   NS_ENSURE_SUCCESS(rv, rv);
-    
+
   return NS_OK;
 }
 /**
@@ -836,7 +835,7 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
 
   if (!aProperties)
     return NS_OK;
-  
+
   nsresult rv;
 
   nsString url;
@@ -851,7 +850,7 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the new properties, but do not send notifications,
-  // since we assume aItem was only just created, and at 
+  // since we assume aItem was only just created, and at
   // this point nobody cares.
   nsCOMPtr<sbILocalDatabaseMediaItem> item =
     do_QueryInterface(aItem, &rv);
@@ -1058,10 +1057,10 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     nsCOMPtr<sbILibrary> oldLibrary;
     rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = oldLibrary->GetGuid(sourceGuid);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = mutableProperties->AppendProperty(PROP_LIBRARY, sourceGuid);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1077,7 +1076,7 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
   }
 
   nsCOMPtr<sbIMediaItem> newItem;
-  
+
   // Is this a list?
   nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
 
@@ -1098,7 +1097,7 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     mPreventAddedNotification = PR_TRUE;
 
     // Don't return after this without resetting mPreventAddedNotification!
-    
+
     // If the list is from a different library, we want to copy the list as
     // type "simple", because other types can carry logic that points at some
     // of its library's resources.
@@ -1109,10 +1108,10 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     PRBool equals;
     rv = itemLibrary->Equals(SB_ILIBRESOURCE_CAST(this), &equals);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     nsCOMPtr<sbIMediaList> newList;
     PRBool forceCreateAsSimple = !equals;
-    
+
     if (!forceCreateAsSimple) {
       rv = CreateMediaList(type, properties, getter_AddRefs(newList));
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Couldn't create media list!");
@@ -1120,7 +1119,7 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
       if (NS_FAILED(rv))
         forceCreateAsSimple = PR_TRUE;
     }
-    
+
     if (forceCreateAsSimple) {
       nsCOMPtr<sbIPropertyArray> simpleProperties;
       rv = GetSimpleMediaListCopyProperties(itemAsList,
@@ -1162,14 +1161,14 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     // keep track of the library/item guid that we just copied from
     NS_NAMED_LITERAL_STRING(PROP_ORIGINURL, SB_PROPERTY_ORIGINURL);
     nsString originURL;
-    
+
     rv = properties->GetPropertyValue(PROP_ORIGINURL, originURL);
     if (rv == NS_ERROR_NOT_AVAILABLE) {
       nsCString spec;
       rv = contentUri->GetSpec(spec);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mutableProperties->AppendProperty(PROP_ORIGINURL, 
+      rv = mutableProperties->AppendProperty(PROP_ORIGINURL,
                                              NS_ConvertUTF8toUTF16(spec));
       NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -1408,7 +1407,7 @@ sbLocalDatabaseLibrary::GetContainingLists(sbMediaItemArray* aItems,
 
     success = lists->AppendObject(list);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  
+
     nsISupportsHashKey* addedList = distinctLists.PutEntry(list);
     NS_ENSURE_TRUE(addedList, NS_ERROR_OUT_OF_MEMORY);
   }
@@ -1485,7 +1484,7 @@ sbLocalDatabaseLibrary::GetAllListsByType(const nsAString& aType,
  * aStringArray: the nsStringArray which will contain the spec string in UTF16
  * format upon successful return.
  * @return: NS_OK on successful return.
- * Note: 
+ * Note:
  * For compatibility reason, aURIs could be array containing nsIURI objects. In
  * that case, we detect it and convert them to their corresponding spec strings.
  */
@@ -1493,7 +1492,7 @@ nsresult
 sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aStringArray)
 {
   TRACE(("ConvertURIsToStrings[0x%.8x] - ConvertURIsToStrings()", this));
-  
+
   NS_ENSURE_ARG_POINTER(aURIs);
   NS_ENSURE_ARG_POINTER(aStringArray);
 
@@ -1501,9 +1500,9 @@ sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aS
   PRUint32 length = 0;
   rv = aURIs->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsAutoPtr<nsStringArray> strArray(new nsStringArray(length));
-  
+
   for (PRUint32 i = 0; i < length; i++) {
     nsAutoString uriSpec;
     nsCOMPtr<nsISupportsString> uriStr = do_QueryElementAt(aURIs, i, &rv);
@@ -1511,7 +1510,7 @@ sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aS
       // aURIs contains the nsIURI objects.
       nsCOMPtr<nsIURI> uri = do_QueryElementAt(aURIs, i, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       nsCAutoString spec;
       rv = uri->GetSpec(spec);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -1525,7 +1524,7 @@ sbLocalDatabaseLibrary::ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aS
   *aStringArray = strArray.forget();
   return NS_OK;
 }
-  
+
 /**
  * \brief Determine whether library contains a copy of the media item specified
  *        by aMediaItem.  Return true in aContainsCopy if the library does
@@ -1666,7 +1665,7 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
 
   rv = builder->AddCriterion(inCriterionContentURL);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Add url's to inCriterionContentURL
   PRUint32 incount = 0;
   // noOfDups tracks how many passed in URI objects have the same spec strings.
@@ -1734,23 +1733,23 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
 
     uniques.RemoveEntry(value);
   }
-  // Now uniques should contain all the final items we need to insert to the 
+  // Now uniques should contain all the final items we need to insert to the
   // destination arrays.
   nsAutoPtr<nsStringArray> filteredURIs(new nsStringArray(length - rowCount - noOfDups));
   nsCOMPtr<nsIMutableArray> filteredPropertyArrayArray;
   if (aPropertyArrayArray) {
-    filteredPropertyArrayArray = 
+    filteredPropertyArrayArray =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
-  for (PRUint32 i = 0; i < length; i++) {  
+
+  for (PRUint32 i = 0; i < length; i++) {
     nsAutoString uriSpec;
     aURIs->StringAt(i, uriSpec);
     if (uniques.GetEntry(uriSpec)) {
       PRBool success = filteredURIs->AppendString(uriSpec);
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-      
+
       if (aPropertyArrayArray && filteredPropertyArrayArray) {
         nsCOMPtr<sbIPropertyArray> properties =
           do_QueryElementAt(aPropertyArrayArray, i, &rv);
@@ -1766,10 +1765,10 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
   }
 
   *aFilteredURIs = filteredURIs.forget();
-  
+
   if (aFilteredPropertyArrayArray)
     NS_IF_ADDREF(*aFilteredPropertyArrayArray = filteredPropertyArrayArray);
-  
+
   return NS_OK;
 }
 
@@ -2014,7 +2013,7 @@ sbLocalDatabaseLibrary::AddCopyListener(sbILocalDatabaseLibraryCopyListener *aCo
   NS_ENSURE_ARG_POINTER(aCopyListener);
 
   nsCOMPtr<sbILocalDatabaseLibraryCopyListener> proxiedListener;
-  
+
   nsresult rv = SB_GetProxyForObject(NS_PROXY_TO_CURRENT_THREAD,
                                      NS_GET_IID(sbILocalDatabaseLibraryCopyListener),
                                      aCopyListener,
@@ -2072,7 +2071,7 @@ sbLocalDatabaseLibrary::NotifyListenersItemUpdated(sbIMediaItem* aItem,
   mMediaListTable.EnumerateRead(CopyInterfaceHashtableEntry<nsStringHashKey,
                                                             nsIWeakReference>,
                                 &tableSnapshot);
-  
+
   tableSnapshot.Enumerate(sbLocalDatabaseLibrary::NotifyListItemUpdated,
                           &info);
 
@@ -2102,7 +2101,7 @@ sbLocalDatabaseLibrary::NotifyCopyListenersItemCopied(sbIMediaItem *aSourceItem,
   NS_ENSURE_ARG_POINTER(aSourceItem);
   NS_ENSURE_ARG_POINTER(aDestinationItem);
 
-  nsAutoPtr<sbMediaItemPair> 
+  nsAutoPtr<sbMediaItemPair>
     mediaItemPair(new sbMediaItemPair(aSourceItem, aDestinationItem));
 
   // use a snapshot because the listeners may do arbitary things, including
@@ -2112,7 +2111,7 @@ sbLocalDatabaseLibrary::NotifyCopyListenersItemCopied(sbIMediaItem *aSourceItem,
   mCopyListeners.EnumerateRead(CopyInterfaceHashtableEntry<nsISupportsHashKey,
                                                            sbILocalDatabaseLibraryCopyListener>,
                                &tableSnapshot);
-  
+
   mCopyListeners.EnumerateRead(sbLocalDatabaseLibrary::NotifyCopyListeners,
                                mediaItemPair);
 
@@ -2130,7 +2129,7 @@ sbLocalDatabaseLibrary::NotifyCopyListeners(nsISupportsHashKey::KeyType aKey,
   sbMediaItemPair *items = static_cast<sbMediaItemPair *>(aUserData);
   NS_ENSURE_TRUE(items, PL_DHASH_STOP);
 
-  nsresult rv = aCopyListener->OnItemCopied(items->sourceItem, 
+  nsresult rv = aCopyListener->OnItemCopied(items->sourceItem,
                                             items->destinationItem);
   NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
 
@@ -2146,9 +2145,9 @@ sbLocalDatabaseLibrary::NotifyListItemUpdated(nsStringHashKey::KeyType aKey,
   NS_ASSERTION(aUserData, "Null userData!");
   nsresult rv;
 
-  sbMediaItemUpdatedInfo* info = 
+  sbMediaItemUpdatedInfo* info =
     static_cast<sbMediaItemUpdatedInfo*>(aUserData);
-  NS_ENSURE_TRUE(info, PL_DHASH_STOP);  
+  NS_ENSURE_TRUE(info, PL_DHASH_STOP);
 
   nsCOMPtr<sbILocalDatabaseSimpleMediaList> simpleList;
   simpleList = do_QueryReferent(aEntry, &rv);
@@ -2156,14 +2155,14 @@ sbLocalDatabaseLibrary::NotifyListItemUpdated(nsStringHashKey::KeyType aKey,
     // If we can get a strong reference that means someone is
     // actively holding on to this list, and may care for
     // item updated notifications.
-              
+
     // Find out if the list contains the item that has been updated.
     PRBool containsItem = PR_FALSE;
     nsCOMPtr<sbIMediaList> list = do_QueryInterface(simpleList, &rv);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
     rv = list->Contains(info->item, &containsItem);
     NS_ENSURE_SUCCESS(rv, PL_DHASH_STOP);
-    
+
     // If so, announce update
     if (containsItem) {
       rv = simpleList->NotifyListenersItemUpdated(
@@ -2414,7 +2413,7 @@ sbLocalDatabaseLibrary::CreateMediaItem(nsIURI* aUri,
 {
   NS_ENSURE_ARG_POINTER(aUri);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   PRBool wasCreated; /* ignored */
   return CreateMediaItemInternal(aUri,
                                  aProperties,
@@ -2434,17 +2433,17 @@ sbLocalDatabaseLibrary::CreateMediaItemIfNotExist(nsIURI *aContentUri,
 {
   NS_ENSURE_ARG_POINTER(aContentUri);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   nsresult rv;
   nsCOMPtr<sbIMediaItem> resultItem;
-  
+
   rv = CreateMediaItemInternal(aContentUri,
                                aProperties,
                                PR_FALSE, /* never allow duplicates */
                                _retval,
                                getter_AddRefs(resultItem));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (aResultItem) {
     resultItem.forget(aResultItem);
   }
@@ -2461,7 +2460,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   NS_ENSURE_ARG_POINTER(aUri);
   NS_ENSURE_ARG_POINTER(aWasCreated);
   NS_ENSURE_ARG_POINTER(_retval);
-  
+
   nsCAutoString spec;
   nsresult rv = aUri->GetSpec(spec);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2475,14 +2474,14 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
     nsAutoPtr<nsStringArray> strArray(new nsStringArray());
     PRBool success = strArray->AppendString(NS_ConvertUTF8toUTF16(spec));
     NS_ENSURE_SUCCESS(success, NS_ERROR_OUT_OF_MEMORY);
-    
+
     nsAutoPtr<nsStringArray> filtered;
 
     rv = FilterExistingItems(strArray,
                              nsnull,
                              getter_Transfers(filtered),
                              nsnull);
-    
+
     NS_ENSURE_SUCCESS(rv, rv);
 
     PRUint32 length = filtered->Count();
@@ -2551,12 +2550,12 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   if (aProperties) {
     aProperties->GetPropertyValue(PROP_LIBRARY, sourceLibraryGUID);
   }
-  
+
   nsString sourceGUID;
   if (aProperties) {
     aProperties->GetPropertyValue(PROP_ITEM, sourceGUID);
   }
-  
+
   // Set up properties for the new item
   rv = SetDefaultItemProperties(mediaItem, aProperties);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2584,11 +2583,11 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
  */
 nsresult
 sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
-  
+
   NS_ENSURE_ARG_POINTER(aMusicFolderURI);
-  
+
   nsresult rv;
-  
+
   static char const SB_MEDIA_MANAGEMENT_PREF[] =
     "songbird.media_management.library.folder";
   static char const SB_MEDIA_MANAGEMENT_ENABLE_PREF[] =
@@ -2599,17 +2598,17 @@ sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
                           "Songbird Download Device");
 
   if (!mFolderPrefs) {
-    mFolderPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1", 
+    mFolderPrefs = do_ProxiedGetService("@mozilla.org/preferences-service;1",
                                         &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   PRBool enabled = PR_FALSE;
   // Ignore error, treat as eanbled false
   mFolderPrefs->GetBoolPref(SB_MEDIA_MANAGEMENT_ENABLE_PREF, &enabled);
 
   nsCOMPtr<nsISupportsString> supportsString;
-  
+
   if (enabled) {
     // Failure is OK, supportsString will just be null
     mFolderPrefs->GetComplexValue(SB_MEDIA_MANAGEMENT_PREF,
@@ -2645,11 +2644,11 @@ sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
   }
 
   nsCOMPtr<nsIURI> folderPathURI;
-  sbLibraryUtils::GetFileContentURI(folderPathFile, 
+  sbLibraryUtils::GetFileContentURI(folderPathFile,
                                     aMusicFolderURI);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  
+
+
   return NS_OK;
 }
 
@@ -2661,17 +2660,17 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
                                           nsAString const & aSourceItemGUID,
                                           sbIMediaItem * aDestinationItem) {
   nsresult rv;
-  
+
   // Get the source library from the library manager
   nsCOMPtr<sbILibraryManager> libraryManager =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbILibrary> library;
-  rv = libraryManager->GetLibrary(aSourceLibraryGUID, 
+  rv = libraryManager->GetLibrary(aSourceLibraryGUID,
                                   getter_AddRefs(library));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Get the item from the source library
   nsCOMPtr<sbIMediaItem> sourceItem;
   rv = library->GetItemByGuid(aSourceItemGUID, getter_AddRefs(sourceItem));
@@ -2684,7 +2683,7 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
   nsCOMPtr<sbIDeviceManager2> deviceManager =
     do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIDevice> device;
   rv = deviceManager->GetDeviceForItem(sourceItem, getter_AddRefs(device));
   if (NS_FAILED(rv) || !device) {
@@ -2697,15 +2696,15 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
   nsCOMPtr<nsIWritablePropertyBag2> requestParams =
     do_CreateInstance(NS_HASH_PROPERTY_BAG_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
                                              aDestinationItem);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("list"),
                                              NS_ISUPPORTS_CAST(sbILibrary*, this));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIURI> folderURI;
   rv = FindMusicFolderURI(getter_AddRefs(folderURI));
   if (NS_FAILED(rv)) {
@@ -2715,10 +2714,10 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("data"),
                                              folderURI);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = device->SubmitRequest(sbIDevice::REQUEST_READ, requestParams);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -2774,7 +2773,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
   nsCOMPtr<sbIMediaItem> mediaItem;
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (aProperties) {
     rv = SetDefaultItemProperties(mediaItem, aProperties);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -2790,7 +2789,7 @@ sbLocalDatabaseLibrary::CreateMediaList(const nsAString& aType,
 
   nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   NS_ADDREF(*_retval = mediaList);
   return NS_OK;
 }
@@ -2892,7 +2891,7 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
       // again. Add a ref and let it live a little longer.
       LOG((LOG_SUBMESSAGE_SPACE "Found live weak reference in cache"));
       NS_ADDREF(*_retval = strongMediaItem);
-      
+
       // It is possible for items to get in the cache without being gotten
       // via "GetMediaItem". Therefore, it is possible for their mSuppressNotification
       // flag to remain TRUE despite the fact that it should be FALSE.
@@ -2949,15 +2948,15 @@ sbLocalDatabaseLibrary::GetMediaItem(const nsAString& aGUID,
 
   itemInfo->weakRef = do_GetWeakReference(strongMediaItem, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  // Remember that this GUID maps to a MediaList, and that it 
+
+  // Remember that this GUID maps to a MediaList, and that it
   // may be instantiated.  We'll use this information for fast
-  // notification.  
+  // notification.
   if (!itemInfo->listType.IsEmpty()) {
     PRBool success = mMediaListTable.Put(aGUID, itemInfo->weakRef);
     NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
   }
-  
+
   nsCOMPtr<sbILocalDatabaseMediaItem> strongLocalItem =
     do_QueryInterface(strongMediaItem, &rv);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "SetSuppressNotifications will not get called!");
@@ -2992,7 +2991,7 @@ sbLocalDatabaseLibrary::GetDuplicate(sbIMediaItem*  aMediaItem,
  * See sbILibrary
  */
 NS_IMETHODIMP
-sbLocalDatabaseLibrary::ClearItems() 
+sbLocalDatabaseLibrary::ClearItems()
 {
   return ClearInternal(PR_TRUE);
 }
@@ -3169,7 +3168,7 @@ sbLocalDatabaseLibrary::Flush()
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - Sync()", this));
   NS_ENSURE_TRUE(mPropertyCache, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsresult rv = mPropertyCache->Write();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3226,7 +3225,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
          this));
 
   nsresult rv;
-  
+
   nsAutoPtr<nsStringArray> strArray;
   // Convert URI objects into String objects
   rv = ConvertURIsToStrings(aURIArray, getter_Transfers(strArray));
@@ -3239,15 +3238,15 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
     filteredPropertyArrayArray = aPropertyArrayArray;
   }
   else {
-    rv = FilterExistingItems(strArray, 
+    rv = FilterExistingItems(strArray,
                              aPropertyArrayArray,
-                             getter_Transfers(filteredArray), 
+                             getter_Transfers(filteredArray),
                              getter_AddRefs(filteredPropertyArrayArray));
     NS_ENSURE_SUCCESS(rv, rv);
     if (strArray == filteredArray)
       strArray.forget();
   }
-  
+
   PRBool runAsync = aListener ? PR_TRUE : PR_FALSE;
 
   nsCOMPtr<sbIDatabaseQuery> query;
@@ -3313,7 +3312,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
 {
   SB_MEDIALIST_LOCK_FULLARRAY_AND_ENSURE_MUTABLE();
@@ -3329,7 +3328,7 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
 
   // We only have to get the simple media lists because those are
   // the lists that are used for storage for all other media list types.
-  // The outer implementation (ie, the actual smart, dynamic media list) 
+  // The outer implementation (ie, the actual smart, dynamic media list)
   // will pick up the changes made to it's storage list.
   sbMediaListArray lists;
   rv = GetAllListsByType(NS_LITERAL_STRING("simple"), &lists);
@@ -3398,7 +3397,7 @@ sbLocalDatabaseLibrary::ClearInternal(PRBool aExcludeLists /*= PR_FALSE*/)
 nsresult
 sbLocalDatabaseLibrary::NeedsMigration(PRBool *aNeedsMigration,
                                        PRUint32 *aFromVersion,
-                                       PRUint32 *aToVersion) 
+                                       PRUint32 *aToVersion)
 {
   NS_ENSURE_ARG_POINTER(aNeedsMigration);
   NS_ENSURE_ARG_POINTER(aFromVersion);
@@ -3441,7 +3440,7 @@ sbLocalDatabaseLibrary::NeedsMigration(PRBool *aNeedsMigration,
     PRUint32 currentVersion = strCurrentVersion.ToInteger(&rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbILocalDatabaseMigrationHelper> migration = 
+    nsCOMPtr<sbILocalDatabaseMigrationHelper> migration =
       do_CreateInstance("@songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3454,22 +3453,22 @@ sbLocalDatabaseLibrary::NeedsMigration(PRBool *aNeedsMigration,
 
     *aNeedsMigration = currentVersion < latestVersion;
 
-    LOG(("++++----++++\nlatest version: %i\ncurrent schema version: %i\nneeds migration: %i\n\n", 
-           latestVersion, 
-           currentVersion, 
+    LOG(("++++----++++\nlatest version: %i\ncurrent schema version: %i\nneeds migration: %i\n\n",
+           latestVersion,
+           currentVersion,
            *aNeedsMigration));
   }
 
   return NS_OK;
 }
 
-nsresult 
-sbLocalDatabaseLibrary::MigrateLibrary(PRUint32 aFromVersion, 
+nsresult
+sbLocalDatabaseLibrary::MigrateLibrary(PRUint32 aFromVersion,
                                        PRUint32 aToVersion)
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsCOMPtr<sbILocalDatabaseMigrationHelper> migration = 
+  nsCOMPtr<sbILocalDatabaseMigrationHelper> migration =
     do_CreateInstance("@songbirdnest.com/Songbird/Library/LocalDatabase/MigrationHelper;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3603,7 +3602,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     }
 
     deleteQuery.Replace(deleteQuery.Length() - 1, 1, NS_LITERAL_STRING(")"));
-    
+
     rv = query->AddQuery(deleteQuery);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -3623,7 +3622,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
     PRUint32 mediaItemId;
     rv = viewMediaList->GetMediaItemId(&mediaItemId);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     sbAutoBatchHelper batchHelper(*viewMediaList);
 
     // If this is a media list, just notify the list
@@ -3652,7 +3651,7 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
       NS_ENSURE_SUCCESS(rv, rv);
       query->BindStringParameter(1, ordinal);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // Get the index of this item in the full array
       //TODO: this scares me! investigate!
       PRUint64 rowid;
@@ -3697,14 +3696,14 @@ sbLocalDatabaseLibrary::RemoveSelected(nsISimpleEnumerator* aSelection,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbLocalDatabaseLibrary::ForceBeginUpdateBatch() { 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::ForceBeginUpdateBatch() {
   sbLocalDatabaseMediaListBase::BeginUpdateBatch();
   return NS_OK;
 };
 
-NS_IMETHODIMP 
-sbLocalDatabaseLibrary::ForceEndUpdateBatch() { 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::ForceEndUpdateBatch() {
   sbLocalDatabaseMediaListBase::EndUpdateBatch();
   return NS_OK;
 };
@@ -4253,10 +4252,10 @@ sbBatchCreateTimerCallback::NotifyInternal(PRBool* _retval)
   //        Second, we seem to be getting one past the end of the *real* query count in the DBEngine somehow.
   //        Still, if we are at this point, we should basically be within a timer's length or so of the end,
   //        (assuming incorrectly that all queries take about the same length of time.)
-  
+
   if (currentQuery <= mQueryCount &&
       isExecuting) {
-        
+
     // Notify listener of progress.
     // There is one query per item, plus a BEGIN and COMMIT.
     PRUint32 itemIndex = (currentQuery > 2) ? currentQuery - 2 : 0;
@@ -4295,7 +4294,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
 
   nsresult rv = aQuery->AddQuery(NS_LITERAL_STRING("begin"));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Iterate over all items in the URI array, creating media items.
   PRUint32 listLength = mURIArray->Count();
 
@@ -4304,7 +4303,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
   for (PRUint32 i = 0; i < listLength; i++) {
     nsAutoString uriSpec;
     mURIArray->StringAt(i, uriSpec);
-    
+
     nsAutoString guid;
     rv = mLibrary->AddNewItemQuery(aQuery,
                                    SB_MEDIAITEM_TYPEID,
@@ -4316,7 +4315,7 @@ sbBatchCreateHelper::InitQuery(sbIDatabaseQuery* aQuery,
     nsString* success = mGuids.AppendElement(guid);
     NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
   }
- 
+
 
   rv = aQuery->AddQuery(NS_LITERAL_STRING("commit"));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -4364,7 +4363,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
                                                  &count,
                                                  &bags);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     for (PRUint32 i = 0; i < length; i++) {
       // We know the GUID and the type of these new media items so preload
       // the cache with this information
@@ -4392,7 +4391,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       NS_ENSURE_TRUE(bags[i], NS_ERROR_NULL_POINTER);
       rv = ldbmi->SetPropertyBag(bags[i]);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       // Now that we have a media item, set up the initial
       // properties
       nsCOMPtr<sbIPropertyArray> properties = nsnull;
@@ -4422,7 +4421,7 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
 
 
 // library statistics implementation
-nsresult 
+nsresult
 sbLocalDatabaseLibrary::InitializeLibraryStatistics() {
   nsresult rv = NS_OK;
 
@@ -4451,12 +4450,12 @@ sbLocalDatabaseLibrary::InitializeLibraryStatistics() {
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty, 
-                                              PRUint32 aCollectionMethod, 
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty,
+                                              PRUint32 aCollectionMethod,
                                               const nsAString & aOtherProperty,
-                                              PRBool aAscending, 
-                                              PRUint32 aMaxResults, 
+                                              PRBool aAscending,
+                                              PRUint32 aMaxResults,
                                               nsIArray **_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
@@ -4494,13 +4493,13 @@ sbLocalDatabaseLibrary::CollectDistinctValues(const nsAString & aProperty,
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIMutableArray> array = 
+  nsCOMPtr<nsIMutableArray> array =
     do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i=0; i<rowCount; i++) {
     // create a variant to hold this string value
-    nsCOMPtr<nsIWritableVariant> variant = 
+    nsCOMPtr<nsIWritableVariant> variant =
       do_CreateInstance(NS_VARIANT_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -4520,7 +4519,7 @@ nsresult
 sbLocalDatabaseLibrary::NeedsReindexCollations(PRBool *aNeedsReindexCollations) {
 
   nsresult rv;
-  
+
   // See if we've specifically been asked to reindex the collations
   nsCOMPtr<nsIPrefBranch> prefBranch =
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
@@ -4558,7 +4557,7 @@ sbLocalDatabaseLibrary::NeedsReindexCollations(PRBool *aNeedsReindexCollations) 
   PRUint32 rowCount = 0;
   rv = result->GetRowCount(&rowCount);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // If the collation-locale has not been set yet, cause a reindex
   if (rowCount == 0) {
     *aNeedsReindexCollations = PR_TRUE;
@@ -4570,16 +4569,16 @@ sbLocalDatabaseLibrary::NeedsReindexCollations(PRBool *aNeedsReindexCollations) 
   nsAutoString previousCollationLocale;
   rv = result->GetRowCell(0, 0, previousCollationLocale);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  nsCOMPtr<sbIDatabaseEngine> dbEngine = 
+
+  nsCOMPtr<sbIDatabaseEngine> dbEngine =
     do_GetService("@songbirdnest.com/Songbird/DatabaseEngine;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsString currentCollationLocale;
   dbEngine->GetLocaleCollationID(currentCollationLocale);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  *aNeedsReindexCollations = 
+
+  *aNeedsReindexCollations =
     !currentCollationLocale.Equals(previousCollationLocale);
 
   return NS_OK;
@@ -4593,15 +4592,15 @@ sbLocalDatabaseLibrary::ReindexCollations() {
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reindex all library_collate sequences
-  
+
   nsAutoString queryStr;
   queryStr = NS_LITERAL_STRING("REINDEX 'library_collate'");
 
   rv = query->AddQuery(queryStr);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Remove the flag that forces reindexing for this library
-  
+
   nsCOMPtr<nsIPrefBranch> prefBranch =
     do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
   if (NS_SUCCEEDED(rv)) {
@@ -4619,21 +4618,21 @@ sbLocalDatabaseLibrary::ReindexCollations() {
 
   // Write the new collation locale identifier in the db
 
-  nsCOMPtr<sbIDatabaseEngine> dbEngine = 
+  nsCOMPtr<sbIDatabaseEngine> dbEngine =
     do_GetService("@songbirdnest.com/Songbird/DatabaseEngine;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsString currentCollationLocale;
   dbEngine->GetLocaleCollationID(currentCollationLocale);
   NS_ENSURE_SUCCESS(rv, rv);
 
   queryStr =
     NS_LITERAL_STRING("INSERT OR REPLACE INTO library_metadata VALUES('collation-locale', '");
-  
+
   queryStr += currentCollationLocale;
-  
+
   queryStr += NS_LITERAL_STRING("')");
-  
+
   rv = query->AddQuery(queryStr);
   NS_ENSURE_SUCCESS(rv, rv);
 
