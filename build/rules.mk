@@ -227,7 +227,7 @@ $(sort $(APP_DIST_DIRS) $(CREATEDIRS)): %: FORCE
 ## Program handling for libs and export targets
 ##
 
-libs:: $(OUR_STATIC_LIB) $(OUR_DYNAMIC_LIB) $(OUR_SIMPLE_PROGRAM) $(SONGBIRD_COMPONENTS)
+libs:: $(OUR_STATIC_LIB) $(OUR_DYNAMIC_LIB) $(OUR_SIMPLE_PROGRAM)
 ifndef NO_DIST_INSTALL
    ifdef SIMPLE_PROGRAM
 	   $(INSTALL_PROG) $(OUR_SIMPLE_PROGRAM) $(FINAL_TARGET)
@@ -925,8 +925,6 @@ endif
 #
 #              EXTENSION_UUID    - uuid of the extension
 #                                  (e.g. "coolthing@example.com")
-#              EXTENSION_ARCH    - arch string describing the build machine
-#                                  (e.g. "WINNT_x86-msvc" or "Darwin_x86-gcc4")
 #              EXTENSION_VER     - extension version
 #                                  (e.g. "1.2.3")
 #              EXTENSION_MIN_VER - minimum version of application needed for 
@@ -1010,6 +1008,10 @@ endif
 # overriden, of course
 ifdef DEBUG
    INSTALL_EXTENSION ?= 1
+endif
+
+ifeq (1_,$(INSTALL_EXTENSION)_$(EXTENSION_UUID)) 
+   $(error INSTALL_EXTENSION requires EXTENSION_UUID to be set.)
 endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
