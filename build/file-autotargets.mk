@@ -128,8 +128,14 @@ $(SONGBIRD_GSTPLUGINSDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIR
 $(SONGBIRD_LIBDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_LIB))),$(addprefix $$d,%)))
 	$(INSTALL_PROG) $^ $(SONGBIRD_LIBDIR)/$(@F)
 
+ifdef XULRUNNERDIR_MODE
+   XULRUNNERDIR_INSTALL = $(INSTALL) -m $(XULRUNNERDIR_MODE)
+else
+   XULRUNNERDIR_INSTALL = $(INSTALL_FILE)
+endif
+
 $(SONGBIRD_XULRUNNERDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_XULRUNNER))),$(addprefix $$d,%)))
-	$(INSTALL) $^ $(SONGBIRD_XULRUNNERDIR)/$(@F)
+	$(XULRUNNERDIR_INSTALL) $^ $(SONGBIRD_XULRUNNERDIR)/$(@F)
 
 $(SONGBIRD_CHROMEDIR)/%: $$(wildcard $$(foreach d, $$(sort $$(dir $$(SONGBIRD_CHROME))),$(addprefix $$d,%)))
 	$(INSTALL_FILE) $^ $(SONGBIRD_CHROMEDIR)/$(@F)
