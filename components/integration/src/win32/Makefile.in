@@ -74,8 +74,6 @@ CPP_SRCS += NativeWindowFromNode.cpp \
             IntegrationComponent.cpp \
             $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
-
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

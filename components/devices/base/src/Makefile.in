@@ -78,6 +78,4 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
 
 IS_COMPONENT = 1
 
-LIBSONGBIRD_COMPONENTS = SongbirdDeviceBaseComps
-
 include $(topsrcdir)/build/rules.mk

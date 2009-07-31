@@ -40,7 +40,4 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/job/public \
 
 XPIDL_MODULE = sbMediaManager.xpt
 
-LIBSONGBIRD_COMPONENT = sbMediaManager
-SONGBIRD_COMPONENTS = $(XPIDL_MODULE)
-
 include $(topsrcdir)/build/rules.mk

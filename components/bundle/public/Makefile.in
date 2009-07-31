@@ -37,6 +37,4 @@ XPIDL_SRCS = sbIBundle.idl \
 
 XPIDL_MODULE = sbBundle.xpt
 
-LIBSONGBIRD_COMPONENT = sbBundle
-
 include $(topsrcdir)/build/rules.mk

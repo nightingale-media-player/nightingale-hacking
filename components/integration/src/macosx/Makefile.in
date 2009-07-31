@@ -71,8 +71,6 @@ DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
                            -framework Cocoa \
                            -Wl,-syslibroot,$(SB_MACOSX_SDK)
 
-LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
-
 IS_COMPONENT = 1 
 
 include $(topsrcdir)/build/rules.mk

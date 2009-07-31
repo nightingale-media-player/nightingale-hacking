@@ -35,6 +35,4 @@ XPIDL_SRCS = sbIDataRemote.idl \
 
 XPIDL_MODULE = sbDataRemote.xpt
 
-LIBSONGBIRD_COMPONENT = sbDataRemote
-
 include $(topsrcdir)/build/rules.mk

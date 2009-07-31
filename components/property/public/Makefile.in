@@ -42,7 +42,5 @@ XPIDL_SRCS = sbIPropertyArray.idl \
 
 XPIDL_MODULE = sbProperties.xpt
 
-LIBSONGBIRD_COMPONENT = sbProperties
-
 include $(topsrcdir)/build/rules.mk
 

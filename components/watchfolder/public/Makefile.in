@@ -35,6 +35,4 @@ XPIDL_SRCS = sbIWatchFolderService.idl \
 
 XPIDL_MODULE = sbWatchFolderService.xpt
 
-LIBSONGBIRD_COMPONENT = sbWatchFolderService
-
 include $(topsrcdir)/build/rules.mk

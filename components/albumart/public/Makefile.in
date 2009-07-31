@@ -38,7 +38,5 @@ XPIDL_SRCS = sbIAlbumArtFetcherSet.idl \
 
 XPIDL_MODULE = sbAlbumArt.xpt
 
-LIBSONGBIRD_COMPONENT = sbAlbumArt
-
 include $(topsrcdir)/build/rules.mk
 

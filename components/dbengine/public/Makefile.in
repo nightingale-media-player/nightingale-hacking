@@ -37,6 +37,4 @@ XPIDL_SRCS = sbIDatabaseEngine.idl \
 
 XPIDL_MODULE = sbDatabaseEngine.xpt
 
-LIBSONGBIRD_COMPONENT = sbDatabaseEngine
-
 include $(topsrcdir)/build/rules.mk

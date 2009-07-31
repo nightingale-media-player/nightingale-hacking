@@ -34,7 +34,5 @@ XPIDL_SRCS = sbIDirectoryEnumerator.idl \
 
 XPIDL_MODULE = sbFileUtils.xpt
 
-LIBSONGBIRD_COMPONENT = sbFileUtils
-
 include $(topsrcdir)/build/rules.mk
 

@@ -44,6 +44,4 @@ XPIDL_SRCS = sbIRemoteAPIService.idl \
 
 XPIDL_MODULE = sbBrowserAPI.xpt
 
-LIBSONGBIRD_COMPONENT = sbBrowserAPI
-
 include $(topsrcdir)/build/rules.mk

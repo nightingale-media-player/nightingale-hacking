@@ -36,7 +36,5 @@ XPIDL_SRCS = sbIFileSystemWatcher.idl \
              
 XPIDL_MODULE = sbFileSystem.xpt
 
-LIBSONGBIRD_COMPONENT = sbFileSystem
-
 include $(topsrcdir)/build/rules.mk
 

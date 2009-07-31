@@ -47,8 +47,6 @@ CPP_EXTRA_INCLUDES = \
 # build a component (ie: a dynamically loadable module)
 IS_COMPONENT = 1
 
-LIBSONGBIRD_COMPONENT = SongbirdXPCOMLib
-
 DYNAMIC_LIB = sbxpcom
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \

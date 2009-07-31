@@ -35,6 +35,4 @@ XPIDL_SRCS = sbIMediaExportAgentService.idl \
 
 XPIDL_MODULE = sbMediaExportService.xpt
 
-LIBSONGBIRD_COMPONENT = sbMediaExportService
-
 include $(topsrcdir)/build/rules.mk

@@ -34,6 +34,4 @@ XPIDL_SRCS = sbILibraryImporter.idl \
 
 XPIDL_MODULE = sbLibraryImporter.xpt
 
-LIBSONGBIRD_COMPONENT = sbLibraryImporter
-
 include $(topsrcdir)/build/rules.mk

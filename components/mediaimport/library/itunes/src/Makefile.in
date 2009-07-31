@@ -88,6 +88,4 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdiTunesImporterComponent
-
 include $(topsrcdir)/build/rules.mk

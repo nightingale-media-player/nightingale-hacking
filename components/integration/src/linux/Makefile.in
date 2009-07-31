@@ -57,8 +57,6 @@ CPP_SRCS += WindowCloak.cpp \
             NativeWindowFromNode.cpp \
             $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdIntegrationComponent
-
 IS_COMPONENT = 1
 
 CFLAGS += $(GTK_CFLAGS)

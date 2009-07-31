@@ -35,6 +35,4 @@ XPIDL_SRCS = sbIDeviceHelper.idl \
 
 XPIDL_MODULE = sbDevice.xpt
 
-LIBSONGBIRD_COMPONENT = sbDevice
-
 include $(topsrcdir)/build/rules.mk

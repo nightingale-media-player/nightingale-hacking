@@ -37,6 +37,4 @@ XPIDL_SRCS = sbIFeathersManager.idl \
 
 XPIDL_MODULE = sbFeathers.xpt
 
-LIBSONGBIRD_COMPONENT = sbFeathers
-
 include $(topsrcdir)/build/rules.mk

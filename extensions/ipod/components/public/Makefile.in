@@ -37,6 +37,4 @@ XPIDL_SRCS = sbIIPDDeviceEvent.idl \
 
 XPIDL_MODULE = sbIPDDevice.xpt
 
-LIBSONGBIRD_COMPONENT = sbIPDDevice
-
 include $(topsrcdir)/build/rules.mk

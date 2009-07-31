@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIDeviceMarshall.idl \
 
 XPIDL_MODULE = sbDeviceMarshall.xpt
 
-LIBSONGBIRD_COMPONENT = sbDeviceMarshall
-
 include $(topsrcdir)/build/rules.mk

@@ -37,6 +37,4 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \
 
 XPIDL_MODULE = sbDeviceController.xpt
 
-LIBSONGBIRD_COMPONENT = sbDeviceController
-
 include $(topsrcdir)/build/rules.mk

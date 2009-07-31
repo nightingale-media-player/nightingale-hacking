@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIDisplayPanes.idl \
 
 XPIDL_MODULE = sbDisplayPanes.xpt
 
-LIBSONGBIRD_COMPONENT = sbDisplayPanes
-
 include $(topsrcdir)/build/rules.mk

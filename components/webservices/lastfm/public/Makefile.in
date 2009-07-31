@@ -34,7 +34,5 @@ XPIDL_SRCS = sbILastFmWebServices.idl \
 
 XPIDL_MODULE = sbWebServicesLastFm.xpt
 
-LIBSONGBIRD_COMPONENT = sbWebServicesLastFm
-
 include $(topsrcdir)/build/rules.mk
 

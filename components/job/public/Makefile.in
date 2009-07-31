@@ -38,6 +38,4 @@ XPIDL_SRCS = sbIJobProgress.idl \
 
 XPIDL_MODULE = sbJob.xpt
 
-LIBSONGBIRD_COMPONENT = sbJob
-
 include $(topsrcdir)/build/rules.mk

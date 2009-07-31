@@ -97,8 +97,6 @@ ifeq (,$(filter-out linux solaris,$(SB_PLATFORM)))
                               $(NULL)
 endif
 
-LIBSONGBIRD_COMPONENT = sbIntl
-
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

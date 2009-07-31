@@ -41,6 +41,4 @@ XPIDL_SRCS = IWindowCloak.idl \
              
 XPIDL_MODULE = sbIntegration.xpt
 
-LIBSONGBIRD_COMPONENT = sbIntegration
-
 include $(topsrcdir)/build/rules.mk

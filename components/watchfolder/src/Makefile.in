@@ -66,8 +66,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/threads/src/sbMozThreads \
                               $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdWatchFolderComponent 
-
 IS_COMPONENT = 1
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbMoveRenameHelper.js

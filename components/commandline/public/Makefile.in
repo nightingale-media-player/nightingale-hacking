@@ -36,6 +36,4 @@ XPIDL_SRCS = sbICommandLineManager.idl \
 
 XPIDL_MODULE = sbCommandLine.xpt
 
-LIBSONGBIRD_COMPONENT = sbCommandLine
-
 include $(topsrcdir)/build/rules.mk

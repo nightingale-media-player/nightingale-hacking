@@ -36,7 +36,5 @@ XPIDL_SRCS = sbIPlaybackHistoryEntry.idl \
 
 XPIDL_MODULE = sbPlaybackHistoryService.xpt
 
-LIBSONGBIRD_COMPONENT = sbPlaybackHistoryService
-
 include $(topsrcdir)/build/rules.mk
 

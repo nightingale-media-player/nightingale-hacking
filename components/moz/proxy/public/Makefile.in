@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIProxiedServices.idl \
 
 XPIDL_MODULE = sbProxiedServices.xpt
 
-LIBSONGBIRD_COMPONENT = sbProxiedServices
-
 include $(topsrcdir)/build/rules.mk

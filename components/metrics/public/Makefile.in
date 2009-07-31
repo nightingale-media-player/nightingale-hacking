@@ -34,8 +34,4 @@ XPIDL_SRCS = sbIMetrics.idl \
 
 XPIDL_MODULE = sbMetrics.xpt
 
-LIBSONGBIRD_COMPONENT = sbMetrics
-
-GARBAGE = $(XPIDL_MODULE_TYPELIBS)
-
 include $(topsrcdir)/build/rules.mk

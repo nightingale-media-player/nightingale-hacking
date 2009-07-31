@@ -35,6 +35,4 @@ XPIDL_SRCS = sbIPlaylistCommands.idl \
 
 XPIDL_MODULE = sbPlaylistCommands.xpt
 
-LIBSONGBIRD_COMPONENT = sbPlaylistCommands
-
 include $(topsrcdir)/build/rules.mk

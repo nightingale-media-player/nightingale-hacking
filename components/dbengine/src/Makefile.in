@@ -174,8 +174,6 @@ ifeq (macosx,$(SB_PLATFORM))
                               $(NULL)
 endif
 
-LIBSONGBIRD_COMPONENT = SongbirdDatabaseEngineComponent
-
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

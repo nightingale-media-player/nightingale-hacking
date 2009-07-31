@@ -34,7 +34,5 @@ XPIDL_SRCS = sbITemporaryFileService.idl \
 
 XPIDL_MODULE = sbTemporaryFileService.xpt
 
-LIBSONGBIRD_COMPONENT = sbTemporaryFileService
-
 include $(topsrcdir)/build/rules.mk
 

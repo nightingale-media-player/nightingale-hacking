@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIApplicationController.idl \
 
 XPIDL_MODULE = sbController.xpt
 
-LIBSONGBIRD_COMPONENT = sbController
-
 include $(topsrcdir)/build/rules.mk

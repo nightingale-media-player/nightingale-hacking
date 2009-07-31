@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIFileScan.idl \
 
 XPIDL_MODULE = sbFileScan.xpt
 
-LIBSONGBIRD_COMPONENT = sbFileScan
-
 include $(topsrcdir)/build/rules.mk

@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIURLFormatter.idl \
 
 XPIDL_MODULE = sbURLFormatter.xpt
 
-LIBSONGBIRD_COMPONENT = sbURLFormatter
-
 include $(topsrcdir)/build/rules.mk

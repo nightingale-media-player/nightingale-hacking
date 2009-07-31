@@ -34,7 +34,5 @@ XPIDL_SRCS = sbIWindowsAutoPlayService.idl \
 
 XPIDL_MODULE = sbWindowsSystem.xpt
 
-LIBSONGBIRD_COMPONENT = sbWindowsSystem
-
 include $(topsrcdir)/build/rules.mk
 

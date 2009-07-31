@@ -62,8 +62,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdLibraryManager
-
 SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
                       $(srcdir)/sbStorageFormatter.jsm \
                       $(srcdir)/sbTimeFormatter.jsm \

@@ -69,8 +69,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/threads/src/sbMozThreads \
 
 
-LIBSONGBIRD_COMPONENT = SongbirdTranscodeComponent
-
 SONGBIRD_COMPONENTS = $(srcdir)/sbTranscodeUtils.js
 
 IS_COMPONENT = 1

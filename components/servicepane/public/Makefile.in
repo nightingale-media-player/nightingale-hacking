@@ -37,6 +37,4 @@ XPIDL_SRCS = sbIServicePaneService.idl \
 
 XPIDL_MODULE = sbServicePane.xpt
 
-LIBSONGBIRD_COMPONENT = sbServicePane
-
 include $(topsrcdir)/build/rules.mk

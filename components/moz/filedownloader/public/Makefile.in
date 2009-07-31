@@ -34,7 +34,5 @@ XPIDL_SRCS = sbIFileDownloader.idl \
 
 XPIDL_MODULE = sbFileDownloader.xpt
 
-LIBSONGBIRD_COMPONENT = sbFileDownloader
-
 include $(topsrcdir)/build/rules.mk
 

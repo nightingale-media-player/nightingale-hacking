@@ -56,6 +56,4 @@ XPIDL_SRCS = sbIMediacore.idl \
 
 XPIDL_MODULE = sbMediacoreBase.xpt
 
-LIBSONGBIRD_COMPONENT = sbMediacoreBase
-
 include $(topsrcdir)/build/rules.mk

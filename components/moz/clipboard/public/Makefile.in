@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIClipboardHelper.idl \
 
 XPIDL_MODULE = sbClipboardHelper.xpt
 
-LIBSONGBIRD_COMPONENT = sbClipboardHelper
-
 include $(topsrcdir)/build/rules.mk

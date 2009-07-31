@@ -34,7 +34,5 @@ XPIDL_SRCS = sbIStringTransform.idl \
 
 XPIDL_MODULE = sbIntl.xpt
 
-LIBSONGBIRD_COMPONENT = sbIntl
-
 include $(topsrcdir)/build/rules.mk
 

@@ -60,6 +60,4 @@ XPIDL_SRCS = sbICascadeFilterSet.idl \
 
 XPIDL_MODULE = sbLibraryBase.xpt
 
-LIBSONGBIRD_COMPONENT = sbLibraryBase
-
 include $(topsrcdir)/build/rules.mk

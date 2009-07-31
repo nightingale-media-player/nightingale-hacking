@@ -76,8 +76,6 @@ DYNAMIC_LIB_EXTRA_FLAGS += -framework Foundation \
 # This component will only build on Mac OS X 10.5
 SB_MACOSX_SDK = $(SB_MACOSX_SDK_10_5)
 
-LIBSONGBIRD_COMPONENT = SongbirdFileSystemBase
-
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

@@ -43,6 +43,4 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/property/public \
 
 XPIDL_MODULE = sbTranscodeModule.xpt
 
-LIBSONGBIRD_COMPONENT = sbTranscodeModule
-
 include $(topsrcdir)/build/rules.mk

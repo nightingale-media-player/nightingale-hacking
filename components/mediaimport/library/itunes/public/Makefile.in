@@ -35,6 +35,4 @@ XPIDL_SRCS = sbIiTunesXMLParser.idl \
 
 XPIDL_MODULE = sbiTunesImporter.xpt
 
-LIBSONGBIRD_COMPONENT = sbiTunesImporter
-
 include $(topsrcdir)/build/rules.mk

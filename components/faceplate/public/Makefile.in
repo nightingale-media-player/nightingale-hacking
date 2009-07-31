@@ -36,6 +36,4 @@ XPIDL_SRCS = sbIFaceplatePane.idl \
 
 XPIDL_MODULE = sbFaceplate.xpt
 
-LIBSONGBIRD_COMPONENT = sbFaceplate
-
 include $(topsrcdir)/build/rules.mk

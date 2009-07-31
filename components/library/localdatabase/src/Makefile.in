@@ -141,8 +141,6 @@ else
    DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
-LIBSONGBIRD_COMPONENT = SongbirdLocalDatabaseLibraryModule
-
 SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
                       $(srcdir)/sbSmartMediaListsUpdater.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \

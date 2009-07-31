@@ -52,8 +52,6 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \
 
 XPIDL_MODULE = sbLocalDatabaseLibrary.xpt
 
-LIBSONGBIRD_COMPONENT = sbLocalDatabaseLibrary
-
 include $(topsrcdir)/build/rules.mk
 
 

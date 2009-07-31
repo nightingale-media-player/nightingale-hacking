@@ -54,6 +54,4 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \
 # XXXMook: TODO: rename this once deviceobsolete is gone
 XPIDL_MODULE = sbDeviceBase2.xpt
 
-LIBSONGBIRD_COMPONENT = sbDeviceBase
-
 include $(topsrcdir)/build/rules.mk

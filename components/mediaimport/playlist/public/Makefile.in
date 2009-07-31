@@ -38,7 +38,5 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/library/base/public \
 
 XPIDL_MODULE = sbPlaylistReader.xpt
 
-LIBSONGBIRD_COMPONENT = sbPlaylistReader
-
 include $(topsrcdir)/build/rules.mk
 

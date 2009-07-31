@@ -34,7 +34,5 @@ XPIDL_SRCS = sbISQLBuilder.idl \
 
 XPIDL_MODULE = sbSQLBuilder.xpt
 
-LIBSONGBIRD_COMPONENT = sbSQLBuilder
-
 include $(topsrcdir)/build/rules.mk
 

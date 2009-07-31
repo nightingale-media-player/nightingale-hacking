@@ -31,6 +31,4 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = $(NULL)
 
-LIBSONGBIRD_COMPONENT = sbDeviceManager
-
 include $(topsrcdir)/build/rules.mk

@@ -95,8 +95,6 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
                               components/moz/threads/src/sbMozThreads \
                               $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdMetadataComponent
-
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

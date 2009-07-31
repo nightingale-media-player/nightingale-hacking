@@ -37,6 +37,4 @@ XPIDL_SRCS = sbIDownloadDevice.idl \
 
 XPIDL_MODULE = sbDownloadDevice.xpt
 
-LIBSONGBIRD_COMPONENT = sbDownloadDevice
-
 include $(topsrcdir)/build/rules.mk

@@ -34,6 +34,4 @@ XPIDL_SRCS = sbIPrompter.idl \
 
 XPIDL_MODULE = sbPrompter.xpt
 
-LIBSONGBIRD_COMPONENT = sbPrompter
-
 include $(topsrcdir)/build/rules.mk

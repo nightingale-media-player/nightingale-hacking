@@ -41,6 +41,4 @@ XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/property/public \
 
 XPIDL_MODULE = sbMetadataModule.xpt
 
-LIBSONGBIRD_COMPONENT = sbMetadataModule
-
 include $(topsrcdir)/build/rules.mk

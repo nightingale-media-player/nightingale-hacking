@@ -71,7 +71,6 @@ CPP_EXTRA_INCLUDES += $(topsrcdir)/components/include \
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
-LIBSONGBIRD_COMPONENT = SongbirdDeviceManager2
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk
