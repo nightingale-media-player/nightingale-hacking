@@ -113,13 +113,11 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
     nsCOMPtr<nsIProtocolHandler> resHandler;
     rv = ioservice->GetProtocolHandler("resource", getter_AddRefs(resHandler));
     NS_ENSURE_SUCCESS(rv, rv);
-    nsCOMPtr<nsIResProtocolHandler> resourceProtocolHandler =
-        do_QueryInterface(resHandler, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<nsIResProtocolHandler> proxiedResourceProtocolHandler;
     rv = do_GetProxyForObject(target,
                               NS_GET_IID(nsIResProtocolHandler),
-                              resourceProtocolHandler,
+                              resHandler,
                               NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                               getter_AddRefs(proxiedResourceProtocolHandler));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -131,13 +129,11 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
   nsCOMPtr<nsIProtocolHandler> fileHandler;
   rv = ioservice->GetProtocolHandler("file", getter_AddRefs(fileHandler));
   NS_ENSURE_SUCCESS(rv, rv);
-  nsCOMPtr<nsIFileProtocolHandler> fileProtocolHandler =
-      do_QueryInterface(fileHandler, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIFileProtocolHandler> proxiedFileProtocolHandler;
   rv = do_GetProxyForObject(target,
                             NS_GET_IID(nsIFileProtocolHandler),
-                            fileProtocolHandler,
+                            fileHandler,
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedFileProtocolHandler));
   NS_ENSURE_SUCCESS(rv, rv);
