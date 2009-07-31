@@ -1090,6 +1090,7 @@ AC_SUBST(SB_SEARCHPLUGINS)
 # Check for extras.
 #
 
+HAS_EXTRAS=
 if test -d ${srcdir}/extras; then
   HAS_EXTRAS=1
 fi
@@ -1111,6 +1112,21 @@ AC_SUBST(HAVE_FLUENDO_MP3)
 
 AC_CHECK_LIB([nspr4], [PR_Cleanup])
 AC_CHECK_LIB([xul], [_XRE_Main])
+
+#
+# If we're building the ipod extension on Win32, we'll need the Windows DDK;
+# look for it here.
+#
+
+if test "$SB_PLATFORM" == "windows"; then
+   if test -n $(echo $SB_EXTENSIONS | grep ipod); then
+      # We have the DDK headers in the extras area, so don't fail on this test
+      # if we have that available to us...
+      if test -z $HAS_EXTRAS; then
+         AC_CHECK_HEADERS(devioctl.h, [], AC_MSG_ERROR(Missing devioctl.h; install the Windows DDK or disable building of the iPod extension))
+      fi
+   fi
+fi
 
 #
 # Use the mozilla perl method for generating makefiles quickly. This script
