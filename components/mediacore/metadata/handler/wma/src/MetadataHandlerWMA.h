@@ -65,11 +65,10 @@ protected:
   ~sbMetadataHandlerWMA();
 
   nsCOMPtr<sbIMutablePropertyArray>  m_PropertyArray;
-  nsCOMPtr<sbIMetadataChannel> m_ChannelHandler;
-  nsCOMPtr<nsIChannel>         m_Channel;
-  nsString                     m_FilePath;
-  PRBool                       m_Completed;
-  PRBool                       m_COMInitialized;
+  nsCOMPtr<sbIMetadataChannel>       m_ChannelHandler;
+  nsCOMPtr<nsIChannel>               m_Channel;
+  nsString                           m_FilePath;
+  PRBool                             m_Completed;
 
   /**
    * Read a single string-based metadata (for the WMF API methods)

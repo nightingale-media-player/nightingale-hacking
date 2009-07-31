@@ -157,9 +157,6 @@ static const metadataKeyMapEntry_t kMetadataKeys[] = {
 };
 #undef KEY_MAP_ENTRY
 
-static PRBool sCOMInitialized = PR_FALSE;
-// FUNCTIONS ==================================================================
-
 // HELPER CLASSES =============================================================
 SB_AUTO_CLASS(sbCoInitializeWrapper,
               HRESULT,
@@ -172,19 +169,12 @@ SB_AUTO_CLASS(sbCoInitializeWrapper,
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerWMA, sbIMetadataHandler)
 
 sbMetadataHandlerWMA::sbMetadataHandlerWMA() :
-  m_Completed(PR_FALSE),
-  m_COMInitialized(PR_FALSE)
+  m_Completed(PR_FALSE)
 {
-  HRESULT hr = CoInitialize(0);
-  NS_ASSERTION(SUCCEEDED(hr), "CoInitialize failed!");
-  if (SUCCEEDED(hr))
-    m_COMInitialized = PR_TRUE;
 }
 
 sbMetadataHandlerWMA::~sbMetadataHandlerWMA()
 {
-  if (m_COMInitialized)
-    CoUninitialize();
 }
 
 NS_IMETHODIMP
@@ -313,6 +303,8 @@ sbMetadataHandlerWMA::Write(PRInt32 *_retval)
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(!m_FilePath.IsEmpty(), NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(m_PropertyArray, NS_ERROR_NOT_INITIALIZED);
+
+  sbCoInitializeWrapper coinit(::CoInitialize(0));
 
   nsresult rv;
   HRESULT hr;
