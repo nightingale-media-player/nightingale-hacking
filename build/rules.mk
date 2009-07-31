@@ -1010,8 +1010,10 @@ ifdef DEBUG
    INSTALL_EXTENSION ?= 1
 endif
 
-ifeq (1_,$(INSTALL_EXTENSION)_$(EXTENSION_UUID)) 
-   $(error INSTALL_EXTENSION requires EXTENSION_UUID to be set.)
+ifdef EXTENSION_NAME
+   ifeq (1_,$(INSTALL_EXTENSION)_$(EXTENSION_UUID)) 
+      $(error INSTALL_EXTENSION requires EXTENSION_UUID to be set.)
+   endif
 endif
 
 $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
