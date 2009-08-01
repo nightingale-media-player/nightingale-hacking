@@ -594,7 +594,7 @@
 <!ENTITY first_run.itunes.header.label                  "iTunes Import/Export">
 <!ENTITY first_run.itunes.description                   "It appears you have iTunes installed. &brandShortName; can be configured to import and/or export tracks between &brandShortName; and iTunes so that your libraries are in sync.">
 <!ENTITY first_run.itunes.checkbox.import.label         "Import tracks and playlists from iTunes">
-<!ENTITY first_run.itunes.checkbox.import.description   "Podcasts and music purchased from the iTunes Store can be imported into Songbird.  This feature works well if Songbird is going to be your primary music player.">
+<!ENTITY first_run.itunes.checkbox.import.description   "Podcasts and music purchased from the iTunes Store can be imported into &brandShotName;.  This feature works well if Songbird is going to be your primary music player.">
 <!ENTITY first_run.itunes.checkbox.export.label         "Export new tracks and playlists to iTunes">
 <!ENTITY first_run.itunes.checkbox.export.description   "Music acquired through Songbird can be exported to iTunes so that it can be transferred to your iPod or iPhone.">
 
