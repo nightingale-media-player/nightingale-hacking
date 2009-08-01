@@ -606,17 +606,24 @@ sbAlbumArtService::Finalize()
   TRACE(("sbAlbumArtService[0x%8.x] - Finalize", this));
   nsresult rv;
 
+  if (!mInitialized) {
+    NS_WARNING("Finalize called when service was not initialized!");
+    // Not initialized or already finalized.
+    return;
+  }
+
+  mInitialized = PR_FALSE;
+
   // Clear the fetcher info.
   mFetcherInfoList.Clear();
-  
+
   // Clear any cache info
   mTemporaryCache.Clear();
-  
+
   // Remove observers.
   if (mObserverService) {
-    mObserverService->RemoveObserver(this,
-                                     "profile-after-change");
-    mObserverService->RemoveObserver(this,
+    mObserverService->RemoveObserver(this, "profile-after-change");
+    mObserverService->RemoveObserver(this, 
                                      SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC);
     mObserverService = nsnull;
   }

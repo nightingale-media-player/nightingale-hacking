@@ -157,7 +157,7 @@ Fetchers = {
      * (again, bug 16751)
      */
     var albumArtService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
-                            .createInstance(Ci.sbIAlbumArtService);
+                            .getService(Ci.sbIAlbumArtService);
     var fetchList = albumArtService.getFetcherList(
                                             Ci.sbIAlbumArtFetcherSet.TYPE_ALL);
     var fetchers;
