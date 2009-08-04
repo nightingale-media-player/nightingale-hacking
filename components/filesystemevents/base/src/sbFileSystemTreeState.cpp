@@ -276,6 +276,9 @@ sbFileSystemTreeState::LoadTreeState(nsID & aSessionID,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  rv = fileObjectStream->Close();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not close the file object stream!");
+
   savedRootNode.forget(aOutRootNode);
   return NS_OK;
 }

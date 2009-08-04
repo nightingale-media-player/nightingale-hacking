@@ -56,12 +56,12 @@ sbWatchFolderPrefMgr::Init(sbWatchFolderService *aWFService)
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = observerService->AddObserver(this,
-                                    "songbird-library-manager-ready",
+                                    "final-ui-startup",
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = observerService->AddObserver(this,
-                                    "songbird-library-manager-before-shutdown",
+                                    "quit-application-granted",
                                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -123,8 +123,8 @@ sbWatchFolderPrefMgr::Observe(nsISupports *aSubject,
 
   nsresult rv;
 
-  // Library startup topic:
-  if (strcmp("songbird-library-manager-ready", aTopic) == 0) {
+  // Final UI startup:
+  if (strcmp("final-ui-startup", aTopic) == 0) {
     nsCOMPtr<nsIObserverService> observerService =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -144,7 +144,7 @@ sbWatchFolderPrefMgr::Observe(nsISupports *aSubject,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   // Library shutdown topic:
-  else if (strcmp("songbird-library-manager-before-shutdown", aTopic) == 0) {
+  else if (strcmp("quit-application-granted", aTopic) == 0) {
     nsCOMPtr<nsIObserverService> observerService =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
