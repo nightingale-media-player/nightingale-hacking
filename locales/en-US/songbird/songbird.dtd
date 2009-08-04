@@ -724,6 +724,13 @@
 <!ENTITY fetch_album_art.dialog.title "Get Album Artwork">
 <!ENTITY fetch_album_art.dialog.message "Not currently implemented. (See Bug 14281)">
 
+<!-- CD Rip Pref Pane entities -->
+<!ENTITY cdrip.prefpane.label                 "CD Rip">
+<!ENTITY cdrip.prefpane.format                "Format">
+<!ENTITY cdrip.prefpane.quality               "Quality">
+<!ENTITY cdrip.prefpane.eject_after_rip       "When CD Rip is completed eject CD">
+<!ENTITY cdrip.prefpane.soundalert_after_rip  "When CD Rip is completed play system alert sound">
+
 <!-- about:credits entities. -->
 <!ENTITY about.credits.intro "We would like to thank our contributors, whose efforts make Songbird what it is. These people have helped by writing code and documentation, and by testing. They have created and maintained this product, its associated development kits, our build tools and our web sites.  Names are followed by IRC nicks, come by #songbird on irc.mozilla.org and say hello!">
 <!ENTITY about.credits.footer.beforeLink "Of course, none of this would be possible without the hard work and efforts of">

@@ -83,9 +83,14 @@
             insertafter="paneContent"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/playbackPrefs.xul" />
+  <prefpane id="paneCDRip"
+            label="&cdrip.prefpane.label;"
+            insertafter="panePlayback"
+            image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
+            src="chrome://songbird/content/xul/preferences/cdripOverlay.xul" />
   <prefpane id="paneAlbumArtwork"
             label="&albumartpreferences.prefpane.label;"
-            insertafter="panePlayback"
+            insertafter="paneCDRip"
             image="chrome://mozapps/skin/xpinstall/xpinstallItemGeneric.png"
             src="chrome://songbird/content/xul/preferences/albumArtwork.xul" />
   <prefpane id="paneAddons"

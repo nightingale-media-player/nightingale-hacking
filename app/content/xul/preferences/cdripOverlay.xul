@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<!-- Import media prefs overlay. -->
+<overlay id="cdrip_prefpane_overlay"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/preferences/cdripPrefs.js"/>
+
+
+  <prefpane id="paneCDRip"
+            onpaneload="CDRipPrefsPane.doPaneLoad();">
+
+    <preferences>
+      <!-- TODO: Fill me out, see bug 17444 -->
+    </preferences>
+
+    <groupbox>
+
+      <!-- Format -->
+      <vbox>
+        <label value="&cdrip.prefpane.format;" />
+        <hbox>
+          <menulist id="rip-format-menulist"
+                    preference=""
+                    width="100">
+            <menupopup flex="1">
+              <!-- TODO: Fill me out, see bug 17444 -->
+            </menupopup>
+          </menulist>
+        </hbox>
+      </vbox>
+
+      <!-- Quality -->
+      <vbox>
+        <label value="&cdrip.prefpane.quality;" />
+        <hbox>
+          <menulist id="rip-quality-menulist"
+                    preference=""
+                    width="100">
+            <menupopup flex="1">
+              <!-- TODO: Fill me out, see bug 17444 -->
+            </menupopup>
+          </menulist>
+        </hbox>
+      </vbox>
+
+      <vbox>
+        <spacer height="10" />
+
+        <!-- Eject after complete checkbox -->
+        <checkbox id="eject-after-rip-checkbox"
+                  preference=""
+                  label="&cdrip.prefpane.eject_after_rip;" />
+
+        <!-- Play system alert after rip checkbox -->
+        <checkbox id="soundalert-after-rip-checkbox"
+                  preference=""
+                  label="&cdrip.prefpane.soundalert_after_rip;" />
+      </vbox>
+    </groupbox>
+
+  </prefpane>
+</overlay>
