@@ -479,3 +479,7 @@ pref("songbird.media_management.library.delete", true);
 pref("songbird.media_management.library.rename", true);
 
 pref("songbird.library_exporter.start_agent", true);
+
+// CD Rip default prefs:
+pref("songbird.cdrip.oncomplete.autoeject", false);
+pref("songbird.cdrip.oncomplete.notifysound", false);

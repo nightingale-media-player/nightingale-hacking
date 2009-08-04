@@ -48,9 +48,11 @@ var CDRipPrefsUI =
 {
   initialize: function CDRipPrefsUI_initialize() {
     //
-    // TODO: Write Me - see bug 17444.
+    // XXXkreeger:
+    // Nothing to do until transcoding profiles are available (for populating
+    // the format and quality popups).
     //
-  },
+  }
 };
 
 //------------------------------------------------------------------------------

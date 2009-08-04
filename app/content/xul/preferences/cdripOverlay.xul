@@ -47,7 +47,25 @@
             onpaneload="CDRipPrefsPane.doPaneLoad();">
 
     <preferences>
-      <!-- TODO: Fill me out, see bug 17444 -->
+      <preference id="rip_format_pref"
+                  prefid="rip_format_pref"
+                  name="songbird.cdrip.format"
+                  type="int" />
+
+      <preference id="rip_quality_pref"
+                  prefid="rip_quality_pref"
+                  name="songbird.cdrip.quality"
+                  type="int" />
+
+      <preference id="rip_oncomplete_autoeject_pref"
+                  prefid="rip_oncomplete_autoeject_pref"
+                  name="songbird.cdrip.oncomplete.autoeject"
+                  type="bool" />
+
+      <preference id="rip_oncomplete_notifysound"
+                  prefid="rip_oncomplete_notifysound"
+                  name="songbird.cdrip.oncomplete.notifysound"
+                  type="bool" />
     </preferences>
 
     <groupbox>
@@ -57,7 +75,7 @@
         <label value="&cdrip.prefpane.format;" />
         <hbox>
           <menulist id="rip-format-menulist"
-                    preference=""
+                    preference="rip_format_pref"
                     width="100">
             <menupopup flex="1">
               <!-- TODO: Fill me out, see bug 17444 -->
@@ -71,7 +89,7 @@
         <label value="&cdrip.prefpane.quality;" />
         <hbox>
           <menulist id="rip-quality-menulist"
-                    preference=""
+                    preference="rip_quality_pref"
                     width="100">
             <menupopup flex="1">
               <!-- TODO: Fill me out, see bug 17444 -->
@@ -85,12 +103,12 @@
 
         <!-- Eject after complete checkbox -->
         <checkbox id="eject-after-rip-checkbox"
-                  preference=""
+                  preference="rip_oncomplete_autoeject_pref"
                   label="&cdrip.prefpane.eject_after_rip;" />
 
         <!-- Play system alert after rip checkbox -->
         <checkbox id="soundalert-after-rip-checkbox"
-                  preference=""
+                  preference="rip_oncomplete_notifysound"
                   label="&cdrip.prefpane.soundalert_after_rip;" />
       </vbox>
     </groupbox>
