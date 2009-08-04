@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<!-- CD Rip Media View. -->
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="cdrip-mediaview">
+
+  <vbox id="cdrip-outter">
+    <vbox id="cdrip-header">
+      <!-- TODO: Put stuff in here see Bug 17421 -->
+    </vbox>
+    
+    <vbox id="cdrip-playlist-content"
+          flex="1">
+      <!-- TODO: Put a playlist here for CD Rip View see Bug 17425 -->
+    </vbox>
+  </vbox>
+  
+</window>
