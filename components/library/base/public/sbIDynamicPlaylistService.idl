@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -25,24 +25,24 @@
 */
 
 /**
- * \file sbILocalDatabaseDynamicPlaylistService.idl
- * \brief Definition of the sbILocalDatabaseDynamicPlaylistService interface
+ * \file sbIDynamicPlaylistService.idl
+ * \brief Definition of the sbIDynamicPlaylistService interface
  */
 
 #include "nsISupports.idl"
 
 interface nsILocalFile;
+interface sbIPropertyArray;
 interface nsISimpleEnumerator;
 interface nsIURI;
-interface sbILocalDatabaseLibrary;
-interface sbILocalDatabaseSimpleMediaList;
+interface sbILibrary;
 interface sbIMediaList;
 
 /**
-* \interface sbILocalDatabaseDynamicPlaylistService
+* \interface sbIDynamicPlaylistService
 */
-[scriptable, uuid(8907dc15-7a57-441a-a35c-6b00d64d78bb)]
-interface sbILocalDatabaseDynamicPlaylistService : nsISupports
+[scriptable, uuid(216f339d-56b4-490f-8632-0029d3aaca66)]
+interface sbIDynamicPlaylistService : nsISupports
 {
   /**
    * \brief Create a new dynamnic playlist
@@ -54,10 +54,21 @@ interface sbILocalDatabaseDynamicPlaylistService : nsISupports
    *        saved in.  If null, the default download directory is used.
    * \return sbIMediaList The new dynamic playlist
    */
-  sbIMediaList createList(in sbILocalDatabaseLibrary aLibrary,
+  sbIMediaList createList(in sbILibrary aLibrary,
                           in nsIURI aUri,
                           in unsigned long aIntervalSeconds,
                           in nsILocalFile aDestinationDirectory);
+
+  /**
+   * \brief Create a new podcast
+   *
+   * \param aLibrary The library in which to create the new podcast
+   * \param aUri The URL of the podcast feed
+   * \param aProperties Optional initial properties for this new podcast
+   */
+  sbIMediaList createPodcast(in sbILibrary aLibrary,
+                             in nsIURI aUri,
+                             [optional] in sbIPropertyArray aProperties);
 
   /**
    * \brief Update a new dynamnic playlist
@@ -68,7 +79,7 @@ interface sbILocalDatabaseDynamicPlaylistService : nsISupports
    * \param aDestinationDirectory Directory that the downloaded files will be
    *        saved in.  If null, the default download directory is used.
    */
-  void updateList(in sbILocalDatabaseSimpleMediaList aMediaList,
+  void updateList(in sbIMediaList aMediaList,
                   in nsIURI aUri,
                   in unsigned long aIntervalSeconds,
                   in nsILocalFile aDestinationDirectory);

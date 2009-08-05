@@ -52,6 +52,8 @@ XPIDL_EXTRA_FLAGS = \
 CPP_SRCS = sbLocalDatabaseModule.cpp \
            sbLocalDatabaseGUIDArray.cpp \
            sbLocalDatabaseAsyncGUIDArray.cpp \
+           sbLocalDatabaseDynamicMediaList.cpp \
+           sbLocalDatabaseDynamicMediaListFactory.cpp \
            sbLocalDatabaseLibraryLoader.cpp \
            sbLocalDatabasePropertyCache.cpp \
            sbLocalDatabaseTreeView.cpp \
@@ -141,8 +143,7 @@ else
    DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
 endif
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbLocalDatabaseDynamicPlaylist.js \
-                      $(srcdir)/sbSmartMediaListsUpdater.js \
+SONGBIRD_COMPONENTS = $(srcdir)/sbSmartMediaListsUpdater.js \
                       $(srcdir)/sbLocalDatabaseMigrationHelper.js \
                       $(NULL)
 

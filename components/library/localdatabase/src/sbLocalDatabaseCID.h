@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -95,7 +95,7 @@
     { 0x84, 0x72, 0x59, 0xe1, 0x5f, 0x2a, 0x35, 0x81 }               \
   }
 
-#define SB_LOCALDATABASE_DYANMICMEDIALISTFACTORY_DESCRIPTION         \
+#define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_DESCRIPTION         \
   "Local Database Dyanmic Media List Factory"
 #define SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID          \
   "@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicMediaListFactory;1"

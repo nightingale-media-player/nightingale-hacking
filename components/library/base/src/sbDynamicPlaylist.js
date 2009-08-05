@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -40,8 +40,6 @@ const SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
 const SB_PROP_SUBSCRIPTIONNEXTRUN  = SB_NS + "subscriptionNextRun";
 const SB_PROP_DESTINATION          = SB_NS + "destination"
 
-const SBLDBCOMP = "@songbirdnest.com/Songbird/Library/LocalDatabase/";
-
 const SB_FINAL_UI_STARTUP_TOPIC = "final-ui-startup";
 const SB_DEVICE_MANAGER_READY_TOPIC = "songbird-device-manager-ready";
 const SB_LIBRARY_MANAGER_READY_TOPIC = "songbird-library-manager-ready";
@@ -50,7 +48,7 @@ const SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC = "songbird-library-manager-befor
 const UPDATE_INTERVAL = 60 * 1000;
 
 function d(s) {
-  //dump("------------------> sbLocalDatabaseDynamicPlaylistService " + s + "\n");
+  //dump("------------------> sbDynamicPlaylistService " + s + "\n");
 }
 
 function TRACE(s) {
@@ -68,7 +66,7 @@ function FIX(s) {
   return g;
 }
 
-function sbLocalDatabaseDynamicPlaylistService()
+function sbDynamicPlaylistService()
 {
   this._started = false;
   this._scheduledLists = {};
@@ -83,15 +81,15 @@ function sbLocalDatabaseDynamicPlaylistService()
   obs.addObserver(this, SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, false);
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype = {
-  classDescription: "Local Database Dynamic Playlist Service",
-  classID:          Components.ID("{9bb3fae0-23ad-4b96-8366-8d754a30f72e}"),
-  contractID:       SBLDBCOMP + "DynamicPlaylistService;1"
+sbDynamicPlaylistService.prototype = {
+  classDescription: "Dynamic Playlist Service",
+  classID:    Components.ID("{10a07ef5-8ab6-4728-9172-4e609f65b4a2}"),
+  contractID: "@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.QueryInterface =
+sbDynamicPlaylistService.prototype.QueryInterface =
 XPCOMUtils.generateQI([
-  Ci.sbILocalDatabaseDynamicPlaylistService,
+  Ci.sbIDynamicPlaylistService,
   Ci.nsIObserver,
   Ci.nsITimerCallback,
   Ci.sbILibraryManagerListener,
@@ -101,10 +99,10 @@ XPCOMUtils.generateQI([
 /*
  * Startup method for the dynamic playlist service
  */
-sbLocalDatabaseDynamicPlaylistService.prototype._startup =
-function sbLocalDatabaseDynamicPlaylistService__startup()
+sbDynamicPlaylistService.prototype._startup =
+function sbDynamicPlaylistService__startup()
 {
-  TRACE("sbLocalDatabaseDynamicPlaylistService::_startup\n");
+  TRACE("sbDynamicPlaylistService::_startup\n");
 
   if (this._started) {
     return;
@@ -163,12 +161,11 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
                          .getService(Ci.sbILibraryManager);
   libraryManager.addListener(this);
 
-  // Schedule all off the dynamic media lists in all libraries
+  // Schedule all of the dynamic media lists in all libraries
   var libraries = libraryManager.getLibraries();
   while (libraries.hasMoreElements()) {
     var library = libraries.getNext();
-    if (library instanceof Ci.sbILocalDatabaseLibrary)
-      this.onLibraryRegistered(library);
+    this.onLibraryRegistered(library);
   }
 
   // Do a queue run just in care some things should have been refreshed while
@@ -178,8 +175,8 @@ function sbLocalDatabaseDynamicPlaylistService__startup()
   this._started = true;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._shutdown =
-function sbLocalDatabaseDynamicPlaylistService__shutdown()
+sbDynamicPlaylistService.prototype._shutdown =
+function sbDynamicPlaylistService__shutdown()
 {
   var obs = Cc["@mozilla.org/observer-service;1"]
               .getService(Ci.nsIObserverService);
@@ -206,8 +203,8 @@ function sbLocalDatabaseDynamicPlaylistService__shutdown()
   this._started = false;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._scheduleLibrary =
-function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
+sbDynamicPlaylistService.prototype._scheduleLibrary =
+function sbDynamicPlaylistService__scheduleLibrary(aLibrary)
 {
   // Add all the media lists that are subscriptions to the _scheduledList
   // array
@@ -231,14 +228,14 @@ function sbLocalDatabaseDynamicPlaylistService__scheduleLibrary(aLibrary)
 
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._isDynamicPlaylist =
-function sbLocalDatabaseDynamicPlaylistService__isDynamicPlaylist(aMediaList)
+sbDynamicPlaylistService.prototype._isDynamicPlaylist =
+function sbDynamicPlaylistService__isDynamicPlaylist(aMediaList)
 {
   return aMediaList.getProperty(SB_PROP_ISSUBSCRIPTION) == "1";
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._removeListsFromLibrary =
-function sbLocalDatabaseDynamicPlaylistService__removeListsFromLibrary(aLibrary)
+sbDynamicPlaylistService.prototype._removeListsFromLibrary =
+function sbDynamicPlaylistService__removeListsFromLibrary(aLibrary)
 {
   for each (var list in this._scheduledLists) {
     if (list.library.equals(aLibrary)) {
@@ -247,8 +244,8 @@ function sbLocalDatabaseDynamicPlaylistService__removeListsFromLibrary(aLibrary)
   }
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._updateSubscriptions =
-function sbLocalDatabaseDynamicPlaylistService__updateSubscriptions(aForce)
+sbDynamicPlaylistService.prototype._updateSubscriptions =
+function sbDynamicPlaylistService__updateSubscriptions(aForce)
 {
   var now = (new Date()).getTime() * 1000;
   for each (var list in this._scheduledLists) {
@@ -275,8 +272,8 @@ function sbLocalDatabaseDynamicPlaylistService__updateSubscriptions(aForce)
   }
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._updateList =
-function sbLocalDatabaseDynamicPlaylistService__updateList(aList)
+sbDynamicPlaylistService.prototype._updateList =
+function sbDynamicPlaylistService__updateList(aList)
 {
   // Get the playlist reader and load the tracks from this url
   var manager = Cc["@songbirdnest.com/Songbird/PlaylistReaderManager;1"]
@@ -294,8 +291,8 @@ function sbLocalDatabaseDynamicPlaylistService__updateList(aList)
   manager.loadPlaylist(uri, aList, null, true, listener);
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._setNextRun =
-function sbLocalDatabaseDynamicPlaylistService__setNextRun(aList)
+sbDynamicPlaylistService.prototype._setNextRun =
+function sbDynamicPlaylistService__setNextRun(aList)
 {
   var now = (new Date()).getTime() * 1000;
   var interval = aList.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
@@ -306,8 +303,8 @@ function sbLocalDatabaseDynamicPlaylistService__setNextRun(aList)
   return nextRun;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._beginIgnore =
-function sbLocalDatabaseDynamicPlaylistService__beginIgnore(aLibrary)
+sbDynamicPlaylistService.prototype._beginIgnore =
+function sbDynamicPlaylistService__beginIgnore(aLibrary)
 {
   var count = this._ignoreLibraryNotifications[FIX(aLibrary.guid)];
   if (count)
@@ -316,8 +313,8 @@ function sbLocalDatabaseDynamicPlaylistService__beginIgnore(aLibrary)
     this._ignoreLibraryNotifications[FIX(aLibrary.guid)] = 1;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._endIgnore =
-function sbLocalDatabaseDynamicPlaylistService__endIgnore(aLibrary)
+sbDynamicPlaylistService.prototype._endIgnore =
+function sbDynamicPlaylistService__endIgnore(aLibrary)
 {
   var count = this._ignoreLibraryNotifications[FIX(aLibrary.guid)];
   if (count)
@@ -326,19 +323,19 @@ function sbLocalDatabaseDynamicPlaylistService__endIgnore(aLibrary)
     throw Cr.NS_ERROR_FAILURE;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype._ignore =
-function sbLocalDatabaseDynamicPlaylistService__ignore(aLibrary)
+sbDynamicPlaylistService.prototype._ignore =
+function sbDynamicPlaylistService__ignore(aLibrary)
 {
   var count = this._ignoreLibraryNotifications[FIX(aLibrary.guid)];
   return count && count > 0;
 }
 
-// sbILocalDatabaseDynamicPlaylistService
-sbLocalDatabaseDynamicPlaylistService.prototype.createList =
-function sbLocalDatabaseDynamicPlaylistService_createList(aLibrary,
-                                                          aUri,
-                                                          aIntervalSeconds,
-                                                          aDestinationDirectory)
+// sbIDynamicPlaylistService
+sbDynamicPlaylistService.prototype.createList =
+function sbDynamicPlaylistService_createList(aLibrary,
+                                             aUri,
+                                             aIntervalSeconds,
+                                             aDestinationDirectory)
 {
   if (!aLibrary ||
       !aUri ||
@@ -358,11 +355,32 @@ function sbLocalDatabaseDynamicPlaylistService_createList(aLibrary,
   return list;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.updateList =
-function sbLocalDatabaseDynamicPlaylistService_updateList(aMediaList,
-                                                          aUri,
-                                                          aIntervalSeconds,
-                                                          aDestinationDirectory)
+sbDynamicPlaylistService.prototype.createPodcast =
+function sbDynamicPlaylistService_createPodcast(aLibrary,
+                                                aUri,
+                                                aProperties)
+{
+  if (!aLibrary || !aUri)
+    throw Cr.NS_ERROR_INVALID_ARG;
+
+  try {
+    this._beginIgnore(aLibrary);
+    var list = aLibrary.createMediaList("dynamic", aProperties);
+    list.setProperty(SBProperties.customType, "podcast");
+    //XXXeps set default podcast settings unless set in aProperties and add to
+    //XXXepsscheduled list
+  }
+  finally {
+    this._endIgnore(aLibrary);
+  }
+  return list;
+}
+
+sbDynamicPlaylistService.prototype.updateList =
+function sbDynamicPlaylistService_updateList(aMediaList,
+                                             aUri,
+                                             aIntervalSeconds,
+                                             aDestinationDirectory)
 {
   if (!aMediaList ||
       !this._isDynamicPlaylist(aMediaList) ||
@@ -389,14 +407,14 @@ function sbLocalDatabaseDynamicPlaylistService_updateList(aMediaList,
 
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.updateAllNow =
-function sbLocalDatabaseDynamicPlaylistService_updateAllNow()
+sbDynamicPlaylistService.prototype.updateAllNow =
+function sbDynamicPlaylistService_updateAllNow()
 {
   this._updateSubscriptions(true);
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.updateNow =
-function sbLocalDatabaseDynamicPlaylistService_updateNow(aMediaList)
+sbDynamicPlaylistService.prototype.updateNow =
+function sbDynamicPlaylistService_updateNow(aMediaList)
 {
   var interval = aMediaList.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL);
   var url = aMediaList.getProperty(SB_PROP_SUBSCRIPTIONURL);
@@ -406,8 +424,8 @@ function sbLocalDatabaseDynamicPlaylistService_updateNow(aMediaList)
     throw Cr.NS_ERROR_INVALID_ARG;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.__defineGetter__("scheduledLists",
-function sbLocalDatabaseDynamicPlaylistService_scheduledLists()
+sbDynamicPlaylistService.prototype.__defineGetter__("scheduledLists",
+function sbDynamicPlaylistService_scheduledLists()
 {
   var a = [];
   for each (var list in this._scheduledLists) {
@@ -418,14 +436,10 @@ function sbLocalDatabaseDynamicPlaylistService_scheduledLists()
 });
 
 // sbILibraryManagerListener
-sbLocalDatabaseDynamicPlaylistService.prototype.onLibraryRegistered =
-function sbLocalDatabaseDynamicPlaylistService_onLibraryRegistered(aLibrary)
+sbDynamicPlaylistService.prototype.onLibraryRegistered =
+function sbDynamicPlaylistService_onLibraryRegistered(aLibrary)
 {
-  TRACE("sbLocalDatabaseDynamicPlaylistService::onLibraryRegistered");
-
-  // Ignore non local database libraries
-  if (!(aLibrary instanceof Ci.sbILocalDatabaseLibrary))
-    return;
+  TRACE("sbDynamicPlaylistService::onLibraryRegistered");
 
   // If a library is registered, attach a listener so we can be notified of
   // media item change notifications.
@@ -440,14 +454,10 @@ function sbLocalDatabaseDynamicPlaylistService_onLibraryRegistered(aLibrary)
   this._scheduleLibrary(aLibrary);
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onLibraryUnregistered =
-function sbLocalDatabaseDynamicPlaylistService_onLibraryUnregistered(aLibrary)
+sbDynamicPlaylistService.prototype.onLibraryUnregistered =
+function sbDynamicPlaylistService_onLibraryUnregistered(aLibrary)
 {
-  TRACE("sbLocalDatabaseDynamicPlaylistService::onLibraryUnregistered");
-
-  // Ignore non local database libraries
-  if (!(aLibrary instanceof Ci.sbILocalDatabaseLibrary))
-    return;
+  TRACE("sbDynamicPlaylistService::onLibraryUnregistered");
 
   // Remove all the lists that are in this library
   this._removeListsFromLibrary(aLibrary);
@@ -457,10 +467,10 @@ function sbLocalDatabaseDynamicPlaylistService_onLibraryUnregistered(aLibrary)
 }
 
 // sbIMediaListListener
-sbLocalDatabaseDynamicPlaylistService.prototype.onItemAdded =
-function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
-                                                           aMediaItem,
-                                                           aIndex)
+sbDynamicPlaylistService.prototype.onItemAdded =
+function sbDynamicPlaylistService_onItemAdded(aMediaList,
+                                              aMediaItem,
+                                              aIndex)
 {
   if (this._ignore(aMediaList.library))
     return;
@@ -485,10 +495,10 @@ function sbLocalDatabaseDynamicPlaylistService_onItemAdded(aMediaList,
 
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onBeforeItemRemoved =
-function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
-                                                                   aMediaItem,
-                                                                   aIndex)
+sbDynamicPlaylistService.prototype.onBeforeItemRemoved =
+function sbDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
+                                                      aMediaItem,
+                                                      aIndex)
 {
   if (this._ignore(aMediaList.library))
     return;
@@ -503,18 +513,18 @@ function sbLocalDatabaseDynamicPlaylistService_onBeforeItemRemoved(aMediaList,
   delete this._scheduledLists[FIX(aMediaItem.guid)];
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onAfterItemRemoved =
-function sbLocalDatabaseDynamicPlaylistService_onAfterItemRemoved(aMediaList,
-                                                                  aMediaItem,
-                                                                  aIndex)
+sbDynamicPlaylistService.prototype.onAfterItemRemoved =
+function sbDynamicPlaylistService_onAfterItemRemoved(aMediaList,
+                                                     aMediaItem,
+                                                     aIndex)
 {
   // do nothing
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onItemUpdated =
-function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
-                                                             aMediaItem,
-                                                             aProperties)
+sbDynamicPlaylistService.prototype.onItemUpdated =
+function sbDynamicPlaylistService_onItemUpdated(aMediaList,
+                                                aMediaItem,
+                                                aProperties)
 {
   if (this._ignore(aMediaList.library))
     return;
@@ -530,21 +540,21 @@ function sbLocalDatabaseDynamicPlaylistService_onItemUpdated(aMediaList,
   this._scheduledLists[FIX(aMediaItem.guid)] = aMediaItem;
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onItemMoved =
-function sbLocalDatabaseDynamicPlaylistService_onItemMoved(aMediaList,
-                                                           aFromIndex,
-                                                           aToIndex)
+sbDynamicPlaylistService.prototype.onItemMoved =
+function sbDynamicPlaylistService_onItemMoved(aMediaList,
+                                              aFromIndex,
+                                              aToIndex)
 {
 }
 
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onBeforeListCleared =
-function sbLocalDatabaseDynamicPlaylistService_onBeforeListCleared(aMediaList)
+sbDynamicPlaylistService.prototype.onBeforeListCleared =
+function sbDynamicPlaylistService_onBeforeListCleared(aMediaList)
 {
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onListCleared =
-function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
+sbDynamicPlaylistService.prototype.onListCleared =
+function sbDynamicPlaylistService_onListCleared(aMediaList)
 {
   if (this._ignore(aMediaList.library))
     return;
@@ -560,14 +570,14 @@ function sbLocalDatabaseDynamicPlaylistService_onListCleared(aMediaList)
   this._removeListsFromLibrary(aMediaList.library);
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onBatchBegin =
-function sbLocalDatabaseDynamicPlaylistService_onBatchBegin(aMediaList)
+sbDynamicPlaylistService.prototype.onBatchBegin =
+function sbDynamicPlaylistService_onBatchBegin(aMediaList)
 {
   this._libraryBatch.begin(aMediaList.library);
 }
 
-sbLocalDatabaseDynamicPlaylistService.prototype.onBatchEnd =
-function sbLocalDatabaseDynamicPlaylistService_onBatchEnd(aMediaList)
+sbDynamicPlaylistService.prototype.onBatchEnd =
+function sbDynamicPlaylistService_onBatchEnd(aMediaList)
 {
   var library = aMediaList.library;
   this._libraryBatch.end(library);
@@ -587,15 +597,15 @@ function sbLocalDatabaseDynamicPlaylistService_onBatchEnd(aMediaList)
 }
 
 // nsITimerCallback
-sbLocalDatabaseDynamicPlaylistService.prototype.notify =
-function sbLocalDatabaseDynamicPlaylistService_notify(aTimer)
+sbDynamicPlaylistService.prototype.notify =
+function sbDynamicPlaylistService_notify(aTimer)
 {
   this._updateSubscriptions(false);
 }
 
 // nsIObserver
-sbLocalDatabaseDynamicPlaylistService.prototype.observe =
-function sbLocalDatabaseDynamicPlaylistService_observe(aSubject, aTopic, aData)
+sbDynamicPlaylistService.prototype.observe =
+function sbDynamicPlaylistService_observe(aSubject, aTopic, aData)
 {
   if (aTopic == SB_DEVICE_MANAGER_READY_TOPIC) {
     this._startup();
@@ -670,44 +680,18 @@ function sbPlaylistReaderListenerObserver_observe(aSubject, aTopic, aData)
   ddh.downloadSome(array.enumerate());
 }
 
-// sbIMedaiListFactory
-function sbLocalDatabaseDynamicMediaListFactory()
-{
-}
-sbLocalDatabaseDynamicMediaListFactory.prototype = {
-  classDescription: "Local Database Dynamic Media List Factory",
-  classID:          Components.ID("{1dcff5da-9a36-46d7-87fd-a6f0d0ec081f}"),
-  contractID:       SBLDBCOMP + "DynamicMediaListFactory;1",
-
-  type: "dynamic",
-  createMediaList: function sbLocalDatabaseDynamicMediaListFactory_createMediaList(aInner) {
-
-    var smlf = Cc[SBLDBCOMP + "SimpleMediaListFactory;1"]
-                 .getService(Ci.sbIMediaListFactory);
-    var list = smlf.createMediaList(aInner);
-    list.setProperty(SB_PROP_ISSUBSCRIPTION, "1");
-
-    //Set customType for use by metrics.
-    list.setProperty(SBProperties.customType,
-                     "dynamic");
-
-    return list;
-  },
-  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListFactory])
-}
-
 function NSGetModule(compMgr, fileSpec) {
 
   return XPCOMUtils.generateModule([
-    sbLocalDatabaseDynamicPlaylistService,
-    sbLocalDatabaseDynamicMediaListFactory
+    sbDynamicPlaylistService
   ],
   function(aCompMgr, aFileSpec, aLocation) {
     XPCOMUtils.categoryManager.addCategoryEntry(
       "app-startup",
-      sbLocalDatabaseDynamicPlaylistService.prototype.classDescription,
-      "service," + sbLocalDatabaseDynamicPlaylistService.prototype.contractID,
+      sbDynamicPlaylistService.prototype.classDescription,
+      "service," + sbDynamicPlaylistService.prototype.contractID,
       true,
       true);
   });
 }
+

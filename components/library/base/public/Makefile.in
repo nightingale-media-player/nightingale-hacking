@@ -30,6 +30,8 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbICascadeFilterSet.idl \
+             sbIDynamicMediaList.idl \
+             sbIDynamicPlaylistService.idl \
              sbIFilterableMediaListView.idl \
              sbILibrary.idl \
              sbILibraryChangeset.idl \

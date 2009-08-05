@@ -38,6 +38,7 @@ var SB_PROP_DESTINATION          = SB_NS + "destination"
 function runTest () {
   testRegistration();
   testUpdate();
+  testPodcast();
 }
 
 var PORT_NUMBER = getTestServerPortNumber()
@@ -56,8 +57,8 @@ http://localhost:{PORT_NUMBER}/test3.mp3
 
 function testRegistration() {
 
-  var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
-              .getService(Ci.sbILocalDatabaseDynamicPlaylistService);
+  var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+              .getService(Ci.sbIDynamicPlaylistService);
   var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
                          .getService(Ci.sbILibraryManager);
   var library1 = createLibrary("test_dynamicplaylist1", null, false);
@@ -77,6 +78,7 @@ function testRegistration() {
                .get("TmpD", Ci.nsIFile);
   var list = dps.createList(library1, uri, 60, dest);
 
+  assertTrue(list.QueryInterface(Ci.sbIDynamicMediaList));
   assertEqual(list.getProperty(SB_PROP_ISSUBSCRIPTION), "1");
   assertEqual(list.getProperty(SB_PROP_SUBSCRIPTIONURL), uri.spec);
   assertEqual(list.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL), "60");
@@ -118,8 +120,8 @@ function testUpdate() {
     server.start(PORT_NUMBER);
     server.registerDirectory("/", getFile("."));
 
-    var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
-                .getService(Ci.sbILocalDatabaseDynamicPlaylistService);
+    var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+                .getService(Ci.sbIDynamicPlaylistService);
 
     var dest = Cc["@mozilla.org/file/directory_service;1"]
                  .getService(Ci.nsIProperties)
@@ -133,7 +135,7 @@ function testUpdate() {
     // Write the first playlist and then update the subscription
     writeFile(playlistFile, playlist1);
 
-    dps.updateNow(list);
+    list.update();
 
     var sleepCount = 0;
     while (list.length < 2 && sleepCount++ < 20) {
@@ -148,7 +150,7 @@ function testUpdate() {
 
     // Updat the playlist file and update again
     writeFile(playlistFile, playlist2);
-    dps.updateNow(list);
+    list.update();
 
     sleepCount = 0;
     while (list.length < 3 && sleepCount++ < 20) {
@@ -169,6 +171,26 @@ function testUpdate() {
 
     libraryManager.unregisterLibrary(library1);
   }
+}
+
+function testPodcast() {
+  // Create a test library.
+  var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryManager);
+  var library1 = createLibrary("test_dynamicplaylist1", null, false);
+  library1.clear();
+  libraryManager.registerLibrary(library1, false);
+
+  // Create and validate a podcast.
+  var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+              .getService(Ci.sbIDynamicPlaylistService);
+  var uri = newURI("http://foo.com");
+  var podcast = dps.createPodcast(library1, uri);
+  assertTrue(podcast);
+  assertEqual(podcast.getProperty(SBProperties.customType), "podcast");
+
+  // Clean up.
+  libraryManager.unregisterLibrary(library1);
 }
 
 function writeFile(file, data) {

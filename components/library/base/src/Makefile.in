@@ -62,7 +62,8 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbLibraryUtils.jsm \
+SONGBIRD_COMPONENTS = $(srcdir)/sbDynamicPlaylist.js \
+                      $(srcdir)/sbLibraryUtils.jsm \
                       $(srcdir)/sbStorageFormatter.jsm \
                       $(srcdir)/sbTimeFormatter.jsm \
                       $(srcdir)/sbColumnSpecParser.jsm \

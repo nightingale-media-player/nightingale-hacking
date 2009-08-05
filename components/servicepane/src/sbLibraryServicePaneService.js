@@ -211,8 +211,8 @@ function sbLibraryServicePane_fillContextMenu(aNode, aContextMenu, aParentWindow
                                     null);
       });
       this._appendMenuItem(aContextMenu, "Update", function(event) { //XXX todo: localize
-        var dps = Cc["@songbirdnest.com/Songbird/Library/LocalDatabase/DynamicPlaylistService;1"]
-                    .getService(Ci.sbILocalDatabaseDynamicPlaylistService);
+        var dps = Cc["@songbirdnest.com/Songbird/Library/DynamicPlaylistService;1"]
+                    .getService(Ci.sbIDynamicPlaylistService);
         dps.updateNow(list);
       });
     }

@@ -62,7 +62,6 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_usereditable.js \
                  $(srcdir)/test_medialistview.js \
                  $(srcdir)/test_medialistviewselection.js \
-                 $(srcdir)/test_dynamicplaylist.js \
                  $(srcdir)/test_onitemupdated.js \
                  $(srcdir)/test_simplemedialistnotifications.js \
                  $(srcdir)/test_bulkproperties.js \

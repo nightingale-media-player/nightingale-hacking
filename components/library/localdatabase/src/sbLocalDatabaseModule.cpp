@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -34,6 +34,7 @@
 #include "sbLocalDatabaseLibraryLoader.h"
 #include "sbLocalDatabaseSimpleMediaListFactory.h"
 #include "sbLocalDatabaseSmartMediaListFactory.h"
+#include "sbLocalDatabaseDynamicMediaListFactory.h"
 #include "sbLocalDatabaseMediaListViewState.h"
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseGUIDArray)
@@ -43,6 +44,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseLibraryLoader)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSimpleMediaListFactory)
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbLocalDatabaseAsyncGUIDArray, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseSmartMediaListFactory)
+NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseDynamicMediaListFactory);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbLocalDatabaseMediaListViewState)
 
 SB_LIBRARY_LOADER_REGISTRATION(sbLocalDatabaseLibraryLoader,
@@ -95,6 +97,12 @@ static const nsModuleComponentInfo components[] =
     SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CID,
     SB_LOCALDATABASE_SMARTMEDIALISTFACTORY_CONTRACTID,
     sbLocalDatabaseSmartMediaListFactoryConstructor
+  },
+  {
+    SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_DESCRIPTION,
+    SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CID,
+    SB_LOCALDATABASE_DYNAMICMEDIALISTFACTORY_CONTRACTID,
+    sbLocalDatabaseDynamicMediaListFactoryConstructor
   },
   {
     SB_LOCALDATABASE_MEDIALISTVIEWSTATE_DESCRIPTION,
