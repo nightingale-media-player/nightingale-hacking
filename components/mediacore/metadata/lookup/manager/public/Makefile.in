@@ -7,10 +7,10 @@
 # http://www.songbirdnest.com
 # 
 # This file may be licensed under the terms of of the
-# GNU General Public License Version 2 (the “GPL”).
+# GNU General Public License Version 2 (the "GPL").
 # 
 # Software distributed under the License is distributed 
-# on an “AS IS” basis, WITHOUT WARRANTY OF ANY KIND, either 
+# on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
 # express or implied. See the GPL for the specific language 
 # governing rights and limitations.
 #
@@ -22,16 +22,23 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = handler \
-          manager \
-          lookup \
-          $(NULL)
+XPIDL_SRCS = sbIMetadataLookupManager.idl \
+             sbIMetadataLookupProvider.idl \
+             sbIMetadataLookupData.idl \
+             $(NULL)
+
+XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/job/public \
+                       $(NULL)
+
+XPIDL_MODULE = sbMetadataLookup.xpt
+
+LIBSONGBIRD_COMPONENT = sbMetadataLookup
 
 include $(topsrcdir)/build/rules.mk
