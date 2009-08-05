@@ -1119,10 +1119,10 @@ AC_CHECK_LIB([xul], [_XRE_Main])
 #
 
 if test "$SB_PLATFORM" == "windows"; then
-   if test -n $(echo $SB_EXTENSIONS | grep ipod); then
+   if test -n "$(echo $SB_EXTENSIONS | grep ipod)"; then
       # We have the DDK headers in the extras area, so don't fail on this test
       # if we have that available to us...
-      if test -z $HAS_EXTRAS; then
+      if test -z "$HAS_EXTRAS"; then
          AC_CHECK_HEADERS(devioctl.h, [], AC_MSG_ERROR(Missing devioctl.h; install the Windows DDK or disable building of the iPod extension))
       fi
    fi
