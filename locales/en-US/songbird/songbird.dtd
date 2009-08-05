@@ -169,8 +169,9 @@
 <!ENTITY subscribe.autocheck      "Automatically update every">
 <!ENTITY subscribe.destinationfolder      "Select destination folder:">
 
-
-
+<!ENTITY feed.subscribe.label     "Subscribe">
+<!ENTITY feed.subscribe.dontask   "Don't automatically show this dialog again">
+<!ENTITY feed.subscribe.close     "Close">
 
 
 <!ENTITY watchfolder.title        "Watch Folders">
