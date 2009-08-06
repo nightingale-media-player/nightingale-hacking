@@ -77,6 +77,9 @@ public:
    * \param aUrl - The URL to send the request to, as a string.
    * \param aUsername [optional] - HTTP authentication username.
    * \param aPassword [optional] - HTTP authentication password.
+   * \param aContentType [optional] - Content type to use for request
+   * \param aRequestBody [optional] - Request body, if any 
+   *                                  (string or input stream)
    *
    * \note The request is always sent asynchronously.
    *       The 'OnHttpRequestCompleted' will get called when the 
@@ -87,7 +90,10 @@ public:
   nsresult SendHttpRequest(const nsACString &aMethod, 
                            const nsACString &aUrl,
                            const nsAString &aUsername = EmptyString(),
-                           const nsAString &aPassword = EmptyString());
+                           const nsAString &aPassword = EmptyString(),
+                           const nsACString &aContentType = EmptyCString(),
+                           nsIVariant *aRequestBody = nsnull);
+
 
   /**
    * \brief Abort an HTTP request

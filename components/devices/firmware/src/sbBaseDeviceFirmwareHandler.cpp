@@ -131,6 +131,8 @@ sbBaseDeviceFirmwareHandler::CreateProxiedURI(const nsACString &aURISpec,
     do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  LOG(("[%s] Creating proxied URI for '%s'", aURISpec.BeginReading()));
+
   nsCOMPtr<nsIURI> uri;
   rv = ioService->NewURI(aURISpec, 
                          nsnull, 
@@ -156,7 +158,9 @@ nsresult
 sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod, 
                                              const nsACString &aUrl,
                                              const nsAString &aUsername /*= EmptyString()*/,
-                                             const nsAString &aPassword /*= EmptyString()*/)
+                                             const nsAString &aPassword /*= EmptyString()*/,
+                                             const nsACString &aContentType /*= EmptyCString()*/,
+                                             nsIVariant *aRequestBody /*= nsnull*/)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
@@ -183,12 +187,19 @@ sbBaseDeviceFirmwareHandler::SendHttpRequest(const nsACString &aMethod,
                                     aUsername, aPassword);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (!aContentType.IsEmpty()) {
+    rv = mXMLHttpRequest->SetRequestHeader(NS_LITERAL_CSTRING("Content-Type"),
+                                           aContentType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   if(!mXMLHttpRequestTimer) {
     mXMLHttpRequestTimer = do_CreateInstance("@mozilla.org/timer;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  rv = mXMLHttpRequest->Send(nsnull);
+  // Send the request asynchronously. aRequestBody may be null here.
+  rv = mXMLHttpRequest->Send(aRequestBody);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsITimerCallback> callback =

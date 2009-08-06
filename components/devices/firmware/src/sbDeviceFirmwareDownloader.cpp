@@ -603,7 +603,7 @@ sbDeviceFirmwareDownloader::IsAlreadyInCache()
   }
 
   nsCOMPtr<nsIVariant> firmwareFilePath;
-   rv = mDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
+  rv = mDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
                                getter_AddRefs(firmwareFilePath));
   NS_ENSURE_SUCCESS(rv, rv);
 

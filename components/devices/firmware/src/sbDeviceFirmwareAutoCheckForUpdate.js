@@ -281,10 +281,18 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
     
     case Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR: {
       // Remove from queue
-      this._queue.splice(0, 1);
-      this._deviceFirmwareUpdater.finalizeUpdate(this._queueItem);
-      this._queueItem = null;
-      this._queueItemSuccess = false;
+      device = aEvent.origin.QueryInterface(Ci.sbIDevice);
+      let index = this._queue.indexOf(device);
+      if(index < 0) {
+        break;
+      }
+      this._queue.splice(index, 1);
+      
+      if(this._queueItem == device) {
+        this._deviceFirmwareUpdater.finalizeUpdate(this._queueItem);
+        this._queueItem = null;
+        this._queueItemSuccess = false;
+      }
     }
     break;
   }

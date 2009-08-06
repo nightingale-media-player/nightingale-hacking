@@ -391,9 +391,7 @@
             if (firmHandler && firmHandler.registerLocation == null) {
               this._getToolBox("register").collapsed = true;
             }
-            if (firmHandler && firmHandler.canUpdate(self.device)) {
-              firmwareUpdater.checkForUpdate(this.device, deviceListener);
-            } else {
+            if (!firmHandler || !firmHandler.canUpdate(self.device)) {
               this._getToolBox("update").collapsed = true;
             }
             if (firmHandler && firmHandler.customerSupportLocation == null) {

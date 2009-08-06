@@ -76,7 +76,9 @@ var deviceFirmwareWizard = {
     }
 
     this._deviceFirmwareUpdater.cancel(this._device);
-    window.close();
+    
+    var self = window;
+    setTimeout(function() { self.close(); }, 0);
 
     return true;
   },
@@ -214,7 +216,9 @@ var deviceFirmwareWizard = {
   
   doBack: function deviceFirmwareWizard_onBack(aEvent) {
     this._deviceFirmwareUpdater.cancel(this._device);
-    window.close();
+
+    var self = window;
+    setTimeout(function() { self.close(); }, 0);
     
     return false;
   },
@@ -223,7 +227,9 @@ var deviceFirmwareWizard = {
     if(this._currentOperation && 
        this._currentOperation.substring(-5, 5) == "error") {
       this._deviceFirmwareUpdater.cancel(this._device);
-      window.close();
+
+      var self = window;
+      setTimeout(function() { self.close(); }, 0);
       
       return false;
     }
