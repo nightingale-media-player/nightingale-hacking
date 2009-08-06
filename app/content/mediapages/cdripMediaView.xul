@@ -30,6 +30,8 @@
 <!-- Import external definitions. -->
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/cdripMediaView.css"
+                 type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
                  type="text/css"?>
 
@@ -37,17 +39,80 @@
 
 <!-- CD Rip Media View. -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="window.cdripController.onLoad();"
         id="cdrip-mediaview">
 
   <vbox id="cdrip-outter">
-    <vbox id="cdrip-header">
+    <vbox id="sb-cdrip-header">
+      <hbox id="sb-cdrip-header-hbox" class="sb-cdrip-header-hbox">
+
+        <!-- RIP SETTINGS VIEW -->
+        <hbox id="sb-cdrip-settings-hbox" class="sb-cdrip-header-hbox">
+          <vbox>
+            <label class="sb-cdrip-settings-label"
+                   value="&cdrip.mediaview.cd_rip_settings_label;" />
+            <hbox>
+              <label class="sb-cdrip-settings-label"
+                     value="&cdrip.mediaview.format_label;"/>
+              <label id="sb-cdrip-format-label" class="sb-cdrip-settings-label" />
+            </hbox>
+            <hbox>
+              <label class="sb-cdrip-settings-label"
+                     value="&cdrip.mediaview.quality_label;" />
+              <label id="sb-cdrip-quality-label" class="sb-cdrip-settings-label" />
+            </hbox>
+
+          </vbox>
+
+          <spacer width="20" />
+
+          <vbox pack="center">
+            <button id="sb-cdrip-settings-button"
+                    label="&cdrip.mediaview.settings_button;"
+                    onclick="window.cdripController.showCDRipSettings();" />
+          </vbox>
+        </hbox>
+
+        <spacer id="sb-cdrip-spacer" flex="1" />
+
+        <!-- RIP ACTION AND STATUS -->
+        <hbox id="sb-cdrip-actionstatus-hbox" class="sb-cdrip-header-hbox">
+          <vbox pack="center" id="sb-cdrip-actionstatus-image">
+            <image id="sb-cdrip-status-image" />
+          </vbox>
+
+          <vbox pack="center">
+            <label id="sb-cdrip-actionstatus-label" />
+          </vbox>
+
+          <spacer width="20" />
+
+          <!-- CD device buttons -->
+          <button id="sb-cdrip-rip-cd-button"
+                  label="&cdrip.mediaview.rip_cd_button;" />
+          <button id="sb-cdrip-stop-rip-button"
+                  label="&cdrip.mediaview.stop_rip_button;" />
+          <button id="sb-cdrip-view-tracks-button"
+                  label="&cdrip.mediaview.view_tracks_button;" />
+          <button id="sb-cdrip-eject-cd-button"
+                  label="&cdrip.mediaview.eject_cd_button;" />
+        </hbox>
+
+      </hbox>
+
+
       <!-- TODO: Put stuff in here see Bug 17421 -->
     </vbox>
-    
+
     <vbox id="cdrip-playlist-content"
           flex="1">
       <!-- TODO: Put a playlist here for CD Rip View see Bug 17425 -->
+      <button label="TEST SWAP VIEW" onclick="window.cdripController._testView();" />
     </vbox>
   </vbox>
-  
+
+  <!-- CD Rip media view controller -->
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/mediapages/cdripMediaView.js"/>
+
 </window>
