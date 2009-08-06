@@ -82,18 +82,6 @@ window.cdripController =
       .SBOpenPreferences("paneCDRip");
   },
 
-  _testView: function() {
-    //
-    // XXXkreeger Testing method for stevo.
-    //
-    if (this._isSettingsViewVisible) {
-      this._hideSettingsView();
-    }
-    else {
-      this._showSettingsView();
-    }
-  },
-
   _hideSettingsView: function cdripController_hideSettingsView() {
     // Hack: Prevent the header box from resizing by setting the |min-height|
     //       CSS value of the status hbox.
