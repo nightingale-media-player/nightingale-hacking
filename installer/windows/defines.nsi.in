@@ -52,6 +52,16 @@
 ; AutoPlay human-readable strings.
 !define AutoPlayManageDeviceAction "Manage device"
 
+; CD AutoPlay settings
+;
+;   Change AutoPlayBaseName to configure a separate AutoPlay installation.
+;
+!define AutoPlayProgID             "${AutoPlayBaseName}.AutoPlay"
+!define AutoPlayCDRipHandlerName   "${AutoPlayBaseName}CDOnRip"
+
+; CD AutoPlay human-readable strings.
+!define AutoPlayCDRipAction "Rip music from CD"
+
 #if SB_USE_JEMALLOC==1
 !define UsingJemalloc         "@SB_USE_JEMALLOC@"
 #endif

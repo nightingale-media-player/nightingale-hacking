@@ -157,7 +157,7 @@ Function InstallBrandingRegistryKeys
 
    ; Register a manage volume device ProgID to launch Songbird.
    StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}\shell\manage\command"
-   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} --autoplay-manage-volume-device"
+   WriteRegStr HKLM $0 "" "$INSTDIR\${FileMainEXE} -autoplay-manage-volume-device"
 
    ; Register a volume device arrival handler to invoke the manage volume
    ; device ProgID.
@@ -173,6 +173,23 @@ Function InstallBrandingRegistryKeys
    ; device arrival handler.
    StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival"
    WriteRegStr HKLM $0 "${AutoPlayVolumeDeviceArrivalHandlerName}" ""
+
+   ; Register CD Rip command
+   WriteRegStr HKLM "Software\Classes\${AutoPlayProgID}\shell\Rip\command" "" "$INSTDIR\${FileMainEXE} -autoplay-cd-rip"
+
+   ; Register an Audio CD Rip handler
+   ; device ProgID.
+   StrCpy $0 "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayCDRipHandlerName}"
+   WriteRegStr HKLM $0 "Action" "${AutoPlayCDRipAction}"
+   WriteRegStr HKLM $0 "DefaultIcon" "$INSTDIR\${FileMainEXE}"
+   WriteRegStr HKLM $0 "InvokeProgID" "${AutoPlayProgID}"
+   WriteRegStr HKLM $0 "InvokeVerb" "Rip"
+   WriteRegStr HKLM $0 "Provider" "${BrandShortName}"
+
+   ; Register for CD arrival events for rip
+   ; device arrival handler.
+   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" "${AutoPlayCDRipHandlerName}" ""
+   
 FunctionEnd 
 
 Section "Desktop Icon"

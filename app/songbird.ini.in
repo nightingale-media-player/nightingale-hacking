@@ -1,9 +1,16 @@
 #filter substitution
 [steps:update]
-0001=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.ManageVolumeDevice\shell\manage\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe --autoplay-manage-volume-device" /f
+0001=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.ManageVolumeDevice\shell\manage\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe -autoplay-manage-volume-device" /f
 0002=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Action" /t REG_SZ /d "Manage device" /f
 0003=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe" /f
 0004=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeProgID" /t REG_SZ /d "@SB_APPNAME@.ManageVolumeDevice" /f
 0005=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "InvokeVerb" /t REG_SZ /d "manage" /f
 0006=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@ManageVolumeDeviceOnArrival" /v "Provider" /t REG_SZ /d "@SB_APPNAME@" /f
 0007=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayMusicFilesOnArrival" /v "@SB_APPNAME@ManageVolumeDeviceOnArrival" /t REG_SZ /d "" /f
+0008=exec REG ADD "HKLM\Software\Classes\@SB_APPNAME@.AutoPlay\shell\Rip\command" /ve /t REG_SZ /d "$APPDIR$Songbird.exe -autoplay-cd-rip" /f
+0009=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "Action" /t REG_SZ /d "Rip Music from CD" /f
+0010=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "DefaultIcon" /t REG_SZ /d "$APPDIR$Songbird.exe" /f
+0011=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "InvokeProgID" /t REG_SZ /d "@SB_APPNAME@.AutoPlay" /f
+0012=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "InvokeVerb" /t REG_SZ /d "Rip" /f
+0013=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\@SB_APPNAME@CDOnRip" /v "Provider" /t REG_SZ /d "@SB_APPNAME@" /f
+0014=exec REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" /v "@SB_APPNAME@CDOnRip" /t REG_SZ /d "" /f

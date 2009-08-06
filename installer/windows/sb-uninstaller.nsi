@@ -91,6 +91,16 @@ Function un.RemoveBrandingRegistryKeys
    StrCpy $0 "Software\Classes\${AutoPlayManageVolumeDeviceProgID}"
    DeleteRegKey HKLM $0
 
+   ; Remove the CD Rip handler from the PlayMusicFilesOnArrival
+   ; event.
+   DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\EventHandlers\PlayCDAudioOnArrival" "${AutoPlayCDRipHandlerName}"
+
+   ; Remove the volume device arrival handler.
+   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Explorer\AutoPlayHandlers\Handlers\${AutoPlayCDRipHandlerName}"
+
+   ; Remove the CD Rip ProgID.
+   DeleteRegKey HKLM "Software\Classes\${AutoPlayProgID}"
+
    ; Read where start menu shortcuts are installed
    ReadRegStr $R0 HKLM $RootAppRegistryKey ${MuiStartmenupageRegName}
 
