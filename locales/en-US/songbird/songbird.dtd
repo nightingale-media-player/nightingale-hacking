@@ -27,6 +27,7 @@
 <!ENTITY menu.file.new          "New Playlist" >
 <!ENTITY menu.file.smart        "New Smart Playlist..." >
 <!ENTITY menu.file.remote       "New Subscription..." >
+<!ENTITY menu.file.podcast      "New Podcast..." >
 <!ENTITY menu.file.folder       "New Folder..." >
 <!ENTITY menu.file.open         "Open File..." >
 <!ENTITY menu.file.url          "Open Location..." >
@@ -173,6 +174,9 @@
 <!ENTITY feed.subscribe.dontask   "Don't automatically show this dialog again">
 <!ENTITY feed.subscribe.close     "Close">
 
+<!ENTITY podcast.creation_dialog.title       "New Podcast">
+<!ENTITY podcast.creation_dialog.url.heading "URL:">
+
 
 <!ENTITY watchfolder.title        "Watch Folders">
 <!ENTITY watchfolder.folderlist   "Watch these folders for new media:">
@@ -221,12 +225,13 @@
 <!ENTITY menu.file.new.accesskey          "N" >
 <!ENTITY menu.file.smart.accesskey        "S" >
 <!ENTITY menu.file.remote.accesskey       "R" >
+<!ENTITY menu.file.podcast.accesskey      "P" >
 <!ENTITY menu.file.folder.accesskey       "L" >
 <!ENTITY menu.file.open.accesskey         "O" >
 <!ENTITY menu.file.url.accesskey          "A" >
 <!ENTITY menu.file.playlist.accesskey     "I" >
 <!ENTITY menu.file.metadata.accesskey     "V" >
-<!ENTITY menu.file.library.accesskey      "P" >
+<!ENTITY menu.file.library.accesskey      "Y" >
 <!ENTITY menu.file.newtab.accesskey       "T" >
 <!ENTITY menu.file.closetab.accesskey     "C" >
 <!ENTITY menu.file.scan.accesskey         "M" >

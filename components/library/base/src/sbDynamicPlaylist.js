@@ -367,6 +367,11 @@ function sbDynamicPlaylistService_createPodcast(aLibrary,
     this._beginIgnore(aLibrary);
     var list = aLibrary.createMediaList("dynamic", aProperties);
     list.setProperty(SBProperties.customType, "podcast");
+
+    // Use the URI host for the podcast name for now.
+    //XXXeps need to read the podcast name from the feed.
+    list.name = aUri.host;
+
     //XXXeps set default podcast settings unless set in aProperties and add to
     //XXXepsscheduled list
   }

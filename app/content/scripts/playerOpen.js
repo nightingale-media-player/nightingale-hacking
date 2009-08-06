@@ -930,6 +930,15 @@ function SBSubscribe(mediaList, defaultUrl, parentWindow)
                     parentWindow);
 }
 
+function SBNewPodcast()
+{
+  WindowUtils.openModalDialog
+    (window,
+     "chrome://songbird/content/xul/podcast/podcastCreationDialog.xul",
+     "",
+     "chrome,centerscreen");
+}
+
 // TODO: This function should be renamed.  See openAboutDialog in browserUtilities.js
 function About( parentWindow )
 {

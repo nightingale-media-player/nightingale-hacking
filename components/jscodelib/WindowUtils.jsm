@@ -113,7 +113,9 @@ var WindowUtils = {
                            aInArgs,
                            aOutArgs,
                            aLocale);
-    },
+  },
+
+
   /**
    * \brief Open the dialog specified by aURL.  The parent window of the
    *        dialog is specified by aParent.  The name of the dialog is specified
@@ -161,6 +163,7 @@ var WindowUtils = {
     var options = aOptions.split(",");
 
     // Add options for a dialog.
+    options.push("dialog");
     if (aModal) {
       options.push("modal=yes");
     }

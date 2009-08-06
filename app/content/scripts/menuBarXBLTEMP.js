@@ -53,6 +53,9 @@ function doMenu( command, event ) {
     case "menuitem_file_remote":
       SBSubscribe(null, null);
     break;
+    case "menuitem_file_podcast":
+      SBNewPodcast();
+    break;
     case "menuitem_file_folder":
       SBNewFolder();
       break;

@@ -66,6 +66,30 @@ var URLUtils = {
   //----------------------------------------------------------------------------
 
   /**
+   * Return an nsIURI object for the URI spec and base URI specified by aSpec
+   * and aBaseURI using the charset specified by aCharset.
+   *
+   * \param aSpec               URI spec.
+   * \param aCharset            URI character set.
+   * \param aBaseURI            Base URI.
+   *
+   * \return                    nsIURI object.
+   */
+
+  newURI: function URLUtils_newURI(aSpec, aCharset, aBaseURI) {
+    var ioService = Cc["@mozilla.org/network/io-service;1"]
+                      .getService(Ci.nsIIOService);
+    var uri = null;
+    try {
+      uri = ioService.newURI(aSpec, aCharset, aBaseURI);
+    } catch (ex) {
+      Cu.reportError(ex);
+    }
+    return uri;
+  },
+
+
+  /**
    * Produce a URL query string from the query parameters specified by the
    * aParams object.  Produce a URL query parameter for each field in the
    * aParams object, applying proper URI encoding.
