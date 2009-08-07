@@ -44,7 +44,7 @@
 
 interface sbIWindowsAutoPlayActionHandler;
 
-[scriptable, uuid(bb2720a8-00d1-4207-9503-05d1374b189a)]
+[scriptable, uuid(7bf2861e-47a6-4981-b6cb-1bae2cd984e7)]
 interface sbIWindowsAutoPlayService : nsISupports
 {
   //
@@ -52,7 +52,7 @@ interface sbIWindowsAutoPlayService : nsISupports
   //
 
   const unsigned long ACTION_MANAGE_VOLUME_DEVICE = 0;
-
+  const unsigned long ACTION_CD_RIP = 1;
 
   /**
    * Add the action handler specified by aHandler as a handler for the AutoPlay

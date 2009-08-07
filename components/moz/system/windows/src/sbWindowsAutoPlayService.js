@@ -264,7 +264,11 @@ sbWindowsAutoPlayService.prototype = {
       case "autoplay-manage-volume-device" :
         this._handleAutoPlayManageVolumeDevice();
         break;
-
+        
+      case "autoplay-cd-rip" :
+        this._handleAutoPlayCDRip();
+        break;
+        
       default :
         return false;
     }
@@ -309,6 +313,32 @@ sbWindowsAutoPlayService.prototype = {
       var _this = this;
       var func = function(aWindow)
                    { _this._alertUserCannotManageDevice(aWindow); };
+      windowWatcher.callWithWindow("Songbird:Main", func);
+    }
+  },
+
+
+  /**
+   * Handle a CD Rip action
+   */
+   
+  _handleAutoPlayCDRip:
+    function sbWindowsAutoPlayService__handleAutoPlayCDRip() {
+    // Handle the action.
+    var actionHandled =
+          this._handleAction
+                 (Ci.sbIWindowsAutoPlayService.ACTION_CD_RIP,
+                  null);
+
+    // If the action was not handled, alert the user that the device cannot be
+    // managed.  Wait until a Songbird main window is available so it can be
+    // used as the parent of the alert.
+    if (!actionHandled) {
+      var windowWatcher = Cc["@songbirdnest.com/Songbird/window-watcher;1"]
+                            .getService(Ci.sbIWindowWatcher);
+      var _this = this;
+      var func = function(aWindow)
+                   { _this._alertUserCannotCDRip(aWindow); };
       windowWatcher.callWithWindow("Songbird:Main", func);
     }
   },
@@ -382,6 +412,23 @@ sbWindowsAutoPlayService.prototype = {
   },
 
 
+  /**
+   * Alert the user that the CD cannot be ripped. Use the window specified
+   * by aWindow for the parent window of the alert.
+   *
+   * \param aWindow             Parent window of the alert.
+   */
+   
+  _alertUserCannotCDRip:
+    function sbWindowsAutoPlayService__alertUserCannotCDRip(aWindow) {
+    var prefix = "windows.autoplay.cannot_cd_rip.dialog.";
+    var prompter = Cc["@songbirdnest.com/Songbird/Prompter;1"]
+                     .createInstance(Ci.sbIPrompter);
+    var title = SBString(prefix + "title");
+    var msg = SBString(prefix + "msg");
+    prompter.alert(aWindow, title, msg);
+  },
+  
   //----------------------------------------------------------------------------
   //
   // Windows AutoPlay event handler services.
@@ -441,6 +488,9 @@ sbWindowsAutoPlayService.prototype = {
 
     // Add Windows AutoPlay command line flag handlers.
     commandLineManager.addFlagHandler(this, "autoplay-manage-volume-device");
+    
+    // Add Windows CD AutoPlay rip command line flag handlers
+    commandLineManager.addFlagHandler(this, "autoplay-cd-rip");
   },
 
 
@@ -457,6 +507,9 @@ sbWindowsAutoPlayService.prototype = {
 
     // Remove Windows AutoPlay command line flag handlers.
     commandLineManager.removeFlagHandler(this, "autoplay-manage-volume-device");
+    
+    // Remove Windows CD AutoPlay rip command line flag handlers
+    commandLineManager.removeFlagHandler(this, "autoplay-cd-rip");
   },
 
 
