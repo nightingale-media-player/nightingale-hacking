@@ -259,9 +259,14 @@ sbLocalDatabaseDynamicMediaList::Initialize(sbIMediaItem* aInner)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set some dynamic media list properties.
-  rv = mBaseMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
-                                   NS_LITERAL_STRING("dynamic"));
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsAutoString customType;
+  mBaseMediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                              customType);
+  if (customType.IsEmpty()) {
+    rv = mBaseMediaList->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CUSTOMTYPE),
+                                     NS_LITERAL_STRING("dynamic"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   rv = mBaseMediaList->SetProperty
                          (NS_LITERAL_STRING(SB_PROPERTY_ISSUBSCRIPTION),
                           NS_LITERAL_STRING("1"));

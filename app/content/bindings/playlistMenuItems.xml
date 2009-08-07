@@ -239,8 +239,6 @@
                 if (exclude.indexOf(listguid) >= 0) 
                   return Components.interfaces.sbIMediaListEnumerationListener.CONTINUE;
                 var type = aMediaItem.type;
-                if (aMediaItem.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1")
-                  type = "dynamic";
                 var smart = (aMediaItem instanceof Components.interfaces.sbILocalDatabaseSmartMediaList);
                 var storageGuid = aMediaItem.getProperty(SBProperties.storageGUID);
                 if (storageGuid) {
@@ -253,6 +251,7 @@
                 aMediaItem.QueryInterface(Components.interfaces.sbIMediaList);
                 var item = document.createElement("menuitem");
                 var name = aMediaItem.name;
+                var customType = aMediaItem.getProperty(SBProperties.customType);
                 item.setAttribute("label", name);
                 item.setAttribute("sbtype", "playlist-menuitem");
                 item.setAttribute("value", listguid);
@@ -264,6 +263,8 @@
                   props += " library";
                 props += " medialisttype-" + type;
                 props += " " + type;
+                if (customType)
+                  props += " " + customType;
                 item.setAttribute("properties", props);
                 item.setAttribute("class", "menuitem-iconic");
                 

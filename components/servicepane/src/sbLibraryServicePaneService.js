@@ -1199,8 +1199,10 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
   node.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
 
   if (aLibrary == this._libraryManager.mainLibrary) {
-    // the main library uses a separate Playlists folder
+    // the main library uses a separate Playlists and Podcasts folder
     this._ensurePlaylistFolderExists();
+    this._ensurePodcastFolderExists();
+
     // Set the weight of the main library
     node.setAttributeNS(SP, 'Weight', -4);
     
@@ -1284,7 +1286,7 @@ function sbLibraryServicePane__ensureMediaListNodeExists(aMediaList) {
     node.editable = aMediaList.userEditable;
   }
   // Set properties for styling purposes
-  if (aMediaList.getProperty("http://songbirdnest.com/data/1.0#isSubscription") == "1") {
+  if (aMediaList.getProperty(SBProperties.isSubscription) == "1") {
     this._mergeProperties(node, ["medialist", "medialisttype-dynamic"]);
     node.setAttributeNS(LSP, "ListSubscription", "1");
   } else {
@@ -1353,6 +1355,28 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
   fnode.dndAcceptIn = 'text/x-sb-playlist';
   fnode.editable = false;
   fnode.setAttributeNS(SP, 'Weight', 3);
+  return fnode;
+}
+
+/**
+ * Get the service pane node for the Podcasts folder (which contains all
+ * the podcasts in the main library).
+ */
+sbLibraryServicePane.prototype._ensurePodcastFolderExists =
+function sbLibraryServicePane__ensurePodcastFolderExists() {
+  var fnode = this._servicePane.getNode("SB:Podcasts");
+  if (!fnode) {
+    // make sure it exists
+    var fnode = this._servicePane.addNode("SB:Podcasts",
+                                          this._servicePane.root,
+                                          true);
+  }
+  fnode.name = "&servicesource.podcasts";
+  this._mergeProperties(fnode, ["folder", this._makeCSSProperty(fnode.name)]);
+  fnode.hidden = false;
+  fnode.contractid = CONTRACTID;
+  fnode.editable = false;
+  fnode.setAttributeNS(SP, "Weight", 2);
   return fnode;
 }
 
@@ -1537,6 +1561,8 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
       // if it has an iTunesGUID property, it's imported from iTunes
       if (aMediaList.getProperty(SBProperties.iTunesGUID) != null) {
         folder = this._ensureiTunesFolderExists();
+      } else if (aMediaList.getProperty(SBProperties.customType) == "podcast") {
+        folder = this._ensurePodcastFolderExists();
       } else {
         folder = this._ensurePlaylistFolderExists();
       }

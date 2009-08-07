@@ -4,7 +4,7 @@
 // 
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 // 
 // This file may be licensed under the terms of of the
@@ -89,6 +89,13 @@ Imported by bindings.css or directly into feathers.
 .alltabs-item.menuitem-iconic[properties~="medialisttype-dynamic"],
 .tabbrowser-tab[properties~="medialisttype-dynamic"] > .tab-image-middle > .tab-icon > .tab-icon-image {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-subscription.png) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( podcast ),
+.locationbar-image[properties~="podcast"],
+.alltabs-item.menuitem-iconic[properties~="podcast"],
+.tabbrowser-tab[properties~="podcast"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-podcast.png) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( download ),

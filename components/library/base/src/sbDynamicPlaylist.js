@@ -364,9 +364,24 @@ function sbDynamicPlaylistService_createPodcast(aLibrary,
     throw Cr.NS_ERROR_INVALID_ARG;
 
   try {
+    // Ignore library changes.
     this._beginIgnore(aLibrary);
-    var list = aLibrary.createMediaList("dynamic", aProperties);
-    list.setProperty(SBProperties.customType, "podcast");
+
+    // Make a deep mutable copy of any properties.
+    var properties =
+          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+            .createInstance(Ci.sbIMutablePropertyArray);
+    if (aProperties) {
+      var propertyCount = aProperties.length;
+      for (var i = 0; i < propertyCount; i++) {
+        var property = aProperties.getPropertyAt(i);
+        properties.appendProperty(property.id, property.value);
+      }
+    }
+
+    // Create the podcast media list.
+    properties.appendProperty(SBProperties.customType, "podcast");
+    var list = aLibrary.createMediaList("dynamic", properties);
 
     // Use the URI host for the podcast name for now.
     //XXXeps need to read the podcast name from the feed.
@@ -376,6 +391,7 @@ function sbDynamicPlaylistService_createPodcast(aLibrary,
     //XXXepsscheduled list
   }
   finally {
+    // Stop ignoring library changes.
     this._endIgnore(aLibrary);
   }
   return list;
