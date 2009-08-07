@@ -77,7 +77,7 @@ var sbCDRipServicePaneServiceConfig = {
 
   appQuitTopic:   "quit-application",
 
-  devMgrURL:      "chrome://songbird/content/mediapages/cdRipMediaView.xul"
+  devMgrURL:      "chrome://songbird/content/mediapages/cdripMediaView.xul"
 };
 
 function sbCDRipServicePaneService() {
