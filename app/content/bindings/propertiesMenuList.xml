@@ -542,16 +542,24 @@
         <parameter name="aTagName"/>
         <parameter name="setDisabled"/>
         <body><![CDATA[
-          var nodes = this.getElementsByTagName(aTagName);
-          for (var i = 0; i < nodes.length; i++) {
-            if (setDisabled) {
-              nodes[i].setAttribute("disabled", true);
-              nodes[i].disabled = true;
-            } else {
-              nodes[i].removeAttribute("disabled");
-              nodes[i].disabled = false;
+          function disable(node)
+          {
+            if (node.localName == aTagName)
+            {
+              if (setDisabled)
+                node.setAttribute("disabled", true);
+              else
+                node.removeAttribute("disabled");
+              node.disabled = setDisabled;
+            }
+            else
+            {
+              Array.forEach(document.getAnonymousNodes(node), disable);
+              Array.forEach(node.childNodes, disable);
             }
           }
+
+          disable(this);
         ]]></body>
       </method>
 
