@@ -100,6 +100,7 @@
     </deck>
   </wizardpage>
 
+  <!-- Check for updated firmware error page. -->
   <wizardpage id="device_firwmare_check_error"
               pageid="device_firmware_wizard_check_error_page"
               hidecancel="true" 
@@ -133,6 +134,25 @@
     </vbox>
   </wizardpage>
 
+  <!-- Recovery mode required page. -->
+  <wizardpage id="device_needs_recovery_mode"
+              pageid="device_needs_recovery_mode_page"
+              hideback="true"
+              hidenext="true"
+              showcancel="true" 
+              hidefinish="true"
+              onpageshow="deviceFirmwareWizard.doPageShow();">
+    <vbox flex="1">
+      <description>
+        &device.firmware.wizard.needs_recovery_mode.description;
+      </description>
+      <browser id="device_firmware_wizard_recovery_mode_browser"
+               flex="1"
+               type="content"/>
+      <label id="device_firmware_wizard_recovery_mode_label"/>
+    </vbox>
+  </wizardpage>              
+  
   <!-- Download firmware page. -->
   <wizardpage id="device_firmware_download"
               pageid="device_firmware_wizard_download_page"

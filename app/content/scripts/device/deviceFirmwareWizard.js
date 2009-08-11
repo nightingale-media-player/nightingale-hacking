@@ -51,6 +51,8 @@ var deviceFirmwareWizard = {
   _currentMode: null,
   _currentOperation: null,
   _firmwareUpdate: null,
+  
+  _waitingForDeviceReconnect: false,
 
   get wizardElem() {
     if (!this._wizardElem)
@@ -71,7 +73,7 @@ var deviceFirmwareWizard = {
     // Looks like we were actually busy and we need to retry.
     if(this._currentOperation == "busy") {
       var self = this;
-      setTimeout(function() { self.wizardElem.goTo("device_firmware_download_page"); }, 0);
+      setTimeout(function() { self.wizardElem.goTo("device_firmware_wizard_download_page"); }, 0);
       return false;
     }
 
@@ -131,6 +133,25 @@ var deviceFirmwareWizard = {
       }
       break;
       
+      case "device_needs_recovery_mode": {
+        let deviceManager = 
+          Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+            .getService(Ci.sbIDeviceManager2);
+        
+        deviceManager.addEventListener(this);
+        
+        let handler = 
+          this._deviceFirmwareUpdater.getActiveHandler(this._device);
+
+        let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+        browser.setAttribute("src", handler.resetInstructionsLocation.spec);
+        
+        let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
+        label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
+                                        [this._device.properties.modelNumber]);
+      }
+      break;
+      
       case "device_firmware_download": {
         var self = this;
         
@@ -141,10 +162,22 @@ var deviceFirmwareWizard = {
             }, 0);
         }
         else {
-          this._currentOperation = "download";
-          setTimeout(function() {
+          let handler = 
+            this._deviceFirmwareUpdater.getActiveHandler(this._device);
+          
+          if(handler.needsRecoveryMode) {
+            this._currentOperation = "needsrecoverymode";
+            
+            setTimeout(function() {
+              self.wizardElem.goTo("device_needs_recovery_mode_page");
+              }, 0);
+          }
+          else {
+            this._currentOperation = "download";
+            setTimeout(function() {
               self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
               }, 0);
+          }
         }
       }
       break;
@@ -224,16 +257,18 @@ var deviceFirmwareWizard = {
   },
   
   doNext: function deviceFirmwareWizard_onNext(aEvent) {
-    if(this._currentOperation && 
-       this._currentOperation.substring(-5, 5) == "error") {
-      this._deviceFirmwareUpdater.cancel(this._device);
+    if(this._currentOperation) {
+      if(this._currentOperation.substring(-5, 5) == "error") {
+        // Error, cancel the operation
+        this._deviceFirmwareUpdater.cancel(this._device);
 
-      var self = window;
-      setTimeout(function() { self.close(); }, 0);
-      
-      return false;
+        var self = window;
+        setTimeout(function() { self.close(); }, 0);
+        
+        return false;
+      }
     }
-    
+   
     return true;
   },
   
@@ -292,9 +327,7 @@ var deviceFirmwareWizard = {
     //         Ideally there should be no hardcoded width and height values in
     //         here. And no hardcoded multipliers either!
     if(aEvent.detail == false) {
-      var height = window.innerHeight;
-      height *= 2.6;
-      window.resizeTo(window.innerWidth, height);
+      window.sizeToContent();
     }
   },
 
@@ -310,6 +343,10 @@ var deviceFirmwareWizard = {
       
       case "install":
         this._handleApplyUpdate(aEvent);
+      break;
+      
+      case "needsrecoverymode":
+        this._handleNeedsRecoveryMode(aEvent);
       break;
     }
   },
@@ -362,37 +399,79 @@ var deviceFirmwareWizard = {
   _handleDownloadFirmware: function deviceFirmwareWizard__handleDownloadFirmware(aEvent) {
     var progressMeter = 
       document.getElementById("device_firmware_wizard_download_progress");
+    switch(aEvent.type) {
+      // Good events
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_PROGRESS:
+        progressMeter.value = aEvent.data;
+      break;
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_END:
+        this._firmwareUpdate = aEvent.data.QueryInterface(Ci.sbIDeviceFirmwareUpdate);
+        this.wizardElem.goTo("device_firmware_wizard_install_page");
+      break;
       
-    if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_PROGRESS) {
-      progressMeter.value = aEvent.data;
-    }
-    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_END) {
-      this._firmwareUpdate = aEvent.data.QueryInterface(Ci.sbIDeviceFirmwareUpdate);
-      this.wizardElem.goTo("device_firmware_wizard_install_page");
-    }
-    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_ERROR) {
-      this.wizardElem.goTo("device_firmware_wizard_download_error_page");
+      // Error Events
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_DOWNLOAD_ERROR:
+        this.wizardElem.goTo("device_firmware_wizard_download_error_page");
+      break;
     }
   },
   
   _handleApplyUpdate: function deviceFirmwareWizard__handleApplyUpdate(aEvent) {
     var progressMeter = 
       document.getElementById("device_firmware_wizard_install_progress");
-    if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_START) {
-      progressMeter.mode = "determined";
+      
+    switch(aEvent.type) {
+      // Good events
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_START:
+        progressMeter.mode = "determined";
+      break;
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_PROGRESS:
+        progressMeter.value = aEvent.data;
+      break;
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_END:
+        progressMeter.value = 100;
+      break;
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_END:
+        this.wizardElem.goTo("device_firmware_wizard_complete_page");  
+      break;
+      
+      // Error events
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_ERROR:
+      case Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_ERROR:
+        this.wizardElem.goTo("device_firmware_install_error_page");
+      break;
     }
-    if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_PROGRESS) {
-      progressMeter.value = aEvent.data;
-    }
-    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_END) {
-      progressMeter.value = 100;
-    }
-    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_END) {
-      this.wizardElem.goTo("device_firmware_wizard_complete_page");
-    }
-    else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_ERROR ||
-            aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_ERROR) {
-      this.wizardElem.goTo("device_firmware_install_error_page");
-    }
+  },
+  
+  _handleNeedsRecoveryMode: function deviceFirmwareWizard__handleNeedsRecoveryMode(aEvent) {
+    switch(aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
+        if(this._waitingForDeviceReconnect) {
+
+          this._waitingForDeviceReconnect = false;
+          
+          let deviceManager = 
+            Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+              .getService(Ci.sbIDeviceManager2);
+        
+          deviceManager.removeEventListener(this);
+          
+          this._device = aEvent.data.QueryInterface(Ci.sbIDevice);
+          this._deviceFirmwareUpdater.continueUpdate(this._device);
+
+          this.wizardElem.goTo("device_firmware_wizard_download_page");
+        }
+      }
+      break;
+      
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED: {
+        let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
+        label.value = SBFormattedString("device.firmware.wizard.recovery_mode.disconnected",
+                                        [this._device.properties.modelNumber]);
+                                        
+        this._waitingForDeviceReconnect = true;
+      }
+      break;
+    } 
   }
 };

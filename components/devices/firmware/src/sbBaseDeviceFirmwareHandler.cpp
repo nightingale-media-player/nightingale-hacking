@@ -68,6 +68,7 @@ sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 : mMonitor(nsnull)
 , mHandlerState(HANDLER_IDLE)
 , mFirmwareVersion(0)
+, mNeedsRecoveryMode(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if(!gBaseDeviceFirmwareHandlerLog) {
@@ -680,6 +681,19 @@ sbBaseDeviceFirmwareHandler::GetRegisterLocation(nsIURI * *aRegisterLocation)
 
   nsresult rv = mRegisterLocation->Clone(aRegisterLocation);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(PRBool *aNeedsRecoveryMode)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aNeedsRecoveryMode);
+
+  nsAutoMonitor mon(mMonitor);
+  *aNeedsRecoveryMode = mNeedsRecoveryMode;
 
   return NS_OK;
 }

@@ -376,6 +376,34 @@ sbMockDeviceFirmwareHandler::HandleRefreshInfoRequest()
 
     mon.Enter();
     uri.swap(mRegisterLocation);
+    mon.Exit();
+
+    rv = CreateProxiedURI(nsDependentCString(SB_MOCK_DEVICE_RESET_URL),
+                          getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mon.Enter();
+    uri.swap(mResetInstructionsLocation);
+    mon.Exit();
+
+    nsCOMPtr<nsIVariant> needsRecoveryModeVariant;
+    rv = mDevice->GetPreference(NS_LITERAL_STRING("testing.firmware.needRecoveryMode"),
+                                getter_AddRefs(needsRecoveryModeVariant));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint16 dataType = 0;
+    rv = needsRecoveryModeVariant->GetDataType(&dataType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool needsRecoveryMode = PR_FALSE;
+    if(dataType == nsIDataType::VTYPE_BOOL) {
+      rv = needsRecoveryModeVariant->GetAsBool(&needsRecoveryMode);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mon.Enter();
+      mNeedsRecoveryMode = needsRecoveryMode;
+      mon.Exit();
+    }
   }
 
   {

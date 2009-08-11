@@ -438,6 +438,7 @@
 <!ENTITY device.firmware.wizard.check.already.description "The firmware for your device is already up to date.">
 <!ENTITY device.firmware.wizard.check.release_notes.label "Release Notes">
 <!ENTITY device.firmware.wizard.no_disconnect_warning     "Please do not disconnect your device or interact with it in any way while its firmware is going to be updated.">
+<!ENTITY device.firmware.wizard.needs_recovery_mode.description "The device must be connected in firmware mode to continue. Please follow the instructions below to set your device to firmware mode.">
 <!ENTITY device.firmware.wizard.download.title  "Downloading new firmware...">
 <!ENTITY device.firmware.wizard.install.title   "Installing firmware...">
 
