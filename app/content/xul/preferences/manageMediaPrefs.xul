@@ -83,9 +83,10 @@
         </hbox>
       </groupbox>
       
-      <groupbox id="manage_media_format_box">
-        <caption id="manage_media_format_caption"
-                 label="&prefWindow.manageMedia.format.box.label;"/>
+      <sb-closable-box id="manage_media_format_box"
+                       orient="vertical"
+                       label="&prefWindow.manageMedia.format.box.label;"
+                       persist="open">
         <hbox id="manage_media_format_dir_container">
           <!-- <label id="manage_media_format_dir_label"/> -->
           <sb-properties-formatter id="manage_media_format_dir_formatter"
@@ -108,7 +109,7 @@
                  tooltiptext="&prefWindow.manageMedia.format.file.suffix.tooltip;"
                  value="&prefWindow.manageMedia.format.file.suffix;"/>
         </sb-properties-formatter>
-      </groupbox>
+      </sb-closable-box>
 
       <hbox>
         <button id="manage_media_global_cmd"

@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- vim: set sw=2 : -->
 <!--
 /*
 //
@@ -65,13 +66,14 @@
             <xul:image sbid="twisty"
                        class="closable-box-image"
                        mousethrough="never"
+                       xbl:inherits="open"
                        onclick="toggleOpenClose(event);"/>
           </xul:vbox>
           <xul:label xbl:inherits="value=label" onclick="toggleOpenClose(event);"/>
         </xul:hbox>
 
         <!-- Box contents. -->
-        <xul:box sbid="content" hidden="true">
+        <xul:box sbid="content" hidden="true" xbl:inherits="orient">
           <children/>
         </xul:box>
 
@@ -89,44 +91,69 @@
     <implementation>
 
     <!--
-     /**
-      * \brief Toggle the open/close state of the box contents.
-      */
-     -->
+      - \brief Toggle the open/close state of the box contents.
+      -->
 
-    <method name="toggleOpenClose"><body>
-        <![CDATA[
-      // Toggle the twisty state.
-      var twisty = document.getAnonymousElementByAttribute(this,
-                                                           "sbid",
-                                                           "twisty");
-      if (twisty.getAttribute("open") == "true")
-          twisty.removeAttribute("open");
-      else
-          twisty.setAttribute("open", "true");
+    <method name="toggleOpenClose">
+      <body><![CDATA[
+      this.open = !this.open;
+      ]]></body>
+    </method>
 
-      // Update content box state.
-      var contentBox = document.getAnonymousElementByAttribute(this,
-                                                               "sbid",
-                                                               "content");
-      var collapsed = false;
-      if (twisty.getAttribute("open") == "true") {
-        contentBox.hidden = false;
-      } else {
-        contentBox.hidden = true;
-        collapsed = true;
-      }
+    <!--
+      - \brief Get/Set the open/close state of the box contents
+      -->
+    <property name="open">
+      <getter><![CDATA[
+        return this.hasAttribute("open");
+      ]]></getter>
+      <setter><![CDATA[
+        let wasOpen = this.hasAttribute("open");
+        if (val == wasOpen) {
+          // no-op
+          return val;
+        }
 
-      // Update window size.
-      window.sizeToContent();
-      
-      var event = document.createEvent("Event");
-      
-      event.initEvent("collapse", true, true);
-      event.detail = collapsed;
-      
-      contentBox.dispatchEvent(event);
-    ]]></body></method>
+        let contentBox = document.getAnonymousElementByAttribute(this,
+                                                                 "sbid",
+                                                                 "content");
+        if (!wasOpen) {
+          contentBox.hidden = false;
+          this.setAttribute("open", true);
+        } else {
+          contentBox.hidden = true;
+          this.removeAttribute("open");
+        }
+
+        // Update window size.
+        window.sizeToContent();
+
+        // tell anybody listening that we just changed state
+        var event = document.createEvent("Event");
+
+        event.initEvent("collapse", true, true);
+        event.detail = !wasOpen;
+
+        contentBox.dispatchEvent(event);
+      ]]></setter>
+    </property>
+
+    <!--
+      - \brief restore the open/close state from the attribute
+      -->
+    <constructor>
+      <![CDATA[
+        // must wait for the attribute to get set
+        setTimeout(function(self){
+          if (self.hasAttribute("open")) {
+            // force lose the open state, so we can toggle it
+            self.removeAttribute("open");
+            // go down the normal path to fire events
+            self.open = true;
+          }
+        }, 0, this);
+      ]]>
+    </constructor>
 
     </implementation>
 

@@ -110,7 +110,12 @@ listheader
 }
 
 
-/* library management tab */
+/* media management tab */
+#manage_media_format_box {
+  margin: 4px;
+  display: -moz-groupbox;
+}
+
 #manage_media_format_dir_formatter > hbox,
 #manage_media_format_file_formatter > hbox {
   min-height: 5em;
