@@ -182,7 +182,7 @@ ifeq (windows,$(SB_PLATFORM))
    CPP_EXTRA_INCLUDES += \
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-2.0 \
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-2.0/include \
-    $(DEPS_DIR)/windows_ddk/$(SB_CONFIGURATION)/include \
+    $(DEPS_DIR)/private/windows_ddk/$(SB_CONFIGURATION)/include \
     $(NULL)
 
    DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
