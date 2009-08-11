@@ -26,4 +26,3 @@ songbird.jar:
 % overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul         chrome://songbird/content/xul/contentAreaContextOverlay.xul
 # Profile overlays
 % overlay chrome://mozapps/content/profile/profileSelection.xul              chrome://songbird/content/xul/profileSelectionOverlay.xul
-% overlay chrome://songbird/content/xul/layoutWithBrowserOverlay.xul         chrome://songbird/content/xul/feedOverlay.xul
