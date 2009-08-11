@@ -1364,6 +1364,10 @@ function sbLibraryServicePane__ensurePlaylistFolderExists() {
  */
 sbLibraryServicePane.prototype._ensurePodcastFolderExists =
 function sbLibraryServicePane__ensurePodcastFolderExists() {
+  // Return null per bug 17607.  Return value should not get used since podcasts
+  // can no longer be created.
+  return null;
+
   var fnode = this._servicePane.getNode("SB:Podcasts");
   if (!fnode) {
     // make sure it exists

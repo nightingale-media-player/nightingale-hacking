@@ -74,7 +74,9 @@
         <menuitem id="menuitem_file_new" key="newplaylist-key" observes="servicePaneOpen" class="menuitem-iconic" label="&menu.file.new;" accesskey="&menu.file.new.accesskey;"/>
         <menuitem id="menuitem_file_smart" key="newsmartplaylist-key" class="menuitem-iconic" label="&menu.file.smart;" accesskey="&menu.file.smart.accesskey;" />
         <menuitem id="menuitem_file_remote" class="menuitem-iconic" label="&menu.file.remote;" accesskey="&menu.file.remote.accesskey;" />
+        <!-- disabled per bug 17607
         <menuitem id="menuitem_file_podcast" class="menuitem-iconic" label="&menu.file.podcast;" accesskey="&menu.file.podcast.accesskey;" />
+        -->
         <!-- XXX lone: disabled; see bug 4387
         <menuitem id="menuitem_file_folder" class="menuitem-iconic" label="&menu.file.folder;" accesskey="&menu.file.folder.accesskey;" />
         -->
