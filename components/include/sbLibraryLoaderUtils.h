@@ -95,14 +95,26 @@ SB_LoadLibraries(nsIFile* aManifest)
         NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
-        nsCOMPtr<nsIFile> clone;
-        rv = aManifest->Clone(getter_AddRefs(clone));
+        nsCOMPtr<nsIFile> parent;
+        rv = aManifest->GetParent(getter_AddRefs(parent));
         NS_ENSURE_SUCCESS(rv, rv);
 
-        libLocal = do_QueryInterface(clone, &rv);
+        while (StringBeginsWith(line, NS_LITERAL_CSTRING(".."))) {
+          nsCOMPtr<nsIFile> newParent;
+
+          // remove .. + delimiter from the path to append
+          line.Cut(0, 3);
+
+          rv = parent->GetParent(getter_AddRefs(newParent));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          newParent.swap(parent);
+        }
+
+        libLocal = do_QueryInterface(parent, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
 
-        rv = libLocal->AppendRelativeNativePath(line);
+        rv = libLocal->AppendRelativePath(NS_ConvertASCIItoUTF16(line));
         NS_ENSURE_SUCCESS(rv, rv);
       }
 
