@@ -310,7 +310,7 @@ var manageMediaPrefsPane = {
       notifBox.removeNotification(oldNotif);
     }
   },
- 
+
   /**
    * Shows a notification message after removing any other ones of the same class.
    */
@@ -406,14 +406,15 @@ var manageMediaPrefsPane = {
         return false;
       }
 
-      if (document.getElementById("management-complete").value &&
-          !dir.equals(this._origLibraryFolder))
+      // show a warning if the folder is not empty
+      // TODO: perhaps check for files that could actually be imported?
+      var complete = document.getElementById("management-complete").value;
+      var hasMore = dir.directoryEntries.hasMoreElements();
+      var thesame = dir.equals(this._origLibraryFolder);
+
+      if ((!complete || (complete && !thesame)) && hasMore)
       {
-        // show a warning if the folder is not empty
-        // TODO: perhaps check for files that could actually be imported?
-        if (dir.directoryEntries.hasMoreElements()) {
-          showErrorNotification(SBString("prefs.media_management.warning.not_empty"), "PRIORITY_WARNING_HIGH");
-        }
+        showErrorNotification(SBString("prefs.media_management.warning.not_empty"), "PRIORITY_WARNING_HIGH");
       }
 
       // This is now a valid managed folder
