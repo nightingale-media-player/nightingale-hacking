@@ -60,7 +60,7 @@
     </vbox>
     <progressmeter id="jobprogress_progressmeter" />
     <sb-closable-box id="jobprogress_error_box" hidden="true" label="&jobprogress.details;">
-      <listbox id="jobprogress_error_list" flex="1" maxrows="10" mousethrough="never" />
+      <listbox id="jobprogress_error_list" flex="1" maxrows="4" mousethrough="never" />
     </sb-closable-box>
   </vbox>
 

@@ -39,9 +39,13 @@ See SBJobUtils.jsm and sbIJobProgress.idl.
   width: 500px;
   min-width: 500px;
   max-width: 500px;
-  min-height: 10em;
+  min-height: 11.5em;
 }
 
 #jobprogress_title_desc {
   font-weight: bold !important;
+}
+
+#jobprogress_error_list {
+  margin: 0;
 }

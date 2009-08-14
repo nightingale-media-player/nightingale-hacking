@@ -184,11 +184,13 @@ var JobProgressDialog = {
       item.setAttribute("tooltiptext", message);
     }
     
-    var rows = this._job.errorCount;
     if (this._errorList.hasAttribute("maxrows")) {
       rows = parseInt(this._errorList.getAttribute("maxrows"));
-    } 
-    this._errorList.setAttribute("rows", Math.min(rows, this._job.errorCount) + 1);
+    }
+    else {
+      rows = 4;
+    }
+    this._errorList.setAttribute("rows", Math.min(rows, this._job.errorCount));
   },
   
   /**
