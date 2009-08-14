@@ -1,5 +1,5 @@
 /*
- * BEGIN SONGBIRD GPL
+ *=BEGIN SONGBIRD GPL
  *
  * This file is part of the Songbird web player.
  *
@@ -19,7 +19,7 @@
  * or write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * END SONGBIRD GPL
+ *=END SONGBIRD GPL
  */
 
 const Cc = Components.classes;
@@ -34,12 +34,7 @@ const FREEDB_NS  = "http://freedb.org/#";
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
-Cu.import("resource://app/jsmodules/SBMetadataLookupJob.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
-/*
-Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
-*/
 
 var KEYMAP = {
   "DISCID" : FREEDB_NS + "discId",
@@ -178,9 +173,11 @@ sbFreeDB.prototype = {
     }
     cmd += totalLength;
 
-    var mlJob = new SBMetadataLookupJob();
-    mlJob._mlJobType = Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP;
-    mlJob._status = Ci.sbIJobProgress.STATUS_RUNNING;
+    // create our new job and initialise it
+    var mlJob = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
+      .createInstance(Ci.sbIMetadataLookupJob);
+    mlJob.init(Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP,
+               Ci.sbIJobProgress.STATUS_RUNNING);
 
     var self = this;
     POST(this._freedbUrl, this._makeCmd(cmd),
@@ -192,16 +189,13 @@ sbFreeDB.prototype = {
         if (statusCode == 202) {
           // 202 == no matches found
           // we treat this as success, but with zero results found
-          mlJob._status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
-          mlJob._mlNumResults = 0;
-          mlJob.notifyJobProgressListeners();
+          mlJob.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
           return;
         } else if (statusCode == 403 || statusCode == 409) {
           // 403 == database entry corrupt
           // 409 == no handshake
           // we treat these are irrecoverable errors
-          mlJob._status = Ci.sbIJobProgress.STATUS_FAILED;
-          mlJob.notifyJobProgressListeners();
+          mlJob.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);
           return;
         }
 
@@ -215,7 +209,7 @@ sbFreeDB.prototype = {
         // multiple matches have the statuscode in the first line, and all
         // results in the subsequent lines.  since we shifted off the status
         // above, we can just iterate now
-        mlJob._mlNumResults = 0;
+        var singleAlbum;
         for each (var line in lines) {
           var matches = line.match("([a-zA-Z0-9]+) ([a-z0-9]+) (.*)");
           if (matches) {
@@ -250,29 +244,27 @@ sbFreeDB.prototype = {
               }
             }
 
-            mlJob._mlResults.push(a);
-            mlJob._mlNumResults++;
+            singleAlbum = a;
+            mlJob.appendResult(a);
           }
         }
 
-        if (mlJob._mlNumResults == 1) {
+        if (mlJob.mlNumResults == 1) {
           // If we only got one result, then we won't be prompting the user to
           // pick an album, so go ahead and grab the detailed info for this
           // album since we'll need it to populate the cd rip view entries
           //
-          // _getAlbumDetail() will set status and notify listeners
+          // _getAlbumDetail() will set status on the job and notify listeners
           // appropriately
-          self._getAlbumDetail(mlJob._mlResults[0], mlJob);
+          self._getAlbumDetail(singleAlbum, mlJob);
         } else {
           // otherwise, just send notification that this job is done
           // the caller will need to do followup getAlbumDetail() calls
-          mlJob._status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
-          mlJob.notifyJobProgressListeners();
+          mlJob.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
         }
       },
       function sbFreeDB_queryFailure(xhr) {
-        mlJob._status = Ci.sbIJobProgress.STATUS_FAILED;
-        mlJob.notifyJobProgressListeners();
+        mlJob.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);
       });
 
     return mlJob;
@@ -288,8 +280,7 @@ sbFreeDB.prototype = {
         var statusCode = headerline.match("^[0-9]+");
         if (statusCode != 210) {
           // error
-          mlJob._status = Ci.sbIJobProgress.STATUS_FAILED;
-          mlJob.notifyJobProgressListeners();
+          mlJob.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);
           return;
         }
 
@@ -386,29 +377,33 @@ sbFreeDB.prototype = {
           }
         }
 
-        mlJob._status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
-        mlJob.notifyJobProgressListeners();
+        mlJob.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
       },
       function sbFreeDB_readFailure(xhr) {
-        mlJob._status = Ci.sbIJobProgress.STATUS_FAILED;
-        mlJob.notifyJobProgressListeners();
+        mlJob.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);
       });
 
     return mlJob;
   },
 
   getAlbumDetail : function sbFreeDB_getAlbumDetail(aAlbum) {
+    // create the new job
+    var mlJob = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
+      .createInstance(Ci.sbIMetadataLookupJob);
+
     // if we already have album detail for this album, then just return it
     if (aAlbum.tracks) {
-      var mlJob = new SBMetadataLookupJob();
-      mlJob._mlJobType = Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP;
-      mlJob._status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
-      return aAlbum;
+      // initialise the job and append our album to it
+      mlJob.init(Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP,
+                 Ci.sbIJobProgress.STATUS_SUCCEEDED);
+      mlJob.appendResult(aAlbum);
+      return mlJob;
     }
 
-    var mlJob = new SBMetadataLookupJob();
-    mlJob._mlJobType = Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP;
-    mlJob._status = Ci.sbIJobProgress.STATUS_RUNNING;
+    // initialise the job and append our album to it
+    mlJob.init(Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP,
+               Ci.sbIJobProgress.STATUS_RUNNING);
+    mlJob.appendResult(aAlbum);
 
     return this._getAlbumDetail(aAlbum, mlJob);
   },

@@ -30,8 +30,8 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbMetadataLookupManager.js \
+                      $(srcdir)/sbMetadataLookupJob.js \
+                      $(srcdir)/sbMetadataAlbumDetail.js \
                       $(NULL)
-
-SONGBIRD_JSMODULES = $(srcdir)/sbMetadataLookupJob.jsm
 
 include $(topsrcdir)/build/rules.mk

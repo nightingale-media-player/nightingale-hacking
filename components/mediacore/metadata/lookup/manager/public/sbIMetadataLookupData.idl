@@ -34,6 +34,19 @@ interface nsISimpleEnumerator;
 interface nsIArray;
 interface sbIMutablePropertyArray;
 
+[scriptable, uuid(5ae0b558-1dd2-11b2-8046-b8cfcbe7f3a9)]
+interface sbIMetadataAlbumDetail : nsISupports
+{
+  // properties of the album itself, e.g. artist name, album name, genre,
+  // etc.  These are standard SBProperties.* as well as provider-specific
+  // ones which should be namespaced to the provider, e.g.
+  // http://freedb.org/#discId
+  readonly attribute sbIMutablePropertyArray properties;
+
+  // an nsIArray of sbIMutablePropertyArray items to hold the track properties
+  readonly attribute nsIArray tracks;
+};
+
 /**
 * \interface sbIMetadataLookupManager sbIMetadataLookupManager.h
 * \brief The manager from which to manage and request metadata lookup providers
@@ -55,21 +68,24 @@ interface sbIMetadataLookupJob : sbIJobProgress
   readonly attribute unsigned short mlNumResults;
   
   /**
+   * \brief Initialise the job type and state of the job
+   */
+  void init(in unsigned short jobType, in unsigned short status);
+
+  /**
+   * \brief Append a result
+   */
+  void appendResult(in sbIMetadataAlbumDetail aAlbum);
+
+  /**
+   * \brief Change the status of the job and notify listeners
+   */
+  void changeStatus(in unsigned short status);
+
+  /**
    * \brief Returns an enumerator of all results found by this lookup job
    * \return Enumerator of sbIMetadataAlbumDetail items
    */
   nsISimpleEnumerator getMetadataResults();
 };
 
-[scriptable, uuid(5ae0b558-1dd2-11b2-8046-b8cfcbe7f3a9)]
-interface sbIMetadataAlbumDetail : nsISupports
-{
-  // properties of the album itself, e.g. artist name, album name, genre,
-  // etc.  These are standard SBProperties.* as well as provider-specific
-  // ones which should be namespaced to the provider, e.g.
-  // http://freedb.org/#discId
-  readonly attribute sbIMutablePropertyArray properties;
-
-  // an nsIArray of sbIMutablePropertyArray items to hold the track properties
-  readonly attribute nsIArray tracks;
-};
