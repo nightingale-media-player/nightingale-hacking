@@ -442,9 +442,9 @@
 <!ENTITY device.firmware.wizard.download.title  "Downloading new firmware...">
 <!ENTITY device.firmware.wizard.install.title   "Installing firmware...">
 
-<!ENTITY device.firmware.wizard.complete.description "Your device has been updated with the newest firmware available.">
+<!ENTITY device.firmware.wizard.complete.description "Your device has been updated with the latest firmware available.">
 
-<!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can be installed only when your device is idle.">
+<!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can only be installed when your device is idle.">
 <!ENTITY device.firmware.wizard.retry.description "Please try again after your device has completed its current operation.">
 
 <!ENTITY device.firmware.wizard.check.error.description    "There was an error while checking for new firmware. Please verify your network connection and try again.">
@@ -493,7 +493,7 @@
 <!ENTITY device.settings.disk.100percent.label "100&#37;">
 <!ENTITY device.settings.disk.0percent.label "0&#37;">
 
-<!ENTITY device.settings.music.transcoding.desc1 "&brandShortName; will automatically re-encode tracks to the WMA format at 128kbps when syncing to a device if the device cannot support the track's current encoding (and if the device supports WMA). Additional encoding formats and quality options will be implemented in future releases.">
+<!ENTITY device.settings.music.transcoding.desc1 "If your device cannot support the track's current encoding (and if the device supports WMA), &brandShortName; will automatically re-encode tracks to WMA format at 128kbps when syncing.  Additional encoding formats and quality options will be implemented in future releases.">
 <!ENTITY device.settings.music.transcoding.desc2 "This does not affect the encoding or quality of the track in your main library.">
 
 <!ENTITY device.management.tabs.music.label "Music">
@@ -755,4 +755,4 @@
 <!ENTITY about.credits.footer.afterLink "to the Mozilla project.">
 <!ENTITY about.credits.heading.translators "Translators">
 <!ENTITY about.credits.heading.champs "Champions">
-<!ENTITY about.credits.description.champs "The Songbird Champions are the die-hard Songbird users and fans who have gone above and beyond the call of duty to help out other Songbird users on our <a href='http://getsatisfaction.com/songbird'>Songbird GetSatisfaction Support Forum</a>.  They are the most prolific guys on our forum, and tirelessly work to make sure every Songbird user is a happy Songbird user.">
+<!ENTITY about.credits.description.champs "The Songbird Champions are the die-hard Songbird users and fans who have gone above and beyond the call of duty to help out other Songbird users on our <a href='http://getsatisfaction.com/songbird'>Songbird GetSatisfaction Support Forum</a>.  They are the most prolific guys on our forum, and tirelessly work to ensure that every Songbird user is a happy Songbird user.">
