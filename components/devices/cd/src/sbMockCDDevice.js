@@ -225,9 +225,10 @@ var gAllThatYouCantLeaveBehindTOC = new sbMockCDTOC_AllThatYouCantLeaveBehind();
 //
 //------------------------------------------------------------------------------
 
-function sbMockCDDevice(aDeviceName)
+function sbMockCDDevice(aDeviceName, aParentCDService)
 {
   this._mName = aDeviceName;
+  this._mParentService = aParentCDService;
 }
 
 sbMockCDDevice.prototype =
@@ -235,6 +236,7 @@ sbMockCDDevice.prototype =
   _mIsDiskInserted: false,
   _mName:           "",
   _mDiscTOC:        null,
+  _mParentService:  null,
 
   get name()
   {
@@ -300,8 +302,8 @@ function sbMockCDService()
   this._mDevices = [];
   this._mListeners = [];
 
-  this._mDevices.push(new sbMockCDDevice("Songbird MockCD Device 8000"));
-  this._mDevices.push(new sbMockCDDevice("Songbird MockCD Device 7000"));
+  this._mDevices.push(new sbMockCDDevice("Songbird MockCD Device 8000", this));
+  this._mDevices.push(new sbMockCDDevice("Songbird MockCD Device 7000", this));
 }
 
 sbMockCDService.prototype =
