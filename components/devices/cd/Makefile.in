@@ -22,14 +22,11 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
-
-SUBDIRS = rip \
-          $(NULL)
 
 include $(topsrcdir)/build/rules.mk
