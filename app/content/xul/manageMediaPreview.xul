@@ -35,6 +35,8 @@
 <?xml-stylesheet href="chrome://songbird-dialogs/skin/manageMediaPreview.css"
                  type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/manageMediaPreview.css"
+                 type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
                  type="text/css"?>
 
@@ -63,18 +65,28 @@
   <windowregion/>
 
   <notificationbox id="preview_notificationbox" flex="1">
-    <!-- Unsupported media list. -->
+    <label id="preview_description"
+           value="&prefWindow.manageMedia.preview.description.label;"/>
     <richlistbox id="preview_listbox" flex="1" seltype="single"/>
     <richlistitem id="preview_listitem_template" collapsed="true"
-                  style="display:block;" class="preview_listitem">
-      <description anonid="preview_listitem_description"
-                   class="preview_listitem_description"
-                   style="-moz-user-select:text;"
-                   contextmenu="preview_list_popup">
-        <label anonid="preview_listitem_label"
-               style="display:inline;-moz-user-select:text;"/>
-        <!-- to have proper spacing :| -->
-      </description>
+                  style="display:block;" class="preview_listitem"
+                  contextmenu="preview_list_popup">
+      <vbox anonid="preview_listitem_container"
+            class="preview_listitem_container"
+            dir="&prefWindow.manageMedia.preview.item.direction;">
+        <label anonid="preview_listitem_prefix"
+               class="preview_listitem_prefix preview_listitem_contents"/>
+        <description anonid="preview_listitem_source"
+                     class="preview_listitem_source preview_listitem_contents"
+                     style="-moz-user-select:text;"/>
+        <label anonid="preview_listitem_infix"
+               class="preview_listitem_infix preview_listitem_contents"/>
+        <description anonid="preview_listitem_destination"
+                     class="preview_listitem_destination preview_listitem_contents"
+                     style="-moz-user-select:text;"/>
+        <label anonid="preview_listitem_suffix"
+               class="preview_listitem_suffix preview_listitem_contents"/>
+      </vbox>
     </richlistitem>
     <menupopup id="preview_list_popup"
                onpopupshowing="return mediaManagePreview.onPopupShowing(event);">
@@ -98,6 +110,7 @@
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
-  <script src="chrome://songbird/content/scripts/manageMediaPreview.js"/>
+  <script type="application/x-javascript;version=1.8"
+          src="chrome://songbird/content/scripts/manageMediaPreview.js"/>
 
 </dialog>

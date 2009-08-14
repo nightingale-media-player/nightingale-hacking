@@ -95,6 +95,7 @@
 
 /***** Media Management preferences pane *****/
 #manage_media_format_box {
+  display: -moz-box;
   margin: 4px;
   padding: 0 4px;
   background-color:rgb(255,255,255);

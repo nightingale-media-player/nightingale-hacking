@@ -47,6 +47,14 @@ See app/content/xul/manageMediaPreview.xul
   padding-bottom: 10px;
 }
 */
-.preview_listitem_description {
+.preview_listitem_container {
   max-width: 470px;
+  padding-bottom: 4px;
+}
+.preview_listitem_contents {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+description.preview_listitem_contents {
+  margin-left: 2em;
 }

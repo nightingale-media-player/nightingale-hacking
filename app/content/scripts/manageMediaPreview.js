@@ -135,11 +135,22 @@ var mediaManagePreview = {
     var destText = "";
     if (action != "delete") {
       destText = jobItem.targetPath.path;
+    } else {
+      listItem.getElementsByAttribute("anonid", "preview_listitem_infix")
+              .collapsed = true;
+      listItem.getElementsByAttribute("anonid", "preview_listitem_destination")
+              .collapsed = true;
     }
-    
-    listItem.getElementsByAttribute("anonid", "preview_listitem_label")[0]
-            .textContent = SBFormattedString("prefs.media_management.preview." + action,
-                                             [srcText, destText]);
+
+    for each (let type in ["prefix", "infix", "suffix"]) {
+      listItem.getElementsByAttribute("anonid", "preview_listitem_" + type)[0]
+              .textContent =
+        SBString("prefs.media_management.preview." + action + "." + type);
+    }
+    listItem.getElementsByAttribute("anonid", "preview_listitem_source")[0]
+            .textContent = srcText;
+    listItem.getElementsByAttribute("anonid", "preview_listitem_destination")[0]
+            .textContent = destText;
 
     // show the item
     listItem.collapsed = false;
@@ -152,14 +163,12 @@ var mediaManagePreview = {
       event.preventDefault();
       return false;
     }
-    loop: while(true) {
-      switch(target.getAttribute("anonid")) {
-        case "preview_listitem_description":
-        case "preview_listitem_label":
-          target = target.parentNode;
-          break;
-        default:
-          break loop;
+    while((target = target.parentNode)) {
+      if (target.localName == "richlistitem") {
+        break;
+      }
+      if (!(/^preview_listitem_/.test(target.getAttribute("anonid")))) {
+        break;
       }
     }
     var item = document.getElementById("perview_list_popupitem");
