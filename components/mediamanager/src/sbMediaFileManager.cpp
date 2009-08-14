@@ -636,11 +636,16 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
       rv = info->GetDisplayName(propertyDisplayName);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      nsTArray<nsString> params;
-      params.AppendElement(propertyDisplayName);
-      aUnknownValue.Assign(stringBundle.Format(STRING_MFM_UNKNOWNPROP,
-                                               params,
-                                               "Unknown %S"));
+      if (propertyDisplayName.IsEmpty()) {
+        aUnknownValue.Assign(stringBundle.Get(STRING_MFM_UNKNOWNPROP_EMPTY,
+                                              "Unknown"));
+      } else {
+        nsTArray<nsString> params;
+        params.AppendElement(propertyDisplayName);
+        aUnknownValue.Assign(stringBundle.Format(STRING_MFM_UNKNOWNPROP,
+                                                 params,
+                                                 "Unknown %S"));
+      }
     }
 
     rv = mPrefBranch->SetCharPref(defaultPrefKey.get(), 

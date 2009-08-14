@@ -58,6 +58,7 @@
 
 // String keys
 #define STRING_MFM_UNKNOWNPROP  "mediamanager.nonexistingproperty"
+#define STRING_MFM_UNKNOWNPROP_EMPTY  "mediamanager.nonexistingproperty.empty"
 
 class sbMediaFileManager : public sbIMediaFileManager {
 public:
