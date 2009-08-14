@@ -26,36 +26,38 @@
 
 #include "nsISupports.idl"
 interface sbICDDevice;
+interface nsISimpleEnumerator;
 
 
 //------------------------------------------------------------------------------
 //
 // @interface sbICDListener
-// @brief This interface is used to be notified when a CD device is
-//        added/removed from the system.
+// @brief This interface is used to provide notification when media is
+//        inserted or removed from a system. This interface will also be
+//        informed when a device has been removed.
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(DCC543BF-70D2-4D79-B20B-B959A5B9A14E)]
+[scriptable, uuid(DAAB38B4-659D-4428-A30F-CE04B3541B56)]
 interface sbICDDeviceListener : nsISupports
 {
   //
-  // @brief A CD device has been added to the system
+  // @brief Callback method when a CD device has been removed.
+  // @param aCDDevice The CD device that has been removed.
   //
-  const unsigned long DEVICE_ADDED = 0x00000000;
+  void onDeviceRemoved(in sbICDDevice aCDDevice);
 
   //
-  // @brief A CD device has been removed from the system
+  // @brief Callback method when media has been inserted into a CD drive.
+  // @param aCDDevice The CD device that had the media inserted.
   //
-  const unsigned long DEVICE_REMOVED = 0x00000001;
+  void onMediaInserted(in sbICDDevice aCDDevice);
 
   //
-  // @brief This method will be called whenever a device is added/removed
-  //        from the system
-  // @note Index specifies the 0-based index of the device being added/removed
-  //       (see sbICD's getDevice())
+  // @brief Callback method when media has been ejected from a CD drive.
+  // @param aCDDevice The CD device that had the media removed.
   //
-  void handleEvent(in unsigned long eventType, in long index);
+  void onMediaEjected(in sbICDDevice aCDDevice);
 };
 
 //------------------------------------------------------------------------------
@@ -78,6 +80,11 @@ interface sbICDDeviceService : nsISupports
   // @note "deviceIndex" is 0-index based
   //
   sbICDDevice getDevice(in long deviceIndex);
+
+  //
+  // @brief Return an enumeration of all the cd devices.
+  //
+  nsISimpleEnumerator getCDDevices();
 
   //
   // @brief adds a listener to be notified when a device is added/removed

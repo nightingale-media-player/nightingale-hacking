@@ -42,8 +42,9 @@ interface sbICDMockDeviceController : nsISupports
   //
   // @brief Mock media disc constants.
   //
-  const unsigned short MOCK_MEDIA_DISC1 = 0;
-  const unsigned short MOCK_MEDIA_DISC2 = 1;
+  const unsigned short MOCK_MEDIA_DISC_MIDNIGHT_ROCK      = 0;
+  const unsigned short MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME = 1;
+  const unsigned short MOCK_MEDIA_DISC_U2                 = 2;
 
   //
   // @brief Call this method to simulate a media inserted event.

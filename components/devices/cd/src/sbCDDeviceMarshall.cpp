@@ -163,16 +163,23 @@ sbCDDeviceMarshall::GetName(nsAString & aName)
 // sbICDDeviceListener
 
 NS_IMETHODIMP
-sbCDDeviceMarshall::HandleEvent(PRUint32 aEventType, PRInt32 aIndex)
+sbCDDeviceMarshall::OnDeviceRemoved(sbICDDevice *aDevice)
 {
-  switch (aEventType) {
-    case sbICDDeviceListener::DEVICE_ADDED:
-      break;
+  NS_ENSURE_ARG_POINTER(aDevice);
+  return NS_OK;
+}
 
-    case sbICDDeviceListener::DEVICE_REMOVED:
-      break;
-  }
+NS_IMETHODIMP
+sbCDDeviceMarshall::OnMediaInserted(sbICDDevice *aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  return NS_OK;
+}
 
+NS_IMETHODIMP
+sbCDDeviceMarshall::OnMediaEjected(sbICDDevice *aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
   return NS_OK;
 }
 

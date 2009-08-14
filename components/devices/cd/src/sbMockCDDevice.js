@@ -147,55 +147,77 @@ var gMidnightRockTOC = new sbMockCDTOC_MidnightRock();
 //
 //------------------------------------------------------------------------------
 
-function sbMockCDTOC_BurnshitHere()
+function sbMockCDTOC_BabyOneMoreTime()
+{
+  // Call super constructor
+  sbMockCDTOCBase.call(this);
+
+  this._firstTrackIndex    = 1;
+  this._lastTrackIndex     = 12;
+  this._leadOutTrackOffset = 260335;
+
+  // tracks:
+  this._tracks = [];
+
+  this._tracks.push(new sbMockCDTOCEntry(0, 211, 1));
+  this._tracks.push(new sbMockCDTOCEntry(15847, 200, 2));
+  this._tracks.push(new sbMockCDTOCEntry(30859, 246, 3));
+  this._tracks.push(new sbMockCDTOCEntry(49320, 202, 4));
+  this._tracks.push(new sbMockCDTOCEntry(64479, 245, 5));
+  this._tracks.push(new sbMockCDTOCEntry(82865, 312, 6));
+  this._tracks.push(new sbMockCDTOCEntry(106307, 234, 7));
+  this._tracks.push(new sbMockCDTOCEntry(123929, 243, 8));
+  this._tracks.push(new sbMockCDTOCEntry(142217, 216, 9));
+  this._tracks.push(new sbMockCDTOCEntry(158447, 223, 10));
+  this._tracks.push(new sbMockCDTOCEntry(175179, 223, 11));
+  this._tracks.push(new sbMockCDTOCEntry(203309, 760, 12));
+}
+
+sbMockCDTOC_BabyOneMoreTime.prototype =
+{
+  __proto__: sbMockCDTOCBase.prototype,
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbICDTOC])
+};
+
+var gBabyOneMoreTimeTOC = new sbMockCDTOC_BabyOneMoreTime();
+
+//------------------------------------------------------------------------------
+//
+// Mock CD TOC "All That You Can't Leave Behind" by U2
+//
+//------------------------------------------------------------------------------
+
+function sbMockCDTOC_AllThatYouCantLeaveBehind()
 {
   // Call super constructor
   sbMockCDTOCBase.call(this);
 
   this._firstTrackIndex    = 1;
   this._lastTrackIndex     = 11;
-  this._leadOutTrackOffset = 160183;
+  this._leadOutTrackOffset = 225562;
 
   // tracks:
   this._tracks = [];
-
-  // FreeDB value:
-  // http://www.freedb.org/freedb/rock/9908570b
-  this._tracks.push(new sbMockCDTOCEntry(150, 204, 0));
-  this._tracks.push(new sbMockCDTOCEntry(15497, 221, 1));
-  this._tracks.push(new sbMockCDTOCEntry(32131, 163, 2));
-  this._tracks.push(new sbMockCDTOCEntry(44400, 164, 3));
-  this._tracks.push(new sbMockCDTOCEntry(56734, 141, 4));
-  this._tracks.push(new sbMockCDTOCEntry(67365, 176, 5));
-  this._tracks.push(new sbMockCDTOCEntry(80595, 249, 6));
-  this._tracks.push(new sbMockCDTOCEntry(99276, 222, 7));
-  this._tracks.push(new sbMockCDTOCEntry(115938, 218, 8));
-  this._tracks.push(new sbMockCDTOCEntry(132320, 168, 9));
-  this._tracks.push(new sbMockCDTOCEntry(144978, 204, 10));
-
-  /*
-  // CD Value
-  this._tracks.push(new sbMockCDTOCEntry(0, 204, 1));
-  this._tracks.push(new sbMockCDTOCEntry(15347, 221, 2));
-  this._tracks.push(new sbMockCDTOCEntry(31981, 163, 3));
-  this._tracks.push(new sbMockCDTOCEntry(44250, 164, 4));
-  this._tracks.push(new sbMockCDTOCEntry(56584, 141, 5));
-  this._tracks.push(new sbMockCDTOCEntry(67215, 176, 6));
-  this._tracks.push(new sbMockCDTOCEntry(80445, 249, 7));
-  this._tracks.push(new sbMockCDTOCEntry(99126, 222, 8));
-  this._tracks.push(new sbMockCDTOCEntry(115788, 218, 9));
-  this._tracks.push(new sbMockCDTOCEntry(132170, 168, 10));
-  this._tracks.push(new sbMockCDTOCEntry(144828, 204, 11));
-  */
+  this._tracks.push(new sbMockCDTOCEntry(150, 248, 1));
+  this._tracks.push(new sbMockCDTOCEntry(18843, 272, 2));
+  this._tracks.push(new sbMockCDTOCEntry(39601, 227, 3));
+  this._tracks.push(new sbMockCDTOCEntry(56966, 296, 4));
+  this._tracks.push(new sbMockCDTOCEntry(79487, 267, 5));
+  this._tracks.push(new sbMockCDTOCEntry(99796, 219, 6));
+  this._tracks.push(new sbMockCDTOCEntry(116534, 226, 7));
+  this._tracks.push(new sbMockCDTOCEntry(133832, 288, 8));
+  this._tracks.push(new sbMockCDTOCEntry(155768, 258, 9));
+  this._tracks.push(new sbMockCDTOCEntry(175400, 330, 10));
+  this._tracks.push(new sbMockCDTOCEntry(200468, 331, 11));
 }
 
-sbMockCDTOC_BurnshitHere.prototype =
+sbMockCDTOC_AllThatYouCantLeaveBehind.prototype =
 {
   __proto__: sbMockCDTOCBase.prototype,
   QueryInterface: XPCOMUtils.generateQI([Ci.sbICDTOC])
 };
 
-var gBurnshitHereTOC = new sbMockCDTOC_BurnshitHere();
+var gAllThatYouCantLeaveBehindTOC = new sbMockCDTOC_AllThatYouCantLeaveBehind();
 
 //------------------------------------------------------------------------------
 //
@@ -253,16 +275,15 @@ sbMockCDDevice.prototype =
     this._mIsDiskInserted = false;
     this._mDiscTOC = null;
 
-    //
-    // XXXkreeger - Probably need to invoke listeners here, definately a hole
-    //              in the current IDL format.
-    //  @see bug 17454.
-    //
+    this._mParentService._onMediaEjected(this);
   },
 
-  _setDiscTOC: function sbMockCDDevice_setDiscTOC(aDiscTOC)
+  _insertDiscTOC: function sbMockCDDevice_insertDiscTOC(aDiscTOC)
   {
     this._mDiscTOC = aDiscTOC;
+    this._mIsDiskInserted = true;
+
+    this._mParentService._onMediaInserted(this);
   },
 
   QueryInterface: XPCOMUtils.generateQI([Ci.sbICDDevice])
@@ -301,6 +322,11 @@ sbMockCDService.prototype =
     return this._mDevices[aDeviceIndex];
   },
 
+  getCDDevices: function sbMockCDService_getCDDevics()
+  {
+    return ArrayConverter.nsIArray(this._mDevices).enumerate();
+  },
+
   registerListener: function sbMockCDDevice_registerListener(aListener)
   {
     aListener.QueryInterface(Ci.sbICDDeviceListener);
@@ -325,26 +351,23 @@ sbMockCDService.prototype =
       return;
     }
 
-    curCDDevice._mIsDiskInserted = true;
+    // Determine which TOC to insert into the device.
+    var mockMediaTOC;
+    switch (aMediaDisc) {
+      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK:
+        mockMediaTOC = gMidnightRockTOC;
+        break;
 
-    // Set the media disc TOC.
-    var mockMediaTOC = 
-      aMediaDisc == Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC1 ?
-                      gMidnightRockTOC : gBurnshitHereTOC;
-    curCDDevice._setDiscTOC(mockMediaTOC);
+      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC2:
+        mockMediaTOC = gBabyOneMoreTimeTOC;
+        break;
 
-    // Notify the listeners that media was inserted.
-    this._mListeners.forEach(
-      function(aListener) {
-        try {
-          aListener.handleEvent(Ci.sbICDDeviceListener.DEVICE_ADDED,
-                                curCDDevice.QueryInterface(Ci.sbICDDevice));
-        }
-        catch (e) {
-          Cu.reportError(e);
-        }
-      }
-    );
+      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_U2:
+        mockMediaTOC = gAllThatYouCantLeaveBehindTOC;
+        break;
+    }
+
+    curCDDevice._insertDiscTOC(mockMediaTOC);
   },
 
   ejectMedia: function sbMockCDService_ejectMedia(aCDDevice, aMediaDisc)
@@ -354,20 +377,7 @@ sbMockCDService.prototype =
       return;
     }
 
-    curCDDevice._mIsDiskInserted = false;
-
-    // Notify the listeners that media was inserted.
-    this._mListeners.forEach(
-      function(aListener) {
-        try {
-          aListener.handleEvent(Ci.sbICDDeviceListener.DEVICE_REMOVED,
-                                curCDDevice.QueryInterface(Ci.sbICDDevice));
-        }
-        catch (e) {
-          Cu.reportError(e);
-        }
-      }
-    );
+    curCDDevice.eject();
   },
 
   _findDevice: function sbMockCDService_findDevice(aCDDevice)
@@ -382,6 +392,32 @@ sbMockCDService.prototype =
     }
 
     return foundDevice;
+  },
+
+  _onMediaEjected: function sbMockCDService_onMediaEjected(aDevice)
+  {
+    this._mListeners.forEach(
+      function(aListener) {
+        try {
+          aListener.onMediaEjected(aDevice);
+        }
+        catch (e) {
+          Cu.reportError(e);
+        }
+      });
+  },
+
+  _onMediaInserted: function sbMockCDService_onMediaInserted(aDevice)
+  {
+    this._mListeners.forEach(
+      function(aListener) {
+        try {
+          aListener.onMediaInserted(aDevice);
+        }
+        catch (e) {
+          Cu.reportError(e);
+        }
+      });
   },
 
   classDescription: "Songbird Mock CD Device Service",
