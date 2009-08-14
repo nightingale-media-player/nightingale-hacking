@@ -685,8 +685,17 @@ sbMediaManagementService::Init()
   NS_ENSURE_SUCCESS (rv, rv);
 
   // Get the branch we are interested in
+  nsCOMPtr<nsIThread> mainThread;
+  rv = NS_GetMainThread(getter_AddRefs(mainThread));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrefBranch> prefBranch;
   rv = prefRoot->GetBranch(SB_PREF_MEDIA_MANAGER_ROOT,
-                           getter_AddRefs(mPrefBranch));
+                           getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = do_GetProxyForObject(mainThread,
+                            prefBranch.get(),
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mPrefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

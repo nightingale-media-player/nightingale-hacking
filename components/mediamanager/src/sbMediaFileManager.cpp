@@ -29,6 +29,7 @@
 #include <sbIMediaItem.h>
 #include <sbLibraryUtils.h>
 #include <sbPropertiesCID.h>
+#include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
@@ -122,7 +123,16 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
   NS_ENSURE_SUCCESS (rv, rv);
 
   // Get the branch we are interested in
-  rv = prefRoot->GetBranch(PREF_MFM_ROOT, getter_AddRefs(mPrefBranch));
+  nsCOMPtr<nsIThread> mainThread;
+  rv = NS_GetMainThread(getter_AddRefs(mainThread));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = prefRoot->GetBranch(PREF_MFM_ROOT, getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = do_GetProxyForObject(mainThread,
+                            prefBranch.get(),
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(mPrefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the Track File Format
@@ -575,7 +585,7 @@ nsresult
 sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
                                     nsString& aUnknownValue)
 {
-  TRACE(("%s", __FUNCTION__));
+  TRACE(("%s (%s)", __FUNCTION__, NS_ConvertUTF16toUTF8(aPropertyKey)));
   nsresult rv;
 
   // Make sure the result is empty for return in case we can not find
@@ -729,12 +739,18 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
 
       // If the property had no associated value, set it to "unknown" if we can
       if (propertyValue.IsEmpty()) {
+        TRACE(("%s: getting fallback for %s",
+               __FUNCTION__,
+               NS_ConvertUTF16toUTF8(configValue).get()));
         rv = GetUnknownValue(configValue, propertyValue); 
         if (NS_FAILED(rv) || propertyValue.IsEmpty()) {
           // there was no data, _and_ the fallback value was empty
           // skip this property and the next separator
           i++;
           continue;
+        }
+        if (aTrimEachProperty) {
+          RemoveBadCharacters(propertyValue);
         }
       }
 
@@ -908,6 +924,16 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   }
 
   // Create a Unique filename if the one we want already exists
+  #if PR_LOGGING
+  {
+    nsString path;
+    rv = aDestFile->GetPath(path);
+    NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to get dest path");
+    TRACE(("%s: creating file %s",
+           __FUNCTION__,
+           NS_ConvertUTF16toUTF8(path).get()));
+  }
+  #endif
   rv = aDestFile->CreateUnique(nsIFile::NORMAL_FILE_TYPE, PERMISSIONS_FILE);
   NS_ENSURE_SUCCESS(rv, rv);
 

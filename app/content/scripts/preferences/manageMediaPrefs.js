@@ -349,7 +349,9 @@ var manageMediaPrefsPane = {
     // no default value (needs platform-specific path separator)
     var dirPrefElem = document.getElementById("manage_media_pref_library_format_dir");
     var dirFormatElem = document.getElementById("manage_media_format_dir_formatter");
-    if (!dirPrefElem.hasUserValue) {
+    // dirFormatElem.value will be empty if the dialog hasn't been correctly
+    // initialized yet; in that case, don't force set the preference
+    if (!dirPrefElem.hasUserValue && (dirFormatElem.value != "")) {
       dirPrefElem.valueFromPreferences = dirFormatElem.value;
     }
 
