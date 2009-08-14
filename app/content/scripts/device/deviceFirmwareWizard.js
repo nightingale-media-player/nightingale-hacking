@@ -258,12 +258,14 @@ var deviceFirmwareWizard = {
   
   doNext: function deviceFirmwareWizard_onNext(aEvent) {
     if(this._currentOperation) {
-      if(this._currentOperation.substring(-5, 5) == "error") {
-        // Error, cancel the operation
-        this._deviceFirmwareUpdater.cancel(this._device);
+      let isError = this._currentOperation.substring(-5, 5) == "error";
+      if(isError || this._currentOperation == "uptodate") {
+        if(isError) {
+          // Error, cancel the operation
+          this._deviceFirmwareUpdater.cancel(this._device);
+        }
 
-        var self = window;
-        setTimeout(function() { self.close(); }, 0);
+        window.close();
         
         return false;
       }
@@ -387,8 +389,17 @@ var deviceFirmwareWizard = {
           document.getElementById("device_firmware_wizard_check_new_box");
       }
       else {
+        let okButton = this.wizardElem.getButton("next");
+        okButton.label = SBString("window.ok.label");
+        okButton.accessKey = SBString("window.ok.accessKey");
+        
+        this.wizardElem.currentPage.setAttribute("hidecancel", "true");
+        this.wizardElem.currentPage.setAttribute("shownext", "true");
+        
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_already_box");
+         
+        this._currentOperation = "uptodate";
       }      
     }
     else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
