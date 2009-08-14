@@ -233,7 +233,7 @@ function sbMockCDDevice(aDeviceName, aParentCDService)
 
 sbMockCDDevice.prototype =
 {
-  _mIsDiskInserted: false,
+  _mIsDiscInserted: false,
   _mName:           "",
   _mDiscTOC:        null,
   _mParentService:  null,
@@ -253,28 +253,28 @@ sbMockCDDevice.prototype =
     return true;
   },
 
-  get isDiskInserted()
+  get isDiscInserted()
   {
-    return this._mIsDiskInserted;
+    return this._mIsDiscInserted;
   },
 
   get discTOC()
   {
-    if (!this._mIsDiskInserted) {
+    if (!this._mIsDiscInserted) {
       return null;
     }
 
     return this._mDiscTOC;
   },
 
-  get diskType()
+  get discType()
   {
     return Ci.sbICDDevice.AUDIO_DISC_TYPE;
   },
 
   eject: function sbMockCDDevice_eject()
   {
-    this._mIsDiskInserted = false;
+    this._mIsDiscInserted = false;
     this._mDiscTOC = null;
 
     this._mParentService._onMediaEjected(this);
@@ -283,7 +283,7 @@ sbMockCDDevice.prototype =
   _insertDiscTOC: function sbMockCDDevice_insertDiscTOC(aDiscTOC)
   {
     this._mDiscTOC = aDiscTOC;
-    this._mIsDiskInserted = true;
+    this._mIsDiscInserted = true;
 
     this._mParentService._onMediaInserted(this);
   },

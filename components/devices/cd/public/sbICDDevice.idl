@@ -125,7 +125,7 @@ interface sbICDDevice : nsISupports
   //
   // @brief returns true if a CD is currently in the drive
   //
-  readonly attribute boolean isDiskInserted;
+  readonly attribute boolean isDiscInserted;
 
   //
   // @brief returns the table of contents of the current CD in the drive
@@ -135,7 +135,7 @@ interface sbICDDevice : nsISupports
   //
   // @brief returns the disc type of the CD in the drive ("audio" or "data")
   //
-  readonly attribute unsigned long diskType;
+  readonly attribute unsigned long discType;
 
   //
   // @brief ejects the CD from the drive
