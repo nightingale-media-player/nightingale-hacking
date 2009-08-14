@@ -1,0 +1,145 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+interface nsIArray;
+
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDTOCEntry
+// @brief This interface represents a track entry in the CD table of contents.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(57FA0B71-F2F1-49F4-BB08-6920CADF60EA)]
+interface sbICDTOCEntry : nsISupports
+{
+  attribute long frameOffset;
+  attribute long length;
+  attribute long trackNumber;
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDTOC
+// @brief This interface represents a CD table of contents.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(F6099663-F880-4886-A487-42616B6B88AC)]
+interface sbICDTOC : nsISupports
+{
+  //
+  // @brief All is OK
+  //
+  const unsigned short STATUS_OK = 0x00;
+
+  //
+  // @brief Error happened
+  //
+  const unsigned short STATUS_ERROR = 0x01;
+
+  //
+  // @brief No disc is present in the drive
+  //
+  const unsigned short STATUS_NODISC = 0x02;
+
+  readonly attribute unsigned short status;
+
+  //
+  // @brief First track index (this value is used for CD database lookup)
+  //
+  readonly attribute long firstTrackIndex;
+
+  //
+  // @brief Last track index (this value is used for CD database lookup)
+  //
+  readonly attribute long lastTrackIndex;
+
+  //
+  // @brief Lead-out track offset (this value is used for CD database lookup)
+  //
+  readonly attribute long leadOutTrackOffset;
+
+  //
+  // @brief tracks contains an array of sbICDTOCEntry values
+  //
+  readonly attribute nsIArray tracks;
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDDevice
+// @brief This interface represents one CD device.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(5DEB000F-69F8-43F5-8135-B6993AF55BEA)]
+interface sbICDDevice : nsISupports
+{
+  //
+  // @brief Disc type contants
+  //
+  const unsigned long AUDIO_DISC_TYPE = 0;
+  const unsigned long DATA_DISC_TYPE  = 1;
+
+  //
+  // @brief name of the device (usually contains manufacturer's name)
+  //
+  readonly attribute AString name;
+
+  //
+  // @brief can we read (rip) data off this device?
+  //
+  readonly attribute boolean readable;
+
+  //
+  // @brief can we write (burn) data to this device?
+  //
+  readonly attribute boolean writeable;
+
+  //
+  // @brief returns true if a CD is currently in the drive
+  //
+  readonly attribute boolean isDiskInserted;
+
+  //
+  // @brief returns the table of contents of the current CD in the drive
+  //
+  attribute sbICDTOC discTOC;
+
+  //
+  // @brief returns the disc type of the CD in the drive ("audio" or "data")
+  //
+  readonly attribute unsigned long diskType;
+
+  //
+  // @brief ejects the CD from the drive
+  //
+  void eject();
+};
+

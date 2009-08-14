@@ -1,0 +1,62 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+interface sbICDDevice;
+
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDMockDeviceController
+// @brief This interface provides some methods for controlling the mock CD
+//        device.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(D39A544E-878C-4954-B5F2-4D5E419B71F6)]
+interface sbICDMockDeviceController : nsISupports
+{
+  //
+  // @brief Mock media disc constants.
+  //
+  const unsigned short MOCK_MEDIA_DISC1 = 0;
+  const unsigned short MOCK_MEDIA_DISC2 = 1;
+
+  //
+  // @brief Call this method to simulate a media inserted event.
+  // @param aMediaDisc The media disc constant defined in this interface.
+  //
+  void insertMedia(in sbICDDevice aCDDevice,
+                   in unsigned short aMediaDisc);
+
+  //
+  // @brief Call this method to simulate a media removed event.
+  // @param aMediaDisc The media disc constant defined in this interface.
+  //
+  void ejectMedia(in sbICDDevice aCDDevice,
+                  in unsigned short aMediaDisc);
+};
+

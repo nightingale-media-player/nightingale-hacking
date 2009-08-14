@@ -1,0 +1,92 @@
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
+
+#include "nsISupports.idl"
+interface sbICDDevice;
+
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDListener
+// @brief This interface is used to be notified when a CD device is
+//        added/removed from the system.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(DCC543BF-70D2-4D79-B20B-B959A5B9A14E)]
+interface sbICDDeviceListener : nsISupports
+{
+  //
+  // @brief A CD device has been added to the system
+  //
+  const unsigned long DEVICE_ADDED = 0x00000000;
+
+  //
+  // @brief A CD device has been removed from the system
+  //
+  const unsigned long DEVICE_REMOVED = 0x00000001;
+
+  //
+  // @brief This method will be called whenever a device is added/removed
+  //        from the system
+  // @note Index specifies the 0-based index of the device being added/removed
+  //       (see sbICD's getDevice())
+  //
+  void handleEvent(in unsigned long eventType, in long index);
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICD
+// @brief This interface implements the CD devices enumeration functions.
+//
+//------------------------------------------------------------------------------
+
+[scriptable, uuid(D143BD95-5401-4315-B58E-0BAF66EF1616)]
+interface sbICDDeviceService : nsISupports
+{
+  //
+  // @brief returns the number of CD devices present in the system
+  //
+  readonly attribute long nbDevices;
+
+  //
+  // @brief returns a sbICDDevice object
+  // @note "deviceIndex" is 0-index based
+  //
+  sbICDDevice getDevice(in long deviceIndex);
+
+  //
+  // @brief adds a listener to be notified when a device is added/removed
+  //
+  void registerListener(in sbICDDeviceListener listener);
+
+  //
+  // @brief removes a listener
+  //
+  void removeListener(in sbICDDeviceListener listener);
+};
+
