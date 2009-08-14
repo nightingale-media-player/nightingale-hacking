@@ -787,15 +787,20 @@ sbMediaManagementJob::GetStatusText(nsAString& aText)
 {
   TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   sbStringBundle bundle;
+  nsTArray<nsString> params;
 
-  if (mStatus == sbIJobProgress::STATUS_RUNNING) {
-    nsTArray<nsString> params;
-    params.AppendElement(mStatusText);
-    aText = bundle.Format("mediamanager.scanning.item.message", params);
-  } else {
-    aText = bundle.Get("mediamanager.scanning.completed");
+  switch (mStatus) {
+    case sbIJobProgress::STATUS_RUNNING:
+      params.AppendElement(mStatusText);
+      aText = bundle.Format("mediamanager.scanning.item.message", params);
+      break;
+    case sbIJobProgress::STATUS_SUCCEEDED:
+      aText = bundle.Get("mediamanager.scanning.completed");
+      break;
+    case sbIJobProgress::STATUS_FAILED:
+      aText = bundle.Get("mediamanager.scanning.completed_with_errors");
+      break;
   }
-
   return NS_OK;
 }
 
