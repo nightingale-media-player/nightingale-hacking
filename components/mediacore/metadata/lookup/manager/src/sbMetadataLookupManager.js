@@ -39,6 +39,7 @@ function sbMLM() {
   this._providers = new Array;
   this._numProviders = 0;
 
+  this._defaultProvider = null;
   // enumerate the catman for all the metadata-lookup managers
   var catMgr = Cc["@mozilla.org/categorymanager;1"]
                  .getService(Ci.nsICategoryManager);
@@ -50,11 +51,23 @@ function sbMLM() {
       var provider = Cc[contract].getService(Ci.sbIMetadataLookupProvider);
       this._providers[provider.name] = provider;
       this._numProviders++;
+
+      // always make the first one we find the default... by default
+      if (!this._defaultProvider)
+        this._defaultProvider = provider;
+      else {
+        // multiple providers
+        // if the current provider has a lower weight than the currently
+        // set default provider, then change the default to be this one
+        if (provider.weight < this._defaultProvider.weight)
+          this._defaultProvider = provider;
+      }
     } catch (e) {
       dump("mlm // failed to register: " + contract + "\n" +
            "mlm //             reason: " + e + "\n");
     }
   }
+
   // define our getters for the attributes
   this.__defineGetter__('numProviders', function() {
       return this._numProviders;
@@ -63,10 +76,16 @@ function sbMLM() {
       if (this._numProviders == 0)
         throw Cr.NS_ERROR_NOT_AVAILABLE;
       else {
-        // XXXstevel return the first provider for now
-        // see bug 17364
-        for each (var provider in this._providers) {
-          return provider;
+        // check to see if the user has specified a default provider in their
+        // preferences.  if so, return that one.
+        var userDefault = Application.prefs.getValue(
+                                "metadata.lookup.default_provider", "");
+        if (userDefault && this._providers[userDefault]) {
+          return this._providers[userDefault];
+        } else {
+          // if the specified default doesn't exist, or no preference has been
+          // set, then return our default one as we scanned it
+          return this._defaultProvider;
         }
       }
   });

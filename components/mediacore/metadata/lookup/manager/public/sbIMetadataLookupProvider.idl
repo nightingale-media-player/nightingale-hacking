@@ -36,7 +36,7 @@ interface sbICDTOC;
   * \interface sbIMetadataLookupProvider sbIMetadataLookupProvider.h
   * \brief A metadata lookup service provider
   */
-[scriptable, uuid(81366f9a-1dd2-11b2-a9ec-d70de1d5278b)]
+[scriptable, uuid(ef74249c-1dd1-11b2-ac5e-d6faf7472d83)]
 interface sbIMetadataLookupProvider : nsISupports
 {
   /**
@@ -53,6 +53,14 @@ interface sbIMetadataLookupProvider : nsISupports
    */
   readonly attribute AUTF8String description;
   readonly attribute ACString infoURL;
+
+  /**
+   * \brief A default weight that the sbIMetadataLookupManager uses to
+   * determine which provider to use by default if the user hasn't specified
+   * one.  0 is reserved for application bundled providers.  Lower values
+   * have stronger weight.
+   */
+  readonly attribute unsigned long weight;
 
   /*
   ACString calculateIdFromTracks([array, size_is(numTracks)] in aTracks,
