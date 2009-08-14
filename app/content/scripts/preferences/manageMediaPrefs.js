@@ -81,12 +81,19 @@ var manageMediaPrefsPane = {
   _prefs: [], // Original values for the preferences
   _isValidManagedFolder: false,
 
+  // holds a copy of the library folder that was in use when the user
+  // opened the dialog, so that we can tell when the user has chosen a
+  // new folder
+  _origLibraryFolder: null,
+
   /**
    * Handles the preference pane load event.
    */
 
   doPaneLoad: function manageMediaPrefsPane_doPaneLoad() {
     var self = this;
+    this._origLibraryFolder = this._libraryFolder.clone();
+
     function forceCheck(event) {
       const instantApply =
         Application.prefs.getValue("browser.preferences.instantApply", true);
@@ -180,13 +187,17 @@ var manageMediaPrefsPane = {
     folderPicker.init(window, title, Ci.nsIFilePicker.modeGetFolder);
     folderPicker.displayDirectory = this._libraryFolder;
 
+    // remove the notifications, because the user is trying to fix the
+    // condition that caused the error (if any), and will be confused
+    // if the error message doesn't go away as a result
+    this._removeErrorNotifications();
+
     if (folderPicker.show() == Ci.nsIFilePicker.returnOK) {
-      var selectedFolder = folderPicker.file;
-      if (false) {
-        selectedFolder = null; // use default
-      }
-      this._libraryFolder = selectedFolder;
+      this._libraryFolder = folderPicker.file;
     }
+
+    this._checkForValidPref(false);
+    this._updateUI();
   },
   
   /**
@@ -197,6 +208,7 @@ var manageMediaPrefsPane = {
     if (prefElem) {
       prefElem.value = !prefElem.value;
     }
+    this._checkForValidPref(false);
     this._updateUI();
   },
   
@@ -278,6 +290,14 @@ var manageMediaPrefsPane = {
       document.getElementById("manage_media_pref_library_folder").value = aValue;
     }
   },
+
+  _removeErrorNotifications: function()
+  {
+    var oldNotif, notifBox = document.getElementById("media_manage_notification_box");
+    while ((oldNotif = notifBox.getNotificationWithValue("media_manage_error"))) {
+      notifBox.removeNotification(oldNotif);
+    }
+  },
  
   /**
    * Shows a notification message after removing any other ones of the same class.
@@ -290,10 +310,7 @@ var manageMediaPrefsPane = {
     var notifBox = document.getElementById("media_manage_notification_box");
 
     // show the notification, hiding any other ones of this class
-    var oldNotif;
-    while ((oldNotif = notifBox.getNotificationWithValue("media_manage_error"))) {
-      notifBox.removeNotification(oldNotif);
-    }
+    this._removeErrorNotifications();
     var level = aLevel || "PRIORITY_CRITICAL_LOW";
     notifBox.appendNotification(aMsg,
                                 "media_manage_error",
@@ -309,11 +326,11 @@ var manageMediaPrefsPane = {
    */
   _checkForValidPref: function manageMediaPrefsPane__checkForValidPref(aSilent) {
     var self = this;
-    function showErrorNotification(aMsg) {
+    function showErrorNotification(aMsg, aLevel) {
       if (aSilent) {
         return;
       }
-      self._showErrorNotification(aMsg); 
+      self._showErrorNotification(aMsg, aLevel); 
     }
 
     // need to manually set the dir pref if it's not user set, because it has
@@ -335,34 +352,34 @@ var manageMediaPrefsPane = {
         showErrorNotification(SBString("prefs.media_management.error.no_path"));
         return false;
       }
-      var file = managedFolder.file;
+      var dir = managedFolder.file;
       var missingDefault = false;
-      if (!file.exists()) {
-        if (file != this._defaultLibraryFolder) {
+      if (!dir.exists()) {
+        if (dir != this._defaultLibraryFolder) {
           missingDefault = true;
         } else {
           showErrorNotification(
               SBFormattedString("prefs.media_management.error.not_exist",
-                                [file.path]));
+                                [dir.path]));
           return false;
         }
       }
-      if (!missingDefault && !file.isDirectory()) {
+      if (!missingDefault && !dir.isDirectory()) {
         showErrorNotification(
             SBFormattedString("prefs.media_management.error.not_directory",
-                              [file.path]));
+                              [dir.path]));
         return false;
       }
-      if (!missingDefault && !file.isReadable()) {
+      if (!missingDefault && !dir.isReadable()) {
         showErrorNotification(
             SBFormattedString("prefs.media_management.error.not_readable",
-                              [file.path]));
+                              [dir.path]));
         return false;
       }
 
       // Try to create a test file so we can be sure it can be written to
       try {
-        var testFile = file.clone();
+        var testFile = dir.clone();
         testFile.append(MMPREF_WRITE_TEST_FILE);
         if (!testFile.exists()) {
           testFile.create(Ci.nsILocalFile.NORMAL_FILE_TYPE, PERMS_FILE);
@@ -371,8 +388,18 @@ var manageMediaPrefsPane = {
       } catch (ex) {
         showErrorNotification(
             SBFormattedString("prefs.media_management.error.not_writable",
-                              [file.path]));
+                              [dir.path]));
         return false;
+      }
+
+      if (document.getElementById("management-complete").value &&
+          !dir.equals(this._origLibraryFolder))
+      {
+        // show a warning if the folder is not empty
+        // TODO: perhaps check for files that could actually be imported?
+        if (dir.directoryEntries.hasMoreElements()) {
+          showErrorNotification(SBString("prefs.media_management.warning.not_empty"), "PRIORITY_WARNING_HIGH");
+        }
       }
 
       // This is now a valid managed folder
@@ -456,4 +483,3 @@ var manageMediaPrefsPane = {
 
   QueryInterface: XPCOMUtils.generateQI([Ci.nsIDOMEventListener])
 };
-

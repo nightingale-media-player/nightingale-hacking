@@ -67,6 +67,9 @@
                   name="songbird.media_management.library.format.file"/>
       <preference id="manage_media_pref_library_enable" type="bool"
                   name="songbird.media_management.library.enabled"/>
+
+      <preference id="management-complete" type="bool"
+		  name="songbird.media_management.library.complete"/>
     </preferences>
 
     <commandset id="manage_media_commandset"/>
