@@ -39,6 +39,7 @@
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIPrefService.h>
+#include <nsIPropertyBag2.h>
 #include <nsIStringBundle.h>
 #include <unicharutil/nsUnicharUtils.h>
 
@@ -90,13 +91,22 @@ sbMediaFileManager::~sbMediaFileManager()
 /**
  * \brief Initialize the sbMediaFileManager component.
  */
-NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
-                                       const nsACString& aFileFormat,
-                                       const nsACString& aDirFormat)
+NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
 {
   TRACE(("%s", __FUNCTION__));
 
+  NS_NAMED_LITERAL_STRING(KEY_MEDIA_FOLDER, "media-folder");
+  NS_NAMED_LITERAL_STRING(KEY_FILE_FORMAT, "file-format");
+  NS_NAMED_LITERAL_STRING(KEY_DIR_FORMAT, "dir-format");
+
   nsresult rv;
+
+  PRBool hasKey;
+  nsCOMPtr<nsIPropertyBag2> properties = aProperties;
+  if (!properties) {
+    properties = do_CreateInstance("@mozilla.org/hash-property-bag;1");
+    NS_ENSURE_TRUE(properties, NS_ERROR_OUT_OF_MEMORY);
+  }
 
   // Get the NetUtils
   mNetUtil = do_GetService("@mozilla.org/network/util;1", &rv);
@@ -117,12 +127,15 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
 
   // Get the Track File Format
   nsCString fileFormatString;
-  if (aFileFormat.IsEmpty()) {
+  rv = properties->HasKey(KEY_FILE_FORMAT, &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    rv = properties->GetPropertyAsACString(KEY_FILE_FORMAT, fileFormatString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
     rv = mPrefBranch->GetCharPref(PREF_MFM_FILEFORMAT,
                                   getter_Copies(fileFormatString));
     NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    fileFormatString = aFileFormat;
   }
   
   // Split the string on , character (odd entries are properties, even ones are
@@ -133,12 +146,15 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
 
   // Get the Folder Format
   nsCString dirFormatString;
-  if (aDirFormat.IsEmpty()) {
+  rv = properties->HasKey(KEY_DIR_FORMAT, &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    rv = properties->GetPropertyAsACString(KEY_DIR_FORMAT, dirFormatString);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
     rv = mPrefBranch->GetCharPref(PREF_MFM_DIRFORMAT,
                                   getter_Copies(dirFormatString));
     NS_ENSURE_SUCCESS(rv, rv);
-  } else {
-    dirFormatString = aDirFormat;
   }
   
   // Split the string on , character (odd entries are properties, even ones are
@@ -150,7 +166,16 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIFile* aMediaFolder,
   mInitialized = PR_TRUE;
 
   // Grab our Media Managed Folder
-  rv = CheckManagementFolder(aMediaFolder);
+  nsCOMPtr<nsIFile> mediaFolder;
+  rv = properties->HasKey(KEY_MEDIA_FOLDER, &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    rv = properties->GetPropertyAsInterface(KEY_MEDIA_FOLDER,
+                                            NS_GET_IID(nsIFile),
+                                            getter_AddRefs(mediaFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  rv = CheckManagementFolder(mediaFolder);
   if (NS_FAILED(rv)) {
     // We don't want to throw an error since this could be because the drive
     // was removed, we will handle that error on the first OrganizeItem call.

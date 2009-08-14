@@ -162,6 +162,17 @@ var manageMediaPrefsPane = {
     var fileFormat = document.getElementById("manage_media_format_file_formatter")
                              .value;
 
+    var manageMode = 0;
+    if (Application.prefs.getValue("songbird.media_management.library.copy", true)) {
+      manageMode |= Ci.sbIMediaFileManager.MANAGE_COPY;
+    }
+    if (Application.prefs.getValue("songbird.media_management.library.move", true)) {
+      manageMode |= Ci.sbIMediaFileManager.MANAGE_MOVE;
+    }
+    if (document.getElementById("manage_media_format_rename").checked) {
+      manageMode |= Ci.sbIMediaFileManager.MANAGE_RENAME;
+    }
+
     // show the preview
     WindowUtils.openModalDialog(window,
                                 "chrome://songbird/content/xul/manageMediaPreview.xul",
@@ -170,7 +181,8 @@ var manageMediaPrefsPane = {
                                 [LibraryUtils.mainLibrary,
                                  this._libraryFolder,
                                  fileFormat,
-                                 dirFormat],
+                                 dirFormat,
+                                 String(manageMode)],
                                 null);
   },
 

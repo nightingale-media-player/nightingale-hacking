@@ -606,7 +606,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
         do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = fileMan->Init(nsnull, EmptyCString(), EmptyCString());
+      rv = fileMan->Init(nsnull);
       NS_ENSURE_SUCCESS(rv, rv);
 
       ProcessItemData data;
@@ -749,7 +749,7 @@ sbMediaManagementService::ScanLibrary()
   rv = mLibraryScanJob->AddJobProgressListener(this);
   NS_ENSURE_SUCCESS(rv, /* void */);
   
-  rv = mLibraryScanJob->Init(mLibrary, nsnull, EmptyCString(), EmptyCString());
+  rv = mLibraryScanJob->Init(mLibrary, nsnull);
   NS_ENSURE_SUCCESS(rv, /* void */);
   
   rv = mLibraryScanJob->OrganizeMediaList();

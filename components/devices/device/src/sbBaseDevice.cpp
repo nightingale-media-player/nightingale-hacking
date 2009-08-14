@@ -56,6 +56,7 @@
 #include <nsIPromptService.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIWritablePropertyBag.h>
+#include <nsIWritablePropertyBag2.h>
 
 #include <sbIDeviceContent.h>
 #include <sbIDeviceCapabilities.h>
@@ -3701,8 +3702,19 @@ nsresult sbBaseDevice::GetDeviceWriteContentSrc
       do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = fileMgr->Init(baseFile,
-                       organizeData->fileFormat, organizeData->dirFormat);
+    NS_NAMED_LITERAL_STRING(KEY_MEDIA_FOLDER, "media-folder");
+    NS_NAMED_LITERAL_STRING(KEY_FILE_FORMAT, "file-format");
+    NS_NAMED_LITERAL_STRING(KEY_DIR_FORMAT, "dir-format");
+    nsCOMPtr<nsIWritablePropertyBag2> writableBag =
+      do_CreateInstance("@mozilla.org/hash-property-bag;1");
+    NS_ENSURE_TRUE(writableBag, NS_ERROR_OUT_OF_MEMORY);
+    rv = writableBag->SetPropertyAsInterface(KEY_MEDIA_FOLDER, baseFile);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = writableBag->SetPropertyAsACString(KEY_FILE_FORMAT, organizeData->fileFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = writableBag->SetPropertyAsACString(KEY_DIR_FORMAT, organizeData->dirFormat);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = fileMgr->Init(writableBag);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = fileMgr->GetManagedPath(aWriteDstItem,

@@ -56,9 +56,18 @@ var mediaManagePreview = {
     var mediaFolder = dialogPB.objects.queryElementAt(1, Ci.nsILocalFile);
     var fileFormat = dialogPB.GetString(0);
     var dirFormat = dialogPB.GetString(1);
+    var manageMode = parseInt(dialogPB.GetString(2));
+    var properties = Cc["@mozilla.org/hash-property-bag;1"]
+                       .createInstance(Ci.nsIWritablePropertyBag2);
+    properties.setPropertyAsInterface("media-folder", mediaFolder);
+    properties.setPropertyAsACString("file-format", fileFormat);
+    properties.setPropertyAsACString("dir-format", dirFormat);
+    if (manageMode) {
+      properties.setPropertyAsACString("manage-mode", manageMode);
+    }
     this.job = Cc["@songbirdnest.com/Songbird/media-manager/job;1"]
                  .createInstance(Ci.sbIMediaManagementJob);
-    this.job.init(mediaList, mediaFolder, fileFormat, dirFormat);
+    this.job.init(mediaList, properties);
     // save the result, since touching anything at all can clobber it!
     var rv = Components.lastResult;
     if (rv == Cr.NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA || mediaList.length == 0) {

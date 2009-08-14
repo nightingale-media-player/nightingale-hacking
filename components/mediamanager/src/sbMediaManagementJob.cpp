@@ -54,6 +54,8 @@
 #include <nsIFileURL.h>
 #include <nsILocalFile.h>
 #include <nsIPrefBranch2.h>
+#include <nsIPropertyBag2.h>
+#include <nsIWritablePropertyBag2.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
@@ -646,19 +648,18 @@ sbMediaManagementJob::GetNext(nsISupports **_retval)
 //------------------------------------------------------------------------------
 
 /* void init (in sbIMediaList aMediaList,
-             [optional] in nsILocalFile aMediaFolder,
-             [optional] in ACString aFileFormat,
-             [optional] in ACString aDirFormat); */
+             [optional] in nsIPropertyBag2 aProperties); */
 NS_IMETHODIMP
 sbMediaManagementJob::Init(sbIMediaList *aMediaList,
-                           nsILocalFile *aMediaFolder,
-                           const nsACString& aFileFormat,
-                           const nsACString& aDirFormat)
+                           nsIPropertyBag2 *aProperties)
 {
   TRACE(("%s[0x%8.x]", __FUNCTION__, this));
   NS_ENSURE_FALSE(mMediaList, NS_ERROR_ALREADY_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aMediaList);
-  
+
+  NS_NAMED_LITERAL_STRING(KEY_MEDIA_FOLDER, "media-folder");
+  NS_NAMED_LITERAL_STRING(KEY_MANAGE_MODE, "manage-mode");
+
   nsresult rv;
   
   mMediaList = aMediaList;
@@ -666,6 +667,14 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList,
   /**
    * Preferences - BEGIN
    */
+  // If no properties were passed in, make an empty property bag
+  PRBool hasKey;
+  nsCOMPtr<nsIPropertyBag2> properties(aProperties);
+  if (!properties) {
+    properties = do_CreateInstance("@mozilla.org/hash-property-bag;1");
+    NS_ENSURE_TRUE(properties, NS_ERROR_OUT_OF_MEMORY);
+  }
+
   // Get the preference branch.
   nsCOMPtr<nsIPrefBranch2> prefBranch =
      do_GetService("@mozilla.org/preferences-service;1", &rv);
@@ -673,15 +682,23 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList,
 
   // Grab our Media Managed Folder
   mMediaFolder = nsnull;
-  if (aMediaFolder) {
+  rv = properties->HasKey(KEY_MEDIA_FOLDER, &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    nsCOMPtr<nsIFile> mediaFolder;
+    rv = properties->GetPropertyAsInterface(KEY_MEDIA_FOLDER,
+                                            NS_GET_IID(nsIFile),
+                                            getter_AddRefs(mediaFolder));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     PRBool success;
-    rv = aMediaFolder->Exists(&success);
+    rv = mediaFolder->Exists(&success);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
-    rv = aMediaFolder->IsDirectory(&success);
+    rv = mediaFolder->IsDirectory(&success);
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(success, NS_ERROR_INVALID_ARG);
-    mMediaFolder = aMediaFolder;
+    mediaFolder.forget(getter_AddRefs(mMediaFolder));
   } else {
     rv = prefBranch->GetComplexValue(PREF_MMJOB_LOCATION,
                                      NS_GET_IID(nsILocalFile),
@@ -689,27 +706,43 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList,
     if (NS_FAILED(rv) || mMediaFolder == nsnull) {
       return NS_ERROR_NOT_AVAILABLE;
     }
+    nsCOMPtr<nsIWritablePropertyBag2> writableBag =
+      do_QueryInterface(properties, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = writableBag->SetPropertyAsInterface(KEY_MEDIA_FOLDER,
+                                             mMediaFolder);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Get flag to indicate if we are to copy files to the media folder
-  mShouldCopyFiles = PR_FALSE;
-  rv = prefBranch->GetBoolPref(PREF_MMJOB_COPYFILES, &mShouldCopyFiles);
-  if (NS_FAILED(rv)) {
+  if (NS_SUCCEEDED(properties->HasKey(KEY_MANAGE_MODE, &hasKey)) && hasKey) {
+    PRUint32 mode;
+    rv = properties->GetPropertyAsUint32(KEY_MANAGE_MODE, &mode);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    mShouldCopyFiles = !!(mode & sbIMediaFileManager::MANAGE_COPY);
+    mShouldMoveFiles = !!(mode & sbIMediaFileManager::MANAGE_MOVE);
+    mShouldRenameFiles = !!(mode & sbIMediaFileManager::MANAGE_RENAME);
+  } else {
+    // Get flag to indicate if we are to copy files to the media folder
     mShouldCopyFiles = PR_FALSE;
-  }
-  
-  // Get flag to indicate if we are to move files in the media folder
-  mShouldMoveFiles = PR_FALSE;
-  rv = prefBranch->GetBoolPref(PREF_MMJOB_MOVEFILES, &mShouldMoveFiles);
-  if (NS_FAILED(rv)) {
+    rv = prefBranch->GetBoolPref(PREF_MMJOB_COPYFILES, &mShouldCopyFiles);
+    if (NS_FAILED(rv)) {
+      mShouldCopyFiles = PR_FALSE;
+    }
+
+    // Get flag to indicate if we are to move files in the media folder
     mShouldMoveFiles = PR_FALSE;
-  }
-  
-  // Get flag to indicate if we are to rename files in the media folder
-  mShouldRenameFiles = PR_FALSE;
-  rv = prefBranch->GetBoolPref(PREF_MMJOB_RENAMEFILES, &mShouldRenameFiles);
-  if (NS_FAILED(rv)) {
+    rv = prefBranch->GetBoolPref(PREF_MMJOB_MOVEFILES, &mShouldMoveFiles);
+    if (NS_FAILED(rv)) {
+      mShouldMoveFiles = PR_FALSE;
+    }
+
+    // Get flag to indicate if we are to rename files in the media folder
     mShouldRenameFiles = PR_FALSE;
+    rv = prefBranch->GetBoolPref(PREF_MMJOB_RENAMEFILES, &mShouldRenameFiles);
+    if (NS_FAILED(rv)) {
+      mShouldRenameFiles = PR_FALSE;
+    }
   }
   
   // Get our timer value
@@ -726,7 +759,7 @@ sbMediaManagementJob::Init(sbIMediaList *aMediaList,
   mMediaFileManager = do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  rv = mMediaFileManager->Init(mMediaFolder, aFileFormat, aDirFormat);
+  rv = mMediaFileManager->Init(properties);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Reset all the progress information
