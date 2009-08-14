@@ -25,9 +25,78 @@
 DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
-VPATH = @srcdir@
+VPATH = @srcdir@ \
+        @top_srcdir@/components/devices/base/src
 
 include $(DEPTH)/build/autodefs.mk
+
+DYNAMIC_LIB = sbCDDevice
+
+CPP_SRCS = sbCDDeviceController.cpp \
+           sbCDDeviceMarshall.cpp \
+           sbCDDeviceModule.cpp \
+           $(NULL)
+
+CPP_INCLUDES = $(DEPTH)/components/devices/cd/public \
+               $(DEPTH)/components/devices/manager/public \
+               $(topsrcdir)/components/devices/device/src \
+               $(DEPTH)/components/devices/device/public \
+               $(DEPTH)/components/devices/marshall/public \
+               $(topsrcdir)/components/devices/marshall/src \
+               $(DEPTH)/components/devices/controller/public \
+               $(topsrcdir)/components/devices/controller/src \
+               $(DEPTH)/components/devices/base/public \
+               $(topsrcdir)/components/devices/base/src \
+               $(DEPTH)/components/property/public \
+               $(topsrcdir)/components/property/src \
+               $(DEPTH)/components/library/base/public \
+               $(topsrcdir)/components/library/base/src/static \
+               $(DEPTH)/components/library/localdatabase/public \
+               $(DEPTH)/components/moz/prompter/public \
+               $(DEPTH)/components/moz/strings/components/public \
+               $(topsrcdir)/components/include \
+               $(topsrcdir)/components/library/localdatabase/src \
+               $(topsrcdir)/components/moz/strings/src \
+               $(topsrcdir)/components/moz/threads/src \
+               $(topsrcdir)/components/library/base/src/static \
+               $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/content \
+               $(MOZSDK_INCLUDE_DIR)/docshell \
+               $(MOZSDK_INCLUDE_DIR)/dom \
+               $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+               $(MOZSDK_INCLUDE_DIR)/intl \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/necko \
+               $(MOZSDK_INCLUDE_DIR)/pref \
+               $(MOZSDK_INCLUDE_DIR)/string \
+               $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(MOZSDK_IDL_DIR) \
+               $(NULL)
+
+#XXXeps should get this from sbDeviceBase.lib
+# included from components/devices/base/src
+CPP_SRCS += sbBaseDeviceEventTarget.cpp \
+            sbDeviceCompatibility.cpp \
+            sbDeviceContent.cpp \
+            sbDeviceEvent.cpp \
+            sbDeviceLibrary.cpp \
+            sbDeviceLibraryHelpers.cpp \
+            $(NULL)
+
+
+DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            $(NULL)
+
+DYNAMIC_LIB_STATIC_IMPORTS = \
+ components/devices/controller/src/sbDeviceController \
+ components/devices/device/src/sbDeviceCore \
+ components/devices/marshall/src/sbDeviceMarshall \
+ components/library/base/src/static/sbLibraryUtils \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(NULL)
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbCDRipServicePaneService.js \
                       $(srcdir)/sbMockCDDevice.js \
