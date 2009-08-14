@@ -40,6 +40,7 @@
 #include <nsCOMPtr.h>
 #include <nsCOMArray.h>
 #include <nsDataHashtable.h>
+#include <nsIRunnable.h>
 #include <nsISupportsImpl.h>
 #include <nsITimer.h>
 #include <prlock.h>
@@ -444,7 +445,7 @@ protected:
   friend class sbBaseDeviceInitHelper;
   friend class sbDeviceEnsureSpaceForWrite;
   friend class sbDeviceStatistics;
-
+  friend class sbDeviceReqAddedEvent;
   /**
    * Base class initialization this will call the InitDevice first then
    * do the intialization needed by the sbDeviceBase
@@ -1092,9 +1093,88 @@ protected:
     return NS_OK;
   }
 
+  /**
+   * Base implementation for the device name.
+   * \param aName the returned name
+   */
+  nsresult GetNameBase(nsAString& aName);
+  /**
+   * Base implementation for the product name
+   * \param aDefaultModelNumberString The localized string name for the default
+   *                                  model number
+   * \param aProductString the localized sttring name for the product name
+   * \param aProductName The returned product name
+   */
+  nsresult GetProductNameBase(char const * aDefaultModelNumberString,
+                              nsAString& aProductName);
+  /**
+   * For use in the request handler thread event mechanism. This is called
+   * to process pending events. The default implementation does nothing, as
+   * not all implementations use this, and much of the implementation is
+   * device specific
+   */
+  virtual nsresult ReqHandleRequestAdded()
+  {
+    return NS_OK;
+  }
 };
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
+
+/**
+ * This class provides an nsIRunnable interface that may be used to dispatch
+ * and process device request added events.
+ */
+
+class sbDeviceReqAddedEvent : public nsIRunnable
+{
+  //----------------------------------------------------------------------------
+  //
+  // Public interface.
+  //
+  //----------------------------------------------------------------------------
+
+public:
+
+  //
+  // Inherited interfaces.
+  //
+
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIRUNNABLE
+
+
+  //
+  // Public methods.
+  //
+
+  static nsresult New(sbBaseDevice * aDevice,
+                      nsIRunnable** aEvent);
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Public interface.
+  //
+  //----------------------------------------------------------------------------
+
+private:
+
+  /**
+   * Owning reference (using nsRefPtr caused ambiguities)
+   */
+  sbBaseDevice* mDevice;
+
+
+  // Make default constructor private to force use of factory methods.
+  sbDeviceReqAddedEvent() : mDevice(nsnull) {};
+  ~sbDeviceReqAddedEvent()
+  {
+    nsISupports * device = NS_ISUPPORTS_CAST(sbIDevice *,mDevice);
+    mDevice = nsnull;
+    NS_IF_RELEASE(device);
+  }
+};
 
 #endif /* __SBBASEDEVICE__H__ */
 

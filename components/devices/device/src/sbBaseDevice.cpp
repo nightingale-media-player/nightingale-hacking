@@ -3998,3 +3998,162 @@ NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
   *_retval = PR_FALSE;
   return NS_OK;
 }
+
+static nsresult
+GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aProperties);
+
+  nsCOMPtr<sbIDeviceProperties> deviceProperties;
+  nsresult rv = aDevice->GetProperties(getter_AddRefs(deviceProperties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceProperties->GetProperties(aProperties);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetNameBase(nsAString& aName)
+{
+  PRBool   hasKey;
+  nsresult rv;
+
+  nsCOMPtr<nsIPropertyBag2> properties;
+  rv = GetPropertyBag(this, getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Try using the friendly name property and exit if successful.
+  rv = properties->HasKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME), &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    rv = properties->GetPropertyAsAString
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME), aName);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
+  }
+
+  // Use the product name.
+  return GetProductName(aName);
+}
+
+nsresult
+sbBaseDevice::GetProductNameBase(char const * aDefaultModelNumberString,
+                                 nsAString& aProductName)
+{
+  NS_ENSURE_ARG_POINTER(aDefaultModelNumberString);
+
+  nsAutoString productName;
+  PRBool       hasKey;
+  nsresult     rv;
+
+  nsCOMPtr<nsIPropertyBag2> properties;
+  rv = GetPropertyBag(this, getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the vendor name.
+  nsAutoString vendorName;
+  rv = properties->HasKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                          &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    // Get the vendor name.
+    rv = properties->GetPropertyAsAString
+                        (NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                         vendorName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Get the device model number, using a default if one is not available.
+  nsAutoString modelNumber;
+  rv = properties->HasKey(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                          &hasKey);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (hasKey) {
+    // Get the model number.
+    rv = properties->GetPropertyAsAString(
+                              NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                              modelNumber);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  if (modelNumber.IsEmpty()) {
+    // Get the default model number.
+    modelNumber = SBLocalizedString(aDefaultModelNumberString);
+  }
+
+  // Produce the product name.
+  if (!vendorName.IsEmpty()) {
+    nsTArray<nsString> params;
+    NS_ENSURE_TRUE(params.AppendElement(vendorName), NS_ERROR_OUT_OF_MEMORY);
+    NS_ENSURE_TRUE(params.AppendElement(modelNumber), NS_ERROR_OUT_OF_MEMORY);
+    productName.Assign(SBLocalizedString("device.product.name", params));
+  } else {
+    productName.Assign(modelNumber);
+  }
+
+  // Return results.
+  aProductName.Assign(productName);
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+//
+// CD device request added event nsISupports services.
+//
+//------------------------------------------------------------------------------
+
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceReqAddedEvent, nsIRunnable)
+
+
+//------------------------------------------------------------------------------
+//
+// MSC device request added event nsIRunnable services.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Run the event.
+ */
+
+NS_IMETHODIMP
+sbDeviceReqAddedEvent::Run()
+{
+  // Dispatch to the device object to handle the event.
+  mDevice->ReqHandleRequestAdded();
+
+  return NS_OK;
+}
+
+
+/**
+ * Create a new sbMSCReqAddedEvent object for the device specified by aDevice
+ * and return it in aEvent.
+ *
+ * \param aDevice               Device for which to create event.
+ * \param aEvent                Created event.
+ */
+
+/* static */ nsresult
+sbDeviceReqAddedEvent::New(sbBaseDevice* aDevice,
+                           nsIRunnable**    aEvent)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aEvent);
+
+  // Create the event object.
+  sbDeviceReqAddedEvent* event;
+  NS_NEWXPCOM(event, sbDeviceReqAddedEvent);
+  NS_ENSURE_TRUE(event, NS_ERROR_OUT_OF_MEMORY);
+
+  // Set the event parameters.
+  event->mDevice = aDevice;
+  NS_ADDREF(NS_ISUPPORTS_CAST(sbIDevice*, aDevice));
+
+  // Return results.
+  NS_ADDREF(*aEvent = event);
+
+  return NS_OK;
+}
