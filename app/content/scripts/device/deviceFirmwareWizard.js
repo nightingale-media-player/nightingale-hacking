@@ -434,12 +434,18 @@ var deviceFirmwareWizard = {
     switch(aEvent.type) {
       // Good events
       case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_START:
-        progressMeter.mode = "determined";
+        progressMeter.mode = "undetermined";
       break;
       case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_PROGRESS:
+        if(progressMeter.mode != "determined") {
+          progressMeter.mode = "determined";
+        }
         progressMeter.value = aEvent.data;
       break;
       case Ci.sbIDeviceEvent.EVENT_FIRMWARE_WRITE_END:
+        if(progressMeter.mode != "determined") {
+          progressMeter.mode = "determined";
+        }
         progressMeter.value = 100;
       break;
       case Ci.sbIDeviceEvent.EVENT_FIRMWARE_UPDATE_END:
