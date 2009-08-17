@@ -492,8 +492,7 @@ include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 # the group (!!?) writeble bit set; other than that, perms seem plausible; see
 # bug 12013 and bug 17086.
 export::
-	$(TAR) -z -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.gz -C $(SONGBIRD_XULRUNNERDIR)
-	$(FIND) $(SONGBIRD_XULRUNNERDIR) -exec $(CHMOD) g-w {} \;
+	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
 
 # Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
 
