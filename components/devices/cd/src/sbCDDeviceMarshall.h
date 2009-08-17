@@ -27,12 +27,17 @@
 #ifndef sbCDDeviceMarshall_h_
 #define sbCDDeviceMarshall_h_
 
+#include "sbCDDeviceDefines.h"
+
 #include <sbBaseDeviceMarshall.h>
 #include <sbIDeviceRegistrar.h>
 #include <sbICDDeviceService.h>
+
 #include <nsIClassInfo.h>
 #include <nsStringAPI.h>
 #include <nsIWritablePropertyBag.h>
+#include <nsInterfaceHashtable.h>
+#include <nsAutoLock.h>
 
 
 class sbCDDeviceMarshall : public sbBaseDeviceMarshall,
@@ -48,20 +53,52 @@ public:
   NS_DECL_SBIDEVICEMARSHALL
   NS_DECL_SBICDDEVICELISTENER
 
+  NS_DECLARE_STATIC_IID_ACCESSOR(SB_CDDEVICE_MARSHALL_IID)
+
   nsresult Init();
 
 protected:
-  nsresult AddCDDevice(const nsAString & aMarshallDeviceID,
-                       nsIWritablePropertyBag *aParams);
+  //
+  // @brief Add and register a device to the list of known devices.
+  //
+  nsresult AddDevice(sbICDDevice *aCDDevice);
+  nsresult AddDevice2(nsAString const & aName, sbIDevice *aDevice);
 
+  //
+  // @brief Remove a device from the list of known devices.
+  //
+  nsresult RemoveDevice(nsAString const & aName);
+
+  //
+  // @brief Get a device from a given device ID.
+  //
+  nsresult GetDevice(nsAString const & aName, sbIDevice **aOutDevice);
+
+  //
+  // @brief Find out if a device is already in the device hash.
+  //
+  nsresult GetHasDevice(nsAString const & aName, PRBool *aOutHasDevice);
+
+  //
+  // @brief Find and add all the devices that have media already.
+  //
+  nsresult DiscoverDevices();
+
+  //
+  // @brief Event dispatching utility method
+  //
   nsresult CreateAndDispatchDeviceManagerEvent(PRUint32 aType,
                                                nsIVariant *aData = nsnull,
                                                nsISupports *aOrigin = nsnull,
                                                PRBool aAsync = PR_FALSE);
 
 private:
-  nsCID    mMarshallCID;
-  nsString mMarshallClassName;
+  nsInterfaceHashtableMT<nsStringHashKey, nsISupports> mKnownDevices;
+  PRMonitor                                            *mKnownDevicesLock;
+
+  // Prevent copying and assignment
+  sbCDDeviceMarshall(sbCDDeviceMarshall const &);
+  sbCDDeviceMarshall & operator= (sbCDDeviceMarshall const &);
 };
 
 #endif  // sbCDDeviceMarshall_h_

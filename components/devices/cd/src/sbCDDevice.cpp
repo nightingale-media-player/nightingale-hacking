@@ -45,8 +45,12 @@ NS_IMPL_CI_INTERFACE_GETTER2(sbCDDevice, sbIDevice,
 NS_DECL_CLASSINFO(sbCDDevice)
 NS_IMPL_THREADSAFE_CI(sbCDDevice)
 
-sbCDDevice::sbCDDevice() : mConnected(PR_FALSE),
-                           mStatus(this)
+sbCDDevice::sbCDDevice(const nsID & aControllerId,
+                       nsIPropertyBag *aProperties)
+  : mConnected(PR_FALSE)
+  , mStatus(this)
+  , mCreationProperties(aProperties)
+  , mControllerID(aControllerId)
 {
   mPropertiesLock = nsAutoMonitor::NewMonitor("sbCDDevice::mPropertiesLock");
   NS_ENSURE_TRUE(mPropertiesLock, );
@@ -59,7 +63,8 @@ sbCDDevice::sbCDDevice() : mConnected(PR_FALSE),
   NS_ENSURE_TRUE(mReqWaitMonitor, );
 }
 
-sbCDDevice::~sbCDDevice() {
+sbCDDevice::~sbCDDevice()
+{
 #ifdef PR_LOGGING
   if (!gCDDeviceLog) {
     gCDDeviceLog = PR_NewLogModule( "sbWPDDevice" );
@@ -120,6 +125,22 @@ sbCDDevice::InitDevice()
   return NS_OK;
 }
 
+/* static */ nsresult
+sbCDDevice::New(const nsID & aControllerId,
+                nsIPropertyBag *aProperties,
+                sbCDDevice **aOutCDDevice)
+{
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aOutCDDevice);
+
+  nsRefPtr<sbCDDevice> device = new sbCDDevice(aControllerId, aProperties);
+  NS_ENSURE_TRUE(device, NS_ERROR_OUT_OF_MEMORY);
+
+  // Return the newly created CD device.
+  device.forget(aOutCDDevice);
+
+  return NS_OK;
+}
 
 // sbIDevice implementation
 

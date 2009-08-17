@@ -28,9 +28,40 @@
 #define sbCDDeviceDefines_h_
 
 //------------------------------------------------------------------------------
-// sbIDeviceMarshall Defines
+// CD device sbIDeviceMarshall Defines
 
-#define SB_CDDEVICE_MARSHALL_NAME  "sbCDDeviceMarshall"
+#define SB_CDDEVICE_MARSHALL_NAME  \
+  "sbCDDeviceMarshall"
+
+#define SB_CDDEVICE_MARSHALL_CONTRACTID \
+  "@songbirdnest.com/Songbird/CDDeviceMarshall;1"
+
+#define SB_CDDEVICE_MARSHALL_CLASSNAME \
+  "SongbirdCDDeviceMarshall"
+
+#define SB_CDDEVICE_MARSHALL_DESC \
+  "Songbird CD Device Marshall"
+
+#define SB_CDDEVICE_MARSHALL_CID \
+  {0x1115bc18, 0x1dd2, 0x11b2, {0xb4, 0x41, 0xaa, 0x8a, 0x5f, 0x59, 0x75, 0x1d}}
+
+#define SB_CDDEVICE_MARSHALL_IID \
+  {0x203c2e84, 0x1dd2, 0x11b2, {0xb6, 0xaf, 0xb2, 0xf6, 0x44, 0x87, 0xcf, 0x9d}}
+
+//------------------------------------------------------------------------------
+// CD device sbIDeviceController Defines
+
+#define SB_CDDEVICE_CONTROLLER_CONTRACTID \
+  "@songbirdnest.com/Songbird/CDDeviceController;1"
+
+#define SB_CDDEVICE_CONTROLLER_CLASSNAME \
+  "SongbirdCDDeviceController"
+
+#define SB_CDDEVICE_CONTROLLER_DESC \
+  "Songbird CD Device Controller"
+
+#define SB_CDDEVICE_CONTROLLER_CID \
+  {0x45684bb8, 0x1dd2, 0x11b2, {0xac, 0xb3, 0x95, 0xcc, 0x54, 0x81, 0x87, 0x17}}
 
 #endif  // sbCDDeviceDefines_h_
 

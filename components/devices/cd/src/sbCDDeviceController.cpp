@@ -26,11 +26,15 @@
 
 #include "sbCDDeviceController.h"
 
+#include "sbCDDevice.h"
+#include "sbCDDeviceDefines.h"
+
 #include <nsIClassInfoImpl.h>
 #include <nsIGenericFactory.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsIPropertyBag2.h>
 
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDeviceController)
@@ -44,6 +48,16 @@ NS_IMPL_THREADSAFE_CI(sbCDDeviceController)
 
 sbCDDeviceController::sbCDDeviceController()
 {
+  static nsID const id = SB_CDDEVICE_CONTROLLER_CID;
+  nsresult rv = SetControllerIdInternal(id);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller id");
+
+  static nsID const marshallId = SB_CDDEVICE_MARSHALL_CID;
+  rv = SetMarshallIdInternal(marshallId);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller id");
+
+  rv = SetControllerNameInternal(NS_LITERAL_STRING("sbCDDeviceController"));
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to set controller name");
 }
 
 sbCDDeviceController::~sbCDDeviceController()
@@ -74,9 +88,20 @@ sbCDDeviceController::CreateDevice(nsIPropertyBag *aParams,
   NS_ENSURE_ARG_POINTER(aParams);
   NS_ENSURE_ARG_POINTER(aRetVal);
 
-  //
-  // XXXkreeger WRITE ME
-  //
+  nsID id;
+  nsresult rv = GetControllerIdInternal(id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsRefPtr<sbCDDevice> cdDevice;
+  rv = sbCDDevice::New(id, aParams, getter_AddRefs(cdDevice));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add the device to the internal list
+  rv = AddDeviceInternal(cdDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return the new CD device.
+  NS_ADDREF(*aRetVal = cdDevice);
 
   return NS_OK;
 }
@@ -116,9 +141,14 @@ sbCDDeviceController::GetId(nsID **aId)
 {
   NS_ENSURE_ARG_POINTER(aId);
 
-  //
-  // XXXkreeger WRITE ME
-  //
+  *aId = nsnull;
+  *aId = static_cast<nsID *>(NS_Alloc(sizeof(nsID)));
+  nsresult rv = GetControllerIdInternal(**aId);
+
+  if (NS_FAILED(rv)) {
+    NS_Free(*aId);
+    *aId = nsnull;
+  }
 
   return NS_OK;
 }
@@ -134,9 +164,14 @@ sbCDDeviceController::GetMarshallId(nsID **aId)
 {
   NS_ENSURE_ARG_POINTER(aId);
 
-  //
-  // XXXkreeger WRITE ME
-  //
+  *aId = nsnull;
+  *aId = static_cast<nsID *>(NS_Alloc(sizeof(nsID)));
+  nsresult rv = GetMarshallIdInternal(**aId);
+
+  if (NS_FAILED(rv)) {
+    NS_Free(*aId);
+    *aId = nsnull;
+  }
 
   return NS_OK;
 }

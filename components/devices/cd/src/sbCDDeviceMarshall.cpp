@@ -25,20 +25,51 @@
 */
 
 #include "sbCDDeviceMarshall.h"
-#include "sbCDDeviceDefines.h"
 
-#include <sbICDDeviceService.h>
+#include "sbICDDevice.h"
+#include "sbICDDeviceService.h"
+
+#include <sbIDevice.h>
 #include <sbIDeviceController.h>
+#include <sbIDeviceRegistrar.h>
+#include <sbIDeviceControllerRegistrar.h>
 #include <sbIDeviceManager.h>
 #include <sbIDeviceEvent.h>
 #include <sbIDeviceEventTarget.h>
+#include <sbVariantUtils.h>
 
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
+#include <prlog.h>
 
+//
+// To log this module, set the following environment variable:
+//   NSPR_LOG_MODULES=sbCDDevice:5
+//
+
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gCDDeviceLog = nsnull;
+#define TRACE(args) PR_LOG(gCDDeviceLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gCDDeviceLog, PR_LOG_WARN, args)
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
+
+//
+// XXXkreeger USE THE MOCK CD DEVICE SERVICE UNTIL THE REAL ONE IS DONE
+//
+#define SB_MOCK_CDDEVICE_SERVICE \
+  "@songbirdnest.com/device/cd/mock-cddevice-service;1"
+
+
+NS_DEFINE_STATIC_IID_ACCESSOR(sbCDDeviceMarshall, SB_CDDEVICE_MARSHALL_IID)
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDeviceMarshall)
 NS_IMPL_THREADSAFE_RELEASE(sbCDDeviceMarshall)
@@ -55,11 +86,23 @@ NS_IMPL_THREADSAFE_CI(sbCDDeviceMarshall)
 
 sbCDDeviceMarshall::sbCDDeviceMarshall()
   : sbBaseDeviceMarshall(NS_LITERAL_CSTRING(SB_DEVICE_CONTROLLER_CATEGORY))
+  , mKnownDevicesLock(nsAutoMonitor::NewMonitor("sbCDDeviceMarshall::mKnownDevicesLock"))
 {
+#ifdef PR_LOGGING
+  if (!gCDDeviceLog) {
+    gCDDeviceLog = PR_NewLogModule("sbCDDevice");
+  }
+#endif
+
+  mKnownDevices.Init(8);
 }
 
 sbCDDeviceMarshall::~sbCDDeviceMarshall()
 {
+  nsAutoMonitor mon(mKnownDevicesLock);
+  mon.Exit();
+
+  nsAutoMonitor::DestroyMonitor(mKnownDevicesLock);
 }
 
 nsresult
@@ -71,6 +114,204 @@ sbCDDeviceMarshall::Init()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // TODO: Check to see if there is a implementation for the cd device service.
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
+{
+  NS_ENSURE_ARG_POINTER(aCDDevice);
+
+  nsresult rv;
+  nsCOMPtr<nsIWritablePropertyBag> propBag =
+    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // TODO: Fill out the property bag with information for the device.
+
+  nsCOMPtr<sbIDeviceController> controller = FindCompatibleControllers(propBag);
+  NS_ENSURE_TRUE(controller, NS_ERROR_UNEXPECTED);
+
+
+  // Have the controller create the device for us.
+  nsCOMPtr<sbIDevice> sbDevice;
+  rv = controller->CreateDevice(propBag, getter_AddRefs(sbDevice));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString deviceName;
+  rv = sbDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Don't bother watching this device if this marshall is already watching
+  // it in mKnownDevices.
+  PRBool hasDevice = PR_FALSE;
+  rv = GetHasDevice(deviceName, &hasDevice);
+  if (NS_FAILED(rv) || hasDevice) {
+    return NS_OK;
+  }
+
+  // Ensure that the device has media inserted into it.
+  PRBool hasDisc = PR_FALSE;
+  rv = aCDDevice->GetIsDiscInserted(&hasDisc);
+  if (NS_FAILED(rv) || !hasDisc) {
+    return NS_OK;
+  }
+
+  // Ensure that the inserted disc is a media disc
+  PRUint32 discType;
+  rv = aCDDevice->GetDiscType(&discType);
+  if (NS_FAILED(rv) || discType != sbICDDevice::AUDIO_DISC_TYPE) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIDeviceManager2> deviceManager =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
+    do_QueryInterface(deviceManager, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Register this device with the device registrar.
+  rv = deviceRegistrar->RegisterDevice(sbDevice);
+  NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to register device!");
+
+  // Dispatch the added device event.
+  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_ADDED,
+                                      sbNewVariant(sbDevice),
+                                      static_cast<sbIDeviceMarshall *>(this));
+
+  // Stash this device in the hash of known CD devices.
+  nsAutoMonitor mon(mKnownDevicesLock);
+  mKnownDevices.Put(deviceName, sbDevice);
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
+{
+  nsresult rv;
+  // Only remove the device if it's stashed in the device hash.
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(aName, getter_AddRefs(device));
+  if (NS_FAILED(rv) || !device) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIDeviceRegistrar> deviceRegistrar =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceControllerRegistrar> deviceControllerRegistrar =
+    do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the device controller for this device.
+  nsCOMPtr<sbIDeviceController> deviceController;
+  nsID *controllerId = nsnull;
+  rv = device->GetControllerId(&controllerId);
+  if (NS_SUCCEEDED(rv)) {
+    rv = deviceControllerRegistrar->GetController(
+        controllerId,
+        getter_AddRefs(deviceController));
+  }
+
+  if (NS_FAILED(rv)) {
+    NS_WARNING("Failed to get device controller.");
+    deviceController = nsnull;
+  }
+
+  if (controllerId) {
+    NS_Free(controllerId);
+  }
+
+  // Release the device from the controller
+  if (deviceController) {
+    rv = deviceController->ReleaseDevice(device);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to release the device");
+  }
+
+  // Unregister the device
+  rv = deviceRegistrar->UnregisterDevice(device);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Failed to unregister device");
+
+  nsAutoMonitor mon(mKnownDevicesLock);
+  mKnownDevices.Remove(aName);
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::GetDevice(nsAString const & aName, sbIDevice **aOutDevice)
+{
+  NS_ENSURE_ARG_POINTER(aOutDevice);
+
+  nsresult rv;
+  nsCOMPtr<nsISupports> supports;
+  rv = mKnownDevices.Get(aName, getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDevice> device = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  device.forget(aOutDevice);
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::GetHasDevice(nsAString const &aName, PRBool *aOutHasDevice)
+{
+  NS_ENSURE_ARG_POINTER(aOutHasDevice);
+  *aOutHasDevice = PR_FALSE;  // assume false
+
+  // Operate under the known devices lock
+  nsAutoMonitor mon(mKnownDevicesLock);
+
+  nsresult rv;
+  nsCOMPtr<sbIDevice> deviceRef;
+  rv = GetDevice(aName, getter_AddRefs(deviceRef));
+  if (NS_SUCCEEDED(rv) && deviceRef) {
+    *aOutHasDevice = PR_TRUE;
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDeviceMarshall::DiscoverDevices()
+{
+  // Iterate over the available CD devices and check to see if they have
+  // media currently inserted.
+  nsresult rv;
+
+  nsCOMPtr<sbICDDeviceService> cdDeviceService =
+    do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
+
+  nsCOMPtr<nsISimpleEnumerator> devicesEnum;
+  rv = cdDeviceService->GetCDDevices(getter_AddRefs(devicesEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore = PR_FALSE;
+  while (NS_SUCCEEDED(devicesEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> curItem;
+    rv = devicesEnum->GetNext(getter_AddRefs(curItem));
+    if (NS_FAILED(rv) || !curItem) {
+      NS_WARNING("Could not get an item out of a enumerator!");
+      continue;
+    }
+
+    nsCOMPtr<sbICDDevice> curDevice = do_QueryInterface(curItem, &rv);
+    if (NS_FAILED(rv) || !curDevice) {
+      NS_WARNING("Could not QI nsISupports to sbICDDevice!");
+      continue;
+    }
+
+    // Now add and register this device.
+    rv = AddDevice(curDevice);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a CD Device!");
+  }
 
   return NS_OK;
 }
@@ -121,20 +362,30 @@ sbCDDeviceMarshall::LoadControllers(sbIDeviceControllerRegistrar *aRegistrar)
 NS_IMETHODIMP
 sbCDDeviceMarshall::BeginMonitoring()
 {
-  //
-  // XXXkreeger Write Me (use the mock cd device for now).
-  //
+  nsresult rv;
+  nsCOMPtr<sbICDDeviceService> cdDeviceService =
+    do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = cdDeviceService->RegisterListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DiscoverDevices();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
 NS_IMETHODIMP
 sbCDDeviceMarshall::StopMonitoring()
 {
-  //
-  // XXXkreeger Write Me (use the mock cd device for now).
-  //
+  nsresult rv;
+  nsCOMPtr<sbICDDeviceService> cdDeviceService =
+    do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  // Remove any device references.
+  rv = cdDeviceService->RemoveListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -144,11 +395,10 @@ sbCDDeviceMarshall::GetId(nsID **aId)
 {
   NS_ENSURE_ARG_POINTER(aId);
 
-  nsID *pid = static_cast<nsID *>(NS_Alloc(sizeof(nsID)));
-  NS_ENSURE_TRUE(pid, NS_ERROR_OUT_OF_MEMORY);
-  *pid = mMarshallCID;
+  static nsID const id = SB_CDDEVICE_MARSHALL_CID;
+  *aId = static_cast<nsID *>(NS_Alloc(sizeof(nsID)));
+  **aId = id;
 
-  *aId = pid;
   return NS_OK;
 }
 
@@ -166,6 +416,20 @@ NS_IMETHODIMP
 sbCDDeviceMarshall::OnDeviceRemoved(sbICDDevice *aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsresult rv;
+  nsString deviceName;
+  rv = aDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Only remove the device if this marshall is currently monitoring it.
+  nsCOMPtr<sbIDevice> device;
+  rv = GetDevice(deviceName, getter_AddRefs(device));
+  if (NS_SUCCEEDED(rv) && device) {
+    rv = RemoveDevice(deviceName);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -173,6 +437,10 @@ NS_IMETHODIMP
 sbCDDeviceMarshall::OnMediaInserted(sbICDDevice *aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsresult rv = AddDevice(aDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -180,6 +448,15 @@ NS_IMETHODIMP
 sbCDDeviceMarshall::OnMediaEjected(sbICDDevice *aDevice)
 {
   NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsresult rv;
+  nsString deviceName;
+  rv = aDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = RemoveDevice(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

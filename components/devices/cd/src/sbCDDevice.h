@@ -140,7 +140,8 @@ public:
   /**
    * Initializes the default values for the device object
    */
-  sbCDDevice();
+  sbCDDevice(const nsID & aControllerId,
+             nsIPropertyBag *aProperties);
 
   /**
    * Performs any final cleanup.
@@ -151,6 +152,13 @@ public:
    * Initializes the device object for a specific device
    */
   nsresult InitDevice();
+
+  /**
+   * Create a new CD device.
+   */
+  static nsresult New(const nsID & aControllerId,
+                      nsIPropertyBag *aProperties,
+                      sbCDDevice **aOutCDDevice);
 
 private:
   /**
