@@ -33,30 +33,16 @@ if (typeof(Cr) == "undefined")
 if (typeof(Cu) == "undefined")
   var Cu = Components.utils;
 
-Cu.import("resource://app/jsmodules/sbProperties.jsm");
-Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
-Cu.import("resource://app/jsmodules/sbStorageFormatter.jsm");
-Cu.import("resource://app/jsmodules/StringUtils.jsm");
-Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 
 const CDRIPNS = 'http://songbirdnest.com/rdf/servicepane/cdrip#';
 const SPNS = 'http://songbirdnest.com/rdf/servicepane#';
 
-const TYPE_X_SB_TRANSFER_MEDIA_LIST = "application/x-sb-transfer-media-list";
-
-// Internal defines for the state of the cd for the context menu display.
-const DEVICE_STATE_IDLE     = 0; // CD Inserted but nothing is happening
-const DEVICE_STATE_LOOKUP   = 1; // A lookup for cd information in progress
-const DEVICE_STATE_RIPPING  = 2; // Ripping tracks from a CD
-const DEVICE_STATE_RIP_OK   = 3; // All selected tracks ripped from CD
-const DEVICE_STATE_RIP_FAIL = 4; // Some selected tracks failed to rip from CD
-
 var sbCDRipServicePaneServiceConfig = {
   className:      "Songbird CD Rip Device Support Module",
-  cid:            Components.ID("{5f96ae26-3c6e-41d1-80de-d174b3b8673a}"),
-  contractID:     "@songbirdnest.com/servicepane/cdRipDevice;1",
+  cid:            Components.ID("{9925b565-5c19-4feb-87a8-413d86570cd9}"),
+  contractID:     "@songbirdnest.com/servicepane/cdDevice;1",
   
   ifList: [ Ci.sbIServicePaneModule,
             Ci.nsIObserver ],
@@ -70,10 +56,6 @@ var sbCDRipServicePaneServiceConfig = {
   ],
 
   devCatName:     "CD Rip Device",
-
-  devURNPrefix:   "urn:device:",
-  libURNPrefix:   "urn:library:",
-  itemURNPrefix:  "urn:item:",
 
   appQuitTopic:   "quit-application",
 
@@ -95,10 +77,13 @@ sbCDRipServicePaneService.prototype = {
   _xpcom_categories: sbCDRipServicePaneServiceConfig.categoryList,
 
   // Services to use.
+  _deviceManagerSvc:      null,
+  _deviceServicePaneSvc:  null,
   _observerSvc:           null,
   _servicePaneSvc:        null,
-  _cdSvc:                 null,
 
+  _deviceInfoList:        [],
+  
   // ************************************
   // sbIServicePaneService implementation
   // ************************************
@@ -110,6 +95,7 @@ sbCDRipServicePaneService.prototype = {
   fillContextMenu: function sbCDRipServicePaneService_fillContextMenu(aNode,
                                                                   aContextMenu,
                                                                   aParentWindow) {
+    // TODO: Bug 17432
   },
 
   fillNewItemMenu: function sbCDRipServicePaneService_fillNewItemMenu(aNode,
@@ -164,7 +150,7 @@ sbCDRipServicePaneService.prototype = {
     }
 
   },
-
+  
   // ************************************
   // nsISupports implementation
   // ************************************
@@ -183,86 +169,249 @@ sbCDRipServicePaneService.prototype = {
     
     this._observerSvc.addObserver(this, this._cfg.appQuitTopic, false);
 
+    this._deviceServicePaneSvc = Cc["@songbirdnest.com/servicepane/device;1"]
+                                   .getService(Ci.sbIDeviceServicePaneService);
+
+    this._deviceManagerSvc = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                               .getService(Ci.sbIDeviceManager2);
+ 
     // Remove all stale nodes.
-    this._removeCDDeviceNodes(this._servicePaneSvc.root);
+    this._removeDeviceNodes(this._servicePaneSvc.root);
+ 
+    // Add a listener for CDDevice Events
+    var deviceEventListener = {
+      cdDeviceServicePaneSvc: this,
+      
+      onDeviceEvent: function deviceEventListener_onDeviceEvent(aDeviceEvent) {
+        this.cdDeviceServicePaneSvc._processDeviceManagerEvent(aDeviceEvent);
+      }
+    };
     
-    // TODO: Get the CD Service
-    // this._cdSvc = Cc[""]
-    //                 .getService(Ci.sbICD);
+    this._deviceEventListener = deviceEventListener;
+    this._deviceManagerSvc.addEventListener(deviceEventListener);
     
-    // TODO: Query CD Service for existing devices
-    //       For each device that has a valid CD in it we will create a node
-    
-    // TODO: Hook up with the cd service and listen for add/remove events
-    
-    // Test add a device node
-    this._addCDDevice(null);
+    this._createConnectedDevices();
+
+    // Initialize the device info list.
+    var deviceEnum = this._deviceManagerSvc.devices.enumerate();
+    while (deviceEnum.hasMoreElements()) {
+      this._addDevice(deviceEnum.getNext().QueryInterface(Ci.sbIDevice));
+    }
   },
   
+  /**
+   * \brief Shutdown and remove the CD Device nodes.
+   */
   _shutdown: function sbCDRipServicePaneService_shutdown() {
     this._observerSvc.removeObserver(this, this._cfg.appQuitTopic);
 
-    // Purge all device nodes before shutdown.
-    this._removeCDDeviceNodes(this._servicePaneSvc.root);
+    this._deviceManagerSvc.removeEventListener(this._deviceEventListener);
+    this._deviceEventListener = null;
     
+    // Purge all device nodes before shutdown.
+    this._removeDeviceNodes(this._servicePaneSvc.root);
+    
+    // Remove all references to nodes
+    this._removeAllDevices();
+    this._deviceInfoList = [];
+
+    this._deviceManagerSvc = null;
+    this._deviceServicePaneSvc = null;
     this._servicePaneSvc = null;
     this._observerSvc = null;
   },
 
   /**
-   * \brief Adds a CD Device node to the service pane.
-   * \param aCDDevice - CD Device information to add a node with.
+   * \brief Process events from the Device Manager.
+   * \param aDeviceEvent - Event that occured for a device.
    */
-  _addCDDevice: function sbCDRipServicePaneService_addDevice(aCDDevice) {
-    // Not available until sbICD is implemented
-    //var device = aCDDevice.QueryInterface(Ci.sbICDDevice);
+  _processDeviceManagerEvent:
+    function sbCDRipServicePaneService_processDeviceManagerEvent(aDeviceEvent) {
     
-    /*
-     * Currently this is only a test node until the CD service is in place.
-     * The following code will be replaced with proper node creation based
-     * on a proper cd device.
-     */
-    // Add a cd rip node in the service pane.
-    //var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device);
-    var node = this._servicePaneSvc.addNode("test-cdrip",
-                                            this._servicePaneSvc.root,
-                                            false);
-    if (!node) {
-      // Already exists so return
-      return;
+    switch(aDeviceEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_INSERTED:
+        this._addDeviceFromEvent(aDeviceEvent);
+      break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_REMOVED:
+        this._removeDeviceFromEvent(aDeviceEvent);
+      break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED: {
+        // Get the device and its node.
+        var device = aDeviceEvent.origin.QueryInterface(Ci.sbIDevice);
+        var deviceId = device.id;
+
+        if (typeof(this._deviceInfoList[deviceId]) != 'undefined') {
+          var devNode = this._deviceInfoList[deviceId].svcPaneNode;
+  
+          // Get the device properties and clear the busy property.
+          devProperties = devNode.properties.split(" ");
+          devProperties = devProperties.filter(function(aProperty) {
+                                                 return aProperty != "busy";
+                                               });
+  
+          // Set the busy property if the device is busy.
+          if (device.state != Ci.sbIDevice.STATE_IDLE) {
+            devProperties.push("busy");
+            // Save the state for when we become idle again so we can
+            // display a successful/unsuccessful image in the service pane
+            // if we just preformed a rip.
+            devNode.setAttributeNS(CDRIPNS, "LastState", device.state);
+          } else {
+            if (devNode.hasAttributeNS(CDRIPNS, "LastState")) {
+              var lastState = devNode.getAttributeNS(CDRIPNS, "LastState");
+              if (lastState == Ci.sbIDevice.STATE_TRANSCODE) {
+                // TODO: Check for errors, if errors add unsuccessful, otherwise
+                // add successful
+              }
+            }
+          }
+          devNode.setAttributeNS(CDRIPNS, "LastState", device.state);
+
+          // Write back the device node properties.
+          devNode.properties = devProperties.join(" ");
+        }
+
+      }
+      break;
+    
+      default:
+      break;
     }
-    
-    // Set up the node properties
-    node.setAttributeNS(SPNS, "Weight", 5);
-    node.properties = "device";
-    node.setAttributeNS(CDRIPNS, "CDId", 0);
-    node.contractid = this._cfg.contractID;
-    node.url = this._cfg.devMgrURL + "?cd-id=" + 0;
-    node.editable = false;
-    node.name = "CD Rip"; // TODO: Localize.
-    node.hidden = false;
+  },
+
+  /**
+   * \brief Add a device that has media from event information.
+   * \param aDeviceEvent - Device event of added device.
+   */
+  _addDeviceFromEvent:
+    function sbCDRipServicePaneService_addDeviceFromEvent(aDeviceEvent) {
+
+    var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    try {
+      this._addDevice(device);
+    }
+    catch(e) {
+      Components.utils.reportError(e);
+    }
   },
   
   /**
-   * \brief Removes all the CD Device nodes from the service pane.
-   * \param aNode - Root node to remove, if it is a container the children will
-   *                be checked first. Nodes are only removed if they match this
-   *                services contract id.
+   * \brief Remove a device that no longer has media from event information.
+   * \param aDeviceEvent - Device event of removed device.
    */
-  _removeCDDeviceNodes: function sbCDRipServicePaneService_removeCDDeviceNodes(
+  _removeDeviceFromEvent:
+    function sbCDRipServicePaneService_removeDeviceFromEvent(aDeviceEvent) {
+
+    var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    try {
+      this._removeDevice(device);
+    }
+    catch(e) {
+      Components.utils.reportError(e);
+    }
+  },
+  
+  /**
+   * \brief Add a device that has media.
+   * \param aDevice - Device to add, this will only be added if it is of type
+   *        "CD".
+   */
+  _addDevice: function sbCDRipServicePaneService_addDevice(aDevice) {
+    var device = aDevice.QueryInterface(Ci.sbIDevice);
+    var devId = device.id;
+
+    // Do nothing if device is not an CD device.
+    var deviceType = device.parameters.getProperty("DeviceType");
+    if (deviceType != "CD") {
+      return;
+    }
+    
+    // TODO:
+    // We need to do a check to ensure that the media inserted is readable and
+    // an audio disc
+    // if (!device.readable ||
+    //     device.getDiscType() != Ci.sbICDDevice.AUDIO_DISC_TYPE) {
+    //   return;
+    // }
+
+    // Add a cd rip node in the service pane.
+    var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device);
+    devNode.setAttributeNS(CDRIPNS, "DeviceId", devId);
+    devNode.setAttributeNS(CDRIPNS, "deviceNodeType", "cd-device");
+    devNode.properties = "cd-device";
+    devNode.contractid = this._cfg.contractID;
+    devNode.url = this._cfg.devMgrURL + "?device-id=" + devId;
+    devNode.editable = false;
+    devNode.name = device.properties.friendlyName;
+    devNode.hidden = false;
+ 
+    this._deviceInfoList[devId] = {};
+    this._deviceInfoList[devId].svcPaneNode = devNode;
+  },
+  
+  /**
+   * \brief Remove a CD Device from the service pane, and all nodes under it.
+   * \param aNode - Service pane node of CD Device to remove.
+   */
+  _removeDeviceNodes: function sbCDRipServicePaneService_removeCDDeviceNodes(
                                                                         aNode) {
     // Remove child device nodes.
     if (aNode.isContainer) {
       var childEnum = aNode.childNodes;
       while (childEnum.hasMoreElements()) {
         var child = childEnum.getNext().QueryInterface(Ci.sbIServicePaneNode);
-        this._removeCDDeviceNodes(child);
+        this._removeDeviceNodes(child);
       }
     }
 
     // Remove cd device node.
     if (aNode.contractid == this._cfg.contractID)
       aNode.hidden = true;
+  },
+  
+  /**
+   * \brief Remove a known CD Device from the service pane.
+   * \param aDevice - Device to remove.
+   */
+  _removeDevice: function sbCDRipServicePaneService_removeDevice(aDevice) {
+    var device = aDevice.QueryInterface(Ci.sbIDevice);
+    var devId = device.id;
+    
+    var devInfo = this._deviceInfoList[devId];
+    if (!devInfo)
+      return;
+
+    // Remove the device node.
+    devInfo.svcPaneNode.hidden = true;
+
+    // Remove device info list entry.
+    delete this._deviceInfoList[devId];
+  },
+  
+  /**
+   * \brief Remove all known CD Devices from the service pane.
+   */
+  _removeAllDevices: function sbCDRipServicePaneService_removeAllDevices() {
+    for (var devId in this._deviceInfoList) {
+      this._removeDevice(this._deviceInfoList[devId].device);
+    }
+  },
+
+  /**
+   * \brief Create all CD Devices that already exist.
+   */
+  _createConnectedDevices: function sbCDRipServicePaneService_createConnectedDevices() {
+    var devices = ArrayConverter.JSArray(this._deviceManagerSvc.devices);
+    for each (device in devices) {
+      try {
+        this._addDevice(device);
+      }
+      catch(e) {
+        Components.utils.reportError(e);
+      }
+    }
   }
 };
 
