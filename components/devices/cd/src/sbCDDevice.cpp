@@ -61,15 +61,16 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
 
   mReqWaitMonitor = nsAutoMonitor::NewMonitor("sbCDDevice::mReqWaitMonitor");
   NS_ENSURE_TRUE(mReqWaitMonitor, );
-}
 
-sbCDDevice::~sbCDDevice()
-{
 #ifdef PR_LOGGING
   if (!gCDDeviceLog) {
     gCDDeviceLog = PR_NewLogModule( "sbWPDDevice" );
   }
 #endif
+}
+
+sbCDDevice::~sbCDDevice()
+{
 }
 
 nsresult

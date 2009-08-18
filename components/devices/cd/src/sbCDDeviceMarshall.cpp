@@ -124,15 +124,25 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   NS_ENSURE_ARG_POINTER(aCDDevice);
 
   nsresult rv;
+
+  // Fill out some properties for this device.
   nsCOMPtr<nsIWritablePropertyBag> propBag =
     do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: Fill out the property bag with information for the device.
+  nsCOMPtr<nsIWritableVariant> deviceType =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceType->SetAsAString(NS_LITERAL_STRING("CD"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propBag->SetProperty(NS_LITERAL_STRING("DeviceType"),
+                             deviceType);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceController> controller = FindCompatibleControllers(propBag);
   NS_ENSURE_TRUE(controller, NS_ERROR_UNEXPECTED);
-
 
   // Have the controller create the device for us.
   nsCOMPtr<sbIDevice> sbDevice;
@@ -140,7 +150,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString deviceName;
-  rv = sbDevice->GetName(deviceName);
+  rv = aCDDevice->GetName(deviceName);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Don't bother watching this device if this marshall is already watching

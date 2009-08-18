@@ -29,6 +29,8 @@
 #include "sbCDDevice.h"
 #include "sbCDDeviceDefines.h"
 
+#include <sbDeviceCompatibility.h>
+
 #include <nsIClassInfoImpl.h>
 #include <nsIGenericFactory.h>
 #include <nsIProgrammingLanguage.h>
@@ -36,6 +38,9 @@
 #include <nsServiceManagerUtils.h>
 #include <nsIPropertyBag2.h>
 
+
+SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbCDDeviceController,
+                                       SB_CDDEVICE_CONTROLLER_CONTRACTID)
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDeviceController)
 NS_IMPL_THREADSAFE_RELEASE(sbCDDeviceController)
@@ -74,10 +79,37 @@ sbCDDeviceController::GetCompatibility(nsIPropertyBag *aParams,
   NS_ENSURE_ARG_POINTER(aParams);
   NS_ENSURE_ARG_POINTER(aRetVal);
 
-  //
-  // XXXkreeger WRITE ME
-  //
+  nsresult rv;
 
+  // Create the device compatibility object.
+  nsRefPtr<sbDeviceCompatibility> deviceCompatibility;
+  NS_NEWXPCOM(deviceCompatibility, sbDeviceCompatibility);
+  NS_ENSURE_TRUE(deviceCompatibility, NS_ERROR_OUT_OF_MEMORY);
+
+  // Get the device type.
+  nsCOMPtr<nsIVariant> property;
+  rv = aParams->GetProperty(NS_LITERAL_STRING("DeviceType"),
+                            getter_AddRefs(property));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString deviceType;
+  rv = property->GetAsAString(deviceType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (deviceType.EqualsLiteral("CD")) {
+    rv = deviceCompatibility->Init(
+        sbIDeviceCompatibility::COMPATIBLE_ENHANCED_SUPPORT,
+        sbIDeviceCompatibility::PREFERENCE_SELECTED);
+  }
+  else {
+    rv = deviceCompatibility->Init(sbIDeviceCompatibility::INCOMPATIBLE,
+                                   sbIDeviceCompatibility::PREFERENCE_UNKNOWN);
+  }
+
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  NS_ADDREF(*aRetVal = deviceCompatibility);
   return NS_OK;
 }
 

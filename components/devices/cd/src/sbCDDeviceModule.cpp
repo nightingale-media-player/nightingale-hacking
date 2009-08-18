@@ -36,8 +36,6 @@
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbCDDeviceMarshall)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbCDDeviceController)
 
-SB_DEVICE_CONTROLLER_REGISTERSELF_IMPL(sbCDDeviceController, 
-                                       SB_CDDEVICE_CONTROLLER_CONTRACTID)
 SB_DEVICE_CONTROLLER_REGISTERSELF(sbCDDeviceController);
 
 // Registration functions for becoming a startup observer
