@@ -39,7 +39,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(6d800e16-02cf-4d52-ac69-3978f79a1a75)]
+[scriptable, uuid(9f483ed9-4a7b-4961-b391-0c3479718158)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -67,6 +67,20 @@ interface sbIDeviceFirmwareHandler : nsISupports
    *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute AString latestFirmwareReadableVersion;
+
+  /**
+   * \brief The current firmware version, in machine friendly format.
+   * \note  The handler must be bound to a device for this value to
+   *        be valid.
+   */
+  readonly attribute unsigned long currentFirmwareVersion;
+  /**
+   * \brief The current firmware version on the device, in human
+   *        readable format (eg. xx.xx.xx.xx).
+   * \note  The handler must be bound to a device for this value to
+   *        be valid.
+   */
+  readonly attribute AString currentFirmwareReadableVersion;
 
   /**
    * \brief Location for the release notes of the latest firmware.

@@ -142,6 +142,12 @@ public:
 
   // override me, see cpp file for implementation notes
   virtual nsresult OnInit();
+
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnGetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion);
+
   // override me, see cpp file for implementation notes
   virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 
                                      PRBool *_retval);

@@ -303,6 +303,57 @@
                                                     "sb-device-tools-cur-firmware-ver");
         }
 
+        if(!this._updateFirmwareButton) {
+          this._updateFirmwareButton = 
+            document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-update-firmware-button");
+        }
+
+        var firmwareVersion = null;
+        var deviceFirmwareUpdater = 
+          Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+                    .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
+
+        // If we have a firmware handler for the device, use it to read
+        // the device firmware version instead of using the one provided
+        // by the device properties.
+        if(deviceFirmwareUpdater.hasHandler(this.device)) {
+          var handler = deviceFirmwareUpdater.getHandler(this.device);          
+          handler.bind(this.device, null);
+          
+          try {
+            firmwareVersion = handler.currentFirmwareReadableVersion;
+          }
+          catch(err) {}
+        }
+        else {
+          try { 
+            firmwareVersion = this.device.properties.firmwareVersion;
+          }
+          catch(err) {}
+        }
+
+        if (firmwareVersion == null) {
+          firmwareVersion = SBString("device.info.unknown");
+        }
+        
+        this._currentFirmwareVersion.value = firmwareVersion;
+        
+        if (!this.formatBox && this.device.supportsReformat) {
+          this.formatBox = document.getAnonymousElementByAttribute(this,
+                                                    "sbid",
+                                                    "sb-device-tools-format");
+          this.formatBox.hidden = false;
+        }
+        
+        this._startBusyCheck();
+        ]]></body>
+      </method>
+
+      <method name="_updateBusyState">
+        <body>
+          <![CDATA[
         if(!this._busyWarningBox) {
           this._busyWarningBox= 
             document.getAnonymousElementByAttribute(this,
@@ -316,27 +367,7 @@
                                                     "sbid",
                                                     "sb-device-tools-busy-device-warning-desc");
         }
-        
-        if(!this._updateFirmwareButton) {
-          this._updateFirmwareButton = 
-            document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-update-firmware-button");
-        }
-        
-        try {
-          this._currentFirmwareVersion.value = this.device.properties.firmwareVersion;
-        }
-        catch(e) {
-          this._currentFirmwareVersion.value = SBString("device.info.unknown");
-        }
 
-        if (!this.formatBox && this.device.supportsReformat) {
-          this.formatBox = document.getAnonymousElementByAttribute(this,
-                                                    "sbid",
-                                                    "sb-device-tools-format");
-          this.formatBox.hidden = false;
-        }
         if(this.device.isBusy) {
           if(this._busyWarningText) {
             this._busyWarningDesc.removeChild(this._busyWarningText);
@@ -352,9 +383,7 @@
         else {
           this._busyWarningBox.hidden = true;
           this._updateFirmwareButton.disabled = false;
-        }
-        
-        this._startBusyCheck();
+        }          
         ]]></body>
       </method>
 
@@ -362,7 +391,7 @@
         <body><![CDATA[
           if(!this._busyCheckTimer) {
             var self = this;
-            this._busyCheckTimer = setInterval(function() { self._update(); }, 1000);
+            this._busyCheckTimer = setInterval(function() { self._updateBusyState(); }, 1000);
           }
         ]]></body>
       </method>

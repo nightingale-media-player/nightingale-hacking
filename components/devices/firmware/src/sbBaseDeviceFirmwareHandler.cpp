@@ -387,6 +387,27 @@ sbBaseDeviceFirmwareHandler::OnInit()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnGetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion)
+{
+  /**
+   * You should return the _current_ version of the firmware on the device.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion)
+{
+  /**
+   * You should return the _current_ human readable version of the firmware
+   * on the device.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /*virtual*/ nsresult 
 sbBaseDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice, 
                                                PRBool *_retval)
@@ -598,6 +619,38 @@ sbBaseDeviceFirmwareHandler::GetLatestFirmwareReadableVersion(nsAString & aLates
   nsAutoMonitor mon(mMonitor);
   aLatestFirmwareReadableVersion = mReadableFirmwareVersion;
   
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aCurrentFirmwareVersion);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = OnGetCurrentFirmwareVersion(aCurrentFirmwareVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = 
+    OnGetCurrentFirmwareReadableVersion(aCurrentFirmwareReadableVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

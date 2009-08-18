@@ -87,7 +87,7 @@ var DIW = {
   //   _contextMenuDocURL       URL to context menu document.
   //
 
-  _pollPeriodTable: { "battery": 60000 },
+  _pollPeriodTable: { "battery": 60000, "firmware_version": 60000 },
   _contextMenuDocURL:
     "chrome://songbird/content/xul/device/deviceContextMenu.xul",
 
@@ -809,10 +809,35 @@ var DIW = {
 
   _getDeviceFirmwareVersion: function DIW__getDeviceFirmwareVersion() {
     var firmwareVersion = null;
-    try { firmwareVersion = this._deviceProperties.firmwareVersion; }
-    catch(err) {}
-    if (firmwareVersion == null)
+    
+    var deviceFirmwareUpdater = 
+      Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
+        .getService(Ci.sbIDeviceFirmwareUpdater);
+    
+    // If we have a firmware handler for the device, use it to read
+    // the device firmware version instead of using the one provided
+    // by the device properties.
+    if(deviceFirmwareUpdater.hasHandler(this._device)) {
+      var handler = deviceFirmwareUpdater.getHandler(this._device);
+      handler.bind(this._device, null);
+      
+      try {
+        firmwareVersion = handler.currentFirmwareReadableVersion;
+        
+        alert(handler.currentFirmwareVersion);
+      }
+      catch(err) {}
+    }
+    else {
+      try { 
+        firmwareVersion = this._deviceProperties.firmwareVersion; 
+      }
+      catch(err) {}
+    }
+
+    if (firmwareVersion == null) {
       firmwareVersion = SBString("device.info.unknown");
+    }
 
     return firmwareVersion;
   },
