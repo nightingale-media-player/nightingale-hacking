@@ -1,10 +1,11 @@
+/* vim: set sw=2 :miv */
 /*
 //
 // BEGIN SONGBIRD GPL
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2009 POTI, Inc.
+// Copyright(c) 2005-2008 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -24,17 +25,14 @@
 //
 */
 
-#ifndef SBDEVICEAPI_H_
-#define SBDEVICEAPI_H_
+#ifndef SBCDLOG_H_
+#define SBCDLOG_H_
 
-/**
- * Determine if we need to export or import. Presence of SB_EXPORT_DEVICE_API
- * means we need to export
- */
-#ifdef SB_EXPORT_BASE_DEVICE_API
-#define SB_API NS_EXPORT
-#else
-#define SB_API NS_IMPORT
+#ifdef PR_LOGGING
+extern PRLogModuleInfo* gCDDeviceLog;
 #endif
 
-#endif /*SBDEVICEAPI_H_*/
+#undef LOG
+#define LOG(args) PR_LOG(gCDDeviceLog, PR_LOG_WARN, args)
+
+#endif /* SBCDLOG_H_ */

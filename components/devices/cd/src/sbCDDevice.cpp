@@ -1,11 +1,32 @@
 /*
- * sbCDDevice.cpp
- *
- *  Created on: Aug 11, 2009
- *      Author: dbradley
- */
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+*/
 
 #include "sbCDDevice.h"
+
+#include "sbCDLog.h"
 
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
@@ -16,6 +37,7 @@
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <nsILocalFile.h>
 
 #include <sbDeviceContent.h>
 #include <sbIDeviceEvent.h>
@@ -25,14 +47,12 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbWPDDevice:5
+ *   NSPR_LOG_MODULES=sbCDDevice:5
  */
 #ifdef PR_LOGGING
-static PRLogModuleInfo* gCDDeviceLog = nsnull;
+PRLogModuleInfo* gCDDeviceLog = nsnull;
 #endif
 
-#undef LOG
-#define LOG(args) PR_LOG(gCDDeviceLog, PR_LOG_WARN, args)
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDevice)
 NS_IMPL_THREADSAFE_RELEASE(sbCDDevice)
@@ -51,6 +71,7 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
   , mStatus(this)
   , mCreationProperties(aProperties)
   , mControllerID(aControllerId)
+  , mIsHandlingRequests(PR_FALSE)
 {
   mPropertiesLock = nsAutoMonitor::NewMonitor("sbCDDevice::mPropertiesLock");
   NS_ENSURE_TRUE(mPropertiesLock, );
@@ -71,6 +92,22 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
 
 sbCDDevice::~sbCDDevice()
 {
+  nsresult rv = mDeviceLibrary->Finalize();
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+      "sbCDDevice failed to finalize the device library");
+
+  mDeviceLibrary = nsnull;
+
+  if (!mDeviceLibraryPath.IsEmpty()) {
+    nsCOMPtr<nsILocalFile> libraryFile;
+    rv = NS_NewLocalFile(mDeviceLibraryPath,
+        PR_FALSE,
+        getter_AddRefs(libraryFile));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    rv = libraryFile->Remove(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
 }
 
 nsresult
@@ -385,8 +422,12 @@ sbCDDevice::Disconnect()
   // This function should only be called on the main thread.
   NS_ASSERTION(NS_IsMainThread(), "not on main thread");
 
+  nsresult rv = Unmount();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   // Stop the request processing.
-  ReqProcessingStop();
+  rv = ReqProcessingStop();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Mark the device as not connected.  After this, "connect lock" fields may
   // not be used.
@@ -399,11 +440,13 @@ sbCDDevice::Disconnect()
   mCapabilities = nsnull;
 
   // Disconnect the device services.
-  ReqDisconnect();
-
+  rv = ReqDisconnect();
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   // Send device removed notification.
-  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,
-                         sbNewVariant(static_cast<sbIDevice*>(this)));
+  rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,
+                              sbNewVariant(static_cast<sbIDevice*>(this)));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Log progress.
   LOG(("Exit sbCDDevice::Disconnect\n"));
@@ -608,3 +651,108 @@ NS_IMETHODIMP sbCDDevice::ResetWarningDialogs()
 {
   return sbBaseDevice::ResetWarningDialogs();
 }
+
+nsresult
+sbCDDevice::Mount(const nsAString& aMountPath)
+{
+  nsresult rv;
+
+  // This function must only be called on the main thread.
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Operate under the connect lock.
+  sbAutoReadLock autoConnectLock(mConnectLock);
+  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
+
+  // Do nothing if a media volume has already been mounted.
+  if (mDeviceLibrary)
+    return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+
+  // Set the mount path.
+  mMountPath = aMountPath;
+
+  // Get the mount URI.
+  nsCOMPtr<nsILocalFile> mountFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID,
+                                                       &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mountFile->InitWithPath(mMountPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Make a string out of the device ID.
+  char deviceID[NSID_LENGTH];
+  mDeviceID.ToProvidedString(deviceID);
+
+  // Create a unique device library ID using the device ID and volumeGUID.
+  // Strip off the braces from the device ID.
+  mDeviceLibraryPath.AssignLiteral("CD");
+  mDeviceLibraryPath.Append(NS_ConvertUTF8toUTF16(deviceID + 1, NSID_LENGTH - 3));
+  mDeviceLibraryPath.AppendLiteral("@devices.library.songbirdnest.com");
+
+  // Create the device library.
+  nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
+  rv = CreateDeviceLibrary(mDeviceLibraryPath, 
+                           nsnull,
+                           getter_AddRefs(deviceLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the main device library.
+  mDeviceLibrary = deviceLibrary;
+
+  // Update the device properties.
+  UpdateProperties();
+
+  // Add the device library.
+  rv = AddLibrary(deviceLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Mount the device. It's very important to send the mount request
+  // before checking for setup. If the device isn't already mounting it
+  // will not actually be sync-able because the sync request will be
+  // submitted before we mount.
+  rv = PushRequest(TransferRequest::REQUEST_MOUNT, nsnull, deviceLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Release connect lock.
+  autoConnectLock.unlock();
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::Unmount()
+{
+  // This function must only be called on the main thread.
+  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+
+  // Operate under the connect lock.
+  sbAutoReadLock autoConnectLock(mConnectLock);
+  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
+
+  // Do nothing if media volume not mounted.
+  if (!mDeviceLibrary) {
+    return NS_OK;
+  }
+
+  // Remove the device library from the device statistics.
+  nsresult rv = mDeviceStatistics->RemoveLibrary(mDeviceLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Remove the device library and dispose of it.
+  RemoveLibrary(mDeviceLibrary);
+
+  return NS_OK;
+}
+
+PRBool
+sbCDDevice::ReqAbortActive()
+{
+  // Atomically get the abort requests flag by atomically adding 0 and reading
+  // the result.
+  PRBool abortRequests = PR_AtomicAdd(&mAbortRequests, 0);
+  if (!abortRequests) {
+    abortRequests = IsRequestAbortedOrDeviceDisconnected();
+  }
+
+  return (abortRequests != 0);
+}
+
