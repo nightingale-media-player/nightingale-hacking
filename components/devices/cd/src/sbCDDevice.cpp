@@ -92,9 +92,12 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
 
 sbCDDevice::~sbCDDevice()
 {
-  nsresult rv = mDeviceLibrary->Finalize();
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-      "sbCDDevice failed to finalize the device library");
+  nsresult rv;
+  if (mDeviceLibrary) {
+    rv = mDeviceLibrary->Finalize();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "sbCDDevice failed to finalize the device library");
+  }
 
   mDeviceLibrary = nsnull;
 
@@ -534,8 +537,12 @@ NS_IMETHODIMP sbCDDevice::GetProperties(sbIDeviceProperties * *aProperties)
   // Operate under the properties lock.
   nsAutoMonitor autoPropertiesLock(mPropertiesLock);
 
+  *aProperties = nsnull;
+
   // Return results.
-  NS_ADDREF(*aProperties = mProperties);
+  if (mProperties) {
+    NS_ADDREF(*aProperties = mProperties);
+  }
 
   return NS_OK;
 }
