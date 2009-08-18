@@ -135,8 +135,6 @@
     else                                                    \
       f.tag()->set##method(true);                           \
   }                                                         \
-  else \
-    fprintf(stderr, "No value for property '%s'\n", SB_PROPERTY); \
   PR_END_MACRO
 
 /*******************************************************************************
