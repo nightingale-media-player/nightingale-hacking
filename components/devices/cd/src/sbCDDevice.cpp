@@ -160,6 +160,15 @@ sbCDDevice::InitDevice()
   rv = mDeviceContent->Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the sbICDDevice reference
+  nsCOMPtr<nsIVariant> deviceVar;
+  rv = mCreationProperties->GetProperty(NS_LITERAL_STRING("sbICDDevice"),
+                                        getter_AddRefs(deviceVar));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceVar->GetAsISupports(getter_AddRefs(mCDDevice));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Log progress.
   LOG(("Exit sbCDDevice::InitDevice"));
 

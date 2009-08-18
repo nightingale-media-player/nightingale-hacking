@@ -234,7 +234,7 @@ public:
   /**
    * Initializes the device object for a specific device
    */
-  nsresult InitDevice();
+  virtual nsresult InitDevice();
 
   /**
    * Create a new CD device.

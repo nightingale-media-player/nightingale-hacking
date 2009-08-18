@@ -125,6 +125,18 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
 
   nsresult rv;
 
+  nsString deviceName;
+  rv = aCDDevice->GetName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Don't bother watching this device if this marshall is already watching
+  // it in mKnownDevices.
+  PRBool hasDevice = PR_FALSE;
+  rv = GetHasDevice(deviceName, &hasDevice);
+  if (NS_FAILED(rv) || hasDevice) {
+    return NS_OK;
+  }
+
   // Fill out some properties for this device.
   nsCOMPtr<nsIWritablePropertyBag> propBag =
     do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
@@ -144,22 +156,21 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   nsCOMPtr<sbIDeviceController> controller = FindCompatibleControllers(propBag);
   NS_ENSURE_TRUE(controller, NS_ERROR_UNEXPECTED);
 
+    // Stash the device with the property bag.
+  nsCOMPtr<nsIWritableVariant> deviceVar =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = deviceVar->SetAsISupports(aCDDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = propBag->SetProperty(NS_LITERAL_STRING("sbICDDevice"), deviceVar);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Have the controller create the device for us.
   nsCOMPtr<sbIDevice> sbDevice;
   rv = controller->CreateDevice(propBag, getter_AddRefs(sbDevice));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  nsString deviceName;
-  rv = aCDDevice->GetName(deviceName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Don't bother watching this device if this marshall is already watching
-  // it in mKnownDevices.
-  PRBool hasDevice = PR_FALSE;
-  rv = GetHasDevice(deviceName, &hasDevice);
-  if (NS_FAILED(rv) || hasDevice) {
-    return NS_OK;
-  }
 
   // Ensure that the device has media inserted into it.
   PRBool hasDisc = PR_FALSE;
