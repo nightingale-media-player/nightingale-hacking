@@ -127,7 +127,7 @@ sbCDDeviceController::CreateDevice(nsIPropertyBag *aParams,
   nsRefPtr<sbCDDevice> cdDevice;
   rv = sbCDDevice::New(id, aParams, getter_AddRefs(cdDevice));
   NS_ENSURE_SUCCESS(rv, rv);
-
+  
   // Add the device to the internal list
   rv = AddDeviceInternal(cdDevice);
   NS_ENSURE_SUCCESS(rv, rv);

@@ -227,13 +227,13 @@ sbCDRipServicePaneService.prototype = {
    */
   _processDeviceManagerEvent:
     function sbCDRipServicePaneService_processDeviceManagerEvent(aDeviceEvent) {
-    
+
     switch(aDeviceEvent.type) {
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_INSERTED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED:
         this._addDeviceFromEvent(aDeviceEvent);
       break;
 
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_MEDIA_REMOVED:
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
         this._removeDeviceFromEvent(aDeviceEvent);
       break;
 
@@ -293,7 +293,7 @@ sbCDRipServicePaneService.prototype = {
       this._addDevice(device);
     }
     catch(e) {
-      Components.utils.reportError(e);
+      Cu.reportError(e);
     }
   },
   
@@ -309,7 +309,7 @@ sbCDRipServicePaneService.prototype = {
       this._removeDevice(device);
     }
     catch(e) {
-      Components.utils.reportError(e);
+      Cu.reportError(e);
     }
   },
   
@@ -321,7 +321,7 @@ sbCDRipServicePaneService.prototype = {
   _addDevice: function sbCDRipServicePaneService_addDevice(aDevice) {
     var device = aDevice.QueryInterface(Ci.sbIDevice);
     var devId = device.id;
-
+    
     // Do nothing if device is not an CD device.
     var deviceType = device.parameters.getProperty("DeviceType");
     if (deviceType != "CD") {
@@ -344,7 +344,7 @@ sbCDRipServicePaneService.prototype = {
     devNode.contractid = this._cfg.contractID;
     devNode.url = this._cfg.devMgrURL + "?device-id=" + devId;
     devNode.editable = false;
-    devNode.name = device.properties.friendlyName;
+    devNode.name = "CD RIP";//device.properties.friendlyName;
     devNode.hidden = false;
  
     this._deviceInfoList[devId] = {};
@@ -380,8 +380,9 @@ sbCDRipServicePaneService.prototype = {
     var devId = device.id;
     
     var devInfo = this._deviceInfoList[devId];
-    if (!devInfo)
+    if (!devInfo) {
       return;
+    }
 
     // Remove the device node.
     devInfo.svcPaneNode.hidden = true;

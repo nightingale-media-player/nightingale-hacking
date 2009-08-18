@@ -85,7 +85,7 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
 
 #ifdef PR_LOGGING
   if (!gCDDeviceLog) {
-    gCDDeviceLog = PR_NewLogModule( "sbWPDDevice" );
+    gCDDeviceLog = PR_NewLogModule( "sbCDDevice" );
   }
 #endif
 }
@@ -185,6 +185,10 @@ sbCDDevice::New(const nsID & aControllerId,
 
   nsRefPtr<sbCDDevice> device = new sbCDDevice(aControllerId, aProperties);
   NS_ENSURE_TRUE(device, NS_ERROR_OUT_OF_MEMORY);
+
+  // Init the device.
+  nsresult rv = device->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Return the newly created CD device.
   device.forget(aOutCDDevice);
@@ -551,6 +555,8 @@ NS_IMETHODIMP sbCDDevice::GetProperties(sbIDeviceProperties * *aProperties)
   // Return results.
   if (mProperties) {
     NS_ADDREF(*aProperties = mProperties);
+  } else {
+    return NS_ERROR_UNEXPECTED;
   }
 
   return NS_OK;
