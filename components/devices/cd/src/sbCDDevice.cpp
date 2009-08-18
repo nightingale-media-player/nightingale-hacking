@@ -624,19 +624,19 @@ NS_IMETHODIMP sbCDDevice::CancelRequests()
 /* void syncLibraries (); */
 NS_IMETHODIMP sbCDDevice::SyncLibraries()
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void eject (); */
 NS_IMETHODIMP sbCDDevice::Eject()
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void format (); */
 NS_IMETHODIMP sbCDDevice::Format()
 {
-    return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void setWarningDialogEnabled (in AString aWarning, in boolean aEnabled); */
