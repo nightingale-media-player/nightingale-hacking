@@ -440,7 +440,7 @@ GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/li
                       $(NULL)
 
       ifdef HAVE_FLUENDO_MP3
-         FLUENDO_PLUGIN = $(DEPS_DIR)/fluendo-mp3/libgstflump3dec.so
+         FLUENDO_PLUGIN = $(DEPS_DIR)/private/fluendo-mp3/libgstflump3dec.so
          SONGBIRD_GST_PLUGINS += $(FLUENDO_PLUGIN)
       endif
    endif # } not mac or windows
