@@ -264,7 +264,9 @@ sbCDDeviceMarshall::GetDevice(nsAString const & aName, sbIDevice **aOutDevice)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDevice> device = do_QueryInterface(supports, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (NS_FAILED(rv) || !device) {
+    return NS_ERROR_FAILURE;
+  }
 
   device.forget(aOutDevice);
   return NS_OK;
