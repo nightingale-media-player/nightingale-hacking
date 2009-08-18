@@ -361,8 +361,13 @@
             tooltiptext="&tooltip.control.fwd;"
             command="trackeditor-next-cmd"/>
     <spacer flex="1"/>
-    <button id="cancel_button" label="&window.cancel;" oncommand="window.close()"/>
+#ifndef XP_MACOSX
     <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
+#endif
+    <button id="cancel_button" label="&window.cancel;" oncommand="window.close()"/>
+#ifdef XP_MACOSX
+    <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
+#endif
   </hbox>
 
   <script type="application/x-javascript"
