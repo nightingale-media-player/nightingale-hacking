@@ -731,6 +731,12 @@
 <!ENTITY fetch_album_art.dialog.title "Get Album Artwork">
 <!ENTITY fetch_album_art.dialog.message "Not currently implemented. (See Bug 14281)">
 
+<!-- CD Metadata/info lookup dialogs -->
+<!ENTITY cdrip.lookup.info_not_found.artist "Artist">
+<!ENTITY cdrip.lookup.info_not_found.album  "Album">
+<!ENTITY cdrip.lookup.info_not_found.title  "CD Information Not Found">
+<!ENTITY cdrip.lookup.info_not_found.descr  "You can add the artist and album name here.  You can edit the remaining information within the CD Rip playlist">
+
 <!-- CD Rip Pref Pane entities -->
 <!ENTITY cdrip.prefpane.label                 "CD Rip">
 <!ENTITY cdrip.prefpane.format                "Format">

@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://global/content/commonDialog.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<!-- ***************************************************************************
+ *
+ * "CD Information Not Found" dialog for CD Lookup metadata
+ *
+ * This dialog is used for when no metadata information is found when CD
+ * lookup is initiated by media being inserted.
+ *
+ *   objects                    nsISupports parameters.
+ *     nsIDevice                Device object.
+ *
+ *************************************************************************** -->
+
+<!-- "CD Information Not Found" dialog box. -->
+<dialog
+  xmlns:html="http://www.w3.org/1999/xhtml"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+  id="cd_info_not_found_dialog"
+  hidechrome="true"
+  flex="1"
+  type="songbird"
+  buttons="accept,cancel"
+  title="&cdrip.lookup.info_not_found.title;"
+  ondialogaccept="cdInfoNotFoundDlg.onAccept();"
+  ondialogcancel="cdInfoNotFoundDlg.onCancel();"
+  onload="cdInfoNotFoundDlg.onLoad();"
+  onunload="cdInfoNotFoundDlg.onUnload();"
+  width="300"
+  height="280">
+
+  <!-- *************************************************************************
+   *
+   * Content.
+   *
+   ************************************************************************* -->
+
+  <groupbox>
+    <caption label="&cdrip.lookup.info_not_found.title;" />
+    <description
+       id="dialog-msg">&cdrip.lookup.info_not_found.descr;</description>
+  </groupbox>
+
+  <vbox>
+    <label id="artist" value="&cdrip.lookup.info_not_found.artist;" />
+    <textbox id="artist-textbox"
+             oninput="cdInfoNotFoundDlg.updateButton();" />
+    <label id="album" value="&cdrip.lookup.info_not_found.album;" />
+    <textbox id="album-textbox"
+             oninput="cdInfoNotFoundDlg.updateButton();" />
+  </vbox>
+
+  <!-- *************************************************************************
+   *
+   * Implementation.
+   *
+   ************************************************************************* -->
+
+  <!-- Import the Songbird services. -->
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+
+  <!-- Unsupported media dialog services. -->
+  <script><![CDATA[
+    if (typeof(Cc) == "undefined")
+      var Cc = Components.classes;
+    if (typeof(Ci) == "undefined")
+      var Ci = Components.interfaces;
+    if (typeof(Cr) == "undefined")
+      var Cr = Components.results;
+    if (typeof(Cu) == "undefined")
+      var Cu = Components.utils;
+
+    Cu.import("resource://app/jsmodules/sbProperties.jsm");
+
+    var cdInfoNotFoundDlg = {
+      _device: null,
+      _okButton: null,
+
+      /**
+       * \brief Handle load events.
+       */
+      onLoad: function cdInfoNotFoundDlg_onLoad() {
+        // Get the dialog and okay button
+        this._dialog = document.getElementById('cd_info_not_found_dialog');
+        this._okButton = this._dialog.getButton("accept");
+
+        this.updateButton();
+      },
+
+      /**
+       * \brief Update the disabled state of the Okay/Accept button when
+       * the values of the textboxes are changed
+       */
+      updateButton: function cdInfoNotFoundDlg_updateButton() {
+        var artistTextbox = document.getElementById("artist-textbox");
+        var albumTextbox = document.getElementById("album-textbox");
+        if (artistTextbox.value == "" || albumTextbox.value == "")
+          this._okButton.disabled = true;
+        else
+          this._okButton.disabled = false;
+      },
+
+      /**
+       * \brief Handle unload events.
+       */
+      onUnload: function cdInfoNotFoundDlg_onUnload() {
+      },
+
+      /**
+       * \brief Handle accept/okay button.
+       */
+      onAccept: function cdInfoNotFoundDlg_onAccept() {
+        // XXXstevel needs to be hooked up to actually do something
+        // Presumably, something along the lines of being able to update
+        // the CD rip view's metadata for each track
+      },
+
+      /**
+       * \brief Handle cancel button.
+       */
+      onCancel: function cdInfoNotFoundDlg_onCancel() {
+        window.close();
+      },
+    };
+
+  ]]></script>
+
+</dialog>
