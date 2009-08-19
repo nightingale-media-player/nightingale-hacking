@@ -1298,7 +1298,7 @@ sbRemotePlayer::Play()
 
   nsCOMPtr<nsITreeSelection> treeSelection;
   rv = treeView->GetSelection( getter_AddRefs(treeSelection) );
-  if ( NS_FAILED(rv) ) {
+  if ( NS_FAILED(rv) || !treeSelection ) {
     NS_WARNING("Got tree view but did not get selection in view. Falling back to standard play.");
     return StandardPlay(mMM);
   }
