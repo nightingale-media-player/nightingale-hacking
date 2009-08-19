@@ -236,12 +236,12 @@
                      autocompletesearch="library-distinct-properties"/>
             <hbox>
               <textbox id="infotab_tracknumber_textbox" 
-                       class="short-number-input"
+                       class="long-number-input"
                        property="http://songbirdnest.com/data/1.0#trackNumber"/>
               <vbox pack="center">
                 <label class="separator-label" value="/" /> 
               </vbox>
-              <textbox class="short-number-input"
+              <textbox class="long-number-input"
                        property="http://songbirdnest.com/data/1.0#totalTracks"/>
             </hbox> 
           </row>
@@ -257,12 +257,12 @@
                      flex="1"
                      autocompletesearch="library-distinct-properties"/>
             <hbox>
-              <textbox class="short-number-input"
+              <textbox class="long-number-input"
                        property="http://songbirdnest.com/data/1.0#discNumber"/>
               <vbox pack="center">
                 <label class="separator-label" value="/" />
               </vbox>
-              <textbox class="short-number-input"
+              <textbox class="long-number-input"
                        property="http://songbirdnest.com/data/1.0#totalDiscs"/>
             </hbox>
           </row>

@@ -625,7 +625,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Track number
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
                       NS_LITERAL_STRING("property.track_no"),
-                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 9999, PR_TRUE,
                       PR_TRUE, PR_TRUE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -646,7 +646,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Total tracks
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_TOTALTRACKS),
                       NS_LITERAL_STRING("property.total_tracks"),
-                      stringBundle, PR_FALSE, PR_TRUE, 1, PR_TRUE, 999, PR_TRUE,
+                      stringBundle, PR_FALSE, PR_TRUE, 1, PR_TRUE, 9999, PR_TRUE,
                       PR_TRUE, PR_TRUE, NULL);
   NS_ENSURE_SUCCESS(rv, rv);
 
