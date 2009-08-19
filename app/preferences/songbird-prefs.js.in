@@ -483,7 +483,3 @@ pref("songbird.library_exporter.start_agent", true);
 // CD Rip default prefs:
 pref("songbird.cdrip.oncomplete.autoeject", false);
 pref("songbird.cdrip.oncomplete.notifysound", false);
-
-pref("browser.dom.window.dump.enabled", true);
-pref("browser.preferences.instantApply", false);
-pref("songbird.first_run.allow_skip", true);
