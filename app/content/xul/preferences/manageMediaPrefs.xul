@@ -52,8 +52,6 @@
             onpaneload="manageMediaPrefsPane.doPaneLoad(event);">
 
     <preferences id="manage_media_preferences">
-      <preference id="manage_media_pref_library_folder" type="file"
-                  name="songbird.media_management.library.folder"/>
       <preference id="manage_media_pref_library_copy" type="bool"
                   name="songbird.media_management.library.copy"/>
       <preference id="manage_media_pref_library_move" type="bool"
@@ -65,8 +63,6 @@
                   name="songbird.media_management.library.format.dir"/>
       <preference id="manage_media_pref_library_format_file" type="string"
                   name="songbird.media_management.library.format.file"/>
-      <preference id="manage_media_pref_library_enable" type="bool"
-                  name="songbird.media_management.library.enabled"/>
 
       <preference id="management-complete" type="bool"
 		  name="songbird.media_management.library.complete"/>

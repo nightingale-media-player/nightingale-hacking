@@ -85,7 +85,8 @@ var watchFolderPrefsPane = {
 
   doPaneLoad: function watchFolderPrefsPane_doPaneLoad() {
     // Update the UI.
-    this._checkForValidPref(true);
+    this._updateUIState();
+
     var self = this;
     function forceCheck(event) {
       if (event.type == "dialogcancel" &&
@@ -98,10 +99,18 @@ var watchFolderPrefsPane = {
         event.stopPropagation();
         return false;
       }
-      var watchFolderEnableCheckbox =
-            document.getElementById("watch_folder_enable_checkbox");
+
+      var watchFolderEnablePrefElem =
+            document.getElementById("watch_folder_enable_pref");
       var watchFolderPathPrefElem =
             document.getElementById("watch_folder_path_pref");
+
+      // explicitly saving these prefs because they're not inside a prefpane
+      watchFolderEnablePrefElem.valueFromPreferences = watchFolderEnablePrefElem.value;
+      watchFolderPathPrefElem.valueFromPreferences = watchFolderPathPrefElem.value;
+
+      var watchFolderEnableCheckbox =
+            document.getElementById("watch_folder_enable_checkbox");
       var shouldPrompt = self.folderPathChanged;
 
       // should never prompt for watch folder rescan if it's not enabled
@@ -180,6 +189,8 @@ var watchFolderPrefsPane = {
       watchFolderPathPrefElem.value = filePicker.file.path;
       this.onPathChanged(aEvent);
     }
+
+    this._checkForValidPref();
   },
   
   /**
@@ -187,13 +198,7 @@ var watchFolderPrefsPane = {
    */
   onPathChanged: function watchFolderPrefsPane_onPathChanged(aEvent) {
     this.folderPathChanged = true;
-    // everything's good, remember to apply the enabled pref if it was
-    // originally checked but not saved
-    var watchFolderEnableCheckboxElem =
-          document.getElementById("watch_folder_enable_checkbox");
-    if (aEvent.target != watchFolderEnableCheckboxElem) {
-      watchFolderEnableCheckboxElem.doCommand();
-    }
+    this._updateUIState();
     return true;
   },
 
@@ -204,31 +209,60 @@ var watchFolderPrefsPane = {
   //
   //----------------------------------------------------------------------------
   
+  _updateUIState: function()
+  {
+    var checkbox = document.getElementById("watch_folder_enable_checkbox");
+    var enabled = checkbox.checked;
+    var broadcaster = document.getElementById("watch_folder_disabled_broadcaster");
+
+    if (enabled) {
+      broadcaster.removeAttribute("disabled");
+    } else {
+      broadcaster.setAttribute("disabled", "true");
+    }
+
+    this._checkForValidPref();
+  },
+
+  _removeErrorNotifications: function()
+  {
+    var oldNotif, notifBox = document.getElementById("watch_folder_notification_box");
+
+    while ((oldNotif = notifBox.getNotificationWithValue("watch_folder_error"))) {
+      notifBox.removeNotification(oldNotif);
+    }
+  },
+
+  _showErrorNotification: function(aMsg)
+  {
+    var notifBox = document.getElementById("watch_folder_notification_box");
+
+    // focus this pref pane and this tab
+    var pane = document.getElementById("paneImportMedia");
+    document.documentElement.showPane(pane);
+    document.getElementById("import_media_tabs").selectedItem = document.getElementById("watch_folder_tab");
+      
+    // show the notification, hiding any other ones of this class
+    this._removeErrorNotifications();
+    notifBox.appendNotification(aMsg, "watch_folder_error", null,
+                                notifBox.PRIORITY_CRITICAL_LOW, []);
+  },
+
   /**
    * Check if the current value of the preference is valid; pops up a
    * notification if it is not.
    * @return true if valid, false if not.
    */
-  _checkForValidPref: function watchFolderPrefsPane__checkForValidPref(aSilent) {
-    var notifBox = document.getElementById("watch_folder_notification_box");
-    function showErrorNotification(aMsg) {
-      if (aSilent) {
-        return;
+  _checkForValidPref: function watchFolderPrefsPane__checkForValidPref(aSilent)
+  {
+    this._removeErrorNotifications();
+
+    var self = this;
+    function showErrorNotification(aMsg)
+    {
+      if (!aSilent) {
+        self._showErrorNotification(aMsg);
       }
-      
-      // focus this pref pane and this tab
-      var pane = document.getElementById("paneImportMedia");
-      document.documentElement.showPane(pane);
-      document.getElementById("import_media_tabs").selectedItem =
-        document.getElementById("watch_folder_tab");
-      
-      // show the notification, hiding any other ones of this class
-      var oldNotif;
-      while ((oldNotif = notifBox.getNotificationWithValue("watch_folder_error"))) {
-        notifBox.removeNotification(oldNotif);
-      }
-      notifBox.appendNotification(aMsg, "watch_folder_error", null,
-                                  notifBox.PRIORITY_CRITICAL_LOW, []);
     }
 
     // Set the watch folder hidden if the watch folder services are not
@@ -247,24 +281,10 @@ var watchFolderPrefsPane = {
         watchFolderHiddenElem.setAttribute("hidden", "true");
     }
 
-    var watchFolderEnablePrefElem =
-          document.getElementById("watch_folder_enable_pref");
-    var watchFolderEnableCheckboxElem =
-          document.getElementById("watch_folder_enable_checkbox");
+    var checkbox = document.getElementById("watch_folder_enable_checkbox");
+    var enabled = checkbox.checked;
 
-    var watchFolderEnabled =
-      watchFolderEnablePrefElem.getElementValue(watchFolderEnableCheckboxElem);
-
-    // Disable the watch folder path preference if watch folder is disabled.
-    var watchFolderDisabledElem =
-          document.getElementById("watch_folder_disabled_broadcaster");
-    if (watchFolderEnabled) {
-      watchFolderDisabledElem.removeAttribute("disabled");
-    } else {
-      watchFolderDisabledElem.setAttribute("disabled", "true");
-    }
-
-    if (!watchFolderEnabled) {
+    if (!enabled) {
       // if it's not enabled, we allow whatever.
       return true;
     }
@@ -285,28 +305,40 @@ var watchFolderPrefsPane = {
       return false;
     }
     
-    var file = null;
+    var dir = null;
     try {
-      file = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
-      file.initWithPath(path);
-      if (!file.exists()) {
-        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_exist", [file.path]));
+      dir = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile);
+      dir.initWithPath(path);
+      if (!dir.exists()) {
+        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_exist", [dir.path]));
         return false;
       }
-      if (!file.isDirectory()) {
-        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_directory", [file.path]));
+      if (!dir.isDirectory()) {
+        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_directory", [dir.path]));
         return false;
       }
-      if (!file.isReadable()) {
-        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_readable", [file.path]));
+      if (!dir.isReadable()) {
+        showErrorNotification(SBFormattedString("prefs.watch_folder.error.not_readable", [dir.path]));
         return false;
       }
     } catch (e) {
-      // failed to create the file (e.g. invalid path?)
+      // failed to create the dir (e.g. invalid path?)
       Components.utils.reportError(e);
       showErrorNotification(SBFormattedString("prefs.watch_folder.error.generic", [path]));
       return false;
     }
+
+    if (document.getElementById("manage_media_pref_library_enable").value)
+    {
+      var managed = document.getElementById("manage_media_pref_library_folder").value;
+
+      if (dir.equals(managed) || dir.contains(managed, true) || managed.contains(dir, true))
+      {
+        showErrorNotification(SBString("prefs.watch_folder.error.contains_managed"));
+        return false;
+      }
+    }
+
     return true;
   },
   

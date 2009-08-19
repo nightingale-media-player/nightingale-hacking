@@ -120,8 +120,15 @@ var manageMediaPrefsPane = {
                            .getService(Ci.sbIMediaManagementService);
       var enablePrefElem =
         document.getElementById("manage_media_pref_library_enable");
+      var folderPrefElem =
+        document.getElementById("manage_media_pref_library_folder");
 
-      var startMgtProcess = self._doUpdateCheck(mediaMgmtSvc.isEnabled, enablePrefElem.value);
+      // explicitly saving these prefs because they're not inside a prefpane
+      enablePrefElem.valueFromPreferences = enablePrefElem.value;
+      folderPrefElem.valueFromPreferences = folderPrefElem.value;
+
+      var startMgtProcess = (enablePrefElem.value && !mediaMgmtSvc.isEnabled) ||
+                            self._doUpdateCheck(enablePrefElem.value);
       mediaMgmtSvc.isEnabled = enablePrefElem.value;
 
       if (startMgtProcess) {
@@ -132,6 +139,7 @@ var manageMediaPrefsPane = {
 
       return true;
     }
+
     window.addEventListener('dialogaccept', forceCheck, false);
     window.addEventListener('dialogcancel', forceCheck, false);
     
@@ -220,6 +228,7 @@ var manageMediaPrefsPane = {
     if (prefElem) {
       prefElem.value = !prefElem.value;
     }
+
     this._checkForValidPref(false);
     this._updateUI();
   },
@@ -406,6 +415,19 @@ var manageMediaPrefsPane = {
         return false;
       }
 
+      if (document.getElementById("watch_folder_enable_pref").value)
+      {
+        var watched = Cc["@mozilla.org/file/local;1"]
+                        .createInstance(Ci.nsILocalFile);
+        watched.initWithPath(document.getElementById("watch_folder_path_pref").value);
+
+        if (dir.equals(watched) || dir.contains(watched, true) || watched.contains(dir, true))
+        {
+          showErrorNotification(SBString("prefs.media_management.error.contains_watched"));
+          return false;
+        }
+      }
+
       // show a warning if the folder is not empty
       // TODO: perhaps check for files that could actually be imported?
       var complete = document.getElementById("management-complete").value;
@@ -464,22 +486,26 @@ var manageMediaPrefsPane = {
   _saveCurrentPrefs: function manageMediaPrefsPane__saveCurrentPrefs() {
     // Go through all the preferences and save the current value
     var prefList = document.getElementById("manage_media_preferences");
-    var childNode = prefList.firstChild;
-    while (childNode) {
-      // Only save preferences that matter or are not dealt with separately
-      if (childNode.id != "manage_media_pref_library_enable") {
-        this._prefs[childNode.id] = childNode.value;
-      }
-      childNode = childNode.nextSibling;
+    var commonPrefs = document.getElementById("common_prefs");
+
+    var self = this;
+    function remember(node)
+    {
+      if (node.id != "manage_media_pref_library_enable" &&
+          !/^watch/.test(node.id))
+        self._prefs[node.id] = node.value;
     }
+
+    Array.forEach(prefList.childNodes, remember);
+    Array.forEach(commonPrefs.childNodes, remember);
   },
 
   /**
    * Checks to see if any of the preferences that we monitor have changed
    */
 
-  _doUpdateCheck: function manageMediaPrefsPane__doUpdateCheck(isEnabled, willEnable) {
-    if (!isEnabled || !willEnable) {
+  _doUpdateCheck: function manageMediaPrefsPane__doUpdateCheck(enable) {
+    if (!enable) {
       // The Service will not be enabled anyways so just abort the check
       return false;
     }
@@ -487,8 +513,15 @@ var manageMediaPrefsPane = {
     // Check all the items to see if any have changed, as soon as one has we return true
     for (var prefID in this._prefs) {
       var prefNode = document.getElementById(prefID);
-      if (prefNode && prefNode.value != this._prefs[prefID]) {
-        return true;
+
+      if (prefNode) {
+        var value = prefNode.value;
+        var stored = this._prefs[prefID];
+
+        if (value instanceof Ci.nsIFile && value.equals(stored))
+          return true;
+        if (value != stored)
+          return true;
       }
     }
 

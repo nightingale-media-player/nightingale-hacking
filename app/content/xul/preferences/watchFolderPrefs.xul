@@ -45,23 +45,6 @@
    *
    ************************************************************************* -->
 
-  <!-- Panel preferences. -->
-  <preferences id="import_media_preferences">
-
-    <!-- Watch folder enable preference. -->
-    <preference id="watch_folder_enable_pref"
-                name="songbird.watch_folder.enable"
-                type="bool"
-                onchange="return watchFolderPrefsPane.doImportOptionsChange(event);"/>
-
-    <!-- Watch folder path preference. -->
-    <preference id="watch_folder_path_pref"
-                name="songbird.watch_folder.path"
-                type="unichar"
-                onchange="return watchFolderPrefsPane.doImportOptionsChange(event);"/>
-
-  </preferences>
-
   <!-- Panel commands. -->
   <commandset id="import_media_commandset">
     <command id="watch_folder_browse_command"
@@ -111,13 +94,12 @@
           <!-- Watch folder path box. -->
           <hbox id="watch_folder_path_box"
                 observes="watch_folder_disabled_broadcaster">
-  
+
             <!-- Watch folder path text box. -->
             <label value="&watch_folder.prefs.watch_folder_label;"/>
             <textbox id="watch_folder_path_textbox"
                      preference="watch_folder_path_pref"
-                     onchange="return watchFolderPrefsPane.onPathChanged(event)"
-                     observes="watch_folder_disabled_broadcaster"/>
+                     onchange="return watchFolderPrefsPane.onPathChanged(event)"/>
   
             <!-- Browse button. -->
             <button id="watch_folder_browse_button"

@@ -61,6 +61,20 @@
   </stringbundleset>
 
  <prefwindow id="BrowserPreferences">
+   <preferences id="common_prefs">
+     <preference id="manage_media_pref_library_enable"
+                 name="songbird.media_management.library.enabled"
+		 type="bool"/>
+     <preference id="manage_media_pref_library_folder"
+                 name="songbird.media_management.library.folder"
+		 type="file"/>
+     <preference id="watch_folder_enable_pref"
+                 name="songbird.watch_folder.enable"
+                 type="bool"/>
+     <preference id="watch_folder_path_pref"
+                 name="songbird.watch_folder.path"
+                 type="unichar"/>
+   </preferences>
 
   <prefpane id="paneManageMedia"
             label="&prefWindow.manageMedia.label;"
