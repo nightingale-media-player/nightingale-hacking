@@ -52,21 +52,25 @@ function(aFile, aMediaList, aReplace)
                     .createInstance(Ci.nsIDOMParser);
   var fileStream = Cc["@mozilla.org/network/file-input-stream;1"]
                     .createInstance(Ci.nsIFileInputStream);
-
-  var itemList = [];
-
+  var scriptableStream = Cc["@mozilla.org/scriptableinputstream;1"]
+                           .createInstance(Ci.nsIScriptableInputStream);
   fileStream.init(aFile, PR_RDONLY, PR_FLAGS_DEFAULT, 0);
-  
-  var doc = domParser.parseFromStream(fileStream, 
-                                      null, 
-                                      fileStream.available(),
-                                      "text/xml");
+  scriptableStream.init(fileStream);
+  var str = scriptableStream.read(-1);
+  scriptableStream.close();
   fileStream.close();
+
+  // ASX pretends to be XML but it isn't. Ampersands are NOT encoded correctly,
+  // so unless we fix them our dom parser chokes. Yay.
+  str = str.replace("&", '&amp;', 'g');
+
+  var doc = domParser.parseFromString(str, "text/xml");
 
   doc = doc.documentElement;  
 
   // This will get all entries at this level (root)
   // Asx is suppose to have <entry> tags at the first level.
+  var itemList = [];
   var entries = doc.getElementsByTagName("*");
   
   for(var i = 0; i < entries.length; ++i) {
