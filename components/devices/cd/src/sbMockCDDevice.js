@@ -37,8 +37,8 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 function newTOC(aFirstTrack, aLastTrack, aLead)
 {
   var toc  Cc["@songbirdnest.com/Songbird/MockCDTOC;1"]
-             .createInstance(Ci.sbIMockCDToc);
-  toc.initialize(aFirstTrack, aLastTarck, aLead);
+             .createInstance(Ci.sbIMockCDTOC);
+  toc.initialize(aFirstTrack, aLastTrack, aLead);
  
   return toc;
 }
