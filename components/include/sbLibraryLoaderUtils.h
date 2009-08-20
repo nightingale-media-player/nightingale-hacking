@@ -33,6 +33,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsILineInputStream.h>
 #include <nsNetUtil.h>
+#include <prerror.h>
 #include <prlog.h>
 #include <prprf.h>
 
@@ -145,8 +146,8 @@ SB_LoadLibraries(nsIFile* aManifest)
       if (!success) {
         nsCString libPath;
         libLocal->GetNativePath(libPath);
-        char* message = PR_smprintf("SB_LoadLibraries: Error loading library: %s",
-                                    libPath.get());
+        char* message = PR_smprintf("SB_LoadLibraries: Error loading library: %s, OS error was: %i",
+                                    libPath.get(), PR_GetOSError());
         NS_WARNING(message);
         PR_smprintf_free(message);
       }
