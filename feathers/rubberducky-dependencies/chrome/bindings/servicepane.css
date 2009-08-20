@@ -136,6 +136,34 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/icons/icon-busy.png) ;
 }
 
+.servicepane-tree > treechildren::-moz-tree-image( cd-device ),
+.locationbar-image[properties~="cd-device"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"],
+.tabbrowser-tab[properties~="cd-device"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_rest.gif) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device busy ),
+.locationbar-image[properties~="cd-device"][properties~="busy"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="busy"],
+.tabbrowser-tab[properties~="cd-device"][properties~="busy"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_ripping.gif) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device successful ),
+.locationbar-image[properties~="cd-device"][properties~="successful"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="successful"],
+.tabbrowser-tab[properties~="cd-device"][properties~="successful"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_successful.gif) ;
+}
+
+.servicepane-tree > treechildren::-moz-tree-image( cd-device unsuccessful ),
+.locationbar-image[properties~="cd-device"][properties~="unsuccessful"],
+.alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="unsuccessful"],
+.tabbrowser-tab[properties~="cd-device"][properties~="unsuccessful"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_successful.gif) ;
+}
+
 .servicepane-tree > treechildren::-moz-tree-image( folder open )
 {
   list-style-image: url(chrome://songbird/skin/icons/icon-folder.png) ;
