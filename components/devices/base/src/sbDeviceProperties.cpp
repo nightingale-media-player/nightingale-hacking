@@ -77,8 +77,10 @@ sbDeviceProperties::InitFriendlyName(const nsAString & aFriendlyName)
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
   nsresult rv =
     mProperties2->SetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
-                                      aFriendlyName);
+                                       aFriendlyName);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP

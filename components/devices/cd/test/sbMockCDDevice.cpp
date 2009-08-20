@@ -272,11 +272,13 @@ public:
                               aDiscInserted,
                               aDiscType);
   }
+
   sbMockCDDevice() : mReadable(PR_FALSE),
                      mWritable(PR_FALSE),
                      mDiscInserted(PR_FALSE),
                      mDiscType(sbICDDevice::AUDIO_DISC_TYPE),
                      mEjected(PR_FALSE) {}
+
 protected:
   sbMockCDDevice(nsAString const & aName,
                  PRBool aReadable,
@@ -344,6 +346,7 @@ NS_IMETHODIMP
 sbMockCDDevice::SetDiscTOC(sbICDTOC * aDiscTOC)
 {
   mTOC = aDiscTOC;
+  mDiscInserted = PR_TRUE;
   return NS_OK;
 }
 
@@ -358,6 +361,7 @@ NS_IMETHODIMP
 sbMockCDDevice::Eject()
 {
   mEjected = PR_TRUE;
+  mDiscInserted = PR_FALSE;
   return NS_OK;
 }
 

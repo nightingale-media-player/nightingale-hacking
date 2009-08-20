@@ -36,7 +36,7 @@ interface sbICDDevice;
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(D39A544E-878C-4954-B5F2-4D5E419B71F6)]
+[scriptable, uuid(B8AA846F-625F-473E-B2B9-F74D5CF448BA)]
 interface sbICDMockDeviceController : nsISupports
 {
   //
@@ -55,9 +55,7 @@ interface sbICDMockDeviceController : nsISupports
 
   //
   // @brief Call this method to simulate a media removed event.
-  // @param aMediaDisc The media disc constant defined in this interface.
   //
-  void ejectMedia(in sbICDDevice aCDDevice,
-                  in unsigned short aMediaDisc);
+  void ejectMedia(in sbICDDevice aCDDevice);
 };
 

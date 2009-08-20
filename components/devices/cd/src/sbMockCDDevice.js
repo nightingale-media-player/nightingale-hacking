@@ -125,25 +125,25 @@ function sbMockCDService()
   this._mDevices = [];
   this._mListeners = [];
 
+  // Push in two mock cd drive devices.
   var device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
                    .createInstance(Ci.sbIMockCDDevice);
-  device.initialize("Songbird MockCD Device 8000", 
-                    true, 
-                    false, 
-                    true, 
+  device.initialize("Songbird MockCD Device 8000",
+                    true,
+                    false,
+                    false,
                     Ci.sbIDeviceController.AUDIO_DISC_TYPE,
                     false);
-  device.sbICDDevice.discTOC = sbMakeMidnightRock();
   this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
+
   device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
                    .createInstance(Ci.sbIMockCDDevice);
-  device.initialize("Songbird MockCD Device 7000", 
-                    true, 
-                    false, 
-                    true, 
+  device.initialize("Songbird MockCD Device 7000",
+                    true,
+                    false,
+                    false,
                     Ci.sbIDeviceController.AUDIO_DISC_TYPE,
                     false);
-  device.sbICDDevice.discTOC = sbMakeBabyOneMoreTime();
   this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
 }
 
@@ -209,16 +209,19 @@ sbMockCDService.prototype =
     }
 
     curCDDevice.discTOC = mockMediaTOC;
+    this._onMediaInserted(curCDDevice);
   },
 
-  ejectMedia: function sbMockCDService_ejectMedia(aCDDevice, aMediaDisc)
+  ejectMedia: function sbMockCDService_ejectMedia(aCDDevice)
   {
     var curCDDevice = this._findDevice(aCDDevice);
-    if (!curCDDevice || !curCDDevice.isDiskInserted) {
+
+    if (!curCDDevice || !curCDDevice.isDiscInserted) {
       return;
     }
 
     curCDDevice.eject();
+    this._onMediaEjected(curCDDevice);
   },
 
   _findDevice: function sbMockCDService_findDevice(aCDDevice)

@@ -69,16 +69,16 @@ var DialogController =
 
   _handleDriveAction: function(aDevice)
   {
+    var mockCDService =
+      Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
+        .getService(Ci.sbICDDeviceService)
+        .QueryInterface(Ci.sbICDMockDeviceController);
+
     if (aDevice.isDiscInserted) {
-      aDevice.eject();
+      mockCDService.ejectMedia(aDevice);
     }
     else {
       // Insert the disc TOC based on the value of the selected radio item
-      var mockCDService =
-        Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
-          .getService(Ci.sbICDDeviceService)
-          .QueryInterface(Ci.sbICDMockDeviceController);
-
       var mediaIndex = parseInt(this._albumRadioGroup.selectedItem.value);
       mockCDService.insertMedia(aDevice, mediaIndex); 
     }
