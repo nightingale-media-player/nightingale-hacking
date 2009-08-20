@@ -33,7 +33,10 @@
 #include <nsStringGlue.h>
 #include <nsIURI.h>
 #include <nsIVariant.h>
-#include <nsIPropertyBag2.h>
+#include <nsIWritablePropertyBag.h>
+#include <nsIWritablePropertyBag2.h>
+
+struct PRLock;
 
 class sbDeviceProperties : public sbIDeviceProperties
 {
@@ -47,17 +50,13 @@ private:
   ~sbDeviceProperties();
 
 protected:
+  PRLock * mLock;
   PRPackedBool isInitialized;
-  
-  nsString mFriendlyName;
-  nsString mVendorName;
-  nsString mFirmwareVersion;
 
-  nsCOMPtr<nsIVariant> mModelNumber;
-  nsCOMPtr<nsIVariant> mSerialNumber;
+  nsCOMPtr<nsIWritablePropertyBag> mProperties;
+  nsCOMPtr<nsIWritablePropertyBag2> mProperties2;
   nsCOMPtr<nsIURI> mDeviceLocation;
   nsCOMPtr<nsIURI> mDeviceIcon;
-  nsCOMPtr<nsIPropertyBag2> mProperties;
 };
 
 #define SONGBIRD_DEVICEPROPERTIES_DESCRIPTION             \

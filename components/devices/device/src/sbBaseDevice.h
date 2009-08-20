@@ -448,7 +448,7 @@ protected:
   friend class sbDeviceReqAddedEvent;
   /**
    * Base class initialization this will call the InitDevice first then
-   * do the intialization needed by the sbDeviceBase
+   * do the initialization needed by the sbDeviceBase
    */
   nsresult Init();
   /**

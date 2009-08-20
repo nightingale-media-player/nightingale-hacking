@@ -135,10 +135,6 @@ sbCDDevice::InitDevice()
   // Log progress.
   LOG(("Enter sbCDDevice::InitDevice"));
 
-  // Invoke the super-class.
-  rv = sbBaseDevice::InitDevice();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create the connect lock.
   mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
                               "sbCDDevice::mConnectLock");
@@ -171,6 +167,42 @@ sbCDDevice::InitDevice()
 
   // Log progress.
   LOG(("Exit sbCDDevice::InitDevice"));
+
+  return NS_OK;
+}
+
+nsresult sbCDDevice::InitializeProperties()
+{
+  nsresult rv;
+
+  mProperties =
+    do_CreateInstance("@songbirdnest.com/Songbird/Device/DeviceProperties;1",
+                      &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> var;
+  rv = mCreationProperties->GetProperty(NS_LITERAL_STRING("sbICDDevice"),
+                                        getter_AddRefs(var));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupports> supports;
+  rv = var->GetAsISupports(getter_AddRefs(supports));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDDevice> cdDevice = do_QueryInterface(supports, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString deviceName;
+  rv = cdDevice->GetName(deviceName);
+  if (NS_FAILED(rv)) {
+    // XXX TODO: Internationalize
+    deviceName.AssignLiteral("Unknown");
+  }
+  rv = mProperties->InitFriendlyName(deviceName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mProperties->InitDone();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -274,6 +306,10 @@ sbCDDevice::CapabilitiesReset()
                                     &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint32 functionTypes = sbIDeviceCapabilities::FUNCTION_DEVICE;
+  rv = mCapabilities->SetFunctionTypes(&functionTypes, 1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Allow registrars to modify the capabilities
   rv = RegisterDeviceCapabilities(mCapabilities);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -351,6 +387,7 @@ NS_IMETHODIMP sbCDDevice::Connect()
     mConnected = PR_TRUE;
   }
 
+  Mount();
   // Start the request processing.
   rv = ProcessRequest();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -440,7 +477,7 @@ sbCDDevice::Disconnect()
 
   nsresult rv = Unmount();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Stop the request processing.
   rv = ReqProcessingStop();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -458,7 +495,7 @@ sbCDDevice::Disconnect()
   // Disconnect the device services.
   rv = ReqDisconnect();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Send device removed notification.
   rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_REMOVED,
                               sbNewVariant(static_cast<sbIDevice*>(this)));
@@ -675,7 +712,7 @@ NS_IMETHODIMP sbCDDevice::ResetWarningDialogs()
 }
 
 nsresult
-sbCDDevice::Mount(const nsAString& aMountPath)
+sbCDDevice::Mount()
 {
   nsresult rv;
 
@@ -690,16 +727,6 @@ sbCDDevice::Mount(const nsAString& aMountPath)
   if (mDeviceLibrary)
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
 
-  // Set the mount path.
-  mMountPath = aMountPath;
-
-  // Get the mount URI.
-  nsCOMPtr<nsILocalFile> mountFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID,
-                                                       &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = mountFile->InitWithPath(mMountPath);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Make a string out of the device ID.
   char deviceID[NSID_LENGTH];
   mDeviceID.ToProvidedString(deviceID);
@@ -712,7 +739,7 @@ sbCDDevice::Mount(const nsAString& aMountPath)
 
   // Create the device library.
   nsCOMPtr<sbIDeviceLibrary> deviceLibrary;
-  rv = CreateDeviceLibrary(mDeviceLibraryPath, 
+  rv = CreateDeviceLibrary(mDeviceLibraryPath,
                            nsnull,
                            getter_AddRefs(deviceLibrary));
   NS_ENSURE_SUCCESS(rv, rv);

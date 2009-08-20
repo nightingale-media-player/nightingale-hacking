@@ -35,12 +35,13 @@ interface nsIArray;
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(57FA0B71-F2F1-49F4-BB08-6920CADF60EA)]
+[scriptable, uuid(4aed56ac-9adb-494d-ad13-87f0f24eb318)]
 interface sbICDTOCEntry : nsISupports
 {
   attribute long frameOffset;
   attribute long length;
   attribute long trackNumber;
+  readonly attribute AString trackURI;
 };
 
 //------------------------------------------------------------------------------

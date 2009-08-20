@@ -170,8 +170,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   nsresult rv;
 
   // Log progress.
-  LOG(("Enter sbCDDevice::ReqHandleMount %s\n",
-       NS_ConvertUTF16toUTF8(mMountPath).get()));
+  LOG(("Enter sbCDDevice::ReqHandleMount \n"));
 
   // Update status and set for auto-failure.
   sbDeviceStatusAutoOperationComplete autoStatus(
@@ -180,7 +179,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
                                               aRequest);
 
   // Update the device library contents.
-  rv = UpdateDeviceLibrary(mDeviceLibrary, mMountPath);
+  rv = UpdateDeviceLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Add the library to the device statistics.
@@ -205,8 +204,7 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
 
 nsresult
-sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary,
-                                nsAString&        aMountPath)
+sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aLibrary);
@@ -259,6 +257,10 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
   rv = mCDDevice->GetDiscTOC(getter_AddRefs(toc));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  if (!toc) {
+    // If no TOC this would be really odd to occur, so we'll just return
+    return NS_OK;
+  }
   nsCOMPtr<nsIArray> tracks;
   rv = toc->GetTracks(getter_AddRefs(tracks));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -281,11 +283,8 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
     rv = entry->GetTrackNumber(&trackNumber);
     if (NS_SUCCEEDED(rv)) {
       nsString uriSpec;
-      uriSpec.AppendLiteral("cdda://");
-      uriSpec.Append(mMountPath);
-      uriSpec.AppendLiteral("/");
-      uriSpec.AppendLiteral("Track ");
-      uriSpec.AppendInt(trackNumber, 10);
+      rv = entry->GetTrackURI(uriSpec);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       nsCOMPtr<nsIURI> uri;
       rv = ioservice->NewURI(NS_LossyConvertUTF16toASCII(uriSpec),

@@ -285,11 +285,6 @@ private:
   nsCOMPtr<sbICDDevice> mCDDevice;
 
   /**
-   * The path to the CD drive
-   */
-  nsString mMountPath;
-
-  /**
    * Our device library
    */
   nsCOMPtr<sbIDeviceLibrary> mDeviceLibrary;
@@ -344,6 +339,12 @@ private:
    * Indicates whether we're handling a request or not
    */
   PRBool mIsHandlingRequests;
+
+  /**
+   * Initializes the device properties
+   */
+  nsresult InitializeProperties();
+
   /**
    * Rebuilds the capabilities object mCapabilities
    */
@@ -378,7 +379,8 @@ private:
   /**
    * Mounts the device given a path
    */
-  nsresult Mount(const nsAString& aMountPath);
+  nsresult Mount();
+
   /**
    * Unmount the CD
    */
@@ -404,11 +406,9 @@ private:
    * the volume at the mount path specified by aMountPath.
    *
    * \param aLibrary              Device library to update.
-   * \param aMountPath            Media volume mount path.
    */
 
-  nsresult UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary,
-                               nsAString&        aMountPath);
+  nsresult UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary);
 
   /**
    * Returns a list of URI's for the tracks on a CD

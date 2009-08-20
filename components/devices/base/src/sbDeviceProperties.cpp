@@ -28,9 +28,13 @@
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceProperties, sbIDeviceProperties)
 
+#include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
 #include <prlog.h>
 #include <prprf.h>
 #include <prtime.h>
+
+#include <sbStandardDeviceProperties.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -53,7 +57,13 @@ isInitialized(PR_FALSE)
     gDevicePropertiesLog = PR_NewLogModule("sbDeviceProperties");
   }
 #endif
+  mLock = nsAutoLock::NewLock("sbDeviceProperties");
+  // Intialize our properties container
+  mProperties2 = do_CreateInstance("@mozilla.org/hash-property-bag;1");
+  mProperties = do_QueryInterface(mProperties2);
+
   TRACE(("sbDeviceProperties[0x%.8x] - Constructed", this));
+
 }
 
 sbDeviceProperties::~sbDeviceProperties()
@@ -65,15 +75,22 @@ NS_IMETHODIMP
 sbDeviceProperties::InitFriendlyName(const nsAString & aFriendlyName)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  mFriendlyName = aFriendlyName;
-  return NS_OK;
+  nsresult rv =
+    mProperties2->SetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
+                                      aFriendlyName);
+  NS_ENSURE_SUCCESS(rv, rv);
 }
 
 NS_IMETHODIMP
 sbDeviceProperties::InitVendorName(const nsAString & aVendorName)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  mVendorName = aVendorName;
+
+  nsresult rv =
+    mProperties2->SetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                                      aVendorName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -81,7 +98,12 @@ NS_IMETHODIMP
 sbDeviceProperties::InitModelNumber(nsIVariant *aModelNumber)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  mModelNumber = aModelNumber;
+
+  nsresult rv =
+    mProperties->SetProperty(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                             aModelNumber);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -89,15 +111,27 @@ NS_IMETHODIMP
 sbDeviceProperties::InitSerialNumber(nsIVariant *aSerialNumber)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  mSerialNumber = aSerialNumber;
-  return NS_OK;
+
+  nsresult rv =
+    mProperties->SetProperty(
+                            NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
+                            aSerialNumber);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+return NS_OK;
 }
 
 NS_IMETHODIMP
 sbDeviceProperties::InitFirmwareVersion(const nsAString &aFirmwareVersion)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  mFirmwareVersion = aFirmwareVersion;
+
+  nsresult rv =
+    mProperties2->SetPropertyAsAString(
+                         NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FIRMWARE_VERSION),
+                         aFirmwareVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -121,7 +155,15 @@ NS_IMETHODIMP
 sbDeviceProperties::InitDeviceProperties(nsIPropertyBag2 *aProperties)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  mProperties = aProperties;
+
+  nsresult rv;
+
+  mProperties2 = do_QueryInterface(aProperties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mProperties = do_QueryInterface(mProperties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -129,19 +171,51 @@ NS_IMETHODIMP
 sbDeviceProperties::InitDone()
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
-  
+
   isInitialized = PR_TRUE;
   return NS_OK;
 }
 
 
+static nsresult
+GetProperty(nsIPropertyBag2 * aProperties,
+            nsAString const & aProp,
+            nsAString & aValue)
+{
+  nsString value;
+  value.SetIsVoid(PR_TRUE);
+
+  nsresult rv = aProperties->GetPropertyAsAString(aProp,
+                                                  value);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  aValue = value;
+  return NS_OK;
+}
+
+static nsresult
+GetProperty(nsIPropertyBag * aProperties,
+            nsAString const & aProp,
+            nsIVariant ** aValue)
+{
+  nsresult rv = aProperties->GetProperty(aProp, aValue);
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+    *aValue = nsnull;
+  }
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbDeviceProperties::GetFriendlyName(nsAString & aFriendlyName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
-  
-  aFriendlyName = mFriendlyName;
-  return NS_OK;
+
+  nsAutoLock lock(mLock);
+  return GetProperty(mProperties2,
+                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
+                     aFriendlyName);
 }
 
 NS_IMETHODIMP
@@ -149,9 +223,12 @@ sbDeviceProperties::SetFriendlyName(const nsAString & aFriendlyName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  mFriendlyName = aFriendlyName;
-  
-  /* Now set it on the device */
+  nsAutoLock lock(mLock);
+  nsresult rv =
+    mProperties2->SetPropertyAsAString(NS_LITERAL_STRING(SB_DEVICE_PROPERTY_NAME),
+                                      aFriendlyName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -160,8 +237,11 @@ sbDeviceProperties::GetVendorName(nsAString & aVendorName)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  aVendorName = mVendorName;
-  return NS_OK;
+  nsAutoLock lock(mLock);
+
+  return GetProperty(mProperties2,
+                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MANUFACTURER),
+                     aVendorName);;
 }
 
 NS_IMETHODIMP
@@ -169,8 +249,11 @@ sbDeviceProperties::GetModelNumber(nsIVariant * *aModelNumber)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  NS_IF_ADDREF( *aModelNumber = mModelNumber );
-  return NS_OK;
+  nsAutoLock lock(mLock);
+
+  return GetProperty(mProperties,
+                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_MODEL),
+                     aModelNumber);
 }
 
 NS_IMETHODIMP
@@ -178,8 +261,11 @@ sbDeviceProperties::GetSerialNumber(nsIVariant * *aSerialNumber)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  NS_IF_ADDREF( *aSerialNumber = mSerialNumber );
-  return NS_OK;
+  nsAutoLock lock(mLock);
+
+  return GetProperty(mProperties,
+                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_SERIAL_NUMBER),
+                     aSerialNumber);
 }
 
 NS_IMETHODIMP
@@ -187,14 +273,19 @@ sbDeviceProperties::GetFirmwareVersion(nsAString &aFirmwareVersion)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  aFirmwareVersion = mFirmwareVersion;
-  return NS_OK;
+  nsAutoLock lock(mLock);
+
+  return GetProperty(mProperties2,
+                     NS_LITERAL_STRING(SB_DEVICE_PROPERTY_FIRMWARE_VERSION),
+                     aFirmwareVersion);
 }
 
 NS_IMETHODIMP
 sbDeviceProperties::GetUri(nsIURI * *aUri)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoLock lock(mLock);
 
   NS_IF_ADDREF( *aUri = mDeviceLocation );
   return NS_OK;
@@ -205,6 +296,7 @@ sbDeviceProperties::GetIconUri(nsIURI * *aIconUri)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
+  nsAutoLock lock(mLock);
 
   NS_IF_ADDREF( *aIconUri = mDeviceIcon );
   return NS_OK;
@@ -215,7 +307,9 @@ sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
 
-  NS_IF_ADDREF( *aProperties = mProperties );
+  nsAutoLock lock(mLock);
+
+  NS_IF_ADDREF( *aProperties = mProperties2 );
   return NS_OK;
 }
 
