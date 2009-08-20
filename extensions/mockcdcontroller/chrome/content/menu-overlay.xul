@@ -36,7 +36,7 @@
 
     <!-- Add a menu item -->
     <menuitem id="mockcdcontroller-showcontroller-menuitem"
-            label="&mockcdcontroller.menuitem.label;" 
+            label="Show Mock CD Controller" 
             insertafter="devToolsSeparator"
             command="mockcdcontroller-showcontroller-cmd" />   
      
