@@ -31,8 +31,8 @@ include $(DEPTH)/build/autodefs.mk
 
 SONGBIRD_TEST_COMPONENT = metadatalookup_manager
 
-#SONGBIRD_TESTS = $(srcdir)/test_manager.js \
-#                 $(NULL)
+SONGBIRD_TESTS = $(srcdir)/test_manager.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

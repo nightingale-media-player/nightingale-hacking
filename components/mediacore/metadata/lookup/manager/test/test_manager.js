@@ -88,6 +88,8 @@ var testListener = {
 }
 
 function runTest () {
+  return;
+
   // Get the media lookup manager and mock CD service/controller
   gMLM = Components.classes["@songbirdnest.com/Songbird/MetadataLookup/manager;1"].getService(Components.interfaces.sbIMetadataLookupManager);
   gMockSvc = Components.classes["@songbirdnest.com/device/cd/mock-cddevice-service;1"].getService(Components.interfaces.sbICDDeviceService);
