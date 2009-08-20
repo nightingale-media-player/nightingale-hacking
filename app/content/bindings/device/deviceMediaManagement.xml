@@ -248,7 +248,7 @@
         var sysInfo =
           Components.classes["@mozilla.org/system-info;1"]
                     .getService(Components.interfaces.nsIPropertyBag2);
-        if (sysInfo.getProperty("name") != "WINNT") {
+        if (sysInfo.getProperty("name") != "Windows_NT") {
           this._transcodingGroupbox.style.visibility = "collapse";
         }
 
