@@ -45,7 +45,11 @@ MockCDController.Controller =
       function() { self.showCDControllerPane(); },
       false);
 
-    setTimeout(function() {self.showCDControllerPane(); }, 200);
+    // Only open the controller pane if the pref is currently set.
+    if (Application.prefs.getValue("extensions.cdripcontroller.startup_show_controller",
+                                   false)) {
+      setTimeout(function() {self.showCDControllerPane(); }, 200);
+    }
   },
 
   showCDControllerPane: function()
