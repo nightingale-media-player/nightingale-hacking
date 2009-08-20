@@ -31,6 +31,7 @@ include $(DEPTH)/build/autodefs.mk
 
 DEFAULT_EXTENSIONS = xpcom_helloworld \
                      AlbumArt \
+                     mockcdcontroller \
                      $(NULL)
 
 # The ipod extension should build out-of-the-box on Linux and Mac, but needs
