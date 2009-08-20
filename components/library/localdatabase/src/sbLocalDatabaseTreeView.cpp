@@ -2160,6 +2160,16 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
 
   if (!value.Equals(oldValue)) {
     rv = item->SetProperty(bind, value);
+    // We need to handle the ILLEGAL_VALUE case specially or the
+    // tree.xml::stopEditing() errors out and leaves the inline
+    // editor showing on deselect. 
+    if (rv == NS_ERROR_ILLEGAL_VALUE) {
+      // We do not notify any observers that the cell has been edited
+      // in the event of illegal data, however, we don't want to throw
+      // an error exception, so we'll throw this sorta-success in case
+      // anyone cares.
+      return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
+    }
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (mObserver) {
