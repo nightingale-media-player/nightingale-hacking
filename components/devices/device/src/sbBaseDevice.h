@@ -152,6 +152,8 @@ public:
                                         copied or transcoded to the device) */
     PRBool needsTranscoding;         /* if true, write item media needs to be
                                         transcoded */
+    nsCOMPtr<nsIArray> imageFormats; /* If non-null, array of supported image
+                                        formats we can transcode album art to */
 
     NS_DECL_ISUPPORTS
     /**

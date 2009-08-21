@@ -33,6 +33,7 @@
 
 #include <nsCOMPtr.h>
 #include <nsStringAPI.h>
+#include <nsIFileStreams.h>
 
 #include <sbITranscodeAlbumArt.h>
 #include <sbIMediaItem.h>
@@ -56,7 +57,7 @@ public:
   nsresult IsValidSizeForFormat(sbIImageFormatType *aFormat,
                                 PRBool *aIsValid);
 
-  nsresult GetTargetFormat(nsCString aMimeType,
+  nsresult GetTargetFormat(nsCString & aMimeType,
                            PRInt32 *aWidth,
                            PRInt32 *aHeight);
 protected:
@@ -66,6 +67,7 @@ private:
   nsCOMPtr<nsIArray>      mImageFormats;
   nsCOMPtr<sbIMediaItem>  mItem;
   nsCOMPtr<imgIContainer> mImgContainer;
+  nsCOMPtr<nsIFileInputStream> mInputStream;
   nsCString               mImageMimeType;
   PRBool                  mHasAlbumArt;
   PRInt32                 mImageHeight;

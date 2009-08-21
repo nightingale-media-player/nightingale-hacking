@@ -131,17 +131,20 @@ interface sbITranscodeProfileProperty : nsISupports
  * \interface sbITranscodeImageProfile sbITranscodeImageProfile.h
  * \brief An object defining the format to transcode a still image to.
  */
-[scriptable, uuid(b7a3803f-d53b-48ce-a975-5454de152021)]
+[scriptable, uuid(8e37f4a4-3ced-427e-9aa3-c9fd8c7509f1)]
 interface sbITranscodeImageProfile : nsISupports
 {
+  /* Initialise a profile for image encoding */
+  void Init(in AString mimetype, in unsigned long width, in unsigned long height);
+
   /* Mime type of the image (image/jpeg, image/png, etc.) */
-  attribute AString mimetype;
+  readonly attribute AString mimetype;
 
   /* Width of the image in pixels */
-  attribute unsigned long width;
+  readonly attribute unsigned long width;
 
   /* Height of the image in pixels */
-  attribute unsigned long height;
+  readonly attribute unsigned long height;
 };
 
 /**

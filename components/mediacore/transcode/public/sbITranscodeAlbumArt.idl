@@ -33,6 +33,7 @@
 
 interface sbIMediaItem;
 interface nsIArray;
+interface nsIInputStream;
 
 /**
  * \interface sbITranscodeAlbumArt
@@ -55,6 +56,9 @@ interface sbITranscodeAlbumArt : nsISupports
 
   /* Convert album art on the item to a supported format */
   void ConvertArt();
+
+  /* Get an input stream from which the transcoded art can be read */
+  nsIInputStream GetTranscodedArt();
 };
 
 %{C++

@@ -31,6 +31,8 @@
 #include <sbStringUtils.h>
 #include <sbClassInfoUtils.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbMemoryUtils.h>
+
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsStringAPI.h>
@@ -231,12 +233,14 @@ sbGStreamerTranscode::AddImageToTagList(GstTagList *aTags,
   rv = stream->ReadByteArray(imageDataLen, &imageData);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  sbAutoNSMemPtr imageDataDestroy(imageData);
+
   GstBuffer *imagebuf = gst_tag_image_data_to_image_buffer (
           imageData, imageDataLen, GST_TAG_IMAGE_TYPE_FRONT_COVER);
   if (!imagebuf)
     return NS_ERROR_FAILURE;
 
-  gst_tag_list_add (aTags, GST_TAG_MERGE_APPEND, GST_TAG_IMAGE,
+  gst_tag_list_add (aTags, GST_TAG_MERGE_REPLACE, GST_TAG_IMAGE,
           imagebuf, NULL);
   gst_buffer_unref (imagebuf);
 

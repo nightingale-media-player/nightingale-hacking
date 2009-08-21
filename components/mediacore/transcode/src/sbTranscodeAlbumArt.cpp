@@ -37,6 +37,8 @@
 #include <nsIArray.h>
 #include <nsIMutableArray.h>
 #include <nsIFileStreams.h>
+#include <nsISeekableStream.h>
+#include <nsIBinaryInputStream.h>
 
 #include <imgITools.h>
 #include <nsComponentManagerUtils.h>
@@ -46,9 +48,13 @@
 #include <sbStandardProperties.h>
 #include <sbProxiedComponentManager.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbMemoryUtils.h>
 
 #include <sbIJobProgress.h>
 #include <sbIFileMetadataService.h>
+#include <sbIAlbumArtService.h>
+
+#define BUFFER_CHUNK_SIZE 1024 
 
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodeAlbumArt,
                               sbITranscodeAlbumArt)
@@ -150,18 +156,18 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Load the actual data from the file; we'll reuse this 
-  nsCOMPtr<nsIFileInputStream> inputStream =
-     do_CreateInstance("@mozilla.org/network/file-input-stream;1", &rv);
+  mInputStream = do_CreateInstance(
+      "@mozilla.org/network/file-input-stream;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = inputStream->Init(imageFile, 0x01, 0600, 0);
+  rv = mInputStream->Init(imageFile, PR_RDONLY, 0, 0);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIBufferedInputStream> bufferedInputStream =
       do_CreateInstance("@mozilla.org/network/buffered-input-stream;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = bufferedInputStream->Init(inputStream, 1024);
+  rv = bufferedInputStream->Init(mInputStream, BUFFER_CHUNK_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
   
   nsCOMPtr<imgITools> imgTools = do_GetService(
@@ -179,6 +185,13 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
   NS_ENSURE_SUCCESS(rv, rv);
 
   mHasAlbumArt = PR_TRUE;
+
+  // Reset the stream so we can reuse it later if required
+  nsCOMPtr<nsISeekableStream> seekableStream =
+      do_QueryInterface(mInputStream, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = seekableStream->Seek(nsISeekableStream::NS_SEEK_SET, 0);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -346,16 +359,53 @@ sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(PRBool *aNeedsConversion)
 
 nsresult
 sbTranscodeAlbumArt::GetTargetFormat(
-        nsCString aMimeType, PRInt32 *aWidth, PRInt32 *aHeight)
+        nsCString & aMimeType, PRInt32 *aWidth, PRInt32 *aHeight)
 {
   NS_ENSURE_ARG_POINTER (aWidth);
   NS_ENSURE_ARG_POINTER (aHeight);
   NS_ENSURE_STATE (mImageFormats);
 
   nsresult rv;
-  /* We take the first format for which we have an image encoder, and then
-     use the first explicit size within that.
-     If there are no formats, or no explicit widths, error out. */
+  /* Figure out the target format as follows:
+
+     1. If the input width and height are both supported for some format, choose
+        the first such format.
+     2. Otherwise, choose the first format. Then, select the smallest
+        explicitly-listed size larger than the input image (unless there are
+        none, in which case use the largest explicit size).
+
+     Note: if the input aspect ratio is not the same as the output aspect ratio,
+           we do not correctly maintain the image aspect ratio by putting black
+           bars/etc. around it. TODO!
+   */
+
+  // 1: exact size match.
+  PRUint32 numFormats = 0;
+  rv = mImageFormats->GetLength(&numFormats);
+  NS_ENSURE_SUCCESS (rv, rv);
+  for (PRUint32 i = 0; i < numFormats; i++) {
+    nsCOMPtr<sbIImageFormatType> format;
+    rv = mImageFormats->QueryElementAt(i, NS_GET_IID(sbIImageFormatType),
+                                       getter_AddRefs(format));
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsCString formatMimeType;
+    rv = format->GetImageFormat(formatMimeType);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    PRBool valid;
+    rv = IsValidSizeForFormat(format, &valid);
+    NS_ENSURE_SUCCESS (rv, rv);
+      
+    if (valid) {
+      aMimeType = formatMimeType;
+      *aWidth = mImageWidth;
+      *aHeight = mImageHeight;
+      return NS_OK;
+    }
+  }
+
+  // 2: resize required.
   nsCOMPtr<sbIImageFormatType> format;
   rv = mImageFormats->QueryElementAt(0, NS_GET_IID(sbIImageFormatType),
           getter_AddRefs(format));
@@ -365,21 +415,89 @@ sbTranscodeAlbumArt::GetTargetFormat(
   rv = format->GetSupportedExplicitSizes(getter_AddRefs(explicitSizes));
   NS_ENSURE_SUCCESS (rv, rv);
 
-  nsCOMPtr<sbIImageSize> size;
-  rv = explicitSizes->QueryElementAt(0, NS_GET_IID(sbIImageSize),
-          getter_AddRefs(size));
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  rv = size->GetWidth(aWidth);
-  NS_ENSURE_SUCCESS (rv, rv);
-
-  rv = size->GetHeight(aHeight);
-  NS_ENSURE_SUCCESS (rv, rv);
-
   rv = format->GetImageFormat(aMimeType);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  return NS_OK;
+  PRInt32 bestWidth = 0;
+  PRInt32 bestHeight = 0;
+  PRInt32 bestSmallerWidth = 0;
+  PRInt32 bestSmallerHeight = 0;
+
+  PRUint32 numSizes = 0;
+  rv = explicitSizes->GetLength(&numSizes);
+  NS_ENSURE_SUCCESS (rv, rv);
+  for (PRUint32 i = 0; i < numSizes; i++) {
+    nsCOMPtr<sbIImageSize> size;
+    rv = explicitSizes->QueryElementAt(i, NS_GET_IID(sbIImageSize),
+                                       getter_AddRefs(size));
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    PRInt32 width, height;
+    rv = size->GetWidth(&width);
+    NS_ENSURE_SUCCESS (rv, rv);
+    rv = size->GetHeight(&height);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    if (width >= mImageWidth && height >= mImageHeight &&
+        (bestWidth == 0 || bestHeight == 0 || 
+         width < bestWidth || height < bestHeight))
+    {
+      bestWidth = width;
+      bestHeight = height;
+    }
+    else if (width < mImageWidth && height < mImageHeight &&
+             (width > bestSmallerWidth || height > bestSmallerHeight))
+    {
+      bestSmallerWidth = width;
+      bestSmallerHeight = height;
+    }
+  }
+
+  if (bestWidth && bestHeight) {
+    *aWidth = bestWidth;
+    *aHeight = bestHeight;
+    return NS_OK;
+  }
+  else if (bestSmallerWidth && bestSmallerHeight) {
+    *aWidth = bestSmallerWidth;
+    *aHeight = bestSmallerHeight;
+    return NS_OK;
+  }
+  else {
+    return NS_ERROR_FAILURE;
+  }
+}
+
+NS_IMETHODIMP
+sbTranscodeAlbumArt::GetTranscodedArt(nsIInputStream **aImageStream)
+{
+  NS_ENSURE_ARG_POINTER(aImageStream);
+
+  PRBool needsConversion = PR_FALSE;
+  nsresult rv = GetNeedsAlbumArtConversion(&needsConversion);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (needsConversion) {
+    nsresult rv;
+    nsCString mimeType;
+    PRInt32 width, height;
+
+    rv = GetTargetFormat(mimeType, &width, &height);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsCOMPtr<imgITools> imgTools = do_GetService(
+            "@mozilla.org/image/tools;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = imgTools->EncodeScaledImage(mImgContainer, mimeType, width, height,
+                                     aImageStream);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_OK;
+  }
+  else {
+    NS_IF_ADDREF(*aImageStream = mInputStream);
+    return NS_OK;
+  }
 }
 
 NS_IMETHODIMP
@@ -407,6 +525,42 @@ sbTranscodeAlbumArt::ConvertArt()
           getter_AddRefs(imageStream));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIBinaryInputStream> binaryStream =
+             do_CreateInstance("@mozilla.org/binaryinputstream;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = binaryStream->SetInputStream(imageStream);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 imageDataLen;
+  rv = imageStream->Available(&imageDataLen);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint8 *imageData;
+  rv = binaryStream->ReadByteArray(imageDataLen, &imageData);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbAutoNSMemPtr imageDataDestroy(imageData);
+
+  nsCOMPtr<sbIAlbumArtService> albumArtService = do_GetService(
+              SB_ALBUMARTSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> cacheURI;
+  rv = albumArtService->CacheImage(mimeType,
+                                   imageData,
+                                   imageDataLen,
+                                   getter_AddRefs(cacheURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString imageURISpec;
+  rv = cacheURI->GetSpec(imageURISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                          NS_ConvertUTF8toUTF16(imageURISpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Ok. We have a replacement image. Now we want to write it to the media item
   // (which points at the copy of the file on the device).
   // TODO: what if we can't write to that (e.g. MTP)? 
@@ -427,8 +581,8 @@ sbTranscodeAlbumArt::ConvertArt()
     new sbTArrayStringEnumerator(&propArray);
   NS_ENSURE_TRUE(propsToWrite, NS_ERROR_OUT_OF_MEMORY);
 
-  nsCOMPtr<sbIFileMetadataService> metadataService =
-      do_GetService("@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
+  nsCOMPtr<sbIFileMetadataService> metadataService = do_ProxiedGetService(
+	 "@songbirdnest.com/Songbird/FileMetadataService;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIJobProgress> job;
@@ -437,7 +591,7 @@ sbTranscodeAlbumArt::ConvertArt()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // The job progress object returnned from the this should only be used
-  // from the main thread, so proxy.
+  // from the main thread, so proxy that too.
   nsCOMPtr<nsIThread> target;
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
