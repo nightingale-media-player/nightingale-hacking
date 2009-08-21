@@ -55,6 +55,8 @@ CPP_INCLUDES = $(DEPTH)/components/devices/cd/public \
                $(topsrcdir)/components/library/base/src/static \
                $(DEPTH)/components/library/localdatabase/public \
                $(DEPTH)/components/mediacore/transcode/public \
+               $(DEPTH)/components/mediacore/metadata/lookup/manager/public \
+               $(DEPTH)/components/job/public \
                $(DEPTH)/components/moz/prompter/public \
                $(DEPTH)/components/moz/strings/components/public \
                $(topsrcdir)/components/include \

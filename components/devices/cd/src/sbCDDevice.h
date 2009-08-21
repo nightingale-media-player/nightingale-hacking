@@ -35,6 +35,9 @@
 #include <sbDeviceStatusHelper.h>
 #include <sbIDeviceProperties.h>
 #include <sbITranscodeManager.h>
+#include <sbIMetadataLookupManager.h>
+#include <sbIMetadataLookupProvider.h>
+#include <sbIMetadataLookupData.h>
 #include <sbMemoryUtils.h>
 
 #include <nsID.h>
@@ -209,6 +212,7 @@ class nsIPropertyBag;
  * Each instance represents a physical device.
  */
 class sbCDDevice : public sbBaseDevice,
+                   public sbIJobProgressListener,
                    public nsIClassInfo
 {
 public:
@@ -218,6 +222,7 @@ public:
 
   NS_DECL_ISUPPORTS
   NS_DECL_SBIDEVICE
+  NS_DECL_SBIJOBPROGRESSLISTENER
   NS_DECL_NSICLASSINFO
 
   /**

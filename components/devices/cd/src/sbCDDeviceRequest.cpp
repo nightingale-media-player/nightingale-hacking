@@ -27,6 +27,7 @@
 
 // Self imports.
 #include "sbCDDevice.h"
+#include "sbCDDeviceDefines.h"
 
 // Local imports
 #include "sbCDLog.h"
@@ -54,6 +55,8 @@
 #include <nsISimpleEnumerator.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
+#include <nsIDOMWindow.h>
+#include <nsIWindowWatcher.h>
 #include <nsNetUtil.h>
 #include <nsThreadUtils.h>
 #include <nsComponentManagerUtils.h>
@@ -107,8 +110,9 @@ sbCDDevice::ReqHandleRequestAdded()
   sbBaseDevice::Batch requestBatch;
   rv = PopRequest(requestBatch);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (requestBatch.empty())
+  if (requestBatch.empty()) {
     return NS_OK;
+  }
 
   // Set up to automatically set the state to STATE_IDLE on exit.  Any device
   // operation must change the state to not be idle.  This ensures that the
@@ -326,8 +330,99 @@ sbCDDevice::UpdateDeviceLibrary(nsIArray* aFileURIList)
   rv = mediaItemList->GetLength(&mediaItemCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // XXX TODO: Metadata retrieval goes here
+  // Get the metadata manager and the default provider
+  nsCOMPtr<sbIMetadataLookupManager> mlm =
+    do_ProxiedGetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1",
+                         &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<sbIMetadataLookupProvider> provider;
+  rv = mlm->GetDefaultProvider(getter_AddRefs(provider));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get our TOC
+  nsCOMPtr<sbICDTOC> toc;
+  rv = mCDDevice->GetDiscTOC(getter_AddRefs(toc));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Initiate the metadata lookup
+  LOG(("Querying metadata lookup provider for disc"));
+  nsCOMPtr<sbIMetadataLookupJob> job;
+  rv = provider->QueryDisc(toc, getter_AddRefs(job));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check the state of the job, if the state reflects success already, then
+  // just invoke the progress listener directly, otherwise add the listener
+  // to the job.
+  PRUint16 jobStatus;
+  rv = job->GetStatus(&jobStatus);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (jobStatus == sbIJobProgress::STATUS_SUCCEEDED) {
+    rv = this->OnJobProgress(job);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    rv = job->AddJobProgressListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
 
+/*****
+ * sbIJobProgressListener
+ *****/
+NS_IMETHODIMP
+sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
+{
+  NS_ENSURE_ARG_POINTER(aJob);
+
+  nsresult rv;
+  PRUint16 jobStatus;
+  rv = aJob->GetStatus(&jobStatus);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Ignore still-running jobs
+  if (jobStatus == sbIJobProgress::STATUS_RUNNING)
+    return NS_OK;
+
+  aJob->RemoveJobProgressListener(this);
+
+  nsCOMPtr<sbIMetadataLookupJob> metalookupJob = do_QueryInterface(aJob, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint16 numResults = 0;
+  rv = metalookupJob->GetMlNumResults(&numResults);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("Number of metadata lookup results found: %d", numResults));
+  // 3 cases to match up
+  if (numResults == 1) {
+    // Exactly 1 match found, automatically populate all the tracks with
+    // the metadata found in this result
+    // XXX Not implemented yet, tracked as bug 17404 (story)
+  } else {
+    nsCOMPtr<nsIDOMWindow> parentWindow;
+    nsCOMPtr<nsIDOMWindow> domWindow;
+    nsCOMPtr<nsIWindowWatcher> windowWatcher =
+      do_ProxiedGetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (numResults == 0) {
+      // Throw up the No CD Information Found dialog and prompt the user for
+      // default artist/album info to populate for each track
+      rv = windowWatcher->OpenWindow(parentWindow,
+                                     NO_CD_INFO_FOUND_DIALOG_URI,
+                                     nsnull,
+                                     "centerscreen,chrome,modal,titlebar",
+                                     mDeviceLibrary,
+                                     getter_AddRefs(domWindow));
+      NS_ENSURE_SUCCESS(rv, rv);
+    } else {
+      // Multiple results found, defer to user to choose
+      // XXX Not implemented yet, tracked as bug 17406 (story)
+    }
+  }
+
+  return NS_OK;
+}

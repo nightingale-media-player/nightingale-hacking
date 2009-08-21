@@ -63,5 +63,8 @@
 #define SB_CDDEVICE_CONTROLLER_CID \
   {0x45684bb8, 0x1dd2, 0x11b2, {0xac, 0xb3, 0x95, 0xcc, 0x54, 0x81, 0x87, 0x17}}
 
+#define NO_CD_INFO_FOUND_DIALOG_URI \
+  "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul"
+
 #endif  // sbCDDeviceDefines_h_
 

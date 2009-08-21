@@ -114,13 +114,23 @@
     Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
     var cdInfoNotFoundDlg = {
-      _device: null,
+      _deviceLibrary: null,
+      _dialog: null,
       _okButton: null,
 
       /**
        * \brief Handle load events.
        */
       onLoad: function cdInfoNotFoundDlg_onLoad() {
+        try {
+          // Save the device reference
+          this._deviceLibrary =
+              window.arguments[0].QueryInterface(Ci.sbILibrary);
+        } catch (e) {
+          dump("Failed to get device reference: " + e + "\n");
+          dump("arg0: " + window.arguments[0] + "\n");
+        }
+
         // Get the dialog and okay button
         this._dialog = document.getElementById('cd_info_not_found_dialog');
         this._okButton = this._dialog.getButton("accept");
@@ -151,9 +161,16 @@
        * \brief Handle accept/okay button.
        */
       onAccept: function cdInfoNotFoundDlg_onAccept() {
-        // XXXstevel needs to be hooked up to actually do something
-        // Presumably, something along the lines of being able to update
-        // the CD rip view's metadata for each track
+        // Need to enumerate through the device library now and set the
+        // artist and album metadata for each track to be the values
+        // entered in the XUL textbox
+        if (!this._deviceLibrary) {
+          throw Components.results.NS_ERROR_NOT_AVAILABLE;
+        }
+
+        this._artistValue = document.getElementById("artist-textbox").value;
+        this._albumValue = document.getElementById("album-textbox").value;
+        this._deviceLibrary.enumerateAllItems(this);
       },
 
       /**
@@ -161,6 +178,18 @@
        */
       onCancel: function cdInfoNotFoundDlg_onCancel() {
         window.close();
+      },
+
+      /**
+       * sbIMediaListEnumerationListener interface
+       */
+      onEnumerationBegin: function (aList) {
+      },
+      onEnumeratedItem: function (aList, aItem) {
+        aItem.setProperty(SBProperties.artistName, this._artistValue);
+        aItem.setProperty(SBProperties.albumName, this._albumValue);
+      },
+      onEnumerationEnd: function (aList, aStatus) {
       },
     };
 
