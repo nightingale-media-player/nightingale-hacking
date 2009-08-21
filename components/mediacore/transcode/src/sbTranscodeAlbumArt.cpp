@@ -27,6 +27,8 @@
 
 #include "sbTranscodeAlbumArt.h"
 
+#include <prio.h>
+
 #include <nsIIOService.h>
 #include <nsIURI.h>
 #include <nsIResProtocolHandler.h>
