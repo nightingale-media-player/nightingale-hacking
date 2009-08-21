@@ -143,6 +143,11 @@ sbCDDevice::ReqHandleRequestAdded()
           // XXX TODO: ReqHandleRead(request);
           break;
 
+        case REQUEST_CDLOOKUP:
+          rv = AttemptCDLookup();
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup CD data!");
+          break;
+
         default :
           NS_WARNING("Unsupported request type.");
           break;
@@ -240,7 +245,19 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
 
   // Update the library with the new media files.
   nsCOMPtr<nsIArray> mediaItemList;
-  rv = UpdateDeviceLibrary(newFileURIList);
+  rv = mDeviceLibrary->BatchCreateMediaItems(newFileURIList,
+                                             nsnull,
+                                             PR_TRUE,
+                                             getter_AddRefs(mediaItemList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the number of created media items.
+  PRUint32 mediaItemCount;
+  rv = mediaItemList->GetLength(&mediaItemCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Go ahead and perform a CD lookup now.
+  rv = AttemptCDLookup();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -308,60 +325,72 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
   return NS_OK;
 }
 
-nsresult
-sbCDDevice::UpdateDeviceLibrary(nsIArray* aFileURIList)
-{
-  // Validate arguments.
-  NS_ENSURE_ARG_POINTER(aFileURIList);
-
-  // Function variables.
+void
+sbCDDevice::ProxyCDLookup() {
   nsresult rv;
-
-  // Create media items for the files.
-  nsCOMPtr<nsIArray> mediaItemList;
-  rv = mDeviceLibrary->BatchCreateMediaItems(aFileURIList,
-                                             nsnull,
-                                             PR_TRUE,
-                                             getter_AddRefs(mediaItemList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the number of created media items.
-  PRUint32 mediaItemCount;
-  rv = mediaItemList->GetLength(&mediaItemCount);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the metadata manager and the default provider
   nsCOMPtr<sbIMetadataLookupManager> mlm =
-    do_ProxiedGetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1",
+    do_GetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1",
                          &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
   nsCOMPtr<sbIMetadataLookupProvider> provider;
   rv = mlm->GetDefaultProvider(getter_AddRefs(provider));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Get our TOC
   nsCOMPtr<sbICDTOC> toc;
   rv = mCDDevice->GetDiscTOC(getter_AddRefs(toc));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Initiate the metadata lookup
   LOG(("Querying metadata lookup provider for disc"));
   nsCOMPtr<sbIMetadataLookupJob> job;
   rv = provider->QueryDisc(toc, getter_AddRefs(job));
-  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
 
   // Check the state of the job, if the state reflects success already, then
   // just invoke the progress listener directly, otherwise add the listener
   // to the job.
   PRUint16 jobStatus;
   rv = job->GetStatus(&jobStatus);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (jobStatus == sbIJobProgress::STATUS_SUCCEEDED) {
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  if (jobStatus == sbIJobProgress::STATUS_SUCCEEDED ||
+      jobStatus == sbIJobProgress::STATUS_FAILED)
+  {
     rv = this->OnJobProgress(job);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  } else {
+    rv = job->AddJobProgressListener((sbIJobProgressListener*)this);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
+}
+
+nsresult
+sbCDDevice::AttemptCDLookup()
+{
+  nsresult rv;
+
+  // Update the status
+  mStatus.ChangeState(STATE_LOOKINGUPCD);
+
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<nsIThreadManager> threadMgr =
+      do_GetService("@mozilla.org/thread-manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIThread> mainThread;
+    rv = threadMgr->GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbCDDevice, this, ProxyCDLookup);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
-    rv = job->AddJobProgressListener(this);
-    NS_ENSURE_SUCCESS(rv, rv);
+    ProxyCDLookup();
   }
 
   return NS_OK;
@@ -398,7 +427,52 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   if (numResults == 1) {
     // Exactly 1 match found, automatically populate all the tracks with
     // the metadata found in this result
-    // XXX Not implemented yet, tracked as bug 17404 (story)
+    nsCOMPtr<nsISimpleEnumerator> metadataResultsEnum;
+    rv = metalookupJob->GetMetadataResults(getter_AddRefs(metadataResultsEnum));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // There is only one returned item, so no need to loop through the
+    // enumerator here.
+    PRBool hasMore = PR_FALSE;
+    rv = metadataResultsEnum->HasMoreElements(&hasMore);
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(hasMore, NS_ERROR_UNEXPECTED);
+
+    nsCOMPtr<nsISupports> curItem;
+    rv = metadataResultsEnum->GetNext(getter_AddRefs(curItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIMetadataAlbumDetail> albumDetail =
+      do_QueryInterface(curItem, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIArray> trackPropResults;
+    rv = albumDetail->GetTracks(getter_AddRefs(trackPropResults));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 length = 0;
+    rv = trackPropResults->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 i = 0; i < length; i++) {
+      nsCOMPtr<sbIMutablePropertyArray> curTrackPropArray =
+        do_QueryElementAt(trackPropResults, i, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      PRUint32 propCount = 0;
+      rv = curTrackPropArray->GetLength(&propCount);
+      if (NS_FAILED(rv) || propCount == 0) {
+        continue;
+      }
+
+      // Append the new properties to the media item.
+      nsCOMPtr<sbIMediaItem> curLibraryItem;
+      rv = mDeviceLibrary->GetItemByIndex(i, getter_AddRefs(curLibraryItem));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = curLibraryItem->SetProperties(curTrackPropArray);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   } else {
     nsCOMPtr<nsIDOMWindow> parentWindow;
     nsCOMPtr<nsIDOMWindow> domWindow;

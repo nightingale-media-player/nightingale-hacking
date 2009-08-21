@@ -56,10 +56,12 @@ PRLogModuleInfo* gCDDeviceLog = nsnull;
 
 NS_IMPL_THREADSAFE_ADDREF(sbCDDevice)
 NS_IMPL_THREADSAFE_RELEASE(sbCDDevice)
-NS_IMPL_QUERY_INTERFACE2_CI(sbCDDevice, sbIDevice,
-                                        sbIDeviceEventTarget)
-NS_IMPL_CI_INTERFACE_GETTER2(sbCDDevice, sbIDevice,
-                                         sbIDeviceEventTarget)
+NS_IMPL_QUERY_INTERFACE3_CI(sbCDDevice, sbIDevice,
+                            sbIJobProgressListener,
+                            sbIDeviceEventTarget)
+NS_IMPL_CI_INTERFACE_GETTER3(sbCDDevice, sbIDevice,
+                             sbIJobProgressListener,
+                             sbIDeviceEventTarget)
 
 // nsIClassInfo implementation.
 NS_DECL_CLASSINFO(sbCDDevice)

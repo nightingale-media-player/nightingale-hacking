@@ -248,6 +248,16 @@ public:
                       nsIPropertyBag *aProperties,
                       sbCDDevice **aOutCDDevice);
 
+  /**
+   * CD device specific events
+   */
+  static const int REQUEST_CDLOOKUP = REQUEST_FLAG_USER + 1;
+
+  /**
+   * CD device specific status.
+   */
+  static const int STATE_LOOKINGUPCD = STATE_USER + 1;
+
 private:
   /**
    * Protects the mProperites member and updating it's contents
@@ -421,11 +431,6 @@ private:
   nsresult GetMediaFiles(nsIArray ** aURIList);
 
   /**
-   * Updates the device library with the URI's
-   */
-  nsresult UpdateDeviceLibrary(nsIArray* aFileURIList);
-
-  /**
    * Return true if the active request should abort; otherwise, return false.
    *
    * \return PR_TRUE              Active request should abort.
@@ -433,6 +438,16 @@ private:
    */
   PRBool ReqAbortActive();
 
+  /**
+   * Populate the device library with metadata from the CD lookup service.
+   * NOTE: This method will proxy to the main thread if it needs to.
+   */
+  nsresult AttemptCDLookup();
+
+  /**
+   * Method to trigger the CD lookup request.
+   */
+  void ProxyCDLookup();
 };
 
 #define SB_CD_DEVICE_AUTO_INVOKE(aName, aMethod)                              \
