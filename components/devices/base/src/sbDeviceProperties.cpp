@@ -30,6 +30,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceProperties, sbIDeviceProperties)
 
 #include <nsAutoLock.h>
 #include <nsComponentManagerUtils.h>
+#include <nsISimpleEnumerator.h>
+#include <nsIProperty.h>
 #include <prlog.h>
 #include <prprf.h>
 #include <prtime.h>
@@ -157,15 +159,34 @@ NS_IMETHODIMP
 sbDeviceProperties::InitDeviceProperties(nsIPropertyBag2 *aProperties)
 {
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aProperties);
 
   nsresult rv;
 
-  mProperties2 = do_QueryInterface(aProperties, &rv);
+  // Copy the properties since the other init methods may have
+  // been called
+  nsCOMPtr<nsISimpleEnumerator> enumerator;
+  rv = aProperties->GetEnumerator(getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mProperties = do_QueryInterface(mProperties, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIProperty> property;
+  nsString name;
+  nsCOMPtr<nsIVariant> value;
 
+  PRBool more;
+  while (NS_SUCCEEDED(enumerator->HasMoreElements(&more)) && more) {
+    rv = enumerator->GetNext(getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = property->GetName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = property->GetValue(getter_AddRefs(value));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mProperties->SetProperty(name, value);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 
@@ -202,9 +223,11 @@ GetProperty(nsIPropertyBag * aProperties,
             nsIVariant ** aValue)
 {
   nsresult rv = aProperties->GetProperty(aProp, aValue);
-  if (rv != NS_ERROR_NOT_AVAILABLE) {
-    NS_ENSURE_SUCCESS(rv, rv);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
     *aValue = nsnull;
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }
@@ -250,6 +273,7 @@ NS_IMETHODIMP
 sbDeviceProperties::GetModelNumber(nsIVariant * *aModelNumber)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aModelNumber);
 
   nsAutoLock lock(mLock);
 
@@ -262,6 +286,7 @@ NS_IMETHODIMP
 sbDeviceProperties::GetSerialNumber(nsIVariant * *aSerialNumber)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aSerialNumber);
 
   nsAutoLock lock(mLock);
 
@@ -286,6 +311,7 @@ NS_IMETHODIMP
 sbDeviceProperties::GetUri(nsIURI * *aUri)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aUri);
 
   nsAutoLock lock(mLock);
 
@@ -297,6 +323,7 @@ NS_IMETHODIMP
 sbDeviceProperties::GetIconUri(nsIURI * *aIconUri)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aIconUri);
 
   nsAutoLock lock(mLock);
 
@@ -308,6 +335,7 @@ NS_IMETHODIMP
 sbDeviceProperties::GetProperties(nsIPropertyBag2 * *aProperties)
 {
   NS_ENSURE_TRUE(isInitialized, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aProperties);
 
   nsAutoLock lock(mLock);
 
