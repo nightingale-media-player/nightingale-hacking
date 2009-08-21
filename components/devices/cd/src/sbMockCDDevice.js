@@ -89,6 +89,8 @@ function sbMakeBabyOneMoreTime()
   toc.addTocEntry(158447, 223, 10);
   toc.addTocEntry(175179, 223, 11);
   toc.addTocEntry(203309, 760, 12);
+
+  return toc;
 }
 
 //------------------------------------------------------------------------------
@@ -112,6 +114,8 @@ function sbMakeAllThatYouCantLeaveBehind()
   toc.addTocEntry(155768, 258, 9);
   toc.addTocEntry(175400, 330, 10);
   toc.addTocEntry(200468, 331, 11);
+
+  return toc;
 }
 
 //------------------------------------------------------------------------------
