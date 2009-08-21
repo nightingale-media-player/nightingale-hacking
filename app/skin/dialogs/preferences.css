@@ -158,3 +158,13 @@ label#manage_media_format_file_suffix_label {
   cursor: default !important;
   text-decoration: none;
 }
+
+.header
+{
+  font-weight: bold;
+}
+
+.para
+{
+  text-indent: 1em;
+}

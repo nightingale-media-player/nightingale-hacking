@@ -124,11 +124,9 @@
                 oncommand="return manageMediaPrefsPane.doDisplayPreview();"/>
       </hbox>
 
-      <groupbox>
-        <description>&prefWindow.manageMedia.generalDescription.p1;</description>
-        <description>&prefWindow.manageMedia.generalDescription.p2;</description>
-        <description>&prefWindow.manageMedia.generalDescription.p3;</description>
-      </groupbox>
+      <label class="header" value="&prefWindow.manageMedia.generalDescription.title;"/>
+      <description class="para">&prefWindow.manageMedia.generalDescription.p1;</description>
+      <description class="para">&prefWindow.manageMedia.generalDescription.p2;</description>
       
     </notificationbox>
 
