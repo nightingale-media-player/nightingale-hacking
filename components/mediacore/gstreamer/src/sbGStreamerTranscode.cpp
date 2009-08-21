@@ -822,17 +822,16 @@ sbGStreamerTranscode::EstimateOutputSize(PRInt32 inputDuration,
   return NS_OK;
 }
 
-
 struct GSTNameMap {
   const char *name;
-  const char *gstName;
+  const char *gstCapsName;
 };
 
 static struct GSTNameMap SupportedContainers[] = {
-  {"ogg", "oggmux"},
-  {"id3", "id3tag"},
-  {"asf", "sbasfmux"},
-  {"wav", "wavenc"}
+  {"ogg", "application/ogg"},
+  {"id3", "application/x-id3"},
+  {"asf", "video/x-ms-asf"},
+  {"wav", "audio/x-wav"}
 };
 
 nsresult
@@ -847,7 +846,13 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
   {
     if (strcmp (cont.BeginReading(), SupportedContainers[i].name) == 0)
     {
-      gstMuxer.Append(SupportedContainers[i].gstName);
+      const char *capsString = SupportedContainers[i].gstCapsName;
+      const char *gstElementName = FindMatchingElementName (
+              capsString, "Muxer");
+      if (!gstElementName)
+        continue;
+
+      gstMuxer.Append(gstElementName);
       /* Ignore properties for now, we don't have any we care about yet */
       return NS_OK;
     }
@@ -857,9 +862,10 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
 }
 
 static struct GSTNameMap SupportedAudioCodecs[] = {
-  {"vorbis", "vorbisenc"},
-  {"flac", "flacenc"},
-  {"wmav2", "wmadmoenc"},
+  {"vorbis", "audio/x-vorbis"},
+  {"flac", "audio/x-flac"},
+  {"wmav2", "audio/x-wma, wmaversion=(int)2"},
+  {"mp3", "audio/mpeg, mpegversion=(int)1, layer=(int)3"},
 };
 
 nsresult
@@ -875,7 +881,13 @@ sbGStreamerTranscode::GetAudioCodec(nsAString &aCodec, nsIArray *properties,
   {
     if (strcmp (codec.BeginReading(), SupportedAudioCodecs[i].name) == 0)
     {
-      gstCodec.Append(SupportedAudioCodecs[i].gstName);
+      const char *capsString = SupportedAudioCodecs[i].gstCapsName;
+      const char *gstElementName = FindMatchingElementName (
+              capsString, "Encoder");
+      if (!gstElementName)
+        continue;
+
+      gstCodec.Append(gstElementName);
 
       /* Now handle the properties */
       PRUint32 propertiesLength = 0;

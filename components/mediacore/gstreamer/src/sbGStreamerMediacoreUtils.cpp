@@ -439,4 +439,98 @@ GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
   return NS_OK;
 }
 
+typedef struct {
+  GstCaps *srccaps;
+  const char *type;
+} TypeMatchingInfo;
+
+static gboolean
+match_element_filter (GstPluginFeature * feature, TypeMatchingInfo * data)
+{
+  const gchar *klass;
+  const GList *templates;
+  GList *walk;
+  GstElementFactory * factory;
+  const char *name;
+
+  /* we only care about element factories */
+  if (!GST_IS_ELEMENT_FACTORY (feature))
+    return FALSE;
+
+  factory = GST_ELEMENT_FACTORY (feature);
+
+  klass = gst_element_factory_get_klass (factory);
+
+  if (strstr (klass, data->type) == NULL) {
+    /* Wrong type, don't check further */
+    return FALSE;
+  }
+
+  /* Blacklist ffmux and ffenc. We don't want to accidently use these on
+     linux systems where they might be loaded from the system. */
+  name = gst_plugin_feature_get_name (feature);
+  if (strstr (name, "ffmux") != NULL ||
+      strstr (name, "ffenc") != NULL)
+    return FALSE;
+
+  templates = gst_element_factory_get_static_pad_templates (factory);
+  for (walk = (GList *) templates; walk; walk = g_list_next (walk)) {
+    GstStaticPadTemplate *templ = (GstStaticPadTemplate *)(walk->data);
+
+    /* Only want source pad templates */
+    if (templ->direction == GST_PAD_SRC) {
+      GstCaps *template_caps = gst_static_caps_get (&templ->static_caps);
+      GstCaps *intersect;
+
+      intersect = gst_caps_intersect (template_caps, data->srccaps);
+      gst_caps_unref (template_caps);
+
+      if (!gst_caps_is_empty (intersect)) {
+        // Non-empty intersection: caps are usable
+        gst_caps_unref (intersect);
+        return TRUE;
+      }
+      gst_caps_unref (intersect);
+    }
+  }
+
+  /* Didn't find a compatible pad */
+  return FALSE;
+}
+
+const char *
+FindMatchingElementName(const char *srcCapsString, const char *typeName)
+{
+  GstCaps *caps;
+  GList *list, *walk;
+  TypeMatchingInfo data;
+  guint bestrank = 0;
+  GstElementFactory *bestfactory = NULL;
+
+  caps = gst_caps_from_string (srcCapsString);
+  if (!caps)
+    return NULL;
+
+  data.srccaps = caps;
+  data.type = typeName;
+
+  list = gst_default_registry_feature_filter (
+          (GstPluginFeatureFilter)match_element_filter, FALSE, &data);
+
+  for (walk = list; walk; walk = g_list_next (walk)) {
+    GstElementFactory *factory = GST_ELEMENT_FACTORY (walk->data);
+    guint rank = gst_plugin_feature_get_rank (GST_PLUGIN_FEATURE (factory));
+
+    // Find the highest-ranked element that we considered acceptable.
+    if (!bestfactory || rank > bestrank) {
+      bestfactory = factory;
+      bestrank = rank;
+    }
+  }
+
+  if (!bestfactory)
+    return NULL;
+
+  return gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (bestfactory));
+}
 
