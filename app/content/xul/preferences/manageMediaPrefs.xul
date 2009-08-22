@@ -96,10 +96,9 @@
         </hbox>
       </groupbox>
       
-      <sb-closable-box id="manage_media_format_box"
-                       orient="vertical"
-                       label="&prefWindow.manageMedia.format.box.label;"
-                       persist="open">
+      <groupbox id="manage_media_format_box">
+        <caption id="manage_media_format_caption"
+                 label="&prefWindow.manageMedia.format.box.label;"/>
         <hbox id="manage_media_format_dir_container">
           <!-- <label id="manage_media_format_dir_label"/> -->
           <sb-properties-formatter id="manage_media_format_dir_formatter"
@@ -127,7 +126,7 @@
                   label="&prefWindow.manageMedia.enable.preview.label;"
                   oncommand="return manageMediaPrefsPane.doDisplayPreview();"/>
         </hbox>
-      </sb-closable-box>
+      </groupbox>
 
       <label class="header" value="&prefWindow.manageMedia.generalDescription.title;"/>
       <description class="para">&prefWindow.manageMedia.generalDescription.p1;</description>
