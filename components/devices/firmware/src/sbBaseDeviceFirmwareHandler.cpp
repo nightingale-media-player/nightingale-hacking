@@ -441,6 +441,25 @@ sbBaseDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
 }
 
 /*virtual*/ nsresult
+sbBaseDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
+                                      sbIDeviceEventListener *aListener,
+                                      PRBool *_retval)
+{
+  /**
+   * When a handler is already active and the device it is bound to
+   * requires to be reconnected in recovery mode (or a special mode so 
+   * that it can be flashed) this function will be called to attempt
+   * to re-associate the new device instance with the old one so that
+   * the update process can continue.
+   *
+   * If you manage to rebind properly, _retval should be set to PR_TRUE.
+   * Otherwise, set it to PR_FALSE.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnCancel()
 {
   TRACE(("[%s]", __FUNCTION__));
@@ -809,6 +828,26 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
       getter_AddRefs(mListener));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::Rebind(sbIDevice *aDevice,
+                                    sbIDeviceEventListener *aListener,
+                                    PRBool *_retval)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(_retval);
+  
+  *_retval = PR_FALSE;
+
+  nsAutoMonitor mon(mMonitor);
+  
+  nsresult rv = OnRebind(aDevice, aListener, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

@@ -155,6 +155,10 @@ public:
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
   // override me, see cpp file for implementation notes
+  virtual nsresult OnRebind(sbIDevice *aDevice,
+                            sbIDeviceEventListener *aListener,
+                            PRBool *_retval);
+  // override me, see cpp file for implementation notes
   virtual nsresult OnCancel();
   // override me, see cpp file for implementation notes
   virtual nsresult OnRefreshInfo();

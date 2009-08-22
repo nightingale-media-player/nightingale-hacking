@@ -75,7 +75,11 @@ public:
   nsresult PutRunningHandler(sbIDevice *aDevice, 
                              sbIDeviceFirmwareHandler *aHandler);
 
-  sbDeviceFirmwareHandlerStatus* GetHandlerStatus(sbIDeviceFirmwareHandler *aHandler);
+  sbDeviceFirmwareHandlerStatus* 
+    GetHandlerStatus(sbIDeviceFirmwareHandler *aHandler);
+
+  nsresult RequiresRecoveryMode(sbIDevice *aDevice,
+                                sbIDeviceFirmwareHandler *aHandler);
 
 private:
   virtual ~sbDeviceFirmwareUpdater();
@@ -100,12 +104,12 @@ protected:
   typedef 
     nsClassHashtableMT<nsISupportsHashKey,
                        sbDeviceFirmwareHandlerStatus> handlerstatus_t;
-
   typedef
     nsInterfaceHashtableMT<nsISupportsHashKey,
                            sbIFileDownloaderListener> downloaders_t;
 
   runninghandlers_t mRunningHandlers;
+  runninghandlers_t mRecoveryModeHandlers;
   handlerstatus_t   mHandlerStatus;
   downloaders_t     mDownloaders;
 

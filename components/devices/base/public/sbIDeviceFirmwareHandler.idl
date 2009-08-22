@@ -39,7 +39,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(9f483ed9-4a7b-4961-b391-0c3479718158)]
+[scriptable, uuid(98799bd8-dacc-4952-988e-c98c3fd96be0)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -145,6 +145,19 @@ interface sbIDeviceFirmwareHandler : nsISupports
    * \throw NS_ERROR_ALREADY_INITIALIZED when handler is already bound.
    */
   void bind(in sbIDevice aDevice, in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Rebind a device to an already running handler.
+   * \param aDevice - The device you wish to bind to
+   * \param [optional] aListener - Optional event listener 
+   *        to also send events to, may be null.
+   * \note Rebind is meant to be used when a device switches modes
+   *       but must continue an existing firmware update (eg. switching
+   *       to recovery mode).
+   * \retval PR_TRUE Rebinding was successful
+   * \retval PR_FALSE Rebinding failed
+   */
+  boolean rebind(in sbIDevice aDevice, in sbIDeviceEventListener aListener);
 
   /**
    * \brief Unbind the handler

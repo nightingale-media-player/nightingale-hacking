@@ -135,6 +135,9 @@ sbDeviceFirmwareUpdater::Init()
   PRBool success = mRunningHandlers.Init(MIN_RUNNING_HANDLERS);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
+  success = mRecoveryModeHandlers.Init(MIN_RUNNING_HANDLERS);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
   success = mHandlerStatus.Init(MIN_RUNNING_HANDLERS);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
@@ -209,6 +212,7 @@ sbDeviceFirmwareUpdater::Shutdown()
   }
 
   mRunningHandlers.Clear();
+  mRecoveryModeHandlers.Clear();
   mHandlerStatus.Clear();
   mDownloaders.Clear();
 
@@ -302,6 +306,27 @@ sbDeviceFirmwareUpdater::GetHandlerStatus(sbIDeviceFirmwareHandler *aHandler)
   }
 
   return _retval;
+}
+
+nsresult 
+sbDeviceFirmwareUpdater::RequiresRecoveryMode(sbIDevice *aDevice,
+                                              sbIDeviceFirmwareHandler *aHandler)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aHandler);
+
+  PRBool needsRecoveryMode = PR_FALSE;
+  
+  nsresult rv = aHandler->GetNeedsRecoveryMode(&needsRecoveryMode);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(needsRecoveryMode && !mRecoveryModeHandlers.Get(aDevice, nsnull)) {
+    PRBool success = mRecoveryModeHandlers.Put(aDevice, aHandler);
+    NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP 
@@ -522,15 +547,61 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
 }
 
 NS_IMETHODIMP
-sbDeviceFirmwareUpdater::ContinueUpdate(sbIDevice *aDevice)
+sbDeviceFirmwareUpdater::ContinueUpdate(sbIDevice *aDevice,
+                                        sbIDeviceEventListener *aListener,
+                                        PRBool *_retval)
 {
   LOG(("[sbDeviceFirmwareUpdater] - ContinueUpdate"));
   
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
   NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(_retval);
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  *_retval = PR_FALSE;
+
+  nsCOMPtr<nsIMutableArray> mutableArray =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mRecoveryModeHandlers.EnumerateRead(
+    sbDeviceFirmwareUpdater::EnumerateIntoArrayISupportsKey,
+    mutableArray.get());
+
+  PRUint32 length = 0;
+  rv = mutableArray->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for(PRUint32 current = 0; current < length; ++current) {
+    nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
+      do_QueryElementAt(mutableArray, current, &rv);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Bad object in hashtable!");
+    if(NS_FAILED(rv)) {
+      continue;
+    }
+
+    PRBool success = PR_FALSE;
+    rv = handler->Rebind(aDevice, aListener, &success);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(success) {
+      *_retval = PR_TRUE;
+#ifdef PR_LOGGING
+      nsString contractId;
+      rv = handler->GetContractId(contractId);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      LOG(("[%s] continueUpdate successful", __FUNCTION__));
+      LOG(("Handler with contract id %s will continue the update", 
+           NS_ConvertUTF16toUTF8(contractId).BeginReading()));
+#endif
+      return NS_OK;
+    }
+  }
+
+  return NS_OK;
 }
 
 NS_IMETHODIMP
@@ -792,6 +863,10 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
         NS_ENSURE_SUCCESS(rv, rv);
 
         removeListener = PR_TRUE;
+
+        // Check to see if the device requires recovery mode
+        rv = RequiresRecoveryMode(device, handler);
+        NS_ENSURE_SUCCESS(rv, rv);
       }
       else {
         // XXXAus: Abort!
