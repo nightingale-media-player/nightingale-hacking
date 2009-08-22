@@ -24,6 +24,7 @@
 //
 */
 
+#include "sbIDeviceEvent.idl"
 #include "nsISupports.idl"
 interface nsIArray;
 
@@ -90,6 +91,26 @@ interface sbICDTOC : nsISupports
   // @brief tracks contains an array of sbICDTOCEntry values
   //
   readonly attribute nsIArray tracks;
+};
+
+//------------------------------------------------------------------------------
+//
+// @interface sbICDDeviceEvent
+// @brief Base CD device event interface.
+//
+//------------------------------------------------------------------------------
+[scriptable, uuid(052861b6-1dd2-11b2-b2bc-d05cabd40402)]
+interface sbICDDeviceEvent : sbIDeviceEvent
+{
+  /**
+   * CD metadata lookup query started event.
+   */
+  const unsigned long EVENT_CDLOOKUP_INITIATED = EVENT_CLIENT_DEFINED + 1;
+  
+  /**
+   * CD metadata lookup query completed event.
+   */
+  const unsigned long EVENT_CDLOOKUP_COMPLETED = EVENT_CLIENT_DEFINED + 2;
 };
 
 //------------------------------------------------------------------------------

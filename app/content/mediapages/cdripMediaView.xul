@@ -40,6 +40,7 @@
 <!-- CD Rip Media View. -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="window.cdripController.onLoad();"
+        onunload="window.cdripController.onUnload();"
         id="cdrip-mediaview">
 
   <vbox id="cdrip-outter">
@@ -76,7 +77,8 @@
         <spacer id="sb-cdrip-spacer" flex="1" />
 
         <!-- RIP ACTION AND STATUS -->
-        <hbox id="sb-cdrip-actionstatus-hbox" class="sb-cdrip-header-hbox">
+        <hbox id="sb-cdrip-actionstatus-hbox" class="sb-cdrip-header-hbox"
+              pack="center">
           <vbox pack="center" id="sb-cdrip-actionstatus-image">
             <image id="sb-cdrip-status-image" />
           </vbox>

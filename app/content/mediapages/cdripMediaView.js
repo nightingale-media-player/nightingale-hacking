@@ -50,7 +50,8 @@ const RIP_SETTINGS_BUTTON           = CDRIP_BASE + "settings-button";
 const RIP_SPACER                    = CDRIP_BASE + "spacer";
 
 const RIP_STATUS_HBOX               = CDRIP_BASE + "actionstatus-hbox";
-const RIP_STATUS_IMAGE              = CDRIP_BASE + "actionstatus-image";
+const RIP_STATUS_IMAGE_VBOX         = CDRIP_BASE + "actionstatus-image";
+const RIP_STATUS_IMAGE              = CDRIP_BASE + "status-image";
 const RIP_STATUS_LABEL              = CDRIP_BASE + "actionstatus-label";
 const RIP_STATUS_RIP_CD_BUTTON      = CDRIP_BASE + "rip-cd-button";
 const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
@@ -63,16 +64,44 @@ const RIP_STATUS_EJECT_CD_BUTTON    = CDRIP_BASE + "eject-cd-button";
 window.cdripController =
 {
   onLoad: function cdripController_onLoad() {
-    // For now, just show the "Looking up info" message.
     this._hideSettingsView();
-    this._setLabelValue(RIP_STATUS_LABEL,
-                        SBString("cdrip.mediaview.status.lookup"));
 
     // Hide the status buttons.
     this._hideElement(RIP_STATUS_RIP_CD_BUTTON);
     this._hideElement(RIP_STATUS_STOP_RIP_BUTTON);
     this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
     this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
+
+    // Add our device listener to listen for lookup notification events
+    this._device = this._getDevice();
+    if (this._device.state == 536870913) {
+      this._toggleLookupNotification(true);
+    } else {
+      this._toggleLookupNotification(false);
+    }
+    var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+    eventTarget.addEventListener(this);
+  },
+
+  onUnload: function cdripController_onUnload() {
+    if (this._device) {
+      var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
+      eventTarget.addEventListener(this);
+      this._device.removeEventListener(this);
+    }
+  },
+
+  onDeviceEvent: function cdripController_onDeviceEvent(aEvent) {
+    switch (aEvent.type) {
+      // START CD LOOKUP
+      case Ci.sbIDeviceEvent.EVENT_CDLOOKUP_INITIATED:
+        this._toggleLookupNotification(true);
+      
+      // CD LOOKUP COMPLETE
+      case Ci.sbIDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
+        this._toggleLookupNotification(false);
+        break;
+    }
   },
 
   showCDRipSettings: function cdripController_showCDRipSettings() {
@@ -80,6 +109,21 @@ window.cdripController =
       .getService(Ci.nsIWindowMediator)
       .getMostRecentWindow("Songbird:Main")
       .SBOpenPreferences("paneCDRip");
+  },
+
+  _toggleLookupNotification: function
+                             cdripController_lookupNotification(show) {
+    if (show) {
+      var ripImage = document.getElementById(RIP_STATUS_IMAGE);
+      ripImage.src =
+        "chrome://songbird/skin/base-elements/icon-loading-large.png";
+      this._setLabelValue(RIP_STATUS_LABEL,
+                          SBString("cdrip.mediaview.status.lookup"));
+    } else {
+      var ripImage = document.getElementById(RIP_STATUS_IMAGE);
+      ripImage.src = "";
+      this._setLabelValue(RIP_STATUS_LABEL, "");
+    }
   },
 
   _hideSettingsView: function cdripController_hideSettingsView() {
@@ -125,5 +169,36 @@ window.cdripController =
   _setLabelValue: function cdripController_setLabelValue(aElementId, aValue) {
     document.getElementById(aElementId).value = aValue;
   },
+
+  _getDevice: function cdripController_getDevice() {
+    // Get the device id from the query string in the uri
+    var queryMap = this._parseQueryString();
+   
+    // Get the device for this media view
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    var device = deviceManager.getDevice(Components.ID(queryMap["device-id"]));
+    if (!device) {
+      Cu.reportError("Device: " + queryMap["device-id"] + " does not exist");
+      return null;
+    }
+    return device;
+  },
+ 
+  /**
+   * Helper function to parse and unescape the query string.
+   * Returns a object mapping key->value
+   */
+  _parseQueryString: function cdripController_parseQueryString() {
+    var queryString = (location.search || "?").substr(1).split("&");
+    var queryObject = {};
+    var key, value;
+    for each (var pair in queryString) {
+      [key, value] = pair.split("=");
+      queryObject[key] = unescape(value);
+    }
+    return queryObject;
+  },
+
 };
 

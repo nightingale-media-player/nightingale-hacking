@@ -329,6 +329,11 @@ void
 sbCDDevice::ProxyCDLookup() {
   nsresult rv;
 
+  // Dispatch the event to notify listeners that we're about to start
+  // metadata lookup
+  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_INITIATED,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
   // Get the metadata manager and the default provider
   nsCOMPtr<sbIMetadataLookupManager> mlm =
     do_GetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1",
@@ -372,7 +377,8 @@ sbCDDevice::AttemptCDLookup()
   nsresult rv;
 
   // Update the status
-  mStatus.ChangeState(STATE_LOOKINGUPCD);
+  rv = mStatus.ChangeState(STATE_LOOKINGUPCD);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   if (!NS_IsMainThread()) {
     nsCOMPtr<nsIThreadManager> threadMgr =
@@ -421,6 +427,10 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   PRUint16 numResults = 0;
   rv = metalookupJob->GetMlNumResults(&numResults);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Dispatch the event to notify listeners that we've finished cdlookup
+  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_COMPLETED,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
 
   LOG(("Number of metadata lookup results found: %d", numResults));
   // 3 cases to match up

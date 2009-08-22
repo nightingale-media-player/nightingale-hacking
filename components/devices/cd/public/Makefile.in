@@ -36,4 +36,6 @@ XPIDL_SRCS = sbICDDevice.idl \
 
 XPIDL_MODULE = sbCDDevices.xpt
 
+XPIDL_EXTRA_INCLUDES= $(topsrcdir)/components/devices/base/public
+
 include $(topsrcdir)/build/rules.mk
