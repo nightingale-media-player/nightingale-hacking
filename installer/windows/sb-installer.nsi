@@ -70,10 +70,13 @@ Function InstallAppRegistryKeys
    ; is only registered for the last application installed. When the last
    ; application installed is uninstalled AccessibleMarshal.dll will no longer 
    ; be registered. bug 338878
+   ; XXXeps - sbWindowsFormatter.dll also behaves as AccessibleMarshall.dll does
+   ; with respect to multiple applications
    ; XXXaus - It's unclear to me if we need to do the same thing, need to
    ; investigate.
    ClearErrors
    RegDLL "$INSTDIR\${XULRunnerDir}\AccessibleMarshal.dll"
+   RegDLL "$INSTDIR\lib\sbWindowsFormatter.dll"
 
    ; Check if QuickTime is installed and copy the nsIQTScriptablePlugin.xpt from
    ; its plugins directory into the app's components directory.

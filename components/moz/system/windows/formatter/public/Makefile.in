@@ -22,14 +22,26 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH = ../../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = formatter
+MIDL_GENERATED_FILES = dlldata.c \
+                       sbIWindowsFormatter.h \
+                       sbIWindowsFormatter.tlb \
+                       sbIWindowsFormatter_i.c \
+                       sbIWindowsFormatter_p.c \
+                       $(NULL)
+
+GARBAGE += $(MIDL_GENERATED_FILES)
 
 include $(topsrcdir)/build/rules.mk
+
+$(MIDL_GENERATED_FILES): sbIWindowsFormatter.midl
+	$(MIDL) $(MIDL_FLAGS) -Oicf $(srcdir)/sbIWindowsFormatter.midl
+
+export:: $(MIDL_GENERATED_FILES)
 

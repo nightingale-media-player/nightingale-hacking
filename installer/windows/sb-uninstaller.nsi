@@ -127,6 +127,9 @@ Function un.RemoveBrandingRegistryKeys
 FunctionEnd
 
 Function un.RemoveAppRegistryKeys
+   ; Unregister DLLs
+   UnRegDLL "$INSTDIR\lib\sbWindowsFormatter.dll"
+
    ; Remove registry keys
    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${BrandFullNameInternal}-$InstallerType-${AppBuildNumber}"
 
