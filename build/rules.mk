@@ -509,6 +509,48 @@ endif
 	$(CC) $(COMPILER_OUTPUT_FLAG) $(CFLAGS_ASSEMBLER) $(OUR_C_FLAGS) $(OUR_C_DEFS) $(OUR_C_INCLUDES) $<
 
 #------------------------------------------------------------------------------
+# Rules for Windows resource file (.rc) compilation
+#------------------------------------------------------------------------------
+#
+# WIN32_RC_SRCS           - a list of .rc files to be compiled
+# WIN32_RC_INCLUDES       - an override of the default include dirs to pass to
+#                           the compiler
+# WIN32_RC_EXTRA_INCLUDES - a list of additional include dirs
+#
+# WIN32_RC_FLAGS          - an override of the default flags to pass to the
+#                           compiler
+# WIN32_RC_EXTRA_FLAGS    - a list of additional flags to pass to the compiler
+#
+# WIN32_RC_DEFS           - a override of the default defines to pass to the
+#                           compiler with -D added
+# WIN32_RC_EXTRA_DEFS     - a list of additional defines with -D to pass to the
+#                           compiler
+#
+
+WIN32_RC_DEFAULT_INCLUDES = $(NULL)
+
+ifdef WIN32_RC_FLAGS
+   OUR_WIN32_RC_FLAGS = $(WIN32_RC_FLAGS)
+else
+   OUR_WIN32_RC_FLAGS = -r $(WIN32_RC_EXTRA_FLAGS)
+endif
+
+ifdef WIN32_RC_DEFS
+   OUR_WIN32_RC_DEFS = $(WIN32_RC_DEFS)
+else
+   OUR_WIN32_RC_DEFS = $(ACDEFINES) $(WIN32_RC_EXTRA_DEFS)
+endif
+
+ifdef WIN32_RC_INCLUDES
+   OUR_WIN32_RC_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(WIN32_RC_INCLUDES)))
+else
+   OUR_WIN32_RC_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(WIN32_RC_EXTRA_INCLUDES) $(WIN32_RC_DEFAULT_INCLUDES)))
+endif
+
+%.res: %.rc
+	$(RC) $(COMPILER_OUTPUT_FLAG) $(OUR_WIN32_RC_FLAGS) $(OUR_WIN32_RC_DEFS) $(OUR_WIN32_RC_INCLUDES) $<
+
+#------------------------------------------------------------------------------
 # Rules for dynamic (.so/.dylib/.dll) library generation
 #------------------------------------------------------------------------------
 # DYNAMIC_LIB                - the name of a lib to generate
@@ -529,6 +571,9 @@ endif
 #
 # DISABLE_IMPLICIT_LIBNAME   - disables the automatic generation of the 
 #                              library name; DYNAMIC_LIB is used directly
+#
+# WIN32_DLL_DEFFILE          - Windows DLL module definition file.
+#
 
 DEFAULT_DYNAMIC_LIBS_IMPORTS = xpcomglue_s \
                                nspr4 \
@@ -547,6 +592,10 @@ else
                           $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
                           $(DYNAMIC_LIB_EXTRA_OBJS) \
                           $(NULL)
+
+   ifeq (windows,$(SB_PLATFORM))
+      OUR_DYNAMIC_LIB_OBJS += $(WIN32_RC_SRCS:.rc=.res)
+   endif
 endif
 
 ifdef DYNAMIC_LIB_FLAGS
@@ -561,6 +610,13 @@ else
        else 
           OUR_LD_FLAGS += -dynamiclib -install_name @executable_path/$(OUR_DYNAMIC_LIB) -compatibility_version 1 -current_version 1
        endif
+   endif
+
+   ifeq (windows,$(SB_PLATFORM))
+      ifdef WIN32_DLL_DEFFILE
+         OUR_LD_FLAGS += -DEF:$(call normalizepath,$(WIN32_DLL_DEFFILE))
+         OUR_DYNAMIC_LIB_EXTRA_DEPS += $(WIN32_DLL_DEFFILE)
+      endif
    endif
 endif
 
@@ -605,7 +661,7 @@ OUR_LD_IMPORTS = $(OUR_LD_STATIC_IMPORT_LIST) \
 
 OUR_LINKER_OUTPUT = $(LDFLAGS_OUT_PREFIX)$@$(LDFLAGS_OUT_SUFFIX)
 
-$(OUR_DYNAMIC_LIB): $(OUR_DYNAMIC_LIB_OBJS)
+$(OUR_DYNAMIC_LIB): $(OUR_DYNAMIC_LIB_OBJS) $(OUR_DYNAMIC_LIB_EXTRA_DEPS)
 ifdef FORCE_RANLIB
 	$(RANLIB) $(OUR_LINKER_OUTPUT) $(FORCE_RANLIB)
 endif

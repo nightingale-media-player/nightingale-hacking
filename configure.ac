@@ -470,6 +470,31 @@ case "$SB_PLATFORM" in
     if test -z "$AR"; then AC_MSG_ERROR(Librarian not found); fi
     AC_CHECK_PROG(RC, rc, rc)
     if test -z "$RC"; then AC_MSG_ERROR(Rc not found); fi
+    AC_CHECK_PROG(MIDL, midl, midl)
+    if test -z "$MIDL"; then AC_MSG_ERROR(Midl not found); fi
+
+    # Check midl version
+    _MIDL_FULL_VERSION=`"${MIDL}" -v 2>&1 | sed -nre "$_MSVC_VER_FILTER"`
+    _MIDL_MAJOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
+    _MIDL_MINOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $2 }'`
+    _MIDL_REV_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $3 }'`
+    # Add flags if necessary
+    AC_MSG_CHECKING([for midl flags])
+    case "$target" in
+    i*86-*)
+        if test \( "$_MIDL_MAJOR_VERSION" = "7" -a "$_MIDL_MINOR_VERSION" = "00" -a "$_MIDL_REV_VERSION" = "0499" \); then
+            # MIDL version 7.00.0499 defaults /env win64 on x64 platforms.
+            # MIDL version 7.00.0500 or later has no problem.
+            MIDL_FLAGS="${MIDL_FLAGS} -env win32"
+            AC_MSG_RESULT([need -env win32])
+        else
+            AC_MSG_RESULT([none needed])
+        fi
+        ;;
+    *)
+        AC_MSG_RESULT([none needed])
+        ;;
+    esac
 
     # Tests for bits of the Windows SDK
     AC_CHECK_HEADERS(wmsdk.h, [], AC_MSG_ERROR(Missing wmsdk.h; install the Windows SDK))
@@ -903,6 +928,7 @@ AC_SUBST(ARFLAGS_LIB)
 AC_SUBST(CFLAGS_INCLUDE_PREFIX)
 AC_SUBST(CFLAGS_INCLUDE_SUFFIX)
 AC_SUBST(_MSC_VER)
+AC_SUBST(MIDL_FLAGS)
 AC_SUBST(MSMANIFEST_TOOL)
 AC_SUBST(LDFLAGS_DLL)
 AC_SUBST(LDFLAGS_BIN)
