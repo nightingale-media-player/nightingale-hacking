@@ -164,6 +164,11 @@ label#manage_media_format_file_suffix_label {
   font-weight: bold;
 }
 
+.emphasis
+{
+  font-weight: bold;
+}
+
 .para
 {
   text-indent: 1em;

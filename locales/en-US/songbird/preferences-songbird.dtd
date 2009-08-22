@@ -1,10 +1,14 @@
 <!-- Songbird-specific preferences entities -->
 <!-- Media Management general description -->
 <!ENTITY prefWindow.manageMedia.generalDescription.title "Please Note:">
-<!ENTITY prefWindow.manageMedia.generalDescription.p1 "Turning Manage Files ON — Existing tracks will be copied to the Songbird Music library folder. Subsequent imported tracks will be copied to this location as well.">
-<!ENTITY prefWindow.manageMedia.generalDescription.p2 "Turning Manage Files OFF — Existing tracks will remain in their current Songbird Music library folder. Subsequent imported tracks will not be copied.">
+<!ENTITY prefWindow.manageMedia.generalDescription.p1 "Turning Manage Files ON — Existing tracks will be copied to the &brandShortName; Music library folder. Subsequent imported tracks will be copied to this location as well.">
+<!ENTITY prefWindow.manageMedia.generalDescription.p2 "Turning Manage Files OFF — Existing tracks will remain in their current &brandShortName; Music library folder. Subsequent imported tracks will not be copied.">
 
 <!-- Media Management entities -->
+<!ENTITY prefWindow.manageMedia.enablebox.description.pre "Advanced users may want to control how &brandShortName; organizes their music files on their computer. Manage Files mode will copy files, rather than link, to a directory structure based on the below settings.">
+<!ENTITY prefWindow.manageMedia.enablebox.warning     "This cannot be undone.">
+<!ENTITY prefWindow.manageMedia.enablebox.description.post "">
+
 <!ENTITY prefWindow.manageMedia.label                 "Manage Files">
 <!ENTITY prefWindow.manageMedia.title                 "Manage Files">
 <!ENTITY prefWindow.manageMedia.library.label         "Music Library Location">
@@ -16,8 +20,7 @@
 <!ENTITY prefWindow.manageMedia.format.file.suffix    ".ext">
 <!ENTITY prefWindow.manageMedia.format.file.suffix.tooltip "The file type of your media file, such as .mp3 or .ogg">
 
-<!ENTITY prefWindow.manageMedia.enable.enable.label   "Turn Managed Mode On">
-<!ENTITY prefWindow.manageMedia.enable.disable.label  "Turn Managed Mode Off">
+<!ENTITY prefWindow.manageMedia.enable.enable.label   "Allow &brandShortName; to manage files">
 <!ENTITY prefWindow.manageMedia.enable.preview.label  "Preview Folder Structure">
 
 <!-- Media Management preview entities -->

@@ -229,6 +229,7 @@ var manageMediaPrefsPane = {
       prefElem.value = !prefElem.value;
     }
 
+    this._removeErrorNotifications();
     this._checkForValidPref(false);
     this._updateUI();
   },
@@ -454,13 +455,10 @@ var manageMediaPrefsPane = {
     var renameCheck = document.getElementById("manage_media_format_rename");
     var fileFormatter = document.getElementById("manage_media_format_file_formatter");
      
-    var enableButton = document.getElementById("manage_media_global_cmd");
     var previewButton = document.getElementById("manage_media_global_preview");
-    var prefElem = document.getElementById(enableButton.getAttribute("preference"));
-    var enabled = prefElem.value;
-    if (enabled) {
+    var prefElem = document.getElementById("manage_media_pref_library_enable");
+    if (prefElem.value) {
       // Enable all the controls
-      enableButton.label = enableButton.getAttribute("label-disable");
       managedFolder.removeAttribute("disabled");
       browseButton.disabled = false;
       renameCheck.removeAttribute("disabled");
@@ -469,7 +467,6 @@ var manageMediaPrefsPane = {
       previewButton.disabled = false;
     } else {
       // Disable the controls
-      enableButton.label = enableButton.getAttribute("label-enable");
       managedFolder.setAttribute("disabled", true);
       browseButton.disabled = true;
       renameCheck.setAttribute("disabled", true);
