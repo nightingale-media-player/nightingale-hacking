@@ -2128,12 +2128,6 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
   rv = GetColumnPropertyInfo(col, getter_AddRefs(info));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Only allow |sbIClickablePropertyInfo|s to be set to null
-  nsCOMPtr<sbIClickablePropertyInfo> clickable = do_QueryInterface(info, &rv);
-  if (NS_FAILED(rv) && (value.IsEmpty() || value.EqualsLiteral(" "))) {
-    return NS_OK;
-  }
-
   nsString bind;
   rv = GetPropertyForTreeColumn(col, bind);
   NS_ENSURE_SUCCESS(rv, rv);
