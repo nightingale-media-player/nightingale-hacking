@@ -27,7 +27,8 @@
 
 #filter substitution
 <RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#"
+     xmlns:songbird="http://www.songbirdnest.com/2007/addon-metadata-rdf#">
 
   <Description about="urn:mozilla:install-manifest">
 
@@ -40,6 +41,20 @@
       </Description>
     </em:targetApplication>
 
+    <!-- Register a pane to be displayed below the service sidebar.
+         See http://songbirdnest.com/add-on-api/articles/display-panes -->
+    <songbird:displayPane>
+      <Description>
+        <songbird:contentTitle>Mock CD Test</songbird:contentTitle>
+        <songbird:contentUrl>chrome://mockcdcontroller/content/pane.xul</songbird:contentUrl>
+        <songbird:contentIcon>chrome://albumart/skin/icon-albumart.png</songbird:contentIcon>
+        <songbird:defaultWidth>200</songbird:defaultWidth>
+        <songbird:defaultHeight>175</songbird:defaultHeight>
+        <songbird:suggestedContentGroups>contentpane</songbird:suggestedContentGroups>
+        <songbird:showOnInstall>false</songbird:showOnInstall>
+      </Description>
+    </songbird:displayPane>
+    
     <em:id>@EXTENSION_UUID@</em:id>
     <em:name>mock-cd-controller</em:name>
     <em:description>Mock CD device controller.</em:description>
