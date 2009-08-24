@@ -81,6 +81,13 @@ window.cdripController =
     }
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
+
+    // Go back to previous page and return if device is not available.
+    if (!this._device) {
+      var browser = SBGetBrowser();
+      browser.getTabForDocument(document).backWithDefault();
+      return;
+    }
   },
 
   onUnload: function cdripController_onUnload() {

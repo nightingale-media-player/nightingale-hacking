@@ -113,10 +113,15 @@
 
     Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
+    if (typeof(SBString) == "undefined") {
+      Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+    }
+
     var cdInfoNotFoundDlg = {
       _deviceLibrary: null,
       _dialog: null,
       _okButton: null,
+      _curTrackIndex: 1,
 
       /**
        * \brief Handle load events.
@@ -177,6 +182,11 @@
        * \brief Handle cancel button.
        */
       onCancel: function cdInfoNotFoundDlg_onCancel() {
+        // Populate all of the tracks w/ the default entries.
+        this._artistValue = SBString("cdrip.lookup.default_artistname");
+        this._albumValue = SBString("cdrip.lookup.default_albumname");
+        this._deviceLibrary.enumerateAllItems(this);
+
         window.close();
       },
 
@@ -188,6 +198,16 @@
       onEnumeratedItem: function (aList, aItem) {
         aItem.setProperty(SBProperties.artistName, this._artistValue);
         aItem.setProperty(SBProperties.albumName, this._albumValue);
+
+        // Only pad the track count to two digits since a CD can only have
+        // up to 99 tracks on it.
+        var curTrackNum = this._curTrackIndex++;
+        if (curTrackNum < 10) {
+          curTrackNum = "0" + curTrackNum;
+        }
+        aItem.setProperty(SBProperties.trackName,
+                          SBFormattedString("cdrip.lookup.default_trackname",
+                                            [curTrackNum]));
       },
       onEnumerationEnd: function (aList, aStatus) {
       },
