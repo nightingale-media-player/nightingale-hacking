@@ -195,11 +195,6 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   rv = mDeviceStatistics->AddLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
-  // Show the device library.
-  rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                   NS_LITERAL_STRING("0"));
-  NS_ENSURE_SUCCESS(rv, /* void */);
-
   // Update status and clear auto-failure.
   autoStatus.SetResult(NS_OK);
 

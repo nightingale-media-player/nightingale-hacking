@@ -42,6 +42,7 @@
 #include <sbDeviceContent.h>
 #include <sbIDeviceEvent.h>
 #include <sbProxiedComponentManager.h>
+#include <sbStandardProperties.h>
 #include <sbVariantUtils.h>
 #include <sbAutoRWLock.h>
 
@@ -748,6 +749,11 @@ sbCDDevice::Mount()
 
   // Set the main device library.
   mDeviceLibrary = deviceLibrary;
+
+  // hide the device library.
+  rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                   NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Update the device properties.
   UpdateProperties();
