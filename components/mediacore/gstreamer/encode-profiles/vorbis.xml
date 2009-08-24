@@ -1,6 +1,9 @@
 <profile>
   <type>audio</type>
   <id>b25ea17e-c2b9-4e5c-99ff-d96f247c0b4e</id>
+  <priority>2000</priority> <!-- Medium priority; Vorbis is a good choice when 
+                                 it's supported, but isn't as widely supported
+                                 as some alternatives. -->
   <description>Ogg Vorbis</description>
   <!-- We use the mime types that we use for device capabilities, even when
        these aren't the most accurate option available -->

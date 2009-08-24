@@ -50,6 +50,7 @@ private:
 
 private:
   nsString mId;
+  PRUint32 mPriority;
   nsString mDescription;
   PRUint32 mType;
   nsString mContainerFormat;

@@ -40,7 +40,7 @@ interface nsIFile;
  *       
  * \sa sbITranscodeJob
  */
-[scriptable, uuid(b019a181-3a6e-45aa-a802-9dc05446ee78)]
+[scriptable, uuid(fcab13ea-56f1-403e-9aa9-fc3b6281b69e)]
 interface sbITranscodeProfile : nsISupports
 {
   // Types of transcode profile.
@@ -49,6 +49,12 @@ interface sbITranscodeProfile : nsISupports
   const unsigned long TRANSCODE_TYPE_VIDEO = 2;
   const unsigned long TRANSCODE_TYPE_AUDIO_VIDEO = 3;
 
+  const unsigned long TRANSCODE_PRIORITY_LOWEST = 0;
+  const unsigned long TRANSCODE_PRIORITY_LOW = 1000;
+  const unsigned long TRANSCODE_PRIORITY_MEDIUM = 2000;
+  const unsigned long TRANSCODE_PRIORITY_HIGH = 3000;
+  const unsigned long TRANSCODE_PRIORITY_HIGHEST = 4000;
+
   /*
    * \brief An opaque string uniquely identifying this profile.
    *
@@ -56,6 +62,17 @@ interface sbITranscodeProfile : nsISupports
    * same profile later.
    */
   attribute AString id;
+
+  /*
+   * \brief A value representing how desirable using this profile is.
+   *
+   * When a user has not explicitly selected a profile to encode with,
+   * encoding will use the highest-priority profile available.
+   * 
+   * The priority MAY be one of the constants defined here, but can also
+   * use intermediate values if desired.
+   */
+  attribute unsigned long priority;
 
   /* \brief A human-readable description of what this profile is for 
    *

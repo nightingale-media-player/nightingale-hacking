@@ -1,6 +1,8 @@
 <profile>
   <type>audio</type>
   <id>e8d631a1-f587-4517-8b1a-6da1a7deda44</id>
+  <priority>3000</priority> <!-- High priority - MP3 is pretty universally
+                                 supported, so it's a good default -->
   <description>MP3</description>
   <mimetype>audio/mpeg</mimetype>
 

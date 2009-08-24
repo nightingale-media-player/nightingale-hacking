@@ -31,6 +31,7 @@
 NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodeProfile, sbITranscodeProfile)
 
 sbTranscodeProfile::sbTranscodeProfile() :
+  mPriority(0),
   mType(sbITranscodeProfile::TRANSCODE_TYPE_UKNOWN)
 {
   /* member initializers and constructor code */
@@ -50,6 +51,19 @@ NS_IMETHODIMP sbTranscodeProfile::GetId(nsAString & aId)
 NS_IMETHODIMP sbTranscodeProfile::SetId(nsAString const & aId)
 {
   mId = aId;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbTranscodeProfile::GetPriority(PRUint32 *aPriority)
+{
+  NS_ENSURE_ARG_POINTER(aPriority);
+  *aPriority = mPriority;
+  return NS_OK;
+}
+
+NS_IMETHODIMP sbTranscodeProfile::SetPriority(PRUint32 aPriority)
+{
+  mPriority = aPriority;
   return NS_OK;
 }
 

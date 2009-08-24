@@ -170,6 +170,17 @@ sbTranscodeProfileLoader::LoadProfileInternal()
           rv = mProfile->SetDescription(textContent);
           NS_ENSURE_SUCCESS(rv, rv);
         }
+      } else if (localName.EqualsLiteral("priority")) {
+        nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
+        if (dom3Node) {
+          nsString textContent;
+          rv = dom3Node->GetTextContent(textContent);
+          NS_ENSURE_SUCCESS(rv, rv);
+          PRInt32 priority = textContent.ToInteger(&rv);
+          NS_ENSURE_SUCCESS(rv, rv);
+          rv = mProfile->SetPriority(priority);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
       } else if (localName.EqualsLiteral("id")) {
         nsCOMPtr<nsIDOM3Node> dom3Node = do_QueryInterface(childNode);
         if (dom3Node) {

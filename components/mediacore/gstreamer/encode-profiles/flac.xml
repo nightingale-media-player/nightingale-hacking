@@ -1,6 +1,9 @@
 <profile>
   <type>audio</type>
   <id>484b0182-645f-4ea7-a992-59d5c098dea2</id>
+  <priority>2000</priority> <!-- Medium priority; FLAC is a good choice when 
+                                 it's supported, but isn't as widely supported
+                                 as some alternatives. -->
   <description>FLAC (Free Lossless Audio Codec)</description>
   <mimetype>audio/x-flac</mimetype>
 
