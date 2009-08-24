@@ -71,6 +71,23 @@
       <menuitem/><sb-device-new-playlist-command bindelem="prev"/>
 
     </box>
+    
+    <!-- CD Device context menu items. -->
+    <box id="cddevice_context_menu_items">
+
+      <menuitem/><sb-device-rip-command bindelem="prev"/>
+      <menuitem/><sb-device-stoprip-command bindelem="prev"
+                    label="&command.device.stoprip;"
+                    accesskey="&command.device.stoprip.accesskey;"/>
+      <menuitem/><sb-device-rescan-command bindelem="prev"
+                    label="&command.device.lookup;"
+                    accesskey="&command.device.lookup.accesskey;"/>
+      <menuitem/><sb-device-viewtracks-command bindelem="prev"/>
+      <menuitem/><sb-device-eject-command bindelem="prev"
+                    label="&command.device.ejectcddevice;"
+                    accesskey="&command.device.ejectcddevice.accesskey;"/>
+    </box>
+    
 
 </box>
 

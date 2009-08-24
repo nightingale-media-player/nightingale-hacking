@@ -430,6 +430,18 @@
 <!ENTITY command.device.renamedevice.accesskey          "R">
 <!ENTITY command.device.devicesync                      "Sync">
 <!ENTITY command.device.devicesync.accesskey            "S">
+<!-- CD Device entities -->
+<!ENTITY command.device.rip                             "Rip CD">
+<!ENTITY command.device.rip.accesskey                   "R">
+<!ENTITY command.device.stoprip                         "Stop Rip">
+<!ENTITY command.device.stoprip.accesskey               "S">
+<!ENTITY command.device.lookup                          "Lookup CD Information">
+<!ENTITY command.device.lookup.accesskey                "L">
+<!ENTITY command.device.recentadded                     "View Tracks">
+<!ENTITY command.device.recentadded.accesskey           "V">
+<!ENTITY command.device.ejectcddevice                   "Eject CD">
+<!ENTITY command.device.ejectcddevice.accesskey         "E">
+
 
 <!ENTITY device.firmware.wizard.title                     "Update Firmware">
 <!ENTITY device.firmware.wizard.check.page.title          "Check for Updated Firmware">

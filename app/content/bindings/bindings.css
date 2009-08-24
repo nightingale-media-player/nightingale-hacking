@@ -514,6 +514,25 @@ sb-device-sync-cancel-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
 }
 
+/**
+ * CD Device Commands
+ */
+sb-device-rip-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rip-command");
+}
+
+sb-device-stoprip-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-stoprip-command");
+}
+
+sb-device-rescan-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-rescan-command");
+}
+
+sb-device-viewtracks-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-viewtracks-command");
+}
+
 sb-device-battery {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfo.xml#sb-device-battery") !important;
 }

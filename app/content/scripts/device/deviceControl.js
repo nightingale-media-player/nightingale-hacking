@@ -51,6 +51,9 @@ Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+
 
 //------------------------------------------------------------------------------
 //
@@ -270,12 +273,141 @@ deviceControlWidget.prototype = {
       case "sync" :
         this._device.syncLibraries();
         break;
+      
+      case "rip" :
+        // Ripping tracks involves copying the selected ones to the main library
+        this._ripTracks();
+        break;
+      
+      case "showrecent" :
+        // Show the recently added playlist if available.
+        this._showRecentPlaylist();
+        break;
+      
+      case "rescan" :
+        // Invoke the CD Lookup again
+        var bag = Cc["@mozilla.org/hash-property-bag;1"]
+                    .createInstance(Ci.nsIWritablePropertyBag);
+        // REQUEST_CDLOOKUP is REQUEST_FLAG_USER+1
+        this._device.submitRequest(this._device.REQUEST_FLAG_USER + 1, bag);
+        break;
 
       default :
         break;
     }
   },
 
+  /**
+   * Get the Recently Added playlist from the main library. We have to do this
+   * by getting all the playlists and comparing the "smart" lists names to our
+   * localized name for the Recently Added playlist.
+   */
+  
+  _getRecentlyAddedPlaylist: function() {
+    // First get the actual localized name for the list to compare.
+    var playListName = SBString("smart.defaultlist.recentlyadded");
+    
+    // Now enumerate through the lists to find the Recently Added
+    var enumerator = LibraryUtils.mainLibrary
+                                 .getItemsByProperty(SBProperties.isList, "1")
+                                 .enumerate();
+    var foundList = null;
+    while(enumerator.hasMoreElements()) {
+      var item = enumerator.getNext().QueryInterface(Ci.sbIMediaList);
+      if (item.type == "smart" &&
+          item.name == playListName) {
+        foundList = item;
+      }
+    }
+    
+    return foundList;
+  },
+
+  /**
+   * Get the devices library (defaults to first library)
+   * \param aIndex - Library index to retrieve
+   */
+  _getDeviceLibrary: function deviceControlWidget__getDeviceLibrary(aIndex) {
+    if (typeof(aIndex) == "undefined") {
+      aIndex = 0;
+    }
+    
+    // Get the libraries for device
+    var libraries = this._device.content.libraries;
+    if (libraries.length < 1) {
+      // Oh no, we have no libraries
+      Cu.reportError("Device " + this._device.id + " has no libraries!");
+      return null;
+    }
+
+    // Get the requested library
+    var deviceLibrary = libraries.queryElementAt(aIndex, Ci.sbIMediaList);
+    if (!deviceLibrary) {
+      Cu.reportError("Unable to get library " + aIndex + " for device: " +
+                     this._device.id);
+      return null;
+    }
+    
+    return deviceLibrary;
+  },
+
+  /**
+   * Rip the tracks from the device to the main library, we do this by copying
+   * the selected tracks from the device to the main library.
+   */
+  
+  _ripTracks: function deviceControlWidget__ripTracks() {
+    var deviceLibrary = this._getDeviceLibrary();
+    try {
+      // Get all the selected tracks from the device library
+      var addItems = deviceLibrary.getItemsByProperty(SBProperties.isChecked, "1");
+  
+      // Then add them to the main library using addSome(enumerator)
+      LibraryUtils.mainLibrary.addSome(addItems.enumerate());
+    } catch (err) {}
+  },
+
+  /**
+   * Show the recently added playlist.
+   */
+
+ _showRecentPlaylist: function deviceControlWidget__showRecentPlaylist() {
+    // First we need to find the Recently Added playlist
+    var mediaList = this._getRecentlyAddedPlaylist();
+    if (!mediaList) {
+      return;
+    }
+    
+    var browser = SBGetBrowser();
+    var tab = browser.loadMediaList(mediaList, null, "_media");
+    browser.selectedTab = tab;
+
+    // Record list type metrics for some reason.
+    // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
+    // changed to loadNode from click as there are ways other than clicking
+    // to get here.
+    try {
+      var listType = mediaList.getProperty(SBProperties.customType);
+      var libType = mediaList.library.getProperty(SBProperties.customType);
+      metrics_inc("app.servicepane.loadnode.medialist", libType + "." + listType, null);
+    } catch(e) { Components.utils.reportError(e); }
+  },
+  
+  /**
+   * Check if any of the items from the device have been successfully ripped.
+   */
+  _getRippedItemCount: function deviceControlWidget__getRippedItemCount() {
+    var deviceLibrary = this._getDeviceLibrary();
+    var rippedCount = 0;
+    try {
+      // Get all the successfully ripped tracks
+      var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.ripStatus,
+                                                         "3|100");
+      rippedCount = rippedItems.length;  
+    } catch (err) {}
+    
+    return rippedCount;
+  },
 
   /**
    * Create a new device playlist.
@@ -513,6 +645,7 @@ deviceControlWidget.prototype = {
     var supportsReformat = this._device.supportsReformat;
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
+    var cddevice = (this._device.parameters.getProperty("DeviceType") == "CD");
 
     // Get the management type for the device library.  Default to manual if no
     // device library.
@@ -526,7 +659,8 @@ deviceControlWidget.prototype = {
         (this._currentMgmtType == mgmtType) &&
         (this._currentSupportsReformat == supportsReformat) &&
         (this._currentSupportsPlaylist == supportsPlaylist) &&
-        (this._currentMsc == msc)) {
+        (this._currentMsc == msc) &&
+        (this._currentCDDevice == cddevice)) {
       return;
     }
 
@@ -537,6 +671,7 @@ deviceControlWidget.prototype = {
     this._currentSupportsReformat = supportsReformat;
     this._currentSupportsPlaylist = supportsPlaylist;
     this._currentMsc = msc;
+    this._currentCDDevice = cddevice;
 
     // Update widget attributes.
     var updateAttributeList = [];
@@ -690,6 +825,15 @@ deviceControlWidget.prototype = {
     // Return false if no state attribute value available.
     if (!this._widget.hasAttribute(stateAttrName))
       return false;
+
+    // For some commands we need to check if there are any ripped items.
+    if (this._widget.hasAttribute(aAttrState + "_ripped")) {
+      // Since this widget has a ripped flag for the state we first check
+      // if there is any ripped tracks and if not return false
+      if (this._getRippedItemCount() <= 0) {
+        return false;
+      }
+    }
 
     // Return the state attribute value.
     aAttrVal.value = this._widget.getAttribute(stateAttrName);

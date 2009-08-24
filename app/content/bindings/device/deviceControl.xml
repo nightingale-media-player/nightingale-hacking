@@ -84,6 +84,9 @@
    *   new_playlist             Create new device playlist.
    *   rename                   Rename device.
    *   sync                     Sync device.
+   *   rip                      Transcode items from a device.
+   *   rescan                   Rescan the device (CD Lookup on rip cd device)
+   *   showrecent               Show the recently added playlist.
    *
    *   Binding specs
    *   =============
@@ -280,7 +283,7 @@
   <binding id="sb-device-eject-command">
     <content>
       <xul:sb-device-control
-         xbl:inherits="bindelem,device-id,service_pane_node_id"
+         xbl:inherits="bindelem,device-id,service_pane_node_id,label,accesskey"
          bindforward="parent"
          label="&command.device.ejectdevice;"
          accesskey="&command.device.ejectdevice.accesskey;"
@@ -539,5 +542,95 @@
     </content>
   </binding>
 
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device rip command widget.
+   *
+   *   This widget implements a device rip command.  It disables itself if
+   * the device is in the middle of a process (sync, rip, etc).
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-rip-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,service_pane_node_id"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.rip;"
+                             accesskey="&command.device.rip.accesskey;"
+                             disabled_default="true"
+                             disabled_idle="remove_attribute"
+                             action="rip"/>
+    </content>
+  </binding> <!-- sb-device-rip-command -->
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device stop rip command widget.
+   *
+   *   This widget implements a device stop rip command. It disables itself if
+   * the device is not currently transcoding.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-stoprip-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
+                             bindforward="parent"
+                             listentodevice="true"
+                             disabled_default="true"
+                             disabled_transcode="remove_attribute"
+                             action="cancel"/>
+    </content>
+  </binding> <!-- sb-device-stoprip-command -->
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device rescan command widget.
+   *
+   *   This widget implements a rescan command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-rescan-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
+                             bindforward="parent"
+                             listentodevice="true"
+                             disabled_default="true"
+                             disabled_idle="remove_attribute"
+                             action="rescan"/>
+    </content>
+  </binding> <!-- sb-device-rescan-command -->
+  
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device view recent tracks command widget.
+   *
+   *   This widget implements a view recent tracks command.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-viewtracks-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.recentadded;"
+                             accesskey="&command.device.recentadded.accesskey;"
+                             disabled_default="true"
+                             disabled_idle="remove_attribute"
+                             idle_ripped="true"
+                             action="showrecent"/>
+    </content>
+  </binding> <!-- sb-device-viewtracks-command -->
 </bindings>
 

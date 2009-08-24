@@ -35,6 +35,7 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 
 const CDRIPNS = 'http://songbirdnest.com/rdf/servicepane/cdrip#';
 const SPNS = 'http://songbirdnest.com/rdf/servicepane#';
@@ -95,7 +96,22 @@ sbCDRipServicePaneService.prototype = {
   fillContextMenu: function sbCDRipServicePaneService_fillContextMenu(aNode,
                                                                   aContextMenu,
                                                                   aParentWindow) {
-    // TODO: Bug 17432
+    // Get the node device ID.  Do nothing if not a device node.
+    var deviceID = aNode.getAttributeNS(CDRIPNS, "DeviceId");
+    if (!deviceID)
+      return;
+  
+    // Get the device node type.
+    var deviceNodeType = aNode.getAttributeNS(CDRIPNS, "deviceNodeType");
+
+    // Import device context menu items into the context menu.
+    if (deviceNodeType == "cd-device") {
+      DOMUtils.importChildElements(aContextMenu,
+                                   this._deviceContextMenuDoc,
+                                   "cddevice_context_menu_items",
+                                   { "device-id": deviceID,
+                                     "service_pane_node_id": aNode.id });
+    }
   },
 
   fillNewItemMenu: function sbCDRipServicePaneService_fillNewItemMenu(aNode,
@@ -197,6 +213,11 @@ sbCDRipServicePaneService.prototype = {
     while (deviceEnum.hasMoreElements()) {
       this._addDevice(deviceEnum.getNext().QueryInterface(Ci.sbIDevice));
     }
+
+    // load the cd-device context menu document
+    this._deviceContextMenuDoc =
+          DOMUtils.loadDocument
+            ("chrome://songbird/content/xul/device/deviceContextMenu.xul");
   },
   
   /**
