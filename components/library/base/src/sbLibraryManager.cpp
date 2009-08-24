@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-// 
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-// 
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this 
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /** 
 * \file  sbLibraryManager.cpp
@@ -50,11 +48,11 @@
 #include <nsComponentManagerUtils.h>
 #include <nsEnumeratorUtils.h>
 #include <nsServiceManagerUtils.h>
-#include <nsThreadUtils.h>
 #include <prlog.h>
 #include <rdf.h>
 #include <sbProxyUtils.h>
 #include <sbLibraryUtils.h>
+#include <sbThreadUtils.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -84,7 +82,7 @@ sbLibraryManager::sbLibraryManager()
   mLock(nsnull)
 {
   MOZ_COUNT_CTOR(sbLibraryManager);
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  NS_ASSERTION(SB_IsMainThread(), "Wrong thread!");
 
 #ifdef PR_LOGGING
   if (!gLibraryManagerLog)
@@ -96,7 +94,7 @@ sbLibraryManager::sbLibraryManager()
 
 sbLibraryManager::~sbLibraryManager()
 {
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), "Wrong thread!");
 
   if(mLock) {
     nsAutoLock::DestroyLock(mLock);
@@ -135,7 +133,9 @@ nsresult
 sbLibraryManager::Init()
 {
   TRACE(("sbLibraryManager[0x%x] - Init", this));
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  NS_ASSERTION(SB_IsMainThread(), "Wrong thread!");
+
+  nsresult rv;
 
   PRBool success = mLibraryTable.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
@@ -146,7 +146,11 @@ sbLibraryManager::Init()
   mLock = nsAutoLock::NewLock("sbLibraryManager::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
-  nsresult rv;
+  // Get the thread manager.  This is used so that main thread checks work
+  // during XPCOM shutdown.
+  mThreadManager = do_GetService("@mozilla.org/thread-manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<nsIObserverService> observerService = 
     do_GetService(NS_OBSERVERSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -395,7 +399,7 @@ void
 sbLibraryManager::InvokeLoaders()
 {
   TRACE(("sbLibraryManager[0x%x] - InvokeLoaders", this));
-  NS_ASSERTION(NS_IsMainThread(), "Wrong thread!");
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), "Wrong thread!");
 
   nsCOMArray<sbILibraryLoader> loaders = mLoaderCache.GetEntries();
   PRInt32 count = loaders.Count();

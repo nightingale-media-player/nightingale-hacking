@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_THREAD_UTILS_H__
 #define __SB_THREAD_UTILS_H__
@@ -49,6 +47,8 @@
 //------------------------------------------------------------------------------
 
 // Mozilla imports.
+#include <nsAutoLock.h>
+#include <nsAutoPtr.h>
 #include <nsThreadUtils.h>
 
 
@@ -352,10 +352,12 @@ public:
 
   //
   // SelfType                   Type for this class.
+  // BaseType                   Base type for this class.
   // MethodType                 Type of method to invoke.
   //
 
   typedef sbRunnableMethod2<ClassType, ReturnType, Arg1Type, Arg2Type> SelfType;
+  typedef sbRunnableMethod1<ClassType, ReturnType, Arg1Type> BaseType;
   typedef ReturnType (ClassType::*MethodType)(Arg1Type aArg1Value,
                                               Arg2Type aArg2Value);
 
@@ -367,14 +369,16 @@ public:
   NS_IMETHOD Run()
   {
     // Do nothing if no object was provided.
-    if (!mObject)
+    if (!BaseType::mObject)
       return NS_OK;
 
     // Invoke method.
-    ReturnType returnValue = (mObject->*mMethod)(mArg1Value, mArg2Value);
+    ReturnType
+      returnValue = (BaseType::mObject->*mMethod)(BaseType::mArg1Value,
+                                                  mArg2Value);
     {
-      nsAutoLock autoLock(mLock);
-      mReturnValue = returnValue;
+      nsAutoLock autoLock(BaseType::mLock);
+      BaseType::mReturnValue = returnValue;
     }
 
     return NS_OK;
@@ -541,7 +545,7 @@ protected:
                     ReturnType aFailureReturnValue,
                     Arg1Type   aArg1Value,
                     Arg2Type   aArg2Value) :
-    sbRunnableMethod1(aObject, nsnull, aFailureReturnValue, aArg1Value),
+    BaseType(aObject, nsnull, aFailureReturnValue, aArg1Value),
     mMethod(aMethod),
     mArg2Value(aArg2Value)
   {
@@ -670,6 +674,24 @@ protected:
                               aFailureReturnValue,                             \
                               aArg1Value,                                      \
                               aArg2Value)
+
+
+//------------------------------------------------------------------------------
+//
+// Songbird thread utilities service prototypes.
+//
+//------------------------------------------------------------------------------
+
+/**
+ * Check if the current thread is the main thread and return true if so.  Use
+ * the thread manager object specified by aThreadManager if provided.  This
+ * function can be used during XPCOM shutdown if aThreadManager is provided.
+ *
+ * \param aThreadManager        Optional thread manager.  Defaults to null.
+ *
+ * \return PR_TRUE              Current thread is main thread.
+ */
+PRBool SB_IsMainThread(nsIThreadManager* aThreadManager = nsnull);
 
 
 #endif // __SB_THREAD_UTILS_H__

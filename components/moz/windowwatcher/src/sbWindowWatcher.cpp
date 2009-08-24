@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -48,6 +46,9 @@
 // Self imports.
 #include "sbWindowWatcher.h"
 
+// Songbird imports.
+#include <sbThreadUtils.h>
+
 // Mozilla imports.
 #include <nsAutoLock.h>
 #include <nsIDOMDocument.h>
@@ -56,7 +57,6 @@
 #include <nsIProxyObjectManager.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
-#include <nsThreadUtils.h>
 #include <prlog.h>
 
 /**
@@ -124,7 +124,7 @@ sbWindowWatcher::CallWithWindow(const nsAString&           aWindowType,
   nsresult rv;
 
   // If not on main thread, call back through a proxy.
-  if (!NS_IsMainThread()) {
+  if (!SB_IsMainThread(mThreadManager)) {
     // Get a main thread proxy to this instance.
     nsCOMPtr<sbIWindowWatcher> proxyWindowWatcher;
     rv = GetProxiedWindowWatcher(getter_AddRefs(proxyWindowWatcher));
@@ -206,7 +206,7 @@ sbWindowWatcher::GetWindow(const nsAString& aWindowType,
   nsresult               rv;
 
   // This method may only be called on the main thread.
-  NS_ENSURE_TRUE(NS_IsMainThread(), NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(SB_IsMainThread(mThreadManager), NS_ERROR_UNEXPECTED);
 
   // Operate within the monitor.
   nsAutoMonitor autoMonitor(mMonitor);
@@ -218,7 +218,7 @@ sbWindowWatcher::GetWindow(const nsAString& aWindowType,
                                       getter_AddRefs(enumerator));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Search for the most recently focused ready window of the specified type.  
+  // Search for the most recently focused ready window of the specified type.
   // The enumerator enumerates from oldest to youngest (least recently focused
   // to most recently), so the last matching window is the most recently focused
   // one.
@@ -275,7 +275,7 @@ sbWindowWatcher::WaitForWindow(const nsAString& aWindowType)
   nsresult rv;
 
   // This method may not be called on the main thread.
-  NS_ENSURE_TRUE(!NS_IsMainThread(), NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(!SB_IsMainThread(mThreadManager), NS_ERROR_UNEXPECTED);
 
   // Don't wait if this instance is shutting down.
   {
@@ -333,13 +333,13 @@ sbWindowWatcher::GetIsShuttingDown(PRBool* aIsShuttingDown)
  * Observe will be called when there is a notification for the
  * topic |aTopic|.  This assumes that the object implementing
  * this interface has been registered with an observer service
- * such as the nsIObserverService. 
+ * such as the nsIObserverService.
  *
- * If you expect multiple topics/subjects, the impl is 
+ * If you expect multiple topics/subjects, the impl is
  * responsible for filtering.
  *
- * You should not modify, add, remove, or enumerate 
- * notifications in the implemention of observe. 
+ * You should not modify, add, remove, or enumerate
+ * notifications in the implemention of observe.
  *
  * @param aSubject : Notification specific interface pointer.
  * @param aTopic   : The notification topic or subject.
@@ -385,7 +385,7 @@ sbWindowWatcher::OnDOMWindowOpened(nsISupports*     aSubject,
 {
   // Validate arguments and state.
   NS_ASSERTION(aSubject, "aSubject is null");
-  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), "not on main thread");
 
   // Function variables.
   nsresult rv;
@@ -415,7 +415,7 @@ sbWindowWatcher::OnDOMWindowClosed(nsISupports*     aSubject,
 {
   // Validate arguments and state.
   NS_ASSERTION(aSubject, "aSubject is null");
-  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), "not on main thread");
 
   // Function variables.
   nsresult rv;
@@ -440,7 +440,7 @@ nsresult
 sbWindowWatcher::OnQuitApplicationGranted()
 {
   // Validate state.
-  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), "not on main thread");
 
   // Shutdown the Songbird window watcher services.
   Shutdown();
@@ -503,6 +503,11 @@ sbWindowWatcher::Init()
 
   // Get the observer service.
   mObserverService = do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the thread manager.  This is used so that main thread checks work
+  // during XPCOM shutdown.
+  mThreadManager = do_GetService("@mozilla.org/thread-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Create a monitor.
@@ -571,7 +576,7 @@ void
 sbWindowWatcher::Shutdown()
 {
   // Validate state.
-  NS_ASSERTION(NS_IsMainThread(), "not on main thread");
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), "not on main thread");
 
   // Operate within the monitor.
   {
@@ -916,12 +921,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbWindowWatcherEventListener,
 //------------------------------------------------------------------------------
 
 /**
- * This method is called whenever an event occurs of the type for which 
+ * This method is called whenever an event occurs of the type for which
  * the EventListener interface was registered.
  *
- * @param   evt The Event contains contextual information about the 
- *              event. It also contains the stopPropagation and 
- *              preventDefault methods which are used in determining the 
+ * @param   evt The Event contains contextual information about the
+ *              event. It also contains the stopPropagation and
+ *              preventDefault methods which are used in determining the
  *              event's flow and default action.
  */
 

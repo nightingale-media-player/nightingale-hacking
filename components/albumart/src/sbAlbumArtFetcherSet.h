@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef __SB_ALBUMARTFETCHERSET_H__
 #define __SB_ALBUMARTFETCHERSET_H__
@@ -59,6 +57,7 @@
 #include <nsIConsoleService.h>
 #include <nsIArray.h>
 #include <nsIMutableArray.h>
+#include <nsIThreadManager.h>
 #include <nsITimer.h>
 
 
@@ -143,6 +142,7 @@ private:
 
   //
   // mAlbumArtService           Album art service.
+  // mThreadManager             Thread manager.
   // mConsoleService            Console service for warning messages.
   // mAlbumArtSourceList        List of album art sources.
   // mType                      sbIAlbumArtFetcherSet.TYPE_[LOCAL|REMOTE|ALL]
@@ -150,6 +150,7 @@ private:
   //
 
   nsCOMPtr<sbIAlbumArtService>  mAlbumArtService;
+  nsCOMPtr<nsIThreadManager>    mThreadManager;
   nsCOMPtr<nsIConsoleService>   mConsoleService;
   nsCOMPtr<nsIArray>            mAlbumArtSourceList;
   PRUint32                      mType;
@@ -158,7 +159,7 @@ private:
   //
   // mListener                  Listener for the fetching.
   //
-  
+
   nsCOMPtr<sbIAlbumArtListener> mListener;
 
   //
@@ -172,7 +173,7 @@ private:
   PRUint32                      mFetcherIndex;
   nsCOMPtr<sbIAlbumArtFetcher>  mFetcher;
   nsCOMPtr<nsIArray>            mMediaItems;
-  
+
   //
   // mTimeoutTimer              Time out timer for fetch opertaions
   // mTimeoutTimerValue         Max time a fetch operation is allowed.
@@ -192,9 +193,9 @@ private:
   //
 
   nsresult CheckLocalImage(nsIURI*    aImageLocation);
-  
+
   nsresult TryNextFetcher();
-  
+
   nsresult NextFetcher();
 };
 

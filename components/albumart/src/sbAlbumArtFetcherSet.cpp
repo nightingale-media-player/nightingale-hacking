@@ -1,30 +1,28 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -57,10 +55,10 @@
 #include <nsIVariant.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
-#include <nsThreadUtils.h>
 
 // Songbird imports
 #include <sbPrefBranch.h>
+#include <sbThreadUtils.h>
 
 /**
  * To log this module, set the following environment variable:
@@ -151,7 +149,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
                                             sbIAlbumArtListener* aListener)
 {
   TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForAlbum"));
-  NS_ASSERTION(NS_IsMainThread(), \
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::FetchAlbumArtForAlbum is main thread only!");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItems);
@@ -192,7 +190,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
                                             sbIAlbumArtListener* aListener)
 {
   TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForTrack"));
-  NS_ASSERTION(NS_IsMainThread(), \
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::FetchAlbumArtForTrack is main thread only!");
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -227,7 +225,7 @@ NS_IMETHODIMP
 sbAlbumArtFetcherSet::Shutdown()
 {
   TRACE(("sbAlbumArtFetcherSet::Shutdown"));
-  NS_ASSERTION(NS_IsMainThread(), \
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::Shutdown is main thread only!");
   if (mFetcher) {
     // Shutdown the current fetcher
@@ -420,6 +418,11 @@ sbAlbumArtFetcherSet::Initialize()
 
   // Create our timer
   mTimeoutTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the thread manager.  This is used so that main thread checks work
+  // during XPCOM shutdown.
+  mThreadManager = do_GetService("@mozilla.org/thread-manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the album art service.
@@ -624,7 +627,7 @@ nsresult
 sbAlbumArtFetcherSet::NextFetcher()
 {
   TRACE(("sbAlbumArtFetcherSet::NextFetcher"));
-  NS_ASSERTION(NS_IsMainThread(), \
+  NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::NextFetcher is main thread only!");
   nsresult rv;
   PRUint32 currentFetcherIndex = mFetcherIndex;
