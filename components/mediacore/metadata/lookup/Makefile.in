@@ -34,7 +34,7 @@ SUBDIRS = manager \
           $(NULL)
 
 ifeq (1,$(SB_ENABLE_TESTS))
-   SUBDIRS += TestProvider
+   SUBDIRS += testprovider
 endif
 
 include $(topsrcdir)/build/rules.mk
