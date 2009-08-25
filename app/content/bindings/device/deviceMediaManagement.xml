@@ -72,12 +72,34 @@
       <xul:vbox flex="1">
         <xul:groupbox flex="1" sbid="transcoding-groupbox">
           <xul:caption label="&device.settings.music.transcoding.label;"/>
-          <xul:description>
-            &device.settings.music.transcoding.desc1;
-          </xul:description>
-          <xul:description>
-            &device.settings.music.transcoding.desc2;
-          </xul:description>
+          <!-- Transcoding preferences. -->
+          <xul:vbox class="content-controls"
+                    oncommand="DeviceMediaManagementServices.onUIPrefChange();">
+
+            <!-- Transcoding mode radio group. -->
+            <xul:radiogroup sbid="transcoding_mode_radio_group" flex="1">
+
+              <xul:radio sbid="transcoding-mode-auto"
+                         label="&device.settings.music.transcoding.mode.auto.label;"/>
+              <xul:radio sbid="transcoding-mode-manual"
+                         label="&device.settings.music.transcoding.mode.manual.label;"/>
+              <xul:vbox sbid="transcoding-mode-details" class="indent">
+                <xul:hbox>
+                  <xul:label value="&device.settings.music.transcoding.format.label;"/>
+                  <xul:menulist sbid="encoding-format-menu">
+                    <xul:menupopup sbid="encoding-format-list"/>
+                  </xul:menulist>
+                </xul:hbox>
+                <xul:hbox sbid="transcoding-bitrate">
+                  <xul:label value="&device.settings.music.transcoding.bitrate.label;"/>
+                  <xul:textbox sbid="transcoding-bitrate-kbps" type="number" 
+                               increment="32"/>
+                  <xul:label value="&device.settings.music.transcoding.bitrate.units;"/>
+                </xul:hbox>
+              </xul:vbox>
+            </xul:radiogroup>
+
+          </xul:vbox>
         </xul:groupbox>
         <xul:groupbox flex="1">
           <xul:caption label="&device.settings.disk.label;"/>
@@ -224,15 +246,6 @@
         </getter>
       </property>
 
-      <property name="_transcodingGroupbox" readonly="true">
-        <getter>
-          return document.getAnonymousElementByAttribute(
-                   this,
-                   "sbid",
-                   "transcoding-groupbox");
-        </getter>
-      </property>
-
       <!--
        * constructor
        *
@@ -241,16 +254,12 @@
 
       <constructor> <![CDATA[
       {
-        Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
+        /* Import external services. */
+        this.importExternalServices();
 
-        // Only show the transcoding groupbox for windows right now:
-        // see bug 16247.
-        var sysInfo =
-          Components.classes["@mozilla.org/system-info;1"]
-                    .getService(Components.interfaces.nsIPropertyBag2);
-        if (sysInfo.getProperty("name") != "Windows_NT") {
-          this._transcodingGroupbox.style.visibility = "collapse";
-        }
+        DeviceMediaManagementServices.initialize(this);
+
+        Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
 
         this.reset();
 
@@ -273,8 +282,35 @@
         if (this.device) {
           this.device = null;
         }
+        /* Finalize the device music management preference services. */
+        DeviceMediaManagementServices.finalize(this);
+
       }
       ]]></destructor>
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+      {
+        /* Import the device sync services. */
+        if (typeof(DeviceMediaManagementServices) == "undefined") {
+          var jsLoader;
+          /* Get the Javascript sub-script loader services. */
+          jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                               .getService
+                                  (Components.interfaces.mozIJSSubScriptLoader);
+          jsLoader.loadSubScript
+                  ("chrome://songbird/content/scripts/device/deviceMediaManagement.js",
+                   null);
+        }
+
+      }
+      ]]></body></method>
+
 
       <method name="save">
         <body> <![CDATA[
@@ -289,6 +325,8 @@
 
           // Save the device's storage settings
           this._saveStorageScaleSetting();
+
+          DeviceMediaManagementServices.savePreferences();
         ]]></body>
       </method>
 
@@ -312,6 +350,8 @@
           // Set the scale to the device's current value.
           var self = this;
           setTimeout(function() { self._resetStorageScale(); }, 100);
+
+          DeviceMediaManagementServices.resetPreferences();
         ]]></body>
       </method>
 
@@ -416,6 +456,9 @@
 
     <handlers>
       <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device music management services. */
+        DeviceMediaManagementServices.finalize(this);
+        DeviceMediaManagementServices.initialize(this);
       ]]></handler>
     </handlers>
 
