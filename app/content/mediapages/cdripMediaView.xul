@@ -43,7 +43,7 @@
         onunload="window.cdripController.onUnload();"
         id="cdrip-mediaview">
 
-  <vbox id="cdrip-outter">
+  <vbox id="cdrip-outter" flex="1">
     <vbox id="sb-cdrip-header">
       <hbox id="sb-cdrip-header-hbox" class="sb-cdrip-header-hbox">
 
@@ -108,7 +108,14 @@
 
     <vbox id="cdrip-playlist-content"
           flex="1">
-      <!-- TODO: Put a playlist here for CD Rip View see Bug 17425 -->
+      <sb-playlist id="sb-cdrip-playlist" 
+          flex="1"
+          persist="column-list column-widths"
+          editable="false"
+          hidefilters="true"
+          hidecolumnpicker="true"
+          enableColumnDrag="false"
+      />
     </vbox>
   </vbox>
 

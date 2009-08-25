@@ -24,7 +24,12 @@
 //
 */
 
+const SB_NS = 'http://songbirdnest.com/data/1.0#';
+
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
@@ -58,11 +63,20 @@ const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
 const RIP_STATUS_VIEW_TRACKS_BUTTON = CDRIP_BASE + "view-tracks-button";
 const RIP_STATUS_EJECT_CD_BUTTON    = CDRIP_BASE + "eject-cd-button";
 
+const CDRIP_PLAYLIST                = CDRIP_BASE + "playlist";
+
 //------------------------------------------------------------------------------
 // CD rip view controller
 
 window.cdripController =
 {
+    // The sbIMediaListView that this page is to display
+  _mediaListView: null,
+    // The playlist we bind our CD Tracks to.
+  _playlist:      null,
+    // The device we are working with
+  _device:        null,
+
   onLoad: function cdripController_onLoad() {
     this._hideSettingsView();
 
@@ -74,6 +88,14 @@ window.cdripController =
 
     // Add our device listener to listen for lookup notification events
     this._device = this._getDevice();
+
+    // Go back to previous page and return if device is not available.
+    if (!this._device) {
+      var browser = SBGetBrowser();
+      browser.getTabForDocument(document).backWithDefault();
+      return;
+    }
+
     if (this._device.state == 536870913) {
       this._toggleLookupNotification(true);
     } else {
@@ -82,12 +104,7 @@ window.cdripController =
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
 
-    // Go back to previous page and return if device is not available.
-    if (!this._device) {
-      var browser = SBGetBrowser();
-      browser.getTabForDocument(document).backWithDefault();
-      return;
-    }
+    this._loadPlaylist();
   },
 
   onUnload: function cdripController_onUnload() {
@@ -176,7 +193,82 @@ window.cdripController =
   _setLabelValue: function cdripController_setLabelValue(aElementId, aValue) {
     document.getElementById(aElementId).value = aValue;
   },
+  
+  _loadPlaylist: function cdripController_loadPlaylist() {
+    this._mediaListView = this._getMediaListView();
+    if (!this._mediaListView) {
+      Cu.reportError("Unable to get media list view for device.");
+      return;
+    }
+  
+    this._playlist = document.getElementById(CDRIP_PLAYLIST);
 
+    // Clear the playlist filters. This is a filter-free view.
+    this._clearFilterLists();
+    
+    // Setup our columns for the CD View
+    this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
+      "http://songbirdnest.com/data/1.0#isChecked 25 " +
+      "http://songbirdnest.com/data/1.0#trackNumber 50 a " +
+      "http://songbirdnest.com/data/1.0#cdRipStatus 75 " +
+      "http://songbirdnest.com/data/1.0#trackName 255 " +
+      "http://songbirdnest.com/data/1.0#duration 70 " +
+      "http://songbirdnest.com/data/1.0#artistName 122 " +
+      "http://songbirdnest.com/data/1.0#albumName 122 " +
+      "http://songbirdnest.com/data/1.0#genre 70");
+
+    // Set up the playlist widget
+    this._playlist.bind(this._mediaListView, null /* TODO: Bug 17437 */);
+  },
+
+  /**
+   * Create a mediaListView from the CD Device Library.
+   */
+  _getMediaListView: function cdripController_getMediaListView() {
+    if (!this._device) {
+      return null;
+    }
+    
+    // Get the libraries for device
+    var libraries = this._device.content.libraries;
+    if (libraries.length < 1) {
+      // Oh no, we have no libraries
+      Cu.reportError("Device " + this._device.id + " has no libraries!");
+      return null;
+    }
+
+    // Get the first library
+    var lib = libraries.queryElementAt(0, Ci.sbILibrary);
+    if (!lib) {
+      Cu.reportError("Unable to get library for device: " + this._device.id);
+      return null;
+    }
+    
+    // Create a view for the library and return it.
+    return lib.createView();
+  },
+  
+  /**
+   * Configure the playlist filter lists
+   */
+  _clearFilterLists: function cdripController_clearFilterLists() {
+    // Don't use filters for this version. We'll clear them out.
+    var filters = this._mediaListView.cascadeFilterSet;
+    
+    for (var i = filters.length - 1; i > 0; i--) {
+     filters.remove(i);
+    }
+    if (filters.length == 0 || !filters.isSearch(0)) {
+      if (filters.length == 1) {
+        filters.remove(0);
+      }
+      filters.appendSearch(["*"], 1);
+    }
+  },
+
+  /**
+   * Get the device from the id passed in on the query string.
+   */
   _getDevice: function cdripController_getDevice() {
     // Get the device id from the query string in the uri
     var queryMap = this._parseQueryString();
@@ -191,7 +283,7 @@ window.cdripController =
     }
     return device;
   },
- 
+
   /**
    * Helper function to parse and unescape the query string.
    * Returns a object mapping key->value
@@ -205,7 +297,6 @@ window.cdripController =
       queryObject[key] = unescape(value);
     }
     return queryObject;
-  },
-
+  }
 };
 
