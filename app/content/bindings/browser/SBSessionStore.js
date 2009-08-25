@@ -294,7 +294,11 @@ var SBSessionStore = {
                 // It's a valid device, so go ahead and open up the chrome page
                 newTab = aTabBrowser.loadURI(url, null, null, null, location);
               } catch (e) {
-                // It's invalid, don't do anything
+                // This is an invalid device, just load the main library view.
+                var libMgr = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                               .getService(Ci.sbILibraryManager);
+                var mainLib = libMgr.mainLibrary;
+                aTabBrowser.loadMediaList(mainLib);
               }
             }
           } else {
