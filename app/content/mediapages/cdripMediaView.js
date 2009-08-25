@@ -76,6 +76,7 @@ window.cdripController =
   _playlist:      null,
     // The device we are working with
   _device:        null,
+  _deviceID:      null,
 
   onLoad: function cdripController_onLoad() {
     this._hideSettingsView();
@@ -126,6 +127,15 @@ window.cdripController =
       // CD LOOKUP COMPLETE
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
         this._toggleLookupNotification(false);
+        break;
+
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+        // Go back to previous page if device removed.
+        var device = aEvent.data.QueryInterface(Ci.sbIDevice);
+        if (device.id.toString() == this._deviceID) {
+          var browser = SBGetBrowser();
+          browser.getTabForDocument(document).backWithDefault();
+        }
         break;
 
       default:
@@ -277,13 +287,15 @@ window.cdripController =
   _getDevice: function cdripController_getDevice() {
     // Get the device id from the query string in the uri
     var queryMap = this._parseQueryString();
+
+    this._deviceID = queryMap["device-id"];
    
     // Get the device for this media view
     var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
-    var device = deviceManager.getDevice(Components.ID(queryMap["device-id"]));
+    var device = deviceManager.getDevice(Components.ID(this._deviceID));
     if (!device) {
-      Cu.reportError("Device: " + queryMap["device-id"] + " does not exist");
+      Cu.reportError("Device: " + this._deviceID + " does not exist");
       return null;
     }
     return device;
