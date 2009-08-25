@@ -137,7 +137,8 @@ function sbMockCDService()
                     false,
                     false,
                     Ci.sbIDeviceController.AUDIO_DISC_TYPE,
-                    false);
+                    false,
+                    this);
   this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
 
   device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
@@ -147,7 +148,8 @@ function sbMockCDService()
                     false,
                     false,
                     Ci.sbIDeviceController.AUDIO_DISC_TYPE,
-                    false);
+                    false,
+                    this);
   this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
 }
 
@@ -225,6 +227,16 @@ sbMockCDService.prototype =
     }
 
     curCDDevice.eject();
+    this._onMediaEjected(curCDDevice);
+  },
+
+  notifyEject: function sbMockCDService_notifyEject(aCDDevice)
+  {
+    var curCDDevice = this._findDevice(aCDDevice);
+    if (!curCDDevice) {
+      return;
+    }
+
     this._onMediaEjected(curCDDevice);
   },
 

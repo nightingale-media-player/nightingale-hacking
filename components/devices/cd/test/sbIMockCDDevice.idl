@@ -31,6 +31,9 @@
  
 #include "nsISupports.idl"
 
+interface sbICDMockDeviceController;
+
+
 /**
  * The Mock TOC interface to setup the TOC object
  */
@@ -72,13 +75,15 @@ interface sbIMockCDDevice : nsISupports
    * \param aDiscInserted Whether the device has a disc inserted
    * \param aDiscType The type of disc audio or data
    * \param aEjected Whether the disc has been ejected
+   * \param aController The owning mock controller. Used for callbacks.
    */
   void initialize(in AString aName,
                   in boolean aReadable,
                   in boolean aWritable,
                   in boolean aDiscInserted,
                   in unsigned long aDiscType,
-                  in boolean aEjected);
+                  in boolean aEjected,
+                  in sbICDMockDeviceController aController);
   /**
    * denotes whether the disc has been ejected
    */

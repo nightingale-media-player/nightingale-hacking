@@ -31,7 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 XPIDL_SRCS = sbICDDevice.idl \
              sbICDDeviceService.idl \
-             sbICDMockDeviceController.idl \
              $(NULL)
 
 XPIDL_MODULE = sbCDDevices.xpt

@@ -32,6 +32,7 @@ include $(DEPTH)/build/autodefs.mk
 SONGBIRD_TEST_COMPONENT = cddevice
 
 XPIDL_SRCS = sbIMockCDDevice.idl \
+             sbICDMockDeviceController.idl \
              $(NULL)
 
 XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/devices/cd/public \

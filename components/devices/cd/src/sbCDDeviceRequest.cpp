@@ -143,6 +143,11 @@ sbCDDevice::ReqHandleRequestAdded()
           // XXX TODO: ReqHandleRead(request);
           break;
 
+        case TransferRequest::REQUEST_EJECT:
+          rv = Eject();
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
+          break;
+
         case REQUEST_CDLOOKUP:
           rv = AttemptCDLookup();
           NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup CD data!");

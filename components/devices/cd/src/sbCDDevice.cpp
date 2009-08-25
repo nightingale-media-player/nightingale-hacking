@@ -569,7 +569,8 @@ sbCDDevice::GetContent(sbIDeviceContent * *aContent)
 }
 
 /* readonly attribute nsIPropertyBag2 parameters; */
-NS_IMETHODIMP sbCDDevice::GetParameters(nsIPropertyBag2 * *aParameters)
+NS_IMETHODIMP
+sbCDDevice::GetParameters(nsIPropertyBag2 * *aParameters)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aParameters);
@@ -582,7 +583,8 @@ NS_IMETHODIMP sbCDDevice::GetParameters(nsIPropertyBag2 * *aParameters)
 }
 
 /* readonly attribute sbIDeviceProperties properties; */
-NS_IMETHODIMP sbCDDevice::GetProperties(sbIDeviceProperties * *aProperties)
+NS_IMETHODIMP
+sbCDDevice::GetProperties(sbIDeviceProperties * *aProperties)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aProperties);
@@ -603,26 +605,30 @@ NS_IMETHODIMP sbCDDevice::GetProperties(sbIDeviceProperties * *aProperties)
 }
 
 /* readonly attribute boolean isBusy; */
-NS_IMETHODIMP sbCDDevice::GetIsBusy(PRBool *aIsBusy)
+NS_IMETHODIMP
+sbCDDevice::GetIsBusy(PRBool *aIsBusy)
 {
   return sbBaseDevice::GetIsBusy(aIsBusy);
 }
 
 /* readonly attribute boolean canDisconnect; */
-NS_IMETHODIMP sbCDDevice::GetCanDisconnect(PRBool *aCanDisconnect)
+NS_IMETHODIMP
+sbCDDevice::GetCanDisconnect(PRBool *aCanDisconnect)
 {
   return sbBaseDevice::GetCanDisconnect(aCanDisconnect);
 }
 
 /* readonly attribute sbIDeviceStatus currentStatus; */
-NS_IMETHODIMP sbCDDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
+NS_IMETHODIMP
+sbCDDevice::GetCurrentStatus(sbIDeviceStatus * *aCurrentStatus)
 {
   NS_ENSURE_ARG_POINTER(aCurrentStatus);
   return mStatus.GetCurrentStatus(aCurrentStatus);
 }
 
 /* readonly attribute boolean supportsReformat; */
-NS_IMETHODIMP sbCDDevice::GetSupportsReformat(PRBool *aSupportsReformat)
+NS_IMETHODIMP
+sbCDDevice::GetSupportsReformat(PRBool *aSupportsReformat)
 {
   NS_ENSURE_ARG_POINTER(aSupportsReformat);
   *aSupportsReformat = PR_FALSE;
@@ -630,18 +636,21 @@ NS_IMETHODIMP sbCDDevice::GetSupportsReformat(PRBool *aSupportsReformat)
 }
 
 /* readonly attribute unsigned long state; */
-NS_IMETHODIMP sbCDDevice::GetState(PRUint32 *aState)
+NS_IMETHODIMP
+sbCDDevice::GetState(PRUint32 *aState)
 {
   return sbBaseDevice::GetState(aState);
 }
 
-NS_IMETHODIMP sbCDDevice::GetPreviousState(PRUint32 *aPreviousState)
+NS_IMETHODIMP
+sbCDDevice::GetPreviousState(PRUint32 *aPreviousState)
 {
   return sbBaseDevice::GetPreviousState(aPreviousState);
 }
 
-NS_IMETHODIMP sbCDDevice::SubmitRequest(PRUint32 aRequest,
-                                        nsIPropertyBag2 *aRequestParameters)
+NS_IMETHODIMP
+sbCDDevice::SubmitRequest(PRUint32 aRequest,
+                          nsIPropertyBag2 *aRequestParameters)
 {
   // Log progress.
   LOG(("sbCDDevice::SubmitRequest\n"));
@@ -661,7 +670,8 @@ NS_IMETHODIMP sbCDDevice::SubmitRequest(PRUint32 aRequest,
 }
 
 /* void cancelRequests (); */
-NS_IMETHODIMP sbCDDevice::CancelRequests()
+NS_IMETHODIMP
+sbCDDevice::CancelRequests()
 {
   nsresult rv;
 
@@ -677,39 +687,51 @@ NS_IMETHODIMP sbCDDevice::CancelRequests()
 }
 
 /* void syncLibraries (); */
-NS_IMETHODIMP sbCDDevice::SyncLibraries()
+NS_IMETHODIMP
+sbCDDevice::SyncLibraries()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void eject (); */
-NS_IMETHODIMP sbCDDevice::Eject()
+NS_IMETHODIMP
+sbCDDevice::Eject()
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_TRUE(mCDDevice, NS_ERROR_UNEXPECTED);
+
+  nsresult rv;
+  rv = mCDDevice->Eject();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 /* void format (); */
-NS_IMETHODIMP sbCDDevice::Format()
+NS_IMETHODIMP
+sbCDDevice::Format()
 {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
 /* void setWarningDialogEnabled (in AString aWarning, in boolean aEnabled); */
-NS_IMETHODIMP sbCDDevice::SetWarningDialogEnabled(const nsAString & aWarning,
-                                                  PRBool aEnabled)
+NS_IMETHODIMP
+sbCDDevice::SetWarningDialogEnabled(const nsAString & aWarning,
+                                    PRBool aEnabled)
 {
   return sbBaseDevice::SetWarningDialogEnabled(aWarning, aEnabled);
 }
 
 /* boolean getWarningDialogEnabled (in AString aWarning); */
-NS_IMETHODIMP sbCDDevice::GetWarningDialogEnabled(const nsAString & aWarning,
-                                                  PRBool *_retval)
+NS_IMETHODIMP
+sbCDDevice::GetWarningDialogEnabled(const nsAString & aWarning,
+                                    PRBool *_retval)
 {
   return sbBaseDevice::GetWarningDialogEnabled(aWarning, _retval);
 }
 
 /* void resetWarningDialogs (); */
-NS_IMETHODIMP sbCDDevice::ResetWarningDialogs()
+NS_IMETHODIMP
+sbCDDevice::ResetWarningDialogs()
 {
   return sbBaseDevice::ResetWarningDialogs();
 }

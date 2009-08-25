@@ -57,5 +57,10 @@ interface sbICDMockDeviceController : nsISupports
   // @brief Call this method to simulate a media removed event.
   //
   void ejectMedia(in sbICDDevice aCDDevice);
+
+  //
+  // @brief Notify listeners of eject.
+  //
+  void notifyEject(in sbICDDevice aCDDevice);
 };
 

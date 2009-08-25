@@ -29,6 +29,7 @@
 #include <sbArrayUtils.h>
 #include <sbICDDevice.h>
 #include <sbIMockCDDevice.h>
+#include <sbICDMockDeviceController.h>
 
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
@@ -279,6 +280,11 @@ public:
                      mDiscType(sbICDDevice::AUDIO_DISC_TYPE),
                      mEjected(PR_FALSE) {}
 
+  ~sbMockCDDevice()
+  {
+    mController = nsnull;
+  }
+
 protected:
   sbMockCDDevice(nsAString const & aName,
                  PRBool aReadable,
@@ -290,7 +296,8 @@ protected:
                    mWritable(aWritable),
                    mDiscInserted(aDiscInserted),
                    mDiscType(aDiscType),
-                   mEjected(PR_FALSE) {}
+                   mEjected(PR_FALSE),
+                   mController(nsnull) {}
 private:
   nsString mName;
   PRBool mReadable;
@@ -299,6 +306,7 @@ private:
   PRUint32 mDiscType;
   PRBool mEjected;
   nsCOMPtr<sbICDTOC> mTOC;
+  nsCOMPtr<sbICDMockDeviceController> mController;
 };
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockCDDevice, sbICDDevice, sbIMockCDDevice)
@@ -360,8 +368,15 @@ sbMockCDDevice::GetDiscType(PRUint32 *aDiscType)
 NS_IMETHODIMP
 sbMockCDDevice::Eject()
 {
+  // Inform the controller of the eject (so it can inform the listeners).
   mEjected = PR_TRUE;
   mDiscInserted = PR_FALSE;
+
+  if (mController) {
+    nsresult rv = mController->NotifyEject(this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
 
@@ -371,7 +386,8 @@ sbMockCDDevice::Initialize(nsAString const & aName,
                            PRBool aWritable,
                            PRBool aDiscInserted,
                            PRUint32 aDiscType,
-                           PRBool aEjected)
+                           PRBool aEjected,
+                           sbICDMockDeviceController *aController)
 {
   mName = aName;
   mReadable = aReadable;
@@ -379,6 +395,7 @@ sbMockCDDevice::Initialize(nsAString const & aName,
   mDiscInserted = aDiscInserted;
   mDiscType = aDiscType;
   mEjected = aEjected;
+  mController = aController;
 
   return NS_OK;
 }
