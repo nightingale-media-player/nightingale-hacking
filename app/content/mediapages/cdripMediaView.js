@@ -96,14 +96,15 @@ window.cdripController =
       return;
     }
 
-    if (this._device.state == 536870913) {
+    // STATE_LOOKINGUPCD is defined as STATE_USER+1 in sbCDDevice.h
+    if (this._device.state == Ci.sbIDevice.STATE_USER + 1) {
       this._toggleLookupNotification(true);
     } else {
       this._toggleLookupNotification(false);
     }
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
-
+    
     this._loadPlaylist();
   },
 
@@ -118,12 +119,16 @@ window.cdripController =
   onDeviceEvent: function cdripController_onDeviceEvent(aEvent) {
     switch (aEvent.type) {
       // START CD LOOKUP
-      case Ci.sbIDeviceEvent.EVENT_CDLOOKUP_INITIATED:
+      case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_INITIATED:
         this._toggleLookupNotification(true);
+        break;
       
       // CD LOOKUP COMPLETE
-      case Ci.sbIDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
+      case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
         this._toggleLookupNotification(false);
+        break;
+
+      default:
         break;
     }
   },
