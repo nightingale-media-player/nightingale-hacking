@@ -30,10 +30,16 @@
 //
 //------------------------------------------------------------------------------
 
+
 function runTest()
 {
   var deviceName = "TestCD";
   var sbDevice = sbCreateDevice(deviceName, sbMakeMidnightRock());
   assertTrue(sbDevice);
-  assertEqual(sbDevice.name, deviceName);
+  
+  var props = Cc["@mozilla.org/hash-property-bag;1"]
+                .createInstance(Ci.nsIWritablePropertyBag2);
+
+  // XXX TODO finish out once we have the CD Addon working
+  // sbDevice.submitRequest(Ci.sbIDevice.REQUEST_READ, 
 }

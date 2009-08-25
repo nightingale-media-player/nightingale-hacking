@@ -216,8 +216,8 @@ public:
    * setup to auto fail. Must Call SetResult for successful completion
    */
   sbDeviceStatusAutoOperationComplete(sbDeviceStatusHelper * aStatus,
-                                            sbDeviceStatusHelper::Operation aOperation,
-                                            sbBaseDevice::TransferRequest * aRequest) :
+                                      sbDeviceStatusHelper::Operation aOperation,
+                                      sbBaseDevice::TransferRequest * aRequest) :
                                      mRequest(aRequest),
                                      mStatus(aStatus),
                                      mResult(NS_ERROR_FAILURE),

@@ -37,13 +37,16 @@ CPP_SRCS = sbBaseDevice.cpp \
            sbDeviceStatusHelper.cpp \
            sbDeviceUtils.cpp \
            sbLibraryListenerHelpers.cpp \
+           sbTranscodeProgressListener.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/device/public \
+                     $(DEPTH)/components/job/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/mediamanager/public \
                      $(DEPTH)/components/moz/prompter/public \

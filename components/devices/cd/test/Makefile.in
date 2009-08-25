@@ -72,8 +72,10 @@ DYNAMIC_LIB = sbDevicesCDTest
     
 IS_COMPONENT = 1
             
-SONGBIRD_TESTS = $(srcdir)/test_cddevice.js \
+SONGBIRD_TESTS = $(srcdir)/head_cddevice.js \
+                 $(srcdir)/test_cddevice.js \
                  $(srcdir)/test_sbcddevice.js \
+                 $(srcdir)/test_sbcdread.js \
                  $(NULL)
 
 include $(topsrcdir)/build/rules.mk

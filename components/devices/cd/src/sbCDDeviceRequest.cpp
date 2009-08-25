@@ -36,12 +36,15 @@
 #include <sbArray.h>
 #include <sbDeviceUtils.h>
 #include <sbIDeviceEvent.h>
+#include <sbIJobProgress.h>
+#include <sbIMediacoreEventTarget.h>
 #include <sbLibraryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbMediaListEnumArrayHelper.h>
 #include <sbProxiedComponentManager.h>
+#include <sbTranscodeProgressListener.h>
 #include <sbVariantUtils.h>
 
 // Mozilla imports.
@@ -135,12 +138,13 @@ sbCDDevice::ReqHandleRequestAdded()
       {
         case TransferRequest::REQUEST_MOUNT :
           mStatus.ChangeState(STATE_MOUNTING);
-          ReqHandleMount(request);
+          rv = ReqHandleMount(request);
+          NS_ENSURE_SUCCESS(rv, rv);
         break;
 
         case TransferRequest::REQUEST_READ :
           mStatus.ChangeState(STATE_COPYING);
-          // XXX TODO: ReqHandleRead(request);
+          ReqHandleRead(request);
           break;
 
         case TransferRequest::REQUEST_EJECT:
@@ -174,17 +178,20 @@ sbCDDevice::ReqHandleRequestAdded()
   return NS_OK;
 }
 
-void
+nsresult
 sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 {
   // Validate arguments.
-  NS_ENSURE_TRUE(aRequest, /* void */);
+  NS_ENSURE_ARG_POINTER(aRequest);
 
   // Function variables.
   nsresult rv;
 
   // Log progress.
   LOG(("Enter sbCDDevice::ReqHandleMount \n"));
+
+  // Set up to auto-disconnect in case of error.
+  SB_CD_DEVICE_AUTO_INVOKE(AutoDisconnect, Disconnect()) autoDisconnect(this);
 
   // Update status and set for auto-failure.
   sbDeviceStatusAutoOperationComplete autoStatus(
@@ -194,14 +201,17 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
   // Update the device library contents.
   rv = UpdateDeviceLibrary(mDeviceLibrary);
-  NS_ENSURE_SUCCESS(rv, /* void */);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Add the library to the device statistics.
   rv = mDeviceStatistics->AddLibrary(mDeviceLibrary);
-  NS_ENSURE_SUCCESS(rv, /* void */);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Update status and clear auto-failure.
   autoStatus.SetResult(NS_OK);
+
+  // Cancel auto-disconnect.
+  autoDisconnect.forget();
 
   // Indicate that the device is now ready.
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
@@ -209,6 +219,8 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
   // Log progress.
   LOG(("Exit sbCDDevice::ReqHandleMount\n"));
+
+  return NS_OK;
 }
 
 
@@ -507,6 +519,191 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
       // XXX Not implemented yet, tracked as bug 17406 (story)
     }
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::GetTranscodeProfile(nsAString const & aContainerFormat,
+                                nsAString const & aCodec,
+                                sbITranscodeProfile ** aTranscodeProfile)
+{
+  nsresult rv;
+  if (!mTranscodeProfile) {
+    nsCOMPtr<nsIArray> profiles;
+    rv = mTranscodeManager->GetTranscodeProfiles(getter_AddRefs(profiles));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString containerFormat;
+    nsString codec;
+    nsCOMPtr<sbITranscodeProfile> profile;
+    PRUint32 length;
+
+    rv = profiles->GetLength(&length);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 index = 0; index < length; ++index) {
+      profile = do_QueryElementAt(profiles, index, &rv);
+      rv = profile->GetContainerFormat(containerFormat);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (containerFormat.Equals(aContainerFormat)) {
+        if (aCodec.IsEmpty()) {
+          profile.forget(aTranscodeProfile);
+          return NS_OK;
+        }
+        nsString codec;
+        rv = profile->GetAudioCodec(codec);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (codec.Equals(aCodec)) {
+          mTranscodeProfile = profile;
+          break;
+        }
+      }
+    }
+
+    // If none found return not available error
+    if (!mTranscodeProfile) {
+      return NS_ERROR_NOT_AVAILABLE;
+    }
+  }
+
+  NS_IF_ADDREF(*aTranscodeProfile = mTranscodeProfile);
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
+{
+  NS_ENSURE_ARG_POINTER(aRequest);
+
+  LOG(("Enter sbMSCDeviceBase::ReqHandleRead\n"));
+
+  nsresult rv;
+
+  sbDeviceStatusAutoOperationComplete autoComplete
+                                     (&mStatus,
+                                      sbDeviceStatusHelper::OPERATION_TYPE_READ,
+                                      aRequest);
+
+  mStatus.ItemStart(aRequest->list,
+                    aRequest->item,
+                    aRequest->batchIndex,
+                    aRequest->batchCount);
+
+  nsCOMPtr<sbIMediaItem> source;
+  rv = sbLibraryUtils::GetItemInLibrary(aRequest->item,
+                                        mDeviceLibrary,
+                                        getter_AddRefs(source));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  sbIMediaItem * destination = aRequest->item;
+
+  // We're creating a copy so we want to break the link back
+  SBVoidString voidString;
+  destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINITEMGUID),
+                           voidString);
+  destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
+                           voidString);
+
+  nsCOMPtr<nsIURI> sourceContentURI;
+  rv = source->GetContentSrc(getter_AddRefs(sourceContentURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> sourceContentURL = do_QueryInterface(sourceContentURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Retrieve the path to where the destination library wants copied media
+  nsCOMPtr<nsIURI> musicFolderURI =
+    do_QueryInterface(aRequest->data, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> musicFolderURL = do_QueryInterface(musicFolderURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString filename;
+  rv = sourceContentURL->GetFileName(filename);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = musicFolderURL->SetFileName(filename);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = musicFolderURL->SetFileExtension(NS_LITERAL_CSTRING("ogg"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = destination->SetContentSrc(musicFolderURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITranscodeProfile> profile;
+  rv = GetTranscodeProfile(NS_LITERAL_STRING("vorbis"),
+                           NS_LITERAL_STRING("ogg"),
+                           getter_AddRefs(profile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITranscodeJob> tcJob;
+  rv = mTranscodeManager->GetTranscoderForMediaItem(aRequest->item,
+                                                    profile,
+                                                    getter_AddRefs(tcJob));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIThread> target;
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = do_GetProxyForObject(target,
+                            tcJob.get(),
+                            NS_PROXY_SYNC | NS_PROXY_ALWAYS,
+                            getter_AddRefs(tcJob));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = tcJob->SetProfile(profile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString URISpec;
+  rv = musicFolderURL->GetSpec(URISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = tcJob->SetDestURI(NS_ConvertUTF8toUTF16(URISpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sourceContentURI->GetSpec(URISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = tcJob->SetSourceURI(NS_ConvertUTF8toUTF16(URISpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set the metadata for the job
+  nsCOMPtr<sbIPropertyArray> metadata;
+  rv = aRequest->item->GetProperties(nsnull, getter_AddRefs(metadata));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = tcJob->SetMetadata(metadata);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create our listener for transcode progress.
+  nsRefPtr<sbTranscodeProgressListener> listener =
+    sbTranscodeProgressListener::New(this, &mStatus, aRequest, mReqWaitMonitor);
+  NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
+
+  // Setup the progress listener.
+  nsCOMPtr<sbIJobProgress> progress = do_QueryInterface(tcJob, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = progress->AddJobProgressListener(listener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Setup the mediacore event listener.
+  nsCOMPtr<sbIMediacoreEventTarget> eventTarget = do_QueryInterface(tcJob,
+                                                                    &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = eventTarget->AddListener(listener);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This is async.
+  rv = tcJob->Transcode();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update status and clear auto-failure.
+  autoComplete.SetResult(NS_OK);
 
   return NS_OK;
 }

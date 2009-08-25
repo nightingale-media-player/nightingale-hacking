@@ -2,25 +2,25 @@
 /*
 //
 // BEGIN SONGBIRD GPL
-// 
+//
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
-// 
+//
 // This file may be licensed under the terms of of the
 // GNU General Public License Version 2 (the "GPL").
-// 
-// Software distributed under the License is distributed 
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either 
-// express or implied. See the GPL for the specific language 
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
 // governing rights and limitations.
 //
-// You should have received a copy of the GPL along with this 
+// You should have received a copy of the GPL along with this
 // program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc., 
+// or write to the Free Software Foundation, Inc.,
 // 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-// 
+//
 // END SONGBIRD GPL
 //
 */
@@ -55,7 +55,7 @@
 # define LOG(args)   /* nothing */
 #endif
 
-nsresult 
+nsresult
 sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
   if (aIgnoreListener) {
     PR_AtomicIncrement(&mIgnoreListenerCounter);
@@ -68,13 +68,13 @@ sbBaseIgnore::SetIgnoreListener(PRBool aIgnoreListener) {
 
 nsresult sbBaseIgnore::IgnoreMediaItem(sbIMediaItem * aItem) {
   NS_ENSURE_ARG_POINTER(aItem);
-  
+
   nsString guid;
   nsresult rv = aItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsAutoLock lock(mLock);
-  
+
   PRInt32 itemCount = 0;
   // We don't care if this fails, itemCount is zero in that case which is fine
   // We have to assume failure is always due to "not found"
@@ -90,16 +90,16 @@ nsresult sbBaseIgnore::IgnoreMediaItem(sbIMediaItem * aItem) {
  */
 PRBool sbBaseIgnore::MediaItemIgnored(sbIMediaItem * aItem) {
   NS_ENSURE_ARG_POINTER(aItem);
-  
+
   nsString guid;
   // If ignoring all or ignoring this specific item return PR_TRUE
   if (mIgnoreListenerCounter > 0)
     return PR_TRUE;
   nsAutoLock lock(mLock);
   nsresult rv = aItem->GetGuid(guid);
-  
+
   // If the guid was valid and it's in our ignore list then it's ignored
-  return (NS_SUCCEEDED(rv) && mIgnored.Get(guid, nsnull)) ? PR_TRUE : 
+  return (NS_SUCCEEDED(rv) && mIgnored.Get(guid, nsnull)) ? PR_TRUE :
                                                             PR_FALSE;
 }
 
@@ -107,7 +107,7 @@ nsresult sbBaseIgnore::UnignoreMediaItem(sbIMediaItem * aItem) {
   nsString guid;
   nsresult rv = aItem->GetGuid(guid);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsAutoLock lock(mLock);
   PRInt32 itemCount = 0;
   if (!mIgnored.Get(guid, &itemCount)) {
@@ -129,7 +129,7 @@ nsresult sbBaseIgnore::UnignoreMediaItem(sbIMediaItem * aItem) {
 class MediaItemContentSrcArrayCreator : public sbIMediaListEnumerationListener
 {
 public:
-  MediaItemContentSrcArrayCreator(nsIMutableArray* aURIs) : 
+  MediaItemContentSrcArrayCreator(nsIMutableArray* aURIs) :
     mURIs(aURIs)
    {}
   NS_DECL_ISUPPORTS
@@ -163,7 +163,7 @@ MediaItemContentSrcArrayCreator::OnEnumeratedItem(sbIMediaList*,
   nsCOMPtr<nsIURI> uri;
   rv = aItem->GetContentSrc(getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = mURIs->AppendElement(uri, PR_FALSE);
   NS_ENSURE_TRUE(rv, rv);
 
@@ -179,11 +179,11 @@ MediaItemContentSrcArrayCreator::OnEnumerationEnd(sbIMediaList*,
 }
 
 //sbBaseDeviceLibraryListener class.
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener, 
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbBaseDeviceLibraryListener,
                               sbIDeviceLibraryListener,
                               nsISupportsWeakReference);
 
-sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener() 
+sbBaseDeviceLibraryListener::sbBaseDeviceLibraryListener()
 : mDevice(nsnull)
 {
 #ifdef PR_LOGGING
@@ -206,14 +206,14 @@ sbBaseDeviceLibraryListener::Init(sbBaseDevice* aDevice)
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBatchBegin(sbIMediaList *aMediaList)
 {
   return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_BEGIN,
                               nsnull, aMediaList);
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBatchEnd(sbIMediaList *aMediaList)
 {
   return mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_BATCH_END,
@@ -257,7 +257,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   } else {
     // Hide the item. It is the responsibility of the device to make the item
     // visible when the transfer is successful.
-    rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN), 
+    rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                  NS_LITERAL_STRING("1"));
 
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
@@ -268,7 +268,7 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                                  sbIMediaItem *aMediaItem,
                                                  PRUint32 aIndex,
@@ -283,8 +283,8 @@ sbBaseDeviceLibraryListener::OnBeforeItemRemoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
-sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList, 
+NS_IMETHODIMP
+sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                                 sbIMediaItem *aMediaItem,
                                                 PRUint32 aIndex,
                                                 PRBool *aNoMoreForBatch)
@@ -299,9 +299,9 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
-  
+
   nsresult rv;
-  
+
   /* If the item is hidden, then it wasn't transferred to the device (which
      will clear the hidden property once the transfer is complete), so don't
      delete it
@@ -319,7 +319,7 @@ sbBaseDeviceLibraryListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
                                            PRBool* aNoMoreForBatch)
 {
@@ -328,7 +328,7 @@ sbBaseDeviceLibraryListener::OnListCleared(sbIMediaList *aMediaList,
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
   *aNoMoreForBatch = PR_FALSE;
-  
+
   return NS_OK;
 }
 NS_IMETHODIMP
@@ -340,20 +340,20 @@ sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
   nsresult rv;
-  
+
   /* yay, we're going to wipe the device! */
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
 
   // We capture the list of content that's going to be deleted here
-  // and hand it over to the device as an nsIArray<nsIURIs> through 
+  // and hand it over to the device as an nsIArray<nsIURIs> through
   // the TransferRequest's data member.
   nsCOMPtr<nsIMutableArray> uris =
     do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsRefPtr<MediaItemContentSrcArrayCreator> creator = 
+  nsRefPtr<MediaItemContentSrcArrayCreator> creator =
                                   new MediaItemContentSrcArrayCreator(uris);
   rv = aMediaList->EnumerateItemsByProperty(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
                                             NS_LITERAL_STRING("0"),
@@ -379,7 +379,7 @@ sbBaseDeviceLibraryListener::OnBeforeListCleared(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
-NS_IMETHODIMP 
+NS_IMETHODIMP
 sbBaseDeviceLibraryListener::OnItemUpdated(sbIMediaList *aMediaList,
                                            sbIMediaItem *aMediaItem,
                                            sbIPropertyArray* aProperties,
@@ -414,9 +414,9 @@ sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aNoMoreForBatch);
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
-  
+
   *aNoMoreForBatch = PR_FALSE;
-  
+
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
@@ -425,7 +425,7 @@ sbBaseDeviceLibraryListener::OnItemMoved(sbIMediaList *aMediaList,
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOVE,
                             nsnull, aMediaList, aFromIndex, aToIndex);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -498,7 +498,7 @@ NS_IMETHODIMP sbBaseDeviceLibraryListener::OnBeforeClear(PRBool *_retval)
 
 
 //sbILocalDatabaseMediaListCopyListener
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener, 
+NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceBaseLibraryCopyListener,
                               sbILocalDatabaseMediaListCopyListener);
 
 sbDeviceBaseLibraryCopyListener::sbDeviceBaseLibraryCopyListener()
@@ -526,7 +526,7 @@ sbDeviceBaseLibraryCopyListener::Init(sbBaseDevice* aDevice)
 }
 
 NS_IMETHODIMP
-sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem, 
+sbDeviceBaseLibraryCopyListener::OnItemCopied(sbIMediaItem *aSourceItem,
                                               sbIMediaItem *aDestItem)
 {
   NS_ENSURE_ARG_POINTER(aSourceItem);
@@ -574,12 +574,12 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbBaseDeviceMediaListListener,
 sbBaseDeviceMediaListListener::sbBaseDeviceMediaListListener()
 : mDevice(nsnull)
 {
-  
+
 }
 
 sbBaseDeviceMediaListListener::~sbBaseDeviceMediaListListener()
 {
-  
+
 }
 
 nsresult
@@ -622,7 +622,7 @@ sbBaseDeviceMediaListListener::OnItemAdded(sbIMediaList *aMediaList,
                               aMediaItem, aMediaList, aIndex);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   if (_retval) {
     *_retval = PR_FALSE; /* don't stop */
   }
@@ -654,7 +654,7 @@ sbBaseDeviceMediaListListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   }
 
   nsresult rv;
-  
+
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_DELETE,
                             aMediaItem, aMediaList, aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -692,7 +692,7 @@ sbBaseDeviceMediaListListener::OnItemMoved(sbIMediaList *aMediaList,
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_MOVE,
                             nsnull, aMediaList, aFromIndex, aToIndex);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (_retval) {
     *_retval = PR_FALSE; /* don't stop */
   }
@@ -712,7 +712,7 @@ sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
                                              PRBool * /* aNoMoreForBatch */)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
-  
+
   NS_ENSURE_TRUE(mDevice, NS_ERROR_NOT_INITIALIZED);
 
   // Check if we're ignoring then do nothing
@@ -720,7 +720,7 @@ sbBaseDeviceMediaListListener::OnListCleared(sbIMediaList *aMediaList,
   if(MediaItemIgnored(aMediaList)) {
     return NS_OK;
   }
-  
+
   // Send the wipe request
   nsresult rv;
   rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WIPE,

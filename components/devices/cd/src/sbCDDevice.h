@@ -356,6 +356,11 @@ private:
   PRBool mIsHandlingRequests;
 
   /**
+   * The cached transcode profile
+   */
+  nsCOMPtr<sbITranscodeProfile> mTranscodeProfile;
+
+  /**
    * Initializes the device properties
    */
   nsresult InitializeProperties();
@@ -414,7 +419,7 @@ private:
    * \param aRequest              Request data record.
    */
 
-  void ReqHandleMount(TransferRequest* aRequest);
+  nsresult ReqHandleMount(TransferRequest* aRequest);
 
   /**
    * Update the device library specified by aLibrary with the media contents of
@@ -448,6 +453,21 @@ private:
    * Method to trigger the CD lookup request.
    */
   void ProxyCDLookup();
+  /**
+   * Returns the transcode profile for CD's
+   * \param aContainerFormat The desired container format
+   * \param aCodec The desired audio codec
+   * \param aTranscodeProfile The matching transcode profile
+   */
+  nsresult GetTranscodeProfile(nsAString const & aContainerFormat,
+                               nsAString const & aCodec,
+                               sbITranscodeProfile ** aTranscodeProfile);
+
+  /**
+   * Processes a read request. Copying content from a CD to the device library
+   * \param aRequest The request to be processed
+   */
+  nsresult ReqHandleRead(TransferRequest * aRequest);
 };
 
 #define SB_CD_DEVICE_AUTO_INVOKE(aName, aMethod)                              \
