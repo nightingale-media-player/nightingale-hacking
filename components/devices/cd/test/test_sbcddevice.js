@@ -80,12 +80,18 @@ function runTest()
                    .createInstance(Ci.sbIMockCDDevice);
 
   var deviceName = "TestCD";
+  var mockCDService =
+    Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
+      .getService(Ci.sbICDDeviceService)
+      .QueryInterface(Ci.sbICDMockDeviceController);
+
   cdDevice.initialize(deviceName, 
                       true, 
                       false, 
                       true, 
                       Ci.sbIDeviceController.AUDIO_DISC_TYPE,
-                      false);
+                      false,
+                      mockCDService);
   cdDevice.sbICDDevice.discTOC = sbMakeMidnightRock();
   var deviceParams = { sbICDDevice : cdDevice };
   var sbDevice = deviceController.createDevice(createPropertyBag(deviceParams));
