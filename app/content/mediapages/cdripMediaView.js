@@ -171,6 +171,8 @@ window.cdripController =
   disableTags : ['sb-player-back-button', 'sb-player-playpause-button',
                  'sb-player-forward-button', 'sb-player-volume-slider',
                  'sb-player-shuffle-button', 'sb-player-repeat-button'],
+  disableMenuControls : ['play', 'next', 'prev', 'shuf', 'repx',
+                         'repa', 'rep1'],
   _togglePlayerControls: function
                          cdripController_togglePlayerControls(disabled) {
 
@@ -189,12 +191,22 @@ window.cdripController =
       }
     }
 
-    // disable playlist play events
+    // disable playlist play events & menu controls
     var pls = document.getElementById("sb-cdrip-playlist");
+    var playMenuItem = mainWin.document.getElementById("menuitem_control_play");
     if (disabled) {
       pls.addEventListener("Play", this._onPlay, false);
+      for each (var i in this.disableMenuControls) {
+        var menuItem = mainWin.document.getElementById("menuitem_control_" + i);
+        menuItem.setAttribute("disabled", "true");
+      }
     } else {
       pls.removeEventListener("Play", this._onPlay, false);
+      playMenuItem.removeAttribute("disabled");
+      for each (var i in this.disableMenuControls) {
+        var menuItem = mainWin.document.getElementById("menuitem_control_" + i);
+        menuItem.removeAttribute("disabled");
+      }
     }
   },
 
