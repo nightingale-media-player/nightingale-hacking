@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
  //
  // BEGIN SONGBIRD GPL
@@ -33,6 +35,7 @@
 // Export media task constants
 
 char const * const ADDED_MEDIA_ITEMS = "added-mediaitems";
+char const * const UPDATED_MEDIA_ITEMS = "updated-mediaitems";
 char const * const ADDED_PLAYLISTS = "added-medialists";
 char const * const DELETED_PLAYLISTS = "removed-medialists";
 char const * const UPDATED_SMARTPLAYLIST = "updated-smartplaylist";
@@ -129,6 +132,7 @@ ParseTask(std::string const & aTask,
 }
  
 sbError sbiTunesAgentProcessor::AddTrack(std::string const & aSource,
+                                         std::string const & aSongbirdId,
                                          std::string const & aPath,
                                          const char *aMethod)
 {
@@ -151,7 +155,21 @@ sbError sbiTunesAgentProcessor::AddTrack(std::string const & aSource,
     mLastSource = aSource;
     mTrackBatch.clear();
   }
-  mTrackBatch.push_back(aPath);
+  mTrackBatch.push_back(Track(Track::TYPE_SONGBIRD, aSongbirdId, aPath));
+  return sbNoError;
+}
+
+sbError sbiTunesAgentProcessor::UpdateTrack(std::string const & aID,
+                                            std::string const & aPath)
+{
+  if (mTrackBatch.size() >= mBatchSize) {
+    sbError const & error = UpdateTracks(mTrackBatch);
+    SB_ENSURE_ERRORHANDLER(error);
+
+    mLastSource = "";
+    mTrackBatch.clear();
+  }
+  mTrackBatch.push_back(Track(Track::TYPE_ITUNES, aID, aPath));
   return sbNoError;
 }
 
@@ -159,7 +177,16 @@ sbError
 sbiTunesAgentProcessor::ProcessTaskFile()
 {
   int retry = 60;
+
+  if (!OpenResultsFile()) {
+    return sbError("Failed to open results file to check for start!");
+  }
   
+  if (OpenResultsFile().tellp() == std::ofstream::pos_type(0)) {
+    OpenResultsFile() << '[' << SCHEMA_VERSION << ":1]\n"
+                      << '[' << ADDED_MEDIA_ITEMS << "]\n";
+  }
+
   // Keep process all files we find
   while (OpenTaskFile(mInputStream)) {
     if (!mInputStream) {
@@ -200,6 +227,9 @@ sbiTunesAgentProcessor::ProcessTaskFile()
               continue; // Will hit the inner while and it will stop
             }
           }
+
+          sbError error = ProcessPendingTrackBatch();
+          SB_ENSURE_ERRORHANDLER(error);
         }
       }
       else {
@@ -210,31 +240,32 @@ sbiTunesAgentProcessor::ProcessTaskFile()
         }
         std::string::size_type const equalSign = line.find('=');
         if (equalSign != std::string::npos) {
+          std::string const & key =
+            Strip(line.substr(0, equalSign));
           std::string const & value =
             Unescape(Strip(line.substr(equalSign + 1)));
 
           // We've been told to add the track
           if (action == ADDED_MEDIA_ITEMS) {
-            sbError const & error = AddTrack(source, value, ADDED_MEDIA_ITEMS);
+            sbError const & error = AddTrack(source, key, value, ADDED_MEDIA_ITEMS);
+            SB_ENSURE_ERRORHANDLER(error);
+          }
+          else if (action == UPDATED_MEDIA_ITEMS) {
+            sbError const & error = UpdateTrack(key, value);
             SB_ENSURE_ERRORHANDLER(error);
           }
           else if (action == ADDED_PLAYLISTS) {
-            sbError error = ProcessPendingTrackBatch();
-            SB_ENSURE_ERRORHANDLER(error);
-
-            error = CreatePlaylist(value);
+            sbError error = CreatePlaylist(value);
             SB_ENSURE_ERRORHANDLER(error);
           }
           // We've been told to remove the playlist
           else if (action == DELETED_PLAYLISTS) {
-            sbError error = ProcessPendingTrackBatch();
-            SB_ENSURE_ERRORHANDLER(error);
-
-            error = RemovePlaylist(value);
+            sbError error = RemovePlaylist(value);
             SB_ENSURE_ERRORHANDLER(error);
           }
           else if (action == UPDATED_SMARTPLAYLIST) {
             sbError const & error = AddTrack(source,
+                                             key,
                                              value,
                                              UPDATED_SMARTPLAYLIST);
             SB_ENSURE_ERRORHANDLER(error);
@@ -282,6 +313,7 @@ sbiTunesAgentProcessor::ProcessTaskFile()
 sbError
 sbiTunesAgentProcessor::ProcessPendingTrackBatch()
 {
+  std::string source(mLastSource);
   mLastSource.clear();
   mLastMethod.clear();
   
@@ -289,8 +321,14 @@ sbiTunesAgentProcessor::ProcessPendingTrackBatch()
     return sbNoError;
   }
 
-  sbError const & error = AddTracks(mLastSource, mTrackBatch);
-  SB_ENSURE_ERRORHANDLER(error);
+  if (mTrackBatch.front().type == Track::TYPE_ITUNES) {
+    // updates
+    sbError const & error = UpdateTracks(mTrackBatch);
+    SB_ENSURE_ERRORHANDLER(error);
+  } else {
+    sbError const & error = AddTracks(source, mTrackBatch);
+    SB_ENSURE_ERRORHANDLER(error);
+  }
 
   mTrackBatch.clear();
   return sbNoError;

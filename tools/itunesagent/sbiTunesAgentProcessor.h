@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
  //
  // BEGIN SONGBIRD GPL
@@ -101,8 +103,15 @@ public:
    * Adds a track to the iTunes database given a path
    */
   sbError AddTrack(std::string const & aSource,
+                   std::string const & aSongbirdId,
                    std::string const & aPath,
                    const char *aMethod);
+
+  /**
+   * Updates a track to the iTunes database given an iTunes ID and new path
+   */
+  sbError UpdateTrack(std::string const & aID,
+                      std::string const & aPath);
 
   /**
    * Reports the error, returns true if app should continue
@@ -137,25 +146,47 @@ public:
   void SetBatchSize(unsigned int aBatchSize) {
     mBatchSize = aBatchSize;
   }
+  /**
+   * A pair of iTunes-or-Songbird persistent ID and track file path
+   * iTunes persistent ID will be 0 when unknown (adding files)
+   */
+  struct Track {
+    enum type_t {
+      TYPE_SONGBIRD,
+      TYPE_ITUNES
+    } type;
+    std::string id;
+    std::string path;
+    Track(type_t aType, std::string aId, std::string aPath)
+      : type(aType), id(aId), path(aPath) {}
+  };
 protected:
-  typedef std::deque<std::string> Tracks;
-  
+  /**
+   * An iterable list of tracks
+   */
+  typedef std::deque<Track> TrackList;
+
   /**
    * Initialize any state
    */
   sbiTunesAgentProcessor();
-  
+
   /**
    * Adds a track to the iTunes database given a path
    */
   virtual sbError AddTracks(std::string const & aSource,
-                            Tracks const & aPaths)=0;
-  
+                            TrackList const & aPaths)=0;
+
+  /**
+   * Update tracks
+   */
+  virtual sbError UpdateTracks(TrackList const & aPaths)=0;
+
   /**
    * Removes a playlist from the iTunes database
    */
   virtual sbError RemovePlaylist(std::string const & aPlaylist) = 0;
-  
+
   /**
    * Creates a playlist (Recreates it if it already exists)
    */
@@ -170,46 +201,51 @@ protected:
    * TODO Add a comment here please.
    */
   sbError ProcessPendingTrackBatch();
-  
+
   /**
    * Retrieve the path to the task file
    */
   virtual bool OpenTaskFile(std::ifstream & aStream) = 0;
-  
+
+  /**
+   * Retrieve the results file
+   */
+  virtual std::ofstream & OpenResultsFile() = 0;
+
   /**
    * Performs any initialization necessary. Optional to implement
    */
   virtual sbError Initialize() { return sbNoError; }
-  
+
   /**
    * Logs the message to the platform specific log device
    */
   virtual void Log(std::string const & aMsg) = 0;
-  
+
   /**
    * Returns true if we should shutdown
    */
   virtual bool ShouldShutdown() = 0;
-  
+
   /**
    * Sleep for x milliseconds
    */
   virtual void Sleep(unsigned long aMilliseconds) = 0;
-  
+
   /**
    * This allows the derived class to perform any kind of
    * cleanup needed after shutdown has been processed. Default
    * implementation is to do nothing
    */
   virtual void ShutdownDone() {}
-  
+
   enum VersionAction {
     OK,     // It's OK, we like this version we know it well
     ABORT,  // Have no clue what to do with it, so just stop
-    RETRY   // Retry we've converted the file and there's a new one to process 
+    RETRY   // Retry we've converted the file and there's a new one to process
             // it. The parser will just delete this file
   };
-  
+
   /**
    * Returns what to do with the file given it's version
    */
@@ -233,7 +269,7 @@ protected:
   unsigned int  mBatchSize;
 private:
   std::ifstream  mInputStream;
-  Tracks         mTrackBatch;
+  TrackList      mTrackBatch;
   std::string    mLastSource;
   std::string    mLastMethod;
 };

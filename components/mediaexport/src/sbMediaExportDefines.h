@@ -31,9 +31,13 @@
 #include <nsStringAPI.h>
 #include <nsAppDirectoryServiceDefs.h>
 #include <list>
+#include <set>
  
 typedef std::list<nsString>                 sbStringList;
 typedef sbStringList::const_iterator        sbStringListIter;
+
+typedef std::set<nsString>                  sbStringSet;
+typedef sbStringSet::const_iterator         sbStringSetIter;
 
 //------------------------------------------------------------------------------
 // Import/Export preference constants
@@ -64,6 +68,7 @@ const PRUint32 LISTENER_NOTIFY_ITEM_DELTA = 10;
 #define TASKFILE_ADDEDMEDIALISTS_HEADER      "added-medialists"
 #define TASKFILE_REMOVEDMEDIALISTS_HEADER    "removed-medialists"
 #define TASKFILE_ADDEDMEDIAITEMS_HEADER      "added-mediaitems"
+#define TASKFILE_UPDATEDMEDIAITEMS_HEADER    "updated-mediaitems"
 #define TASKFILE_UPDATEDSMARTPLAYLIST_HEADER "updated-smartplaylist"
 #define SHUTDOWN_NAME                        "songbird_export.shutdown"
 

@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -51,11 +53,13 @@ public:
 
 protected:
   virtual sbError AddTracks(std::string const & aSource,
-                            Tracks const & aPaths);
+                            TrackList const & aPaths);
+  virtual sbError UpdateTracks(TrackList const & aPaths);
   virtual sbError RemovePlaylist(std::string const & aPlaylistName);
   virtual sbError CreatePlaylist(std::string const & aPlaylistName);
   virtual sbError ClearPlaylist(std::string const & aPlaylistName);
   virtual bool OpenTaskFile(std::ifstream & aStream);
+  virtual std::ofstream & OpenResultsFile();
   virtual void Log(std::string const & aMsg);
   virtual bool ShouldShutdown();
   virtual void Sleep(unsigned long aMilliseconds);
@@ -68,6 +72,7 @@ protected:
 private:
   std::string            mCurrentTaskFile;
   sbiTunesLibraryManager *mLibraryMgr;
+  std::ofstream          mOutputStream;
 };
 
 #endif  // sbiTunesAgentMacProcessor_h_

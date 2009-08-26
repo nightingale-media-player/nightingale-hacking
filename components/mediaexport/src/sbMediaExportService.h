@@ -115,15 +115,13 @@ protected:
   nsresult WriteAddedMediaLists();
   nsresult WriteRemovedMediaLists();
   nsresult WriteAddedMediaItems();
+  nsresult WriteUpdatedMediaItems();
   nsresult WriteUpdatedSmartPlaylists();
   nsresult WriteMediaItemsArray(nsIArray *aItemsArray);
 
   // Lookup mediaitems by a guid list.
   nsresult GetMediaListByGuid(const nsAString & aItemGuid,
                               sbIMediaList **aMediaList);
-  nsresult EnumerateItemsByGuids(sbStringList & aGuidStringList,
-                                 sbIMediaList *aMediaList,
-                                 nsIArray **aRetVal);
 
   // Notify job progress listeners.
   nsresult NotifyListeners();
@@ -138,9 +136,16 @@ private:
   nsCOMPtr<sbIMutablePropertyArray>      mFilteredProperties;
   nsCOMArray<sbIMediaList>               mObservedMediaLists;
   nsCOMArray<sbILocalDatabaseSmartMediaList> mObservedSmartMediaLists;
+
+  // a map of <media list guid> to array of <media item>s added to that list
   sbMediaListItemMap                     mAddedItemsMap;
+  // a set of <media item guid>s of items changed in the library
+  sbStringSet                            mUpdatedItems;
+  // a list of <media list guid>s that were added to the library
   sbStringList                           mAddedMediaList;
+  // a list of <media list guid>s that were removed from the library
   sbStringList                           mRemovedMediaLists;
+  // a list of <media list guid>s of updated <smart media list>s
   sbStringList                           mUpdatedSmartMediaLists;
   PRBool                                 mIsRunning;
 

@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
  //
  // BEGIN SONGBIRD GPL
@@ -90,7 +92,12 @@ protected:
    * Adds a track to the iTunes database given a path
    */
   virtual sbError AddTracks(std::string const & aSource,
-                            Tracks const & aPaths);
+                            TrackList const & aPaths);
+
+  /**
+   * Adds a track to the iTunes database given a path
+   */
+  virtual sbError UpdateTracks(TrackList const & aPaths);
   
   /**
    * Creates a playlist (Recreates it if it already exists)
@@ -112,6 +119,11 @@ protected:
    */
   virtual bool OpenTaskFile(std::ifstream & aStream);
   
+  /**
+   * Retrieve the results file
+   */
+  virtual std::ofstream & OpenResultsFile();
+
   /**
    * Logs the message to the platform specific log device
    */
@@ -135,6 +147,7 @@ private:
   sbiTunesLibrary miTunesLibrary;
   std::wstring mCurrentTaskFile;
   HANDLE mAppExistsMutex;
+  std::ofstream mOutputStream;
   
   /**
    * Callback for the app watcher to know when a shutdown

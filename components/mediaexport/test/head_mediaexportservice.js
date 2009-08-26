@@ -36,6 +36,7 @@ var TASKFILE_SCHEMAVERSION_HEADER     = "schema-version";
 var TASKFILE_ADDEDMEDIALISTS_HEADER   = "added-medialists";
 var TASKFILE_REMOVEDMEDIALISTS_HEADER = "removed-medialists";
 var TASKFILE_ADDEDMEDIAITEMS_HEADER   = "added-mediaitems";
+var TASKFILE_UPDATEDMEDIAITEMS_HEADER = "updated-mediaitems";
 
 // Media exporter prefs.
 var PREF_IMPORTEXPORT_ONSHUTDOWN = 
@@ -250,7 +251,7 @@ TaskFileDataParser.prototype =
         }
       }
       else if ((result = /^(\d+)=(.*)$/(curLine.value))) {
-        // this is an item
+        // this is an added-to-medialist or removed item
         assertEqual(result[1], nextItem, "items out of order");
         nextItem++;
         // all names are in utf8
@@ -264,16 +265,28 @@ TaskFileDataParser.prototype =
             this._removedMediaLists.push(curValue);
             break;
 
+          default:
+            doFail("Unexpected state " + this._curParseMode);
+        }
+      }
+      else if ((result = /^([0-9a-f-]{36})=(.*)$/(curLine.value))) {
+        // this is an added item
+        // all names are in utf8
+        var curValue = decodeURIComponent(result[2]);
+        switch (this._curParseMode) {
           case this._STATE_MODE_ADDEDMEDIAITEMS:
             if (!this._addedMediaItems[this._curMediaListName]) {
               this._addedMediaItems[this._curMediaListName] = [];
             }
             this._addedMediaItems[this._curMediaListName].push(curValue);
             break;
+
+          default:
+            doFail("Unexpected state " + this._curParseMode);
         }
       }
       else {
-        doFail("Unexpected line");
+        doFail("Unexpected line " + curLine.value);
       }
     }
 

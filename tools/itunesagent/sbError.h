@@ -75,6 +75,10 @@ public:
   /**
    * Used to create misc. sbError instances.
    */
+  explicit sbError(std::string const & aMessage, bool aChecked) :
+    mMessage(aMessage) ,
+    mChecked(aChecked) {
+  }
   explicit sbError(const char *aMessage, bool aChecked) :
     mMessage(aMessage) ,
     mChecked(aChecked) {

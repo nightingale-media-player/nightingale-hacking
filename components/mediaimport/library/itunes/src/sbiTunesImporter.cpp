@@ -30,21 +30,26 @@
 #include <algorithm>
 
 // Mozilla includes
+#include <nsAppDirectoryServiceDefs.h>
 #include <nsArrayUtils.h>
+#include <nsAutoPtr.h>
 #include <nsCOMArray.h>
 #include <nsComponentManagerUtils.h>
+#include <nsDirectoryServiceUtils.h>
 #include <nsIArray.h>
 #include <nsIBufferedStreams.h>
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIInputStream.h>
 #include <nsIIOService.h>
+#include <nsILineInputStream.h>
 #include <nsILocalFile.h>
 #include <nsIProperties.h>
 #include <nsISimpleEnumerator.h>
 #include <nsIURI.h>
 #include <nsIXULRuntime.h>
 #include <nsMemory.h>
+#include <nsNetUtil.h>
 #include <nsThreadUtils.h>
 
 // NSPR includes
@@ -455,6 +460,65 @@ sbiTunesImporter::Initialize()
   
   rv = miTunesDBServices.Initialize();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read in the added results file
+  do { /* scope, and to jump out of */
+    nsCOMPtr<nsIFile> resultsFile;
+    rv = NS_GetSpecialDirectory(NS_APP_APPLICATION_REGISTRY_DIR,
+                                getter_AddRefs(resultsFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = resultsFile->Append(NS_LITERAL_STRING("itunesexportresults.txt"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool success;
+    rv = resultsFile->Exists(&success);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!success) {
+      // no file, escape from scope
+      break;
+    }
+
+    nsCOMPtr<nsIInputStream> inputStream;
+    rv = NS_NewLocalFileInputStream(getter_AddRefs(inputStream), resultsFile);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsILineInputStream> lineStream = do_QueryInterface(inputStream, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    do { // loop over lines
+      nsCAutoString line;
+      rv = lineStream->ReadLine(line, &success);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      if (StringBeginsWith(line, NS_LITERAL_CSTRING("["))) {
+        // skip for now
+        continue;
+      }
+
+      // line format is
+      // <songbird guid>=<library persistent id>,<track database id>
+      // with only the last part be variable-length
+      const int LEN_GUID = 36;
+      const int LEN_PID = 16;
+
+      if (line.Length() < LEN_GUID + LEN_PID + 2) {
+        continue;
+      }
+      if (line[LEN_GUID] != '=' ||
+          line[LEN_GUID + 1 + LEN_PID] != ',')
+      {
+        // invalidly formatted line
+        continue;
+      }
+
+      NS_ConvertASCIItoUTF16 sbid(Substring(line, 0, LEN_GUID)),
+                             libid(Substring(line, LEN_GUID + 1, LEN_PID)),
+                             id(Substring(line, LEN_GUID + 2 + LEN_PID));
+      miTunesDBServices.MapID(libid, id, sbid);
+    } while (success);
+    /* rv = */ inputStream->Close();
+    /* rv = */ resultsFile->Remove(PR_FALSE);
+  } while(false);
   
   mPlaylistBlacklist = 
     SBLocalizedString(NS_LITERAL_STRING("import_library.itunes.excluded_playlists"), 
@@ -593,7 +657,6 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
   rv = sbOpenInputStream(mLibraryPath, getter_AddRefs(mStream));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 bytesRead = 0;
   nsCOMPtr<nsILocalFile> file = do_CreateInstance("@mozilla.org/file/local;1", 
                                                   &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -701,7 +764,7 @@ sbiTunesImporter::OnTrack(sbIStringMap *aProperties) {
   }
   nsresult rv = UpdateProgress();
   
-  iTunesTrack * const track = new iTunesTrack;
+  nsAutoPtr<iTunesTrack> track(new iTunesTrack);
   NS_ENSURE_TRUE(track, NS_ERROR_OUT_OF_MEMORY);
 
   rv  = track->Initialize(aProperties);
@@ -717,10 +780,9 @@ sbiTunesImporter::OnTrack(sbIStringMap *aProperties) {
   nsString persistentID;
   if (!track->mProperties.Get(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID), 
                               &persistentID)) {
-    delete track;
     return NS_OK;
   }
-  mTrackBatch.push_back(track);
+  mTrackBatch.push_back(track.forget());
   if (mTrackBatch.size() == BATCH_SIZE) {
     ProcessTrackBatch();
   }
@@ -1325,8 +1387,11 @@ nsresult sbiTunesImporter::ProcessUpdates() {
                                mIOService,
                                miTunesLibSig, 
                                getter_AddRefs(uri));
+            nsCOMPtr<nsIURI> fixedUri;
+            rv = sbLibraryUtils::GetContentURI(uri, getter_AddRefs(fixedUri));
+            NS_ENSURE_SUCCESS(rv, rv);
             nsCString trackCURI;
-            rv = uri->GetSpec(trackCURI);
+            rv = fixedUri->GetSpec(trackCURI);
             if (NS_SUCCEEDED(rv)) {      
               nsString const & trackURI = NS_ConvertUTF8toUTF16(trackCURI);
               if (!trackURI.Equals(contentURL)) {
@@ -1586,6 +1651,13 @@ nsresult sbiTunesImporter::ProcessTrackBatch() {
   
   mTrackBatch.clear();
   return NS_OK;
+}
+
+sbiTunesImporter::iTunesTrack::iTunesTrack() {
+  MOZ_COUNT_CTOR(iTunesTrack);
+}
+sbiTunesImporter::iTunesTrack::~iTunesTrack() {
+  MOZ_COUNT_DTOR(iTunesTrack);
 }
 
 nsresult 

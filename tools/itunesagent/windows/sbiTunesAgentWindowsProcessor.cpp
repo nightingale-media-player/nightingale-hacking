@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
  //
  // BEGIN SONGBIRD GPL
@@ -35,6 +37,7 @@ wchar_t const ITUNES_EXECUTABLE_NAME[] = L"itunes.exe";
 wchar_t const AGENT_EXPORT_FILENAME_MASK[] = L"songbird_export.task*";
 wchar_t const AGENT_ERROR_FILENAME[] = L"itunesexporterrors.txt";
 wchar_t const AGENT_LOG_FILENAME[] = L"itunesexport.log";
+wchar_t const AGENT_RESULT_FILENAME[] = L"itunesexportresults.txt";
 wchar_t const AGENT_SHUTDOWN_FILENAME[] = L"songbird_export.shutdown";
 wchar_t const WINDOWS_RUN_KEY[] = L"Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 wchar_t const WINDOWS_RUN_KEY_VALUE[] = L"sbitunesagent";
@@ -81,6 +84,40 @@ std::wstring ConvertUTF8ToUTF16(const std::string& src) {
   #undef GET_BITS
 }
 
+std::string ConvertUTF16ToUTF8(const std::wstring& src) {
+  std::string result;
+  unsigned long c;
+  unsigned char buffer[6];
+  std::wstring::const_iterator it, end = src.end();
+  for (it = src.begin(); it < end; ++it) {
+    c = (unsigned long)(*it);
+    int trailCount;
+    if (c >= 0x04000000) {
+      trailCount = 5;
+    } else if (c >= 0x200000) {
+      trailCount = 4;
+    } else if (c >= 0x010000) {
+      trailCount = 3;
+    } else if (c >= 0x0800) {
+      trailCount = 2;
+    } else if (c >= 0x80) {
+      trailCount = 1;
+    } else {
+      // raw, special case
+      result.append(1, (char)(c & 0x7F));
+      continue;
+    }
+    for (int i = trailCount; i > 0; --i) {
+      buffer[i] = (unsigned char)(c & 0x3F);
+      c >>= 6;
+    }
+    buffer[0] = ((1 << (trailCount + 1)) - 1) << (8 - trailCount - 1);
+    buffer[0] |= c & ((1 << (8 - trailCount - 2)) - 1);
+    result.append((std::string::value_type*)buffer, trailCount + 1);
+  }
+  return result;
+}
+
 static std::wstring GetSongbirdPath() {
   WCHAR buffer[MAX_PATH + 2];
   HRESULT result = SHGetSpecialFolderPathW(NULL, buffer, CSIDL_APPDATA, true);
@@ -120,14 +157,57 @@ sbiTunesAgentWindowsProcessor::~sbiTunesAgentWindowsProcessor() {
 
 sbError
 sbiTunesAgentWindowsProcessor::AddTracks(std::string const & aSource,
-                                         Tracks const & aPaths) {
-  std::deque<std::wstring> paths;
-  Tracks::const_iterator const end = aPaths.end();
-  for (Tracks::const_iterator iter = aPaths.begin(); iter != end; ++iter) {
-    paths.push_back(ConvertUTF8ToUTF16(*iter));
+                                         TrackList const & aPaths) {
+  typedef std::deque<std::wstring> StringDeque;
+  StringDeque paths;
+  StringDeque trackIds;
+  TrackList::const_iterator const end = aPaths.end();
+  for (TrackList::const_iterator iter = aPaths.begin(); iter != end; ++iter) {
+    paths.push_back(ConvertUTF8ToUTF16(iter->path));
   }
-  return miTunesLibrary.AddTracks(ConvertUTF8ToUTF16(aSource),
-                                  paths);
+  sbError error;
+  error = miTunesLibrary.AddTracks(ConvertUTF8ToUTF16(aSource),
+                                   paths,
+                                   trackIds);
+  SB_ENSURE_SUCCESS(error, error);
+
+  if (!OpenResultsFile()) {
+    return sbError("Failed to open output file");
+  }
+
+  TrackList::const_iterator trackIter = aPaths.begin();
+  StringDeque::const_iterator idIter;
+  for (idIter = trackIds.begin();
+       idIter != trackIds.end();
+       ++idIter, ++trackIter) {
+    OpenResultsFile() << trackIter->id
+                      << "="
+                      << miTunesLibrary.GetLibraryId()
+                      << ","
+                      << ConvertUTF16ToUTF8(*idIter)
+                      << std::endl;
+  }
+  return sbNoError;
+}
+
+sbError
+sbiTunesAgentWindowsProcessor::UpdateTracks(TrackList const & aPaths) {
+  std::deque<sbiTunesLibrary::TrackProperty> tracks;
+  TrackList::const_iterator const end = aPaths.end();
+  for (TrackList::const_iterator iter = aPaths.begin(); iter != end; ++iter) {
+    unsigned long long id;
+    int count = 0;
+    assert(iter->type == Track::TYPE_ITUNES);
+    count = sscanf_s(iter->id.c_str(), "%llx", &id);
+    if (count < 1) {
+      std::string msg("Unable to parse itunes ID ");
+      msg.append(iter->id);
+      return sbError(msg);
+    }
+    tracks.push_back(sbiTunesLibrary::TrackProperty(id,
+                                                    ConvertUTF8ToUTF16(iter->path)));
+  }
+  return miTunesLibrary.UpdateTracks(tracks);
 }
 
 bool sbiTunesAgentWindowsProcessor::GetIsAgentRunning() {
@@ -181,6 +261,15 @@ bool sbiTunesAgentWindowsProcessor::OpenTaskFile(std::ifstream & aStream) {
   FindClose(hFind);
   aStream.open(path.c_str());
   return true;
+}
+
+std::ofstream & sbiTunesAgentWindowsProcessor::OpenResultsFile() {
+  if (!!mOutputStream && !mOutputStream.is_open()) {
+    std::wstring path(GetSongbirdPath());
+    path += AGENT_RESULT_FILENAME;
+    mOutputStream.open(path.c_str(), std::ios_base::ate);
+  }
+  return mOutputStream;
 }
 
 sbError sbiTunesAgentWindowsProcessor::Initialize() {

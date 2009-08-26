@@ -241,6 +241,25 @@ sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList
 }
 
 nsresult
+sbMediaExportTaskWriter::WriteUpdatedMediaItemsListHeader()
+{
+  LOG(("%s: Writing header '%s' for updated items",
+        __FUNCTION__,
+        TASKFILE_UPDATEDMEDIAITEMS_HEADER));
+
+  // Header format looks like this
+  // [updated-mediaitems]
+  mOutputStream << "["
+                << TASKFILE_UPDATEDMEDIAITEMS_HEADER
+                << "]"
+                << std::endl;
+
+  // Reset the output index
+  mCurOutputIndex = 0;
+  return NS_OK;
+}
+
+nsresult
 sbMediaExportTaskWriter::WriteAddedTrack(sbIMediaItem *aMediaItem)
 {
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -269,16 +288,77 @@ sbMediaExportTaskWriter::WriteAddedTrack(sbIMediaItem *aMediaItem)
   PRBool exists = PR_FALSE;
   rv = contentFile->Exists(&exists);
   NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(exists, NS_ERROR_FILE_NOT_FOUND);
 
   nsCString escaped;
   rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(itemContentPath),
           nsINetUtil::ESCAPE_URL_PATH, escaped);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString guid;
+  rv = aMediaItem->GetGuid(guid);
+  NS_ENSURE_SUCCESS(rv, rv);
   
   LOG(("%s: Writing added track '%s'",
         __FUNCTION__, escaped.get()));
 
-  mOutputStream << mCurOutputIndex++ 
+  mOutputStream << NS_LossyConvertUTF16toASCII(guid).get()
+                << "="
+                << escaped.get()
+                << std::endl;
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaExportTaskWriter::WriteUpdatedTrack(sbIMediaItem *aMediaItem)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  nsresult rv;
+
+  // Get the itunes id of the media item
+  nsString iTunesID;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                               iTunesID);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(!iTunesID.IsEmpty(), NS_ERROR_FAILURE);
+
+  // Get the path of mediaitem and write that info to disk
+  nsCOMPtr<nsIURI> contentUri;
+  rv = aMediaItem->GetContentSrc(getter_AddRefs(contentUri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> contentFileURL = do_QueryInterface(contentUri, &rv);
+  if (NS_FAILED(rv) || !contentFileURL) {
+    // If this is not a local resource, just warn and return.
+    NS_WARNING("WARNING: Tried to write a remote mediaitem resource!");
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIFile> contentFile;
+  rv = contentFileURL->GetFile(getter_AddRefs(contentFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString itemContentPath;
+  rv = contentFile->GetPath(itemContentPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool exists = PR_FALSE;
+  rv = contentFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(exists, NS_ERROR_FILE_NOT_FOUND);
+
+  nsCString escaped;
+  rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(itemContentPath),
+          nsINetUtil::ESCAPE_URL_PATH, escaped);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  LOG(("%s: Writing updated track '%s' -> '%s'",
+        __FUNCTION__,
+        NS_LossyConvertUTF16toASCII(iTunesID).get(),
+        escaped.get()));
+
+  mOutputStream << NS_LossyConvertUTF16toASCII(iTunesID).get()
                 << "="
                 << escaped.get()
                 << std::endl;

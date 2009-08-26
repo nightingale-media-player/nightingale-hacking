@@ -60,6 +60,57 @@
 PRLogModuleInfo *gMediaExportLog = nsnull;
 #endif
 
+
+template <class T>
+static nsresult
+EnumerateItemsByGuids(typename T::const_iterator const aGuidStringListBegin,
+                      typename T::const_iterator const aGuidStringListEnd,
+                      sbIMediaList *aMediaList,
+                      nsIArray **aRetVal)
+{
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aRetVal);
+
+  nsresult rv;
+
+#ifdef PR_LOGGING
+  nsString mediaListName;
+  rv = aMediaList->GetName(mediaListName);
+  NS_ENSURE_SUCCESS(rv, rv);
+  LOG(("%s: Enumerate items by guids on media list '%s'",
+        __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListName).get()));
+#endif
+
+  nsCOMPtr<sbIMutablePropertyArray> properties =
+    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_NAMED_LITERAL_STRING(guidProperty, SB_PROPERTY_GUID);
+
+  typename T::const_iterator iter;
+  for (iter = aGuidStringListBegin; iter != aGuidStringListEnd; ++iter) {
+    rv = properties->AppendProperty(guidProperty, *iter);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
+    new sbMediaListEnumArrayHelper();
+  NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = enumHelper->New();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aMediaList->EnumerateItemsByProperties(
+      properties,
+      enumHelper,
+      sbIMediaList::ENUMERATIONTYPE_LOCKING);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return enumHelper->GetMediaItemsArray(aRetVal);
+}
+
+//------------------------------------------------------------------------------
+
 NS_IMPL_THREADSAFE_ISUPPORTS7(sbMediaExportService,
                               sbIMediaExportService,
                               nsIClassInfo,
@@ -573,6 +624,8 @@ sbMediaExportService::WriteChangesToTaskFile()
     if (mPrefController->GetShouldExportTracks()) {
       rv = WriteAddedMediaItems();
       NS_ENSURE_SUCCESS(rv, rv);
+      rv = WriteUpdatedMediaItems();
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
     rv = NotifyListeners();
@@ -713,9 +766,10 @@ sbMediaExportService::WriteAddedMediaItems()
     }
 
     nsCOMPtr<nsIArray> addedMediaItems;
-    rv = EnumerateItemsByGuids(next->second,
-                               curParentList,
-                               getter_AddRefs(addedMediaItems));
+    rv = EnumerateItemsByGuids<sbStringList>(next->second.begin(),
+                                             next->second.end(),
+                                             curParentList,
+                                             getter_AddRefs(addedMediaItems));
     if (NS_FAILED(rv) || !addedMediaItems) {
       NS_WARNING("ERROR: Could not enumerate media items by guid!");
       continue;
@@ -725,6 +779,76 @@ sbMediaExportService::WriteAddedMediaItems()
     rv = WriteMediaItemsArray(addedMediaItems);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                      "ERROR: Could not write out the media items!");
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbMediaExportService::WriteUpdatedMediaItems()
+{
+  TRACE(("%s: Writing %i updated media items",
+         __FUNCTION__,
+         mUpdatedItems.size()));
+  if (mUpdatedItems.empty()) {
+    return NS_OK;
+  }
+
+  NS_ENSURE_STATE(mTaskWriter);
+
+  nsresult rv;
+
+  nsCOMPtr<sbILibrary> mainLibrary;
+  rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> updatedMediaItems;
+  rv = EnumerateItemsByGuids<sbStringSet>(mUpdatedItems.begin(),
+                                          mUpdatedItems.end(),
+                                          mainLibrary,
+                                          getter_AddRefs(updatedMediaItems));
+  if (NS_FAILED(rv) || !updatedMediaItems) {
+    NS_WARNING("ERROR: Could not enumerate media items by guid!");
+    return NS_ERROR_FAILURE;;
+  }
+
+  rv = mTaskWriter->WriteUpdatedMediaItemsListHeader();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 length = 0;
+  rv = updatedMediaItems->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 updatedtemDelta = 0;
+
+  for (PRUint32 i = 0; i < length; i++) {
+    nsCOMPtr<sbIMediaItem> curMediaItem =
+      do_QueryElementAt(updatedMediaItems, i, &rv);
+    if (NS_FAILED(rv) || !curMediaItem) {
+      NS_WARNING("ERROR: Could not get a mediaitem from an array!");
+      continue;
+    }
+
+    rv = mTaskWriter->WriteUpdatedTrack(curMediaItem);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "ERROR: Could not write a smartlist mediaitem!");
+
+    ++mProgress;
+    ++updatedtemDelta;
+
+    // Go ahead and notify the listener after each write.
+    if (updatedtemDelta == LISTENER_NOTIFY_ITEM_DELTA) {
+      rv = NotifyListeners();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+          "ERROR: Could not notify the listeners!");
+      updatedtemDelta = 0;
+    }
+  }
+
+  if (updatedtemDelta > 0) {
+    rv = NotifyListeners();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+        "ERROR: Could not notify the listeners!");
   }
 
   return NS_OK;
@@ -875,55 +999,6 @@ sbMediaExportService::GetMediaListByGuid(const nsAString & aItemGuid,
 }
 
 nsresult
-sbMediaExportService::EnumerateItemsByGuids(sbStringList & aGuidStringList,
-                                            sbIMediaList *aMediaList,
-                                            nsIArray **aRetVal)
-{
-  NS_ENSURE_ARG_POINTER(aMediaList);
-  NS_ENSURE_ARG_POINTER(aRetVal);
-
-  nsresult rv;
-  
-#ifdef PR_LOGGING
-  nsString mediaListName;
-  rv = aMediaList->GetName(mediaListName);
-  NS_ENSURE_SUCCESS(rv, rv);
-  LOG(("%s: Enumerate items by guids on media list '%s'",
-        __FUNCTION__, NS_ConvertUTF16toUTF8(mediaListName).get()));
-#endif
-  
-  nsCOMPtr<sbIMutablePropertyArray> properties =
-    do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  NS_NAMED_LITERAL_STRING(guidProperty, SB_PROPERTY_GUID);
-
-  sbStringListIter begin = aGuidStringList.begin();
-  sbStringListIter end = aGuidStringList.end();
-  sbStringListIter next;
-  
-  for (next = begin; next != end; ++next) {
-    rv = properties->AppendProperty(guidProperty, *next);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsRefPtr<sbMediaListEnumArrayHelper> enumHelper =
-    new sbMediaListEnumArrayHelper();
-  NS_ENSURE_TRUE(enumHelper, NS_ERROR_OUT_OF_MEMORY);
-
-  rv = enumHelper->New();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = aMediaList->EnumerateItemsByProperties(
-      properties,
-      enumHelper,
-      sbIMediaList::ENUMERATIONTYPE_LOCKING);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  return enumHelper->GetMediaItemsArray(aRetVal);
-}
-
-nsresult
 sbMediaExportService::NotifyListeners()
 {
   LOG(("%s: updating listeners of job progress", __FUNCTION__));
@@ -955,10 +1030,11 @@ sbMediaExportService::NotifyListeners()
 PRBool
 sbMediaExportService::GetHasRecordedChanges()
 {
-  return mAddedItemsMap.size() > 0 ||
-         mAddedMediaList.size() > 0 ||
-         mRemovedMediaLists.size() > 0 ||
-         mUpdatedSmartMediaLists.size() > 0;
+  return !mAddedItemsMap.empty() ||
+         !mUpdatedItems.empty() ||
+         !mAddedMediaList.empty() ||
+         !mRemovedMediaLists.empty() ||
+         !mUpdatedSmartMediaLists.empty();
 }
 
 //------------------------------------------------------------------------------
@@ -1071,6 +1147,22 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
   }
   // Handle the added mediaitem track.
   else {
+    nsCOMPtr<sbILibrary> mainLibrary;
+    rv = GetMainLibrary(getter_AddRefs(mainLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (SameCOMIdentity(mainLibrary, aMediaList)) {
+      // this item was added to the main library; check if it already has an
+      // itunes persistent id, and ignore it if so (because that means we just
+      // imported the track from itunes)
+      nsString itunesGuid;
+      rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                                   itunesGuid);
+      if (NS_SUCCEEDED(rv) && !itunesGuid.IsEmpty()) {
+        // this item already exists
+        return NS_OK;
+      }
+    }
+
     nsString listGuid;
     rv = aMediaList->GetGuid(listGuid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1090,7 +1182,7 @@ sbMediaExportService::OnItemAdded(sbIMediaList *aMediaList,
 
     guidIter->second.push_back(itemGuid);
   }
-  
+
   return NS_OK;
 }
 
@@ -1170,6 +1262,57 @@ sbMediaExportService::OnItemUpdated(sbIMediaList *aMediaList,
                                     PRBool *aRetVal)
 {
   LOG(("%s: Media Item Updated!!", __FUNCTION__));
+
+  NS_ENSURE_ARG_POINTER(aMediaList);
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(aProperties);
+  NS_ENSURE_ARG_POINTER(aRetVal);
+
+  // we always want more notifications
+  *aRetVal = PR_FALSE;
+
+  nsresult rv;
+  #if DEBUG
+  {
+    nsCOMPtr<sbILibrary> mainLib;
+    rv = GetMainLibrary(getter_AddRefs(mainLib));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ASSERTION(SameCOMIdentity(mainLib, aMediaList),
+                 "sbMediaExportService::OnItemUpdated: unexpected media list");
+  }
+  #endif
+
+  nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(aMediaItem, &rv);
+  if (itemAsList && NS_SUCCEEDED(rv)) {
+    // this is a media list; we don't care about those
+    return NS_OK;
+  }
+
+  nsString contentUrl;
+  rv = aProperties->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
+                                     contentUrl);
+  if (NS_FAILED(rv)) {
+    // the content url didn't change, something else did
+    // we don't need to update the export
+    return NS_OK;
+  }
+
+  nsString itunesGuid;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
+                               itunesGuid);
+  if (NS_FAILED(rv)) {
+    // no itunes guid, new item?
+    NS_NOTREACHED("not implemented");
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  nsString itemGuid;
+  rv = aMediaItem->GetGuid(itemGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add this item's guid to the list of things that were changed
+  mUpdatedItems.insert(itemGuid);
+
   return NS_OK;
 }
 

@@ -26,8 +26,13 @@
 
 #include "sbiTunesLibrary.h"
 
+#include <algorithm>
 #include <assert.h>
+#include <limits.h>
+#include <iomanip>
 #include <sstream>
+
+#include <sbMemoryUtils.h>
 
 HRESULT const SB_ITUNES_ERROR_BUSY = 0x8001010a;
 
@@ -36,6 +41,7 @@ wchar_t const SB_ITUNES_PLAYLIST_NAME[] = L"Songbird";
 
 wchar_t const ITUNES_APP_PROGID[] = L"iTunes.Application";
 
+SB_AUTO_NULL_CLASS(sbVariantArg, VARIANTARG*, VariantClear(mValue));
 
 sbiTunesLibrary::sbiTunesLibrary() {
 }
@@ -196,10 +202,44 @@ sbError sbiTunesLibrary::Initialize() {
                        "from the Songbird playlist source");
       }
     }
+    // Get the main library persistent id
+    {
+      long persistentIdHigh, persistentIdLow;
+      sbVariantArg result = new VARIANTARG;
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(mLibrarySource.get());
+      hr = miTunesApp.Invoke(L"ITObjectPersistentIDHigh",
+                             args,
+                             *result.get(),
+                             DISPATCH_METHOD | DISPATCH_PROPERTYGET);
+      if (FAILED(hr)) {
+        return sbError("Failed to get high persistent ID for library");
+      }
+      assert(result.get()->vt == VT_I4);
+      persistentIdHigh = result.get()->lVal;
+      hr = miTunesApp.Invoke(L"ITObjectPersistentIDLow",
+                             args,
+                             *result.get(),
+                             DISPATCH_METHOD | DISPATCH_PROPERTYGET);
+      if (FAILED(hr)) {
+        return sbError("Failed to get low persistent ID for library");
+      }
+      assert(result.get()->vt == VT_I4);
+      persistentIdLow = result.get()->lVal;
+
+      std::ostringstream sstr;
+      sstr << std::hex << std::uppercase << std::setw(8) << std::setfill('0')
+           << persistentIdHigh << persistentIdLow;
+      mLibraryPersistentId = sstr.str();
+    }
     // All good exit
     break;
   }
   return sbNoError;
+}
+
+const std::string& sbiTunesLibrary::GetLibraryId() {
+  return mLibraryPersistentId;
 }
 
 /**
@@ -226,11 +266,13 @@ CreateVariantArray(std::deque<std::wstring> const & aStrings,
 }
 
 sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource, 
-                                   std::deque<std::wstring> const & aTrackPaths) {
+                                   std::deque<std::wstring> const & aTrackPaths,
+                                   std::deque<std::wstring> & aDatabaseIds) {
   if (!miTunesApp.get()) {
     return sbError("iTunes objects not initialized");
   }
   if (aSource == SB_ITUNES_MAIN_LIBRARY_SOURCE_NAME) {
+    sbIDispatchPtr operationStatus;
     // Loop until success
     for (;;) {
       VARIANTARG varFiles;
@@ -250,9 +292,50 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
       if (IsIDispatch(result)) {
         WaitForCompletion(result.pdispVal);
       }
+      operationStatus = result.pdispVal;
       VariantClear(&result);
       break;
     }
+
+    sbIDispatchPtr tracks;
+    HRESULT hr = operationStatus.GetProperty(L"Tracks", &tracks);
+    if (FAILED(hr)) {
+      return MakeCOMError(hr, "fetching added tracks");
+    }
+
+    long trackCount = 0;
+    hr = tracks.GetProperty(L"Count", trackCount);
+    if (FAILED(hr)) {
+      return MakeCOMError(hr, "fetching number of added tracks");
+    }
+    for (long i = 1; i <= trackCount; ++i) {
+      sbIDispatchPtr::VarArgs args(1);
+      args.Append(i);
+      sbVariantArg result = new VARIANTARG;
+      hr = tracks.Invoke(L"Item",
+                         args,
+                         *result.get(),
+                         DISPATCH_METHOD | DISPATCH_PROPERTYGET);
+      if (FAILED(hr) || !IsIDispatch(*result.get())) {
+        // we failed to get an item; skip to the next one, instead of aborting
+        continue;
+      }
+      sbIDispatchPtr track(result.get()->pdispVal);
+
+      long trackId;
+      hr = track.GetProperty(L"TrackDatabaseID", trackId);
+      if (FAILED(hr)) {
+        // failed to get the track ID; try the next item
+        continue;
+      }
+
+      // the tracks are assumed to be in the same order as the inputs :(
+
+      std::wostringstream trackIdString;
+      trackIdString << trackId;
+      aDatabaseIds.push_back(trackIdString.str());
+    }
+
   }
   else {
     HRESULT hr;
@@ -369,6 +452,91 @@ sbError sbiTunesLibrary::AddTracks(std::wstring const & aSource,
     }
   }
   return sbNoError;
+}
+
+sbError sbiTunesLibrary::UpdateTracks(std::deque<sbiTunesLibrary::TrackProperty> const & aTrackPaths)
+{
+  if (!miTunesApp.get()) {
+    return sbError("iTunes objects not initialized");
+  }
+
+  HRESULT hr;
+  sbIDispatchPtr tracks;
+
+  // Loop until success
+  for (;;) {
+    hr = mLibraryPlaylist.GetProperty(L"Tracks", &tracks);
+    if (COMBusyError(hr)) {
+      continue;
+    }
+    else if (FAILED(hr) || !tracks.get()) {
+      return sbError("Failed to get the tracks");
+    }
+    break;
+  }
+
+  sbError lastError = sbNoError;
+  std::deque<sbiTunesLibrary::TrackProperty>::const_iterator it;
+  std::deque<sbiTunesLibrary::TrackProperty>::const_iterator end = aTrackPaths.end();
+  for (it = aTrackPaths.begin(); it != end; ++it) {
+    for (;;) { // Loop until success
+      sbIDispatchPtr::VarArgs args(2);
+      args.Append(static_cast<const long>((it->first >> 32) & ULONG_MAX));
+      args.Append(static_cast<const long>((it->first) & ULONG_MAX));
+
+      sbVariantArg result = new VARIANTARG;
+      if (!result) {
+        lastError = sbError("failed to allocate new variantarg", true);
+        // go to next item
+        break;
+      }
+      ::VariantInit(result.get());
+
+      hr = tracks.Invoke(L"ItemByPersistentID",
+                         args,
+                         *result.get(),
+                         DISPATCH_PROPERTYGET);
+      if (COMBusyError(hr)) {
+        // retry this item
+        continue;
+      }
+      else if (FAILED(hr) || !IsIDispatch(*result.get())) {
+        lastError = sbError("Failed to get a track by persistent ID", true);
+        // go to the next item
+        break;
+      }
+
+      sbIDispatchPtr track = result.get()->pdispVal;
+      sbVariantArg arg = new VARIANTARG;
+      if (!result) {
+        lastError = sbError("failed to allocate new variantarg", true);
+        // go to next item
+        break;
+      }
+      ::VariantInit(arg.get());
+      arg.get()->bstrVal = ::SysAllocStringLen(it->second.c_str(),
+                                               it->second.length());
+      arg.get()->vt = VT_BSTR;
+      if (!arg.get()->bstrVal) {
+        lastError = sbError("failed to allocate BSTR for new url", true);
+        // go to next item
+        break;
+      }
+
+      hr = track.SetProperty(L"Location", *arg.get());
+      if (COMBusyError(hr)) {
+        // retry this item
+        continue;
+      }
+      else if (FAILED(hr) || !IsIDispatch(*arg.get())) {
+        lastError = sbError("Failed to set track location", true);
+        // go to the next item
+        break;
+      }
+    }
+  }
+
+  return lastError;
 }
 
 sbError sbiTunesLibrary::CreatePlaylist(std::wstring const & aPlaylistName) {

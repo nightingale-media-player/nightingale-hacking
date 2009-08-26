@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
  //
  // BEGIN SONGBIRD GPL
@@ -46,6 +48,8 @@
 class sbiTunesLibrary
 {
 public:
+  typedef std::pair<unsigned long long, std::wstring> TrackProperty;
+
   /**
    * Does really do anything except place all the pointer initialization 
    * in the cpp reducing code size
@@ -61,10 +65,20 @@ public:
    */
   sbError Initialize();
   /**
+   * Get the persistent ID of the library
+   */
+  const std::string & GetLibraryId();
+  /**
    * Adds a track given a source (playlist) and a URI
+   * Returns a list of (non-persistent) ids.
    */
   sbError AddTracks(std::wstring const & aSource,
-                    std::deque<std::wstring> const & aTrackPaths);
+                    std::deque<std::wstring> const & aTrackPaths,
+                    std::deque<std::wstring> & aDatabaseIds);
+  /**
+   * Updates a track in the library, given an iTunes persistent ID and a URI
+   */
+  sbError UpdateTracks(std::deque<TrackProperty> const & aTrackPaths);
   /**
    * Creates a playlist, will erase the playlist if it already exists
    */
@@ -83,7 +97,8 @@ private:
   sbIDispatchPtr mSongbirdPlaylists;
   sbIDispatchPtr mSongbirdPlaylist;
   sbIDispatchPtr mSongbirdPlaylistSource;
-  sbIDispatchPtr miTunesApp;   
+  sbIDispatchPtr miTunesApp;
+  std::string mLibraryPersistentId;
 };
 
 #endif /* SBITUNESLIBRARY_H_ */

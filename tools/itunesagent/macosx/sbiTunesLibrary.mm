@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -32,16 +34,17 @@
 #include <sstream>
 #include <iostream>
 
+#include <sbMemoryUtils.h>
+
 // Magic keywords from the iTunes AppleScript definition file.
-#define SB_GET_DESCRIPTOR_CLASS         'getd'
-#define SB_GET_CLASS_COUNT              'cnte'
-#define SB_SET_PROPERTY_CLASS           'setd'
-#define SB_ITEM_PROPERTY_NAME           'pnam'
 #define SB_ITUNES_MAINLIBRARYPLAYLIST   'cLiP'
 #define SB_PLAYLIST_CLASS               'cPly'
 #define SB_FOLDER_PLAYLIST_CLASS        'cFoP'
 #define SB_ITUNES_ADD                   'Add '
 #define SB_PARENT_PROPERTY_NAME         'pPlP'
+#define SB_LOCATION_PROPERTY_NAME       'pLoc'
+#define SB_DATABASE_ID_PROPERTY_NAME    'pDID'
+#define SB_PERSISTENT_ID_PROPERTY_NAME  'pPIS'
 
 const OSType iTunesSignature = 'hook';
 const OSType AppleSignature  = 'hook';
@@ -65,7 +68,7 @@ const static NSString *gSetPropertyArgFormat =
 sbError const sbiTunesNotRunningError("iTunes Not Running!", true);
 
 inline sbError
-sbOSErrError(const char *aMsg, OSErr & aErr)
+sbOSErrError(const char *aMsg, OSErr & aErr, bool aChecked = false)
 {
   // If the error code matches to the |procNotFound| code (-600) or 
   // |connectionInvalid| (-609) - iTunes is no longer running.
@@ -78,7 +81,7 @@ sbOSErrError(const char *aMsg, OSErr & aErr)
     
   std::ostringstream msg;
   msg << "ERROR: " << aMsg << " : OSErr == " << aErr;
-  return sbError(msg.str());
+  return sbError(msg.str(), aChecked);
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +112,7 @@ GetElementClassCount(DescType aDescType,
 
   AppleEvent getEvent;
   OSErr err = AEBuildAppleEvent(kAECoreSuite,
-                                SB_GET_CLASS_COUNT,
+                                kAECountElements,
                                 typeApplSignature,
                                 &AppleSignature,
                                 sizeof(typeApplSignature),
@@ -182,7 +185,7 @@ GetAEResponseForDescClass(DescType aDescType,
   
   AppleEvent getEvent;
   OSErr err = AEBuildAppleEvent(kAECoreSuite,
-                                SB_GET_DESCRIPTOR_CLASS,
+                                kAEGetData,
                                 typeApplSignature,
                                 &AppleSignature,
                                 sizeof(AppleSignature),
@@ -227,7 +230,7 @@ GetAEResonseForPropertyType(DescType aDescType,
 
   AppleEvent getEvent;
   OSErr err = AEBuildAppleEvent(kAECoreSuite,
-                                SB_GET_DESCRIPTOR_CLASS,
+                                kAEGetData,
                                 typeApplSignature,
                                 &AppleSignature,
                                 sizeof(AppleSignature),
@@ -311,32 +314,18 @@ CreateElementOfDescClass(DescType aDescType,
 }
 
 sbError
-SetPropertyWithString(std::string const & aString, 
-                      DescType aDescType, 
-                      AEDesc *aTargetDesc)
+SetPropertyWithDesc(AEDesc *aValueDesc,
+                    DescType aDescType,
+                    AEDesc *aTargetDesc)
 {
   OSErr err;
-  AEDesc valueDesc;
-
-  // Create a descriptor for the new name
-  NSString *value = [NSString stringWithSTDString:&aString];
-  
-  int valueLength = [value lengthOfBytesUsingEncoding:NSUnicodeStringEncoding];
-  err = AEBuildDesc(&valueDesc, 
-                    NULL, 
-                    "'utxt'(@)", 
-                    valueLength,  
-                    [value cStringUsingEncoding:NSUnicodeStringEncoding]);
-  if (err != noErr) {
-    return sbOSErrError("Could not build descriptor", err);
-  }
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSString *args =
-    [NSString stringWithFormat:gSetPropertyArgFormat,
-                               UTCreateStringForOSType(SB_ITEM_PROPERTY_NAME)];
+    [NSString stringWithFormat:gSetPropertyArgFormat, aDescType];
   AppleEvent setEvent;
   err = AEBuildAppleEvent(kAECoreSuite,
-                          SB_SET_PROPERTY_CLASS,
+                          kAESetData,
                           typeApplSignature,
                           &AppleSignature,
                           sizeof(AppleSignature),
@@ -345,9 +334,10 @@ SetPropertyWithString(std::string const & aString,
                           &setEvent,
                           NULL,
                           [args UTF8String],
-                          &valueDesc,
+                          aValueDesc,
                           aTargetDesc);
   if (err != noErr) {
+    [pool release];
     return sbOSErrError("Could not build the AppleEvent", err);
   }
 
@@ -356,12 +346,148 @@ SetPropertyWithString(std::string const & aString,
                       kAENoReply,
                       kAEDefaultTimeout);
   AEDisposeDesc(&setEvent);
-  AEDisposeDesc(&valueDesc);
   if (err != noErr) {
+    [pool release];
     return sbOSErrError("Could not send the AppleEvent", err);
   }
 
+  [pool release];
   return sbNoError;
+}
+
+sbError
+SetPropertyWithString(std::string const & aString,
+                      DescType aDescType,
+                      AEDesc *aTargetDesc)
+{
+  OSErr err;
+  AEDesc valueDesc;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  // Create a descriptor for the new name
+  NSString *value = [NSString stringWithSTDString:&aString];
+
+  int valueLength = [value lengthOfBytesUsingEncoding:NSUnicodeStringEncoding];
+  err = AEBuildDesc(&valueDesc,
+                    NULL,
+                    "'utxt'(@)",
+                    valueLength,
+                    [value cStringUsingEncoding:NSUnicodeStringEncoding]);
+  if (err != noErr) {
+    [pool release];
+    return sbOSErrError("Could not build descriptor", err);
+  }
+
+  sbError error = SetPropertyWithDesc(&valueDesc, aDescType, aTargetDesc);
+
+  AEDisposeDesc(&valueDesc);
+  [pool release];
+
+  return error;
+}
+
+sbError
+SetPropertyWithPath(std::string const aPath, /* allow char* ctor */
+                    DescType aDescType,
+                    AEDesc *aTargetDesc)
+{
+  OSErr err;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  FSRef curPathFSRef;
+  NSURL *url = [NSURL fileURLWithPath:[NSString stringWithSTDString:&aPath]];
+  if (!CFURLGetFSRef((CFURLRef)url, &curPathFSRef)) {
+    [pool release];
+    return sbError("failed to create NSURL for file path");
+  }
+
+  // Convert the FSRef to an alias handle
+  AliasHandle curPathAlias;
+  err = FSNewAliasMinimal(&curPathFSRef, &curPathAlias);
+  if (err != noErr) {
+    [pool release];
+    return sbOSErrError("failed to create alias for file path NSURL", err);
+  }
+
+  // set the property
+  AEDesc aliasDesc;
+
+  // Create a descriptor for the new name
+  err = AECreateDesc(typeAlias,
+                     *curPathAlias,
+                     GetHandleSize((Handle)curPathAlias),
+                     &aliasDesc);
+  DisposeHandle((Handle)curPathAlias);
+  if (err != noErr) {
+    [pool release];
+    return sbOSErrError("Could not get AEDesc for alias", err);
+  }
+
+  sbError error = SetPropertyWithDesc(&aliasDesc,
+                                      aDescType,
+                                      aTargetDesc);
+
+  AEDisposeDesc(&aliasDesc);
+  [pool release];
+  return error;
+}
+
+sbError
+GetPropertyWithString(AEDesc *aTargetDesc,
+                      DescType aDescType,
+                      std::string &aResult)
+{
+  if (!aTargetDesc) {
+    return sbError("GetPropertyWithString called with no AEDesc");
+  }
+
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  AppleEvent replyEvent;
+  sbError error = GetAEResonseForPropertyType(aDescType,
+                                              aTargetDesc,
+                                              &replyEvent);
+  if (error) {
+    [pool release];
+    return error;
+  }
+
+  // Pluck the string value out of the argument
+  DescType resultType;
+  Size resultSize;
+  OSErr err = AESizeOfParam(&replyEvent,
+                            keyDirectObject,
+                            &resultType,
+                            &resultSize);
+  if (err != noErr) {
+    AEDisposeDesc(&replyEvent);
+    [pool release];
+    return sbOSErrError("Could not get size of param", err);
+  }
+
+  // According to the Apple Event Manager Reference, on OS X 10.4 and
+  // higher, use |typeUTF8Text| rather than |typeUnicodeText|.
+  UInt8 dataChunk[resultSize];
+  err = AEGetParamPtr(&replyEvent,
+                      keyDirectObject,
+                      typeUTF8Text,
+                      &resultType,
+                      &dataChunk,
+                      resultSize,
+                      &resultSize);
+  AEDisposeDesc(&replyEvent);
+  if (err != noErr) {
+    [pool release];
+    return sbOSErrError("GetPropertyWithString could not get ParamPtr", err);
+  }
+
+  // Use a NSString since it handles our encoding for us.
+  NSString *name = [[NSString alloc] initWithBytes:dataChunk
+                                            length:resultSize
+                                          encoding:NSUTF8StringEncoding];
+  aResult = [name UTF8String];
+  [name release];
+  [pool release];
+  return error;
 }
 
 //------------------------------------------------------------------------------
@@ -414,56 +540,11 @@ sbError
 sbiTunesPlaylist::GetPlaylistName(std::string & aOutString)
 {
   if (!mLoadedPlaylist) {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-    AppleEvent replyEvent;
-    sbError error = GetAEResonseForPropertyType(SB_ITEM_PROPERTY_NAME,
-                                                &mDescriptor,
-                                                &replyEvent);
+    sbError error = GetPropertyWithString(&mDescriptor,
+                                          keyAEName,
+                                          mPlaylistName);
     SB_ENSURE_SUCCESS(error, error);
-
-    // Pluck the string value out of the argument
-    DescType resultType;
-    Size resultSize;
-    OSErr err = AESizeOfParam(&replyEvent, 
-                              keyDirectObject, 
-                              &resultType, 
-                              &resultSize);
-    if (err != noErr) {
-      AEDisposeDesc(&replyEvent);
-      return sbOSErrError("Could not get size of param", err);
-    }
-
-    if (resultType != typeUnicodeText) {
-      AEDisposeDesc(&replyEvent);
-      return sbError("ERROR: Unexpected result type");
-    }
-
-    // According to the Apple Event Manager Reference, on OS X 10.4 and 
-    // higher, use |typeUTF8Text| rather than |typeUnicodeText|.
-    UInt8 dataChunk[resultSize];
-    err = AEGetParamPtr(&replyEvent,
-                        keyDirectObject,
-                        typeUTF8Text,
-                        &resultType,
-                        &dataChunk,
-                        resultSize,
-                        &resultSize);
-    if (err != noErr) {
-      AEDisposeDesc(&replyEvent);
-      return sbOSErrError("Could not get ParamPtr", err);
-    }
-
-    AEDisposeDesc(&replyEvent);
-
-    // Use a NSString since it handles our encoding for us.
-    NSString *name = [[NSString alloc] initWithBytes:dataChunk
-                                              length:resultSize
-                                            encoding:NSUTF8StringEncoding];
-    mPlaylistName = [name UTF8String];
     mLoadedPlaylist = true;
-    [name release];
-    [pool release];
   }
 
   aOutString = mPlaylistName;
@@ -475,7 +556,7 @@ sbError
 sbiTunesPlaylist::SetPlaylistName(std::string const & aPlaylistName)
 {
   return SetPropertyWithString(aPlaylistName,
-                               SB_ITEM_PROPERTY_NAME,
+                               keyAEName,
                                &mDescriptor);
 }
 
@@ -702,6 +783,17 @@ sbiTunesLibraryManager::GetMainLibraryPlaylist(sbiTunesPlaylist **aPlaylistPtr)
 }
 
 sbError
+sbiTunesLibraryManager::GetLibraryId(std::string &aId)
+{
+  if (!mMainLibraryPlaylistPtr.get()) {
+    return sbError("GetMainLibraryID called before initialization");
+  }
+  return GetPropertyWithString(mMainLibraryPlaylistPtr->GetDescriptor(),
+                               SB_PERSISTENT_ID_PROPERTY_NAME,
+                               aId);
+}
+
+sbError
 sbiTunesLibraryManager::GetSongbirdPlaylistFolder(sbiTunesPlaylist **aPlaylistPtr)
 {
   if (!aPlaylistPtr) {
@@ -747,8 +839,9 @@ sbiTunesLibraryManager::GetSongbirdPlaylist(std::string const & aPlaylistName,
 }
 
 sbError
-sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPaths,
-                                      sbiTunesPlaylist *aTargetPlaylist)
+sbiTunesLibraryManager::AddTrackPaths(sbiTunesPlaylist *aTargetPlaylist,
+                                      std::deque<std::string> const & aTrackPaths,
+                                      std::deque<std::string> & aDatabaseIds)
 {
   if (!aTargetPlaylist) {
     return sbError("Invalid in-param |aTargetPlaylist|");
@@ -796,7 +889,6 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
     DisposeHandle((Handle)curPathAlias);
   }
 
-  NSString *args = @"'----':@, insh:(@)";
   // Now actually build the AppleEvent to send to iTunes.
   AppleEvent cmdEvent;
   err = AEBuildAppleEvent(iTunesSignature,
@@ -808,7 +900,7 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
                           kAnyTransactionID,
                           &cmdEvent,
                           NULL,
-                          [args UTF8String],
+                          "'----':@, insh:(@)",
                           &aliasList,
                           aTargetPlaylist->GetDescriptor());
   if (err != noErr) {
@@ -817,19 +909,173 @@ sbiTunesLibraryManager::AddTrackPaths(std::deque<std::string> const & aTrackPath
   }
 
   // Phew, now send the message.
+  AppleEvent replyEvent;
   err = AESendMessage(&cmdEvent,
-                      NULL,
+                      &replyEvent,
                       kAEWaitReply + kAENeverInteract,
                       kAEDefaultTimeout);
+  AEDisposeDesc(&cmdEvent);
   if (err != noErr) {
-    AEDisposeDesc(&cmdEvent);
     [pool release];
     return sbOSErrError("Could not send the AppleEvent", err);
   }
 
-  AEDisposeDesc(&cmdEvent);
+  AEDescList resultList;
+  err = AEGetParamDesc(&replyEvent,
+                       keyDirectObject,
+                       typeAEList,
+                       &resultList);
+  if (err != noErr) {
+    AEDisposeDesc(&replyEvent);
+    [pool release];
+    return sbOSErrError("Could not get the event param", err);
+  }
+
+  long resultCount;
+  err = AECountItems(&resultList, &resultCount);
+  if (err != noErr) {
+    AEDisposeDesc(&resultList);
+    AEDisposeDesc(&replyEvent);
+    [pool release];
+    return sbOSErrError("Could not get result count", err);
+  }
+
+  sbError error(sbNoError);
+  for (long i = 1; i <= resultCount; ++i) {
+    AEDesc itemDesc;
+    err = AEGetNthDesc(&resultList, i, typeWildCard, NULL, &itemDesc);
+    if (err != noErr) {
+      error = sbOSErrError("could not get result item", err, true);
+      continue;
+    }
+    AppleEvent getEvent;
+    error = GetAEResonseForPropertyType(SB_DATABASE_ID_PROPERTY_NAME,
+                                        &itemDesc,
+                                        &getEvent);
+    if (error) {
+      AEDisposeDesc(&itemDesc);
+      continue;
+    }
+
+    long resultID;
+    err = AEGetParamPtr(&getEvent,
+                        keyDirectObject,
+                        typeSInt32,
+                        NULL,
+                        &resultID,
+                        sizeof(resultID),
+                        NULL);
+    AEDisposeDesc(&getEvent);
+    AEDisposeDesc(&itemDesc);
+    if (err != noErr) {
+      error = sbOSErrError("Could not get database id", err, true);
+      continue;
+    }
+
+    std::stringstream trackIdString;
+    trackIdString << resultID;
+    aDatabaseIds.push_back(trackIdString.str());
+  }
+
+  AEDisposeDesc(&resultList);
+  AEDisposeDesc(&replyEvent);
   [pool release];
-  return sbNoError;
+  return error;
+}
+
+sbError
+sbiTunesLibraryManager::UpdateTracks(sbiTunesLibraryManager::TrackPropertyList const &aTrackProperties)
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  sbError error;
+
+  std::deque<sbiTunesLibraryManager::TrackProperty>::const_iterator iter;
+
+  for (iter = aTrackProperties.begin(); iter != aTrackProperties.end(); ++iter) {
+    // grab the track
+    static const char query[] =
+      "'----': obj {"
+      "   form: indx,"
+      "   want: type(cFlT),"                                 /* file track */
+      "   seld: abso('any '),"
+      "   from: obj {"
+      "     form: test,"
+      "     want: type(cFlT),"                               /* file track */
+      "     from: @,"
+      "     seld: cmpd {"
+      "       relo: =,"
+      "       obj1: obj {"
+      "         form: prop,"
+      "         want: type(prop),"
+      "         seld: type(pPID),"                        /* persistent id */
+      "         from: exmn()"
+      "       },"
+      "       obj2: @"
+      "     }"
+      "   }"
+      "}";
+
+    AEDesc ppidDesc;
+    OSErr err = AECreateDesc(typeSInt64, &iter->first, 8, &ppidDesc);
+    if (err != noErr) {
+      error = sbOSErrError("Could not build pPID desc", err, true);
+      continue;
+    }
+    AppleEvent getEvent;
+    err = AEBuildAppleEvent(kAECoreSuite,
+                            kAEGetData,
+                            typeApplSignature,
+                            &AppleSignature,
+                            sizeof(typeApplSignature),
+                            kAutoGenerateReturnID,
+                            kAnyTransactionID,
+                            &getEvent,
+                            NULL,
+                            query,
+                            mMainLibraryPlaylistPtr->GetDescriptor(),
+                            &ppidDesc);
+    AEDisposeDesc(&ppidDesc);
+    if (err != noErr) {
+      error = sbOSErrError("Could not build AppleEvent", err, true);
+      continue;
+    }
+
+    AppleEvent replyEvent;
+    err = AESendMessage(&getEvent,
+                        &replyEvent,
+                        kAEWaitReply + kAENeverInteract,
+                        kAEDefaultTimeout);
+    AEDisposeDesc(&getEvent);
+    if (err != noErr) {
+      error = sbOSErrError("Could not send AppleEvent", err, true);
+      continue;
+    }
+
+    std::auto_ptr<sbiTunesObject> track(new sbiTunesObject());
+    if (!track.get()) {
+      AEDisposeDesc(&replyEvent);
+      error = sbError("cannot create track wrapper", true);
+      continue;
+    }
+
+    error = track->Init(&replyEvent);
+    AEDisposeDesc(&replyEvent);
+    if (error) {
+      continue;
+    }
+
+    error = SetPropertyWithPath(iter->second,
+                                SB_LOCATION_PROPERTY_NAME,
+                                track->GetDescriptor());
+    if (error) {
+      // this is here just to check the error and make it not assert :|
+      continue;
+    }
+  }
+
+  [pool release];
+  return error;
 }
 
 sbError

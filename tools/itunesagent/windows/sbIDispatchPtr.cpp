@@ -30,6 +30,21 @@
 #include <assert.h>
 #include <vector>
 
+/**
+ * Returns true if this is the busy error and we need to retry
+ * also perform a sleep so we don't hog the CPU
+ */
+static inline
+bool COMBusyError(HRESULT error) {
+  HRESULT const SB_ITUNES_ERROR_BUSY = 0x8001010a;
+  bool const busy = (error == SB_ITUNES_ERROR_BUSY);
+  if (busy) {
+    // Sleep for 1/10 second
+    Sleep(100);
+  }
+  return busy;
+}
+
 inline
 void Initialize(VARIANTARG & aVar) {
   VariantInit(&aVar);
@@ -52,16 +67,16 @@ HRESULT SBVariantCopy(VARIANT & aDestination, VARIANT & aSource) {
   return VariantCopy(&aDestination, &aSource);
 }
 
-sbIDispatchPtr::VarArgs::VarArgs(size_t aArgs) : mVariantCount(0), 
+sbIDispatchPtr::VarArgs::VarArgs(size_t aArgs) : mVariantCount(0),
                                                  mParamsReversed(false) {
   VARIANTARG varArg;
-  VariantClear(&varArg);
+  ::VariantInit(&varArg);
   mVariants.resize(aArgs, varArg);
   std::for_each(mVariants.begin(), mVariants.end(), Initialize);  
 }
 
 sbIDispatchPtr::VarArgs::~VarArgs() {
-  std::for_each(mVariants.begin(), mVariants.end(), Destroy);
+  Clear();
 }
 
 HRESULT sbIDispatchPtr::VarArgs::Append(std::wstring const & aArg) {
@@ -77,7 +92,7 @@ HRESULT sbIDispatchPtr::VarArgs::Append(std::wstring const & aArg) {
   return S_OK;
 }
 
-HRESULT sbIDispatchPtr::VarArgs::Append(long & aLong)
+HRESULT sbIDispatchPtr::VarArgs::Append(const long aLong)
 {
   assert(mVariantCount < mVariants.size());
   assert(!mParamsReversed);
@@ -121,6 +136,43 @@ HRESULT sbIDispatchPtr::VarArgs::AppendOutIDispatch(IDispatch ** aOutObj) {
   return S_OK;
 }
 
+HRESULT sbIDispatchPtr::VarArgs::Clear() {
+  std::for_each(mVariants.begin(), mVariants.end(), Destroy);
+  mVariantCount = 0;
+  mParamsReversed = false;
+  return S_OK;
+}
+
+HRESULT sbIDispatchPtr::VarArgs::GetValueAt(const size_t aIndex,
+                                            std::wstring & aResult) {
+  assert(mVariantCount <= mVariants.size());
+  if (mVariantCount <= aIndex || mVariants[aIndex].vt != VT_BSTR) {
+    return E_FAIL;
+  }
+  aResult = std::wstring(mVariants[aIndex].bstrVal,
+                         SysStringLen(mVariants[aIndex].bstrVal));
+  return S_OK;
+}
+
+HRESULT sbIDispatchPtr::VarArgs::GetValueAt(const size_t aIndex,
+                                            long & aResult) {
+  assert(mVariantCount <= mVariants.size());
+  if (mVariantCount <= aIndex || mVariants[aIndex].vt != VT_I4) {
+    return E_FAIL;
+  }
+  aResult = mVariants[aIndex].lVal;
+  return S_OK;
+}
+
+HRESULT sbIDispatchPtr::VarArgs::GetValueAt(const size_t aIndex,
+                                            VARIANTARG & aResult) {
+  assert(mVariantCount <= mVariants.size());
+  if (mVariantCount <= aIndex) {
+    return E_FAIL;
+  }
+  return ::VariantCopy(&aResult, &mVariants[aIndex]);
+}
+
 DISPPARAMS * sbIDispatchPtr::VarArgs::GetDispParams() {
   // IDispatch reverses the order of the parameters. This check allows
   // GetDispParams to be called multiple times
@@ -148,14 +200,17 @@ HRESULT sbIDispatchPtr::Invoke(wchar_t const * aMethodName,
     return DISP_E_MEMBERNOTFOUND;
   }
   
-  HRESULT hr = mPtr->Invoke(dispID,
-                            IID_NULL,
-                            LOCALE_SYSTEM_DEFAULT,
-                            aFlags,
-                            aVarArgs.GetDispParams(),
-                            &aResult,
-                            &exceptionInfo,
-                            &argErr); 
+  HRESULT hr;
+  do {
+    hr = mPtr->Invoke(dispID,
+                      IID_NULL,
+                      LOCALE_SYSTEM_DEFAULT,
+                      aFlags,
+                      aVarArgs.GetDispParams(),
+                      &aResult,
+                      &exceptionInfo,
+                      &argErr);
+  } while (COMBusyError(hr));
   return hr;
 }
 
@@ -170,14 +225,17 @@ HRESULT sbIDispatchPtr::GetProperty(wchar_t const * aPropertyName,
     return DISP_E_MEMBERNOTFOUND;
   }
   
-  HRESULT hr = mPtr->Invoke(dispID,
-                            IID_NULL,
-                            LOCALE_SYSTEM_DEFAULT,
-                            DISPATCH_PROPERTYGET,
-                            &dispParams,
-                            &aVar,
-                            &exceptionInfo,
-                            &argErr);
+  HRESULT hr;
+  do {
+    hr = mPtr->Invoke(dispID,
+                      IID_NULL,
+                      LOCALE_SYSTEM_DEFAULT,
+                      DISPATCH_PROPERTYGET,
+                      &dispParams,
+                      &aVar,
+                      &exceptionInfo,
+                      &argErr);
+  } while (COMBusyError(hr));
   return hr;
 }
 
@@ -264,7 +322,8 @@ HRESULT sbIDispatchPtr::GetProperty(wchar_t const * aPropertyName,
 }
 
 HRESULT sbIDispatchPtr::SetProperty(wchar_t const * aPropertyName, VARIANTARG & aVar) {
-  DISPPARAMS dispParams = { &aVar, 0, 1, 0 };
+  DISPID dispidNamed = DISPID_PROPERTYPUT;
+  DISPPARAMS dispParams = { &aVar, &dispidNamed, 1, 1 };
   EXCEPINFO exceptionInfo;
   unsigned int argErr;
   
@@ -273,14 +332,17 @@ HRESULT sbIDispatchPtr::SetProperty(wchar_t const * aPropertyName, VARIANTARG & 
     return DISP_E_MEMBERNOTFOUND;
   }
   
-  HRESULT hr = mPtr->Invoke(dispID,
-                            IID_NULL,
-                            LOCALE_SYSTEM_DEFAULT,
-                            DISPATCH_PROPERTYPUT,
-                            &dispParams,
-                            &aVar,
-                            &exceptionInfo,
-                            &argErr);
+  HRESULT hr;
+  do {
+    hr = mPtr->Invoke(dispID,
+                      IID_NULL,
+                      LOCALE_SYSTEM_DEFAULT,
+                      DISPATCH_PROPERTYPUT,
+                      &dispParams,
+                      &aVar,
+                      &exceptionInfo,
+                      &argErr);
+  } while (COMBusyError(hr));
   return hr;
 }
 

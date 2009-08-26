@@ -151,6 +151,8 @@ private:
    * Contains information about the iTunes track
    */
   struct iTunesTrack {
+    iTunesTrack();
+    ~iTunesTrack();
     nsresult Initialize(sbIStringMap * aProperties);
     nsresult GetPropertyArray(sbIPropertyArray ** aPropertyArray);
     nsresult GetTrackURI(sbiTunesImporter::OSType aOSType, 

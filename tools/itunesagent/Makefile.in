@@ -47,6 +47,9 @@ CPP_SRCS = main.cpp \
 
 # we force include mozilla-config.h; otherwise this is not necessary
 CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/nspr \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
+               $(topsrcdir)/components/include \
                $(srcdir) \
                $(NULL)
 
@@ -83,6 +86,9 @@ ifeq (macosx,$(SB_PLATFORM)) # {
    CMM_INCLUDES += $(srcdir) \
                    $(srcdir)/macosx \
                    $(MOZSDK_INCLUDE_DIR) \
+                   $(MOZSDK_INCLUDE_DIR)/nspr \
+                   $(MOZSDK_INCLUDE_DIR)/xpcom \
+                   $(topsrcdir)/components/include \
                    $(NULL)
 
    CMM_SRCS += sbiTunesAgentMacProcessor.mm \
@@ -127,7 +133,7 @@ export::
 ifeq (macosx,$(SB_PLATFORM))
 	# We do a cp followed by a find so we don't have to use rsync, which
 	# would require a bunch of other infra work
-	$(MKDIR) $(MAC_APP_DIR)
+	$(MKDIR) $(MAC_APP_DIR)/Contents/MacOS/
 	$(CP) -R $(srcdir)/$(SB_PLATFORM)/appskeleton/* $(MAC_APP_DIR)
 	$(FIND) $(MAC_APP_DIR) -depth -type d -name '.svn' -exec $(RM) -r {} \;
 	$(INSTALL_FILE) $(CURDIR)/Info.plist $(MAC_APP_DIR)/Contents/

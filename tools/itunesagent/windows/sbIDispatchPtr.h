@@ -73,23 +73,43 @@ public:
     /**
      * Appends a long integer argument.
      */
-    HRESULT Append(long & aLong);
-    
+    HRESULT Append(const long aLong);
+
     /**
      * Appends an IDispatch object argument
      */
     HRESULT Append(IDispatch * aObj);
-    
+
     /**
      * Append a variant value to the args. The aVar is copied so the caller
      * should free the one passed in.
      */
     HRESULT Append(VARIANTARG & aVar);
-    
+
     /**
      * Appends and out IDispatch argument
      */
     HRESULT AppendOutIDispatch(IDispatch ** aObj);
+
+    /**
+     * Clear this argument array, reinitializing it
+     */
+    HRESULT Clear();
+
+    /**
+     * Reads out a string argument at a given index
+     */
+    HRESULT GetValueAt(const size_t aIndex, std::wstring & aResult);
+
+    /**
+     * Reads out a long argument at a given index
+     */
+    HRESULT GetValueAt(const size_t aIndex, long & aResult);
+
+    /**
+     * Reads out a variant argument at a given index
+     */
+    HRESULT GetValueAt(const size_t aIndex, VARIANTARG & aResult);
     
   private:
     typedef std::vector<VARIANTARG> Variants;
@@ -106,7 +126,8 @@ public:
      */
     inline
     DISPPARAMS * GetDispParams();
-};
+  };
+
   /**
    * Initializes our pointer and addref's it if not null
    */

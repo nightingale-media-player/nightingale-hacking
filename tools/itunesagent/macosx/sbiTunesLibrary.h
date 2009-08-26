@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
 //
 // BEGIN SONGBIRD GPL
@@ -85,6 +87,8 @@ extern sbError const sbiTunesNotRunningError;
 class sbiTunesLibraryManager
 {
 public:
+  typedef std::pair<unsigned long long, std::string> TrackProperty;
+  typedef std::deque<TrackProperty> TrackPropertyList;
   sbiTunesLibraryManager();
   virtual ~sbiTunesLibraryManager();
 
@@ -105,8 +109,13 @@ public:
   // \brief Get the playlist item for the main iTunes library.
   //
   // NOTE: The out-param is owned by this class, do not |delete|.
- //
+  //
   sbError GetMainLibraryPlaylist(sbiTunesPlaylist **aPlaylistPtr);
+
+  //
+  // \brief Get the persistent ID of the library
+  //
+  sbError GetLibraryId(std::string &aId);
 
   //
   // \brief Get the Songbird folder playlist item from iTunes.
@@ -134,8 +143,19 @@ public:
   //
   // \brief Add a list of files to iTunes to the specified playlist.
   //
-  sbError AddTrackPaths(std::deque<std::string> const & aTrackPaths,
-                        sbiTunesPlaylist *aTargetPlaylist);
+  // \param aTargetPlaylist the playlist to add the tracks into
+  // \param aTrackPaths the paths to add
+  // \param aDatabaseID the (non-persistent) database IDs of the new tracks
+  //
+  sbError AddTrackPaths(sbiTunesPlaylist *aTargetPlaylist,
+                        std::deque<std::string> const & aTrackPaths,
+                        std::deque<std::string> & aDatabaseIds);
+
+  //
+  // \brief Updates a track in the library, given the iTunes persistent ID and
+  //        a new URI
+  //
+  sbError UpdateTracks(TrackPropertyList const & aTrackProperties);
 
   //
   // \brief Create a playlist under the Songbird folder in iTunes.

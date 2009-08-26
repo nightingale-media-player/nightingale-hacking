@@ -79,10 +79,21 @@ public:
   nsresult WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList);
 
   //
+  // \brief Write the header for the "updated media items" exported data.
+  //
+  nsresult WriteUpdatedMediaItemsListHeader();
+
+  //
   // \brief Write a added track out to the exported task file.
   // \param aMediaItem The media item to write out to disk.
   //
   nsresult WriteAddedTrack(sbIMediaItem *aMediaItem);
+
+  //
+  // \brief Write an updated track out to the exported task file.
+  // \param aMediaItem The media item to write out to disk.
+  //
+  nsresult WriteUpdatedTrack(sbIMediaItem *aMediaItem);
 
   //
   // \brief Write a media list out to the exported task file.

@@ -166,63 +166,63 @@ TestController.prototype =
     switch (this._phase) {
       case 0:
         // There shouldn't be any added media lists.
-        assertTrue(parsedTask.getAddedMediaLists().length == 0);
+        assertEqual(parsedTask.getAddedMediaLists().length, 0);
 
         // There shouldn't be any removed media lists.
-        assertTrue(parsedTask.getRemovedMediaLists().length == 0);
+        assertEqual(parsedTask.getRemovedMediaLists().length, 0);
 
         // Ensure the added tracks to the main library
         var addedLibraryItems = parsedTask.getAddedMediaItems()["Library"];
         assertTrue(addedLibraryItems);
 
         // There should only be three added media items.
-        assertTrue(addedLibraryItems.length == 3);
-        assertTrue(addedLibraryItems[0] == this._trackPaths[0]);
-        assertTrue(addedLibraryItems[1] == this._trackPaths[1]);
-        assertTrue(addedLibraryItems[2] == this._trackPaths[2]);
+        assertEqual(addedLibraryItems.length, 3);
+        assertEqual(addedLibraryItems[0], this._trackPaths[0]);
+        assertEqual(addedLibraryItems[1], this._trackPaths[1]);
+        assertEqual(addedLibraryItems[2], this._trackPaths[2]);
         break;
 
       case 1:
         // Ensure that the 2 playlists were added and that the 3 mediaitems
         // have been added to the simple playlist.
         var addedMediaLists = parsedTask.getAddedMediaLists();
-        assertTrue(addedMediaLists.length == 2);
-        assertTrue(addedMediaLists[0] == this._playlist.name);
-        assertTrue(addedMediaLists[1] == this._smartPlaylist.name);
+        assertEqual(addedMediaLists.length, 2);
+        assertEqual(addedMediaLists[0], this._playlist.name);
+        assertEqual(addedMediaLists[1], this._smartPlaylist.name);
 
         // Should be no removed playlists.
         var removedLists = parsedTask.getRemovedMediaLists();
-        assertTrue(removedLists.length == 0);
+        assertEqual(removedLists.length, 0);
 
         // Should be 3 added mediaitems to |this._playlist|.
         var addedMediaItems = 
           parsedTask.getAddedMediaItems()[this._playlist.name];
-        assertTrue(addedMediaItems.length == 3);
+        assertEqual(addedMediaItems.length, 3);
 
-        assertTrue(addedMediaItems[0] == this._trackPaths[0]);
-        assertTrue(addedMediaItems[1] == this._trackPaths[1]);
-        assertTrue(addedMediaItems[2] == this._trackPaths[2]);
+        assertEqual(addedMediaItems[0], this._trackPaths[0]);
+        assertEqual(addedMediaItems[1], this._trackPaths[1]);
+        assertEqual(addedMediaItems[2], this._trackPaths[2]);
 
         // Should be 3 added mediaitems to |this._mainLibrary|.
         addedMediaItems = 
           parsedTask.getAddedMediaItems()[this._mainLibrary.name];
-        assertTrue(addedMediaItems.length == 3);
+        assertEqual(addedMediaItems.length, 3);
 
-        assertTrue(addedMediaItems[0] == this._track2Paths[0]);
-        assertTrue(addedMediaItems[1] == this._track2Paths[1]);
-        assertTrue(addedMediaItems[2] == this._track2Paths[2]);
+        assertEqual(addedMediaItems[0], this._track2Paths[0]);
+        assertEqual(addedMediaItems[1], this._track2Paths[1]);
+        assertEqual(addedMediaItems[2], this._track2Paths[2]);
         break;
 
       case 2:
         // There shouldn't be any added media lists.
-        assertTrue(parsedTask.getAddedMediaLists().length == 0);
+        assertEqual(parsedTask.getAddedMediaLists().length, 0);
 
         // There should be 2 removed media lists.
         var removedMediaLists = parsedTask.getRemovedMediaLists();
-        assertTrue(removedMediaLists.length == 2);
+        assertEqual(removedMediaLists.length, 2);
 
-        assertTrue(removedMediaLists[0] == this._playlist.name);
-        assertTrue(removedMediaLists[1] == this._smartPlaylist.name);
+        assertEqual(removedMediaLists[0], this._playlist.name);
+        assertEqual(removedMediaLists[1], this._smartPlaylist.name);
 
         // There shouldn't be any added media items.
         var hasAddedContent = false;
@@ -230,7 +230,7 @@ TestController.prototype =
           hasAddedContent = true;
           this._log("FOUND " + item + " as an added mediaitem ERROR!!!!");
         }
-        assertTrue(!hasAddedContent);
+        assertFalse(hasAddedContent);
 
         // Shutdown the unit test now.
         shouldContinue = false;

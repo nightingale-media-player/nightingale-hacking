@@ -1,3 +1,5 @@
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+ * vim: set ts=8 et sw=2 ai tw=80: */
 /*
  //
  // BEGIN SONGBIRD GPL
@@ -39,6 +41,7 @@
 #define AGENT_EXPORT_FILENAME    "songbird_export.task"
 #define AGENT_ERROR_FILENAME     "itunesexporterrors.txt"
 #define AGENT_LOG_FILENAME       "itunesexport.log"
+#define AGENT_RESULT_FILENAME    "itunesexportresults.txt"
 #define AGENT_SHUTDOWN_FILENAME  "songbird_export.shutdown"
 #define AGENT_ERROR_FILENAME     "itunesexporterrors.txt"
 
@@ -383,9 +386,15 @@ sbiTunesAgentMacProcessor::GetIsAgentRunning()
   return retval;
 }
 
+struct __attribute__ ((visibility ("hidden") )) PathCopier {
+  std::string operator()(const sbiTunesAgentProcessor::Track t) {
+    return t.path;
+  }
+};
+
 sbError
 sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
-                                     Tracks const & aPaths)
+                                     TrackList const & aPaths)
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
@@ -407,7 +416,60 @@ sbiTunesAgentMacProcessor::AddTracks(std::string const & aSource,
     SB_ENSURE_SUCCESS(error, error);
   }
 
-  error = mLibraryMgr->AddTrackPaths(aPaths, sourceList);
+  PathCopier copier;
+  std::deque<std::string> paths, dbIds;
+  std::insert_iterator<std::deque<std::string> > inserter(paths, paths.begin());
+  std::transform(aPaths.begin(), aPaths.end(), inserter, copier);
+  error = mLibraryMgr->AddTrackPaths(sourceList, paths, dbIds);
+
+  if (!OpenResultsFile()) {
+    [pool release];
+    return sbError("Failed to open output file");
+  }
+
+  std::string libraryId;
+  error = mLibraryMgr->GetLibraryId(libraryId);
+  SB_ENSURE_SUCCESS(error, error);
+
+  TrackList::const_iterator trackIter = aPaths.begin();
+  std::deque<std::string>::const_iterator idIter;
+  for (idIter = dbIds.begin();
+       idIter != dbIds.end();
+       ++idIter, ++trackIter) {
+    OpenResultsFile() << trackIter->id
+                      << "="
+                      << libraryId
+                      << ","
+                      << *idIter
+                      << std::endl;
+  }
+
+  [pool release];
+  return error;
+}
+
+sbError
+sbiTunesAgentMacProcessor::UpdateTracks(TrackList const & aPaths)
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+  sbError error(sbNoError);
+
+  sbiTunesLibraryManager::TrackPropertyList tracks;
+  TrackList::const_iterator const end = aPaths.end();
+  for (TrackList::const_iterator iter = aPaths.begin(); iter != end; ++iter) {
+    unsigned long long id;
+    int count = 0;
+    assert(iter->type == Track::TYPE_ITUNES);
+    count = sscanf(iter->id.c_str(), "%llx", &id);
+    if (count < 1) {
+      std::string msg("Unable to parse itunes ID ");
+      msg.append(iter->id);
+      return sbError(msg);
+    }
+    tracks.push_back(sbiTunesLibraryManager::TrackProperty(id, iter->path));
+  }
+  return mLibraryMgr->UpdateTracks(tracks);
 
   [pool release];
   return error;
@@ -476,12 +538,31 @@ sbiTunesAgentMacProcessor::OpenTaskFile(std::ifstream & aStream)
   return true;
 }
 
+std::ofstream &
+sbiTunesAgentMacProcessor::OpenResultsFile()
+{
+  if (!!mOutputStream && !mOutputStream.is_open()) {
+    std::string path;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    NSString *songbirdProfilePath = GetSongbirdProfilePath();
+
+    path = [songbirdProfilePath UTF8String];
+    path.append(AGENT_RESULT_FILENAME);
+
+    [pool release];
+    mOutputStream.open(path.c_str(), std::ios_base::ate);
+  }
+  return mOutputStream;
+}
+
+
 void
 sbiTunesAgentMacProcessor::Log(std::string const & aMsg)
 {
   if (mLogState != DEACTIVATED) {
     if (mLogState != OPENED) {
-      std::string logPath = [GetSongbirdProfilePath UTF8String];
+      std::string logPath = [GetSongbirdProfilePath() UTF8String];
       logPath += AGENT_LOG_FILENAME;
       mLogStream.open(logPath.c_str());
       // If we can't open then don't bother trying again
