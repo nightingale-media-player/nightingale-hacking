@@ -78,6 +78,8 @@
      <method name="showPopup">
        <body>
          <![CDATA[
+         if (this.getAttribute("disabled"))
+           return;
          if (this.popup && !this.popupShowing) 
          {
           var anchor = this.popup.getAttribute("popupanchor");
@@ -95,6 +97,8 @@
        <parameter name="delay"/>
        <body>
          <![CDATA[
+         if (this.getAttribute("disabled"))
+           return;
          this.popupInterval = setTimeout(function(obj) { obj.showPopup(); }, delay, this);
          ]]>
        </body>

@@ -36,7 +36,7 @@
     <xul:box sbid="sb-progress-slider" xbl:inherits="orient,class" flex="1">
       <xul:button collapsed="true" type="checkbox" sbid="sb-progress-slider-min"
                   class="sb-progress-slider" xbl:inherits="class"
-                  oncommand="return document.getBindingParent(this).snapToValue(0);"/>
+                  oncommand="if (!document.getBindingParent(this).getAttribute('disabled')) return document.getBindingParent(this).snapToValue(0);"/>
       <xul:stack xbl:inherits="class" flex="1">
         <xul:progressmeter sbid="sb-progress-slider-progress"
                            class="sb-progress-slider"

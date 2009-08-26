@@ -106,10 +106,13 @@ window.cdripController =
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
     
+    // Disable player controls & load the playlist
+    this._togglePlayerControls(true);
     this._loadPlaylist();
   },
 
   onUnload: function cdripController_onUnload() {
+    this._togglePlayerControls(false);
     if (this._device) {
       var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
       eventTarget.addEventListener(this);
@@ -162,6 +165,26 @@ window.cdripController =
       var ripImage = document.getElementById(RIP_STATUS_IMAGE);
       ripImage.src = "";
       this._setLabelValue(RIP_STATUS_LABEL, "");
+    }
+  },
+
+  disableTags : ['sb-player-back-button', 'sb-player-playpause-button',
+                 'sb-player-forward-button', 'sb-player-volume-slider',
+                 'sb-player-shuffle-button', 'sb-player-repeat-button'],
+  _togglePlayerControls: function
+                         cdripController_togglePlayerControls(disabled) {
+    var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Ci.nsIWindowMediator)
+                     .getMostRecentWindow("Songbird:Main");
+    for (var i in this.disableTags) {
+      var elements = mainWin.document.getElementsByTagName(this.disableTags[i]);
+      for (var j=0; j<elements.length; j++) {
+        if (disabled) {
+          elements[j].setAttribute('disabled', 'true');
+        } else {
+          elements[j].removeAttribute('disabled');
+        }
+      }
     }
   },
 

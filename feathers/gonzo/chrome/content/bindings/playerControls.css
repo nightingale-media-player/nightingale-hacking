@@ -94,6 +94,13 @@ Imported by bindings.css or directly into feathers.
   background-image:none !important;
   background-color:transparent !important;
 }
+  /* prevent the general [disabled="true"] rule of 0.5 opacity from layering
+   * on this element (due to the widget+hbox+button combination...)
+   */
+  sb-player-playpause-button[disabled="true"],
+  sb-player-playpause-button[disabled="true"] * {
+    opacity: 1.0 !important;
+  }
   /*play*/
   .sb-player-play-button-play > button,
   .sb-player-playpause-button-play > button {
@@ -110,6 +117,7 @@ Imported by bindings.css or directly into feathers.
   .sb-player-play-button-play[disabled="true"] > button,
   .sb-player-playpause-button-play[disabled="true"] > button {
     -moz-image-region: rect(120px 40px 160px 0px);
+    opacity: 1.0 !important;
   }
   /*pause*/
   .sb-player-pause-button-pause > button,
@@ -127,6 +135,7 @@ Imported by bindings.css or directly into feathers.
   .sb-player-pause-button-pause[disabled="true"] > button,
   .sb-player-playpause-button-pause[disabled="true"] > button { 
     -moz-image-region: rect(120px 80px 160px 40px);
+    opacity: 1.0 !important;
   }
 
 

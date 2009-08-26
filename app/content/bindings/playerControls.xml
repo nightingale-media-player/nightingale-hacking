@@ -117,6 +117,8 @@
     <method name="onTrackVolume">
       <body>
         <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
           // prevent this volume control from being updated while it is being
           // moved (but other volume controls are updated with our motion)
           this.trackingVolume = true; 
@@ -133,6 +135,8 @@
     <method name="onReleaseVolume">
       <body>
         <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
           this.trackingVolume = false;
           this.mm.volumeControl.volume = this.value / this.sliderScale;
         ]]>
@@ -142,6 +146,8 @@
     <method name="onRemoteVolumeChange">
       <body>
         <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
           try {
             this.value = parseFloat(this.remote_volume.stringValue) * this.sliderScale;
           } catch (err) {
@@ -154,6 +160,8 @@
     <method name="onRemoteMute">
       <body>
         <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
           // the mute state changed
           if (this.remote_mute.boolValue) {
             if (this.value != 0) {
@@ -288,6 +296,8 @@
     <method name="doMute">
       <body>
         <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
           this.mm.volumeControl.mute = !this.mm.volumeControl.mute;
           // this will trigger onRemoteMute due to the data remote
         ]]>
@@ -297,6 +307,8 @@
     <method name="onRemoteMute">
       <body>
         <![CDATA[
+          if (this.getAttribute("disabled"))
+            return;
           var newmute = this.mm.volumeControl.mute;
           if (!newmute) {
             // restore last volume when coming back from mute state
@@ -1233,7 +1245,7 @@
   <binding id="playpause-button" extends="chrome://songbird/content/bindings/playerControls.xml#play-control-base">
   
     <content>
-      <xul:hbox id="sb-player-playpause-button" flex="1" xbl:inherits="hidden,class">
+      <xul:hbox id="sb-player-playpause-button" flex="1" xbl:inherits="hidden,class,disabled">
       
         <xul:button type="sb-clickhold"
                     id="sb-player-playpause-button-play"
@@ -1241,7 +1253,7 @@
                     class="sb-player-playpause-button-play sb-player-button"
                     oncommand="onPlayPause(event.target);"
                     tooltiptext="&tooltip.control.play;"
-                    xbl:inherits="label,position"
+                    xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
           <xul:menupopup xbl:inherits="popupanchor,popupalign">
             <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
@@ -1256,7 +1268,7 @@
                     class="sb-player-playpause-button-pause sb-player-button"
                     oncommand="onPlayPause(event.target);"
                     tooltiptext="&tooltip.control.pause;"
-                    xbl:inherits="label,position"
+                    xbl:inherits="label,position,disabled"
                     onmenushowing="syncMenus();">
           <xul:menupopup xbl:inherits="popupanchor,popupalign">
 	          <xul:menuitem id="menu_play" class="menuitem-iconic" label="&menu.control.play.button;"/>
