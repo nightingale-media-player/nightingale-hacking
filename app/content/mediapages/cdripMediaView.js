@@ -173,6 +173,8 @@ window.cdripController =
                  'sb-player-shuffle-button', 'sb-player-repeat-button'],
   _togglePlayerControls: function
                          cdripController_togglePlayerControls(disabled) {
+
+    // disable player controls in faceplate
     var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Ci.nsIWindowMediator)
                      .getMostRecentWindow("Songbird:Main");
@@ -186,6 +188,19 @@ window.cdripController =
         }
       }
     }
+
+    // disable playlist play events
+    var pls = document.getElementById("sb-cdrip-playlist");
+    if (disabled) {
+      pls.addEventListener("Play", this._onPlay, false);
+    } else {
+      pls.removeEventListener("Play", this._onPlay, false);
+    }
+  },
+
+  _onPlay: function(e) {
+    e.stopPropagation();
+    e.preventDefault();
   },
 
   _hideSettingsView: function cdripController_hideSettingsView() {
