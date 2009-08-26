@@ -195,9 +195,9 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
   // Update status and set for auto-failure.
   sbDeviceStatusAutoOperationComplete autoStatus(
-                                              &mStatus,
-                                              sbDeviceStatusHelper::OPERATION_TYPE_MOUNT,
-                                              aRequest);
+                                    &mStatus,
+                                    sbDeviceStatusHelper::OPERATION_TYPE_MOUNT,
+                                    aRequest);
 
   // Update the device library contents.
   rv = UpdateDeviceLibrary(mDeviceLibrary);
@@ -212,6 +212,10 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
   // Cancel auto-disconnect.
   autoDisconnect.forget();
+
+  // Go ahead and perform a CD lookup now.
+  rv = AttemptCDLookup();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // Indicate that the device is now ready.
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
@@ -266,10 +270,6 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   // Get the number of created media items.
   PRUint32 mediaItemCount;
   rv = mediaItemList->GetLength(&mediaItemCount);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Go ahead and perform a CD lookup now.
-  rv = AttemptCDLookup();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -431,6 +431,7 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   if (jobStatus == sbIJobProgress::STATUS_RUNNING)
     return NS_OK;
 
+  rv = mStatus.ChangeState(STATE_IDLE);
   aJob->RemoveJobProgressListener(this);
 
   nsCOMPtr<sbIMetadataLookupJob> metalookupJob = do_QueryInterface(aJob, &rv);

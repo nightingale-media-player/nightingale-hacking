@@ -256,7 +256,7 @@ public:
   /**
    * CD device specific status.
    */
-  static const int STATE_LOOKINGUPCD = STATE_USER + 1;
+  static const unsigned long STATE_LOOKINGUPCD = STATE_USER + 1;
 
 private:
   /**
