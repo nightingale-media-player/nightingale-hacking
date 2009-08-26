@@ -833,7 +833,7 @@ $(GENERATED_PP_DEPS): $(SONGBIRD_PP_RESOURCES)
    ifeq (,$(wildcard $(OUR_SONGBIRD_PP_DIR)))
 	   $(MKDIR_APP) $(OUR_SONGBIRD_PP_DIR)
    endif
-	@for item in $(SONGBIRD_PP_RESOURCES); do \
+	@$(EXIT_ON_ERROR) for item in $(SONGBIRD_PP_RESOURCES); do \
       target=$(OUR_SONGBIRD_PP_DIR)/`basename $$item $(PP_RESOURCES_STRIP_SUFFIX)`; \
       echo Preprocessing $$item into $$target...; \
       $(RM) -f $$target; \
