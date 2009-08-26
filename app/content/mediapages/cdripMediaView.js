@@ -196,12 +196,14 @@ window.cdripController =
     var playMenuItem = mainWin.document.getElementById("menuitem_control_play");
     if (disabled) {
       pls.addEventListener("Play", this._onPlay, false);
+      mainWin.addEventListener("keypress", this._onKeypress, true);
       for each (var i in this.disableMenuControls) {
         var menuItem = mainWin.document.getElementById("menuitem_control_" + i);
         menuItem.setAttribute("disabled", "true");
       }
     } else {
       pls.removeEventListener("Play", this._onPlay, false);
+      mainWin.removeEventListener("keypress", this._onKeypress, true);
       playMenuItem.removeAttribute("disabled");
       for each (var i in this.disableMenuControls) {
         var menuItem = mainWin.document.getElementById("menuitem_control_" + i);
@@ -213,6 +215,26 @@ window.cdripController =
   _onPlay: function(e) {
     e.stopPropagation();
     e.preventDefault();
+  },
+
+  _onKeypress: function(e) {
+    // somebody else has focus
+    if (document.commandDispatcher.focusedWindow != window ||
+        (document.commandDispatcher.focusedElement &&
+         document.commandDispatcher.focusedElement.id != "sb-playlist-tree"))
+    {
+      return true;
+    }
+
+    if (e.charCode != KeyboardEvent.DOM_VK_SPACE ||
+        e.ctrlKey || e.altKey || e.metaKey || e.altGraphKey)
+    {
+      return true;
+    }
+
+    e.stopPropagation();
+    e.preventDefault();
+    return true;
   },
 
   _hideSettingsView: function cdripController_hideSettingsView() {
