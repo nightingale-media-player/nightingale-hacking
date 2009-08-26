@@ -248,16 +248,6 @@ public:
                       nsIPropertyBag *aProperties,
                       sbCDDevice **aOutCDDevice);
 
-  /**
-   * CD device specific events
-   */
-  static const int REQUEST_CDLOOKUP = REQUEST_FLAG_USER + 1;
-
-  /**
-   * CD device specific status.
-   */
-  static const unsigned long STATE_LOOKINGUPCD = STATE_USER + 1;
-
 private:
   /**
    * Protects the mProperites member and updating it's contents

@@ -97,8 +97,7 @@ window.cdripController =
       return;
     }
 
-    // STATE_LOOKINGUPCD is defined as STATE_USER+1 in sbCDDevice.h
-    if (this._device.state == Ci.sbIDevice.STATE_USER + 1) {
+    if (this._device.state == Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD) {
       this._toggleLookupNotification(true);
     } else {
       this._toggleLookupNotification(false);

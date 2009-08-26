@@ -287,9 +287,8 @@ deviceControlWidget.prototype = {
       case "rescan" :
         // Invoke the CD Lookup again
         var bag = Cc["@mozilla.org/hash-property-bag;1"]
-                    .createInstance(Ci.nsIWritablePropertyBag);
-        // REQUEST_CDLOOKUP is REQUEST_FLAG_USER+1
-        this._device.submitRequest(this._device.REQUEST_FLAG_USER + 1, bag);
+                    .createInstance(Ci.nsIPropertyBag2);
+        this._device.submitRequest(Ci.sbICDDeviceEvent.REQUEST_CDLOOKUP, bag);
         break;
 
       default :

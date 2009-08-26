@@ -24,6 +24,7 @@
 //
 */
 
+#include "sbIDevice.idl"
 #include "sbIDeviceEvent.idl"
 #include "nsISupports.idl"
 interface nsIArray;
@@ -111,6 +112,16 @@ interface sbICDDeviceEvent : sbIDeviceEvent
    * CD metadata lookup query completed event.
    */
   const unsigned long EVENT_CDLOOKUP_COMPLETED = EVENT_CLIENT_DEFINED + 2;
+
+  //
+  // @brief Request constants
+  //
+  const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
+  
+  //
+  // @brief State constants
+  //
+  const unsigned long STATE_LOOKINGUPCD = sbIDevice::STATE_USER + 1;
 };
 
 //------------------------------------------------------------------------------

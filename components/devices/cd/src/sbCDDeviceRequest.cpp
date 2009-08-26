@@ -152,7 +152,7 @@ sbCDDevice::ReqHandleRequestAdded()
           NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
           break;
 
-        case REQUEST_CDLOOKUP:
+        case sbICDDeviceEvent::REQUEST_CDLOOKUP:
           rv = AttemptCDLookup();
           NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup CD data!");
           break;
@@ -389,7 +389,7 @@ sbCDDevice::AttemptCDLookup()
   nsresult rv;
 
   // Update the status
-  rv = mStatus.ChangeState(STATE_LOOKINGUPCD);
+  rv = mStatus.ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (!NS_IsMainThread()) {
