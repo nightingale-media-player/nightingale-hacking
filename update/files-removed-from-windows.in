@@ -26,6 +26,7 @@
 ./tag.dll
 ./searchplugins/yahoo-lyrics.xml
 ./searchplugins/skreemr.xml
+./searchplugins/hypemachine.xml
 ./searchplugins/google-lyrics.xml
 ./plugins/vlcmodules/libxtag_plugin.dll
 ./plugins/vlcmodules/libxml_plugin.dll

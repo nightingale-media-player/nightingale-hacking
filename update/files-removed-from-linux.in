@@ -27,6 +27,7 @@
 ./songbird.desktop
 ./searchplugins/yahoo-lyrics.xml
 ./searchplugins/skreemr.xml
+./searchplugins/hypemachine.xml
 ./searchplugins/google-lyrics.xml
 ./lib/sbGStreamer.so
 ./lib/liboil-0.3.so

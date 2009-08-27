@@ -14,6 +14,7 @@
 ./Contents/Resources/testharness/
 ./Contents/Resources/searchplugins/yahoo-lyrics.xml
 ./Contents/Resources/searchplugins/skreemr.xml
+./Contents/Resources/searchplugins/hypemachine.xml
 ./Contents/Resources/searchplugins/google-lyrics.xml
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/VLC Plugin.rsrc
 ./Contents/Resources/plugins/VLC.plugin/Contents/Resources/English.lproj/InfoPlist.strings
