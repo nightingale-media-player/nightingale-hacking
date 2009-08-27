@@ -110,6 +110,7 @@
 #define SB_PROPERTY_DISABLE_DOWNLOAD          "http://songbirdnest.com/data/1.0#disableDownload"
 #define SB_PROPERTY_ISSUBSCRIPTION            "http://songbirdnest.com/data/1.0#isSubscription"
 #define SB_PROPERTY_CDRIP_STATUS              "http://songbirdnest.com/data/1.0#cdRipStatus"
+#define SB_PROPERTY_SHOULDRIP                 "http://songbirdnest.com/data/1.0#shouldRip"
 
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"

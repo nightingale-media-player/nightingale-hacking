@@ -327,7 +327,7 @@ window.cdripController =
     
     // Setup our columns for the CD View
     this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
-      "http://songbirdnest.com/data/1.0#isChecked 25 " +
+      "http://songbirdnest.com/data/1.0#shouldRip 25 " +
       "http://songbirdnest.com/data/1.0#trackNumber 50 a " +
       "http://songbirdnest.com/data/1.0#cdRipStatus 75 " +
       "http://songbirdnest.com/data/1.0#trackName 255 " +

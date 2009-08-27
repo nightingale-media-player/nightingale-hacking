@@ -28,18 +28,25 @@
 #define __SBBOOLEANPROPERTYINFO_H__
 
 #include <sbIPropertyManager.h>
+#include <sbITreeViewPropertyInfo.h>
+#include <sbIClickablePropertyInfo.h>
+
 #include "sbPropertyInfo.h"
 
 #include <nsCOMPtr.h>
 #include <nsStringGlue.h>
 
 class sbBooleanPropertyInfo : public sbPropertyInfo,
-                              public sbIBooleanPropertyInfo
+                              public sbIBooleanPropertyInfo,
+                              public sbIClickablePropertyInfo,
+                              public sbITreeViewPropertyInfo
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
   NS_FORWARD_SBIPROPERTYINFO_STDPROP(sbPropertyInfo::);
   NS_DECL_SBIBOOLEANPROPERTYINFO
+  NS_DECL_SBICLICKABLEPROPERTYINFO
+  NS_DECL_SBITREEVIEWPROPERTYINFO
 
   sbBooleanPropertyInfo();
   virtual ~sbBooleanPropertyInfo();

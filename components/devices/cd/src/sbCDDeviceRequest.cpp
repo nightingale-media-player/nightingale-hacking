@@ -267,6 +267,13 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
                                              getter_AddRefs(mediaItemList));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // By default mark all library items as "Should Rip".
+  rv = sbDeviceUtils::BulkSetProperty
+                        (aLibrary,
+                         NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
+                         NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Get the number of created media items.
   PRUint32 mediaItemCount;
   rv = mediaItemList->GetLength(&mediaItemCount);

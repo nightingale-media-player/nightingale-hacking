@@ -1201,6 +1201,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Should Rip (for cd devices)
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
+                       NS_LITERAL_STRING("property.shouldrip"),
+                       stringBundle,
+                       PR_FALSE, PR_TRUE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

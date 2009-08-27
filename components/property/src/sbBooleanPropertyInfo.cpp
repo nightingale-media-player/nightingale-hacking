@@ -27,9 +27,13 @@
 #include "sbBooleanPropertyInfo.h"
 #include "sbStandardOperators.h"
 #include <nsAutoPtr.h>
+#include <nsITreeView.h>
 
-NS_IMPL_ISUPPORTS_INHERITED1(sbBooleanPropertyInfo, sbPropertyInfo,
-                                                    sbIBooleanPropertyInfo)
+NS_IMPL_ISUPPORTS_INHERITED3(sbBooleanPropertyInfo,
+                             sbPropertyInfo,
+                             sbIBooleanPropertyInfo,
+                             sbIClickablePropertyInfo,
+                             sbITreeViewPropertyInfo)
 
 sbBooleanPropertyInfo::sbBooleanPropertyInfo()
 {
@@ -42,7 +46,8 @@ sbBooleanPropertyInfo::~sbBooleanPropertyInfo()
   MOZ_COUNT_DTOR(sbBooleanPropertyInfo);
 }
 
-nsresult sbBooleanPropertyInfo::Init()
+nsresult
+sbBooleanPropertyInfo::Init()
 {
   nsresult rv;
 
@@ -55,7 +60,8 @@ nsresult sbBooleanPropertyInfo::Init()
   return NS_OK;
 }
 
-nsresult sbBooleanPropertyInfo::InitializeOperators()
+nsresult
+sbBooleanPropertyInfo::InitializeOperators()
 {
   nsAutoString op;
   nsRefPtr<sbPropertyOperator> propOp;
@@ -92,7 +98,8 @@ nsresult sbBooleanPropertyInfo::InitializeOperators()
   return NS_OK;
 }
 
-NS_IMETHODIMP sbBooleanPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
+NS_IMETHODIMP
+sbBooleanPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
@@ -108,12 +115,21 @@ NS_IMETHODIMP sbBooleanPropertyInfo::Validate(const nsAString & aValue, PRBool *
   return NS_OK;
 }
 
-NS_IMETHODIMP sbBooleanPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP
+sbBooleanPropertyInfo::Sanitize(const nsAString & aValue, nsAString & _retval)
 {
     return NS_ERROR_NOT_IMPLEMENTED;
 }
 
-NS_IMETHODIMP sbBooleanPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
+NS_IMETHODIMP
+sbBooleanPropertyInfo::Format(const nsAString & aValue, nsAString & _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
 {
   nsresult rv;
   PRBool valid = PR_FALSE;
@@ -131,32 +147,145 @@ NS_IMETHODIMP sbBooleanPropertyInfo::Format(const nsAString & aValue, nsAString 
   return rv;
 }
 
-NS_IMETHODIMP sbBooleanPropertyInfo::MakeSearchable(const nsAString & aValue, nsAString & _retval)
-{
-  nsresult rv;
-  PRBool valid = PR_FALSE;
-
-  _retval = aValue;
-
-  rv = Validate(_retval, &valid);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  if(!valid) {
-    _retval.Truncate();
-    rv = NS_ERROR_INVALID_ARG;
-  }
-
-  return rv;
-}
-
-NS_IMETHODIMP sbBooleanPropertyInfo::GetOPERATOR_ISTRUE(nsAString & aOPERATOR_ISTRUE)
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetOPERATOR_ISTRUE(nsAString & aOPERATOR_ISTRUE)
 {
   aOPERATOR_ISTRUE = NS_LITERAL_STRING(SB_OPERATOR_ISTRUE);
   return NS_OK;
 }
 
-NS_IMETHODIMP sbBooleanPropertyInfo::GetOPERATOR_ISFALSE(nsAString & aOPERATOR_ISFALSE)
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetOPERATOR_ISFALSE(nsAString & aOPERATOR_ISFALSE)
 {
   aOPERATOR_ISFALSE = NS_LITERAL_STRING(SB_OPERATOR_ISFALSE);
+  return NS_OK;
+}
+
+// sbITreeViewPropertyInfo
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetImageSrc(const nsAString& aValue,
+                                   nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetProgressMode(const nsAString& aValue,
+                                       PRInt32* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = nsITreeView::PROGRESS_NONE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetCellValue(const nsAString& aValue,
+                                    nsAString& _retval)
+{
+  nsresult rv;
+  PRBool valid = PR_FALSE;
+
+  _retval = aValue;
+
+  rv = Validate(_retval, &valid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if(!valid) {
+    _retval.Truncate();
+    rv = NS_ERROR_INVALID_ARG;
+  }
+
+  return rv;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetColumnProperties(const nsAString& aValue,
+                                           nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetRowProperties(const nsAString& aValue,
+                                        nsAString& _retval)
+{
+  _retval.Truncate();
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetCellProperties(const nsAString& aValue,
+                                         nsAString& _retval)
+{
+
+  _retval.AssignLiteral("checkbox");
+  if (aValue.IsVoid() ||
+      aValue.EqualsLiteral("0")) {
+    _retval.AppendLiteral(" unchecked");
+  } else if (aValue.EqualsLiteral("1")) {
+    _retval.AppendLiteral(" checked");
+  }
+  
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetColumnType(nsAString& _retval)
+{
+  _retval.AssignLiteral("text");
+  return NS_OK;
+}
+
+// sbIClickablePropertyInfo
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
+{
+  NS_ENSURE_ARG_POINTER(aSuppressSelect);
+  *aSuppressSelect = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::IsDisabled(const nsAString& aCurrentValue,
+                                  PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_FALSE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::HitTest(const nsAString& aCurrentValue,
+                               const nsAString& aPart,
+                               PRUint32 aBoxWidth,
+                               PRUint32 aBoxHeight,
+                               PRUint32 aMouseX,
+                               PRUint32 aMouseY,
+                               PRBool* _retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBooleanPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
+                                        PRUint32 aBoxWidth,
+                                        PRUint32 aBoxHeight,
+                                        PRUint32 aMouseX,
+                                        PRUint32 aMouseY,
+                                        nsAString& _retval)
+{
+  if (aCurrentValue.IsVoid() ||
+      aCurrentValue.EqualsLiteral("0")) {
+    _retval.AssignLiteral("1");
+  } else {
+    _retval.AssignLiteral("0");
+  }
+  
   return NS_OK;
 }
