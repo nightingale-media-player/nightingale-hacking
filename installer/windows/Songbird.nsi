@@ -58,6 +58,14 @@ RequestExecutionLevel user
 ; ... and this is $(srcdir)/installer/windows
 !addincludedir ..\..\installer\windows
 
+; and add includes/plugins for nsProcess... and UAC
+!addincludedir ..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\nsProcess\include
+!addplugindir ..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\nsProcess\Plugin
+
+; ... and UAC
+!addincludedir ..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\uac
+!addplugindir ..\..\dependencies\windows-i686-msvc8\nsis-2.45\extra-plugins\uac\Release\A
+
 ; From NSIS
 !include FileFunc.nsh
 !include LogicLib.nsh
