@@ -29,12 +29,4 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = cddevice
-
-SONGBIRD_TESTS = $(srcdir)/head_cddevice.js \
-                 $(srcdir)/test_cddevice.js \
-                 $(srcdir)/test_sbcddevice.js \
-                 $(srcdir)/test_sbcdread.js \
-                 $(NULL)
-
 include $(topsrcdir)/build/rules.mk

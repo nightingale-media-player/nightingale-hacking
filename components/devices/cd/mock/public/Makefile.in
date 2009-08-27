@@ -22,19 +22,19 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../../../..
+DEPTH = ../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_TEST_COMPONENT = cddevice
+XPIDL_SRCS += sbIMockCDDevice.idl \
+              sbIMockCDDeviceController.idl \
+              $(NULL)
 
-SONGBIRD_TESTS = $(srcdir)/head_cddevice.js \
-                 $(srcdir)/test_cddevice.js \
-                 $(srcdir)/test_sbcddevice.js \
-                 $(srcdir)/test_sbcdread.js \
-                 $(NULL)
+XPIDL_EXTRA_INCLUDES += $(topsrcdir)/components/devices/cd/public
+
+XPIDL_MODULE = sbMockCDDevice.xpt
 
 include $(topsrcdir)/build/rules.mk

@@ -191,7 +191,7 @@ sbMockCDService.prototype =
   },
 
   //
-  // sbICDMockDeviceController
+  // sbIMockCDDeviceController
   //
   insertMedia: function sbMockCDService_insertMedia(aCDDevice, aMediaDisc)
   {
@@ -203,13 +203,13 @@ sbMockCDService.prototype =
     // Determine which TOC to insert into the device.
     var mockMediaTOC;
     switch (aMediaDisc) {
-      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK:
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK:
         mockMediaTOC = sbMakeMidnightRock();
         break;
-      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME:
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME:
         mockMediaTOC = sbMakeBabyOneMoreTime();
         break;
-      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_U2:
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_U2:
         mockMediaTOC = sbMakeAllThatYouCantLeaveBehind();
         break;
     }
@@ -284,7 +284,7 @@ sbMockCDService.prototype =
   classID: Components.ID("{C701A410-7F71-41E9-A07A-C765A4F04D41}"),
   contractID: "@songbirdnest.com/device/cd/mock-cddevice-service;1",
   QueryInterface: XPCOMUtils.generateQI([Ci.sbICDDeviceService,
-                                         Ci.sbICDMockDeviceController])
+                                         Ci.sbIMockCDDeviceController])
 };
 
 function NSGetModule(compMgr, fileSpec) {

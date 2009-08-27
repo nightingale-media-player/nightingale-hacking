@@ -31,7 +31,7 @@
  
 #include "nsISupports.idl"
 
-interface sbICDMockDeviceController;
+interface sbIMockCDDeviceController;
 
 
 /**
@@ -83,7 +83,7 @@ interface sbIMockCDDevice : nsISupports
                   in boolean aDiscInserted,
                   in unsigned long aDiscType,
                   in boolean aEjected,
-                  in sbICDMockDeviceController aController);
+                  in sbIMockCDDeviceController aController);
   /**
    * denotes whether the disc has been ejected
    */

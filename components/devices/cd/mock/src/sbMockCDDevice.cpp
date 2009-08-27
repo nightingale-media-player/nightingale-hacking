@@ -29,7 +29,7 @@
 #include <sbArrayUtils.h>
 #include <sbICDDevice.h>
 #include <sbIMockCDDevice.h>
-#include <sbICDMockDeviceController.h>
+#include <sbIMockCDDeviceController.h>
 
 #include <nsServiceManagerUtils.h>
 #include <nsICategoryManager.h>
@@ -306,7 +306,7 @@ private:
   PRUint32 mDiscType;
   PRBool mEjected;
   nsCOMPtr<sbICDTOC> mTOC;
-  nsCOMPtr<sbICDMockDeviceController> mController;
+  nsCOMPtr<sbIMockCDDeviceController> mController;
 };
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockCDDevice, sbICDDevice, sbIMockCDDevice)
@@ -387,7 +387,7 @@ sbMockCDDevice::Initialize(nsAString const & aName,
                            PRBool aDiscInserted,
                            PRUint32 aDiscType,
                            PRBool aEjected,
-                           sbICDMockDeviceController *aController)
+                           sbIMockCDDeviceController *aController)
 {
   mName = aName;
   mReadable = aReadable;

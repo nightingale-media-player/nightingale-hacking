@@ -30,14 +30,14 @@ interface sbICDDevice;
 
 //------------------------------------------------------------------------------
 //
-// @interface sbICDMockDeviceController
+// @interface sbIMockCDDeviceController
 // @brief This interface provides some methods for controlling the mock CD
 //        device.
 //
 //------------------------------------------------------------------------------
 
 [scriptable, uuid(B8AA846F-625F-473E-B2B9-F74D5CF448BA)]
-interface sbICDMockDeviceController : nsISupports
+interface sbIMockCDDeviceController : nsISupports
 {
   //
   // @brief Mock media disc constants.
