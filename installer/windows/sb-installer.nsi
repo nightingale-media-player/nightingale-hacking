@@ -400,11 +400,42 @@ FunctionEnd
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 Function .onInit
-   ; preedTODO: Include mutex hack
    ; preedTODO: Check drive space
    ${UAC.I.Elevate.AdminOnly}
 
    Call CommonInstallerInit
+
+   ; Version checks! This is not in CommonInstallerInit, because we always 
+   ; want the uninstaller to be able to run.
+
+   ${If} $UnpackMode != ${TRUE}
+      ${If} ${AtLeastWinXP}
+         ${If} ${IsWinXP}
+            ${Unless} ${AtLeastServicePack} 2
+               Goto confirmUnsupportedWinVersion
+            ${EndUnless}
+         ${Else}
+            ${If} ${AtLeastWin7}
+               Goto confirmUnsupportedWinVersion
+            ${EndIf}
+         ${EndIf}
+      ${Else}
+         Goto confirmUnsupportedWinVersion
+      ${EndIf}
+      ${If} ${IsServerOS}
+         Goto confirmUnsupportedWinVersion
+      ${EndIf}
+   ${EndIf}
+
+   ; This really isn't an override, but rather we've passed all the checks
+   ; successfully; continue installing...
+   Goto overrideVersionCheck
+
+confirmUnsupportedWinVersion:
+   MessageBox MB_OKCANCEL|MB_ICONSTOP "${InstallUnsupportedWinVersion}" /SD IDCANCEL IDOK overrideVersionCheck
+   Quit
+
+overrideVersionCheck:
 
    ${If} $UnpackMode != ${TRUE} 
       ${If} $InstallerType != "nightly"
