@@ -79,14 +79,6 @@ window.cdripController =
   _deviceID:      null,
 
   onLoad: function cdripController_onLoad() {
-    this._hideSettingsView();
-
-    // Hide the status buttons.
-    this._hideElement(RIP_STATUS_RIP_CD_BUTTON);
-    this._hideElement(RIP_STATUS_STOP_RIP_BUTTON);
-    this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
-    this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
-
     // Add our device listener to listen for lookup notification events
     this._device = this._getDevice();
 
@@ -96,6 +88,9 @@ window.cdripController =
       browser.getTabForDocument(document).backWithDefault();
       return;
     }
+
+    // Update the header information
+    this._updateHeaderView();
 
     if (this._device.state == Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD) {
       this._toggleLookupNotification(true);
@@ -140,6 +135,13 @@ window.cdripController =
         }
         break;
 
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        var device = aEvent.origin.QueryInterface(Ci.sbIDevice);
+        if (device.id.toString() == this._deviceID) {
+          this._updateHeaderView();
+        }
+        break;
+
       default:
         break;
     }
@@ -164,6 +166,37 @@ window.cdripController =
       var ripImage = document.getElementById(RIP_STATUS_IMAGE);
       ripImage.src = "";
       this._setLabelValue(RIP_STATUS_LABEL, "");
+    }
+    this._updateHeaderView();
+  },
+
+  _updateHeaderView: function cdripController__updateHeaderView() {
+    switch (this._device.state) {
+      // STATE_LOOKINGUPCD
+      case Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD:
+        // Ignore this state since it is handled by the events in the
+        // onDeviceEvent function.
+        break;
+      
+      case Ci.sbIDevice.STATE_TRANSCODE:
+        // Currently ripping
+        this._showSettingsView();
+        // Display only the Stop Rip button.
+        this._hideElement(RIP_STATUS_RIP_CD_BUTTON);
+        this._showElement(RIP_STATUS_STOP_RIP_BUTTON);
+        this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
+        this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
+        break;
+      
+      default:
+        // By default we assume IDLE
+        this._showSettingsView();
+        // Display only the Rip button.
+        this._showElement(RIP_STATUS_RIP_CD_BUTTON);
+        this._hideElement(RIP_STATUS_STOP_RIP_BUTTON);
+        this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
+        this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
+        break;
     }
   },
 
