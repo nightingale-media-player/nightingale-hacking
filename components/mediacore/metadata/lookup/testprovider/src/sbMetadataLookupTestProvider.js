@@ -69,13 +69,13 @@ sbTestProvider.prototype = {
   identifyTOC : function sbTestProvider_identifyTOC(aTOC) {
     if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 15 &&
         aTOC.leadOutTrackOffset == 285675)
-      return Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK;
+      return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK;
     else if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 12 &&
         aTOC.leadOutTrackOffset == 260335)
-      return Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME;
+      return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME;
     else if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 11 &&
         aTOC.leadOutTrackOffset == 225562)
-      return Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_U2;
+      return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_U2;
     else
       throw Components.results.NS_ERROR_UNEXPECTED;
   },
@@ -93,19 +93,19 @@ sbTestProvider.prototype = {
     this.whichAlbum = id;
 
     switch (id) {
-      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK:
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK:
         // Test case 1: Midnight Rock
         // Return a TOC after 5 seconds
         this._timer.initWithCallback(this, 5000,
                                      Ci.nsITimerCallback.TYPE_ONE_SHOT);
         break;
-      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME:
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME:
         // Test case 2: Hit Me Baby One More Time
         // Return no TOC found after 5 seconds
         this._timer.initWithCallback(this, 5000,
                                      Ci.nsITimerCallback.TYPE_ONE_SHOT);
         break;
-      case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_U2:
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_U2:
         // Test case 3: U2
         // Timeout after 3 minutes
         this._timer.initWithCallback(this, 180000,
@@ -126,11 +126,11 @@ sbTestProvider.prototype = {
     this._timer = null;
 
     var id = this.whichAlbum;
-    if (id == Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME)
+    if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME)
     {
       // do nothing, return empty results
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
-    } else if (id == Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK)
+    } else if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK)
     {
       // create the skeleton sbIMetadataAlbumDetail object
       var a = new Object;

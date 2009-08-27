@@ -81,7 +81,7 @@ var testListener = {
 
     // eject the disc
     gMockController.ejectMedia(testListener.device,
-         Components.interfaces.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
+         Components.interfaces.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
 
     testFinished();
   }
@@ -99,7 +99,7 @@ function runTest () {
   testListener.device = cd0;
   // insert "All That You Can't Leave Behind"
   gMockController.insertMedia(cd0,
-         Components.interfaces.sbICDMockDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
+         Components.interfaces.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
 
   testPending();
 }
