@@ -77,14 +77,14 @@ int main(int argc, LPTSTR *argv) {
       usingFallback = true;
     }
   }
-  distIni = GetDistributionDirectory(ininame);
+  distIni = GetDistIniDirectory(ininame);
   if (distIni.empty()) {
     DebugMessage("Failed to find distribution.ini");
     return DH_ERROR_USER;
   }
   distIni = ininame;
   
-  tstring srcAppIniName(GetDistributionDirectory()),
+  tstring srcAppIniName(GetDistIniDirectory()),
           destAppIniName(ResolvePathName("$/application.ini"));
   srcAppIniName.append(_T("application.ini"));
   
@@ -133,7 +133,12 @@ int main(int argc, LPTSTR *argv) {
     if (usingFallback) {
       // we're using the fallback, the fact that distini (really, songbird.ini)
       // is missing is not fatal, just means we have nothing to do
-      LogMessage("Squelching error due to fallback distribution.ini");
+      LogMessage("Squelching error, fallback %S missing is not fatal", ininame);
+      if (ConvertUTFnToUTF8(argv[1]) == "uninstall") {
+        // uninstall mode, explicitly delete the log
+        gEnableLogging = false;
+        CommandDeleteFile("$/disthelper.log");
+      }
       return DH_ERROR_OK;
     }
     // we're in the distribution case, expecting a custom ini file here but

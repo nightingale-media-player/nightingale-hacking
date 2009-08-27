@@ -46,6 +46,7 @@ SIMPLE_PROGRAM_IMPORT_PATHS = $(MOZSDK_LIB_DIR) \
 
 ifeq ($(SB_PLATFORM),windows)
    SIMPLE_PROGRAM_EXTRA_IMPORTS = shell32 \
+                                  shlwapi \
                                   version \
                                   $(NULL)
    CPP_SRCS += icon.cpp \

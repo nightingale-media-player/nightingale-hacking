@@ -43,6 +43,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <shlwapi.h>
 #include <stdlib.h>
 
 #ifndef UNICODE
@@ -50,6 +51,8 @@
 #endif
 
 #define MAX_LONG_PATH 0x8000 /* 32767 + 1, maximum size for \\?\ style paths */
+
+#define NS_ARRAY_LENGTH(x) (sizeof(x) / sizeof(x[0]))
 
 tstring ResolvePathName(std::string aSrc) {
   std::wstring src(ConvertUTF8ToUTF16(aSrc));
@@ -70,7 +73,7 @@ tstring ResolvePathName(std::string aSrc) {
       src.replace(begin, next, GetAppDirectory());
     }
     WCHAR buffer[MAX_LONG_PATH + 1];
-    DWORD length = SearchPath(GetDistributionDirectory().c_str(),
+    DWORD length = SearchPath(GetDistIniDirectory().c_str(),
                               src.c_str(),
                               NULL,
                               MAX_LONG_PATH,
@@ -279,34 +282,41 @@ tstring GetAppDirectory() {
   return result;
 }
 
-tstring gDistributionDirectory;
-tstring GetDistributionDirectory(const TCHAR *aPath) {
+tstring gDistIniDirectory;
+tstring GetDistIniDirectory(const TCHAR *aPath) {
   if (aPath) {
-    DWORD size = GetFullPathName(aPath, 0, NULL, NULL);
-    if (!size) {
-      DebugMessage("Failed to find dist.ini %S path size", aPath);
+    TCHAR buffer[MAX_PATH];
+    _tcsncpy(buffer, GetAppDirectory().c_str(), NS_ARRAY_LENGTH(buffer));
+    buffer[NS_ARRAY_LENGTH(buffer) - 1] = _T('\0');
+    // the PathAppend call will correctly copy aPath over if it is already an
+    // absolute path; otherwise, it will append aPath to the app directory
+    if (!::PathAppend(buffer, aPath)) {
+      DebugMessage("Failed to resolve dist.ini path %S", aPath);
       return tstring(_T(""));
     }
-    TCHAR *buffer = (TCHAR*)malloc((size + 2) * sizeof(TCHAR));
-    if (!buffer) {
-      DebugMessage("Failed to allocate buffer for distribution directory");
+
+    // if the given file doesn't exist, bail (because there are no actions)
+    if (!::PathFileExists(buffer)) {
+      DebugMessage("File %S doesn't exist, bailing", buffer);
       return tstring(_T(""));
     }
-    TCHAR *separator;
-    size = GetFullPathName(aPath, size + 1, buffer, &separator);
-    if (!size) {
-      DebugMessage("Failed to find dist.ini %S", aPath);
-      free(buffer);
+
+    // now remove the file name
+    if (!::PathRemoveFileSpec(buffer)) {
+      DebugMessage("Failed to find directory name for %S", buffer);
       return tstring(_T(""));
     }
-    *separator = NULL;
+    if (!::PathAddBackslash(buffer)) {
+      DebugMessage("Failed to add trailing backslash to %S", buffer);
+      return tstring(_T(""));
+    }
+
     #if DEBUG
       DebugMessage("found distribution path %S", buffer);
     #endif
-    gDistributionDirectory = buffer;
-    free(buffer);
+    gDistIniDirectory = buffer;
   }
-  return gDistributionDirectory;
+  return gDistIniDirectory;
 }
 
 std::string GetLeafName(std::string aSrc) {
@@ -344,7 +354,7 @@ void ShowFatalError(const char* fmt, ...) {
   msg.append(ConvertUTF8ToUTF16(fmt));
   
   len = _vsctprintf(msg.c_str(), args) // _vscprintf doesn't count
-                         + 1; // terminating '\0'
+          + 1;                         // terminating '\0'
   
   buffer = (TCHAR*)malloc(len * sizeof(TCHAR));
 

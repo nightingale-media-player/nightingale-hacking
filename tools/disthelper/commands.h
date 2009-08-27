@@ -115,9 +115,9 @@ tstring GetAppDirectory();
  * The result must end with a path separator.
  *
  * \param aPath If given, it will be assumed to be the path to distribution.ini;
- *              it can either be absolute, or relative to the working directory.
+ *              it can either be absolute, or relative to the application directory.
  */
-tstring GetDistributionDirectory(const TCHAR* aPath = NULL);
+tstring GetDistIniDirectory(const TCHAR* aPath = NULL);
 
 /**
  * Resolve a path name.
