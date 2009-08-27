@@ -39,12 +39,13 @@
 #include <nsThreadUtils.h>
 #include <nsILocalFile.h>
 
+#include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
 #include <sbIDeviceEvent.h>
+#include <sbILibraryManager.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbVariantUtils.h>
-#include <sbAutoRWLock.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -817,7 +818,15 @@ sbCDDevice::Unmount()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Remove the device library and dispose of it.
-  RemoveLibrary(mDeviceLibrary);
+  rv = RemoveLibrary(mDeviceLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbILibraryManager> libManager =
+      do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = libManager->UnregisterLibrary(mDeviceLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

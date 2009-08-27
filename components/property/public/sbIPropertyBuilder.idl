@@ -88,6 +88,28 @@ interface sbIDownloadButtonPropertyBuilder : sbIPropertyBuilder
   attribute AString retryLabelKey;
 };
 
+
+/**
+* \interface sbIStatusPropertyBuilder
+* \sa sbIPropertyBuilder
+* used for unit testing
+*/
+[scriptable, uuid(6c5495d2-5b26-45f0-9117-b9f775502bae)]
+interface sbIStatusPropertyBuilder : sbIPropertyBuilder
+{
+  attribute AString label;
+  
+  attribute AString completedLabel;
+  
+  attribute AString failedLabel;
+
+  attribute AString labelKey;
+
+  attribute AString completedLabelKey;
+    
+  attribute AString failedLabelKey;
+};
+
 /**
 * \interface sbIImagePropertyBuilder
 * \sa sbIPropertyBuilder

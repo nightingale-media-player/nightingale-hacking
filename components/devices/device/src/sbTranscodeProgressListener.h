@@ -32,12 +32,12 @@
 #include "sbBaseDevice.h"
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventListener.h>
-
 // Forward class declarations
 
 class sbIJobProgress;
 class sbDeviceStatusAutoOperationComplete;
 class sbDeviceStatusHelper;
+class sbStatusPropertyValue;
 
 /**
  * Provides a listener to indicate when the progress listener has completed
@@ -50,11 +50,43 @@ public:
   NS_DECL_SBIJOBPROGRESSLISTENER
   NS_DECL_SBIMEDIACOREEVENTLISTENER
 
+  /**
+   * Holds the status property information if any
+   */
+  class StatusProperty
+  {
+  public:
+    /**
+     * Initialize the status property with the source item and property name.
+     * Default values will cause the status not to be updated.
+     */
+    StatusProperty(sbIMediaItem * aSourceItem = nsnull,
+                   nsAString const & aPropertyName = nsString()) :
+      mSourceItem(aSourceItem),
+      mPropertyName(aPropertyName)
+    {
+    }
+    /**
+     * Sets the status property to aValue if the property name was given
+     */
+    nsresult SetValue(nsAString const & aValue)
+    {
+      if (!mPropertyName.IsEmpty() && mSourceItem) {
+        nsresult rv = mSourceItem->SetProperty(mPropertyName, aValue);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      return NS_OK;
+    }
+  private:
+    nsCOMPtr<sbIMediaItem> mSourceItem;
+    nsString mPropertyName;
+  };
   static sbTranscodeProgressListener *
   New(sbBaseDevice * aDeviceBase,
       sbDeviceStatusHelper * aDeviceStatusHelper,
       sbBaseDevice::TransferRequest * aRequest,
-      PRMonitor * aCompleteNotifyMonitor = nsnull);
+      PRMonitor * aCompleteNotifyMonitor = nsnull,
+      StatusProperty const & aStatusProperty = StatusProperty());
 
   PRBool IsComplete() { return PR_AtomicAdd(&mIsComplete, 0); };
 
@@ -63,7 +95,8 @@ private:
   sbTranscodeProgressListener(sbBaseDevice * aDeviceBase,
                               sbDeviceStatusHelper * aDeviceStatusHelper,
                               sbBaseDevice::TransferRequest * aRequest,
-                              PRMonitor * aCompleteNotifyMonitor);
+                              PRMonitor * aCompleteNotifyMonitor,
+                              StatusProperty const & aStatusProperty);
 
   ~sbTranscodeProgressListener();
   /**
@@ -78,7 +111,13 @@ private:
    */
   nsresult SetProgress(sbIJobProgress * aJobProgress);
 
-  // Raw manually ref coutned pointer because nsISupports is ambiguous
+  /**
+   * Sets the status property of the item if given
+   */
+  inline
+  nsresult SetStatusProperty(sbStatusPropertyValue const & aValue);
+
+  // Raw manually ref counted pointer because nsISupports is ambiguous
   sbBaseDevice * mBaseDevice;
 
   // Non-owning reference, reference to mBaseDevice will keep this alive
@@ -87,6 +126,7 @@ private:
   PRMonitor *mCompleteNotifyMonitor;
   PRInt32 mIsComplete;
   PRUint32 mTotal;
+  StatusProperty mStatusProperty;
 };
 
 

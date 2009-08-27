@@ -4,7 +4,7 @@
 //
 // This file is part of the Songbird web player.
 //
-// Copyright(c) 2005-2008 POTI, Inc.
+// Copyright(c) 2005-2009 POTI, Inc.
 // http://songbirdnest.com
 //
 // This file may be licensed under the terms of of the
@@ -109,7 +109,7 @@
 #define SB_PROPERTY_EXCLUDE_FROM_HISTORY      "http://songbirdnest.com/data/1.0#excludeFromHistory"
 #define SB_PROPERTY_DISABLE_DOWNLOAD          "http://songbirdnest.com/data/1.0#disableDownload"
 #define SB_PROPERTY_ISSUBSCRIPTION            "http://songbirdnest.com/data/1.0#isSubscription"
-
+#define SB_PROPERTY_CDRIP_STATUS              "http://songbirdnest.com/data/1.0#cdRipStatus"
 
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"

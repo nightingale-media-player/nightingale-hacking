@@ -47,6 +47,7 @@
 #include "sbImagePropertyInfo.h"
 #include "sbDummyPlaylistPropertyInfo.h"
 #include "sbDownloadButtonPropertyBuilder.h"
+#include "sbStatusPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
 #include "sbOriginPageImagePropertyBuilder.h"
@@ -183,7 +184,7 @@ NS_IMETHODIMP sbPropertyManager::AddPropertyInfo(sbIPropertyInfo *aPropertyInfo)
 NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
                                                  sbIPropertyInfo **_retval)
 {
-  LOG(( "sbPropertyManager::GetPropertyInfo(%s)", 
+  LOG(( "sbPropertyManager::GetPropertyInfo(%s)",
         NS_LossyConvertUTF16toASCII(aID).get() ));
 
   NS_ENSURE_ARG_POINTER(_retval);
@@ -199,10 +200,10 @@ NS_IMETHODIMP sbPropertyManager::GetPropertyInfo(const nsAString & aID,
 
     textProperty = new sbTextPropertyInfo();
     NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-    
+
     rv = textProperty->Init();
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = textProperty->SetId(aID);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -302,7 +303,7 @@ NS_IMETHODIMP sbPropertyManager::GetDependentProperties(const nsAString & aId,
       NS_ENSURE_SUCCESS(rv, rv);
       rv = deps->SetStrict(PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       success = mPropDependencyMap.Put(mPropIDs.ElementAt(i), deps);
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
     }
@@ -315,10 +316,10 @@ NS_IMETHODIMP sbPropertyManager::GetDependentProperties(const nsAString & aId,
       nsString dependentID = mPropIDs.ElementAt(i);
       rv = GetPropertyInfo(dependentID, getter_AddRefs(propertyInfo));
       NS_ENSURE_SUCCESS(rv, rv);
-      
+
       secondarySort = nsnull;
       rv = propertyInfo->GetSecondarySort(getter_AddRefs(secondarySort));
-      
+
       if (NS_SUCCEEDED(rv) && secondarySort) {
         PRUint32 propertyCount;
         rv = secondarySort->GetLength(&propertyCount);
@@ -387,13 +388,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //List Type 
+  //List Type
   rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_LISTTYPE), EmptyString(),
-                      stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE, 
+                      stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
                       0, PR_FALSE, PR_TRUE, PR_FALSE, nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Is List 
+  //Is List
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISLIST), EmptyString(),
                        stringBundle, PR_FALSE, PR_FALSE, PR_FALSE,
                        PR_FALSE);
@@ -410,8 +411,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Only Custom Media Pages (internal use only)
-  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES), 
-                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE, 
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ONLY_CUSTOM_MEDIAPAGES),
+                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE,
                        PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -653,7 +654,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   //Is part of a compilation
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISPARTOFCOMPILATION),
                        NS_LITERAL_STRING("property.is_part_of_compilation"),
-                       stringBundle, PR_FALSE, PR_TRUE, 
+                       stringBundle, PR_FALSE, PR_TRUE,
                        PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -699,7 +700,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  //Primary image url, see bug #11618 for an explanation as to why this 
+  //Primary image url, see bug #11618 for an explanation as to why this
   //property is not user viewable.
   rv = RegisterImage(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
                      NS_LITERAL_STRING("property.primary_image_url"),
@@ -915,7 +916,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   dbBuilder->SetUserViewable(PR_FALSE);
-  
+
   rv = dbBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_DOWNLOADBUTTON));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -924,7 +925,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = dbBuilder->SetLabelKey(NS_LITERAL_STRING("property.download_button"));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = dbBuilder->SetRetryLabelKey(NS_LITERAL_STRING("property.download_button_retry"));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -933,7 +934,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = dbBuilder->SetRemoteWritable(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIPropertyInfo> propertyInfo;
   rv = dbBuilder->Get(getter_AddRefs(propertyInfo));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -975,6 +976,43 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Status Property
+  nsRefPtr<sbStatusPropertyBuilder> statusBuilder =
+    new sbStatusPropertyBuilder();
+  NS_ENSURE_TRUE(dbBuilder, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = statusBuilder->Init();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  statusBuilder->SetUserViewable(PR_FALSE);
+
+  rv = statusBuilder->SetPropertyID(NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->SetDisplayNameKey(NS_LITERAL_STRING("property.cdrip_status"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->SetLabelKey(NS_LITERAL_STRING("property.cdrip_status"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->SetCompletedLabelKey(NS_LITERAL_STRING("property.cdrip_completed"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->SetFailedLabelKey(NS_LITERAL_STRING("property.cdrip_failed"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->SetRemoteReadable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->SetRemoteWritable(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = statusBuilder->Get(getter_AddRefs(propertyInfo));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddPropertyInfo(propertyInfo);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Go To Source
   nsRefPtr<sbOriginPageImagePropertyBuilder> iBuilder = new sbOriginPageImagePropertyBuilder();
   NS_ENSURE_TRUE(iBuilder, NS_ERROR_OUT_OF_MEMORY);
@@ -1004,7 +1042,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
 
   rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Artist detail image link
   rv = RegisterImageLink(NS_LITERAL_STRING(SB_PROPERTY_ARTISTDETAIL),
                          NS_LITERAL_STRING("property.artist_detail_image"),
@@ -1054,8 +1092,8 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Exclude from playback history?
-  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_EXCLUDE_FROM_HISTORY), 
-                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE, 
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_EXCLUDE_FROM_HISTORY),
+                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE,
                        PR_TRUE, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1140,7 +1178,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Playlist dummy property for smart medialists internal use
-  rv = RegisterDummy(new sbDummyPlaylistPropertyInfo(), 
+  rv = RegisterDummy(new sbDummyPlaylistPropertyInfo(),
                      NS_LITERAL_STRING(SB_DUMMYPROPERTY_SMARTMEDIALIST_PLAYLIST),
                      NS_LITERAL_STRING("property.dummy.playlist"),
                      stringBundle);
@@ -1205,7 +1243,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
 
   nsRefPtr<sbTextPropertyInfo> textProperty(new sbTextPropertyInfo());
   NS_ENSURE_TRUE(textProperty, NS_ERROR_OUT_OF_MEMORY);
-  
+
   nsresult rv = textProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1223,7 +1261,7 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
       rv = textProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    
+
     rv = textProperty->SetLocalizationKey(aDisplayKey);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1243,12 +1281,12 @@ sbPropertyManager::RegisterText(const nsAString& aPropertyID,
     rv = textProperty->SetSecondarySort(aSecondarySort);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   if (aNoCompressWhitespace) {
     rv = textProperty->SetNoCompressWhitespace(aNoCompressWhitespace);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbITextPropertyInfo*, textProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1278,7 +1316,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
   nsRefPtr<sbDatetimePropertyInfo>
     datetimeProperty(new sbDatetimePropertyInfo());
   NS_ENSURE_TRUE(datetimeProperty, NS_ERROR_OUT_OF_MEMORY);
-  
+
   nsresult rv = datetimeProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1295,7 +1333,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
       rv = datetimeProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    
+
     rv = datetimeProperty->SetLocalizationKey(aDisplayKey);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1305,7 +1343,7 @@ sbPropertyManager::RegisterDateTime(const nsAString& aPropertyID,
 
   rv = datetimeProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIDatetimePropertyInfo*, datetimeProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1333,7 +1371,7 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
   nsRefPtr<sbDurationPropertyInfo>
     durationProperty(new sbDurationPropertyInfo());
   NS_ENSURE_TRUE(durationProperty, NS_ERROR_OUT_OF_MEMORY);
-  
+
   nsresult rv = durationProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1347,7 +1385,7 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
       rv = durationProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    
+
     rv = durationProperty->SetLocalizationKey(aDisplayKey);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1357,7 +1395,7 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
 
   rv = durationProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsRefPtr<sbIPropertyUnitConverter> propConverter = new sbDurationPropertyUnitConverter();
   rv = durationProperty->SetUnitConverter(propConverter);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1368,7 +1406,7 @@ sbPropertyManager::RegisterDuration(const nsAString& aPropertyID,
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1388,7 +1426,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
 
   nsRefPtr<sbURIPropertyInfo> uriProperty(new sbURIPropertyInfo());
   NS_ENSURE_TRUE(uriProperty, NS_ERROR_OUT_OF_MEMORY);
-  
+
   nsresult rv = uriProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1402,7 +1440,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
       rv = uriProperty->SetDisplayName(displayValue);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    
+
     rv = uriProperty->SetLocalizationKey(aDisplayKey);
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -1419,7 +1457,7 @@ sbPropertyManager::RegisterURI(const nsAString& aPropertyID,
 
   rv = SetRemoteAccess(propInfo, aRemoteReadable, aRemoteWritable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = AddPropertyInfo(propInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1508,7 +1546,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
 
   nsRefPtr<sbNumberPropertyInfo> numberProperty(new sbNumberPropertyInfo());
   NS_ENSURE_TRUE(numberProperty, NS_ERROR_OUT_OF_MEMORY);
-  
+
   nsresult rv = numberProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1542,7 +1580,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
 
   rv = numberProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = numberProperty->SetUnitConverter(aUnitConverter);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1550,7 +1588,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
     rv = numberProperty->SetSecondarySort(aSecondarySort);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbINumberPropertyInfo*, numberProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1564,7 +1602,7 @@ sbPropertyManager::RegisterNumber(const nsAString& aPropertyID,
   return NS_OK;
 }
 
-nsresult 
+nsresult
 sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
                                    const nsAString &aDisplayKey,
                                    nsIStringBundle* aStringBundle,
@@ -1579,7 +1617,7 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
 
   nsRefPtr<sbBooleanPropertyInfo> booleanProperty(new sbBooleanPropertyInfo());
   NS_ENSURE_TRUE(booleanProperty, NS_ERROR_OUT_OF_MEMORY);
-  
+
   nsresult rv = booleanProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1603,7 +1641,7 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
 
   rv = booleanProperty->SetUserEditable(aUserEditable);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<sbIPropertyInfo> propInfo =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIBooleanPropertyInfo*, booleanProperty), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1625,7 +1663,7 @@ sbPropertyManager::RegisterDummy(sbDummyPropertyInfo *dummyProperty,
 {
   nsresult rv = dummyProperty->Init();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = dummyProperty->SetId(aPropertyID);
   NS_ENSURE_SUCCESS(rv, rv);
 

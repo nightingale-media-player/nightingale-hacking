@@ -32,6 +32,8 @@
 #include <sbIMediacoreEventListener.h>
 #include <sbIMediacoreEvent.h>
 #include <sbIMediacoreError.h>
+#include <sbStandardProperties.h>
+#include <sbStatusPropertyValue.h>
 #include <sbVariantUtils.h>
 
 // Local includes
@@ -45,24 +47,28 @@ sbTranscodeProgressListener *
 sbTranscodeProgressListener::New(sbBaseDevice * aDeviceBase,
                                  sbDeviceStatusHelper * aDeviceStatusHelper,
                                  sbBaseDevice::TransferRequest * aRequest,
-                                 PRMonitor * aCompleteNotifyMonitor) {
+                                 PRMonitor * aCompleteNotifyMonitor,
+                                 StatusProperty const & aStatusProperty) {
   return new sbTranscodeProgressListener(aDeviceBase,
                                          aDeviceStatusHelper,
                                          aRequest,
-                                         aCompleteNotifyMonitor);
+                                         aCompleteNotifyMonitor,
+                                         aStatusProperty);
 }
 
 sbTranscodeProgressListener::sbTranscodeProgressListener(
   sbBaseDevice * aDeviceBase,
   sbDeviceStatusHelper * aDeviceStatusHelper,
   sbBaseDevice::TransferRequest * aRequest,
-  PRMonitor * aCompleteNotifyMonitor) :
+  PRMonitor * aCompleteNotifyMonitor,
+  StatusProperty const & aStatusProperty) :
     mBaseDevice(aDeviceBase),
     mStatus(aDeviceStatusHelper),
     mRequest(aRequest),
     mCompleteNotifyMonitor(aCompleteNotifyMonitor),
     mIsComplete(0),
-    mTotal(0) {
+    mTotal(0),
+    mStatusProperty(aStatusProperty) {
 
   NS_ASSERTION(mBaseDevice,
                "sbTranscodeProgressListener mBaseDevice can't be null");
@@ -86,6 +92,9 @@ nsresult
 sbTranscodeProgressListener::Completed(sbIJobProgress * aJobProgress) {
   nsresult rv;
 
+  sbStatusPropertyValue value;
+  value.SetMode(sbStatusPropertyValue::eComplete);
+  SetStatusProperty(value);
   // Indicate that the transcode operation is complete.  If a complete notify
   // monitor was provided, operate under the monitor and send completion
   // notification.
@@ -124,6 +133,12 @@ sbTranscodeProgressListener::SetProgress(sbIJobProgress * aJobProgress) {
                                  static_cast<double>(mTotal);
   mStatus->ItemProgress(percentComplete);
 
+  sbStatusPropertyValue value;
+  double const complete = percentComplete * 100.0;
+  value.SetMode(sbStatusPropertyValue::eRipping);
+  value.SetCurrent(complete);
+  SetStatusProperty(value);
+
   return NS_OK;
 }
 
@@ -153,6 +168,16 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
     }
     break;
   }
+
+  return NS_OK;
+}
+
+inline nsresult
+sbTranscodeProgressListener::SetStatusProperty(
+                                           sbStatusPropertyValue const & aValue)
+{
+  nsresult rv = mStatusProperty.SetValue(aValue.GetValue());
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

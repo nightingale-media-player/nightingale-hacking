@@ -1,29 +1,28 @@
 /* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+
 
 // Self imports.
 #include "sbCDDevice.h"
@@ -44,6 +43,7 @@
 #include <sbStringUtils.h>
 #include <sbMediaListEnumArrayHelper.h>
 #include <sbProxiedComponentManager.h>
+#include <sbStatusPropertyValue.h>
 #include <sbTranscodeProgressListener.h>
 #include <sbVariantUtils.h>
 
@@ -598,6 +598,12 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
                                         getter_AddRefs(source));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  sbStatusPropertyValue value;
+  value.SetMode(sbStatusPropertyValue::eNone);
+  rv = source->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS),
+                           value.GetValue());
+  NS_ENSURE_SUCCESS(rv, rv);
+
   sbIMediaItem * destination = aRequest->item;
 
   // We're creating a copy so we want to break the link back
@@ -681,9 +687,17 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = tcJob->SetMetadata(metadata);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  typedef sbTranscodeProgressListener::StatusProperty StatusProperty;
+
+  StatusProperty statusProperty(source,
+                                NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS));
   // Create our listener for transcode progress.
   nsRefPtr<sbTranscodeProgressListener> listener =
-    sbTranscodeProgressListener::New(this, &mStatus, aRequest, mReqWaitMonitor);
+    sbTranscodeProgressListener::New(this,
+                                     &mStatus,
+                                     aRequest,
+                                     mReqWaitMonitor,
+                                     statusProperty);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   // Setup the progress listener.

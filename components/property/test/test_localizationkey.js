@@ -97,6 +97,7 @@ function runTest () {
     defaultMediaPageURL: 'default_mediapage_url',
     availability: 'availability',
     albumArtistName: 'albumartistname',
+    cdRipStatus: 'cdrip_status',
   };
 
   // list of properties with localization keys, but not in SBProperties.jsm

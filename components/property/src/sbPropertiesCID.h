@@ -159,6 +159,19 @@
 #define SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID    \
   "@songbirdnest.com/Songbird/Properties/Builder/DownloadButton;1"
 
+#define SB_STATUSPROPERTYBUILDER_DESCRIPTION           \
+  "Songbird Status Property Builder"
+#define SB_STATUSPROPERTYBUILDER_CID                   \
+  {                                                    \
+    0x808a5a46,                                        \
+    0x0065,                                            \
+    0x4db4,                                            \
+    {0x8c, 0x45, 0x04, 0x5c, 0xf9, 0xeb, 0xfe, 0x4d}   \
+  }
+
+#define SB_STATUSPROPERTYBUILDER_CONTRACTID            \
+  "@songbirdnest.com/Songbird/Properties/Builder/StatusProperty;1"
+
 #define SB_SIMPLEBUTTONPROPERTYBUILDER_DESCRIPTION     \
   "Songbird Simple Button Property Builder"
 #define SB_SIMPLEBUTTONPROPERTYBUILDER_CID             \

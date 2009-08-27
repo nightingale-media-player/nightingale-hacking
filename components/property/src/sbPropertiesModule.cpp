@@ -38,6 +38,7 @@
 #include "sbOriginPageImagePropertyBuilder.h"
 #include "sbRatingPropertyBuilder.h"
 #include "sbSimpleButtonPropertyBuilder.h"
+#include "sbStatusPropertyBuilder.h"
 #include "sbTextPropertyInfo.h"
 #include "sbURIPropertyInfo.h"
 
@@ -55,6 +56,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(sbTextPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbURIPropertyInfo);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbBooleanPropertyInfo, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDownloadButtonPropertyBuilder, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbStatusPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbSimpleButtonPropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbImagePropertyBuilder, Init);
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbRatingPropertyBuilder, Init);
@@ -127,6 +129,12 @@ static const nsModuleComponentInfo components[] =
     SB_DOWNLOADBUTTONPROPERTYBUILDER_CID,
     SB_DOWNLOADBUTTONPROPERTYBUILDER_CONTRACTID,
     sbDownloadButtonPropertyBuilderConstructor
+  },
+  {
+    SB_STATUSPROPERTYBUILDER_DESCRIPTION,
+    SB_STATUSPROPERTYBUILDER_CID,
+    SB_STATUSPROPERTYBUILDER_CONTRACTID,
+    sbStatusPropertyBuilderConstructor
   },
   {
     SB_SIMPLEBUTTONPROPERTYBUILDER_DESCRIPTION,

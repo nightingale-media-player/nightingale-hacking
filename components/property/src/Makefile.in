@@ -70,6 +70,8 @@ CPP_SRCS = sbPropertyManager.cpp \
            sbDummyPropertyInfo.cpp \
            sbDummyPlaylistPropertyInfo.cpp \
            sbImageLinkPropertyInfo.cpp \
+           sbStatusPropertyBuilder.cpp \
+           sbStatusPropertyInfo.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/property/public \
