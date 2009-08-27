@@ -575,6 +575,28 @@ protected:
   nsresult GetMusicAvailableSpace(sbILibrary* aLibrary,
                                   PRInt64*    aMusicAvailableSpace);
 
+  /**
+   * Return in aDeviceSettingsDocument a DOM document object representing the
+   * Songbird settings stored on the device.  Return null in
+   * aDeviceSettingsDocument if no Songbird settings are stored on the device.
+   *
+   * \param aDeviceSettingsDocument Returned device settings document object.
+   */
+  virtual nsresult GetDeviceSettingsDocument
+                     (class nsIDOMDocument** aDeviceSettingsDocument);
+
+  /**
+   * Return in aDeviceSettingsDocument the device settings stored in the file
+   * specified by aDeviceSettingsFile.  Return null in aDeviceSettingsDocument
+   * if the device settings file does not exist.
+   *
+   * \param aDeviceSettingsFile     File containing device settings.
+   * \param aDeviceSettingsDocument Returned device settings document object.
+   */
+  nsresult GetDeviceSettingsDocument
+             (nsIFile*               aDeviceSettingsFile,
+              class nsIDOMDocument** aDeviceSettingsDocument);
+
 
   //----------------------------------------------------------------------------
   //
@@ -742,6 +764,14 @@ protected:
    */
   nsresult GetLibraryPreferenceBase(sbIDeviceLibrary* aLibrary,
                                     nsAString&        aPrefBase);
+
+  /**
+   * Return in aCapabilities the device capabilities preference.  Return a void
+   * variant if no device capabilities preference has been set.
+   *
+   * \param aCapabilities       Returned device capabilities preference.
+   */
+  nsresult GetCapabilitiesPreference(nsIVariant** aCapabilities);
 
 
   //----------------------------------------------------------------------------

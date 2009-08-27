@@ -52,11 +52,14 @@
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
+#include <nsIDOMDocument.h>
 #include <nsIDOMWindow.h>
 #include <nsIPromptService.h>
+#include <nsIScriptSecurityManager.h>
 #include <nsISupportsPrimitives.h>
 #include <nsIWritablePropertyBag.h>
 #include <nsIWritablePropertyBag2.h>
+#include <nsIXMLHttpRequest.h>
 
 #include <sbIDeviceContent.h>
 #include <sbIDeviceCapabilities.h>
@@ -85,6 +88,7 @@
 #include "sbDeviceLibrary.h"
 #include "sbDeviceStatus.h"
 #include "sbDeviceUtils.h"
+#include "sbDeviceXMLCapabilities.h"
 #include "sbLibraryListenerHelpers.h"
 #include "sbLibraryUtils.h"
 #include "sbProxyUtils.h"
@@ -883,6 +887,11 @@ NS_IMETHODIMP sbBaseDevice::GetPreference(const nsAString & aPrefName, nsIVarian
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
   nsresult rv;
+
+  // special case device capabilities preferences
+  if (aPrefName.Equals(NS_LITERAL_STRING("capabilities"))) {
+    return GetCapabilitiesPreference(_retval);
+  }
 
   // get the pref branch for this device
   nsCOMPtr<nsIPrefBranch> prefBranch;
@@ -1939,6 +1948,73 @@ sbBaseDevice::GetMusicAvailableSpace(sbILibrary* aLibrary,
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::GetDeviceSettingsDocument
+                (nsIDOMDocument** aDeviceSettingsDocument)
+{
+  // No device settings document.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+  *aDeviceSettingsDocument = nsnull;
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetDeviceSettingsDocument
+                (nsIFile*         aDeviceSettingsFile,
+                 nsIDOMDocument** aDeviceSettingsDocument)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsFile);
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+
+  // Function variables.
+  nsresult rv;
+
+  // If the device settings file does not exist, just return null.
+  PRBool exists;
+  rv = aDeviceSettingsFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!exists) {
+    *aDeviceSettingsDocument = nsnull;
+    return NS_OK;
+  }
+
+  // Get the device settings file URI spec.
+  nsCAutoString    deviceSettingsURISpec;
+  nsCOMPtr<nsIURI> deviceSettingsURI;
+  rv = NS_NewFileURI(getter_AddRefs(deviceSettingsURI), aDeviceSettingsFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = deviceSettingsURI->GetSpec(deviceSettingsURISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create an XMLHttpRequest object.
+  nsCOMPtr<nsIXMLHttpRequest>
+    xmlHttpRequest = do_CreateInstance(NS_XMLHTTPREQUEST_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIScriptSecurityManager> ssm =
+    do_GetService(NS_SCRIPTSECURITYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIPrincipal> principal;
+  rv = ssm->GetSystemPrincipal(getter_AddRefs(principal));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->Init(principal, nsnull, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the device settings file document.
+  rv = xmlHttpRequest->OpenRequest(NS_LITERAL_CSTRING("GET"),
+                                   deviceSettingsURISpec,
+                                   PR_FALSE,                  // async
+                                   SBVoidString(),            // user
+                                   SBVoidString());           // password
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->Send(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = xmlHttpRequest->GetResponseXML(aDeviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 //
 // Device properties services.
@@ -2496,6 +2572,44 @@ nsresult sbBaseDevice::GetLibraryPreferenceBase(sbIDeviceLibrary* aLibrary,
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::GetCapabilitiesPreference(nsIVariant** aCapabilities)
+{
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+
+  nsresult rv;
+
+  // Get the device settings document.
+  nsCOMPtr<nsIDOMDocument> domDocument;
+  rv = GetDeviceSettingsDocument(getter_AddRefs(domDocument));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Read the device capabilities from the device settings document.
+  if (domDocument) {
+    nsCOMPtr<sbIDeviceCapabilities> deviceCapabilities =
+      do_CreateInstance(SONGBIRD_DEVICECAPABILITIES_CONTRACTID);
+    sbDeviceXMLCapabilities xmlCapabilities(domDocument);
+    rv = xmlCapabilities.Read(deviceCapabilities);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = deviceCapabilities->InitDone();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Return any device capabilities from the device settings document.
+    if (xmlCapabilities.HasCapabilities()) {
+      sbNewVariant capabilitiesVariant(deviceCapabilities);
+      NS_ENSURE_TRUE(capabilitiesVariant.get(), NS_ERROR_FAILURE);
+      NS_ADDREF(*aCapabilities = capabilitiesVariant.get());
+      return NS_OK;
+    }
+  }
+
+  // Return no capabilities.
+  sbNewVariant capabilitiesVariant;
+  NS_ENSURE_TRUE(capabilitiesVariant.get(), NS_ERROR_FAILURE);
+  NS_ADDREF(*aCapabilities = capabilitiesVariant.get());
+
+  return NS_OK;
+}
 
 //------------------------------------------------------------------------------
 //

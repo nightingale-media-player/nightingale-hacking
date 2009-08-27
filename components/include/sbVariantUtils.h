@@ -87,12 +87,28 @@ public:
   // Variant constructors.
   //
 
-  sbNewVariant(nsISupports* aValue)
+  sbNewVariant()
   {
     nsresult rv;
     mVariant = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
     if (NS_SUCCEEDED(rv))
-      rv = mVariant->SetAsISupports(aValue);
+      rv = mVariant->SetAsVoid();
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Failed to create new variant.");
+      mVariant = nsnull;
+    }
+  }
+
+  sbNewVariant(nsISupports* aValue)
+  {
+    nsresult rv;
+    mVariant = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    if (NS_SUCCEEDED(rv)) {
+      if (aValue)
+        rv = mVariant->SetAsISupports(aValue);
+      else
+        rv = mVariant->SetAsEmpty();
+    }
     if (NS_FAILED(rv)) {
       NS_WARNING("Failed to create new variant.");
       mVariant = nsnull;
@@ -103,8 +119,12 @@ public:
   {
     nsresult rv;
     mVariant = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-    if (NS_SUCCEEDED(rv))
-      rv = mVariant->SetAsInterface(aIID, aValue);
+    if (NS_SUCCEEDED(rv)) {
+      if (aValue)
+        rv = mVariant->SetAsInterface(aIID, aValue);
+      else
+        rv = mVariant->SetAsEmpty();
+    }
     if (NS_FAILED(rv)) {
       NS_WARNING("Failed to create new variant.");
       mVariant = nsnull;
@@ -147,8 +167,12 @@ public:
     if (aValue)
       value.AssignLiteral(aValue);
     mVariant = do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-    if (NS_SUCCEEDED(rv))
-      rv = mVariant->SetAsAString(value);
+    if (NS_SUCCEEDED(rv)) {
+      if (aValue)
+        rv = mVariant->SetAsAString(value);
+      else
+        rv = mVariant->SetAsEmpty();
+    }
     if (NS_FAILED(rv)) {
       NS_WARNING("Failed to create new variant.");
       mVariant = nsnull;

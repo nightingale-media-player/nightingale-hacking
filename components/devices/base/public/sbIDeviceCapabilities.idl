@@ -259,7 +259,7 @@ interface sbIAudioFormatType : nsISupports
  * \brief [UNIMPLEMENTED UNTIL AFTER 0.3]
  * \note Implementations of this interface must be threadsafe.
  */
-[scriptable, uuid(54d42a87-9031-4928-991e-e66f4916a90b)]
+[scriptable, uuid(cc7e84be-5c15-416d-b3dd-ce35de33e497)]
 interface sbIDeviceCapabilities : nsISupports
 {
 
@@ -311,6 +311,12 @@ interface sbIDeviceCapabilities : nsISupports
   void AddFormatType(in AString aFormat, 
                      in nsISupports aFormatType);
                            
+  /**
+   * \brief Add the capabilities specified by aCapabilities
+   * \param aCapabilities Set of capabilities to add
+   */
+  void addCapabilities(in sbIDeviceCapabilities aCapabilities);
+
   /**
    * \brief Indicates that the initialization is complete, the add and set
    *        functions above will no longer affect the data.

@@ -36,6 +36,7 @@ CPP_SRCS = sbBaseDevice.cpp \
            sbDeviceStatistics.cpp \
            sbDeviceStatusHelper.cpp \
            sbDeviceUtils.cpp \
+           sbDeviceXMLCapabilities.cpp \
            sbLibraryListenerHelpers.cpp \
            sbTranscodeProgressListener.cpp \
            $(NULL)
@@ -60,12 +61,16 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
                      $(topsrcdir)/components/property/src \
+                     $(MOZSDK_INCLUDE_DIR)/caps \
+                     $(MOZSDK_INCLUDE_DIR)/content \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/js \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/pref \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/xpconnect \
                      $(NULL)
 
 SONGBIRD_COMPONENTS = $(srcdir)/sbBaseDeviceHelper.js \

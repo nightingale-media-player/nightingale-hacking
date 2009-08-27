@@ -187,13 +187,33 @@ private:                                                                       \
 //   sbAutoMemPtr               Typed wrapper to auto-dispose memory blocks
 //                              allocated with malloc.
 //   sbAutoNSTypePtr            Typed version of sbAutoNSMemPtr
+//   sbAutoNSArray              Wrapper to auto-dispose a simple array and all
+//                              of its members allocated with NS_Alloc.
+//                              Example: sbAutoNSArray<char*>
+//                                         autoArray(array, arrayLength);
 //
 
 SB_AUTO_CLASS(sbAutoNSMemPtr, void*, !!mValue, NS_Free(mValue), mValue = nsnull);
 template<typename T> SB_AUTO_NULL_CLASS(sbAutoMemPtr, T*, free(mValue));
+
 template<typename T>
 SB_AUTO_CLASS(sbAutoNSTypePtr, T*, !!mValue, NS_Free(mValue), mValue = nsnull);
+
+template<typename T>
+SB_AUTO_CLASS2(sbAutoNSArray,
+               T*,
+               PRUint32,
+               !!mValue,
+               {
+                 for (PRUint32 i = 0; i < mValue2; ++i) {
+                   if (mValue[i])
+                     NS_Free(mValue[i]);
+                 }
+                 NS_Free(mValue);
+               },
+               mValue = nsnull);
 
 
 
 #endif /* __SBMEMORYUTILS_H__ */
+

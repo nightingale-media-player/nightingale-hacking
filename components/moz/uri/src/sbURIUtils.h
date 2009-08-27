@@ -12,7 +12,8 @@
 #include <nsIURI.h>
 #include <nsNetError.h>
 
-nsresult sbGetFileExtensionFromURI(nsIURI* aURI, nsACString& _retval)
+static inline nsresult
+sbGetFileExtensionFromURI(nsIURI* aURI, nsACString& _retval)
 {
   NS_ENSURE_ARG_POINTER(aURI);
 

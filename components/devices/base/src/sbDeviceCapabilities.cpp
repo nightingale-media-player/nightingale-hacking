@@ -32,6 +32,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsArrayUtils.h>
+#include <sbMemoryUtils.h>
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceCapabilities,
                               sbIDeviceCapabilities,
@@ -104,7 +105,8 @@ sbDeviceCapabilities::SetFunctionTypes(PRUint32 *aFunctionTypes,
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < aFunctionTypesCount; ++arrayCounter) {
-    if (mFunctionTypes.IndexOf(aFunctionTypes[arrayCounter]) == -1) {
+    if (mFunctionTypes.IndexOf(aFunctionTypes[arrayCounter]) ==
+        mFunctionTypes.NoIndex) {
       mFunctionTypes.AppendElement(aFunctionTypes[arrayCounter]);
     }
   }
@@ -119,7 +121,8 @@ sbDeviceCapabilities::SetEventTypes(PRUint32 *aEventTypes,
   NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
 
   for (PRUint32 arrayCounter = 0; arrayCounter < aEventTypesCount; ++arrayCounter) {
-    if (mSupportedEvents.IndexOf(aEventTypes[arrayCounter]) == -1) {
+    if (mSupportedEvents.IndexOf(aEventTypes[arrayCounter]) ==
+        mSupportedEvents.NoIndex) {
       mSupportedEvents.AppendElement(aEventTypes[arrayCounter]);
     }
   }
@@ -143,7 +146,8 @@ sbDeviceCapabilities::AddContentTypes(PRUint32 aFunctionType,
   }
   NS_ASSERTION(nContentTypes, "nContentTypes should not be null");
   for (PRUint32 arrayCounter = 0; arrayCounter < aContentTypesCount; ++arrayCounter) {
-    if (nContentTypes->IndexOf(aContentTypes[arrayCounter]) == -1) {
+    if (nContentTypes->IndexOf(aContentTypes[arrayCounter]) ==
+        nContentTypes->NoIndex) {
       nContentTypes->AppendElement(aContentTypes[arrayCounter]);
     }
   }
@@ -171,7 +175,7 @@ sbDeviceCapabilities::AddFormats(PRUint32 aContentType,
   NS_ASSERTION(nFormats, "nFormats should not be null");
   for (PRUint32 arrayCounter = 0; arrayCounter < aFormatsCount; ++arrayCounter) {
     nsCString format(aFormats[arrayCounter]);
-    if (nFormats->IndexOf(format) == -1) {
+    if (nFormats->IndexOf(format) == nFormats->NoIndex) {
       nFormats->AppendElement(aFormats[arrayCounter]);
     }
   }
@@ -191,6 +195,83 @@ sbDeviceCapabilities::AddFormatType(nsAString const & aFormat,
 
   PRBool const added = mFormatTypes.Put(aFormat, aFormatType);
   NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbDeviceCapabilities::AddCapabilities(sbIDeviceCapabilities *aCapabilities)
+{
+  NS_ENSURE_ARG_POINTER(aCapabilities);
+  NS_ENSURE_TRUE(!isInitialized, NS_ERROR_ALREADY_INITIALIZED);
+
+  nsresult rv;
+
+  PRUint32* functionTypes;
+  PRUint32  functionTypesCount;
+  rv = aCapabilities->GetSupportedFunctionTypes(&functionTypesCount,
+                                                &functionTypes);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetFunctionTypes(functionTypes, functionTypesCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 functionTypeIndex = 0;
+       functionTypeIndex < functionTypesCount;
+       ++functionTypeIndex) {
+    PRUint32 functionType = functionTypes[functionTypeIndex];
+
+    PRUint32* contentTypes;
+    PRUint32  contentTypesCount;
+    rv = aCapabilities->GetSupportedContentTypes(functionType,
+                                                 &contentTypesCount,
+                                                 &contentTypes);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = AddContentTypes(functionType, contentTypes, contentTypesCount);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    for (PRUint32 contentTypeIndex = 0;
+         contentTypeIndex < contentTypesCount;
+         ++contentTypeIndex) {
+      PRUint32 contentType = contentTypes[contentTypeIndex];
+
+      char**   formats;
+      PRUint32 formatsCount;
+      rv = aCapabilities->GetSupportedFormats(contentType,
+                                              &formatsCount,
+                                              &formats);
+      NS_ENSURE_SUCCESS(rv, rv);
+      sbAutoNSArray<char*> autoFormats(formats, formatsCount);
+
+      rv = AddFormats(contentType,
+                      const_cast<const char**>(formats),
+                      formatsCount);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      for (PRUint32 formatIndex = 0;
+           formatIndex < formatsCount;
+           ++formatIndex) {
+        nsAutoString format;
+        format.AssignLiteral(formats[formatIndex]);
+
+        nsCOMPtr<nsISupports> formatType;
+        rv = aCapabilities->GetFormatType(format, getter_AddRefs(formatType));
+        if (NS_SUCCEEDED(rv)) {
+          rv = AddFormatType(format, formatType);
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+      }
+    }
+  }
+
+  PRUint32* supportedEvents;
+  PRUint32  supportedEventsCount;
+  rv = aCapabilities->GetSupportedEvents(&supportedEventsCount,
+                                         &supportedEvents);
+  NS_ENSURE_SUCCESS(rv, rv);
+  SetEventTypes(supportedEvents, supportedEventsCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
