@@ -28,6 +28,9 @@ const Cr = Components.results;
 const Ce = Components.Exception;
 const Cu = Components.utils;
 
+// Timeout a job after 2 minutes
+const JOB_TIMEOUT = 120;
+
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/WindowUtils.jsm");
@@ -39,6 +42,10 @@ function sbMLJob() {
 
   // where we'll be storing our results
   this._mlResults = [];
+
+  // our timeout counter
+  this._mlJobTimeoutTimer = Cc["@mozilla.org/timer;1"]
+                              .createInstance(Ci.nsITimer);
 }
 
 sbMLJob.prototype = {
@@ -49,10 +56,11 @@ sbMLJob.prototype = {
   contractID       : "@songbirdnest.com/Songbird/MetadataLookup/job;1",
   QueryInterface   : XPCOMUtils.generateQI(
       [Ci.sbIMetadataLookupJob, Ci.sbIJobProgress, Ci.sbIJobCancelable, 
-       Ci.sbIJobProgressListener, Ci.nsIClassInfo]),
+       Ci.sbIJobProgressListener, Ci.nsIClassInfo, Ci.nsITimerCallback]),
 
   _mlNumResults        : 0,
   _mlJobType           : Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP,
+  _mlJobTimedOut       : false,
 
   /** sbIMetadataLookupJob **/
   get mlJobType() {
@@ -66,6 +74,10 @@ sbMLJob.prototype = {
   init: function(jobType, status) {
     this._mlJobType = jobType;
     this._status = status;
+
+    // start our timer
+    this._mlJobTimeoutTimer.initWithCallback(this, JOB_TIMEOUT*1000,
+                                             Ci.nsITimer.TYPE_ONE_SHOT);
   },
 
   appendResult: function(album) {
@@ -74,13 +86,31 @@ sbMLJob.prototype = {
   },
 
   changeStatus: function(status) {
+    if (this._mlJobTimedOut) {
+      Cc["@mozilla.org/consoleservice;1"].getService(Ci.nsIConsoleService)
+         .logStringMessage("Attempted to change status on an " +
+                           "already timed out lookup job.");
+      return;
+    }
     this._status = status;
     this.notifyJobProgressListeners();
+    if (this._mlJobTimeoutTimer)
+      this._mlJobTimeoutTimer.cancel();
   },
 
-  getMetadataResults : function() {
+  getMetadataResults: function() {
     return ArrayConverter.enumerator(this._mlResults);
   },
+
+  /** nsITimerCallback **/
+  notify: function(timer) {
+    // only timeout if we're still running
+    if (this.status == Ci.sbIMetadataLookupJob.STATUS_RUNNING) {
+      // set our status to indicate we've failed
+      this.changeStatus(Ci.sbIMetadataLookupJob.STATUS_FAILED);
+      this._mlJobTimedOut = true;
+    }
+  }
 }
 
 function NSGetModule(compMgr, fileSpec) {

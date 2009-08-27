@@ -107,8 +107,8 @@ sbTestProvider.prototype = {
         break;
       case Ci.sbICDMockDeviceController.MOCK_MEDIA_DISC_U2:
         // Test case 3: U2
-        // Timeout after 2 minutes
-        this._timer.initWithCallback(this, 120000,
+        // Timeout after 3 minutes
+        this._timer.initWithCallback(this, 180000,
                                      Ci.nsITimerCallback.TYPE_ONE_SHOT);
         break;
       default:

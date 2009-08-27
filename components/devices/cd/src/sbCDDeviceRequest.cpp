@@ -341,6 +341,10 @@ void
 sbCDDevice::ProxyCDLookup() {
   nsresult rv;
 
+  // Update the status
+  rv = mStatus.ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
   // Dispatch the event to notify listeners that we're about to start
   // metadata lookup
   CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_INITIATED,
@@ -387,10 +391,6 @@ nsresult
 sbCDDevice::AttemptCDLookup()
 {
   nsresult rv;
-
-  // Update the status
-  rv = mStatus.ChangeState(sbICDDeviceEvent::STATE_LOOKINGUPCD);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   if (!NS_IsMainThread()) {
     nsCOMPtr<nsIThreadManager> threadMgr =
