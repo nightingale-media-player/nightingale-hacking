@@ -70,7 +70,7 @@ var DialogController =
     var mockCDService =
       Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
         .getService(Ci.sbICDDeviceService)
-        .QueryInterface(Ci.sbICDMockDeviceController);
+        .QueryInterface(Ci.sbIMockCDDeviceController);
 
     if (aDevice.isDiscInserted) {
       mockCDService.ejectMedia(aDevice);
