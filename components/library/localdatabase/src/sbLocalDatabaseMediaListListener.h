@@ -132,7 +132,7 @@ class sbLocalDatabaseMediaListListener
 
 public:
   sbLocalDatabaseMediaListListener();
-  ~sbLocalDatabaseMediaListListener();
+  virtual ~sbLocalDatabaseMediaListListener();
 
 protected:
   // Initialize the instance.

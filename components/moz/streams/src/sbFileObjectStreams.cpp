@@ -26,6 +26,17 @@
 #include <nsStringAPI.h>
 
 
+sbFileObjectStream::sbFileObjectStream()
+: mFileStreamIsActive(PR_FALSE)
+, mObjectStreamIsActive(PR_FALSE)
+{
+}
+
+/*virtual*/ 
+sbFileObjectStream::~sbFileObjectStream()
+{
+}
+
 NS_IMPL_ISUPPORTS1(sbFileObjectOutputStream, nsISupports)
 
 sbFileObjectOutputStream::sbFileObjectOutputStream()

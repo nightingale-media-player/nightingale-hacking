@@ -48,6 +48,7 @@ nsresult ConvertTagListToPropertyArray(GstTagList *taglist,
 
 class sbGStreamerMessageHandler : public nsISupports {
 public:
+  virtual ~sbGStreamerMessageHandler() {};
   virtual void HandleMessage(GstMessage *message) = 0;
   virtual PRBool HandleSynchronousMessage(GstMessage *message) = 0;
 };

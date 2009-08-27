@@ -34,6 +34,8 @@
 class sbIGstAudioFilter
 {
 public:
+  virtual ~sbIGstAudioFilter() {};
+
   /* Add an audio filter to playback pipelines created by this mediacore. */
   virtual nsresult AddAudioFilter(GstElement *element) = 0;
 

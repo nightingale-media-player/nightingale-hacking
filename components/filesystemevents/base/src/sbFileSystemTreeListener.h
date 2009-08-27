@@ -49,6 +49,7 @@ typedef enum {
 class sbFileSystemTreeListener
 {
 public:
+  virtual ~sbFileSystemTreeListener() {};
   //
   // \brief Callback function for when changes are found in the tree.
   //

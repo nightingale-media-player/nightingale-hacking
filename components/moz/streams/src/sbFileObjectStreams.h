@@ -37,6 +37,8 @@
 class sbFileObjectStream
 {
 public:
+  sbFileObjectStream();
+  virtual ~sbFileObjectStream();
   //
   // \brief Init a stream with a given file spec.
   //

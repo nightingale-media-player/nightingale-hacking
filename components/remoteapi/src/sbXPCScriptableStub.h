@@ -37,6 +37,7 @@
 class sbXPCScriptableStub : public nsIXPCScriptable
 {
 public:
+  virtual ~sbXPCScriptableStub() {};
   /* GetClassName(char * *aClassName) needs to be implemented by the user */
 
   /* GetScriptableFlags(PRUint32 *aScriptableFlags) needs to be implemented by the user */
