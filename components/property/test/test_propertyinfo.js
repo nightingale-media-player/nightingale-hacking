@@ -288,13 +288,29 @@ function testBooleanInfo() {
   
   sample = "0";
   assertEqual(booleanInfo.validate(sample), true);
-  assertEqual(booleanInfo.format(sample), "0");
+  assertEqual(booleanInfo.format(sample), "");
   assertEqual(booleanInfo.makeSearchable(sample), "0");
   
   sample = "1";
   assertEqual(booleanInfo.validate(sample), true);
-  assertEqual(booleanInfo.format(sample), "1");
+  assertEqual(booleanInfo.format(sample), "");
   assertEqual(booleanInfo.makeSearchable(sample), "1");
+  
+  sample = "";
+  assertEqual(booleanInfo.validate(sample), true);
+  assertEqual(booleanInfo.format(sample), "");
+  assertEqual(booleanInfo.makeSearchable(sample), "");
+  
+  var tvpi = booleanInfo.QueryInterface(Ci.sbITreeViewPropertyInfo);
+  assertEqual(tvpi.getCellValue(null), "0");
+  assertEqual(tvpi.getCellValue(""),   "0");
+  assertEqual(tvpi.getCellValue("0"),  "0");
+  assertEqual(tvpi.getCellValue("1"),  "1");
+
+  assertEqual(tvpi.getCellProperties(null), "checkbox unchecked");
+  assertEqual(tvpi.getCellProperties(""),   "checkbox unchecked");
+  assertEqual(tvpi.getCellProperties("0"),  "checkbox unchecked");
+  assertEqual(tvpi.getCellProperties("1"),  "checkbox checked");
 }
 
 function runTest () {

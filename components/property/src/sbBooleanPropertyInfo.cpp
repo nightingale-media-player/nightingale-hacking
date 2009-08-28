@@ -103,7 +103,8 @@ sbBooleanPropertyInfo::Validate(const nsAString & aValue, PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
   
-  if (aValue.IsVoid() || 
+  if (aValue.IsVoid() ||
+      aValue.IsEmpty() ||
       aValue.EqualsLiteral("0") || 
       aValue.EqualsLiteral("1")) {
     *_retval = PR_TRUE;
@@ -197,6 +198,11 @@ sbBooleanPropertyInfo::GetCellValue(const nsAString& aValue,
     rv = NS_ERROR_INVALID_ARG;
   }
 
+  // Force empty or nulls to be false.
+  if (aValue.IsVoid() || aValue.IsEmpty()) {
+    _retval.AssignLiteral("0");
+  }
+
   return rv;
 }
 
@@ -220,13 +226,12 @@ NS_IMETHODIMP
 sbBooleanPropertyInfo::GetCellProperties(const nsAString& aValue,
                                          nsAString& _retval)
 {
-
   _retval.AssignLiteral("checkbox");
-  if (aValue.IsVoid() ||
-      aValue.EqualsLiteral("0")) {
-    _retval.AppendLiteral(" unchecked");
-  } else if (aValue.EqualsLiteral("1")) {
+  
+  if (aValue.EqualsLiteral("1")) {
     _retval.AppendLiteral(" checked");
+  } else {
+    _retval.AppendLiteral(" unchecked");
   }
   
   return NS_OK;
@@ -280,11 +285,10 @@ sbBooleanPropertyInfo::GetValueForClick(const nsAString& aCurrentValue,
                                         PRUint32 aMouseY,
                                         nsAString& _retval)
 {
-  if (aCurrentValue.IsVoid() ||
-      aCurrentValue.EqualsLiteral("0")) {
-    _retval.AssignLiteral("1");
-  } else {
+  if (aCurrentValue.EqualsLiteral("1")) {
     _retval.AssignLiteral("0");
+  } else {
+    _retval.AssignLiteral("1");
   }
   
   return NS_OK;
