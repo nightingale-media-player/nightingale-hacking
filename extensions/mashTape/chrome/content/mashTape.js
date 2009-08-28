@@ -553,6 +553,9 @@ mashTape.init = function(e) {
 	// pre-select the tab the user has defined as their default
 	mashTape.selectDefaultTab();
 
+  // add our event listener to pause/resuming the photo stream
+  dpTabBar.addEventListener("select", mashTape.playPausePhotoListener, false);
+
 	gMM.addListener(mashTape);
 
 	var SB_NewDataRemote = Components.Constructor(
@@ -592,11 +595,15 @@ mashTape.selectDefaultTab = function() {
 		default:
 			break;
 	}
+  mashTape.selectedTab = mashTape.displayPane.tabBar.selectedItem;
 }
 
 mashTape.unload = function() {
 	// remove thyself!
 	window.removeEventListener("unload", mashTape.unload, false);
+
+	var dpTabBar = mashTape.displayPane.tabBar;
+  dpTabBar.removeEventListener("select", mashTape.playPausePhotoListener,false);
 
 	// clean up other listeners
 	gBrowser.removeProgressListener(mashTape.locationListener);
@@ -1885,6 +1892,8 @@ mashTape.drawPhotoStream = function(provider, results) {
 	else
 		mashTape.imageLoadCount = results.length;
 	mashTape.imageResults = results;
+  mashTape.photoStreamReady = false;
+  mashTape.photoStreamRunning = false;
 	for (var i=0; i<mashTape.imageLoadCount; i++) {
 		var item = results[i];
 		var imgcontainer = doc.createElement("span");
@@ -1966,9 +1975,38 @@ mashTape.imageLoadListener = function(e) {
 		}
 	}
 
-	// start the photo stream
-	mashTape.photoFrame.contentWindow.mashTape_triggerPhotoStream(
-			mashTape.photoFrame.contentWindow.imageItems, doc.width);
+  // if the Photos tab is currently focused, then start the photo stream
+  // otherwise add a listener to delay triggering the photo stream until
+  // the tab is in focus
+	var dpTabBar = mashTape.displayPane.tabBar;
+  if (dpTabBar.selectedItem == mashTape.photoTabTop) {
+    mashTape.photoFrame.contentWindow.mashTape_triggerPhotoStream(
+        mashTape.photoFrame.contentWindow.imageItems, doc.width);
+  } else {
+    mashTape.photoStreamReady = true;
+    mashTape.photoStreamRunning = false;
+  }
+}
+
+mashTape.playPausePhotoListener = function(e) {
+	var dpTabBar = mashTape.displayPane.tabBar;
+  if (dpTabBar.selectedItem == mashTape.photoTabTop) {
+    // switched to the photo tab, need to resume or start it
+    if (!mashTape.photoStreamRunning) {
+      mashTape.photoStreamRunning = true;
+      var doc = mashTape.photoFrame.contentWindow.document;
+      mashTape.photoFrame.contentWindow.mashTape_triggerPhotoStream(
+          mashTape.photoFrame.contentWindow.imageItems, doc.width);
+    } else {
+      var mTWindow = mashTape.photoFrame.contentWindow;
+      mTWindow.nS5.playpause(mTWindow.nS5.interval, 'next');
+    }
+  } else if (mashTape.selectedTab == mashTape.photoTabTop) {
+    // previously selected tab was the photo tab, need to pause it
+    var mTWindow = mashTape.photoFrame.contentWindow;
+    mTWindow.nS5.playpause(mTWindow.nS5.interval, 'next');
+  }
+  mashTape.selectedTab = dpTabBar.selectedItem;
 }
 
 /****************************************************************************
