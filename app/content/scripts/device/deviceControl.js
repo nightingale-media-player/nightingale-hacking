@@ -401,7 +401,7 @@ deviceControlWidget.prototype = {
     try {
       // Get all the successfully ripped tracks
       var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
-                                                         "3|100");
+                                                         "2|100");
       rippedCount = rippedItems.length;  
     } catch (err) {}
     

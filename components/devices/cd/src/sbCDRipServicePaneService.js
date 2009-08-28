@@ -258,43 +258,16 @@ sbCDRipServicePaneService.prototype = {
         this._removeDeviceFromEvent(aDeviceEvent);
       break;
 
-      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED: {
-        // Get the device and its node.
-        var device = aDeviceEvent.origin.QueryInterface(Ci.sbIDevice);
-        var deviceId = device.id;
+      case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_INITIATED:
+        this._updateState(aDeviceEvent, true);
+        break;
+      
+      case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
+        this._updateState(aDeviceEvent, false);
+        break;
 
-        if (typeof(this._deviceInfoList[deviceId]) != 'undefined') {
-          var devNode = this._deviceInfoList[deviceId].svcPaneNode;
-  
-          // Get the device properties and clear the busy property.
-          devProperties = devNode.properties.split(" ");
-          devProperties = devProperties.filter(function(aProperty) {
-                                                 return aProperty != "busy";
-                                               });
-  
-          // Set the busy property if the device is busy.
-          if (device.state != Ci.sbIDevice.STATE_IDLE) {
-            devProperties.push("busy");
-            // Save the state for when we become idle again so we can
-            // display a successful/unsuccessful image in the service pane
-            // if we just preformed a rip.
-            devNode.setAttributeNS(CDRIPNS, "LastState", device.state);
-          } else {
-            if (devNode.hasAttributeNS(CDRIPNS, "LastState")) {
-              var lastState = devNode.getAttributeNS(CDRIPNS, "LastState");
-              if (lastState == Ci.sbIDevice.STATE_TRANSCODE) {
-                // TODO: Check for errors, if errors add unsuccessful, otherwise
-                // add successful
-              }
-            }
-          }
-          devNode.setAttributeNS(CDRIPNS, "LastState", device.state);
-
-          // Write back the device node properties.
-          devNode.properties = devProperties.join(" ");
-        }
-
-      }
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        this._updateState(aDeviceEvent, false);
       break;
     
       default:
@@ -302,6 +275,89 @@ sbCDRipServicePaneService.prototype = {
     }
   },
 
+  /**
+   * \brief Updates the state of the service pane node.
+   * \param aDeviceEvent - Device event of device.
+   */
+  _updateState: function sbCDRipServicePaneService__updateState(aDeviceEvent,
+                                                                aForceBusy) {
+    // Get the device and its node.
+    var device = aDeviceEvent.origin.QueryInterface(Ci.sbIDevice);
+    var deviceId = device.id;
+
+    if (typeof(this._deviceInfoList[deviceId]) != 'undefined') {
+      var devNode = this._deviceInfoList[deviceId].svcPaneNode;
+
+      // Get the device properties and clear the busy property.
+      devProperties = devNode.properties.split(" ");
+      devProperties = devProperties.filter(function(aProperty) {
+                                             return aProperty != "busy";
+                                           });
+
+      // Set the busy property if the device is busy.
+      if (aForceBusy || device.state != Ci.sbIDevice.STATE_IDLE) {
+        devProperties.push("busy");
+      } else {
+        if (devNode.hasAttributeNS(CDRIPNS, "LastState")) {
+          var lastState = devNode.getAttributeNS(CDRIPNS, "LastState");
+          if (lastState == Ci.sbIDevice.STATE_TRANSCODE) {
+            if (this._checkErrors(device)) {
+              devProperties.push("unsuccessful");
+            } else {
+              devProperties.push("successful");
+            }
+          }
+        }
+      }
+      devNode.setAttributeNS(CDRIPNS, "LastState", device.state);
+
+      // Write back the device node properties.
+      devNode.properties = devProperties.join(" ");
+    }
+  },
+ 
+  /**
+   * Get the devices library (defaults to first library)
+   * \param aDevice - Device to get library from
+   */
+  _getDeviceLibrary: function sbCDRipServicePaneService__getDeviceLibrary(aDevice) {
+    // Get the libraries for device
+    var libraries = aDevice.content.libraries;
+    if (libraries.length < 1) {
+      // Oh no, we have no libraries
+      Cu.reportError("Device " + aDevice.id + " has no libraries!");
+      return null;
+    }
+
+    // Get the requested library
+    var deviceLibrary = libraries.queryElementAt(0, Ci.sbIMediaList);
+    if (!deviceLibrary) {
+      Cu.reportError("Unable to get library for device: " + aDevice.id);
+      return null;
+    }
+    
+    return deviceLibrary;
+  },
+  
+  /**
+   * Check for any ripped tracks that failed
+   * \param aDevice - Device to check
+   * \return True if errors occured, false otherwise
+   */
+  _checkErrors: function sbCDRipServicePaneService__checkErrors(aDevice) {
+    // Check for any tracks that have a failed status
+    var deviceLibrary = this._getDeviceLibrary(aDevice);
+    var errorCount = 0;
+    try {
+      // Get all the did not successfully ripped tracks
+      var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
+                                                         "4|100");
+      errorCount = rippedItems.length;  
+    } catch (err) {}
+    
+    return (errorCount > 0);
+  },
+  
   /**
    * \brief Add a device that has media from event information.
    * \param aDeviceEvent - Device event of added device.

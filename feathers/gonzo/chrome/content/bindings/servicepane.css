@@ -151,7 +151,7 @@ Imported by bindings.css or directly into feathers.
 .locationbar-image[properties~="cd-device"][properties~="unsuccessful"],
 .alltabs-item.menuitem-iconic[properties~="cd-device"][properties~="unsuccessful"],
 .tabbrowser-tab[properties~="cd-device"][properties~="unsuccessful"] > .tab-image-middle > .tab-icon > .tab-icon-image {
-  list-style-image: url(chrome://songbird/skin/service-pane/cd_successful.gif) ;
+  list-style-image: url(chrome://songbird/skin/service-pane/cd_unsuccessful.gif) ;
 }
 
 .servicepane-tree > treechildren::-moz-tree-image( bookmark ) {
