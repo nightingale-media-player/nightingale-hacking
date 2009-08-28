@@ -160,8 +160,8 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<sbIMediaListFactory> factory;
   };
 
-  struct sbMediaItemInfo { 
-    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE) 
+  struct sbMediaItemInfo {
+    sbMediaItemInfo(PRPackedBool aHasListType = PR_FALSE)
     : itemID(0),
       hasItemID(PR_FALSE) {
       hasListType = aHasListType;
@@ -184,7 +184,7 @@ class sbLocalDatabaseLibrary : public sbLocalDatabaseMediaListBase,
     nsCOMPtr<sbIMediaItem> sourceItem;
     nsCOMPtr<sbIMediaItem> destinationItem;
   };
-  
+
   struct sbMediaItemUpdatedInfo {
     sbMediaItemUpdatedInfo(sbIMediaItem           *aItem,
                            sbIPropertyArray       *aProperties,
@@ -321,7 +321,7 @@ private:
   nsresult GetAllListsByType(const nsAString& aType, sbMediaListArray* aArray);
 
   nsresult ConvertURIsToStrings(nsIArray* aURIs, nsStringArray** aStringArray);
-  
+
   nsresult ContainsCopy(sbIMediaItem* aMediaItem,
                         PRBool*       aContainsCopy);
 
@@ -333,7 +333,7 @@ private:
   nsresult GetGuidFromContentURI(nsIURI* aURI, nsAString& aGUID);
 
   nsresult Shutdown();
-  
+
   /* possibly create an item, and report if it was.
      See sbILibrary::CreateMediaItem.*/
   nsresult CreateMediaItemInternal(nsIURI* aUri,
@@ -347,18 +347,18 @@ private:
                                          PRBool aAllowDuplicates,
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
-  
+
   nsresult ClearInternal(PRBool aExcludeLists = PR_FALSE);
 
   /* Migration related methods */
-  nsresult NeedsMigration(PRBool *aNeedsMigration, 
-                          PRUint32 *aFromVersion, 
+  nsresult NeedsMigration(PRBool *aNeedsMigration,
+                          PRUint32 *aFromVersion,
                           PRUint32 *aToVersion);
 
   nsresult MigrateLibrary(PRUint32 aFromVersion, PRUint32 aToVersion);
-  
+
   nsresult NeedsReindexCollations(PRBool *aNeedsReindexCollations);
-  
+
   nsresult ReindexCollations();
 
 private:
@@ -400,10 +400,8 @@ private:
   // This monitor protects calls to GetMediaItem.
   PRMonitor *mMonitor;
 
-  nsCOMPtr<nsIPrefBranch> mFolderPrefs;
-  
   // Hashtable that holds all the copy listeners.
-  nsInterfaceHashtableMT<nsISupportsHashKey, 
+  nsInterfaceHashtableMT<nsISupportsHashKey,
                          sbILocalDatabaseLibraryCopyListener> mCopyListeners;
 
   // initialize the library statistics stuff
@@ -413,7 +411,7 @@ private:
   nsCOMPtr<sbIDatabasePreparedStatement> mStatisticsSumPreparedStatement;
 
   nsresult FindMusicFolderURI(nsIURI ** aMusicFolderURI);
-  
+
   nsresult SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
                              nsAString const & aSourceItemGUID,
                              sbIMediaItem * aDestinationItem);
@@ -439,7 +437,7 @@ public:
 private:
   sbLocalDatabaseLibrary* mFriendLibrary;
   PRBool mShouldInvalidate;
-  
+
   sbMediaItemArray mNotificationList;
 
   // This list is to enable copyListener notifications
@@ -496,7 +494,7 @@ public:
   nsresult NotifyInternal(PRBool* _retval);
 
   sbBatchCreateHelper* BatchHelper();
-  
+
 private:
   sbLocalDatabaseLibrary* mLibrary;
   nsCOMPtr<sbIBatchCreateMediaItemsListener> mListener;

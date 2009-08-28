@@ -28,8 +28,9 @@
 #include "nsISupports.idl"
 
 interface sbILibrary;
+interface nsIURI;
 
-[scriptable, uuid(5600a088-1dd2-11b2-b5ae-f0e015bbe296)]
+[scriptable, uuid(5e4e170f-7052-4f2b-910d-cafc1f35d4c9)]
 interface sbIMediaManagementService : nsISupports
 {
   /**
@@ -54,6 +55,10 @@ interface sbIMediaManagementService : nsISupports
    * TODO: possibly implement later if at all
    */
   //sbIJobProgress consolidateList(in sbIMediaList aMediaList);
+  /**
+   * Returns the managed folder URI
+   */
+   readonly attribute nsIURI managedFolder;
 };
 
 //

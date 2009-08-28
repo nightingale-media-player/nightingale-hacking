@@ -36,6 +36,7 @@
 #include <nsIPrefService.h>
 #include <nsIProxyObjectManager.h>
 #include <nsIScriptError.h>
+#include <nsISupportsPrimitives.h>
 #include <nsIThread.h>
 #include <nsITimer.h>
 #include <nsIURI.h>
@@ -82,7 +83,7 @@
 
 /**
  * logging
- * 
+ *
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbMediaManagementService:5
  */
@@ -181,7 +182,7 @@ sbMediaManagementService::SetIsEnabled(PRBool aIsEnabled)
       mDelayedStartupTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    
+
     TRACE(("%s: arming delayed startup timer due to manual enable", __FUNCTION__));
     rv = mDelayedStartupTimer->InitWithCallback(this,
                                                 MMS_SCAN_DELAY,
@@ -232,17 +233,17 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     nsCOMPtr<nsIObserverService> obs =
       do_GetService("@mozilla.org/observer-service;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = obs->AddObserver(this,
                           SB_LIBRARY_MANAGER_READY_TOPIC,
                           PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = obs->AddObserver(this,
                           SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC,
                           PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     return NS_OK;
   }
 
@@ -267,13 +268,13 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
       TRACE(("not enabled, don't bother doing anything else"));
       return NS_OK;
     }
-    
+
     // library management is enabled, setup startup timer
     if (!mDelayedStartupTimer) {
       mDelayedStartupTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    
+
     TRACE(("%s: arming delayed startup timer", __FUNCTION__));
     rv = mDelayedStartupTimer->InitWithCallback(this,
                                                 MMS_STARTUP_DELAY,
@@ -284,7 +285,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
     }
     return NS_OK;
   }
-  
+
   if (!strcmp(SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC, aTopic)) {
     TRACE(("%s: shutting down", __FUNCTION__));
     rv = StopListening();
@@ -310,7 +311,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
 
     if (mPrefBranch) {
       nsCOMPtr<nsIPrefBranch2> prefBranch2 = do_QueryInterface(mPrefBranch, &rv);
-      NS_ENSURE_SUCCESS(rv, rv); 
+      NS_ENSURE_SUCCESS(rv, rv);
       rv = prefBranch2->RemoveObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this);
       NS_ENSURE_SUCCESS(rv, rv);
       mPrefBranch = nsnull;
@@ -318,7 +319,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
 
     return NS_OK;
   }
-  
+
   if (!strcmp(NS_PREFBRANCH_PREFCHANGE_TOPIC_ID, aTopic)) {
     nsString modifiedPref(aData);
     if (modifiedPref.EqualsLiteral(SB_PREF_MEDIA_MANAGER_FMTFILE) ||
@@ -454,13 +455,13 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
   NS_ENSURE_TRUE(mPerformActionTimer, NS_ERROR_NOT_INITIALIZED);
-  
+
   nsresult rv;
 
   PRUint16 jobStatus;
   rv = aJobProgress->GetStatus(&jobStatus);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (jobStatus == sbIJobProgress::STATUS_RUNNING) {
     // still running, ignore
     return NS_OK;
@@ -473,7 +474,7 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
   NS_ENSURE_SUCCESS(rv, rv);
   rv = aJobProgress->GetTotal(&total);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // job complete or canceled
   rv = mLibraryScanJob->RemoveJobProgressListener(this);
   mLibraryScanJob = nsnull;
@@ -493,14 +494,14 @@ sbMediaManagementService::OnJobProgress(sbIJobProgress *aJobProgress)
   }
   if (itemCount > 0) {
     // have queued jobs
-  
+
     TRACE(("%s: job complete, has queue, setting timer", __FUNCTION__));
     rv = mPerformActionTimer->InitWithCallback(this,
                                                MMS_SCAN_DELAY,
                                                nsITimer::TYPE_ONE_SHOT);
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   return NS_OK;
 }
 
@@ -568,14 +569,14 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
     return NS_OK;
   } else if (aTimer == mPerformActionTimer) {
     TRACE(("%s: perform action timer fired", __FUNCTION__));
-    
+
     NS_ENSURE_TRUE(mDirtyItemsLock, NS_ERROR_NOT_INITIALIZED);
     { /* scope */
       nsAutoLock lock(mDirtyItemsLock);
       NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_NOT_INITIALIZED);
       NS_ENSURE_TRUE(mDirtyItems->IsInitialized(), NS_ERROR_NOT_INITIALIZED);
     }
-    
+
     // get the management type
     mManageMode = 0;
     PRBool isSet;
@@ -625,7 +626,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
           return NS_ERROR_OUT_OF_MEMORY;
         }
       }
-      
+
       PRUint32 count = data.dirtyItems->EnumerateRead(ProcessItem, &data);
       // Check if errors occured and inform user...
       if (data.hadErrors) {
@@ -641,7 +642,7 @@ sbMediaManagementService::Notify(nsITimer *aTimer)
     }
     return NS_OK;
   }
-  
+
   NS_NOTREACHED("sbMediaManagementService::Notify on an unknown timer");
   return NS_ERROR_UNEXPECTED;
 }
@@ -656,10 +657,10 @@ sbMediaManagementService::Init()
   TRACE(("%s: initing", __FUNCTION__));
   NS_ENSURE_FALSE(mLibrary, NS_ERROR_ALREADY_INITIALIZED);
   nsresult rv;
-  
+
   mDirtyItemsLock = nsAutoLock::NewLock("sbMediaManagementService::mDirtyItemsLock");
   NS_ENSURE_TRUE(mDirtyItemsLock, NS_ERROR_OUT_OF_MEMORY);
-  
+
   mDirtyItems = new DirtyItems_t;
   NS_ENSURE_TRUE(mDirtyItems, NS_ERROR_OUT_OF_MEMORY);
   NS_ENSURE_TRUE(mDirtyItems->Init(), NS_ERROR_OUT_OF_MEMORY);
@@ -672,11 +673,11 @@ sbMediaManagementService::Init()
                         "profile-after-change",
                         PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   nsCOMPtr<nsIRunnable> runnable =
     NS_NEW_RUNNABLE_METHOD(sbMediaManagementService, this, InitProcessActionThread);
   NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
-  
+
   rv = NS_NewThread(getter_AddRefs(mPerformActionThread), runnable);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -715,7 +716,7 @@ sbMediaManagementService::ShutdownProcessActionThread()
 {
   NS_PRECONDITION(mPerformActionTimer, "mPerformActionTimer not initialized!");
   nsresult rv;
-  
+
   NS_ENSURE_TRUE(mDirtyItemsLock, /* void */);
   NS_ENSURE_TRUE(mDirtyItems, /* void */);
 
@@ -739,7 +740,7 @@ sbMediaManagementService::ShutdownProcessActionThread()
       nsresult __rv = rv;
       NS_ENSURE_SUCCESS_BODY(rv, rv);
     }
-    
+
     mPerformActionTimer = nsnull;
   }
 }
@@ -749,21 +750,21 @@ sbMediaManagementService::ScanLibrary()
 {
   NS_ENSURE_TRUE(mLibrary, /* void */);
   NS_ENSURE_FALSE(mLibraryScanJob, /* void */);
-  
+
   nsresult rv;
-  
+
   mLibraryScanJob = do_CreateInstance(SB_MEDIAMANAGEMENTJOB_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   rv = mLibraryScanJob->AddJobProgressListener(this);
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   rv = mLibraryScanJob->Init(mLibrary, nsnull);
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   rv = mLibraryScanJob->OrganizeMediaList();
   NS_ENSURE_SUCCESS(rv, /* void */);
-  
+
   rv = mJobProgressSvc->ShowProgressDialog(mLibraryScanJob,
                                            nsnull,
                                            MMS_PROGRESS_DELAY);
@@ -778,7 +779,7 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
   NS_ENSURE_ARG_POINTER(aItem);
   PRBool success;
   nsresult rv;
-  
+
   #if DEBUG
   PRUint32 oldOp;
   { /* scope */
@@ -790,13 +791,13 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
                  "operations on a deleted media item!");
   }
   #endif
-  
+
   { /* scope */
     nsAutoLock lock(mDirtyItemsLock);
     success = mDirtyItems->Put(aItem, aOperation);
   }
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
-  
+
   if (mLibraryScanJob) {
     TRACE(("%s: item changed, not setting timer due to library scan job",
            __FUNCTION__));
@@ -818,15 +819,15 @@ sbMediaManagementService::StartListening()
   TRACE(("%s: starting", __FUNCTION__));
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
- 
+
   // Call setup which will create filters and such
   rv = SetupLibraryListener();
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Also listen for changes to the format preferences so we can
   // reload the filter on the listener.
   nsCOMPtr<nsIPrefBranch2> prefBranch2 = do_QueryInterface(mPrefBranch, &rv);
-  NS_ENSURE_SUCCESS(rv, rv); 
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = prefBranch2->AddObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this, false);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -840,19 +841,19 @@ sbMediaManagementService::StopListening()
   NS_ENSURE_TRUE(mLibrary, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_TRUE(mPerformActionTimer, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
-  
+
   rv = mLibrary->RemoveListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIPrefBranch2> prefBranch2 = do_QueryInterface(mPrefBranch, &rv);
-  NS_ENSURE_SUCCESS(rv, rv); 
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = prefBranch2->RemoveObserver(SB_PREF_MEDIA_MANAGER_LISTEN, this);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // flush
   rv = mPerformActionTimer->InitWithCallback(this, 0, nsITimer::TYPE_ONE_SHOT);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -860,7 +861,7 @@ NS_METHOD
 sbMediaManagementService::ReportError()
 {
   TRACE(("%s", __FUNCTION__));
- 
+
   sbStringBundle bundle;
   nsString dialogTitle = bundle.Get("mediamanager.import_manage_error.title");
   nsString dialogText = bundle.Get("mediamanager.import_manage_error.text");
@@ -877,7 +878,7 @@ sbMediaManagementService::ReportError()
                        dialogTitle.BeginReading(),
                        dialogText.BeginReading());
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   return NS_OK;
 }
 
@@ -888,8 +889,8 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
                                       void* aClosure)
 {
   nsresult rv;
-  
-  ProcessItemData* data = 
+
+  ProcessItemData* data =
     reinterpret_cast<ProcessItemData*>(aClosure);
   PRUint32 opMask = data->mediaMgmtService->mManageMode;
 
@@ -924,7 +925,7 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
     data->hadErrors = true;
     // Log what file failed...
     nsString message(NS_LITERAL_STRING("Unable to manage file: "));
-    
+
     nsCOMPtr<nsIURI> uri;
     rv = item->GetContentSrc(getter_AddRefs(uri));
     NS_ENSURE_SUCCESS( rv, PL_DHASH_NEXT );
@@ -936,7 +937,7 @@ sbMediaManagementService::ProcessItem(nsISupports* aKey,
     } else {
       message.AppendLiteral("Unknown File");
     }
-    
+
     nsCOMPtr<nsIConsoleService> consoleService =
         do_GetService("@mozilla.org/consoleservice;1", &rv);
     NS_ENSURE_SUCCESS( rv, PL_DHASH_NEXT );
@@ -987,7 +988,7 @@ sbMediaManagementService::SetupLibraryListener()
   // Now listen to the library (removing previous listeners first)
   rv = mLibrary->RemoveListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = mLibrary->AddListener(this,
                              PR_FALSE,
                              sbIMediaList::LISTENER_FLAGS_ITEMADDED |
@@ -1103,3 +1104,55 @@ sbMediaManagementService::IsValidMediaItem(sbIMediaItem *aMediaItem,
   return NS_OK;
 }
 
+nsresult
+sbMediaManagementService::GetManagedFolder(nsIURI ** aMusicFolderURI) {
+
+  NS_ENSURE_ARG_POINTER(aMusicFolderURI);
+
+  nsresult rv;
+
+  static char const SB_MEDIA_MANAGEMENT_PREF[] =
+    "songbird.media_management.library.folder";
+  static char const SB_MEDIA_MANAGEMENT_ENABLE_PREF[] =
+    "songbird.media_management.library.enabled";
+
+  nsCOMPtr<nsIPrefBranch> folderPrefs =
+    do_ProxiedGetService("@mozilla.org/preferences-service;1",
+                         &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool enabled = PR_FALSE;
+  // Ignore error, treat as enabled false
+  folderPrefs->GetBoolPref(SB_MEDIA_MANAGEMENT_ENABLE_PREF, &enabled);
+
+  if (!enabled) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<nsISupportsString> supportsString;
+
+  // Failure is OK, supportsString will just be null
+  rv =  folderPrefs->GetComplexValue(SB_MEDIA_MANAGEMENT_PREF,
+                                     NS_GET_IID(nsISupportsString),
+                                     getter_AddRefs(supportsString));
+  if (NS_FAILED(rv) || !supportsString) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<nsILocalFile> folderPathFile;
+
+  // Just check to be safe
+  nsString folderPath;
+  rv = supportsString->GetData(folderPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+  folderPathFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = folderPathFile->InitWithPath(folderPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = sbLibraryUtils::GetFileContentURI(folderPathFile,
+                                         aMusicFolderURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
