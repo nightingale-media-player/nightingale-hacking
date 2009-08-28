@@ -43,6 +43,18 @@
         onunload="window.cdripController.onUnload();"
         id="cdrip-mediaview">
 
+  <keyset id="">
+    <key id="cdrip-eject-key"
+         modifiers="&cdrip.mediaview.eject.modifiers;"
+         key="&cdrip.mediaview.eject.key;" />
+    <key id="cdrip-rip-key"
+         modifiers="&cdrip.mediaview.rip.modifiers;"
+         key="&cdrip.mediaview.rip.key;" />
+    <key id="cdrip-stop-rip-key"
+         modifiers="&cdrip.mediaview.stop_rip.modifiers;"
+         key="&cdrip.mediaview.stop_rip.key;" />
+  </keyset>
+
   <vbox id="cdrip-outter" flex="1">
     <vbox id="sb-cdrip-header">
       <hbox id="sb-cdrip-header-hbox" class="sb-cdrip-header-hbox">
