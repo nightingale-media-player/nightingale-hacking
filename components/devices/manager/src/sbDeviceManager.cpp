@@ -754,9 +754,13 @@ nsresult sbDeviceManager::PrepareShutdown()
     nsCOMPtr<sbIDeviceController> controller;
     rv = controllers->QueryElementAt(i, NS_GET_IID(sbIDeviceController),
                                      getter_AddRefs(controller));
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv)) {
+      NS_WARNING("Failed to disconnect device.");
+      continue;
+    }
     rv = controller->DisconnectDevices();
-    NS_ENSURE_SUCCESS(rv, rv);
+    if (NS_FAILED(rv))
+      NS_WARNING("Failed to disconnect device.");
   }
   
   return NS_OK;
