@@ -40,23 +40,23 @@ function runTest() {
   assertEqual(pi.id, prop);
 
   assertEqual(pi.format(null),       "Status");
-  assertEqual(pi.format("0|100|50"), "Status");
-  assertEqual(pi.format("1|100|50"), "");
-  assertEqual(pi.format("2|100|50"), "Completed");
-  assertEqual(pi.format("3|100|50"), "Unable to rip this CD track");
+  assertEqual(pi.format("0|50"), "Status");
+  assertEqual(pi.format("1|50"), "");
+  assertEqual(pi.format("2|100"), "Completed");
+  assertEqual(pi.format("3|100"), "Unable to rip this CD track");
 
   var tvpi = pi.QueryInterface(Ci.sbITreeViewPropertyInfo);
 
-  assertEqual(tvpi.getProgressMode(null),    Ci.nsITreeView.PROGRESS_NONE);
+  assertEqual(tvpi.getProgressMode(null),  Ci.nsITreeView.PROGRESS_NONE);
   assertEqual(tvpi.getProgressMode("0|0"), Ci.nsITreeView.PROGRESS_NONE);
   assertEqual(tvpi.getProgressMode("1|0"), Ci.nsITreeView.PROGRESS_NORMAL);
   assertEqual(tvpi.getProgressMode("2|0"), Ci.nsITreeView.PROGRESS_NONE);
   assertEqual(tvpi.getProgressMode("3|0"), Ci.nsITreeView.PROGRESS_NONE);
 
-  assertEqual(tvpi.getCellValue(null),       "");
+  assertEqual(tvpi.getCellValue(null),   "");
   assertEqual(tvpi.getCellValue("0|50"), "");
   assertEqual(tvpi.getCellValue("1|50"), "50");
-  assertEqual(tvpi.getCellValue("2|50"), "");
-  assertEqual(tvpi.getCellValue("3|50"), "");
+  assertEqual(tvpi.getCellValue("2|100"), "");
+  assertEqual(tvpi.getCellValue("3|100"), "");
 }
 

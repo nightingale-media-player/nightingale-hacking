@@ -42,6 +42,7 @@
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
 #include <sbMediaListEnumArrayHelper.h>
+#include <sbMemoryUtils.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStatusPropertyValue.h>
 #include <sbTranscodeProgressListener.h>
@@ -71,12 +72,12 @@
 // Auto-disposal class wrappers.
 //
 //   sbCDAutoFalse             Wrapper to automatically set a boolean to false.
-//   sbCDAutoUnignoreItem      Wrapper to auto unignore changes to a media
-//                              item.
+//   sbCDAutoUnignoreItem      Wrapper to auto ignore changes to a media
+//                             item.
 //
 
 SB_AUTO_NULL_CLASS(sbCDAutoFalse, PRBool*, *mValue = PR_FALSE);
-SB_AUTO_CLASS2(sbCDAutoUnignoreItem,
+SB_AUTO_CLASS2(sbCDAutoIgnoreItem,
                sbCDDevice*,
                sbIMediaItem*,
                mValue != nsnull,
@@ -645,6 +646,10 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = musicFolderURL->SetFileExtension(NS_LITERAL_CSTRING("ogg"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Prevent notification while we set the content source on the item
+  sbCDAutoIgnoreItem autoUnignore(this, destination);
+
+  // Update the content URL now that it's been transcoded
   rv = destination->SetContentSrc(musicFolderURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -655,7 +660,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbITranscodeJob> tcJob;
-  rv = mTranscodeManager->GetTranscoderForMediaItem(aRequest->item,
+  rv = mTranscodeManager->GetTranscoderForMediaItem(destination,
                                                     profile,
                                                     getter_AddRefs(tcJob));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -724,8 +729,68 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = tcJob->Transcode();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Update status and clear auto-failure.
-  autoComplete.SetResult(NS_OK);
+  // Wait until the transcode job is complete.
+  //XXXeps should check for abort.  To do this, the job will have to be
+  //       canceled.  In addition, calling functions will need to know that the
+  //       operation was aborted.  Calling ReqAbortActive once clears the abort
+  //       condition.
+  PRBool isComplete = PR_FALSE;
+  while (!isComplete) {
+    // Operate within the request wait monitor.
+    nsAutoMonitor monitor(mReqWaitMonitor);
+
+    // Check if the job is complete.
+    isComplete = listener->IsComplete();
+
+    // If not complete, wait for completion.
+    if (!isComplete)
+      monitor.Wait();
+  }
+
+  // Check the transcode status.
+  PRUint16 status;
+  rv = progress->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Log any errors.
+#ifdef PR_LOGGING
+  if (status != sbIJobProgress::STATUS_SUCCEEDED) {
+    // Get an enumerator of the error messages.
+    nsCOMPtr<nsIStringEnumerator> errorMessageEnum;
+    rv = progress->GetErrorMessages(getter_AddRefs(errorMessageEnum));
+
+    // Log each error.
+    if (NS_SUCCEEDED(rv)) {
+      PRBool hasMore;
+      rv = errorMessageEnum->HasMore(&hasMore);
+      if (NS_FAILED(rv))
+        hasMore = PR_FALSE;
+      while (hasMore) {
+        // Get the next error message.
+        nsAutoString errorMessage;
+        rv = errorMessageEnum->GetNext(errorMessage);
+        if (NS_FAILED(rv))
+          break;
+
+        // Log the error message.
+        LOG(("sbCDDevice::ReqTranscodeWrite error %s\n",
+             NS_ConvertUTF16toUTF8(errorMessage).get()));
+
+        // Check for more error messages.
+        rv = errorMessageEnum->HasMore(&hasMore);
+        if (NS_FAILED(rv))
+          hasMore = PR_FALSE;
+      }
+    }
+  }
+#endif
+
+  // Check for transcode errors.
+ if (status == sbIJobProgress::STATUS_SUCCEEDED) {
+   return NS_ERROR_FAILURE;
+ }
+
+ autoComplete.SetResult(NS_OK);
 
   return NS_OK;
 }

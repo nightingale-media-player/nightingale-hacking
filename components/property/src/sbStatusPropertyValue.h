@@ -114,7 +114,7 @@ public:
     return mCurrent;
   }
   /**
-   * Sets the curretn progress value 0 - 100
+   * Sets the current progress value 0 - 100
    */
   void SetCurrent(PRUint32 aCurrent)
   {
@@ -127,8 +127,16 @@ public:
   {
     nsString value;
     value.AppendInt(GetMode());
-    value.AppendLiteral("|");
-    AppendInt(value, GetCurrent());
+    switch (GetMode()) {
+      case eComplete:
+      case eFailed:
+        value.AppendLiteral("|100");
+        break;
+      default:
+        value.AppendLiteral("|");
+        AppendInt(value, GetCurrent());
+        break;
+    }
     return value;
   }
 

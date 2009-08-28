@@ -43,7 +43,7 @@ NS_IMPL_ISUPPORTS_INHERITED1(sbStatusPropertyInfo,
  *
  * <mode>|<current value>
  *
- * mode can be: 0 = none, 2 = ripping, 3 = complete, 4 = failed
+ * mode can be: 0 = none, 1 = ripping, 2 = complete, 3 = failed
  * current value: 0 to 100
  *
  */

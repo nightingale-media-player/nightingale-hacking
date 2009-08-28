@@ -92,9 +92,6 @@ nsresult
 sbTranscodeProgressListener::Completed(sbIJobProgress * aJobProgress) {
   nsresult rv;
 
-  sbStatusPropertyValue value;
-  value.SetMode(sbStatusPropertyValue::eComplete);
-  SetStatusProperty(value);
   // Indicate that the transcode operation is complete.  If a complete notify
   // monitor was provided, operate under the monitor and send completion
   // notification.
@@ -151,17 +148,32 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
   nsresult rv = aJobProgress->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);
   switch (status) {
-    case sbIJobProgress::STATUS_SUCCEEDED:
-    case sbIJobProgress::STATUS_FAILED: {
+    case sbIJobProgress::STATUS_SUCCEEDED: {
+      sbStatusPropertyValue value;
+      value.SetMode(sbStatusPropertyValue::eComplete);
+      SetStatusProperty(value);
+
       rv = Completed(aJobProgress);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
+
+    case sbIJobProgress::STATUS_FAILED: {
+      sbStatusPropertyValue value;
+      value.SetMode(sbStatusPropertyValue::eFailed);
+      SetStatusProperty(value);
+
+      rv = Completed(aJobProgress);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    break;
+
     case sbIJobProgress::STATUS_RUNNING: {
       rv = SetProgress(aJobProgress);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     break;
+
     default: {
       NS_WARNING("Unexpected progress state in "
                  "sbTranscodeProgressListener::OnJobProgress");
