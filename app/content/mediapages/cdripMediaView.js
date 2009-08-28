@@ -63,6 +63,8 @@ const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
 const RIP_STATUS_VIEW_TRACKS_BUTTON = CDRIP_BASE + "view-tracks-button";
 const RIP_STATUS_EJECT_CD_BUTTON    = CDRIP_BASE + "eject-cd-button";
 
+const RIP_COMMAND_EJECT             = CDRIP_BASE + "eject-command";
+
 const CDRIP_PLAYLIST                = CDRIP_BASE + "playlist";
 
 //------------------------------------------------------------------------------
@@ -181,21 +183,29 @@ window.cdripController =
       case Ci.sbIDevice.STATE_TRANSCODE:
         // Currently ripping
         this._showSettingsView();
+
         // Display only the Stop Rip button.
         this._hideElement(RIP_STATUS_RIP_CD_BUTTON);
         this._showElement(RIP_STATUS_STOP_RIP_BUTTON);
         this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
         this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
+
+        // Update commands:
+        this._disableCommand(RIP_COMMAND_EJECT);
         break;
-      
+
       default:
         // By default we assume IDLE
         this._showSettingsView();
-        // Display only the Rip button.
+
+        // Display only the Rip button and the eject button.
         this._showElement(RIP_STATUS_RIP_CD_BUTTON);
         this._hideElement(RIP_STATUS_STOP_RIP_BUTTON);
         this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
-        this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
+        this._showElement(RIP_STATUS_EJECT_CD_BUTTON);
+
+        // Update commands:
+        this._enableCommand(RIP_COMMAND_EJECT);
         break;
     }
   },
@@ -269,6 +279,12 @@ window.cdripController =
     return true;
   },
 
+  _ejectDevice: function cdripController_ejectDevice() {
+    if (this._device) {
+      this._device.eject();
+    }
+  },
+
   _hideSettingsView: function cdripController_hideSettingsView() {
     // Hack: Prevent the header box from resizing by setting the |min-height|
     //       CSS value of the status hbox.
@@ -307,6 +323,14 @@ window.cdripController =
 
   _isElementHidden: function cdripController_isElementHidden(aElementId) {
     return document.getElementById(aElementId).hasAttribute("hidden");
+  },
+
+  _disableCommand: function cdripController_disableCommand(aElementId) {
+    document.getElementById(aElementId).setAttribute("disabled", "true");
+  },
+
+  _enableCommand: function cdripController_enableCommand(aElementId) {
+    document.getElementById(aElementId).removeAttribute("disabled");
   },
 
   _setLabelValue: function cdripController_setLabelValue(aElementId, aValue) {

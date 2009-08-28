@@ -43,10 +43,16 @@
         onunload="window.cdripController.onUnload();"
         id="cdrip-mediaview">
 
-  <keyset id="">
+  <commandset>
+    <command id="sb-cdrip-eject-command"
+             oncommand="window.cdripController._ejectDevice();" />
+  </commandset>
+
+  <keyset>
     <key id="cdrip-eject-key"
          modifiers="&cdrip.mediaview.eject.modifiers;"
-         key="&cdrip.mediaview.eject.key;" />
+         key="&cdrip.mediaview.eject.key;"
+         command="sb-cdrip-eject-command" />
     <key id="cdrip-rip-key"
          modifiers="&cdrip.mediaview.rip.modifiers;"
          key="&cdrip.mediaview.rip.key;" />
@@ -109,7 +115,8 @@
           <button id="sb-cdrip-view-tracks-button"
                   label="&cdrip.mediaview.view_tracks_button;" />
           <button id="sb-cdrip-eject-cd-button"
-                  label="&cdrip.mediaview.eject_cd_button;" />
+                  label="&cdrip.mediaview.eject_cd_button;"
+                  command="sb-cdrip-eject-command" />
         </hbox>
 
       </hbox>
