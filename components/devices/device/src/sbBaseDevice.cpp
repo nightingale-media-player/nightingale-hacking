@@ -1653,7 +1653,9 @@ sbBaseDevice::CreateTransferRequest(PRUint32 aRequest,
                                     nsIPropertyBag2 *aRequestParameters,
                                     TransferRequest **aTransferRequest)
 {
-  NS_ENSURE_ARG_RANGE(aRequest, REQUEST_MOUNT, REQUEST_FACTORY_RESET);
+  NS_ENSURE_TRUE( ((aRequest >= REQUEST_MOUNT && aRequest <= REQUEST_FORMAT) ||
+                   (aRequest & REQUEST_FLAG_USER)),
+                  NS_ERROR_ILLEGAL_VALUE);
   NS_ENSURE_ARG_POINTER(aRequestParameters);
   NS_ENSURE_ARG_POINTER(aTransferRequest);
 
