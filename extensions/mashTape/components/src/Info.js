@@ -409,7 +409,7 @@ ArtistInfo.prototype = {
 						this.data[this.i].mbid + " complete! " +
 						this.data.pending + " left.");
 				var x = new XML(xmlText);
-				var url = x..url.toString();
+				var url = x.album.url.toString();
 				if (url != "") {
 					this.data[this.i].link = url;
 					this.data[this.i].tooltip = strings.GetStringFromName(
