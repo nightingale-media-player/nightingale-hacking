@@ -100,7 +100,9 @@ PublicPlaylistCommands.prototype = {
   m_downloadCommandsServicePane   : null,
   m_serviceTreeDefaultCommands    : null,
   m_mgr                           : null,
-
+  m_deviceLibraryCommands         : null,
+  m_cdDeviceLibraryCommands       : null,
+  
   // Define various playlist commands, they will be exposed to the playlist commands
   // manager so that they can later be retrieved and concatenated into bigger
   // playlist commands objects.
@@ -120,6 +122,7 @@ PublicPlaylistCommands.prototype = {
   m_cmd_UpdateSmartPlaylist       : null, // update the smart playlist
   m_cmd_EditSmartPlaylist         : null, // edit  the smart playlist properties
   m_cmd_SmartPlaylistSep          : null, // a separator (its own object for visible cb)
+  m_cmd_LookupCDInfo              : null, // look up cd information
   
   // Commands that act on playlist themselves
   m_cmd_list_Remove               : null, // remove the selected playlist
@@ -591,6 +594,25 @@ PublicPlaylistCommands.prototype = {
                                                       plCmd_IsAnyTrackSelected);
     
       // --------------------------------------------------------------------------
+      // The Lookup CD Info action
+      // --------------------------------------------------------------------------
+
+      this.m_cmd_LookupCDInfo = new PlaylistCommandsBuilder();
+      
+      this.m_cmd_LookupCDInfo.appendAction(null,
+                                           "library_cmd_lookupcdinfo",
+                                           "&command.lookupcdinfo",
+                                           "&command.tooltip.lookupcdinfo",
+                                           plCmd_LookupCDInfo_TriggerCallback);
+
+      this.m_cmd_LookupCDInfo.setCommandShortcut(null,
+                                                 "library_cmd_lookupcdinfo",
+                                                 "&command.shortcut.key.lookupcdinfo",
+                                                 "&command.shortcut.keycode.lookupcdinfo",
+                                                 "&command.shortcut.modifiers.lookupcdinfo",
+                                                 true);
+
+      // --------------------------------------------------------------------------
 
       // Publish atomic commands
 
@@ -848,6 +870,24 @@ PublicPlaylistCommands.prototype = {
 
       this.m_mgr.publish(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,
                          this.m_deviceLibraryCommands);
+
+      // --------------------------------------------------------------------------
+      // Construct and publish the cd device library commands
+      // --------------------------------------------------------------------------
+
+      this.m_cdDeviceLibraryCommands = new PlaylistCommandsBuilder();
+
+      this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_edit",
+                                                    this.m_cmd_Edit);
+
+      this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_lookup",
+                                                    this.m_cmd_LookupCDInfo);
+      
+      this.m_mgr.publish(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY,
+                         this.m_cdDeviceLibraryCommands);
+      
 
       // --------------------------------------------------------------------------
       // Construct and publish the download toolbar commands
@@ -1350,6 +1390,38 @@ function plCmd_GetArtwork_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
                                              .selectedMediaItems,
                                      null);
   }
+}
+
+
+// Called when the lookup cd info action is triggered
+function plCmd_LookupCDInfo_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
+  var firstItem;
+  try {
+    var playlist = unwrap(aContext.playlist);
+    var medialist = playlist.mediaListView.mediaList;
+    var firstItem = medialist.getItemByIndex(0);
+    
+    if (!firstItem) {
+      Cu.reportError("Unable to get CD Device: " + err);
+      return;
+    }
+  } catch (err) {
+    Cu.reportError("Unable to get CD Device: " + err);
+    return;
+  }
+  
+  var devMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                 .getService(Ci.sbIDeviceManager2);
+  var device = devMgr.getDeviceForItem(firstItem);
+  if (!device) {
+    Cu.reportError("Unable to get CD Device");
+    return;
+  }
+
+  // Invoke the CD Lookup
+  var bag = Cc["@mozilla.org/hash-property-bag;1"]
+              .createInstance(Ci.nsIPropertyBag2);
+  device.submitRequest(Ci.sbICDDeviceEvent.REQUEST_CDLOOKUP, bag);
 }
 
 // Called when the "burn to cd" action is triggered

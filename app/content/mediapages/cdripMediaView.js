@@ -360,8 +360,15 @@ window.cdripController =
       "http://songbirdnest.com/data/1.0#albumName 122 " +
       "http://songbirdnest.com/data/1.0#genre 70");
 
+    // Get playlist commands (context menu, keyboard shortcuts, toolbar)
+    // Note: playlist commands currently depend on the playlist widget.
+    var mgr =
+      Components.classes["@songbirdnest.com/Songbird/PlaylistCommandsManager;1"]
+                .createInstance(Components.interfaces.sbIPlaylistCommandsManager);
+    var cmds = mgr.request(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY);
+
     // Set up the playlist widget
-    this._playlist.bind(this._mediaListView, null /* TODO: Bug 17437 */);
+    this._playlist.bind(this._mediaListView, cmds);
   },
 
   /**
