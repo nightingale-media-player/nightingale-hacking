@@ -207,6 +207,10 @@ class nsIPropertyBag;
 //
 //------------------------------------------------------------------------------
 
+// Preference keys
+#define PREF_CDDEVICE_COMPLETE_BRANCH   "songbird.cdrip.oncomplete."
+#define PREF_CDDEVICE_AUTOEJECT         "autoeject"
+
 /**
  * This class provides the core CD device implementation
  * Each instance represents a physical device.

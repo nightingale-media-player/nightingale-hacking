@@ -38,6 +38,7 @@
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbLibraryUtils.h>
+#include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStringUtils.h>
@@ -786,11 +787,26 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 #endif
 
   // Check for transcode errors.
- if (status == sbIJobProgress::STATUS_SUCCEEDED) {
-   return NS_ERROR_FAILURE;
- }
+  if (status != sbIJobProgress::STATUS_SUCCEEDED) {
+    return NS_ERROR_FAILURE;
+  }
 
- autoComplete.SetResult(NS_OK);
+  autoComplete.SetResult(NS_OK);
 
+  // We need to check if this is the last item to be ripped, if so check for
+  // AutoEject.
+  if (aRequest->batchIndex == aRequest->batchCount) {
+    // Check the preferences to see if we should eject
+    sbPrefBranch prefBranch(PREF_CDDEVICE_COMPLETE_BRANCH, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    PRBool autoEject = prefBranch.GetBoolPref(PREF_CDDEVICE_AUTOEJECT, PR_FALSE);
+    if (autoEject) {
+      // Since we successfully ripped all selected tracks and the user has
+      // the autoEject preference set, we can eject now.
+      rv = Eject();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
+    }
+  }
   return NS_OK;
 }
