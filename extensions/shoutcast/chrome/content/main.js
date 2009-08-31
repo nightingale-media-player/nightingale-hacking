@@ -225,12 +225,13 @@ ShoutcastRadio.Controller = {
 			bmNode.image = FAVICON_PATH;
 		} else {
 			// bookmark already exists
-			var node = SPS.getNodeForURL(
+			bmNode = SPS.getNodeForURL(
 					"chrome://shoutcast-radio/content/directory.xul");
-			if (node.image != FAVICON_PATH) {
-				node.image = FAVICON_PATH;
+			if (bmNode.image != FAVICON_PATH) {
+				bmNode.image = FAVICON_PATH;
 			}
 		}
+    bmNode.hidden = false;
 
 		// Check the Favourite Stations list to see if it's been created
 		// If it has, then we'll need to relocalise its name on startup
