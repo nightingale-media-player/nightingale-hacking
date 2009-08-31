@@ -933,7 +933,7 @@ else
       OUR_MAKE_JARS_FLAGS += -f flat -d $(OUR_JAR_TARGET_DIR)
    else
       OUR_MAKE_JARS_FLAGS += -d $(OUR_JAR_TARGET_DIR)/stage
-      ALL_TRASH += $(OUR_JAR_TARGET_DIR)/stage
+      ALL_TRASH += $(if $(EXTENSION_STAGE_DIR), $(OUR_JAR_TARGET_DIR)/stage)
    endif
 
    ifdef JAR_IS_EXTENSION
