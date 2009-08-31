@@ -112,8 +112,6 @@
                   label="&cdrip.mediaview.rip_cd_button;" />
           <button id="sb-cdrip-stop-rip-button"
                   label="&cdrip.mediaview.stop_rip_button;" />
-          <button id="sb-cdrip-view-tracks-button"
-                  label="&cdrip.mediaview.view_tracks_button;" />
           <button id="sb-cdrip-eject-cd-button"
                   label="&cdrip.mediaview.eject_cd_button;"
                   command="sb-cdrip-eject-command" />

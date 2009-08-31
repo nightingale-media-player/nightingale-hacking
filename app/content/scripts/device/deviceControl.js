@@ -279,11 +279,6 @@ deviceControlWidget.prototype = {
         this._ripTracks();
         break;
       
-      case "showrecent" :
-        // Show the recently added playlist if available.
-        this._showRecentPlaylist();
-        break;
-      
       case "rescan" :
         // Invoke the CD Lookup again
         var bag = Cc["@mozilla.org/hash-property-bag;1"]
@@ -294,32 +289,6 @@ deviceControlWidget.prototype = {
       default :
         break;
     }
-  },
-
-  /**
-   * Get the Recently Added playlist from the main library. We have to do this
-   * by getting all the playlists and comparing the "smart" lists names to our
-   * localized name for the Recently Added playlist.
-   */
-  
-  _getRecentlyAddedPlaylist: function() {
-    // First get the actual localized name for the list to compare.
-    var playListName = SBString("smart.defaultlist.recentlyadded");
-    
-    // Now enumerate through the lists to find the Recently Added
-    var enumerator = LibraryUtils.mainLibrary
-                                 .getItemsByProperty(SBProperties.isList, "1")
-                                 .enumerate();
-    var foundList = null;
-    while(enumerator.hasMoreElements()) {
-      var item = enumerator.getNext().QueryInterface(Ci.sbIMediaList);
-      if (item.type == "smart" &&
-          item.name == playListName) {
-        foundList = item;
-      }
-    }
-    
-    return foundList;
   },
 
   /**
@@ -359,39 +328,14 @@ deviceControlWidget.prototype = {
     var deviceLibrary = this._getDeviceLibrary();
     try {
       // Get all the selected tracks from the device library
-      var addItems = deviceLibrary.getItemsByProperty(SBProperties.isChecked, "1");
+      var addItems = deviceLibrary.getItemsByProperty(SBProperties.shouldRip,
+                                                      "1");
   
       // Then add them to the main library using addSome(enumerator)
       LibraryUtils.mainLibrary.addSome(addItems.enumerate());
     } catch (err) {}
   },
 
-  /**
-   * Show the recently added playlist.
-   */
-
- _showRecentPlaylist: function deviceControlWidget__showRecentPlaylist() {
-    // First we need to find the Recently Added playlist
-    var mediaList = this._getRecentlyAddedPlaylist();
-    if (!mediaList) {
-      return;
-    }
-    
-    var browser = SBGetBrowser();
-    var tab = browser.loadMediaList(mediaList, null, "_media");
-    browser.selectedTab = tab;
-
-    // Record list type metrics for some reason.
-    // See http://bugzilla.songbirdnest.com/show_bug.cgi?id=4021
-    // changed to loadNode from click as there are ways other than clicking
-    // to get here.
-    try {
-      var listType = mediaList.getProperty(SBProperties.customType);
-      var libType = mediaList.library.getProperty(SBProperties.customType);
-      metrics_inc("app.servicepane.loadnode.medialist", libType + "." + listType, null);
-    } catch(e) { Components.utils.reportError(e); }
-  },
-  
   /**
    * Check if any of the items from the device have been successfully ripped.
    */

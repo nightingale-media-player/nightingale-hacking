@@ -86,7 +86,6 @@
    *   sync                     Sync device.
    *   rip                      Transcode items from a device.
    *   rescan                   Rescan the device (CD Lookup on rip cd device)
-   *   showrecent               Show the recently added playlist.
    *
    *   Binding specs
    *   =============
@@ -609,28 +608,5 @@
     </content>
   </binding> <!-- sb-device-rescan-command -->
   
-  <!-- *************************************************************************
-   *****************************************************************************
-   *
-   * Device view recent tracks command widget.
-   *
-   *   This widget implements a view recent tracks command.
-   *
-   *****************************************************************************
-   ************************************************************************* -->
-
-  <binding id="sb-device-viewtracks-command">
-    <content>
-      <xul:sb-device-control xbl:inherits="bindelem,device-id"
-                             bindforward="parent"
-                             listentodevice="true"
-                             label="&command.device.recentadded;"
-                             accesskey="&command.device.recentadded.accesskey;"
-                             disabled_default="true"
-                             disabled_idle="remove_attribute"
-                             idle_ripped="true"
-                             action="showrecent"/>
-    </content>
-  </binding> <!-- sb-device-viewtracks-command -->
 </bindings>
 

@@ -82,7 +82,6 @@
       <menuitem/><sb-device-rescan-command bindelem="prev"
                     label="&command.device.lookup;"
                     accesskey="&command.device.lookup.accesskey;"/>
-      <menuitem/><sb-device-viewtracks-command bindelem="prev"/>
       <menuitem/><sb-device-eject-command bindelem="prev"
                     label="&command.device.ejectcddevice;"
                     accesskey="&command.device.ejectcddevice.accesskey;"/>

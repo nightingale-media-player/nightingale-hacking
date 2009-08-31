@@ -60,7 +60,6 @@ const RIP_STATUS_IMAGE              = CDRIP_BASE + "status-image";
 const RIP_STATUS_LABEL              = CDRIP_BASE + "actionstatus-label";
 const RIP_STATUS_RIP_CD_BUTTON      = CDRIP_BASE + "rip-cd-button";
 const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
-const RIP_STATUS_VIEW_TRACKS_BUTTON = CDRIP_BASE + "view-tracks-button";
 const RIP_STATUS_EJECT_CD_BUTTON    = CDRIP_BASE + "eject-cd-button";
 
 const RIP_COMMAND_EJECT             = CDRIP_BASE + "eject-command";
@@ -187,7 +186,6 @@ window.cdripController =
         // Display only the Stop Rip button.
         this._hideElement(RIP_STATUS_RIP_CD_BUTTON);
         this._showElement(RIP_STATUS_STOP_RIP_BUTTON);
-        this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
         this._hideElement(RIP_STATUS_EJECT_CD_BUTTON);
 
         // Update commands:
@@ -201,7 +199,6 @@ window.cdripController =
         // Display only the Rip button and the eject button.
         this._showElement(RIP_STATUS_RIP_CD_BUTTON);
         this._hideElement(RIP_STATUS_STOP_RIP_BUTTON);
-        this._hideElement(RIP_STATUS_VIEW_TRACKS_BUTTON);
         this._showElement(RIP_STATUS_EJECT_CD_BUTTON);
 
         // Update commands:

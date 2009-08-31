@@ -437,8 +437,6 @@
 <!ENTITY command.device.stoprip.accesskey               "S">
 <!ENTITY command.device.lookup                          "Lookup CD Information">
 <!ENTITY command.device.lookup.accesskey                "L">
-<!ENTITY command.device.recentadded                     "View Tracks">
-<!ENTITY command.device.recentadded.accesskey           "V">
 <!ENTITY command.device.ejectcddevice                   "Eject CD">
 <!ENTITY command.device.ejectcddevice.accesskey         "E">
 
