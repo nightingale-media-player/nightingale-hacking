@@ -48,10 +48,8 @@
 #include "sbWindowsFormatter.h"
 #include "sbWindowsFormatterClassFactory.h"
 
-// Windows imports.
-#include <tchar.h>
-
-#include <strsafe.h>
+// Songbird imports.
+#include <sbWindowsUtils.h>
 
 
 //------------------------------------------------------------------------------

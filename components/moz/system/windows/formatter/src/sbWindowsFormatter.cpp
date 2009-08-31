@@ -40,7 +40,10 @@
 
 // Local imports.
 #include "sbIWindowsFormatter_i.c"
-#include "sbWindowsEventLog.h"
+
+// Songbird imports.
+#include <sbWindowsStorage.h>
+#include <sbWindowsUtils.h>
 
 
 //------------------------------------------------------------------------------
@@ -157,8 +160,40 @@ sbWindowsFormatter::Format(BSTR          aVolumeName,
                            long          aQuickFormat,
                            long          aEnableCompression)
 {
+  // Validate arguments.
+  SB_WIN_ENSURE_ARG_POINTER(aVolumeName);
+
   // Log format request.
   sbWindowsEventLog("Formatting volume: %S\n", aVolumeName);
+
+  // Function variables.
+  HRESULT result;
+
+  // Get the VDS volume from the volume name and set it up for auto-disposal.
+  IVdsVolumeMF* volume;
+  result = GetVolume(aVolumeName, &volume);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  SB_WIN_ENSURE_TRUE(result == S_OK, HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND));
+  sbAutoIUnknown autoVolume(volume);
+
+  // Format the volume.
+  IVdsAsync* async;
+  result = volume->Format(static_cast<VDS_FILE_SYSTEM_TYPE>(aType),
+                          aLabel,
+                          aUnitAllocationSize,
+                          aForce,
+                          aQuickFormat,
+                          aEnableCompression,
+                          &async);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  sbAutoIUnknown autoAsync(async);
+
+  // Wait for the format to complete.
+  VDS_ASYNC_OUTPUT asyncOutput;
+  HRESULT          formatResult;
+  result = async->Wait(&formatResult, &asyncOutput);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  SB_WIN_ENSURE_SUCCESS(formatResult, formatResult);
 
   return S_OK;
 }
@@ -170,22 +205,297 @@ sbWindowsFormatter::Format(BSTR          aVolumeName,
 //
 //------------------------------------------------------------------------------
 
-/**
- * Create an instance of a Songbird Windows formatter object.
- */
+//-------------------------------------
+//
+// New
+//
 
-sbWindowsFormatter::sbWindowsFormatter() :
-  mRefCount(0)
+/* static */ HRESULT
+sbWindowsFormatter::New(sbWindowsFormatter** aWindowsFormatter)
 {
+  // Validate arguments.
+  SB_WIN_ENSURE_ARG_POINTER(aWindowsFormatter);
+
+  // Function variables.
+  HRESULT result;
+
+  // Create the Windows formatter object and set it up for auto-disposal.
+  sbWindowsFormatter* windowsFormatter = new sbWindowsFormatter();
+  SB_WIN_ENSURE_TRUE(windowsFormatter, E_OUTOFMEMORY);
+  windowsFormatter->AddRef();
+  sbAutoIUnknown autoWindowsFormatter(windowsFormatter);
+
+  // Initialize the Windows formatter.
+  result = windowsFormatter->Initialize();
+  SB_WIN_ENSURE_SUCCESS(result, result);
+
+  // Return results.
+  *aWindowsFormatter = windowsFormatter;
+  autoWindowsFormatter.forget();
+
+  return S_OK;
 }
 
 
-/**
- * Destroy an instance of a Songbird Windows formatter object.
- */
+//-------------------------------------
+//
+// ~sbWindowsFormatter
+//
 
 sbWindowsFormatter::~sbWindowsFormatter()
 {
+  // Release the VDS service object.
+  if (mVdsService)
+    mVdsService->Release();
+
+  // Uninitialize COM.
+  CoUninitialize();
 }
 
+
+//------------------------------------------------------------------------------
+//
+// Private Songbird Windows formatter services.
+//
+//------------------------------------------------------------------------------
+
+//-------------------------------------
+//
+// sbWindowsFormatter
+//
+
+sbWindowsFormatter::sbWindowsFormatter() :
+  mRefCount(0),
+  mVdsService(NULL)
+{
+}
+
+
+//-------------------------------------
+//
+// GetVolume
+//
+
+HRESULT
+sbWindowsFormatter::Initialize()
+{
+  HRESULT result;
+
+  // Initialize COM.
+  result = CoInitialize(NULL);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+
+  // Get the VDS service loader object and set it up for auto-disposal.
+  IVdsServiceLoader* vdsServiceLoader;
+  result = CoCreateInstance(CLSID_VdsLoader,
+                            NULL,
+                            CLSCTX_LOCAL_SERVER,
+                            IID_IVdsServiceLoader,
+                            reinterpret_cast<void**>(&vdsServiceLoader));
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  sbAutoIUnknown autoVdsServiceLoader(vdsServiceLoader);
+
+  // Load the VDS service.
+  result = vdsServiceLoader->LoadService(NULL, &mVdsService);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  result = mVdsService->WaitForServiceReady();
+  SB_WIN_ENSURE_SUCCESS(result, result);
+
+  return S_OK;
+}
+
+
+//-------------------------------------
+//
+// GetVolume
+//
+
+HRESULT
+sbWindowsFormatter::GetVolume(BSTR           aVolumeName,
+                              IVdsVolumeMF** aVolume)
+{
+  // Validate arguments.
+  SB_WIN_ENSURE_ARG_POINTER(aVolumeName);
+  SB_WIN_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  HRESULT result;
+
+  // Return a null volume by default.
+  *aVolume = NULL;
+
+  // Get the list of software providers and set it up for auto-disposal.
+  IEnumVdsObject* swProviderEnum;
+  result = mVdsService->QueryProviders(VDS_QUERY_SOFTWARE_PROVIDERS,
+                                       &swProviderEnum);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  sbAutoIUnknown autoSwProviderEnum(swProviderEnum);
+
+  // Search each software provider for the volume.  Enumerate all software
+  // providers until no more remain or until the volume is found.
+  while (1) {
+    // Get the next software provider and set it up for auto-disposal.  The
+    // returned count will be zero when the enumeration is complete.
+    IUnknown* swProviderIUnknown;
+    ULONG     count;
+    result = swProviderEnum->Next(1, &swProviderIUnknown, &count);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    if (!count)
+      break;
+    sbAutoIUnknown autoSwProviderIUnknown(swProviderIUnknown);
+
+    // QI the software provider and set it up for auto-disposal.
+    IVdsSwProvider* swProvider;
+    result = swProviderIUnknown->QueryInterface
+                                   (IID_IVdsSwProvider,
+                                    reinterpret_cast<void**>(&swProvider));
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    sbAutoIUnknown autoSwProvider(swProvider);
+
+    // Try getting the volume from the software provider.  Return volume if
+    // found.
+    result = GetVolume(swProvider, aVolumeName, aVolume);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    if (result == S_OK)
+      return S_OK;
+  }
+
+  return S_FALSE;
+}
+
+
+//-------------------------------------
+//
+// GetVolume
+//
+
+HRESULT
+sbWindowsFormatter::GetVolume(IVdsSwProvider* aSwProvider,
+                              BSTR            aVolumeName,
+                              IVdsVolumeMF**  aVolume)
+{
+  // Validate arguments.
+  SB_WIN_ENSURE_ARG_POINTER(aSwProvider);
+  SB_WIN_ENSURE_ARG_POINTER(aVolumeName);
+  SB_WIN_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  HRESULT result;
+
+  // Return a null volume by default.
+  *aVolume = NULL;
+
+  // Get the list of VDS packs and set it up for auto-disposal.
+  IEnumVdsObject* packEnum;
+  result = aSwProvider->QueryPacks(&packEnum);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  sbAutoIUnknown autoPackEnum(packEnum);
+
+  // Search each pack for the volume.  Enumerate all packs until no more remain
+  // or until the volume is found.
+  while (1) {
+    // Get the next pack and set it up for auto-disposal.  The returned count
+    // will be zero when the enumeration is complete.
+    IUnknown* packIUnknown;
+    ULONG     count;
+    result = packEnum->Next(1, &packIUnknown, &count);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    if (!count)
+      break;
+    sbAutoIUnknown autoPackIUnknown(packIUnknown);
+
+    // QI the pack and set it up for auto-disposal.
+    IVdsPack* pack;
+    result = packIUnknown->QueryInterface(IID_IVdsPack,
+                                          reinterpret_cast<void**>(&pack));
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    sbAutoIUnknown autoPack(pack);
+
+    // Try getting the volume from the pack.  Return volume if found.
+    result = GetVolume(pack, aVolumeName, aVolume);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    if (result == S_OK)
+      return S_OK;
+  }
+
+  return S_FALSE;
+}
+
+
+//-------------------------------------
+//
+// GetVolume
+//
+
+HRESULT
+sbWindowsFormatter::GetVolume(IVdsPack*      aPack,
+                              BSTR           aVolumeName,
+                              IVdsVolumeMF** aVolume)
+{
+  // Validate arguments.
+  SB_WIN_ENSURE_ARG_POINTER(aPack);
+  SB_WIN_ENSURE_ARG_POINTER(aVolumeName);
+  SB_WIN_ENSURE_ARG_POINTER(aVolume);
+
+  // Function variables.
+  HRESULT result;
+
+  // Return a null volume by default.
+  *aVolume = NULL;
+
+  // Get the target volume storage device number.
+  STORAGE_DEVICE_NUMBER targetDevNum;
+  result = sbWinGetStorageDevNum(aVolumeName, &targetDevNum);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+
+  // Get the list of VDS pack volumes and set it up for auto-disposal.
+  IEnumVdsObject* volumeEnum;
+  result = aPack->QueryVolumes(&volumeEnum);
+  SB_WIN_ENSURE_SUCCESS(result, result);
+  sbAutoIUnknown autoVolumeEnum(volumeEnum);
+
+  // Search for the volume.  Enumerate all volumes until no more remain or until
+  // the target volume is found.
+  while (1) {
+    // Get the next volume and set it up for auto-disposal.  The returned count
+    // will be zero when the enumeration is complete.
+    IUnknown* volumeIUnknown;
+    ULONG     count;
+    result = volumeEnum->Next(1, &volumeIUnknown, &count);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    if (!count)
+      break;
+    sbAutoIUnknown autoVolumeIUnknown(volumeIUnknown);
+
+    // QI the volume and set it up for auto-disposal.
+    IVdsVolume* volume;
+    result = volumeIUnknown->QueryInterface(IID_IVdsVolume,
+                                            reinterpret_cast<void**>(&volume));
+    SB_WIN_ENSURE_SUCCESS(result, result);
+    sbAutoIUnknown autoVolume(volume);
+
+    // Get the volume properties.
+    VDS_VOLUME_PROP volumeProp;
+    result = volume->GetProperties(&volumeProp);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+
+    // Get the volume storage device number.
+    STORAGE_DEVICE_NUMBER volumeDevNum;
+    result = sbWinGetStorageDevNum(volumeProp.pwszName, &volumeDevNum);
+    SB_WIN_ENSURE_SUCCESS(result, result);
+
+    // Return volume if it matches the target.
+    if ((volumeDevNum.DeviceType == targetDevNum.DeviceType) &&
+        (volumeDevNum.DeviceNumber == targetDevNum.DeviceNumber) &&
+        (volumeDevNum.PartitionNumber == targetDevNum.PartitionNumber)) {
+      result = volumeIUnknown->QueryInterface
+                                 (IID_IVdsVolumeMF,
+                                  reinterpret_cast<void**>(aVolume));
+      SB_WIN_ENSURE_SUCCESS(result, result);
+      return S_OK;
+    }
+  }
+
+  return S_FALSE;
+}
 

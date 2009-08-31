@@ -49,8 +49,10 @@
 // Local imports.
 #include "sbIWindowsFormatter.h"
 
-// Songbird imports.
-#include <sbMemoryUtils.h>
+// Windows imports.
+#include <rpcsal.h>
+
+#include <vds.h>
 
 
 //------------------------------------------------------------------------------
@@ -103,37 +105,96 @@ public:
   // Public services.
   //
 
-  sbWindowsFormatter();
+  /**
+   * Create a new Songbird Windows formatter object and return it in
+   * aWindowsFormatter.
+   *
+   * \param aWindowsFormatter  Returned created Windows formatter object.
+   */
+  static HRESULT New(sbWindowsFormatter** aWindowsFormatter);
 
+  /**
+   * Destroy an instance of a Songbird Windows formatter object.
+   */
   virtual ~sbWindowsFormatter();
 
 
   //----------------------------------------------------------------------------
   //
-  // Protected interface.
+  // Private interface.
   //
   //----------------------------------------------------------------------------
 
-protected:
+private:
 
   //
   // mRefCount                  Object reference count.
+  // mVdsService                VDS service object.
   //
 
   ULONG                         mRefCount;
+  IVdsService*                  mVdsService;
+
+
+  //
+  // Private services.
+  //
+
+  /**
+   * Create an instance of a Songbird Windows formatter object.
+   */
+  sbWindowsFormatter();
+
+  /**
+   * Initialize the Songbird Windows formatter object.
+   */
+  HRESULT Initialize();
+
+  /**
+   * Return in aVolume the VDS volume object for the volume with the volume name
+   * specified by aVolumeName.
+   *
+   * \param aVolumeName         Name of volume to get.
+   * \param aVolume             Returned VDS volume.
+   *
+   * \return S_OK               Volume was found.
+   *         S_FALSE            Volume was not found.
+   */
+  HRESULT GetVolume(BSTR           aVolumeName,
+                    IVdsVolumeMF** aVolume);
+
+  /**
+   * Search the volumes belonging to the VDS software provider specified by
+   * aSwProvider for a volume with the name specified by aVolumeName.  Return
+   * any found volume in aVolume.
+   *
+   * \param aSwProvider         VDS software provider to search.
+   * \param aVolumeName         Name of volume to get.
+   * \param aVolume             Returned VDS volume.
+   *
+   * \return S_OK               Volume was found.
+   *         S_FALSE            Volume was not found.
+   */
+  HRESULT GetVolume(IVdsSwProvider* aSwProvider,
+                    BSTR            aVolumeName,
+                    IVdsVolumeMF**  aVolume);
+
+  /**
+   * Search the volumes belonging to the VDS pack specified by aPack for a
+   * volume with the name specified by aVolumeName.  Return any found volume in
+   * aVolume.
+   *
+   * \param aPack               VDS pack to search.
+   * \param aVolumeName         Name of volume to get.
+   * \param aVolume             Returned VDS volume.
+   *
+   * \return S_OK               Volume was found.
+   *         S_FALSE            Volume was not found.
+   */
+  HRESULT GetVolume(IVdsPack*      aPack,
+                    BSTR           aVolumeName,
+                    IVdsVolumeMF** aVolume);
 };
-
-
-//
-// Auto-disposal class wrappers.
-//
-//   sbAutoRegKey               Wrapper to automatically close a registry key.
-//   sbAutoIUnknown             Wrapper to automatically release an IUnknown
-//                              object.
-//
-
-SB_AUTO_NULL_CLASS(sbAutoRegKey, HKEY, RegCloseKey(mValue));
-SB_AUTO_NULL_CLASS(sbAutoIUnknown, IUnknown*, mValue->Release());
 
 
 #endif // __SB_WINDOWS_FORMATTER_H__

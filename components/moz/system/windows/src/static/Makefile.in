@@ -22,18 +22,25 @@
 # END SONGBIRD GPL
 #
 
-DEPTH = ../../../../..
+DEPTH = ../../../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = static \
-          $(NULL)
+STATIC_LIB = sbWindowsUtils
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbWindowsAutoPlayService.js \
-                      $(NULL)
+CPP_SRCS = sbWindowsEventLog.cpp \
+           sbWindowsStorage.cpp \
+           sbWindowsUtils.cpp \
+           WindowsGUIDs.cpp \
+           $(NULL)
+
+CPP_EXTRA_INCLUDES += \
+ $(DEPS_DIR)/private/windows_ddk/$(SB_CONFIGURATION)/include \
+ $(topsrcdir)/components/include \
+ $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

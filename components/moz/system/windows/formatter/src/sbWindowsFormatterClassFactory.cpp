@@ -42,6 +42,9 @@
 #include "sbWindowsFormatter.h"
 #include "sbWindowsFormatterServer.h"
 
+// Songbird imports.
+#include <sbWindowsUtils.h>
+
 
 //------------------------------------------------------------------------------
 //
@@ -159,10 +162,9 @@ sbWindowsFormatterClassFactory::CreateInstance(IUnknown* aOuter,
 
   // Create a new addref'ed Songbird Windows format object and set it up for
   // auto-release.
-  sbWindowsFormatter* windowsFormatter = new sbWindowsFormatter();
-  if (!windowsFormatter)
-    return E_OUTOFMEMORY;
-  windowsFormatter->AddRef();
+  sbWindowsFormatter* windowsFormatter;
+  result = sbWindowsFormatter::New(&windowsFormatter);
+  SB_WIN_ENSURE_SUCCESS(result, result);
   sbAutoIUnknown autoWindowsFormatter(windowsFormatter);
 
   // Get the requested interface.
