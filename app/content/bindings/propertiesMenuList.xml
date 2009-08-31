@@ -544,6 +544,9 @@
         <body><![CDATA[
           function disable(node)
           {
+            if (!(node instanceof Components.interfaces.nsIDOMElement))
+              return;
+
             if (node.localName == aTagName)
             {
               if (setDisabled)
