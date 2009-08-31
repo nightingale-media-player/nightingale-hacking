@@ -465,7 +465,7 @@ var DPW = {
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
     {
       localeKey = "device.status.progress_preparing_" + operationLocaleSuffix;
-    } if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
+    } else if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
       params[2] = SBFormattedString(
         "device.status.progress_header_transcoding_percent_complete",
         [this._itemProgress.intValue]);
