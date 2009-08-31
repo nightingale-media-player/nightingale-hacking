@@ -29,19 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-MIDL_GENERATED_FILES = dlldata.c \
-                       sbIWindowsFormatter.h \
-                       sbIWindowsFormatter.tlb \
-                       sbIWindowsFormatter_i.c \
-                       sbIWindowsFormatter_p.c \
-                       $(NULL)
-
-GARBAGE += $(MIDL_GENERATED_FILES)
+MIDL_SRCS = $(srcdir)/sbIWindowsFormatter.midl \
+            $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-
-$(MIDL_GENERATED_FILES): sbIWindowsFormatter.midl
-	$(MIDL) $(MIDL_FLAGS) -Oicf $(srcdir)/sbIWindowsFormatter.midl
-
-export:: $(MIDL_GENERATED_FILES)
-

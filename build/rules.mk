@@ -326,6 +326,30 @@ ifneq (,$(XPIDL_MODULE))
 endif
 
 #------------------------------------------------------------------------------
+# Rules for Microsoft IDL compilation compilation
+#------------------------------------------------------------------------------
+#
+# MIDL_SRCS - a list of idl files to turn into header and typelib files
+# MIDL_GENERATED_FILES - an override to the default list of midl generated
+#                        files (mostly affects dependency generation)
+#
+
+MIDL_GENERATED_FILES ?= $(notdir $(MIDL_SRCS:.midl=.h) \
+                                 $(MIDL_SRCS:.midl=.tlb) \
+                                 $(MIDL_SRCS:.midl=_i.c) \
+                                 $(MIDL_SRCS:.midl=_p.c) \
+                                 $(NULL) )
+
+ALL_TRASH += $(MIDL_GENERATED_FILES) \
+             $(if $(MIDL_SRCS), dlldata.c) \
+             $(NULL)
+
+dlldata.c %.h %.tlb %_i.c %_p.c: %.midl
+	$(MIDL) $(MIDL_FLAGS) -Oicf $^
+
+export:: $(MIDL_GENERATED_FILES)
+
+#------------------------------------------------------------------------------
 # Common compiler flags
 #------------------------------------------------------------------------------
 
