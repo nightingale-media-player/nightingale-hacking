@@ -536,6 +536,14 @@ TrackEditorArtwork.prototype = {
     
     // update the check box to indicate we haved edited the property
     this._checkbox.checked = TrackEditor.state.isPropertyEdited(this.property);
+
+    // Toggle the "Add..." button depending on the read-only state.
+    if (TrackEditor.state.isDisabled) {
+      this._button.setAttribute("disabled", "true");
+    }
+    else {
+      this._button.removeAttribute("disabled");
+    }
   }
 }
 
