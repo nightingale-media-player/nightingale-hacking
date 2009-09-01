@@ -389,6 +389,11 @@ fi
 _SAVE_CFLAGS=$CFLAGS
 _SAVE_CXXFLAGS=$CXXFLAGS
 
+#
+# Must use gcc 4.0 on Mac OS X with the 10.4u SDK.
+# NOTE: gcc4.0 is the default compiler on 10.5 but not on 10.6 and we still
+#       support back to 10.4. See bug 17752 for juicy details.
+#
 case "$SB_PLATFORM" in
   windows)
   AC_PROG_CC(cl gcc)
@@ -397,6 +402,10 @@ case "$SB_PLATFORM" in
   solaris)
   AC_PROG_CC(cc gcc)
   AC_PROG_CXX(CC g++)
+  ;;
+  macosx)
+  AC_PROG_CC(gcc-4.0 gcc)
+  AC_PROG_CXX(g++-4.0 g++)
   ;;
   *)
   AC_PROG_CC
