@@ -116,10 +116,6 @@ listheader
   display: -moz-groupbox;
 }
 
-#manage_media_format_dir_formatter > hbox,
-#manage_media_format_file_formatter > hbox {
-  min-height: 5em;
-}
 #manage_media_format_dir_file .fileFieldLabel,
 #manage_media_format_dir_formatter > hbox > vbox > textbox {
   background: none;
