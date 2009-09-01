@@ -571,6 +571,18 @@ else
    OUR_WIN32_RC_INCLUDES = $(addsuffix $(CFLAGS_INCLUDE_SUFFIX),$(addprefix $(CFLAGS_INCLUDE_PREFIX),$(WIN32_RC_EXTRA_INCLUDES) $(WIN32_RC_DEFAULT_INCLUDES)))
 endif
 
+ifeq (windows,$(SB_PLATFORM))
+   ifdef WIN32_RC_OBJS
+      OUR_WIN32_RC_OBJS = $(WIN32_RC_OBJS)
+   else
+      OUR_WIN32_RC_OBJS = $(WIN32_RC_SRCS:.rc=.res)
+   endif
+
+   DYNAMIC_LIB_EXTRA_OBJS += $(OUR_WIN32_RC_OBJS)
+endif
+
+export:: $(OUR_WIN32_RC_OBJS)
+
 %.res: %.rc
 	$(RC) $(COMPILER_OUTPUT_FLAG) $(OUR_WIN32_RC_FLAGS) $(OUR_WIN32_RC_DEFS) $(OUR_WIN32_RC_INCLUDES) $<
 
@@ -581,7 +593,9 @@ endif
 # DYNAMIC_LIB_OBJS           - an override to the defaut list of object files 
 #                              to link into the shared lib
 #
-# DYNAMIC_LIB_EXTRA_OBJS     - a list of extra objects to add to the library
+# DYNAMIC_LIB_EXTRA_OBJS     - a list of extra objects to add to the library 
+#                              (mostly used for Win32 resource file inclusion 
+#                              right now)
 #
 # DYNAMIC_LIB_IMPORT_PATHS   - an overide to the default list of libs to link
 # DYNAMIC_LIB_IMPORT_EXTRA_PATHS   - a list of paths to search for libs
@@ -616,10 +630,6 @@ else
                           $(CMM_SRCS:.mm=$(OBJ_SUFFIX)) \
                           $(DYNAMIC_LIB_EXTRA_OBJS) \
                           $(NULL)
-
-   ifeq (windows,$(SB_PLATFORM))
-      OUR_DYNAMIC_LIB_OBJS += $(WIN32_RC_SRCS:.rc=.res)
-   endif
 endif
 
 ifdef DYNAMIC_LIB_FLAGS

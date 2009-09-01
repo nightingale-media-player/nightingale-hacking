@@ -47,7 +47,8 @@ CPP_EXTRA_INCLUDES += \
  $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
- components/moz/system/windows/src/static/sbWindowsUtils
+ components/moz/system/windows/src/static/sbWindowsUtils \
+ $(NULL)
 
 WIN32_RC_SRCS = sbWindowsFormatter.rc \
                 $(NULL)
