@@ -43,6 +43,7 @@
 #include <nsIRunnable.h>
 #include <nsISupportsImpl.h>
 #include <nsITimer.h>
+#include <nsTArray.h>
 #include <prlock.h>
 
 #include <sbILibraryChangeset.h>
@@ -595,6 +596,17 @@ protected:
    */
   nsresult GetDeviceSettingsDocument
              (nsIFile*               aDeviceSettingsFile,
+              class nsIDOMDocument** aDeviceSettingsDocument);
+
+  /**
+   * Return in aDeviceSettingsDocument the device settings contained in
+   * aDeviceSettingsContent.
+   *
+   * \param aDeviceSettingsContent  Device settings content.
+   * \param aDeviceSettingsDocument Returned device settings document object.
+   */
+  nsresult GetDeviceSettingsDocument
+             (nsTArray<PRUint8>&     aDeviceSettingsContent,
               class nsIDOMDocument** aDeviceSettingsDocument);
 
 

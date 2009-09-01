@@ -34,6 +34,7 @@
 
 #include <prtime.h>
 
+#include <nsIDOMParser.h>
 #include <nsIFileURL.h>
 #include <nsIPropertyBag2.h>
 #include <nsITimer.h>
@@ -2012,6 +2013,30 @@ sbBaseDevice::GetDeviceSettingsDocument
   rv = xmlHttpRequest->Send(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = xmlHttpRequest->GetResponseXML(aDeviceSettingsDocument);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetDeviceSettingsDocument
+                (nsTArray<PRUint8>& aDeviceSettingsContent,
+                 nsIDOMDocument**   aDeviceSettingsDocument)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aDeviceSettingsDocument);
+
+  // Function variables.
+  nsresult rv;
+
+  // Parse the device settings document from the content.
+  nsCOMPtr<nsIDOMParser> domParser = do_CreateInstance(NS_DOMPARSER_CONTRACTID,
+                                                       &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = domParser->ParseFromBuffer(aDeviceSettingsContent.Elements(),
+                                  aDeviceSettingsContent.Length(),
+                                  "text/xml",
+                                  aDeviceSettingsDocument);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
