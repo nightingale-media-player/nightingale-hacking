@@ -849,7 +849,13 @@ sbGStreamerTranscode::GetContainer(nsAString &container, nsIArray *properties,
       const char *capsString = SupportedContainers[i].gstCapsName;
       const char *gstElementName = FindMatchingElementName (
               capsString, "Muxer");
-      if (!gstElementName)
+      if (!gstElementName) {
+        // Muxers for 'tag formats' like id3 are sometimes named 'Formatter'
+        // rather than 'Muxer'. Search for that too.
+        gstElementName = FindMatchingElementName (capsString, "Formatter");
+      }
+
+      if (!gstElementName) 
         continue;
 
       gstMuxer.Append(gstElementName);
