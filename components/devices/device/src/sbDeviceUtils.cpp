@@ -318,7 +318,7 @@ nsresult sbDeviceUtils::GetMediaItemByDevicePersistentId
   PRUint32 length;
   rv = mediaItemList->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
-  for (PRInt32 i = 0; i < length; i++) {
+  for (PRUint32 i = 0; i < length; i++) {
     // get the next media item
     nsCOMPtr<sbIMediaItem> mediaItem;
     rv = mediaItemList->QueryElementAt(i,
@@ -386,6 +386,54 @@ nsresult sbDeviceUtils::QueryUserSpaceExceeded
   NS_ENSURE_TRUE(query, NS_ERROR_OUT_OF_MEMORY);
   rv = query->Query(aDevice, aLibrary, aSpaceNeeded, aSpaceAvailable, aAbort);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::QueryUserAbortRip(PRBool* aAbort)
+{
+  NS_ENSURE_ARG_POINTER(aAbort);
+
+  nsresult rv;
+  
+  // By default assume the user says yes.
+  *aAbort = PR_TRUE;
+  
+  // Get a prompter that does not wait for a window.
+  nsCOMPtr<sbIPrompter> prompter =
+                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prompter->SetWaitForWindow(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the prompt title.
+  nsAString const& title =
+    SBLocalizedString("device.dialog.cddevice.stopripping.title");
+
+  // Get the prompt message.
+  nsAString const& message =
+    SBLocalizedString("device.dialog.cddevice.stopripping.msg");
+
+  // Configure the buttons.
+  PRUint32 buttonFlags = nsIPromptService::STD_YES_NO_BUTTONS;
+
+  // Query the user if they wish to cancel the rip or not.
+  PRInt32 buttonPressed;
+  rv = prompter->ConfirmEx(nsnull,
+                           title.BeginReading(),
+                           message.BeginReading(),
+                           buttonFlags,
+                           nsnull,                      // "Yes" Button
+                           nsnull,                      // "No" Button
+                           nsnull,                      // No button 2.
+                           nsnull,                      // No check message.
+                           nsnull,                      // No check result.
+                           &buttonPressed);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Yes = 0, No = 1
+  *aAbort = (buttonPressed == 0);
 
   return NS_OK;
 }

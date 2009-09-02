@@ -41,6 +41,7 @@
 
 #include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
+#include <sbDeviceUtils.h>
 #include <sbIDeviceEvent.h>
 #include <sbILibraryManager.h>
 #include <sbProxiedComponentManager.h>
@@ -675,6 +676,24 @@ NS_IMETHODIMP
 sbCDDevice::CancelRequests()
 {
   nsresult rv;
+
+  // Check if we are ripping, if we are pop up a dialog to ask the user if
+  // they really want to stop ripping.
+  nsCOMPtr<sbIDeviceStatus> status;
+  rv = GetCurrentStatus(getter_AddRefs(status));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRUint32 currentState;
+  rv = status->GetCurrentState(&currentState);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (currentState == sbIDevice::STATE_TRANSCODE) {
+    PRBool abortRip;
+    rv = sbDeviceUtils::QueryUserAbortRip(&abortRip);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!abortRip) {
+      return NS_OK;
+    }
+  }
 
   // Convert the device ID to a string.
   char deviceIDString[NSID_LENGTH];

@@ -145,7 +145,7 @@ sbCDDevice::ReqHandleRequestAdded()
         break;
 
         case TransferRequest::REQUEST_READ :
-          mStatus.ChangeState(STATE_COPYING);
+          mStatus.ChangeState(STATE_TRANSCODE);
           ReqHandleRead(request);
           break;
 

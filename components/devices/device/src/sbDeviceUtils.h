@@ -153,6 +153,16 @@ public:
                      /* out */ PRBool*           aAbort);
 
   /**
+   * Ask the user if they wish to abort ripping the cd, this will be called
+   * when the user cancels the rip.
+   *
+   * \param aDevice         [in] Target device of operation
+   * \param aAbort          [out] True if user selected to stop rip.
+   */
+
+  static nsresult QueryUserAbortRip(PRBool*     aAbort);
+  
+  /**
    * Check if the device specified by aDevice is linked to the local sync
    * partner.  If it is, return true in aIsLinkedLocally; otherwise, return
    * false.  If aRequestPartnerChange is true and the device is not linked
