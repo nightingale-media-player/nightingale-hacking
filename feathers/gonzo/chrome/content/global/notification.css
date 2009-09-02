@@ -31,8 +31,8 @@ notification > .notification-inner {
   -moz-appearance: none;
   list-style-image: url("chrome://songbird/skin/notification-bar/button-close.png") !important;
   -moz-image-region: rect(0px 12px 12px 0px);
-  max-height:12px;
-  max-width:12px;
+  min-height:12px;
+  min-width:12px;
   padding:0px !important;
   border:none;
   background-image:none;
