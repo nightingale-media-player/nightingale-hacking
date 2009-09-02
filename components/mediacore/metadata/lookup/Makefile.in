@@ -33,7 +33,9 @@ SUBDIRS = manager \
           freedb \
           $(NULL)
 
-ifeq (1,$(SB_ENABLE_TESTS))
+# Only build the test provider if we're doing a developer or nightly build
+# (for QA).  We don't want to ship the test provider with the release builds.
+ifndef SONGBIRD_OFFICIAL
    SUBDIRS += testprovider
 endif
 
