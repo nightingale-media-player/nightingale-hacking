@@ -31,7 +31,9 @@ function onLoad() {
     .getService(Ci.sbIGStreamerService);
 
   var audioDecoders = [];
+  var audioEncoders = [];
   var videoDecoders = [];
+  var videoEncoders = [];
   var demuxers = [];
 
   var handler = {
@@ -73,8 +75,14 @@ function onLoad() {
         if (c.decoder && c.audio) {
           audioDecoders.push(o);
         }
+        if (c.encoder && c.audio) {
+          audioEncoders.push(o);
+        }
         if (c.decoder && c.video) {
           videoDecoders.push(o);
+        }
+        if (c.encoder && c.video) {
+          videoEncoders.push(o);
         }
         if (c.demuxer) {
           demuxers.push(o);
@@ -143,7 +151,9 @@ function onLoad() {
   }
 
   writeList("Audio Decoders", audioDecoders);
+  writeList("Audio Encoders", audioEncoders);
   writeList("Video Decoders", videoDecoders);
+  writeList("Video Encoders", videoEncoders);
   writeList("Demuxers", demuxers);
 }
 
