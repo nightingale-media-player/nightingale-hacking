@@ -77,6 +77,8 @@
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
 #include <sbITranscodeManager.h>
+#include <sbITranscodeAlbumArt.h>
+#include <sbArray.h>
 #include <sbLocalDatabaseCID.h>
 #include <sbPrefBranch.h>
 #include <sbMemoryUtils.h>
@@ -4082,7 +4084,6 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mCapabilitiesRegistrar) {
-
     // This may return NS_ERROR_NOT_AVAILABLE or null if no transcoding is
     // required
     rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, this, aProfile);
@@ -4091,6 +4092,115 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   }
   // No acceptable transcoding profile available
   return NS_ERROR_NOT_AVAILABLE;
+}
+
+/**
+ * Process a batch in preparation for transcoding, figuring out which items
+ * need transcoding.
+ */
+
+nsresult
+sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
+{
+  nsresult rv;
+
+  if (aBatch.empty()) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIArray> imageFormats;
+  rv = GetSupportedAlbumArtFormats(getter_AddRefs(imageFormats));
+  // No album art formats isn't fatal.
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Iterate over the batch getting the transcode profiles if needed.
+  Batch::iterator end = aBatch.end();
+  Batch::iterator iter = aBatch.begin();
+  while (iter != end) {
+    // Check for abort.
+    if (IsRequestAbortedOrDeviceDisconnected()) {
+      return SB_ERROR_REQUEST_ABORTED;
+    }
+
+    TransferRequest * const request = *iter;
+    rv = FindTranscodeProfile(request->item,
+                              &request->transcodeProfile);
+    // Treat no profiles available as not needing transcoding
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    if (request->transcodeProfile)
+      request->needsTranscoding = PR_TRUE;
+
+    request->albumArt = do_CreateInstance(
+            SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // It's ok for this to fail; album art is optional
+    rv = request->albumArt->Init(request->item, imageFormats);
+    if (NS_FAILED(rv)) {
+      request->albumArt = 0;
+    }
+
+    ++iter;
+  }
+
+  return NS_OK;
+}
+
+static nsresult
+AddAlbumArtFormats(sbIDeviceCapabilities *aCapabilities,
+                   nsIMutableArray *aArray,
+                   PRUint32 numFormats,
+                   char **formats)
+{
+  nsresult rv;
+
+  for (PRUint32 i = 0; i < numFormats; i++) {
+    nsCOMPtr<nsISupports> formatType;
+    rv = aCapabilities->GetFormatType(NS_ConvertASCIItoUTF16(formats[i]),
+            getter_AddRefs(formatType));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIImageFormatType> constraints =
+        do_QueryInterface(formatType, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = aArray->AppendElement(constraints, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::GetSupportedAlbumArtFormats(nsIArray * *aFormats)
+{
+  nsresult rv;
+  nsCOMPtr<nsIMutableArray> formatConstraints =
+      do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceCapabilities> capabilities;
+  rv = GetCapabilities(getter_AddRefs(capabilities));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  char **formats;
+  PRUint32 numFormats;
+  rv = capabilities->GetSupportedFormats(sbIDeviceCapabilities::CONTENT_IMAGE,
+          &numFormats, &formats);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddAlbumArtFormats(capabilities, formatConstraints, numFormats, formats);
+  /* Ensure everything is freed here before potentially returning; no
+     magic destructors for this thing */
+  NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(numFormats, formats);
+  NS_ENSURE_SUCCESS (rv, rv);
+
+  NS_ADDREF (*aFormats = formatConstraints);
+  return NS_OK;
 }
 
 nsresult

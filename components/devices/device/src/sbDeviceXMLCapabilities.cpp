@@ -551,13 +551,6 @@ sbDeviceXMLCapabilities::ProcessImage(nsIDOMNode * aImageNode)
                              mimeType);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsString container;
-    rv = attributes.GetValue(NS_LITERAL_STRING("container"),
-                             container);
-    if (rv != NS_ERROR_NOT_AVAILABLE) { // not found error is ok, leave blank
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
     nsCOMPtr<nsIMutableArray> imageSizes =
       do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
                         &rv);
@@ -602,7 +595,7 @@ sbDeviceXMLCapabilities::ProcessImage(nsIDOMNode * aImageNode)
       do_CreateInstance(SB_IIMAGEFORMATTYPE_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = imageFormatType->Initialize(NS_ConvertUTF16toUTF8(container),
+    rv = imageFormatType->Initialize(NS_ConvertUTF16toUTF8(mimeType),
                                      imageSizes,
                                      widths,
                                      heights);

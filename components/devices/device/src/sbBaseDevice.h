@@ -43,6 +43,7 @@
 #include <nsIRunnable.h>
 #include <nsISupportsImpl.h>
 #include <nsITimer.h>
+#include <nsIFile.h>
 #include <nsTArray.h>
 #include <prlock.h>
 
@@ -60,6 +61,7 @@ class sbBaseDeviceMediaListListener;
 class sbIDeviceCapabilitiesRegistrar;
 class sbIDeviceLibrary;
 class sbITranscodeProfile;
+class sbITranscodeAlbumArt;
 
 /* Property used to force a sync diff. */
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
@@ -153,8 +155,11 @@ public:
                                         copied or transcoded to the device) */
     PRBool needsTranscoding;         /* if true, write item media needs to be
                                         transcoded */
-    nsCOMPtr<nsIArray> imageFormats; /* If non-null, array of supported image
-                                        formats we can transcode album art to */
+    nsCOMPtr<sbITranscodeAlbumArt> albumArt; /* Album art transcoding object,
+                                                or null if no album art 
+                                                transcoding should be done */
+    nsCOMPtr<nsIFile> temporaryFile; /* Temporary file for transcoding, if one
+                                        was used. */
 
     NS_DECL_ISUPPORTS
     /**
@@ -503,7 +508,6 @@ protected:
   PRUint32 mCapabilitiesRegistrarType;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
-
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -1084,6 +1088,23 @@ protected:
    */
   nsresult FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                 sbITranscodeProfile ** aProfile);
+
+  /**
+   * Prepare a batch for transcoding. This processes items in the batch and
+   * determines which of them require transcoding and/or album-art transcoding.
+   *
+   * \brief aBatch The batch to process
+   */
+  nsresult PrepareBatchForTranscoding(Batch & aBatch);
+
+  /* Return an array of sbIImageFormatType describing all the supported
+   * album art formats for the device.
+   * 
+   * The array may be empty; this should be interpreted as "unknown" rather than
+   * "album art is not supported"
+   */
+  nsresult GetSupportedAlbumArtFormats(nsIArray * *aFormats);
+
   /**
    * Gets the first request. This does not lock request queue
    * Iterator
