@@ -218,6 +218,11 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::
   return NS_OK;
 }
 
+/* For most of these, the file extension -> container format mapping is fairly
+   reliable, but the codecs can vary wildly. There is no way to do better
+   without actually looking inside the files. The codecs listed are usually the
+   most commonly found ones for this extension.
+ */
 sbExtensionToContentFormatEntry_t const
 MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* audio */
@@ -226,6 +231,7 @@ MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   { "aac",  "audio/aac",       "mov",  "aac",    sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "m4a",  "audio/aac",       "mov",  "aac",    sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "aa",   "audio/audible",   "",     "",       sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "oga",  "application/ogg", "ogg",  "flac",   sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "ogg",  "application/ogg", "ogg",  "vorbis", sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "flac", "audio/x-flac",    "",     "flac",   sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
   { "wav",  "audio/x-wav",     "wav",  "pcm-int",sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
