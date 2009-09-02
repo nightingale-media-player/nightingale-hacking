@@ -163,6 +163,7 @@ sbTestProvider.prototype = {
         // Return multiple TOCs found after 5 seconds
         this._timer.initWithCallback(this, 5000,
                                      Ci.nsITimerCallback.TYPE_ONE_SHOT);
+        break;
       default:
         dump("This is not a recognised disc.\n");
         break;
