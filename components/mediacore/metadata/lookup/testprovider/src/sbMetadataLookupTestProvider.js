@@ -54,6 +54,50 @@ var midnightRock = [
   {artist: "Skid Row", title: "I Remember You"}
   ];
 
+var incredibad = [
+  {artist: "The Lonely Island", title: "Who Said We're Wack?"},
+  {artist: "The Lonely Island", title: "Santana DVX (feat. E-40)"},
+  {artist: "The Lonely Island", title: "Jizz In My Pants"},
+  {artist: "The Lonely Island", title: "I'm On A Boat (feat. T-Pain)"},
+  {artist: "The Lonely Island", title: "Sax Man (feat. Jack Black)"},
+  {artist: "The Lonely Island", title: "Lazy Sunday (feat. Chris Parnell)"},
+  {artist: "The Lonely Island", title: "Normal Guy - Interlude"},
+  {artist: "The Lonely Island", title: "Boombox (feat. Julian Casablancas)"},
+  {artist: "The Lonely Island", title: "Shrooms - Interlude"},
+  {artist: "The Lonely Island", title: "Like A Boss"},
+  {artist: "The Lonely Island", title: "We Like Sports"},
+  {artist: "The Lonely Island", title: "Dreamgirl (feat. Norah Jones)"},
+  {artist: "The Lonely Island", title: "Ras Trent"},
+  {artist: "The Lonely Island", title: "Dick In A Box (feat. Justin Timberlake)"},
+  {artist: "The Lonely Island", title: "The Old Saloon - Interlude"},
+  {artist: "The Lonely Island", title: "Punch You In The Jeans"},
+  {artist: "The Lonely Island", title: "Space Olympics"},
+  {artist: "The Lonely Island", title: "Natalie's Rap (feat. Natalie Portman & Chris Parnell)"},
+  {artist: "The Lonely Island", title: "Incredibad"},
+  ];
+
+var notIncredibad = [
+  {artist: "Not The Lonely Island", title: "Fake Track 1"},
+  {artist: "Not The Lonely Island", title: "Fake Track 2"},
+  {artist: "Not The Lonely Island", title: "Fake Track 3"},
+  {artist: "Not The Lonely Island", title: "Fake Track 4"},
+  {artist: "Not The Lonely Island", title: "Fake Track 5"},
+  {artist: "Not The Lonely Island", title: "Fake Track 6"},
+  {artist: "Not The Lonely Island", title: "Fake Track 7"},
+  {artist: "Not The Lonely Island", title: "Fake Track 8"},
+  {artist: "Not The Lonely Island", title: "Fake Track 9"},
+  {artist: "Not The Lonely Island", title: "Fake Track 10"},
+  {artist: "Not The Lonely Island", title: "Fake Track 11"},
+  {artist: "Not The Lonely Island", title: "Fake Track 12"},
+  {artist: "Not The Lonely Island", title: "Fake Track 13"},
+  {artist: "Not The Lonely Island", title: "Fake Track 14"},
+  {artist: "Not The Lonely Island", title: "Fake Track 15"},
+  {artist: "Not The Lonely Island", title: "Fake Track 16"},
+  {artist: "Not The Lonely Island", title: "Fake Track 17"},
+  {artist: "Not The Lonely Island", title: "Fake Track 18"},
+  {artist: "Not The Lonely Island", title: "Fake Track 19"},
+  ];
+
 sbTestProvider.prototype = {
   classDescription : 'Songbird Test Metadata Lookup Service',
   classID : Components.ID('9e599632-1dd1-11b2-ab82-e0952e7285ce'),
@@ -76,6 +120,9 @@ sbTestProvider.prototype = {
     else if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 11 &&
         aTOC.leadOutTrackOffset == 225562)
       return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_U2;
+    else if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 19 &&
+        aTOC.leadOutTrackOffset == 190565)
+      return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INCREDIBAD;
     else
       throw Components.results.NS_ERROR_UNEXPECTED;
   },
@@ -111,12 +158,48 @@ sbTestProvider.prototype = {
         this._timer.initWithCallback(this, 180000,
                                      Ci.nsITimerCallback.TYPE_ONE_SHOT);
         break;
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INCREDIBAD:
+        // Test case 4: Incredibad
+        // Return multiple TOCs found after 5 seconds
+        this._timer.initWithCallback(this, 5000,
+                                     Ci.nsITimerCallback.TYPE_ONE_SHOT);
       default:
         dump("This is not a recognised disc.\n");
         break;
     }
 
     return this.job;
+  },
+
+  makeAlbum: function(albumToc, artistName, albumName, genre) {
+    // create the skeleton sbIMetadataAlbumDetail object
+    var a = new Object;
+    a.QueryInterface = XPCOMUtils.generateQI([Ci.sbIMetadataAlbumDetail]);
+    a.tracks = null;
+    a.properties =
+        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+           .createInstance(Ci.sbIMutablePropertyArray);
+
+    a.properties.appendProperty(SBProperties.genre, genre);
+    a.properties.appendProperty(SBProperties.artistName, artistName);
+    a.properties.appendProperty(SBProperties.albumName, albumName);
+
+    a.tracks = Cc["@mozilla.org/array;1"]
+        .createInstance(Ci.nsIMutableArray);
+    for (var i=0; i<albumToc.length; i++) {
+      var track = Cc[
+          "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          .createInstance(Ci.sbIMutablePropertyArray);
+      var trackInfo = albumToc[i];
+      track.appendProperty(SBProperties.artistName, trackInfo.artist);
+      track.appendProperty(SBProperties.trackName, trackInfo.title);
+      track.appendProperty(SBProperties.albumName, albumName);
+      track.appendProperty(SBProperties.genre, genre);
+      track.appendProperty(SBProperties.trackNumber, (i+1).toString());
+      a.tracks.appendElement(track, false);
+    }
+
+    return a;
   },
 
   notify: function (aTimer) {
@@ -132,36 +215,20 @@ sbTestProvider.prototype = {
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
     } else if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK)
     {
-      // create the skeleton sbIMetadataAlbumDetail object
-      var a = new Object;
-      a.QueryInterface = XPCOMUtils.generateQI([Ci.sbIMetadataAlbumDetail]);
-      a.tracks = null;
-      a.properties =
-          Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-             .createInstance(Ci.sbIMutablePropertyArray);
-
-      a.properties.appendProperty(SBProperties.genre, "Rock");
-      a.properties.appendProperty(SBProperties.artistName, "Various");
-      a.properties.appendProperty(SBProperties.albumName,
-                                  "Midnight Rock Disc 1");
-
-      a.tracks = Cc["@mozilla.org/array;1"]
-          .createInstance(Ci.nsIMutableArray);
-      for (var i=0; i<15; i++) {
-        var track = Cc[
-            "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-            .createInstance(Ci.sbIMutablePropertyArray);
-        var trackInfo = midnightRock[i];
-        track.appendProperty(SBProperties.artistName, trackInfo.artist);
-        track.appendProperty(SBProperties.trackName, trackInfo.title);
-        track.appendProperty(SBProperties.albumName, "Midnight Rock Disc 1");
-        track.appendProperty(SBProperties.genre, "Other");
-        track.appendProperty(SBProperties.trackNumber, (i+1).toString());
-        a.tracks.appendElement(track, false);
-      }
+      var a = this.makeAlbum(midnightRock, "Various", "Midnight Rock Disc 1",
+                             "Rock");
 
       // append this result & declare success
       this.job.appendResult(a);
+      this.job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
+    } else if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INCREDIBAD)
+    {
+      var a = this.makeAlbum(incredibad, "The Lonely Island", "Incredibad",
+                             "Comedy");
+      var b = this.makeAlbum(notIncredibad, "Not The Lonely Island",
+                             "Fake Incredibad", "Gospel");
+      this.job.appendResult(a);
+      this.job.appendResult(b);
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
     } else {
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);

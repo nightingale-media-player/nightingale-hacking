@@ -58,6 +58,9 @@
         <radio value="2"
                style="padding: 2px;"
                label="All That You Can't Leave Behind - U2" />
+        <radio value="3"
+               style="padding: 2px;"
+               label="Incredibad - The Lonely Island" />
       </radiogroup>
     </groupbox>
 

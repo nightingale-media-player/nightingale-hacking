@@ -120,6 +120,39 @@ function sbMakeAllThatYouCantLeaveBehind()
 
 //------------------------------------------------------------------------------
 //
+// Mock CD TOC "Incredibad" by The Lonely Island
+//
+//------------------------------------------------------------------------------
+
+function sbMakeIncredibad()
+{
+  var toc = newTOC(1, 19, 190565);
+
+  toc.addTocEntry(150, 76, 1);
+  toc.addTocEntry(5896, 155, 2);
+  toc.addTocEntry(17528, 151, 3);
+  toc.addTocEntry(28879, 156, 4);
+  toc.addTocEntry(40599, 126, 5);
+  toc.addTocEntry(50106, 139, 6);
+  toc.addTocEntry(60584, 64, 7);
+  toc.addTocEntry(65394, 193, 8);
+  toc.addTocEntry(79870, 34, 9);
+  toc.addTocEntry(82446, 106, 10);
+  toc.addTocEntry(90457, 123, 11);
+  toc.addTocEntry(99748, 193, 12);
+  toc.addTocEntry(114258, 126, 13);
+  toc.addTocEntry(123750, 161, 14);
+  toc.addTocEntry(135829, 65, 15);
+  toc.addTocEntry(140754, 167, 16);
+  toc.addTocEntry(153283, 175, 17);
+  toc.addTocEntry(166425, 149, 18);
+  toc.addTocEntry(177440, 179, 19);
+
+  return toc;
+}
+
+//------------------------------------------------------------------------------
+//
 // Mock CD service implementation.
 //
 //------------------------------------------------------------------------------
@@ -211,6 +244,9 @@ sbMockCDService.prototype =
         break;
       case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_U2:
         mockMediaTOC = sbMakeAllThatYouCantLeaveBehind();
+        break;
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INCREDIBAD:
+        mockMediaTOC = sbMakeIncredibad();
         break;
     }
 
