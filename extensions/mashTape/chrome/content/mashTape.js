@@ -2144,9 +2144,18 @@ mashTape.loadFlashDetail = function(el) {
 
 		// Provider specific listeners
 		youTubeListener: function(state) {
-			if (state != 0)
-				return;
-			flashWindow.mashTapeVideo.resumeSongbird();
+      switch (state) {
+        case 1: // playing
+        case 3: // buffering
+          flashWindow.mashTapeVideo.pauseSongbird();
+          break;
+        case 0: // done playing
+        case 2: // paused
+          flashWindow.mashTapeVideo.resumeSongbird();
+          break;
+        default:
+          break;
+      }
 		},
 		yahooListener: function(eventType, eventInfo) {
 			if (eventType != "done")
@@ -2175,8 +2184,7 @@ mashTape.loadFlashDetail = function(el) {
 	// 'onYouTubePlayerReady' which is invoked with the id of the object
 	flashWindow.onYouTubePlayerReady = function(id) {
 		var p = doc.getElementById("mTFlashObject");
-		p.addEventListener("onStateChange",
-				flashWindow.mashTapeVideo.youTubeListener);
+		p.addEventListener("onStateChange", "mashTapeVideo.youTubeListener");
 	}
 	
 	// MTV is hard-coded to look for a window-level function named
@@ -2240,7 +2248,6 @@ mashTape.loadFlashDetail = function(el) {
 	mashTape.log("Loading movie from: " + swfUrl, true);
 
 	swf.setAttribute("type", "application/x-shockwave-flash");
-	swf.setAttribute("onclick", "mashTapeVideo.pauseSongbird();");
 	swf.setAttribute("id", "mTFlashObject");
 	swf.setAttribute("name", "mTFlashObject");
 	swf.setAttribute("width", parseInt(width));
