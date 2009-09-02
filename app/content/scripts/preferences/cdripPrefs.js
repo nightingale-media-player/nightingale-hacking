@@ -88,9 +88,6 @@ var CDRipPrefsPane =
     for (var i=0; i<registrar.devices.length; i++) {
       var device = registrar.devices.queryElementAt(i, Ci.sbIDevice);
       var deviceType = device.parameters.getProperty("DeviceType");
-      if (deviceType == "CD")
-        deviceBusy = true;
-
       if (deviceType == "CD" && device.state != Ci.sbIDevice.STATE_IDLE)
       {
           deviceBusy = true;
