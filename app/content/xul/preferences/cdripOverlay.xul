@@ -1,29 +1,27 @@
 <?xml version="1.0"?>
-<!--
+<!-- 
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -44,7 +42,8 @@
 
 
   <prefpane id="paneCDRip"
-            onpaneload="CDRipPrefsPane.doPaneLoad();">
+            onpaneload="CDRipPrefsPane.doPaneLoad();"
+            onpaneunload="CDRipPrefsPane.doPaneUnload();">
 
     <preferences>
       <preference id="rip_format_pref"
@@ -68,50 +67,54 @@
                   type="bool" />
     </preferences>
 
-    <groupbox>
+    <notificationbox id="cdrip_notification_box" flex="1">
 
-      <!-- Format -->
-      <vbox>
-        <label value="&cdrip.prefpane.format;" />
-        <hbox>
-          <menulist id="rip-format-menulist"
-                    preference="rip_format_pref"
-                    width="100">
-            <menupopup flex="1">
-              <!-- TODO: Fill me out, see bug 17444 -->
-            </menupopup>
-          </menulist>
-        </hbox>
-      </vbox>
+      <groupbox>
 
-      <!-- Quality -->
-      <vbox>
-        <label value="&cdrip.prefpane.quality;" />
-        <hbox>
-          <menulist id="rip-quality-menulist"
-                    preference="rip_quality_pref"
-                    width="100">
-            <menupopup flex="1">
-              <!-- TODO: Fill me out, see bug 17444 -->
-            </menupopup>
-          </menulist>
-        </hbox>
-      </vbox>
+        <!-- Format -->
+        <vbox>
+          <label value="&cdrip.prefpane.format;" />
+          <hbox>
+            <menulist id="rip-format-menulist"
+                      preference="rip_format_pref"
+                      width="100">
+              <menupopup flex="1">
+                <!-- TODO: Fill me out, see bug 17444 -->
+              </menupopup>
+            </menulist>
+          </hbox>
+        </vbox>
 
-      <vbox>
-        <spacer height="10" />
+        <!-- Quality -->
+        <vbox>
+          <label value="&cdrip.prefpane.quality;" />
+          <hbox>
+            <menulist id="rip-quality-menulist"
+                      preference="rip_quality_pref"
+                      width="100">
+              <menupopup flex="1">
+                <!-- TODO: Fill me out, see bug 17444 -->
+              </menupopup>
+            </menulist>
+          </hbox>
+        </vbox>
 
-        <!-- Eject after complete checkbox -->
-        <checkbox id="eject-after-rip-checkbox"
-                  preference="rip_oncomplete_autoeject_pref"
-                  label="&cdrip.prefpane.eject_after_rip;" />
+        <vbox>
+          <spacer height="10" />
 
-        <!-- Play system alert after rip checkbox -->
-        <checkbox id="soundalert-after-rip-checkbox"
-                  preference="rip_oncomplete_notifysound"
-                  label="&cdrip.prefpane.soundalert_after_rip;" />
-      </vbox>
-    </groupbox>
+          <!-- Eject after complete checkbox -->
+          <checkbox id="eject-after-rip-checkbox"
+                    preference="rip_oncomplete_autoeject_pref"
+                    label="&cdrip.prefpane.eject_after_rip;" />
+
+          <!-- Play system alert after rip checkbox -->
+          <checkbox id="soundalert-after-rip-checkbox"
+                    preference="rip_oncomplete_notifysound"
+                    label="&cdrip.prefpane.soundalert_after_rip;" />
+        </vbox>
+      </groupbox>
+    
+    </notificationbox>
 
   </prefpane>
 </overlay>

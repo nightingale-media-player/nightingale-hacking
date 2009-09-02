@@ -1,4 +1,3 @@
-/* vim: set sw=2 :miv */
 /*
  *=BEGIN SONGBIRD GPL
  *
@@ -22,7 +21,6 @@
  *
  *=END SONGBIRD GPL
  */
-
 
 // Self imports.
 #include "sbCDDevice.h"
@@ -125,9 +123,17 @@ sbCDDevice::ReqHandleRequestAdded()
   // is being accessed.
   sbDeviceStatusAutoState autoState(&mStatus, STATE_IDLE);
 
+  // Snapshot the preferences to be used by the operations in this batch
+  sbPrefBranch prefBranch(PREF_CDDEVICE_RIPBRANCH, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mPrefAutoEject = prefBranch.GetBoolPref(PREF_CDDEVICE_AUTOEJECT, PR_FALSE);
+  mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
+                                            PR_FALSE);
+  mPrefRipFormat = prefBranch.GetIntPref(PREF_CDDEVICE_RIPFORMAT, PR_FALSE);
+  mPrefRipQuality = prefBranch.GetIntPref(PREF_CDDEVICE_RIPQUALITY, PR_FALSE);
+
   // If we're not waiting and the batch isn't empty process the batch
   while (!requestBatch.empty()) {
-
     // Process each request in the batch
     Batch::iterator const end = requestBatch.end();
     Batch::iterator iter = requestBatch.begin();
@@ -797,11 +803,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   // AutoEject.
   if (aRequest->batchIndex == aRequest->batchCount) {
     // Check the preferences to see if we should eject
-    sbPrefBranch prefBranch(PREF_CDDEVICE_COMPLETE_BRANCH, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    
-    PRBool autoEject = prefBranch.GetBoolPref(PREF_CDDEVICE_AUTOEJECT, PR_FALSE);
-    if (autoEject) {
+    if (mPrefAutoEject) {
       // Since we successfully ripped all selected tracks and the user has
       // the autoEject preference set, we can eject now.
       rv = Eject();
