@@ -65,6 +65,11 @@
                   prefid="rip_oncomplete_notifysound"
                   name="songbird.cdrip.oncomplete.notifysound"
                   type="bool" />
+
+      <preference id="rip_cdlookup_provider"
+                  predif="rip_cdlookup_provider"
+                  name="metadata.lookup.default_provider"
+                  type="string" />
     </preferences>
 
     <notificationbox id="cdrip_notification_box" flex="1">
@@ -113,6 +118,27 @@
                     label="&cdrip.prefpane.soundalert_after_rip;" />
         </vbox>
       </groupbox>
+
+      <groupbox>
+        <caption label="&cdrip.prefpane.providers.title;" />
+        <hbox align="start">
+          <hbox flex="0">
+            <menulist id="provider-list"
+                      preference="rip_cdlookup_provider"
+                      width="100" flex="0">
+              <menupopup id="provider-popup" flex="0"
+                         oncommand="CDRipPrefsPane.providerChanged(event)">
+              </menupopup>
+            </menulist>
+          </hbox>
+
+          <hbox flex="1">
+            <description id="provider-description"
+                         width="0" flex="1" />
+          </hbox>
+        </hbox>
+      </groupbox>
+
     
     </notificationbox>
 

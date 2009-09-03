@@ -73,6 +73,37 @@ var CDRipPrefsPane =
                                   .getBranch("songbird.cdrip.")
                                   .QueryInterface(Ci.nsIPrefBranch2);
     CDRipPrefsPane.prefBranch.addObserver("", CDRipPrefsPane, false);
+
+    // initialise the list of metadatalookup providers
+    var provList = document.getElementById("provider-list");
+    var provPopup = document.getElementById("provider-popup");
+    var catMgr = Cc["@mozilla.org/categorymanager;1"]
+                 .getService(Ci.nsICategoryManager);
+    var e = catMgr.enumerateCategory('metadata-lookup');
+    var defaultProvider =
+              Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+                .getService(Ci.sbIMetadataLookupManager)
+                .defaultProvider.name;
+
+    this.providerDescriptions = new Array();
+    while (e.hasMoreElements()) {
+      var key = e.getNext().QueryInterface(Ci.nsISupportsCString);
+      var contract = catMgr.getCategoryEntry('metadata-lookup', key);
+      try {
+        var provider = Cc[contract].getService(Ci.sbIMetadataLookupProvider);
+        var provMenuItem = document.createElement("menuitem");
+        provMenuItem.setAttribute("label", provider.name);
+        provMenuItem.setAttribute("value", provider.name);
+        provPopup.appendChild(provMenuItem);
+        if (provider.name == defaultProvider) {
+          provList.selectedItem = provMenuItem;
+          this.setProviderDescription(provider.description);
+        }
+        this.providerDescriptions[provider.name] = provider.description;
+      } catch (e) {
+        dump("Exception in CD Rip prefs pane: " + e + "\n");
+      }
+    }
   },
 
   doPaneUnload: function CDRipPrefsPane_doPaneUnload() {
@@ -105,5 +136,17 @@ var CDRipPrefsPane =
                                   []);
       this.warningShown = true;
     }
+  },
+
+  providerChanged: function CDRipPrefsPane_providerChanged(ev) {
+    var provName = ev.target.value;
+    this.setProviderDescription(this.providerDescriptions[provName]);
+  },
+
+  setProviderDescription: function CDRipPrefsPane_setProviderDescription(txt) {
+    var provDescr = document.getElementById("provider-description");
+    while (provDescr.firstChild)
+      provDescr.removeChild(provDescr.firstChild);
+    provDescr.appendChild(document.createTextNode(txt));
   },
 }
