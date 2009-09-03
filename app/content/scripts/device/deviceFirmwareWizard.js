@@ -109,7 +109,7 @@ var deviceFirmwareWizard = {
     switch(currentPage.id) {
       case "device_firmware_check": {
         this._currentOperation = "checkforupdate";
-        var self = this;
+        let self = this;
         setTimeout(function() {
             self._deviceFirmwareUpdater.checkForUpdate(self._device, self);
           }, 0);
@@ -138,7 +138,8 @@ var deviceFirmwareWizard = {
           Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
             .getService(Ci.sbIDeviceManager2);
         
-        deviceManager.addEventListener(this);
+        let self = this;
+        deviceManager.addEventListener(self);
         
         let handler = 
           this._deviceFirmwareUpdater.getActiveHandler(this._device);
@@ -464,19 +465,39 @@ var deviceFirmwareWizard = {
     switch(aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
         if(this._waitingForDeviceReconnect) {
-
-          this._waitingForDeviceReconnect = false;
-          
-          let deviceManager = 
-            Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-              .getService(Ci.sbIDeviceManager2);
-        
-          deviceManager.removeEventListener(this);
-          
           this._device = aEvent.data.QueryInterface(Ci.sbIDevice);
-          this._deviceFirmwareUpdater.continueUpdate(this._device);
+          
+          let criticalFailure = false;
+          let continueSuccess = false;
+          
+          try {
+            var self = this;
+            continueSuccess = 
+              this._deviceFirmwareUpdater.continueUpdate(self._device, self);
+          }
+          catch(e) {
+            criticalFailure = true;
+          }          
 
-          this.wizardElem.goTo("device_firmware_wizard_download_page");
+          if(continueSuccess || criticalFailure) {
+            this._waitingForDeviceReconnect = false;
+          
+            let deviceManager = 
+              Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                .getService(Ci.sbIDeviceManager2);
+        
+            deviceManager.removeEventListener(this);
+
+            if(criticalFailure) {
+              // We're not recovering from this one, go to the error page.
+              this.wizardElem.goTo("device_firmware_install_error_page");
+            }
+            else {
+              // Business as usual, download the new firmware and proceed
+              // with the installation.
+              this.wizardElem.goTo("device_firmware_wizard_download_page");            
+            }
+          }
         }
       }
       break;

@@ -33,15 +33,16 @@
   <menupopup id="menu_ToolsPopup"> 
 
     <!-- Add a menu item -->
-    <menuitem id="mockcdcontroller-showcontroller-menuitem"
-            label="Show Mock CD Controller" 
-            insertafter="devToolsSeparator"
-            command="mockcdcontroller-showcontroller-cmd" />
-
     <menuitem id="mockdevicecontroller-showcontroller-menuitem"
               label="Show Mock Device Controller"
+              insertafter="devToolsSeparator"
               command="mockdevicecontroller-showcontroller-cmd" />
-     
+
+    <menuitem id="mockcdcontroller-showcontroller-menuitem"
+              label="Show Mock CD Controller"
+              insertafter="devToolsSeparator"
+              command="mockcdcontroller-showcontroller-cmd" />
+
   </menupopup>
 
 </overlay>

@@ -139,6 +139,32 @@ sbMockDeviceFirmwareHandler::OnCanUpdate(sbIDevice *aDevice,
   return NS_OK;
 }
 
+/*virtual*/ nsresult 
+sbMockDeviceFirmwareHandler::OnRebind(sbIDevice *aDevice,
+                                      sbIDeviceEventListener *aListener,
+                                      PRBool *_retval)
+{
+  PRBool canHandleDevice = PR_FALSE;
+  
+  *_retval = PR_FALSE;
+  
+  nsresult rv = OnCanHandleDevice(aDevice, &canHandleDevice);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(canHandleDevice) {
+    rv = Unbind();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = Bind(aDevice, aListener);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    *_retval = PR_TRUE;
+  }
+  
+  return NS_OK;
+}
+
+
 /*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnCancel()
 {

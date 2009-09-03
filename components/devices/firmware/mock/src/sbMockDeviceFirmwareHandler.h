@@ -47,6 +47,9 @@ public:
                                      PRBool *_retval);
   virtual nsresult OnCanUpdate(sbIDevice *aDevice, 
                                PRBool *_retval);
+  virtual nsresult OnRebind(sbIDevice *aDevice,
+                          sbIDeviceEventListener *aListener,
+                          PRBool *_retval);
   virtual nsresult OnCancel();
   virtual nsresult OnRefreshInfo();
   virtual nsresult OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);

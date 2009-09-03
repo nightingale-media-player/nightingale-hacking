@@ -37,7 +37,7 @@
 <dialog xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         id="mock-device-controller-dialog" 
         title="Mock Device Controller 9000"
-        onload="DialogController.onDialogLoad();"
+        onload="DeviceDialogController.onDialogLoad();"
         buttons="accept"
         defaultButton="accept"
         buttonlabelaccept="Close"
@@ -51,19 +51,33 @@
         <button id="mock-device-cfu-button"
                 label="Enable Fail on CheckForUpdatedFirmware"
                 style="width: 260px;"
-                onclick="DialogController.onMockDeviceCheckForUpdateButton();"/>
+                onclick="DeviceDialogController.onMockDeviceCheckForUpdateButton();"/>
+        
+        <!-- We don't support making downloads fail at this time. 
+             Talk to Aus if you want to know why. -->
+        <!--
         <button id="mock-device-download-button"
                 label="Enable Fail on DownloadNewFirmware"
                 style="width: 260px;"
-                onclick="DialogController.onMockDeviceDownloadButton();"/>
+                onclick="DeviceDialogController.onMockDeviceDownloadButton();"/>
+        -->
+
+        <button id="mock-device-write-button"
+                label="Enable Fail on WritingNewFirmware"
+                style="width: 260px;"
+                onclick="DeviceDialogController.onMockDeviceWriteButton();"/>
         <button id="mock-device-install-button"
                 label="Enable Fail on InstallNewFirmware"
                 style="width: 260px;"
-                onclick="DialogController.onMockDeviceInstallButton();"/>
+                onclick="DeviceDialogController.onMockDeviceInstallButton();"/>
+        <button id="mock-device-recovery-button"
+                label="Enable RecoveryModeRequired on Device"
+                style="width: 260px;"
+                onclick="DeviceDialogController.onMockDeviceRecoveryButton();"/>
         <button id="mock-device-busy-button"
                 label="Make Mock Device Busy"
                 style="width: 260px;"
-                onclick="DialogController.onMockDeviceBusyButton();"/>
+                onclick="DeviceDialogController.onMockDeviceBusyButton();"/>
       </vbox>
     </groupbox>
 
@@ -73,7 +87,7 @@
         <button id="mock-device-connect-button"
                 label="Add and Connect Mock Device"
                 style="width: 160px;"
-                onclick="DialogController.onMockDeviceConnectButton();"/>
+                onclick="DeviceDialogController.onMockDeviceConnectButton();"/>
       </vbox>
     </groupbox>
 
