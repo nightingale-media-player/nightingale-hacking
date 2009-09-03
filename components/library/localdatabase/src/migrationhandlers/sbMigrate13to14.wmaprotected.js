@@ -69,6 +69,16 @@ sbLibraryMigration.prototype = {
   fromVersion: FROM_VERSION,
   toVersion: TO_VERSION,
   migrate: function sbLibraryMigration_migrate(aLibrary) {
+    if (!("@songbirdnest.com/Songbird/MetadataHandler/WMA;1" in Cc)) {
+      // no WMA metadata handler - nothing to do here
+      var query = this.createMigrationQuery(aLibrary);
+      query.addQuery("commit");
+      query.setAsyncQuery(false);
+      if (query.execute() != 0) {
+        throw("Query failed: " + query.getLastError());
+      }
+      return;
+    }
     try{
       this.startNotificationTimer();
       this._databaseGUID = aLibrary.databaseGuid;
