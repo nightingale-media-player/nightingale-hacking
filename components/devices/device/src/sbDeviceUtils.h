@@ -42,6 +42,18 @@ class nsIFile;
 class nsIMutableArray;
 
 /**
+ * Map entry figuring out the container format and codec given an extension or
+ * mime type
+ */
+struct sbExtensionToContentFormatEntry_t {
+  char const * Extension;
+  char const * MimeType;
+  char const * ContainerFormat;
+  char const * Codec;
+  PRUint32 Type;
+};
+
+/**
  * Utilities to aid in implementing devices
  */
 class sbDeviceUtils
@@ -194,7 +206,64 @@ public:
    * Determines if the device given supports playlists
    */
   static bool ArePlaylistsSupported(sbIDevice * aDevice);
+
+  /**
+   * \brief For a media item, get format information describing it (extension,
+   *        mime type, etc.
+   */
+  static nsresult GetFormatTypeForItem(
+                     sbIMediaItem * aItem,
+                     sbExtensionToContentFormatEntry_t & aFormatType,
+                     PRUint32 & aBitRate,
+                     PRUint32 & aSampleRate);
+
+  /**
+   * \brief Determine if an item needs transcoding
+   * \param aFormatType The format type mapping of the item
+   * \param aBitRate the bit rate of the item
+   * \param aDevice The device we're transcoding to
+   * \param aNeedsTranscoding where we put our flag denoting it needs or does
+   *        not need transcoding
+   */
+  static nsresult DoesItemNeedTranscoding(
+                    sbExtensionToContentFormatEntry_t & aFormatType,
+                    PRUint32 & aBitRate,
+                    PRUint32 & aSampleRate,
+                    sbIDevice * aDevice,
+                    bool & aNeedsTranscoding);
+
+  /**
+   * Returns a list of transcode profiles that the device supports
+   * \param aDevice the device to retrieve the profiles for.
+   * \param aProfiles the array of profiles that were found
+   * \return NS_OK if successful else some NS_ERROR value
+   */
+  static nsresult GetSupportedTranscodeProfiles(sbIDevice * aDevice,
+                                                nsIArray ** aProfiles);
+
+  /** For each transcoding profile property in aPropertyArray, look up a
+   *  preference in aDevice starting with aPrefNameBase, and set the property
+   *  value to the preference value if any.
+   */
+  static nsresult ApplyPropertyPreferencesToProfile(sbIDevice *aDevice,
+                                                    nsIArray *aPropertyArray,
+                                                    nsString aPrefNameBase);
+
+  /** Get the appropriate file extension for files ended with this profile.
+   */
+  static nsresult GetTranscodedFileExtension(sbITranscodeProfile *aProfile,
+                                             nsCString &aExtension);
+
+  /** Get the most-likely container type and codec type for a given mime type.
+   * Returns NS_ERROR_NOT_AVAILABLE if not known for this mime type
+   */
+  static nsresult GetCodecAndContainerForMimeType(nsCString aMimeType,
+                                                  nsCString &aContainer,
+                                                  nsCString &aCodec);
 };
 
+extern sbExtensionToContentFormatEntry_t const
+  MAP_FILE_EXTENSION_CONTENT_FORMAT[];
+extern PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH;
 
 #endif /* __SBDEVICEUTILS__H__ */

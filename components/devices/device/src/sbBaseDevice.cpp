@@ -97,6 +97,7 @@
 #include "sbProxyUtils.h"
 #include "sbStandardDeviceProperties.h"
 #include "sbStandardProperties.h"
+#include "sbVariantUtils.h"
 
 /*
  * To log this module, set the following environment variable:
@@ -4093,19 +4094,175 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
 
   nsresult rv;
 
-  rv = ProcessCapabilitiesRegistrars();
+  nsAutoString isDRMProtected;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
+                               isDRMProtected);
+  if (NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1")) {
+    // we can't have any transcoding profiles that support DRM
+    nsCOMPtr<nsIWritablePropertyBag2> bag =
+      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
+                                   SBLocalizedString("transcode.file.drmprotected"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
+                                     aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
+                                sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
+
+  // TODO: In the future, GetFormatTypeForItem should return a big complex
+  // object describing everything we need about an object, rather than this
+  // local magic lookup table entry.
+  sbExtensionToContentFormatEntry_t formatType;
+  PRUint32 bitRate = 0;
+  PRUint32 sampleRate = 0;
+  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
+                                           formatType,
+                                           bitRate,
+                                           sampleRate);
+  // Check for expected error, unable to find format type
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    return rv;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mCapabilitiesRegistrar) {
-    // This may return null if no transcoding is required,
-    // or NS_ERROR_NOT_AVAILABLE if it is but we don't have encoders etc.
-    rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, this, aProfile);
-    NS_ENSURE_SUCCESS(rv, rv);
-    TRACE(("%s: found a profile", __FUNCTION__));
+  bool needsTranscoding = false;
+  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
+                                              bitRate,
+                                              sampleRate,
+                                              this,
+                                              needsTranscoding);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!needsTranscoding) {
+    *aProfile = nsnull;
     return NS_OK;
   }
-  // No acceptable transcoding profile available
-  TRACE(("%s: no registrars found", __FUNCTION__));
+
+  rv = SelectTranscodeProfile(formatType.Type, aProfile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SelectTranscodeProfile(PRUint32 contentType,
+                                     sbITranscodeProfile **aProfile)
+{
+  nsresult rv;
+
+  PRBool hasProfilePref = PR_FALSE;
+  // See if we have a preference for the transcoding profile.
+  nsCOMPtr<nsIVariant> profileIdVariant;
+  nsString prefProfileId;
+  rv = GetPreference(NS_LITERAL_STRING("transcode_profile.profile_id"),
+                     getter_AddRefs(profileIdVariant));
+  if (NS_SUCCEEDED(rv))
+  {
+    hasProfilePref = PR_TRUE;
+    rv = profileIdVariant->GetAsAString(prefProfileId);
+    NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s: found a profile", __FUNCTION__));
+  }
+
+  if (!mTranscodeProfiles) {
+    rv = sbDeviceUtils::GetSupportedTranscodeProfiles(
+                          this,
+                          getter_AddRefs(mTranscodeProfiles));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRUint32 bestPriority = 0;
+  nsCOMPtr<sbITranscodeProfile> bestProfile;
+  nsCOMPtr<sbITranscodeProfile> prefProfile;
+
+  PRUint32 length;
+  rv = mTranscodeProfiles->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = 0; index < length; ++index) {
+    nsCOMPtr<sbITranscodeProfile> profile =
+        do_QueryElementAt(mTranscodeProfiles, index, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (profile) {
+      PRUint32 profileContentType;
+      rv = profile->GetType(&profileContentType);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // If the content types don't match, skip (we don't want to use a video
+      // transcoding profile to transcode audio, for example)
+      if (profileContentType == contentType) {
+        if (hasProfilePref) {
+          nsString profileId;
+          rv = profile->GetId(profileId);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          if (profileId.Equals(prefProfileId))
+            prefProfile = profile;
+        }
+
+        // Also track the highest-priority profile. This is our default.
+        PRUint32 priority;
+        rv = profile->GetPriority(&priority);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!bestProfile || priority > bestPriority) {
+          bestProfile = profile;
+          bestPriority = priority;
+        }
+      }
+    }
+  }
+ if (prefProfile) {
+    // We found the profile selected in the preferences. Apply relevant
+    // preferenced properties to it as well...
+    nsCOMPtr<nsIArray> audioProperties;
+    rv = prefProfile->GetAudioProperties(getter_AddRefs(audioProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbDeviceUtils::ApplyPropertyPreferencesToProfile(
+            this,
+            audioProperties,
+            NS_LITERAL_STRING("transcode_profile.audio_properties"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIArray> videoProperties;
+    rv = prefProfile->GetVideoProperties(getter_AddRefs(videoProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbDeviceUtils::ApplyPropertyPreferencesToProfile(
+            this,
+            videoProperties,
+            NS_LITERAL_STRING("transcode_profile.video_properties"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIArray> containerProperties;
+    rv = prefProfile->GetContainerProperties(
+            getter_AddRefs(containerProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = sbDeviceUtils::ApplyPropertyPreferencesToProfile(
+            this,
+            containerProperties,
+            NS_LITERAL_STRING("transcode_profile.container_properties"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    prefProfile.forget(aProfile);
+    TRACE(("%s: found pref profile", __FUNCTION__));
+    return NS_OK;
+  }
+  else if (bestProfile) {
+    TRACE(("%s: using best-match profile", __FUNCTION__));
+    bestProfile.forget(aProfile);
+    return NS_OK;
+  }
+
+  // Indicate no appropriate transcoding profile available
+  TRACE(("%s: no supported profiles available", __FUNCTION__));
   return NS_ERROR_NOT_AVAILABLE;
 }
 

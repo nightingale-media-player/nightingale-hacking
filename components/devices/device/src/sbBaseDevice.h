@@ -508,6 +508,7 @@ protected:
   PRUint32 mCapabilitiesRegistrarType;
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
+  nsCOMPtr<nsIArray> mTranscodeProfiles;
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -1088,6 +1089,19 @@ protected:
    */
   nsresult FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                 sbITranscodeProfile ** aProfile);
+
+  /**
+   * \brief Select a transcode profile to use when transcoding to this device.
+   * \param aContentType The type of transcoding profile to look for.ng
+   * \param aProfile     The profile found or may be null if no transcoding
+   *                     is needed.
+   * \note This selects the best available transcoding profile for this device
+   *       for arbitrary input - even if the thing to be transcoded is directly
+   *       supported by the device.
+   * \note NS_ERROR_NOT_AVAILABLE is returned if no suitable profile is found
+   */
+  nsresult SelectTranscodeProfile(PRUint32 aContentType,
+                                  sbITranscodeProfile **aProfile);
 
   /**
    * Prepare a batch for transcoding. This processes items in the batch and

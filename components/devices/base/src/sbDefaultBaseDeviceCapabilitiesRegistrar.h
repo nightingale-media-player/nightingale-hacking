@@ -39,12 +39,6 @@ class sbIDevice;
 /**
  *   This is a base class for implementing a default capabilities registrar for
  * a device.
- *   Asside from providing additional capabilities implementation it also
- * contains a rudimentary algorithm for choosing a transcoding profile. This
- * algorithm compares the source item's media format, the transcoding profiles
- * and the devices capabilities to find the profile that is closest match
- * between the item and the device. Well that's the ultimate goal. Right now
- * it just picks the first viable match.
  */
 class sbDefaultBaseDeviceCapabilitiesRegistrar:
         public sbIDeviceCapabilitiesRegistrar
@@ -56,53 +50,7 @@ public:
 
 protected:
   virtual ~sbDefaultBaseDeviceCapabilitiesRegistrar();
-
-private:
-  typedef nsCOMArray<sbITranscodeProfile> TranscodeProfiles;
-
-  PRLock * mLock;
-  /**
-   * Cached collection of profiles suitable for this device
-   */
-  TranscodeProfiles mTranscodeProfiles;
-  /**
-   * true if we've built the cache
-   */
-  bool mTranscodeProfilesBuilt;
-
-  /**
-   * Returns a list of transcode profiles that the device supports
-   * \param aDevice the device to retrieve the profiles for.
-   * \param aProfiles the list of profiles that were found
-   * \return NS_OK if successful else some NS_ERROR value
-   */
-  nsresult GetSupportedTranscodeProfiles(sbIDevice * aDevice,
-                                         TranscodeProfiles ** aProfiles);
-
-  /** For each transcoding profile property in aPropertyArray, look up a
-   *  preference in aDevice starting with aPrefNameBase, and set the property
-   *  value to the preference value if any.
-   */
-  nsresult ApplyPropertyPreferencesToProfile(sbIDevice *aDevice,
-                                             nsIArray *aPropertyArray,
-                                             nsString aPrefNameBase);
 };
-
-/**
- * Map entry figuring out the container format and codec given an extension or
- * mime type
- */
-struct sbExtensionToContentFormatEntry_t {
-  char const * Extension;
-  char const * MimeType;
-  char const * ContainerFormat;
-  char const * Codec;
-  PRUint32 Type;
-};
-
-extern sbExtensionToContentFormatEntry_t const
-  MAP_FILE_EXTENSION_CONTENT_FORMAT[];
-extern PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH;
 
 #endif /* SBIDEFAULTBASEDEVICECAPABILITIESREGISTRAR_H_ */
 
