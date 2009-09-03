@@ -32,6 +32,7 @@
   <!-- Add a command.  See http://www.xulplanet.com/tutorials/xultu/commands.html -->  
   <commandset id="mainCommandSet">
     <command id="mockcdcontroller-showcontroller-cmd"  />
+    <command id="mockdevicecontroller-showcontroller-cmd" />
   </commandset>
-  
+ 
 </overlay>

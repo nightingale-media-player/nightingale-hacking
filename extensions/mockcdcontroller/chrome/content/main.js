@@ -42,19 +42,33 @@ MockCDController.Controller =
       "command",
       function() { self.showCDControllerPane(); },
       false);
+      
+    var showCommandDevice = 
+      document.getElementById("mockdevicecontroller-showcontroller-cmd");
+      
+    showCommandDevice.addEventListener(
+      "command",
+      function() { self.showDeviceControllerPane(); },
+      false);
 
     // Only open the controller pane if the pref is currently set.
     if (Application.prefs.getValue("extensions.cdripcontroller.startup_show_controller",
                                    false)) {
-      setTimeout(function() {self.showCDControllerPane(); }, 200);
+      setTimeout(function() { self.showCDControllerPane(); }, 200);
     }
   },
 
   showCDControllerPane: function()
   {
-    // TODO: Show this thang
     window.openDialog("chrome://mockcdcontroller/content/mockCDControllerDialog.xul",
                       "cd-controller-pane",
+                      "chrome,centerscreen,resizable=false");
+  },
+  
+  showDeviceControllerPane: function()
+  {
+    window.openDialog("chrome://mockcdcontroller/content/deviceControllerDialog.xul",
+                      "device-controller-pane",
                       "chrome,centerscreen,resizable=false");
   }
 };

@@ -36,7 +36,11 @@
     <menuitem id="mockcdcontroller-showcontroller-menuitem"
             label="Show Mock CD Controller" 
             insertafter="devToolsSeparator"
-            command="mockcdcontroller-showcontroller-cmd" />   
+            command="mockcdcontroller-showcontroller-cmd" />
+
+    <menuitem id="mockdevicecontroller-showcontroller-menuitem"
+              label="Show Mock Device Controller"
+              command="mockdevicecontroller-showcontroller-cmd" />
      
   </menupopup>
 
