@@ -794,7 +794,7 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::ChooseProfile
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIVariant> variant =
-      sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag);
+      sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag).get();
     nsCOMPtr<sbIDeviceManager2> deviceManager =
       do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
