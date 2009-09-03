@@ -307,6 +307,8 @@ var DPW = {
     // Simulate a device state changed event to initialize the operation state
     // and update the UI.
     this._handleStateChanged({ data: this._device.state });
+    this._checkForErrors(this._device);
+    this._update();
   },
 
 

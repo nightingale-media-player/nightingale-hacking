@@ -102,13 +102,16 @@
  * To log this module, set the following environment variable:
  *   NSPR_LOG_MODULES=sbBaseDevice:5
  */
+#undef LOG
+#undef TRACE
 #ifdef PR_LOGGING
 PRLogModuleInfo* gBaseDeviceLog = nsnull;
+#define LOG(args)   PR_LOG(gBaseDeviceLog, PR_LOG_WARN,  args)
+#define TRACE(args) PR_LOG(gBaseDeviceLog, PR_LOG_DEBUG, args)
+#else
+#define LOG(args)  do{ } while(0)
+#define TRACE(args) do { } while(0)
 #endif
-
-#undef LOG
-#define LOG(args) PR_LOG(gBaseDeviceLog, PR_LOG_WARN, args)
-
 
 #define DEFAULT_COLUMNSPEC_DEVICE_LIBRARY SB_PROPERTY_TRACKNAME " 265 "     \
                                           SB_PROPERTY_DURATION " 43 "       \
@@ -3581,6 +3584,7 @@ sbBaseDevice::SyncMergeSetToLatest(nsAString const & aNewValue,
 nsresult
 sbBaseDevice::SyncForceDiffMediaLists(sbIMediaList* aMediaList)
 {
+  TRACE(("%s", __FUNCTION__));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaList);
 
@@ -3618,6 +3622,7 @@ nsresult
 sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
                                   PRBool*       aShouldSync)
 {
+  TRACE(("%s", __FUNCTION__));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaList);
   NS_ENSURE_ARG_POINTER(aShouldSync);
@@ -3661,6 +3666,7 @@ sbBaseDevice::ShouldSyncMediaList(sbIMediaList* aMediaList,
 nsresult
 sbBaseDevice::PromptForEjectDuringPlayback(PRBool* aEject)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aEject);
 
   nsresult rv;
@@ -3728,6 +3734,7 @@ sbBaseDevice::PromptForEjectDuringPlayback(PRBool* aEject)
 
 nsresult sbBaseDevice::GetPrimaryLibrary(sbIDeviceLibrary ** aDeviceLibrary)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aDeviceLibrary);
 
   nsCOMPtr<sbIDeviceContent> content;
@@ -3756,6 +3763,7 @@ nsresult sbBaseDevice::GetDeviceWriteContentSrc
                           nsIURI*       aWriteSrcURI,
                           nsIURI **     aContentSrc)
 {
+  TRACE(("%s", __FUNCTION__));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aWriteDstItem);
   NS_ENSURE_ARG_POINTER(aContentSrcBaseURI);
@@ -3950,6 +3958,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
                           nsIURI*       aContentSrcBaseURI,
                           nsIURI*       aWriteSrcURI)
 {
+  TRACE(("%s", __FUNCTION__));
   nsCOMPtr<nsIURI> contentSrc;
   nsresult rv = GetDeviceWriteContentSrc(aWriteDstItem,
                                          aContentSrcBaseURI,
@@ -3964,6 +3973,7 @@ nsresult sbBaseDevice::SetDeviceWriteContentSrc
 
 nsresult sbBaseDevice::SetupDevice()
 {
+  TRACE(("%s", __FUNCTION__));
   nsresult rv;
 
   // Present the setup device dialog.
@@ -3987,6 +3997,7 @@ nsresult sbBaseDevice::SetupDevice()
 nsresult
 sbBaseDevice::ProcessCapabilitiesRegistrars()
 {
+  TRACE(("%s", __FUNCTION__));
   // If we haven't built the registrars then do so
   if (mCapabilitiesRegistrarType != sbIDeviceCapabilitiesRegistrar::NONE) {
     return NS_OK;
@@ -4056,6 +4067,7 @@ sbBaseDevice::ProcessCapabilitiesRegistrars()
 nsresult
 sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
   nsresult rv;
@@ -4075,6 +4087,7 @@ nsresult
 sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                    sbITranscodeProfile ** aProfile)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aProfile);
 
@@ -4084,13 +4097,15 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (mCapabilitiesRegistrar) {
-    // This may return NS_ERROR_NOT_AVAILABLE or null if no transcoding is
-    // required
+    // This may return null if no transcoding is required,
+    // or NS_ERROR_NOT_AVAILABLE if it is but we don't have encoders etc.
     rv = mCapabilitiesRegistrar->ChooseProfile(aMediaItem, this, aProfile);
     NS_ENSURE_SUCCESS(rv, rv);
+    TRACE(("%s: found a profile", __FUNCTION__));
     return NS_OK;
   }
   // No acceptable transcoding profile available
+  TRACE(("%s: no registrars found", __FUNCTION__));
   return NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -4102,6 +4117,7 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
 nsresult
 sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
 {
+  TRACE(("%s", __FUNCTION__));
   nsresult rv;
 
   if (aBatch.empty()) {
@@ -4128,11 +4144,15 @@ sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
     rv = FindTranscodeProfile(request->item,
                               &request->transcodeProfile);
     // Treat no profiles available as not needing transcoding
-    if (rv != NS_ERROR_NOT_AVAILABLE) {
+    if (rv == NS_ERROR_NOT_AVAILABLE) {
+      TRACE(("%s: no transcode profile available", __FUNCTION__));
+    } else {
       NS_ENSURE_SUCCESS(rv, rv);
     }
-    if (request->transcodeProfile)
+    if (request->transcodeProfile) {
+      TRACE(("%s: transcoding needed", __FUNCTION__));
       request->needsTranscoding = PR_TRUE;
+    }
 
     request->albumArt = do_CreateInstance(
             SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
@@ -4141,7 +4161,8 @@ sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
     // It's ok for this to fail; album art is optional
     rv = request->albumArt->Init(request->item, imageFormats);
     if (NS_FAILED(rv)) {
-      request->albumArt = 0;
+      TRACE(("%s: no album art available", __FUNCTION__));
+      request->albumArt = nsnull;
     }
 
     ++iter;
@@ -4178,6 +4199,7 @@ AddAlbumArtFormats(sbIDeviceCapabilities *aCapabilities,
 nsresult
 sbBaseDevice::GetSupportedAlbumArtFormats(nsIArray * *aFormats)
 {
+  TRACE(("%s", __FUNCTION__));
   nsresult rv;
   nsCOMPtr<nsIMutableArray> formatConstraints =
       do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
@@ -4207,6 +4229,7 @@ nsresult
 sbBaseDevice::GetShouldLimitMusicSpace(const nsAString & aPrefBase,
                                        PRBool *aOutShouldLimitSpace)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aOutShouldLimitSpace);
   *aOutShouldLimitSpace = PR_FALSE;
 
@@ -4224,6 +4247,7 @@ nsresult
 sbBaseDevice::GetMusicLimitSpacePercent(const nsAString & aPrefBase,
                                         PRUint32 *aOutLimitPercentage)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aOutLimitPercentage);
   *aOutLimitPercentage = 100;  // always default to 100
 
@@ -4240,11 +4264,13 @@ sbBaseDevice::GetMusicLimitSpacePercent(const nsAString & aPrefBase,
 /* void Format(); */
 NS_IMETHODIMP sbBaseDevice::Format()
 {
+  TRACE(("%s", __FUNCTION__));
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 /* readonly attribute boolean supportsReformat; */
 NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(_retval);
   *_retval = PR_FALSE;
   return NS_OK;
@@ -4253,6 +4279,7 @@ NS_IMETHODIMP sbBaseDevice::GetSupportsReformat(PRBool *_retval)
 static nsresult
 GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aProperties);
 
@@ -4269,6 +4296,7 @@ GetPropertyBag(sbIDevice * aDevice, nsIPropertyBag2 ** aProperties)
 nsresult
 sbBaseDevice::GetNameBase(nsAString& aName)
 {
+  TRACE(("%s", __FUNCTION__));
   PRBool   hasKey;
   nsresult rv;
 
@@ -4294,6 +4322,7 @@ nsresult
 sbBaseDevice::GetProductNameBase(char const * aDefaultModelNumberString,
                                  nsAString& aProductName)
 {
+  TRACE(("%s [%s]", __FUNCTION__, aDefaultModelNumberString));
   NS_ENSURE_ARG_POINTER(aDefaultModelNumberString);
 
   nsAutoString productName;

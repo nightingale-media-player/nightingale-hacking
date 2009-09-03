@@ -131,7 +131,11 @@ interface sbIDeviceEvent : nsISupports
   const unsigned long EVENT_DEVICE_TRANSCODE_PROGRESS   = EVENT_DEVICE_BASE + 29;
   const unsigned long EVENT_DEVICE_TRANSCODE_END        = EVENT_DEVICE_BASE + 30;
 
-  // device transcoding errors (the data variant will hold a sbIMediacoreError)
+  // device transcoding errors
+  // the .data should be a nsIPropertyBag, with the optional properties:
+  // "mediacore-error": the sbIMediacoreError
+  // "message": a message to display to the user
+  // "item": associated sbIMediaItem
   const unsigned long EVENT_DEVICE_TRANSCODE_ERROR      = EVENT_DEVICE_BASE + 31;
   
   // device library events

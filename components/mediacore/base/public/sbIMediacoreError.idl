@@ -63,6 +63,8 @@ interface sbIMediacoreError : nsISupports
   const unsigned long SB_STREAM_DECODE                 = 54;
   // Unable to encode the media.
   const unsigned long SB_STREAM_ENCODE                 = 55;
+  // The media is DRM protected.
+  const unsigned long SB_STREAM_DRM_PROTECTED          = 56;
 
   /**
    * \brief Error code.

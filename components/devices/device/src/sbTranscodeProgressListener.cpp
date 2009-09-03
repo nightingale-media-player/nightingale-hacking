@@ -26,6 +26,9 @@
 */
 #include "sbTranscodeProgressListener.h"
 
+// Mozilla includes
+#include <nsIWritablePropertyBag2.h>
+
 // Songbird includes
 #include <sbIJobProgress.h>
 #include <sbIDeviceEvent.h>
@@ -211,9 +214,24 @@ sbTranscodeProgressListener::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Dispatch the device event
+    nsCOMPtr<nsIWritablePropertyBag2> bag =
+      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString message;
+    rv = error->GetMessage(message);
+    if (NS_SUCCEEDED(rv)) {
+      rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
+                                     message);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("mediacore-error"),
+                                     NS_ISUPPORTS_CAST(sbIMediacoreError*, error));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     mBaseDevice->CreateAndDispatchEvent(
           sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
-          sbNewVariant(NS_ISUPPORTS_CAST(sbIMediacoreError*, error)));
+          sbNewVariant(bag));
   }
 
   return NS_OK;

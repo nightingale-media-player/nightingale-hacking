@@ -413,18 +413,22 @@
         <parameter name="cmdid"/>
         <body>
           <![CDATA[
-            var metricscategory = this.getAttribute("metricscategory");
-            if (!metricscategory) return;
-            var library = this.medialist ? this.medialist.library : null;
-            var metricstype = library ? library.getProperty("http://songbirdnest.com/data/1.0#customType") : null;
-            if (!metricstype) return;
-            var p = cmdid.indexOf(":");
-            if (p != -1) cmdid = cmdid.slice(0, p);
-            p = cmdid.indexOf(";");
-            if (p != -1) cmdid = cmdid.slice(0, p);
-            p = cmdid.indexOf(",");
-            if (p != -1) cmdid = cmdid.slice(0, p);
-            metrics_inc(metricscategory, metricstype, cmdid);
+            try {
+              var metricscategory = this.getAttribute("metricscategory");
+              if (!metricscategory) return;
+              var library = this.medialist ? this.medialist.library : null;
+              var metricstype = library ? library.getProperty("http://songbirdnest.com/data/1.0#customType") : null;
+              if (!metricstype) return;
+              var p = cmdid.indexOf(":");
+              if (p != -1) cmdid = cmdid.slice(0, p);
+              p = cmdid.indexOf(";");
+              if (p != -1) cmdid = cmdid.slice(0, p);
+              p = cmdid.indexOf(",");
+              if (p != -1) cmdid = cmdid.slice(0, p);
+              metrics_inc(metricscategory, metricstype, cmdid);
+            } catch (e) {
+              // don't make broken metrics break anything else
+            }
           ]]>
         </body>
       </method>

@@ -174,6 +174,13 @@ deviceErrorMonitor.prototype = {
           } else if (aDeviceEvent.data instanceof Ci.sbIMediaItem) {
             mediaURL = aDeviceEvent.data.getProperty(SBProperties.contentURL);
             mediaURL = decodeURIComponent(mediaURL);
+          } else if (aDeviceEvent.data instanceof Ci.nsIPropertyBag2) {
+            var bag = aDeviceEvent.data;
+            if (bag.hasKey("item")) {
+              mediaURL = bag.getPropertyAsInterface("item", Ci.sbIMediaItem)
+                            .getProperty(SBProperties.contentURL);
+              mediaURL = decodeURIComponent(mediaURL);
+            }
           }
         } else {
           mediaURL = SBString("device.info.unknown");
@@ -285,14 +292,19 @@ deviceErrorMonitor.prototype = {
                        SBString("device.error.unsupported_type"));
       break;
       
-      // Transcode errors use the data property to pass a sbIMediacoreError
-      // component for error details. We need to extract it and store for later.
       case Ci.sbIDeviceEvent.EVENT_DEVICE_TRANSCODE_ERROR:
-        // Grab the extended error info (an sbIMediacoreError object)
-        var coreError = aDeviceEvent.data.QueryInterface(Ci.sbIMediacoreError);
-        if (coreError) {
-          this._logError(aDeviceEvent, coreError.message);
+        // Grab the extended error info from the property bag
+        var message = "";
+        if (aDeviceEvent.data instanceof Ci.nsIPropertyBag2) {
+          message = aDeviceEvent.data.get("message");
+          if (!message && aDeviceEvent.data.hasKey("mediacore-error")) {
+            message = aDeviceEvent.data
+                                  .getPropertyAsInterface("mediacore-error",
+                                                          Ci.sbIMediacoreError)
+                                  .message;
+          }
         }
+        this._logError(aDeviceEvent, message);
       break;
 
     }

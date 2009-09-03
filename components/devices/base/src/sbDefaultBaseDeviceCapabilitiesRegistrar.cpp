@@ -28,16 +28,40 @@
 
 // Mozilla includes
 #include <nsArrayUtils.h>
+#include <nsISupportsPrimitives.h>
 #include <nsIVariant.h>
+#include <nsIWritablePropertyBag2.h>
 #include <nsMemory.h>
+#include <prlog.h>
 
 // Songbird includes
 #include <sbIDevice.h>
 #include <sbIDeviceCapabilities.h>
+#include <sbIDeviceEvent.h>
+#include <sbIDeviceEventTarget.h>
+#include <sbIDeviceManager.h>
 #include <sbIMediaItem.h>
 #include <sbITranscodeManager.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
+#include <sbVariantUtils.h>
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbDefaultBaseDeviceCapabilitiesRegistrar:5
+ */
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gDefaultBaseDeviceCapabilitiesRegistrarLog = nsnull;
+#define TRACE(args) PR_LOG(gDefaultBaseDeviceCapabilitiesRegistrarLog , PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gDefaultBaseDeviceCapabilitiesRegistrarLog , PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif
 
 PRInt32 const K = 1000;
 
@@ -46,6 +70,11 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::
     mLock(nsAutoLock::NewLock("sbDefaultBaseDeviceCapabilitiesRegistrar")),
     mTranscodeProfilesBuilt(false)
 {
+  #ifdef PR_LOGGING
+    if (!gDefaultBaseDeviceCapabilitiesRegistrarLog)
+      gDefaultBaseDeviceCapabilitiesRegistrarLog =
+        PR_NewLogModule("sbDefaultBaseDeviceCapabilitiesRegistrar");
+  #endif
 }
 
 sbDefaultBaseDeviceCapabilitiesRegistrar::
@@ -58,6 +87,7 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::
 NS_IMETHODIMP
 sbDefaultBaseDeviceCapabilitiesRegistrar::GetType(PRUint32 *aType)
 {
+  TRACE(("%s: default", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aType);
 
   *aType = sbIDeviceCapabilitiesRegistrar::DEFAULT;
@@ -68,6 +98,7 @@ NS_IMETHODIMP
 sbDefaultBaseDeviceCapabilitiesRegistrar::
   AddCapabilities(sbIDevice *aDevice,
                   sbIDeviceCapabilities *aCapabilities) {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aCapabilities);
 
@@ -272,6 +303,7 @@ PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =
  */
 PRUint32 ParseBitRate(nsAString const & aBitRate)
 {
+  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aBitRate).get()));
   nsresult rv;
 
   if (aBitRate.IsEmpty()) {
@@ -290,6 +322,7 @@ PRUint32 ParseBitRate(nsAString const & aBitRate)
  * \return the integer version of the sample rate or 0 if it fails
  */
 PRUint32 ParseSampleRate(nsAString const & aSampleRate) {
+  TRACE(("%s: %s", __FUNCTION__, NS_LossyConvertUTF16toASCII(aSampleRate).get()));
   nsresult rv;
   if (aSampleRate.IsEmpty()) {
     return 0;
@@ -314,6 +347,7 @@ GetFormatTypeForItem(sbIMediaItem * aItem,
                      PRUint32 & aBitRate,
                      PRUint32 & aSampleRate)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aItem);
 
   nsresult rv;
@@ -337,6 +371,9 @@ GetFormatTypeForItem(sbIMediaItem * aItem,
       sbExtensionToContentFormatEntry_t const & entry =
         MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
       if (fileExtension.EqualsLiteral(entry.Extension)) {
+        TRACE(("%s: ext %s type %s container %s codec %s",
+               __FUNCTION__, entry.Extension, entry.MimeType,
+               entry.ContainerFormat, entry.Codec));
         aFormatType = entry;
         nsString bitRate;
         rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
@@ -387,6 +424,8 @@ GetContainerFormatAndCodec(nsISupports * aFormatType,
                            nsAString & aCodec,
                            sbIDevCapRange ** aBitRateRange = nsnull,
                            sbIDevCapRange ** aSampleRateRange = nsnull) {
+
+  TRACE(("%s", __FUNCTION__));
 
   switch (aContentType) {
     case sbIDeviceCapabilities::CONTENT_AUDIO: {
@@ -453,6 +492,7 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::GetSupportedTranscodeProfiles
                                             (sbIDevice * aDevice,
                                              TranscodeProfiles ** aProfiles)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aProfiles);
 
@@ -608,6 +648,7 @@ DoesItemNeedTranscoding(sbExtensionToContentFormatEntry_t & aFormatType,
                         sbIDevice * aDevice,
                         bool & aNeedsTranscoding)
 {
+  TRACE(("%s", __FUNCTION__));
   nsCOMPtr<sbIDeviceCapabilities> devCaps;
   nsresult rv = aDevice->GetCapabilities(getter_AddRefs(devCaps));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -631,13 +672,7 @@ DoesItemNeedTranscoding(sbExtensionToContentFormatEntry_t & aFormatType,
          formatIndex < formatsLength && NS_SUCCEEDED(rv);
          ++formatIndex) {
 
-      nsString format;
-      format.AssignLiteral(formats[formatIndex]);
-      nsMemory::Free(formats[formatIndex]);
-      // If we've figured out it doesn't need transcoding no need to compare
-      if (!aNeedsTranscoding) {
-        continue;
-      }
+      NS_ConvertASCIItoUTF16 format(formats[formatIndex]);
       nsCOMPtr<nsISupports> formatType;
       rv = devCaps->GetFormatType(format, getter_AddRefs(formatType));
       if (NS_SUCCEEDED(rv)) {
@@ -658,16 +693,25 @@ DoesItemNeedTranscoding(sbExtensionToContentFormatEntry_t & aFormatType,
               codec.Equals(itemCodec) &&
               IsValueInRange(aBitRate, bitRateRange) &&
               IsValueInRange(aSampleRate, sampleRateRange)) {
+            TRACE(("%s: no transcoding needed, matches format %s "
+                   "container %s codec %s",
+                   __FUNCTION__, formats[formatIndex],
+                   NS_LossyConvertUTF16toASCII(containerFormat).get(),
+                   NS_LossyConvertUTF16toASCII(codec).get()));
             aNeedsTranscoding = false;
+            break;
           }
         }
       }
     }
-    nsMemory::Free(formats);
+    NS_FREE_XPCOM_ALLOCATED_POINTER_ARRAY(formatsLength, formats);
   }
   else { // We don't know the transcoding formats of the device so just copy
+    TRACE(("%s: no information on device, assuming no transcoding needed",
+           __FUNCTION__));
     aNeedsTranscoding = false;
   }
+  TRACE(("%s: result %s", __FUNCTION__, aNeedsTranscoding ? "yes" : "no"));
   return NS_OK;
 }
 
@@ -726,11 +770,49 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::ChooseProfile
                                              sbIDevice*            aDevice,
                                              sbITranscodeProfile** retval)
 {
+  TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(retval);
 
   nsresult rv;
+
+  nsAutoString isDRMProtected;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
+                               isDRMProtected);
+  if (NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1")) {
+    // we can't have any transcoding profiles that support DRM
+    nsCOMPtr<nsIWritablePropertyBag2> bag =
+      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
+                                   SBLocalizedString("transcode.file.drmprotected"));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
+                                     aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIVariant> variant =
+      sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag);
+    nsCOMPtr<sbIDeviceManager2> deviceManager =
+      do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceEvent> event;
+    rv = deviceManager->CreateEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
+                                    variant, aDevice, getter_AddRefs(event));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<sbIDeviceEventTarget> target = do_QueryInterface(aDevice, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool dispatched = PR_FALSE;
+    rv = target->DispatchEvent(event, PR_TRUE, &dispatched);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
 
   sbExtensionToContentFormatEntry_t formatType;
   PRUint32 bitRate = 0;
@@ -813,6 +895,7 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::ChooseProfile
   }
 
   if (prefProfile) {
+    TRACE(("%s: found pref profile", __FUNCTION__));
     // We found the profile selected in the preferences. Apply relevant
     // preferenced properties to it as well...
     nsCOMPtr<nsIArray> audioProperties;
@@ -841,11 +924,13 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::ChooseProfile
     return NS_OK;
   }
   else if (bestProfile) {
+    TRACE(("%s: using best-match profile", __FUNCTION__));
     bestProfile.forget(retval);
     return NS_OK;
   }
 
   // Indicate no appropriate transoding profile available
+  TRACE(("%s: no profile available", __FUNCTION__));
   return NS_ERROR_NOT_AVAILABLE;
 }
 
