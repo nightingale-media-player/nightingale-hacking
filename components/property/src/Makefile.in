@@ -111,7 +111,6 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbSmartPlaylistPropertyRegistrar.js \
 
 IS_COMPONENT = 1
 
-# TODO: Post 0.5 we need to remove js modules from the line above           
 SONGBIRD_JSMODULES =  sbProperties.jsm \
                       $(NULL)           
 

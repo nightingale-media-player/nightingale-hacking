@@ -100,6 +100,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 #define SB_COMMENT      SB_PROPERTY_COMMENT
 #define SB_LENGTH       SB_PROPERTY_DURATION
 #define SB_ALBUMARTIST  SB_PROPERTY_ALBUMARTISTNAME
+#define SB_PROTECTED    SB_PROPERTY_ISDRMPROTECTED
 
 #define WMP_ARTIST      "Author"
 #define WMP_TITLE       "Title"
@@ -120,6 +121,7 @@ static PRLogModuleInfo* gLog = PR_NewLogModule("sbMetadataHandlerWMA");
 #define WMP_COMMENT     "Comment"
 #define WMP_LENGTH      "Duration"
 #define WMP_ALBUMARTIST "WM/AlbumArtist"
+#define WMP_PROTECTED   "Is_Protected"
 
 // These are the keys we're going to read from the WM interface 
 // and push to the SB interface.
@@ -154,6 +156,7 @@ static const metadataKeyMapEntry_t kMetadataKeys[] = {
 //  KEY_MAP_ENTRY(DIRECTOR, WMT_TYPE_STRING),
   KEY_MAP_ENTRY(LENGTH, WMT_TYPE_QWORD),
   KEY_MAP_ENTRY(ALBUMARTIST, WMT_TYPE_STRING),
+  KEY_MAP_ENTRY(PROTECTED, WMT_TYPE_BOOL),
 };
 #undef KEY_MAP_ENTRY
 
@@ -901,6 +904,8 @@ NS_METHOD
 sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
                                          PRInt32* _retval)
 {
+  nsresult rv;
+
   CComPtr<IWMMetadataEditor> reader;
   HRESULT hr = WMCreateEditor(&reader);
   COM_ENSURE_SUCCESS(hr);
@@ -953,9 +958,8 @@ sbMetadataHandlerWMA::ReadMetadataWMFSDK(const nsAString& aFilePath,
     value = NS_LITERAL_STRING("audio");
   }
 
-  nsresult rv = 
-    m_PropertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE), 
-                                    value);
+  rv = m_PropertyArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                       value);
 
   if(NS_SUCCEEDED(rv)) {
     *_retval += 1;
@@ -1011,6 +1015,11 @@ sbMetadataHandlerWMA::ReadMetadataWMP(const nsAString& aFilePath,
       if (key == WMP_BITRATE) {
         // WMP returns bitrate in bits/sec, Songbird wants kbps/sec
         metadataValue.Assign(value.m_str, value.Length() - 3);
+      } else if (key == WMP_PROTECTED) {
+        // Songbird wants (nothing) or "1"
+        if (value.Length() > 0) {
+          metadataValue.AssignLiteral("1");
+        }
       } else {
         metadataValue.Assign(value.m_str);
       }
