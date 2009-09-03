@@ -97,15 +97,17 @@
         <!-- RIP ACTION AND STATUS -->
         <hbox id="sb-cdrip-actionstatus-hbox" class="sb-cdrip-header-hbox"
               pack="center">
-          <vbox pack="center" id="sb-cdrip-actionstatus-image">
-            <image id="sb-cdrip-status-image" />
-          </vbox>
+          <hbox id="sb-cdrip-status-hbox">
+            <vbox pack="center" id="sb-cdrip-actionstatus-image">
+              <image id="sb-cdrip-status-image" />
+            </vbox>
 
-          <vbox pack="center">
-            <label id="sb-cdrip-actionstatus-label" />
-          </vbox>
+            <vbox pack="center">
+              <label id="sb-cdrip-actionstatus-label" />
+            </vbox>
 
-          <spacer width="20" />
+            <spacer width="20" />
+          </hbox>
 
           <!-- CD device buttons -->
           <button id="sb-cdrip-rip-cd-button"

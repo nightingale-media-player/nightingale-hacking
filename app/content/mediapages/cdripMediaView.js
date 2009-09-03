@@ -155,14 +155,16 @@ window.cdripController =
 
   _toggleLookupNotification: function
                              cdripController_lookupNotification(show) {
+    var ripImage = document.getElementById(RIP_STATUS_IMAGE);
+    var statusBox = document.getElementById("sb-cdrip-status-hbox");
     if (show) {
-      var ripImage = document.getElementById(RIP_STATUS_IMAGE);
+      statusBox.style.visibility = "visible";
       ripImage.src =
         "chrome://songbird/skin/base-elements/icon-loading-large.png";
       this._setLabelValue(RIP_STATUS_LABEL,
                           SBString("cdrip.mediaview.status.lookup"));
     } else {
-      var ripImage = document.getElementById(RIP_STATUS_IMAGE);
+      statusBox.style.visibility = "collapse";
       ripImage.src = "";
       this._setLabelValue(RIP_STATUS_LABEL, "");
     }
