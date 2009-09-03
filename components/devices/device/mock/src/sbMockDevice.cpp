@@ -99,13 +99,19 @@ NS_IMETHODIMP sbMockDevice::GetControllerId(nsID * *aControllerId)
 /* readonly attribute nsIDPtr id; */
 NS_IMETHODIMP sbMockDevice::GetId(nsID * *aId)
 {
-  /* note: this is a bad example, since you probably want a different ID per
-     instance of a device... and not a constant ;) */
   NS_ENSURE_ARG_POINTER(aId);
   
+  nsID mockDeviceID;
+  
+  PRBool success = 
+    mockDeviceID.Parse("{3572E6FC-4954-4458-AFE7-0D0A65BF5F55}");
+  NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
   *aId = (nsID*)NS_Alloc(sizeof(nsID));
   NS_ENSURE_TRUE(*aId, NS_ERROR_OUT_OF_MEMORY);
-  **aId = NS_GET_IID(sbIDevice);
+
+  **aId = mockDeviceID;
+
   return NS_OK;
 }
 

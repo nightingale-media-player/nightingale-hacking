@@ -31,10 +31,11 @@ include $(DEPTH)/build/autodefs.mk
 
 include $(topsrcdir)/build/rules.mk
 
-# Always build test, no matter what; the ordering matters here; we want
-# the tests subdir to be built last
+# Only build the mock firmware handler components if we're doing a developer or
+# nightly build (for QA).  We don't want to ship the mock bits with the release
+# builds.
 
-#
-# XXXAus: No tests yet :)
-#
-#SUBDIRS += test
+ifndef SONGBIRD_OFFICIAL
+   SUBDIRS += mock \
+              $(NULL)
+endif
