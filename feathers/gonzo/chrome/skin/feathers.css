@@ -850,6 +850,12 @@ toolbarbutton[disabled="true"] > .toolbarbutton-menulist-dropmarker {
   width: 440px;
 }
 
+#mediacore_error_desc {
+  -moz-user-focus: normal;
+  -moz-user-select: text;
+  cursor: text;
+}
+
 
 
 /******************************************************************************

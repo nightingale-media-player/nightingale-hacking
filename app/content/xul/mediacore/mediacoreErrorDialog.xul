@@ -35,8 +35,10 @@
 <!DOCTYPE overlay [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
   <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
   %brandDTD;
   %songbirdDTD;
+  %textcontextDTD;
 ]>
 
 <dialog
@@ -54,6 +56,29 @@
  ondialogcancel="return doNext();"
 >
 
+  <script type="application/x-javascript" 
+          src="chrome://global/content/globalOverlay.js"/>
+
+  <commandset id="selectEditMenuItems">
+    <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
+    <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
+  </commandset>
+
+  <popupset id="contentAreaContextSet">
+    <popup id="contentAreaContextMenu"
+           onpopupshowing="goUpdateCommand('cmd_copy')">
+      <menuitem id="context-copyselected"
+                label="&copySelectionCmd.label;"
+                accesskey="&copySelectionCmd.accesskey;"
+                command="cmd_copy"
+                disabled="true"/>
+      <menuitem id="context-selectall"
+                label="&selectAllCmd.label;"
+                accesskey="&selectAllCmd.accesskey;"
+                command="cmd_selectAll"/>
+    </popup>
+  </popupset>
+
   <vbox>
     <vbox>
       <!-- Preface the error with a quick message -->
@@ -61,7 +86,8 @@
 
       <!-- Detailed description of the error -->
       <vbox id="mediacore_error_desc_box">
-        <description class="indent" flex="1" id="mediacore_error_desc" />
+        <description class="indent" flex="1" id="mediacore_error_desc"
+                     context="contentAreaContextMenu" tabindex="-1"/>
       </vbox>
     </vbox>
 
