@@ -59,7 +59,7 @@ sbLibraryMigration.prototype = {
 
   classDescription: 'Songbird Migration Handler, version ' + this.versionString,
   classID: Components.ID("{62bb8fb0-8fd8-11dd-ad8b-0800200c9a66}"),
-  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + this.versionString,
+  contractID: SBLocalDatabaseMigrationUtils.baseHandlerContractID + "10 to 11",
 
   _databaseLocation: null,
   _databaseGUID: null,

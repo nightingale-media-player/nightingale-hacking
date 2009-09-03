@@ -37,6 +37,7 @@
 #include <nsStringGlue.h>
 
 #include "sbIMetadataHandler.h"
+#include "sbIMetadataHandlerWMA.h"
 #include "sbIMetadataChannel.h"
 
 // DEFINES ====================================================================
@@ -54,10 +55,12 @@ class nsIChannel;
 struct IWMHeaderInfo3;
 struct IWMPMedia3;
 
-class sbMetadataHandlerWMA : public sbIMetadataHandler
+class sbMetadataHandlerWMA : public sbIMetadataHandler,
+                             public sbIMetadataHandlerWMA
 {
   NS_DECL_ISUPPORTS
   NS_DECL_SBIMETADATAHANDLER
+  NS_DECL_SBIMETADATAHANDLERWMA
 
   sbMetadataHandlerWMA();
 

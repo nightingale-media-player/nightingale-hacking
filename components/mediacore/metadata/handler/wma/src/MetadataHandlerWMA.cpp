@@ -169,7 +169,9 @@ SB_AUTO_CLASS(sbCoInitializeWrapper,
 
 // CLASSES ====================================================================
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbMetadataHandlerWMA, sbIMetadataHandler)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbMetadataHandlerWMA,
+                              sbIMetadataHandler,
+                              sbIMetadataHandlerWMA)
 
 sbMetadataHandlerWMA::sbMetadataHandlerWMA() :
   m_Completed(PR_FALSE)
@@ -1254,4 +1256,16 @@ sbMetadataHandlerWMA::ReadAlbumArtWMP(const nsAString &aFilePath,
 
   // if we get here, we ran through the pictures and found nothing useful
   return NS_ERROR_FAILURE;
+}
+
+/* PRBool isDRMProtected (in AString aPath); */
+NS_IMETHODIMP
+sbMetadataHandlerWMA::IsDRMProtected(const nsAString & aPath,
+                                     PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  BOOL isProtected; // needed for data type conversion
+  HRESULT hr = WMIsContentProtected(aPath.BeginReading(), &isProtected);
+  *_retval = isProtected;
+  return SUCCEEDED(hr) ? NS_OK : NS_ERROR_FAILURE;
 }

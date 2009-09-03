@@ -79,7 +79,7 @@ sbLocalDatabaseMigrationHelper.prototype = {
                        Ci.sbIJobProgress,
                        Ci.sbIJobCancelable ],
   
-  _latestSchemaVersion: 20,
+  _latestSchemaVersion: 21,
   _lowestFromSchemaVersion: Number.MAX_VALUE,
   
   _migrationHandlers:   null,
@@ -155,9 +155,16 @@ sbLocalDatabaseMigrationHelper.prototype = {
       let key = oldVersion + "," + newVersion;
       
       if(!(key in this._migrationHandlers)) {
+        dump("Failed to find migration handler " + key + "\n");
         throw Cr.NS_ERROR_UNEXPECTED;
       }
-      this._migrationHandlers[key].migrate(aLibrary);
+      try {
+        this._migrationHandlers[key].migrate(aLibrary);
+      } catch (e) {
+        dump("Error in migrating " + oldVersion + " to " + newVersion + ":\n" +
+             e + "\n");
+        throw(e);
+      }
       
       oldVersion = newVersion;
       newVersion += 1;

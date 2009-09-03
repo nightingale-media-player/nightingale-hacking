@@ -1195,6 +1195,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // iTunes Guid (for import/export from/to iTunes)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
                     EmptyString(),
                     stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
@@ -1206,6 +1207,12 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                        NS_LITERAL_STRING("property.shouldrip"),
                        stringBundle,
                        PR_FALSE, PR_TRUE, PR_FALSE, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  //Whether a media file is DRM protected
+  rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
+                       EmptyString(), stringBundle, PR_FALSE, PR_FALSE,
+                       PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
