@@ -366,7 +366,7 @@ DirectoryImportJob.prototype = {
       // If the file scan query is still running just update the UI
     } else {
       var text = this._fileScanQuery.getLastFileFound();
-      text = text.split("/").pop();
+      text = decodeURIComponent(text.split("/").pop());
       if (text.length > 60) {
         text = text.substring(0, 10) + "..." + text.substring(text.length - 40);
       }
