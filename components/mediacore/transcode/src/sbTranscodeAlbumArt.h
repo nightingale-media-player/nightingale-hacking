@@ -57,9 +57,6 @@ public:
   nsresult IsValidSizeForFormat(sbIImageFormatType *aFormat,
                                 PRBool *aIsValid);
 
-  nsresult GetTargetFormat(nsCString & aMimeType,
-                           PRInt32 *aWidth,
-                           PRInt32 *aHeight);
 protected:
   virtual ~sbTranscodeAlbumArt();
 

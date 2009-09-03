@@ -59,6 +59,11 @@ interface sbITranscodeAlbumArt : nsISupports
 
   /* Get an input stream from which the transcoded art can be read */
   nsIInputStream GetTranscodedArt();
+
+  /* Get the target format that will be transcoded to */
+  void GetTargetFormat(out AUTF8String mimeType,
+                       out long width,
+                       out long height);
 };
 
 %{C++

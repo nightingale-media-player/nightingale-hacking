@@ -172,7 +172,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
   rv = bufferedInputStream->Init(mInputStream, BUFFER_CHUNK_SIZE);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsCOMPtr<imgITools> imgTools = do_GetService(
+  nsCOMPtr<imgITools> imgTools = do_ProxiedGetService(
           "@mozilla.org/image/tools;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -359,9 +359,9 @@ sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(PRBool *aNeedsConversion)
   return NS_OK;
 }
 
-nsresult
+NS_IMETHODIMP
 sbTranscodeAlbumArt::GetTargetFormat(
-        nsCString & aMimeType, PRInt32 *aWidth, PRInt32 *aHeight)
+        nsACString & aMimeType, PRInt32 *aWidth, PRInt32 *aHeight)
 {
   NS_ENSURE_ARG_POINTER (aWidth);
   NS_ENSURE_ARG_POINTER (aHeight);
@@ -486,7 +486,7 @@ sbTranscodeAlbumArt::GetTranscodedArt(nsIInputStream **aImageStream)
     rv = GetTargetFormat(mimeType, &width, &height);
     NS_ENSURE_SUCCESS (rv, rv);
 
-    nsCOMPtr<imgITools> imgTools = do_GetService(
+    nsCOMPtr<imgITools> imgTools = do_ProxiedGetService(
             "@mozilla.org/image/tools;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -518,7 +518,7 @@ sbTranscodeAlbumArt::ConvertArt()
   rv = GetTargetFormat(mimeType, &width, &height);
   NS_ENSURE_SUCCESS (rv, rv);
 
-  nsCOMPtr<imgITools> imgTools = do_GetService(
+  nsCOMPtr<imgITools> imgTools = do_ProxiedGetService(
           "@mozilla.org/image/tools;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -544,7 +544,7 @@ sbTranscodeAlbumArt::ConvertArt()
 
   sbAutoNSMemPtr imageDataDestroy(imageData);
 
-  nsCOMPtr<sbIAlbumArtService> albumArtService = do_GetService(
+  nsCOMPtr<sbIAlbumArtService> albumArtService = do_ProxiedGetService(
               SB_ALBUMARTSERVICE_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
