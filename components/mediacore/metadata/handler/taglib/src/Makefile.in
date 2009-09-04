@@ -69,11 +69,13 @@ DYNAMIC_LIB_EXTRA_IMPORTS = unicharutil_external_s \
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag_s \
+ $(DEPS_DIR)/taglib/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)tag_s$(LIB_SUFFIX) \
  $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
-   DYNAMIC_LIB_STATIC_IMPORTS += $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+    $(DEPS_DIR)/zlib/$(SB_CONFIGURATION)/lib/zlib$(LIB_SUFFIX) \
+    $(NULL)
 else 
    DYNAMIC_LIB_EXTRA_IMPORTS += z
 endif

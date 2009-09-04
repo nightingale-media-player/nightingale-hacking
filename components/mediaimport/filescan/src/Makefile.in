@@ -61,7 +61,9 @@ endif
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else
-   DYNAMIC_LIB_STATIC_IMPORTS += $(MOZSDK_LIB_DIR)/libunicharutil_external_s
+   DYNAMIC_LIB_STATIC_IMPORTS += \
+	 $(MOZSDK_LIB_DIR)/$(LIB_PREFIX)unicharutil_external_s$(LIB_SUFFIX) \
+	 $(NULL)
 endif
 
 IS_COMPONENT = 1

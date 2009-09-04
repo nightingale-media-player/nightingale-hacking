@@ -124,7 +124,7 @@ DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/moz/strings/src \
 DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
- $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d) \
+ $(CURDIR)/metadata/sbMetadataGstreamer$(DEBUG:%=_d)$(LIB_SUFFIX) \
  $(NULL)
 
 # Use system headers for MEDIA_CORE_GST_SYSTEM only

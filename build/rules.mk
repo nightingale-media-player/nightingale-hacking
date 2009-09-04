@@ -683,8 +683,8 @@ endif
 
 OUR_LD_STATIC_IMPORT_LIST = $(foreach import, \
                              $(DYNAMIC_LIB_STATIC_IMPORTS), \
-                             $(if $(wildcard $(dir $(import))), \
-                             $(import)$(LIB_SUFFIX), \
+                             $(if $(wildcard $(import)), \
+                             $(import), \
                              $(addprefix $(SONGBIRD_OBJDIR)/, \
                              $(import)$(DEBUG:%=_d)$(LIB_SUFFIX))))
 
