@@ -1284,34 +1284,6 @@ function plCmd_Reveal_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   }
 }
 
-
-/*
-
-// mig dice: MUY DEPRACATADO!!!
-
-// Called when the "add to library" action is triggered
-function plCmd_AddToLibrary_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
-  var libraryManager =
-    Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-      .getService(Ci.sbILibraryManager);
-  var mediaList = libraryManager.mainLibrary;
-
-  var playlist = unwrap(aContext.playlist);
-  var mediaListView = playlist.mediaListView;
-  var selectionCount = mediaListView.selection.count;
-
-  var unwrapper = new SelectionUnwrapper(mediaListView.selectedIndexedMediaItems);
-
-  var oldLength = mediaList.length;
-  mediaList.addSome(unwrapper);
-
-  var itemsAdded = mediaList.length - oldLength;
-  DNDUtils.reportAddedTracks(itemsAdded,
-                             selectionCount - itemsAdded,
-                             mediaList.name);
-}
-*/
-
 // Called when the "copy track location" action is triggered
 function plCmd_CopyTrackLocation_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   var clipboardtext = "";
