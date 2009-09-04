@@ -41,7 +41,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(6c58aa05-9705-4c0c-84a3-796dde0ff147)]
+[scriptable, uuid(b74ea787-f864-4de2-b499-e56c8af35e18)]
 interface sbIDeviceFirmwareUpdater : nsISupports
 {
   /**
@@ -91,7 +91,7 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    * \brief Apply firmware update to device
    * \param aDevice - The device to update
    * \param aFirmwareUpdate - The firmware update to apply
-   * \param aListener [optional] - Device listener to recieve events
+   * \param aListener [optional] - Device listener to receive events
    * \note The flow of events for this method is the following: 
    *       firmware update start, firmware write start, N * firmware write progress,
    *       firmware write end, firmware verify start, N * firmware verify progress,
@@ -101,6 +101,14 @@ interface sbIDeviceFirmwareUpdater : nsISupports
   void applyUpdate(in sbIDevice aDevice,
                    in sbIDeviceFirmwareUpdate aFirmwareUpdate,
                    in sbIDeviceEventListener aListener);
+
+  /**
+   * \brief Recovery the device restoring it to factory state
+   * \param aDevice - The device to restore to factory state
+   * \param aListener [optional] - Device listener to receive events
+   */
+  void recoveryUpdate(in sbIDevice aDevice,
+                      in sbIDeviceEventListener aListener);
 
   /**
    * \brief Continue the auto-update process.

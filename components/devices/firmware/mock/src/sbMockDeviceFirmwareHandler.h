@@ -53,6 +53,7 @@ public:
   virtual nsresult OnCancel();
   virtual nsresult OnRefreshInfo();
   virtual nsresult OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
+  virtual nsresult OnRecover(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
   virtual nsresult OnVerifyDevice();
   virtual nsresult OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
   virtual nsresult OnHttpRequestCompleted();

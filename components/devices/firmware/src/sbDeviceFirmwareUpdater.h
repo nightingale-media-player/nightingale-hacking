@@ -81,6 +81,9 @@ public:
   nsresult RequiresRecoveryMode(sbIDevice *aDevice,
                                 sbIDeviceFirmwareHandler *aHandler);
 
+  nsresult GetCachedFirmwareUpdate(sbIDevice *aDevice,
+                                   sbIDeviceFirmwareUpdate **aUpdate);
+
 private:
   virtual ~sbDeviceFirmwareUpdater();
 
@@ -130,7 +133,8 @@ public:
     OP_NONE = 0,
     OP_REFRESH,
     OP_DOWNLOAD,
-    OP_UPDATE
+    OP_UPDATE,
+    OP_RECOVERY
   } handleroperation_t;
 
   sbDeviceFirmwareHandlerStatus();
@@ -159,15 +163,22 @@ public:
 
   sbDeviceFirmwareUpdaterRunner();
 
-  nsresult Init(sbIDeviceFirmwareUpdate *aUpdate, 
-                sbIDeviceFirmwareHandler *aHandler);
+  nsresult Init(sbIDevice *aDevice,
+                sbIDeviceFirmwareUpdate *aUpdate, 
+                sbIDeviceFirmwareHandler *aHandler,
+                PRBool aRecovery = PR_FALSE,
+                PRBool aFirmwareUpdateNeedsCaching = PR_FALSE);
 
 private:
   virtual ~sbDeviceFirmwareUpdaterRunner();
 
 protected:
+  nsCOMPtr<sbIDevice>                 mDevice;
   nsCOMPtr<sbIDeviceFirmwareUpdate>   mFirmwareUpdate;
   nsCOMPtr<sbIDeviceFirmwareHandler>  mHandler;
+
+  PRPackedBool mRecovery;
+  PRPackedBool mFirmwareUpdateNeedsCaching;
 };
 
 #define SB_DEVICEFIRMWAREUPDATER_DESCRIPTION               \

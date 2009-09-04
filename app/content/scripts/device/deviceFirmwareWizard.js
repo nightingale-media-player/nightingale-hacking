@@ -47,12 +47,14 @@ var deviceFirmwareWizard = {
   _device: null,
   _deviceFirmwareUpdater: null,
   _wizardElem: null,
+  _wizardMode: "update",
   
   _currentMode: null,
   _currentOperation: null,
   _firmwareUpdate: null,
   
   _waitingForDeviceReconnect: false,
+  _initialized: false,
 
   get wizardElem() {
     if (!this._wizardElem)
@@ -101,15 +103,16 @@ var deviceFirmwareWizard = {
   },
 
   doPageShow: function deviceFirmwareWizard_doPageShow() {
-    this._initialize();
-    this.update();
+    if(!this._initialized)
+      return;
 
     var currentPage = this.wizardElem.currentPage;
     
     switch(currentPage.id) {
       case "device_firmware_check": {
-        this._currentOperation = "checkforupdate";
         let self = this;
+        
+        this._currentOperation = "checkforupdate";
         setTimeout(function() {
             self._deviceFirmwareUpdater.checkForUpdate(self._device, self);
           }, 0);
@@ -207,9 +210,17 @@ var deviceFirmwareWizard = {
         cancelButton.disabled = true;
         
         var self = this;
-        setTimeout(function() {
-            self._deviceFirmwareUpdater.applyUpdate(self._device, self._firmwareUpdate, self);
-            }, 0);
+        
+        if(this._wizardMode == "repair") {
+          setTimeout(function() {
+              self._deviceFirmwareUpdater.recoveryUpdate(self._device, self);
+              }, 0);
+        }
+        else {
+          setTimeout(function() {
+              self._deviceFirmwareUpdater.applyUpdate(self._device, self._firmwareUpdate, self);
+              }, 0);
+        }
       }
       break;
       
@@ -297,6 +308,13 @@ var deviceFirmwareWizard = {
     var dialogPB = 
       window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
 
+    try {
+      var wizardMode = dialogPB.GetString(0).split("=");
+      this._wizardMode = wizardMode[1];
+    } catch(e) {
+      this._wizardMode = "update";
+    }
+
     this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
     this._deviceFirmwareUpdater = 
       Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
@@ -311,6 +329,23 @@ var deviceFirmwareWizard = {
     this._wizardElem.canRewind = true;
 
     this._initialized = true;
+    
+    // in repair mode, skip check for update and download firmware
+    var self = this;
+    if(this._wizardMode == "repair") {
+      this._currentOperation = "install";
+      setTimeout(function() {
+          self._wizardElem.goTo("device_firmware_wizard_install_page");
+        }, 0);
+      
+      // XXXAus: Actually, check if the device is in the right mode, if not, go
+      // to needs recovery! Need a way to check if device is in rec or normal mode.
+    }
+    else {
+      setTimeout(function() {
+          self._wizardElem.goTo("device_firmware_wizard_check_page");
+        }, 0);
+    }
   },
 
 

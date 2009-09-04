@@ -165,6 +165,8 @@ public:
   // override me, see cpp file for implementation notes
   virtual nsresult OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
   // override me, see cpp file for implementation notes
+  virtual nsresult OnRecover(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
+  // override me, see cpp file for implementation notes
   virtual nsresult OnVerifyDevice();
   // override me, see cpp file for implementation notes
   virtual nsresult OnVerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate);
@@ -181,10 +183,13 @@ protected:
 
   handlerstate_t mHandlerState;
   PRUint32 mFirmwareVersion;
+  PRUint32 mDefaultFirmwareVersion;
 
   nsString mContractId;
   nsString mReadableFirmwareVersion;
+  nsString mDefaultReadableFirmwareVersion;
 
+  nsCOMPtr<nsIURI> mDefaultFirmwareLocation;
   nsCOMPtr<nsIURI> mFirmwareLocation;
   nsCOMPtr<nsIURI> mReleaseNotesLocation;
   nsCOMPtr<nsIURI> mResetInstructionsLocation;

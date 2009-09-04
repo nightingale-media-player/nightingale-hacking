@@ -424,6 +424,28 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
   mListener = aListener;
   mHandler  = aHandler;
 
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  mDownloader = do_CreateInstance(SB_FILEDOWNLOADER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDownloader->SetListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateCacheRoot(getter_AddRefs(mCacheDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateCacheDirForDevice(mDevice, 
+                               mCacheDir, 
+                               getter_AddRefs(mDeviceCacheDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+/*static*/ nsresult 
+sbDeviceFirmwareDownloader::CreateCacheRoot(nsIFile **aCacheRoot)
+{
   // Initialize the cache
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIProperties> directoryService =
@@ -432,14 +454,14 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
 
   nsCOMPtr<nsIFile> localDataDir;
   rv = directoryService->Get(NS_APP_USER_PROFILE_LOCAL_50_DIR,
-                             NS_GET_IID(nsIFile),
-                             getter_AddRefs(localDataDir));
+    NS_GET_IID(nsIFile),
+    getter_AddRefs(localDataDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(!localDataDir) {
     rv = directoryService->Get(NS_APP_USER_PROFILE_50_DIR,
-                               NS_GET_IID(nsIFile),
-                               getter_AddRefs(localDataDir));
+      NS_GET_IID(nsIFile),
+      getter_AddRefs(localDataDir));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -484,27 +506,22 @@ sbDeviceFirmwareDownloader::Init(sbIDevice *aDevice,
   NS_ENSURE_TRUE(isReadable, NS_ERROR_FAILURE);
   NS_ENSURE_TRUE(isWritable, NS_ERROR_FAILURE);
 
-  cacheDir.swap(mCacheDir);
-
-  mDownloader = do_CreateInstance(SB_FILEDOWNLOADER_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mDownloader->SetListener(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = CreateCacheDirForDevice();
-  NS_ENSURE_SUCCESS(rv, rv);
+  cacheDir.forget(aCacheRoot);
 
   return NS_OK;
 }
 
-nsresult
-sbDeviceFirmwareDownloader::CreateCacheDirForDevice()
+/*static*/ nsresult
+sbDeviceFirmwareDownloader::CreateCacheDirForDevice(sbIDevice *aDevice,
+                                                    nsIFile *aCacheRoot,
+                                                    nsIFile **aCacheDir)
 {
-  NS_ENSURE_STATE(mDevice);
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aCacheRoot);
+  NS_ENSURE_ARG_POINTER(aCacheDir);
 
   nsCOMPtr<sbIDeviceProperties> properties;
-  nsresult rv = mDevice->GetProperties(getter_AddRefs(properties));
+  nsresult rv = aDevice->GetProperties(getter_AddRefs(properties));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString vendorName;
@@ -535,7 +552,7 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice()
   PRUint32 hashCode = HashString(hashStr);
 
   nsCOMPtr<nsIFile> deviceCacheDir;
-  rv = mCacheDir->Clone(getter_AddRefs(deviceCacheDir));
+  rv = aCacheRoot->Clone(getter_AddRefs(deviceCacheDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deviceCacheDir->Append(sbAutoString(hashCode));
@@ -572,7 +589,67 @@ sbDeviceFirmwareDownloader::CreateCacheDirForDevice()
   NS_ENSURE_TRUE(isReadable, NS_ERROR_FAILURE);
   NS_ENSURE_TRUE(isWritable, NS_ERROR_FAILURE);
 
-  deviceCacheDir.swap(mDeviceCacheDir);
+  deviceCacheDir.forget(aCacheDir);
+
+  return NS_OK;
+}
+
+/*static*/ nsresult 
+sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice, 
+                                                sbIDeviceFirmwareUpdate *aFirmwareUpdate,
+                                                sbIDeviceFirmwareUpdate **aCachedFirmwareUpdate)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
+
+  nsCOMPtr<nsIFile> cacheRoot;
+  nsresult rv = CreateCacheRoot(getter_AddRefs(cacheRoot));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> deviceCache;
+  rv = CreateCacheDirForDevice(aDevice, cacheRoot, getter_AddRefs(deviceCache));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> firmwareFile;
+  rv = aFirmwareUpdate->GetFirmwareImageFile(getter_AddRefs(firmwareFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString firmwareReadableVersion;
+  rv = aFirmwareUpdate->GetFirmwareReadableVersion(firmwareReadableVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 firmwareVersion = 0;
+  rv = aFirmwareUpdate->GetFirmwareVersion(&firmwareVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString leafName;
+  rv = firmwareFile->GetLeafName(leafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = firmwareFile->CopyTo(deviceCache, leafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString firmwarePath;
+  rv = deviceCache->GetPath(firmwarePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsILocalFile> newFirmwareFile;
+  rv = NS_NewLocalFile(firmwarePath, PR_FALSE, getter_AddRefs(newFirmwareFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = newFirmwareFile->Append(leafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
+    do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = firmwareUpdate->Init(newFirmwareFile, 
+                            firmwareReadableVersion, 
+                            firmwareVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  firmwareUpdate.forget(aCachedFirmwareUpdate);
 
   return NS_OK;
 }

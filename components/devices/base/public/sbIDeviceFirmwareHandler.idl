@@ -117,6 +117,12 @@ interface sbIDeviceFirmwareHandler : nsISupports
    */
   readonly attribute boolean needsRecoveryMode;
 
+  /**
+   * \brief The default firmware update that is packaged with the
+   *        firmware handler. This update should always be available.
+   */
+  readonly attribute sbIDeviceFirmwareUpdate defaultFirmwareUpdate;
+
   /** 
    * \brief Check to see if this handler supports the given device
    * \param aDevice - The device
@@ -178,6 +184,14 @@ interface sbIDeviceFirmwareHandler : nsISupports
    * \param aFirmwareUpdate - The firmware update to apply
    */
   void update(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
+
+  /**
+   * \brief Perform a recovery update on the specified device
+   * \note Calling this method will often wipe all content from the device
+   * \param aFirmwareUpdate - The firmware update to apply during the
+   *                          recovery update. 
+   */
+  void recover(in sbIDeviceFirmwareUpdate aFirmwareUpdate);
 
   /**
    * \brief Verify the firmware already on the device

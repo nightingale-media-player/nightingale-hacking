@@ -55,8 +55,15 @@ public:
                 sbIDeviceEventListener *aListener,
                 sbIDeviceFirmwareHandler *aHandler);
 
-  nsresult CreateCacheDirForDevice();
-  nsresult GetCacheDirForDevice(nsIFile **aCacheDir);
+  static nsresult CreateCacheRoot(nsIFile **aCacheRoot);
+  static nsresult CreateCacheDirForDevice(sbIDevice *aDevice, 
+                                          nsIFile *aCacheRoot, 
+                                          nsIFile **aCacheDir);
+  static nsresult GetCacheDirForDevice(sbIDevice *aDevice, nsIFile **aCacheDir);
+  static nsresult CacheFirmwareUpdate(sbIDevice *aDevice, 
+                                      sbIDeviceFirmwareUpdate *aFirmwareUpdate,
+                                      sbIDeviceFirmwareUpdate **aCachedFirmwareUpdate);
+
   PRBool   IsAlreadyInCache();
   nsresult GetCachedFile(nsIFile **aFile);
  

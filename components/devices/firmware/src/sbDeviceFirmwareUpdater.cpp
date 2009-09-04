@@ -26,9 +26,11 @@
 
 #include "sbDeviceFirmwareUpdater.h"
 
+#include <nsILocalFile.h>
 #include <nsIMutableArray.h>
 #include <nsIObserverService.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIVariant.h>
 
 #include <sbIDevice.h>
 #include <sbIDeviceEvent.h>
@@ -43,6 +45,7 @@
 #include <prlog.h>
 
 #include "sbDeviceFirmwareDownloader.h"
+#include "sbDeviceFirmwareUpdate.h"
 
 /**
  * To log this module, set the following environment variable:
@@ -58,6 +61,10 @@ static PRLogModuleInfo* gDeviceFirmwareUpdater = nsnull;
 #endif
 
 #define MIN_RUNNING_HANDLERS (2)
+
+#define FIRMWARE_FILE_PREF      "firmware.cache.file"
+#define FIRMWARE_VERSION_PREF   "firmware.cache.version"
+#define FIRMWARE_READABLE_PREF  "firmware.cache.readableVersion"
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceFirmwareUpdater,
                               sbIDeviceFirmwareUpdater,
@@ -329,6 +336,62 @@ sbDeviceFirmwareUpdater::RequiresRecoveryMode(sbIDevice *aDevice,
   return NS_OK;
 }
 
+nsresult
+sbDeviceFirmwareUpdater::GetCachedFirmwareUpdate(sbIDevice *aDevice,
+                                                 sbIDeviceFirmwareUpdate **aUpdate)
+{
+  nsCOMPtr<nsIVariant> firmwareVersion;
+  nsresult rv = 
+    aDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF),
+    getter_AddRefs(firmwareVersion));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRUint32 prefVersion = 0;
+  rv = firmwareVersion->GetAsUint32(&prefVersion);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  rv = aDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_READABLE_PREF),
+                              getter_AddRefs(firmwareVersion));
+
+  nsString prefReadableVersion;
+  rv = firmwareVersion->GetAsAString(prefReadableVersion);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  nsCOMPtr<nsIVariant> firmwareFilePath;
+  rv = aDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
+    getter_AddRefs(firmwareFilePath));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString filePath;
+  rv = firmwareFilePath->GetAsAString(filePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsILocalFile> localFile;
+  rv = NS_NewLocalFile(filePath, PR_FALSE, getter_AddRefs(localFile));
+
+  PRBool exists = PR_FALSE;
+  rv = localFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!exists) {
+    *aUpdate = nsnull;
+    return NS_OK;
+  }
+
+  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
+    do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = firmwareUpdate->Init(localFile, 
+                            prefReadableVersion, 
+                            prefVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  firmwareUpdate.forget(aUpdate);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbDeviceFirmwareUpdater::CheckForUpdate(sbIDevice *aDevice, 
                                         sbIDeviceEventListener *aListener)
@@ -537,7 +600,80 @@ sbDeviceFirmwareUpdater::ApplyUpdate(sbIDevice *aDevice,
   NS_NEWXPCOM(runner, sbDeviceFirmwareUpdaterRunner);
   NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = runner->Init(aFirmwareUpdate, handler);
+  rv = runner->Init(aDevice, aFirmwareUpdate, handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mThreadPool->Dispatch(runner, NS_DISPATCH_NORMAL);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice, 
+                                        sbIDeviceEventListener *aListener)
+{
+  LOG(("[sbDeviceFirmwareUpdater] - ApplyUpdate"));
+
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_FALSE(mIsShutdown, NS_ERROR_ILLEGAL_DURING_SHUTDOWN);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler = 
+    GetRunningHandler(aDevice, aListener, PR_TRUE);
+
+  nsAutoMonitor mon(mMonitor);
+
+  sbDeviceFirmwareHandlerStatus *handlerStatus = GetHandlerStatus(handler);
+  NS_ENSURE_TRUE(handlerStatus, NS_ERROR_OUT_OF_MEMORY);
+
+  sbDeviceFirmwareHandlerStatus::handlerstatus_t status = 
+    sbDeviceFirmwareHandlerStatus::STATUS_NONE;
+  rv = handlerStatus->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(status != sbDeviceFirmwareHandlerStatus::STATUS_NONE &&
+     status != sbDeviceFirmwareHandlerStatus::STATUS_FINISHED) {
+    return NS_ERROR_FAILURE;
+  }
+
+  nsCOMPtr<sbIDeviceEventTarget> eventTarget = do_QueryInterface(aDevice, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = eventTarget->AddEventListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = PutRunningHandler(aDevice, handler);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handlerStatus->SetOperation(sbDeviceFirmwareHandlerStatus::OP_RECOVERY);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mon.Exit();
+
+  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate;
+  rv = GetCachedFirmwareUpdate(aDevice, getter_AddRefs(firmwareUpdate));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool needsCaching = PR_FALSE;
+  if(!firmwareUpdate) {
+    rv = handler->GetDefaultFirmwareUpdate(getter_AddRefs(firmwareUpdate));
+    NS_ENSURE_SUCCESS(rv, rv);
+    NS_ENSURE_TRUE(firmwareUpdate, NS_ERROR_UNEXPECTED);
+
+    needsCaching = PR_TRUE;
+  }
+
+  nsRefPtr<sbDeviceFirmwareUpdaterRunner> runner;
+  NS_NEWXPCOM(runner, sbDeviceFirmwareUpdaterRunner);
+  NS_ENSURE_TRUE(runner, NS_ERROR_OUT_OF_MEMORY);
+
+  rv = runner->Init(aDevice, firmwareUpdate, handler, PR_TRUE, needsCaching);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mThreadPool->Dispatch(runner, NS_DISPATCH_NORMAL);
@@ -892,8 +1028,9 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
     }
     break;
 
-    case sbDeviceFirmwareHandlerStatus::OP_UPDATE: {
-      LOG(("[sbDeviceFirmwareUpdater] - OP_UPDATE"));
+    case sbDeviceFirmwareHandlerStatus::OP_UPDATE:
+    case sbDeviceFirmwareHandlerStatus::OP_RECOVERY: {
+      LOG(("[sbDeviceFirmwareUpdater] - OP_UPDATE or OP_RECOVERY"));
       
       if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_UPDATE_START &&
          status == sbDeviceFirmwareHandlerStatus::STATUS_WAITING_FOR_START) {
@@ -1058,6 +1195,8 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceFirmwareUpdaterRunner,
                               nsIRunnable);
 
 sbDeviceFirmwareUpdaterRunner::sbDeviceFirmwareUpdaterRunner()
+: mRecovery(PR_FALSE)
+, mFirmwareUpdateNeedsCaching(PR_FALSE)
 {
 }
 
@@ -1067,14 +1206,22 @@ sbDeviceFirmwareUpdaterRunner::~sbDeviceFirmwareUpdaterRunner()
 }
 
 nsresult
-sbDeviceFirmwareUpdaterRunner::Init(sbIDeviceFirmwareUpdate *aUpdate, 
-                                    sbIDeviceFirmwareHandler *aHandler)
+sbDeviceFirmwareUpdaterRunner::Init(sbIDevice *aDevice,
+                                    sbIDeviceFirmwareUpdate *aUpdate, 
+                                    sbIDeviceFirmwareHandler *aHandler,                                    
+                                    PRBool aRecovery /*= PR_FALSE*/,
+                                    PRBool aFirmwareUpdateNeedsCaching /*= PR_FALSE*/)
 {
+  NS_ENSURE_ARG_POINTER(aDevice);
   NS_ENSURE_ARG_POINTER(aUpdate);
   NS_ENSURE_ARG_POINTER(aHandler);
 
+  mDevice = aDevice;
   mFirmwareUpdate = aUpdate;
   mHandler = aHandler;
+
+  mRecovery = aRecovery;
+  mFirmwareUpdateNeedsCaching = aFirmwareUpdateNeedsCaching;
 
   return NS_OK;
 }
@@ -1085,8 +1232,31 @@ sbDeviceFirmwareUpdaterRunner::Run()
   NS_ENSURE_STATE(mHandler);
   NS_ENSURE_STATE(mFirmwareUpdate);
 
-  nsresult rv = mHandler->Update(mFirmwareUpdate);
-  NS_ENSURE_SUCCESS(rv, rv);
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  if(mFirmwareUpdateNeedsCaching) {
+    nsCOMPtr<sbIDeviceFirmwareUpdate> cachedFirmwareUpdate;
+    rv = 
+      sbDeviceFirmwareDownloader::CacheFirmwareUpdate(mDevice,
+                                                      mFirmwareUpdate, 
+                                                      getter_AddRefs(cachedFirmwareUpdate));
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    cachedFirmwareUpdate.swap(mFirmwareUpdate);
+  }
+
+  // Don't need this anymore, get rid of it asap.
+  mDevice = nsnull;
+
+  if(mRecovery) {
+    rv = mHandler->Recover(mFirmwareUpdate);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = mHandler->Update(mFirmwareUpdate);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
 
   return NS_OK;
 }

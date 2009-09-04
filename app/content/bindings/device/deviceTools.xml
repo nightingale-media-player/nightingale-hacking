@@ -234,7 +234,7 @@
              "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
              "device_firmware_dialog",
              "",
-             [ "", this.device ],
+             [ "mode=update", this.device ],
              null);
          ]]></body>
       </method>
@@ -257,7 +257,9 @@
       </method>
 
       <method name="repairDevice">
-        <body><![CDATA[
+        <body>
+            <![CDATA[
+          /*
           var prompter = 
               Components.classes['@songbirdnest.com/Songbird/Prompter;1']
               .getService(Components.interfaces.sbIPrompter);
@@ -273,6 +275,15 @@
             this.device.submitRequest(
                 Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);
           }
+          */
+          
+          WindowUtils.openModalDialog
+            (window,
+             "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+             "device_firmware_dialog",
+             "",
+             [ "mode=repair", this.device ],
+             null);
         ]]></body>
       </method>
 
@@ -422,6 +433,7 @@
             }
             if (!firmHandler || !firmHandler.canUpdate(self.device)) {
               this._getToolBox("update").collapsed = true;
+              this._getToolBox("repair").collapsed = true;
             }
             if (firmHandler && firmHandler.customerSupportLocation == null) {
               this._getToolBox("support").collapsed = true;

@@ -26,6 +26,8 @@
 
 #include "sbBaseDeviceFirmwareHandler.h"
 
+#include <nsIChromeRegistry.h>
+#include <nsIFileURL.h>
 #include <nsIIOService.h>
 #include <nsIScriptSecurityManager.h>
 
@@ -37,6 +39,8 @@
 #include <sbIDeviceEventTarget.h>
 
 #include <sbProxiedComponentManager.h>
+
+#include "sbDeviceFirmwareUpdate.h"
 
 /**
  * To log this module, set the following environment variable:
@@ -68,6 +72,7 @@ sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 : mMonitor(nsnull)
 , mHandlerState(HANDLER_IDLE)
 , mFirmwareVersion(0)
+, mDefaultFirmwareVersion(0)
 , mNeedsRecoveryMode(PR_FALSE)
 {
 #ifdef PR_LOGGING
@@ -522,6 +527,39 @@ sbBaseDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+/*virtual*/ nsresult 
+sbBaseDeviceFirmwareHandler::OnRecover(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  /**
+  * Here is where you will want to actually perform the firmware update
+  * on the device. The firmware update object will contain the local 
+  * location for the firmware image. It also contains the version of the 
+  * firmware image. 
+  *
+  * If no firmware update object is passed, the handler
+  * is expected to use a firmware update it packaged as part of it's add-on.
+  * This is to enable a device to always be recovered even if the user is
+  * off line or has never updated their firmware before and have no firmware
+  * update present in their cache.
+  *
+  * This method is expected to also reset the device to factory settings.
+  *
+  * The implementation of this method must be asynchronous and not block
+  * the main thread. The flow of expected events is as follows:
+  * firmware update start, firmware write start, firmware write progress, 
+  * firmware write end, firmware verify start, firmware verify progress, 
+  * firmware verify end, firmware update end.
+  *
+  * See sbIDeviceEvent for more infomation about event payload.
+  *
+  * Events must be sent to both the device and the listener (if it is specified 
+  * during the call).
+  */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /*virtual*/ nsresult
 sbBaseDeviceFirmwareHandler::OnVerifyDevice()
 {
@@ -770,6 +808,50 @@ sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(PRBool *aNeedsRecoveryMode)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **aFirmwareUpdate)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
+
+  nsAutoMonitor mon(mMonitor);
+  NS_ENSURE_TRUE(mDefaultFirmwareLocation, NS_ERROR_NOT_INITIALIZED);
+
+  PRBool schemeIsChrome = PR_FALSE;
+  nsresult rv = mDefaultFirmwareLocation->SchemeIs("chrome", 
+                                                   &schemeIsChrome);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(schemeIsChrome, NS_ERROR_INVALID_ARG);
+
+  nsCOMPtr<nsIChromeRegistry> chromeRegistry =
+    do_GetService("@mozilla.org/chrome/chrome-registry;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> fileURI;
+  rv = chromeRegistry->ConvertChromeURL(mDefaultFirmwareLocation, 
+                                        getter_AddRefs(fileURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(fileURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
+    do_CreateInstance(SB_DEVICEFIRMWAREUPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = firmwareUpdate->Init(file, 
+                            mDefaultReadableFirmwareVersion, 
+                            mDefaultFirmwareVersion);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::CanHandleDevice(sbIDevice *aDevice, 
                                                PRBool *_retval)
@@ -904,6 +986,20 @@ sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   nsresult rv = OnUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
   
+  return NS_OK;
+}
+
+NS_IMETHODIMP 
+sbBaseDeviceFirmwareHandler::Recover(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+
+  nsAutoMonitor mon(mMonitor);
+
+  nsresult rv = OnRecover(aFirmwareUpdate);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

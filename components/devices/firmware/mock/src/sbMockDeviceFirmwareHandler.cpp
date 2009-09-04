@@ -241,6 +241,12 @@ sbMockDeviceFirmwareHandler::OnUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 }
 
 /*virtual*/ nsresult
+sbMockDeviceFirmwareHandler::OnRecover(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
+{
+  return OnUpdate(aFirmwareUpdate);
+}
+
+/*virtual*/ nsresult
 sbMockDeviceFirmwareHandler::OnVerifyDevice()
 {
   /**
