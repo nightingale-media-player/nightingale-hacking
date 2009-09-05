@@ -27,12 +27,10 @@
  */
 -->
 
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceFirmwareWizard.css" type="text/css"?>
 <?xml-stylesheet href="chrome://global/skin" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
-<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
-                 type="text/css"?>
-<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceFirmwareWizard.css"
-                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
 
 <!DOCTYPE window [
   <!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
@@ -203,7 +201,7 @@
         &device.firmware.wizard.repair.time.description;
       </description>
       <groupbox>
-        <description>
+        <description class="device-firmware-wizard-warning-description">
           &device.firmware.wizard.repair.warning;
         </description>
       </groupbox>
@@ -223,7 +221,8 @@
       <progressmeter id="device_firmware_wizard_install_progress"
                      mode="undetermined"/>
       <groupbox>
-        <description id="device_firmware_install_no_disconnect_desc"/>
+        <description id="device_firmware_install_no_disconnect_desc"
+                     class="device-firmware-wizard-warning-description"/>
       </groupbox>
     </vbox>
   </wizardpage>

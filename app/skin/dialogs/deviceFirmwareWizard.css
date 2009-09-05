@@ -28,9 +28,9 @@
 
 /**
 *******************************************************************************
-FIRST RUN WIZARD
+Firmware Wizard
 
-Additional styles imported directly by the first run dialog.
+Additional styles imported directly by the Firmware Wizard dialog.
 
 *******************************************************************************
 */
@@ -46,4 +46,12 @@ Additional styles imported directly by the first run dialog.
 #device_firmware_wizard_release_notes_browser {
   min-width: 380px;
   min-height: 220px;
+}
+
+/* Classes */
+.device-firmware-wizard-warning-description {
+ background-image:url('chrome://songbird/skin/base-elements/icon-error.png');
+ background-position:left center;
+ background-repeat:no-repeat;
+ padding-left: 26px;
 }

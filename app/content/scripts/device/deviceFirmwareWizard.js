@@ -462,11 +462,10 @@ var deviceFirmwareWizard = {
   },
   
   _handleBrowserCollapse: function deviceFirmwareWizard__handleBrowserCollapse(aEvent) {
-    // XXXAus: Errr, that isn't the right way to do it, but it works for now.
-    //         Ideally there should be no hardcoded width and height values in
-    //         here. And no hardcoded multipliers either!
-    if(aEvent.detail == false) {
-      window.sizeToContent();
+    const BROWSER_VISIBLE_INNER_HEIGHT = 360;
+    
+    if(aEvent.detail == true) {
+      window.innerHeight = BROWSER_VISIBLE_INNER_HEIGHT;
     }
   },
 
