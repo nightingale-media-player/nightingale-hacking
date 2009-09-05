@@ -163,7 +163,8 @@
       <progressmeter id="device_firmware_wizard_download_progress"
                      mode="determined"/>
       <groupbox>
-        <description id="device_firmware_download_no_disconnect_desc"/>
+        <description id="device_firmware_download_no_disconnect_desc"
+                     class="device-firmware-wizard-warning-description"/>
       </groupbox>
     </vbox>
   </wizardpage>

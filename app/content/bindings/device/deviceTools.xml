@@ -189,6 +189,7 @@
         }
         
         this.device = null;
+        this._firmwareHandler = null;
         this._busyCheckTimer = null;
         this._currentFirmwareVersion = null;
         this._busyWarningBox = null;
@@ -201,11 +202,6 @@
       </constructor>
 
       <destructor><![CDATA[
-        var firmwareUpdater = 
-          Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
-                    .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
-        firmwareUpdater.finalizeUpdate(this.device);
-
         if(this.device) {
           this.device = null;
         }
@@ -305,8 +301,7 @@
       </method>
 
       <method name="_update">
-        <body>
-          <![CDATA[
+        <body><![CDATA[
         if(!this._currentFirmwareVersion) {
           this._currentFirmwareVersion =
             document.getAnonymousElementByAttribute(this,
@@ -330,19 +325,37 @@
         // the device firmware version instead of using the one provided
         // by the device properties.
         if(deviceFirmwareUpdater.hasHandler(this.device)) {
-          var handler = deviceFirmwareUpdater.getHandler(this.device);          
-          handler.bind(this.device, null);
+          var handler = deviceFirmwareUpdater.getHandler(this.device);
           
+          var self = this;
+          var deviceListener = {
+            onDeviceEvent: function(aEvent) {
+              if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
+                let curFirmHandler = self._firmwareHandler;
+                self._registerURI = curFirmHandler.registerLocation;
+                self._customerSupportLocation = curFirmHandler.customerSupportLocation;
+                self._propertyLookup();
+              }
+            }
+          };
+
           try {
+            handler.bind(this.device, deviceListener);
+            this._firmwareHandler = handler; 
+            handler.refreshInfo();
             firmwareVersion = handler.currentFirmwareReadableVersion;
           }
-          catch(err) {}
+          catch(err) { 
+            Components.utils.reportError(err); 
+            this._firmwareHandler = null; 
+          }
         }
-        else {
+
+        if(firmwareVersion == null) {
           try { 
             firmwareVersion = this.device.properties.firmwareVersion;
           }
-          catch(err) {}
+          catch(err) { Components.utils.reportError(err); }
         }
 
         if (firmwareVersion == null) {
@@ -363,8 +376,7 @@
       </method>
 
       <method name="_updateBusyState">
-        <body>
-          <![CDATA[
+        <body><![CDATA[
         if(!this._busyWarningBox) {
           this._busyWarningBox= 
             document.getAnonymousElementByAttribute(this,
@@ -378,7 +390,7 @@
                                                     "sbid",
                                                     "sb-device-tools-busy-device-warning-desc");
         }
-
+        
         if(this.device.isBusy) {
           if(this._busyWarningText) {
             this._busyWarningDesc.removeChild(this._busyWarningText);
@@ -409,43 +421,29 @@
 
       <method name="_propertyLookup">
         <body><![CDATA[
-          var firmwareUpdater =
-            Components.classes["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
-                      .getService(Components.interfaces.sbIDeviceFirmwareUpdater);
-
-          // Update the device for product registration fun.
-          var self = this;
-          var deviceListener = {
-            onDeviceEvent: function(aEvent) {
-              if (aEvent.type == Components.interfaces.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
-                var curFirmHandler = firmwareUpdater.getActiveHandler(self.device);
-                self._registerURI = curFirmHandler.registerLocation;
-                self._customerSupportLocation = curFirmHandler.customerSupportLocation;
-              }
-            }
-          };
-
-          // Now hide irrelevant tool boxes, and check for an update
-          try {
-            var firmHandler = firmwareUpdater.getHandler(self.device);
-            if (firmHandler && firmHandler.registerLocation == null) {
-              this._getToolBox("register").collapsed = true;
-            }
-            if (!firmHandler || !firmHandler.canUpdate(self.device)) {
-              this._getToolBox("update").collapsed = true;
-              this._getToolBox("repair").collapsed = true;
-            }
-            if (firmHandler && firmHandler.customerSupportLocation == null) {
-              this._getToolBox("support").collapsed = true;
-            }
-          } catch (e if ("result" in e && e.result == Components.results.NS_ERROR_NOT_AVAILABLE)) {
+          if(!this._firmwareHandler) {
             // no handler
-            for each (let id in ["support", "update", "register"]) {
+            for each (let id in ["support", "update", "register", "repair"]) {
               this._getToolBox(id).collapsed = true;
             }
-          } catch (e) {
-            Components.utils.reportError(e);
-            throw(e);
+          }
+          else {
+            // Now hide irrelevant tool boxes, and check for an update
+            try {
+              var firmHandler = this._firmwareHandler;
+              if (firmHandler && firmHandler.registerLocation == null) {
+                this._getToolBox("register").collapsed = true;
+              }
+              if (!firmHandler || !firmHandler.canUpdate(this.device)) {
+                this._getToolBox("update").collapsed = true;
+                this._getToolBox("repair").collapsed = true;
+              }
+              if (firmHandler && firmHandler.customerSupportLocation == null) {
+                this._getToolBox("support").collapsed = true;
+              }
+            } catch (e) {
+              Components.utils.reportError(e);
+            }
           }
         ]]></body>
       </method>
