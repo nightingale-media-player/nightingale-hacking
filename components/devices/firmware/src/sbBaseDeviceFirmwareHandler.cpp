@@ -815,6 +815,8 @@ sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
+  *aFirmwareUpdate = nsnull;
+
   nsAutoMonitor mon(mMonitor);
   NS_ENSURE_TRUE(mDefaultFirmwareLocation, NS_ERROR_NOT_INITIALIZED);
 
@@ -848,6 +850,8 @@ sbBaseDeviceFirmwareHandler::GetDefaultFirmwareUpdate(sbIDeviceFirmwareUpdate **
                             mDefaultReadableFirmwareVersion, 
                             mDefaultFirmwareVersion);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  firmwareUpdate.forget(aFirmwareUpdate);
 
   return NS_OK;
 }

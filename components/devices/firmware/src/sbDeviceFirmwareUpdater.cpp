@@ -343,19 +343,19 @@ sbDeviceFirmwareUpdater::GetCachedFirmwareUpdate(sbIDevice *aDevice,
   nsCOMPtr<nsIVariant> firmwareVersion;
   nsresult rv = 
     aDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF),
-    getter_AddRefs(firmwareVersion));
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+                           getter_AddRefs(firmwareVersion));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 prefVersion = 0;
   rv = firmwareVersion->GetAsUint32(&prefVersion);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = aDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_READABLE_PREF),
                               getter_AddRefs(firmwareVersion));
 
   nsString prefReadableVersion;
   rv = firmwareVersion->GetAsAString(prefReadableVersion);
-  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIVariant> firmwareFilePath;
   rv = aDevice->GetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
@@ -658,10 +658,9 @@ sbDeviceFirmwareUpdater::RecoveryUpdate(sbIDevice *aDevice,
 
   nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate;
   rv = GetCachedFirmwareUpdate(aDevice, getter_AddRefs(firmwareUpdate));
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  
   PRBool needsCaching = PR_FALSE;
-  if(!firmwareUpdate) {
+  if(NS_FAILED(rv) || !firmwareUpdate) {
     rv = handler->GetDefaultFirmwareUpdate(getter_AddRefs(firmwareUpdate));
     NS_ENSURE_SUCCESS(rv, rv);
     NS_ENSURE_TRUE(firmwareUpdate, NS_ERROR_UNEXPECTED);

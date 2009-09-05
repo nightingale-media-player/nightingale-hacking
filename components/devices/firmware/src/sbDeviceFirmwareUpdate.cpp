@@ -93,7 +93,7 @@ sbDeviceFirmwareUpdate::GetFirmwareVersion(PRUint32 *aFirmwareVersion)
   nsAutoMonitor mon(mMonitor);
   *aFirmwareVersion = mFirmwareVersion;
 
-  return NS_ERROR_NOT_IMPLEMENTED;
+  return NS_OK;
 }
 
 NS_IMETHODIMP sbDeviceFirmwareUpdate::Init(nsIFile *aFirmwareImageFile, 

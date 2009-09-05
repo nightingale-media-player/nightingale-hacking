@@ -52,8 +52,8 @@
   onload="deviceFirmwareWizard.doLoad();"
   onunload="deviceFirmwareWizard.doUnload();"
   onclose="return deviceFirmwareWizard.doClose();" 
-  onwizardback="deviceFirmwareWizard.doBack();" 
-  onwizardnext="deviceFirmwareWizard.doNext();" 
+  onwizardback="return deviceFirmwareWizard.doBack();" 
+  onwizardnext="return deviceFirmwareWizard.doNext();" 
   onwizardfinish="return deviceFirmwareWizard.doFinish();"
   onwizardcancel="return deviceFirmwareWizard.doCancel();"
 >
@@ -124,7 +124,7 @@
             hidefinish="true"
             shownext="true"
             onpageshow="deviceFirmwareWizard.doPageShow();">
-    <vbox>
+    <vbox flex="1">
       <description>
         &device.firmware.wizard.busy.description;
       </description>
@@ -165,9 +165,7 @@
       <progressmeter id="device_firmware_wizard_download_progress"
                      mode="determined"/>
       <groupbox>
-        <description>
-          &device.firmware.wizard.no_disconnect_warning;
-        </description>
+        <description id="device_firmware_download_no_disconnect_desc"/>
       </groupbox>
     </vbox>
   </wizardpage>
@@ -180,13 +178,35 @@
               showfinish="true"
               hidenext="true" 
               onpageshow="deviceFirmwareWizard.doPageShow();">
-    <vbox>
+    <vbox flex="1">
       <description>
         &device.firmware.wizard.download.error.description;
       </description>
       <description>
         &device.firmware.wizard.support.description; <label id="device_firmware_download_error_link" class="text-link" />
       </description>
+    </vbox>
+  </wizardpage>
+  
+  <!-- Repair device confirmation page -->
+  <wizardpage id="device_firmware_repair"
+              pageid="device_firmware_wizard_repair_page"
+              showcancel="true" 
+              hideback="true"
+              shownext="true"
+              hidefinish="true"
+              onpageshow="deviceFirmwareWizard.doPageShow();"
+              next="device_firmware_wizard_install_page">
+    <vbox flex="1">
+      <description id="device_firmware_repair_description" />
+      <description>
+        &device.firmware.wizard.repair.time.description;
+      </description>
+      <groupbox>
+        <description>
+          &device.firmware.wizard.repair.warning;
+        </description>
+      </groupbox>
     </vbox>
   </wizardpage>
   
@@ -198,13 +218,12 @@
               hidefinish="true" 
               onpageshow="deviceFirmwareWizard.doPageShow();">
     <vbox flex="1">
-      <label value="&device.firmware.wizard.install.title;"/>
+      <label id="device_firmware_wizard_install_title" 
+             value="&device.firmware.wizard.install.title;"/>
       <progressmeter id="device_firmware_wizard_install_progress"
                      mode="undetermined"/>
       <groupbox>
-        <description>
-          &device.firmware.wizard.no_disconnect_warning;
-        </description>
+        <description id="device_firmware_install_no_disconnect_desc"/>
       </groupbox>
     </vbox>
   </wizardpage>
@@ -217,10 +236,8 @@
               shownext="true" 
               hidefinish="true"
               onpageshow="deviceFirmwareWizard.doPageShow();">
-    <vbox>
-      <description>
-        &device.firmware.wizard.install.error.description;
-      </description>
+    <vbox flex="1">
+      <description id="device_firmware_install_error_description" />
       <description>
         &device.firmware.wizard.support.description; <label id="device_firmware_install_error_link" class="text-link" />
       </description>
@@ -235,11 +252,9 @@
               hidecancel="true" 
               showfinish="true"
               onpageshow="deviceFirmwareWizard.doPageShow();">
-    <description>
-      &device.firmware.wizard.complete.description;
-    </description>    
+    <description id="device_firmware_update_complete_description" />
   </wizardpage>
-
+  
   <!-- *************************************************************************
    *
    * Implementation.

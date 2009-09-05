@@ -39,8 +39,8 @@ Additional styles imported directly by the first run dialog.
 #device_firmware_wizard {
   min-width: 440px;
   width: 440px;
-  min-height: 140px;
-  height: 140px;
+  min-height: 180px;
+  height: 180px;
 }
 
 #device_firmware_wizard_release_notes_browser {

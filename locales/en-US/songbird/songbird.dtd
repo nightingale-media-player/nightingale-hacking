@@ -447,19 +447,17 @@
 <!ENTITY device.firmware.wizard.check.install.description "Installing the updated firmware should take less than 10 minutes. You can always perform the update at a later time.">
 <!ENTITY device.firmware.wizard.check.already.description "The firmware for your device is already up to date.">
 <!ENTITY device.firmware.wizard.check.release_notes.label "Release Notes">
-<!ENTITY device.firmware.wizard.no_disconnect_warning     "Please do not disconnect your device or interact with it in any way while its firmware is going to be updated.">
 <!ENTITY device.firmware.wizard.needs_recovery_mode.description "The device must be connected in firmware mode to continue. Please follow the instructions below to set your device to firmware mode.">
-<!ENTITY device.firmware.wizard.download.title  "Downloading new firmware...">
-<!ENTITY device.firmware.wizard.install.title   "Installing firmware...">
-
-<!ENTITY device.firmware.wizard.complete.description "Your device has been updated with the latest firmware available.">
+<!ENTITY device.firmware.wizard.download.title            "Downloading new firmware...">
+<!ENTITY device.firmware.wizard.repair.time.description   "Restoring the device should take less than 5 minutes.">
+<!ENTITY device.firmware.wizard.repair.warning            "Restoring your device to factory settings will erase all music and data on the device. Please back up all your files before proceeding.">
+<!ENTITY device.firmware.wizard.install.title             "Installing firmware...">
 
 <!ENTITY device.firmware.wizard.busy.description  "It appears that your device is busy. Firmware can only be installed when your device is idle.">
 <!ENTITY device.firmware.wizard.retry.description "Please try again after your device has completed its current operation.">
 
 <!ENTITY device.firmware.wizard.check.error.description    "There was an error while checking for new firmware. Please verify your network connection and try again.">
 <!ENTITY device.firmware.wizard.download.error.description "There was an error while downloading the new firmware. Please verify your network connection and try again.">
-<!ENTITY device.firmware.wizard.install.error.description  "There was an error while installing the new firmware on your device. Please reconnect the device and try again.">
 <!ENTITY device.firmware.wizard.support.description        "Support resources such as FAQs and troubleshooting tips can be found at">
 
 <!ENTITY device.info.icon.device            "Generic device icon">

@@ -55,6 +55,8 @@ var deviceFirmwareWizard = {
   
   _waitingForDeviceReconnect: false,
   _initialized: false,
+  
+  _repairDescriptionNode: null,
 
   get wizardElem() {
     if (!this._wizardElem)
@@ -79,7 +81,7 @@ var deviceFirmwareWizard = {
       return false;
     }
 
-    this._deviceFirmwareUpdater.cancel(this._device);
+    this._deviceFirmwareUpdater.finalizeUpdate(this._device);
     
     var self = window;
     setTimeout(function() { self.close(); }, 0);
@@ -166,22 +168,22 @@ var deviceFirmwareWizard = {
             }, 0);
         }
         else {
-          let handler = 
-            this._deviceFirmwareUpdater.getActiveHandler(this._device);
+          let descElem = 
+            document.getElementById("device_firmware_download_no_disconnect_desc");
+          let descTextNode = 
+            document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warning"));
           
-          if(handler.needsRecoveryMode) {
-            this._currentOperation = "needsrecoverymode";
-            
-            setTimeout(function() {
-              self.wizardElem.goTo("device_needs_recovery_mode_page");
-              }, 0);
+          if(descElem.firstChild && 
+             descElem.firstChild.nodeType == Ci.nsIDOMNode.TEXT_NODE) {
+            descElem.removeChild(descElem.firstChild);
           }
-          else {
-            this._currentOperation = "download";
-            setTimeout(function() {
-              self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
-              }, 0);
-          }
+          
+          descElem.appendChild(descTextNode);
+          
+          this._currentOperation = "download";
+          setTimeout(function() {
+            self._deviceFirmwareUpdater.downloadUpdate(self._device, false, self);
+            }, 0);
         }
       }
       break;
@@ -203,6 +205,26 @@ var deviceFirmwareWizard = {
       }
       break;
       
+      case "device_firmware_repair": {
+        this._currentOperation = "confirmrepair";
+        
+        let restoreButton = this.wizardElem.getButton("next");
+        restoreButton.label = SBString("device.firmware.repair.button");
+        restoreButton.accessKey = null;
+        
+        let descElem = document.getElementById("device_firmware_repair_description");
+        if(this._repairDescriptionNode) {
+          descElem.removeChild(this._repairDescriptionNode);
+          this._repairDescriptionNode = null;
+        }
+
+        let descString = SBFormattedString("device.firmware.repair.description",
+                                           [this._device.properties.friendlyName]);
+        this._repairDescriptionNode = document.createTextNode(descString);
+        descElem.appendChild(this._repairDescriptionNode);
+      }
+      break;
+      
       case "device_firmware_install": {
         this._currentOperation = "install";
         
@@ -211,12 +233,29 @@ var deviceFirmwareWizard = {
         
         var self = this;
         
+        let descElem = document.getElementById("device_firmware_install_no_disconnect_desc");
+        if(descElem.firstChild && 
+           descElem.firstChild.nodeType == Ci.nsIDOMNode.TEXT_NODE) {
+          descElem.removeChild(descElem.firstChild);
+        }
+        
         if(this._wizardMode == "repair") {
+          let label = document.getElementById("device_firmware_wizard_install_title");
+          label.value = SBString("device.firmware.repair.inprocess");
+          
+          let textNode = 
+            document.createTextNode(SBString("device.firmware.repair.no_disconnect_warning"));
+          descElem.appendChild(textNode);
+          
           setTimeout(function() {
               self._deviceFirmwareUpdater.recoveryUpdate(self._device, self);
               }, 0);
         }
         else {
+          let textNode = 
+            document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warning"));
+          descElem.appendChild(textNode);
+          
           setTimeout(function() {
               self._deviceFirmwareUpdater.applyUpdate(self._device, self._firmwareUpdate, self);
               }, 0);
@@ -235,14 +274,50 @@ var deviceFirmwareWizard = {
           document.getElementById("device_firmware_install_error_link");
         let handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
         
-        let supportLinkValue = handler.customerSupportLocation.spec;
+        let supportLinkValue = null;
+        
+        try {
+          supportLinkValue = handler.customerSupportLocation.spec;
+        } catch(e) {}
+        
         supportLink.value = supportLinkValue;
         supportLink.href = supportLinkValue;
+        
+        let descElem = 
+          document.getElementById("device_firmware_install_error_description");
+          
+        if(descElem.firstChild && 
+           descElem.firstChild.nodeType == Ci.nsIDOMNode.TEXT_NODE) {
+          descElem.removeChild(descElem.firstChild);
+        }
+        
+        let text = null;        
+        if(this._wizardMode == "repair") {
+          text = SBString("device.firmware.repair.error.description");
+        }
+        else {
+          text = SBString("device.firmware.wizard.install.error.description");
+        }
+        descElem.appendChild(document.createTextNode(text));
       }
       break;
       
       case "device_firmware_update_complete": {
         this._currentOperation = "complete";
+        
+        let desc = 
+          document.getElementById("device_firmware_update_complete_description");
+        let descStr = "";
+        
+        if(this._wizardMode == "repair") {
+          descStr = SBString("device.firmware.repair.complete.description");
+        }
+        else {
+          descStr = SBString("device.firmware.wizard.complete.description");
+        }
+        
+        let descTextNode = document.createTextNode(descStr);
+        desc.appendChild(descTextNode);
       }
       break;
       
@@ -276,10 +351,36 @@ var deviceFirmwareWizard = {
           // Error, cancel the operation
           this._deviceFirmwareUpdater.cancel(this._device);
         }
+        
+        try {
+          this._deviceFirmwareUpdater.finalizeUpdate(this._device);
+        } catch(e) { Cu.reportError(e); }
 
         window.close();
         
         return false;
+      }
+      else if(this._currentOperation == "checkforupdate") {
+        // Check if the handler needs to be in recovery mode, if so
+        // go to the recovery mode page to show the instructions and
+        // wait for the device to be reconnected in recovery mode.
+        let handler = 
+          this._deviceFirmwareUpdater.getActiveHandler(this._device);
+          
+        if(handler.needsRecoveryMode) {
+          this._currentOperation = "needsrecoverymode";
+          
+          let self = this;  
+          setTimeout(function() {
+            self.wizardElem.goTo("device_needs_recovery_mode_page");
+            }, 0);
+        }
+      }
+      else if(this._currentOperation == "confirmrepair") {
+        let self = this;
+        setTimeout(function() {
+            self.wizardElem.goTo("device_firmware_wizard_install_page");
+          }, 0);
       }
     }
    
@@ -333,9 +434,9 @@ var deviceFirmwareWizard = {
     // in repair mode, skip check for update and download firmware
     var self = this;
     if(this._wizardMode == "repair") {
-      this._currentOperation = "install";
+      this._wizardElem.title = SBString("device.firmware.repair.title");
       setTimeout(function() {
-          self._wizardElem.goTo("device_firmware_wizard_install_page");
+          self._wizardElem.goTo("device_firmware_wizard_repair_page");
         }, 0);
       
       // XXXAus: Actually, check if the device is in the right mode, if not, go
@@ -528,9 +629,15 @@ var deviceFirmwareWizard = {
               this.wizardElem.goTo("device_firmware_install_error_page");
             }
             else {
-              // Business as usual, download the new firmware and proceed
-              // with the installation.
-              this.wizardElem.goTo("device_firmware_wizard_download_page");            
+              if(this._wizardMode == "repair") {
+                // Repair mode can go straight to installation.
+                this.wizardElem.goTo("device_firmware_wizard_install_page");
+              }
+              else {
+                // Business as usual, download the new firmware and proceed
+                // with the installation.
+                this.wizardElem.goTo("device_firmware_wizard_download_page");
+              }
             }
           }
         }

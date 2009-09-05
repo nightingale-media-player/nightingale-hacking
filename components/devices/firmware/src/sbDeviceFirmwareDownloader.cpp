@@ -626,6 +626,22 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice,
   rv = firmwareFile->GetLeafName(leafName);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIFile> finalDestFile;
+  rv = deviceCache->Clone(getter_AddRefs(finalDestFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = finalDestFile->Append(leafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool exists = PR_FALSE;
+  rv = finalDestFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(exists) {
+    rv = finalDestFile->Remove(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   rv = firmwareFile->CopyTo(deviceCache, leafName);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -638,6 +654,28 @@ sbDeviceFirmwareDownloader::CacheFirmwareUpdate(sbIDevice *aDevice,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = newFirmwareFile->Append(leafName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> firmwareVersionVariant = 
+    sbNewVariant(firmwareVersion).get();
+  rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_VERSION_PREF), 
+                              firmwareVersionVariant);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIVariant> firmwareReadableVariant = 
+    sbNewVariant(firmwareReadableVersion).get();
+  rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_READABLE_PREF),
+                              firmwareReadableVariant);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString newFirmwareFilePath;
+  rv = newFirmwareFile->GetPath(newFirmwareFilePath);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  nsCOMPtr<nsIVariant> firmwareFileVariant = 
+    sbNewVariant(newFirmwareFilePath).get();
+  rv = aDevice->SetPreference(NS_LITERAL_STRING(FIRMWARE_FILE_PREF),
+                              firmwareFileVariant);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDeviceFirmwareUpdate> firmwareUpdate = 
