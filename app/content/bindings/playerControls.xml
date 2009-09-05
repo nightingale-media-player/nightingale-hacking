@@ -1869,7 +1869,7 @@
       <xul:box id="sb-player-curtrack-box" 
                 orient="horizontal" 
                 mousethrough="never" 
-                onmousedown="onCurrentTrack();" 
+                onclick="if (event.button == 0) onCurrentTrack();" 
                 xbl:inherits="hidden,class,flex,pack,orient">
         <children/>
       </xul:box>
