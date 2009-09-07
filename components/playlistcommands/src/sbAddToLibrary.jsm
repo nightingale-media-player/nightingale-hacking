@@ -45,7 +45,7 @@ EXPORTED_SYMBOLS = [ "addToLibraryHelper",
                      "SBPlaylistCommand_AddToLibrary" ];
 
 // ----------------------------------------------------------------------------
-// The "Add to device" dynamic command object
+// The "Add to library" dynamic command object
 // ----------------------------------------------------------------------------
 var SBPlaylistCommand_AddToLibrary =
 {
@@ -194,9 +194,16 @@ var SBPlaylistCommand_AddToLibrary =
 
   initCommands: function(aHost) {
     this.addToLibrary = new addToLibraryHelper();
+    this.addToLibrary.init(this);
   },
 
   shutdownCommands: function() {
+    if (!this.addToLibrary) {
+      dump("this.addToLibrary is null in SBPlaylistCommand_AddToLibrary ?!!\n");
+      return;
+    }
+
+    this.addToLibrary.shutdown();
     this.context = null;
   },
 
@@ -228,17 +235,29 @@ var SBPlaylistCommand_AddToLibrary =
 
     return this;
   }
-}; // SBPlaylistCommand_Addtolibrary declaration
+}; // SBPlaylistCommand_AddToLibrary declaration
 
 function addToLibraryHelper() {}
 addToLibraryHelper.prototype = {
-  deviceManager: Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-      .getService(Ci.sbIDeviceManager2),
-  libraryManager: Cc["@songbirdnest.com/Songbird/library/Manager;1"]
-      .getService(Ci.sbILibraryManager),
+  deviceManager: null,
+  libraryManager: null,
+
+  init: function addToLibraryHelper_init(aCommands) {
+    this.libraryManager =
+      Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+      .getService(Ci.sbILibraryManager);
+    this.deviceManager =
+      Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+      .getService(Ci.sbIDeviceManager2);
+  },
+
+  shutdown: function addToLibraryHelper_shutdown() {
+    this.deviceManager = null;
+    this.libraryManager = null;
+  },
 
   // handle click on a device command item
-  handleCommand: function addtolibraryHelper_handleCommand(id, context) {
+  handleCommand: function addToLibraryHelper_handleCommand(id, context) {
     try {
       if ( id == ADDTOLIBRARY_COMMAND_ID) {
         var library = this.libraryManager.mainLibrary;
