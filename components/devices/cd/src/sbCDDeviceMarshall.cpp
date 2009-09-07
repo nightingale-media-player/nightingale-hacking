@@ -312,26 +312,19 @@ sbCDDeviceMarshall::DiscoverDevices()
   nsCOMPtr<sbICDDeviceService> cdDeviceService =
     do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
 
-  nsCOMPtr<nsISimpleEnumerator> devicesEnum;
-  rv = cdDeviceService->GetCDDevices(getter_AddRefs(devicesEnum));
+  // Since the GW stuff is a little jacked, use the index getter
+  PRInt32 deviceCount = 0;
+  rv = cdDeviceService->GetNbDevices(&deviceCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRBool hasMore = PR_FALSE;
-  while (NS_SUCCEEDED(devicesEnum->HasMoreElements(&hasMore)) && hasMore) {
-    nsCOMPtr<nsISupports> curItem;
-    rv = devicesEnum->GetNext(getter_AddRefs(curItem));
-    if (NS_FAILED(rv) || !curItem) {
-      NS_WARNING("Could not get an item out of a enumerator!");
-      continue;
-    }
-
-    nsCOMPtr<sbICDDevice> curDevice = do_QueryInterface(curItem, &rv);
+  for (PRInt32 i = 0; i < deviceCount; i++) {
+    nsCOMPtr<sbICDDevice> curDevice;
+    rv = cdDeviceService->GetDevice(i, getter_AddRefs(curDevice));
     if (NS_FAILED(rv) || !curDevice) {
-      NS_WARNING("Could not QI nsISupports to sbICDDevice!");
+      NS_WARNING("Could not get the current device!");
       continue;
     }
 
-    // Now add and register this device.
     rv = AddDevice(curDevice);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a CD Device!");
   }
