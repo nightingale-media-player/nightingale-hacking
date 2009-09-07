@@ -1054,11 +1054,11 @@ sbBaseDeviceFirmwareHandler::Notify(nsITimer *aTimer)
     NS_ENSURE_SUCCESS(rv, rv);
 
     if(state == HTTP_STATE_COMPLETED) {
-      rv = OnHttpRequestCompleted();
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnHttpRequestCompleted failed");
-
       rv = mXMLHttpRequestTimer->Cancel();
       NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = OnHttpRequestCompleted();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "OnHttpRequestCompleted failed");
     }
   }
 
