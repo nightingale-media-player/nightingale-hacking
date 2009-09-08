@@ -313,8 +313,8 @@
         if ((!this._mediaTab) || (!this._mediaTab.collapsed)) {
           return;
         }
-        if (!this.childNodes[0]) {
-          // err no tabs!?
+        if (this.childNodes.length <= 1) {
+          // Only one tab "overflowing"? We don't care...
           return;
         }
         var total = this.childNodes[0].boxObject.width * this.childNodes.length;
