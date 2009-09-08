@@ -65,6 +65,8 @@
 
 #define NO_CD_INFO_FOUND_DIALOG_URI \
   "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul"
+#define MULTI_CD_INFO_FOUND_DIALOG_URI \
+  "chrome://songbird/content/xul/device/multiCDLookupResultsDialog.xul"
 
 #endif  // sbCDDeviceDefines_h_
 

@@ -456,6 +456,10 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   rv = metalookupJob->GetMlNumResults(&numResults);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsISimpleEnumerator> metadataResultsEnum;
+  rv = metalookupJob->GetMetadataResults(getter_AddRefs(metadataResultsEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Dispatch the event to notify listeners that we've finished cdlookup
   CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_COMPLETED,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
@@ -465,9 +469,6 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   if (numResults == 1) {
     // Exactly 1 match found, automatically populate all the tracks with
     // the metadata found in this result
-    nsCOMPtr<nsISimpleEnumerator> metadataResultsEnum;
-    rv = metalookupJob->GetMetadataResults(getter_AddRefs(metadataResultsEnum));
-    NS_ENSURE_SUCCESS(rv, rv);
 
     // There is only one returned item, so no need to loop through the
     // enumerator here.
@@ -520,20 +521,23 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
     rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if (numResults == 0) {
-      // Throw up the No CD Information Found dialog and prompt the user for
-      // default artist/album info to populate for each track
-      rv = windowWatcher->OpenWindow(parentWindow,
-                                     NO_CD_INFO_FOUND_DIALOG_URI,
-                                     nsnull,
-                                     "centerscreen,chrome,modal,titlebar",
-                                     mDeviceLibrary,
-                                     getter_AddRefs(domWindow));
-      NS_ENSURE_SUCCESS(rv, rv);
-    } else {
-      // Multiple results found, defer to user to choose
-      // XXX Not implemented yet, tracked as bug 17406 (story)
-    }
+    nsCOMPtr<nsIMutableArray> args = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = args->AppendElement(mDeviceLibrary, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = args->AppendElement(metadataResultsEnum, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Throw up one of the metadata dialogs and prompt the user for
+    // the right artist/album info and populate each track with it.
+    rv = windowWatcher->OpenWindow(parentWindow,
+                                   (numResults == 0) ? NO_CD_INFO_FOUND_DIALOG_URI
+                                                     : MULTI_CD_INFO_FOUND_DIALOG_URI,
+                                   nsnull,
+                                   "centerscreen,chrome,modal,titlebar,resizable,scrollbars=yes",
+                                   args,
+                                   getter_AddRefs(domWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;

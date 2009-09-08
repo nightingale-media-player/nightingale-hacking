@@ -783,3 +783,12 @@
 <!ENTITY about.credits.heading.translators "Translators">
 <!ENTITY about.credits.heading.champs "Champions">
 <!ENTITY about.credits.description.champs "The Songbird Champions are the die-hard Songbird users and fans who have gone above and beyond the call of duty to help out other Songbird users on our <a href='http://getsatisfaction.com/songbird'>Songbird GetSatisfaction Support Forum</a>.  They are the most prolific guys on our forum, and tirelessly work to ensure that every Songbird user is a happy Songbird user.">
+
+<!ENTITY cdrip.lookup.multiple.title       "Multiple CD Records Found">
+<!ENTITY cdrip.lookup.multiple.description "Please select one CD to rip.">
+<!ENTITY cdinfo.details.closed             "See Details">
+<!ENTITY cdinfo.other.label                "Add your own Artist and Album Info">
+
+<!ENTITY property.ordinal "#">
+<!ENTITY property.track_name "Title">
+
