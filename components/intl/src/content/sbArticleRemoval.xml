@@ -91,6 +91,10 @@
 	  <article pattern="*, O"/>
 	  <article pattern="A *"/>
 	  <article pattern="*, A"/>
+	  <article pattern="À *"/>
+	  <article pattern="*, À"/>
+	  <article pattern="Às *"/>
+	  <article pattern="*, Às"/>
 	  <article pattern="Os *"/>
 	  <article pattern="*, Os"/>
 	  <article pattern="As *"/>
