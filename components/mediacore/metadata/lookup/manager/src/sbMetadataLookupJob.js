@@ -28,8 +28,8 @@ const Cr = Components.results;
 const Ce = Components.Exception;
 const Cu = Components.utils;
 
-// Timeout a job after 2 minutes
-const JOB_TIMEOUT = 120;
+// Timeout a job after 30s
+const JOB_TIMEOUT = 30;
 
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
