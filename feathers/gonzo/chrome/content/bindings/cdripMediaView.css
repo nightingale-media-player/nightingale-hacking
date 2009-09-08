@@ -66,3 +66,10 @@ label.sb-cdrip-settings-label {
   font-weight: bold;
   font-size: 10pt;
 }
+
+#sb-cdrip-status-image {
+  max-width: 48px;
+  max-height: 48px;
+  width: 48px;
+  height: 48px;
+}
