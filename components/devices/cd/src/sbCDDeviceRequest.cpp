@@ -39,6 +39,7 @@
 #include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
+#include <sbPropertiesCID.h>
 #include <sbStringUtils.h>
 #include <sbMediaListEnumArrayHelper.h>
 #include <sbMemoryUtils.h>
@@ -267,19 +268,35 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   rv = GetMediaFiles(getter_AddRefs(newFileURIList));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRUint32 length;
+  newFileURIList->GetLength(&length);
+
+  nsCOMPtr<nsIMutableArray> newPropsArray = do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 i = 1; i <= length; i++)
+  {
+    nsCOMPtr<sbIMutablePropertyArray> propList = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // By default mark all library items as "Should Rip".
+    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP), NS_LITERAL_STRING("1"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString indexStr;
+    indexStr.AppendInt(i);
+    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), indexStr);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    newPropsArray->AppendElement(propList, false);
+  }
+
   // Update the library with the new media files.
   nsCOMPtr<nsIArray> mediaItemList;
   rv = mDeviceLibrary->BatchCreateMediaItems(newFileURIList,
-                                             nsnull,
+                                             newPropsArray,
                                              PR_TRUE,
                                              getter_AddRefs(mediaItemList));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // By default mark all library items as "Should Rip".
-  rv = sbDeviceUtils::BulkSetProperty
-                        (aLibrary,
-                         NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
-                         NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the number of created media items.
