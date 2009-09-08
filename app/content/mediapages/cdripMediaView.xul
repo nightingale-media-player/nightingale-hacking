@@ -110,13 +110,15 @@
           </hbox>
 
           <!-- CD device buttons -->
-          <button id="sb-cdrip-rip-cd-button"
-                  label="&cdrip.mediaview.rip_cd_button;" />
-          <button id="sb-cdrip-stop-rip-button"
-                  label="&cdrip.mediaview.stop_rip_button;" />
-          <button id="sb-cdrip-eject-cd-button"
-                  label="&cdrip.mediaview.eject_cd_button;"
-                  command="sb-cdrip-eject-command" />
+          <hbox id="sb-cdrip-status-buttons">
+            <button id="sb-cdrip-rip-cd-button"
+                    label="&cdrip.mediaview.rip_cd_button;" />
+            <button id="sb-cdrip-stop-rip-button"
+                    label="&cdrip.mediaview.stop_rip_button;" />
+            <button id="sb-cdrip-eject-cd-button"
+                    label="&cdrip.mediaview.eject_cd_button;"
+                    command="sb-cdrip-eject-command" />
+          </hbox>
         </hbox>
 
       </hbox>
