@@ -34,15 +34,21 @@
 #include <nsCOMPtr.h>
 #include <nsCRT.h>
 #include <nsComponentManagerUtils.h>
+#include <nsIDOMWindow.h>
+#include <nsIDialogParamBlock.h>
 #include <nsIMutableArray.h>
 #include <nsIFile.h>
 #include <nsISimpleEnumerator.h>
+#include <nsISupportsArray.h>
 #include <nsIURI.h>
 #include <nsIURL.h>
+#include <nsIWindowWatcher.h>
+#include <nsThreadUtils.h>
 
 #include "sbBaseDevice.h"
 #include "sbIDeviceCapabilities.h"
 #include "sbIDeviceContent.h"
+#include "sbIDeviceErrorMonitor.h"
 #include "sbIDeviceHelper.h"
 #include "sbIDeviceLibrary.h"
 #include "sbIMediaItem.h"
@@ -53,6 +59,7 @@
 #include <sbIPrompter.h>
 #include "sbIWindowWatcher.h"
 #include "sbLibraryUtils.h"
+#include <sbProxiedComponentManager.h>
 #include "sbStandardProperties.h"
 #include "sbStringUtils.h"
 #include "sbProxyUtils.h"
@@ -461,6 +468,137 @@ nsresult sbDeviceUtils::QueryUserAbortRip(PRBool* aAbort)
   *aAbort = (buttonPressed == 0);
 
   return NS_OK;
+}
+
+/* static */
+nsresult sbDeviceUtils::QueryUserViewErrors(sbIDevice* aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  nsresult rv;
+  
+  nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
+      do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  PRBool hasErrors;
+  rv = errMonitor->DeviceHasErrors(aDevice, &hasErrors);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  if (hasErrors) {
+    // Query the user if they wish to see the errors
+    
+    // Get a prompter that does not wait for a window.
+    nsCOMPtr<sbIPrompter> prompter =
+                            do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = prompter->SetWaitForWindow(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  
+    // Get the prompt title.
+    nsAString const& title =
+      SBLocalizedString("device.dialog.cddevice.viewerrors.title");
+  
+    // Get the prompt message.
+    nsAString const& message =
+      SBLocalizedString("device.dialog.cddevice.viewerrors.msg");
+  
+    // Configure the buttons.
+    PRUint32 buttonFlags = nsIPromptService::STD_YES_NO_BUTTONS;
+  
+    // Query the user if they wish to see the errors
+    PRInt32 buttonPressed;
+    rv = prompter->ConfirmEx(nsnull,
+                             title.BeginReading(),
+                             message.BeginReading(),
+                             buttonFlags,
+                             nsnull,                      // "Yes" Button
+                             nsnull,                      // "No" Button
+                             nsnull,                      // No button 2.
+                             nsnull,                      // No check message.
+                             nsnull,                      // No check result.
+                             &buttonPressed);
+    NS_ENSURE_SUCCESS(rv, rv);
+    
+    if (buttonPressed == 0) {
+      ShowDeviceErrors(aDevice);
+    }
+  }
+  
+  return NS_OK;
+}
+
+
+/* static */
+nsresult sbDeviceUtils::ShowDeviceErrors(sbIDevice* aDevice)
+{
+  NS_ENSURE_ARG_POINTER(aDevice);
+  
+  nsresult rv;
+  
+  // We have to send an comglmeration of stuff into the OpenWindow to get
+  // all the parameters the dialog needs to display the errors.
+  //  nsISupports = nsIDialogParamBlock =
+  //    String[0] = "" Bank string for options.
+  //    String[1] = "Ripping" Localized string for operation message.
+  //    Objects = nsIMutableArray =
+  //      [0] = sbIDevice
+  //      [1] = nsIArray of nsISupportStrings for error messages.
+    
+  // Start with the DialogParamBlock and add strings/objects to it  
+  nsCOMPtr<nsIDialogParamBlock> dialogBlock =
+    do_CreateInstance(NS_DIALOGPARAMBLOCK_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // First add strings
+  // Options string
+  rv = dialogBlock->SetString(0, NS_LITERAL_STRING("").get());
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Operation string
+  rv = dialogBlock->SetString(1, NS_LITERAL_STRING("ripping").get());
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Now add Objects (nsIMutableArray)
+  nsCOMPtr<nsIMutableArray> objects =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Append device
+  rv = objects->AppendElement(aDevice, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Append error strings
+  nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
+      do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIArray> errorStrings;
+  rv = errMonitor->GetErrorsForDevice(aDevice, getter_AddRefs(errorStrings));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = objects->AppendElement(errorStrings, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // Append the objects to the dialogBlock
+  rv = dialogBlock->SetObjects(objects);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Convert the DialogParamBlock to an nsISuports
+  nsCOMPtr<nsISupports> arguments = do_QueryInterface(dialogBlock, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Get a prompter that does not wait for a window.
+  nsCOMPtr<sbIPrompter> prompter =
+                          do_CreateInstance(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = prompter->SetWaitForWindow(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // Display the dialog.
+  nsCOMPtr<nsIDOMWindow> dialogWindow;
+  rv = prompter->OpenDialog(nsnull, // Default to parent window
+                            NS_LITERAL_STRING("chrome://songbird/content/xul/device/deviceErrorDialog.xul"),
+                            NS_LITERAL_STRING("device_error_dialog"),
+                            NS_LITERAL_STRING("chrome,centerscreen,model=yes,titlebar=no"),
+                            arguments,
+                            getter_AddRefs(dialogWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  return NS_OK; 
 }
 
 /* static */

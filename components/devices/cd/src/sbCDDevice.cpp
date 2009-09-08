@@ -739,6 +739,10 @@ sbCDDevice::Eject()
   NS_ENSURE_TRUE(mCDDevice, NS_ERROR_UNEXPECTED);
 
   nsresult rv;
+  
+  // Check for errors then query the user if they wish to see them first.
+  rv = sbDeviceUtils::QueryUserViewErrors(this);
+  NS_ENSURE_SUCCESS(rv, rv);
   rv = mCDDevice->Eject();
   NS_ENSURE_SUCCESS(rv, rv);
 

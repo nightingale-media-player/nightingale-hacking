@@ -168,11 +168,25 @@ public:
    * Ask the user if they wish to abort ripping the cd, this will be called
    * when the user cancels the rip.
    *
-   * \param aDevice         [in] Target device of operation
    * \param aAbort          [out] True if user selected to stop rip.
    */
 
   static nsresult QueryUserAbortRip(PRBool*     aAbort);
+  
+  /**
+   * Ask the user if they wish to see the errors for a device before ejecting
+   * if there are any errors.
+   *
+   * \param aDevice         [in] Target device of operation
+   */
+  static nsresult QueryUserViewErrors(sbIDevice* aDevice);
+  
+  /**
+   * Show the user any errors that occured for a device.
+   *
+   * \param aDevice         [in] Target device of operation
+   */
+  static nsresult ShowDeviceErrors(sbIDevice* aDevice);
   
   /**
    * Check if the device specified by aDevice is linked to the local sync
