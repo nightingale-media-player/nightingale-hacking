@@ -275,8 +275,7 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
     do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  for (PRUint32 i = 1; i <= length; i++)
-  {
+  for (PRUint32 i = 1; i <= length; i++) {
     nsCOMPtr<sbIMutablePropertyArray> propList =
       do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
