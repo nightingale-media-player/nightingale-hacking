@@ -80,6 +80,7 @@ CPP_INCLUDES = $(DEPTH)/components/devices/cd/public \
                $(MOZSDK_INCLUDE_DIR)/pref \
                $(MOZSDK_INCLUDE_DIR)/string \
                $(MOZSDK_INCLUDE_DIR)/unicharutil \
+               $(MOZSDK_INCLUDE_DIR)/widget \
                $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(MOZSDK_IDL_DIR) \

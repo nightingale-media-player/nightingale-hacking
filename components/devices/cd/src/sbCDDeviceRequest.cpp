@@ -57,6 +57,7 @@
 #include <nsILocalFile.h>
 #include <nsIProxyObjectManager.h>
 #include <nsISimpleEnumerator.h>
+#include <nsISound.h>
 #include <nsIStringEnumerator.h>
 #include <nsIURI.h>
 #include <nsIDOMWindow.h>
@@ -836,6 +837,15 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
       // the autoEject preference set, we can eject now.
       rv = Eject();
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
+    }
+
+    // if the user wants a sound notification, then beep
+    if (mPrefNotifySound) {
+      nsCOMPtr<nsISound> soundInterface =
+                         do_CreateInstance("@mozilla.org/sound;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      soundInterface->Beep();
     }
   }
   return NS_OK;
