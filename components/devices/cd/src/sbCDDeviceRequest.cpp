@@ -271,21 +271,25 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   PRUint32 length;
   newFileURIList->GetLength(&length);
 
-  nsCOMPtr<nsIMutableArray> newPropsArray = do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> newPropsArray =
+    do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 i = 1; i <= length; i++)
   {
-    nsCOMPtr<sbIMutablePropertyArray> propList = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    nsCOMPtr<sbIMutablePropertyArray> propList =
+      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     // By default mark all library items as "Should Rip".
-    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP), NS_LITERAL_STRING("1"));
+    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
+                                  NS_LITERAL_STRING("1"));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString indexStr;
     indexStr.AppendInt(i);
-    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER), indexStr);
+    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                  indexStr);
     NS_ENSURE_SUCCESS(rv, rv);
 
     newPropsArray->AppendElement(propList, false);
