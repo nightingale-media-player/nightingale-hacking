@@ -674,7 +674,17 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = musicFolderURL->SetFileName(filename);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = musicFolderURL->SetFileExtension(NS_LITERAL_CSTRING("ogg"));
+  // Find the preferred audio transcoding profile.
+  nsCOMPtr<sbITranscodeProfile> profile;
+  rv = SelectTranscodeProfile(sbIDeviceCapabilities::CONTENT_AUDIO,
+                              getter_AddRefs(profile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString extension;
+  rv = sbDeviceUtils::GetTranscodedFileExtension(profile, extension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = musicFolderURL->SetFileExtension(extension);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Prevent notification while we set the content source on the item
@@ -682,12 +692,6 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   // Update the content URL now that it's been transcoded
   rv = destination->SetContentSrc(musicFolderURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbITranscodeProfile> profile;
-  rv = GetTranscodeProfile(NS_LITERAL_STRING("vorbis"),
-                           NS_LITERAL_STRING("ogg"),
-                           getter_AddRefs(profile));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbITranscodeJob> tcJob;

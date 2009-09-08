@@ -624,9 +624,10 @@ sbIPDDevice::PrefInitializeSyncPartner()
   }
 
   // Set the internal sync partner ID preference.
-  rv = sbBaseDevice::SetPreferenceInternal(NS_LITERAL_STRING("SyncPartner"),
-                                           sbIPDVariant(sbSyncPartnerID).get(),
-                                           nsnull);
+  rv = sbBaseDevice::SetPreferenceInternalNoNotify(
+                       NS_LITERAL_STRING("SyncPartner"),
+                       sbIPDVariant(sbSyncPartnerID).get(),
+                       nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

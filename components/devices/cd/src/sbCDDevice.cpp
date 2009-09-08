@@ -535,6 +535,16 @@ sbCDDevice::GetThreaded(PRBool *aThreaded)
 NS_IMETHODIMP
 sbCDDevice::GetPreference(const nsAString & aPrefName, nsIVariant **_retval)
 {
+  // Transcoding profile-related prefs are global for CD device; not per device.
+  if (StringBeginsWith(aPrefName, NS_LITERAL_STRING("transcode_profile")))
+  {
+    nsCOMPtr<nsIPrefBranch> prefBranch;
+    nsresult rv = GetPrefBranch(PREF_CDDEVICE_RIPBRANCH,
+                                getter_AddRefs(prefBranch));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return GetPreferenceInternal(prefBranch, aPrefName, _retval);
+  }
+
   // Forward call to base class.
   return sbBaseDevice::GetPreference(aPrefName, _retval);
 }
@@ -545,6 +555,15 @@ sbCDDevice::SetPreference(const nsAString & aPrefName, nsIVariant *aPrefValue)
 {
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aPrefValue);
+  // Transcoding profile-related prefs are global for CD device; not per device.
+  if (StringBeginsWith(aPrefName, NS_LITERAL_STRING("transcode_profile")))
+  {
+    nsCOMPtr<nsIPrefBranch> prefBranch;
+    nsresult rv = GetPrefBranch(PREF_CDDEVICE_RIPBRANCH,
+                                getter_AddRefs(prefBranch));
+    NS_ENSURE_SUCCESS(rv, rv);
+    return SetPreferenceInternal(prefBranch, aPrefName, aPrefValue);
+  }
 
   // Forward call to base class.
   return sbBaseDevice::SetPreference(aPrefName, aPrefValue);

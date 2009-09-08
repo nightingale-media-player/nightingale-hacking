@@ -262,12 +262,14 @@ public:
    * This method may be used for loading preferences from device storage.  It
    * will not send preference changed events.
    *
+   * @param aPrefBranch The branch to set preferences on.
    * @param aPrefName Name of the preference to set.
    * @param aPrefValue Value to set preference.
    * @param aHasChanged True if preference value changed.
    */
 
-  nsresult SetPreferenceInternal(const nsAString& aPrefName,
+  nsresult SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
+                                 const nsAString& aPrefName,
                                  nsIVariant*      aPrefValue,
                                  PRBool*          aHasChanged);
 
@@ -652,6 +654,26 @@ protected:
 
   /* get a prefbranch for this device */
   nsresult GetPrefBranch(nsIPrefBranch** aPrefBranch);
+
+  /* Helper function to get a particular pref branch */
+  nsresult GetPrefBranch(const char *aPrefBranchName,
+                         nsIPrefBranch** aPrefBranch);
+
+  /* Get a preference from a specific pref branch */
+  nsresult GetPreferenceInternal(nsIPrefBranch *aPrefBranch,
+                                 const nsAString & aPrefName,
+                                 nsIVariant **_retval);
+
+  /* Set a preference on a specific pref branch */
+  nsresult SetPreferenceInternal(nsIPrefBranch *aPrefBranch,
+                                 const nsAString & aPrefName,
+                                 nsIVariant *aPrefValue);
+
+  /* Set a preference, not sending an event if the preference changed */
+  nsresult SetPreferenceInternalNoNotify(const nsAString & aPrefName,
+                                         nsIVariant *aPrefValue,
+                                         PRBool *aPrefChanged);
+
 
   /**
    * Apply the preference specified by aPrefName with the value specified by

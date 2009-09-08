@@ -888,6 +888,70 @@ nsresult sbBaseDevice::BatchGetRequestType(sbBaseDevice::Batch& aBatch,
   return NS_OK;
 }
 
+nsresult sbBaseDevice::GetPreferenceInternal(nsIPrefBranch *aPrefBranch,
+                                             const nsAString & aPrefName,
+                                             nsIVariant **_retval)
+{
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+  NS_ENSURE_ARG_POINTER(_retval);
+  NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  nsresult rv;
+
+  NS_ConvertUTF16toUTF8 prefNameUTF8(aPrefName);
+
+  // get tht type of the pref
+  PRInt32 prefType;
+  rv = aPrefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // create a writable variant
+  nsCOMPtr<nsIWritableVariant> writableVariant =
+    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get the value of our pref
+  switch (prefType) {
+    case nsIPrefBranch::PREF_INVALID: {
+      rv = writableVariant->SetAsEmpty();
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    case nsIPrefBranch::PREF_STRING: {
+      char* _value = NULL;
+      rv = aPrefBranch->GetCharPref(prefNameUTF8.get(), &_value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCString value;
+      value.Adopt(_value);
+
+      // set the value of the variant to the value of the pref
+      rv = writableVariant->SetAsACString(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    case nsIPrefBranch::PREF_INT: {
+      PRInt32 value;
+      rv = aPrefBranch->GetIntPref(prefNameUTF8.get(), &value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = writableVariant->SetAsInt32(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+    case nsIPrefBranch::PREF_BOOL: {
+      PRBool value;
+      rv = aPrefBranch->GetBoolPref(prefNameUTF8.get(), &value);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = writableVariant->SetAsBool(value);
+      NS_ENSURE_SUCCESS(rv, rv);
+      break;
+    }
+  }
+
+  return CallQueryInterface(writableVariant, _retval);
+}
+
 /* nsIVariant getPreference (in AString aPrefName); */
 NS_IMETHODIMP sbBaseDevice::GetPreference(const nsAString & aPrefName, nsIVariant **_retval)
 {
@@ -905,59 +969,7 @@ NS_IMETHODIMP sbBaseDevice::GetPreference(const nsAString & aPrefName, nsIVarian
   rv = GetPrefBranch(getter_AddRefs(prefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ConvertUTF16toUTF8 prefNameUTF8(aPrefName);
-
-  // get tht type of the pref
-  PRInt32 prefType;
-  rv = prefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // create a writable variant
-  nsCOMPtr<nsIWritableVariant> writableVariant =
-    do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // get the value of our pref
-  switch (prefType) {
-    case nsIPrefBranch::PREF_INVALID: {
-      rv = writableVariant->SetAsEmpty();
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
-    }
-    case nsIPrefBranch::PREF_STRING: {
-      char* _value = NULL;
-      rv = prefBranch->GetCharPref(prefNameUTF8.get(), &_value);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCString value;
-      value.Adopt(_value);
-
-      // set the value of the variant to the value of the pref
-      rv = writableVariant->SetAsACString(value);
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
-    }
-    case nsIPrefBranch::PREF_INT: {
-      PRInt32 value;
-      rv = prefBranch->GetIntPref(prefNameUTF8.get(), &value);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = writableVariant->SetAsInt32(value);
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
-    }
-    case nsIPrefBranch::PREF_BOOL: {
-      PRBool value;
-      rv = prefBranch->GetBoolPref(prefNameUTF8.get(), &value);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = writableVariant->SetAsBool(value);
-      NS_ENSURE_SUCCESS(rv, rv);
-      break;
-    }
-  }
-
-  return CallQueryInterface(writableVariant, _retval);
+  return GetPreferenceInternal(prefBranch, aPrefName, _retval);
 }
 
 /* void setPreference (in AString aPrefName, in nsIVariant aPrefValue); */
@@ -967,8 +979,24 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
   NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
   nsresult rv;
 
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return SetPreferenceInternal(prefBranch, aPrefName, aPrefValue);
+}
+
+nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch *aPrefBranch,
+                                             const nsAString & aPrefName,
+                                             nsIVariant *aPrefValue)
+{
+  NS_ENSURE_ARG_POINTER(aPrefValue);
+  NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
+  nsresult rv;
+
   PRBool hasChanged = PR_FALSE;
-  rv = SetPreferenceInternal(aPrefName, aPrefValue, &hasChanged);
+  rv = SetPreferenceInternal(aPrefBranch, aPrefName, aPrefValue, &hasChanged);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (hasChanged) {
@@ -989,18 +1017,27 @@ NS_IMETHODIMP sbBaseDevice::SetPreference(const nsAString & aPrefName, nsIVarian
   return NS_OK;
 }
 
-nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
+nsresult sbBaseDevice::SetPreferenceInternalNoNotify(
+                         const nsAString& aPrefName,
+                         nsIVariant*      aPrefValue,
+                         PRBool*          aHasChanged)
+{
+  // get the pref branch for this device
+  nsCOMPtr<nsIPrefBranch> prefBranch;
+  nsresult rv = GetPrefBranch(getter_AddRefs(prefBranch));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return SetPreferenceInternal(prefBranch, aPrefName, aPrefValue, aHasChanged);
+}
+
+nsresult sbBaseDevice::SetPreferenceInternal(nsIPrefBranch*   aPrefBranch,
+                                             const nsAString& aPrefName,
                                              nsIVariant*      aPrefValue,
                                              PRBool*          aHasChanged)
 {
   NS_ENSURE_ARG_POINTER(aPrefValue);
   NS_ENSURE_FALSE(aPrefName.IsEmpty(), NS_ERROR_INVALID_ARG);
   nsresult rv;
-
-  // get the pref branch for this device
-  nsCOMPtr<nsIPrefBranch> prefBranch;
-  rv = GetPrefBranch(getter_AddRefs(prefBranch));
-  NS_ENSURE_SUCCESS(rv, rv);
 
   NS_ConvertUTF16toUTF8 prefNameUTF8(aPrefName);
 
@@ -1011,7 +1048,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
 
   // figure out what sort of data we used to have
   PRInt32 prefType;
-  rv = prefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
+  rv = aPrefBranch->GetPrefType(prefNameUTF8.get(), &prefType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool hasChanged = PR_FALSE;
@@ -1036,13 +1073,13 @@ nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
       if (prefType != nsIPrefBranch::PREF_INT) {
         hasChanged = PR_TRUE;
       } else {
-        rv = prefBranch->GetIntPref(prefNameUTF8.get(), &oldValue);
+        rv = aPrefBranch->GetIntPref(prefNameUTF8.get(), &oldValue);
         if (NS_SUCCEEDED(rv) && oldValue != value) {
           hasChanged = PR_TRUE;
         }
       }
 
-      rv = prefBranch->SetIntPref(prefNameUTF8.get(), value);
+      rv = aPrefBranch->SetIntPref(prefNameUTF8.get(), value);
       NS_ENSURE_SUCCESS(rv, rv);
 
       break;
@@ -1058,13 +1095,13 @@ nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
       if (prefType != nsIPrefBranch::PREF_BOOL) {
         hasChanged = PR_TRUE;
       } else {
-        rv = prefBranch->GetBoolPref(prefNameUTF8.get(), &oldValue);
+        rv = aPrefBranch->GetBoolPref(prefNameUTF8.get(), &oldValue);
         if (NS_SUCCEEDED(rv) && oldValue != value) {
           hasChanged = PR_TRUE;
         }
       }
 
-      rv = prefBranch->SetBoolPref(prefNameUTF8.get(), value);
+      rv = aPrefBranch->SetBoolPref(prefNameUTF8.get(), value);
       NS_ENSURE_SUCCESS(rv, rv);
 
       break;
@@ -1075,7 +1112,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
     {
       // unset the pref
       if (prefType != nsIPrefBranch::PREF_INVALID) {
-        rv = prefBranch->ClearUserPref(prefNameUTF8.get());
+        rv = aPrefBranch->ClearUserPref(prefNameUTF8.get());
         NS_ENSURE_SUCCESS(rv, rv);
         hasChanged = PR_TRUE;
       }
@@ -1094,7 +1131,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
         hasChanged = PR_TRUE;
       } else {
         char* oldValue;
-        rv = prefBranch->GetCharPref(prefNameUTF8.get(), &oldValue);
+        rv = aPrefBranch->GetCharPref(prefNameUTF8.get(), &oldValue);
         if (NS_SUCCEEDED(rv)) {
           if (!(value.Equals(oldValue))) {
             hasChanged = PR_TRUE;
@@ -1103,7 +1140,7 @@ nsresult sbBaseDevice::SetPreferenceInternal(const nsAString& aPrefName,
         }
       }
 
-      rv = prefBranch->SetCharPref(prefNameUTF8.get(), value.get());
+      rv = aPrefBranch->SetCharPref(prefNameUTF8.get(), value.get());
       NS_ENSURE_SUCCESS(rv, rv);
 
       break;
@@ -2221,10 +2258,10 @@ NS_IMETHODIMP sbBaseDevice::ResetWarningDialogs()
   return NS_OK;
 }
 
-nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+nsresult sbBaseDevice::GetPrefBranch(const char *aPrefBranchName,
+                                     nsIPrefBranch** aPrefBranch)
 {
   NS_ENSURE_ARG_POINTER(aPrefBranch);
-
   nsresult rv;
 
   // get the prefs service
@@ -2246,24 +2283,9 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
     prefService.swap(proxy);
   }
 
-  // get id of this device
-  nsID* id;
-  rv = GetId(&id);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // get that as a string
-  char idString[NSID_LENGTH];
-  id->ToProvidedString(idString);
-  NS_Free(id);
-
-  // create the pref key
-  nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
-  prefKey.Append(idString);
-  prefKey.AppendLiteral(".preferences.");
-
   // get the pref branch
   nsCOMPtr<nsIPrefBranch> prefBranch;
-  rv = prefService->GetBranch(prefKey.get(), getter_AddRefs(prefBranch));
+  rv = prefService->GetBranch(aPrefBranchName, getter_AddRefs(prefBranch));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If we're not on the main thread proxy the pref branch
@@ -2282,6 +2304,29 @@ nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
   prefBranch.forget(aPrefBranch);
 
   return rv;
+}
+
+nsresult sbBaseDevice::GetPrefBranch(nsIPrefBranch** aPrefBranch)
+{
+  NS_ENSURE_ARG_POINTER(aPrefBranch);
+  nsresult rv;
+
+  // get id of this device
+  nsID* id;
+  rv = GetId(&id);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // get that as a string
+  char idString[NSID_LENGTH];
+  id->ToProvidedString(idString);
+  NS_Free(id);
+
+  // create the pref key
+  nsCString prefKey(PREF_DEVICE_PREFERENCES_BRANCH);
+  prefKey.Append(idString);
+  prefKey.AppendLiteral(".preferences.");
+
+  return GetPrefBranch(prefKey.get(), aPrefBranch);
 }
 
 nsresult sbBaseDevice::ApplyPreference(const nsAString& aPrefName,
