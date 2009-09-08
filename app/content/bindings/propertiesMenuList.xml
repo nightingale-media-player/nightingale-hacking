@@ -104,6 +104,10 @@
         if (enableAll) {
           addItems(true);
         }
+
+        // Select first item if no item selected.
+        if (self.selectedIndex < 0)
+          self.selectedIndex = 0;
       } catch(e) {
         Components.utils.reportError(e);
         throw(e);
