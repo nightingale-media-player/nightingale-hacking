@@ -73,7 +73,7 @@
         </xul:hbox>
 
         <!-- Box contents. -->
-        <xul:box sbid="content" hidden="true" xbl:inherits="orient">
+        <xul:box sbid="content" class="closable-box-content" hidden="true" xbl:inherits="orient">
           <children/>
         </xul:box>
 
