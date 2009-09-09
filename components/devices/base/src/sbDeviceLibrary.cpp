@@ -438,7 +438,9 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                          sbIMediaList::LISTENER_FLAGS_ITEMADDED |
                          sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
                          sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                         sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED,
+                         sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED |
+                         sbIMediaList::LISTENER_FLAGS_BATCHBEGIN |
+                         sbIMediaList::LISTENER_FLAGS_BATCHEND,
                          nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 

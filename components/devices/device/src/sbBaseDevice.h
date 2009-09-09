@@ -156,7 +156,7 @@ public:
     PRBool needsTranscoding;         /* if true, write item media needs to be
                                         transcoded */
     nsCOMPtr<sbITranscodeAlbumArt> albumArt; /* Album art transcoding object,
-                                                or null if no album art 
+                                                or null if no album art
                                                 transcoding should be done */
     nsCOMPtr<nsIFile> temporaryFile; /* Temporary file for transcoding, if one
                                         was used. */
@@ -480,6 +480,10 @@ protected:
   nsCOMPtr<nsITimer> mBatchEndTimer;
   PRInt32 mNextBatchID;
   Batch mCurrentBatch;
+  /**
+   * Tracks the REQUEST_BATCH_BEGIN/REQUEST_BATCH_END depth
+   */
+  PRInt32 mBatchDepth;
 public:
   /**
    * The request queue type
@@ -1141,7 +1145,7 @@ protected:
 
   /* Return an array of sbIImageFormatType describing all the supported
    * album art formats for the device.
-   * 
+   *
    * The array may be empty; this should be interpreted as "unknown" rather than
    * "album art is not supported"
    */

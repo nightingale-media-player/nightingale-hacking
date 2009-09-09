@@ -340,6 +340,7 @@ static void CheckRequestBatch(sbBaseDevice::TransferRequestQueue::const_iterator
 
 sbBaseDevice::sbBaseDevice() :
   mNextBatchID(1),
+  mBatchDepth(0),
   mLastTransferID(0),
   mLastRequestPriority(PR_INT32_MIN),
   mAbortCurrentRequest(PR_FALSE),
@@ -374,6 +375,8 @@ sbBaseDevice::sbBaseDevice() :
 
 sbBaseDevice::~sbBaseDevice()
 {
+  NS_WARN_IF_FALSE(mBatchDepth != 0,
+                   "Device destructed with batches remaining");
   if (mPreferenceLock)
     nsAutoLock::DestroyLock(mPreferenceLock);
 
@@ -575,7 +578,27 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
 
   } /* end scope for request lock */
 
-  return ProcessRequest();
+  // Defer process request until end of batch
+  PRInt32 batchDepth;
+  switch (aRequest->type) {
+    case TransferRequest::REQUEST_BATCH_BEGIN:
+      batchDepth = PR_AtomicIncrement(&mBatchDepth);
+      // Incrementing, no need to go further
+      return NS_OK;
+    case TransferRequest::REQUEST_BATCH_END:
+      batchDepth = PR_AtomicDecrement(&mBatchDepth);
+      break;
+    default:
+      batchDepth = mBatchDepth;
+      break;
+  }
+  NS_ASSERTION(batchDepth >= 0,
+               "Batch depth out of whack in sbBaseDevice::PushRequest");
+  if (batchDepth == 0) {
+    nsresult rv = ProcessRequest();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_OK;
 }
 
 nsresult sbBaseDevice::FindFirstRequest(
