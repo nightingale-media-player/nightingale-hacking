@@ -65,8 +65,10 @@ static PRLogModuleInfo* gCDDeviceLog = nsnull;
 //
 // XXXkreeger USE THE MOCK CD DEVICE SERVICE UNTIL THE REAL ONE IS DONE
 //
+//#define SB_MOCK_CDDEVICE_SERVICE \
+//  "@songbirdnest.com/device/cd/mock-cddevice-service;1"
 #define SB_MOCK_CDDEVICE_SERVICE \
-  "@songbirdnest.com/device/cd/mock-cddevice-service;1"
+  "@songbirdnest.com/gearworks-cd-service;1"
 
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbCDDeviceMarshall, SB_CDDEVICE_MARSHALL_IID)
