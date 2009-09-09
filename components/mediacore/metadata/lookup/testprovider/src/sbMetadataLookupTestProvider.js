@@ -192,6 +192,7 @@ sbTestProvider.prototype = {
           "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
       var trackInfo = albumToc[i];
+      track.appendProperty(SBProperties.albumArtistName, artistName);
       track.appendProperty(SBProperties.artistName, trackInfo.artist);
       track.appendProperty(SBProperties.trackName, trackInfo.title);
       track.appendProperty(SBProperties.albumName, albumName);

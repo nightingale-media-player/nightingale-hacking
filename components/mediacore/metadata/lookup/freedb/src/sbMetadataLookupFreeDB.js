@@ -349,20 +349,27 @@ sbFreeDB.prototype = {
                   }
                   var title;
                   var artist;
+                  var albumArtist = aAlbum.properties.getPropertyValue(
+                                        SBProperties.artistName);
 
+                  // if we got something in the right format, then parse it
+                  // up into the specific artist and track titles.  if not
+                  // then use the literal value as the track title and set the
+                  // artist name to the album artist
                   var matches = value.match("(.*?) / (.*)");
                   if (matches) {
                     artist = matches[1];
                     title = matches[2];
                   } else {
                     title = value;
-                    artist = aAlbum.properties.getPropertyValue(
-                        SBProperties.artistName);
+                    artist = albumArtist;
                   }
 
                   var track = Cc[
           "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
           .createInstance(Ci.sbIMutablePropertyArray);
+                  track.appendProperty(SBProperties.albumArtistName,
+                                       albumArtist);
                   track.appendProperty(SBProperties.artistName, artist);
                   track.appendProperty(SBProperties.trackName, title);
                   track.appendProperty(SBProperties.albumName, album);

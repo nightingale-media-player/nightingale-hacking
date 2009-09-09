@@ -196,6 +196,7 @@
       onEnumerationBegin: function (aList) {
       },
       onEnumeratedItem: function (aList, aItem) {
+        aItem.setProperty(SBProperties.albumArtistName, this._artistValue);
         aItem.setProperty(SBProperties.artistName, this._artistValue);
         aItem.setProperty(SBProperties.albumName, this._albumValue);
 
