@@ -1126,6 +1126,7 @@ sbDeviceUtils::GetSupportedTranscodeProfiles(sbIDevice * aDevice,
        ++contentTypeIndex)
   {
     PRUint32 const contentType = contentTypes[contentTypeIndex];
+    TRACE(("%s: Finding profiles for content type %d", __FUNCTION__, contentType));
     PRUint32 formatsLength;
     char ** formats;
     rv = devCaps->GetSupportedFormats(contentType,

@@ -4198,7 +4198,23 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
 }
 
 nsresult
-sbBaseDevice::SelectTranscodeProfile(PRUint32 contentType,
+sbBaseDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
+{
+  nsresult rv;
+  if (!mTranscodeProfiles) {
+    rv = sbDeviceUtils::GetSupportedTranscodeProfiles(
+                          this,
+                          getter_AddRefs(mTranscodeProfiles));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  NS_IF_ADDREF(*aSupportedProfiles = mTranscodeProfiles);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::SelectTranscodeProfile(PRUint32 transcodeType,
                                      sbITranscodeProfile **aProfile)
 {
   nsresult rv;
@@ -4217,24 +4233,21 @@ sbBaseDevice::SelectTranscodeProfile(PRUint32 contentType,
     TRACE(("%s: found a profile", __FUNCTION__));
   }
 
-  if (!mTranscodeProfiles) {
-    rv = sbDeviceUtils::GetSupportedTranscodeProfiles(
-                          this,
-                          getter_AddRefs(mTranscodeProfiles));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+  nsCOMPtr<nsIArray> supportedProfiles;
+  rv = GetSupportedTranscodeProfiles(getter_AddRefs(supportedProfiles));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 bestPriority = 0;
   nsCOMPtr<sbITranscodeProfile> bestProfile;
   nsCOMPtr<sbITranscodeProfile> prefProfile;
 
   PRUint32 length;
-  rv = mTranscodeProfiles->GetLength(&length);
+  rv = supportedProfiles->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 index = 0; index < length; ++index) {
     nsCOMPtr<sbITranscodeProfile> profile =
-        do_QueryElementAt(mTranscodeProfiles, index, &rv);
+        do_QueryElementAt(supportedProfiles, index, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (profile) {
@@ -4244,7 +4257,7 @@ sbBaseDevice::SelectTranscodeProfile(PRUint32 contentType,
 
       // If the content types don't match, skip (we don't want to use a video
       // transcoding profile to transcode audio, for example)
-      if (profileContentType == contentType) {
+      if (profileContentType == transcodeType) {
         if (hasProfilePref) {
           nsString profileId;
           rv = profile->GetId(profileId);
@@ -4264,9 +4277,14 @@ sbBaseDevice::SelectTranscodeProfile(PRUint32 contentType,
           bestPriority = priority;
         }
       }
+      else {
+        TRACE(("%s: skipping profile for content type %d",
+                __FUNCTION__,
+                profileContentType));
+      }
     }
   }
- if (prefProfile) {
+  if (prefProfile) {
     // We found the profile selected in the preferences. Apply relevant
     // preferenced properties to it as well...
     nsCOMPtr<nsIArray> audioProperties;

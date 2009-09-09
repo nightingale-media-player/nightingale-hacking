@@ -565,55 +565,6 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
 }
 
 nsresult
-sbCDDevice::GetTranscodeProfile(nsAString const & aContainerFormat,
-                                nsAString const & aCodec,
-                                sbITranscodeProfile ** aTranscodeProfile)
-{
-  nsresult rv;
-  if (!mTranscodeProfile) {
-    nsCOMPtr<nsIArray> profiles;
-    rv = mTranscodeManager->GetTranscodeProfiles(getter_AddRefs(profiles));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString containerFormat;
-    nsString codec;
-    nsCOMPtr<sbITranscodeProfile> profile;
-    PRUint32 length;
-
-    rv = profiles->GetLength(&length);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    for (PRUint32 index = 0; index < length; ++index) {
-      profile = do_QueryElementAt(profiles, index, &rv);
-      rv = profile->GetContainerFormat(containerFormat);
-      NS_ENSURE_SUCCESS(rv, rv);
-      if (containerFormat.Equals(aContainerFormat)) {
-        if (aCodec.IsEmpty()) {
-          profile.forget(aTranscodeProfile);
-          return NS_OK;
-        }
-        nsString codec;
-        rv = profile->GetAudioCodec(codec);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        if (codec.Equals(aCodec)) {
-          mTranscodeProfile = profile;
-          break;
-        }
-      }
-    }
-
-    // If none found return not available error
-    if (!mTranscodeProfile) {
-      return NS_ERROR_NOT_AVAILABLE;
-    }
-  }
-
-  NS_IF_ADDREF(*aTranscodeProfile = mTranscodeProfile);
-  return NS_OK;
-}
-
-nsresult
 sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
@@ -677,7 +628,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   // Find the preferred audio transcoding profile.
   nsCOMPtr<sbITranscodeProfile> profile;
-  rv = SelectTranscodeProfile(sbIDeviceCapabilities::CONTENT_AUDIO,
+  rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
                               getter_AddRefs(profile));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -705,26 +656,27 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = NS_GetMainThread(getter_AddRefs(target));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbITranscodeJob> proxiedJob;
   rv = do_GetProxyForObject(target,
                             tcJob.get(),
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
-                            getter_AddRefs(tcJob));
+                            getter_AddRefs(proxiedJob));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcJob->SetProfile(profile);
+  rv = proxiedJob->SetProfile(profile);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCString URISpec;
   rv = musicFolderURL->GetSpec(URISpec);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcJob->SetDestURI(NS_ConvertUTF8toUTF16(URISpec));
+  rv = proxiedJob->SetDestURI(NS_ConvertUTF8toUTF16(URISpec));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = sourceContentURI->GetSpec(URISpec);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcJob->SetSourceURI(NS_ConvertUTF8toUTF16(URISpec));
+  rv = proxiedJob->SetSourceURI(NS_ConvertUTF8toUTF16(URISpec));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Set the metadata for the job
@@ -732,7 +684,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = aRequest->item->GetProperties(nsnull, getter_AddRefs(metadata));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = tcJob->SetMetadata(metadata);
+  rv = proxiedJob->SetMetadata(metadata);
   NS_ENSURE_SUCCESS(rv, rv);
 
   typedef sbTranscodeProgressListener::StatusProperty StatusProperty;
@@ -749,20 +701,20 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   // Setup the progress listener.
-  nsCOMPtr<sbIJobProgress> progress = do_QueryInterface(tcJob, &rv);
+  nsCOMPtr<sbIJobProgress> progress = do_QueryInterface(proxiedJob, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = progress->AddJobProgressListener(listener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Setup the mediacore event listener.
-  nsCOMPtr<sbIMediacoreEventTarget> eventTarget = do_QueryInterface(tcJob,
+  nsCOMPtr<sbIMediacoreEventTarget> eventTarget = do_QueryInterface(proxiedJob,
                                                                     &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = eventTarget->AddListener(listener);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // This is async.
-  rv = tcJob->Transcode();
+  rv = proxiedJob->Transcode();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Wait until the transcode job is complete.

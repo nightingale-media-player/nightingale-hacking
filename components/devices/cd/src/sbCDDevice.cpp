@@ -886,3 +886,19 @@ sbCDDevice::ReqAbortActive()
   return (abortRequests != 0);
 }
 
+// Override base class: we want to return all profiles, not just those supported
+// by the device (since that's not meaningful for a cd device!)
+nsresult
+sbCDDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
+{
+  nsresult rv;
+  nsCOMPtr<sbITranscodeManager> tcManager = do_ProxiedGetService(
+          "@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = tcManager->GetTranscodeProfiles(aSupportedProfiles);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

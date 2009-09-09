@@ -455,15 +455,10 @@ private:
    * Method to trigger the CD lookup request.
    */
   void ProxyCDLookup();
-  /**
-   * Returns the transcode profile for CD's
-   * \param aContainerFormat The desired container format
-   * \param aCodec The desired audio codec
-   * \param aTranscodeProfile The matching transcode profile
-   */
-  nsresult GetTranscodeProfile(nsAString const & aContainerFormat,
-                               nsAString const & aCodec,
-                               sbITranscodeProfile ** aTranscodeProfile);
+
+  /* Override base class to get all profiles, not just those we can write to
+   * the CD (i.e. none) */
+  nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
 
   /**
    * Processes a read request. Copying content from a CD to the device library
