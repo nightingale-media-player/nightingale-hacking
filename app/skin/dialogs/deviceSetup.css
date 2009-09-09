@@ -41,13 +41,9 @@ Additional styles imported directly by the device setup dialog.
   font-size: smaller;
 }
 
-#device-dialog-ignore-before-text,
 #device-dialog-ignore-link-text {
-  margin-right: 0px;
-  padding-right: 0px;
-}
-#device-dialog-ignore-after-text,
-#device-dialog-ignore-link-text {
-  margin-left: 0px;
   padding-left: 0px;
+  padding-right: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
