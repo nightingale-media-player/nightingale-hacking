@@ -2644,6 +2644,20 @@ PRBool sbMetadataHandlerTaglib::ReadMP4File()
       }
     }
 
+    // XXX Mook: We should be looking at whether the
+    // moov/trak/mdia/minf/stbl/stsd/drms box exists; for now, just assume file
+    // extension is close enough, because our taglib m4a support doesn't support
+    // exposing boxes to the outside world (nor does it understand DRM).
+    if (NS_SUCCEEDED(result)) {
+        nsCString fileExt;
+        result = mpURL->GetFileExtension(fileExt);
+        if (NS_SUCCEEDED(result) &&
+            fileExt.Equals(NS_LITERAL_CSTRING("m4p"), CaseInsensitiveCompare))
+        {
+            result = AddMetadataValue(SB_PROPERTY_ISDRMPROTECTED, true);
+        }
+    }
+
     /* File is invalid on any error. */
     if (NS_FAILED(result))
         isValid = PR_FALSE;

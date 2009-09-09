@@ -103,13 +103,31 @@ sbLibraryMigration.prototype = {
       }
       var propertyId = query.getResultObject().getRowCell(0, 0);
 
+      // Run a query to look for all m4p files and assume they are protected :(
+      query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
+                    .createInstance(Ci.sbIDatabaseQuery);
+      query.databaseLocation = aLibrary.databaseLocation;
+      query.setDatabaseGUID(aLibrary.databaseGuid);
+
+      query.addQuery(<>
+        INSERT OR REPLACE INTO resource_properties(
+          media_item_id, property_id, obj, obj_searchable, obj_sortable)
+          SELECT media_item_id, "{propertyId}", "1", "1", "1"
+            FROM media_items
+            WHERE content_url LIKE "%.m4p";
+        </>);
+      query.setAsyncQuery(false);
+      if (query.execute() != 0) {
+        throw "Media item fetch failed";
+      }
+
       // Run a query to look for all wma files :(
       query = Cc["@songbirdnest.com/Songbird/DatabaseQuery;1"]
                     .createInstance(Ci.sbIDatabaseQuery);
       query.databaseLocation = aLibrary.databaseLocation;
       query.setDatabaseGUID(aLibrary.databaseGuid);
 
-      query.addQuery(<>SELECT guid, content_url FROM media_ITEMS
+      query.addQuery(<>SELECT guid, content_url FROM media_items
                          WHERE content_url LIKE "file://%.wma"
                            COLLATE NOCASE</>);
       query.setAsyncQuery(false);
