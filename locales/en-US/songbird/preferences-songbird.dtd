@@ -5,13 +5,12 @@
 <!ENTITY prefWindow.manageMedia.generalDescription.p2 "Turning Manage Files OFF — Existing tracks will remain in their current &brandShortName; Music library folder. Subsequent imported tracks will not be copied.">
 
 <!-- Media Management entities -->
-<!ENTITY prefWindow.manageMedia.enablebox.description.pre "Advanced users may want to control how &brandShortName; organizes their music files on their computer. Manage Files mode will copy files, rather than link, to a directory structure based on the below settings.">
+<!ENTITY prefWindow.manageMedia.enablebox.description.pre "These settings control how &brandShortName; organizes your music. Manage Files mode will copy files to the directory structure you choose here.">
 <!ENTITY prefWindow.manageMedia.enablebox.warning     "This cannot be undone.">
 <!ENTITY prefWindow.manageMedia.enablebox.description.post "">
 
 <!ENTITY prefWindow.manageMedia.label                 "Manage Files">
 <!ENTITY prefWindow.manageMedia.title                 "Manage Files">
-<!ENTITY prefWindow.manageMedia.library.label         "Music Library Location">
 <!ENTITY prefWindow.manageMedia.library.browse.label  "Choose...">
 
 <!ENTITY prefWindow.manageMedia.format.box.label      "Structure folders as:">

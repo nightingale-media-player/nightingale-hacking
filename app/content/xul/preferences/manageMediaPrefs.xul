@@ -48,7 +48,7 @@
    *
    ************************************************************************* -->
 
-  <prefpane id="paneManageMedia"
+  <prefpane id="paneManageMedia" flex="1"
             onpaneload="manageMediaPrefsPane.doPaneLoad(event);">
 
     <preferences id="manage_media_preferences">
@@ -83,11 +83,7 @@
                   label="&prefWindow.manageMedia.enable.enable.label;"
                   oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
                   preference="manage_media_pref_library_enable"/>
-      </groupbox>
 
-      <groupbox id="mange_media_library_box">
-        <caption id="manage_media_library_caption"
-                 label="&prefWindow.manageMedia.library.label;"/>
         <hbox>
           <filefield id="manage_media_library_file" flex="1"/>
           <button id="manage_media_library_browse"
