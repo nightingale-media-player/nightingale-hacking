@@ -188,9 +188,11 @@ var SongbirdMainPaneOverlay = {
       downloadsCaptions.item(0).setAttribute("label", tempString);
     }
 
-    // Remove the addons button
-    const addonsGroup = document.getElementById("addonsMgrGroup");
-    addonsGroup.setAttribute("hidden", "true");
+    // Hide the addons button
+    //   actually, we'll remove the hbox containing to the addonsGroupbox to
+    //   avoid bug17280
+    var addonsGroup = document.getElementById("addonsMgrGroup");
+    addonsGroup.parentNode.parentNode.removeChild(addonsGroup.parentNode);
 
     // Build the rest of the content.
     const groupbox = document.createElement("groupbox");
