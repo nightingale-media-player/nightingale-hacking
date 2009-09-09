@@ -46,6 +46,10 @@
   <commandset>
     <command id="sb-cdrip-eject-command"
              oncommand="window.cdripController._ejectDevice();" />
+    <command id="sb-cdrip-startrip-command"
+             oncommand="window.cdripController._startRip();" />
+    <command id="sb-cdrip-stoprip-command"
+             oncommand="window.cdripController._stopRip();" />
   </commandset>
 
   <keyset>
@@ -55,10 +59,12 @@
          command="sb-cdrip-eject-command" />
     <key id="cdrip-rip-key"
          modifiers="&cdrip.mediaview.rip.modifiers;"
-         key="&cdrip.mediaview.rip.key;" />
+         key="&cdrip.mediaview.rip.key;"
+         command="sb-cdrip-startrip-command"/>
     <key id="cdrip-stop-rip-key"
          modifiers="&cdrip.mediaview.stop_rip.modifiers;"
-         key="&cdrip.mediaview.stop_rip.key;" />
+         key="&cdrip.mediaview.stop_rip.key;"
+         command="sb-cdrip-stoprip-command"/>
   </keyset>
 
   <vbox id="cdrip-outter" flex="1">
@@ -110,21 +116,19 @@
           </hbox>
 
           <!-- CD device buttons -->
-          <hbox id="sb-cdrip-status-buttons">
-            <button id="sb-cdrip-rip-cd-button"
-                    label="&cdrip.mediaview.rip_cd_button;" />
-            <button id="sb-cdrip-stop-rip-button"
-                    label="&cdrip.mediaview.stop_rip_button;" />
-            <button id="sb-cdrip-eject-cd-button"
-                    label="&cdrip.mediaview.eject_cd_button;"
-                    command="sb-cdrip-eject-command" />
-          </hbox>
+          <button id="sb-cdrip-rip-cd-button"
+                  label="&cdrip.mediaview.rip_cd_button;"
+                  command="sb-cdrip-startrip-command" />
+          <button id="sb-cdrip-stop-rip-button"
+                  label="&cdrip.mediaview.stop_rip_button;"
+                  command="sb-cdrip-stoprip-command" />
+          <button id="sb-cdrip-eject-cd-button"
+                  label="&cdrip.mediaview.eject_cd_button;"
+                  command="sb-cdrip-eject-command" />
         </hbox>
 
       </hbox>
 
-
-      <!-- TODO: Put stuff in here see Bug 17421 -->
     </vbox>
 
     <vbox id="cdrip-playlist-content"

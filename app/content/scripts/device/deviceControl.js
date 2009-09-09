@@ -275,81 +275,16 @@ deviceControlWidget.prototype = {
         break;
       
       case "rip" :
-        // Ripping tracks involves copying the selected ones to the main library
-        this._ripTracks();
+        sbCDDeviceUtils.doCDRip(this._device);
         break;
       
       case "rescan" :
-        // Invoke the CD Lookup again
-        var bag = Cc["@mozilla.org/hash-property-bag;1"]
-                    .createInstance(Ci.nsIPropertyBag2);
-        this._device.submitRequest(Ci.sbICDDeviceEvent.REQUEST_CDLOOKUP, bag);
+        sbCDDeviceUtils.doCDLookUp(this._device);
         break;
 
       default :
         break;
     }
-  },
-
-  /**
-   * Get the devices library (defaults to first library)
-   * \param aIndex - Library index to retrieve
-   */
-  _getDeviceLibrary: function deviceControlWidget__getDeviceLibrary(aIndex) {
-    if (typeof(aIndex) == "undefined") {
-      aIndex = 0;
-    }
-    
-    // Get the libraries for device
-    var libraries = this._device.content.libraries;
-    if (libraries.length < 1) {
-      // Oh no, we have no libraries
-      Cu.reportError("Device " + this._device.id + " has no libraries!");
-      return null;
-    }
-
-    // Get the requested library
-    var deviceLibrary = libraries.queryElementAt(aIndex, Ci.sbIMediaList);
-    if (!deviceLibrary) {
-      Cu.reportError("Unable to get library " + aIndex + " for device: " +
-                     this._device.id);
-      return null;
-    }
-    
-    return deviceLibrary;
-  },
-
-  /**
-   * Rip the tracks from the device to the main library, we do this by copying
-   * the selected tracks from the device to the main library.
-   */
-  
-  _ripTracks: function deviceControlWidget__ripTracks() {
-    var deviceLibrary = this._getDeviceLibrary();
-    try {
-      // Get all the selected tracks from the device library
-      var addItems = deviceLibrary.getItemsByProperty(SBProperties.shouldRip,
-                                                      "1");
-  
-      // Then add them to the main library using addSome(enumerator)
-      LibraryUtils.mainLibrary.addSome(addItems.enumerate());
-    } catch (err) {}
-  },
-
-  /**
-   * Check if any of the items from the device have been successfully ripped.
-   */
-  _getRippedItemCount: function deviceControlWidget__getRippedItemCount() {
-    var deviceLibrary = this._getDeviceLibrary();
-    var rippedCount = 0;
-    try {
-      // Get all the successfully ripped tracks
-      var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
-                                                         "2|100");
-      rippedCount = rippedItems.length;  
-    } catch (err) {}
-    
-    return rippedCount;
   },
 
   /**
@@ -588,7 +523,6 @@ deviceControlWidget.prototype = {
     var supportsReformat = this._device.supportsReformat;
     var supportsPlaylist = this._supportsPlaylist();
     var msc = (this._device.parameters.getProperty("DeviceType") == "MSCUSB");
-    var cddevice = (this._device.parameters.getProperty("DeviceType") == "CD");
 
     // Get the management type for the device library.  Default to manual if no
     // device library.
@@ -602,8 +536,7 @@ deviceControlWidget.prototype = {
         (this._currentMgmtType == mgmtType) &&
         (this._currentSupportsReformat == supportsReformat) &&
         (this._currentSupportsPlaylist == supportsPlaylist) &&
-        (this._currentMsc == msc) &&
-        (this._currentCDDevice == cddevice)) {
+        (this._currentMsc == msc)) {
       return;
     }
 
@@ -614,7 +547,6 @@ deviceControlWidget.prototype = {
     this._currentSupportsReformat = supportsReformat;
     this._currentSupportsPlaylist = supportsPlaylist;
     this._currentMsc = msc;
-    this._currentCDDevice = cddevice;
 
     // Update widget attributes.
     var updateAttributeList = [];
@@ -768,15 +700,6 @@ deviceControlWidget.prototype = {
     // Return false if no state attribute value available.
     if (!this._widget.hasAttribute(stateAttrName))
       return false;
-
-    // For some commands we need to check if there are any ripped items.
-    if (this._widget.hasAttribute(aAttrState + "_ripped")) {
-      // Since this widget has a ripped flag for the state we first check
-      // if there is any ripped tracks and if not return false
-      if (this._getRippedItemCount() <= 0) {
-        return false;
-      }
-    }
 
     // Return the state attribute value.
     aAttrVal.value = this._widget.getAttribute(stateAttrName);

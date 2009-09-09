@@ -112,6 +112,8 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
 SONGBIRD_COMPONENTS = $(srcdir)/sbCDRipServicePaneService.js \
                       $(NULL)
 
+SONGBIRD_JSMODULES = $(srcdir)/sbCDDeviceUtils.jsm
+
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

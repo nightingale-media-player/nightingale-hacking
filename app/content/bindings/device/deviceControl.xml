@@ -227,6 +227,7 @@
       {
         // Songbird imports.
         Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
 
         // Import the device control services.
         if (typeof(deviceControlWidget) == "undefined") {

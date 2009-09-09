@@ -28,6 +28,7 @@ Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
@@ -61,6 +62,8 @@ const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
 const RIP_STATUS_EJECT_CD_BUTTON    = CDRIP_BASE + "eject-cd-button";
 
 const RIP_COMMAND_EJECT             = CDRIP_BASE + "eject-command";
+const RIP_COMMAND_STARTRIP          = CDRIP_BASE + "startrip-command";
+const RIP_COMMAND_STOPRIP           = CDRIP_BASE + "stoprip-command";
 
 const CDRIP_PLAYLIST                = CDRIP_BASE + "playlist";
 
@@ -193,6 +196,8 @@ window.cdripController =
 
         // Update commands:
         this._disableCommand(RIP_COMMAND_EJECT);
+        this._disableCommand(RIP_COMMAND_STARTRIP);
+        this._enableCommand(RIP_COMMAND_STOPRIP);
         break;
 
       default:
@@ -206,6 +211,8 @@ window.cdripController =
 
         // Update commands:
         this._enableCommand(RIP_COMMAND_EJECT);
+        this._enableCommand(RIP_COMMAND_STARTRIP);
+        this._disableCommand(RIP_COMMAND_STOPRIP);
         break;
     }
   },
@@ -282,6 +289,22 @@ window.cdripController =
   _ejectDevice: function cdripController_ejectDevice() {
     if (this._device) {
       this._device.eject();
+    }
+  },
+  
+  _startRip: function cdripController_startRip() {
+    if (this._device) {
+      sbCDDeviceUtils.doCDRip(this._device);
+    } else {
+      Cu.reportError("No device defined to start rip on.");
+    }
+  },
+
+  _stopRip: function cdripController_stopRip() {
+    if (this._device) {
+      this._device.cancelRequests();
+    } else {
+      Cu.reportError("No device defined to stop rip on.");
     }
   },
 
