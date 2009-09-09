@@ -223,7 +223,7 @@ public:
                                      mResult(NS_ERROR_FAILURE),
                                      mOperation(aOperation) {
     mStatus->OperationStart(mOperation,
-                            mRequest->index,
+                            mRequest->batchIndex,
                             mRequest->batchCount,
                             IsItemOp(mOperation) ? mRequest->list : nsnull,
                             IsItemOp(mOperation) ? mRequest->item : nsnull);

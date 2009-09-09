@@ -254,7 +254,8 @@ PRBool sbBaseDevice::TransferRequest::IsPlaylist() const
 PRBool sbBaseDevice::TransferRequest::IsCountable() const
 {
   return !IsPlaylist() &&
-         type != sbIDevice::REQUEST_UPDATE;
+         type != sbIDevice::REQUEST_UPDATE &&
+         (type & REQUEST_FLAG_USER) == 0;
 }
 
 void sbBaseDevice::TransferRequest::SetTranscodeProfile(sbITranscodeProfile * aProfile)

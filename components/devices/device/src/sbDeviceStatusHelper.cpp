@@ -367,7 +367,14 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                  (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_START,
                   sbNewVariant(mMediaItem));
       break;
-
+    case OPERATION_TYPE_DELETE:
+      LOG(("sbDeviceStatusHelper::ItemStart delete\n"));
+      UpdateStatus(NS_LITERAL_STRING("deleting"),
+                   NS_LITERAL_STRING("InProgress"),
+                   aItemNum,
+                   aItemCount,
+                   0.0);
+      break;
     case OPERATION_TYPE_TRANSCODE :
       LOG(("sbMSCSTatus::ItemStart transcode\n"));
       UpdateStatus(NS_LITERAL_STRING("transcoding"),

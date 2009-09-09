@@ -51,6 +51,7 @@
 #include <sbLibraryChangeset.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
+#include <sbStringUtils.h>
 
 NS_IMPL_THREADSAFE_ADDREF(sbLocalDatabaseDiffingService)
 NS_IMPL_THREADSAFE_RELEASE(sbLocalDatabaseDiffingService)
@@ -369,6 +370,16 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
     propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID));
   NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
+  // Sadly we can't use content length because on a device the length may be
+  // different
+  successHashkey =
+    propertyExclusionList.PutEntry(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH));
+  NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
+
   nsString propertyId;
   nsString propertyValue;
   nsString propertyDestinationValue;
@@ -391,7 +402,6 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
 
     rv = aDestinationProperties->GetPropertyValue(propertyId,
                                                   propertyDestinationValue);
-
     // Property has been added.
     if(rv == NS_ERROR_NOT_AVAILABLE) {
       nsRefPtr<sbPropertyChange> propertyChange;
@@ -419,6 +429,31 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
       successHashkey = sourcePropertyNamesFoundInDestination.PutEntry(propertyId);
       NS_ENSURE_TRUE(successHashkey, NS_ERROR_OUT_OF_MEMORY);
 
+      if (propertyId.EqualsLiteral(SB_PROPERTY_CONTENTURL)) {
+        nsString originURL;
+        rv = aDestinationProperties->GetPropertyValue(
+                                       NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                                       originURL);
+        if (NS_SUCCEEDED(rv) && !originURL.IsEmpty()) {
+          if (propertyValue.Equals(originURL)) {
+            continue;
+          }
+        }
+      }
+      // Check if the duration is the same in seconds, that's good enough
+      else if (propertyId.EqualsLiteral(SB_PROPERTY_DURATION)) {
+        PRUint32 const sourceDuration = propertyValue.ToInteger(&rv, 10);
+        if (NS_SUCCEEDED(rv)) {
+          PRUint64 const destDuration =
+            nsString_ToUint64(propertyDestinationValue, &rv);
+          // If the duration was parsed and the difference less than a second
+          // then treat it as unchanged
+          if (NS_SUCCEEDED(rv)
+              && abs(sourceDuration - destDuration) < PR_USEC_PER_SEC) {
+            continue;
+          }
+        }
+      }
       // Property values are the same, nothing changed,
       // continue onto the next property.
       if(propertyValue.Equals(propertyDestinationValue)) {
