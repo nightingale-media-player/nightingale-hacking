@@ -145,12 +145,13 @@ NS_IMPL_ISUPPORTS2(sbAlbumArtService,
  * (remote, local, all) as an array of nsIVariant's of type ACString. 
  *
  * \param aType               sbIAlbumArtFetcherSet.TYPE_[ALL|REMOTE|LOCAL]
- *
+ * \param aIncludeDisabled    Include disabled fetchers in the list.
  * \return                    List of album art fetcher contract ID's.
  */
 
 NS_IMETHODIMP
 sbAlbumArtService::GetFetcherList(PRUint32 aType,
+                                  PRBool aIncludeDisabled,
                                   nsIArray** _retval)
 {
   TRACE(("sbAlbumArtService[0x%8.x] - GetFetcherList", this));
@@ -173,26 +174,33 @@ sbAlbumArtService::GetFetcherList(PRUint32 aType,
   // Add each fetcher contract ID to fetcher list.
   PRUint32 fetcherCount = mFetcherInfoList.Length();
   for (PRUint32 i = 0; i < fetcherCount; i++) {
-    // Append the fetcher to the list only if it is enabled
-    if (NS_SUCCEEDED(rv)) {    
-      if (mFetcherInfoList[i].enabled) {
-        // Make sure we only add the desired type
-        if ((sbIAlbumArtFetcherSet::TYPE_LOCAL == aType &&
-             !mFetcherInfoList[i].local) ||
-            (sbIAlbumArtFetcherSet::TYPE_REMOTE == aType &&
-             mFetcherInfoList[i].local))
-        {
-          // Not the right type, ignore
+    // Append the fetcher to the list only if it is enabled and the caller
+    // only wants enabled ones.
+    if (!mFetcherInfoList[i].enabled && !aIncludeDisabled) {
+      continue;
+    }
+    
+    // Check if the types match
+    switch (aType) {
+      case sbIAlbumArtFetcherSet::TYPE_LOCAL:
+        if (!mFetcherInfoList[i].local) {
           continue;
         }
-        nsCOMPtr<nsIVariant>
-          contractID = sbNewVariant(mFetcherInfoList[i].contractID).get();
-        NS_ENSURE_TRUE(contractID, NS_ERROR_OUT_OF_MEMORY);
-
-        rv = fetcherList->AppendElement(contractID, PR_FALSE);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
+      break;
+      case sbIAlbumArtFetcherSet::TYPE_REMOTE:
+        if (mFetcherInfoList[i].local) {
+          continue;
+        }
+      break;
     }
+    
+    // Ok we can add this fetcher to the list
+    nsCOMPtr<nsIVariant>
+      contractID = sbNewVariant(mFetcherInfoList[i].contractID).get();
+    NS_ENSURE_TRUE(contractID, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = fetcherList->AppendElement(contractID, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   
   // Return results.

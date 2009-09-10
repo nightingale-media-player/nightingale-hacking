@@ -53,6 +53,7 @@
 #include <sbIMediaItem.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
+#include <sbStringBundle.h>
 #include <sbStringUtils.h>
 
 // Mozilla imports.
@@ -202,7 +203,8 @@ sbFileAlbumArtFetcher::GetShortName(nsAString& aShortName)
 NS_IMETHODIMP
 sbFileAlbumArtFetcher::GetName(nsAString& aName)
 {
-  aName.AssignLiteral("file");
+  sbStringBundle stringBundle;
+  aName.Assign(stringBundle.Get("songbird.albumart.file.name"));
   return NS_OK;
 }
 
@@ -215,7 +217,8 @@ sbFileAlbumArtFetcher::GetName(nsAString& aName)
 NS_IMETHODIMP
 sbFileAlbumArtFetcher::GetDescription(nsAString& aDescription)
 {
-  aDescription.AssignLiteral("file");
+  sbStringBundle stringBundle;
+  aDescription.Assign(stringBundle.Get("songbird.albumart.file.description"));
   return NS_OK;
 }
 

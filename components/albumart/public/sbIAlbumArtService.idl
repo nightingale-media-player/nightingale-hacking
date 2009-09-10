@@ -47,7 +47,7 @@ interface nsIURI;
  *
  * "@songbirdnest.com/Songbird/album-art-service;1"
  */
-[scriptable, uuid(aa7cdc8e-1dd1-11b2-93af-9e33a97b1a4d)]
+[scriptable, uuid(dcb6dd07-36a2-44e6-9ee2-8b22577204bf)]
 interface sbIAlbumArtService : nsISupports
 {
   /**
@@ -56,11 +56,13 @@ interface sbIAlbumArtService : nsISupports
    * or all fetchers.
    *
    * \param type                sbIAlbumArtFetcherSet.TYPE_LOCAL, etc.
+   * \param includeDisabled     Includes fetchers that are disabled. (defaults to false)
    *
    * \return                    List of album art fetcher contract ID's.
    */
 
-  nsIArray getFetcherList(in unsigned long type);
+  nsIArray getFetcherList(in unsigned long type,
+                          [optional] in boolean includeDisabled);
 
 
   /**

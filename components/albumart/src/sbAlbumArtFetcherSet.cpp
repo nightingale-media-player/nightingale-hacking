@@ -124,6 +124,7 @@ sbAlbumArtFetcherSet::SetFetcherType(PRUint32 aType)
     mType = aType;
     TRACE(("sbAlbumArtFetcherSet::SetFetcherType - Reloading fetcher list."));
     rv = mAlbumArtService->GetFetcherList(mType,
+                                          PR_FALSE,
                                           getter_AddRefs(mFetcherList));
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -431,6 +432,7 @@ sbAlbumArtFetcherSet::Initialize()
 
   // Get the list of fetchers.
   rv = mAlbumArtService->GetFetcherList(mType,
+                                        PR_FALSE,
                                         getter_AddRefs(mFetcherList));
   NS_ENSURE_SUCCESS(rv, rv);
 

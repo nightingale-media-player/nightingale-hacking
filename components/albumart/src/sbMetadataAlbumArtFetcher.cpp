@@ -53,6 +53,7 @@
 #include <sbIMediaItem.h>
 #include <sbMemoryUtils.h>
 #include <sbStandardProperties.h>
+#include <sbStringBundle.h>
 
 // Mozilla imports.
 #include <nsComponentManagerUtils.h>
@@ -181,7 +182,8 @@ sbMetadataAlbumArtFetcher::GetShortName(nsAString& aShortName)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetName(nsAString& aName)
 {
-  aName.AssignLiteral("metadata");
+  sbStringBundle stringBundle;
+  aName.Assign(stringBundle.Get("songbird.albumart.metadata.name"));
   return NS_OK;
 }
 
@@ -194,7 +196,8 @@ sbMetadataAlbumArtFetcher::GetName(nsAString& aName)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetDescription(nsAString& aDescription)
 {
-  aDescription.AssignLiteral("metadata");
+  sbStringBundle stringBundle;
+  aDescription.Assign(stringBundle.Get("songbird.albumart.metadata.description"));
   return NS_OK;
 }
 

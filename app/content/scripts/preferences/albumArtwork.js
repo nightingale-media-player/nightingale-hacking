@@ -40,7 +40,7 @@ if (typeof(Cu) == "undefined")
 
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 
-Fetchers = {
+var Fetchers = {
 
   /**
    * \brief doPaneLoad - We need to load up the fetchers and watch for the
@@ -98,49 +98,6 @@ Fetchers = {
   },
 
   /**
-   * \brief getFetchers - This will get all of the fetchers that are available.
-   * The sbIAlbumArtService.getFetcherList currently will only get either
-   * REMOTE or LOCAL fetchers but not both.
-   * Remove when the TYPE_ALL in the sbIAlbumArtService.getFetcherList works.
-   * (bug 16751)
-   */
-  getFetchers: function() {
-    var fetcherList = [];
-    // Get the category manager.
-    var categoryManager = Cc["@mozilla.org/categorymanager;1"]
-                            .getService(Ci.nsICategoryManager);
-    // Get the enumeration of album art fetchers.
-    var enumerator = categoryManager.enumerateCategory("songbird-album-art-fetcher");
-    while (enumerator.hasMoreElements()) {
-      var catItem = enumerator.getNext();
-      var categoryName = catItem.QueryInterface(Ci.nsISupportsCString).toString();
-      var fetcherCid = categoryManager.getCategoryEntry("songbird-album-art-fetcher",
-                                                        categoryName);
-
-      var cFetcher = Cc[fetcherCid].createInstance(Ci.sbIAlbumArtFetcher);
-      fetcherList.push( { fetcherCID: fetcherCid,
-                          fetcherPriority: cFetcher.priority});
-    }
-
-    function fetcherPriorityCompare(a, b) {
-      if (a.fetcherPriority == -1) {
-        return 1;
-      }
-      if (b.fetcherPriority == -1) {
-        return -1;
-      }
-      return (a.fetcherPriority - b.fetcherPriority);
-    }
-    fetcherList.sort(fetcherPriorityCompare);
-
-    var outList = [];
-    for (var i = 0; i < fetcherList.length; i++) {
-      outList.push(fetcherList[i].fetcherCID);
-    }
-    return outList;
-  },
-
-  /**
    * \brief resetFetcherPreferences - This will setup the preferences for all
    * of the fetchers. It will clear the current settings first.
    */
@@ -151,43 +108,25 @@ Fetchers = {
     while(fetcherBox.getRowCount() > 0) {
       fetcherbox.removeItemAt(0);
     }
-    /**
-     * The sbIAlbumArtService.getFetcherList is broken :( it doesn't process the
-     * TYPE_ALL flag even though it accepts it (As of 1.2.0).
-     * (again, bug 16751)
-     */
+    
     var albumArtService = Cc["@songbirdnest.com/Songbird/album-art-service;1"]
                             .getService(Ci.sbIAlbumArtService);
     var fetchList = albumArtService.getFetcherList(
-                                            Ci.sbIAlbumArtFetcherSet.TYPE_ALL);
-    var fetchers;
-    if (fetchList.length > 0) {
-      fetchers = ArrayConverter.JSArray(fetchList);
-    } else {
-      fetchers = this.getFetchers();
-    }
+                                            Ci.sbIAlbumArtFetcherSet.TYPE_ALL,
+                                            true);
 
-    for (var fIndex = 0; fIndex < fetchers.length; fIndex++) {
+    for (var fIndex = 0; fIndex < fetchList.length; fIndex++) {
       // Add a list item entry for each one
-      var fetcherCid = fetchers[fIndex];
-      var cFetcher = Cc[fetcherCid].createInstance(Ci.sbIAlbumArtFetcher);
-
-      // File and Metadata look stupid right now :P
-      // TODO: file bug for localization of these two and remove once done.
-      var fLabel;
-      var bundlePreferences =
-         document.getElementById("bundleSongbirdPreferences");
-
-      if (cFetcher.name.match(/^file$/)) {
-        fLabel = bundlePreferences.getString("albumartprefs.fetcher.local");
-      } else if (cFetcher.name.match(/^metadata$/)) {
-        fLabel = bundlePreferences.getString("albumartprefs.fetcher.metadata");
-      } else {
-        fLabel = cFetcher.name + " (" + cFetcher.description + ")";
+      try {
+        var fetcherCid = fetchList.queryElementAt(fIndex, Ci.nsIVariant);
+        var cFetcher = Cc[fetcherCid].createInstance(Ci.sbIAlbumArtFetcher);
+        var fLabel = cFetcher.name + " (" + cFetcher.description + ")";
+        var newFetcher = fetcherBox.appendItem(fLabel, fetcherCid);
+        newFetcher.setAttribute("type", "checkbox");
+        newFetcher.setAttribute("checked", cFetcher.isEnabled);
+      } catch (err) {
+        Cu.reportError("Unable to find fetcher: " + err);
       }
-      var newFetcher = fetcherBox.appendItem(fLabel, fetcherCid);
-      newFetcher.setAttribute("type", "checkbox");
-      newFetcher.setAttribute("checked", cFetcher.isEnabled);
     }
   },
 
@@ -204,10 +143,14 @@ Fetchers = {
     for (var fIndex = 0; fIndex < fetcherCount; fIndex++) {
       var fetcherItem = fetcherBox.getItemAtIndex(fIndex);
       if (fetcherItem) {
-        var fetcherCid = fetcherItem.value;
-        var cFetcher = Cc[fetcherCid].createInstance(Ci.sbIAlbumArtFetcher);
-        cFetcher.priority = fIndex;
-        cFetcher.isEnabled = fetcherItem.checked;
+        try {
+          var fetcherCid = fetcherItem.value;
+          var cFetcher = Cc[fetcherCid].createInstance(Ci.sbIAlbumArtFetcher);
+          cFetcher.priority = fIndex;
+          cFetcher.isEnabled = fetcherItem.checked;
+        } catch (err) {
+          Cu.reportError("Unable to update fetcher: " + err);
+        }
       }
     }
 
