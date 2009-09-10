@@ -253,19 +253,13 @@ sbCDRipServicePaneService.prototype = {
 
         // if we successfully added the device, switch the media tab
         // to the CD rip view
-        if (result) {
-          var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
-          var url = this._cfg.devMgrURL + "?device-id=" + device.id;
-          Cc['@mozilla.org/appshell/window-mediator;1']
-            .getService(Ci.nsIWindowMediator)
-            .getMostRecentWindow('Songbird:Main').gBrowser
-            .loadURI(url, null, null, null, "_media");
-        }
-      break;
+        if (result)
+          this._loadCDViewFromEvent(aDeviceEvent);
+        break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
         this._removeDeviceFromEvent(aDeviceEvent);
-      break;
+        break;
 
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_INITIATED:
         this._updateState(aDeviceEvent, true);
@@ -277,11 +271,26 @@ sbCDRipServicePaneService.prototype = {
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
         this._updateState(aDeviceEvent, false);
-      break;
+        break;
     
       default:
-      break;
+        break;
     }
+  },
+
+  /**
+   * \brief Load the CD Rip media view
+   * \param aDevice - The device itself.
+   */
+  _loadCDViewFromEvent:
+      function sbCDRipServicePaneService_loadCDView(aDeviceEvent) {
+
+    var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    var url = this._cfg.devMgrURL + "?device-id=" + device.id;
+    Cc['@mozilla.org/appshell/window-mediator;1']
+      .getService(Ci.nsIWindowMediator)
+      .getMostRecentWindow('Songbird:Main').gBrowser
+      .loadURI(url, null, null, null, "_media");
   },
 
   /**
@@ -293,6 +302,11 @@ sbCDRipServicePaneService.prototype = {
     // Get the device and its node.
     var device = aDeviceEvent.origin.QueryInterface(Ci.sbIDevice);
     var deviceId = device.id;
+    var deviceType = device.parameters.getProperty("DeviceType");
+
+    // We only care about CD devices
+    if (deviceType != "CD")
+      return;
 
     if (typeof(this._deviceInfoList[deviceId]) != 'undefined') {
       var devNode = this._deviceInfoList[deviceId].svcPaneNode;
@@ -375,6 +389,12 @@ sbCDRipServicePaneService.prototype = {
     function sbCDRipServicePaneService_addDeviceFromEvent(aDeviceEvent) {
 
     var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    var deviceType = device.parameters.getProperty("DeviceType");
+
+    // We only care about CD devices
+    if (deviceType != "CD")
+      return false;
+
     try {
       this._addDevice(device);
     }
@@ -393,6 +413,12 @@ sbCDRipServicePaneService.prototype = {
     function sbCDRipServicePaneService_removeDeviceFromEvent(aDeviceEvent) {
 
     var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
+    var deviceType = device.parameters.getProperty("DeviceType");
+
+    // We only care about CD devices
+    if (deviceType != "CD")
+      return;
+
     try {
       this._removeDevice(device);
     }
