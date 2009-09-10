@@ -32,9 +32,9 @@
 // INCLUDES ===================================================================
 #include "sbFileScan.h"
 #include "nspr.h"
+#include "prmem.h"
 #include "prlog.h"
 
-#include <nspr/prmem.h>
 #include <xpcom/nsMemory.h>
 #include <xpcom/nsAutoLock.h>     // for nsAutoMonitor
 #include <necko/nsIIOService.h>
