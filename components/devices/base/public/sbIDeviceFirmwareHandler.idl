@@ -111,7 +111,7 @@ interface sbIDeviceFirmwareHandler : nsISupports
 
   /**
    * \brief Whether the device needs to be in recovery mode
-   *        to have it's firmware update.
+   *        to have its firmware updated.
    * \note This value is not valid until is is refreshed at least once.
    *       The value can be refreshed by calling refreshInfo.
    */
@@ -122,6 +122,11 @@ interface sbIDeviceFirmwareHandler : nsISupports
    *        firmware handler. This update should always be available.
    */
   readonly attribute sbIDeviceFirmwareUpdate defaultFirmwareUpdate;
+
+  /**
+   * \brief The device bound to this handler, or null.
+   */
+  readonly attribute sbIDevice boundDevice;
 
   /** 
    * \brief Check to see if this handler supports the given device

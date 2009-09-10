@@ -717,11 +717,23 @@ sbDeviceFirmwareUpdater::ContinueUpdate(sbIDevice *aDevice,
       continue;
     }
 
+    nsCOMPtr<sbIDevice> oldDevice;
+    rv = handler->GetBoundDevice(getter_AddRefs(oldDevice));
+    NS_ENSURE_SUCCESS(rv, rv);
+
     PRBool success = PR_FALSE;
     rv = handler->Rebind(aDevice, aListener, &success);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if(success) {
+      if (oldDevice) {
+        mRecoveryModeHandlers.Remove(oldDevice);
+        mRunningHandlers.Remove(oldDevice);
+      }
+
+      rv = PutRunningHandler(aDevice, handler);
+      NS_ENSURE_SUCCESS(rv, rv);
+
       *_retval = PR_TRUE;
 #ifdef PR_LOGGING
       nsString contractId;
@@ -754,6 +766,7 @@ sbDeviceFirmwareUpdater::FinalizeUpdate(sbIDevice *aDevice)
   nsAutoMonitor mon(mMonitor);
 
   mRunningHandlers.Remove(aDevice);
+  mRecoveryModeHandlers.Remove(aDevice);
   mHandlerStatus.Remove(handler);
 
   nsCOMPtr<sbIFileDownloaderListener> listener;
@@ -763,6 +776,8 @@ sbDeviceFirmwareUpdater::FinalizeUpdate(sbIDevice *aDevice)
     
     nsresult rv = downloader->Cancel();
     NS_ENSURE_SUCCESS(rv, rv);
+
+    mDownloaders.Remove(aDevice);
   }
 
   return NS_OK;

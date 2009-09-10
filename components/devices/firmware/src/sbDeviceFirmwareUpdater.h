@@ -111,9 +111,17 @@ protected:
     nsInterfaceHashtableMT<nsISupportsHashKey,
                            sbIFileDownloaderListener> downloaders_t;
 
+  /* Hash table of sbIDevice -> sbIDeviceFirmwareHandler for firmware update
+     processes in progress */
   runninghandlers_t mRunningHandlers;
+  /* Hash table of sbIDevice -> sbIDeviceFirmwareHandler
+     for device instances where we expect to resume firmware
+     updating later. Here, the sbIDevice key is the original device (not the
+     recovery mode device instance) */
   runninghandlers_t mRecoveryModeHandlers;
+  /* Hash table of sbIDeviceFirmwareHandler -> sbIDeviceFirmwareHandlerStatus */
   handlerstatus_t   mHandlerStatus;
+  /* Hash table of sbIDevice -> sbIFileDownloaderListener */
   downloaders_t     mDownloaders;
 
   nsCOMPtr<nsIEventTarget> mThreadPool;

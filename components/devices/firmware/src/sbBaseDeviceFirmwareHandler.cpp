@@ -621,6 +621,19 @@ sbBaseDeviceFirmwareHandler::OnHttpRequestCompleted()
 // sbIDeviceFirmwareHandler
 // ----------------------------------------------------------------------------
 
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetBoundDevice(sbIDevice **aDevice)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsAutoMonitor mon(mMonitor);
+
+  NS_IF_ADDREF(*aDevice = mDevice);
+  return NS_OK;
+}
+
 NS_IMETHODIMP 
 sbBaseDeviceFirmwareHandler::GetContractId(nsAString & aContractId)
 {
