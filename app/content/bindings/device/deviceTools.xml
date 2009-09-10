@@ -255,31 +255,31 @@
       <method name="repairDevice">
         <body>
             <![CDATA[
-          /*
-          var prompter = 
-              Components.classes['@songbirdnest.com/Songbird/Prompter;1']
-              .getService(Components.interfaces.sbIPrompter);
-
-          var confirmed = prompter.confirm(window, 
-              SBString('device.dialog.factoryrestore.title'),
-              SBFormattedString('device.dialog.factoryrestore.message', 
-                [this.device.name]));
-
-          if (confirmed) {
-            var bag = Components.classes['@mozilla.org/hash-property-bag;1']
-                .createInstance(Components.interfaces.nsIPropertyBag2);
-            this.device.submitRequest(
-                Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);
+          if (!this._firmwareHandler) {
+            var prompter = 
+                Components.classes['@songbirdnest.com/Songbird/Prompter;1']
+                .getService(Components.interfaces.sbIPrompter);
+  
+            var confirmed = prompter.confirm(window, 
+                SBString('device.dialog.factoryrestore.title'),
+                SBFormattedString('device.dialog.factoryrestore.message', 
+                  [this.device.name]));
+  
+            if (confirmed) {
+              var bag = Components.classes['@mozilla.org/hash-property-bag;1']
+                  .createInstance(Components.interfaces.nsIPropertyBag2);
+              this.device.submitRequest(
+                  Components.interfaces.sbIDevice.REQUEST_FACTORY_RESET, bag);
+            }
+          } else {
+            WindowUtils.openModalDialog
+              (window,
+               "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+               "device_firmware_dialog",
+               "",
+               [ "mode=repair", this.device ],
+               null);
           }
-          */
-          
-          WindowUtils.openModalDialog
-            (window,
-             "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
-             "device_firmware_dialog",
-             "",
-             [ "mode=repair", this.device ],
-             null);
         ]]></body>
       </method>
 
@@ -423,7 +423,7 @@
         <body><![CDATA[
           if(!this._firmwareHandler) {
             // no handler
-            for each (let id in ["support", "update", "register", "repair"]) {
+            for each (let id in ["support", "update", "register"]) {
               this._getToolBox(id).collapsed = true;
             }
           }
