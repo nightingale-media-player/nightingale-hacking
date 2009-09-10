@@ -1,5 +1,3 @@
-/* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* vim: set sw=2 :miv */
 /*
  *=BEGIN SONGBIRD GPL
  *
@@ -40,10 +38,14 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 var multiCDDialog = (function multiCDDialog() {
   var infolist, other;
   var library = window.arguments[0].QueryInterface(Ci.sbIDeviceLibrary);
-  var metadataResults = ArrayConverter.JSArray(window.arguments[1].QueryInterface(Ci.nsISimpleEnumerator));
+  var metadataResults =
+            ArrayConverter.JSArray(window.arguments[1].QueryInterface(
+                                     Ci.nsISimpleEnumerator));
 
   var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-  function newelem(tagname) { return document.createElementNS(XUL_NS, tagname); }
+  function newelem(tagname) {
+    return document.createElementNS(XUL_NS, tagname);
+  }
 
   /**
    * \brief Handle load events.
@@ -59,16 +61,19 @@ var multiCDDialog = (function multiCDDialog() {
       result.QueryInterface(Ci.sbIMetadataAlbumDetail);
       var props = SBProperties.arrayToJSObject(result.properties);
 
-      var radio = infolist.insertItemAt(infolist.getIndexOfItem(other),
-                                        SBFormattedString("cdrip.lookup.name.format",
-                                                          [props[SBProperties.artistName],
-                                                           props[SBProperties.albumName]]),
-                                        i);
+      var radio =
+          infolist.insertItemAt(infolist.getIndexOfItem(other),
+                                SBFormattedString("cdrip.lookup.name.format",
+                                              [props[SBProperties.artistName],
+                                               props[SBProperties.albumName]]),
+                                i);
 
       var tracks = newelem("sb-cdtracks");
       infolist.insertBefore(tracks, other);
 
-      function getname(props) { return SBProperties.arrayToJSObject(props)[SBProperties.trackName]; }
+      function getname(props) {
+        return SBProperties.arrayToJSObject(props)[SBProperties.trackName];
+      }
       tracks.setTrackTitles(ArrayConverter.JSArray(result.tracks).map(getname));
     }
   };
@@ -80,25 +85,25 @@ var multiCDDialog = (function multiCDDialog() {
   {
     if (infolist.value == "none")
     {
-      openDialog("chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul",
-                 null, "centerscreen,chrome,modal,titlebar,resizable", library, metadataResults);
+      openDialog(
+               "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul",
+               null,
+               "centerscreen,chrome,modal,titlebar,resizable",
+               library,
+               metadataResults);
       return;
     }
 
     var result = metadataResults[parseInt(infolist.value)];
     var tracks = ArrayConverter.JSArray(result.tracks);
 
-    var i = 0;
-    var enumerator = {
-      onEnumerationBegin: function(list) { },
-      onEnumeratedItem: function(list, item)
-      {
-        item.setProperties(tracks[i++]);
-      },
-      onEnumerationEnd: function(list, status) { },
-    };
-
-    library.enumerateAllItems(enumerator);
+    for (var i=0; i < tracks.length; i++) {
+      // Get the media item in this device library that has the same track
+      // number (we add one due to the tracknumber being indexed from 1)
+      var trackArr = library.getItemsByProperty(SBProperties.trackNumber, i+1);
+      var item = trackArr.queryElementAt(0, Ci.sbIMediaItem);
+      item.setProperties(tracks[i]);
+    }
   };
 
   return multiCDDialog;

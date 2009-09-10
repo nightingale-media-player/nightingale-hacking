@@ -525,9 +525,26 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
         continue;
       }
 
+      // Get the media item in this device library that has the same track
+      // number (we add one due to the tracknumber being indexed from 1)
+      nsString indexStr;
+      indexStr.AppendInt(i+1);
+      nsCOMPtr<nsIArray> tracks;
+      rv = mDeviceLibrary->GetItemsByProperty(NS_LITERAL_STRING(
+                                                   SB_PROPERTY_TRACKNUMBER),
+                                              indexStr,
+                                              getter_AddRefs(tracks));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // we should only ever have 1 matching track
+      PRUint32 length = 0;
+      rv = tracks->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+      NS_ASSERTION(length == 1,
+                   "More than one track in the device library with same #");
+
       // Append the new properties to the media item.
-      nsCOMPtr<sbIMediaItem> curLibraryItem;
-      rv = mDeviceLibrary->GetItemByIndex(i, getter_AddRefs(curLibraryItem));
+      nsCOMPtr<sbIMediaItem> curLibraryItem = do_QueryElementAt(tracks, 0, &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
       rv = curLibraryItem->SetProperties(curTrackPropArray);
