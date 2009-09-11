@@ -352,12 +352,15 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
      * mpWebBrowser             Web browser used for download.
      * mpChannel                Download channel.
      * mpTmpFile                Temporary download file.
+     * mpSrcURI                 Source download URI.
      * mpDstLibrary             Destination library.
      * mpDstFile                Destination download file.
      * mpDstURI                 Destination download URI.
+     * mEntityID                Entity ID of the download (for resuming).
      * mShutdown                True if session has been shut down.
      * mSuspended               True if session is suspended.
      * mLastUpdate              Last time progress was updated.
+     * mInitialProgressBytes    Number of bytes already downloaded when a new channel was created.
      * mLastProgressBytes       Number of progress bytes on last update.
      * mRate                    Download rate.
      * mIdleTimer               Idle timer cancels downloads that aren't
@@ -372,15 +375,18 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
     nsCOMPtr<sbILibraryUtils>   mpLibraryUtils;
     nsCOMPtr<nsIWebBrowserPersist>
                                 mpWebBrowser;
-    nsCOMPtr<nsIRequest>        mpRequest;
+    nsCOMPtr<nsIChannel>        mpRequest;
     nsCOMPtr<nsIFile>           mpTmpFile;
+    nsCOMPtr<nsIURI>            mpSrcURI;
     nsCOMPtr<sbILibrary>        mpDstLibrary;
     nsCOMPtr<nsIFile>           mpDstFile;
     nsCOMPtr<nsIURI>            mpDstURI;
     nsCOMPtr<sbIMediaItem>      mpStatusTarget;
+    nsCString                   mEntityID;
     PRBool                      mShutdown;
     PRBool                      mSuspended;
     PRTime                      mLastUpdate;
+    PRInt64                     mInitialProgressBytes;
     PRUint64                    mLastProgressBytes;
     PRUint64                    mLastProgressBytesMax;
     double                      mRate;
@@ -391,6 +397,8 @@ class sbDownloadSession : public nsIWebProgressListener, nsITimerCallback
     /*
      * Private download session services.
      */
+
+    nsresult SetUpRequest();
 
     nsresult CompleteTransfer(nsIRequest* aRequest);
 

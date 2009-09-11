@@ -63,6 +63,7 @@
 #include <nsIURL.h>
 #include <nsIUTF8ConverterService.h>
 #include <nsIWindowWatcher.h>
+#include <nsIResumableChannel.h>
 #include <nsServiceManagerUtils.h>
 #include <nsNetUtil.h>
 #include <nsUnicharUtils.h>
@@ -2627,6 +2628,7 @@ sbDownloadSession::sbDownloadSession(
     mpDownloadDevice(pDownloadDevice),
     mShutdown(PR_FALSE),
     mSuspended(PR_FALSE),
+    mInitialProgressBytes(0),
     mLastProgressBytes(0)
 {
     TRACE(("sbDownloadSession[0x%.8x] - ctor", this));
@@ -2661,7 +2663,6 @@ nsresult sbDownloadSession::Initiate()
 {
     TRACE(("sbDownloadSession[0x%.8x] - Initiate", this));
     nsCOMPtr<sbILibraryManager> pLibraryManager;
-    nsCOMPtr<nsIURI>            pSrcURI;
     nsCOMPtr<nsIURI>            pDstURI;
     nsString                    dstSpec;
     nsCString                   dstCSpec;
@@ -2669,174 +2670,201 @@ nsresult sbDownloadSession::Initiate()
     nsCString                   fileName;
     nsCOMPtr<nsIURI>            pURI;
     nsCOMPtr<nsIStandardURL>    pStandardURL;
-    nsresult                    result = NS_OK;
+    nsresult                    rv;
 
     /* Get the library manager and utilities services. */
     mpLibraryUtils =
-        do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &result);
-    if (NS_SUCCEEDED(result))
-    {
-        pLibraryManager = do_GetService
-                                ("@songbirdnest.com/Songbird/library/Manager;1",
-                                 &result);
-    }
+        do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    pLibraryManager = do_GetService
+                            ("@songbirdnest.com/Songbird/library/Manager;1",
+                             &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the string bundle. */
-    if (NS_SUCCEEDED(result))
-    {
-        nsCOMPtr<nsIStringBundleService>
-                                    pStringBundleService;
+    nsCOMPtr<nsIStringBundleService>
+                                pStringBundleService;
 
-        /* Get the download device string bundle. */
-        pStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID,
-                                             &result);
-        if (NS_SUCCEEDED(result))
-        {
-            result = pStringBundleService->CreateBundle
-                                            (SB_STRING_BUNDLE_CHROME_URL,
-                                             getter_AddRefs(mpStringBundle));
-        }
-    }
+    /* Get the download device string bundle. */
+    pStringBundleService = do_GetService(NS_STRINGBUNDLE_CONTRACTID,
+                                         &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = pStringBundleService->CreateBundle
+                                    (SB_STRING_BUNDLE_CHROME_URL,
+                                     getter_AddRefs(mpStringBundle));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get some strings. */
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpStringBundle->GetStringFromName
-                        (NS_LITERAL_STRING("device.download.complete").get(),
-                         getter_Copies(mCompleteStr));
-    }
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpStringBundle->GetStringFromName
-                        (NS_LITERAL_STRING("device.download.error").get(),
-                         getter_Copies(mErrorStr));
-    }
+    rv = mpStringBundle->GetStringFromName
+                    (NS_LITERAL_STRING("device.download.complete").get(),
+                     getter_Copies(mCompleteStr));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mpStringBundle->GetStringFromName
+                    (NS_LITERAL_STRING("device.download.error").get(),
+                     getter_Copies(mErrorStr));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Create the session lock. */
-    if (NS_SUCCEEDED(result))
-    {
-        mpSessionLock = nsAutoLock::NewLock("sbDownloadSession::mpSessionLock");
-        if (!mpSessionLock)
-            result = NS_ERROR_OUT_OF_MEMORY;
-    }
+    mpSessionLock = nsAutoLock::NewLock("sbDownloadSession::mpSessionLock");
+    if (!mpSessionLock)
+        return NS_ERROR_OUT_OF_MEMORY;
 
     /* Get a unique temporary download file. */
-    if (NS_SUCCEEDED(result))
-        result = mpDownloadDevice->GetTmpFile(getter_AddRefs(mpTmpFile));
+    rv = mpDownloadDevice->GetTmpFile(getter_AddRefs(mpTmpFile));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Set the origin URL */
-    if (NS_SUCCEEDED(result))
-    {
-      // Check if the origin URL is already set, if not copy from ContentSrc
-      // We do this so that we don't overwrite the originURL with a downloaded
-      // file location, then we can still see the original originURL.
-      nsAutoString currentOriginURL;
-      result = mpMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                        currentOriginURL);
-      if (currentOriginURL.IsEmpty()) {
-        nsCOMPtr<nsIURI> pSrcURI;
-        nsCString srcSpec;
-        result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
-        if (NS_SUCCEEDED(result))
-            result = pSrcURI->GetSpec(srcSpec);
-        if (NS_SUCCEEDED(result))
-        {
-            mSrcURISpec = NS_ConvertUTF8toUTF16(srcSpec);
-            result = mpMediaItem->SetProperty
-                                    (NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
-                                     mSrcURISpec);
-            NS_ASSERTION(NS_SUCCEEDED(result), \
-              "Failed to set originURL, this item may be duplicated later \
-               because it's origin cannot be tracked!");
-        }
+    // Check if the origin URL is already set, if not copy from ContentSrc
+    // We do this so that we don't overwrite the originURL with a downloaded
+    // file location, then we can still see the original originURL.
+    nsAutoString currentOriginURL;
+    mpMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                             currentOriginURL);
+    if (currentOriginURL.IsEmpty()) {
+      nsCOMPtr<nsIURI> pSrcURI;
+      nsCString srcSpec;
+      rv = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = pSrcURI->GetSpec(srcSpec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mSrcURISpec = NS_ConvertUTF8toUTF16(srcSpec);
+      rv = mpMediaItem->SetProperty
+                              (NS_LITERAL_STRING(SB_PROPERTY_ORIGINURL),
+                               mSrcURISpec);
+      if (NS_FAILED(rv))
+      {
+        NS_WARNING("Failed to set originURL, this item may be duplicated later \
+                    because it's origin cannot be tracked!");
+        return rv;
       }
     }
 
     /* Get the status target, if any */
-    if (NS_SUCCEEDED(result)) {
-      result = sbDownloadDevice::GetStatusTarget(mpMediaItem,
-                                                 getter_AddRefs(mpStatusTarget));
-    }
+    rv = sbDownloadDevice::GetStatusTarget(mpMediaItem,
+                                               getter_AddRefs(mpStatusTarget));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the destination download (directory) URI. */
-    if (NS_SUCCEEDED(result))
-    {
-        result = mpMediaItem->GetProperty
-                                    (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
-                                     dstSpec);
-        if (NS_SUCCEEDED(result) && dstSpec.IsEmpty())
-            result = NS_ERROR_FAILURE;
-    }
+    rv = mpMediaItem->GetProperty
+                                (NS_LITERAL_STRING(SB_PROPERTY_DESTINATION),
+                                 dstSpec);
+    if (NS_SUCCEEDED(rv) && dstSpec.IsEmpty())
+        rv = NS_ERROR_FAILURE;
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    if (NS_SUCCEEDED(result))
-    {
-        result = NS_NewURI(getter_AddRefs(mpDstURI), dstSpec);
-    }
+    rv = NS_NewURI(getter_AddRefs(mpDstURI), dstSpec);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    if (NS_SUCCEEDED(result))
     {
       /* Keep a reference to the nsIFile pointing at the directory */
-        nsCOMPtr<nsIFileURL>        pFileURL;
-        nsCOMPtr<nsIFile>           pFile;
-        if (NS_SUCCEEDED(result))
-          pFileURL = do_QueryInterface(mpDstURI, &result);
-        if (NS_SUCCEEDED(result))
-          result = pFileURL->GetFile(getter_AddRefs(pFile));
-        if (NS_SUCCEEDED(result))
-          pDstFile = do_QueryInterface(pFile, &result);
+      nsCOMPtr<nsIFileURL>        pFileURL;
+      nsCOMPtr<nsIFile>           pFile;
+      pFileURL = do_QueryInterface(mpDstURI, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = pFileURL->GetFile(getter_AddRefs(pFile));
+      NS_ENSURE_SUCCESS(rv, rv);
+      pDstFile = do_QueryInterface(pFile, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    if (NS_SUCCEEDED(result))
-    {
-        /* set the destination directory */
-        result = pDstFile->Clone(getter_AddRefs(mpDstFile));
-    }
+    /* set the destination directory */
+    rv = pDstFile->Clone(getter_AddRefs(mpDstFile));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get the destination library. */
-    if (NS_SUCCEEDED(result))
-        result = pLibraryManager->GetMainLibrary(getter_AddRefs(mpDstLibrary));
+    rv = pLibraryManager->GetMainLibrary(getter_AddRefs(mpDstLibrary));
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Get a URI for the source. */
-    if (NS_SUCCEEDED(result))
-        result = mpMediaItem->GetContentSrc(getter_AddRefs(pSrcURI));
+    rv = mpMediaItem->GetContentSrc(getter_AddRefs(mpSrcURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Start download */
+    rv = SetUpRequest();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Create the idle timer */
+    mIdleTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Create the progress timer */
+    mProgressTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    return rv;
+}
+
+/*
+ * SetUpRequest
+ *
+ *   Starts the download or resumes a previously cancelled download.
+ */
+
+nsresult sbDownloadSession::SetUpRequest()
+{
+    nsresult rv;
 
     /* Create a persistent download web browser. */
-    if (NS_SUCCEEDED(result))
+    mpWebBrowser = do_CreateInstance
+                        ("@mozilla.org/embedding/browser/nsWebBrowserPersist;1",
+                         &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    /* Create channel to download from. */
+    nsCOMPtr<nsIInterfaceRequestor> ir(do_QueryInterface(mpWebBrowser));
+    rv = NS_NewChannel(getter_AddRefs(mpRequest), mpSrcURI, nsnull, nsnull, ir);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!mEntityID.IsEmpty())
     {
-        mpWebBrowser = do_CreateInstance
-                            ("@mozilla.org/embedding/browser/nsWebBrowserPersist;1",
-                             &result);
+        /* We are resuming a download, initialize the channel to resume at the correct position */
+        nsCOMPtr<nsIFile> clone;
+        if (NS_FAILED(mpTmpFile->Clone(getter_AddRefs(clone))) ||
+            NS_FAILED(clone->GetFileSize(&mInitialProgressBytes)))
+        {
+            NS_WARNING("Restarting download instead of resuming: failed \
+                        determining how much is already downloaded!");
+            mInitialProgressBytes = 0;
+        }
+
+        if (mInitialProgressBytes)
+        {
+            nsCOMPtr<nsIResumableChannel> resumableChannel(do_QueryInterface(mpRequest));
+            if (resumableChannel &&
+                NS_SUCCEEDED(resumableChannel->ResumeAt(mInitialProgressBytes, mEntityID)))
+            {
+                /* We are resuming download, make sure to append to the existing file */
+                rv = mpWebBrowser->SetPersistFlags(nsIWebBrowserPersist::PERSIST_FLAGS_APPEND_TO_FILE);
+                NS_ENSURE_SUCCESS(rv, rv);
+            }
+            else
+            {
+                NS_WARNING("Restarting download instead of resuming: \
+                            nsIResumableChannel.ResumeAt failed");
+                mInitialProgressBytes = 0;
+            }
+        }
     }
 
     /* Set up the listener. */
-    if (NS_SUCCEEDED(result))
-    {
-        mLastUpdate = PR_Now();
-        result = mpWebBrowser->SetProgressListener(this);
-    }
+    mLastUpdate = PR_Now();
+    rv = mpWebBrowser->SetProgressListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
 
     /* Initiate the download. */
-    if (NS_SUCCEEDED(result))
-        result = mpWebBrowser->SaveURI(pSrcURI,
-                                       nsnull,
-                                       nsnull,
-                                       nsnull,
-                                       nsnull,
-                                       mpTmpFile);
-
-    /* Create the idle timer */
-    if (NS_SUCCEEDED(result)) {
-        mIdleTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &result);
+    rv = mpWebBrowser->SaveChannel(mpRequest, mpTmpFile);
+    if (NS_FAILED(rv))
+    {
+        NS_WARNING("Failed initiating download");
+        mpWebBrowser->SetProgressListener(nsnull);
     }
-
-    /* Create the progress timer */
-    if (NS_SUCCEEDED(result)) {
-        mProgressTimer = do_CreateInstance(NS_TIMER_CONTRACTID, &result);
-    }
-
-    return (result);
+    return rv;
 }
-
 
 /*
  * Suspend
@@ -2859,8 +2887,24 @@ nsresult sbDownloadSession::Suspend()
         return NS_OK;
 
     /* Suspend request. */
-    if (mpRequest)
+    mEntityID.Truncate();
+    nsCOMPtr<nsIResumableChannel> resumable(do_QueryInterface(mpRequest));
+    if (resumable)
+        resumable->GetEntityID(mEntityID);
+
+    if (!mEntityID.IsEmpty())
     {
+        /* Channel is resumable, simply cancel current request */
+        rv = mpWebBrowser->Cancel(NS_BINDING_ABORTED);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        mpRequest = nsnull;
+        mpWebBrowser->SetProgressListener(nsnull);
+        mpWebBrowser = nsnull;
+    }
+    else
+    {
+        /* Channel not resumable, try suspending */
         rv = mpRequest->Suspend();
         NS_ENSURE_SUCCESS(rv, rv);
     }
@@ -2899,7 +2943,12 @@ nsresult sbDownloadSession::Resume()
         return NS_OK;
 
     /* Resume the request. */
-    if (mpRequest)
+    if (!mEntityID.IsEmpty())
+    {
+        rv = SetUpRequest();
+        NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else
     {
         rv = mpRequest->Resume();
         NS_ENSURE_SUCCESS(rv, rv);
@@ -3186,31 +3235,6 @@ NS_IMETHODIMP sbDownloadSession::OnProgressChange(
 
     /* we got some progress, let's reset the idle timer */
     ResetTimers();
-
-    PRBool                      suspendRequest = PR_FALSE;
-
-    /* Update session state inside lock. */
-    {
-        /* Lock the session. */
-        nsAutoLock lock(mpSessionLock);
-
-        /* Do nothing if shutting down. */
-        if (mShutdown)
-            return NS_OK;
-
-        /* Save the request.  Suspend request */
-        /* if download session is suspended.  */
-        if (!mpRequest)
-        {
-            mpRequest = aRequest;
-            suspendRequest = mSuspended;
-        }
-    }
-
-    /* Suspend request if needed.  Ignore suspension       */
-    /* errors since there's nothing to be done about them. */
-    if (suspendRequest)
-        aRequest->Suspend();
 
     /* Update progress. */
     UpdateProgress(aCurSelfProgress, aMaxSelfProgress);
@@ -3604,6 +3628,10 @@ void sbDownloadSession::UpdateProgress(
     PRUint64                    aProgress,
     PRUint64                    aProgressMax)
 {
+    /* Correct progress values in case we are resuming a download */
+    aProgress += mInitialProgressBytes;
+    aProgressMax += mInitialProgressBytes;
+
     /* Update the download button property. */
     sbAutoDownloadButtonPropertyValue property(mpMediaItem, mpStatusTarget);
     property.value->SetMode(sbDownloadButtonPropertyValue::eDownloading);
