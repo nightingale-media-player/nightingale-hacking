@@ -28,6 +28,7 @@
 #include "sbWatchFolderServiceCID.h"
 #include "sbWatchFolderDefines.h"
 #include <sbIWFMoveRenameHelper9000.h>
+#include <sbIWFRemoveHelper9001.h>
 #include <sbPropertiesCID.h>
 #include <sbStandardProperties.h>
 #include <sbIApplicationController.h>
@@ -1178,12 +1179,14 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
 
   if (length > 0) {
     if (mCurrentProcessType == eRemoval) {
-      // Remove the found items from the library.
-      nsCOMPtr<nsISimpleEnumerator> mediaItemEnum;
-      rv = mEnumeratedMediaItems->Enumerate(getter_AddRefs(mediaItemEnum));
+      // Remove the found items from the library, pop up the progress dialog.
+      nsCOMPtr<sbIWFRemoveHelper9001> helper =
+        do_GetService("@songbirdnest.com/Songbird/RemoveHelper;1", &rv);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = mMainLibrary->RemoveSome(mediaItemEnum);
+      mRemovedPaths.clear();
+
+      helper->Remove(mEnumeratedMediaItems);
       NS_ENSURE_SUCCESS(rv, rv);
     }
     else if (mCurrentProcessType == eChanged) {

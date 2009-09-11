@@ -68,7 +68,9 @@ DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
 
 IS_COMPONENT = 1
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbMoveRenameHelper.js
+SONGBIRD_COMPONENTS = $(srcdir)/sbMoveRenameHelper.js \
+                      $(srcdir)/sbRemoveHelper.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 
