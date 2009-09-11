@@ -32,6 +32,7 @@
 #include <nsIClassInfoImpl.h>
 #include <nsIGenericFactory.h>
 #include <nsIPropertyBag2.h>
+#include <nsIWritablePropertyBag2.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIUUIDGenerator.h>
 #include <nsMemory.h>
@@ -46,6 +47,7 @@
 #include <sbILibraryManager.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
+#include <sbStandardDeviceProperties.h>
 #include <sbVariantUtils.h>
 
 /*
@@ -209,6 +211,17 @@ nsresult sbCDDevice::InitializeProperties()
   rv = mProperties->InitDone();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // CD devices are inherently read-only for now
+  nsCOMPtr<nsIPropertyBag2> properties;
+  rv = mProperties->GetProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsCOMPtr<nsIWritablePropertyBag2> writeProperties =
+          do_QueryInterface(properties, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  writeProperties->SetPropertyAsAString(
+        NS_LITERAL_STRING(SB_DEVICE_PROPERTY_ACCESS_COMPATIBILITY),
+        NS_LITERAL_STRING("ro"));
   return NS_OK;
 }
 
@@ -902,3 +915,11 @@ sbCDDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
   return NS_OK;
 }
 
+// Override base class: CD devices are always read-only, and users won't
+// expect otherwise, so popping up a dialog informing them is confusing.
+// This overrides the sbBaseDevice::CheckAccess to not throw up the dialog
+nsresult
+sbCDDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
+{
+  return NS_OK;
+}

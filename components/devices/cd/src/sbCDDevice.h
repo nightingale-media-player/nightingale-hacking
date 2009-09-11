@@ -460,6 +460,9 @@ private:
    * the CD (i.e. none) */
   nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
 
+  /* Override base class to avoid popping up read-only dialog box */
+  nsresult CheckAccess(sbIDeviceLibrary* aDevLib);
+
   /**
    * Processes a read request. Copying content from a CD to the device library
    * \param aRequest The request to be processed

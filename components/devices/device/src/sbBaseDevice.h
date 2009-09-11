@@ -328,7 +328,7 @@ public:
    * specified by aDevLib and prompt the user if needed.
    * @param aDevLib the device library to check.
    */
-  nsresult CheckAccess(sbIDeviceLibrary* aDevLib);
+  virtual nsresult CheckAccess(sbIDeviceLibrary* aDevLib);
 
   /**
    * Remove the library specified by aDevLib from the device content.

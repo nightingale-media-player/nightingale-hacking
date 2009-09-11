@@ -401,6 +401,18 @@ addToDeviceHelper.prototype = {
       var libraryguid;
       var device = devices[d];
       var devicename = device.name;
+
+      // don't add devices that are read-only
+      var deviceProperties = device.properties.properties;
+      var accessCompatibility;
+      try {
+        accessCompatibility = deviceProperties.getPropertyAsAString(
+            "http://songbirdnest.com/device/1.0#accessCompatibility");
+      } catch (ex) {}
+      if (accessCompatibility == "ro") {
+        continue;
+      }
+
       var isEnabled = false;
       if (!devicename) 
         devicename = "Unnamed Device";
