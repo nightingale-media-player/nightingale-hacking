@@ -79,7 +79,7 @@ listbox:focus > listitem[selected="true"] {
 
 listheader { 
   -moz-box-align: center;
-  min-height:none !important;
+  min-height:0 !important;
   height:16px !important;
   max-height:16px !important;
 
