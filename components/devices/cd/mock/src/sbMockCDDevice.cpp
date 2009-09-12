@@ -342,6 +342,14 @@ sbMockCDDevice::GetIsDiscInserted(PRBool *aDiscInserted)
 }
 
 NS_IMETHODIMP
+sbMockCDDevice::GetIdentifier(nsACString & aIdentifier)
+{
+  // For the mock device, just rely on the device name.
+  aIdentifier.Assign(NS_ConvertUTF16toUTF8(mName));
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbMockCDDevice::GetDiscTOC(sbICDTOC * *aDiscTOC)
 {
   NS_ENSURE_ARG_POINTER(aDiscTOC);

@@ -203,6 +203,22 @@ sbMockCDService.prototype =
   {
     return this._mDevices[aDeviceIndex];
   },
+  
+  getDeviceFromIdentifier:
+            function sbMockCDService_getDeviceFromIdentifier(aDeviceIdentifier)
+  {
+    var foundDevice = null;
+    
+    for (var i = 0; i < this._mDevices.length; i++) {
+      var curDeviceIdentifier = this._mDevices[i].identifier;
+      if (curDeviceIdentifier == aDeviceIdentifier) {
+        foundDevice = this._mDevices[i];
+        break;
+      }
+    }
+    
+    return foundDevice;
+  },
 
   getCDDevices: function sbMockCDService_getCDDevics()
   {

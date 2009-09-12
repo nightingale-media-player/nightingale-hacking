@@ -67,7 +67,7 @@ interface sbICDDeviceListener : nsISupports
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(9bcd3019-cb62-47eb-a373-f80c8ff6bc73)]
+[scriptable, uuid(c43ed5c6-1dd1-11b2-8b2c-d2d82a8f0f75)]
 interface sbICDDeviceService : nsISupports
 {
   //
@@ -82,10 +82,9 @@ interface sbICDDeviceService : nsISupports
   sbICDDevice getDevice(in long deviceIndex);
 
   //
-  // @brief returns a sbICDDevice object
-  // @note "mountpoint" is a cdda:// URI
+  // @brief Get a device based on its identifier.
   //
-  sbICDDevice getDeviceFromMountPoint(in AString mountPoint);
+  sbICDDevice getDeviceFromIdentifier(in ACString aDeviceIdentifier);
 
   //
   // @brief Return an enumeration of all the cd devices.

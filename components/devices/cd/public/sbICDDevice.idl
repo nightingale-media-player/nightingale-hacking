@@ -131,7 +131,7 @@ interface sbICDDeviceEvent : sbIDeviceEvent
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(5DEB000F-69F8-43F5-8135-B6993AF55BEA)]
+[scriptable, uuid(f87e843e-1dd1-11b2-9817-ca281b55f6b9)]
 interface sbICDDevice : nsISupports
 {
   //
@@ -159,6 +159,12 @@ interface sbICDDevice : nsISupports
   // @brief returns true if a CD is currently in the drive
   //
   readonly attribute boolean isDiscInserted;
+
+  //
+  // @brief Unique identifier for this CD device.
+  // @note String varies on implementor.
+  //
+  readonly attribute ACString identifier;
 
   //
   // @brief returns the table of contents of the current CD in the drive
