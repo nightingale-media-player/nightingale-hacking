@@ -121,15 +121,21 @@ sbCDDevice::~sbCDDevice()
 }
 
 nsresult
-sbCDDevice::CreateDeviceID(nsID & aDeviceID)
+sbCDDevice::CreateDeviceID(nsID* aDeviceID)
 {
   nsresult rv;
-  nsCOMPtr<nsIUUIDGenerator> uuidGen =
-    do_GetService("@mozilla.org/uuid-generator;1", &rv);
+
+  // Initialize the device ID with zeros.
+  PRUint32* buffer = reinterpret_cast<PRUint32*>(aDeviceID);
+  memset(buffer, 0, sizeof(nsID));
+
+  // Get the identifier from the CD device
+  nsCString identifier;
+  rv = mCDDevice->GetIdentifier(identifier);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = uuidGen->GenerateUUIDInPlace(&aDeviceID);
-  NS_ENSURE_SUCCESS(rv, rv);
+  // Hash the identifier
+  *buffer = HashString(identifier);
 
   return NS_OK;
 }
@@ -153,10 +159,6 @@ sbCDDevice::InitDevice()
   // Initialize the device state.
   SetState(sbIDevice::STATE_IDLE);
 
-  // Create the device ID.  This depends upon some of the device properties.
-  rv = CreateDeviceID(mDeviceID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create and initialize the device content object.
   mDeviceContent = sbDeviceContent::New();
   NS_ENSURE_TRUE(mDeviceContent, NS_ERROR_OUT_OF_MEMORY);
@@ -170,6 +172,10 @@ sbCDDevice::InitDevice()
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = deviceVar->GetAsISupports(getter_AddRefs(mCDDevice));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the device ID.  This depends on mCDDevice being initialised first.
+  rv = CreateDeviceID(&mDeviceID);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Log progress.
@@ -827,6 +833,10 @@ sbCDDevice::Mount()
 
   // Set the main device library.
   mDeviceLibrary = deviceLibrary;
+
+  // Clear the library out
+  rv = mDeviceLibrary->Clear();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // hide the device library.
   rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),

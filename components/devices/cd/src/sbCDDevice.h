@@ -375,7 +375,7 @@ private:
   /**
    * Creates the device ID for the device
    */
-  nsresult CreateDeviceID(nsID & aDeviceID);
+  nsresult CreateDeviceID(nsID* aDeviceID);
 
   /**
    * Initialize the request queue connection

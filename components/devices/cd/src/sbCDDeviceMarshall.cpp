@@ -158,7 +158,7 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
   nsCOMPtr<sbIDeviceController> controller = FindCompatibleControllers(propBag);
   NS_ENSURE_TRUE(controller, NS_ERROR_UNEXPECTED);
 
-    // Stash the device with the property bag.
+  // Stash the device with the property bag.
   nsCOMPtr<nsIWritableVariant> deviceVar =
     do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
