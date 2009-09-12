@@ -1410,14 +1410,9 @@
             this.handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();
             event.preventDefault();
-          } else {
-            var where = this._checkTarget(target, event);
-            if (where &&
-                this.loadURI(href, referrer, null, event, target)) {
-              event.stopPropagation();
-              event.preventDefault();
-            }
           }
+
+          // doesn't look like a media URL; dispatch it normally
         }
         return true;
       ]]></handler>
