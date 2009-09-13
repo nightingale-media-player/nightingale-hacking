@@ -365,6 +365,8 @@ static const struct errMap StreamErrorMap[] = {
       "mediacore.error.decode_failed"},
   { GST_STREAM_ERROR_ENCODE, sbIMediacoreError::SB_STREAM_ENCODE,
       "mediacore.error.encode_failed"},
+  { GST_STREAM_ERROR_FAILED, sbIMediacoreError::SB_STREAM_FAILURE,
+      "mediacore.error.failure"},
 };
 
 nsresult
