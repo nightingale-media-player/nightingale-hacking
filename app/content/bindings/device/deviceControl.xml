@@ -1,4 +1,5 @@
 <?xml version="1.0"?>
+<!-- vim: set sw=2 :miv -->
 <!--
 /*
 //
@@ -212,9 +213,13 @@
           this._deviceControlWidget.finalize();
         this._deviceControlWidget = null;
 
-        // Remove object references.
-        this.deviceID = null;
-        this.device = null;
+        // Remove object references.  But only if they're not read only...
+        if (!this.__lookupGetter__("deviceID") || this.__lookupSetter__("deviceID")) {
+          this.deviceID = null;
+        }
+        if (!this.__lookupGetter__("device") || this.__lookupSetter__("device")) {
+          this.device = null;
+        }
         this.boundElem = null;
       ]]></body></method>
 
