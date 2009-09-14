@@ -172,6 +172,18 @@ sbTestProvider.prototype = {
     return this.job;
   },
 
+  getAlbumDetail: function(album) {
+    var job = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
+                  .createInstance(Ci.sbIMetadataLookupJob);
+    job.init(Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP,
+             Ci.sbIJobProgress.STATUS_RUNNING);
+
+    job.appendResult(album);
+    job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
+
+    return job;
+  },
+
   makeAlbum: function(albumToc, artistName, albumName, genre) {
     // create the skeleton sbIMetadataAlbumDetail object
     var a = new Object;
