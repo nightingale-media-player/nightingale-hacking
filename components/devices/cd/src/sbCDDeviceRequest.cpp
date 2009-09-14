@@ -295,6 +295,8 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
     newPropsArray->AppendElement(propList, false);
   }
 
+  NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+
   // Update the library with the new media files.
   nsCOMPtr<nsIArray> mediaItemList;
   rv = mDeviceLibrary->BatchCreateMediaItems(newFileURIList,
@@ -345,6 +347,7 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRUint32 index = 0; index < length; ++index) {
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
     entry = do_QueryElementAt(tracks, index, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
