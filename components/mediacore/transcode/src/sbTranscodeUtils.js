@@ -78,8 +78,8 @@ TranscodeBatchJob.prototype = {
   _joblisteners    : null,
   _jobStatus       : Ci.sbIJobProgress.STATUS_RUNNING,
 
-  _statusText      : SBString("transcode.batch.running"),
-  _titleText       : SBString("transcode.batch.title"),
+  _statusText      : null,
+  _titleText       : null,
 
   _startTime       : -1,
 
@@ -151,10 +151,14 @@ TranscodeBatchJob.prototype = {
   },
 
   get statusText() {
+    if (!this._statusText)
+      this._statusText = SBString("transcode.batch.running");
     return this._statusText;
   },
 
   get titleText() {
+    if (!this._titleText)
+      this._titleText = SBString("transcode.batch.title");
     return this._titleText;
   },
 
