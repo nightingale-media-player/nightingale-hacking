@@ -55,6 +55,8 @@ var multiCDDialog = (function multiCDDialog() {
     infolist = document.getElementById("infolist");
     other = document.getElementById("other");
 
+    this._jobTracksMap = new Object;
+
     for (i in metadataResults)
     {
       var result = metadataResults[i];
@@ -71,11 +73,40 @@ var multiCDDialog = (function multiCDDialog() {
       var tracks = newelem("sb-cdtracks");
       infolist.insertBefore(tracks, other);
 
-      function getname(props) {
-        return SBProperties.arrayToJSObject(props)[SBProperties.trackName];
+      // Do the follow-up call to get album detail for each track
+      var mlm = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+                  .getService(Ci.sbIMetadataLookupManager);
+      var job = mlm.defaultProvider.getAlbumDetail(result);
+      this._jobTracksMap[job] = tracks;
+      if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
+        job.addJobProgressListener(this);
+      } else {
+        this.onJobProgress(job);
       }
-      tracks.setTrackTitles(ArrayConverter.JSArray(result.tracks).map(getname));
     }
+  };
+
+  /**
+   * \brief Job progress listener for album detail follow-up calls
+   */
+  multiCDDialog.onJobProgress = function onJobProgress(job)
+  {
+    if (job.status != Ci.sbIJobProgress.STATUS_SUCCEEDED)
+      return;
+
+    if (job.mlJobType != Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP) {
+      return;
+    }
+
+    function getname(props) {
+      return SBProperties.arrayToJSObject(props)[SBProperties.trackName];
+    }
+
+    var tracks = this._jobTracksMap[job];
+    // album detail calls should only ever have one result
+    var enum = job.getMetadataResults();
+    var result = enum.getNext().QueryInterface(Ci.sbIMetadataAlbumDetail);
+    tracks.setTrackTitles(ArrayConverter.JSArray(result.tracks).map(getname));
   };
 
   /**
