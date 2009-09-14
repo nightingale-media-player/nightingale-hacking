@@ -51,7 +51,16 @@ function updateOnceAfterFirstRun() {
   var updateChecker = updateSvc.backgroundChecker;
   // dummy update check listener - it doesn't do anything
   var updateCheckListener = {
-    onCheckComplete: function (request, updates, updatecount) { },
+    onCheckComplete: function (request, updates, updatecount) {
+      var update = updateSvc.selectUpdate(updates, updatecount);
+      if (!update)
+        return;
+
+      window.openDialog("chrome://mozapps/content/update/updates.xul",
+                        "",
+                        "chrome,centerscreen,dialog=no,resizable=no,titlebar,toolbar=no",
+                        update);
+    },
     onError: function (request, update) { },
     onProgress: function (request, position, totalSize) { }
   };
