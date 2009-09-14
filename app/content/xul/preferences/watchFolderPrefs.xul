@@ -45,14 +45,6 @@
    *
    ************************************************************************* -->
 
-  <!-- Panel commands. -->
-  <commandset id="import_media_commandset">
-    <command id="watch_folder_browse_command"
-             label="&window.browse;"
-             oncommand="watchFolderPrefsPane.doBrowseCommand(event);"
-             observes="watch_folder_disabled_broadcaster"/>
-  </commandset>
-
   <!-- Watch folder tab. -->
   <tabs id="import_media_tabs">
     <tab id="watch_folder_tab"
@@ -103,7 +95,9 @@
   
             <!-- Browse button. -->
             <button id="watch_folder_browse_button"
-                    command="watch_folder_browse_command"/>
+                    label="&window.browse;"
+                    oncommand="watchFolderPrefsPane.doBrowseCommand(event);"
+                    observes="watch_folder_disabled_broadcaster"/>
   
           </hbox>
   
