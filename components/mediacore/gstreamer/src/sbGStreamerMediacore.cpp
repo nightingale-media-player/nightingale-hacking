@@ -1723,9 +1723,11 @@ sbGStreamerMediacore::OnPlay()
   }
 
   /* Usually ret will be GST_STATE_CHANGE_ASYNC, but we could get a synchronous
-   * error... */
+   * error - however, in such a case we'll always still receive an error event,
+   * so we just return OK here, and then fail playback once we process the
+   * error event. */
   if (ret == GST_STATE_CHANGE_FAILURE)
-    return NS_ERROR_FAILURE;
+    return NS_OK;
   else if (ret == GST_STATE_CHANGE_NO_PREROLL)
   {
     /* NO_PREROLL means we have a live pipeline, for which we have to 
