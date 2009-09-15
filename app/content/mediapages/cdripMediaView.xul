@@ -81,7 +81,7 @@
                      value="&cdrip.mediaview.format_label;"/>
               <label id="sb-cdrip-format-label" class="sb-cdrip-settings-label" />
             </hbox>
-            <hbox>
+            <hbox id="sb-cdrip-bitrate-hbox">
               <label class="sb-cdrip-settings-label"
                      value="&cdrip.mediaview.quality_label;" />
               <label id="sb-cdrip-quality-label" class="sb-cdrip-settings-label" />
