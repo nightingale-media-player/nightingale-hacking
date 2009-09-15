@@ -235,6 +235,9 @@ In-cell Download Buttons
   background-position:center center;
   background-repeat:no-repeat;
 }
+treechildren::-moz-tree-cell-text( status ) {
+  color:transparent !important;
+}
 
 /**
 *******************************************************************************
