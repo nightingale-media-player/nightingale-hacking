@@ -3193,39 +3193,22 @@
             if (primaryCore && status.state == sbIMediacoreStatus.STATUS_PAUSED) {
               primaryCore.play();
             } else {
-              mm.sequencer.playView(this.mediaListView,
-                                    Math.max(this.mediaListView.selection.currentIndex, 0));
+              this.sendPlayEvent();
             }
           }
           event.stopPropagation();
         ]]>
       </handler>
 
-      <handler event="keypress" phase="target">
+      <handler event="keypress" keycode="VK_RETURN" phase="target">
         <![CDATA[
           if (event.originalTarget != this.tree) {
             // possibly an event from the inline metadata editing textbox
             return;
           }
 
-          /* We have to handle the enter key like this because event
-           * filtering is broken for certain keycodes including space 
-           * and enter.
-           */
-          if (event.keyCode == KeyEvent.DOM_VK_RETURN &&
-              !event.shiftKey &&
-              !event.metaKey &&
-              !event.ctrlKey &&
-              !event.altKey) {
-            var mm = 
-              Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                        .getService(Components.interfaces.sbIMediacoreManager);
-
-            mm.sequencer.playView(this.mediaListView,
-                                  Math.max(this.mediaListView.selection.currentIndex, 0));
-
-            event.stopPropagation();
-          }       
+          this.sendPlayEvent();
+          event.stopPropagation();
         ]]>
       </handler>
       <handler event="keypress" keycode="VK_UP" modifiers="accel" phase="capturing">
