@@ -47,6 +47,7 @@
 #include <sbStatusPropertyValue.h>
 #include <sbTranscodeProgressListener.h>
 #include <sbVariantUtils.h>
+#include <sbStandardProperties.h>
 
 // Mozilla imports.
 #include <nsArrayUtils.h>
@@ -585,6 +586,38 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
 }
 
 nsresult
+sbCDDevice::GenerateDefaultFilename(sbIMediaItem *aItem,
+                                    nsACString & aOutFilename)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+
+  // The format for the filename should be "<track#> - <title>"
+  // I.e. "01 - DJFAIL MIX1"
+  
+  nsresult rv;
+  nsString trackNumProp;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                          trackNumProp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Pad at least one zero if we need to.
+  if (trackNumProp.Length() == 1) {
+    trackNumProp.Insert(NS_LITERAL_STRING("0"), 0);
+  }
+
+  nsString trackNameProp;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNAME),
+                          trackNameProp);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  aOutFilename.Append(NS_ConvertUTF16toUTF8(trackNumProp));
+  aOutFilename.AppendLiteral(" - ");
+  aOutFilename.Append(NS_ConvertUTF16toUTF8(trackNameProp));
+
+  return NS_OK;
+}
+
+nsresult
 sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
@@ -639,8 +672,9 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   nsCOMPtr<nsIURL> musicFolderURL = do_QueryInterface(musicFolderURI, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Get the default filename to use for this file.
   nsCString filename;
-  rv = sourceContentURL->GetFileName(filename);
+  rv = GenerateDefaultFilename(aRequest->item, filename);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = musicFolderURL->SetFileName(filename);

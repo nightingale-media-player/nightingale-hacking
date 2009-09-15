@@ -464,6 +464,13 @@ private:
   nsresult CheckAccess(sbIDeviceLibrary* aDevLib);
 
   /**
+   * Create a default filename of a media item that will be transcoded to disk.
+   * @note This method only generates the basefilename without the extension.
+   */
+  nsresult GenerateDefaultFilename(sbIMediaItem *aItem,
+                                   nsACString & aOutFilename);
+
+  /**
    * Processes a read request. Copying content from a CD to the device library
    * \param aRequest The request to be processed
    */
