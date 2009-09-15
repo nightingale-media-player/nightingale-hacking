@@ -25,7 +25,7 @@
 EXPORTED_SYMBOLS = [ "sbCDDeviceUtils" ];
 
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-Components.utils.import("resource://app/jsmodules/SBProperties.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 const Ci = Components.interfaces;
 const Cr = Components.results;
