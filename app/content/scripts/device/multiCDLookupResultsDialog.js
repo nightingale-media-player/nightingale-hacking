@@ -35,107 +35,112 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm"); 
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
-var multiCDDialog = (function multiCDDialog() {
-  var infolist, other;
-  var library = window.arguments[0].QueryInterface(Ci.sbIDeviceLibrary);
-  var metadataResults =
-            ArrayConverter.JSArray(window.arguments[1].QueryInterface(
-                                     Ci.nsISimpleEnumerator));
-
-  var XUL_NS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
-  function newelem(tagname) {
-    return document.createElementNS(XUL_NS, tagname);
-  }
-
+var multiCDDialog = {
   /**
    * \brief Handle load events.
    */
-  multiCDDialog.onload = function onload()
+  onload: function onload()
   {
-    infolist = document.getElementById("infolist");
-    other = document.getElementById("other");
+    this.library = window.arguments[0].QueryInterface(Ci.sbIDeviceLibrary);
+    this._metadataResults = ArrayConverter.JSArray(
+                             window.arguments[1].QueryInterface(
+                               Ci.nsISimpleEnumerator));
 
-    this._jobTracksMap = new Object;
+    this._infolist = document.getElementById("infolist");
+    this._other = document.getElementById("other");
 
-    for (i in metadataResults)
+    this._jobTracksMap = [];
+    this._jobResultIndexMap =
+         Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+
+    for (i in this._metadataResults)
     {
-      var result = metadataResults[i];
+      var result = this._metadataResults[i];
       result.QueryInterface(Ci.sbIMetadataAlbumDetail);
       var props = SBProperties.arrayToJSObject(result.properties);
 
       var radio =
-          infolist.insertItemAt(infolist.getIndexOfItem(other),
+        this._infolist.insertItemAt(
+                                this._infolist.getIndexOfItem(this._other),
                                 SBFormattedString("cdrip.lookup.name.format",
                                               [props[SBProperties.artistName],
                                                props[SBProperties.albumName]]),
                                 i);
 
-      var tracks = newelem("sb-cdtracks");
-      infolist.insertBefore(tracks, other);
+      var tracks = document.createElementNS(
+          "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
+          "sb-cdtracks");
+
+      this._infolist.insertBefore(tracks, this._other);
 
       // Do the follow-up call to get album detail for each track
       var mlm = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
                   .getService(Ci.sbIMetadataLookupManager);
       var job = mlm.defaultProvider.getAlbumDetail(result);
-      this._jobTracksMap[job] = tracks;
+
+      // Map the job to the results index so we can update it later
+      this._jobResultIndexMap.appendElement(job, false);
+      // Map the job to the sb-cdtracks xbl
+      this._jobTracksMap[i] = tracks;
       if (job.status == Ci.sbIJobProgress.STATUS_RUNNING) {
         job.addJobProgressListener(this);
       } else {
         this.onJobProgress(job);
       }
     }
-  };
+  },
 
   /**
    * \brief Job progress listener for album detail follow-up calls
    */
-  multiCDDialog.onJobProgress = function onJobProgress(job)
+  onJobProgress: function onJobProgress(job)
   {
+    job.QueryInterface(Ci.sbIMetadataLookupJob);
     if (job.status != Ci.sbIJobProgress.STATUS_SUCCEEDED)
       return;
 
-    if (job.mlJobType != Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP) {
+    if (job.mlJobType != Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP)
       return;
-    }
 
     function getname(props) {
       return SBProperties.arrayToJSObject(props)[SBProperties.trackName];
     }
 
-    var tracks = this._jobTracksMap[job];
+    var index = this._jobResultIndexMap.indexOf(0, job);
+    var tracks = this._jobTracksMap[index];
     // album detail calls should only ever have one result
     var enum = job.getMetadataResults();
     var result = enum.getNext().QueryInterface(Ci.sbIMetadataAlbumDetail);
     tracks.setTrackTitles(ArrayConverter.JSArray(result.tracks).map(getname));
-  };
+    this._metadataResults[index] = result;
+  },
 
   /**
    * \brief Handle accept/okay button.
    */
-  multiCDDialog.onaccept = function onaccept()
+  onaccept: function onaccept()
   {
-    if (infolist.value == "none")
+    if (this._infolist.value == "none")
     {
       openDialog(
                "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul",
                null,
                "centerscreen,chrome,modal,titlebar,resizable",
                library,
-               metadataResults);
+               this._metadataResults);
       return;
     }
 
-    var result = metadataResults[parseInt(infolist.value)];
+    var result = this._metadataResults[parseInt(this._infolist.value)];
     var tracks = ArrayConverter.JSArray(result.tracks);
 
     for (var i=0; i < tracks.length; i++) {
       // Get the media item in this device library that has the same track
       // number (we add one due to the tracknumber being indexed from 1)
-      var trackArr = library.getItemsByProperty(SBProperties.trackNumber, i+1);
+      var trackArr = this.library.getItemsByProperty(SBProperties.trackNumber,
+                                                     i+1);
       var item = trackArr.queryElementAt(0, Ci.sbIMediaItem);
       item.setProperties(tracks[i]);
     }
-  };
-
-  return multiCDDialog;
-})();
+  }
+}

@@ -222,7 +222,8 @@ sbFreeDB.prototype = {
             var a = new Object;
             a.QueryInterface = XPCOMUtils.generateQI(
                 [Ci.sbIMetadataAlbumDetail]);
-            a.tracks = null;
+            a.tracks = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                         .createInstance(Ci.nsIMutableArray);
             a.properties =
               Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
                 .createInstance(Ci.sbIMutablePropertyArray);
@@ -285,8 +286,7 @@ sbFreeDB.prototype = {
           return;
         }
 
-        aAlbum.tracks = Cc["@mozilla.org/array;1"]
-                          .createInstance(Ci.nsIMutableArray);
+        aAlbum.tracks.QueryInterface(Ci.nsIMutableArray);
         for each (var line in lines) {
           if (line[0] == "#") // comment
             continue;
@@ -400,7 +400,7 @@ sbFreeDB.prototype = {
       .createInstance(Ci.sbIMetadataLookupJob);
 
     // if we already have album detail for this album, then just return it
-    if (aAlbum.tracks) {
+    if (aAlbum.tracks.length > 0) {
       // initialise the job and append our album to it
       mlJob.init(Ci.sbIMetadataLookupJob.JOB_ALBUM_DETAIL_LOOKUP,
                  Ci.sbIJobProgress.STATUS_SUCCEEDED);
