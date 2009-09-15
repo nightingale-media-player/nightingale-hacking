@@ -12,7 +12,7 @@
 
 <page id="shoutcast-window"
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-	onload="setTimeout(function() { RadioDirectory.init().call(RadioDirectory);
+	onload="setTimeout(function() { RadioDirectory.init();
 		}, 100);"
 	onunload="RadioDirectory.unload()">
 
