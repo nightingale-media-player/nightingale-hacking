@@ -30,6 +30,10 @@
 <?xml-stylesheet href="chrome://global/content/commonDialog.css"
                  type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
+                 type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/mediacoreErrorDialog.css"
+                 type="text/css"?>
 
 <!-- Import external definitions. -->
 <!DOCTYPE overlay [
@@ -46,18 +50,18 @@
  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
  id="mediacore_error"
  title="&mediacore.error.title;"
- buttons="cancel,accept"
- buttonlabelaccept="&mediacore.error.stop;" 
- buttonlabelcancel="&mediacore.error.continue;" 
- defaultButton="cancel" 
+ buttons="accept"
  type="songbird"
+ hidechrome="true"
+ resizers="both"
  onload="doOnLoad();"
- ondialogaccept="return doStop();"
- ondialogcancel="return doNext();"
+ onunload="checkForDontShowMe();"
 >
 
   <script type="application/x-javascript" 
           src="chrome://global/content/globalOverlay.js"/>
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
 
   <commandset id="selectEditMenuItems">
     <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
@@ -79,14 +83,15 @@
     </popup>
   </popupset>
 
-  <vbox>
-    <vbox>
+  <vbox flex="1">
+    <vbox flex="1">
       <!-- Preface the error with a quick message -->
       <label class="header" value="&mediacore.error.preface;" />
 
       <!-- Detailed description of the error -->
-      <vbox id="mediacore_error_desc_box">
-        <description class="indent" flex="1" id="mediacore_error_desc"
+      <vbox id="mediacore_error_desc_box" flex="1">
+        <description class="indent mediacore_error_desc"
+                     id="mediacore_error_desc"
                      context="contentAreaContextMenu" tabindex="-1"/>
       </vbox>
     </vbox>
@@ -108,13 +113,22 @@
           var mediacoreError = 
             window.arguments[0].QueryInterface(Ci.sbIMediacoreError);
           var desc = document.getElementById("mediacore_error_desc");
-          
-          desc.textContent = mediacoreError.message;
+
+          desc.textContent = mediacoreError.message + "\n";
         }
       }
       catch( err ) {
         Cu.reportError(err);
       }
+    }
+
+    function addError(mediacoreError) {
+      var template = document.getElementById("mediacore_error_desc");
+      var desc = template.cloneNode(true);
+      desc.removeAttribute("id");
+      desc.textContent = mediacoreError.message + "\n";
+      template.parentNode.appendChild(desc);
+      window.focus();
     }
     
     function checkForDontShowMe() {
@@ -124,32 +138,6 @@
                         .prefs;
         prefs.setValue("songbird.mediacore.error.dontshowme", true);
       }
-    }
-    
-    function doNext() {
-      try {
-        gMM.sequencer.next();
-      }
-      catch(e) {
-        Cu.reportError(e);
-      }
-      
-      checkForDontShowMe();
-      
-      onExit();
-    }
-    
-    function doStop() {
-      try {
-        gMM.sequencer.stop();
-      }
-      catch(err) {
-        Cu.reportError(err);
-      }
-      
-      checkForDontShowMe();
-      
-      onExit();
     }
   ]]>
   </script>

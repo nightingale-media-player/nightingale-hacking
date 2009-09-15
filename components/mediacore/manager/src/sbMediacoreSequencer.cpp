@@ -67,6 +67,7 @@
 #include <sbIPropertyArray.h>
 #include <sbISortableMediaListView.h>
 #include <sbIWindowWatcher.h>
+#include <sbIMediacoreErrorHandler.h>
 
 #include <sbBaseMediacoreVolumeControl.h>
 #include <sbMediacoreError.h>
@@ -81,19 +82,14 @@
 #include "sbMediacoreDataRemotes.h"
 #include "sbMediacoreShuffleSequenceGenerator.h"
 
-#define MEDIACORE_ERROR_DONT_SHOW_ME_PREF \
-  "songbird.mediacore.error.dontshowme"
-
-#define MEDIACORE_ERROR_DIALOG_URI \
-  "chrome://songbird/content/xul/mediacore/mediacoreErrorDialog.xul"
-#define MEDIACORE_ERROR_DIALOG_ID \
-  "mediacoreErrorDialog"
-
 // Time in ms between dataremote updates
 #define MEDIACORE_UPDATE_NOTIFICATION_DELAY 500
 
 // Time in ms to wait before deferred media list check
 #define MEDIACORE_CHECK_DELAY 100
+
+// Number of errors after which to stop flipping to next track
+#define MEDIACORE_MAX_SUBSEQUENT_ERRORS 20
 
 /**
  * To log this module, set the following environment variable:
@@ -188,6 +184,7 @@ sbMediacoreSequencer::sbMediacoreSequencer()
 , mShouldAbort(PR_FALSE)
 , mMode(sbIMediacoreSequencer::MODE_FORWARD)
 , mRepeatMode(sbIMediacoreSequencer::MODE_REPEAT_NONE)
+, mErrorCount(0)
 , mPosition(0)
 , mViewPosition(0)
 , mCurrentItemIndex(0)
@@ -1156,54 +1153,61 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
   NS_ENSURE_ARG_POINTER(aEvent);
 
   nsAutoMonitor mon(mMonitor);
+  mErrorCount++;
+
   if(mIsWaitingForPlayback) {
     mIsWaitingForPlayback = PR_FALSE;
+  }
+
+  nsresult rv;
+  if(mErrorCount >= MEDIACORE_MAX_SUBSEQUENT_ERRORS) {
+    // Too many subsequent errors, stop
+    if(mStatus == sbIMediacoreStatus::STATUS_PLAYING ||
+       mStatus == sbIMediacoreStatus::STATUS_PAUSED ||
+       mStatus == sbIMediacoreStatus::STATUS_BUFFERING) {
+      // Grip.
+      nsCOMPtr<sbIMediacorePlaybackControl> playbackControl = mPlaybackControl;
+      mon.Exit();
+      rv = playbackControl->Stop();
+      NS_ASSERTION(NS_SUCCEEDED(rv), "Stop failed at end of sequence.");
+      mon.Enter();
+    }
+
+    mStatus = sbIMediacoreStatus::STATUS_STOPPED;
+
+    rv = StopSequenceProcessor();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = UpdatePlayStateDataRemotes();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if(mSeenPlaying) {
+      mSeenPlaying = PR_FALSE;
+
+      rv = mDataRemoteFaceplateSeenPlaying->SetBoolValue(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else {
+    mCoreWillHandleNext = PR_FALSE;
+
+    rv = Next();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   mon.Exit();
 
   nsCOMPtr<sbIMediacoreError> error;
-  nsresult rv = aEvent->GetError(getter_AddRefs(error));
+  rv = aEvent->GetError(getter_AddRefs(error));
   NS_ENSURE_SUCCESS(rv, rv);
 
   // If there's an error object, we'll show the contents of it to the user
   if(error) {
-    nsCOMPtr<nsIPrefBranch> prefBranch =
-      do_GetService(NS_PREFSERVICE_CONTRACTID, &rv);
+    nsCOMPtr<sbIMediacoreErrorHandler> errorHandler =
+      do_GetService("@songbirdnest.com/Songbird/MediacoreErrorHandler;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-    PRInt32 prefType = 0;
-    rv = prefBranch->GetPrefType(MEDIACORE_ERROR_DONT_SHOW_ME_PREF, &prefType);
-
-    PRBool dontAskMe = PR_FALSE;
-
-    if(prefType == nsIPrefBranch::PREF_BOOL) {
-      rv = prefBranch->GetBoolPref(MEDIACORE_ERROR_DONT_SHOW_ME_PREF, &dontAskMe);
-    }
-
-    if(NS_SUCCEEDED(rv) && !dontAskMe) {
-
-      nsCOMPtr<nsIDOMWindow> parentWindow;
-
-      // Get the window watcher service.
-      nsCOMPtr<nsIWindowWatcher> windowWatcher =
-        do_GetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<nsIDOMWindow> domWindow;
-      rv = windowWatcher->OpenWindow(parentWindow,
-        MEDIACORE_ERROR_DIALOG_URI,
-        nsnull,
-        "centerscreen,chrome,modal,titlebar",
-        error,
-        getter_AddRefs(domWindow));
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    else {
-      rv = Next();
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
+    rv = errorHandler->ProcessError(error);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -2407,6 +2411,7 @@ sbMediacoreSequencer::PlayURL(nsIURI *aURI)
   nsAutoMonitor mon(mMonitor);
 
   mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
+  mErrorCount = 0;
   mIsWaitingForPlayback = PR_TRUE;
 
   nsresult rv = ResetMetadataDataRemotes();
@@ -2459,6 +2464,7 @@ sbMediacoreSequencer::Play()
   }
 
   mStatus = sbIMediacoreStatus::STATUS_BUFFERING;
+  mErrorCount = 0;
   mIsWaitingForPlayback = PR_TRUE;
 
   // Always reset this data remote, otherwise the video window may get into
@@ -2896,6 +2902,7 @@ sbMediacoreSequencer::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
       if(mStatus == sbIMediacoreStatus::STATUS_BUFFERING &&
          mIsWaitingForPlayback) {
+        mErrorCount = 0;
         mIsWaitingForPlayback = PR_FALSE;
         mStopTriggeredBySequencer = PR_FALSE;
         mStatus = sbIMediacoreStatus::STATUS_PLAYING;

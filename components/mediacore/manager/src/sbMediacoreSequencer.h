@@ -159,6 +159,7 @@ protected:
   PRPackedBool                   mStopTriggeredBySequencer;
   PRPackedBool                   mCoreWillHandleNext;
   PRPackedBool                   mPositionInvalidated;
+  PRUint32                       mErrorCount;
 
   PRPackedBool                   mCanAbort;
   PRPackedBool                   mShouldAbort;

@@ -52,6 +52,7 @@ CPP_SRCS += sbMediacoreVotingChain.cpp \
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                $(DEPTH)/components/library/base/public \
                $(DEPTH)/components/mediacore/base/public \
+               $(DEPTH)/components/mediacore/manager/public \
                $(DEPTH)/components/mediaimport/playlist/public \
                $(DEPTH)/components/property/public \
                $(topsrcdir)/components/include \
@@ -85,5 +86,8 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  $(NULL)
 
 IS_COMPONENT = 1
+
+SONGBIRD_COMPONENTS = $(srcdir)/sbMediacoreErrorHandler.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
