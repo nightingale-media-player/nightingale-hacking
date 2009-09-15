@@ -48,6 +48,7 @@ const CDRIP_HBOX_PLAIN_CLASS        = CDRIP_BASE + "header-plain-hbox";
 
 const RIP_SETTINGS_HBOX             = CDRIP_BASE + "settings-hbox";
 const RIP_SETTINGS_FORMAT_LABEL     = CDRIP_BASE + "format-label";
+const RIP_SETTINGS_BITRATE_HBOX     = CDRIP_BASE + "bitrate-hbox";
 const RIP_SETTINGS_QUALITY_LABEL    = CDRIP_BASE + "quality-label";
 const RIP_SETTINGS_BUTTON           = CDRIP_BASE + "settings-button";
 
@@ -80,6 +81,8 @@ window.cdripController =
   _device:        null,
   _deviceID:      null,
 
+  _supportedProfiles: null,
+
   onLoad: function cdripController_onLoad() {
     // Add our device listener to listen for lookup notification events
     this._device = this._getDevice();
@@ -103,6 +106,7 @@ window.cdripController =
     eventTarget.addEventListener(this);
     
     // Disable player controls & load the playlist
+    this._updateRipSettings();
     this._togglePlayerControls(true);
     this._loadPlaylist();
   },
@@ -215,6 +219,95 @@ window.cdripController =
         this._disableCommand(RIP_COMMAND_STOPRIP);
         break;
     }
+  },
+
+  _updateRipSettings: function cdripController_updateRipSettings() {
+    var profileId = this._device.getPreference("transcode_profile.profile_id");
+    var profile;
+    var bitrate = 0;
+
+    var profiles = this._findSupportedProfiles();
+    
+    if (profileId) {
+      profile = this._profileFromProfileId(profileId, profiles);
+      bitrate = parseInt(this._device.getPreference(
+                  "transcode_profile.audio_properties.bitrate"));
+    }
+
+    var highestPriority = 0;
+    if (!profile) {
+      // Nothing set in preferences, or set value is not available. Determine the
+      // default profile.
+      for (var i = 0; i < profiles.length; i++) {
+        var current = profiles[i];
+        if (!profile || current.priority > highestPriority) {
+          profile = current;
+          highestPriority = profile.priority;
+        }
+      }
+    }
+
+    var hasBitrate = false;
+    var propertiesArray = profile.audioProperties;
+    if (propertiesArray) {
+      for (var i = 0; i < propertiesArray.length; i++) {
+        var prop = propertiesArray.queryElementAt(i,
+                Ci.sbITranscodeProfileProperty);
+        if (prop.propertName == "bitrate") {
+          hasBitrate = true;
+          if (!bitrate) {
+            bitrate = parseInt(prop.value);
+          }
+        }
+      }
+    }
+
+    if (hasBitrate) {
+      this._showElement(RIP_SETTINGS_BITRATE_HBOX);
+      var bitrateLabel = document.getElementById(RIP_SETTINGS_QUALITY_LABEL);
+      bitrateLabel.setAttribute("value", "" + (bitrate / 1000) + " kbps");
+    }
+    else {
+      this._hideElement(RIP_SETTINGS_BITRATE_HBOX);
+    }
+
+    var formatLabel = document.getElementById(RIP_SETTINGS_FORMAT_LABEL);
+    formatLabel.setAttribute("value", profile.description);
+  },
+
+  _findSupportedProfiles:
+      function cdripController_findSupportedProfiles()
+  {
+    if (this._supportedProfiles)
+      return this._supportedProfiles;
+
+    this._supportedProfiles = [];
+
+    var transcodeManager =
+        Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
+          .getService(Ci.sbITranscodeManager);
+    var profiles = transcodeManager.getTranscodeProfiles();
+
+    for (var i = 0; i < profiles.length; i++) {
+      var profile = profiles.queryElementAt(i, Ci.sbITranscodeProfile);
+
+      if (profile.type == Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO)
+      {
+        this._supportedProfiles.push(profile);
+      }
+    }
+    return this._supportedProfiles;
+  },
+
+  _profileFromProfileId:
+      function cdripController_profileFromProfileId(aId, aProfiles)
+  {
+    for (var i = 0; i < aProfiles.length; i++) {
+      var profile = aProfiles[i];
+      if (profile.id == aId)
+        return profile;
+    }
+    return null;
   },
 
   disableTags : ['sb-player-back-button', 'sb-player-playpause-button',
