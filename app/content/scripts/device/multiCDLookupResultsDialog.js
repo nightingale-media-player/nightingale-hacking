@@ -126,7 +126,7 @@ var multiCDDialog = {
                "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul",
                null,
                "centerscreen,chrome,modal,titlebar,resizable",
-               library,
+               this.library,
                this._metadataResults);
       return;
     }

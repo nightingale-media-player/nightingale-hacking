@@ -33,7 +33,7 @@
 #include "sbCDDeviceMarshall.h"
 #include "sbCDDeviceController.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR(sbCDDeviceMarshall)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbCDDeviceMarshall, Init)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbCDDeviceController)
 
 SB_DEVICE_CONTROLLER_REGISTERSELF(sbCDDeviceController);

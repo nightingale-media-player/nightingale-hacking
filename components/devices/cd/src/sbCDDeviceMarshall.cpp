@@ -41,6 +41,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
 #include <nsIProgrammingLanguage.h>
+#include <nsISupportsPrimitives.h>
 #include <nsServiceManagerUtils.h>
 #include <nsMemory.h>
 #include <prlog.h>
@@ -61,15 +62,6 @@ static PRLogModuleInfo* gCDDeviceLog = nsnull;
 #ifdef __GNUC__
 #define __FUNCTION__ __PRETTY_FUNCTION__
 #endif /* __GNUC__ */
-
-//
-// XXXkreeger USE THE MOCK CD DEVICE SERVICE UNTIL THE REAL ONE IS DONE
-//
-//#define SB_MOCK_CDDEVICE_SERVICE \
-//  "@songbirdnest.com/device/cd/mock-cddevice-service;1"
-#define SB_MOCK_CDDEVICE_SERVICE \
-  "@songbirdnest.com/gearworks-cd-service;1"
-
 
 NS_DEFINE_STATIC_IID_ACCESSOR(sbCDDeviceMarshall, SB_CDDEVICE_MARSHALL_IID)
 
@@ -115,7 +107,48 @@ sbCDDeviceMarshall::Init()
     do_GetService("@songbirdnest.com/Songbird/DeviceManager;2", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // TODO: Check to see if there is a implementation for the cd device service.
+  mCDDeviceService = nsnull;
+  PRInt32 selectedWeight = -1;
+
+  // Enumerate the category manager for cdrip services
+  nsCOMPtr<nsICategoryManager> catman =
+    do_GetService(NS_CATEGORYMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> categoryEnum;
+  rv = catman->EnumerateCategory("cdrip-engine", getter_AddRefs(categoryEnum));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRBool hasMore = PR_FALSE;
+  while (NS_SUCCEEDED(categoryEnum->HasMoreElements(&hasMore)) && hasMore) {
+    nsCOMPtr<nsISupports> ptr;
+    if (NS_SUCCEEDED(categoryEnum->GetNext(getter_AddRefs(ptr))) && ptr) {
+      nsCOMPtr<nsISupportsCString> stringValue(do_QueryInterface(ptr));
+      nsCString factoryName;
+      if (stringValue && NS_SUCCEEDED(stringValue->GetData(factoryName))) {
+        nsCString contractId;
+        rv = catman->GetCategoryEntry("cdrip-engine", factoryName.get(),
+                                      getter_Copies(contractId));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Get this CD device service
+        nsCOMPtr<sbICDDeviceService> cdDevSvc =
+            do_GetService(contractId.get(), &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        PRInt32 currentWeight;
+        rv = cdDevSvc->GetWeight(&currentWeight);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // if we don't have a CD device service yet, or if this service has
+        // a higher voting weight than the current service, then choose this
+        // service as our selected CD device service
+        if (selectedWeight == -1 || currentWeight >= selectedWeight) {
+          mCDDeviceService = cdDevSvc;
+          selectedWeight = currentWeight;
+        }
+      }
+    }
+  }
 
   return NS_OK;
 }
@@ -311,17 +344,14 @@ sbCDDeviceMarshall::DiscoverDevices()
   // media currently inserted.
   nsresult rv;
 
-  nsCOMPtr<sbICDDeviceService> cdDeviceService =
-    do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
-
   // Since the GW stuff is a little jacked, use the index getter
   PRInt32 deviceCount = 0;
-  rv = cdDeviceService->GetNbDevices(&deviceCount);
+  rv = mCDDeviceService->GetNbDevices(&deviceCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
   for (PRInt32 i = 0; i < deviceCount; i++) {
     nsCOMPtr<sbICDDevice> curDevice;
-    rv = cdDeviceService->GetDevice(i, getter_AddRefs(curDevice));
+    rv = mCDDeviceService->GetDevice(i, getter_AddRefs(curDevice));
     if (NS_FAILED(rv) || !curDevice) {
       NS_WARNING("Could not get the current device!");
       continue;
@@ -381,11 +411,8 @@ NS_IMETHODIMP
 sbCDDeviceMarshall::BeginMonitoring()
 {
   nsresult rv;
-  nsCOMPtr<sbICDDeviceService> cdDeviceService =
-    do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = cdDeviceService->RegisterListener(this);
+  rv = mCDDeviceService->RegisterListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = DiscoverDevices();
@@ -398,11 +425,8 @@ NS_IMETHODIMP
 sbCDDeviceMarshall::StopMonitoring()
 {
   nsresult rv;
-  nsCOMPtr<sbICDDeviceService> cdDeviceService =
-    do_GetService(SB_MOCK_CDDEVICE_SERVICE, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = cdDeviceService->RemoveListener(this);
+  rv = mCDDeviceService->RemoveListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

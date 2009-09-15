@@ -96,6 +96,9 @@ private:
   nsInterfaceHashtableMT<nsStringHashKey, nsISupports> mKnownDevices;
   PRMonitor                                            *mKnownDevicesLock;
 
+  // The CD device service to use
+  nsCOMPtr<sbICDDeviceService> mCDDeviceService;
+
   // Prevent copying and assignment
   sbCDDeviceMarshall(sbCDDeviceMarshall const &);
   sbCDDeviceMarshall & operator= (sbCDDeviceMarshall const &);

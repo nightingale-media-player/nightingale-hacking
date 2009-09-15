@@ -194,6 +194,13 @@ sbMockCDService.prototype =
   //
   // sbICDDeviceService:
   //
+  get weight()
+  {
+    // return a weight of 0 effectively making the mock CD service selected
+    // only if no other service wants to assume responsibility.
+    return 0;
+  },
+
   get nbDevices()
   {
     return this._mDevices.length;
@@ -340,6 +347,17 @@ sbMockCDService.prototype =
 };
 
 function NSGetModule(compMgr, fileSpec) {
-  return XPCOMUtils.generateModule([sbMockCDService]);
+  return XPCOMUtils.generateModule([sbMockCDService],
+      // our post-register function to register ourselves with the
+      // category manager
+      function (aCompMgr, aFileSpec, aLocation) {
+        XPCOMUtils.categoryManager.addCategoryEntry(
+          "cdrip-engine",
+          "Mock CD Device",
+          sbMockCDService.prototype.contractID,
+          true,
+          true);
+      }
+  );
 }
 
