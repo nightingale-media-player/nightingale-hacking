@@ -1410,9 +1410,17 @@
             this.handleMediaURL(href, false, false, target, referrer);
             event.stopPropagation();
             event.preventDefault();
+          } else {
+            var where = this._checkTarget(target, event);
+            if (where == '_blank' || where == '_media' || where != target) {
+              if (this.loadURI(href, referrer, null, event, where)) {
+                event.stopPropagation();
+                event.preventDefault();
+              }
+            }
+            // if we get here, we're using the default target, which isn't to
+            // open a new tab.  let the normal browser mechanism handle it.
           }
-
-          // doesn't look like a media URL; dispatch it normally
         }
         return true;
       ]]></handler>
