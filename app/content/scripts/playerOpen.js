@@ -214,7 +214,14 @@ try
       }
       else if ( gTypeSniffer.isValidMediaURL(uri) )
       {
-        var item = SBImportURLIntoWebLibrary(uri);
+        var item = null;
+
+        // Doesn't import local file to the web Library
+        if (uri.scheme != "file")
+          item = SBImportURLIntoWebLibrary(uri);
+
+        // Import the item.
+        item = SBImportURLIntoMainLibrary(uri);
 
         // And if we're good, play it.
         SBDataSetStringValue("metadata.title", uri.spec);
@@ -226,8 +233,6 @@ try
         
         var view = _SBGetCurrentView();
         var targetLength = view.length + 1;
-        // Import the item.
-        var item = SBImportURLIntoMainLibrary(uri);
 
         // Wait for the item to show up in the view before trying to play it
         // and give it time to sort (given 10 tracks per millisecond)
@@ -366,7 +371,7 @@ try
       }
       
       var metadataService = 
-         Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+         Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
                    .getService(Components.interfaces.sbIFileMetadataService);
       var metadataJob = metadataService.read(array);
       
