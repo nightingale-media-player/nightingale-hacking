@@ -253,7 +253,7 @@ window.cdripController =
       for (var i = 0; i < propertiesArray.length; i++) {
         var prop = propertiesArray.queryElementAt(i,
                 Ci.sbITranscodeProfileProperty);
-        if (prop.propertName == "bitrate") {
+        if (prop.propertyName == "bitrate") {
           hasBitrate = true;
           if (!bitrate) {
             bitrate = parseInt(prop.value);
