@@ -794,13 +794,19 @@ endif
 
 ifdef SIMPLE_PROGRAM_STATIC_IMPORTS
    ifeq (windows,$(SB_PLATFORM))
-      OUR_SIMPLE_PROGRAM_IMPORTS_LIST += $(SIMPLE_PROGRAM_STATIC_IMPORTS)
+      OUR_LINKER_STATIC_IMPORT_LIST = $(foreach import, \
+                                       $(SIMPLE_PROGRAM_STATIC_IMPORTS), \
+                                       $(if $(wildcard $(import)), \
+                                       $(import), \
+                                       $(addprefix $(SONGBIRD_OBJDIR)/, \
+                                       $(import)$(DEBUG:%=_d)$(LIB_SUFFIX))))
    else
       OUR_SIMPLE_PROGRAM_OBJS += $(addsuffix $(LIB_SUFFIX),$(SIMPLE_PROGRAM_STATIC_IMPORTS))
    endif
 endif
 
-OUR_LINKER_IMPORTS = $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), \
+OUR_LINKER_IMPORTS = $(OUR_LINKER_STATIC_IMPORT_LIST) \
+                     $(addsuffix $(LDFLAGS_IMPORT_SUFFIX), \
                       $(addprefix $(LDFLAGS_IMPORT_PREFIX), \
                       $(OUR_SIMPLE_PROGRAM_IMPORTS_LIST)))
 

@@ -202,6 +202,18 @@
       </constructor>
 
       <destructor><![CDATA[
+        this._firmwareHandler.unbind();
+
+        this._firmwareHandler = null;
+        this._busyCheckTimer = null;
+        this._currentFirmwareVersion = null;
+        this._busyWarningBox = null;
+        this._busyWarningDesc = null;
+        this._busyWarningText = null;
+        this._updateFirmwareButton = null;
+        this._registerURI = null;
+        this._customerSupportLocation = null;
+
         if(this.device) {
           this.device = null;
         }

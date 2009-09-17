@@ -46,6 +46,9 @@ CPP_EXTRA_INCLUDES += \
  $(topsrcdir)/components/moz/system/windows/src/static \
  $(NULL)
 
+CPP_EXTRA_DEFS += -DSB_LOG_TO_WINDOWS_EVENT_LOG \
+                  $(NULL)
+
 DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/system/windows/src/static/sbWindowsUtils \
  $(NULL)

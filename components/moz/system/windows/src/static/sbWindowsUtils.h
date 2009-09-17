@@ -71,9 +71,14 @@
  * \param aMessage              Warning message.
  */
 
+#ifdef SB_LOG_TO_WINDOWS_EVENT_LOG
 #define SB_WIN_WARNING(aMessage)                                               \
     sbWindowsEventLog("WARNING: %s: file %s, line %d",                         \
                       aMessage, __FILE__, __LINE__)
+#else
+#define SB_WIN_WARNING(aMessage)                                               \
+    printf("WARNING: %s: file %s, line %d\n", aMessage, __FILE__, __LINE__)
+#endif
 
 
 /**
@@ -132,6 +137,7 @@
   do {                                                                         \
     if (!(aCondition)) {                                                       \
       SB_WIN_WARNING("SB_WIN_ENSURE_TRUE(" #aCondition ") failed");            \
+      return aReturnValue;                                                     \
     }                                                                          \
   } while (0)
 
@@ -154,10 +160,11 @@
 //
 //------------------------------------------------------------------------------
 
-
 //
 // Auto-disposal class wrappers.
 //
+//   sbAutoPtr                  Wrapper to auto-delete classes.  Use in place of
+//                              nsAutoPtr when writing native Windows apps.
 //   sbAutoHANDLE               Wrapper to auto-close Windows handles.
 //   sbAutoRegKey               Wrapper to automatically close a Windows
 //                              registry key.
@@ -165,6 +172,7 @@
 //                              object.
 //
 
+template<typename T> SB_AUTO_NULL_CLASS(sbAutoPtr, T*, delete mValue);
 SB_AUTO_CLASS(sbAutoHANDLE,
               HANDLE,
               mValue != INVALID_HANDLE_VALUE,
