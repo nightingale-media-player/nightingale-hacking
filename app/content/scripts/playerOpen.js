@@ -220,9 +220,6 @@ try
         if (uri.scheme != "file")
           item = SBImportURLIntoWebLibrary(uri);
 
-        // Import the item.
-        item = SBImportURLIntoMainLibrary(uri);
-
         // And if we're good, play it.
         SBDataSetStringValue("metadata.title", uri.spec);
         SBDataSetStringValue("metadata.artist", "");
@@ -233,6 +230,9 @@ try
         
         var view = _SBGetCurrentView();
         var targetLength = view.length + 1;
+
+        // Import the item.
+        item = SBImportURLIntoMainLibrary(uri);
 
         // Wait for the item to show up in the view before trying to play it
         // and give it time to sort (given 10 tracks per millisecond)
