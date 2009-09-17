@@ -734,3 +734,8 @@ sbIPDMarshall::IsMediaPartition(nsACString& aDeviceUDI)
   return PR_TRUE;
 }
 
+nsresult
+sbIPDMarshall::RemoveDevice(sbIDevice* aDevice)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}

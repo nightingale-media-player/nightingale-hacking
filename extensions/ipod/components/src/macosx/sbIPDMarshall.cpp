@@ -897,3 +897,8 @@ sbIPDMarshall::GetFirewireGUID(FSVolumeRefNum aVolumeRefNum,
   return (error == noErr) ? NS_OK : NS_ERROR_UNEXPECTED;
 }
 
+nsresult
+sbIPDMarshall::RemoveDevice(sbIDevice* aDevice)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}

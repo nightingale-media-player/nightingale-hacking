@@ -27,11 +27,12 @@
 #include "nsISupports.idl"
 
 interface sbIDeviceControllerRegistrar;
+interface sbIDevice;
 
 /**
  * \interface sbIDeviceMarshall
  */
-[scriptable, uuid(3dc4e74e-104e-416f-ba1b-9c6685bc416f)]
+[scriptable, uuid(e5219882-1dd1-11b2-a99d-c2250594367c)]
 interface sbIDeviceMarshall : nsISupports
 {
   /**
@@ -57,6 +58,11 @@ interface sbIDeviceMarshall : nsISupports
    * devices.
    */
   void stopMonitoring();
+
+  /**
+   * Remove the given device.
+   */
+  void removeDevice(in sbIDevice aDevice);
 };
 
 %{C++

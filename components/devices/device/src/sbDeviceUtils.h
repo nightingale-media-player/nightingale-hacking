@@ -88,7 +88,8 @@ public:
   static nsresult BulkSetProperty(sbIMediaList *aMediaList,
                                   const nsAString& aPropertyId,
                                   const nsAString& aPropertyValue,
-                                  sbIPropertyArray* aPropertyFilter = nsnull);
+                                  sbIPropertyArray* aPropertyFilter = nsnull,
+                                  PRInt32 *aAbortFlag = nsnull);
 
   /**
    * Delete all items that have the property with the given value

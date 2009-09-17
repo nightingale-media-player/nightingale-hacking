@@ -246,6 +246,11 @@ sbCDDeviceMarshall::AddDevice(sbICDDevice *aCDDevice)
 }
 
 nsresult
+sbCDDeviceMarshall::RemoveDevice(sbIDevice* aDevice) {
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+nsresult
 sbCDDeviceMarshall::RemoveDevice(nsAString const & aName)
 {
   nsresult rv;

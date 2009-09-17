@@ -658,3 +658,8 @@ sbIPDMarshall::IsIPod(char aDriveLetter)
 }
 
 
+nsresult
+sbIPDMarshall::RemoveDevice(sbIDevice* aDevice)
+{
+  return NS_ERROR_NOT_IMPLEMENTED;
+}

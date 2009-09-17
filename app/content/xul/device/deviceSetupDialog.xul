@@ -236,7 +236,9 @@
           var manager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
           var controller = manager.getController(this._device.controllerId);
-          controller.releaseDevice(this._device);
+          var marshall = manager.getMarshallByID(controller.marshallId);
+          this._device.cancelRequests();
+          marshall.removeDevice(this._device);
         }
         return acceptedBlacklist;
       }

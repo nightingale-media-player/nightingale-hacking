@@ -175,22 +175,46 @@ class sbDeviceUtilsBulkSetPropertyEnumerationListener :
 {
 public:
   sbDeviceUtilsBulkSetPropertyEnumerationListener(const nsAString& aId,
-                                                  const nsAString& aValue)
+                                                  const nsAString& aValue,
+                                                  PRInt32 *aAbortFlag = nsnull)
   : mId(aId),
-    mValue(aValue)
+    mValue(aValue),
+    mAbortFlag(aAbortFlag)
   {}
 
   NS_DECL_ISUPPORTS
 
-  NS_IMETHODIMP OnEnumerationBegin(sbIMediaList *aMediaList, PRUint16 *_retval) {
-      NS_ENSURE_ARG_POINTER(_retval);
+  NS_IMETHODIMP OnEnumerationBegin(sbIMediaList *aMediaList, PRUint16 *_retval)
+  {
+    NS_ENSURE_ARG_POINTER(_retval);
+
+    PRBool abortRequests = PR_FALSE;
+    if (mAbortFlag)
+      abortRequests = PR_AtomicAdd(mAbortFlag, 0);
+
+    if (abortRequests) {
+      *_retval = sbIMediaListEnumerationListener::CANCEL;
+      return NS_OK;
+    } else {
       *_retval = sbIMediaListEnumerationListener::CONTINUE;
       return NS_OK;
+    }
   }
 
-  NS_IMETHODIMP OnEnumeratedItem(sbIMediaList *aMediaList, sbIMediaItem *aItem, PRUint16 *_retval) {
+  NS_IMETHODIMP OnEnumeratedItem(sbIMediaList *aMediaList, sbIMediaItem *aItem,
+                                 PRUint16 *_retval)
+  {
     NS_ENSURE_ARG_POINTER(aItem);
     NS_ENSURE_ARG_POINTER(_retval);
+
+    PRBool abortRequests = PR_FALSE;
+    if (mAbortFlag)
+      abortRequests = PR_AtomicAdd(mAbortFlag, 0);
+
+    if (abortRequests) {
+      *_retval = sbIMediaListEnumerationListener::CANCEL;
+      return NS_OK;
+    }
 
     nsresult rv = aItem->SetProperty(mId, mValue);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -200,13 +224,15 @@ public:
     return NS_OK;
   }
 
-  NS_IMETHODIMP OnEnumerationEnd(sbIMediaList *aMediaList, nsresult aStatusCode) {
+  NS_IMETHODIMP OnEnumerationEnd(sbIMediaList *aMediaList, nsresult aStatusCode)
+  {
     return NS_OK;
   }
 
 protected:
   nsString mId;
   nsString mValue;
+  PRBool *mAbortFlag;
   virtual ~sbDeviceUtilsBulkSetPropertyEnumerationListener() {}
 };
 
@@ -217,13 +243,15 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceUtilsBulkSetPropertyEnumerationListener,
 nsresult sbDeviceUtils::BulkSetProperty(sbIMediaList *aMediaList,
                                         const nsAString& aPropertyId,
                                         const nsAString& aPropertyValue,
-                                        sbIPropertyArray* aPropertyFilter)
+                                        sbIPropertyArray* aPropertyFilter,
+                                        PRInt32 *aAbortFlag)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
   nsRefPtr<sbDeviceUtilsBulkSetPropertyEnumerationListener> listener =
     new sbDeviceUtilsBulkSetPropertyEnumerationListener(aPropertyId,
-                                                        aPropertyValue);
+                                                        aPropertyValue,
+                                                        aAbortFlag);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   if (!aPropertyFilter) {
