@@ -253,8 +253,7 @@
       </method>
 
       <method name="repairDevice">
-        <body>
-            <![CDATA[
+        <body><![CDATA[
           if (!this._firmwareHandler) {
             var prompter = 
                 Components.classes['@songbirdnest.com/Songbird/Prompter;1']
