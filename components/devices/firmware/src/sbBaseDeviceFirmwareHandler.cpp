@@ -74,6 +74,7 @@ sbBaseDeviceFirmwareHandler::sbBaseDeviceFirmwareHandler()
 , mFirmwareVersion(0)
 , mDefaultFirmwareVersion(0)
 , mNeedsRecoveryMode(PR_FALSE)
+, mRecoveryMode(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if(!gBaseDeviceFirmwareHandlerLog) {
@@ -817,6 +818,19 @@ sbBaseDeviceFirmwareHandler::GetNeedsRecoveryMode(PRBool *aNeedsRecoveryMode)
 
   nsAutoMonitor mon(mMonitor);
   *aNeedsRecoveryMode = mNeedsRecoveryMode;
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbBaseDeviceFirmwareHandler::GetRecoveryMode(PRBool *aRecoveryMode)
+{
+  TRACE(("[%s]", __FUNCTION__));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aRecoveryMode);
+
+  nsAutoMonitor mon(mMonitor);
+  *aRecoveryMode = mRecoveryMode;
 
   return NS_OK;
 }

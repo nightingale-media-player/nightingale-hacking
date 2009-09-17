@@ -197,6 +197,7 @@ protected:
   nsCOMPtr<nsIURI> mRegisterLocation;
 
   PRPackedBool mNeedsRecoveryMode;
+  PRPackedBool mRecoveryMode;
 
   nsCOMPtr<nsIXMLHttpRequest> mXMLHttpRequest;
   nsCOMPtr<nsITimer>          mXMLHttpRequestTimer;

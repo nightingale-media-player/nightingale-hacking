@@ -37,7 +37,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(98799bd8-dacc-4952-988e-c98c3fd96be0)]
+[scriptable, uuid(57f217dd-ba0f-409a-85f3-ba9530fed91a)]
 interface sbIDeviceFirmwareHandler : nsISupports
 {
   /**
@@ -104,7 +104,7 @@ interface sbIDeviceFirmwareHandler : nsISupports
   /**
    * \brief Location where one can perform owner registration with the 
    *        device manufacturer.
-   * \note This value is not valid until is is refreshed at least once.
+   * \note This value is not valid until it is refreshed at least once.
    *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute nsIURI registerLocation;
@@ -112,10 +112,17 @@ interface sbIDeviceFirmwareHandler : nsISupports
   /**
    * \brief Whether the device needs to be in recovery mode
    *        to have its firmware updated.
-   * \note This value is not valid until is is refreshed at least once.
+   * \note This value is not valid until it is refreshed at least once.
    *       The value can be refreshed by calling refreshInfo.
    */
   readonly attribute boolean needsRecoveryMode;
+
+  /**
+   * \brief Indicates whether the device is in recovery mode or not
+   * \note This value is not valid until it is refreshed at least once.
+   *       The value can be refreshed by calling refreshInfo.
+   */
+  readonly attribute boolean recoveryMode;
 
   /**
    * \brief The default firmware update that is packaged with the
