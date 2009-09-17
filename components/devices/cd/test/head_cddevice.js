@@ -1,34 +1,57 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 //------------------------------------------------------------------------------
 //
 // Mock CD device test
 //
 //------------------------------------------------------------------------------
+
+/**
+ * List of callbacks to call on test complete
+ */
+var gTailCallback = [];
+
+/**
+ * set the CD lookup provider to be the test provider
+ * and make sure we don't accidentally go over the internet to look for data
+ */
+(function head_ForceLookupProvider() {
+  const K_PREF = "metadata.lookup.default_provider";
+  const Application = Cc["@mozilla.org/fuel/application;1"]
+                        .getService(Ci.fuelIApplication);
+
+  var providerValue = Application.prefs.get(K_PREF);
+  Application.prefs.setValue(K_PREF, "TestProvider");
+  gTailCallback.push(function(){
+    if (providerValue) {
+      Application.prefs.setValue(K_PREF, providerValue.value);
+    } else {
+      Application.prefs.setValue(K_PREF, null);
+    }
+  });
+})();
 
 function createPropertyBag(aParams) {
   var bag = Cc["@mozilla.org/hash-property-bag;1"]

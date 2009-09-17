@@ -36,7 +36,7 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 
 function sbMLM() {
   // initialise private variables
-  this._providers = new Array;
+  this._providers = {};
   this._numProviders = 0;
 
   this._defaultProvider = null;
@@ -100,7 +100,7 @@ sbMLM.prototype = {
   // Return an nsISimpleEnumerator of all the providers registered with the
   // metadata lookup manager
   getProviders: function() {
-    return ArrayConverter.enumerator(this._providers);
+    return ArrayConverter.enumerator([p for each (p in this._providers)]);
   },
 
   // Return the metadata provider of the passed in name
