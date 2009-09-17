@@ -134,6 +134,13 @@ try
       }
       else if ( gTypeSniffer.isValidMediaURL(uri) )
       {
+        if (fp.file instanceof Components.interfaces.nsILocalFile) {
+          if (!fp.file.exists()) {
+            gBrowser.addTab(uri.spec);
+            return;
+          }
+        }
+
         // And if we're good, play it.
         SBDataSetStringValue("metadata.title", fp.file.leafName);
         SBDataSetStringValue("metadata.artist", "");
@@ -183,6 +190,36 @@ try
     }
   }
 
+  function MediaUriCheckerObserver(uri) {
+    this._uri = uri;
+  }
+
+  MediaUriCheckerObserver.prototype.onStartRequest =
+  function MediaUriCheckerObserver_onStartRequest(aRequest, aContext)
+  {
+  }
+
+  MediaUriCheckerObserver.prototype.onStopRequest =
+  function MediaUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
+  {
+    if (!Components.isSuccessCode(aStatusCode)) {
+      var libraryManager = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                             .getService(Ci.sbILibraryManager);
+
+      library = libraryManager.mainLibrary;
+      var mediaItem =
+            getFirstItemByProperty(library,
+                                   "http://songbirdnest.com/data/1.0#contentURL",
+                                   this._uri.spec);
+      if (mediaItem)
+        library.remove(mediaItem);
+
+      gBrowser.addTab(this._uri.spec);
+    }
+
+    return;
+  }
+
   function SBUrlOpen( parentWindow )
   {
     // Make a magic data object to get passed to the dialog
@@ -214,20 +251,30 @@ try
       }
       else if ( gTypeSniffer.isValidMediaURL(uri) )
       {
+        if (uri.scheme == "file") {
+          var pFileURL = uri.QueryInterface(Ci.nsIFileURL);
+          if (pFileURL.file && !pFileURL.file.exists()) {
+            gBrowser.addTab(uri.spec);
+            return;
+          }
+        }
+
+        if (uri.scheme == "http") {
+          var checker = Cc["@mozilla.org/network/urichecker;1"]
+            .createInstance(Ci.nsIURIChecker);
+          checker.init(uri);
+          checker.asyncCheck(new MediaUriCheckerObserver(uri), null);
+        }
+
         var item = null;
 
         // Doesn't import local file to the web Library
         if (uri.scheme != "file")
           item = SBImportURLIntoWebLibrary(uri);
 
-        // And if we're good, play it.
-        SBDataSetStringValue("metadata.title", uri.spec);
-        SBDataSetStringValue("metadata.artist", "");
-        SBDataSetStringValue("metadata.album", "");
-
         // Display the main library
         _SBShowMainLibrary();
-        
+
         var view = _SBGetCurrentView();
         var targetLength = view.length + 1;
 
@@ -1148,7 +1195,7 @@ function SBImportURLIntoMainLibrary(url) {
   items.appendElement(mediaItem, false);
 
   var metadataService = 
-     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
                .getService(Components.interfaces.sbIFileMetadataService);
   var metadataJob = metadataService.read(items);
 
@@ -1197,7 +1244,7 @@ function SBImportURLIntoWebLibrary(url) {
   items.appendElement(mediaItem, false);
 
   var metadataService = 
-     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]                                              
+     Components.classes["@songbirdnest.com/Songbird/FileMetadataService;1"]
                .getService(Components.interfaces.sbIFileMetadataService);
   var metadataJob = metadataService.read(items);
 

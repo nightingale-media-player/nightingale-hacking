@@ -420,7 +420,7 @@ function ImageUriCheckerObserver_onStartRequest(aRequest, aContext)
 ImageUriCheckerObserver.prototype.onStopRequest =
 function ImageUriCheckerObserver_onStopRequest(aRequest, aContext, aStatusCode)
 {
-  if (aStatusCode == 0) {
+  if (Components.isSuccessCode(aStatusCode)) {
 
     if(aRequest &&
        aRequest.baseChannel &&
