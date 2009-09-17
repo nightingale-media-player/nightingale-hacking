@@ -80,6 +80,8 @@ window.cdripController =
     // The device we are working with
   _device:        null,
   _deviceID:      null,
+  // Transcoding pref branch
+  _transcodePrefBranch: null,
 
   _supportedProfiles: null,
 
@@ -109,6 +111,13 @@ window.cdripController =
     this._updateRipSettings();
     this._togglePlayerControls(true);
     this._loadPlaylist();
+
+    // Listen to transcoding pref changes.
+    this._transcodePrefBranch = Cc["@mozilla.org/preferences-service;1"]
+                                  .getService(Ci.nsIPrefService)
+                                  .getBranch("songbird.cdrip.transcode_profile.")
+                                  .QueryInterface(Ci.nsIPrefBranch2);
+    this._transcodePrefBranch.addObserver("", this, false);
   },
 
   onUnload: function cdripController_onUnload() {
@@ -118,6 +127,9 @@ window.cdripController =
       eventTarget.addEventListener(this);
       this._device.removeEventListener(this);
     }
+
+    this._transcodePrefBranch.removeObserver("", this, false);
+    this._transcodePrefBranch = null;
   },
 
   onDeviceEvent: function cdripController_onDeviceEvent(aEvent) {
@@ -151,6 +163,11 @@ window.cdripController =
       default:
         break;
     }
+  },
+
+  observe: function cdripController_observe(subject, topic, data) {
+    // Something changed in the rip transcoding prefs, update that UI now.
+    this._updateRipSettings();
   },
 
   showCDRipSettings: function cdripController_showCDRipSettings() {
