@@ -39,22 +39,6 @@ if (typeof(Cu) == "undefined")
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
-//------------------------------------------------------------------------------
-//
-// CD Rip preference pane UI controller.
-//
-//------------------------------------------------------------------------------
-
-var CDRipPrefsUI =
-{
-  initialize: function CDRipPrefsUI_initialize() {
-    //
-    // XXXkreeger:
-    // Nothing to do until transcoding profiles are available (for populating
-    // the format and quality popups).
-    //
-  },
-};
 
 //------------------------------------------------------------------------------
 //
@@ -65,16 +49,19 @@ var CDRipPrefsUI =
 var CDRipPrefsPane =
 {
   warningShown: false,
+  currentTranscodeProfileID: 0,
 
   doPaneLoad: function CDRipPrefsPane_doPaneLoad() {
-    CDRipPrefsUI.initialize();
     CDRipPrefsPane.prefBranch = Cc["@mozilla.org/preferences-service;1"]
                                   .getService(Ci.nsIPrefService)
                                   .getBranch("songbird.cdrip.")
                                   .QueryInterface(Ci.nsIPrefBranch2);
     CDRipPrefsPane.prefBranch.addObserver("", CDRipPrefsPane, false);
 
-    // initialise the list of metadatalookup providers
+    // Initialize the transcoding options:
+    this.populateTranscodingProfiles();
+
+    // Initialize the list of metadatalookup providers
     var provList = document.getElementById("provider-list");
     var provPopup = document.getElementById("provider-popup");
     var catMgr = Cc["@mozilla.org/categorymanager;1"]
@@ -149,4 +136,139 @@ var CDRipPrefsPane =
       provDescr.removeChild(provDescr.firstChild);
     provDescr.appendChild(document.createTextNode(txt));
   },
+
+  //----------------------------------------------------------------------------
+  // Transcoding and quality utils
+
+  populateTranscodingProfiles:
+                         function CDRipPrefsPane_populateTranscodingProfiles() {
+    var transcodeManager =
+        Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
+          .getService(Ci.sbITranscodeManager);
+    var profiles = transcodeManager.getTranscodeProfiles();
+
+    // Get the current default transcode profile
+    var defaultFormatIdPref =
+      document.getElementById("rip_format_pref").getAttribute("name");
+    var defaultTranscodeId =
+      Application.prefs.getValue(defaultFormatIdPref, "");
+
+    // Clear the popup first.
+    var profilesMenuList = document.getElementById("rip-format-menulist");
+    var profilesPopupMenuList = document.getElementById("rip-format-list");
+    while (profilesPopupMenuList.firstChild) {
+      profilesPopupMenuList.removeChild(profilesPopupMenuList.firstChild);
+    }
+
+    // Push all of the "audio" type transcode profiles into the popup.
+    var highestPriorityProfile = null;
+    var highestPriorityProfileMenuitem = null;
+    for (var i = 0; i < profiles.length; i++) {
+      var profile = profiles.queryElementAt(i, Ci.sbITranscodeProfile);
+      if (profile.type == Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO) {
+        var readableName = profile.description;
+        var menuItem = document.createElement("menuitem");
+        menuItem.setAttribute("label", readableName);
+        menuItem.setAttribute("value", profile.id);
+
+        // Add the menu item to the list.
+        profilesPopupMenuList.appendChild(menuItem);
+
+        // If this is the default ID, set it now.
+        if (profile.id == defaultTranscodeId) {
+          profilesMenuList.selectedItem = menuItem;
+
+          // Update the bitrate field
+          this.onTranscodeProfileChanged(profile);
+        }
+
+        // Stash the highest priority profile to fallback on.
+        if (!highestPriorityProfile ||
+            profile.priority > highestPriorityProfile.priority)
+        {
+          highestPriorityProfile = profile;
+          highestPriorityProfileMenuitem = menuItem;
+        }
+      }
+    }
+
+    // If the selected menu item has not been selected yet, select the
+    // current platforms default encoder.
+    if (profilesMenuList.selectedIndex == -1) {
+      profilesMenuList.selectedItem = highestPriorityProfileMenuitem;
+      this.onTranscodeProfileChanged(highestPriorityProfile);
+    }
+  },
+
+  formatChanged: function CDRipPrefsPane_formatChanged(event) {
+    var selectedProfileID = event.target.value;
+
+    // Update the quality settings based on the new format.
+    var transcodeManager =
+      Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
+        .getService(Ci.sbITranscodeManager);
+    var profiles = transcodeManager.getTranscodeProfiles();
+    for (var i = 0; i < profiles.length; i++) {
+      var profile = profiles.queryElementAt(i, Ci.sbITranscodeProfile);
+      if (profile.type == Ci.sbITranscodeProfile.TRANSCODE_TYPE_AUDIO &&
+          profile.id == selectedProfileID)
+      {
+        this.onTranscodeProfileChanged(profile);
+        break;
+      }
+    }
+  },
+
+  updateBitratePref: function CDRipPrefsPane_updateBitratePref() {
+    // Since the displayable bitrate is always 1000 times smaller than what
+    // the actual pref needs to be, simply update the prefs value with
+    // 1000x the size of the displayable bitrate.
+    var qualityPref = document.getElementById("rip_quality_pref");
+    var bitrateField = document.getElementById("transcoding-bitrate-kbps");
+    qualityPref.value = parseInt(bitrateField.value * 1000);
+  },
+
+  onTranscodeProfileChanged:
+      function CDRipPrefsPane_onTranscodeProfileChanged(aTranscodeProfile) {
+
+    // First find out if the new transcode profile has bitrate information.
+    var bitrate = 0;
+    var hasBitrate = false;
+    var propertiesArray = aTranscodeProfile.audioProperties;
+    if (propertiesArray) {
+      for (var i = 0; i < propertiesArray.length; i++) {
+        var prop =
+          propertiesArray.queryElementAt(i, Ci.sbITranscodeProfileProperty);
+        if (prop.propertyName == "bitrate") {
+          hasBitrate = true;
+          if (!bitrate) {
+            bitrate = parseInt(prop.value);
+          }
+        }
+      }
+    }
+
+    var qualityPrefElem = document.getElementById("rip_quality_pref");
+    var bitrateTextfield = document.getElementById("transcoding-bitrate-kbps");
+    var bitrateLabel = document.getElementById("transcoding-quality-label");
+    if (hasBitrate) {
+      bitrateTextfield.hidden = false;
+      bitrateLabel.hidden = false;
+      // If the transcoding profile has changed always default to the bitrate
+      // that the profile defaults to.
+      if (aTranscodeProfile.id != this.currentTranscodeProfileID ||
+          !Application.prefs.has(qualityPrefElem.name))
+      {
+        bitrateTextfield.value = (bitrate / 1000);
+        this.updateBitratePref();
+      }
+    }
+    else {
+      bitrateTextfield.hidden = true;
+      bitrateLabel.hidden = true;
+    }
+
+    this.currentTranscodeProfileID = aTranscodeProfile.id;
+  }
 }
+
