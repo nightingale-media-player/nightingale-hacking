@@ -52,12 +52,10 @@
 // Mozilla imports.
 #include <nsArrayUtils.h>
 #include <nsIBufferedStreams.h>
-#include <nsIDOMWindowInternal.h>
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsIIOService.h>
 #include <nsILocalFile.h>
-#include <nsIWindowMediator.h>
 #include <nsIProxyObjectManager.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISound.h>
@@ -456,22 +454,6 @@ sbCDDevice::AttemptCDLookup()
   return NS_OK;
 }
 
-static bool
-InUnitTest()
-{
-  nsresult rv;
-  // Don't bother to prompt unless there is a player window open.
-  // This avoids popping a modal dialog mid unit test.
-  nsCOMPtr<nsIWindowMediator> windowMediator =
-    do_ProxiedGetService("@mozilla.org/appshell/window-mediator;1", &rv);
-  NS_ENSURE_SUCCESS(rv, false);
-
-  nsCOMPtr<nsIDOMWindowInternal> window;
-  rv = windowMediator->GetMostRecentWindow(nsnull,
-                                           getter_AddRefs(window));
-  return NS_FAILED(rv) || !window;
-}
-
 /*****
  * sbIJobProgressListener
  *****/
@@ -572,7 +554,7 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
       rv = curLibraryItem->SetProperties(curTrackPropArray);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-  } else if (!InUnitTest()) {
+  } else {
     nsCOMPtr<nsIDOMWindow> parentWindow;
     nsCOMPtr<nsIDOMWindow> domWindow;
     nsCOMPtr<nsIWindowWatcher> windowWatcher =
@@ -599,9 +581,6 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
                                    getter_AddRefs(domWindow));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  else {
-    NS_WARNING("CD Information failed in a unit test, bypassing dialog");
-  }
 
   return NS_OK;
 }
@@ -614,7 +593,7 @@ sbCDDevice::GenerateDefaultFilename(sbIMediaItem *aItem,
 
   // The format for the filename should be "<track#> - <title>"
   // I.e. "01 - DJFAIL MIX1"
-
+  
   nsresult rv;
   nsString trackNumProp;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
