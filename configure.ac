@@ -483,10 +483,15 @@ case "$SB_PLATFORM" in
     if test -z "$MIDL"; then AC_MSG_ERROR(Midl not found); fi
 
     # Check midl version
-    _MIDL_FULL_VERSION=`"${MIDL}" -v 2>&1 | sed -nre "$_MSVC_VER_FILTER"`
+    changequote(,)
+    _MIDL_VER_FILTER='s|.* \([0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*|\1|p'
+    changequote([,])
+    
+    _MIDL_FULL_VERSION=`"${MIDL}" -v 2>&1 | sed -ne "$_MIDL_VER_FILTER"`
     _MIDL_MAJOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $1 }'`
     _MIDL_MINOR_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $2 }'`
     _MIDL_REV_VERSION=`echo ${_MIDL_FULL_VERSION} | $AWK -F\. '{ print $3 }'`
+    
     # Add flags if necessary
     AC_MSG_CHECKING([for midl flags])
     case "$target" in
