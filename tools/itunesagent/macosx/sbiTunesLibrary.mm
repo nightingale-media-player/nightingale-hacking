@@ -322,7 +322,8 @@ SetPropertyWithDesc(AEDesc *aValueDesc,
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
   NSString *args =
-    [NSString stringWithFormat:gSetPropertyArgFormat, aDescType];
+    [NSString stringWithFormat:gSetPropertyArgFormat,
+                               (NSString *)UTCreateStringForOSType(aDescType)];
   AppleEvent setEvent;
   err = AEBuildAppleEvent(kAECoreSuite,
                           kAESetData,

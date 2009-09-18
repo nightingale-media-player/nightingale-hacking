@@ -337,7 +337,7 @@ sbiTunesAgentMacProcessor::UnregisterForStartOnLogin()
   NSArray *loginItems = nil;
   OSStatus err = LIAECopyLoginItems((CFArrayRef *) &loginItems);
   if (err != noErr) {
-    return sbOSStatusError("Could not get a refernce to the login items!", err);
+    return sbOSStatusError("Could not get a reference to the login items!", err);
   }
 
   NSURL *agentURL = GetSongbirdAgentURL();
