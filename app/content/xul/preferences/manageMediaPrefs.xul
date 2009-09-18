@@ -74,16 +74,20 @@
       <groupbox>
         <caption label="&prefWindow.manageMedia.title;"/>
         <description class="para">
-          &prefWindow.manageMedia.enablebox.description.pre; 
-          <label class="emphasis" value="&prefWindow.manageMedia.enablebox.warning;"/>
+          &prefWindow.manageMedia.enablebox.description.pre;
+          <span class="emphasis">&prefWindow.manageMedia.enablebox.warning;</span>
           &prefWindow.manageMedia.enablebox.description.post; 
         </description>
-        <checkbox id="manage_media_global_cmd"
-                  preference-editable="true"
-                  label="&prefWindow.manageMedia.enable.enable.label;"
-                  oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
-                  preference="manage_media_pref_library_enable"/>
-
+	<hbox>
+          <checkbox id="manage_media_global_cmd"
+                    preference-editable="true"
+                    label="&prefWindow.manageMedia.enable.enable.label;"
+                    oncommand="return manageMediaPrefsPane.doEnableCommand(event)"
+                    preference="manage_media_pref_library_enable"/>
+	  <spacer flex="1"/>
+	  <button id="mac_apply_button"
+		  label="&prefWindow.manageMedia.mac_button.label;"/>
+	</hbox>
         <hbox>
           <filefield id="manage_media_library_file" flex="1"/>
           <button id="manage_media_library_browse"

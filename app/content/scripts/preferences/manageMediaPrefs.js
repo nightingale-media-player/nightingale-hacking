@@ -140,8 +140,14 @@ var manageMediaPrefsPane = {
       return true;
     }
 
-    window.addEventListener('dialogaccept', forceCheck, false);
-    window.addEventListener('dialogcancel', forceCheck, false);
+    var button = document.getElementById("mac_apply_button")
+    if (/^Mac/.test(navigator.platform)) {
+      button.addEventListener("command", forceCheck, false);
+    } else {
+      button.hidden = true;
+      window.addEventListener("dialogaccept", forceCheck, false);
+      window.addEventListener("dialogcancel", forceCheck, false);
+    }
     
     document.getElementById("manage_media_pref_library_folder")
             .addEventListener("change", this, false);

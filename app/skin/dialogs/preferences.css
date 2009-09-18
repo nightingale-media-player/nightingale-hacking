@@ -165,7 +165,11 @@ label#manage_media_format_file_suffix_label {
   font-weight: bold;
 }
 
-.para
-{
-  text-indent: 1em;
+#manage_media_library_file {
+  margin-left: 1em;
+}
+
+/* the songbird theme ought to handle this, really */
+#manage_media_global_cmd .checkbox-label-box {
+  margin-left: 4px;
 }
