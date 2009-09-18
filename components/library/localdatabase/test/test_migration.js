@@ -28,57 +28,37 @@
  */
 
 /**
- * \brief Get a file from the localdatabase folder under the application.
- * \param aFileName - String name of file to get.
- */
-function getFile(aFileName) {
-  var file = Cc["@mozilla.org/file/directory_service;1"]
-               .getService(Ci.nsIProperties)
-               .get("resource:app", Ci.nsIFile);
-  file = file.clone();
-  file.append("chrome");
-  file.append("songbird");
-  file.append("content");
-  file.append("songbird");
-  file.append("library");
-  file.append("localdatabase");
-  file.append(aFileName);
-  return file;
-}
-
-/**
  * \brief Reads in the schema.sql file and parses out the library_metadata
  * version information.
  * \returns int value of schema version, -1 if unable to find.
  */
 function getLatestSchemaVersionFromFile() {
-  var schemaVersion = -1;
+  // the schema file may be in a jar, so we alway need to use the chrome url
+  const schemaSpec = "chrome://songbird/content/library/localdatabase/schema.sql";
+  var ioService = Cc["@mozilla.org/network/io-service;1"]
+                    .getService(Ci.nsIIOService);
+  var schemaUri = ioService.newURI(schemaSpec, null, null);
+  var channel = ioService.newChannelFromURI(schemaUri);
+  var rawStream = channel.open();
+  var inStream = Cc["@mozilla.org/scriptableinputstream;1"]
+                   .createInstance(Ci.nsIScriptableInputStream);
+  inStream.init(rawStream);
   
-  var schemaFile = getFile("schema.sql");
-  assertEqual(schemaFile.exists(),
-              true,
-              "Schema file not found: " + schemaFile.path);
-  
-  var istream = Cc["@mozilla.org/network/file-input-stream;1"]
-                  .createInstance(Ci.nsIFileInputStream);
-  istream.init(schemaFile, 0x01, 0444, 0);
-  istream.QueryInterface(Ci.nsILineInputStream);
-  
-  // Now read the file line by line and find the version
-  //insert into library_metadata (name, value) values ('version', '21');
-  var hasmore = true;
-  var versionLineReg = /^insert into library_metadata/;
-  do {
-    var line = {};
-    hasmore = istream.readLine(line);
-    if (versionLineReg.test(line.value)) {
-      schemaVersion = parseInt(line.value.match(/\'\d*\'/g)[0]
-                                         .replace(/\'/g, ""));
-    }
-  } while(hasmore && (schemaVersion == -1));
-  istream.close();
+  var data = "", buffer;
+  while ((buffer = inStream.read(~0))) {
+    data += buffer;
+  }
+  inStream.close();
+  rawStream.close();
 
-  return schemaVersion;
+  const versionLineReg = /^insert into library_metadata/;
+  for each (var line in data.split(/\n/)) {
+    if (versionLineReg.test(line)) {
+      return parseInt(line.match(/'(\d+)'/)[1]);
+    }
+  }
+
+  return -1;
 }
 
 function runTest() {
