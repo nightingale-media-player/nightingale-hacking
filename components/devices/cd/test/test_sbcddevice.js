@@ -33,7 +33,7 @@
 function runTest()
 {
   var deviceName = "TestCD";
-  var sbDevice = sbCreateDevice(deviceName, sbMakeMidnightRock());
+  var sbDevice = sbCreateDevice(deviceName, sbMakeInstantJunk());
   assertTrue(sbDevice);
   assertEqual(sbDevice.name, deviceName);
 }

@@ -44,6 +44,7 @@ interface sbIMockCDDeviceController : nsISupports
   const unsigned short MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME = 1;
   const unsigned short MOCK_MEDIA_DISC_U2                 = 2;
   const unsigned short MOCK_MEDIA_DISC_INCREDIBAD         = 3;
+  const unsigned short MOCK_MEDIA_DISC_INSTANT_JUNK       = 4;
 
   //
   // @brief Call this method to simulate a media inserted event.

@@ -45,10 +45,13 @@ var gTailCallback = [];
   var providerValue = Application.prefs.get(K_PREF);
   Application.prefs.setValue(K_PREF, "TestProvider");
   gTailCallback.push(function(){
-    if (providerValue) {
+    if (providerValue && providerValue.value) {
       Application.prefs.setValue(K_PREF, providerValue.value);
     } else {
-      Application.prefs.setValue(K_PREF, null);
+      pref = Application.prefs.get(K_PREF);
+      if (pref) {
+        pref.reset();
+      }
     }
   });
 })();
@@ -76,22 +79,29 @@ function sbMakeMidnightRock()
   var toc = newTOC(1, 15, 285675);
 
   // tracks:
-  toc.addTocEntry(32, 309, 0);
-  toc.addTocEntry(23260, 231, 0);
-  toc.addTocEntry(40612, 242, 0);
-  toc.addTocEntry(58770, 191, 0);
-  toc.addTocEntry(73145, 310, 0);
-  toc.addTocEntry(96415, 290, 0);
-  toc.addTocEntry(118232, 301, 0);
-  toc.addTocEntry(140867, 259, 0);
-  toc.addTocEntry(160322, 316, 0);
-  toc.addTocEntry(184085, 222, 0);
-  toc.addTocEntry(200777, 236, 0);
-  toc.addTocEntry(218535, 185, 0);
-  toc.addTocEntry(232437, 211, 0);
-  toc.addTocEntry(248320, 184, 0);
-  toc.addTocEntry(262145, 313, 0);
+  toc.addTocEntry(32, 309, 1);
+  toc.addTocEntry(23260, 231, 2);
+  toc.addTocEntry(40612, 242, 3);
+  toc.addTocEntry(58770, 191, 4);
+  toc.addTocEntry(73145, 310, 5);
+  toc.addTocEntry(96415, 290, 6);
+  toc.addTocEntry(118232, 301, 7);
+  toc.addTocEntry(140867, 259, 8);
+  toc.addTocEntry(160322, 316, 9);
+  toc.addTocEntry(184085, 222, 10);
+  toc.addTocEntry(200777, 236, 11);
+  toc.addTocEntry(218535, 185, 12);
+  toc.addTocEntry(232437, 211, 13);
+  toc.addTocEntry(248320, 184, 14);
+  toc.addTocEntry(262145, 313, 15);
   
+  return toc;
+}
+
+function sbMakeInstantJunk()
+{
+  var toc = newTOC(1, 1, 131072);
+  toc.addTocEntry(32, 32, 1);
   return toc;
 }
 

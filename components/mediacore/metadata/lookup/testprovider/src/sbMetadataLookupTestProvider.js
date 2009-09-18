@@ -98,6 +98,10 @@ var notIncredibad = [
   {artist: "Not The Lonely Island", title: "Fake Track 19"},
   ];
 
+var instantJunk = [
+  {artist: "Songbird", title: "No Data"},
+  ];
+
 sbTestProvider.prototype = {
   classDescription : 'Songbird Test Metadata Lookup Service',
   classID : Components.ID('9e599632-1dd1-11b2-ab82-e0952e7285ce'),
@@ -123,6 +127,9 @@ sbTestProvider.prototype = {
     else if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 19 &&
         aTOC.leadOutTrackOffset == 190565)
       return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INCREDIBAD;
+    else if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 1 &&
+        aTOC.leadOutTrackOffset == 131072)
+      return Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INSTANT_JUNK;
     else
       throw Components.results.NS_ERROR_UNEXPECTED;
   },
@@ -163,6 +170,11 @@ sbTestProvider.prototype = {
         // Return multiple TOCs found after 5 seconds
         this._timer.initWithCallback(this, 5000,
                                      Ci.nsITimerCallback.TYPE_ONE_SHOT);
+        break;
+      case Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INSTANT_JUNK:
+        // Test case 5: Instant Junk
+        // Return multiple TOCs found immediately
+        this.notify(this._timer);
         break;
       default:
         dump("This is not a recognised disc.\n");
@@ -221,7 +233,6 @@ sbTestProvider.prototype = {
       return;
 
     this._timer = null;
-
     var id = this.whichAlbum;
     if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_BABY_ONE_MORE_TIME)
     {
@@ -243,6 +254,15 @@ sbTestProvider.prototype = {
                              "Fake Incredibad", "Gospel");
       this.job.appendResult(a);
       this.job.appendResult(b);
+      this.job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
+    } else if (id == Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_INSTANT_JUNK)
+    {
+      // return a dummy disc immediately
+      var a = this.makeAlbum(instantJunk, "Songbird", "Instant Junk",
+                             "Soundtrack");
+
+      // append this result & declare success
+      this.job.appendResult(a);
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_SUCCEEDED);
     } else {
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);
