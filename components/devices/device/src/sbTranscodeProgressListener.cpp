@@ -38,7 +38,7 @@
 #include <sbStandardProperties.h>
 #include <sbStatusPropertyValue.h>
 #include <sbVariantUtils.h>
-
+#include <sbIJobCancelable.h>
 // Local includes
 #include "sbDeviceStatusHelper.h"
 
@@ -51,12 +51,14 @@ sbTranscodeProgressListener::New(sbBaseDevice * aDeviceBase,
                                  sbDeviceStatusHelper * aDeviceStatusHelper,
                                  sbBaseDevice::TransferRequest * aRequest,
                                  PRMonitor * aCompleteNotifyMonitor,
-                                 StatusProperty const & aStatusProperty) {
+                                 StatusProperty const & aStatusProperty,
+                                 sbIJobCancelable * aCancel) {
   return new sbTranscodeProgressListener(aDeviceBase,
                                          aDeviceStatusHelper,
                                          aRequest,
                                          aCompleteNotifyMonitor,
-                                         aStatusProperty);
+                                         aStatusProperty,
+                                         aCancel);
 }
 
 sbTranscodeProgressListener::sbTranscodeProgressListener(
@@ -64,14 +66,17 @@ sbTranscodeProgressListener::sbTranscodeProgressListener(
   sbDeviceStatusHelper * aDeviceStatusHelper,
   sbBaseDevice::TransferRequest * aRequest,
   PRMonitor * aCompleteNotifyMonitor,
-  StatusProperty const & aStatusProperty) :
+  StatusProperty const & aStatusProperty,
+  sbIJobCancelable * aCancel) :
     mBaseDevice(aDeviceBase),
     mStatus(aDeviceStatusHelper),
     mRequest(aRequest),
     mCompleteNotifyMonitor(aCompleteNotifyMonitor),
     mIsComplete(0),
     mTotal(0),
-    mStatusProperty(aStatusProperty) {
+    mStatusProperty(aStatusProperty),
+    mCancel(aCancel),
+    mAborted(PR_FALSE) {
 
   NS_ASSERTION(mBaseDevice,
                "sbTranscodeProgressListener mBaseDevice can't be null");
@@ -111,6 +116,8 @@ sbTranscodeProgressListener::Completed(sbIJobProgress * aJobProgress) {
   rv = aJobProgress->RemoveJobProgressListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mCancel = nsnull;
+
   return NS_OK;
 }
 
@@ -147,6 +154,12 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
 
+  if (mCancel && mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
+    mAborted = PR_TRUE;
+    mCancel->Cancel();
+    mCancel = nsnull;
+    return NS_OK;
+  }
   PRUint16 status;
   nsresult rv = aJobProgress->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);

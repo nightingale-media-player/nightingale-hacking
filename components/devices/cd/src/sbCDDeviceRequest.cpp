@@ -33,6 +33,7 @@
 #include <sbArray.h>
 #include <sbDeviceUtils.h>
 #include <sbIDeviceEvent.h>
+#include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbLibraryUtils.h>
@@ -155,7 +156,10 @@ sbCDDevice::ReqHandleRequestAdded()
 
         case TransferRequest::REQUEST_READ :
           mStatus.ChangeState(STATE_TRANSCODE);
-          ReqHandleRead(request);
+          rv = ReqHandleRead(request);
+          if (rv == NS_ERROR_ABORT) {
+            return NS_OK;
+          }
           break;
 
         case TransferRequest::REQUEST_EJECT:
@@ -745,13 +749,17 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   StatusProperty statusProperty(source,
                                 NS_LITERAL_STRING(SB_PROPERTY_CDRIP_STATUS));
+
+  nsCOMPtr<sbIJobCancelable> cancel = do_QueryInterface(proxiedJob);
+
   // Create our listener for transcode progress.
   nsRefPtr<sbTranscodeProgressListener> listener =
     sbTranscodeProgressListener::New(this,
                                      &mStatus,
                                      aRequest,
                                      mReqWaitMonitor,
-                                     statusProperty);
+                                     statusProperty,
+                                     cancel);
   NS_ENSURE_TRUE(listener, NS_ERROR_OUT_OF_MEMORY);
 
   // Setup the progress listener.
@@ -787,6 +795,10 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
     // If not complete, wait for completion.
     if (!isComplete)
       monitor.Wait();
+  }
+
+  if (listener->IsAborted()) {
+    return NS_ERROR_ABORT;
   }
 
   // Check the transcode status.

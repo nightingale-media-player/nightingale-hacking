@@ -34,7 +34,7 @@
 #include <sbIMediacoreEventListener.h>
 // Forward class declarations
 
-class sbIJobProgress;
+class sbIJobCancelable;
 class sbDeviceStatusAutoOperationComplete;
 class sbDeviceStatusHelper;
 class sbStatusPropertyValue;
@@ -86,17 +86,19 @@ public:
       sbDeviceStatusHelper * aDeviceStatusHelper,
       sbBaseDevice::TransferRequest * aRequest,
       PRMonitor * aCompleteNotifyMonitor = nsnull,
-      StatusProperty const & aStatusProperty = StatusProperty());
+      StatusProperty const & aStatusProperty = StatusProperty(),
+      sbIJobCancelable * aCancel = nsnull);
 
-  PRBool IsComplete() { return PR_AtomicAdd(&mIsComplete, 0); };
-
+  PRBool IsComplete() const { return mIsComplete; };
+  PRBool IsAborted() const { return mAborted; }
 private:
   inline
   sbTranscodeProgressListener(sbBaseDevice * aDeviceBase,
                               sbDeviceStatusHelper * aDeviceStatusHelper,
                               sbBaseDevice::TransferRequest * aRequest,
                               PRMonitor * aCompleteNotifyMonitor,
-                              StatusProperty const & aStatusProperty);
+                              StatusProperty const & aStatusProperty,
+                              sbIJobCancelable * aCancel);
 
   ~sbTranscodeProgressListener();
   /**
@@ -127,6 +129,8 @@ private:
   PRInt32 mIsComplete;
   PRUint32 mTotal;
   StatusProperty mStatusProperty;
+  nsCOMPtr<sbIJobCancelable> mCancel;
+  PRBool mAborted;
 };
 
 

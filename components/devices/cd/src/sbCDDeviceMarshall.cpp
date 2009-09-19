@@ -349,6 +349,8 @@ sbCDDeviceMarshall::DiscoverDevices()
   // media currently inserted.
   nsresult rv;
 
+  NS_ENSURE_STATE(mCDDeviceService);
+
   // Since the GW stuff is a little jacked, use the index getter
   PRInt32 deviceCount = 0;
   rv = mCDDeviceService->GetNbDevices(&deviceCount);
@@ -417,6 +419,8 @@ sbCDDeviceMarshall::BeginMonitoring()
 {
   nsresult rv;
 
+  NS_ENSURE_STATE(mCDDeviceService);
+
   rv = mCDDeviceService->RegisterListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -431,9 +435,10 @@ sbCDDeviceMarshall::StopMonitoring()
 {
   nsresult rv;
 
-  rv = mCDDeviceService->RemoveListener(this);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  if (mCDDeviceService) {
+    rv = mCDDeviceService->RemoveListener(this);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   return NS_OK;
 }
 
@@ -500,7 +505,7 @@ sbCDDeviceMarshall::OnMediaEjected(sbICDDevice *aDevice)
   nsString deviceName;
   rv = aDevice->GetName(deviceName);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   rv = RemoveDevice(deviceName);
   NS_ENSURE_SUCCESS(rv, rv);
 
