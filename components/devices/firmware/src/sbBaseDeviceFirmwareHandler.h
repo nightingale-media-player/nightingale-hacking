@@ -147,6 +147,8 @@ public:
   virtual nsresult OnGetCurrentFirmwareVersion(PRUint32 *aCurrentFirmwareVersion);
   // override me, see cpp file for implementation notes
   virtual nsresult OnGetCurrentFirmwareReadableVersion(nsAString &aCurrentFirmwareReadableVersion);
+  // override me, see cpp file for implementation notes
+  virtual nsresult OnGetRecoveryMode(PRBool *aRecoveryMode);
 
   // override me, see cpp file for implementation notes
   virtual nsresult OnCanHandleDevice(sbIDevice *aDevice, 

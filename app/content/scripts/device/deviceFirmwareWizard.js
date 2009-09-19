@@ -45,6 +45,7 @@ if (typeof(Cu) == "undefined")
 
 var deviceFirmwareWizard = {
   _device: null,
+  _deviceProperties: null,
   _deviceFirmwareUpdater: null,
   _wizardElem: null,
   _wizardMode: "update",
@@ -139,6 +140,8 @@ var deviceFirmwareWizard = {
       break;
       
       case "device_needs_recovery_mode": {
+        this._currentOperation = "needsrecoverymode";
+        
         let deviceManager = 
           Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
             .getService(Ci.sbIDeviceManager2);
@@ -146,15 +149,46 @@ var deviceFirmwareWizard = {
         let self = this;
         deviceManager.addEventListener(self);
         
-        let handler = 
-          this._deviceFirmwareUpdater.getActiveHandler(this._device);
-
-        let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
-        browser.setAttribute("src", handler.resetInstructionsLocation.spec);
+        let handler = null;
         
+        try {
+          handler = this._deviceFirmwareUpdater.getActiveHandler(this._device);
+        }
+        catch(e) {
+          if(e.result == Cr.NS_ERROR_NOT_AVAILABLE &&
+             this._wizardMode == "repair") {
+            let listener = {
+              device: self._device,
+              onDeviceEvent: function(aEvent) {
+                if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
+                  let handler = self._deviceFirmwareUpdater.getActiveHandler(this.device);
+
+                  let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
+                  label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
+                                                  [self._deviceProperties.modelNumber]);
+                  if(handler.resetInstructionsLocation) {
+                    let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+                    browser.setAttribute("src", handler.resetInstructionsLocation.spec);
+                  }
+                }
+              }
+            };
+            
+            this._deviceFirmwareUpdater.checkForUpdate(this._device, listener);
+            this._deviceFirmwareUpdater.requireRecovery(this._device);
+            
+            return;
+          }
+        }
+
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
         label.value = SBFormattedString("device.firmware.wizard.recovery_mode.connected",
-                                        [this._device.properties.modelNumber]);
+                                        [this._deviceProperties.modelNumber]);
+
+        if(handler.resetInstructionsLocation) {
+          let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
+          browser.setAttribute("src", handler.resetInstructionsLocation.spec);
+        }
       }
       break;
       
@@ -219,7 +253,7 @@ var deviceFirmwareWizard = {
         }
 
         let descString = SBFormattedString("device.firmware.repair.description",
-                                           [this._device.properties.friendlyName]);
+                                           [this._deviceProperties.friendlyName]);
         this._repairDescriptionNode = document.createTextNode(descString);
         descElem.appendChild(this._repairDescriptionNode);
       }
@@ -417,6 +451,7 @@ var deviceFirmwareWizard = {
     }
 
     this._device = dialogPB.objects.queryElementAt(0, Ci.sbIDevice);
+    this._deviceProperties = this._device.properties;
     this._deviceFirmwareUpdater = 
       Cc["@songbirdnest.com/Songbird/Device/Firmware/Updater;1"]
         .getService(Ci.sbIDeviceFirmwareUpdater);
@@ -435,12 +470,21 @@ var deviceFirmwareWizard = {
     var self = this;
     if(this._wizardMode == "repair") {
       this._wizardElem.title = SBString("device.firmware.repair.title");
-      setTimeout(function() {
-          self._wizardElem.goTo("device_firmware_wizard_repair_page");
-        }, 0);
-      
-      // XXXAus: Actually, check if the device is in the right mode, if not, go
-      // to needs recovery! Need a way to check if device is in rec or normal mode.
+      let handler = this._deviceFirmwareUpdater.getHandler(this._device);
+      handler.bind(this._device, null);
+      let recoveryMode = handler.recoveryMode;
+      handler.unbind();
+      if(recoveryMode) {
+        setTimeout(function() {
+            self._wizardElem.goTo("device_firmware_wizard_repair_page");
+          }, 0);
+      }
+      else {
+        // device needs to be switched to recovery mode
+        setTimeout(function() {
+            self._wizardElem.goTo("device_needs_recovery_mode_page");
+          }, 0);
+      }
     }
     else {
       setTimeout(function() {
@@ -599,44 +643,46 @@ var deviceFirmwareWizard = {
   _handleNeedsRecoveryMode: function deviceFirmwareWizard__handleNeedsRecoveryMode(aEvent) {
     switch(aEvent.type) {
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED: {
-        if(this._waitingForDeviceReconnect) {
-          this._device = aEvent.data.QueryInterface(Ci.sbIDevice);
-          
-          let criticalFailure = false;
-          let continueSuccess = false;
-          
-          try {
-            var self = this;
-            continueSuccess = 
-              this._deviceFirmwareUpdater.continueUpdate(self._device, self);
-          }
-          catch(e) {
-            criticalFailure = true;
-          }          
-
-          if(continueSuccess || criticalFailure) {
-            this._waitingForDeviceReconnect = false;
-          
-            let deviceManager = 
-              Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                .getService(Ci.sbIDeviceManager2);
+        if(!this._waitingForDeviceReconnect) {
+          return;
+        }
         
-            deviceManager.removeEventListener(this);
+        this._device = aEvent.data.QueryInterface(Ci.sbIDevice);
+        
+        let criticalFailure = false;
+        let continueSuccess = false;
+        
+        try {
+          var self = this;
+          continueSuccess = 
+            this._deviceFirmwareUpdater.continueUpdate(self._device, self);
+        }
+        catch(e) {
+          criticalFailure = true;
+        }          
 
-            if(criticalFailure) {
-              // We're not recovering from this one, go to the error page.
-              this.wizardElem.goTo("device_firmware_install_error_page");
+        if(continueSuccess || criticalFailure) {
+          this._waitingForDeviceReconnect = false;
+        
+          let deviceManager = 
+            Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+              .getService(Ci.sbIDeviceManager2);
+      
+          deviceManager.removeEventListener(this);
+
+          if(criticalFailure) {
+            // We're not recovering from this one, go to the error page.
+            this.wizardElem.goTo("device_firmware_install_error_page");
+          }
+          else {
+            if(this._wizardMode == "repair") {
+              // Repair mode can go straight to installation.
+              this.wizardElem.goTo("device_firmware_wizard_install_page");
             }
             else {
-              if(this._wizardMode == "repair") {
-                // Repair mode can go straight to installation.
-                this.wizardElem.goTo("device_firmware_wizard_install_page");
-              }
-              else {
-                // Business as usual, download the new firmware and proceed
-                // with the installation.
-                this.wizardElem.goTo("device_firmware_wizard_download_page");
-              }
+              // Business as usual, download the new firmware and proceed
+              // with the installation.
+              this.wizardElem.goTo("device_firmware_wizard_download_page");
             }
           }
         }
@@ -644,11 +690,11 @@ var deviceFirmwareWizard = {
       break;
       
       case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED: {
+        this._waitingForDeviceReconnect = true;
+
         let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
         label.value = SBFormattedString("device.firmware.wizard.recovery_mode.disconnected",
-                                        [this._device.properties.modelNumber]);
-                                        
-        this._waitingForDeviceReconnect = true;
+                                        [this._deviceProperties.modelNumber]);
       }
       break;
     } 

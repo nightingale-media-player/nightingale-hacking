@@ -963,6 +963,20 @@ sbDeviceFirmwareUpdater::Cancel(sbIDevice *aDevice)
 }
 
 NS_IMETHODIMP
+sbDeviceFirmwareUpdater::RequireRecovery(sbIDevice *aDevice)
+{
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aDevice);
+
+  nsCOMPtr<sbIDeviceFirmwareHandler> handler = GetRunningHandler(aDevice);
+
+  PRBool success = mRecoveryModeHandlers.Put(aDevice, handler);
+  NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent) 
 {
   LOG(("[sbDeviceFirmwareUpdater] - OnDeviceEvent"));

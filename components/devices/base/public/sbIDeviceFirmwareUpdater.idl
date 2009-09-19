@@ -41,7 +41,7 @@ interface sbIDeviceFirmwareUpdate;
  *       to use your own listener if you do not have a listener registered
  *       with the device.
  */
-[scriptable, uuid(b74ea787-f864-4de2-b499-e56c8af35e18)]
+[scriptable, uuid(1561bc1c-c1a9-484e-b86c-585534dfa86b)]
 interface sbIDeviceFirmwareUpdater : nsISupports
 {
   /**
@@ -180,4 +180,9 @@ interface sbIDeviceFirmwareUpdater : nsISupports
    * \brief Cancel the current operation
    */
   void cancel(in sbIDevice aDevice);
+
+  /**
+   * \brief Force a device to go through recovery mode.
+   */
+  void requireRecovery(in sbIDevice aDevice);
 };

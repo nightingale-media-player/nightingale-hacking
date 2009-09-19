@@ -415,6 +415,16 @@ sbBaseDeviceFirmwareHandler::OnGetCurrentFirmwareReadableVersion(nsAString &aCur
 }
 
 /*virtual*/ nsresult 
+sbBaseDeviceFirmwareHandler::OnGetRecoveryMode(PRBool *aRecoveryMode)
+{
+  /**
+   * You should return if the bound device is in recovery mode or not.
+   */
+
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
+/*virtual*/ nsresult 
 sbBaseDeviceFirmwareHandler::OnCanHandleDevice(sbIDevice *aDevice, 
                                                PRBool *_retval)
 {
@@ -830,7 +840,9 @@ sbBaseDeviceFirmwareHandler::GetRecoveryMode(PRBool *aRecoveryMode)
   NS_ENSURE_ARG_POINTER(aRecoveryMode);
 
   nsAutoMonitor mon(mMonitor);
-  *aRecoveryMode = mRecoveryMode;
+
+  nsresult rv = OnGetRecoveryMode(aRecoveryMode);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
