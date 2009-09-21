@@ -597,7 +597,7 @@ sbCDDevice::GenerateDefaultFilename(sbIMediaItem *aItem,
 
   // The format for the filename should be "<track#> - <title>"
   // I.e. "01 - DJFAIL MIX1"
-  
+
   nsresult rv;
   nsString trackNumProp;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
@@ -842,6 +842,15 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   // Check for transcode errors.
   if (status != sbIJobProgress::STATUS_SUCCEEDED) {
     return NS_ERROR_FAILURE;
+  }
+
+  // Show the item.
+  {
+    IgnoreMediaItem(aRequest->item);
+    sbCDAutoIgnoreItem autoUnignore(this, aRequest->item);
+    rv = aRequest->item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                     NS_LITERAL_STRING("0"));
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   autoComplete.SetResult(NS_OK);

@@ -2709,6 +2709,10 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
     // If we can't find it then just forget copying no reason to error
     return NS_OK;
   }
+  // Hide the item till the copy is complete. Code processing the
+  // read request will unhide.
+  aDestinationItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                NS_LITERAL_STRING("1"));
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("data"),
                                              folderURI);
   NS_ENSURE_SUCCESS(rv, rv);
