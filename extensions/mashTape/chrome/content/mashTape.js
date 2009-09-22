@@ -466,10 +466,11 @@ mashTape.init = function(e) {
 		splitter.appendChild(grippy);
 		thispanel.actualContent.appendChild(splitter);
 		
-		iframe = document.createElement("iframe");
+		iframe = document.createElementNS("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul", "iframe");
 		iframe.id = "mashTape-flash-detail";
 		iframe.setAttribute("flex", 1);
 		iframe.setAttribute("tooltip", "aHTMLTooltip");
+		iframe.setAttribute("type", "content");
 
 		iframe.setAttribute("src",
 				"http://mashtape.songbirdnest.com/iframeFlash.html");
@@ -770,9 +771,9 @@ mashTape.playingObserver = {
 		{
 			// we were previously paused and we just unpaused
 			var videoWindow = mashTape.flashDetailFrame.contentWindow;
-			if (typeof(videoWindow.mashTapeVideo) != "undefined") {
-				videoWindow.mashTapeVideo.pauseVideo()
-			}
+      var event = videoWindow.document.createEvent("Events");
+      event.initEvent("songbirdPlaybackResumed", false, false);
+      videoWindow.dispatchEvent(event);
 		}
 	}
 }
@@ -2100,111 +2101,30 @@ mashTape.loadFlashDetail = function(el) {
 	var flashWindow = mashTape.flashDetailFrame.contentWindow;
 	var doc = mashTape.flashDetailFrame.contentWindow.document;
 
+  var script = doc.createElement("script");
+  script.setAttribute("src", "chrome://mashtape/content/iframe-flash.js");
+  doc.body.appendChild(script);
+
 	doc.mashTapeRatio = ratio;
 
-	flashWindow.mashTapeVideo = {
-		// Only resume playback if mT triggered the pause in the first place
-		paused: false,
-		pauseSongbird: function() {
-			if (gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING)
-			{
-				flashWindow.mashTapeVideo.paused = true;
-				gMM.playbackControl.pause();
-			}
-		},
-
-		resumeSongbird: function() {
-			if ((gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PLAYING ||
-					gMM.status.state == Ci.sbIMediacoreStatus.STATUS_PAUSED) &&
-					flashWindow.mashTapeVideo.paused)
-			{
-				flashWindow.mashTapeVideo.paused = false;
-				gMM.playbackControl.play();
-			}
-		},
-		
-		pauseVideo: function() {
-			var obj = doc.getElementById("mTFlashObject");
-			if (typeof(obj) == "undefined")
-				return;
-			switch(obj.getAttribute("mashTape-provider")) {
-				case "YouTube":
-					obj.pauseVideo();
-					break;
-				case "Yahoo Music":
-					obj.vidPause();
-					break;
-				case "MTV Music Video":
-					obj.pause();
-					break;
-				default:
-					return;
-			}
-		},
-
-		// Provider specific listeners
-		youTubeListener: function(state) {
-      switch (state) {
-        case 1: // playing
-        case 3: // buffering
-          flashWindow.mashTapeVideo.pauseSongbird();
-          break;
-        case 0: // done playing
-        case 2: // paused
-          flashWindow.mashTapeVideo.resumeSongbird();
-          break;
-        default:
-          break;
-      }
-		},
-		yahooListener: function(eventType, eventInfo) {
-			if (eventType != "done")
-				return;
-			flashWindow.mashTapeVideo.resumeSongbird();
-		},
-
-		openLink: function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-			var target = e.target;
-			while (target != null && !target.href)
-				target = target.parentNode;
-			if (target == null)
-				return;
-			if (target.href) {
-				Components.classes['@mozilla.org/appshell/window-mediator;1']
-				.getService(Components.interfaces.nsIWindowMediator)
-				.getMostRecentWindow('Songbird:Main').gBrowser
-				.loadOneTab(target.href);
-			}
-		}
-	}
-
-	// YouTube is hard-coded to look for a window-level function named
-	// 'onYouTubePlayerReady' which is invoked with the id of the object
-	flashWindow.onYouTubePlayerReady = function(id) {
-		var p = doc.getElementById("mTFlashObject");
-		p.addEventListener("onStateChange", "mashTapeVideo.youTubeListener");
-	}
-	
-	// MTV is hard-coded to look for a window-level function named
-	// 'mtvnPlayerLoaded' which is invoked with the id of the object
-	flashWindow.mtvListener = function(state) {
-		// if no state parameter passed, then this is the MEDIA_ENDED
-		// event, and we're done with the video, so resume.
-		if (state == null || state == "stopped") {
-			flashWindow.mashTapeVideo.resumeSongbird();
-		}
-	}
-	flashWindow.mtvnPlayerLoaded = function(id) {
-		var p = doc.getElementById("mTFlashObject");
-		p.addEventListener("STATE_CHANGE", 'mtvListener');
-		p.addEventListener("MEDIA_ENDED", 'mtvListener');
-	}
+  function openLink(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    var target = e.target;
+    while (target != null && !target.href)
+      target = target.parentNode;
+    if (target == null)
+      return;
+    if (target.href) {
+      Components.classes['@mozilla.org/appshell/window-mediator;1']
+      .getService(Components.interfaces.nsIWindowMediator)
+      .getMostRecentWindow('Songbird:Main').gBrowser
+      .loadOneTab(target.href);
+    }
+  }
 
 	if (typeof(mashTape.flashListenerAdded) == "undefined") {
-		flashWindow.addEventListener('click',
-				flashWindow.mashTapeVideo.openLink, false);
+		flashWindow.addEventListener('click', openLink, false);
 		mashTape.flashListenerAdded = true;
 	}
 
