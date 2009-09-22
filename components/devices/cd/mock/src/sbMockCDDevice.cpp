@@ -35,6 +35,11 @@
 #include <nsICategoryManager.h>
 #include <nsIGenericFactory.h>
 
+
+//==============================================================================
+// Mock CD TOC entry implementation
+//==============================================================================
+
 class sbMockCDTOCEntry : public sbICDTOCEntry
 {
 public:
@@ -131,11 +136,10 @@ sbMockCDTOCEntry::GetTrackURI(nsAString & aTrackURI)
   aTrackURI = uri;
   return NS_OK;
 }
-//------------------------------------------------------------------------------
-//
-// Mock CD TOC Entry implementation
-//
-//------------------------------------------------------------------------------
+
+//==============================================================================
+// Mock CD TOC implementation
+//==============================================================================
 
 class sbMockCDTOC : public sbICDTOC, sbIMockCDTOC
 {
@@ -172,7 +176,6 @@ private:
 
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockCDTOC, sbICDTOC, sbIMockCDTOC)
 
-/* readonly attribute unsigned short status; */
 NS_IMETHODIMP
 sbMockCDTOC::GetStatus(PRUint16 *aStatus)
 {
@@ -182,7 +185,6 @@ sbMockCDTOC::GetStatus(PRUint16 *aStatus)
   return NS_OK;
 }
 
-/* readonly attribute long firstTrackIndex; */
 NS_IMETHODIMP
 sbMockCDTOC::GetFirstTrackIndex(PRInt32 *aFirstTrackIndex)
 {
@@ -193,7 +195,6 @@ sbMockCDTOC::GetFirstTrackIndex(PRInt32 *aFirstTrackIndex)
   return NS_OK;
 }
 
-/* readonly attribute long lastTrackIndex; */
 NS_IMETHODIMP
 sbMockCDTOC::GetLastTrackIndex(PRInt32 *aLastTrackIndex)
 {
@@ -204,7 +205,6 @@ sbMockCDTOC::GetLastTrackIndex(PRInt32 *aLastTrackIndex)
   return NS_OK;
 }
 
-/* readonly attribute long leadOutTrackOffset; */
 NS_IMETHODIMP
 sbMockCDTOC::GetLeadOutTrackOffset(PRInt32 *aLeadOutTrackOffset)
 {
@@ -215,7 +215,6 @@ sbMockCDTOC::GetLeadOutTrackOffset(PRInt32 *aLeadOutTrackOffset)
   return NS_OK;
 }
 
-/* readonly attribute nsIArray tracks; */
 NS_IMETHODIMP
 sbMockCDTOC::GetTracks(nsIArray * *aTracks)
 {
@@ -254,6 +253,10 @@ sbMockCDTOC::Initialize(PRInt32 aFirstTrackIndex,
   return NS_OK;
 }
 
+//==============================================================================
+// Mock CD device implementation
+//==============================================================================
+
 class sbMockCDDevice : public sbICDDevice, sbIMockCDDevice
 {
 public:
@@ -278,10 +281,12 @@ public:
                      mWritable(PR_FALSE),
                      mDiscInserted(PR_FALSE),
                      mDiscType(sbICDDevice::AUDIO_DISC_TYPE),
-                     mEjected(PR_FALSE) {}
+                     mEjected(PR_FALSE),
+                     mIsDeviceLocked(PR_FALSE) {}
 
   ~sbMockCDDevice()
   {
+    NS_ASSERTION(mIsDeviceLocked, "ERROR: Device is still locked!!!!!!!!");
     mController = nsnull;
   }
 
@@ -303,6 +308,7 @@ private:
   PRBool mReadable;
   PRBool mWritable;
   PRBool mDiscInserted;
+  PRBool mIsDeviceLocked;
   PRUint32 mDiscType;
   PRBool mEjected;
   nsCOMPtr<sbICDTOC> mTOC;
@@ -318,7 +324,6 @@ sbMockCDDevice::GetName(nsAString & aName)
   return NS_OK;
 }
 
-/* readonly attribute boolean readable; */
 NS_IMETHODIMP
 sbMockCDDevice::GetReadable(PRBool *aReadable)
 {
@@ -326,7 +331,6 @@ sbMockCDDevice::GetReadable(PRBool *aReadable)
   return NS_OK;
 }
 
-/* readonly attribute boolean writeable; */
 NS_IMETHODIMP
 sbMockCDDevice::GetWriteable(PRBool *aWritable)
 {
@@ -426,6 +430,33 @@ sbMockCDDevice::SetEjected(PRBool aEjected)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbMockCDDevice::GetIsDeviceLocked(PRBool *aIsLocked)
+{
+  NS_ENSURE_ARG_POINTER(aIsLocked);
+
+  *aIsLocked = mIsDeviceLocked;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDDevice::LockDevice()
+{
+  mIsDeviceLocked = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDDevice::UnlockDevice()
+{
+  mIsDeviceLocked = PR_FALSE;
+  return NS_OK;
+}
+
+//==============================================================================
+// XPCOM component registration
+//==============================================================================
+
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDDevice)
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbMockCDTOC)
 
@@ -446,5 +477,3 @@ static nsModuleComponentInfo sbMockCDDevice[] =
 };
 
 NS_IMPL_NSGETMODULE(SongbirdMockCDDevice, sbMockCDDevice)
-
-

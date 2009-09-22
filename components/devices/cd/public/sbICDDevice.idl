@@ -131,7 +131,7 @@ interface sbICDDeviceEvent : sbIDeviceEvent
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(f87e843e-1dd1-11b2-9817-ca281b55f6b9)]
+[scriptable, uuid(63ec6cfe-1dd2-11b2-81d2-8b303f4f6ada)]
 interface sbICDDevice : nsISupports
 {
   //
@@ -180,5 +180,19 @@ interface sbICDDevice : nsISupports
   // @brief ejects the CD from the drive
   //
   void eject();
-};
 
+  //
+  // @brief Return the locked state of the device.
+  //
+  readonly attribute boolean isDeviceLocked;
+
+  //
+  // @brief Lock the CD drive (prevent the tray from being opened)
+  //
+  void lockDevice();
+
+  //
+  // @brief Unlock the CD drive (allow the tray from being opened)
+  //
+  void unlockDevice();
+};

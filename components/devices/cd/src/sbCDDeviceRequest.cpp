@@ -163,9 +163,27 @@ sbCDDevice::ReqHandleRequestAdded()
 
         case TransferRequest::REQUEST_READ :
           mStatus.ChangeState(STATE_TRANSCODE);
+
+          // Ensure that the device is locked during a read operation.
+          {
+            PRBool isDeviceLocked = PR_FALSE;
+            rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
+            NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                "Could not get device lock state!");
+            if (!isDeviceLocked) {
+              rv = mCDDevice->LockDevice();
+              NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                  "Could not lock the cd device!");
+            }
+          }
+
           rv = ReqHandleRead(request);
           if (rv == NS_ERROR_ABORT) {
-            return NS_OK;
+            // Just warn here, the check for |NS_ERROR_ABORT| is
+            // outside of the loop.
+            NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+              "Could not read a track off of disc!");
+            break;
           }
           break;
 
@@ -189,7 +207,23 @@ sbCDDevice::ReqHandleRequestAdded()
       }
     }
 
-    // Get the next request batch.
+    // If the device is currently locked, unlock it here.
+    // Always unlock before checking the result of the read request.
+    PRBool isDeviceLocked = PR_FALSE;
+    rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (isDeviceLocked) {
+      rv = mCDDevice->UnlockDevice();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    // If one of the above operatons returned |NS_ERROR_ABORT|, we need to
+    // bail out of this method.
+    if (rv = NS_ERROR_ABORT) {
+      return rv;
+    }
+
+    // Get the next request batchs.
     rv = PopRequest(requestBatch);
     NS_ENSURE_SUCCESS(rv, rv);
   }
