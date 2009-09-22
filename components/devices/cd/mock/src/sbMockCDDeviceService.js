@@ -159,31 +159,7 @@ function sbMakeIncredibad()
 
 function sbMockCDService()
 {
-  this._mDevices = [];
   this._mListeners = [];
-
-  // Push in two mock cd drive devices.
-  var device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
-                   .createInstance(Ci.sbIMockCDDevice);
-  device.initialize("Songbird MockCD Device 8000",
-                    true,
-                    false,
-                    false,
-                    Ci.sbIDeviceController.AUDIO_DISC_TYPE,
-                    false,
-                    this);
-  this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
-
-  device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
-                   .createInstance(Ci.sbIMockCDDevice);
-  device.initialize("Songbird MockCD Device 7000",
-                    true,
-                    false,
-                    false,
-                    Ci.sbIDeviceController.AUDIO_DISC_TYPE,
-                    false,
-                    this);
-  this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
 }
 
 sbMockCDService.prototype =
@@ -203,11 +179,13 @@ sbMockCDService.prototype =
 
   get nbDevices()
   {
+    this._initDevices();
     return this._mDevices.length;
   },
 
   getDevice: function sbMockCDDevice_getDevice(aDeviceIndex)
   {
+    this._initDevices();
     return this._mDevices[aDeviceIndex];
   },
   
@@ -216,6 +194,7 @@ sbMockCDService.prototype =
   {
     var foundDevice = null;
     
+    this._initDevices();
     for (var i = 0; i < this._mDevices.length; i++) {
       var curDeviceIdentifier = this._mDevices[i].identifier;
       if (curDeviceIdentifier == aDeviceIdentifier) {
@@ -229,6 +208,7 @@ sbMockCDService.prototype =
 
   getCDDevices: function sbMockCDService_getCDDevics()
   {
+    this._initDevices();
     return ArrayConverter.nsIArray(this._mDevices).enumerate();
   },
 
@@ -299,10 +279,70 @@ sbMockCDService.prototype =
     this._onMediaEjected(curCDDevice);
   },
 
+  //
+  // nsIObserver
+  //
+
+  observe: function sbMockCDService_observe(aSubject, aTopic, aData)
+  {
+    // clear the devices
+    this._mDevices = null;
+
+    // unobserve
+    var obs = Cc["@mozilla.org/observer-service;1"]
+                .getService(Ci.nsIObserverService);
+    obs.removeObserver(this, aTopic);
+  },
+
+  //
+  // internal methods
+  //
+
+  /**
+   * Make sure the devices are initialized
+   */
+  _initDevices: function sbMockCDService_init()
+  {
+    if (this._mDevices) {
+      // already initialized
+      return;
+    }
+
+    this._mDevices = [];
+
+    // Push in two mock cd drive devices.
+    var device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
+                     .createInstance(Ci.sbIMockCDDevice);
+    device.initialize("Songbird MockCD Device 8000",
+                      true,
+                      false,
+                      false,
+                      Ci.sbIDeviceController.AUDIO_DISC_TYPE,
+                      false,
+                      this);
+    this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
+
+    device = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
+                     .createInstance(Ci.sbIMockCDDevice);
+    device.initialize("Songbird MockCD Device 7000",
+                      true,
+                      false,
+                      false,
+                      Ci.sbIDeviceController.AUDIO_DISC_TYPE,
+                      false,
+                      this);
+    this._mDevices.push(device.QueryInterface(Ci.sbICDDevice));
+
+    var obs = Cc["@mozilla.org/observer-service;1"]
+                .getService(Ci.nsIObserverService);
+    obs.addObserver(this, "quit-application", false);
+  },
+
   _findDevice: function sbMockCDService_findDevice(aCDDevice)
   {
     // Return the local copy of our Mock CD Device that we have stashed in
     // |_mDevices|.
+    this._initDevices();
     var foundDevice = null;
     for (var i = 0; i < this._mDevices.length && foundDevice == null; i++) {
       if (this._mDevices[i].name == aCDDevice.name) {
@@ -343,7 +383,8 @@ sbMockCDService.prototype =
   classID: Components.ID("{C701A410-7F71-41E9-A07A-C765A4F04D41}"),
   contractID: "@songbirdnest.com/device/cd/mock-cddevice-service;1",
   QueryInterface: XPCOMUtils.generateQI([Ci.sbICDDeviceService,
-                                         Ci.sbIMockCDDeviceController])
+                                         Ci.sbIMockCDDeviceController,
+                                         Ci.nsIObserver])
 };
 
 function NSGetModule(compMgr, fileSpec) {
