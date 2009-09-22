@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #ifndef sbMediaExportDefines_h_
 #define sbMediaExportDefines_h_
@@ -71,6 +69,12 @@ const PRUint32 LISTENER_NOTIFY_ITEM_DELTA = 10;
 #define TASKFILE_UPDATEDMEDIAITEMS_HEADER    "updated-mediaitems"
 #define TASKFILE_UPDATEDSMARTPLAYLIST_HEADER "updated-smartplaylist"
 #define SHUTDOWN_NAME                        "songbird_export.shutdown"
+
+// Sentinel value used in task file to indicate items added to the main library
+// If you change this make sure you update it in:
+//    tools/itunesagent/macosx/sbiTunesAgentMacProcessor.h
+//    tools/itunesagent/windows/sbiTunesLibrary.h
+#define SONGBIRD_MAIN_LIBRARY_NAME "#####SONGBIRD_MAIN_LIBRRAY#####"
 
 //------------------------------------------------------------------------------
 // Media export service XPCOM info

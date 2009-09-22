@@ -1,28 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2009 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 #include "sbMediaExportTaskWriter.h"
 
@@ -208,7 +206,7 @@ sbMediaExportTaskWriter::WriteUpdatedSmartPlaylistHeader(sbIMediaList *aMediaLis
 }
 
 nsresult
-sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList)
+sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList, PRBool aIsMainLibrary)
 {
   NS_ENSURE_ARG_POINTER(aMediaList);
 
@@ -218,9 +216,14 @@ sbMediaExportTaskWriter::WriteAddedMediaItemsListHeader(sbIMediaList *aMediaList
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCString escaped;
-  rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(mediaListName),
-          nsINetUtil::ESCAPE_URL_PATH, escaped);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aIsMainLibrary) {
+    // If you use this as your playlist name, you get what you deserve.
+    escaped.AssignLiteral(SONGBIRD_MAIN_LIBRARY_NAME);
+  } else {
+    rv = mNetUtil->EscapeString(NS_ConvertUTF16toUTF8(mediaListName),
+            nsINetUtil::ESCAPE_URL_PATH, escaped);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   LOG(("%s: Writing header '%s' for medialist name '%s'",
         __FUNCTION__, 
