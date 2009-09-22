@@ -1029,6 +1029,7 @@ PublicPlaylistCommands.prototype = {
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DOWNLOADPLAYLIST, this.m_downloadCommandsServicePane);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIAITEM_SMARTPLAYLIST, this.m_smartPlaylistsCommands);
     this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_DEVICE_LIBRARY,this.m_deviceLibraryCommands);
+    this.m_mgr.withdraw(kPlaylistCommands.MEDIALIST_CDDEVICE_LIBRARY, this.m_cdDeviceLibraryCommands);
 
     // Un-register download playlist commands
 
@@ -1114,6 +1115,7 @@ PublicPlaylistCommands.prototype = {
     this.m_downloadCommandsServicePane.shutdown();
     this.m_serviceTreeDefaultCommands.shutdown();
     this.m_deviceLibraryCommands.shutdown();
+    this.m_cdDeviceLibraryCommands.shutdown();
 
     g_dataRemoteService = null;
 
