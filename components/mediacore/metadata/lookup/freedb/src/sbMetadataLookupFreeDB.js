@@ -85,7 +85,8 @@ function sbFreeDB() {
                        .getService(Ci.fuelIApplication).prefs.getValue(
                         "metadata.lookup.freedb.url", FREEDB_URL);
 
-  Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService)
+  Cc["@mozilla.org/observer-service;1"]
+    .getService(Ci.nsIObserverService)
     .addObserver(this, "songbird-library-manager-before-shutdown", false);
 }
 
@@ -93,7 +94,8 @@ sbFreeDB.prototype = {
   classDescription : 'Songbird FreeDB Metadata Lookup Service',
   classID : Components.ID('c435acec-1dd1-11b2-88a4-b869b7fd74e2'),
   contractID : '@songbirdnest.com/Songbird/MetadataLookup/freedb;1',
-  QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupProvider]),
+  QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupProvider,
+                                          Ci.nsIObserver]),
 
   name : "FreeDB",
   weight : 1, // set weight to 1 so it can be overridden by Gracenote
@@ -113,7 +115,8 @@ sbFreeDB.prototype = {
 
   observe: function(subject, topic, data) {
     if (topic == "songbird-library-manager-before-shutdown") {
-      Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService)
+      Cc["@mozilla.org/observer-service;1"]
+        .getService(Ci.nsIObserverService)
         .removeObserver(this, "songbird-library-manager-before-shutdown");
 
       // no leaky!

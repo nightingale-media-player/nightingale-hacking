@@ -106,7 +106,8 @@ sbTestProvider.prototype = {
   classDescription : 'Songbird Test Metadata Lookup Service',
   classID : Components.ID('9e599632-1dd1-11b2-ab82-e0952e7285ce'),
   contractID : '@songbirdnest.com/Songbird/MetadataLookup/testProvider;1',
-  QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupProvider]),
+  QueryInterface : XPCOMUtils.generateQI([Ci.sbIMetadataLookupProvider,
+                                          Ci.nsITimerCallback]),
 
   name : "TestProvider",
   weight : 9999, // set weight to 1 so it can be overridden by Gracenote
@@ -140,7 +141,7 @@ sbTestProvider.prototype = {
     this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     
     this.job = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
-                  .createInstance(Ci.sbIMetadataLookupJob);
+                 .createInstance(Ci.sbIMetadataLookupJob);
     this.job.init(Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP,
                   Ci.sbIJobProgress.STATUS_RUNNING);
 
@@ -209,12 +210,10 @@ sbTestProvider.prototype = {
     a.properties.appendProperty(SBProperties.artistName, artistName);
     a.properties.appendProperty(SBProperties.albumName, albumName);
 
-    a.tracks = Cc["@mozilla.org/array;1"]
-        .createInstance(Ci.nsIMutableArray);
-    for (var i=0; i<albumToc.length; i++) {
-      var track = Cc[
-          "@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
-          .createInstance(Ci.sbIMutablePropertyArray);
+    a.tracks = Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+    for (var i = 0; i < albumToc.length; i++) {
+      var track = Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+                    .createInstance(Ci.sbIMutablePropertyArray);
       var trackInfo = albumToc[i];
       track.appendProperty(SBProperties.albumArtistName, artistName);
       track.appendProperty(SBProperties.artistName, trackInfo.artist);
@@ -267,6 +266,7 @@ sbTestProvider.prototype = {
     } else {
       this.job.changeStatus(Ci.sbIJobProgress.STATUS_FAILED);
     }
+    this.job = null;
   },
 }
 

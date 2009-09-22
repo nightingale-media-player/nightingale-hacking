@@ -45,15 +45,18 @@ var testListener = {
     var job = provider.queryDisc(cdDevice.discTOC);
     // if the job was already finished, then just trigger the listener
     // otherwise add the listener and wait
-    if (job.status == Components.interfaces.sbIJobProgress.STATUS_SUCCEEDED)
+    if (job.status == Ci.sbIJobProgress.STATUS_SUCCEEDED)
       this.onJobProgress(job);
     else
       job.addJobProgressListener(this);
   },
 
+  onDeviceRemoved: function(cdDevice) {},
+  onMediaEjected: function(cdDevice) {},
+
   // sbIJobProgressListener
   onJobProgress: function(job) {
-    if (job.status != Components.interfaces.sbIJobProgress.STATUS_SUCCEEDED)
+    if (job.status != Ci.sbIJobProgress.STATUS_SUCCEEDED)
       return;
 
     // output the # of results found
@@ -63,10 +66,9 @@ var testListener = {
 
     log("Got " + numResults + " results");
     // enumerate the various results
-    var enum = job.getMetadataResults();
-    while (enum.hasMoreElements()) {
-      var a = enum.getNext().QueryInterface(
-                      Components.interfaces.sbIMetadataAlbumDetail);
+    var results = job.getMetadataResults();
+    while (results.hasMoreElements()) {
+      var a = results.getNext().QueryInterface(Ci.sbIMetadataAlbumDetail);
       log("This album has " + a.tracks.length + " tracks");
       var albumName = a.properties.getPropertyValue(SBProperties.albumName);
       assertEqual(albumName, "Midnight Rock Disc 1",
@@ -81,17 +83,22 @@ var testListener = {
 
     // eject the disc
     gMockController.ejectMedia(testListener.device,
-         Components.interfaces.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
+         Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
 
+    job.removeJobProgressListener(this);
+    gMockSvc.removeListener(this);
     testFinished();
   }
 }
 
 function runTest () {
   // Get the media lookup manager and mock CD service/controller
-  gMLM = Components.classes["@songbirdnest.com/Songbird/MetadataLookup/manager;1"].getService(Components.interfaces.sbIMetadataLookupManager);
-  gMockSvc = Components.classes["@songbirdnest.com/device/cd/mock-cddevice-service;1"].getService(Components.interfaces.sbICDDeviceService);
-  gMockController = Components.classes["@songbirdnest.com/device/cd/mock-cddevice-service;1"].getService(Components.interfaces.sbIMockCDDeviceController);
+  gMLM = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+           .getService(Ci.sbIMetadataLookupManager);
+  gMockSvc = Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
+               .getService(Ci.sbICDDeviceService);
+  gMockController = Cc["@songbirdnest.com/device/cd/mock-cddevice-service;1"]
+                      .getService(Ci.sbIMockCDDeviceController);
 
   gMockSvc.registerListener(testListener);
   var cd0 = gMockSvc.getDevice(0);
@@ -99,7 +106,7 @@ function runTest () {
   testListener.device = cd0;
   // insert "All That You Can't Leave Behind"
   gMockController.insertMedia(cd0,
-         Components.interfaces.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
+         Ci.sbIMockCDDeviceController.MOCK_MEDIA_DISC_MIDNIGHT_ROCK);
 
   testPending();
 }
