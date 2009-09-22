@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-DYNAMIC_LIB = sbWatchFolderService
-
 CPP_SRCS = sbWatchFolderUtils.cpp \
            $(NULL)
 
