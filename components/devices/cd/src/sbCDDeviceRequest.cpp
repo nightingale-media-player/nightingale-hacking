@@ -49,6 +49,7 @@
 #include <sbTranscodeProgressListener.h>
 #include <sbVariantUtils.h>
 #include <sbStandardProperties.h>
+#include <sbWatchFolderUtils.h>
 
 // Mozilla imports.
 #include <nsArrayUtils.h>
@@ -726,6 +727,26 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   nsCString URISpec;
   rv = musicFolderURL->GetSpec(URISpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Setup the ignore rule w/ the watch folder service.
+  nsRefPtr<sbAutoIgnoreWatchFolderPath> autoWFPathIgnore =
+    new sbAutoIgnoreWatchFolderPath();
+  NS_ENSURE_TRUE(autoWFPathIgnore, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIFileURL> destFileURL =
+    do_QueryInterface(musicFolderURL, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> destFileSpec;
+  rv = destFileURL->GetFile(getter_AddRefs(destFileSpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString destFilePath;
+  rv = destFileSpec->GetPath(destFilePath);
+  NS_ENSURE_SUCCESS(rv, rv); 
+
+  rv = autoWFPathIgnore->Init(destFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = proxiedJob->SetDestURI(NS_ConvertUTF8toUTF16(URISpec));

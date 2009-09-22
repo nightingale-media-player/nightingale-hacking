@@ -45,9 +45,35 @@
 #include <sbILibraryUtils.h>
 #include <sbIMediaListListener.h>
 #include <nsIDOMWindow.h>
+#include <nsUnicharUtils.h>
 #include <set>
 #include <map>
 
+
+//==============================================================================
+//
+// @brief Ignore case comparision function for the string maps.
+//
+//==============================================================================
+
+struct sbStringIgnoreCaseCompare
+{
+  bool operator() (const nsAString & s1, const nsAString & s2) const
+  {
+#if defined(XP_WIN)
+    return s1.Compare(s2, CaseInsensitiveCompare) < 0;
+#else
+    return s1.Compare(s2) < 0;
+#endif
+  }
+};
+
+//==============================================================================
+//
+// @interface sbWatchFolderService
+// @brief Songbird watch folder implementation class.
+//
+//==============================================================================
 
 class sbWatchFolderService : public sbIWatchFolderService,
                              public sbIFileSystemListener,
@@ -75,7 +101,7 @@ public:
                                 const nsModuleComponentInfo *aInfo);
 
 protected:
-  typedef std::set<nsString> sbStringSet;
+  typedef std::set<nsString, sbStringIgnoreCaseCompare> sbStringSet;
   typedef sbStringSet::iterator sbStringSetIter;
   struct ignorePathData_t {
     PRInt32 depth; // number of calls to addIgnorePath()
@@ -84,7 +110,7 @@ protected:
     ignorePathData_t(PRInt32 aDepth, PRInt32 aCount)
       : depth(aDepth), count(aCount) {}
   };
-  typedef std::map<nsString, ignorePathData_t> sbStringMap;
+  typedef std::map<nsString, ignorePathData_t, sbStringIgnoreCaseCompare> sbStringMap;
   
   typedef enum {
     eNone  = 0,
@@ -241,4 +267,3 @@ private:
 };
 
 #endif  // sbWatchFolderService_h_
-

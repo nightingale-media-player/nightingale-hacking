@@ -29,4 +29,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+SUBDIRS = utils \
+          $(NULL)
+
 include $(topsrcdir)/build/rules.mk
