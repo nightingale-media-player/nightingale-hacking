@@ -134,8 +134,14 @@ sbCDDevice::ReqHandleRequestAdded()
   mPrefAutoEject = prefBranch.GetBoolPref(PREF_CDDEVICE_AUTOEJECT, PR_FALSE);
   mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
                                             PR_FALSE);
-  mPrefRipFormat = prefBranch.GetIntPref(PREF_CDDEVICE_RIPFORMAT, PR_FALSE);
-  mPrefRipQuality = prefBranch.GetIntPref(PREF_CDDEVICE_RIPQUALITY, PR_FALSE);
+
+  // Find the preferred audio transcoding profile.
+  if (!mTranscodeProfile) 
+  {
+    rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
+				getter_AddRefs(mTranscodeProfile));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // If we're not waiting and the batch isn't empty process the batch
   while (!requestBatch.empty()) {
@@ -685,14 +691,8 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = musicFolderURL->SetFileName(filename);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Find the preferred audio transcoding profile.
-  nsCOMPtr<sbITranscodeProfile> profile;
-  rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
-                              getter_AddRefs(profile));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCString extension;
-  rv = sbDeviceUtils::GetTranscodedFileExtension(profile, extension);
+  rv = sbDeviceUtils::GetTranscodedFileExtension(mTranscodeProfile, extension);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = musicFolderURL->SetFileExtension(extension);
@@ -707,7 +707,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   nsCOMPtr<sbITranscodeJob> tcJob;
   rv = mTranscodeManager->GetTranscoderForMediaItem(destination,
-                                                    profile,
+                                                    mTranscodeProfile,
                                                     getter_AddRefs(tcJob));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -722,7 +722,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
                             getter_AddRefs(proxiedJob));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = proxiedJob->SetProfile(profile);
+  rv = proxiedJob->SetProfile(mTranscodeProfile);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCString URISpec;

@@ -359,8 +359,6 @@ private:
    */
   PRBool mPrefAutoEject;
   PRBool mPrefNotifySound;
-  PRUint32 mPrefRipQuality;
-  PRUint32 mPrefRipFormat;
 
   /**
    * Initializes the device properties
