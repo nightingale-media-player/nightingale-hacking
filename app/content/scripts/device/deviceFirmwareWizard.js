@@ -567,6 +567,10 @@ var deviceFirmwareWizard = {
         
         progressDeck.selectedPanel = 
           document.getElementById("device_firmware_wizard_check_new_box");
+          
+        // force canRewind since we need to be able to use the back button
+        // as the remind me later button.
+        this._wizardElem.canRewind = true;
       }
       else {
         let okButton = this.wizardElem.getButton("next");
