@@ -61,7 +61,7 @@ const PRUint32 LISTENER_NOTIFY_ITEM_DELTA = 10;
 // NOTE: When changing these values, please reflect the changes in the unittest!
 //
 #define TASKFILE_NAME                        "songbird_export.task"
-#define TASKFILE_SCHEMAVERSION               "1"
+#define TASKFILE_SCHEMAVERSION               "2"
 #define TASKFILE_SCHEMAVERSION_HEADER        "schema-version"
 #define TASKFILE_ADDEDMEDIALISTS_HEADER      "added-medialists"
 #define TASKFILE_REMOVEDMEDIALISTS_HEADER    "removed-medialists"

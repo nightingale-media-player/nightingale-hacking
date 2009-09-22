@@ -31,7 +31,7 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 // NOTE: When changing these constants, be sure to update the file
 //       'sbMediaExportDefines.h' as welll!
 var TASKFILE_NAME                     = "songbird_export.task";
-var TASKFILE_SCHEMAVERSION            = "1"
+var TASKFILE_SCHEMAVERSION            = "2"
 var TASKFILE_SCHEMAVERSION_HEADER     = "schema-version";
 var TASKFILE_ADDEDMEDIALISTS_HEADER   = "added-medialists";
 var TASKFILE_REMOVEDMEDIALISTS_HEADER = "removed-medialists";

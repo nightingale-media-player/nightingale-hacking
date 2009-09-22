@@ -33,7 +33,7 @@
 // If you change this make sure you update it in:
 //    tools/itunesagent/macosx/sbiTunesMacProcessor.h
 //    components/mediaexport/src/sbMediaExportDefines.h
-#define SONGBIRD_MAIN_LIBRARY_NAME "#####SONGBIRD_MAIN_LIBRRAY#####"
+#define SONGBIRD_MAIN_LIBRARY_NAME L"#####SONGBIRD_MAIN_LIBRRAY#####"
 
 #include <deque>
 #include <stdio.h>

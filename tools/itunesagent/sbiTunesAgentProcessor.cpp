@@ -183,7 +183,7 @@ sbiTunesAgentProcessor::ProcessTaskFile()
   }
   
   if (OpenResultsFile().tellp() == std::ofstream::pos_type(0)) {
-    OpenResultsFile() << '[' << SCHEMA_VERSION << ":1]\n"
+    OpenResultsFile() << '[' << SCHEMA_VERSION << ":2]\n"
                       << '[' << ADDED_MEDIA_ITEMS << "]\n";
   }
 

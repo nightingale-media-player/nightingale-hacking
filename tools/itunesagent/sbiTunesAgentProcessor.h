@@ -33,7 +33,7 @@
 
 #include "sbError.h"
 
-#define EXPORT_SCHEMAVERSION  1
+#define EXPORT_SCHEMAVERSION  2
 
 // Logging options
 #define AGENT_LOGGING 1

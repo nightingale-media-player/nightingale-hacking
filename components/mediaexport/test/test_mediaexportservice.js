@@ -172,7 +172,7 @@ TestController.prototype =
         assertEqual(parsedTask.getRemovedMediaLists().length, 0);
 
         // Ensure the added tracks to the main library
-        var addedLibraryItems = parsedTask.getAddedMediaItems()["Library"];
+        var addedLibraryItems = parsedTask.getAddedMediaItems()["#####SONGBIRD_MAIN_LIBRRAY#####"];
         assertTrue(addedLibraryItems);
 
         // There should only be three added media items.
@@ -205,7 +205,7 @@ TestController.prototype =
 
         // Should be 3 added mediaitems to |this._mainLibrary|.
         addedMediaItems = 
-          parsedTask.getAddedMediaItems()[this._mainLibrary.name];
+          parsedTask.getAddedMediaItems()["#####SONGBIRD_MAIN_LIBRRAY#####"];
         assertEqual(addedMediaItems.length, 3);
 
         assertEqual(addedMediaItems[0], this._track2Paths[0]);
