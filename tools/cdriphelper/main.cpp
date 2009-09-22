@@ -36,8 +36,8 @@ LPCTSTR DRIVER_KEY_THREE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
 
 LPCTSTR DRIVER_SUBKEY_STR = _T("UpperFilters");
 
-LPCTSTR GEARWORKS_REG_VALUE_STR = _T("GEARAspiWDM");
-LPCTSTR REDBOOK_REG_VALUE_STR = _T("redbook");
+const TCHAR GEARWORKS_REG_VALUE_STR[] = _T("GEARAspiWDM");
+const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
 
 // The second arguments to these constructors look scary, but they're just
 // non-function call versions of _tcslen()
