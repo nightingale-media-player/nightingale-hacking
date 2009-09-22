@@ -4,6 +4,7 @@
 #include <shellapi.h>
 #include <stdlib.h>
 #include <vector>
+#include <algorithm>
 
 #include "stringconvert.h"
 #include "debug.h"
@@ -36,9 +37,16 @@ LPCTSTR DRIVER_KEY_THREE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
 LPCTSTR DRIVER_SUBKEY_STR = _T("UpperFilters");
 
 LPCTSTR GEARWORKS_REG_VALUE_STR = _T("GEARAspiWDM");
+LPCTSTR REDBOOK_REG_VALUE_STR = _T("redbook");
+
+// The second arguments to these constructors look scary, but they're just
+// non-function call versions of _tcslen()
 
 static const regValue_t GEARWORKS_REG_VALUE(GEARWORKS_REG_VALUE_STR,
-                                            _tcslen(GEARWORKS_REG_VALUE_STR));
+ sizeof(GEARWORKS_REG_VALUE_STR)/sizeof(GEARWORKS_REG_VALUE_STR[0]) - 1);
+
+static const regValue_t REDBOOK_REG_VALUE(REDBOOK_REG_VALUE_STR,
+ sizeof(REDBOOK_REG_VALUE_STR)/sizeof(REDBOOK_REG_VALUE_STR[0]) - 1);
 
 LPTSTR GetSystemErrorMessage(DWORD errNum) {
   LPTSTR returnString = NULL; 
@@ -153,22 +161,20 @@ int main(int argc, LPTSTR *argv) {
       multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
 
       regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
-      LPCTSTR redbookValueStr = _T("redbook");
 
-      regValueList_t::iterator redbookNode;
-      for (regValueList_t::iterator itr = regValues.begin();
-       itr != regValues.end();
-       itr++) {
-        if (0 == _tcscmp(redbookValueStr, itr->p)) {
-          redbookNode = itr;
-          break;
-        }
+      regValueList_t::iterator redbookNode = find(regValues.begin(),
+       regValues.end(), REDBOOK_REG_VALUE);
+
+      // We didn't find the redbook node, so put our filter driver first.
+      if (redbookNode == regValues.end()) {
+        regValues.push_front(GEARWORKS_REG_VALUE);
+      } else {
+        // insert() inserts to the node _before_; we want to be inserted
+        // after that value, so increment the iterator; we shouldn't fall off 
+        // the end because we test for that above.
+        redbookNode++;
+        regValues.insert(redbookNode, GEARWORKS_REG_VALUE);
       }
-
-      if (redbookNode == NULL)
-        redbookNode == regValues.begin();
-
-      regValues.insert(redbookNode, GEARWORKS_REG_VALUE);
 
       multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
 
@@ -411,11 +417,9 @@ int main(int argc, LPTSTR *argv) {
   }
   else if (mode == "upgrade") {
     OutputDebugString(_T("Upgrade mode"));
-  }
-  else if ("remove" == mode) {
+  } else if ("remove" == mode) {
     OutputDebugString(_T("Remove mode"));
-  }
-  else {
+  } else {
     OutputDebugString(_T("Unknown mode"));
     return RH_ERROR_USER;
   }

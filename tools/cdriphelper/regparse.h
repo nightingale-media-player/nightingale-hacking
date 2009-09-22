@@ -18,6 +18,12 @@ struct regValue_t {
   size_t len; // in characters, no terminating null
   regValue_t(const TCHAR* _p, size_t _len)
     :p(_p), len(_len) {}
+
+  // Comparison of reg keys is case-insensitive, becuase reg keys are case
+  // insensitive, even if the strings we actually use to define the
+  // regValue_t's have case.
+  bool operator==(const regValue_t &rhs) const { 
+   return (0 == _tcsicmp(p, rhs.p)); } 
 };
 
 typedef std::list<regValue_t> regValueList_t;
