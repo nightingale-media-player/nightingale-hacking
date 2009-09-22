@@ -676,8 +676,8 @@ var deviceFirmwareWizard = {
           }
           else {
             if(this._wizardMode == "repair") {
-              // Repair mode can go straight to installation.
-              this.wizardElem.goTo("device_firmware_wizard_install_page");
+              // Repair mode needs to ask for confirmation first.
+              this.wizardElem.goTo("device_firmware_wizard_repair_page");
             }
             else {
               // Business as usual, download the new firmware and proceed
