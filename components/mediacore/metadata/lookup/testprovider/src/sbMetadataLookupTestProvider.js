@@ -140,10 +140,11 @@ sbTestProvider.prototype = {
     var id = this.identifyTOC(aTOC);
     this._timer = Cc["@mozilla.org/timer;1"].createInstance(Ci.nsITimer);
     
-    this.job = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
-                 .createInstance(Ci.sbIMetadataLookupJob);
-    this.job.init(Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP,
-                  Ci.sbIJobProgress.STATUS_RUNNING);
+    var job = Cc["@songbirdnest.com/Songbird/MetadataLookup/job;1"]
+                .createInstance(Ci.sbIMetadataLookupJob);
+    job.init(Ci.sbIMetadataLookupJob.JOB_DISC_LOOKUP,
+             Ci.sbIJobProgress.STATUS_RUNNING);
+    this.job = job;
 
     this.whichAlbum = id;
 
@@ -182,7 +183,7 @@ sbTestProvider.prototype = {
         break;
     }
 
-    return this.job;
+    return job;
   },
 
   getAlbumDetail: function(album) {
