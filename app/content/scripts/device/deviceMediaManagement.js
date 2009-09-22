@@ -419,21 +419,23 @@ var DeviceMediaManagementServices = {
 
     // Does the active profile have a bitrate property?
     var foundBitrate = false;
-    var propertiesArray = activeProfile.audioProperties;
-    if (propertiesArray) {
-      for (var i = 0; i < propertiesArray.length; i++) {
-        var property = propertiesArray.queryElementAt(i,
-                Ci.sbITranscodeProfileProperty);
-        if (property.propertyName == "bitrate") {
-          foundBitrate = true;
-          var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
-          bitrateEntry.min = parseInt(property.valueMin) / 1000;
-          bitrateEntry.max = parseInt(property.valueMax) / 1000;
-          if (this._mediaManagementPrefs.selectedBitrate)
-            bitrateEntry.value = parseInt(
-                    this._mediaManagementPrefs.selectedBitrate) / 1000;
-          else
-            bitrateEntry.value = parseInt(property.value) / 1000;
+    if (activeProfile) {
+      var propertiesArray = activeProfile.audioProperties;
+      if (propertiesArray) {
+        for (var i = 0; i < propertiesArray.length; i++) {
+          var property = propertiesArray.queryElementAt(i,
+                  Ci.sbITranscodeProfileProperty);
+          if (property.propertyName == "bitrate") {
+            foundBitrate = true;
+            var bitrateEntry = this._getElement("transcoding-bitrate-kbps");
+            bitrateEntry.min = parseInt(property.valueMin) / 1000;
+            bitrateEntry.max = parseInt(property.valueMax) / 1000;
+            if (this._mediaManagementPrefs.selectedBitrate)
+              bitrateEntry.value = parseInt(
+                      this._mediaManagementPrefs.selectedBitrate) / 1000;
+            else
+              bitrateEntry.value = parseInt(property.value) / 1000;
+          }
         }
       }
     }

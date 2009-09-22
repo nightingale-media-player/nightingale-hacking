@@ -141,6 +141,7 @@
           </xul:vbox>
           <xul:vbox>
             <xul:checkbox sbid="mgmt_enable"
+                          oncommand="onMgmtEnableChange();"
                           label="&device.settings.disk.management.label;"/>
             <xul:hbox class="indent">
               <xul:sb-properties-formatter sbid="mgmt_dir_format"
@@ -346,6 +347,11 @@
           setTimeout(function(self){
             self._formatter.value = Application.prefs.getValue(formatDirPrefName,
                                                                defaultValue);
+            var mgmtEnableCheckbox =
+                  document.getAnonymousElementByAttribute(self,
+                                                          "sbid",
+                                                          "mgmt_enable");
+            self._formatter.disableAll = !mgmtEnableCheckbox.checked;
           }, 0, this);
 
           // Set the scale to the device's current value.
@@ -383,6 +389,16 @@
             SBFormattedString("device.settings.limit_disk_space",
                               [this._scale.getAttribute("value"),
                                capacity]);
+        ]]></body>
+      </method>
+
+      <method name="onMgmtEnableChange">
+        <body><![CDATA[
+          var mgmtEnableCheckbox =
+                document.getAnonymousElementByAttribute(this,
+                                                        "sbid",
+                                                        "mgmt_enable");
+          this._formatter.disableAll = !mgmtEnableCheckbox.checked;
         ]]></body>
       </method>
 
