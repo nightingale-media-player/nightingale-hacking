@@ -232,7 +232,8 @@ var CDRipPrefsPane =
       function CDRipPrefsPane_onTranscodeProfileChanged(aTranscodeProfile) {
 
     // First find out if the new transcode profile has bitrate information.
-    var bitrate = 0;
+    var defaultBitrate = 0;
+    var customizedBitrate = 0;
     var hasBitrate = false;
     var propertiesArray = aTranscodeProfile.audioProperties;
     if (propertiesArray) {
@@ -241,9 +242,15 @@ var CDRipPrefsPane =
           propertiesArray.queryElementAt(i, Ci.sbITranscodeProfileProperty);
         if (prop.propertyName == "bitrate") {
           hasBitrate = true;
-          if (!bitrate) {
-            bitrate = parseInt(prop.value);
-          }
+          // The default bitrate that the profile defaults to.
+          defaultBitrate = parseInt(prop.value);
+
+          // The user-defined bitrate.
+          var bitratePref =
+            document.getElementById("rip_quality_pref").getAttribute("name");
+          customizedBitrate = Application.prefs.getValue(bitratePref, "");
+
+          break;
         }
       }
     }
@@ -254,16 +261,17 @@ var CDRipPrefsPane =
     if (hasBitrate) {
       bitrateTextfield.hidden = false;
       bitrateLabel.hidden = false;
-      // If the transcoding profile has changed always default to the bitrate
-      // that the profile defaults to.
-      if (aTranscodeProfile.id != this.currentTranscodeProfileID ||
-          !Application.prefs.has(qualityPrefElem.name))
-      {
-        bitrateTextfield.value = (bitrate / 1000);
-        this.updateBitratePref();
-      }
-    }
-    else {
+
+      // If the transcoding profile has changed or no user-defined bitrate,
+      // always default to the bitrate that the profile defaults to.
+      var defaultValue = ((this.currentTranscodeProfileID != 0) &&
+        (aTranscodeProfile.id != this.currentTranscodeProfileID)) || !customizedBitrate;
+
+      var bitrate = defaultValue ? defaultBitrate : customizedBitrate;
+      bitrateTextfield.value = (bitrate / 1000);
+      this.updateBitratePref();
+
+    } else {
       bitrateTextfield.hidden = true;
       bitrateLabel.hidden = true;
     }
