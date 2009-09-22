@@ -74,9 +74,11 @@ NS_IMETHODIMP
 sbPlaylistTreeSelection::Select(PRInt32 index)
 {
   mShiftSelectPivot = -1;
-  nsresult rv = mViewSelection->SelectOnly(index);
+  // Update real selection before changing mViewSelection,
+  // some of its listeners might get confused otherwise.
+  nsresult rv = mTreeSelection->Select(index);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = mTreeSelection->Select(index);
+  rv = mViewSelection->SelectOnly(index);
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }
@@ -85,9 +87,11 @@ NS_IMETHODIMP
 sbPlaylistTreeSelection::TimedSelect(PRInt32 index, PRInt32 delay)
 {
   mShiftSelectPivot = -1;
-  nsresult rv = mViewSelection->SelectOnly(index);
+  // Update real selection before changing mViewSelection,
+  // some of its listeners might get confused otherwise.
+  nsresult rv = mTreeSelection->TimedSelect(index, delay);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = mTreeSelection->TimedSelect(index, delay);
+  rv = mViewSelection->TimedSelectOnly(index, delay);
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }

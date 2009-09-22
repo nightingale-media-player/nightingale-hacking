@@ -35,6 +35,7 @@
 #include <nsDataHashtable.h>
 #include <nsISimpleEnumerator.h>
 #include <nsISerializable.h>
+#include <nsITimer.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTObserverArray.h>
@@ -67,6 +68,8 @@ private:
 
   nsresult GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId);
 
+  static void DelayedSelectNotification(nsITimer* aTimer, void* aClosure);
+
   nsresult AddToSelection(PRUint32 aIndex);
   nsresult RemoveFromSelection(PRUint32 aIndex);
   inline void CheckSelectAll() {
@@ -93,6 +96,8 @@ private:
 
   nsCOMPtr<sbILibrary> mLibrary;
   nsString mListGUID;
+
+  nsCOMPtr<nsITimer> mSelectTimer;
 
   // A weak reference to the view's array.  We're owned by the view so this
   // will never go away

@@ -114,6 +114,14 @@ interface sbIMediaListViewSelection : nsISupports
   void selectOnly(in long aIndex);
 
   /**
+   * \brief Same as selectOnly but notifies listeners after a delay (analogous
+   *        to nsITreeSelection.timedSelect()).
+   * \param aIndex Index of the item in the view
+   * \param aDelay Delay in milliseconds before notification
+   */
+  void timedSelectOnly(in long aIndex, in long aDelay);
+
+  /**
    * \brief Toggle the selection state of the item at the given index
    * \param aIndex Index of the item in the view
    */

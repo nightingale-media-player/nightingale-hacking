@@ -28,6 +28,7 @@
 #include "sbLocalDatabaseMediaItem.h"
 
 #include <sbStringUtils.h>
+#include <nsComponentManagerUtils.h>
 #include <nsIObjectInputStream.h>
 #include <nsIObjectOutputStream.h>
 
@@ -38,15 +39,17 @@
 NS_IMPL_ISUPPORTS1(sbLocalDatabaseMediaListViewSelection,
                    sbIMediaListViewSelection)
 
-#define NOTIFY_LISTENERS(_method, _params)             \
-  PR_BEGIN_MACRO                                       \
-  if (!mSelectionNotificationsSuppressed) {            \
-    sbObserverArray::ForwardIterator iter(mObservers); \
-    while (iter.HasMore()) {                           \
-      iter.GetNext()->_method _params;                 \
-    }                                                  \
-  }                                                    \
+#define NOTIFY_LISTENERS_INDIRECT(_obj, _method, _params)     \
+  PR_BEGIN_MACRO                                              \
+  if (!_obj->mSelectionNotificationsSuppressed) {             \
+    sbObserverArray::ForwardIterator iter(_obj->mObservers);  \
+    while (iter.HasMore()) {                                  \
+      iter.GetNext()->_method _params;                        \
+    }                                                         \
+  }                                                           \
   PR_END_MACRO
+#define NOTIFY_LISTENERS(_method, _params)                    \
+  NOTIFY_LISTENERS_INDIRECT(this, _method, _params)
 
 /*
  * To log this module, set the following environment variable:
@@ -359,6 +362,40 @@ sbLocalDatabaseMediaListViewSelection::SelectOnly(PRInt32 aIndex)
 #endif
 
   return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListViewSelection::TimedSelectOnly(PRInt32 aIndex, PRInt32 aDelay)
+{
+  PRBool suppressed = mSelectionNotificationsSuppressed;
+  if (aDelay != -1)
+    mSelectionNotificationsSuppressed = PR_TRUE;
+  nsresult rv = SelectOnly(aIndex);
+  mSelectionNotificationsSuppressed = suppressed;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aDelay != -1 && !mSelectionNotificationsSuppressed) {
+    if (mSelectTimer)
+      mSelectTimer->Cancel();
+
+    mSelectTimer = do_CreateInstance("@mozilla.org/timer;1");
+    mSelectTimer->InitWithFuncCallback(DelayedSelectNotification, this, aDelay,
+                                       nsITimer::TYPE_ONE_SHOT);
+  }
+
+  return NS_OK;
+}
+
+void
+sbLocalDatabaseMediaListViewSelection::DelayedSelectNotification(nsITimer* aTimer, void* aClosure)
+{
+  nsRefPtr<sbLocalDatabaseMediaListViewSelection> self =
+      static_cast<sbLocalDatabaseMediaListViewSelection*>(aClosure);
+  if (self) {
+    NOTIFY_LISTENERS_INDIRECT(self, OnSelectionChanged, ());
+    aTimer->Cancel();
+    self->mSelectTimer = nsnull;
+  }
 }
 
 NS_IMETHODIMP
