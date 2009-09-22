@@ -31,7 +31,9 @@ include $(DEPTH)/build/autodefs.mk
 
 # XXX Mook: disthelper only works on Windows for now
 ifeq (windows,$(SB_PLATFORM))
-   SUBDIRS += disthelper
+   SUBDIRS += disthelper \
+              cdriphelper \
+              $(NULL)
 endif
 
 # iTunesAgent is Win32/Mac-only and (for now) requires extra goo in

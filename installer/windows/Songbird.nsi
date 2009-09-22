@@ -70,13 +70,15 @@ RequestExecutionLevel user
 !include FileFunc.nsh
 !include LogicLib.nsh
 !include MUI.nsh
-!include nsProcess.nsh
 !include TextFunc.nsh
-!include UAC.nsh
 !include WinMessages.nsh
 !include WinVer.nsh
 !include WordFunc.nsh
 !include x64.nsh
+
+; Extra plugins
+!include UAC.nsh
+!include nsProcess.nsh
 
 !insertmacro DirState
 

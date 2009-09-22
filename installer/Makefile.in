@@ -42,6 +42,9 @@ SONGBIRD_PP_RESOURCES = $(topsrcdir)/installer/common/LICENSE.html.in \
 
 PPDEFINES += -DSB_PLATFORM="$(SB_PLATFORM)"
 
+GARBAGE += $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME) \
+           $(NULL)
+
 include $(topsrcdir)/build/rules.mk
 
 # preedTODO: the easiest way to re-express this dependency is to do it as

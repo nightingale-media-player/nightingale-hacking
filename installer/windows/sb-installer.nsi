@@ -99,6 +99,10 @@ Function InstallAppRegistryKeys
    WriteRegStr HKLM $RootAppRegistryKey "InstallDir" "$INSTDIR"
    WriteRegStr HKLM $RootAppRegistryKey "BuildNumber" "${AppBuildNumber}"
    WriteRegStr HKLM $RootAppRegistryKey "BuildVersion" "${AppVersion}"
+
+   ; Default this to false; we'll set it to true in the installation
+   ; section if need-be
+   WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${FALSE}
   
    ${DirState} $INSTDIR $R0
    ${If} $R0 == -1
@@ -228,6 +232,29 @@ Section "QuickLaunch Icon"
    ; Remember that we installed a quicklaunch shortcut.
    WriteRegStr HKLM $RootAppRegistryKey ${QuicklaunchRegName} "$QUICKLAUNCH\${BrandFullNameInternal}.lnk"
 End:
+SectionEnd
+
+Section "CD Ripping Module"
+   ;MessageBox MB_OK "OH HAI in CD-rIP!"
+
+   WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
+
+   SetOutPath $SYSDIR
+   File GearAspi.dll
+   SetOutPath $SYSDIR\Drivers
+   File GearAspiWDM.sys
+
+   ; Set up the root key for Gearworks itself
+   StrCpy $0 "SYSTEM\CurrentControlSet\Services\GearAspiWDM"
+ 
+   WriteRegStr HKLM $0 "DisplayName" "GEARAspiWDM"
+   WriteRegDWORD HKLM $0 "ErrorControl" 1
+   WriteRegStr HKLM $0 "Group" "filter"
+   WriteRegExpandStr HKLM $0 "ImagePath" "%SYSTEM32%\Drivers\GearAspiWDM.sys"
+   WriteRegDWORD HKLM $0 "Start" 3
+   WriteRegDWORD HKLM $0 "Type" 1
+
+   ExecWait '$INSTDIR\${CdripHelperEXE} install'
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
