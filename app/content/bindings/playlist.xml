@@ -195,6 +195,20 @@
         </setter>
       </property>
 
+      <field name="_disableDrag">false</field>
+      <property name="disableDrag">
+        <getter>
+          <![CDATA[
+            return this._disableDrag;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            return this._disableDrag = val;
+          ]]>
+        </setter>
+      </property>
+
       <!-- The outer window, set from the outside -->
       <field name="_outerWindow">null</field>
       <property name="outerWindow">
@@ -2563,6 +2577,12 @@
         <parameter name="event"/>
         <body>
 <![CDATA[
+    // Don't initiate a drag if disableDrag is set
+    if (this._disableDrag) {
+      event.stopPropagation();
+      return;
+    }
+
     // Don't initiate a drag if handling clickable content
     if (this._isHandlingClickableContent) {
       event.stopPropagation();

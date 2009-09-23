@@ -485,6 +485,9 @@ window.cdripController =
     // Set a flag so sb-playlist won't try to writeback metadata to files
     this._mediaListView.mediaList.setProperty(
       "http://songbirdnest.com/data/1.0#dontWriteMetadata", 1);
+    
+    // Make sure we can not drag items from the cd to libraries or playlists
+    this._playlist.disableDrag = true;
 
     // Setup our columns for the CD View
     this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,

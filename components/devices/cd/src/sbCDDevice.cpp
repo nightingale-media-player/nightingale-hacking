@@ -843,6 +843,11 @@ sbCDDevice::Mount()
                                    NS_LITERAL_STRING("1"));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Make sure it is read only
+  rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                                   NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the device properties.
   UpdateProperties();
 
