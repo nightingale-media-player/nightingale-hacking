@@ -36,8 +36,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-#ifndef _DISTHERLPER_DEBUG_H__
-#define _DISTHERLPER_DEBUG_H__
+#ifndef _REGHELPER_DEBUG_H__
+#define _REGHELPER_DEBUG_H__
 
 extern bool gEnableLogging;
 
@@ -49,4 +49,4 @@ void DebugMessage(const char* fmt, ...);
 
 void LogMessage(const char* fmt, ...);
 
-#endif /* _DISTHERLPER_DEBUG_H__ */
+#endif /* _REGHELPER_DEBUG_H__ */
