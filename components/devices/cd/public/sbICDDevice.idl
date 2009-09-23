@@ -37,13 +37,21 @@ interface nsIArray;
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(4aed56ac-9adb-494d-ad13-87f0f24eb318)]
+[scriptable, uuid(2e06760a-1dd2-11b2-bdee-fcb2b291e86e)]
 interface sbICDTOCEntry : nsISupports
 {
-  attribute long frameOffset;
-  attribute long length;
-  attribute long trackNumber;
+  //
+  // @brief Track mode type constants
+  //
+  const unsigned short TRACKMODE_AUDIO = 0;
+  const unsigned short TRACKMODE_DATA  = 1;
+  const unsigned short TRACKMODE_OTHER = 3;
+
+  readonly attribute long    frameOffset;
+  readonly attribute PRTime  length;
+  readonly attribute long    trackNumber;
   readonly attribute AString trackURI;
+  readonly attribute short   trackMode;
 };
 
 //------------------------------------------------------------------------------

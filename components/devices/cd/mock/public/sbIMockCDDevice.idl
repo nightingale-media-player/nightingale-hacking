@@ -37,7 +37,7 @@ interface sbIMockCDDeviceController;
 /**
  * The Mock TOC interface to setup the TOC object
  */
-[scriptable, uuid(227073b0-2ad0-4d72-ba93-9c699bc51619)]
+[scriptable, uuid(a19f61ee-1dd1-11b2-ae3d-9a561c640054)]
 interface sbIMockCDTOC : nsISupports
 {
   /**
@@ -45,11 +45,13 @@ interface sbIMockCDTOC : nsISupports
    * \param frameOffset the frame offset, what else?
    * \param length Length of the track, probably in seconds see sbICDTOC
    * \param trackNumber 1 based index
+   * \param aTrackMode The track mode of the entry.
    */
   void addTocEntry(in long frameOffset,
-                   in long length, 
-                   in long trackNumber);
-  
+                   in PRTime length, 
+                   in long trackNumber,
+                   in short aTrackMode);
+
   /**
    * initializes the TOC
    * \param firstTrackIndex the index of the first track

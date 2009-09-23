@@ -397,6 +397,13 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
     entry = do_QueryElementAt(tracks, index, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Only append audio tracks to the library list.
+    PRInt16 curTrackMode;
+    rv = entry->GetTrackMode(&curTrackMode);
+    if (NS_FAILED(rv) || curTrackMode != sbICDTOCEntry::TRACKMODE_AUDIO) {
+      continue;
+    }
+    
     PRInt32 trackNumber;
     rv = entry->GetTrackNumber(&trackNumber);
     if (NS_SUCCEEDED(rv)) {

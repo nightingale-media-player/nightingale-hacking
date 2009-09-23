@@ -47,21 +47,28 @@ public:
   NS_DECL_SBICDTOCENTRY
 
   static sbMockCDTOCEntry * New(PRInt32 aFrameOffset,
-                                PRInt32 aLength,
+                                PRTime aLength,
                                 PRInt32 aTrackNumber,
+                                PRInt16 aTrackMode,
                                 nsAString const & aDrive)
   {
-    return new sbMockCDTOCEntry(aFrameOffset, aLength, aTrackNumber, aDrive);
+    return new sbMockCDTOCEntry(aFrameOffset,
+                                aLength,
+                                aTrackNumber,
+                                aTrackMode,
+                                aDrive);
   }
 
 protected:
   sbMockCDTOCEntry(PRInt32 aFrameOffset,
-                   PRInt32 aLength,
+                   PRTime aLength,
                    PRInt32 aTrackNumber,
+                   PRInt16 aTrackMode,
                    nsAString const & aDrive) :
                      mFrameOffset(aFrameOffset),
                      mLength(aLength),
                      mTrackNumber(aTrackNumber),
+                     mTrackMode(aTrackMode),
                      mDrive(aDrive)
   {
 
@@ -69,8 +76,9 @@ protected:
   virtual ~sbMockCDTOCEntry() {}
 private:
   PRInt32 mFrameOffset;
-  PRInt32 mLength;
+  PRTime mLength;
   PRInt32 mTrackNumber;
+  PRInt16 mTrackMode;
   nsString mDrive;
 };
 
@@ -87,25 +95,11 @@ sbMockCDTOCEntry::GetFrameOffset(PRInt32 *aFrameOffset)
 }
 
 NS_IMETHODIMP
-sbMockCDTOCEntry::SetFrameOffset(PRInt32 aFrameOffset)
-{
-  mFrameOffset = aFrameOffset;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbMockCDTOCEntry::GetLength(PRInt32 *aLength)
+sbMockCDTOCEntry::GetLength(PRTime *aLength)
 {
   NS_ENSURE_ARG_POINTER(aLength);
 
   *aLength = mLength;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
-sbMockCDTOCEntry::SetLength(PRInt32 aLength)
-{
-  mLength = aLength;
   return NS_OK;
 }
 
@@ -119,13 +113,6 @@ sbMockCDTOCEntry::GetTrackNumber(PRInt32 *aTrackNumber)
 }
 
 NS_IMETHODIMP
-sbMockCDTOCEntry::SetTrackNumber(PRInt32 aTrackNumber)
-{
-  mTrackNumber = aTrackNumber;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbMockCDTOCEntry::GetTrackURI(nsAString & aTrackURI)
 {
   nsString uri;
@@ -134,6 +121,15 @@ sbMockCDTOCEntry::GetTrackURI(nsAString & aTrackURI)
   uri.AppendLiteral("/");
   uri.AppendInt(mTrackNumber);
   aTrackURI = uri;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDTOCEntry::GetTrackMode(PRInt16 *aTrackMode)
+{
+  NS_ENSURE_ARG_POINTER(aTrackMode);
+
+  *aTrackMode = mTrackMode;
   return NS_OK;
 }
 
@@ -227,11 +223,15 @@ sbMockCDTOC::GetTracks(nsIArray * *aTracks)
 }
 
 NS_IMETHODIMP
-sbMockCDTOC::AddTocEntry(PRInt32 frameOffset, PRInt32 length, PRInt32 trackNumber)
+sbMockCDTOC::AddTocEntry(PRInt32 frameOffset,
+                         PRTime length,
+                         PRInt32 trackNumber,
+                         PRInt16 trackMode)
 {
   sbMockCDTOCEntry * entry = sbMockCDTOCEntry::New(frameOffset,
                                                    length,
                                                    trackNumber,
+                                                   trackMode,
                                                    NS_LITERAL_STRING("f:"));
   NS_ENSURE_TRUE(entry, NS_ERROR_OUT_OF_MEMORY);
 

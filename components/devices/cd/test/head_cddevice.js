@@ -79,21 +79,21 @@ function sbMakeMidnightRock()
   var toc = newTOC(1, 15, 285675);
 
   // tracks:
-  toc.addTocEntry(32, 309, 1);
-  toc.addTocEntry(23260, 231, 2);
-  toc.addTocEntry(40612, 242, 3);
-  toc.addTocEntry(58770, 191, 4);
-  toc.addTocEntry(73145, 310, 5);
-  toc.addTocEntry(96415, 290, 6);
-  toc.addTocEntry(118232, 301, 7);
-  toc.addTocEntry(140867, 259, 8);
-  toc.addTocEntry(160322, 316, 9);
-  toc.addTocEntry(184085, 222, 10);
-  toc.addTocEntry(200777, 236, 11);
-  toc.addTocEntry(218535, 185, 12);
-  toc.addTocEntry(232437, 211, 13);
-  toc.addTocEntry(248320, 184, 14);
-  toc.addTocEntry(262145, 313, 15);
+  toc.addTocEntry(32, 309, 1, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(23260, 231, 2, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(40612, 242, 3, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(58770, 191, 4, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(73145, 310, 5, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(96415, 290, 6, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(118232, 301, 7, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(140867, 259, 8, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(160322, 316, 9, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(184085, 222, 10, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(200777, 236, 11, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(218535, 185, 12, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(232437, 211, 13, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(248320, 184, 14, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
+  toc.addTocEntry(262145, 313, 15, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
   
   return toc;
 }
@@ -101,7 +101,7 @@ function sbMakeMidnightRock()
 function sbMakeInstantJunk()
 {
   var toc = newTOC(1, 1, 131072);
-  toc.addTocEntry(32, 32, 1);
+  toc.addTocEntry(32, 32, 1, Ci.sbICDTOCEntry.TRACKMODE_AUDIO);
   return toc;
 }
 
