@@ -34,6 +34,7 @@ if (typeof(Cu) == "undefined")
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
 
 const CDRIPNS = 'http://songbirdnest.com/rdf/servicepane/cdrip#';
 const SPNS = 'http://songbirdnest.com/rdf/servicepane#';
@@ -60,6 +61,9 @@ var sbCDRipServicePaneServiceConfig = {
 
   devMgrURL:      "chrome://songbird/content/mediapages/cdripMediaView.xul"
 };
+if ("sbIWindowsAutoPlayActionHandler" in Ci) {
+  sbCDRipServicePaneServiceConfig.ifList.push(Ci.sbIWindowsAutoPlayActionHandler);
+}
 
 function sbCDRipServicePaneService() {
 
@@ -216,6 +220,27 @@ sbCDRipServicePaneService.prototype = {
     this._deviceContextMenuDoc =
           DOMUtils.loadDocument
             ("chrome://songbird/content/xul/device/deviceContextMenu.xul");
+
+    if (PlatformUtils.platformString == "Windows_NT") {
+      // Register autoplay handler
+      var autoPlayActionHandler = {
+        cdDeviceServicePaneSvc: this,
+
+        handleAction: function autoPlayActionHandler_handleAction(aAction, aActionArg) {
+          return this.cdDeviceServicePaneSvc._processAutoPlayAction(aAction);
+        },
+
+        QueryInterface: XPCOMUtils.generateQI([Ci.sbIWindowsAutoPlayActionHandler])
+      }
+
+      this._autoPlayActionHandler = autoPlayActionHandler;
+      var windowsAutoPlayService =
+            Cc["@songbirdnest.com/Songbird/WindowsAutoPlayService;1"]
+              .getService(Ci.sbIWindowsAutoPlayService);
+      windowsAutoPlayService.addActionHandler
+        (autoPlayActionHandler,
+         Ci.sbIWindowsAutoPlayService.ACTION_CD_RIP);
+    }
   },
   
   /**
@@ -227,6 +252,17 @@ sbCDRipServicePaneService.prototype = {
     this._deviceManagerSvc.removeEventListener(this._deviceEventListener);
     this._deviceEventListener = null;
     
+    if (PlatformUtils.platformString == "Windows_NT") {
+      // Unregister autoplay handler
+      var windowsAutoPlayService =
+            Cc["@songbirdnest.com/Songbird/WindowsAutoPlayService;1"]
+              .getService(Ci.sbIWindowsAutoPlayService);
+      windowsAutoPlayService.removeActionHandler
+        (this._autoPlayActionHandler,
+         Ci.sbIWindowsAutoPlayService.ACTION_CD_RIP);
+      this._autoPlayActionHandler = null;
+    }
+
     // Purge all device nodes before shutdown.
     this._removeDeviceNodes(this._servicePaneSvc.root);
     
@@ -279,11 +315,47 @@ sbCDRipServicePaneService.prototype = {
   },
 
   /**
-   * \brief Load the CD Rip media view
-   * \param aDevice - The device itself.
+   * \brief Handles autoplay actions initiated by the user.
+   * \param aAction - Action to be handled.
+   */
+  _processAutoPlayAction:
+      function sbCDRipServicePaneService_processAutoPlayAction(aAction) {
+
+    switch (aAction) {
+      case Ci.sbIWindowsAutoPlayService.ACTION_CD_RIP:
+        // No way to tell which CD the user meant to rip, let's take one randomly
+        // (hopefully the last one enumerated is also the last one added)
+        var deviceNode = null;
+        for each (let deviceInfo in this._deviceInfoList) {
+          if (!deviceInfo.svcPaneNode.hidden) {
+            deviceNode = deviceInfo.svcPaneNode;
+          }
+        }
+
+        if (deviceNode) {
+          Cc['@mozilla.org/appshell/window-mediator;1']
+            .getService(Ci.nsIWindowMediator)
+            .getMostRecentWindow('Songbird:Main').gBrowser
+            .loadURI(deviceNode.url, null, null, null, "_media");
+        }
+        else {
+          // CD is probably not recognized yet, don't do anything - the view
+          // will switch to it anyway once it is.
+        }
+
+        return true;
+
+      default:
+        return false;
+    }
+  },
+
+  /**
+   * \brief Load the CD Rip media view as response to a device event
+   * \param aDeviceEvent - Device event being acted upon.
    */
   _loadCDViewFromEvent:
-      function sbCDRipServicePaneService_loadCDView(aDeviceEvent) {
+      function sbCDRipServicePaneService_loadCDViewFromEvent(aDeviceEvent) {
 
     var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
     var url = this._cfg.devMgrURL + "?device-id=" + device.id;
