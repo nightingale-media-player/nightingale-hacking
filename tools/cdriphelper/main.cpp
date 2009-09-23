@@ -20,24 +20,24 @@
  * is used (must be a platform-native absolute path)
  */
 
-/* WARNING: live amunition...
+/* WARNING: live ammunition...
 
-LPCTSTR DRIVER_KEY_ONE = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
+LPCTSTR KEY_DEVICE_CDROM = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
 
-LPCTSTR DRIVER_KEY_TWO = _T("\\SYSTEM\\CurrentControlSet\\Control\\Class\\{6D807884-7D21-11CF-801C-08002BE10318}");
+LPCTSTR KEY_DEVICE_TAPE = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{6D807884-7D21-11CF-801C-08002BE10318}");
 
-LPCTSTR DRIVER_KEY_THREE = _T("HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Class\{CE5939AE-EBDE-11D0-B181-0000F8753EC4}");
+LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{CE5939AE-EBDE-11D0-B181-0000F8753EC4}");
 
 */
 
-LPCTSTR DRIVER_KEY_ONE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
-LPCTSTR DRIVER_KEY_TWO = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey2");
-LPCTSTR DRIVER_KEY_THREE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
+LPCTSTR KEY_DEVICE_CDROM = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
+LPCTSTR KEY_DEVICE_TAPE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey2");
+LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
 
 LPCTSTR DRIVER_SUBKEY_STR = _T("UpperFilters");
 
-const TCHAR GEARWORKS_REG_VALUE_STR[] = _T("GEARAspiWDM");
-const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
+static const TCHAR GEARWORKS_REG_VALUE_STR[] = _T("GEARAspiWDM");
+static const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
 
 // The second arguments to these constructors look scary, but they're just
 // non-function call versions of _tcslen()
@@ -67,7 +67,7 @@ LPTSTR GetSystemErrorMessage(DWORD errNum) {
   }
 }
 
-BOOL EnsureSuccess(LONG rv, LPCTSTR message) {
+BOOL LoggedSUCCEEDED(HRESULT rv, LPCTSTR message) {
   BOOL callSucceeded = SUCCEEDED(rv);
 
   if (!callSucceeded) {
@@ -77,432 +77,395 @@ BOOL EnsureSuccess(LONG rv, LPCTSTR message) {
   }
   return callSucceeded;
 }
-      
-int main(int argc, LPTSTR *argv) {
-  int result = 0;
-  
-  if (argc != 2) {
-    OutputDebugString(_T("Incorrect number of arguments"));
-    return RH_ERROR_USER;
-  }
 
-  std::string mode;
-  mode.assign(ConvertUTFnToUTF8(argv[1]));
+int RegInstallKeys() {
+  DWORD keyCreationResult;
+  HKEY keyHandle;
 
-  if (mode == "install") {
-    DWORD keyCreationResult;
-    HKEY keyHandle;
+  LONG rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,    // handle
+                           KEY_DEVICE_CDROM,      // lpSubKey
+                           0,                     // dwReserved
+                           NULL,                  // lpClass
+                           0,                     // dwOptions
+                           KEY_ALL_ACCESS,        // samDesired
+                           NULL,                  // lpSecurityAttributes
+                           &keyHandle,            // phkResult
+                           &keyCreationResult);   // lpdwDisposition
 
-    LONG rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,    // handle
-                             DRIVER_KEY_ONE,        // lpSubKey
-                             0,                     // dwReserved
-                             NULL,                  // lpClass
-                             0,                     // dwOptions
-                             KEY_ALL_ACCESS,        // samDesired
-                             NULL,                  // lpSecurityAttributes
-                             &keyHandle,            // phkResult
-                             &keyCreationResult);   // lpdwDisposition
+  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() on key one failed")))
+    return RH_ERROR_INIT_CREATEKEY;
 
-    if (FAILED(rv)) {
-      LPTSTR errStr = GetSystemErrorMessage(rv);
-      DebugMessage("RegCreateKeyEx() on key one failed: %S", errStr);
-      LocalFree(errStr);
-      return RH_ERROR_INIT_CREATEKEY;
-    }
+  if (REG_CREATED_NEW_KEY == keyCreationResult) {
+    OutputDebugString(_T("Created new key one"));
 
-    if (REG_CREATED_NEW_KEY == keyCreationResult) {
-      OutputDebugString(_T("Created new key one"));
+    regValueList_t newRegValueList;
+    newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
 
-      regValueList_t newRegValueList;
-      newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+    MakeMultiSzRegString(newRegValue, newRegValueList);
 
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-      MakeMultiSzRegString(newRegValue, newRegValueList);
-
-      rv = RegSetValueEx(keyHandle,             // key handle
-                         DRIVER_SUBKEY_STR,     // lpValueName
-                         0,                     // reserved
-                         REG_MULTI_SZ,          // dwType
-                         newRegValue.value,     // data
-                         newRegValue.cbBytes);  // cbData
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegSetValueEx() failed: %S", errStr);
-        LocalFree(errStr);
-      }
-
-      rv = RegCloseKey(keyHandle);
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegCloseKey() failed: %S", errStr);
-        LocalFree(errStr);
-      }
-    } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
-      OutputDebugString(_T("Opened old key one"));
-
-      DWORD currentKeyType;
-      DWORD dataBufferLen = 4096;
-      LPTSTR data = (LPTSTR)malloc(dataBufferLen);
-
-      memset(data, 0, dataBufferLen);
-
-      rv = RegQueryValueEx(keyHandle,          // key handle
-                           DRIVER_SUBKEY_STR,  // lpValueName
-                           0,                  // lpReserved
-                           &currentKeyType,    // lpType
-                           (LPBYTE)data,       // lpData
-                           &dataBufferLen);    // lpcbData
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegQueryValueEx() failed: %S", errStr);
-        LocalFree(errStr);
-        return RH_ERROR_QUERY_KEY;
-      }
-
-      if (currentKeyType != REG_SZ &&
-          currentKeyType != REG_EXPAND_SZ &&
-          currentKeyType != REG_MULTI_SZ) {
-        DebugMessage("Unknown type %d for key %s", currentKeyType, 
-         DRIVER_KEY_ONE);
-        return RH_ERROR_UNKNOWN_KEY_TYPE; 
-      }
-
-      multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
-
-      regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
-
-      regValueList_t::iterator redbookNode = find(regValues.begin(), regValues.end(), REDBOOK_REG_VALUE);
-
-      // We didn't find the redbook node, so put our filter driver first.
-      if (redbookNode == regValues.end()) {
-        regValues.push_front(GEARWORKS_REG_VALUE);
-      } else {
-        // insert() inserts to the node _before_; we want to be inserted
-        // after that value, so increment the iterator; we shouldn't fall off 
-        // the end because we test for that above.
-        redbookNode++;
-        regValues.insert(redbookNode, GEARWORKS_REG_VALUE);
-      }
-
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-
-      // Does this modify cbBytes to be the correct number of bytes?
-      MakeMultiSzRegString(newRegValue, regValues);
-
-      rv = RegSetValueEx(keyHandle,
-                         DRIVER_SUBKEY_STR,
-                         0,
-                         REG_MULTI_SZ,
-                         newRegValue.value, 
-                         newRegValue.cbBytes);
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegSetValueEx() failed: %S", errStr);
-        LocalFree(errStr);
-        return RH_ERROR_SETVALUE;
-      }
-
-      rv = RegCloseKey(keyHandle);
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegCloseKey() failed: %S", errStr);
-        LocalFree(errStr);
-      }
-    } else {
-      OutputDebugString(_T("Unknown creationResult"));
-    }
-
-    OutputDebugString(_T("Creating driver key 2"));
-
-    rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,    // handle
-                        DRIVER_KEY_TWO,        // lpSubKey
-                        0,                     // dwReserved
-                        NULL,                  // lpClass
-                        0,                     // dwOptions
-                        KEY_ALL_ACCESS,        // samDesired
-                        NULL,                  // lpSecurityAttributes
-                        &keyHandle,            // phkResult
-                        &keyCreationResult);   // lpdwDisposition
+    rv = RegSetValueEx(keyHandle,             // key handle
+                       DRIVER_SUBKEY_STR,     // lpValueName
+                       0,                     // reserved
+                       REG_MULTI_SZ,          // dwType
+                       newRegValue.value,     // data
+                       newRegValue.cbBytes);  // cbData
 
     if (FAILED(rv)) {
       LPTSTR errStr = GetSystemErrorMessage(rv);
-      DebugMessage("RegCreateKeyEx() on key two failed: %S", errStr);
+      DebugMessage("RegSetValueEx() failed: %S", errStr);
       LocalFree(errStr);
-      return RH_ERROR_INIT_CREATEKEY;
     }
 
-    if (REG_CREATED_NEW_KEY == keyCreationResult) {
-      OutputDebugString(_T("Created new key two"));
-
-      regValueList_t newRegValueList;
-      newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
-
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-      MakeMultiSzRegString(newRegValue, newRegValueList);
-
-      rv = RegSetValueEx(keyHandle,             // key handle
-                         DRIVER_SUBKEY_STR,     // lpValueName
-                         0,                     // reserved
-                         REG_MULTI_SZ,          // dwType
-                         newRegValue.value,     // data
-                         newRegValue.cbBytes);  // cbData
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegSetValueEx() failed on key two: %S", errStr);
-        LocalFree(errStr);
-      }
-
-    } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
-      OutputDebugString(_T("Opened old key two"));
-
-      DWORD currentKeyType;
-      DWORD dataBufferLen = 4096;
-      LPTSTR data = (LPTSTR)malloc(dataBufferLen);
-
-      memset(data, 0, dataBufferLen);
-
-      rv = RegQueryValueEx(keyHandle,          // key handle
-                           DRIVER_SUBKEY_STR,  // lpValueName
-                           0,                  // lpReserved
-                           &currentKeyType,    // lpType
-                           (LPBYTE)data,       // lpData
-                           &dataBufferLen);    // lpcbData
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegQueryValueEx() on key two failed: %S", errStr);
-        LocalFree(errStr);
-        return RH_ERROR_QUERY_KEY;
-      }
-
-      if (currentKeyType != REG_SZ &&
-       currentKeyType != REG_EXPAND_SZ &&
-       currentKeyType != REG_MULTI_SZ) {
-        DebugMessage("Unknown type %d for key %s", currentKeyType, 
-         DRIVER_KEY_ONE);
-        return RH_ERROR_UNKNOWN_KEY_TYPE;
-      }
-
-      multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
-
-      regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
-      regValues.push_front(GEARWORKS_REG_VALUE);
-
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-
-      MakeMultiSzRegString(newRegValue, regValues);
-
-      rv = RegSetValueEx(keyHandle,
-                         DRIVER_SUBKEY_STR,
-                         0,
-                         REG_MULTI_SZ,
-                         newRegValue.value, 
-                         newRegValue.cbBytes);
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegSetValueEx() failed on key two: %S", errStr);
-        LocalFree(errStr);
-        return RH_ERROR_SETVALUE;
-      }
-
-      rv = RegCloseKey(keyHandle);
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegCloseKey() failed: %S", errStr);
-        LocalFree(errStr);
-      }
-
-    } else {
-      OutputDebugString(_T("Unknown creationResult"));
-    }
-
-    OutputDebugString(_T("Creating driver key 3"));
-
-    rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,    // handle
-                        DRIVER_KEY_THREE,      // lpSubKey
-                        0,                     // dwReserved
-                        NULL,                  // lpClass
-                        0,                     // dwOptions
-                        KEY_ALL_ACCESS,        // samDesired
-                        NULL,                  // lpSecurityAttributes
-                        &keyHandle,            // phkResult
-                        &keyCreationResult);   // lpdwDisposition
-
-    if (FAILED(rv)) {
-      LPTSTR errStr = GetSystemErrorMessage(rv);
-      DebugMessage("RegCreateKeyEx() on key three failed: %S", errStr);
-      LocalFree(errStr);
-      return RH_ERROR_INIT_CREATEKEY;
-    }
-
-    if (REG_CREATED_NEW_KEY == keyCreationResult) {
-      OutputDebugString(_T("Created new key three"));
-
-      regValueList_t newRegValueList;
-      newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
-
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-      MakeMultiSzRegString(newRegValue, newRegValueList);
-
-      rv = RegSetValueEx(keyHandle,             // key handle
-                         DRIVER_SUBKEY_STR,     // lpValueName
-                         0,                     // reserved
-                         REG_MULTI_SZ,          // dwType
-                         newRegValue.value,     // data
-                         newRegValue.cbBytes);  // cbData
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegSetValueEx() failed on key three: %S", errStr);
-        LocalFree(errStr);
-      }
-    } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
-      OutputDebugString(_T("Opened old key three"));
-
-      DWORD currentKeyType;
-      DWORD dataBufferLen = 4096;
-      LPTSTR data = (LPTSTR)malloc(dataBufferLen);
-
-      memset(data, 0, dataBufferLen);
-
-      rv = RegQueryValueEx(keyHandle,          // key handle
-                           DRIVER_SUBKEY_STR,  // lpValueName
-                           0,                  // lpReserved
-                           &currentKeyType,    // lpType
-                           (LPBYTE)data,       // lpData
-                           &dataBufferLen);    // lpcbData
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegQueryValueEx() on key three failed: %S", errStr);
-        LocalFree(errStr);
-        return RH_ERROR_QUERY_KEY;
-      }
-
-      if (currentKeyType != REG_SZ &&
-       currentKeyType != REG_EXPAND_SZ &&
-       currentKeyType != REG_MULTI_SZ) {
-        DebugMessage("Unknown type %d for key %s", currentKeyType, 
-         DRIVER_KEY_ONE);
-        return RH_ERROR_UNKNOWN_KEY_TYPE; 
-      }
-
-      multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
-
-      regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
-      regValues.push_front(GEARWORKS_REG_VALUE);
-
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-
-      MakeMultiSzRegString(newRegValue, regValues);
-
-      rv = RegSetValueEx(keyHandle,
-                         DRIVER_SUBKEY_STR,
-                         0,
-                         REG_MULTI_SZ,
-                         newRegValue.value, 
-                         newRegValue.cbBytes);
-
-      if (FAILED(rv)) {
-        LPTSTR errStr = GetSystemErrorMessage(rv);
-        DebugMessage("RegSetValueEx() failed on key three: %S", errStr);
-        LocalFree(errStr);
-        return RH_ERROR_SETVALUE;
-      }
-
-    } else {
-      OutputDebugString(_T("Unknown creationResult"));
-    }
     rv = RegCloseKey(keyHandle);
     if (FAILED(rv)) {
       LPTSTR errStr = GetSystemErrorMessage(rv);
       DebugMessage("RegCloseKey() failed: %S", errStr);
       LocalFree(errStr);
     }
-  }
-  else if (mode == "upgrade") {
-    OutputDebugString(_T("Upgrade mode"));
-  } else if ("remove" == mode) {
-    OutputDebugString(_T("Remove mode"));
+  } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
+    OutputDebugString(_T("Opened old key one"));
 
-    std::list<LPCTSTR> regKeysToMunge;
-    regKeysToMunge.push_back(DRIVER_KEY_ONE);
-    regKeysToMunge.push_back(DRIVER_KEY_TWO);
-    regKeysToMunge.push_back(DRIVER_KEY_THREE);
+    DWORD currentKeyType;
+    DWORD dataBufferLen = 4096;
+    LPTSTR data = (LPTSTR)malloc(dataBufferLen);
 
-    for (std::list<LPCTSTR>::const_iterator itr = regKeysToMunge.begin();
-         itr != regKeysToMunge.end();
-         ++itr) {
+    memset(data, 0, dataBufferLen);
 
-      HKEY keyHandle;
-      DWORD currentKeyType;
-      DWORD dataBufferLen = 4096;
-      LPTSTR data = (LPTSTR)malloc(dataBufferLen);
+    rv = RegQueryValueEx(keyHandle,          // key handle
+                         DRIVER_SUBKEY_STR,  // lpValueName
+                         0,                  // lpReserved
+                         &currentKeyType,    // lpType
+                         (LPBYTE)data,       // lpData
+                         &dataBufferLen);    // lpcbData
 
-      memset(data, 0, dataBufferLen);
+    if (!LoggedSUCCEEDED(rv, _T("RegQueryValueEx() failed")))
+      return RH_ERROR_QUERY_KEY;
 
-      LONG rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE, // hKey
-                             *itr,               // lpSubKey
-                             0,                  // ulOptions
-                             KEY_ALL_ACCESS,     // samDesired
-                             &keyHandle);        // phkResult
-
-      if (!EnsureSuccess(rv, _T("RegOpenKeyEx() on remove"))) {
-        free(data);
-        continue;
-      }
-
-      rv = RegQueryValueEx(keyHandle,          // key handle
-                           DRIVER_SUBKEY_STR,  // lpValueName
-                           0,                  // lpReserved
-                           &currentKeyType,    // lpType
-                           (LPBYTE)data,       // lpData
-                           &dataBufferLen);    // lpcbData
-
-      if (!EnsureSuccess(rv, _T("RegQueryValueEx() on remove"))) {
-        free(data);
-        continue;
-      }
-
-      multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
-
-      regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
-  
-      regValueList_t::iterator gearworksNode = find(regValues.begin(),
-       regValues.end(), GEARWORKS_REG_VALUE);
-
-      if (gearworksNode == regValues.end()) {
-        DebugMessage("Couldn't find gearworks value in key %S", *itr);
-        free(data);
-        continue;
-      }
-
-      regValues.erase(gearworksNode);
-
-      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
-
-      MakeMultiSzRegString(newRegValue, regValues);
-
-      rv = RegSetValueEx(keyHandle,
-                         DRIVER_SUBKEY_STR,
-                         0,
-                         REG_MULTI_SZ,
-                         newRegValue.value, 
-                         newRegValue.cbBytes);
-  
-      EnsureSuccess(rv, _T("RegSetValueEx() on remove"));
-      free(data);
-      free(newRegValue.value);
+    if (currentKeyType != REG_SZ &&
+        currentKeyType != REG_EXPAND_SZ &&
+        currentKeyType != REG_MULTI_SZ) {
+      DebugMessage("Unknown type %d for key %s", currentKeyType, 
+       KEY_DEVICE_CDROM);
+      return RH_ERROR_UNKNOWN_KEY_TYPE; 
     }
+
+    multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
+
+    regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
+
+    regValueList_t::iterator redbookNode = find(regValues.begin(), regValues.end(), REDBOOK_REG_VALUE);
+
+    // We didn't find the redbook node, so put our filter driver first.
+    if (redbookNode == regValues.end()) {
+      regValues.push_front(GEARWORKS_REG_VALUE);
+    } else {
+      // insert() inserts to the node _before_; we want to be inserted
+      // after that value, so increment the iterator; we shouldn't fall off 
+      // the end because we test for that above.
+      redbookNode++;
+      regValues.insert(redbookNode, GEARWORKS_REG_VALUE);
+    }
+
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+
+    // Does this modify cbBytes to be the correct number of bytes?
+    MakeMultiSzRegString(newRegValue, regValues);
+
+    rv = RegSetValueEx(keyHandle,
+                       DRIVER_SUBKEY_STR,
+                       0,
+                       REG_MULTI_SZ,
+                       newRegValue.value, 
+                       newRegValue.cbBytes);
+
+    if (!LoggedSUCCEEDED(rv, _T("RegSetValueEx() failed")))
+      return RH_ERROR_SETVALUE;
+
+    rv = RegCloseKey(keyHandle);
+    LoggedSUCCEEDED(rv, _T("RegCloseKey() failed"));
   } else {
-    OutputDebugString(_T("Unknown mode"));
-    return RH_ERROR_USER;
+    OutputDebugString(_T("Unknown creationResult"));
   }
 
-  return RH_OK;
+  OutputDebugString(_T("Creating driver key 2"));
+
+  rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,    // handle
+                      KEY_DEVICE_TAPE,       // lpSubKey
+                      0,                     // dwReserved
+                      NULL,                  // lpClass
+                      0,                     // dwOptions
+                      KEY_ALL_ACCESS,        // samDesired
+                      NULL,                  // lpSecurityAttributes
+                      &keyHandle,            // phkResult
+                      &keyCreationResult);   // lpdwDisposition
+
+  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() on key two failed")))
+    return RH_ERROR_INIT_CREATEKEY;
+
+  if (REG_CREATED_NEW_KEY == keyCreationResult) {
+    OutputDebugString(_T("Created new key two"));
+
+    regValueList_t newRegValueList;
+    newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
+
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+    MakeMultiSzRegString(newRegValue, newRegValueList);
+
+    rv = RegSetValueEx(keyHandle,             // key handle
+                       DRIVER_SUBKEY_STR,     // lpValueName
+                       0,                     // reserved
+                       REG_MULTI_SZ,          // dwType
+                       newRegValue.value,     // data
+                       newRegValue.cbBytes);  // cbData
+
+    LoggedSUCCEEDED(rv, _T("RegSetValueEx() failed on key two"));
+
+  } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
+    OutputDebugString(_T("Opened old key two"));
+
+    DWORD currentKeyType;
+    DWORD dataBufferLen = 4096;
+    LPTSTR data = (LPTSTR)malloc(dataBufferLen);
+
+    memset(data, 0, dataBufferLen);
+
+    rv = RegQueryValueEx(keyHandle,          // key handle
+                         DRIVER_SUBKEY_STR,  // lpValueName
+                         0,                  // lpReserved
+                         &currentKeyType,    // lpType
+                         (LPBYTE)data,       // lpData
+                         &dataBufferLen);    // lpcbData
+
+    if (FAILED(rv)) {
+      LPTSTR errStr = GetSystemErrorMessage(rv);
+      DebugMessage("RegQueryValueEx() on key two failed: %S", errStr);
+      LocalFree(errStr);
+      return RH_ERROR_QUERY_KEY;
+    }
+
+    if (currentKeyType != REG_SZ &&
+        currentKeyType != REG_EXPAND_SZ &&
+        currentKeyType != REG_MULTI_SZ) {
+      DebugMessage("Unknown type %d for key %s", currentKeyType, 
+       KEY_DEVICE_CDROM);
+      return RH_ERROR_UNKNOWN_KEY_TYPE;
+    }
+
+    multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
+
+    regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
+    regValues.push_front(GEARWORKS_REG_VALUE);
+
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+
+    MakeMultiSzRegString(newRegValue, regValues);
+
+    rv = RegSetValueEx(keyHandle,
+                       DRIVER_SUBKEY_STR,
+                       0,
+                       REG_MULTI_SZ,
+                       newRegValue.value, 
+                       newRegValue.cbBytes);
+
+    if (FAILED(rv)) {
+      LPTSTR errStr = GetSystemErrorMessage(rv);
+      DebugMessage("RegSetValueEx() failed on key two: %S", errStr);
+      LocalFree(errStr);
+      return RH_ERROR_SETVALUE;
+    }
+
+    rv = RegCloseKey(keyHandle);
+    if (FAILED(rv)) {
+      LPTSTR errStr = GetSystemErrorMessage(rv);
+      DebugMessage("RegCloseKey() failed: %S", errStr);
+      LocalFree(errStr);
+    }
+
+  } else {
+    OutputDebugString(_T("Unknown creationResult"));
+  }
+
+  OutputDebugString(_T("Creating driver key 3"));
+
+  rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,       // handle
+                      KEY_DEVICE_MEDIACHANGER,  // lpSubKey
+                      0,                        // dwReserved
+                      NULL,                     // lpClass
+                      0,                        // dwOptions
+                      KEY_ALL_ACCESS,           // samDesired
+                      NULL,                     // lpSecurityAttributes
+                      &keyHandle,               // phkResult
+                      &keyCreationResult);      // lpdwDisposition
+
+  if (FAILED(rv)) {
+    LPTSTR errStr = GetSystemErrorMessage(rv);
+    DebugMessage("RegCreateKeyEx() on key three failed: %S", errStr);
+    LocalFree(errStr);
+    return RH_ERROR_INIT_CREATEKEY;
+  }
+
+  if (REG_CREATED_NEW_KEY == keyCreationResult) {
+    OutputDebugString(_T("Created new key three"));
+
+    regValueList_t newRegValueList;
+    newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
+
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+    MakeMultiSzRegString(newRegValue, newRegValueList);
+
+    rv = RegSetValueEx(keyHandle,             // key handle
+                       DRIVER_SUBKEY_STR,     // lpValueName
+                       0,                     // reserved
+                       REG_MULTI_SZ,          // dwType
+                       newRegValue.value,     // data
+                       newRegValue.cbBytes);  // cbData
+
+    if (FAILED(rv)) {
+      LPTSTR errStr = GetSystemErrorMessage(rv);
+      DebugMessage("RegSetValueEx() failed on key three: %S", errStr);
+      LocalFree(errStr);
+    }
+  } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
+    OutputDebugString(_T("Opened old key three"));
+
+    DWORD currentKeyType;
+    DWORD dataBufferLen = 4096;
+    LPTSTR data = (LPTSTR)malloc(dataBufferLen);
+
+    memset(data, 0, dataBufferLen);
+
+    rv = RegQueryValueEx(keyHandle,          // key handle
+                         DRIVER_SUBKEY_STR,  // lpValueName
+                         0,                  // lpReserved
+                         &currentKeyType,    // lpType
+                         (LPBYTE)data,       // lpData
+                         &dataBufferLen);    // lpcbData
+
+    if (FAILED(rv)) {
+      LPTSTR errStr = GetSystemErrorMessage(rv);
+      DebugMessage("RegQueryValueEx() on key three failed: %S", errStr);
+      LocalFree(errStr);
+      return RH_ERROR_QUERY_KEY;
+    }
+
+    if (currentKeyType != REG_SZ &&
+     currentKeyType != REG_EXPAND_SZ &&
+     currentKeyType != REG_MULTI_SZ) {
+      DebugMessage("Unknown type %d for key %s", currentKeyType, 
+       KEY_DEVICE_CDROM);
+      return RH_ERROR_UNKNOWN_KEY_TYPE; 
+    }
+
+    multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
+
+    regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
+    regValues.push_front(GEARWORKS_REG_VALUE);
+
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+
+    MakeMultiSzRegString(newRegValue, regValues);
+
+    rv = RegSetValueEx(keyHandle,
+                       DRIVER_SUBKEY_STR,
+                       0,
+                       REG_MULTI_SZ,
+                       newRegValue.value, 
+                       newRegValue.cbBytes);
+
+    if (FAILED(rv)) {
+      LPTSTR errStr = GetSystemErrorMessage(rv);
+      DebugMessage("RegSetValueEx() failed on key three: %S", errStr);
+      LocalFree(errStr);
+      return RH_ERROR_SETVALUE;
+    }
+
+  } else {
+    OutputDebugString(_T("Unknown creationResult"));
+  }
+  rv = RegCloseKey(keyHandle);
+  if (FAILED(rv)) {
+    LPTSTR errStr = GetSystemErrorMessage(rv);
+    DebugMessage("RegCloseKey() failed: %S", errStr);
+    LocalFree(errStr);
+  }
+}
+
+int RegRemoveKeys(void) {
+  int result = RH_OK;
+
+  std::list<LPCTSTR> regKeysToMunge;
+  regKeysToMunge.push_back(KEY_DEVICE_CDROM);
+  regKeysToMunge.push_back(KEY_DEVICE_TAPE);
+  regKeysToMunge.push_back(KEY_DEVICE_MEDIACHANGER);
+
+  for (std::list<LPCTSTR>::const_iterator itr = regKeysToMunge.begin();
+       itr != regKeysToMunge.end();
+       ++itr) {
+
+    HKEY keyHandle;
+    DWORD currentKeyType;
+    DWORD dataBufferLen = 4096;
+    LPTSTR data = (LPTSTR)malloc(dataBufferLen);
+
+    memset(data, 0, dataBufferLen);
+
+    LONG rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE, // hKey
+                           *itr,               // lpSubKey
+                           0,                  // ulOptions
+                           KEY_ALL_ACCESS,     // samDesired
+                           &keyHandle);        // phkResult
+
+    if (!LoggedSUCCEEDED(rv, _T("RegOpenKeyEx() on remove"))) {
+      result = RH_ERROR_OPENKEY;
+      free(data);
+      continue;
+    }
+
+    rv = RegQueryValueEx(keyHandle,          // key handle
+                         DRIVER_SUBKEY_STR,  // lpValueName
+                         0,                  // lpReserved
+                         &currentKeyType,    // lpType
+                         (LPBYTE)data,       // lpData
+                         &dataBufferLen);    // lpcbData
+
+    if (!LoggedSUCCEEDED(rv, _T("RegQueryValueEx() on remove"))) {
+      result = RH_ERROR_QUERY_VALUE;
+      free(data);
+      continue;
+    }
+
+    multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
+
+    regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
+
+    regValueList_t::iterator gearworksNode = find(regValues.begin(),
+                                                  regValues.end(),
+                                                  GEARWORKS_REG_VALUE);
+
+    if (gearworksNode == regValues.end()) {
+      DebugMessage("Couldn't find gearworks value in key %S", *itr);
+      free(data);
+      continue;
+    }
+
+    regValues.erase(gearworksNode);
+
+    multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+
+    MakeMultiSzRegString(newRegValue, regValues);
+
+    rv = RegSetValueEx(keyHandle,
+                       DRIVER_SUBKEY_STR,
+                       0,
+                       REG_MULTI_SZ,
+                       newRegValue.value, 
+                       newRegValue.cbBytes);
+
+    LoggedSUCCEEDED(rv, _T("RegSetValueEx() on remove"));
+    free(data);
+    free(newRegValue.value);
+  }
+
+  return result;
 }

@@ -44,13 +44,7 @@
 
 #include "stringconvert.h"
 #include "error.h"
-
-/*
- * This is the Windows-specific main() implementation to prevent a console
- * window from showing up; this calls the real main() in main.cpp
- */
-
-int main(int argc, LPWSTR* argv);
+#include "reghandlers.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   // don't use any of the args, because we want to be Unicode-compatible
@@ -68,10 +62,33 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     return RH_ERROR_USER;
   }
   
-  int result;
-  
-  result = main(argc, argvw);
-  
+  int result = -1;
+
+  if (argc != 2) {
+    OutputDebugString(_T("Incorrect number of arguments"));
+    return RH_ERROR_USER;
+  }
+
+  std::string mode;
+  mode.assign(ConvertUTFnToUTF8(argvw[1]));
+
+  if (mode == "install") {
+    OutputDebugString(_T("In Install mode"));
+    result = RegInstallKeys();
+
+  } else if (mode == "upgrade") {
+    OutputDebugString(_T("In Upgrade mode"));
+    result = RH_ERROR_NOIMPL;
+
+  } else if ("remove" == mode) {
+    OutputDebugString(_T("In Remove mode"));
+    result = RegRemoveKeys();
+
+  } else {
+    OutputDebugString(_T("Unknown mode"));
+    result = RH_ERROR_USER;
+  }
+
   LocalFree(argvw);
   return result;
 }
