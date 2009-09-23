@@ -29,8 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-CPP_SRCS = main.cpp \
-           winmain.cpp \
+CPP_SRCS = winmain.cpp \
+           reghandlers.cpp \
            stringconvert.cpp \
            debug.cpp \
            regparse.cpp \
