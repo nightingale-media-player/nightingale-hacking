@@ -240,7 +240,7 @@ SectionEnd
 
 Function InstallCdrip
    ;Section "${CdripSectionName}"
-   MessageBox MB_OK "OH HAI in CD-rIP!"
+   MessageBox MB_OK "Installing ${CdripSectionName} Functionality"
 
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
 

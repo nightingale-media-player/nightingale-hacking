@@ -37,19 +37,19 @@
 
 /* WARNING: live ammunition... */
 
-// LPCTSTR KEY_DEVICE_CDROM = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
+LPCTSTR KEY_DEVICE_CDROM = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
 
-// LPCTSTR KEY_DEVICE_TAPE = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{6D807884-7D21-11CF-801C-08002BE10318}");
+LPCTSTR KEY_DEVICE_TAPE = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{6D807884-7D21-11CF-801C-08002BE10318}");
 
-// LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{CE5939AE-EBDE-11D0-B181-0000F8753EC4}");
+LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{CE5939AE-EBDE-11D0-B181-0000F8753EC4}");
 
 /* end live ammunition... */
 
 /* Testing Keys */
 
-LPCTSTR KEY_DEVICE_CDROM = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
-LPCTSTR KEY_DEVICE_TAPE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey2");
-LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
+// LPCTSTR KEY_DEVICE_CDROM = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
+// LPCTSTR KEY_DEVICE_TAPE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey2");
+// LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
 
 /* End Testing Keys */
 
@@ -88,8 +88,8 @@ LPTSTR GetSystemErrorMessage(DWORD errNum) {
   }
 }
 
-BOOL LoggedSUCCEEDED(HRESULT rv, LPCTSTR message) {
-  BOOL callSucceeded = SUCCEEDED(rv);
+BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message) {
+  BOOL callSucceeded = (rv == ERROR_SUCCESS);
 
   if (!callSucceeded) {
     LPTSTR errStr = GetSystemErrorMessage(rv);
@@ -107,21 +107,39 @@ int AddFilteredDriver(LPCTSTR regSubKey,
   DWORD keyCreationResult;
   HKEY keyHandle;
 
-  HRESULT rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,  // handle
-                              regSubKey,           // lpSubKey
-                              0,                   // dwReserved
-                              NULL,                // lpClass
-                              0,                   // dwOptions
-                              KEY_ALL_ACCESS,      // samDesired
-                              NULL,                // lpSecurityAttributes
-                              &keyHandle,          // phkResult
-                              &keyCreationResult); // lpdwDisposition
+  LONG rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,  // handle
+                           regSubKey,           // lpSubKey
+                           0,                   // dwReserved
+                           NULL,                // lpClass
+                           0,                   // dwOptions
+                           KEY_ALL_ACCESS,      // samDesired
+                           NULL,                // lpSecurityAttributes
+                           &keyHandle,          // phkResult
+                           &keyCreationResult); // lpdwDisposition
 
   if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() failed")))
     return RH_ERROR_INIT_CREATEKEY;
 
-  if (REG_CREATED_NEW_KEY == keyCreationResult) {
-    DebugMessage("Created new key: %S", newKey.p);
+  DWORD currentKeyType = 0;
+  DWORD dataBufferLen = DEFAULT_REG_BUFFER_SZ;
+  LPTSTR data = (LPTSTR)malloc(dataBufferLen);
+
+  memset(data, 0, dataBufferLen);
+
+  rv = RegQueryValueEx(keyHandle,          // key handle
+                       DRIVER_SUBKEY_STR,  // lpValueName
+                       0,                  // lpReserved
+                       &currentKeyType,    // lpType
+                       (LPBYTE)data,       // lpData
+                       &dataBufferLen);    // lpcbData
+
+  if (REG_CREATED_NEW_KEY == keyCreationResult || ERROR_FILE_NOT_FOUND == rv) {
+
+    if (REG_CREATED_NEW_KEY == keyCreationResult)
+      DebugMessage("Created new key: %S", newKey.p);
+    if (ERROR_FILE_NOT_FOUND == rv)
+      DebugMessage("Creatint new subkey %S in existing key: %S",
+                   GEARWORKS_REG_VALUE.p, newKey.p);
 
     regValueList_t newRegValueList;
     newRegValueList.insert(newRegValueList.begin(), GEARWORKS_REG_VALUE);
@@ -146,29 +164,10 @@ int AddFilteredDriver(LPCTSTR regSubKey,
   } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
     OutputDebugString(_T("Opened old key"));
 
-    DWORD currentKeyType;
-    DWORD dataBufferLen = DEFAULT_REG_BUFFER_SZ;
-    LPTSTR data = (LPTSTR)malloc(dataBufferLen);
-
-    memset(data, 0, dataBufferLen);
-
-    rv = RegQueryValueEx(keyHandle,          // key handle
-                         DRIVER_SUBKEY_STR,  // lpValueName
-                         0,                  // lpReserved
-                         &currentKeyType,    // lpType
-                         (LPBYTE)data,       // lpData
-                         &dataBufferLen);    // lpcbData
-
-    if (!LoggedSUCCEEDED(rv, _T("RegQueryValueEx() failed"))) {
-      free(data);
-      return RH_ERROR_QUERY_KEY;
-    }
-
     if (currentKeyType != REG_SZ &&
         currentKeyType != REG_EXPAND_SZ &&
         currentKeyType != REG_MULTI_SZ) {
-      DebugMessage("Unknown type %d for key %s", currentKeyType, 
-       KEY_DEVICE_CDROM);
+      DebugMessage("Unknown type %d for key %S", currentKeyType, regSubKey);
       free(data);
       return RH_ERROR_UNKNOWN_KEY_TYPE; 
     }
@@ -251,27 +250,31 @@ int AddFilteredDriver(LPCTSTR regSubKey,
 int RegInstallKeys(void) {
   int finalRv = RH_OK;
 
+  DebugMessage("Begin installation of key %S", KEY_DEVICE_CDROM);
   int rv = AddFilteredDriver(KEY_DEVICE_CDROM,
                              GEARWORKS_REG_VALUE,
                              driverLoc_t(driverLoc_t::INSERT_AFTER_NODE,
                                          &REDBOOK_REG_VALUE));
-  DebugMessage("Addition of key %S had rv %d", KEY_DEVICE_CDROM, rv);
+  DebugMessage("Installation of key %S had rv %d", KEY_DEVICE_CDROM, rv);
 
   if (rv != RH_OK)
     finalRv = rv;
 
+  DebugMessage("-- Begin installation of key %S", KEY_DEVICE_TAPE);
   rv = AddFilteredDriver(KEY_DEVICE_TAPE,
                          GEARWORKS_REG_VALUE,
                          driverLoc_t(driverLoc_t::INSERT_AT_FRONT));
-  DebugMessage("Addition of key %S had rv %d", KEY_DEVICE_CDROM, rv);
+  DebugMessage("-- Installation of key %S had rv %d", KEY_DEVICE_TAPE, rv);
 
   if (rv != RH_OK)
     finalRv = rv;
 
+  DebugMessage("-- Begin installation of key %S", KEY_DEVICE_MEDIACHANGER);
   rv = AddFilteredDriver(KEY_DEVICE_MEDIACHANGER,
                          GEARWORKS_REG_VALUE,
                          driverLoc_t(driverLoc_t::INSERT_AT_FRONT));
-  DebugMessage("Addition of key %S had rv %d", KEY_DEVICE_CDROM, rv);
+  DebugMessage("-- Installation of key %S had rv %d", KEY_DEVICE_MEDIACHANGER,
+   rv);
 
   if (rv != RH_OK)
     finalRv = rv;
