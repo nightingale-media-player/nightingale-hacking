@@ -36,6 +36,11 @@ Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 var multiCDDialog = {
+  library: null,
+  _artistValue: null,
+  _albumValue: null,
+  _curTrackIndex: 1,
+
   /**
    * \brief Handle load events.
    */
@@ -142,5 +147,38 @@ var multiCDDialog = {
       var item = trackArr.queryElementAt(0, Ci.sbIMediaItem);
       item.setProperties(tracks[i]);
     }
-  }
+  },
+
+  /**
+   * \brief Handle cancel button.
+   */
+  oncancel: function oncancel()
+  {
+    // Populate all of the tracks w/ the default entries.
+    this._artistValue = SBString("cdrip.lookup.default_artistname");
+    this._albumValue = SBString("cdrip.lookup.default_albumname");
+    this.library.enumerateAllItems(this);
+  },
+
+  /**
+   * sbIMediaListEnumerationListener interface
+   */
+  onEnumerationBegin: function (aList) {},
+  onEnumeratedItem: function (aList, aItem)
+  {
+    aItem.setProperty(SBProperties.albumArtistName, this._artistValue);
+    aItem.setProperty(SBProperties.artistName, this._artistValue);
+    aItem.setProperty(SBProperties.albumName, this._albumValue);
+
+    // Only pad the track count to two digits since a CD can only have
+    // up to 99 tracks on it.
+    var curTrackNum = this._curTrackIndex++;
+    if (curTrackNum < 10) {
+      curTrackNum = "0" + curTrackNum;
+    }
+    aItem.setProperty(SBProperties.trackName,
+                      SBFormattedString("cdrip.lookup.default_trackname",
+                                        [curTrackNum]));
+  },
+  onEnumerationEnd: function (aList, aStatus) {}
 }

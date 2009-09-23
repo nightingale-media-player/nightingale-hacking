@@ -42,7 +42,9 @@
   hidechrome="true" flex="1" type="songbird"
   buttons="accept,cancel"
   title="&cdrip.lookup.multiple.title;"
-  ondialogaccept="multiCDDialog.onaccept();" onload="multiCDDialog.onload();"
+  onload="multiCDDialog.onload();"
+  ondialogaccept="multiCDDialog.onaccept();"
+  ondialogcancel="multiCDDialog.oncancel();"
   width="600" height="450" resizers="both">
 
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
