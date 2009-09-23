@@ -42,7 +42,7 @@ var InstallerMode
 var UnpackMode
 var DistributionMode
 var DistributionName
-var UninstallNeedsReboot
+var ForceInstallCdrip
 
 ; Compressor settings
 SetCompressor /SOLID lzma

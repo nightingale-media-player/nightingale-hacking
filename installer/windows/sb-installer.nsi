@@ -61,6 +61,10 @@ Section "-Application" Section1
          ; partner installer *calling us* to set this.
          ExecWait '"$INSTDIR\${DistHelperEXE}" install'
       ${EndIf}
+
+      ${If} $ForceInstallCdrip == ${TRUE}
+          Call InstallCdrip
+      ${EndIf}
    ${EndIf}
 SectionEnd
 
@@ -234,8 +238,9 @@ Section "QuickLaunch Icon"
 End:
 SectionEnd
 
-Section "${CdripSectionName}"
-   ;MessageBox MB_OK "OH HAI in CD-rIP!"
+Function InstallCdrip
+   ;Section "${CdripSectionName}"
+   MessageBox MB_OK "OH HAI in CD-rIP!"
 
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
 
@@ -255,7 +260,8 @@ Section "${CdripSectionName}"
    WriteRegDWORD HKLM $0 "Type" 1
 
    ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
-SectionEnd
+   ;SectionEnd
+FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Installer Helper Functions

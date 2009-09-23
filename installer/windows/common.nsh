@@ -217,7 +217,7 @@ FunctionEnd
       StrCpy $DistributionName ${DefaultDistributionName}
       StrCpy $InstallerMode ${InstallerBuildMode}
       StrCpy $InstallerType ${InstallerBuildType}
-      StrCpy $UninstallNeedsReboot ${FALSE}
+      StrCpy $ForceInstallCdrip ${FALSE}
 
       ${${un}GetParameters} $R1
       ClearErrors
@@ -286,6 +286,10 @@ FunctionEnd
       ${EndIf}
       ClearErrors
 
+      ${${un}GetOptions} $R1 "/CDRIP" $0
+      IfErrors +2 0
+         StrCpy $ForceInstallCdrip ${TRUE}
+
       Call ${un}SetRootRegistryKey
 
       ${If} $InstallerMode == "debug"
@@ -293,6 +297,7 @@ FunctionEnd
          MessageBox MB_OK "DistributionMode is $DistributionMode"
          MessageBox MB_OK "InstallerMode is $InstallerMode"
          MessageBox MB_OK "InstallerType is $InstallerType"
+         MessageBox MB_OK "ForceInstallCdrip is $ForceInstallCdrip"
          SetDetailsView show
       ${EndIf}
    FunctionEnd
