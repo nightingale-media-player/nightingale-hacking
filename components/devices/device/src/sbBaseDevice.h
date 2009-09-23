@@ -67,8 +67,6 @@ class sbITranscodeAlbumArt;
 #define DEVICE_PROPERTY_SYNC_FORCE_DIFF \
           "http://songbirdnest.com/device/1.0#forceDiff"
 
-#define SB_ERROR_REQUEST_ABORTED NS_ERROR_GENERATE_FAILURE( NS_ERROR_MODULE_GENERAL, 2 )
-
 #define SB_SYNC_PARTNER_PREF NS_LITERAL_STRING("SyncPartner")
 
 /**

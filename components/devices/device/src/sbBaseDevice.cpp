@@ -523,7 +523,7 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     // If we're aborting don't accept any more requests
     if (mAbortCurrentRequest)
     {
-      return SB_ERROR_REQUEST_ABORTED;
+      return NS_ERROR_ABORT;
     }
     /* decide where this request will be inserted */
     // figure out which queue we're looking at
@@ -2754,7 +2754,7 @@ sbBaseDevice::HandleSyncRequest(TransferRequest* aRequest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (IsRequestAbortedOrDeviceDisconnected()) {
-    return SB_ERROR_REQUEST_ABORTED;
+    return NS_ERROR_ABORT;
   }
 
   // Apply changes to the destination library.
@@ -3351,7 +3351,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   // Group changes for later processing but apply property updates immediately.
   for (PRUint32 i = 0; i < changeCount; i++) {
     if (IsRequestAbortedOrDeviceDisconnected()) {
-      return SB_ERROR_REQUEST_ABORTED;
+      return NS_ERROR_ABORT;
     }
     // Get the next change.
     nsCOMPtr<sbILibraryChange> change = do_QueryElementAt(changeList, i, &rv);
@@ -3423,7 +3423,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   }
 
   if (IsRequestAbortedOrDeviceDisconnected()) {
-    return SB_ERROR_REQUEST_ABORTED;
+    return NS_ERROR_ABORT;
   }
 
   // Delete items.
@@ -3434,7 +3434,7 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (IsRequestAbortedOrDeviceDisconnected()) {
-    return SB_ERROR_REQUEST_ABORTED;
+    return NS_ERROR_ABORT;
   }
 
   // Add items.
@@ -3449,14 +3449,14 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
                                          NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                          NS_LITERAL_STRING("1"));
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to remove partial added items");
-    return SB_ERROR_REQUEST_ABORTED;
+    return NS_ERROR_ABORT;
   }
 
   // Add media lists.
   PRInt32 count = addMediaListList.Count();
   for (PRInt32 i = 0; i < count; i++) {
     if (IsRequestAbortedOrDeviceDisconnected()) {
-      return SB_ERROR_REQUEST_ABORTED;
+      return NS_ERROR_ABORT;
     }
     rv = SyncAddMediaList(aDstLibrary, addMediaListList[i]);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -4381,7 +4381,7 @@ sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
   while (iter != end) {
     // Check for abort.
     if (IsRequestAbortedOrDeviceDisconnected()) {
-      return SB_ERROR_REQUEST_ABORTED;
+      return NS_ERROR_ABORT;
     }
 
     TransferRequest * const request = *iter;
