@@ -47,6 +47,7 @@ var multiCDDialog = {
   onload: function onload()
   {
     this.library = window.arguments[0].QueryInterface(Ci.sbIDeviceLibrary);
+    this._device = this.library.device;
     this._metadataResults = ArrayConverter.JSArray(
                              window.arguments[1].QueryInterface(
                                Ci.nsISimpleEnumerator));
@@ -93,6 +94,22 @@ var multiCDDialog = {
         this.onJobProgress(job);
       }
     }
+
+    // Listen for device events.
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    deviceManager.addEventListener(this);
+  },
+
+  /**
+   * \brief Handle unload events.
+   */
+  onunload: function onunload()
+  {
+    // Remove device event listener.
+    var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    deviceManager.removeEventListener(this);
   },
 
   /**
@@ -146,6 +163,22 @@ var multiCDDialog = {
                                                      i+1);
       var item = trackArr.queryElementAt(0, Ci.sbIMediaItem);
       item.setProperties(tracks[i]);
+    }
+  },
+
+  /**
+   * \brief Handle device events.
+   */
+  onDeviceEvent: function onDeviceEvent(aEvent) {
+    switch(aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+        // Close dialog if device is removed.
+        if (aEvent.data == this._device)
+          window.close();
+        break;
+
+      default :
+        break;
     }
   },
 

@@ -119,6 +119,7 @@
 
     var cdInfoNotFoundDlg = {
       _deviceLibrary: null,
+      _device: null,
       _dialog: null,
       _okButton: null,
       _curTrackIndex: 1,
@@ -131,6 +132,7 @@
           // Save the device reference
           this._deviceLibrary =
               window.arguments[0].QueryInterface(Ci.sbILibrary);
+          this._device = this._deviceLibrary.device;
         } catch (e) {
           dump("Failed to get device reference: " + e + "\n");
           dump("arg0: " + window.arguments[0] + "\n");
@@ -141,6 +143,11 @@
         this._okButton = this._dialog.getButton("accept");
 
         this.updateButton();
+
+        // Listen for device events.
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        deviceManager.addEventListener(this);
       },
 
       /**
@@ -160,6 +167,10 @@
        * \brief Handle unload events.
        */
       onUnload: function cdInfoNotFoundDlg_onUnload() {
+        // Remove device event listener.
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        deviceManager.removeEventListener(this);
       },
 
       /**
@@ -212,6 +223,22 @@
       },
       onEnumerationEnd: function (aList, aStatus) {
       },
+
+      /**
+       * sbIDeviceEventListener interface
+       */
+      onDeviceEvent: function cdInfoNotFoundDlg_onDeviceEvent(aEvent) {
+        switch(aEvent.type) {
+          case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+            // Close dialog if device is removed.
+            if (aEvent.data == this._device)
+              window.close();
+            break;
+
+          default :
+            break;
+        }
+      }
     };
 
   ]]></script>

@@ -43,6 +43,7 @@
   buttons="accept,cancel"
   title="&cdrip.lookup.multiple.title;"
   onload="multiCDDialog.onload();"
+  onunload="multiCDDialog.onunload();"
   ondialogaccept="multiCDDialog.onaccept();"
   ondialogcancel="multiCDDialog.oncancel();"
   width="600" height="450" resizers="both">
