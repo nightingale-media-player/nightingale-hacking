@@ -98,6 +98,7 @@
                      type="number"
                      onchange="CDRipPrefsPane.updateBitratePref();"
                      increment="32"/>
+            <label value="&cdrip.prefpane.quality.units.kbps;"/>
           </hbox>
         </vbox>
 
