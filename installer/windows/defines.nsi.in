@@ -147,5 +147,7 @@
 
 !define UnintallSurveyURL http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d
 
-!define UninstallRebootNow "${BrandShortName} has been uninstalled, but your computer must be rebooted to complete the uninstallation.$\n$\nreboot now?"
+!define UninstallRebootNow "${BrandShortName} has been uninstalled, but your computer must be rebooted to complete the uninstallation.$\n$\nReboot now?"
+
+!define InstallRebootNow "${BrandShortName} has been installed, but your computer must be rebooted to complete the installation.$\n$\nReboot now?"
 

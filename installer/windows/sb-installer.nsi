@@ -66,6 +66,11 @@ Section "-Application" Section1
           Call InstallCdrip
       ${EndIf}
    ${EndIf}
+
+   IfRebootFlag 0 noReboot
+      MessageBox MB_YESNO|MB_ICONQUESTION "${InstallRebootNow}" /SD IDNO IDNO noReboot
+      Reboot
+   noReboot:
 SectionEnd
 
 Function InstallAppRegistryKeys
@@ -255,11 +260,13 @@ Function InstallCdrip
    WriteRegStr HKLM $0 "DisplayName" "GEARAspiWDM"
    WriteRegDWORD HKLM $0 "ErrorControl" 1
    WriteRegStr HKLM $0 "Group" "filter"
-   WriteRegExpandStr HKLM $0 "ImagePath" "%SYSTEM32%\Drivers\GearAspiWDM.sys"
+   WriteRegExpandStr HKLM $0 "ImagePath" "system32\Drivers\GearAspiWDM.sys"
    WriteRegDWORD HKLM $0 "Start" 3
    WriteRegDWORD HKLM $0 "Type" 1
 
    ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
+   ; Temporary hack to ensure drivers are loaded
+   SetRebootFlag true
    ;SectionEnd
 FunctionEnd
 
