@@ -510,7 +510,11 @@ sbCDRipServicePaneService.prototype = {
    */
   _removeAllDevices: function sbCDRipServicePaneService_removeAllDevices() {
     for (var devId in this._deviceInfoList) {
-      this._removeDevice(this._deviceInfoList[devId].device);
+      // Remove the device node.
+      this._deviceInfoList[devId].svcPaneNode.hidden = true;
+
+      // Remove device info list entry.
+      delete this._deviceInfoList[devId];
     }
   },
 
