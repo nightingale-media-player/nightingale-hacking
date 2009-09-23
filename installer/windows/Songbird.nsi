@@ -42,6 +42,7 @@ var InstallerMode
 var UnpackMode
 var DistributionMode
 var DistributionName
+var UninstallNeedsReboot
 
 ; Compressor settings
 SetCompressor /SOLID lzma

@@ -9,5 +9,6 @@
 #define RH_ERROR_QUERY_KEY 		3
 #define RH_ERROR_UNKNOWN_KEY_TYPE 	4
 #define RH_ERROR_SETVALUE 		5
+#define RH_ERROR_OPENKEY 		6
 
 #endif /* _REGHELPER_ERROR_H__ */

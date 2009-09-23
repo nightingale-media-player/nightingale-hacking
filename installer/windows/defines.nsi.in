@@ -27,6 +27,7 @@
 !define DistHelperEXE         "disthelper.exe"
 !define AgentEXE              "songbirditunesagent.exe"
 !define CdripHelperEXE        "cdriphelper.exe"
+!define CdripSectionName      "Compact Disc Import"
 
 !define DistHelperLog         "disthelper.log"
 
@@ -145,4 +146,6 @@
 !define TakeSurveyMessage "We're sorry to see that you uninstalled ${BrandShortName}.$\n$\nWill you consider helping us make ${BrandShortName} better by taking a quick anonymous survey to help us improve the product?$\nIt shouldn't take more than 30 seconds to complete."
 
 !define UnintallSurveyURL http://www.surveymonkey.com/s.aspx?sm=PzpxLFChwaxzVfT4H0qbKg_3d_3d
+
+!define UninstallRebootNow "${BrandShortName} has been uninstalled, but your computer must be rebooted to complete the uninstallation.$\n$\nreboot now?"
 

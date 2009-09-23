@@ -67,6 +67,17 @@ LPTSTR GetSystemErrorMessage(DWORD errNum) {
   }
 }
 
+BOOL EnsureSuccess(LONG rv, LPCTSTR message) {
+  BOOL callSucceeded = SUCCEEDED(rv);
+
+  if (!callSucceeded) {
+    LPTSTR errStr = GetSystemErrorMessage(rv);
+    DebugMessage("%S: %S", message, errStr);
+    LocalFree(errStr);
+  }
+  return callSucceeded;
+}
+      
 int main(int argc, LPTSTR *argv) {
   int result = 0;
   
@@ -151,8 +162,8 @@ int main(int argc, LPTSTR *argv) {
       }
 
       if (currentKeyType != REG_SZ &&
-       currentKeyType != REG_EXPAND_SZ &&
-       currentKeyType != REG_MULTI_SZ) {
+          currentKeyType != REG_EXPAND_SZ &&
+          currentKeyType != REG_MULTI_SZ) {
         DebugMessage("Unknown type %d for key %s", currentKeyType, 
          DRIVER_KEY_ONE);
         return RH_ERROR_UNKNOWN_KEY_TYPE; 
@@ -162,8 +173,7 @@ int main(int argc, LPTSTR *argv) {
 
       regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
 
-      regValueList_t::iterator redbookNode = find(regValues.begin(),
-       regValues.end(), REDBOOK_REG_VALUE);
+      regValueList_t::iterator redbookNode = find(regValues.begin(), regValues.end(), REDBOOK_REG_VALUE);
 
       // We didn't find the redbook node, so put our filter driver first.
       if (redbookNode == regValues.end()) {
@@ -419,6 +429,76 @@ int main(int argc, LPTSTR *argv) {
     OutputDebugString(_T("Upgrade mode"));
   } else if ("remove" == mode) {
     OutputDebugString(_T("Remove mode"));
+
+    std::list<LPCTSTR> regKeysToMunge;
+    regKeysToMunge.push_back(DRIVER_KEY_ONE);
+    regKeysToMunge.push_back(DRIVER_KEY_TWO);
+    regKeysToMunge.push_back(DRIVER_KEY_THREE);
+
+    for (std::list<LPCTSTR>::const_iterator itr = regKeysToMunge.begin();
+         itr != regKeysToMunge.end();
+         ++itr) {
+
+      HKEY keyHandle;
+      DWORD currentKeyType;
+      DWORD dataBufferLen = 4096;
+      LPTSTR data = (LPTSTR)malloc(dataBufferLen);
+
+      memset(data, 0, dataBufferLen);
+
+      LONG rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE, // hKey
+                             *itr,               // lpSubKey
+                             0,                  // ulOptions
+                             KEY_ALL_ACCESS,     // samDesired
+                             &keyHandle);        // phkResult
+
+      if (!EnsureSuccess(rv, _T("RegOpenKeyEx() on remove"))) {
+        free(data);
+        continue;
+      }
+
+      rv = RegQueryValueEx(keyHandle,          // key handle
+                           DRIVER_SUBKEY_STR,  // lpValueName
+                           0,                  // lpReserved
+                           &currentKeyType,    // lpType
+                           (LPBYTE)data,       // lpData
+                           &dataBufferLen);    // lpcbData
+
+      if (!EnsureSuccess(rv, _T("RegQueryValueEx() on remove"))) {
+        free(data);
+        continue;
+      }
+
+      multiSzBuffer_t oldRegValue((BYTE*)data, dataBufferLen);
+
+      regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
+  
+      regValueList_t::iterator gearworksNode = find(regValues.begin(),
+       regValues.end(), GEARWORKS_REG_VALUE);
+
+      if (gearworksNode == regValues.end()) {
+        DebugMessage("Couldn't find gearworks value in key %S", *itr);
+        free(data);
+        continue;
+      }
+
+      regValues.erase(gearworksNode);
+
+      multiSzBuffer_t newRegValue((LPBYTE)new char[4096], 4096);
+
+      MakeMultiSzRegString(newRegValue, regValues);
+
+      rv = RegSetValueEx(keyHandle,
+                         DRIVER_SUBKEY_STR,
+                         0,
+                         REG_MULTI_SZ,
+                         newRegValue.value, 
+                         newRegValue.cbBytes);
+  
+      EnsureSuccess(rv, _T("RegSetValueEx() on remove"));
+      free(data);
+      free(newRegValue.value);
+    }
   } else {
     OutputDebugString(_T("Unknown mode"));
     return RH_ERROR_USER;

@@ -59,7 +59,7 @@ Section "-Application" Section1
          ; Execute disthelper.exe in install mode; disthelper.exe needs a 
          ; distribution.ini, but gets it from the environment; we expect the 
          ; partner installer *calling us* to set this.
-         ExecWait '$INSTDIR\${DistHelperEXE} install'
+         ExecWait '"$INSTDIR\${DistHelperEXE}" install'
       ${EndIf}
    ${EndIf}
 SectionEnd
@@ -234,7 +234,7 @@ Section "QuickLaunch Icon"
 End:
 SectionEnd
 
-Section "CD Ripping Module"
+Section "${CdripSectionName}"
    ;MessageBox MB_OK "OH HAI in CD-rIP!"
 
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
@@ -254,7 +254,7 @@ Section "CD Ripping Module"
    WriteRegDWORD HKLM $0 "Start" 3
    WriteRegDWORD HKLM $0 "Type" 1
 
-   ExecWait '$INSTDIR\${CdripHelperEXE} install'
+   ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

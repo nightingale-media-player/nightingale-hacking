@@ -217,6 +217,7 @@ FunctionEnd
       StrCpy $DistributionName ${DefaultDistributionName}
       StrCpy $InstallerMode ${InstallerBuildMode}
       StrCpy $InstallerType ${InstallerBuildType}
+      StrCpy $UninstallNeedsReboot ${FALSE}
 
       ${${un}GetParameters} $R1
       ClearErrors

@@ -63,13 +63,20 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
+   Call un.RemoveCdripRegistryKeys
    Call un.RemoveAppRegistryKeys
+
    !insertmacro un.UninstallFiles
 
    Call un.CleanVirtualStore
 
    ; Refresh desktop.
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
+
+   IfRebootFlag 0 noReboot
+      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallRebootNow}" /SD IDNO IDNO noReboot
+      Reboot
+   noReboot:
 SectionEnd
 
 
@@ -126,6 +133,20 @@ Function un.RemoveBrandingRegistryKeys
    ; Always remove this temporary key on uninstall; we shouldn't ever have it
    ; around
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
+FunctionEnd
+
+Function un.RemoveCdripRegistryKeys
+   ReadRegStr $0 HKLM $RootAppRegistryKey ${CdripRegKey}
+
+   ${If} $0 == ${TRUE}
+      ExecWait '"$INSTDIR\${CdripHelperEXE}" remove'
+      DeleteRegKey HKLM "SYSTEM\CurrentControlSet\Services\GearAspiWDM"
+      Delete /REBOOTOK $SYSDIR\GearAspi.dll
+      Delete /REBOOTOK $SYSDIR\Drivers\GearAspiWDM.sys 
+   ${EndIf}
+
+   StrCpy $0 "$RootAppRegistryKey\${CdripRegKey}"
+   DeleteRegKey HKLM $0
 FunctionEnd
 
 Function un.RemoveAppRegistryKeys
