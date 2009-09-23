@@ -219,7 +219,7 @@ sbCDDevice::ReqHandleRequestAdded()
 
     // If one of the above operatons returned |NS_ERROR_ABORT|, we need to
     // bail out of this method.
-    if (rv = NS_ERROR_ABORT) {
+    if (rv == NS_ERROR_ABORT) {
       return rv;
     }
 
