@@ -60,7 +60,6 @@
             class="sb-playlist-tree"
             flex="3"
             editable="true"
-            onselect="_onPlaylistSelectClick(event);"
             oncontextmenu="_onPlaylistContextMenu(event);"
           >
             <treecols sbid="treecols" type="sb-contextpicker"/>
@@ -180,6 +179,9 @@
         this.destroy();
       </destructor>
 
+      <!-- Selection listener for the media list view -->
+      <field name="_mediaListSelectionListener">null</field>
+
       <!-- The media list view this playlist is showing -->
       <field name="_mediaListView">null</field>
       <property name="mediaListView">
@@ -190,6 +192,31 @@
         </getter>
         <setter>
           <![CDATA[
+            // Remove selection listener from the old media list view and add
+            // it to the new one.
+            if (!this._mediaListSelectionListener) {
+              this._mediaListSelectionListener = {
+                playlist: this,
+                onSelectionChanged:
+                    function mediaListSelectionListener_onSelectionChanged() {
+                  this.playlist._onPlaylistSelectClick();
+                },
+                onCurrentIndexChanged:
+                    function mediaListSelectionListener_onCurrentIndexChanged() {},
+                QueryInterface: function columnSpecWatcher_QI(aIID) {
+                  if (aIID.equals(Components.interfaces.sbIMediaListViewSelectionListener) ||
+                      aIID.equals(Components.interfaces.nsISupports)) {
+                    return this;
+                  }
+                  throw Components.results.NS_ERROR_NO_INTERFACE;
+                }
+              };
+            }
+            if (this._mediaListView)
+              this._mediaListView.selection.removeListener(this._mediaListSelectionListener);
+            if (val)
+              val.selection.addListener(this._mediaListSelectionListener);
+
             return this._mediaListView = val;
           ]]>
         </setter>
@@ -612,6 +639,11 @@
     if (this.columnSpecWatcher) {
       this.columnSpecWatcher.
            medialist.library.removeListener(this.columnSpecWatcher);
+    }
+
+    if (this._mediaListView) {
+      this._mediaListView.
+           selection.removeListener(this._mediaListSelectionListener);
     }
 
     if (this._saveColumnSpecTimeout) {
@@ -1767,7 +1799,6 @@
       </method>
 
       <method name="_onPlaylistSelectClick">
-        <parameter name="evt"/>
         <body>
 <![CDATA[
   window.updateCommands("tree-select");
