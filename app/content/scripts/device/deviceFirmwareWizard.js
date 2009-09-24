@@ -205,7 +205,7 @@ var deviceFirmwareWizard = {
           let descElem = 
             document.getElementById("device_firmware_download_no_disconnect_desc");
           let descTextNode = 
-            document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warning"));
+            document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warn"));
           
           if(descElem.firstChild && 
              descElem.firstChild.nodeType == Ci.nsIDOMNode.TEXT_NODE) {
@@ -287,7 +287,7 @@ var deviceFirmwareWizard = {
         }
         else {
           let textNode = 
-            document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warning"));
+            document.createTextNode(SBString("device.firmware.wizard.no_disconnect_warn"));
           descElem.appendChild(textNode);
           
           setTimeout(function() {
