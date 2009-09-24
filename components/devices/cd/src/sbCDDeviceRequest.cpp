@@ -52,6 +52,7 @@
 #include <sbWatchFolderUtils.h>
 
 // Mozilla imports.
+#include <nsCRT.h>
 #include <nsArrayUtils.h>
 #include <nsIBufferedStreams.h>
 #include <nsIFile.h>
@@ -665,6 +666,19 @@ sbCDDevice::GenerateDefaultFilename(sbIMediaItem *aItem,
   aOutFilename.Append(NS_ConvertUTF16toUTF8(trackNumProp));
   aOutFilename.AppendLiteral(" - ");
   aOutFilename.Append(NS_ConvertUTF16toUTF8(trackNameProp));
+
+  // Ensure we generate a valid filename by stripping illegal characters */
+  aOutFilename.StripChars(FILE_ILLEGAL_CHARACTERS);
+  // And path separators
+  aOutFilename.StripChars(FILE_PATH_SEPARATOR);
+  // And on win32, we cannot start or end with a space or dot.
+  // Do this everywhere (rather than just win32) for consistency
+  aOutFilename.Trim(" .", PR_TRUE, PR_TRUE);
+
+  // Now give it a 'dummy' file extension. We'll replace this with the correct
+  // extension for the format we transcode to, but we don't want to mistake
+  // something else in the filename for the file extension.
+  aOutFilename.AppendLiteral(".cdda");
 
   return NS_OK;
 }
