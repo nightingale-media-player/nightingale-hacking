@@ -287,6 +287,29 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
 
   nsCOMPtr<sbIDeviceEventListener> listener = mListener;
 
+  if(!NS_IsMainThread()) {
+    if(!mProxiedListener) {
+      mon.Exit();
+
+      nsCOMPtr<nsIThread> mainThread;
+      rv = NS_GetMainThread(getter_AddRefs(mainThread));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbIDeviceEventListener> proxiedListener;
+      rv = do_GetProxyForObject(mainThread,
+                                NS_GET_IID(sbIDeviceEventListener),
+                                listener, 
+                                NS_PROXY_ALWAYS | NS_PROXY_SYNC,
+                                getter_AddRefs(proxiedListener));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      mon.Enter();
+      mProxiedListener = proxiedListener;
+    }
+
+    listener = mProxiedListener;
+  }
+
   NS_ENSURE_STATE(mDevice);
   nsCOMPtr<sbIDeviceEventTarget> target = do_QueryInterface(mDevice, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -943,17 +966,8 @@ sbBaseDeviceFirmwareHandler::Bind(sbIDevice *aDevice,
   NS_ENSURE_FALSE(mListener, NS_ERROR_ALREADY_INITIALIZED);
 
   mDevice = aDevice;
+  mListener = aListener;
   
-  if(aListener) {
-    nsCOMPtr<nsIThread> target = do_GetMainThread();
-    nsresult rv = do_GetProxyForObject(target, 
-      NS_GET_IID(sbIDeviceEventListener), 
-      aListener, 
-      NS_PROXY_ALWAYS | NS_PROXY_ASYNC, 
-      getter_AddRefs(mListener));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   return NS_OK;
 }
 
@@ -1009,8 +1023,6 @@ sbBaseDeviceFirmwareHandler::RefreshInfo()
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
-
   nsresult rv = OnRefreshInfo();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1024,8 +1036,6 @@ sbBaseDeviceFirmwareHandler::Update(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aFirmwareUpdate);
 
-  nsAutoMonitor mon(mMonitor);
-
   nsresult rv = OnUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
   
@@ -1037,8 +1047,6 @@ sbBaseDeviceFirmwareHandler::Recover(sbIDeviceFirmwareUpdate *aFirmwareUpdate)
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = OnRecover(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1052,8 +1060,6 @@ sbBaseDeviceFirmwareHandler::VerifyDevice()
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
 
-  nsAutoMonitor mon(mMonitor);
-
   nsresult rv = OnVerifyDevice();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1065,8 +1071,6 @@ sbBaseDeviceFirmwareHandler::VerifyUpdate(sbIDeviceFirmwareUpdate *aFirmwareUpda
 {
   TRACE(("[%s]", __FUNCTION__));
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
-
-  nsAutoMonitor mon(mMonitor);
 
   nsresult rv = OnVerifyUpdate(aFirmwareUpdate);
   NS_ENSURE_SUCCESS(rv, rv);

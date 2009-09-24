@@ -182,6 +182,7 @@ protected:
 
   nsCOMPtr<sbIDevice> mDevice;
   nsCOMPtr<sbIDeviceEventListener> mListener;
+  nsCOMPtr<sbIDeviceEventListener> mProxiedListener;
 
   handlerstate_t mHandlerState;
   PRUint32 mFirmwareVersion;
