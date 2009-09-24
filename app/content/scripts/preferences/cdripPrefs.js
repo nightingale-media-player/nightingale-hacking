@@ -236,12 +236,17 @@ var CDRipPrefsPane =
     var customizedBitrate = 0;
     var hasBitrate = false;
     var propertiesArray = aTranscodeProfile.audioProperties;
+    var bitrateTextfield = document.getElementById("transcoding-bitrate-kbps");
     if (propertiesArray) {
       for (var i = 0; i < propertiesArray.length; i++) {
         var prop =
           propertiesArray.queryElementAt(i, Ci.sbITranscodeProfileProperty);
         if (prop.propertyName == "bitrate") {
           hasBitrate = true;
+
+          bitrateTextfield.min = parseInt(prop.valueMin) / 1000;
+          bitrateTextfield.max = parseInt(prop.valueMax) / 1000;
+
           // The default bitrate that the profile defaults to.
           defaultBitrate = parseInt(prop.value);
 
@@ -256,7 +261,6 @@ var CDRipPrefsPane =
     }
 
     var qualityPrefElem = document.getElementById("rip_quality_pref");
-    var bitrateTextfield = document.getElementById("transcoding-bitrate-kbps");
     var bitrateLabel = document.getElementById("transcoding-quality-label");
     if (hasBitrate) {
       bitrateTextfield.hidden = false;
