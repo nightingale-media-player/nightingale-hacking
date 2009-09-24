@@ -136,14 +136,6 @@ sbCDDevice::ReqHandleRequestAdded()
   mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
                                             PR_FALSE);
 
-  // Find the preferred audio transcoding profile.
-  if (!mTranscodeProfile) 
-  {
-    rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
-				getter_AddRefs(mTranscodeProfile));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
   // If we're not waiting and the batch isn't empty process the batch
   while (!requestBatch.empty()) {
     // Process each request in the batch
@@ -316,31 +308,10 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   rv = GetMediaFiles(getter_AddRefs(newFileURIList));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRUint32 length;
-  newFileURIList->GetLength(&length);
-
-  nsCOMPtr<nsIMutableArray> newPropsArray =
-    do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  // Get the list of new properties for each item.
+  nsCOMPtr<nsIArray> newPropsArray;
+  rv = GetMediaProperties(getter_AddRefs(newPropsArray));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  for (PRUint32 i = 1; i <= length; i++) {
-    nsCOMPtr<sbIMutablePropertyArray> propList =
-      do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // By default mark all library items as "Should Rip".
-    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
-                                  NS_LITERAL_STRING("1"));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString indexStr;
-    indexStr.AppendInt(i);
-    rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
-                                  indexStr);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    newPropsArray->AppendElement(propList, false);
-  }
 
   NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
 
@@ -359,7 +330,6 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
 
   return NS_OK;
 }
-
 
 nsresult
 sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
@@ -405,8 +375,6 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
       continue;
     }
     
-    PRInt32 trackNumber;
-    rv = entry->GetTrackNumber(&trackNumber);
     if (NS_SUCCEEDED(rv)) {
       nsString uriSpec;
       rv = entry->GetTrackURI(uriSpec);
@@ -425,6 +393,88 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
   }
 
   rv = CallQueryInterface(list, aURIList);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::GetMediaProperties(nsIArray ** aPropertyList)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIMutableArray> newPropsArray =
+    do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDTOC> toc;
+  rv = mCDDevice->GetDiscTOC(getter_AddRefs(toc));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!toc) {
+    // If no TOC this would be really odd to occur, so we'll just return
+    return NS_OK;
+  }
+  nsCOMPtr<nsIArray> tracks;
+  rv = toc->GetTracks(getter_AddRefs(tracks));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbICDTOCEntry> entry;
+
+  PRUint32 length;
+  rv = tracks->GetLength(&length);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 index = 0; index < length; ++index) {
+    NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+    entry = do_QueryElementAt(tracks, index, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 trackNumber;
+    rv = entry->GetTrackNumber(&trackNumber);
+    if (NS_SUCCEEDED(rv)) {
+      nsCOMPtr<sbIMutablePropertyArray> propList =
+        do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // By default mark all library items as "Should Rip".
+      rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
+                                    NS_LITERAL_STRING("1"));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // number each track starting at 1
+      nsAutoString trackNumberStr;
+      trackNumberStr.AppendInt(trackNumber+1);
+      rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_TRACKNUMBER),
+                                    trackNumberStr);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // CDDA tracks always have 2 channels
+      rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CHANNELS),
+                                    NS_LITERAL_STRING("2"));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // and are always 44100 samples per second
+      rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
+                                    NS_LITERAL_STRING("44100"));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // but have varying lengths (microseconds)
+      PRTime duration;
+      rv = entry->GetLength(&duration);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsAutoString durationStr;
+      durationStr.AppendInt(duration);
+      rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
+                                    durationStr);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      newPropsArray->AppendElement(propList, false);
+    }
+  }
+
+  rv = CallQueryInterface(newPropsArray, aPropertyList);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
@@ -723,6 +773,25 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ORIGINLIBRARYGUID),
                            voidString);
 
+  // Find the preferred audio transcoding profile.
+  if (!mTranscodeProfile) 
+  {
+    rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
+				getter_AddRefs(mTranscodeProfile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Cache the bitrate (as a string) so that it can be applied to
+    // the tracks as they're created. This avoids the problem where
+    // tracks are marked with the wrong bitrate if the user changes
+    // his transcoding prefs after inserting a cd.
+    PRUint32 bitrate;
+    GetBitrateFromProfile(&bitrate);
+    mTranscodeBitrateStr.Truncate();
+    mTranscodeBitrateStr.AppendInt(bitrate/1000);
+  }
+
+  destination->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), mTranscodeBitrateStr);
+
   nsCOMPtr<nsIURI> sourceContentURI;
   rv = source->GetContentSrc(getter_AddRefs(sourceContentURI));
   NS_ENSURE_SUCCESS(rv, rv);
@@ -934,6 +1003,8 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   // We need to check if this is the last item to be ripped, if so check for
   // AutoEject.
   if (aRequest->batchIndex == aRequest->batchCount) {
+    mTranscodeProfile = nsnull;
+
     // Check the preferences to see if we should eject
     if (mPrefAutoEject) {
       // Since we successfully ripped all selected tracks and the user has
@@ -952,4 +1023,45 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
     }
   }
   return NS_OK;
+}
+
+nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
+{
+  nsresult rv;
+
+  nsCOMPtr<nsIArray> properties;
+  rv = mTranscodeProfile->GetAudioProperties(getter_AddRefs(properties));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISimpleEnumerator> propEnumerator;
+  rv = properties->Enumerate(getter_AddRefs(propEnumerator));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool more = PR_FALSE;
+  rv = propEnumerator->HasMoreElements(&more);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  while (more)
+  {
+    nsCOMPtr<sbITranscodeProfileProperty> property;
+    rv = propEnumerator->GetNext(getter_AddRefs(property));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoString profilePropName;
+    rv = property->GetPropertyName(profilePropName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (profilePropName.Equals(NS_LITERAL_STRING("bitrate")))
+    {
+      nsCOMPtr<nsIVariant> valueVariant;
+      rv = property->GetValue(getter_AddRefs(valueVariant));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = valueVariant->GetAsUint32(bitrate);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    rv = propEnumerator->HasMoreElements(&more);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 }

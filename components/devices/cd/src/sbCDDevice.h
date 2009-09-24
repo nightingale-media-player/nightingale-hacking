@@ -353,6 +353,7 @@ private:
    * The cached transcode profile
    */
   nsCOMPtr<sbITranscodeProfile> mTranscodeProfile;
+  nsString mTranscodeBitrateStr;
 
   /**
    * Snapshotted values of the CD Rip preferences
@@ -436,6 +437,11 @@ private:
   nsresult GetMediaFiles(nsIArray ** aURIList);
 
   /**
+   * Returns a list of property arrays for the tracks on a CD
+   */
+  nsresult GetMediaProperties(nsIArray ** aPropertyList);
+
+  /**
    * Return true if the active request should abort; otherwise, return false.
    *
    * \return PR_TRUE              Active request should abort.
@@ -473,6 +479,11 @@ private:
    * \param aRequest The request to be processed
    */
   nsresult ReqHandleRead(TransferRequest * aRequest);
+
+  /**
+   * Gets the bitrate property from the cached transcoding profile
+   */
+  nsresult GetBitrateFromProfile(PRUint32 * bitrate);
 };
 
 #define SB_CD_DEVICE_AUTO_INVOKE(aName, aMethod)                              \
