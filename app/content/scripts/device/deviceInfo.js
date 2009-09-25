@@ -825,6 +825,8 @@ var DIW = {
         firmwareVersion = handler.currentFirmwareReadableVersion;
       }
       catch(err) {}
+      
+      handler.unbind();
     }
     else {
       try { 

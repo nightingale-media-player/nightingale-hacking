@@ -202,7 +202,8 @@
       </constructor>
 
       <destructor><![CDATA[
-        this._firmwareHandler.unbind();
+        if(this._firmwareHandler)
+          this._firmwareHandler.unbind();
 
         this._firmwareHandler = null;
         this._busyCheckTimer = null;
@@ -312,7 +313,8 @@
       </method>
 
       <method name="_update">
-        <body><![CDATA[
+        <body>
+              <![CDATA[
         if(!this._currentFirmwareVersion) {
           this._currentFirmwareVersion =
             document.getAnonymousElementByAttribute(this,
@@ -353,11 +355,12 @@
           try {
             handler.bind(this.device, deviceListener);
             this._firmwareHandler = handler; 
-            handler.refreshInfo();
+            this._firmwareHandler.refreshInfo();
             firmwareVersion = handler.currentFirmwareReadableVersion;
           }
           catch(err) { 
             Components.utils.reportError(err); 
+            this._firmwareHandler.unbind();
             this._firmwareHandler = null; 
           }
         }
