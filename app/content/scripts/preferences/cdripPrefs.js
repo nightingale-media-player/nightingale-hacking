@@ -260,11 +260,9 @@ var CDRipPrefsPane =
       }
     }
 
-    var qualityPrefElem = document.getElementById("rip_quality_pref");
-    var bitrateLabel = document.getElementById("transcoding-quality-label");
+    var bitrateSettings = document.getElementById("transcoding-bitrate-settings");
     if (hasBitrate) {
-      bitrateTextfield.hidden = false;
-      bitrateLabel.hidden = false;
+      bitrateSettings.hidden = false;
 
       // If the transcoding profile has changed or no user-defined bitrate,
       // always default to the bitrate that the profile defaults to.
@@ -276,8 +274,7 @@ var CDRipPrefsPane =
       this.updateBitratePref();
 
     } else {
-      bitrateTextfield.hidden = true;
-      bitrateLabel.hidden = true;
+      bitrateSettings.hidden = true;
     }
 
     this.currentTranscodeProfileID = aTranscodeProfile.id;

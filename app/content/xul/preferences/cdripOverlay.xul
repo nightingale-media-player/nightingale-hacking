@@ -90,9 +90,8 @@
         </vbox>
 
         <!-- Quality -->
-        <vbox>
-          <label id="transcoding-quality-label"
-                 value="&cdrip.prefpane.quality;" />
+        <vbox id="transcoding-bitrate-settings">
+          <label value="&cdrip.prefpane.quality;" />
           <hbox>
             <textbox id="transcoding-bitrate-kbps"
                      type="number"
