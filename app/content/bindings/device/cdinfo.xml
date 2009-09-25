@@ -32,7 +32,7 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
   <binding id="sb-cdtracks">
     <content>
-      <xul:sb-closable-box label="&cdinfo.details.closed;">
+      <xul:sb-closable-box label="&cdinfo.details.closed;" xbl:inherits="open">
         <xul:listbox anonid="tracklist" flex="1" seltype="none">
           <xul:listcols>
             <xul:listcol/>

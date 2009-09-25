@@ -77,6 +77,8 @@ var multiCDDialog = {
       var tracks = document.createElementNS(
           "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul",
           "sb-cdtracks");
+      if (i == 0)
+        tracks.setAttribute("open", "true");
 
       this._infolist.insertBefore(tracks, this._other);
 
@@ -96,7 +98,7 @@ var multiCDDialog = {
       }
     }
 
-    this.onSelectionChange();
+    this._infolist.selectedIndex = 0;
 
     // Listen for device events.
     var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
