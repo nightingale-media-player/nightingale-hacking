@@ -110,6 +110,7 @@ var deviceFirmwareWizard = {
       return;
 
     var currentPage = this.wizardElem.currentPage;
+    var self = this;
     
     switch(currentPage.id) {
       case "device_firmware_check": {
@@ -146,8 +147,7 @@ var deviceFirmwareWizard = {
           Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
             .getService(Ci.sbIDeviceManager2);
         
-        let self = this;
-        deviceManager.addEventListener(self);
+        deviceManager.addEventListener(this);
         
         let handler = null;
         
@@ -193,8 +193,6 @@ var deviceFirmwareWizard = {
       break;
       
       case "device_firmware_download": {
-        var self = this;
-        
         if(this._device.isBusy) {
           this._currentOperation = "busy";
           setTimeout(function() { 
@@ -264,8 +262,6 @@ var deviceFirmwareWizard = {
         
         let cancelButton = this.wizardElem.getButton("cancel");
         cancelButton.disabled = true;
-        
-        var self = this;
         
         let descElem = document.getElementById("device_firmware_install_no_disconnect_desc");
         if(descElem.firstChild && 
@@ -344,10 +340,10 @@ var deviceFirmwareWizard = {
         let descStr = "";
         
         if(this._wizardMode == "repair") {
-          descStr = SBString("device.firmware.repair.complete.description");
+          descStr = SBString("device.firmware.repair.complete.desc");
         }
         else {
-          descStr = SBString("device.firmware.wizard.complete.description");
+          descStr = SBString("device.firmware.wizard.complete.desc");
         }
         
         let descTextNode = document.createTextNode(descStr);
