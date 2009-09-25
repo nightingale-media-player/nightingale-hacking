@@ -96,7 +96,7 @@
   <binding id="sb-sys-close-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <!-- Close the window or close the app -->
-      <handler event="command" action="( event.target.getAttribute('type') == 'dialog' ) ? onExit() : quitApp();"/>
+      <handler event="command" action="( event.target.getAttribute('type') == 'dialog' ) ? document.documentElement.cancelDialog() : quitApp();"/>
     </handlers>
     <implementation>
       <constructor>
@@ -237,7 +237,7 @@
 
   <binding id="sb-sys-icon" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
-      <handler event="dblclick" action="( event.target.getAttribute('type') == 'dialog' ) ? onExit() : ( event.target.getAttribute('type') == 'hide' ) ? onHideButtonClick() : quitApp(); "/>
+      <handler event="dblclick" action="( event.target.getAttribute('type') == 'dialog' ) ? document.documentElement.cancelDialog() : ( event.target.getAttribute('type') == 'hide' ) ? onHideButtonClick() : quitApp(); "/>
     </handlers>
     <implementation>
       <constructor>
