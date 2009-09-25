@@ -624,8 +624,8 @@ nsresult sbMetadataJob::HandleWrittenItem(sbMetadataJobItem *aJobItem)
   nsString strContentLength;
   AppendInt(strContentLength, fileSize);
 
-  rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
-                          strContentLength);
+  rv = item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                         strContentLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
