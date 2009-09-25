@@ -36,7 +36,7 @@ interface sbICDTOC;
   * \interface sbIMetadataLookupProvider sbIMetadataLookupProvider.h
   * \brief A metadata lookup service provider
   */
-[scriptable, uuid(2d106ba6-1dd2-11b2-8c0e-dc5b4d1ef99c)]
+[scriptable, uuid(6e85fb20-1dd2-11b2-a6ae-c297b88bb7ef)]
 interface sbIMetadataLookupProvider : nsISupports
 {
   /**
@@ -46,12 +46,21 @@ interface sbIMetadataLookupProvider : nsISupports
   readonly attribute AString name;
 
   /**
-   * \brief Purely descriptive and are for some future use, maybe when/if
-   * we make a preference pane for viewing the different providers and
-   * reprioritising them, etc.  would be good to have some sort of
-   * description & URL to hit up for more info on each provider
+   * \brief Used in the CD Rip preference pane to display descriptive text
+   * next to the provider drop down
    */
   readonly attribute AString description;
+
+  /**
+   * \brief Used during CD Lookup notification in the header to display
+   * which service we're currently looking up data aginst.  This can be
+   * null if no logo is provided.
+   */
+  readonly attribute AString logoURL;
+
+  /*
+   * \brief Currently unused.  This can be null if no URL is provided.
+   */
   readonly attribute AString infoURL;
 
   /**

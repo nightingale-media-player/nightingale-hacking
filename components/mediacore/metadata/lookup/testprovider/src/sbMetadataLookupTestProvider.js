@@ -113,7 +113,6 @@ sbTestProvider.prototype = {
   weight : 9999, // set weight to 1 so it can be overridden by Gracenote
   description : "Test provider.  Unless you like Britney, U2, or Midnight Rock, you probably don't want this.",
   infoURL : "http://getsongbird.com",
-  detailLookupsNeeded : false,
 
   identifyTOC : function sbTestProvider_identifyTOC(aTOC) {
     if (aTOC.firstTrackIndex == 1 && aTOC.lastTrackIndex == 15 &&

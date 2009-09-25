@@ -101,7 +101,7 @@ sbFreeDB.prototype = {
   weight : 1, // set weight to 1 so it can be overridden by Gracenote
   description : "Free GPL'd database for looking up and submitting CD information.",
   infoURL : "http://www.freedb.org",
-  detailLookupsNeeded : true,
+  logoURL : "chrome://service-icons/skin/freedb-logo.png",
 
   // private functions
   _makeCmd: function sbFreeDB_makeCmd(cddbCmd) {
