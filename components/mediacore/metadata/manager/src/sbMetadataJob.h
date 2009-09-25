@@ -188,6 +188,12 @@ private:
    * *** MAIN THREAD ONLY ***
    */
   nsresult HandleProcessedItem(sbMetadataJobItem *aJobItem);
+
+  /**
+   * Handle things needed after a write job has completed. 
+   * *** MAIN THREAD ONLY ***
+   */
+  nsresult HandleWrittenItem(sbMetadataJobItem *aJobItem);
   
   /**
    * Saves the job item into mProcessedBackgroundThreadItems

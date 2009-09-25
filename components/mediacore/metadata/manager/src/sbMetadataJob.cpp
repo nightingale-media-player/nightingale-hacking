@@ -574,7 +574,8 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
     NS_ASSERTION(NS_SUCCEEDED(rv), \
       "sbMetadataJob::HandleProcessedItem CopyPropertiesToMediaItem failed!");
   } else {
-    // For write items, all we need to do is check for failure
+    // For write items, we need to check for failure. Also, we need to
+    // update the content-length property if we did write to the file.
     PRBool processed = PR_FALSE;
     aJobItem->GetProcessed(&processed);
     if (!processed) {
@@ -582,6 +583,8 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
       NS_ASSERTION(NS_SUCCEEDED(rv), \
         "sbMetadataJob::HandleProcessedItem HandleFailedItem failed!");
     }
+
+    rv = HandleWrittenItem(aJobItem);
   }
 
   // Close the handler
@@ -593,6 +596,40 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
   return rv;
 }
 
+nsresult sbMetadataJob::HandleWrittenItem(sbMetadataJobItem *aJobItem)
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaItem> item;
+  rv = aJobItem->GetMediaItem(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> contentURI;
+  rv = item->GetContentSrc(getter_AddRefs(contentURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  /* If it's not a file, that's ok */
+  nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(contentURI, &rv);
+  if (NS_FAILED (rv))
+    return NS_OK;
+
+  nsCOMPtr<nsIFile> file;
+  rv = fileURL->GetFile(getter_AddRefs(file));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRInt64 fileSize;
+  rv = file->GetFileSize(&fileSize);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString strContentLength;
+  AppendInt(strContentLength, fileSize);
+
+  rv = aItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),
+                          strContentLength);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
 
 nsresult sbMetadataJob::DeferProcessedItemHandling(sbMetadataJobItem *aJobItem)
 {
