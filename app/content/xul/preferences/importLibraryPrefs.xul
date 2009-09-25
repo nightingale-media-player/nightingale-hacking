@@ -114,16 +114,6 @@
   
   </preferences>
 
-  <!-- Panel commands. -->
-  <commandset id="import_media_commandset">
-    <command id="import_library_browse_command"
-             label="&window.browse;"
-             oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
-    <command id="import_library_import_command"
-             label="&import_library.import_command;"
-             oncommand="importLibraryPrefsUI.doImportCommand(event);"/>
-  </commandset>
-
   <!-- Import library tab. -->
   <tabs id="import_media_tabs">
     <tab id="import_library_tab" label="&import_library.prefs.title;"/>
@@ -157,10 +147,16 @@
                    preference="library_file_path_pref"/>
 
           <!-- Browse button. -->
+          <!-- bug 17988.  Tab panel command elements don't always render
+          properly if they're placed in the tab panel.  It seems the second time
+          the preference window is opened with the import media preference pane
+          selected, tab panel command buttons don't display the command label.-->
           <button id="import_library_browse_button"
-                  command="import_library_browse_command"/>
+                  label="&window.browse;"
+                  oncommand="importLibraryPrefsUI.doBrowseCommand(event);"/>
           <button id="import_library_button"
-                  command="import_library_import_command"/>
+                  label="&import_library.import_command;"
+                  oncommand="importLibraryPrefsUI.doImportCommand(event);"/>
 
         </hbox>
 

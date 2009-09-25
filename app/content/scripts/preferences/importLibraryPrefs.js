@@ -295,11 +295,11 @@ var importLibraryPrefsUI = {
 
   _update: function importLibrary__update() {
     // Disable the library import command when there is no file selected.
-    var importCommand = document.getElementById
-                                   ("import_library_import_command");
+    var importLibraryButton = document.getElementById
+                                         ("import_library_button");
     var libraryPath = this._getPrefElem("library_file_path_pref").value;
     var choseLibrary = (libraryPath != "");
-    importCommand.setAttribute("disabled", choseLibrary ? "false" : "true");
+    importLibraryButton.setAttribute("disabled", choseLibrary ? "false" : "true");
 
     // Update the broadcasters
     this._updateCheckboxBroadcaster("import_tracks_itunes");

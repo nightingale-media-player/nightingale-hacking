@@ -56,13 +56,6 @@
     <!-- Import media preferences. -->
     <preferences id="import_media_preferences"/>
 
-    <!-- Panel commands.  Tab panel command elements don't always render
-         properly if they're placed in the tab panel.  It seems the second time
-         the preference window is opened with the import media preference pane
-         selected, tab panel command buttons don't display the command label.
-         Instead, panel commands should be overlayed into this command set. -->
-    <commandset id="import_media_commandset"/>
-
     <!-- Import media preference tab box. -->
     <tabbox id="import_media_tabbox" selectedIndex="0" persist="selectedIndex">
 
