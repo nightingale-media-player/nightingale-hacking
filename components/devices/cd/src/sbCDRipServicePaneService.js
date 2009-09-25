@@ -391,6 +391,11 @@ sbCDRipServicePaneService.prototype = {
 
       // Set the busy property if the device is busy.
       if (aForceBusy || device.state != Ci.sbIDevice.STATE_IDLE) {
+        // Clear success state from previous rip
+        devProperties = devProperties.filter(function(aProperty) {
+                                               return aProperty != "successful" &&
+                                                      aProperty != "unsuccessful";
+                                             });
         devProperties.push("busy");
       } else {
         if (devNode.hasAttributeNS(CDRIPNS, "LastState")) {
