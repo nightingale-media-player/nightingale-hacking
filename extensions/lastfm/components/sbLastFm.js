@@ -402,6 +402,14 @@ function sbLastFm() {
     this.listeners.each(function(l) { l.onShouldScrobbleChanged(val); });
   });
 
+  // the enable-radio-node pref
+  this.__defineGetter__('displayRadioNode', function() {
+    return prefsService.getBoolPref('extensions.lastfm.show_radio_node');
+  });
+  this.__defineSetter__('displayRadioNode', function(val) {
+    prefsService.setBoolPref('extensions.lastfm.show_radio_node', val);
+  });
+
   // user-logged-out pref
   this.__defineGetter__('userLoggedOut', function() {
     return prefsService.getBoolPref('extensions.lastfm.loggedOut');
@@ -491,11 +499,11 @@ function sbLastFm() {
 	  radioFolder.setAttributeNS(SB_NS, "radioFolder", 1);
   }
   radioFolder.editable = false;
-  radioFolder.hidden = false;
+
   // Sort the radio folder node in the service pane
   radioFolder.setAttributeNS(SP_NS, "Weight", 1);
   this._servicePaneService.sortNode(radioFolder);
-  
+
   this._servicePaneNode = BMS.addBookmarkAt(
 		  "chrome://sb-lastfm/content/tuner2.xhtml", "Last.fm",
 		  "chrome://sb-lastfm/skin/as.png", radioFolder, null);
@@ -505,7 +513,26 @@ function sbLastFm() {
   }
   this._servicePaneNode.image = 'chrome://sb-lastfm/skin/as.png';
   this._servicePaneNode.editable = false;
-  this._servicePaneNode.hidden = false;
+
+  if (this.displayRadioNode)
+  	this._servicePaneNode.hidden = false;
+  else
+  	this._servicePaneNode.hidden = true;
+
+  // Hide the "Radio" node if it's empty
+  var enum = radioFolder.childNodes;
+  var visibleFlag = false;
+
+  // Iterate through elements and check if one is visible
+  while (enum.hasMoreElements()) {
+	var node = enum.getNext();
+	if (!node.hidden) {
+		visibleFlag = true;
+		break;
+	}
+  }
+
+  radioFolder.hidden = !visibleFlag;
 
   //dump("HERE: " + this._servicePaneNode + "\n");
   //this._servicePaneService.removeNode(this._servicePaneNode);
@@ -524,7 +551,7 @@ function sbLastFm() {
   var observerService = Cc["@mozilla.org/observer-service;1"]
 	.getService(Ci.nsIObserverService);
   observerService.addObserver(this, "http-on-modify-request", false);
- 
+
   // reset some data remotes
   SBDataSetStringValue("lastfm.radio.station", "");
   SBDataSetBoolValue("lastfm.radio.requesting", false);

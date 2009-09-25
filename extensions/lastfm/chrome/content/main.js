@@ -304,6 +304,12 @@ LastFm.onLoad = function() {
 				  .style.visibility = "collapse";
         }, false);
     this._faceplate.appendChild(this._faceplateTag);
+
+    // Add a preferences observer
+    this.prefs = Cc["@mozilla.org/preferences-service;1"]
+		.getService(Ci.nsIPrefService).getBranch("extensions.lastfm.")
+		.QueryInterface(Ci.nsIPrefBranch2);
+    this.prefs.addObserver("", this.prefObserver, false);
   }
 
   // clear the login error message
@@ -406,6 +412,7 @@ LastFm.onUnload = function() {
   // the window is about to close
   this._service.listeners.remove(this);
   window.removeEventListener("ShowCurrentTrack", LastFm.showCurrentTrack, true);
+  this.prefs.removeObserver("", this.prefObserver, false);
 }
 
 LastFm.showCurrentTrack = function(e) {
@@ -639,6 +646,39 @@ LastFm.onLoveBan = function LastFm_onLoveBan(aItem, love) {
 }
 
 LastFm.onAuthorisationSuccess = function LastFm_onAuthorisationSuccess() { }
+
+LastFm.prefObserver = {
+	observe: function(subject, topic, data) {
+                if (subject instanceof Components.interfaces.nsIPrefBranch &&
+			data == "show_radio_node") {
+			var lastFmNode = Cc['@songbirdnest.com/servicepane/service;1']
+				.getService(Ci.sbIServicePaneService).
+				getNodeForURL("chrome://sb-lastfm/content/tuner2.xhtml");
+
+			if (lastFmNode != null) {
+				lastFmNode.hidden =
+					!Application.prefs.getValue("extensions.lastfm.show_radio_node", true);
+	
+				// Hide the "Radio" node if it's empty
+				var radioNode = lastFmNode.parentNode;
+				var enum = radioNode.childNodes;
+				var visibleFlag = false;
+
+				// Iterate through elements and check if one is
+				// visible
+				while (enum.hasMoreElements()) {
+					var node = enum.getNext();
+					if (!node.hidden) {
+						visibleFlag = true;
+						break;
+					}
+				}
+
+				radioNode.hidden = !visibleFlag;
+			}
+                }
+	}
+}
 
 window.addEventListener("load", function(e) { LastFm.onLoad(e); }, false);
 window.addEventListener("unload", function(e) { LastFm.onUnload(e); }, false);
