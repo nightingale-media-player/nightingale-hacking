@@ -37,6 +37,7 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 var multiCDDialog = {
   library: null,
+  _infolist: null,
   _artistValue: null,
   _albumValue: null,
   _curTrackIndex: 1,
@@ -95,6 +96,8 @@ var multiCDDialog = {
       }
     }
 
+    this.onSelectionChange();
+
     // Listen for device events.
     var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
@@ -138,18 +141,32 @@ var multiCDDialog = {
   },
 
   /**
+   * \brief Updates element state whenever radio group selection changes.
+   */
+  onSelectionChange: function onSelectionChange()
+  {
+    // This might get called during radiogroup construction, before load event.
+    if (!this._infolist)
+      return;
+
+    document.getElementById("artist-textbox").disabled =
+                                      (this._infolist.value != "other");
+    document.getElementById("album-textbox").disabled =
+                                      (this._infolist.value != "other");
+  },
+
+  /**
    * \brief Handle accept/okay button.
    */
   onaccept: function onaccept()
   {
-    if (this._infolist.value == "none")
+    if (this._infolist.value == "other")
     {
-      openDialog(
-               "chrome://songbird/content/xul/device/cdInfoNotFoundDialog.xul",
-               null,
-               "centerscreen,chrome,modal,titlebar,resizable",
-               this.library,
-               this._metadataResults);
+      this._artistValue = document.getElementById("artist-textbox").value ||
+                          SBString("cdrip.lookup.default_artistname");
+      this._albumValue = document.getElementById("album-textbox").value ||
+                         SBString("cdrip.lookup.default_albumname");
+      this.library.enumerateAllItems(this);
       return;
     }
 

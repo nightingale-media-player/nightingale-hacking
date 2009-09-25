@@ -56,7 +56,13 @@
     <description id="dialog-msg">&cdrip.lookup.multiple.description;</description>
   </groupbox>
 
-  <radiogroup id="infolist" flex="1">
-    <radio label="&cdinfo.other.label;" value="none" id="other" group="infolist"/>
+  <radiogroup id="infolist" flex="1" onselect="multiCDDialog.onSelectionChange();">
+    <radio label="&cdinfo.other.label;" value="other" id="other" group="infolist"/>
+    <vbox id="otherInfo">
+      <label control="artist-textbox" value="&cdrip.lookup.info_not_found.artist;"/>
+      <textbox id="artist-textbox"/>
+      <label control="album-textbox" value="&cdrip.lookup.info_not_found.album;"/>
+      <textbox id="album-textbox"/>
+    </vbox>
   </radiogroup>
 </dialog>

@@ -26,6 +26,10 @@
 sb-cdtracks {
   -moz-binding: url("chrome://songbird/content/bindings/device/cdinfo.xml#sb-cdtracks");
   -moz-box-orient: vertical;
+}
+
+sb-cdtracks,
+#otherInfo {
   padding: 0 1em;
 }
 
