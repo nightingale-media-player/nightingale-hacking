@@ -287,7 +287,7 @@ sbBaseDeviceFirmwareHandler::SendDeviceEvent(sbIDeviceEvent *aEvent,
 
   nsCOMPtr<sbIDeviceEventListener> listener = mListener;
 
-  if(!NS_IsMainThread()) {
+  if(!NS_IsMainThread() && listener) {
     if(!mProxiedListener) {
       mon.Exit();
 
