@@ -46,8 +46,7 @@ sbMLAlbumDetail.prototype = {
   classDescription : 'Songbird Metadata Lookup Album Detail',
   classID          : Components.ID("84dd6e90-1dd2-11b2-bad9-c6f63b798098"),
   contractID       : "@songbirdnest.com/Songbird/MetadataLookup/albumdetail;1",
-  QueryInterface   : XPCOMUtils.generateQI(
-      [Ci.sbIMetadataAlbumDetail, Ci.nsIClassInfo]),
+  QueryInterface   : XPCOMUtils.generateQI([Ci.sbIMetadataAlbumDetail]),
 
   /** sbIMetadataAlbumDetail **/
   get tracks() {
