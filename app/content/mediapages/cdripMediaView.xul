@@ -37,6 +37,10 @@
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
 
+<!-- Import the standard scripts and overlays for all media pages.
+     Required for the playlist and other widgets to function correctly. -->
+<?xul-overlay href="chrome://songbird/content/xul/mediaPageOverlay.xul"?>
+
 <!-- CD Rip Media View. -->
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
         onload="window.cdripController.onLoad();"

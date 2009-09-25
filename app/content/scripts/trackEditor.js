@@ -521,6 +521,13 @@ var TrackEditor = {
     }
   */
     
+    // Don't attempt to writeback data if the playlist doesn't allow it
+    if (this.mediaListView.mediaList.getProperty(
+          "http://songbirdnest.com/data/1.0#dontWriteMetadata") == 1)
+    {
+      return;
+    }
+
     // Add all items that need writing into an array 
     // and hand them off to the metadata manager
     var mediaItemArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]

@@ -118,6 +118,9 @@ window.cdripController =
                                   .getBranch("songbird.cdrip.transcode_profile.")
                                   .QueryInterface(Ci.nsIPrefBranch2);
     this._transcodePrefBranch.addObserver("", this, false);
+
+    // Now that we are all initialized we can act like a regular media page.
+    window.mediaPage = new MediaPageImpl();
   },
 
   onUnload: function cdripController_onUnload() {
@@ -592,3 +595,24 @@ window.cdripController =
   }
 };
 
+//------------------------------------------------------------------------------
+// sbIMediaPage implementation
+
+function MediaPageImpl() {}
+MediaPageImpl.prototype = {
+  get mediaListView() {
+    return window.cdripController._mediaListView;
+  },
+  set mediaListView(value) {},
+
+  highlightItem: function(aIndex) {
+    window.cdripController._playlist.highlightItem(aIndex);
+  },
+
+  canDrop: function(aEvent, aSession) {
+    return false;
+  },
+  onDrop: function(aEvent, aSession) {
+    return false;
+  }
+}
