@@ -38,8 +38,13 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 var multiCDDialog = {
   library: null,
   _infolist: null,
+  // Artist name to be set (for onEnumeratedItem)
   _artistValue: null,
+  // Album title to be set (for onEnumeratedItem)
   _albumValue: null,
+  // True if user cancels - only set artist/album if empty, don't overwrite
+  // existing data.
+  _setEmptyOnly: false,
   _curTrackIndex: 1,
 
   /**
@@ -168,6 +173,7 @@ var multiCDDialog = {
                           SBString("cdrip.lookup.default_artistname");
       this._albumValue = document.getElementById("album-textbox").value ||
                          SBString("cdrip.lookup.default_albumname");
+      this._setEmptyOnly = false;
       this.library.enumerateAllItems(this);
       return;
     }
@@ -209,6 +215,7 @@ var multiCDDialog = {
     // Populate all of the tracks w/ the default entries.
     this._artistValue = SBString("cdrip.lookup.default_artistname");
     this._albumValue = SBString("cdrip.lookup.default_albumname");
+    this._setEmptyOnly = true;
     this.library.enumerateAllItems(this);
   },
 
@@ -218,19 +225,24 @@ var multiCDDialog = {
   onEnumerationBegin: function (aList) {},
   onEnumeratedItem: function (aList, aItem)
   {
-    aItem.setProperty(SBProperties.albumArtistName, this._artistValue);
-    aItem.setProperty(SBProperties.artistName, this._artistValue);
-    aItem.setProperty(SBProperties.albumName, this._albumValue);
+    if (!this._setEmptyOnly || !aItem.getProperty(SBProperties.albumArtistName))
+      aItem.setProperty(SBProperties.albumArtistName, this._artistValue);
+    if (!this._setEmptyOnly || !aItem.getProperty(SBProperties.artistName))
+      aItem.setProperty(SBProperties.artistName, this._artistValue);
+    if (!this._setEmptyOnly || !aItem.getProperty(SBProperties.albumName))
+      aItem.setProperty(SBProperties.albumName, this._albumValue);
 
-    // Only pad the track count to two digits since a CD can only have
-    // up to 99 tracks on it.
-    var curTrackNum = this._curTrackIndex++;
-    if (curTrackNum < 10) {
-      curTrackNum = "0" + curTrackNum;
+    if (!aItem.getProperty(SBProperties.trackName)) {
+      // Only pad the track count to two digits since a CD can only have
+      // up to 99 tracks on it.
+      var curTrackNum = this._curTrackIndex++;
+      if (curTrackNum < 10) {
+        curTrackNum = "0" + curTrackNum;
+      }
+      aItem.setProperty(SBProperties.trackName,
+                        SBFormattedString("cdrip.lookup.default_trackname",
+                                          [curTrackNum]));
     }
-    aItem.setProperty(SBProperties.trackName,
-                      SBFormattedString("cdrip.lookup.default_trackname",
-                                        [curTrackNum]));
   },
   onEnumerationEnd: function (aList, aStatus) {}
 }
