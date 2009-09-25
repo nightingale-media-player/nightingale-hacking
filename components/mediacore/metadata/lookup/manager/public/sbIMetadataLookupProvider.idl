@@ -36,14 +36,14 @@ interface sbICDTOC;
   * \interface sbIMetadataLookupProvider sbIMetadataLookupProvider.h
   * \brief A metadata lookup service provider
   */
-[scriptable, uuid(ef74249c-1dd1-11b2-ac5e-d6faf7472d83)]
+[scriptable, uuid(2d106ba6-1dd2-11b2-8c0e-dc5b4d1ef99c)]
 interface sbIMetadataLookupProvider : nsISupports
 {
   /**
    * \brief The name this provider is identified by.  Used by the metadata
    * lookup manager's getProvider() method
    */
-  readonly attribute ACString name;
+  readonly attribute AString name;
 
   /**
    * \brief Purely descriptive and are for some future use, maybe when/if
@@ -51,8 +51,8 @@ interface sbIMetadataLookupProvider : nsISupports
    * reprioritising them, etc.  would be good to have some sort of
    * description & URL to hit up for more info on each provider
    */
-  readonly attribute AUTF8String description;
-  readonly attribute ACString infoURL;
+  readonly attribute AString description;
+  readonly attribute AString infoURL;
 
   /**
    * \brief A default weight that the sbIMetadataLookupManager uses to
