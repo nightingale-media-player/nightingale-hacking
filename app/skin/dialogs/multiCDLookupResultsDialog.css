@@ -38,8 +38,3 @@ sb-cdtracks,
   margin: 4px;
   overflow: auto;
 }
-
-#select-media-dialog {
-  min-width: 600px;
-  min-height: 450px;
-}

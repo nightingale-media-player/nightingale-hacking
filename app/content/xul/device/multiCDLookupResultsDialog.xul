@@ -46,8 +46,9 @@
   onunload="multiCDDialog.onunload();"
   ondialogaccept="multiCDDialog.onaccept();"
   ondialogcancel="multiCDDialog.oncancel();"
-  width="600" height="450" resizers="both">
+  minwidth="600" minheight="450" width="600" height="450" resizers="both">
 
+  <script type="application/x-javascript" src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
   <script type="application/x-javascript" src="chrome://songbird/content/scripts/device/multiCDLookupResultsDialog.js"/>
 
