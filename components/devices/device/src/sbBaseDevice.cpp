@@ -881,19 +881,19 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   if (!requests.empty()) {
     rv = RemoveLibraryItems(requests.begin(), requests.end());
     NS_ENSURE_SUCCESS(rv, rv);
+  }
 
-    if (request) {
-      nsCOMPtr<nsIWritableVariant> var =
-        do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
+  if (request) {
+    nsCOMPtr<nsIWritableVariant> var =
+      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      rv = var->SetAsISupports(request->item);
-      NS_ENSURE_SUCCESS(rv, rv);
+    rv = var->SetAsISupports(request->item);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-      CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
-                             var,
-                             PR_TRUE);
-    }
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
+			   var,
+			   PR_TRUE);
   }
 
   return NS_OK;
