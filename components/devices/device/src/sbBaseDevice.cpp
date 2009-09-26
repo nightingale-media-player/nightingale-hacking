@@ -3391,6 +3391,17 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
           rv = change->GetSourceItem(getter_AddRefs(mediaItem));
           NS_ENSURE_SUCCESS(rv, rv);
 
+          // if it's hidden, don't sync it
+          nsString hidden;
+          rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                      hidden);
+          if (rv != NS_ERROR_NOT_AVAILABLE) {
+            NS_ENSURE_SUCCESS(rv, rv);
+            if (hidden.Equals(NS_LITERAL_STRING("1"))) {
+              break;
+            }
+          }
+
           if (itemIsList) {
             nsCOMPtr<sbIMediaList> mediaList = do_QueryInterface(mediaItem,
                                                                  &rv);
@@ -3405,6 +3416,27 @@ sbBaseDevice::SyncApplyChanges(sbIDeviceLibrary*    aDstLibrary,
 
       case sbIChangeOperation::MODIFIED:
         {
+          // Get the source item that changed.
+          nsCOMPtr<sbIMediaItem> mediaItem;
+          rv = change->GetSourceItem(getter_AddRefs(mediaItem));
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          // if it's hidden, don't sync it
+          nsString hidden;
+          rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                      hidden);
+          if (rv != NS_ERROR_NOT_AVAILABLE) {
+            NS_ENSURE_SUCCESS(rv, rv);
+
+            if (hidden.Equals(NS_LITERAL_STRING("1"))) {
+              NS_ENSURE_SUCCESS(rv, rv);
+              // If it's in both places, and it's has become hidden then we
+              // should delete it
+              rv = deleteItemList->AppendElement(mediaItem, PR_FALSE);
+              NS_ENSURE_SUCCESS(rv, rv);
+              break;
+            }
+          }
           // If the change is to a media list, add it to the media list change
           // list.
           if (itemIsList) {

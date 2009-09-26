@@ -173,9 +173,14 @@ sbLibraryUpdateListener::OnItemAdded(sbIMediaList *aMediaList,
 
   nsCOMPtr<sbIMediaList> list = do_QueryInterface(aMediaItem);
   if (!list || !mIgnorePlaylists) {
-    nsresult rv = mTargetLibrary->Add(aMediaItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-
+    // Ignore if item is hidden. We'll pick it up when it's unhidden
+    nsString hidden;
+    nsresult rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                          hidden);
+    if (!hidden.EqualsLiteral("1")) {
+      rv = mTargetLibrary->Add(aMediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
     // See if this is a playlist being added, if so we need to listen to it
     if (list) {
       PRBool shouldListen;
@@ -249,6 +254,50 @@ sbLibraryUpdateListener::OnAfterItemRemoved(sbIMediaList *aMediaList,
   return NS_OK;
 }
 
+/**
+ * Determines if an item was unhidden.
+ * \PARAMS aOldProps old property values for the item
+ * \PARAMS aNewProps new property values for the item
+ * \PARAMS aisUnhidden set to true if the item is now visible
+ */
+static nsresult
+GetHideState(sbIPropertyArray * aOldProps,
+            sbIPropertyArray * aNewProps,
+            bool & aIsHidden,
+            bool & aIsUnhidden)
+{
+  nsresult rv;
+  nsString oldHidden;
+  rv = aOldProps->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                   oldHidden);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    oldHidden.SetIsVoid(PR_TRUE);
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsString newHidden;
+  rv = aNewProps->GetPropertyValue(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                   newHidden);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    newHidden.SetIsVoid(PR_TRUE);
+  }
+  else {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  PRBool const oldIsHidden = oldHidden.Equals(NS_LITERAL_STRING("1"));
+  PRBool const newIsHidden = newHidden.Equals(NS_LITERAL_STRING("1"));
+
+  // If we are not hidden now, but were before return true
+  aIsUnhidden = oldIsHidden && !newIsHidden;
+
+  aIsHidden = newIsHidden && !oldIsHidden;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
                                        sbIMediaItem *aMediaItem,
@@ -267,17 +316,34 @@ sbLibraryUpdateListener::OnItemUpdated(sbIMediaList *aMediaList,
     return NS_OK;
   }
   nsresult rv;
+
+  // the property array here are the old values; we need the new ones
+  nsCOMPtr<sbIPropertyArray> newProps;
+  rv = aMediaItem->GetProperties(aProperties, getter_AddRefs(newProps));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If this item is being unhidden then we'll need to add to the device lib
+  bool isHidden;
+  bool isUnhidden;
+  rv = GetHideState(aProperties, newProps, isHidden, isUnhidden);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // It's no longer hidden so add it
+  if (isUnhidden) {
+    rv = mTargetLibrary->Add(aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else if (isHidden) {
+    rv = mTargetLibrary->Remove(aMediaItem);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   nsCOMPtr<sbIMediaItem> targetItem;
   rv = GetSyncItemInLibrary(aMediaItem,
                             mTargetLibrary,
                             getter_AddRefs(targetItem));
   NS_ENSURE_SUCCESS(rv, rv);
   if (targetItem) {
-    // the property array here are the old values; we need the new ones
-    nsCOMPtr<sbIPropertyArray> newProps;
-    rv = aMediaItem->GetProperties(aProperties, getter_AddRefs(newProps));
-    NS_ENSURE_SUCCESS(rv, rv);
-
     rv = targetItem->SetProperties(newProps);
     NS_ENSURE_SUCCESS(rv, rv);
   }
