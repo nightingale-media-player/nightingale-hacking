@@ -3,4 +3,4 @@ pref("extensions.lastfm.api_url", "http://ws.audioscrobbler.com/2.0/");
 pref("extensions.lastfm.loggedOut", true);
 pref("extensions.lastfm.scrobble", true);
 pref("extensions.lastfm.header", false);
-pref("extensions.lastfm.show_radio_node", true);
+pref("extensions.lastfm.show_radio_node", false);

@@ -514,28 +514,9 @@ function sbLastFm() {
   this._servicePaneNode.image = 'chrome://sb-lastfm/skin/as.png';
   this._servicePaneNode.editable = false;
 
-  if (this.displayRadioNode)
-  	this._servicePaneNode.hidden = false;
-  else
-  	this._servicePaneNode.hidden = true;
-
-  // Hide the "Radio" node if it's empty
-  var enum = radioFolder.childNodes;
-  var visibleFlag = false;
-
-  // Iterate through elements and check if one is visible
-  while (enum.hasMoreElements()) {
-	var node = enum.getNext();
-	if (!node.hidden) {
-		visibleFlag = true;
-		break;
-	}
-  }
-
-  radioFolder.hidden = !visibleFlag;
-
   //dump("HERE: " + this._servicePaneNode + "\n");
   //this._servicePaneService.removeNode(this._servicePaneNode);
+  this.updateServicePaneNodes();
 
   // track metrics
   this._metrics = Cc['@songbirdnest.com/Songbird/Metrics;1']
@@ -572,6 +553,31 @@ sbLastFm.prototype.QueryInterface =
 // Error reporting
 sbLastFm.prototype.log = function sbLastFm_log(message) {
   this._console.logStringMessage('[last-fm] '+message);
+}
+
+sbLastFm.prototype.updateServicePaneNodes = function updateSPNodes() {
+  // only show the Last.fm radio node if the user is a subscriber or if they've
+  // specifically requested to have it be shown
+  var radioString = this._strings.GetStringFromName("lastfm.radio.label");
+  var radioFolder = findRadioNode(this._servicePaneService.root, radioString);
+  if (this.loggedIn && (this._subscriber || this.displayRadioNode))
+    this._servicePaneNode.hidden = false;
+  else
+    this._servicePaneNode.hidden = true;
+
+  // Hide the "Radio" node if it's empty
+  var enum = radioFolder.childNodes;
+  var visibleFlag = false;
+
+  // Iterate through elements and check if one is visible
+  while (enum.hasMoreElements()) {
+    var node = enum.getNext();
+    if (!node.hidden) {
+      visibleFlag = true;
+      break;
+    }
+  }
+  radioFolder.hidden = !visibleFlag;
 }
 
 // failure handling
@@ -616,6 +622,7 @@ function sbLastFm_postHandshake() {
 		try {
 			self.loggedIn = true;
 			self.error = null;
+      self.updateServicePaneNodes();
 			self.listeners.each(function(l) { l.onLoginSucceeded(); });
 
 			self.login_phase = null;
@@ -627,8 +634,9 @@ function sbLastFm_postHandshake() {
     }, function failure() {
       self.loggedIn = false;
       self.error = null;
+      self.updateServicePaneNodes();
       self.listeners.each(function(l) { l.onLoginFailed(); });
-	  self.login_phase = null;
+      self.login_phase = null;
     });
 	
 	// get loved tracks information
@@ -748,6 +756,7 @@ function sbLastFm_logout() {
   this.nowplaying_url = null;
   this.submission_url = null;
   this.loggedIn = false;
+  this.updateServicePaneNodes();
 }
 
 
@@ -857,6 +866,8 @@ function sbLastFm_updateProfile(onSuccess, onFailure) {
 			self.avatar = text('image');
 			self.profileurl = text('url');
 			self.listeners.each(function(l) { l.onProfileUpdated(); });
+
+      self.updateServicePaneNodes();
 
 			if (typeof(onSuccess) == "function")
 				onSuccess();
