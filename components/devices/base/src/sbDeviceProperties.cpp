@@ -59,7 +59,7 @@ isInitialized(PR_FALSE)
     gDevicePropertiesLog = PR_NewLogModule("sbDeviceProperties");
   }
 #endif
-  mLock = nsAutoLock::NewLock("sbDeviceProperties");
+  mLock = nsAutoLock::NewLock("sbDevicePropertiesLock");
   // Intialize our properties container
   mProperties2 = do_CreateInstance("@mozilla.org/hash-property-bag;1");
   mProperties = do_QueryInterface(mProperties2);
@@ -71,6 +71,10 @@ isInitialized(PR_FALSE)
 sbDeviceProperties::~sbDeviceProperties()
 {
   TRACE(("sbDeviceProperties[0x%.8x] - Destructed", this));
+  if (mLock) {
+    nsAutoLock::DestroyLock(mLock);
+    mLock = nsnull;
+  }
 }
 
 NS_IMETHODIMP
