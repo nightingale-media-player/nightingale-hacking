@@ -286,7 +286,7 @@ public:
 
   ~sbMockCDDevice()
   {
-    NS_ASSERTION(mIsDeviceLocked, "ERROR: Device is still locked!!!!!!!!");
+    NS_ASSERTION(!mIsDeviceLocked, "ERROR: Device is still locked!!!!!!!!");
     mController = nsnull;
   }
 
