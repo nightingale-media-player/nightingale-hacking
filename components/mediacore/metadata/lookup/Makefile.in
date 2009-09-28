@@ -30,7 +30,6 @@ VPATH = @srcdir@
 include $(DEPTH)/build/autodefs.mk
 
 SUBDIRS = manager \
-          freedb \
           $(NULL)
 
 # Only build the test provider if we're doing a developer or nightly build

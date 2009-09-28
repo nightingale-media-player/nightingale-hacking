@@ -34,7 +34,6 @@ SUBDIRS = bindings \
           dialogs \
           global \
           mozapps \
-          service-icons \
           $(NULL)
 
 include $(topsrcdir)/build/rules.mk

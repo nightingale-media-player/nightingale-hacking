@@ -1,3 +1,0 @@
-songbird.jar:
-% skin  service-icons classic/1.0  %skin/service-icons/
-@include_all_to skin/service-icons/
