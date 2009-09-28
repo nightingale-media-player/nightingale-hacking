@@ -339,7 +339,8 @@ sbIPDSysDevice::GetDevInst(char     aDriveLetter,
     NS_ENSURE_TRUE(rv != NS_ERROR_NOT_AVAILABLE, NS_ERROR_NOT_AVAILABLE);
     if (NS_FAILED(rv))
       continue;
-    sbAutoMemPtr autoDevIfDetailData(devIfDetailData);
+    sbAutoMemPtr<SP_DEVICE_INTERFACE_DETAIL_DATA> autoDevIfDetailData
+                                                    (devIfDetailData);
 
     // Get the next device number.
     ULONG devNum;
@@ -469,7 +470,8 @@ sbIPDSysDevice::GetDevDetail(PSP_DEVICE_INTERFACE_DETAIL_DATA* aDevIfDetailData,
   PSP_DEVICE_INTERFACE_DETAIL_DATA devIfDetailData;
   devIfDetailData = (PSP_DEVICE_INTERFACE_DETAIL_DATA) malloc(size);
   NS_ENSURE_TRUE(devIfDetailData, NS_ERROR_OUT_OF_MEMORY);
-  sbAutoMemPtr autoDevIfDetailData(devIfDetailData);
+  sbAutoMemPtr<SP_DEVICE_INTERFACE_DETAIL_DATA> autoDevIfDetailData
+                                                  (devIfDetailData);
   devIfDetailData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
 
   // Get the device interface details.

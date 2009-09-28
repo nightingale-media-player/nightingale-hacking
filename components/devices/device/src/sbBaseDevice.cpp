@@ -343,6 +343,7 @@ sbBaseDevice::sbBaseDevice() :
   mBatchDepth(0),
   mLastTransferID(0),
   mLastRequestPriority(PR_INT32_MIN),
+  mHaveCurrentRequest(PR_FALSE),
   mAbortCurrentRequest(PR_FALSE),
   mIgnoreMediaListCount(0),
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
@@ -683,7 +684,7 @@ nsresult sbBaseDevice::PopRequest(sbBaseDevice::TransferRequest** _retval)
   return GetFirstRequest(true, _retval);
 }
 
-nsresult sbBaseDevice::PopRequest(sbBaseDevice::Batch & aBatch) {
+nsresult sbBaseDevice::StartNextRequest(sbBaseDevice::Batch & aBatch) {
 
   aBatch.clear();
   nsAutoMonitor reqMon(mRequestMonitor);
@@ -750,6 +751,22 @@ nsresult sbBaseDevice::PopRequest(sbBaseDevice::Batch & aBatch) {
     aBatch.push_back(*requestQueueIter);
     queue.erase(requestQueueIter);
   }
+
+  // If the batch is not empty, mark that there's a current request.
+  if (!aBatch.empty())
+    mHaveCurrentRequest = PR_TRUE;
+
+  return NS_OK;
+}
+
+nsresult sbBaseDevice::CompleteCurrentRequest() {
+  // Operate within the request monitor.
+  nsAutoMonitor reqMon(mRequestMonitor);
+
+  // There's no longer a current request, and it no longer needs to be aborted.
+  mHaveCurrentRequest = PR_FALSE;
+  mAbortCurrentRequest = PR_FALSE;
+
   return NS_OK;
 }
 
@@ -826,9 +843,6 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   nsresult rv;
   sbBaseDeviceTransferRequests requests;
 
-  nsRefPtr<TransferRequest> request;
-  PeekRequest(getter_AddRefs(request));
-
   NS_ENSURE_TRUE(mRequestMonitor, NS_ERROR_NOT_INITIALIZED);
   {
     nsAutoMonitor reqMon(mRequestMonitor);
@@ -837,12 +851,6 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
       rv = SetState(STATE_CANCEL);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      Batch::iterator const batchEnd = mCurrentBatch.end();
-      for (Batch::iterator batchIter = mCurrentBatch.begin();
-           batchIter != batchEnd;
-           ++batchIter) {
-        requests.push_back(*batchIter);
-      }
       // Save off the library items that are pending to avoid any
       // potential reenterancy issues when deleting them.
       TransferRequestQueueMap::const_iterator mapIt = mRequests.begin(),
@@ -867,11 +875,18 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
         #endif
       }
 
-      mAbortCurrentRequest = PR_TRUE;
+      // Clear requests from the queue.
       mRequests.clear();
 
-      rv = SetState(STATE_IDLE);
-      NS_ENSURE_SUCCESS(rv, rv);
+      // If there is a current request being processed, abort it.  Otherwise,
+      // just set the state to idle.  Let the request processing code deal with
+      // doing a clean abort and removing library items for the current request.
+      if (mHaveCurrentRequest) {
+        mAbortCurrentRequest = PR_TRUE;
+      } else {
+        rv = SetState(STATE_IDLE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
     }
   }
 
@@ -881,19 +896,6 @@ nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
   if (!requests.empty()) {
     rv = RemoveLibraryItems(requests.begin(), requests.end());
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  if (request) {
-    nsCOMPtr<nsIWritableVariant> var =
-      do_CreateInstance("@songbirdnest.com/Songbird/Variant;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = var->SetAsISupports(request->item);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSFER_END,
-			   var,
-			   PR_TRUE);
   }
 
   return NS_OK;
@@ -1260,8 +1262,20 @@ nsresult sbBaseDevice::SetState(PRUint32 aState)
 
   // set state, checking if it changed
   {
+    // Don't allow the state to be changed outside of the request monitor.  In
+    // order to prevent a dead lock, acquire the request monitor before the
+    // state lock.
+    nsAutoMonitor reqMon(mRequestMonitor);
+
     NS_ENSURE_TRUE(mStateLock, NS_ERROR_NOT_INITIALIZED);
     nsAutoLock lock(mStateLock);
+
+    // Only allow the cancel state to transition to the idle state.  This
+    // prevents the request processing code from changing the state from cancel
+    // to some other operation before it has checked for a canceled request.
+    if ((mState == STATE_CANCEL) && (aState != STATE_IDLE))
+      return NS_OK;
+
     prevState = mState;
     if (mState != aState) {
       mState = aState;

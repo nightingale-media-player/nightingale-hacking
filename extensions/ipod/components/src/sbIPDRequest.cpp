@@ -123,18 +123,17 @@ sbIPDDevice::ReqHandleRequestAdded()
   // the request thread, so locking is not required.
   if (mIsHandlingRequests)
     return NS_OK;
-
   mIsHandlingRequests = PR_TRUE;
   sbIPDAutoFalse autoIsHandlingRequests(&mIsHandlingRequests);
 
-  if (mCurrentBatch.empty()) {
-    rv = PopRequest(mCurrentBatch);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  // If batch is empty just exit. We're probably waiting for it to complete.
-  if (mCurrentBatch.empty()) {
+  // Start processing of the next request batch and set to automatically
+  // complete the current request on exit.
+  sbBaseDevice::Batch requestBatch;
+  rv = StartNextRequest(requestBatch);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (requestBatch.empty())
     return NS_OK;
-  }
+  sbAutoDeviceCompleteCurrentRequest autoComplete(this);
 
   // Set up to automatically set the state to STATE_IDLE on exit.  Any device
   // operation must change the state to not be idle.  This ensures that the
@@ -148,17 +147,29 @@ sbIPDDevice::ReqHandleRequestAdded()
   {
     sbIPDAutoDBFlush autoDBFlush(this);
 
-    // If we're not waiting and the batch isn't empty process the batch
-    while (!mCurrentBatch.empty()) {
+    // If the batch isn't empty, process the batch
+    while (!requestBatch.empty()) {
       bool ensuredSpaceForWrite = false;
 
+      // Check for abort.
+      if (ReqAbortActive()) {
+        rv = RemoveLibraryItems(requestBatch.begin(), requestBatch.end());
+        NS_ENSURE_SUCCESS(rv, rv);
+        return NS_ERROR_ABORT;
+      }
+
       // Process each request in the batch
-      Batch::iterator const end = mCurrentBatch.end();
-      Batch::iterator iter = mCurrentBatch.begin();
+      Batch::iterator const end = requestBatch.end();
+      Batch::iterator iter = requestBatch.begin();
       while (iter != end) {
 
         // Check for abort.
-        NS_ENSURE_FALSE(ReqAbortActive(), NS_ERROR_ABORT);
+        if (ReqAbortActive()) {
+          rv = RemoveLibraryItems(iter, end);
+          NS_ENSURE_SUCCESS(rv, rv);
+
+          return NS_ERROR_ABORT;
+        }
 
         TransferRequest * request = iter->get();
 
@@ -180,13 +191,13 @@ sbIPDDevice::ReqHandleRequestAdded()
 
                 // Check for space for request.  Assume space is ensured on error
                 // and attempt the write.
-                rv = EnsureSpaceForWrite(mCurrentBatch);
+                rv = EnsureSpaceForWrite(requestBatch);
                 NS_ENSURE_SUCCESS(rv, rv);
 
                 ensuredSpaceForWrite = true;
 
                 // Reset the iter and request in case the first item was removed
-                iter = mCurrentBatch.begin();
+                iter = requestBatch.begin();
               }
 
               // Handle request if space has been ensured for it.
@@ -259,19 +270,24 @@ sbIPDDevice::ReqHandleRequestAdded()
           }
           // Something may have advanced the iter so need to check for end
           if (iter != end) {
-            mCurrentBatch.erase(iter);
-            iter = mCurrentBatch.begin();
+            requestBatch.erase(iter);
+            iter = requestBatch.begin();
           }
         }
       }
+
+      // Complete the current request and forget auto-completion.
+      CompleteCurrentRequest();
+      autoComplete.forget();
+
+      // Start processing of the next request batch and set to automatically
+      // complete the current request on exit.
+      rv = StartNextRequest(requestBatch);
+      NS_ENSURE_SUCCESS(rv, rv);
+      if (!requestBatch.empty())
+        autoComplete.Set(this);
     }
-
-    rv = PopRequest(mCurrentBatch);
-    NS_ENSURE_SUCCESS(rv, rv);
   }
-
-  // Safely reset the abort request flag
-  IsRequestAborted();
 
   return NS_OK;
 }
@@ -964,8 +980,8 @@ sbIPDDevice::ReqConnect()
 {
   nsresult rv;
 
-  // Clear the abort requests flag.
-  PR_AtomicSet(&mAbortRequests, 0);
+  // Clear the stop request processing flag.
+  PR_AtomicSet(&mReqStopProcessing, 0);
 
   // Create the request added event object.
   rv = sbIPDReqAddedEvent::New(this, getter_AddRefs(mReqAddedEvent));
@@ -1030,8 +1046,8 @@ sbIPDDevice::ReqProcessingStop()
   sbAutoReadLock autoConnectLock(mConnectLock);
   NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
 
-  // Set the abort requests flag.
-  PR_AtomicSet(&mAbortRequests, 1);
+  // Set the stop processing requests flag.
+  PR_AtomicSet(&mReqStopProcessing, 1);
 
   // Shutdown the request processing thread.
   mReqThread->Shutdown();
@@ -1050,11 +1066,11 @@ sbIPDDevice::ReqProcessingStop()
 PRBool
 sbIPDDevice::ReqAbortActive()
 {
-  // Atomically get the abort requests flag by atomically adding 0 and reading
-  // the result.
-  PRBool abortRequests = PR_AtomicAdd(&mAbortRequests, 0);
+  // Abort if request processing has been stopped.
+  if (PR_AtomicAdd(&mReqStopProcessing, 0))
+    return PR_TRUE;
 
-  return (abortRequests != 0);
+  return IsRequestAbortedOrDeviceDisconnected();
 }
 
 

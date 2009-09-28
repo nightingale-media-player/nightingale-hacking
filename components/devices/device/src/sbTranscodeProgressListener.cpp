@@ -154,12 +154,19 @@ sbTranscodeProgressListener::OnJobProgress(sbIJobProgress *aJobProgress)
 {
   NS_ENSURE_ARG_POINTER(aJobProgress);
 
-  if (mCancel && mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
+  // Cancel job if it needs to be aborted.  Continue processing OnJobProgress
+  // calls while the cancel operation is performed.  Make sure cancel is only
+  // called once.  Calling cancel can result in a reentrant call to
+  // OnJobProgress.
+  if (!mAborted &&
+      mCancel &&
+      mBaseDevice->IsRequestAbortedOrDeviceDisconnected()) {
     mAborted = PR_TRUE;
-    mCancel->Cancel();
+    nsCOMPtr<sbIJobCancelable> cancel = mCancel;
     mCancel = nsnull;
-    return NS_OK;
+    cancel->Cancel();
   }
+
   PRUint16 status;
   nsresult rv = aJobProgress->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);

@@ -171,7 +171,7 @@
 // Not locked
 //   mConnectLock
 //   mRequestLock
-//   mAbortRequests
+//   mReqStopProcessing
 //   mDeviceContent
 //   mCreationProperties
 //   mCreationProperties2
@@ -455,13 +455,13 @@ private:
   //
   //   mReqAddedEvent           Request added event object.
   //   mReqThread               Request processing thread.
-  //   mAbortRequests           Non-zero if requests should be aborted.
+  //   mReqStopProcessing       Non-zero if request processing should stop.
   //   mIsHandlingRequests      True if requests are being handled.
   //
 
   nsCOMPtr<nsIRunnable>         mReqAddedEvent;
   nsCOMPtr<nsIThread>           mReqThread;
-  PRInt32                       mAbortRequests;
+  PRInt32                       mReqStopProcessing;
   PRBool                        mIsHandlingRequests;
 
 

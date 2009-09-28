@@ -46,6 +46,9 @@
 //
 //------------------------------------------------------------------------------
 
+// Songbird imports.
+#include <sbMemoryUtils.h>
+
 // Mozilla imports.
 #include <nsComponentManagerUtils.h>
 #include <nsIIOService.h>
@@ -63,86 +66,6 @@
 
 //------------------------------------------------------------------------------
 //
-// iPod device utility services macros.
-//
-//------------------------------------------------------------------------------
-
-/**
- * Define a class that wraps a data type and auto-disposes it when going out of
- * scope.  The class name is specified by aName, and the data type is specified
- * by aType.  An additional class field type may be specified by aType2.  A code
- * snippet that checks for valid data is specified by aIsValid.  A code snippet
- * that disposes of the data is specified by aDispose.  A code snippet that
- * invalidates the data is specified by aInvalidate.  The code snippets may use
- * mValue to refer to the wrapped data and mValue2 to refer to the additional
- * class field.
- *
- * \param aName                 Name of class.
- * \param aType                 Class data type.
- * \param aType2                Additional class field data type.
- * \param aIsValid              Code snippet to test for data validity.
- * \param aDispose              Code snippet to dispose of the data.
- * \param aInvalidate           Code snippet to invalidate the data.
- *
- * Example:
- *   SB_AUTO_CLASS(sbAutoMemPtr,
- *                 void*,
- *                 mValue,
- *                 NS_Free(mValue),
- *                 mValue = nsnull)
- *   sbAutoMemPtr autoMem(memPtr);
- *
- *   SB_AUTO_CLASS2(sbAutoClassData,
- *                  void*,
- *                  classType*,
- *                  mValue,
- *                  mValue2->Delete(mValue),
- *                  mValue = nsnull)
- *   sbAutoClassData(data, this);
- */
-
-#define SB_AUTO_CLASS2(aName, aType, aType2, aIsValid, aDispose, aInvalidate)  \
-class aName                                                                    \
-{                                                                              \
-public:                                                                        \
-  aName() { Invalidate(); }                                                    \
-                                                                               \
-  aName(aType aValue) : mValue(aValue) {}                                      \
-                                                                               \
-  aName(aType aValue, aType2 aValue2) : mValue(aValue), mValue2(aValue2) {}    \
-                                                                               \
-  virtual ~aName()                                                             \
-  {                                                                            \
-    if (aIsValid) {                                                            \
-      aDispose;                                                                \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-  void Set(aType aValue) { mValue = aValue; }                                  \
-                                                                               \
-  void Set(aType aValue, aType2 aValue2)                                       \
-         { mValue = aValue; mValue2 = aValue2; }                               \
-                                                                               \
-  aType forget()                                                               \
-  {                                                                            \
-    aType value = mValue;                                                      \
-    Invalidate();                                                              \
-    return value;                                                              \
-  }                                                                            \
-                                                                               \
-private:                                                                       \
-  aType mValue;                                                                \
-  aType2 mValue2;                                                              \
-                                                                               \
-  void Invalidate() { aInvalidate; }                                           \
-}
-
-#define SB_AUTO_CLASS(aName, aType, aIsValid, aDispose, aInvalidate)           \
-          SB_AUTO_CLASS2(aName, aType, char, aIsValid, aDispose, aInvalidate)
-
-
-//------------------------------------------------------------------------------
-//
 // iPod device utility services classes.
 //
 //------------------------------------------------------------------------------
@@ -150,18 +73,12 @@ private:                                                                       \
 //
 // Auto-disposal class wrappers.
 //
-//   sbAutoMemPtr               Wrapper to auto-dipose memory blocks allocated
-//                              with malloc.
-//   sbAutoNSMemPtr             Wrapper to auto-dispose memory blocks allocated
-//                              with NS_Alloc.
 //   sbAutoGMemPtr              Wrapper to auto-dispose memory blocks allocated
 //                              with g_malloc.
 //   sbAutoITDBTrackPtr         Wrapper to auto-dispose iPod database track data
 //                              records.
 //
 
-SB_AUTO_CLASS(sbAutoMemPtr, void*, mValue, free(mValue), mValue = NULL);
-SB_AUTO_CLASS(sbAutoNSMemPtr, void*, mValue, NS_Free(mValue), mValue = nsnull);
 SB_AUTO_CLASS(sbAutoGMemPtr, void*, mValue, g_free(mValue), mValue = NULL);
 SB_AUTO_CLASS(sbAutoITDBTrackPtr,
               Itdb_Track*,

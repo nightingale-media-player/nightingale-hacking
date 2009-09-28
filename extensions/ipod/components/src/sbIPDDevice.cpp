@@ -755,7 +755,7 @@ NS_IMETHODIMP sbIPDDevice::ResetWarningDialogs()
 sbIPDDevice::sbIPDDevice(const nsID&     aControllerID,
                          nsIPropertyBag* aProperties) :
   // Request services.
-  mAbortRequests(0),
+  mReqStopProcessing(0),
   mIsHandlingRequests(PR_FALSE),
 
   // Preference services.

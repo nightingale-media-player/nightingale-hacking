@@ -51,6 +51,8 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 
+#include <sbMemoryUtils.h>
+
 #include "sbDeviceStatistics.h"
 
 class nsIPrefBranch;
@@ -217,13 +219,18 @@ public:
   nsresult PopRequest(TransferRequest** _retval);
 
   /**
-   * Returns the next batch. This may be a single request if the next request
-   * is not part of a batch.
-   * \param aWait denotes whether the caller needs to wait for the batch to
-   *              complete.
+   * Returns the next request batch in aBatch and marks it as the current
+   * request.  The batch may be a single request if the next request is not part
+   * of a batch.
    * \param aBatch A collection that receives the batch items found.
    */
-  nsresult PopRequest(Batch & aBatch);
+  nsresult StartNextRequest(Batch & aBatch);
+
+  /**
+   * Complete the current request (single or batch) and clear the current
+   * request.
+   */
+  nsresult CompleteCurrentRequest();
 
   /* get a reference to the next request without removing it; note that _retval
    * will be null while returning NS_OK if there are no requests left
@@ -423,16 +430,13 @@ public:
                                   PRBool aAsync = PR_TRUE);
 
   /**
-   * Returns true if the current request should be aborted. This subsequently
-   * resets the flags
+   * Returns true if the current request should be aborted.
    */
   PRBool IsRequestAborted()
   {
     NS_ASSERTION(mRequestMonitor, "mRequestMonitor must be initialized");
     nsAutoMonitor mon(mRequestMonitor);
-    PRBool const abort = mAbortCurrentRequest;
-    mAbortCurrentRequest = PR_FALSE;
-    return abort;
+    return mAbortCurrentRequest;
   }
 
   NS_SCRIPTABLE NS_IMETHOD SetWarningDialogEnabled(const nsAString & aWarning, PRBool aEnabled);
@@ -478,7 +482,6 @@ protected:
   PRMonitor * mRequestMonitor;
   nsCOMPtr<nsITimer> mBatchEndTimer;
   PRInt32 mNextBatchID;
-  Batch mCurrentBatch;
   /**
    * Tracks the REQUEST_BATCH_BEGIN/REQUEST_BATCH_END depth
    */
@@ -502,6 +505,7 @@ protected:
   PRLock *mPreviousStateLock;
   PRUint32 mPreviousState;
   nsRefPtr<sbDeviceStatistics> mDeviceStatistics;
+  PRBool mHaveCurrentRequest;
   PRBool mAbortCurrentRequest;
   PRInt32 mIgnoreMediaListCount; // Allows us to know if we're ignoring lists
   PRUint32 mPerTrackOverhead; // estimated bytes of overhead per track
@@ -1285,6 +1289,19 @@ private:
     NS_IF_RELEASE(device);
   }
 };
+
+
+//
+// Auto-disposal class wrappers.
+//
+//   sbAutoDeviceCompleteCurrentRequest
+//                              Wrapper to automatically complete the current
+//                              request.
+//
+
+SB_AUTO_NULL_CLASS(sbAutoDeviceCompleteCurrentRequest,
+                   sbBaseDevice*,
+                   mValue->CompleteCurrentRequest());
 
 #endif /* __SBBASEDEVICE__H__ */
 

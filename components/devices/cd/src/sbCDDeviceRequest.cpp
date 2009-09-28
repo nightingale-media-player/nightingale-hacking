@@ -114,14 +114,14 @@ sbCDDevice::ReqHandleRequestAdded()
   mIsHandlingRequests = PR_TRUE;
   sbCDAutoFalse autoIsHandlingRequests(&mIsHandlingRequests);
 
-  // Get the next request batch.  If a complete batch is not available, do
-  // nothing more.
+  // Start processing of the next request batch and set to automatically
+  // complete the current request on exit.
   sbBaseDevice::Batch requestBatch;
-  rv = PopRequest(requestBatch);
+  rv = StartNextRequest(requestBatch);
   NS_ENSURE_SUCCESS(rv, rv);
-  if (requestBatch.empty()) {
+  if (requestBatch.empty())
     return NS_OK;
-  }
+  sbAutoDeviceCompleteCurrentRequest autoComplete(this);
 
   // Set up to automatically set the state to STATE_IDLE on exit.  Any device
   // operation must change the state to not be idle.  This ensures that the
@@ -136,12 +136,20 @@ sbCDDevice::ReqHandleRequestAdded()
   mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
                                             PR_FALSE);
 
-  // If we're not waiting and the batch isn't empty process the batch
+  // If the batch isn't empty, process the batch
   while (!requestBatch.empty()) {
     // Process each request in the batch
     Batch::iterator const end = requestBatch.end();
     Batch::iterator iter = requestBatch.begin();
     while (iter != end) {
+      // Check for abort.
+      if (ReqAbortActive()) {
+        rv = RemoveLibraryItems(iter, end);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        return NS_ERROR_ABORT;
+      }
+
       TransferRequest * request = iter->get();
 
       // Dispatch processing of request.
@@ -216,13 +224,17 @@ sbCDDevice::ReqHandleRequestAdded()
       return rv;
     }
 
-    // Get the next request batchs.
-    rv = PopRequest(requestBatch);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
+    // Complete the current request and forget auto-completion.
+    CompleteCurrentRequest();
+    autoComplete.forget();
 
-  // Safely reset the abort request flag
-  IsRequestAborted();
+    // Start processing of the next request batch and set to automatically
+    // complete the current request on exit.
+    rv = StartNextRequest(requestBatch);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!requestBatch.empty())
+      autoComplete.Set(this);
+  }
 
   return NS_OK;
 }
@@ -925,10 +937,6 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Wait until the transcode job is complete.
-  //XXXeps should check for abort.  To do this, the job will have to be
-  //       canceled.  In addition, calling functions will need to know that the
-  //       operation was aborted.  Calling ReqAbortActive once clears the abort
-  //       condition.
   PRBool isComplete = PR_FALSE;
   while (!isComplete) {
     // Operate within the request wait monitor.
