@@ -27,14 +27,15 @@
 #ifndef __SB_AUTORWLOCK_H__
 #define __SB_AUTORWLOCK_H__
 
-#include <nsAutoLock.h>
+#include <nscore.h>
+#include <prlog.h>
 #include <prrwlock.h>
 
 /** 
  * sbAutoReadLock
  * Stack-based read locking object for PRRWLock.
  **/
-class NS_COM_GLUE sbAutoReadLock : public nsAutoLockBase {
+class NS_COM_GLUE sbAutoReadLock {
 private:
     PRRWLock* mLock;
     PRBool mLocked;
@@ -57,21 +58,6 @@ private:
 public:
 
     /**
-     * NewLock
-     * Allocates a new PRRWLock for use with sbAutoReadLock. name is
-     * not checked for uniqueness.
-     * @param rank Lock rank.
-     * @param name A name which can reference this lock
-     * @param lock A valid PRRWLock* that was created by
-     *             sbAutoReadLock::NewLock()
-     * @returns nsnull if failure
-     *          A valid PRRWLock* if successful, which must be destroyed
-     *          by sbAutoReadLock::DestroyLock()
-     **/
-    static PRRWLock* NewLock(PRUint32 rank, const char* name);
-    static void      DestroyLock(PRRWLock* lock);
-
-    /**
      * Constructor
      * The constructor aquires the given lock for reading.  The destructor
      * releases the lock.
@@ -80,8 +66,7 @@ public:
      * PR_NewRWLock() function.
      **/
     sbAutoReadLock(PRRWLock* aLock)
-        : nsAutoLockBase(aLock, eAutoLock),
-          mLock(aLock),
+        : mLock(aLock),
           mLocked(PR_TRUE) {
         PR_ASSERT(mLock);
 
@@ -101,7 +86,6 @@ public:
      * note that attempting to aquire a locked lock will hang or crash.
      **/  
     void lock() {
-        Show();
         PR_ASSERT(!mLocked);
         PR_RWLock_Rlock(mLock);
         mLocked = PR_TRUE;
@@ -117,20 +101,19 @@ public:
         PR_ASSERT(mLocked);
         PR_RWLock_Unlock(mLock);
         mLocked = PR_FALSE;
-        Hide();
     }
 };
 
-class sbAutoReadUnlock : nsAutoUnlockBase
+class sbAutoReadUnlock
 {
 private:
     PRRWLock *mLock;
      
 public:
     sbAutoReadUnlock(PRRWLock *lock) : 
-        nsAutoUnlockBase(lock),
         mLock(lock)
     {
+        PR_ASSERT(mLock);
         PR_RWLock_Unlock(mLock);
     }
 
@@ -143,7 +126,7 @@ public:
  * sbAutoWriteLock
  * Stack-based write locking object for PRRWLock.
  **/
-class NS_COM_GLUE sbAutoWriteLock : public nsAutoLockBase {
+class NS_COM_GLUE sbAutoWriteLock {
 private:
     PRRWLock* mLock;
     PRBool mLocked;
@@ -166,21 +149,6 @@ private:
 public:
 
     /**
-     * NewLock
-     * Allocates a new PRRWLock for use with sbAutoWriteLock. name is
-     * not checked for uniqueness.
-     * @param rank Lock rank.
-     * @param name A name which can reference this lock
-     * @param lock A valid PRRWLock* that was created by
-     *             sbAutoWriteLock::NewLock()
-     * @returns nsnull if failure
-     *          A valid PRRWLock* if successful, which must be destroyed
-     *          by sbAutoWriteLock::DestroyLock()
-     **/
-    static PRRWLock* NewLock(PRUint32 rank, const char* name);
-    static void      DestroyLock(PRRWLock* lock);
-
-    /**
      * Constructor
      * The constructor aquires the given lock for writing.  The destructor
      * releases the lock.
@@ -189,8 +157,7 @@ public:
      * PR_NewRWLock() function.
      **/
     sbAutoWriteLock(PRRWLock* aLock)
-        : nsAutoLockBase(aLock, eAutoLock),
-          mLock(aLock),
+        : mLock(aLock),
           mLocked(PR_TRUE) {
         PR_ASSERT(mLock);
 
@@ -210,7 +177,6 @@ public:
      * note that attempting to aquire a locked lock will hang or crash.
      **/  
     void lock() {
-        Show();
         PR_ASSERT(!mLocked);
         PR_RWLock_Wlock(mLock);
         mLocked = PR_TRUE;
@@ -226,20 +192,19 @@ public:
         PR_ASSERT(mLocked);
         PR_RWLock_Unlock(mLock);
         mLocked = PR_FALSE;
-        Hide();
     }
 };
 
-class sbAutoWriteUnlock : nsAutoUnlockBase
+class sbAutoWriteUnlock
 {
 private:
     PRRWLock *mLock;
      
 public:
     sbAutoWriteUnlock(PRRWLock *lock) : 
-        nsAutoUnlockBase(lock),
         mLock(lock)
     {
+        PR_ASSERT(mLock);
         PR_RWLock_Unlock(mLock);
     }
 

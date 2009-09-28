@@ -81,13 +81,10 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
   , mCreationProperties(aProperties)
   , mControllerID(aControllerId)
   , mIsHandlingRequests(PR_FALSE)
+  , mConnectLock(nsnull)
 {
   mPropertiesLock = nsAutoMonitor::NewMonitor("sbCDDevice::mPropertiesLock");
   NS_ENSURE_TRUE(mPropertiesLock, );
-
-  mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
-                              "sbCDDevice::mConnectLock");
-  NS_ENSURE_TRUE(mConnectLock, );
 
 #ifdef PR_LOGGING
   if (!gCDDeviceLog) {
@@ -139,6 +136,10 @@ sbCDDevice::~sbCDDevice()
     rv = libraryFile->Remove(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, /* void */);
   }
+  
+  if (mConnectLock) {
+    PR_DestroyRWLock(mConnectLock);
+  }
 }
 
 nsresult
@@ -170,6 +171,7 @@ sbCDDevice::InitDevice()
   LOG(("Enter sbCDDevice::InitDevice"));
 
   // Create the connect lock.
+  NS_ENSURE_FALSE(mConnectLock, NS_ERROR_ALREADY_INITIALIZED);
   mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
                               "sbCDDevice::mConnectLock");
   NS_ENSURE_TRUE(mConnectLock, NS_ERROR_OUT_OF_MEMORY);
