@@ -30,6 +30,7 @@
 
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
+#include <nsIFileURL.h>
 #include <nsIGenericFactory.h>
 #include <nsIPropertyBag2.h>
 #include <nsIWritablePropertyBag2.h>
@@ -45,6 +46,7 @@
 #include <sbDeviceUtils.h>
 #include <sbIDeviceEvent.h>
 #include <sbILibraryManager.h>
+#include <sbILocalDatabaseLibrary.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
@@ -87,9 +89,6 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
                               "sbCDDevice::mConnectLock");
   NS_ENSURE_TRUE(mConnectLock, );
 
-  mReqWaitMonitor = nsAutoMonitor::NewMonitor("sbCDDevice::mReqWaitMonitor");
-  NS_ENSURE_TRUE(mReqWaitMonitor, );
-
 #ifdef PR_LOGGING
   if (!gCDDeviceLog) {
     gCDDeviceLog = PR_NewLogModule( "sbCDDevice" );
@@ -100,19 +99,41 @@ sbCDDevice::sbCDDevice(const nsID & aControllerId,
 sbCDDevice::~sbCDDevice()
 {
   nsresult rv;
+  nsCOMPtr<sbILibrary> lib;
   if (mDeviceLibrary) {
+    // hold on to the underlying local database library
+    rv = mDeviceLibrary->GetLibrary(getter_AddRefs(lib));
+    if (NS_FAILED(rv)) {
+      lib = nsnull;
+    }
     rv = mDeviceLibrary->Finalize();
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
         "sbCDDevice failed to finalize the device library");
+    mDeviceLibrary = nsnull;
   }
 
-  mDeviceLibrary = nsnull;
+  if (mPropertiesLock) {
+    nsAutoMonitor::DestroyMonitor(mPropertiesLock);
+    mPropertiesLock = nsnull;
+  }
 
-  if (!mDeviceLibraryPath.IsEmpty()) {
-    nsCOMPtr<nsILocalFile> libraryFile;
-    rv = NS_NewLocalFile(mDeviceLibraryPath,
-        PR_FALSE,
-        getter_AddRefs(libraryFile));
+  if (lib && !mDeviceLibraryPath.IsEmpty()) {
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    nsCOMPtr<sbILocalDatabaseLibrary> localLib = do_QueryInterface(lib, &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIURI> uri;
+    rv = localLib->GetDatabaseLocation(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIFileURL> fileURL = do_QueryInterface(uri, &rv);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIFile> libraryFile;
+    rv = fileURL->GetFile(getter_AddRefs(libraryFile));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    rv = libraryFile->Append(mDeviceLibraryPath);
     NS_ENSURE_SUCCESS(rv, /* void */);
 
     rv = libraryFile->Remove(PR_FALSE);
