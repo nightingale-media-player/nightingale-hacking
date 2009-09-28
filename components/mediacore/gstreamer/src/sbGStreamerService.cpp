@@ -144,6 +144,7 @@ sbGStreamerService::Init()
   NS_NAMED_LITERAL_STRING(kGstPluginSystemPath, "GST_PLUGIN_SYSTEM_PATH");
   NS_NAMED_LITERAL_STRING(kGstRegistry, "GST_REGISTRY");
   NS_NAMED_LITERAL_STRING(kGstPluginPath, "GST_PLUGIN_PATH");
+  PRBool noSystemPlugins;
   PRBool systemGst;
   PRBool hasMore;
   PRBool first = PR_TRUE;
@@ -162,11 +163,15 @@ sbGStreamerService::Init()
 
 #if defined(XP_MACOSX) || defined(XP_WIN)
   systemGst = PR_FALSE;
+  noSystemPlugins = PR_TRUE;
 #else
   // On unix, default to using the bundled gstreamer (plus the system plugins
   // as a fallback).
   // If this env var is set, use ONLY the system gstreamer.
   rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_SYSTEM"), &systemGst);
+  NS_ENSURE_SUCCESS(rv, rv);
+  // And if this one is set, don't use system plugins
+  rv = envSvc->Exists(NS_LITERAL_STRING("SB_GST_NO_SYSTEM"), &noSystemPlugins);
   NS_ENSURE_SUCCESS(rv, rv);
 #endif
 
@@ -255,44 +260,46 @@ sbGStreamerService::Init()
     // Remaining steps on unix only
 #if !defined(XP_MACOSX) && !defined(XP_WIN)
 
-    // 4. Add $HOME/.gstreamer-0.10/plugins to system plugin path
-    // Use the same code as gstreamer for this to ensure it's the
-    // same path...
-    char *homeDirPlugins = g_build_filename (g_get_home_dir (), 
-            ".gstreamer-0.10", "plugins", NULL);
-    systemPluginPaths = NS_ConvertUTF8toUTF16(homeDirPlugins);
+    if (!noSystemPlugins) {
+      // 4. Add $HOME/.gstreamer-0.10/plugins to system plugin path
+      // Use the same code as gstreamer for this to ensure it's the
+      // same path...
+      char *homeDirPlugins = g_build_filename (g_get_home_dir (), 
+              ".gstreamer-0.10", "plugins", NULL);
+      systemPluginPaths = NS_ConvertUTF8toUTF16(homeDirPlugins);
 
-    // 5. Add /usr/lib/gstreamer-0.10 to system plugin path
+      // 5. Add /usr/lib/gstreamer-0.10 to system plugin path
 
-    // There's a bug in GStreamer which can cause registry problems with
-    // renamed plugins. Older versions of decodebin2 were in 
-    // 'libgsturidecodebin.so' rather than the current 'libgstdecodebin2.so'.
-    // To avoid this, do not use system plugins if this old plugin file
-    // exists.
-    nsCOMPtr<nsILocalFile> badFile = do_CreateInstance(
-            "@mozilla.org/file/local;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsString sysLibDir;
+      // There's a bug in GStreamer which can cause registry problems with
+      // renamed plugins. Older versions of decodebin2 were in 
+      // 'libgsturidecodebin.so' rather than the current 'libgstdecodebin2.so'.
+      // To avoid this, do not use system plugins if this old plugin file
+      // exists.
+      nsCOMPtr<nsILocalFile> badFile = do_CreateInstance(
+              "@mozilla.org/file/local;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+  
+      nsString sysLibDir;
 #ifdef HAVE_64BIT_OS
-    sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-0.10");
+      sysLibDir = NS_LITERAL_STRING("/usr/lib64/gstreamer-0.10");
 #else
-    sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-0.10");
+      sysLibDir = NS_LITERAL_STRING("/usr/lib/gstreamer-0.10");
 #endif
 
-    nsString badFilePath = sysLibDir;
-    badFilePath.AppendLiteral("/libgsturidecodebin.so");
+      nsString badFilePath = sysLibDir;
+      badFilePath.AppendLiteral("/libgsturidecodebin.so");
 
-    rv = badFile->InitWithPath(badFilePath);
-    NS_ENSURE_SUCCESS(rv, rv);
+      rv = badFile->InitWithPath(badFilePath);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    PRBool badFileExists;
-    rv = badFile->Exists(&badFileExists);
-    NS_ENSURE_SUCCESS(rv, rv);
+      PRBool badFileExists;
+      rv = badFile->Exists(&badFileExists);
+      NS_ENSURE_SUCCESS(rv, rv);
 
-    if (!badFileExists) {
-      systemPluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
-      systemPluginPaths.Append(sysLibDir);
+      if (!badFileExists) {
+        systemPluginPaths.AppendLiteral(G_SEARCHPATH_SEPARATOR_S);
+        systemPluginPaths.Append(sysLibDir);
+      }
     }
 #else
     systemPluginPaths = NS_LITERAL_STRING("");
