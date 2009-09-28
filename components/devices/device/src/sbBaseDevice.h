@@ -196,6 +196,7 @@ public:
   NS_IMETHOD SyncLibraries(void);
   NS_IMETHOD Format(void);
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
+  NS_IMETHOD SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval);
 
 public:
   sbBaseDevice();

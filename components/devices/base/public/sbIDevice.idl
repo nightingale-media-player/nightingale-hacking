@@ -38,6 +38,7 @@ interface sbIDeviceContent;
 interface sbIDeviceProperties;
 interface sbIDeviceParameters;
 interface sbIDeviceStatus;
+interface sbIMediaItem;
 
 /**
  * \interface sbIDevice
@@ -45,7 +46,7 @@ interface sbIDeviceStatus;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(d2172a50-e39c-4655-aa35-1eaf89ee9021)]
+[scriptable, uuid(ab8b1094-1dd1-11b2-954f-e3eb25232beb)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -222,6 +223,16 @@ interface sbIDevice : nsISupports
    * Call sync() on all libraries attached to this device
    */
   void syncLibraries();
+
+  /**
+   * Can this media item be stored on this device?
+   * 
+   * A supported file is either 
+   *   a) natively supported, or
+   *   b) transcodable into one,
+   * and is _NEVER_ DRM protected.
+   */
+  boolean supportsMediaItem(in sbIMediaItem aMediaItem);
 
   /**
    * Eject device.

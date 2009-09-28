@@ -751,6 +751,12 @@ sbCDDevice::SyncLibraries()
   return NS_ERROR_NOT_IMPLEMENTED;
 }
 
+NS_IMETHODIMP
+sbCDDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, 
+                              PRBool *_retval) {
+  return NS_ERROR_NOT_IMPLEMENTED;
+}
+
 /* void eject (); */
 NS_IMETHODIMP
 sbCDDevice::Eject()

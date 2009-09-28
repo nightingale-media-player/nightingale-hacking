@@ -525,6 +525,10 @@ NS_IMETHODIMP sbMockDevice::SyncLibraries()
   return sbBaseDevice::SyncLibraries();
 }
 
+NS_IMETHODIMP sbMockDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, 
+                                              PRBool *_retval) {
+  return sbBaseDevice::SupportsMediaItem(aMediaItem, _retval);
+}
 
 
 /****************************** sbIMockDevice ******************************/

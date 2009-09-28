@@ -349,6 +349,7 @@ sbURIImportService.prototype =
       this._listener.onImportComplete(this._targetList,
                                       this._totalImported,
                                       this._totalDups,
+                                      this._otherDrops,
                                       this._totalInserted,
                                       this._otherDrops);
     }

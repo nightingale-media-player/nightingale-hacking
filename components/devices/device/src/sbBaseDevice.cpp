@@ -4185,6 +4185,70 @@ sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval)
+{
+  nsresult rv;
+
+  nsAutoString isDRMProtected;
+  rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
+                               isDRMProtected);
+  if (NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1")) {
+    // we can't have any transcoding profiles that support DRM
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+
+  // TODO: In the future, GetFormatTypeForItem should return a big complex
+  // object describing everything we need about an object, rather than this
+  // local magic lookup table entry.
+  sbExtensionToContentFormatEntry_t formatType;
+  PRUint32 bitRate = 0;
+  PRUint32 sampleRate = 0;
+  rv = sbDeviceUtils::GetFormatTypeForItem(aMediaItem,
+                                           formatType,
+                                           bitRate,
+                                           sampleRate);
+  // Check for expected error, unable to find format type
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    // If we can't even figure out what the format type is
+    // we don't support it.
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  bool needsTranscoding = false;
+  rv = sbDeviceUtils::DoesItemNeedTranscoding(formatType,
+                                              bitRate,
+                                              sampleRate,
+                                              this,
+                                              needsTranscoding);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!needsTranscoding) {
+    *_retval = PR_TRUE;
+    return NS_OK;
+  }
+
+  // So we do need to transcode (the device doesn't natively support
+  // the file) but is there a transcoding profile available that will
+  // work?
+  nsCOMPtr<sbITranscodeProfile> profile;
+  rv = SelectTranscodeProfile(formatType.Type, getter_AddRefs(profile));
+  
+  // No profile available means we don't support this file.
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // We should definitely have a real profile now, since we didn't
+  // get the NOT AVAILABLE error, so... we're done!
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
 nsresult
 sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                    sbITranscodeProfile ** aProfile)
@@ -4198,7 +4262,10 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
   nsAutoString isDRMProtected;
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
                                isDRMProtected);
-  if (NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1")) {
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  if (NS_SUCCEEDED(rv) && isDRMProtected.Equals(NS_LITERAL_STRING("1"))) {
     // we can't have any transcoding profiles that support DRM
     nsCOMPtr<nsIWritablePropertyBag2> bag =
       do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
@@ -4215,7 +4282,7 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
                                 sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    return NS_ERROR_NOT_IMPLEMENTED;
+    return NS_ERROR_NOT_AVAILABLE;
   }
 
   // TODO: In the future, GetFormatTypeForItem should return a big complex

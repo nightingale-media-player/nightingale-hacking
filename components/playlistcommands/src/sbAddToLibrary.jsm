@@ -268,7 +268,7 @@ addToLibraryHelper.prototype = {
           library.addSome(selection);
         }
         var added = library.length - oldLength;
-        DNDUtils.reportAddedTracks(added, 0, library.name);
+        DNDUtils.reportAddedTracks(added, 0, 0, library.name);
         return true;
       }
     } catch (e) {

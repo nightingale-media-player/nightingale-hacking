@@ -65,7 +65,8 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 Cu.import("resource://app/jsmodules/SBJobUtils.jsm");
 Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Cu.import("resource://app/jsmodules/SBUtils.jsm");
- 
+Cu.import("resource://app/jsmodules/StringUtils.jsm");
+
 
 /*
 
@@ -176,51 +177,30 @@ var DNDUtils = {
     statusOverrideType.stringValue = "report";
   },
 
-  _str_tracksaddedto        : null,
-  _str_trackaddedto         : null,
-  _str_notracksaddedto      : null,
-  _str_trackalreadypresent  : null,
-  _str_tracksalreadypresent : null,
-
   // temporarily writes "X tracks added to <name>, Y tracks already present" 
   // in the status bar. if 0 is specified for aDups, the second part of the
   // message is skipped.
-  reportAddedTracks: function(aAdded, aDups, aDestName) {
-    if (!this._str_tracksaddedto) {
-      this._gotStrings = true;
-      this._str_tracksaddedto =
-        this._getString("library.tracksaddedto", "tracks added to");
-      this._str_trackaddedto =
-        this._getString("library.trackaddedto", "track added to");
-      this._str_notracksaddedto =
-        this._getString("library.notracksaddedto", "No tracks added to");
-      this._str_trackalreadypresent =
-        this._getString("library.trackalreadypresent", "track already present");
-      this._str_tracksalreadypresent =
-        this._getString("library.tracksalreadypresent","tracks already present");
-      this._stringbundle = null;
+  reportAddedTracks: function(aAdded, aDups, aUnsupported, aDestName) {
+    var msg = "";
+    
+    var single = SBString("library.singletrack");
+    var plural = SBString("library.pluraltracks");
+    
+    if (aDups && aUnsupported) {
+      msg = SBFormattedString("library.tracksadded.with.dups.and.unsupported",
+        [aAdded, aDestName, aDups, aUnsupported]);
     }
-    var msg = aAdded + " ";
-
-    // start message with 'xxx added to'... except for 0 ('no tracks added')
-    switch (aAdded) {
-      case 0:  msg = this._str_notracksaddedto;  break;
-      case 1:  msg += this._str_trackaddedto;    break;
-      default: msg += this._str_tracksaddedto;   break;
+    else if (aDups) {
+      msg = SBFormattedString("library.tracksadded.with.dups",
+        [aAdded, aDestName, aDups]);
     }
-
-    msg += " " + aDestName;
-
-    // append the message about items that were already present (if any)
-    if (aDups > 0) {
-      msg += " (" + aDups + " ";
-      if (aDups == 1) {
-        msg += this._str_trackalreadypresent;
-      }
-      else {
-        msg += this._str_tracksalreadypresent;
-      }
-      msg += ")";
+    else if (aUnsupported) {
+      msg = SBFormattedString("library.tracksadded.with.unsupported",
+        [aAdded, aDestName, aUnsupported]);
+    }
+    else {
+      msg = SBFormattedString("library.tracksadded",
+        [aAdded, aDestName]);
     }
 
     this.customReport(msg);
@@ -231,12 +211,14 @@ var DNDUtils = {
   standardReport: function(aTargetList,
                            aImportedInLibrary,
                            aDuplicates,
+                           aUnsupported,
                            aInsertedInMediaList,
                            aOtherDropsHandled) {
     // do not report anything if all we did was drop an XPI
     if ((aImportedInLibrary == 0) &&
         (aInsertedInMediaList == 0) &&
         (aDuplicates == 0) &&
+        (aUnsupported == 0) && 
         (aOtherDropsHandled != 0)) 
       return;
     
@@ -245,34 +227,13 @@ var DNDUtils = {
     if (aTargetList != aTargetList.library) {
       DNDUtils.reportAddedTracks(aInsertedInMediaList, 
                                  0, 
+                                 aUnsupported,
                                  aTargetList.name);
     } else {
       DNDUtils.reportAddedTracks(aImportedInLibrary, 
                                  aDuplicates, 
+                                 aUnsupported, 
                                  aTargetList.name);
-    }
-  },
-  
-  // --------------------------------------------------------------------------
-  // methods below this point are pretend-private
-  // --------------------------------------------------------------------------
-
-  _stringbundle : null,
-  
-  // get a string from the default songbird bundle, with fallback
-  _getString: function(name, defaultValue) {
-    if (!this._stringbundle) {
-      var src = "chrome://songbird/locale/songbird.properties";
-      var stringBundleService = this._Cc["@mozilla.org/intl/stringbundle;1"]
-                                    .getService(this._Ci.nsIStringBundleService);
-      this._stringbundle = stringBundleService.createBundle(src);
-    }
-
-    try {
-      return this._stringbundle.GetStringFromName(name);
-    }
-    catch(e) {
-      return defaultValue;
     }
   }
 }
@@ -419,6 +380,7 @@ a minimal implementation:
     onDropComplete: function(aTargetList,
                              aImportedInLibrary,
                              aDuplicates,
+                             aUnsupported,
                              aInsertedInMediaList,
                              aOtherDropsHandled) { 
       // returning true causes the standard drop report to be printed
@@ -545,6 +507,7 @@ var InternalDropHandler = {
 
       // are we dropping on a library ?
       var targetListIsLibrary = (targetList instanceof this._Ci.sbILibrary);
+      var rejectedItems = 0; // for devices we may have to reject some items
 
       if (targetListIsLibrary) {
         // want to copy the list and the contents
@@ -566,29 +529,40 @@ var InternalDropHandler = {
           // uh oh - you can't drop a list onto itself
           return;
         }
+        
+        // is this a device media list we're going to?
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        var selectedDevice = deviceManager.getDeviceForItem(targetList);
+        
+        // make an enumerator with all the items from the source playlist        
+        var allItems = {
+          items: [],
+          onEnumerationBegin: function(aMediaList) {
+            this.items = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                           .createInstance(Ci.nsIMutableArray);
+          },
+          onEnumeratedItem: function(aMediaList, aMediaItem) {
+            if (!selectedDevice ||
+                selectedDevice.supportsMediaItem(aMediaItem)) {
+              this.items.appendElement(aMediaItem, false);
+            }
+            else {
+              rejectedItems++;
+            }
+          },
+          onEnumerationEnd: function(aMediaList, aResultCode) {
+          }
+        };
+
+        list.enumerateAllItems(allItems);
+        
         // add the contents
         if (aDropPosition != -1 &&
             targetList instanceof this._Ci.sbIOrderableMediaList) {
-
-          // make an enumerator with all the items from the source playlist
-          var allItems = {
-            items: [],
-            onEnumerationBegin: function(aMediaList) {
-              this.items = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
-                             .createInstance(Ci.nsIMutableArray);
-            },
-            onEnumeratedItem: function(aMediaList, aMediaItem) {
-              this.items.appendElement(aMediaItem, false);
-            },
-            onEnumerationEnd: function(aMediaList, aResultCode) {
-            }
-          };
-
-          list.enumerateAllItems(allItems);
-
           targetList.insertSomeBefore(aDropPosition, allItems.items.enumerate());
         } else {
-          targetList.addAll(list);
+          targetList.addSome(allItems.items.enumerate());
         }
         if (aListener && list.length > 0) {
           aListener.onFirstMediaItem(list.getItemByIndex(0));
@@ -598,7 +572,7 @@ var InternalDropHandler = {
       // tracks have been copied, which is true if both the source and target 
       // are playlists, but could be false if the target is a library. better 
       // than nothing anyway.
-      this._dropComplete(aListener, targetList, list.length, 0, list.length, 0);
+      this._dropComplete(aListener, targetList, list.length, 0, rejectedItems, list.length, 0);
 
     } else if (session.isDataFlavorSupported(TYPE_X_SB_TRANSFER_MEDIA_ITEMS)) {
 
@@ -614,7 +588,7 @@ var InternalDropHandler = {
         if (items.hasMoreElements() && 
             items.getNext().library == targetList) {
           // can't add items to a library to which they already belong
-          this._dropComplete(aListener, targetList, 0, context.count, 0, 0);
+          this._dropComplete(aListener, targetList, 0, context.count, 0, 0, 0);
           return;
         }
         // we just ate an item; reset the enumerator
@@ -684,6 +658,7 @@ var InternalDropHandler = {
       var totalImported = dupFilter.mediaItemCount - dupFilter.duplicateCount;
       var totalDups = dupFilter.duplicateCount;
       var totalInserted = dupFilter.mediaItemCount;
+      var totalUnsupported = dupFilter.unsupportedCount;
       if (dupFilter.removeCopies)
         totalInserted = totalImported;
 
@@ -691,6 +666,7 @@ var InternalDropHandler = {
                          targetList,
                          totalImported,
                          totalDups,
+                         totalUnsupported,
                          totalInserted,
                          0);
     }
@@ -702,18 +678,21 @@ var InternalDropHandler = {
                           targetList, 
                           totalImported, 
                           totalDups, 
+                          totalUnsupported,
                           totalInserted,
                           otherDrops) {
     // notify the listener that we're done
     if (listener) {
       if (listener.onDropComplete(targetList,
                                   totalImported,
-                                  totalDups, 
+                                  totalDups,
+                                  totalUnsupported, 
                                   totalInserted,
                                   otherDrops)) {
         DNDUtils.standardReport(targetList,
                                 totalImported,
-                                totalDups, 
+                                totalDups,
+                                totalUnsupported, 
                                 totalInserted,
                                 otherDrops);
       }
@@ -721,6 +700,7 @@ var InternalDropHandler = {
       DNDUtils.standardReport(targetList,
                               totalImported,
                               totalDups, 
+                              totalUnsupported,
                               totalInserted,
                               otherDrops);
     }
@@ -1042,6 +1022,7 @@ var ExternalDropHandler = {
   onImportComplete: function(aTargetMediaList,
                              aTotalImportCount,
                              aTotalDupeCount,
+                             aTotalUnsupported,
                              aTotalInserted,
                              aOtherDrops)
   {
@@ -1050,10 +1031,12 @@ var ExternalDropHandler = {
                                         aTotalImportCount,
                                         aTotalDupeCount, 
                                         aTotalInserted,
+                                        aTotalUnsupported,
                                         aOtherDrops)) {
         DNDUtils.standardReport(aTargetMediaList,
                                 aTotalImportCount,
                                 aTotalDupeCount, 
+                                aTotalUnsupported, 
                                 aTotalInserted,
                                 aOtherDrops);
       }
@@ -1061,7 +1044,8 @@ var ExternalDropHandler = {
     else {
       DNDUtils.standardReport(aTargetMediaList,
                               aTotalImportCount,
-                              aTotalInserted, 
+                              aTotalInserted, // usually dupes
+                              aTotalUnsupported, 
                               aTotalInserted,
                               aOtherDrops);
     }

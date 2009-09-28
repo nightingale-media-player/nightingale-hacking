@@ -26,6 +26,8 @@
 
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 
 const Ci = Components.interfaces;
 
@@ -482,20 +484,31 @@ addToDeviceHelper.prototype = {
     if (library) {
       var oldLength = library.length;
       var selection = 
-        sourceplaylist.mediaListView.selection.selectedIndexedMediaItems;
+        sourceplaylist.mediaListView.selection.selectedMediaItems;
 
       // Create an enumerator that wraps the enumerator we were handed since
       // the enumerator we get hands back sbIIndexedMediaItem, not just plain
       // 'ol sbIMediaItems
 
+      // Create a media item duplicate enumerator filter to count the number of
+      // duplicate items and to remove them from the enumerator if the target is
+      // a library.
+      var dupFilter = new LibraryUtils.EnumeratorDuplicateFilter(library);
+      dupFilter.removeDuplicates = true;
+      
+      // Create a filtered item enumerator.
+      var func = function(aElement) { return dupFilter.filter(aElement); };
+      var filteredItems = new SBFilteredEnumerator(selection, func);
+
+      // We also want to set the downloadStatusTarget property as we work.
       var unwrapper = {
-        enumerator: selection,
+        enumerator: filteredItems,
 
         hasMoreElements : function() {
           return this.enumerator.hasMoreElements();
         },
         getNext : function() {
-          var item = this.enumerator.getNext().mediaItem;
+          var item = this.enumerator.getNext();
           item.setProperty(SBProperties.downloadStatusTarget,
                            item.library.guid + "," + item.guid);
           return item;
@@ -511,7 +524,10 @@ addToDeviceHelper.prototype = {
       library.addSome(unwrapper);
 
       var added = library.length - oldLength;
-      DNDUtils.reportAddedTracks(added, 0, devicename);
+      DNDUtils.reportAddedTracks(dupFilter.mediaItemCount - dupFilter.duplicateCount,
+                                 dupFilter.duplicateCount,
+                                 dupFilter.unsupportedCount,
+                                 devicename);
     }
   },
 

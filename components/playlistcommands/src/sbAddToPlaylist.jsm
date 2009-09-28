@@ -422,7 +422,8 @@ addToPlaylistHelper.prototype = {
 
     var libs = this.m_libraryManager.getLibraries();
     while (libs.hasMoreElements()) {
-      var library = libs.getNext();
+      var library = libs.getNext().QueryInterface(
+        Components.interfaces.sbILibrary);
       library.addListener(this, false);
       this.m_reglist.push(library);
       this.makePlaylistsForLibrary(library, typearray);
@@ -628,7 +629,7 @@ addToPlaylistHelper.prototype = {
       medialist.addSome(unwrapper);
 
       var added = medialist.length - oldLength;
-      DNDUtils.reportAddedTracks(added, 0, medialist.name);
+      DNDUtils.reportAddedTracks(added, 0, 0, medialist.name);
     }
   },
 

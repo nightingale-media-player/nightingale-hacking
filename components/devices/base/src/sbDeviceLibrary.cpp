@@ -234,7 +234,7 @@ sbDeviceLibrary::Finalize()
   }
 
   if (deviceLibrary)
-    UnregisterDeviceLibrary(deviceLibrary);
+    UnregisterDeviceLibrary();
 
   // let go of the owner device
   mDevice = nsnull;
@@ -514,16 +514,15 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   rv = UpdateIsReadOnly();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = RegisterDeviceLibrary(mDeviceLibrary);
+  rv = RegisterDeviceLibrary();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
 
 nsresult
-sbDeviceLibrary::RegisterDeviceLibrary(sbILibrary* aDeviceLibrary)
+sbDeviceLibrary::RegisterDeviceLibrary()
 {
-  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
 
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
@@ -531,21 +530,19 @@ sbDeviceLibrary::RegisterDeviceLibrary(sbILibrary* aDeviceLibrary)
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return libraryManager->RegisterLibrary(aDeviceLibrary, PR_FALSE);
+  return libraryManager->RegisterLibrary(this, PR_FALSE);
 }
 
 nsresult
-sbDeviceLibrary::UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary)
+sbDeviceLibrary::UnregisterDeviceLibrary()
 {
-  NS_ENSURE_ARG_POINTER(aDeviceLibrary);
-
   nsresult rv;
   nsCOMPtr<sbILibraryManager> libraryManager;
   libraryManager =
     do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  return libraryManager->UnregisterLibrary(aDeviceLibrary);
+  return libraryManager->UnregisterLibrary(this);
 }
 
 nsresult
@@ -1524,6 +1521,15 @@ sbDeviceLibrary::Add(sbIMediaItem *aMediaItem)
 {
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAdd(aMediaItem, &mShouldProcceed));
+
+  nsresult rv;
+  PRBool supported;
+  if (NS_SUCCEEDED(rv = mDevice->SupportsMediaItem(aMediaItem, &supported))
+      && !supported) {
+    return NS_ERROR_ILLEGAL_VALUE;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
   if (mPerformAction) {
     return mDeviceLibrary->Add(aMediaItem);
   } else {
@@ -1541,6 +1547,7 @@ sbDeviceLibrary::AddAll(sbIMediaList *aMediaList)
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddAll(aMediaList,
                                                     &mShouldProcceed));
   if (mPerformAction) {
+    // XXX: not implemented!
     return mDeviceLibrary->AddAll(aMediaList);
   } else {
     return NS_OK;
@@ -1556,6 +1563,10 @@ sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
                                                     &mShouldProcceed));
+  nsRefPtr<nsISimpleEnumerator> filtered = 
+    new sbSupportedMediaItemsEnumerator(aMediaItems, mDevice);
+  NS_ENSURE_TRUE(filtered, NS_ERROR_OUT_OF_MEMORY);
+
   if (mPerformAction) {
     return mDeviceLibrary->AddSome(aMediaItems);
   } else {
@@ -1576,4 +1587,89 @@ sbDeviceLibrary::Clear(void)
   } else {
     return NS_OK;
   }
+}
+
+/** 
+ *
+ * sbSupportedMediaItemsEnumerator
+ * 
+ * Given an input enumeration, discard any items that
+ * are not supported by the device.
+ *
+ * \sa sbDeviceLibrary::AddSome
+ */
+
+NS_IMPL_ISUPPORTS1(sbSupportedMediaItemsEnumerator,
+                   nsISimpleEnumerator)
+
+NS_IMETHODIMP
+sbSupportedMediaItemsEnumerator::HasMoreElements(PRBool *_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = FindNext(getter_AddRefs(item));
+
+  // if there are no elements left, FindNext will return
+  // NS_ERROR_NOT_AVAILABLE
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    *_retval = PR_FALSE;
+    return NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSupportedMediaItemsEnumerator::GetNext(nsISupports **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+  nsCOMPtr<sbIMediaItem> item;
+  nsresult rv = FindNext(getter_AddRefs(item));
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  // consume the item we grabbed
+  mNextItem = nsnull;
+  return CallQueryInterface(item, _retval);
+}
+
+/*
+ * FindNext locates the next element and caches it
+ * so that peeking via hasMoreElements() won't lose items.
+ */
+nsresult
+sbSupportedMediaItemsEnumerator::FindNext(sbIMediaItem **_retval)
+{
+  NS_ENSURE_TRUE(mMediaItemsEnumerator, NS_ERROR_NOT_INITIALIZED);
+  nsresult rv;
+  
+  if (mNextItem) {
+    *_retval = mNextItem;
+    NS_ADDREF(*_retval);
+    return NS_OK;
+  }
+
+  // Return the next supported MediaItem.
+  nsCOMPtr<sbIMediaItem> item;
+  PRBool hasMore;
+  while (NS_SUCCEEDED(rv = mMediaItemsEnumerator->HasMoreElements(&hasMore))
+         && hasMore)
+  {
+    rv = mMediaItemsEnumerator->GetNext(getter_AddRefs(item));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool supported = PR_FALSE;
+    if (NS_SUCCEEDED(rv = mDevice->SupportsMediaItem(item, &supported))
+        && supported)
+    {
+      mNextItem = item;
+      *_retval = item;
+      NS_ADDREF(*_retval);
+      return NS_OK;
+    }
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  return NS_ERROR_NOT_AVAILABLE;
 }

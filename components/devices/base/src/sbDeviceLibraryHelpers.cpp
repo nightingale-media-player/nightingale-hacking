@@ -34,6 +34,7 @@
 #include <sbIOrderableMediaList.h>
 #include <sbIPropertyArray.h>
 
+#include <sbIDevice.h>
 #include "sbDeviceLibrary.h"
 
 #include <sbLibraryUtils.h>

@@ -43,6 +43,7 @@ interface sbIRUIImportListener : nsISupports
   // @param aTargetMediaList The target media list.
   // @param aTotalImportCount The number of items that where imported
   // @param aTotalDupeCount The number of duplicates found
+  // @param aTotalUnsupportedCount The number of unsupported items found
   // @param aTotalInserted The number of media items that where inserted into
   //        the target media list.
   // @param aOtherDrops Other items that were not imported.
@@ -50,6 +51,7 @@ interface sbIRUIImportListener : nsISupports
   void onImportComplete(in sbIMediaList aTargetMediaList,
                         in unsigned long aTotalImportCount,
                         in unsigned long aTotalDupeCount,
+                        in unsigned long aTotalUnsupportedCount,
                         in unsigned long aTotalInserted,
                         in unsigned long aOtherDrops);
 

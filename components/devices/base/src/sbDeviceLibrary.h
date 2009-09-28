@@ -32,6 +32,7 @@
 #include <nsCOMPtr.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIClassInfo.h>
+#include <nsISimpleEnumerator.h>
 
 #include <sbIDeviceEventListener.h>
 #include <sbIDeviceLibrary.h>
@@ -105,6 +106,24 @@
   NS_IMETHOD RunInBatchMode(sbIMediaListBatchCallback *aCallback, nsISupports *aUserData) { return !_to ? NS_ERROR_NULL_POINTER : _to->RunInBatchMode(aCallback, aUserData); } \
   NS_IMETHOD GetDistinctValuesForProperty(const nsAString & aPropertyID, nsIStringEnumerator **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetDistinctValuesForProperty(aPropertyID, _retval); } 
 
+#define SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(_to) \
+  NS_SCRIPTABLE NS_IMETHOD GetIsMutable(PRBool *aIsMutable) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetIsMutable(aIsMutable); } \
+  NS_SCRIPTABLE NS_IMETHOD GetMediaCreated(PRInt64 *aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaCreated(aMediaCreated); } \
+  NS_SCRIPTABLE NS_IMETHOD SetMediaCreated(PRInt64 aMediaCreated) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMediaCreated(aMediaCreated); } \
+  NS_SCRIPTABLE NS_IMETHOD GetMediaUpdated(PRInt64 *aMediaUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetMediaUpdated(aMediaUpdated); } \
+  NS_SCRIPTABLE NS_IMETHOD SetMediaUpdated(PRInt64 aMediaUpdated) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetMediaUpdated(aMediaUpdated); } \
+  NS_SCRIPTABLE NS_IMETHOD GetContentSrc(nsIURI * *aContentSrc) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetContentSrc(aContentSrc); } \
+  NS_SCRIPTABLE NS_IMETHOD SetContentSrc(nsIURI * aContentSrc) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentSrc(aContentSrc); } \
+  NS_SCRIPTABLE NS_IMETHOD GetContentLength(PRInt64 *aContentLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetContentLength(aContentLength); } \
+  NS_SCRIPTABLE NS_IMETHOD SetContentLength(PRInt64 aContentLength) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentLength(aContentLength); } \
+  NS_SCRIPTABLE NS_IMETHOD GetContentType(nsAString & aContentType) { return !_to ? NS_ERROR_NULL_POINTER : _to->GetContentType(aContentType); } \
+  NS_SCRIPTABLE NS_IMETHOD SetContentType(const nsAString & aContentType) { return !_to ? NS_ERROR_NULL_POINTER : _to->SetContentType(aContentType); } \
+  NS_SCRIPTABLE NS_IMETHOD TestIsAvailable(nsIObserver *aObserver) { return !_to ? NS_ERROR_NULL_POINTER : _to->TestIsAvailable(aObserver); } \
+  NS_SCRIPTABLE NS_IMETHOD OpenInputStreamAsync(nsIStreamListener *aListener, nsISupports *aContext, nsIChannel **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStreamAsync(aListener, aContext, _retval); } \
+  NS_SCRIPTABLE NS_IMETHOD OpenInputStream(nsIInputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenInputStream(_retval); } \
+  NS_SCRIPTABLE NS_IMETHOD OpenOutputStream(nsIOutputStream **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->OpenOutputStream(_retval); } \
+  NS_SCRIPTABLE NS_IMETHOD ToString(nsAString & _retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->ToString(_retval); } 
+
 class sbDeviceLibrary : public sbIDeviceLibrary,
                         public sbIMediaListListener,
                         public sbILocalDatabaseMediaListCopyListener,
@@ -123,9 +142,16 @@ public:
   virtual ~sbDeviceLibrary();
 
   NS_FORWARD_SAFE_SBILIBRARYRESOURCE(mDeviceLibrary)
-  NS_FORWARD_SAFE_SBIMEDIAITEM(mDeviceLibrary)
   SB_FORWARD_SAFE_SBIMEDIALIST(mDeviceLibrary)
   SB_FORWARD_SAFE_SBILIBRARY(mDeviceLibrary)
+  SB_FORWARD_SAFE_SBIMEDIAITEM_MINUS_OVERRIDES(mDeviceLibrary)
+  
+  NS_IMETHODIMP GetLibrary(sbILibrary** _retval) {
+    NS_ENSURE_ARG_POINTER(_retval);
+    *_retval = this;
+    NS_ADDREF(*_retval);
+    return NS_OK;
+  }
 
   SB_DECL_SBILIBRARY_OVERRIDES
   SB_DECL_SBIMEDIALIST_OVERRIDES
@@ -228,9 +254,8 @@ private:
    * to view the library. It becomes accessible to others programmatically as
    * well through the library manager.
    *
-   * \param aDeviceLibrary The library instance to register.
    */
-  nsresult RegisterDeviceLibrary(sbILibrary* aDeviceLibrary);
+  nsresult RegisterDeviceLibrary();
 
   /**
    * \brief Unregister a device library with the library manager.
@@ -243,9 +268,8 @@ private:
    * shuts down, when the device is disconnected suddenly and when the user
    * ejects the device.
    *
-   * \param aDeviceLibrary The library instance to unregister.
    */
-  nsresult UnregisterDeviceLibrary(sbILibrary* aDeviceLibrary);
+  nsresult UnregisterDeviceLibrary();
 
   /**
    * \brief Update the listeners for the main library to account for changes to
@@ -301,6 +325,27 @@ private:
   PRBool mLastIsSyncedLocally;
 
   PRLock* mLock;
+};
+
+class sbSupportedMediaItemsEnumerator : public nsISimpleEnumerator
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSISIMPLEENUMERATOR
+
+  sbSupportedMediaItemsEnumerator(nsISimpleEnumerator* aMediaItemsEnumerator,
+                                  sbIDevice* aDevice) :
+    mMediaItemsEnumerator(aMediaItemsEnumerator),
+    mDevice(aDevice) {};
+
+  ~sbSupportedMediaItemsEnumerator() {};
+
+private:
+  nsCOMPtr<nsISimpleEnumerator> mMediaItemsEnumerator;
+  nsCOMPtr<sbIMediaItem> mNextItem;
+  nsCOMPtr<sbIDevice> mDevice;
+
+  nsresult FindNext(sbIMediaItem **_retval);
 };
 
 #endif /* __SBDEVICELIBRARY_H__ */

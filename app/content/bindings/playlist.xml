@@ -2405,7 +2405,8 @@
 
     var added = ml.length - oldLength;
     DNDUtils.reportAddedTracks(added, 
-                               1 - added, 
+                               1 - added,
+                               0,
                                this.mediaList.name);
   }
 ]]>
@@ -2493,7 +2494,8 @@
 
     var added = ml.length - oldLength;
     DNDUtils.reportAddedTracks(added, 
-                               count - added, 
+                               count - added,
+                               0,
                                this.mediaList.name);
   }
 ]]>
