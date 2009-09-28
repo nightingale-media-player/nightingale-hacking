@@ -326,7 +326,7 @@ var deviceFirmwareWizard = {
           text = SBString("device.firmware.repair.error.description");
         }
         else {
-          text = SBString("device.firmware.wizard.install.error.description");
+          text = SBString("device.firmware.wizard.install.error.desc");
         }
         descElem.appendChild(document.createTextNode(text));
       }
