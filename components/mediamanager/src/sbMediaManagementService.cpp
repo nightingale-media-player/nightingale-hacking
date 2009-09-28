@@ -366,8 +366,8 @@ sbMediaManagementService::OnBeforeItemRemoved(sbIMediaList *aMediaList,
                                               PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_TRUE; /* skip all further OnBeforeItemRemoved */
-  return NS_OK;
+  *_retval = PR_FALSE; /* keep listening to messages */
+  return this->QueueItem(aMediaItem, sbIMediaFileManager::MANAGE_DELETE);
 }
 
 /* boolean onAfterItemRemoved (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
@@ -379,8 +379,8 @@ sbMediaManagementService::OnAfterItemRemoved(sbIMediaList *aMediaList,
                                              PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_FALSE; /* keep listening to messages */
-  return this->QueueItem(aMediaItem, sbIMediaFileManager::MANAGE_DELETE);
+  *_retval = PR_TRUE; /* skip all further OnAfterItemRemoved */
+  return NS_OK;
 }
 
 /* boolean onItemUpdated (in sbIMediaList aMediaList, in sbIMediaItem aMediaItem,
@@ -415,8 +415,8 @@ sbMediaManagementService::OnBeforeListCleared(sbIMediaList *aMediaList,
                                               PRBool *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  *_retval = PR_TRUE; /* skip all further OnListCleared */
-  return NS_OK;
+  *_retval = PR_FALSE; /* keep listening to messages */
+  return this->QueueItems(aMediaList, sbIMediaFileManager::MANAGE_DELETE);;
 }
 
 /* boolean onListCleared (in sbIMediaList aMediaList); */
@@ -792,6 +792,16 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
   }
   #endif
 
+  // Check if we should remove this item
+  nsAutoString deleteFromDisk;
+  rv = aItem->GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#deleteFromDisk"),
+                          deleteFromDisk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!deleteFromDisk.Equals(NS_LITERAL_STRING("1"))) {
+    // No need to queue an item we are not asked to remove from disk.
+    return NS_OK;
+  }
+
   { /* scope */
     nsAutoLock lock(mDirtyItemsLock);
     success = mDirtyItems->Put(aItem, aOperation);
@@ -809,6 +819,29 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
                                              MMS_SCAN_DELAY,
                                              nsITimer::TYPE_ONE_SHOT);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+NS_METHOD
+sbMediaManagementService::QueueItems(sbIMediaList* aList, PRUint32 aOperation)
+{
+  NS_ENSURE_ARG_POINTER(aList);
+  nsresult rv;
+
+  PRUint32 totalItems;
+  rv = aList->GetLength(&totalItems);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  for (PRUint32 itemCount = 0; itemCount < totalItems; itemCount++) {
+    // Get the next item
+    nsCOMPtr<sbIMediaItem> nextItem;
+    rv = aList->GetItemByIndex(itemCount, getter_AddRefs(nextItem));
+    NS_ENSURE_SUCCESS(rv, rv);
+    // Queue it up to be processed.
+    rv = this->QueueItem(nextItem, aOperation);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }
@@ -992,9 +1025,9 @@ sbMediaManagementService::SetupLibraryListener()
   rv = mLibrary->AddListener(this,
                              PR_FALSE,
                              sbIMediaList::LISTENER_FLAGS_ITEMADDED |
-                               sbIMediaList::LISTENER_FLAGS_AFTERITEMREMOVED |
+                               sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED |
                                sbIMediaList::LISTENER_FLAGS_ITEMUPDATED |
-                               sbIMediaList::LISTENER_FLAGS_LISTCLEARED,
+                               sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED,
                              filterProperties);
   NS_ENSURE_SUCCESS(rv, rv);
 

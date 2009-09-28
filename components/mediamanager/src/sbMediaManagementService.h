@@ -115,6 +115,11 @@ protected:
   NS_METHOD QueueItem(sbIMediaItem* aItem, PRUint32 aOperation);
 
   /**
+   * Queue all items from a list for processing
+   */
+  NS_METHOD QueueItems(sbIMediaList* aList, PRUint32 aOperation);
+
+  /**
    * do anything else needed to start listening for changes
    */
   NS_METHOD StartListening();
