@@ -179,12 +179,10 @@ sbCDDevice::ReqHandleRequestAdded()
           }
 
           rv = ReqHandleRead(request);
-          if (rv == NS_ERROR_ABORT) {
-            // Just warn here, the check for |NS_ERROR_ABORT| is
-            // outside of the loop.
+          if (rv != NS_ERROR_ABORT) {
+            // Warn of any errors
             NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
               "Could not read a track off of disc!");
-            break;
           }
           break;
 
@@ -386,7 +384,7 @@ sbCDDevice::GetMediaFiles(nsIArray ** aURIList)
     if (NS_FAILED(rv) || curTrackMode != sbICDTOCEntry::TRACKMODE_AUDIO) {
       continue;
     }
-    
+
     if (NS_SUCCEEDED(rv)) {
       nsString uriSpec;
       rv = entry->GetTrackURI(uriSpec);
@@ -786,7 +784,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
                            voidString);
 
   // Find the preferred audio transcoding profile.
-  if (!mTranscodeProfile) 
+  if (!mTranscodeProfile)
   {
     rv = SelectTranscodeProfile(sbITranscodeProfile::TRANSCODE_TYPE_AUDIO,
 				getter_AddRefs(mTranscodeProfile));
@@ -880,7 +878,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   nsString destFilePath;
   rv = destFileSpec->GetPath(destFilePath);
-  NS_ENSURE_SUCCESS(rv, rv); 
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = autoWFPathIgnore->Init(destFilePath);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -951,6 +949,10 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   }
 
   if (listener->IsAborted()) {
+    // If aborted, remove the current file
+    rv = destFileSpec->Remove(PR_FALSE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Unable to remove file after aborting ripping");
     return NS_ERROR_ABORT;
   }
 
@@ -994,6 +996,10 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   // Check for transcode errors.
   if (status != sbIJobProgress::STATUS_SUCCEEDED) {
+    // If there was an error, remove any partial file
+    destFileSpec->Remove(PR_FALSE);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Unable to remove file after error while ripping");
     return NS_ERROR_FAILURE;
   }
 
