@@ -470,6 +470,7 @@ sbCDDevice::ReqProcessingStop()
 nsresult
 sbCDDevice::ReqDisconnect()
 {
+  LOG(("%s", __FUNCTION__));
   // Clear all remaining requests.
   char deviceIDStr[NSID_LENGTH];
   mDeviceID.ToProvidedString(deviceIDStr);
@@ -478,13 +479,19 @@ sbCDDevice::ReqDisconnect()
 
   // Remove object references.
   mReqThread = nsnull;
-  mReqAddedEvent = nsnull;
   mTranscodeManager = nsnull;
 
   // Dispose of the request wait monitor.
   if (mReqWaitMonitor) {
     nsAutoMonitor::DestroyMonitor(mReqWaitMonitor);
     mReqWaitMonitor = nsnull;
+  }
+  
+  // Dispose of the library
+  nsCOMPtr<sbIDeviceLibrary> deviceLib = mDeviceLibrary.forget();
+  if (deviceLib) {
+    rv = deviceLib->Finalize();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   return NS_OK;
 }

@@ -36,4 +36,19 @@ function runTest()
   var sbDevice = sbCreateDevice(deviceName, sbMakeInstantJunk());
   assertTrue(sbDevice);
   assertEqual(sbDevice.name, deviceName);
+
+  function onDeviceEvent(aEvent) {
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_READY:
+        sbDevice.disconnect();
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
+        sbDevice.removeEventListener(onDeviceEvent);
+        testFinished();
+        break;
+    }
+  }
+  sbDevice.QueryInterface(Ci.sbIDeviceEventTarget)
+          .addEventListener(onDeviceEvent);
+  testPending();
 }

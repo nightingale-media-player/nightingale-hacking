@@ -42,4 +42,19 @@ function runTest()
 
   // XXX TODO finish out once we have the CD Addon working
   // sbDevice.submitRequest(Ci.sbIDevice.REQUEST_READ, 
+
+  function onDeviceEvent(aEvent) {
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_READY:
+        sbDevice.disconnect();
+        break;
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
+        sbDevice.removeEventListener(onDeviceEvent);
+        testFinished();
+        break;
+    }
+  }
+  sbDevice.QueryInterface(Ci.sbIDeviceEventTarget)
+          .addEventListener(onDeviceEvent);
+  testPending();
 }

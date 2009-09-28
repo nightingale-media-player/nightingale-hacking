@@ -110,7 +110,8 @@ function sbCreateDevice(deviceName, toc)
   var deviceController = Cc["@songbirdnest.com/Songbird/CDDeviceController;1"]
                            .createInstance(Ci.sbIDeviceController);
   var cdDevice = Cc["@songbirdnest.com/Songbird/MockCDDevice;1"]
-                   .createInstance(Ci.sbIMockCDDevice);
+                   .createInstance(Ci.sbIMockCDDevice)
+                   .QueryInterface(Ci.sbICDDevice);
 
   cdDevice.initialize(deviceName, 
                       true, 
@@ -120,9 +121,10 @@ function sbCreateDevice(deviceName, toc)
                       false,
                       null);
   if (toc) {
-    cdDevice.sbICDDevice.discTOC = toc;
+    cdDevice.discTOC = toc;
   }
-  var deviceParams = { sbICDDevice : cdDevice };
+  var deviceParams = new Object;
+  deviceParams["sbICDDevice"] = cdDevice;
   var sbDevice = deviceController.createDevice(createPropertyBag(deviceParams));
   sbDevice.connect();
   return sbDevice;
