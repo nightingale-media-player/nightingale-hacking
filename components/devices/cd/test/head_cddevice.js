@@ -118,7 +118,7 @@ function sbCreateDevice(deviceName, toc)
                       true, 
                       Ci.sbIDeviceController.AUDIO_DISC_TYPE,
                       false,
-                      deviceController.sbMockCDDeviceController);
+                      null);
   if (toc) {
     cdDevice.sbICDDevice.discTOC = toc;
   }
