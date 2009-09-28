@@ -376,7 +376,7 @@ sbBaseDevice::sbBaseDevice() :
 
 sbBaseDevice::~sbBaseDevice()
 {
-  NS_WARN_IF_FALSE(mBatchDepth != 0,
+  NS_WARN_IF_FALSE(mBatchDepth == 0,
                    "Device destructed with batches remaining");
   if (mPreferenceLock)
     nsAutoLock::DestroyLock(mPreferenceLock);
