@@ -77,6 +77,10 @@ sbGStreamerPipeline::~sbGStreamerPipeline()
   TRACE(("sbGStreamerPipeline[0x%.8x] - Destructed", this));
 
   DestroyPipeline();
+
+  if (mMonitor) {
+    nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
 }
 
 NS_IMETHODIMP
