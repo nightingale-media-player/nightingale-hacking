@@ -540,6 +540,7 @@ sbDeviceStatusHelper::ItemComplete(nsresult aResult)
 
 sbDeviceStatusHelper::~sbDeviceStatusHelper()
 {
+  MOZ_COUNT_DTOR(sbDeviceStatusHelper);
 }
 
 
@@ -731,6 +732,7 @@ sbDeviceStatusHelper::sbDeviceStatusHelper(sbBaseDevice* aDevice) :
   mItemNum(-1),
   mItemCount(-1)
 {
+  MOZ_COUNT_CTOR(sbDeviceStatusHelper);
   // Validate arguments.
   NS_ASSERTION(aDevice, "aDevice is null");
 }
