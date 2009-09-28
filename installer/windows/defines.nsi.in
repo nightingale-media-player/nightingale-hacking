@@ -28,6 +28,8 @@
 !define AgentEXE              "songbirditunesagent.exe"
 !define CdripHelperEXE        "cdriphelper.exe"
 !define CdripSectionName      "Compact Disc Import"
+!define CdripApiDll           "GEARAspi.dll"
+!define CdripApiSYS           "GEARAspiWDM.sys"
 
 !define DistHelperLog         "disthelper.log"
 
