@@ -493,15 +493,17 @@ window.cdripController =
     this._playlist.disableDrag = true;
 
     // Setup our columns for the CD View
-    this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
-      "http://songbirdnest.com/data/1.0#shouldRip 25 " +
-      "http://songbirdnest.com/data/1.0#trackNumber 50 a " +
-      "http://songbirdnest.com/data/1.0#cdRipStatus 75 " +
-      "http://songbirdnest.com/data/1.0#trackName 255 " +
-      "http://songbirdnest.com/data/1.0#duration 70 " +
-      "http://songbirdnest.com/data/1.0#artistName 122 " +
-      "http://songbirdnest.com/data/1.0#albumName 122 " +
-      "http://songbirdnest.com/data/1.0#genre 70");
+    if (!this._mediaListView.mediaList.getProperty(SBProperties.columnSpec)) {
+      this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
+        "http://songbirdnest.com/data/1.0#shouldRip 25 " +
+        "http://songbirdnest.com/data/1.0#trackNumber 50 a " +
+        "http://songbirdnest.com/data/1.0#cdRipStatus 75 " +
+        "http://songbirdnest.com/data/1.0#trackName 255 " +
+        "http://songbirdnest.com/data/1.0#duration 70 " +
+        "http://songbirdnest.com/data/1.0#artistName 122 " +
+        "http://songbirdnest.com/data/1.0#albumName 122 " +
+        "http://songbirdnest.com/data/1.0#genre 70");
+    }
 
     // Get playlist commands (context menu, keyboard shortcuts, toolbar)
     // Note: playlist commands currently depend on the playlist widget.
