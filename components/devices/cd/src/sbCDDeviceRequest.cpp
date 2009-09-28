@@ -1078,4 +1078,6 @@ nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
     rv = propEnumerator->HasMoreElements(&more);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
 }
