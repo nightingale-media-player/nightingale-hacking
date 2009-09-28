@@ -135,7 +135,6 @@ Amazon.prototype = {
     queryParams["ReviewSort"] = "-HelpfulVotes";
     var url = _buildQuery(queryParams);
 
-    dump("url: " + url + "\n");
 		mtUtils.log("Amazon", "ItemLookup (" + asin + ") URL: " + url);
 		reviewReq.open("GET", url, true);
 		reviewReq.onreadystatechange = function(ev) {

@@ -119,6 +119,7 @@ ArtistInfo.prototype = {
 					while (bioContent[bioContent.length-1].match(/^\s*$/))
 						bioContent.pop();
 					bio.bioText = "<p>" + bioContent.join("</p><p>") + "</p>";
+          bio.bioText = bio.bioText.replace(/http:\/\/ws.audioscrobbler.com/g, 'http://last.fm');
 					
 					updateFn.wrappedJSObject.update(CONTRACTID, bio, "bio");
 					updateFn.wrappedJSObject.update(CONTRACTID, imgUrl,"photo");
