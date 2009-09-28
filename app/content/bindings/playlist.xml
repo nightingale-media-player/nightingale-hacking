@@ -222,6 +222,7 @@
         </setter>
       </property>
 
+      <!-- Disable the ability to drag items from this playlist -->
       <field name="_disableDrag">false</field>
       <property name="disableDrag">
         <getter>
@@ -232,6 +233,21 @@
         <setter>
           <![CDATA[
             return this._disableDrag = val;
+          ]]>
+        </setter>
+      </property>
+
+      <!-- Disable the ability to drop items to this playlist -->
+      <field name="_disableDrop">false</field>
+      <property name="disableDrop">
+        <getter>
+          <![CDATA[
+            return this._disableDrop;
+          ]]>
+        </getter>
+        <setter>
+          <![CDATA[
+            return this._disableDrop = val;
           ]]>
         </setter>
       </property>
@@ -2986,6 +3002,12 @@
   // Note that canDrop is also called before calling the drop event, so in that
   // case on linux, getCurrentSession will fail, we need to test if we got
   // something and only record it if we did.
+
+  // Special flag we use to disable dropping items to a playlist, this allows
+  // the playlist to still be editable but stop drag and drop.
+  if (this._disableDrop) {
+    return false;
+  }
 
   var dragService = this._Cc["@mozilla.org/widget/dragservice;1"]
                         .getService(this._Ci.nsIDragService);

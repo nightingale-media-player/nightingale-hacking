@@ -491,7 +491,9 @@ window.cdripController =
     
     // Make sure we can not drag items from the cd to libraries or playlists
     this._playlist.disableDrag = true;
-
+    // Make sure we can not drop items to the cd rip library
+    this._playlist.disableDrop = true;
+    
     // Setup our columns for the CD View
     if (!this._mediaListView.mediaList.getProperty(SBProperties.columnSpec)) {
       this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
