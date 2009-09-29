@@ -161,6 +161,12 @@ sbCDDevice::ReqHandleRequestAdded()
           mStatus.ChangeState(STATE_MOUNTING);
           rv = ReqHandleMount(request);
           NS_ENSURE_SUCCESS(rv, rv);
+
+          // Now that the device library has been built and the device has
+          // been mounted, it's now time to start lookup by submitting a new
+          // request for cd lookup.
+          rv = PushRequest(sbICDDeviceEvent::REQUEST_CDLOOKUP, nsnull, nsnull);
+          NS_ENSURE_SUCCESS(rv, rv);
         break;
 
         case TransferRequest::REQUEST_READ :
@@ -272,14 +278,6 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
 
   // Cancel auto-disconnect.
   autoDisconnect.forget();
-
-  // Go ahead and perform a CD lookup now.
-  rv = AttemptCDLookup();
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Indicate that the device is now ready.
-  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
-                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
 
   // Log progress.
   LOG(("Exit sbCDDevice::ReqHandleMount\n"));
@@ -522,7 +520,7 @@ sbCDDevice::ProxyCDLookup() {
   LOG(("Querying metadata lookup provider for disc"));
   nsCOMPtr<sbIMetadataLookupJob> job;
   rv = provider->QueryDisc(toc, getter_AddRefs(job));
-  NS_ENSURE_SUCCESS(rv, /* void */);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup metadatajob!");
 
   // Check the state of the job, if the state reflects success already, then
   // just invoke the progress listener directly, otherwise add the listener
@@ -713,6 +711,11 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   // complete event.
   CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_METADATA_COMPLETE,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
+  // Indicate that the device is now ready.
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
   return NS_OK;
 }
 
