@@ -1189,6 +1189,17 @@ sbMediacoreSequencer::HandleErrorEvent(sbIMediacoreEvent *aEvent)
     }
   }
   else {
+    if (mCoreWillHandleNext) {
+      // The core has requested handling the next item, then given us an error.
+      // Assume the error is about the next item - thus, we should skip to two
+      // items ahead.
+      // This call to Next() (while mCoreWillHandleNext is set) will just cause
+      // the position tracking to update - we won't try to play it again this
+      // time.
+      rv = Next();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }      
+      
     mCoreWillHandleNext = PR_FALSE;
 
     rv = Next();
