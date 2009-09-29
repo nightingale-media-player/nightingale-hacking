@@ -51,6 +51,7 @@
 #include <sbStandardProperties.h>
 #include <sbStandardDeviceProperties.h>
 #include <sbVariantUtils.h>
+#include <sbStringUtils.h>
 
 /*
  * To log this module, set the following environment variable:
@@ -230,11 +231,12 @@ nsresult sbCDDevice::InitializeProperties()
 
   nsString deviceName;
   rv = cdDevice->GetName(deviceName);
-  if (NS_FAILED(rv)) {
-    // XXX TODO: Internationalize
-    deviceName.AssignLiteral("Unknown");
-  }
-  rv = mProperties->InitFriendlyName(deviceName);
+  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "ERROR: Could not get the device name!");
+
+  // Use the localized "CD Rip" string for the device friendly name. The CD
+  // lookup jobs will update this value once lookup has been completed.
+  rv = mProperties->InitFriendlyName(
+      SBLocalizedString("cdrip.service.default_node_name"));
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mProperties->InitDone();
@@ -750,7 +752,7 @@ sbCDDevice::CancelRequests()
   nsCOMPtr<sbIDeviceStatus> status;
   rv = GetCurrentStatus(getter_AddRefs(status));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   PRUint32 currentState;
   rv = status->GetCurrentState(&currentState);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -782,7 +784,7 @@ sbCDDevice::SyncLibraries()
 }
 
 NS_IMETHODIMP
-sbCDDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, 
+sbCDDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
                               PRBool *_retval) {
   return NS_ERROR_NOT_IMPLEMENTED;
 }
@@ -794,7 +796,7 @@ sbCDDevice::Eject()
   NS_ENSURE_TRUE(mCDDevice, NS_ERROR_UNEXPECTED);
 
   nsresult rv;
-  
+
   // Check for errors then query the user if they wish to see them first.
   rv = sbDeviceUtils::QueryUserViewErrors(this);
   NS_ENSURE_SUCCESS(rv, rv);

@@ -173,6 +173,10 @@ var multiCDDialog = {
                           SBString("cdrip.lookup.default_artistname");
       this._albumValue = document.getElementById("album-textbox").value ||
                          SBString("cdrip.lookup.default_albumname");
+
+      // Update the device friendly name to use the album name.
+      this._device.properties.friendlyName = this._albumValue;
+
       this._setEmptyOnly = false;
       this.library.enumerateAllItems(this);
       return;
@@ -180,6 +184,11 @@ var multiCDDialog = {
 
     var result = this._metadataResults[parseInt(this._infolist.value)];
     var tracks = ArrayConverter.JSArray(result.tracks);
+
+    if (tracks.length > 0) {
+      this._device.properties.friendlyName =
+        result.properties.getPropertyValue(SBProperties.albumName);
+    }
 
     for (var i=0; i < tracks.length; i++) {
       // Get the media item in this device library that has the same track
@@ -215,6 +224,10 @@ var multiCDDialog = {
     // Populate all of the tracks w/ the default entries.
     this._artistValue = SBString("cdrip.lookup.default_artistname");
     this._albumValue = SBString("cdrip.lookup.default_albumname");
+
+    // Update the device friendly name to use the album name.
+    this._device.properties.friendlyName = this._albumValue;
+
     this._setEmptyOnly = true;
     this.library.enumerateAllItems(this);
   },

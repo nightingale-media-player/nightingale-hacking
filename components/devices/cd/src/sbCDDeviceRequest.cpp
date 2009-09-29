@@ -624,6 +624,19 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
       do_QueryInterface(curItem, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Update the device friendly name with the new album name.
+    nsCOMPtr<sbIMutablePropertyArray> albumProperties;
+    rv = albumDetail->GetProperties(getter_AddRefs(albumProperties));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString albumName;
+    rv = albumProperties->GetPropertyValue(
+        NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), albumName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mProperties->SetFriendlyName(albumName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     nsCOMPtr<nsIArray> trackPropResults;
     rv = albumDetail->GetTracks(getter_AddRefs(trackPropResults));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -696,6 +709,10 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Now that the metadata has been sorted out, post the metadata lookup
+  // complete event.
+  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_METADATA_COMPLETE,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
   return NS_OK;
 }
 

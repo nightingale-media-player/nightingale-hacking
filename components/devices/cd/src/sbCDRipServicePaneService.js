@@ -300,15 +300,19 @@ sbCDRipServicePaneService.prototype = {
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_INITIATED:
         this._updateState(aDeviceEvent, true);
         break;
-      
+
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
+        this._updateState(aDeviceEvent, false);
+        break;
+
+      case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_METADATA_COMPLETE:
         this._updateState(aDeviceEvent, false);
         break;
 
       case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
         this._updateState(aDeviceEvent, false);
         break;
-    
+
       default:
         break;
     }
@@ -382,6 +386,11 @@ sbCDRipServicePaneService.prototype = {
 
     if (typeof(this._deviceInfoList[deviceId]) != 'undefined') {
       var devNode = this._deviceInfoList[deviceId].svcPaneNode;
+
+      // The friendly name might have changed, keep it in sync.
+      if (devNode.name != device.properties.friendlyName) {
+        devNode.name = device.properties.friendlyName;
+      }
 
       // Get the device properties and clear the busy property.
       devProperties = devNode.properties.split(" ");
@@ -535,9 +544,9 @@ sbCDRipServicePaneService.prototype = {
     devNode.contractid = this._cfg.contractID;
     devNode.url = this._cfg.devMgrURL + "?device-id=" + devId;
     devNode.editable = false;
-    devNode.name = "CD RIP";//device.properties.friendlyName;
+    devNode.name = device.properties.friendlyName;
     devNode.hidden = false;
- 
+
     this._deviceInfoList[devId] = {};
     this._deviceInfoList[devId].svcPaneNode = devNode;
   },

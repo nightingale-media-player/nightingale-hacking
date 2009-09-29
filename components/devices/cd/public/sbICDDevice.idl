@@ -111,21 +111,25 @@ interface sbICDTOC : nsISupports
 [scriptable, uuid(052861b6-1dd2-11b2-b2bc-d05cabd40402)]
 interface sbICDDeviceEvent : sbIDeviceEvent
 {
-  /**
-   * CD metadata lookup query started event.
-   */
+  //
+  // @brief  CD metadata lookup query started event.
+  //
   const unsigned long EVENT_CDLOOKUP_INITIATED = EVENT_CLIENT_DEFINED + 1;
-  
-  /**
-   * CD metadata lookup query completed event.
-   */
+
+  //
+  // @brief CD metadata lookup query completed event.
+  //
   const unsigned long EVENT_CDLOOKUP_COMPLETED = EVENT_CLIENT_DEFINED + 2;
 
+  //
+  // @brief CD metadata has been applied to the device's items.
+  //
+  const unsigned long EVENT_CDLOOKUP_METADATA_COMPLETE = EVENT_CLIENT_DEFINED + 3;
   //
   // @brief Request constants
   //
   const unsigned long REQUEST_CDLOOKUP = sbIDevice::REQUEST_FLAG_USER + 1;
-  
+
   //
   // @brief State constants
   //
