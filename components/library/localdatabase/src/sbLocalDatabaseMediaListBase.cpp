@@ -228,7 +228,11 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
 
   // Save off the guid array in case we need it.
   mCachedPartialArray = guidArray;
-  
+
+  // Set up to invalidate the cached partial array if the library changes.
+  rv = mCachedPartialArray->SetInvalidateOnChangeLibrary(mLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // And make an enumerator to return the filtered items.
   sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
 

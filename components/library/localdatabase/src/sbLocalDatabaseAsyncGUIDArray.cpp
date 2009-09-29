@@ -476,6 +476,23 @@ sbLocalDatabaseAsyncGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* a
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetInvalidateOnChangeLibrary
+                                 (sbILibrary** aInvalidateOnChangeLibrary)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetInvalidateOnChangeLibrary(aInvalidateOnChangeLibrary);
+}
+NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::SetInvalidateOnChangeLibrary
+                                 (sbILibrary* aInvalidateOnChangeLibrary)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->SetInvalidateOnChangeLibrary(aInvalidateOnChangeLibrary);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::AddSort(const nsAString& aProperty,
                                        PRBool aAscending)
 {

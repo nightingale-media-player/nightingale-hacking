@@ -35,6 +35,7 @@ interface nsIStringEnumerator;
 interface nsIURI;
 interface sbILocalDatabasePropertyCache;
 interface sbIPropertyArray;
+interface sbILibrary;
 
 /**
  * \interface sbILocalDatabaseGUIDArrayListener
@@ -50,7 +51,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(a5c6c0b1-a217-4c33-b7d3-05e7e98c6350)]
+[scriptable, uuid(c3313148-1dd1-11b2-8cf4-e207b77051c8)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -79,6 +80,12 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   attribute sbILocalDatabaseGUIDArrayListener listener;
 
   attribute sbILocalDatabasePropertyCache propertyCache;
+
+  /**
+   * \brief If invalidateOnChangeLibrary is set to a library, the guid array
+   *        will be invalidated whenever the library contents change.
+   */
+  attribute sbILibrary invalidateOnChangeLibrary;
   
   void addSort(in AString aProperty,
                in boolean aAscending);

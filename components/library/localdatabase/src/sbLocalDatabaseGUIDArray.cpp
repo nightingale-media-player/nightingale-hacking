@@ -71,12 +71,16 @@ static const PRLogModuleInfo *gLocalDatabaseGUIDArrayLog = nsnull;
 #define TRACE(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_DEBUG, args)
 #define LOG(args) PR_LOG(gLocalDatabaseGUIDArrayLog, PR_LOG_WARN, args)
 
-NS_IMPL_THREADSAFE_ISUPPORTS1(sbLocalDatabaseGUIDArray, sbILocalDatabaseGUIDArray)
+NS_IMPL_THREADSAFE_ISUPPORTS3(sbLocalDatabaseGUIDArray,
+                              nsISupportsWeakReference,
+                              sbILocalDatabaseGUIDArray,
+                              sbIMediaListListener)
 
 sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
   mBaseConstraintValue(0),
   mFetchSize(DEFAULT_FETCH_SIZE),
   mLength(0),
+  mListeningToLibrary(PR_FALSE),
   mIsDistinct(PR_FALSE),
   mDistinctWithSortableValues(PR_FALSE),
   mValid(PR_FALSE),
@@ -92,6 +96,7 @@ sbLocalDatabaseGUIDArray::sbLocalDatabaseGUIDArray() :
 
 sbLocalDatabaseGUIDArray::~sbLocalDatabaseGUIDArray()
 {
+  StopListeningForLibraryChanges();
 }
 
 NS_IMETHODIMP
@@ -284,6 +289,39 @@ sbLocalDatabaseGUIDArray::GetLength(PRUint32 *aLength)
   }
 
   *aLength = mLength;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::GetInvalidateOnChangeLibrary
+                            (sbILibrary** aInvalidateOnChangeLibrary)
+{
+  NS_ENSURE_ARG_POINTER(aInvalidateOnChangeLibrary);
+  NS_IF_ADDREF(*aInvalidateOnChangeLibrary = mInvalidateOnChangeLibrary);
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::SetInvalidateOnChangeLibrary
+                            (sbILibrary*  aInvalidateOnChangeLibrary)
+{
+  nsresult rv;
+
+  // Do nothing if value not changing.
+  if (aInvalidateOnChangeLibrary == mInvalidateOnChangeLibrary)
+    return NS_OK;
+
+  // Stop listening for library changes.
+  rv = StopListeningForLibraryChanges();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get invalidate on library change value.
+  mInvalidateOnChangeLibrary = aInvalidateOnChangeLibrary;
+
+  // Start listening for library changes.
+  rv = StartListeningForLibraryChanges();
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -588,12 +626,13 @@ sbLocalDatabaseGUIDArray::Invalidate()
 {
   TRACE(("sbLocalDatabaseGUIDArray[0x%.8x] - Invalidate", this));
 
+  nsresult rv;
+
   if (mValid == PR_FALSE) {
     return NS_OK;
   }
 
   if (mListener) {
-    nsresult rv;
     nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener =
       do_QueryReferent(mListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -610,6 +649,10 @@ sbLocalDatabaseGUIDArray::Invalidate()
   if(mPrimarySortKeyPositionCache.IsInitialized()) {
     mPrimarySortKeyPositionCache.Clear();
   }
+
+  // Stop listening for library changes.
+  rv = StopListeningForLibraryChanges();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mValid = PR_FALSE;
 
@@ -1008,6 +1051,105 @@ sbLocalDatabaseGUIDArray::ContainsGuid(const nsAString& aGuid,
   return NS_OK;
 }
 
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnItemAdded(sbIMediaList* aMediaList,
+                                      sbIMediaItem* aMediaItem,
+                                      PRUint32      aIndex,
+                                      PRBool*       _retval)
+{
+  // Invalidate the array.
+  Invalidate();
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnBeforeItemRemoved(sbIMediaList* aMediaList,
+                                              sbIMediaItem* aMediaItem,
+                                              PRUint32      aIndex,
+                                              PRBool*       _retval)
+{
+  // Don't invalidate yet because nothing has changed.
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnAfterItemRemoved(sbIMediaList* aMediaList,
+                                             sbIMediaItem* aMediaItem,
+                                             PRUint32      aIndex,
+                                             PRBool*       _retval)
+{
+  // Invalidate the array.
+  Invalidate();
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnItemUpdated(sbIMediaList*     aMediaList,
+                                        sbIMediaItem*     aMediaItem,
+                                        sbIPropertyArray* aProperties,
+                                        PRBool*           _retval)
+{
+  // Invalidate the array.
+  Invalidate();
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnItemMoved(sbIMediaList* aMediaList,
+                                      PRUint32      aFromIndex,
+                                      PRUint32      aToIndex,
+                                      PRBool*       _retval)
+{
+  // Invalidate the array.
+  Invalidate();
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnBeforeListCleared(sbIMediaList* aMediaList,
+                                              PRBool*       _retval)
+{
+  // Don't invalidate yet because nothing has changed.
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnListCleared(sbIMediaList* aMediaList,
+                                        PRBool*       _retval)
+{
+  // Invalidate the array.
+  Invalidate();
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = PR_TRUE;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnBatchBegin(sbIMediaList* aMediaList)
+{
+  // Don't invalidate because nothing has changed.
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseGUIDArray::OnBatchEnd(sbIMediaList* aMediaList)
+{
+  // Don't invalidate because nothing has changed.
+  return NS_OK;
+}
+
 nsresult
 sbLocalDatabaseGUIDArray::Initialize()
 {
@@ -1111,6 +1253,11 @@ sbLocalDatabaseGUIDArray::Initialize()
   }
 
   mValid = PR_TRUE;
+
+  // Start listening for library changes.  This checks for a valid array, so it
+  // must be called after setting the array valid.
+  rv = StartListeningForLibraryChanges();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -1974,6 +2121,49 @@ PRInt32
 sbLocalDatabaseGUIDArray::GetPropertyId(const nsAString& aProperty)
 {
   return SB_GetPropertyId(aProperty, mPropertyCache);
+}
+
+nsresult
+sbLocalDatabaseGUIDArray::StartListeningForLibraryChanges()
+{
+  nsresult rv;
+
+  // Don't start listening for changes if not set to, if already listening, or
+  // if array is invalid.
+  if (!mInvalidateOnChangeLibrary || mListeningToLibrary || !mValid)
+    return NS_OK;
+
+  // Start listening for changes to library.
+  rv = mInvalidateOnChangeLibrary->AddListener
+         (this,
+          PR_TRUE,
+          sbIMediaList::LISTENER_FLAGS_ALL &
+            ~sbIMediaList::LISTENER_FLAGS_BEFOREITEMREMOVED &
+            ~sbIMediaList::LISTENER_FLAGS_BEFORELISTCLEARED &
+            ~sbIMediaList::LISTENER_FLAGS_BATCHBEGIN &
+            ~sbIMediaList::LISTENER_FLAGS_BATCHEND,
+          nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mListeningToLibrary = PR_TRUE;
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseGUIDArray::StopListeningForLibraryChanges()
+{
+  nsresult rv;
+
+  // Do nothing if not listening to a library.
+  if (!mListeningToLibrary)
+    return NS_OK;
+
+  // Stop listening to changes to library.
+  rv = mInvalidateOnChangeLibrary->RemoveListener(this);
+  NS_ENSURE_SUCCESS(rv, rv);
+  mListeningToLibrary = PR_FALSE;
+
+  return NS_OK;
 }
 
 NS_IMPL_ISUPPORTS1(sbGUIDArrayEnumerator, nsISimpleEnumerator)
