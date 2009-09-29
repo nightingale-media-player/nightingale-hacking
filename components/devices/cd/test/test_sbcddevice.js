@@ -32,7 +32,7 @@
 
 function runTest()
 {
-  var deviceName = "TestCD";
+  var deviceName = "CD Rip";
   var sbDevice = sbCreateDevice(deviceName, sbMakeInstantJunk());
   assertTrue(sbDevice);
   assertEqual(sbDevice.name, deviceName);
