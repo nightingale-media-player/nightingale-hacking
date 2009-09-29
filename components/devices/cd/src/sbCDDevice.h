@@ -91,7 +91,6 @@ class nsIPropertyBag;
 //   mConnected
 //   mMountPath
 //   mMountURI
-//   mReqAddedEvent
 //   mReqThread
 //   mReqWaitMonitor
 //   mDeviceLibrary
@@ -173,7 +172,6 @@ class nsIPropertyBag;
 //   mConnected
 //   mMountPath
 //   mMountURI
-//   mReqAddedEvent
 //   mReqThread
 //   mReqWaitMonitor
 //   mDeviceLibrary
@@ -322,12 +320,6 @@ private:
    * The device status helper
    */
   sbDeviceStatusHelper mStatus;
-
-
-  /**
-   * Used to trigger request processing
-   */
-  nsCOMPtr<nsIRunnable> mReqAddedEvent;
 
   /**
    * The request handler thread

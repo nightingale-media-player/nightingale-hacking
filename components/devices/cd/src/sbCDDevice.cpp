@@ -388,10 +388,6 @@ sbCDDevice::ReqConnect()
     nsAutoMonitor::NewMonitor("sbCDDevice::mReqWaitMonitor");
   NS_ENSURE_TRUE(mReqWaitMonitor, NS_ERROR_OUT_OF_MEMORY);
 
-  // Create the request added event object.
-  rv = sbDeviceReqAddedEvent::New(this, getter_AddRefs(mReqAddedEvent));
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Create the request processing thread.
   rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -463,8 +459,13 @@ sbCDDevice::ProcessRequest()
     return NS_OK;
   }
 
+  // Create the request added event object.
+  nsCOMPtr<nsIRunnable> reqAddedEvent;
+  rv = sbDeviceReqAddedEvent::New(this, getter_AddRefs(reqAddedEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Dispatch processing of the request added event.
-  rv = mReqThread->Dispatch(mReqAddedEvent, NS_DISPATCH_NORMAL);
+  rv = mReqThread->Dispatch(reqAddedEvent, NS_DISPATCH_NORMAL);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
