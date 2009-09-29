@@ -773,8 +773,10 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
         // Allow us to get the hell out of here.
         PRBool cancel = PR_FALSE;
         pQuery->IsCancelled(&cancel);
-        if (cancel)
+        
+        if (cancel) {
           break;
+        }
 
         pDirEntries->HasMoreElements(&bHasMore);
 
@@ -879,6 +881,7 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
           keepRunning = !m_ThreadShouldShutdown;
         }
       }
+      NS_IF_RELEASE(pDirEntries);
     }
   }
   else if(NS_SUCCEEDED(pFile->IsFile(&bFlag)) && bFlag)
@@ -892,6 +895,11 @@ PRInt32 sbFileScan::ScanDirectory(sbIFileScanQuery *pQuery)
   }
 
   NS_IF_RELEASE(pCallback);
+
+  dirstack_t::iterator it = dirStack.begin();
+  for(; it != dirStack.end(); ++it) {
+    NS_IF_RELEASE(*it);
+  }
 
   dirStack.clear();
   fileEntryStack.clear();
