@@ -44,6 +44,7 @@
 #include <nsISupportsImpl.h>
 #include <nsITimer.h>
 #include <nsIFile.h>
+#include <nsIURL.h>
 #include <nsTArray.h>
 #include <prlock.h>
 
@@ -428,6 +429,12 @@ public:
   nsresult CreateAndDispatchEvent(PRUint32 aType,
                                   nsIVariant *aData,
                                   PRBool aAsync = PR_TRUE);
+
+  /**
+   * Regenerate the Media URL when the media management service is enabled.
+   * @note This method will regenerate the content URL for the Media Item.
+   */
+  nsresult RegenerateMediaURL(sbIMediaItem *aItem, nsIURL **_retval);
 
   /**
    * Returns true if the current request should be aborted.

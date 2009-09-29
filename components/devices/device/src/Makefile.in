@@ -42,6 +42,7 @@ CPP_SRCS = sbBaseDevice.cpp \
            $(NULL)
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
+                     $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/device/public \
                      $(DEPTH)/components/job/public \

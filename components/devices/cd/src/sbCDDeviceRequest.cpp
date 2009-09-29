@@ -36,6 +36,7 @@
 #include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventTarget.h>
+#include <sbIMediaManagementService.h>
 #include <sbLibraryUtils.h>
 #include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
@@ -806,9 +807,6 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = source->GetContentSrc(getter_AddRefs(sourceContentURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIURL> sourceContentURL = do_QueryInterface(sourceContentURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // Retrieve the path to where the destination library wants copied media
   nsCOMPtr<nsIURI> musicFolderURI =
     do_QueryInterface(aRequest->data, &rv);
@@ -838,6 +836,20 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   // Update the content URL now that it's been transcoded
   rv = destination->SetContentSrc(musicFolderURL);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Retrieve the managed path if the media management service is enabled.
+  rv = RegenerateMediaURL(destination, getter_AddRefs(musicFolderURL));
+
+  if (rv != NS_ERROR_NOT_AVAILABLE) {
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Prevent notification while we set the content source on the item
+    sbCDAutoIgnoreItem autoUnignore(this, destination);
+
+    // Update the content URL to point to where the item will be organized.
+    rv = destination->SetContentSrc(musicFolderURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsCOMPtr<sbITranscodeJob> tcJob;
   rv = mTranscodeManager->GetTranscoderForMediaItem(destination,

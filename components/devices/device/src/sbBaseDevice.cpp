@@ -74,6 +74,7 @@
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
 #include <sbIMediaFileManager.h>
+#include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
 #include <sbITranscodeManager.h>
@@ -1818,6 +1819,71 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return DispatchEvent(deviceEvent, aAsync, nsnull);
+}
+
+nsresult
+sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
+                                 nsIURL **_retval)
+{
+  NS_ENSURE_ARG_POINTER(aItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  nsCOMPtr<sbIMediaManagementService> mms =
+    do_GetService(SB_MEDIAMANAGEMENTSERVICE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool enable;
+  rv = mms->GetIsEnabled(&enable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (!enable) {
+    return NS_ERROR_NOT_AVAILABLE;
+  }
+
+  nsCOMPtr<sbIMediaFileManager> fileMan =
+    do_CreateInstance(SB_MEDIAFILEMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = fileMan->Init(nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the path the item would be organized
+  nsCOMPtr<nsIFile> mediaPath;
+  rv = fileMan->GetManagedPath(aItem,
+                               sbIMediaFileManager::MANAGE_MOVE |
+                                 sbIMediaFileManager::MANAGE_COPY |
+                                 sbIMediaFileManager::MANAGE_RENAME,
+                               getter_AddRefs(mediaPath));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> parentDir;
+  rv = mediaPath->GetParent(getter_AddRefs(parentDir));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool fileExists = PR_FALSE;
+  rv = parentDir->Exists(&fileExists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!fileExists) {
+    rv = parentDir->Create(nsIFile::DIRECTORY_TYPE, 0755);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<nsIIOService> ioservice =
+      do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> mediaURI;
+  rv = ioservice->NewFileURI(mediaPath, getter_AddRefs(mediaURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> mediaURL;
+  mediaURL = do_QueryInterface(mediaURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mediaURL.forget(_retval);
+  return NS_OK;
 }
 
 template <class T>

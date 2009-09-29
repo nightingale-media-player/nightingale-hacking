@@ -106,7 +106,7 @@ var manageMediaPrefsPane = {
           Application.prefs.setValue(folderPrefElem.getAttribute("name"),
                                      self._defaultLibraryFolder.path);
         }
-        return true
+        return true;
       }
 
       if (!self._checkForValidPref(false)) {
