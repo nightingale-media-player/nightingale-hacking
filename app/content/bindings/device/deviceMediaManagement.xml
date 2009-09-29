@@ -2,29 +2,27 @@
 <!-- vim: set sw=2 :miv -->
 <!--
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 -->
 
@@ -71,7 +69,7 @@
         - "library-id"
         -->
       <xul:vbox flex="1">
-        <xul:groupbox flex="1" sbid="transcoding-groupbox">
+        <xul:groupbox flex="1" sbid="transcoding-groupbox" setting="transcode">
           <xul:caption label="&device.settings.music.transcoding.label;"/>
           <!-- Transcoding preferences. -->
           <xul:vbox class="content-controls"
@@ -102,7 +100,7 @@
 
           </xul:vbox>
         </xul:groupbox>
-        <xul:groupbox flex="1">
+        <xul:groupbox flex="1" setting="diskmgmt">
           <xul:caption label="&device.settings.disk.label;"/>
           <xul:vbox>
             <xul:checkbox sbid="space_limit_enable"
@@ -263,6 +261,16 @@
 
         Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm", this);
 
+        var settingsAttribute = this.getAttribute("hide");
+        var settingsList = settingsAttribute.split(",");
+
+        for(let i = 0; i < settingsList.length; ++i) {
+          let box = this._getSettingBox(settingsList[i]);
+          if(box) {
+            box.hidden = true;
+          }
+        }
+
         this.reset();
 
         var self = this;
@@ -289,6 +297,14 @@
 
       }
       ]]></destructor>
+
+      <method name="_getSettingBox">
+        <parameter name="aID"/>
+        <body>
+          return document.getAnonymousElementByAttribute(this, "setting", aID);
+        </body>
+      </method>
+
 
       <!--
        * importExternalServices

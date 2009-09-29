@@ -1,29 +1,26 @@
 /* -*- Mode: Java; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* vim: set sw=2 :miv */
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
  */
 
 /**
@@ -66,6 +63,13 @@ var DeviceSettingsPane = {
   _deviceManagementWidgets: [],
   _mediaManagementWidgets: [],
 
+  // Currently we save every setting (transcode, and diskmgmt).  Since both
+  // of those settings are settings where the default is the same as 'unset',
+  // this happens to work nicely (e.g. for transcode it's "automatic", and
+  // diskmgmt it's "disabled").  If we ever add a setting here where the
+  // default setting is not the same as "explicitly unset" for the device,
+  // then we should make sure we only save the settings that aren't in the
+  // 'hide' list.
   save: function DeviceSettingsPane_save() {
     for each (let widget in this._deviceManagementWidgets) {
       widget.save();
@@ -93,6 +97,13 @@ var DeviceSettingsPane = {
   refreshMediaManagement: function DeviceSettingsPane_refreshMediaManagement(aEvent) {
     var deviceID = document.getElementById("deviceIDBroadcaster")
                            .getAttribute("device-id");
+
+    // determine what settings to hide so we can pass it onto the
+    // sb-device-management binding
+    var settingsToHide =
+          document.getElementById("device_management_settings_tabpanel")
+          .getAttribute("hide");
+
     var seenLibraries = {};
     for (let idx = this._mediaManagementWidgets.length - 1; idx >= 0; --idx) {
       let widget = this._mediaManagementWidgets[idx];
@@ -124,6 +135,7 @@ var DeviceSettingsPane = {
       var widget = document.createElement("sb-device-management");
       widget.setAttribute("device-id", deviceID);
       widget.setAttribute("library-id", library.guid);
+      widget.setAttribute("hide", settingsToHide);
       container.appendChild(widget);
 
       widget.device = device;
