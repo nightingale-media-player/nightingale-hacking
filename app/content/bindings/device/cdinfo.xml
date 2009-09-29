@@ -32,22 +32,32 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
   <binding id="sb-cdtracks">
     <content>
-      <xul:sb-closable-box label="&cdinfo.details.closed;" xbl:inherits="open">
+      <xul:sb-closable-box xbl:inherits="open">
         <xul:listbox anonid="tracklist" flex="1" seltype="none">
           <xul:listcols>
             <xul:listcol/>
             <xul:listcol flex="1"/>
           </xul:listcols>
 
-          <xul:listhead>
-            <xul:listheader label="&property.ordinal;"/>
-            <xul:listheader label="&property.track_name;"/>
+          <xul:listhead anonid="tracklist-header">
+            <xul:listheader/>
+            <xul:listheader/>
           </xul:listhead>
         </xul:listbox>
       </xul:sb-closable-box>
     </content>
 
     <implementation>
+      <constructor>
+	<![CDATA[
+          var box = document.getAnonymousElementByAttribute(this, "anonid", "tracklist").parentNode;
+	  box.setAttribute("label", SBString("cdinfo.details.closed"));
+          var header = document.getAnonymousElementByAttribute(this, "anonid", "tracklist-header");
+	  header.childNodes[0].setAttribute("label", SBString("property.ordinal"));
+	  header.childNodes[1].setAttribute("label", SBString("property.track_name"));
+        ]]>
+      </constructor>
+
       <method name="setTrackTitles">
         <parameter name="titles"/>
         <body>

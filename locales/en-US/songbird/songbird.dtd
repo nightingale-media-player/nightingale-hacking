@@ -787,9 +787,4 @@
 
 <!ENTITY cdrip.lookup.multiple.title       "Multiple CD Records Found">
 <!ENTITY cdrip.lookup.multiple.description "Choose one of the following or add your own info.">
-<!ENTITY cdinfo.details.closed             "See Details">
 <!ENTITY cdinfo.other.label                "Add your own Artist and Album Info">
-
-<!ENTITY property.ordinal "#">
-<!ENTITY property.track_name "Title">
-
