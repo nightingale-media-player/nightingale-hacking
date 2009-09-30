@@ -166,31 +166,55 @@ nsString ConvertDateTime(nsAString const & aDateTime) {
   if (aDateTime.IsEmpty()) {
     return nsString();
   }
-  // Convert "1970-01-01T00:00:00Z" to "1970/01/01 00:00:00 UTC".
-  nsCString dateTime = ::NS_LossyConvertUTF16toASCII(aDateTime);
-  PRInt32 zIndex = dateTime.FindChar('T');
-  if (zIndex != -1) {
-    dateTime.Replace(zIndex, 1, ' ');
-  }
-  zIndex = dateTime.FindChar('Z');
-  if (zIndex != -1) {
-    dateTime.Replace(zIndex, 1, "GMT");
-  }
-  // Strip the first two digits as PR_ParseTimeString can't handle 4 digit years
-  dateTime.Cut(0, 2);
-  // Parse the date/time string into epoch time.
+
+  // Convert "1970-01-31T00:00:00Z" to "01-31-1970 00:00:00 GMT" for parsing
+  // by PR_ParseTimeString
+
+  // Split off "Z" and anything after (time zone spec?)
+  nsCAutoString dateTime = ::NS_LossyConvertUTF16toASCII(aDateTime);
+  nsTArray<nsCString> splitString;
+  nsCString_Split(dateTime, NS_LITERAL_CSTRING("Z"), splitString);
+  NS_ENSURE_TRUE(splitString.Length() > 0, nsString());
+  dateTime = splitString[0];
+
+  // Split up the date and time strings
+  nsCString_Split(dateTime, NS_LITERAL_CSTRING("T"), splitString);
+  NS_ENSURE_TRUE(splitString.Length() > 1, nsString());
+  nsCAutoString dateString = splitString[0];
+  nsCAutoString timeString = splitString[1];
+
+  // Split up the day, month, and year strings
+  nsCString_Split(dateString, NS_LITERAL_CSTRING("-"), splitString);
+  NS_ENSURE_TRUE(splitString.Length() > 2, nsString());
+  nsCAutoString yearString = splitString[0];
+  nsCAutoString monthString = splitString[1];
+  nsCAutoString dayString = splitString[2];
+
+  // Produce the "01-31-1970 00:00:00 GMT" format
+  char cDateTime[128];
+  cDateTime[0] = '\0';
+  PR_snprintf(cDateTime,
+              sizeof(cDateTime),
+              "%s-%s-%s %s GMT",
+              monthString.get(),
+              dayString.get(),
+              yearString.get(),
+              timeString.get());
+
+  // Parse the date/time string into epoch time
   PRTime prTime;
-  PRStatus status = PR_ParseTimeString(dateTime.BeginReading(),
-                                       PR_TRUE,
-                                       &prTime);
+  PRStatus status = PR_ParseTimeString(cDateTime, PR_TRUE, &prTime);
+
   // On failure just return an emptry string
   if (status == PR_FAILURE) {
     NS_WARNING("Failed to parse time in sbiTunesImporter ConvertDateTime");
     return nsString();
   }
+
+  // Convert time to microseconds
   prTime /= PR_USEC_PER_MSEC;
-  
-  return sbAutoString(static_cast<PRUint64>(prTime)); 
+
+  return sbAutoString(static_cast<PRUint64>(prTime));
 }
 
 /**
