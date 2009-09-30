@@ -73,3 +73,7 @@ label.sb-cdrip-settings-label {
   width: 48px;
   height: 48px;
 }
+
+.sb-cdrip-link {
+  cursor: pointer;
+}

@@ -55,9 +55,16 @@ const RIP_SETTINGS_BUTTON           = CDRIP_BASE + "settings-button";
 const RIP_SPACER                    = CDRIP_BASE + "spacer";
 
 const RIP_STATUS_HBOX               = CDRIP_BASE + "actionstatus-hbox";
-const RIP_STATUS_IMAGE_VBOX         = CDRIP_BASE + "actionstatus-image";
+const RIP_STATUS_IMAGE_HBOX         = CDRIP_BASE + "actionstatus-image-box";
 const RIP_STATUS_IMAGE              = CDRIP_BASE + "status-image";
-const RIP_STATUS_LABEL              = CDRIP_BASE + "actionstatus-label";
+const RIP_STATUS_PRE_LOGO_SPACER    = CDRIP_BASE + "logo-pre-spacer";
+const RIP_STATUS_LOGO_HBOX          = CDRIP_BASE + "actionstatus-logo-box";
+const RIP_STATUS_LOGO               = CDRIP_BASE + "provider-logo";
+const RIP_STATUS_POST_LOGO_SPACER   = CDRIP_BASE + "logo-post-spacer";
+const RIP_STATUS_LABEL_HBOX         = CDRIP_BASE + "actionstatus-label-box";
+const RIP_STATUS_LABEL              = CDRIP_BASE + "status-label";
+const RIP_STATUS_PRE_BUTTONS_SPACER = CDRIP_BASE + "buttons-pre-spacer";
+const RIP_STATUS_BUTTON_HBOX        = CDRIP_BASE + "status-buttons";
 const RIP_STATUS_RIP_CD_BUTTON      = CDRIP_BASE + "rip-cd-button";
 const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
 const RIP_STATUS_EJECT_CD_BUTTON    = CDRIP_BASE + "eject-cd-button";
@@ -67,6 +74,11 @@ const RIP_COMMAND_STARTRIP          = CDRIP_BASE + "startrip-command";
 const RIP_COMMAND_STOPRIP           = CDRIP_BASE + "stoprip-command";
 
 const CDRIP_PLAYLIST                = CDRIP_BASE + "playlist";
+
+// Time to display lookup provider logo
+const LOGO_DISPLAY_MIN_TIMER        = 5000;
+// Delay before displaying lookup message
+const LOOKUP_MESSAGE_DELAY_TIMER    = 1000;
 
 //------------------------------------------------------------------------------
 // CD rip view controller
@@ -85,6 +97,10 @@ window.cdripController =
 
   _supportedProfiles: null,
 
+  _logoTimer: null,
+  logoTimerEnabled: false,
+  _lookupDelayTimer: null,
+
   onLoad: function cdripController_onLoad() {
     // Add our device listener to listen for lookup notification events
     this._device = this._getDevice();
@@ -98,6 +114,11 @@ window.cdripController =
 
     // Update the header information
     this._updateHeaderView();
+
+    this._logoTimer = Cc["@mozilla.org/timer;1"]
+                        .createInstance(Ci.nsITimer);
+    this._lookupDelayTimer = Cc["@mozilla.org/timer;1"]
+                               .createInstance(Ci.nsITimer);
 
     if (this._device.state == Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD) {
       this._toggleLookupNotification(true);
@@ -169,8 +190,22 @@ window.cdripController =
   },
 
   observe: function cdripController_observe(subject, topic, data) {
-    // Something changed in the rip transcoding prefs, update that UI now.
-    this._updateRipSettings();
+    if (topic == 'timer-callback') {
+      if (subject == this._logoTimer) {
+        this.logoTimerEnabled = false;
+        // Hide any lookup objects if lookup is complete
+        if (this._device.state != Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD)
+          this._toggleLookupNotification(false);
+      } else if (subject == this._lookupDelayTimer) {
+        // Enable lookup image/label if still looking up
+        if (this._device.state == Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD) {
+          this._toggleLookupLabel(true);
+        }
+      }
+    } else {
+      // Something changed in the rip transcoding prefs, update that UI now.
+      this._updateRipSettings();
+    }
   },
 
   showCDRipSettings: function cdripController_showCDRipSettings() {
@@ -182,22 +217,95 @@ window.cdripController =
 
   _toggleLookupNotification: function
                              cdripController_lookupNotification(show) {
-    var ripImage = document.getElementById(RIP_STATUS_IMAGE);
-    var statusBox = document.getElementById("sb-cdrip-status-hbox");
-    var buttonsBox = document.getElementById("sb-cdrip-status-buttons");
+    var actionStatusBox = document.getElementById(RIP_STATUS_HBOX);
+    var ripImageBox = document.getElementById(RIP_STATUS_IMAGE_HBOX);
+    var preLogoSpacer = document.getElementById(RIP_STATUS_PRE_LOGO_SPACER);
+    var logoImageBox = document.getElementById(RIP_STATUS_LOGO_HBOX);
+    var postLogoSpacer = document.getElementById(RIP_STATUS_POST_LOGO_SPACER);
+    var ripLabelBox = document.getElementById(RIP_STATUS_LABEL_HBOX);
+    var preButtonsSpacer = document.getElementById(RIP_STATUS_PRE_BUTTONS_SPACER);
+    var buttonsBox = document.getElementById(RIP_STATUS_BUTTON_HBOX);
+
     if (show) {
-      statusBox.style.visibility = "visible";
+      var manager = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
+                      .getService(Ci.sbIMetadataLookupManager);
+      var provider = manager.defaultProvider;
+      var providerLogo = provider.logoURL;
+      var providerName = provider.name;
+      var providerURL = provider.infoURL;
+
+      this._lookupDelayTimer.init(this, LOOKUP_MESSAGE_DELAY_TIMER,
+                                  Ci.nsITimer.TYPE_ONE_SHOT);
+
+      if (providerLogo) {
+        preLogoSpacer.style.visibility = "visible";
+        this._setImageSrc(RIP_STATUS_LOGO, providerLogo);
+        if (providerName)
+          this._setToolTip(RIP_STATUS_LOGO,
+                           SBFormattedString("cdrip.mediaview.status.lookup_provided_by",
+                                             [providerName]));
+        if (providerURL)
+          this._setLogoURLListener(RIP_STATUS_LOGO, providerURL);
+        logoImageBox.style.visiblity = "visible";
+        postLogoSpacer.style.visibility = "visible";
+
+        this._logoTimer.init(this, LOGO_DISPLAY_MIN_TIMER,
+                         Ci.nsITimer.TYPE_ONE_SHOT);
+        this.logoTimerEnabled = true;
+      } else {
+        // For now, nothing is visible
+        actionStatusBox.style.visibility = "collapse";
+      }
+
       buttonsBox.style.visibility = "collapse";
-      ripImage.src =
-        "chrome://songbird/skin/base-elements/icon-loading-large.png";
+    } else {
+      actionStatusBox.style.visibility = "visible";
+
+      if (!this.logoTimerEnabled) {
+        preLogoSpacer.style.visibility = "collapse";
+        logoImageBox.style.visiblity = "collapse";
+        this._setImageSrc(RIP_STATUS_LOGO, "");
+        postLogoSpacer.style.visibility = "collapse";
+      }
+
+      this._toggleLookupLabel(false);
+
+      preButtonsSpacer.style.visibility = "collapse";
+      buttonsBox.style.visibility = "visible";
+    }
+
+    this._updateHeaderView();
+  },
+
+  _toggleLookupLabel: function
+                             cdripController_lookupLabel(show) {
+    var actionStatusBox = document.getElementById(RIP_STATUS_HBOX);
+    var ripImageBox = document.getElementById(RIP_STATUS_IMAGE_HBOX);
+    var ripLabelBox = document.getElementById(RIP_STATUS_LABEL_HBOX);
+    var preButtonsSpacer = document.getElementById(RIP_STATUS_PRE_BUTTONS_SPACER);
+
+    if (show) {
+      actionStatusBox.style.visibility = "visible";
+
+      this._setImageSrc(RIP_STATUS_IMAGE,
+                        "chrome://songbird/skin/base-elements/icon-loading-large.png");
+      ripImageBox.style.visibility = "visible";
+
       this._setLabelValue(RIP_STATUS_LABEL,
                           SBString("cdrip.mediaview.status.lookup"));
+      ripLabelBox.style.visibility = "visible";
+
+      preButtonsSpacer.style.visibility = "visible";
     } else {
-      statusBox.style.visibility = "collapse";
-      buttonsBox.style.visibility = "visible";
-      ripImage.src = "";
+      ripImageBox.style.visibility = "collapse";
+      this._setImageSrc(RIP_STATUS_IMAGE, "");
+
+      ripLabelBox.style.visibility = "collapse";
       this._setLabelValue(RIP_STATUS_LABEL, "");
+
+      preButtonsSpacer.style.visibility = "collapse";
     }
+
     this._updateHeaderView();
   },
 
@@ -471,6 +579,25 @@ window.cdripController =
 
   _setLabelValue: function cdripController_setLabelValue(aElementId, aValue) {
     document.getElementById(aElementId).value = aValue;
+  },
+
+  _setImageSrc: function cdripController_setImageSrc(aElementId, aValue) {
+    document.getElementById(aElementId).src = aValue;
+  },
+
+  _setToolTip: function cdripController_setToolTip(aElementId, aValue) {
+    document.getElementById(aElementId).setAttribute('tooltiptext', aValue);
+  },
+
+  _setLogoURLListener: function cdripController_setLogoURLListener(aElementId, aURL) {
+    var element = document.getElementById(aElementId);
+    if (element) {
+      element.setAttribute('class', "sb-cdrip-link");
+      element.addEventListener('click', function(event) {
+        var browser = SBGetBrowser();
+        browser.loadURI(aURL, null, null);
+      }, false);
+    }
   },
   
   _loadPlaylist: function cdripController_loadPlaylist() {
