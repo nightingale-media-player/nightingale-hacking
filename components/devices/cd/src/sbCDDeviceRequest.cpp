@@ -857,17 +857,22 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = destination->SetContentSrc(musicFolderURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<nsIURL> regeneratedURL;
   // Retrieve the managed path if the media management service is enabled.
-  rv = RegenerateMediaURL(destination, getter_AddRefs(musicFolderURL));
+  rv = RegenerateMediaURL(destination, getter_AddRefs(regeneratedURL));
 
   if (rv != NS_ERROR_NOT_AVAILABLE) {
     NS_ENSURE_SUCCESS(rv, rv);
+
+    // We've got the file management URL so set the musicFolderURL to it
+    // for the watch folder ignore logic below
+    musicFolderURL = regeneratedURL;
 
     // Prevent notification while we set the content source on the item
     sbCDAutoIgnoreItem autoUnignore(this, destination);
 
     // Update the content URL to point to where the item will be organized.
-    rv = destination->SetContentSrc(musicFolderURL);
+    rv = destination->SetContentSrc(regeneratedURL);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
