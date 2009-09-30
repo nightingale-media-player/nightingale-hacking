@@ -37,15 +37,15 @@
 
 #include "DeviceManager.h"
 
-NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceManager, Initialize);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbDeviceManagerObsolete, Initialize);
 
 // Registration functions for becoming a startup observer
 static NS_METHOD
-sbDeviceManagerRegisterSelf(nsIComponentManager* aCompMgr,
-                            nsIFile* aPath,
-                            const char* registryLocation,
-                            const char* componentType,
-                            const nsModuleComponentInfo* info)
+sbDeviceManagerObsoleteRegisterSelf(nsIComponentManager* aCompMgr,
+                                    nsIFile* aPath,
+                                    const char* registryLocation,
+                                    const char* componentType,
+                                    const nsModuleComponentInfo* info)
 {
   nsresult rv;
   nsCOMPtr<nsICategoryManager> categoryManager =
@@ -54,17 +54,17 @@ sbDeviceManagerRegisterSelf(nsIComponentManager* aCompMgr,
 
   rv = categoryManager->
          AddCategoryEntry(APPSTARTUP_CATEGORY,
-                          SONGBIRD_DEVICEMANAGER_DESCRIPTION,
-                          "service," SONGBIRD_DEVICEMANAGER_CONTRACTID,
+                          SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
+                          "service," SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID,
                           PR_TRUE, PR_TRUE, nsnull);
   return rv;
 }
 
 static NS_METHOD
-sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
-                              nsIFile* aPath,
-                              const char* registryLocation,
-                              const nsModuleComponentInfo* info)
+sbDeviceManagerObsoleteUnregisterSelf(nsIComponentManager* aCompMgr,
+                                      nsIFile* aPath,
+                                      const char* registryLocation,
+                                      const nsModuleComponentInfo* info)
 {
   nsresult rv;
   nsCOMPtr<nsICategoryManager> categoryManager =
@@ -72,7 +72,7 @@ sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = categoryManager->DeleteCategoryEntry(APPSTARTUP_CATEGORY,
-                                            SONGBIRD_DEVICEMANAGER_DESCRIPTION,
+                                            SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION,
                                             PR_TRUE);
 
   return rv;
@@ -81,13 +81,13 @@ sbDeviceManagerUnregisterSelf(nsIComponentManager* aCompMgr,
 static nsModuleComponentInfo components[] =
 {
   {
-    SONGBIRD_DEVICEMANAGER_CLASSNAME, 
-    SONGBIRD_DEVICEMANAGER_CID,
-    SONGBIRD_DEVICEMANAGER_CONTRACTID,
-    sbDeviceManagerConstructor,
-    sbDeviceManagerRegisterSelf,
-    sbDeviceManagerUnregisterSelf
+    SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME, 
+    SONGBIRD_OBSOLETE_DEVICEMANAGER_CID,
+    SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID,
+    sbDeviceManagerObsoleteConstructor,
+    sbDeviceManagerObsoleteRegisterSelf,
+    sbDeviceManagerObsoleteUnregisterSelf
   }
 };
 
-NS_IMPL_NSGETMODULE(SongbirdDeviceManagerModule, components)
+NS_IMPL_NSGETMODULE(SongbirdDeviceManagerObsoleteModule, components)

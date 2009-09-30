@@ -40,13 +40,13 @@
 #include <prlock.h>
 
 // DEFINES ====================================================================
-#define SONGBIRD_DEVICEMANAGER_DESCRIPTION                 \
-  "Songbird DeviceManager Service"
-#define SONGBIRD_DEVICEMANAGER_CONTRACTID                  \
+#define SONGBIRD_OBSOLETE_DEVICEMANAGER_DESCRIPTION       \
+  "Songbird Obsolete DeviceManager Service"
+#define SONGBIRD_OBSOLETE_DEVICEMANAGER_CONTRACTID         \
   "@songbirdnest.com/Songbird/DeviceManager;1"
-#define SONGBIRD_DEVICEMANAGER_CLASSNAME                   \
-  "Songbird Device Manager"
-#define SONGBIRD_DEVICEMANAGER_CID                         \
+#define SONGBIRD_OBSOLETE_DEVICEMANAGER_CLASSNAME          \
+  "Songbird Obsolete Device Manager"
+#define SONGBIRD_OBSOLETE_DEVICEMANAGER_CID                \
 { /* d0b017c4-f388-4e78-abf3-5f48ca616a94 */               \
   0xd0b017c4,                                              \
   0xf388,                                                  \
@@ -55,21 +55,21 @@
 }
 // CLASSES ====================================================================
 
-class sbDeviceManager : public sbIDeviceManager
+class sbDeviceManagerObsolete : public sbIDeviceManager
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_NSIOBSERVER
   NS_DECL_SBIDEVICEMANAGER
 
-  sbDeviceManager();
+  sbDeviceManagerObsolete();
 
   // Initializes the service. This will fail if we have already been
   // initialized, even thought that should never happen with getService.
   NS_IMETHOD Initialize();
 
 private:
-  ~sbDeviceManager();
+  ~sbDeviceManagerObsolete();
 
   // Iterate through the registered contractIDs looking for supported devices.
   NS_IMETHOD LoadSupportedDevices();

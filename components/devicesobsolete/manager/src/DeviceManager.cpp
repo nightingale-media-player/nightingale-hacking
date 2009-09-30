@@ -45,7 +45,7 @@
 
 /*
  * To log this module, set the following environment variable:
- *   NSPR_LOG_MODULES=sbDeviceManager:5
+ *   NSPR_LOG_MODULES=sbDeviceManagerObsolete:5
  */
 #ifdef PR_LOGGING
 static PRLogModuleInfo* gDevicemanagerLog = nsnull;
@@ -57,40 +57,42 @@ static PRLogModuleInfo* gDevicemanagerLog = nsnull;
 #define SB_DEVICE_PREFIX "@songbirdnest.com/Songbird/OldDeviceImpl/"
 
 // This allows us to be initialized once and only once.
-PRBool sbDeviceManager::sServiceInitialized = PR_FALSE;
+PRBool sbDeviceManagerObsolete::sServiceInitialized = PR_FALSE;
 
 // Whether or not we've already loaded all supported devices
-PRBool sbDeviceManager::sDevicesLoaded = PR_FALSE;
+PRBool sbDeviceManagerObsolete::sDevicesLoaded = PR_FALSE;
 
 // This is a sanity check to make sure that we're finalizing properly
-PRBool sbDeviceManager::sServiceFinalized = PR_FALSE;
+PRBool sbDeviceManagerObsolete::sServiceFinalized = PR_FALSE;
 
-NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceManager, sbIDeviceManager, nsIObserver)
+NS_IMPL_THREADSAFE_ISUPPORTS2(sbDeviceManagerObsolete,
+                              sbIDeviceManager,
+                              nsIObserver)
 
-sbDeviceManager::sbDeviceManager()
+sbDeviceManagerObsolete::sbDeviceManagerObsolete()
 : mLock(nsnull),
   mLastRequestedIndex(nsnull)
 {
 #ifdef PR_LOGGING
   if (!gDevicemanagerLog)
-    gDevicemanagerLog = PR_NewLogModule("sbDeviceManager");
+    gDevicemanagerLog = PR_NewLogModule("sbDeviceManagerObsolete");
 #endif
 
-  LOG(("DeviceManager[0x%x] - Created", this));
+  LOG(("DeviceManagerObsolete[0x%x] - Created", this));
 }
 
-sbDeviceManager::~sbDeviceManager()
+sbDeviceManagerObsolete::~sbDeviceManagerObsolete()
 {
-  NS_ASSERTION(sbDeviceManager::sServiceFinalized,
-               "DeviceManager never finalized!");
+  NS_ASSERTION(sbDeviceManagerObsolete::sServiceFinalized,
+               "DeviceManagerObsolete never finalized!");
   if (mLock)
     nsAutoLock::DestroyLock(mLock);
 
-  LOG(("DeviceManager[0x%x] - Destroyed", this));
+  LOG(("DeviceManagerObsolete[0x%x] - Destroyed", this));
 }
 
 NS_IMETHODIMP
-sbDeviceManager::Initialize()
+sbDeviceManagerObsolete::Initialize()
 {
   LOG(("DeviceManager[0x%x] - Initialize", this));
 
@@ -98,10 +100,10 @@ sbDeviceManager::Initialize()
   // doing the right thing (using getService) then we should never get here
   // more than once. If they do the wrong thing (createInstance) then we'll
   // fail on them so that they fix their code.
-  NS_ENSURE_FALSE(sbDeviceManager::sServiceInitialized,
+  NS_ENSURE_FALSE(sbDeviceManagerObsolete::sServiceInitialized,
                   NS_ERROR_ALREADY_INITIALIZED);
 
-  mLock = nsAutoLock::NewLock("sbDeviceManager::mLock");
+  mLock = nsAutoLock::NewLock("sbDeviceManagerObsolete::mLock");
   NS_ENSURE_TRUE(mLock, NS_ERROR_OUT_OF_MEMORY);
 
   mLastRequestedCategory = EmptyString();
@@ -138,18 +140,18 @@ sbDeviceManager::Initialize()
   //     AddObserver.
 
   // Set the static variable so that we won't initialize again.
-  sbDeviceManager::sServiceInitialized = PR_TRUE;
+  sbDeviceManagerObsolete::sServiceInitialized = PR_TRUE;
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDeviceManager::Finalize()
+sbDeviceManagerObsolete::Finalize()
 {
-  LOG(("DeviceManager[0x%x] - Finalize", this));
+  LOG(("DeviceManagerObsolete[0x%x] - Finalize", this));
 
   // Make sure we aren't called more than once
-  NS_ENSURE_FALSE(sbDeviceManager::sServiceFinalized, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_FALSE(sbDeviceManagerObsolete::sServiceFinalized, NS_ERROR_UNEXPECTED);
 
   // Loop through the array and call Finalize() on all the devices.
   nsresult rv;
@@ -165,7 +167,7 @@ sbDeviceManager::Finalize()
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "A device failed to finalize");
   }
 
-  sbDeviceManager::sServiceFinalized = PR_TRUE;
+  sbDeviceManagerObsolete::sServiceFinalized = PR_TRUE;
 
   return NS_OK;
 }
@@ -175,14 +177,14 @@ sbDeviceManager::Finalize()
 // finding the components with @songbirdnest.com/Songbird/Device/ prefix for the
 // contract ID for the interface.
 NS_IMETHODIMP
-sbDeviceManager::LoadSupportedDevices()
+sbDeviceManagerObsolete::LoadSupportedDevices()
 {
-  LOG(("DeviceManager[0x%x] - LoadSupportedDevices", this));
+  LOG(("DeviceManagerObsolete[0x%x] - LoadSupportedDevices", this));
 
   // Make sure we aren't called more than once
-  NS_ENSURE_TRUE(sbDeviceManager::sServiceInitialized,
+  NS_ENSURE_TRUE(sbDeviceManagerObsolete::sServiceInitialized,
                  NS_ERROR_ALREADY_INITIALIZED);
-  NS_ENSURE_FALSE(sbDeviceManager::sDevicesLoaded, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_FALSE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
   nsAutoLock autoLock(mLock);
 
@@ -246,16 +248,16 @@ sbDeviceManager::LoadSupportedDevices()
     NS_ENSURE_TRUE(ok, NS_ERROR_FAILURE);
   }
 
-  sbDeviceManager::sDevicesLoaded = PR_TRUE;
+  sbDeviceManagerObsolete::sDevicesLoaded = PR_TRUE;
 
   return NS_OK;
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetDeviceCount(PRUint32* aDeviceCount)
+sbDeviceManagerObsolete::GetDeviceCount(PRUint32* aDeviceCount)
 {
   NS_ENSURE_ARG_POINTER(aDeviceCount);
-  NS_ENSURE_TRUE(sbDeviceManager::sDevicesLoaded, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
   nsAutoLock autoLock(mLock);
 
@@ -264,10 +266,10 @@ sbDeviceManager::GetDeviceCount(PRUint32* aDeviceCount)
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetCategoryByIndex(PRUint32 aIndex,
-                                    nsAString& _retval)
+sbDeviceManagerObsolete::GetCategoryByIndex(PRUint32 aIndex,
+                                            nsAString& _retval)
 {
-  NS_ENSURE_TRUE(sbDeviceManager::sDevicesLoaded, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
   nsAutoLock autoLock(mLock);
 
@@ -283,11 +285,11 @@ sbDeviceManager::GetCategoryByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetDeviceByIndex(PRUint32 aIndex,
-                                  sbIDeviceBase** _retval)
+sbDeviceManagerObsolete::GetDeviceByIndex(PRUint32 aIndex,
+                                          sbIDeviceBase** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(sbDeviceManager::sDevicesLoaded, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
   nsAutoLock autoLock(mLock);
 
@@ -302,11 +304,11 @@ sbDeviceManager::GetDeviceByIndex(PRUint32 aIndex,
 }
 
 NS_IMETHODIMP
-sbDeviceManager::HasDeviceForCategory(const nsAString& aCategory,
-                                      PRBool* _retval)
+sbDeviceManagerObsolete::HasDeviceForCategory(const nsAString& aCategory,
+                                              PRBool* _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(sbDeviceManager::sDevicesLoaded, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
   nsAutoLock autoLock(mLock);
 
@@ -318,11 +320,11 @@ sbDeviceManager::HasDeviceForCategory(const nsAString& aCategory,
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetDeviceByCategory(const nsAString& aCategory,
-                                     sbIDeviceBase** _retval)
+sbDeviceManagerObsolete::GetDeviceByCategory(const nsAString& aCategory,
+                                             sbIDeviceBase** _retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
-  NS_ENSURE_TRUE(sbDeviceManager::sDevicesLoaded, NS_ERROR_UNEXPECTED);
+  NS_ENSURE_TRUE(sbDeviceManagerObsolete::sDevicesLoaded, NS_ERROR_UNEXPECTED);
 
   nsAutoLock autoLock(mLock);
 
@@ -341,8 +343,8 @@ sbDeviceManager::GetDeviceByCategory(const nsAString& aCategory,
 }
 
 NS_IMETHODIMP
-sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
-                                     PRUint32* _retval)
+sbDeviceManagerObsolete::GetIndexForCategory(const nsAString& aCategory,
+                                             PRUint32* _retval)
 {
   // We don't bother checking arguments or locking because we assume that we
   // have already done so in our public methods.
@@ -383,11 +385,11 @@ sbDeviceManager::GetIndexForCategory(const nsAString& aCategory,
 }
 
 NS_IMETHODIMP
-sbDeviceManager::Observe(nsISupports* aSubject,
-                         const char* aTopic,
-                         const PRUnichar* aData)
+sbDeviceManagerObsolete::Observe(nsISupports* aSubject,
+                                 const char* aTopic,
+                                 const PRUnichar* aData)
 {
-  LOG(("DeviceManager[0x%x] - Observe: %s", this, aTopic));
+  LOG(("DeviceManagerObsolete[0x%x] - Observe: %s", this, aTopic));
 
   nsresult rv;
   nsCOMPtr<nsIObserverService> observerService =
