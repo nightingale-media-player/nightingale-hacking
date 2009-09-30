@@ -50,6 +50,7 @@ var CDRipPrefsPane =
 {
   warningShown: false,
   currentTranscodeProfileID: 0,
+  prefBranch: null,
 
   doPaneLoad: function CDRipPrefsPane_doPaneLoad() {
     CDRipPrefsPane.prefBranch = Cc["@mozilla.org/preferences-service;1"]
@@ -91,17 +92,22 @@ var CDRipPrefsPane =
         dump("Exception in CD Rip prefs pane: " + e + "\n");
       }
     }
+    
+    window.addEventListener("unload", CDRipPrefsPane.doPaneUnload, true);
   },
 
   doPaneUnload: function CDRipPrefsPane_doPaneUnload() {
-    CDRipPrefsPane.prefBranch.removeObserver("", CDRipPrefsPane, false);
+    window.removeEventListener("unload", CDRipPrefsPane.doPaneUnload, true);
+    CDRipPrefsPane.prefBranch.removeObserver("", CDRipPrefsPane);
   },
 
   observe: function CDRipPrefsPane_observe(subject, topic, data) {
     // enumerate all devices and see if any of them are currently ripping
     var deviceBusy = false;
-    var deviceMgr = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
-                 .getService(Ci.sbIDeviceManager2);
+    
+    var deviceMgr = 
+      Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+        .getService(Ci.sbIDeviceManager2);
     var registrar = deviceMgr.QueryInterface(Ci.sbIDeviceRegistrar);
     for (var i=0; i<registrar.devices.length; i++) {
       var device = registrar.devices.queryElementAt(i, Ci.sbIDevice);
@@ -142,9 +148,9 @@ var CDRipPrefsPane =
 
   populateTranscodingProfiles:
                          function CDRipPrefsPane_populateTranscodingProfiles() {
-    var transcodeManager =
-        Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
-          .getService(Ci.sbITranscodeManager);
+    var transcodeManager = 
+      Cc["@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1"]
+        .getService(Ci.sbITranscodeManager);
     var profiles = transcodeManager.getTranscodeProfiles();
 
     // Get the current default transcode profile

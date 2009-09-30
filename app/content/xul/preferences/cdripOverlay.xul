@@ -42,8 +42,7 @@
 
 
   <prefpane id="paneCDRip"
-            onpaneload="CDRipPrefsPane.doPaneLoad();"
-            onpaneunload="CDRipPrefsPane.doPaneUnload();">
+            onpaneload="CDRipPrefsPane.doPaneLoad();">
 
     <preferences>
       <preference id="rip_format_pref"
