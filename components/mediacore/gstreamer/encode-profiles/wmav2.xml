@@ -11,7 +11,7 @@
 
   <audio>
     <type>wmav2</type>
-    <property name="bitrate" type="int" min="32000" max="256000" default="160000"/>
+    <property name="bitrate" type="int" min="32000" max="320000" default="160000"/>
   </audio>
 </profile>
 

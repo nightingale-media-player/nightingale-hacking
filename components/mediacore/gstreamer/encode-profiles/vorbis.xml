@@ -15,7 +15,7 @@
 
   <audio>
     <type>vorbis</type>
-    <property name="bitrate" type="int" min="32000" max="256000" default="128000"/>
+    <property name="bitrate" type="int" min="45000" max="500000" default="128000"/>
   </audio>
 </profile>
 
