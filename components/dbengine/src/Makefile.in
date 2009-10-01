@@ -31,79 +31,6 @@ include $(DEPTH)/build/autodefs.mk
 
 DYNAMIC_LIB = sbDBEngine
 
-# preedTODO investigate
-ifeq (windows,$(SB_PLATFORM)) #{ windows
-   C_FLAGS = -nologo \
-             -W3 \
-             -WL \
-             -Zi \
-             -GS \
-             -c \
-             -TC \
-             -FI "mozilla-config.h" \
-             -FI "xpcom/xpcom-config.h" \
-             $(NULL)
-
-   C_EXTRA_DEFS += -DOS_WIN=1 \
-                   $(NULL)
-
-   ARFLAGS = -NOLOGO \
-             -MACHINE:X86 \
-             -SUBSYSTEM:WINDOWS \
-             $(NULL)
-
-   ifdef DEBUG
-      C_FLAGS += -Od
-   else
-      C_FLAGS += -Ox
-   endif
-
-   ifneq (1,$(SB_USE_JEMALLOC))
-      C_FLAGS += -MT$(DEBUG:%=d)
-   endif
-endif #} windows
-
-ifeq (macosx, $(SB_PLATFORM))
-   export MACOSX_DEPLOYMENT_TARGET=10.4
-endif
-
-ifdef SB_SQLITE_DEBUG
-   C_EXTRA_DEFS += -DSQLITE_DEBUG=1 \
-                   $(NULL)
-endif
-
-C_EXTRA_DEFS += -DSQLITE_ALLOW_XTHREAD_CONNECT=1 \
-                -DSQLITE_OMIT_LOAD_EXTENSION=1 \
-                -DSQLITE_THREADSAFE=1 \
-                -DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 \
-                -DTEMP_STORE=2 \
-                -DNO_TCL \
-                -DSQLITE_CORE \
-                -DSQLITE_ENABLE_FTS3 \
-                $(NULL)
-
-ifeq (macosx, $(SB_PLATFORM))
-   C_EXTRA_DEFS += -DSQLITE_ENABLE_LOCKING_STYLE=1 \
-                   $(NULL)
-endif
-
-# If this is gcc, suppress some warnings when we compile sqlite
-ifeq (gcc,$(CC))
-   C_EXTRA_FLAGS += -Wno-conversion \
-                    -Wno-pointer-arith \
-                    -Wno-cast-align \
-                    -Wno-uninitialized \
-                    -Wno-unused \
-                    $(NULL)
-endif
-
-C_SRCS = sqlite3.c \
-         $(NULL)
-
-C_INCLUDES = $(srcdir) \
-             $(MOZSDK_INCLUDE_DIR) \
-             $(NULL)
-
 CPP_SRCS = DatabaseEngineComponent.cpp \
            DatabaseEngine.cpp \
            DatabaseQuery.cpp \
@@ -130,14 +57,17 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(MOZSDK_INCLUDE_DIR)/pref \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(MOZSDK_IDL_DIR) \
+                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
                      $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
                             
-DYNAMIC_LIB_STATIC_IMPORTS += components/moz/strings/src/sbMozStringUtils \
-                              components/moz/threads/src/sbMozThreads \
-                              $(NULL)
+DYNAMIC_LIB_STATIC_IMPORTS += \
+ components/moz/strings/src/sbMozStringUtils \
+ components/moz/threads/src/sbMozThreads \
+ $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/lib/$(LIB_PREFIX)sqlite3$(LIB_SUFFIX) \
+ $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
    DYNAMIC_LIB_STATIC_IMPORTS += \
@@ -155,6 +85,7 @@ ifeq (linux,$(SB_PLATFORM))
                               $(PTHREAD_LIBS) \
                               $(GLIB_LIBS) \
                               $(NULL)
+
    CPP_RAW_INCLUDES = $(GLIB_CFLAGS) \
                       $(NULL)
 endif
