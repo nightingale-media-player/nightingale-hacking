@@ -757,6 +757,7 @@
 <!ENTITY cdrip.prefpane.eject_after_rip       "When CD Rip is completed eject CD">
 <!ENTITY cdrip.prefpane.soundalert_after_rip  "When CD Rip is completed play system alert sound">
 <!ENTITY cdrip.prefpane.providers.title       "CD Lookup Provider">
+<!ENTITY cdrip.prefpane.quality_desc          "A higher kbps quality setting will result in higher quality audio and a larger file size.">
 
 <!-- CD Rip Media View entities -->
 <!ENTITY cdrip.mediaview.cd_rip_settings_label     "CD Rip Settings">
