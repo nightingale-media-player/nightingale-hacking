@@ -62,7 +62,10 @@
                 collapsed="true"
                 onclick="event.stopPropagation();"
                 onselect="document.getBindingParent(this).onTabSelect(event)"/>
-          <button type="menu" mousethrough="never" class="sb-displaypane-menubutton"
+          <button type="menu"
+                  mousethrough="never"
+                  class="sb-displaypane-menubutton"
+                  tooltiptext="&tooltip.displaypane.options;"
                   onclick="event.stopPropagation();">
             <menupopup anonid="menu" class="menulist-menupopup">
               <sb-displaypane-content-menuitems anonid="contentitems" xbl:inherits="paneid=id"/>
@@ -927,7 +930,7 @@
           var strKey = (this._closed ? 
                           "menu.displaypane.title.show" : 
                           "menu.displaypane.title.hide");
-          this._button.setAttribute("tooltip", 
+          this._button.setAttribute("tooltiptext",
                                     this.formatString(strKey, label));
         </xbl:body>
       </xbl:method>

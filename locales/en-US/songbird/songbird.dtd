@@ -127,6 +127,7 @@
 <!ENTITY tooltip.servicepane.show    "Show Service Pane" >
 <!ENTITY tooltip.servicepane.hide    "Hide Service Pane" >
 <!ENTITY tooltip.servicepane.newnode "New Playlist" >
+<!ENTITY tooltip.displaypane.options "Content Pane Options">
 
 <!ENTITY smart.window             "Smart Playlist" >
 <!ENTITY smart.limit              "Limit to" >
