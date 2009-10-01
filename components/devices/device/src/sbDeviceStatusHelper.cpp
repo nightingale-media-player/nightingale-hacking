@@ -374,6 +374,9 @@ sbDeviceStatusHelper::ItemStart(PRInt32     aItemNum,
                    aItemNum,
                    aItemCount,
                    0.0);
+      mDevice->CreateAndDispatchEvent
+                 (sbIDeviceEvent::EVENT_DEVICE_TRANSFER_PROGRESS,
+                  sbNewVariant(mMediaItem));
       break;
     case OPERATION_TYPE_TRANSCODE :
       LOG(("sbMSCSTatus::ItemStart transcode\n"));

@@ -122,7 +122,6 @@ var DPWCfg = {
       progressMeterDetermined: true,
       canBeCompleted: true,
       showIdleMessage: true,
-      needsMediaItem: true,
       showProgress: true,
       updateBusy: true
     },
@@ -134,7 +133,6 @@ var DPWCfg = {
       progressMeterDetermined: true,
       canBeCompleted: true,
       showIdleMessage: true,
-      needsMediaItem: true,
       showProgress: true,
       updateBusy: true
     },
@@ -145,7 +143,6 @@ var DPWCfg = {
       localeSuffix: "updating",
       progressMeterDetermined: true,
       canBeCompleted: true,
-      needsMediaItem: true,
       showProgress: true,
       updateBusy: true
     },
@@ -177,7 +174,6 @@ var DPWCfg = {
       progressMeterDetermined: true,
       canBeCompleted: true,
       showIdleMessage: true,
-      needsMediaItem: true,
       showProgress: true,
       updateBusy: true,
       preparingOnIdle: true
@@ -437,7 +433,6 @@ var DPW = {
     // Get the operation info.
     var operationInfo = this._getOperationInfo(operation);
     var operationLocaleSuffix = operationInfo.localeSuffix;
-    var operationNeedsMediaItem = operationInfo.needsMediaItem;
 
     // Update the operation progress meter.
     if (operationInfo.progressMeterDetermined) {

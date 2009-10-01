@@ -237,6 +237,34 @@ public:
     }
   }
   /**
+     * Initialize the request and status, start the operation and
+     * setup to auto fail. Must Call SetResult for successful completion
+     * This version allows overriding of the batch count
+     */
+  sbDeviceStatusAutoOperationComplete(sbDeviceStatusHelper * aStatus,
+                                      sbDeviceStatusHelper::Operation aOperation,
+                                      sbBaseDevice::TransferRequest * aRequest,
+                                      PRInt32 aBatchCount) :
+                                     mRequest(aRequest),
+                                     mStatus(aStatus),
+                                     mResult(NS_ERROR_FAILURE),
+                                     mOperation(aOperation) {
+    mStatus->OperationStart(mOperation,
+                            0,
+                            aBatchCount,
+                            IsItemOp(mOperation) ? mRequest->list : nsnull,
+                            IsItemOp(mOperation) ? mRequest->item : nsnull);
+
+    if (IsItemOp(mOperation)) {
+      // Update item status
+      mStatus->ItemStart(aRequest->list,
+                         aRequest->item,
+                         0,
+                         aBatchCount);
+    }
+  }
+
+  /**
    * If this is the last item in the batch then call the OperationComplete
    * method.
    */
