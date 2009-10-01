@@ -429,6 +429,16 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
                                      getter_AddRefs(mDeviceLibrary));
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Store our guid in the inner device library
+  nsString deviceLibraryGuid;
+  rv = this->GetGuid(deviceLibraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = mDeviceLibrary->SetProperty
+                              (NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
+                              deviceLibraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCOMPtr<sbIMediaList> list;
   list = do_QueryInterface(mDeviceLibrary, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1563,7 +1573,7 @@ sbDeviceLibrary::AddSome(nsISimpleEnumerator *aMediaItems)
   NS_ASSERTION(mDeviceLibrary, "mDeviceLibrary is null, call init first.");
   SB_NOTIFY_LISTENERS_ASK_PERMISSION(OnBeforeAddSome(aMediaItems,
                                                     &mShouldProcceed));
-  nsRefPtr<nsISimpleEnumerator> filtered = 
+  nsRefPtr<nsISimpleEnumerator> filtered =
     new sbSupportedMediaItemsEnumerator(aMediaItems, mDevice);
   NS_ENSURE_TRUE(filtered, NS_ERROR_OUT_OF_MEMORY);
 
@@ -1589,10 +1599,10 @@ sbDeviceLibrary::Clear(void)
   }
 }
 
-/** 
+/**
  *
  * sbSupportedMediaItemsEnumerator
- * 
+ *
  * Given an input enumeration, discard any items that
  * are not supported by the device.
  *
@@ -1629,7 +1639,7 @@ sbSupportedMediaItemsEnumerator::GetNext(nsISupports **_retval)
   nsCOMPtr<sbIMediaItem> item;
   nsresult rv = FindNext(getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // consume the item we grabbed
   mNextItem = nsnull;
   return CallQueryInterface(item, _retval);
@@ -1644,7 +1654,7 @@ sbSupportedMediaItemsEnumerator::FindNext(sbIMediaItem **_retval)
 {
   NS_ENSURE_TRUE(mMediaItemsEnumerator, NS_ERROR_NOT_INITIALIZED);
   nsresult rv;
-  
+
   if (mNextItem) {
     *_retval = mNextItem;
     NS_ADDREF(*_retval);

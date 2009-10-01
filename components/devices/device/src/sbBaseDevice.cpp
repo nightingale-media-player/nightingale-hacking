@@ -69,6 +69,7 @@
 #include <sbIDeviceHelper.h>
 #include <sbIDeviceManager.h>
 #include <sbIDeviceProperties.h>
+#include <sbIDownloadDevice.h>
 #include <sbILibrary.h>
 #include <sbILibraryDiffingService.h>
 #include <sbIMediaItem.h>
@@ -77,6 +78,7 @@
 #include <sbIMediaManagementService.h>
 #include <sbIOrderableMediaList.h>
 #include <sbIPrompter.h>
+#include <nsISupportsPrimitives.h>
 #include <sbITranscodeManager.h>
 #include <sbITranscodeAlbumArt.h>
 #include <sbArray.h>
@@ -1821,9 +1823,108 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   return DispatchEvent(deviceEvent, aAsync, nsnull);
 }
 
+/**
+ * Returns the URI for the item based on the download folder
+ */
+static nsresult
+RegenerateFromDownloadFolder(sbIMediaItem * aItem,
+                             nsIURI ** aURI)
+{
+  nsresult rv;
+
+  static char const SB_DOWNLOAD_FOLDER_PREF[] =
+    "songbird.download.music.folder";
+  NS_NAMED_LITERAL_STRING(SB_DOWNLOAD_DEVICE_CATEGORY,
+                          "Songbird Download Device");
+
+  nsCOMPtr<nsIPrefBranch> folderPrefs =
+    do_ProxiedGetService("@mozilla.org/preferences-service;1",
+                         &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsISupportsString> supportsString;
+  // Get the download folder
+  rv = folderPrefs->GetComplexValue(SB_DOWNLOAD_FOLDER_PREF,
+                                    NS_GET_IID(nsISupportsString),
+                                    getter_AddRefs(supportsString));
+
+  nsCOMPtr<nsILocalFile> downloadFolderFile;
+
+  // If we didn't get it from the prefs ask the download device helper
+  if (NS_SUCCEEDED(rv) && supportsString) {
+    nsString folderPath;
+    rv = supportsString->GetData(folderPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+    downloadFolderFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = downloadFolderFile->InitWithPath(folderPath);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // use default value; if any of this fails, the function doesn't work at all
+    nsCOMPtr<sbIDownloadDeviceHelper> deviceHelper =
+      do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    nsCOMPtr<nsIFile> downloadDir;
+    rv = deviceHelper->GetDefaultMusicFolder(getter_AddRefs(downloadDir));
+    NS_ENSURE_SUCCESS(rv, rv);
+    downloadFolderFile = do_QueryInterface(downloadDir, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  nsCOMPtr<nsIURI> uri;
+  rv = sbLibraryUtils::GetFileContentURI(downloadFolderFile,
+                                         getter_AddRefs(uri));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> sourceContentURI;
+  rv = aItem->GetContentSrc(getter_AddRefs(sourceContentURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString filename;
+  nsCString extension;
+  nsCOMPtr<nsIURL> sourceContentURL = do_QueryInterface(sourceContentURI, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    rv = sourceContentURL->GetFileName(filename);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = sourceContentURL->GetFileExtension(extension);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  } else {
+    // Last ditch effort to figure out the filename/extension
+    nsCString spec;
+    rv = sourceContentURI->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 lastSlash = spec.RFind("/");
+    if (lastSlash == -1) {
+      lastSlash = 0;
+    }
+    PRInt32 lastPeriod = spec.RFind(".");
+    if (lastPeriod == -1) {
+      lastPeriod = spec.Length();
+    }
+    filename = Substring(spec, lastSlash + 1, lastPeriod - lastSlash - 1);
+    extension = Substring(spec, lastPeriod + 1, spec.Length() - lastPeriod - 1);
+  }
+  nsCOMPtr<nsIURL> downloadFolderURL =
+    do_QueryInterface(uri, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = downloadFolderURL->SetFileName(filename);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = downloadFolderURL->SetFileExtension(extension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CallQueryInterface(downloadFolderURL, aURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 nsresult
 sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
-                                 nsIURL **_retval)
+                                 nsIURI **_retval)
 {
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
@@ -1838,8 +1939,11 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
   rv = mms->GetIsEnabled(&enable);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // If the managed media service isn't operational use the download folder
   if (!enable) {
-    return NS_ERROR_NOT_AVAILABLE;
+    rv = RegenerateFromDownloadFolder(aItem, _retval);
+    NS_ENSURE_SUCCESS(rv, rv);
+    return NS_OK;
   }
 
   nsCOMPtr<sbIMediaFileManager> fileMan =
@@ -1882,7 +1986,9 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
   mediaURL = do_QueryInterface(mediaURI, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mediaURL.forget(_retval);
+  rv = CallQueryInterface(mediaURL, _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 
@@ -4315,7 +4421,7 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval)
   // work?
   nsCOMPtr<sbITranscodeProfile> profile;
   rv = SelectTranscodeProfile(formatType.Type, getter_AddRefs(profile));
-  
+
   // No profile available means we don't support this file.
   if (rv == NS_ERROR_NOT_AVAILABLE) {
     *_retval = PR_FALSE;

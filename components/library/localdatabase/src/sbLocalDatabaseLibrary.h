@@ -412,8 +412,7 @@ private:
 
   nsresult FindMusicFolderURI(nsIURI ** aMusicFolderURI);
 
-  nsresult SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
-                             nsAString const & aSourceItemGUID,
+  nsresult SubmitCopyRequest(sbIMediaItem * aSourceItem,
                              sbIMediaItem * aDestinationItem);
 };
 

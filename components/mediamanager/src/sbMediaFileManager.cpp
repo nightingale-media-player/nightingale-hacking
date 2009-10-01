@@ -118,7 +118,7 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Get the pref branch
-  nsCOMPtr<nsIPrefService> prefRoot = 
+  nsCOMPtr<nsIPrefService> prefRoot =
     do_GetService("@mozilla.org/preferences-service;1", &rv);
   NS_ENSURE_SUCCESS (rv, rv);
 
@@ -147,7 +147,7 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
                                   getter_Copies(fileFormatString));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   // Split the string on , character (odd entries are properties, even ones are
   // separators) and save for later.
   nsString_Split(NS_ConvertUTF8toUTF16(fileFormatString),
@@ -166,7 +166,7 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
                                   getter_Copies(dirFormatString));
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   // Split the string on , character (odd entries are properties, even ones are
   // separators) and save for later.
   nsString_Split(NS_ConvertUTF8toUTF16(dirFormatString),
@@ -203,7 +203,7 @@ NS_IMETHODIMP sbMediaFileManager::Init(nsIPropertyBag2 *aProperties)
  * \param aRetVal     - True if successful.
  */
 NS_IMETHODIMP
-sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem, 
+sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
                                  unsigned short aManageType,
                                  nsIFile        *aForceTargetFile,
                                  PRBool         *aRetVal)
@@ -212,7 +212,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aRetVal);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
-  
+
   // Assume things won't go well so that we have the right value in aRetVal
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
@@ -222,25 +222,25 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
     TRACE(("%s - no action requested (%04x)", __FUNCTION__, aManageType));
     return NS_ERROR_INVALID_ARG;
   }
-  
+
   nsresult rv;
 
   // First thing is to check if the Managment folder exists, we need this because
   // all operations require that folder, we only delete from that folder and we
   // only copy to or move in that folder. We also need to make sure we have the
   // management folder, if not get it from the preferences.
- 
+
   // First see if we have the management folder, if not get it from preferences
   rv = CheckManagementFolder(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Now make sure that we're operating on a file
-  
+
   // Get to the old file's path
   nsCOMPtr<nsIURI> itemUri;
   rv = aMediaItem->GetContentSrc(getter_AddRefs(itemUri));
   NS_ENSURE_SUCCESS (rv, rv);
-  
+
   // Get an nsIFileURL object from the nsIURI
   nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
   if (NS_FAILED(rv) || !fileUrl) {
@@ -258,18 +258,18 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
   nsCOMPtr<nsIFile> itemFile;
   rv = fileUrl->GetFile(getter_AddRefs(itemFile));
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Make sure the original file exists before doing any organizing.
   PRBool exists;
   rv = itemFile->Exists(&exists);
   if (NS_FAILED(rv) || !exists) {
     return NS_ERROR_FILE_NOT_FOUND;
   }
-  
+
   if (aManageType & sbIMediaFileManager::MANAGE_DELETE) {
     rv = Delete(itemFile, aRetVal);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     // MANAGE_DELETE does not make sense to use in conjunction with other flags,
     // so if anymore action was requested, return false in aRetVal, but don't
     // cause an exception.
@@ -283,7 +283,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
 
     return NS_OK;
   }
-  
+
   if (!((aManageType & sbIMediaFileManager::MANAGE_MOVE) ||
         (aManageType & sbIMediaFileManager::MANAGE_COPY) ||
         (aManageType & sbIMediaFileManager::MANAGE_RENAME)))
@@ -291,10 +291,10 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
     LOG(("%s: nothing to manage", __FUNCTION__));
     return NS_OK;
   }
-  
+
   // Get the target file
   nsCOMPtr<nsIFile> newFile;
-  
+
   if (aForceTargetFile) {
     #if PR_LOGGING
       nsString path;
@@ -339,7 +339,7 @@ sbMediaFileManager::OrganizeItem(sbIMediaItem   *aMediaItem,
 
   if (isOrganized) {
     // Already managed so just return ok
-    TRACE(("%s: Already organized", __FUNCTION__)); 
+    TRACE(("%s: Already organized", __FUNCTION__));
     *aRetVal = PR_TRUE;
     return NS_OK;
   }
@@ -368,12 +368,12 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
   NS_ENSURE_ARG_POINTER(aItem);
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
-  
+
   if (aManageType == 0) {
     // No action was requested, fail altogether
     return NS_ERROR_INVALID_ARG;
   }
-  
+
   nsresult rv;
 
   // First see if we have the management folder, if not get it from preferences
@@ -381,34 +381,39 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Next make sure that we're operating on a file
-  
+
   // Get to the old file's path
   nsCOMPtr<nsIURI> itemUri;
   rv = aItem->GetContentSrc(getter_AddRefs(itemUri));
   NS_ENSURE_SUCCESS (rv, rv);
-  
-  // Get an nsIFileURL object from the nsIURI
-  nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
-  NS_ENSURE_SUCCESS(rv, NS_ERROR_INVALID_ARG);
 
   // Get the file object
   nsCOMPtr<nsIFile> oldItemFile;
-  rv = fileUrl->GetFile(getter_AddRefs(oldItemFile));
-  NS_ENSURE_SUCCESS(rv, rv);
-  
+  // Get the file from the URI and delete if needed
+  nsCOMPtr<nsIFileURL> fileUrl(do_QueryInterface(itemUri, &rv));
+  if (NS_SUCCEEDED(rv)) {
+
+    rv = fileUrl->GetFile(getter_AddRefs(oldItemFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (aManageType & sbIMediaFileManager::MANAGE_DELETE) {
+      // file will be deleted; don't make a new path
+      oldItemFile.forget(_retval);
+      return NS_OK;
+    }
+  }
+  // If we're told to delete and this is not a file, that's bad
+  else if (aManageType & sbIMediaFileManager::MANAGE_DELETE) {
+    return NS_ERROR_INVALID_ARG;
+  }
+
   // Find the target file
   nsCOMPtr<nsIFile> newItemFile;
-  
-  if (aManageType & sbIMediaFileManager::MANAGE_DELETE) {
-    // file will be deleted; don't make a new path
-    oldItemFile.forget(_retval);
-    return NS_OK;
-  }
 
   nsString filename;
   nsString path;
   PRBool success;
-  
+
   // figure out the containing folder for the final path
   if (aManageType & sbIMediaFileManager::MANAGE_MOVE) {
     // Since we are organizing the folder path get the new one
@@ -431,23 +436,25 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
     // neither move nor copy is set, we need to abort
     return NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA;
   }
- 
+
   if (aManageType & sbIMediaFileManager::MANAGE_RENAME) {
     rv = GetNewFilename(aItem, itemUri, filename, &success);
     NS_ENSURE_SUCCESS(rv, rv);
     // If there was an error trying to construct the new filename, abort now,
     // but don't cause an exception
     NS_ENSURE_TRUE(success, NS_SUCCESS_LOSS_OF_INSIGNIFICANT_DATA);
-  } else {
+  } else if (oldItemFile) {
     // not renaming, use the old name
     rv = oldItemFile->GetLeafName(filename);
     NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    return NS_ERROR_INVALID_ARG;
   }
   rv = newItemFile->Append(filename);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   newItemFile.forget(_retval);
-  
+
   return NS_OK;
 }
 
@@ -459,10 +466,10 @@ sbMediaFileManager::GetManagedPath(sbIMediaItem *aItem,
  *        This function will replace aFilename with new contents.
  * \param aRetVal     - True if successful.
  */
-nsresult 
-sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem, 
+nsresult
+sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
                                    nsIURI       *aItemUri,
-                                   nsString     &aFilename, 
+                                   nsString     &aFilename,
                                    PRBool       *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
@@ -471,7 +478,7 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
   NS_ENSURE_ARG_POINTER(aRetVal);
 
   nsresult rv;
-  
+
   // Assume things won't go well so that we have the right value in aRetVal
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
@@ -509,7 +516,7 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
   if (!fullExtension.IsEmpty()) {
     aFilename.Append(fullExtension);
   }
-  
+
   // We successfully constructed the new filename
   *aRetVal = PR_TRUE;
 
@@ -522,9 +529,9 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
  * \param aPath       - Newly generated path from the items metadata.
  * \param aRetVal     - True if successful.
  */
-nsresult 
-sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem, 
-                               nsString     &aPath, 
+nsresult
+sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
+                               nsString     &aPath,
                                PRBool       *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
@@ -532,11 +539,11 @@ sbMediaFileManager::GetNewPath(sbIMediaItem *aMediaItem,
   NS_ENSURE_ARG_POINTER(aRetVal);
 
   nsresult rv;
-  
+
   // Assume things won't go well so that we have the right value in aRetVal
   // if we except, regardless of any previous success
   *aRetVal = PR_FALSE;
-  
+
   // First see if we have the management folder, if not get it from preferences
   rv = CheckManagementFolder(nsnull);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -598,11 +605,11 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
   nsCString defaultPrefKey;
   defaultPrefKey.AssignLiteral(PREF_MFM_DEFPROPERTY);
   defaultPrefKey.Append(NS_ConvertUTF16toUTF8(aPropertyKey));
-  
+
   PRBool prefExists;
   rv = mPrefBranch->PrefHasUserValue(defaultPrefKey.get(), &prefExists);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // If the pref exists, reuse it
   if (prefExists) {
     nsCString value;
@@ -616,7 +623,7 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
     rv = mPropertyManager->GetPropertyInfo(aPropertyKey,
                                            getter_AddRefs(info));
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     // try to get a custom localized string first
     sbStringBundle stringBundle;
 
@@ -648,7 +655,7 @@ sbMediaFileManager::GetUnknownValue(nsString  aPropertyKey,
       }
     }
 
-    rv = mPrefBranch->SetCharPref(defaultPrefKey.get(), 
+    rv = mPrefBranch->SetCharPref(defaultPrefKey.get(),
                              NS_ConvertUTF16toUTF8(aUnknownValue).get());
     NS_ENSURE_SUCCESS(rv, rv);
   }
@@ -683,7 +690,7 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
- 
+
   nsresult rv;
 
   for (PRUint32 i=0; i< aFormatSpec.Length(); i++) {
@@ -703,7 +710,7 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
       nsString propertyValue;
       rv = aMediaItem->GetProperty(configValue, propertyValue);
       NS_ENSURE_SUCCESS(rv, rv);
-     
+
       if (!propertyValue.IsEmpty()) {
         if (aTrimEachProperty) {
           RemoveBadCharacters(propertyValue);
@@ -747,7 +754,7 @@ sbMediaFileManager::GetFormattedFileFolder(nsTArray<nsString>  aFormatSpec,
         TRACE(("%s: getting fallback for %s",
                __FUNCTION__,
                NS_ConvertUTF16toUTF8(configValue).get()));
-        rv = GetUnknownValue(configValue, propertyValue); 
+        rv = GetUnknownValue(configValue, propertyValue);
         if (NS_FAILED(rv) || propertyValue.IsEmpty()) {
           // there was no data, _and_ the fallback value was empty
           // skip this property and the next separator
@@ -798,7 +805,7 @@ sbMediaFileManager::CheckManagementFolder(nsIFile* aMediaFolder)
     } else {
       // Note: prefRoot->GetComplexValue does not work here even passing "folder"
       // Get the pref branch
-      nsCOMPtr<nsIPrefService> prefRoot = 
+      nsCOMPtr<nsIPrefService> prefRoot =
         do_GetService("@mozilla.org/preferences-service;1", &rv);
       NS_ENSURE_SUCCESS (rv, rv);
 
@@ -834,7 +841,7 @@ nsresult sbMediaFileManager::NormalizeDir(nsString &aDir)
   // If the directory string is not terminated by a separator, add one,
   // unless the string is empty (empty relative dir)
   nsString separator = NS_LITERAL_STRING(FILE_PATH_SEPARATOR);
-  if (!aDir.IsEmpty() && 
+  if (!aDir.IsEmpty() &&
       aDir.CharAt(aDir.Length()-1) != separator.CharAt(0)) {
     aDir.Append(separator);
   }
@@ -881,7 +888,7 @@ sbMediaFileManager::ZeroPadTrackNumber(const nsAString & aTrackNumStr,
 }
 
 /**
- * \brief Copys a file from the old location to the new location, ensures that 
+ * \brief Copys a file from the old location to the new location, ensures that
  * the destination is in the managed folder and that unique filenames are used
  * if the destination file already exists.
  * \param aMediaItem  - The media item we are organizing.
@@ -889,8 +896,8 @@ sbMediaFileManager::ZeroPadTrackNumber(const nsAString & aTrackNumStr,
  * \param aDestFile   - New file for item.
  * \param aRetVal     - True if successful.
  */
-nsresult 
-sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem, 
+nsresult
+sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
                                nsIFile      *aSrcFile,
                                nsIFile      *aDestFile,
                                PRBool       *aRetVal)
@@ -966,7 +973,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   nsString newPath;
   rv = aDestFile->GetPath(newPath);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!mWatchFolderService) {
     mWatchFolderService =
       do_GetService("@songbirdnest.com/watch-folder-service;1", &rv);
@@ -987,7 +994,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   rv = aDestFile->GetParent(getter_AddRefs(newParentDir));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // If the original was in the managed folder do a move instead of a copy/delete 
+  // If the original was in the managed folder do a move instead of a copy/delete
   rv = mMediaFolder->Contains(aSrcFile, PR_TRUE, &isManaged);
   NS_ENSURE_SUCCESS(rv, rv);
   if (!isManaged) {
@@ -997,7 +1004,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
     // TODO: Do some checks to make sure we successfully copied the file.
   } else {
     // Move since the original is in the managed folder
-    // First we need to create a copy of the original file object 
+    // First we need to create a copy of the original file object
     nsCOMPtr<nsIFile> holdOldFile;
     rv = aSrcFile->Clone(getter_AddRefs(holdOldFile));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1018,7 +1025,7 @@ sbMediaFileManager::CopyRename(sbIMediaItem *aMediaItem,
   // And send that URI back as the item contentsrc
   rv = aMediaItem->SetContentSrc(newURI);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Copying has successfully completed
   *aRetVal = PR_TRUE;
 
@@ -1035,7 +1042,7 @@ nsresult sbMediaFileManager::CheckDirectoryForDeletion(nsIFile *aItemFile)
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aItemFile);
   nsresult rv;
-  
+
   // Get the parent file object
   nsCOMPtr<nsIFile> parent;
   rv = aItemFile->GetParent(getter_AddRefs(parent));
@@ -1053,7 +1060,7 @@ nsresult sbMediaFileManager::CheckDirectoryForDeletion(nsIFile *aItemFile)
  *  files and be located in the Managed Folder.
  * \param aDirectory - The folder to check for deletion.
  */
-nsresult 
+nsresult
 sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
 {
   TRACE(("%s", __FUNCTION__));
@@ -1080,7 +1087,7 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
   PRBool hasMoreElements;
   rv = dirEntries->HasMoreElements(&hasMoreElements);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (hasMoreElements) {
     // Directory is not empty, exit recursion now.
     TRACE(("%s: Folder Not Empty", __FUNCTION__));
@@ -1097,7 +1104,7 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
   rv = aDirectory->GetParent(getter_AddRefs(parent));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // And recurse ...  
+  // And recurse ...
   return CheckDirectoryForDeletion_Recursive(parent);
 }
 
@@ -1109,7 +1116,7 @@ sbMediaFileManager::CheckDirectoryForDeletion_Recursive(nsIFile *aDirectory)
  * \param aRetVal    - True if successful.
  */
 nsresult
-sbMediaFileManager::Delete(nsIFile *aItemFile, 
+sbMediaFileManager::Delete(nsIFile *aItemFile,
                            PRBool  *aRetVal)
 {
   TRACE(("%s", __FUNCTION__));
@@ -1134,7 +1141,7 @@ sbMediaFileManager::Delete(nsIFile *aItemFile,
     // aRetVal is false
     return NS_OK;
   }
-  
+
   // Delete the file
   rv = aItemFile->Remove(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1142,10 +1149,10 @@ sbMediaFileManager::Delete(nsIFile *aItemFile,
   // Check whether we need to also delete the directory (and parent directories)
   rv = CheckDirectoryForDeletion(aItemFile);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Deletion happened successfully
   *aRetVal = PR_TRUE;
-  
+
   return NS_OK;
 }
 

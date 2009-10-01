@@ -434,7 +434,7 @@ public:
    * Regenerate the Media URL when the media management service is enabled.
    * @note This method will regenerate the content URL for the Media Item.
    */
-  nsresult RegenerateMediaURL(sbIMediaItem *aItem, nsIURL **_retval);
+  nsresult RegenerateMediaURL(sbIMediaItem *aItem, nsIURI **_retval);
 
   /**
    * Returns true if the current request should be aborted.

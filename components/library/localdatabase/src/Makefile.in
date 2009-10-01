@@ -87,7 +87,6 @@ CPP_SRCS += sbLibraryChangeset.cpp
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devicesobsolete/base/public \
-                     $(DEPTH)/components/devicesobsolete/download/public \
                      $(DEPTH)/components/job/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \

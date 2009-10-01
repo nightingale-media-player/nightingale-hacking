@@ -49,8 +49,8 @@
 #include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbIDevice.h>
+#include <sbIDeviceLibrary.h>
 #include <sbIDeviceManager.h>
-#include <sbIDownloadDevice.h>
 #include <sbILibraryFactory.h>
 #include <sbILibraryManager.h>
 #include <sbILibraryResource.h>
@@ -1026,6 +1026,24 @@ sbLocalDatabaseLibrary::DeleteDatabaseItem(const nsAString& aGuid)
 }
 
 /**
+ * Determins if the library is a device library
+ */
+static PRBool
+IsDeviceLibrary(sbILibrary * aLibrary)
+{
+  nsresult rv;
+  nsCOMPtr<sbIMediaItem> libraryAsItem = do_QueryInterface(aLibrary);
+  if (!libraryAsItem) {
+    return PR_FALSE;
+  }
+
+  nsString innderDeviceLibraryGuid;
+  rv = libraryAsItem->GetProperty
+                              (NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
+                               innderDeviceLibraryGuid);
+  return NS_SUCCEEDED(rv) && !innderDeviceLibraryGuid.IsEmpty();
+}
+/**
  * \brief
  */
 nsresult
@@ -1051,13 +1069,14 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
     do_QueryInterface(properties, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  nsCOMPtr<sbILibrary> oldLibrary;
+  rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // If the item doesn't have a library property add it
   nsString existingGuid, sourceGuid;
   rv = properties->GetPropertyValue(PROP_LIBRARY, existingGuid);
   if (rv == NS_ERROR_NOT_AVAILABLE) {
-    nsCOMPtr<sbILibrary> oldLibrary;
-    rv = aMediaItem->GetLibrary(getter_AddRefs(oldLibrary));
-    NS_ENSURE_SUCCESS(rv, rv);
 
     rv = oldLibrary->GetGuid(sourceGuid);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1174,6 +1193,14 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
       NS_ENSURE_SUCCESS(rv, rv);
     }
 
+    // If we're copying from the device, Hide the item till the copy is
+    // complete. Code processing the read request will unhide.
+    PRBool const isCopyingFromDevice = IsDeviceLibrary(oldLibrary);
+    if (isCopyingFromDevice) {
+      mutableProperties->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                        NS_LITERAL_STRING("1"));
+    }
+
     // CreateMediaItem usually notify listeners that an item was added to the
     // media list. That's not what we want in this case because our callers
     // (Add and OnEnumeratedItem) will notify instead.
@@ -1182,6 +1209,9 @@ sbLocalDatabaseLibrary::AddItemToLocalDatabase(sbIMediaItem* aMediaItem,
                          getter_AddRefs(newItem));
     mPreventAddedNotification = PR_FALSE;
     NS_ENSURE_SUCCESS(rv, rv);
+    if (isCopyingFromDevice) {
+      SubmitCopyRequest(aMediaItem, newItem);
+    }
   }
 
   newItem.swap(*_retval);
@@ -2544,19 +2574,6 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
   rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_NAMED_LITERAL_STRING(PROP_LIBRARY, SB_PROPERTY_ORIGINLIBRARYGUID);
-  NS_NAMED_LITERAL_STRING(PROP_ITEM, SB_PROPERTY_ORIGINITEMGUID);
-
-  nsString sourceLibraryGUID;
-  if (aProperties) {
-    aProperties->GetPropertyValue(PROP_LIBRARY, sourceLibraryGUID);
-  }
-
-  nsString sourceGUID;
-  if (aProperties) {
-    aProperties->GetPropertyValue(PROP_ITEM, sourceGUID);
-  }
-
   // Set up properties for the new item
   rv = SetDefaultItemProperties(mediaItem, aProperties);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -2570,112 +2587,19 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
     NotifyListenersItemAdded(SB_IMEDIALIST_CAST(this), mediaItem, length);
   }
 
-  if (!sourceLibraryGUID.IsEmpty() && !sourceGUID.IsEmpty()) {
-    SubmitCopyRequest(sourceLibraryGUID, sourceGUID, mediaItem);
-  }
   *aWasCreated = PR_TRUE;
   NS_ADDREF(*_retval = mediaItem);
   return NS_OK;
 }
 
 /**
- * Returns the music folder URI to copy music to when copying from the device.
- * This will be either the managed folder or the download folder.
+ * Submits a REQUEST_COPY to the device so that the device can copy the physical
+ * file or resource
  */
 nsresult
-sbLocalDatabaseLibrary::FindMusicFolderURI(nsIURI ** aMusicFolderURI) {
-
-  NS_ENSURE_ARG_POINTER(aMusicFolderURI);
-
-  nsresult rv;
-
-  nsCOMPtr<sbIMediaManagementService> mms =
-    do_GetService(SB_MEDIAMANAGEMENTSERVICE_CONTRACTID, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = mms->GetManagedFolder(aMusicFolderURI);
-  if (NS_SUCCEEDED(rv)) {
-    return NS_OK;
-  }
-  // If the managed media service isn't operational use the download folder
-  if (rv == NS_ERROR_NOT_AVAILABLE) {
-    static char const SB_DOWNLOAD_FOLDER_PREF[] =
-      "songbird.download.music.folder";
-    NS_NAMED_LITERAL_STRING(SB_DOWNLOAD_DEVICE_CATEGORY,
-                            "Songbird Download Device");
-
-    nsCOMPtr<nsIPrefBranch> folderPrefs =
-      do_ProxiedGetService("@mozilla.org/preferences-service;1",
-                           &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsISupportsString> supportsString;
-    // Get the download folder
-    rv = folderPrefs->GetComplexValue(SB_DOWNLOAD_FOLDER_PREF,
-                                      NS_GET_IID(nsISupportsString),
-                                      getter_AddRefs(supportsString));
-
-    nsCOMPtr<nsILocalFile> folderPathFile;
-
-    // If we didn't get it from the prefs ask the download device helper
-    if (NS_SUCCEEDED(rv) && supportsString) {
-      nsString folderPath;
-      rv = supportsString->GetData(folderPath);
-      NS_ENSURE_SUCCESS(rv, rv);
-      folderPathFile = do_CreateInstance(NS_LOCAL_FILE_CONTRACTID, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      rv = folderPathFile->InitWithPath(folderPath);
-      NS_ENSURE_SUCCESS(rv, rv);
-    } else {
-      // use default value; if any of this fails, the function doesn't work at all
-      nsCOMPtr<sbIDownloadDeviceHelper> deviceHelper =
-        do_GetService("@songbirdnest.com/Songbird/DownloadDeviceHelper;1", &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-      nsCOMPtr<nsIFile> downloadDir;
-      rv = deviceHelper->GetDefaultMusicFolder(getter_AddRefs(downloadDir));
-      NS_ENSURE_SUCCESS(rv, rv);
-      folderPathFile = do_QueryInterface(downloadDir, &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    rv = sbLibraryUtils::GetFileContentURI(folderPathFile,
-                                           aMusicFolderURI);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-  }
-  else {
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-/**
- * Submits a REQUEST_COPY to the device to allow the device to make a copy
- */
-nsresult
-sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
-                                          nsAString const & aSourceItemGUID,
+sbLocalDatabaseLibrary::SubmitCopyRequest(sbIMediaItem * aSourceItem,
                                           sbIMediaItem * aDestinationItem) {
   nsresult rv;
-
-  // Get the source library from the library manager
-  nsCOMPtr<sbILibraryManager> libraryManager =
-    do_GetService("@songbirdnest.com/Songbird/library/Manager;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<sbILibrary> library;
-  rv = libraryManager->GetLibrary(aSourceLibraryGUID,
-                                  getter_AddRefs(library));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the item from the source library
-  nsCOMPtr<sbIMediaItem> sourceItem;
-  rv = library->GetItemByGuid(aSourceItemGUID, getter_AddRefs(sourceItem));
-  if (NS_FAILED(rv)) {
-    // On error don't submit
-    return NS_OK;
-  }
 
   // Ask the device manager for the device the item belongs to
   nsCOMPtr<sbIDeviceManager2> deviceManager =
@@ -2683,7 +2607,7 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIDevice> device;
-  rv = deviceManager->GetDeviceForItem(sourceItem, getter_AddRefs(device));
+  rv = deviceManager->GetDeviceForItem(aSourceItem, getter_AddRefs(device));
   if (NS_FAILED(rv) || !device) {
     // Errors are OK, means there's no device and we don't need to do
     // a copy request to the device
@@ -2703,18 +2627,8 @@ sbLocalDatabaseLibrary::SubmitCopyRequest(nsAString const & aSourceLibraryGUID,
                                              NS_ISUPPORTS_CAST(sbILibrary*, this));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIURI> folderURI;
-  rv = FindMusicFolderURI(getter_AddRefs(folderURI));
-  if (NS_FAILED(rv)) {
-    // If we can't find it then just forget copying no reason to error
-    return NS_OK;
-  }
-  // Hide the item till the copy is complete. Code processing the
-  // read request will unhide.
-  aDestinationItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                NS_LITERAL_STRING("1"));
   rv = requestParams->SetPropertyAsInterface(NS_LITERAL_STRING("data"),
-                                             folderURI);
+                                             aSourceItem);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = device->SubmitRequest(sbIDevice::REQUEST_READ, requestParams);

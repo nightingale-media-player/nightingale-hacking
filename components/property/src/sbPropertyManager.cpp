@@ -1195,6 +1195,13 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                     PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  //Denote that the library is a device library (internal use)
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DEVICE_LIBRARY_GUID),
+                    EmptyString(),
+                    stringBundle, PR_FALSE, PR_FALSE, 0, PR_FALSE,
+                    PR_TRUE, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // iTunes Guid (for import/export from/to iTunes)
   rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_ITUNES_GUID),
                     EmptyString(),

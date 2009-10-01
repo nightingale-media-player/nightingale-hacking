@@ -126,6 +126,10 @@
 #define SB_PROPERTY_CREATED_FIRSTRUN_SMARTPLAYLISTS "http://songbirdnest.com/data/1.0#createdFirstRunSmartPlaylists"
 #define SB_PROPERTY_DOWNLOAD_MEDIALIST_GUID   "http://songbirdnest.com/data/1.0#downloadMediaListGUID"
 
+// GUID of the device library. Present if the library is the one created for a
+// device library
+#define SB_PROPERTY_DEVICE_LIBRARY_GUID       "http://songbirdnest.com/data/1.0#deviceLibraryGuid"
+
 // iTunes Import/export related properties
 #define SB_PROPERTY_ITUNES_GUID "http://songbirdnest.com/data/1.0#iTunesGUID"
 

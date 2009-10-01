@@ -474,7 +474,7 @@ sbCDDevice::GetMediaProperties(nsIArray ** aPropertyList)
       NS_ENSURE_SUCCESS(rv, rv);
 
       nsAutoString durationStr;
-      durationStr.AppendInt(duration);
+      AppendInt(durationStr, duration);
       rv = propList->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_DURATION),
                                     durationStr);
       NS_ENSURE_SUCCESS(rv, rv);
@@ -783,10 +783,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
                     aRequest->batchIndex,
                     aRequest->batchCount);
 
-  nsCOMPtr<sbIMediaItem> source;
-  rv = sbLibraryUtils::GetItemInLibrary(aRequest->item,
-                                        mDeviceLibrary,
-                                        getter_AddRefs(source));
+  nsCOMPtr<sbIMediaItem> source = do_QueryInterface(aRequest->data, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   sbStatusPropertyValue value;
@@ -827,52 +824,18 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   rv = source->GetContentSrc(getter_AddRefs(sourceContentURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Retrieve the path to where the destination library wants copied media
-  nsCOMPtr<nsIURI> musicFolderURI =
-    do_QueryInterface(aRequest->data, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURL> musicFolderURL = do_QueryInterface(musicFolderURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Get the default filename to use for this file.
-  nsCString filename;
-  rv = GenerateDefaultFilename(aRequest->item, filename);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = musicFolderURL->SetFileName(filename);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCString extension;
-  rv = sbDeviceUtils::GetTranscodedFileExtension(mTranscodeProfile, extension);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = musicFolderURL->SetFileExtension(extension);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Prevent notification while we set the content source on the item
-  sbCDAutoIgnoreItem autoUnignore(this, destination);
-
-  // Update the content URL now that it's been transcoded
-  rv = destination->SetContentSrc(musicFolderURL);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURL> regeneratedURL;
   // Retrieve the managed path if the media management service is enabled.
-  rv = RegenerateMediaURL(destination, getter_AddRefs(regeneratedURL));
+  nsCOMPtr<nsIURI> musicFolderURI;
+  rv = RegenerateMediaURL(destination, getter_AddRefs(musicFolderURI));
+  NS_ENSURE_SUCCESS(rv, rv);
 
-  if (rv != NS_ERROR_NOT_AVAILABLE) {
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // We've got the file management URL so set the musicFolderURL to it
-    // for the watch folder ignore logic below
-    musicFolderURL = regeneratedURL;
-
+  // Ignore item update block
+  {
     // Prevent notification while we set the content source on the item
     sbCDAutoIgnoreItem autoUnignore(this, destination);
 
-    // Update the content URL to point to where the item will be organized.
-    rv = destination->SetContentSrc(regeneratedURL);
+    // Update the content URI to point to where the item will be organized.
+    rv = destination->SetContentSrc(musicFolderURI);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -897,7 +860,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCString URISpec;
-  rv = musicFolderURL->GetSpec(URISpec);
+  rv = musicFolderURI->GetSpec(URISpec);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Setup the ignore rule w/ the watch folder service.
@@ -906,7 +869,7 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   NS_ENSURE_TRUE(autoWFPathIgnore, NS_ERROR_OUT_OF_MEMORY);
 
   nsCOMPtr<nsIFileURL> destFileURL =
-    do_QueryInterface(musicFolderURL, &rv);
+    do_QueryInterface(musicFolderURI, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIFile> destFileSpec;
