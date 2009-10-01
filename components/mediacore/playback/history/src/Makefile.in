@@ -38,6 +38,7 @@ CPP_SRCS = sbPlaybackHistoryEntry.cpp \
 
 CPP_EXTRA_INCLUDES = $(DEPTH)/components/dbengine/public \
                      $(topsrcdir)/components/dbengine/src \
+                     $(DEPS_DIR)/sqlite/$(SB_CONFIGURATION)/include \
                      $(topsrcdir)/components/include \
                      $(DEPTH)/components/mediacore/base/public \
                      $(DEPTH)/components/mediacore/playback/history/public \
