@@ -38,4 +38,6 @@
 #define RH_ERROR_SET_KEY             9
 #define RH_ERROR_INVALID_ARG         10
 
+#define RH_SUCCESS_NOACTION          128
+
 #endif /* _REGHELPER_ERROR_H__ */

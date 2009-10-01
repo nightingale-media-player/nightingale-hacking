@@ -249,39 +249,13 @@ Function InstallCdrip
 
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
 
-   ; Refcounting for the driver we're dropping in
-   Push $1
-   Push $2
-   StrCpy $2 "SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs"
-   StrCpy $1 "$SYSDIR\${CdripApiDll}"
-   ReadRegDWORD $0 HKLM $2 $1
-   IntOp $0 $0 + 1
-   WriteRegDWORD HKLM $2 $1 $0
-   StrCpy $1 "$SYSDIR\Drivers\${CdripApiSYS}"
-   ReadRegDWORD $0 HKLM $2 $1
-   IntOp $0 $0 + 1
-   WriteRegDWORD HKLM $2 $1 $0
-   Pop $2
-   Pop $1
-
    SetOutPath $SYSDIR
    File ${CdripApiDll}
    SetOutPath $SYSDIR\Drivers
    File ${CdripApiSYS}
 
-   ; Set up the root key for Gearworks itself
-   StrCpy $0 "SYSTEM\CurrentControlSet\Services\GEARAspiWDM"
- 
-   WriteRegStr HKLM $0 "DisplayName" "GEAR ASPI Filter Driver"
-   WriteRegDWORD HKLM $0 "ErrorControl" 1
-   WriteRegStr HKLM $0 "Group" "filter"
-   WriteRegExpandStr HKLM $0 "ImagePath" "System32\Drivers\${CdripApiSYS}"
-   WriteRegDWORD HKLM $0 "Start" 3
-   WriteRegDWORD HKLM $0 "Type" 1
-
    ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
-   ; Temporary hack to ensure drivers are loaded
-   SetRebootFlag true
+
    ;SectionEnd
 FunctionEnd
 

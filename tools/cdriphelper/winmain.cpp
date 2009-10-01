@@ -74,7 +74,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
   if (mode == "install") {
     OutputDebugString(_T("In Install mode"));
-    result = RegInstallKeys();
+    result = InstallAspiDriver();
 
   } else if (mode == "upgrade") {
     OutputDebugString(_T("In Upgrade mode"));
@@ -82,7 +82,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
   } else if ("remove" == mode) {
     OutputDebugString(_T("In Remove mode"));
-    result = RegRemoveKeys();
+    result = RemoveAspiDriver();
+
+  } else if ("repair" == mode) {
+    OutputDebugString(_T("In Repair mode"));
+    result = RH_ERROR_NOIMPL;
 
   } else {
     OutputDebugString(_T("Unknown mode"));

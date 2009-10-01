@@ -22,12 +22,14 @@
  *=END SONGBIRD GPL
  */
 
+#include <algorithm>
+#include <vector>
+
 #include <windows.h>
 #include <tchar.h>
 #include <shellapi.h>
+#include <shlobj.h>
 #include <stdlib.h>
-#include <vector>
-#include <algorithm>
 
 #include "reghandlers.h"
 #include "stringconvert.h"
@@ -35,23 +37,39 @@
 #include "error.h"
 #include "regparse.h"
 
-/* WARNING: live ammunition... */
-
-LPCTSTR KEY_DEVICE_CDROM = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
-
-LPCTSTR KEY_DEVICE_TAPE = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{6D807884-7D21-11CF-801C-08002BE10318}");
-
-LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{CE5939AE-EBDE-11D0-B181-0000F8753EC4}");
-
-/* end live ammunition... */
-
-/* Testing Keys */
-
-// LPCTSTR KEY_DEVICE_CDROM = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
-// LPCTSTR KEY_DEVICE_TAPE = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey2");
-// LPCTSTR KEY_DEVICE_MEDIACHANGER = _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
-
-/* End Testing Keys */
+#ifndef RH_REGKEY_ENGAGE_SAFETY
+  /* WARNING: live ammunition... */
+  LPCTSTR KEY_SHARED_DLLS =
+    _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\SharedDLLs");
+  LPCTSTR STR_API_DLL_NAME =
+  _T("GEARAspi.dll");
+  LPCTSTR STR_API_SYS_NAME =
+   _T("Drivers\\GEARAspiWDM.sys");
+  LPCTSTR STR_SERVICE_NAME =
+   _T("GEARAspiWDM");
+  LPCTSTR KEY_DEVICE_CDROM =
+   _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
+  LPCTSTR KEY_DEVICE_TAPE =
+   _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{6D807884-7D21-11CF-801C-08002BE10318}");
+  LPCTSTR KEY_DEVICE_MEDIACHANGER =
+   _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{CE5939AE-EBDE-11D0-B181-0000F8753EC4}");
+#else
+  /* Safety is on; testing keys... */
+  LPCTSTR KEY_SHARED_DLLS =
+   _T("SOFTWARE\\Songbird\\gearworks-test\\SharedDLLs");
+  LPCTSTR STR_API_DLL_NAME =
+   _T("GEARAspi.dll");
+  LPCTSTR STR_API_SYS_NAME =
+   _T("Drivers\\GEARAspiWDM.sys");
+  LPCTSTR STR_SERVICE_NAME =
+   _T("GEARAspiWDM");
+  LPCTSTR KEY_DEVICE_CDROM =
+   _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
+  LPCTSTR KEY_DEVICE_TAPE =
+   _T("SOFTWARE\\Songbird\\gearworks-test\\dkey2");
+  LPCTSTR KEY_DEVICE_MEDIACHANGER =
+   _T("SOFTWARE\\Songbird\\gearworks-test\\dkey3");
+#endif
 
 LPCTSTR DRIVER_SUBKEY_STR = _T("UpperFilters");
 
@@ -63,11 +81,12 @@ static const size_t DEFAULT_REG_BUFFER_SZ = 4096;
 // The second arguments to these constructors look scary, but they're just
 // non-function call versions of _tcslen()
 
+#define ARRAY_LENGTH(x) (sizeof(x)/sizeof(x)[0])
 static const regValue_t GEARWORKS_REG_VALUE(GEARWORKS_REG_VALUE_STR,
- sizeof(GEARWORKS_REG_VALUE_STR)/sizeof(GEARWORKS_REG_VALUE_STR[0]) - 1);
+ ARRAY_LENGTH(GEARWORKS_REG_VALUE_STR) - 1);
 
 static const regValue_t REDBOOK_REG_VALUE(REDBOOK_REG_VALUE_STR,
- sizeof(REDBOOK_REG_VALUE_STR)/sizeof(REDBOOK_REG_VALUE_STR[0]) - 1);
+ ARRAY_LENGTH(REDBOOK_REG_VALUE_STR) - 1);
 
 LPTSTR GetSystemErrorMessage(DWORD errNum) {
   LPTSTR returnString = NULL; 
@@ -88,17 +107,73 @@ LPTSTR GetSystemErrorMessage(DWORD errNum) {
   }
 }
 
-BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message) {
-  BOOL callSucceeded = (rv == ERROR_SUCCESS);
-
-  if (!callSucceeded) {
+void DoLogMessage(LONG rv, LPCTSTR message) {
     LPTSTR errStr = GetSystemErrorMessage(rv);
     DebugMessage("%S: %S", message, errStr);
     LocalFree(errStr);
-  }
+}
+
+BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message) {
+  BOOL callSucceeded = (rv == ERROR_SUCCESS);
+
+  if (!callSucceeded)
+    DoLogMessage(rv, message);
+
   return callSucceeded;
 }
 
+int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
+  HRESULT hr;
+  LONG ret;
+  const size_t pathStorage = MAX_PATH + 1;
+
+  TCHAR sysDir[pathStorage], nameBuffer[pathStorage];
+
+  hr = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, sysDir);
+
+  if (FAILED(hr) || hr == S_FALSE) {
+    DoLogMessage(hr, _T("Get system directory"));
+    return RH_ERROR_QUERY_KEY;
+  }
+
+  memset(sysDir, 0, pathStorage); // never trust
+
+  HKEY hKeySharedDLLs;
+  ret = RegCreateKey(HKEY_LOCAL_MACHINE, KEY_SHARED_DLLS, &hKeySharedDLLs);
+  if (!LoggedSUCCEEDED(ret, _T("Open SharedDLLs key")))
+    return RH_ERROR_OPENKEY;
+
+  // adjust the refcount
+  int len = _sntprintf(nameBuffer, MAX_PATH, _T("%s\\%s"), sysDir, dllName);
+  if (len < 0) {
+    DebugMessage("Failed to get DLL name");
+    return RH_ERROR_QUERY_VALUE;
+  }
+  DWORD dllCount, bufferSize = sizeof(DWORD);
+  ret = RegQueryValueEx(hKeySharedDLLs, nameBuffer, NULL, NULL,
+                        (LPBYTE)&dllCount, &bufferSize);
+  if (ret == ERROR_FILE_NOT_FOUND) {
+    dllCount = 0;
+  } else if (!LoggedSUCCEEDED(ret, _T("Get dll refcount"))) {
+    return RH_ERROR_QUERY_VALUE;
+  }
+  dllCount += value;
+  if (dllCount != 0) {
+    ret = RegSetValueEx(hKeySharedDLLs, nameBuffer, NULL, REG_DWORD,
+                        (LPBYTE)&dllCount, sizeof(DWORD));
+  } else {
+    ret = RegDeleteValue(hKeySharedDLLs, nameBuffer);
+  }
+  if (!LoggedSUCCEEDED(ret, _T("Set dll refcount")))
+    return RH_ERROR_SETVALUE;
+
+  RegCloseKey(hKeySharedDLLs);
+
+  if (result)
+    *result = value;
+
+  return RH_OK;
+}
 
 int AddFilteredDriver(LPCTSTR regSubKey,
                       const regValue_t &newKey,
@@ -247,14 +322,57 @@ int AddFilteredDriver(LPCTSTR regSubKey,
   return RH_OK;
 }
 
-int RegInstallKeys(void) {
+int InstallAspiDriver(void) {
   int finalRv = RH_OK;
 
+  int rv;
+  
+  rv = AdjustDllUseCount(STR_API_DLL_NAME, 1);
+  if (rv != RH_OK)
+    return rv;
+  rv = AdjustDllUseCount(STR_API_SYS_NAME, 1);
+  if (rv != RH_OK)
+    return rv;
+
+  // register the service
+  { /* scope */
+    SC_HANDLE hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+    if (!hSCM) {
+      DoLogMessage(GetLastError(), _T("Open service control manager"));
+      return RH_ERROR_OPENKEY;
+    }
+    TCHAR filepath[MAX_PATH+1];
+    _sntprintf(filepath, MAX_PATH, _T("System32\\%s"), STR_API_SYS_NAME);
+    SC_HANDLE hService = CreateService(hSCM,
+                                       STR_SERVICE_NAME,
+                                       _T("GEAR ASPI Filter Driver"),
+                                       SC_MANAGER_ALL_ACCESS,
+                                       SERVICE_KERNEL_DRIVER,
+                                       SERVICE_DEMAND_START,
+                                       SERVICE_ERROR_NORMAL,
+                                       filepath,
+                                       _T("PnP Filter"),
+                                       NULL,
+                                       NULL,
+                                       NULL,
+                                       NULL);
+    if (hService) {
+      CloseServiceHandle(hService);
+    } else {
+      DWORD lastError = GetLastError();
+      if (lastError != ERROR_SERVICE_EXISTS) {
+        DoLogMessage(GetLastError(), _T("Create service"));
+        return RH_ERROR_SET_KEY;
+      }
+    }
+    CloseServiceHandle(hSCM);
+  } /* end scope */
+
   DebugMessage("Begin installation of key %S", KEY_DEVICE_CDROM);
-  int rv = AddFilteredDriver(KEY_DEVICE_CDROM,
-                             GEARWORKS_REG_VALUE,
-                             driverLoc_t(driverLoc_t::INSERT_AFTER_NODE,
-                                         &REDBOOK_REG_VALUE));
+  rv = AddFilteredDriver(KEY_DEVICE_CDROM,
+                         GEARWORKS_REG_VALUE,
+                         driverLoc_t(driverLoc_t::INSERT_AFTER_NODE,
+                                     &REDBOOK_REG_VALUE));
   DebugMessage("Installation of key %S had rv %d", KEY_DEVICE_CDROM, rv);
 
   if (rv != RH_OK)
@@ -282,8 +400,43 @@ int RegInstallKeys(void) {
   return finalRv;
 }
 
-int RegRemoveKeys(void) {
+int RemoveAspiDriver(void) {
   int result = RH_OK;
+  
+  int dllCount, sysCount;
+  result = AdjustDllUseCount(STR_API_DLL_NAME, -1, &dllCount);
+  if (result != RH_OK)
+    return result;
+  result = AdjustDllUseCount(STR_API_SYS_NAME, -1, &sysCount);
+  if (result != RH_OK)
+    return result;
+
+  if (dllCount > 0 || sysCount > 0) {
+    // some other folks are using the driver
+    return RH_SUCCESS_NOACTION;
+  }
+
+  // unregister the service
+  { /* scope */
+    SC_HANDLE hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+    if (!hSCM) {
+      DoLogMessage(GetLastError(), _T("Open service control manager"));
+      return RH_ERROR_OPENKEY;
+    }
+    SC_HANDLE hService = OpenService(hSCM,
+                                     STR_SERVICE_NAME,
+                                     SC_MANAGER_ALL_ACCESS);
+    if (hService) {
+      DeleteService(hService);
+    } else {
+      DWORD lastError = GetLastError();
+      if (lastError != ERROR_INVALID_NAME) {
+        DoLogMessage(GetLastError(), _T("Delete service"));
+        return RH_ERROR_SET_KEY;
+      }
+    }
+    CloseServiceHandle(hSCM);
+  } /* end scope */
 
   std::list<LPCTSTR> regKeysToMunge;
   regKeysToMunge.push_back(KEY_DEVICE_CDROM);

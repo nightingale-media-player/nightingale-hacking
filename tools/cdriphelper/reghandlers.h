@@ -39,8 +39,8 @@ struct driverLoc_t {
 
 LPTSTR GetSystemErrorMessage(DWORD errNum);
 BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message);
-int RegInstallKeys(void);
-int RegRemoveKeys(void);
+int InstallAspiDriver(void);
+int RemoveAspiDriver(void);
 int AddFilteredDriver(LPCTSTR k, const regValue_t &nk, driverLoc_t l); 
 
 #endif /* _REGHANDLER_ERROR_H__ */

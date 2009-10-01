@@ -139,30 +139,11 @@ Function un.RemoveCdripRegistryKeys
    ReadRegStr $0 HKLM $RootAppRegistryKey ${CdripRegKey}
 
    ${If} $0 == ${TRUE}
-      ExecWait '"$INSTDIR\${CdripHelperEXE}" remove'
-      ; Delete the Gearworks driver, if refcount reaches zero
-      Push $1
-      Push $2
-      StrCpy $2 "SOFTWARE\Microsoft\Windows\CurrentVersion\SharedDLLs"
-      StrCpy $1 "$SYSDIR\${CdripApiDll}"
-      ReadRegDWORD $0 HKLM $2 $1
-      IntOp $0 $0 - 1
-      WriteRegDWORD HKLM $2 $1 $0
-      IntCmp $0 0 0 SkipRemoveDll SkipRemoveDll
-      Delete /REBOOTOK "$SYSDIR\${CdripApiDll}"
-      DeleteRegValue HKLM $2 $1
-   SkipRemoveDll:
-      StrCpy $1 "$SYSDIR\Drivers\${CdripApiSYS}"
-      ReadRegDWORD $0 HKLM $2 $1
-      IntOp $0 $0 - 1
-      WriteRegDWORD HKLM $2 $1 $0
-      IntCmp $0 0 0 SkipRemoveService SkipRemoveService
-      DeleteRegKey HKLM "SYSTEM\CurrentControlSet\Services\GEARAspiWDM"
-      Delete /REBOOTOK "$SYSDIR\Drivers\${CdripApiSYS}"
-      DeleteRegValue HKLM $2 $1
-   SkipRemoveService:
-      Pop $2
-      Pop $1
+      ExecWait '"$INSTDIR\${CdripHelperEXE}" remove' $0
+      ${If} $0 = 0
+         Delete /REBOOTOK "$SYSDIR\${CdripApiDll}"
+         Delete /REBOOTOK "$SYSDIR\Drivers\${CdripApiSYS}"
+      ${EndIf}
    ${EndIf}
 
    StrCpy $0 "$RootAppRegistryKey\${CdripRegKey}"
