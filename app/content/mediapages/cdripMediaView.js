@@ -55,15 +55,21 @@ const RIP_SETTINGS_BUTTON           = CDRIP_BASE + "settings-button";
 const RIP_SPACER                    = CDRIP_BASE + "spacer";
 
 const RIP_STATUS_HBOX               = CDRIP_BASE + "actionstatus-hbox";
+
+const RIP_STATUS_IMAGE_PRE_SPACER   = CDRIP_BASE + "statusimage-pre-spacer";
 const RIP_STATUS_IMAGE_HBOX         = CDRIP_BASE + "actionstatus-image-box";
 const RIP_STATUS_IMAGE              = CDRIP_BASE + "status-image";
-const RIP_STATUS_PRE_LOGO_SPACER    = CDRIP_BASE + "logo-pre-spacer";
-const RIP_STATUS_LOGO_HBOX          = CDRIP_BASE + "actionstatus-logo-box";
-const RIP_STATUS_LOGO               = CDRIP_BASE + "provider-logo";
-const RIP_STATUS_POST_LOGO_SPACER   = CDRIP_BASE + "logo-post-spacer";
+const RIP_STATUS_IMAGE_POST_SPACER  = CDRIP_BASE + "statusimage-post-spacer";
+
 const RIP_STATUS_LABEL_HBOX         = CDRIP_BASE + "actionstatus-label-box";
 const RIP_STATUS_LABEL              = CDRIP_BASE + "status-label";
-const RIP_STATUS_PRE_BUTTONS_SPACER = CDRIP_BASE + "buttons-pre-spacer";
+
+const RIP_STATUS_LOGO_PRE_SPACER    = CDRIP_BASE + "logo-pre-spacer";
+const RIP_STATUS_LOGO_HBOX          = CDRIP_BASE + "actionstatus-logo-box";
+const RIP_STATUS_LOGO               = CDRIP_BASE + "provider-logo";
+const RIP_STATUS_LOGO_POST_SPACER   = CDRIP_BASE + "logo-post-spacer";
+
+const RIP_STATUS_BUTTONS_PRE_SPACER = CDRIP_BASE + "buttons-pre-spacer";
 const RIP_STATUS_BUTTON_HBOX        = CDRIP_BASE + "status-buttons";
 const RIP_STATUS_RIP_CD_BUTTON      = CDRIP_BASE + "rip-cd-button";
 const RIP_STATUS_STOP_RIP_BUTTON    = CDRIP_BASE + "stop-rip-button";
@@ -79,6 +85,14 @@ const CDRIP_PLAYLIST                = CDRIP_BASE + "playlist";
 const LOGO_DISPLAY_MIN_TIMER        = 5000;
 // Delay before displaying lookup message
 const LOOKUP_MESSAGE_DELAY_TIMER    = 1000;
+
+//------------------------------------------------------------------------------
+// Misc internal constants
+
+const FINAL_TRANSCODE_STATUS_SUCCESS = 0;
+const FINAL_TRANSCODE_STATUS_PARTIAL = 1;
+const FINAL_TRANSCODE_STATUS_FAILED  = 2;
+
 
 //------------------------------------------------------------------------------
 // CD rip view controller
@@ -114,6 +128,7 @@ window.cdripController =
 
     // Update the header information
     this._updateHeaderView();
+    this._toggleRipStatus(false);
 
     this._logoTimer = Cc["@mozilla.org/timer;1"]
                         .createInstance(Ci.nsITimer);
@@ -127,7 +142,7 @@ window.cdripController =
     }
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
-    
+
     // Disable player controls & load the playlist
     this._updateRipSettings();
     this._togglePlayerControls(true);
@@ -162,7 +177,7 @@ window.cdripController =
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_INITIATED:
         this._toggleLookupNotification(true);
         break;
-      
+
       // CD LOOKUP COMPLETE
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_COMPLETED:
         this._toggleLookupNotification(false);
@@ -182,6 +197,10 @@ window.cdripController =
         if (device.id.toString() == this._deviceID) {
           this._updateHeaderView();
         }
+        break;
+
+      case Ci.sbICDDeviceEvent.EVENT_CDRIP_COMPLETED:
+        this._toggleRipStatus(true);
         break;
 
       default:
@@ -216,16 +235,7 @@ window.cdripController =
   },
 
   _toggleLookupNotification: function
-                             cdripController_lookupNotification(show) {
-    var actionStatusBox = document.getElementById(RIP_STATUS_HBOX);
-    var ripImageBox = document.getElementById(RIP_STATUS_IMAGE_HBOX);
-    var preLogoSpacer = document.getElementById(RIP_STATUS_PRE_LOGO_SPACER);
-    var logoImageBox = document.getElementById(RIP_STATUS_LOGO_HBOX);
-    var postLogoSpacer = document.getElementById(RIP_STATUS_POST_LOGO_SPACER);
-    var ripLabelBox = document.getElementById(RIP_STATUS_LABEL_HBOX);
-    var preButtonsSpacer = document.getElementById(RIP_STATUS_PRE_BUTTONS_SPACER);
-    var buttonsBox = document.getElementById(RIP_STATUS_BUTTON_HBOX);
-
+                             cdripController_toggleLookupNotification(show) {
     if (show) {
       var manager = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
                       .getService(Ci.sbIMetadataLookupManager);
@@ -234,92 +244,129 @@ window.cdripController =
       var providerName = provider.name;
       var providerURL = provider.infoURL;
 
-      this._lookupDelayTimer.init(this, LOOKUP_MESSAGE_DELAY_TIMER,
+      // Arm the lookup delay timer now.
+      this._lookupDelayTimer.init(this,
+                                  LOOKUP_MESSAGE_DELAY_TIMER,
                                   Ci.nsITimer.TYPE_ONE_SHOT);
 
       if (providerLogo) {
-        preLogoSpacer.style.visibility = "visible";
-        this._setImageSrc(RIP_STATUS_LOGO, providerLogo);
-        if (providerName)
-          this._setToolTip(RIP_STATUS_LOGO,
-                           SBFormattedString("cdrip.mediaview.status.lookup_provided_by",
-                                             [providerName]));
-        if (providerURL)
-          this._setLogoURLListener(RIP_STATUS_LOGO, providerURL);
-        logoImageBox.style.visiblity = "visible";
-        postLogoSpacer.style.visibility = "visible";
+        this._showLookupVendorInfo(providerLogo, providerName, providerURL);
 
-        this._logoTimer.init(this, LOGO_DISPLAY_MIN_TIMER,
-                         Ci.nsITimer.TYPE_ONE_SHOT);
+        // Arm the logo timer.
+        this._logoTimer.init(this,
+                             LOGO_DISPLAY_MIN_TIMER,
+                             Ci.nsITimer.TYPE_ONE_SHOT);
         this.logoTimerEnabled = true;
-      } else {
+      }
+      else {
         // For now, nothing is visible
-        actionStatusBox.style.visibility = "collapse";
+        this._hideElement(RIP_STATUS_HBOX);
       }
 
-      buttonsBox.style.visibility = "collapse";
-    } else {
-      actionStatusBox.style.visibility = "visible";
-
+      // Hide the action buttons while the lookup is going.
+      this._hideElement(RIP_STATUS_BUTTON_HBOX);
+    }
+    else {
+      // If the logo timer isn't enabled, hide all of the lookup vendor
+      // logo stuff.
       if (!this.logoTimerEnabled) {
-        preLogoSpacer.style.visibility = "collapse";
-        logoImageBox.style.visiblity = "collapse";
-        this._setImageSrc(RIP_STATUS_LOGO, "");
-        postLogoSpacer.style.visibility = "collapse";
+        this._hideLookupVendorInfo();
       }
 
       this._toggleLookupLabel(false);
 
-      preButtonsSpacer.style.visibility = "collapse";
-      buttonsBox.style.visibility = "visible";
+      // Reset the action buttons.
+      this._showElement(RIP_STATUS_BUTTON_HBOX);
+      this._hideElement(RIP_STATUS_BUTTONS_PRE_SPACER);
     }
 
     this._updateHeaderView();
   },
 
-  _toggleLookupLabel: function
-                             cdripController_lookupLabel(show) {
-    var actionStatusBox = document.getElementById(RIP_STATUS_HBOX);
-    var ripImageBox = document.getElementById(RIP_STATUS_IMAGE_HBOX);
-    var ripLabelBox = document.getElementById(RIP_STATUS_LABEL_HBOX);
-    var preButtonsSpacer = document.getElementById(RIP_STATUS_PRE_BUTTONS_SPACER);
-
+  _toggleLookupLabel: function cdripController_lookupLabel(show) {
     if (show) {
-      actionStatusBox.style.visibility = "visible";
+      this._showElement(RIP_STATUS_HBOX);
+      this._showElement(RIP_STATUS_IMAGE_HBOX);
 
       this._setImageSrc(RIP_STATUS_IMAGE,
                         "chrome://songbird/skin/base-elements/icon-loading-large.png");
-      ripImageBox.style.visibility = "visible";
-
       this._setLabelValue(RIP_STATUS_LABEL,
                           SBString("cdrip.mediaview.status.lookup"));
-      ripLabelBox.style.visibility = "visible";
 
-      preButtonsSpacer.style.visibility = "visible";
-    } else {
-      ripImageBox.style.visibility = "collapse";
+      this._showElement(RIP_STATUS_LABEL_HBOX);
+      this._showElement(RIP_STATUS_BUTTONS_PRE_SPACER);
+    }
+    else {
+      this._hideElement(RIP_STATUS_IMAGE_HBOX);
+      this._hideElement(RIP_STATUS_LABEL_HBOX);
+
       this._setImageSrc(RIP_STATUS_IMAGE, "");
-
-      ripLabelBox.style.visibility = "collapse";
       this._setLabelValue(RIP_STATUS_LABEL, "");
 
-      preButtonsSpacer.style.visibility = "collapse";
+      this._hideElement(RIP_STATUS_BUTTONS_PRE_SPACER);
     }
 
     this._updateHeaderView();
   },
 
-  _updateHeaderView: function cdripController__updateHeaderView() {
+  _toggleRipStatus: function cdripController_toggleRipStatus(aShouldShow) {
+    if (aShouldShow) {
+      // Unhide the status elements.
+      this._showElement(RIP_STATUS_IMAGE_PRE_SPACER);
+      this._showElement(RIP_STATUS_IMAGE_POST_SPACER);
+      this._showElement(RIP_STATUS_LABEL_HBOX);
+      this._showElement(RIP_STATUS_IMAGE_HBOX);
+      this._showElement(RIP_STATUS_BUTTONS_PRE_SPACER);
+
+      // Update the status label and image based on the final
+      // transcode job status.
+      var status = this._getLastTranscodeStatus();
+      var statusLabel = "";
+      var statusImageSrc = "";
+      switch (status) {
+        case FINAL_TRANSCODE_STATUS_SUCCESS:
+          statusLabel = "cdrip.mediaview.status.rip_success";
+          statusImageSrc = "chrome://songbird/skin/device/icon-complete.png";
+          break;
+
+        case FINAL_TRANSCODE_STATUS_FAILED:
+          statusLabel = "cdrip.mediaview.status.rip_failed";
+          statusImageSrc = "chrome://songbird/skin/device/icon-warning.png";
+          break;
+
+        case FINAL_TRANSCODE_STATUS_PARTIAL:
+          statusLabel = "cdrip.mediaview.status.rip_partial";
+          statusImageSrc = "chrome://songbird/skin/device/icon-warning.png";
+          break;
+
+        default:
+          Cu.reportError("Unhandled transcode state!");
+      }
+
+      this._setLabelValue(RIP_STATUS_LABEL, SBString(statusLabel));
+      this._setImageSrc(RIP_STATUS_IMAGE, statusImageSrc);
+    }
+    else {
+      this._hideElement(RIP_STATUS_LABEL_HBOX);
+      this._hideElement(RIP_STATUS_IMAGE_HBOX);
+      this._hideElement(RIP_STATUS_BUTTONS_PRE_SPACER);
+      this._hideElement(RIP_STATUS_IMAGE_PRE_SPACER);
+      this._hideElement(RIP_STATUS_IMAGE_POST_SPACER);
+    }
+  },
+
+  _updateHeaderView: function cdripController_updateHeaderView() {
     switch (this._device.state) {
       // STATE_LOOKINGUPCD
       case Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD:
         // Ignore this state since it is handled by the events in the
         // onDeviceEvent function.
         break;
-      
+
       case Ci.sbIDevice.STATE_TRANSCODE:
         // Currently ripping
         this._showSettingsView();
+        this._toggleRipStatus(false);
 
         // Display only the Stop Rip button.
         this._hideElement(RIP_STATUS_RIP_CD_BUTTON);
@@ -355,7 +402,7 @@ window.cdripController =
     var bitrate = 0;
 
     var profiles = this._findSupportedProfiles();
-    
+
     if (profileId) {
       profile = this._profileFromProfileId(profileId, profiles);
       bitrate = parseInt(this._device.getPreference(
@@ -512,7 +559,7 @@ window.cdripController =
       this._device.eject();
     }
   },
-  
+
   _startRip: function cdripController_startRip() {
     if (this._device) {
       sbCDDeviceUtils.doCDRip(this._device);
@@ -589,6 +636,38 @@ window.cdripController =
     document.getElementById(aElementId).setAttribute('tooltiptext', aValue);
   },
 
+  _showLookupVendorInfo: function
+                              cdripController_showLookupLogo(aProviderLogoSrc,
+                                                             aProviderName,
+                                                             aProviderURL) {
+    if (aProviderLogoSrc) {
+      this._showElement(RIP_STATUS_LOGO_PRE_SPACER);
+      this._showElement(RIP_STATUS_LOGO_HBOX);
+      this._showElement(RIP_STATUS_LOGO_POST_SPACER);
+      this._setImageSrc(RIP_STATUS_LOGO, aProviderLogoSrc);
+
+      // Set the tooltip on the provider logo if provided.
+      if (aProviderName) {
+        this._setToolTip(
+            RIP_STATUS_LOGO,
+            SBFormattedString("cdrip.mediaview.status.lookup_provided_by",
+              [aProviderName]));
+      }
+
+      // Set the click handler URL if the URL is also provided.
+      if (aProviderURL) {
+        this._setLogoURLListener(RIP_STATUS_LOGO, aProviderURL);
+      }
+    }
+  },
+
+  _hideLookupVendorInfo: function cdripController_hideLookupVendorInfo() {
+    this._hideElement(RIP_STATUS_LOGO_PRE_SPACER);
+    this._hideElement(RIP_STATUS_LOGO_HBOX);
+    this._hideElement(RIP_STATUS_LOGO_POST_SPACER);
+    this._setImageSrc(RIP_STATUS_LOGO, "");
+  },
+
   _setLogoURLListener: function cdripController_setLogoURLListener(aElementId, aURL) {
     var element = document.getElementById(aElementId);
     if (element) {
@@ -599,14 +678,14 @@ window.cdripController =
       }, false);
     }
   },
-  
+
   _loadPlaylist: function cdripController_loadPlaylist() {
     this._mediaListView = this._getMediaListView();
     if (!this._mediaListView) {
       Cu.reportError("Unable to get media list view for device.");
       return;
     }
-  
+
     this._playlist = document.getElementById(CDRIP_PLAYLIST);
 
     // Clear the playlist filters. This is a filter-free view.
@@ -615,12 +694,12 @@ window.cdripController =
     // Set a flag so sb-playlist won't try to writeback metadata to files
     this._mediaListView.mediaList.setProperty(
       "http://songbirdnest.com/data/1.0#dontWriteMetadata", 1);
-    
+
     // Make sure we can not drag items from the cd to libraries or playlists
     this._playlist.disableDrag = true;
     // Make sure we can not drop items to the cd rip library
     this._playlist.disableDrop = true;
-    
+
     // Setup our columns for the CD View
     if (!this._mediaListView.mediaList.getProperty(SBProperties.columnSpec)) {
       this._mediaListView.mediaList.setProperty(SBProperties.columnSpec,
@@ -652,7 +731,7 @@ window.cdripController =
     if (!this._device) {
       return null;
     }
-    
+
     // Get the libraries for device
     var libraries = this._device.content.libraries;
     if (libraries.length < 1) {
@@ -667,18 +746,18 @@ window.cdripController =
       Cu.reportError("Unable to get library for device: " + this._device.id);
       return null;
     }
-    
+
     // Create a view for the library and return it.
     return lib.createView();
   },
-  
+
   /**
    * Configure the playlist filter lists
    */
   _clearFilterLists: function cdripController_clearFilterLists() {
     // Don't use filters for this version. We'll clear them out.
     var filters = this._mediaListView.cascadeFilterSet;
-    
+
     for (var i = filters.length - 1; i > 0; i--) {
      filters.remove(i);
     }
@@ -690,6 +769,60 @@ window.cdripController =
     }
   },
 
+  //----------------------------------------------------------------------------
+  // Transcode job status helpers
+
+  _getLastTranscodeStatus: function cdripController_getLastTranscodeStatus() {
+    if (!this._device) {
+      return 0;
+    }
+
+    // Check for any tracks that have a failed status ('4')
+    var deviceLibrary = this._getDeviceLibrary();
+    var errorCount = 0;
+    try {
+      // Get all the did not successfully ripped tracks
+      var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
+                                                         "4|100");
+      errorCount = rippedItems.length;
+    } catch (err) {}
+
+    var status = FINAL_TRANSCODE_STATUS_SUCCESS;
+    if (errorCount > 0) {
+      if (errrCount == deviceLibrary.length)
+        status = FINAL_TRANSCODE_STATUS_FAILED;
+      else
+        status = FINAL_TRANSCODE_STATUS_PARTIAL;
+    }
+
+    // XXXkreeger TESTING HACK:
+    status = FINAL_TRANSCODE_STATUS_SUCCESS;
+    return status;
+  },
+
+  _getDeviceLibrary: function sbCDRipServicePaneService__getDeviceLibrary() {
+    if (!this._device) {
+      return null;
+    }
+
+    // Get the libraries for device
+    var libraries = this._device.content.libraries;
+    if (libraries.length < 1) {
+      // Oh no, we have no libraries
+      Cu.reportError("Device " + aDevice.id + " has no libraries!");
+      return null;
+    }
+
+    // Get the requested library
+    var deviceLibrary = libraries.queryElementAt(0, Ci.sbIMediaList);
+    if (!deviceLibrary) {
+      Cu.reportError("Unable to get library for device: " + aDevice.id);
+      return null;
+    }
+
+    return deviceLibrary;
+  },
+
   /**
    * Get the device from the id passed in on the query string.
    */
@@ -698,7 +831,7 @@ window.cdripController =
     var queryMap = this._parseQueryString();
 
     this._deviceID = queryMap["device-id"];
-   
+
     // Get the device for this media view
     var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);

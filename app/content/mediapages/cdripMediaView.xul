@@ -105,14 +105,30 @@
         <spacer id="sb-cdrip-spacer" flex="1" />
 
         <!-- RIP ACTION AND STATUS -->
-        <hbox id="sb-cdrip-actionstatus-hbox" class="sb-cdrip-header-hbox"
+        <hbox id="sb-cdrip-actionstatus-hbox"
+              class="sb-cdrip-header-hbox"
               pack="center">
+
+          <!-- Status Image -->
+          <spacer id="sb-cdrip-statusimage-pre-spacer" width="10" />
+
           <hbox id="sb-cdrip-actionstatus-image-box">
             <vbox pack="center">
               <image id="sb-cdrip-status-image" />
             </vbox>
           </hbox>
 
+          <spacer id="sb-cdrip-statusimage-post-spacer" width="4" />
+
+          <!-- Status Label -->
+          <hbox id="sb-cdrip-actionstatus-label-box">
+            <vbox pack="center">
+              <label id="sb-cdrip-status-label"
+                     class="sb-cdrip-status-label" />
+            </vbox>
+          </hbox>
+
+          <!-- Provider Logo -->
           <spacer id="sb-cdrip-logo-pre-spacer" width="6" />
 
           <hbox id="sb-cdrip-actionstatus-logo-box">
@@ -123,12 +139,7 @@
 
           <spacer id="sb-cdrip-logo-post-spacer" width="4" />
 
-          <hbox id="sb-cdrip-actionstatus-label-box">
-            <vbox pack="center">
-              <label id="sb-cdrip-status-label" />
-            </vbox>
-          </hbox>
-
+          <!-- Action buttions -->
           <spacer id="sb-cdrip-buttons-pre-spacer" width="20" />
 
           <!-- CD device buttons -->
@@ -151,7 +162,7 @@
 
     <vbox id="cdrip-playlist-content"
           flex="1">
-      <sb-playlist id="sb-cdrip-playlist" 
+      <sb-playlist id="sb-cdrip-playlist"
           flex="1"
           persist="column-list column-widths"
           editable="false"

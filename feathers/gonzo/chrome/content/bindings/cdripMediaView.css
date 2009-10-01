@@ -57,6 +57,10 @@ label.sb-cdrip-settings-label {
   margin: 0;
 }
 
+label.sb-cdrip-status-label {
+  font-weight: bold;
+}
+
 #sb-cdrip-actionstatus-image {
   margin-left: 10px;
   margin-right: 20px;
@@ -68,10 +72,10 @@ label.sb-cdrip-settings-label {
 }
 
 #sb-cdrip-status-image {
-  max-width: 48px;
-  max-height: 48px;
-  width: 48px;
-  height: 48px;
+  max-width: 32px;
+  max-height: 32px;
+  width: 32px;
+  height: 32px;
 }
 
 .sb-cdrip-link {

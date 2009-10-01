@@ -1056,6 +1056,10 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   if (aRequest->batchIndex == aRequest->batchCount) {
     mTranscodeProfile = nsnull;
 
+    // Dispatch the event to notify listeners that we've finished the rip job.
+    CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
+                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
     // Check the preferences to see if we should eject
     if (mPrefAutoEject) {
       // Since we successfully ripped all selected tracks and the user has

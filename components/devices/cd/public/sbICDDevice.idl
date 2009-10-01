@@ -125,6 +125,12 @@ interface sbICDDeviceEvent : sbIDeviceEvent
   // @brief CD metadata has been applied to the device's items.
   //
   const unsigned long EVENT_CDLOOKUP_METADATA_COMPLETE = EVENT_CLIENT_DEFINED + 3;
+
+  //
+  // @brief CD rip has completed.
+  //
+  const unsigned long EVENT_CDRIP_COMPLETED = EVENT_CLIENT_DEFINED + 4;
+
   //
   // @brief Request constants
   //
