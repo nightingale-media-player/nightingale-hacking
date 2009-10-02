@@ -525,7 +525,7 @@ var TrackEditor = {
     if (this.mediaListView.mediaList.getProperty(
           "http://songbirdnest.com/data/1.0#dontWriteMetadata") == 1)
     {
-      return;
+      return true;
     }
 
     // Add all items that need writing into an array 
