@@ -841,11 +841,13 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   TRACE(("sbMetadataJob::ReadAlbumArtwork - starting\n"));
   nsresult rv;
 
-  nsCOMPtr<sbIAlbumArtFetcherSet> artFetcher =
-    do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  rv = artFetcher->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_LOCAL);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!mArtFetcher) {
+    mArtFetcher =
+      do_CreateInstance("@songbirdnest.com/Songbird/album-art-fetcher-set;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mArtFetcher->SetFetcherType(sbIAlbumArtFetcherSet::TYPE_LOCAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
   
   // Recycle the existing handler to avoid re-reading the file
   nsCOMPtr<nsIMutableArray> sources =
@@ -856,14 +858,14 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   NS_ENSURE_SUCCESS(rv, rv);
   rv = sources->AppendElement(handler, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = artFetcher->SetAlbumArtSourceList(sources);
+  rv = mArtFetcher->SetAlbumArtSourceList(sources);
   NS_ENSURE_SUCCESS(rv, rv);
   
   // Attempt to fetch some art
   nsCOMPtr<sbIMediaItem> item;
   rv = aJobItem->GetMediaItem(getter_AddRefs(item));
   NS_ENSURE_SUCCESS(rv, rv);
-  rv = artFetcher->FetchAlbumArtForTrack(item, this);
+  rv = mArtFetcher->FetchAlbumArtForTrack(item, this);
   NS_ENSURE_SUCCESS(rv, rv);
   
   TRACE(("sbMetadataJob::ReadAlbumArtwork - finished rv %08x\n",

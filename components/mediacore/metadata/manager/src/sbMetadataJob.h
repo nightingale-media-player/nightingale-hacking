@@ -60,6 +60,7 @@ typedef std::set<nsString> sbStringSet;
 
 class sbMetadataJobItem;
 class sbIMutablePropertyArray;
+class sbIAlbumArtFetcherSet;
 
 /**
  * \class sbMetadataJob
@@ -322,6 +323,9 @@ private:
   // Indicates that we've started a library batch, and need
   // to close it before we complete
   PRBool                                   mInLibraryBatch;
+
+  // Cached art fetcher instance
+  nsCOMPtr<sbIAlbumArtFetcherSet>          mArtFetcher;
   
   nsCOMPtr<nsIStringBundle>                mStringBundle;
 };
