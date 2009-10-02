@@ -1141,6 +1141,8 @@ function sbLastFm_requestMoreRadio(onSuccess, onFailure) {
 			var extensions = tracks[i].getElementsByTagName("extension")[0];
 			mediaItem.setProperty(PROPERTY_ARTISTPAGE,
 				extensions.getElementsByTagName("artistpage")[0].textContent);
+			mediaItem.setProperty(PROPERTY_TRACKAUTH,
+				extensions.getElementsByTagName("trackauth")[0].textContent);
 
 			self.radio_mediaList.add(mediaItem);
 		}
@@ -1500,6 +1502,8 @@ function sbLastFm_scrobble(aEntries) {
   // create the scrobble list in the reverse order
   var scrobble_list = [];
   if (entry_list.length > 0) {
+    var banCount = 0;
+
     // collect the playlist history entries into objects that can be sent
     // to last.fm's audioscrobbler api
     for (var i=entry_list.length-1; i>=0; i--) {
@@ -1514,10 +1518,11 @@ function sbLastFm_scrobble(aEntries) {
       var rating = '';
       if (entry_list[i].hasAnnotation(ANNOTATION_LOVE)) {
         rating = 'L';
-      } else {
-        // this isn't allowed except for radio
-        // rating = 'B';
+      } else if (entry_list[i].hasAnnotation(ANNOTATION_BAN)){
+        rating = 'B';
+        banCount++;
       }
+
       var source;
       var track_auth = entry_list[i].item.getProperty(PROPERTY_TRACKAUTH);
       if (track_auth) {
@@ -1544,13 +1549,11 @@ function sbLastFm_scrobble(aEntries) {
                 artist: entry.item.getProperty(SBProperties.artistName)
               }, function response(success, xml) { });
           } else if (entry.hasAnnotation(ANNOTATION_BAN)) {
-            self.apiCall('track.ban', {
-                track: entry.item.getProperty(SBProperties.trackName),
-                artist: entry.item.getProperty(SBProperties.artistName)
-              }, function response(success, xml) { });
+            // Do nothing, this is handled in trackBan()
           }
         }
-        self.playcount += entry_list.length;
+        // Only non-banned songs are counted in overall play count
+        self.playcount += (entry_list.length-banCount);
         self.listeners.each(function(l) { l.onProfileUpdated(); });
         self.error = null;
         // increment metrics
@@ -1604,6 +1607,23 @@ function sbLastFm_removeTag(aMediaItem, aTagName) {
 	});
 }
 
+// Note: this web services call will eventually be deprecated and rely
+// strictly on the scrobble (see http://www.last.fm/api/submissions)
+sbLastFm.prototype.trackBan =
+function sbLastFm_trackBan(aMediaItem) {
+	if (aMediaItem.getProperty(SBProperties.artistName) != null && 
+		aMediaItem.getProperty(SBProperties.trackName) != null)
+	{
+		// Only trigger web services call, scrobble requires
+		// additional minimum requirements and is handled in
+		// scrobble()
+		this.apiCall('track.ban', {
+				track: aMediaItem.getProperty(SBProperties.trackName),
+				artist: aMediaItem.getProperty(SBProperties.artistName)
+		}, function response(success, xml) { });
+	}
+}
+
 // love and ban
 sbLastFm.prototype.loveBan =
 function sbLastFm_loveBan(aMediaItem, aLove) {
@@ -1622,6 +1642,7 @@ function sbLastFm_loveBan(aMediaItem, aLove) {
 	  } else {
 		  dump("deleting this track\n");
 		  delete this.lovedTracks[trackName + "@@" + artistName];
+		  this.trackBan(aMediaItem);
 	  }
   }
   this.listeners.each(function(l) {
