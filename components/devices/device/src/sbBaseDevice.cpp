@@ -841,7 +841,7 @@ nsresult sbBaseDevice::RemoveRequest(const int aType,
 
 typedef std::vector<nsRefPtr<sbBaseDevice::TransferRequest> > sbBaseDeviceTransferRequests;
 
-nsresult sbBaseDevice::ClearRequests(const nsAString &aDeviceID)
+nsresult sbBaseDevice::ClearRequests()
 {
   nsresult rv;
   sbBaseDeviceTransferRequests requests;

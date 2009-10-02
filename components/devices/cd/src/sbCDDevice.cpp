@@ -498,9 +498,7 @@ sbCDDevice::ReqDisconnect()
 {
   LOG(("%s", __FUNCTION__));
   // Clear all remaining requests.
-  char deviceIDStr[NSID_LENGTH];
-  mDeviceID.ToProvidedString(deviceIDStr);
-  nsresult rv = ClearRequests(NS_ConvertASCIItoUTF16(deviceIDStr));
+  nsresult rv = ClearRequests();
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Remove object references.
@@ -766,12 +764,8 @@ sbCDDevice::CancelRequests()
     }
   }
 
-  // Convert the device ID to a string.
-  char deviceIDString[NSID_LENGTH];
-  mDeviceID.ToProvidedString(deviceIDString);
-
   // Clear requests.
-  rv = ClearRequests(NS_ConvertASCIItoUTF16(deviceIDString, NSID_LENGTH-1));
+  rv = ClearRequests();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

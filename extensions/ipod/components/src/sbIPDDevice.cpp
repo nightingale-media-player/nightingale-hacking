@@ -352,12 +352,8 @@ sbIPDDevice::CancelRequests()
 {
   nsresult rv;
 
-  // Convert the device ID to a string.
-  char deviceIDString[NSID_LENGTH];
-  mDeviceID.ToProvidedString(deviceIDString);
-
   // Clear requests.
-  rv = ClearRequests(NS_ConvertASCIItoUTF16(deviceIDString, NSID_LENGTH-1));
+  rv = ClearRequests();
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;

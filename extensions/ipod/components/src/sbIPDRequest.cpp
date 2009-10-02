@@ -1007,9 +1007,7 @@ void
 sbIPDDevice::ReqDisconnect()
 {
   // Clear all remaining requests.
-  char deviceIDStr[NSID_LENGTH];
-  mDeviceID.ToProvidedString(deviceIDStr);
-  ClearRequests(NS_ConvertASCIItoUTF16(deviceIDStr));
+  ClearRequests();
 
   // Remove object references.
   mReqAddedEvent = nsnull;

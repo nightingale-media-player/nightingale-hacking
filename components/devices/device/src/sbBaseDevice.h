@@ -250,7 +250,7 @@ public:
                          sbIMediaList* aList = nsnull);
 
   /* clear the request queue */
-  nsresult ClearRequests(const nsAString &aDeviceID);
+  nsresult ClearRequests();
 
   /**
    * Return in aRequestType the request type of the request batch specified by

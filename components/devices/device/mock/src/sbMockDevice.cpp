@@ -465,15 +465,7 @@ nsresult sbMockDevice::ProcessRequest()
 
 NS_IMETHODIMP sbMockDevice::CancelRequests()
 {
-  nsID* id;
-  nsresult rv = GetId(&id);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  char idString[NSID_LENGTH];
-  id->ToProvidedString(idString);
-  NS_Free(id);
-  
-  return ClearRequests(NS_ConvertASCIItoUTF16(idString));
+  return ClearRequests();
 }
 
 NS_IMETHODIMP sbMockDevice::Eject()
