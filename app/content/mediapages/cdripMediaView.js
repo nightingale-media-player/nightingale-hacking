@@ -795,8 +795,6 @@ window.cdripController =
         status = FINAL_TRANSCODE_STATUS_PARTIAL;
     }
 
-    // XXXkreeger TESTING HACK:
-    status = FINAL_TRANSCODE_STATUS_SUCCESS;
     return status;
   },
 
