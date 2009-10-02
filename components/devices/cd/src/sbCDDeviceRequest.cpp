@@ -1009,6 +1009,13 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
     destFileSpec->Remove(PR_FALSE);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
                      "Unable to remove file after error while ripping");
+
+    // If this was the last item in the batch, report this rip as done.
+    if (aRequest->batchIndex == aRequest->batchCount) {
+      CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
+                             sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+    }
+
     return NS_ERROR_FAILURE;
   }
 

@@ -35,6 +35,7 @@ Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/ArrayConverter.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
 Cu.import("resource://app/jsmodules/PlatformUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
 const CDRIPNS = 'http://songbirdnest.com/rdf/servicepane/cdrip#';
 const SPNS = 'http://songbirdnest.com/rdf/servicepane#';
@@ -457,12 +458,16 @@ sbCDRipServicePaneService.prototype = {
     // Check for any tracks that have a failed status
     var deviceLibrary = this._getDeviceLibrary(aDevice);
     var errorCount = 0;
+
     try {
       // Get all the did not successfully ripped tracks
       var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
-                                                         "4|100");
-      errorCount = rippedItems.length;  
-    } catch (err) {}
+                                                         "3|100");
+      errorCount = rippedItems.length;
+    }
+    catch (err) {
+      Cu.reportError("ERROR GETTING TRANSCODE ERROR COUNT " + err);
+    }
     
     return (errorCount > 0);
   },
@@ -528,14 +533,6 @@ sbCDRipServicePaneService.prototype = {
       return;
     }
     
-    // TODO:
-    // We need to do a check to ensure that the media inserted is readable and
-    // an audio disc
-    // if (!device.readable ||
-    //     device.getDiscType() != Ci.sbICDDevice.AUDIO_DISC_TYPE) {
-    //   return;
-    // }
-
     // Add a cd rip node in the service pane.
     var devNode = this._deviceServicePaneSvc.createNodeForDevice2(device);
     devNode.setAttributeNS(CDRIPNS, "DeviceId", devId);

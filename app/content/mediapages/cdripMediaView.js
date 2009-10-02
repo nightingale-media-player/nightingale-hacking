@@ -29,6 +29,7 @@ Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
@@ -783,13 +784,19 @@ window.cdripController =
     try {
       // Get all the did not successfully ripped tracks
       var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
-                                                         "4|100");
+                                                         "3|100");
       errorCount = rippedItems.length;
-    } catch (err) {}
+    }
+    catch (err) {
+      Cu.reportError("ERROR GETTING TRANSCODE ERROR COUNT " + err);
+    }
 
     var status = FINAL_TRANSCODE_STATUS_SUCCESS;
     if (errorCount > 0) {
-      if (errrCount == deviceLibrary.length)
+      // Compare the error count to how many tracks were supposed to be ripped.
+      var shouldRipItems =
+        deviceLibrary.getItemsByProperty(SBProperties.shouldRip, "1");
+      if (errorCount == shouldRipItems.length)
         status = FINAL_TRANSCODE_STATUS_FAILED;
       else
         status = FINAL_TRANSCODE_STATUS_PARTIAL;
