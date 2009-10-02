@@ -129,6 +129,10 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
 
   TCHAR sysDir[pathStorage], nameBuffer[pathStorage];
 
+  // Ensure these are 0s from the start...
+  memset(sysDir, 0, pathStorage);
+  memset(nameBuffer, 0, pathStorage);
+
   hr = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, sysDir);
 
   if (FAILED(hr) || hr == S_FALSE) {
@@ -136,7 +140,7 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
     return RH_ERROR_QUERY_KEY;
   }
 
-  memset(sysDir, 0, pathStorage); // never trust
+  sysDir[MAX_PATH] = _T('\0'); // never trust 
 
   HKEY hKeySharedDLLs;
   ret = RegCreateKey(HKEY_LOCAL_MACHINE, KEY_SHARED_DLLS, &hKeySharedDLLs);
