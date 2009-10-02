@@ -437,6 +437,27 @@ public:
   nsresult RegenerateMediaURL(sbIMediaItem *aItem, nsIURI **_retval);
 
   /**
+   * Used to generate a filename for an item. This is virtual so different
+   * devices can choose to name the file differently. Eventually this logic
+   * should be moved to a more centralized place.
+   * \param aItem The item we're generating a filename for
+   * \param aFilename The filename that was generated. This is can be an escaped
+   *                  filename so you may need to unescape or use SetFilename
+   *                  on a URL object.
+   */
+  virtual nsresult GenerateFilename(sbIMediaItem * aItem,
+                                    nsACString & aFilename);
+
+  /**
+   * Generates a URI for the item
+   * \param aItem The item we're generating a URI for
+   * \param aFilename The URI that was generated
+   */
+  nsresult
+  RegenerateFromDownloadFolder(sbIMediaItem * aItem,
+                               nsIURI ** aURI);
+
+  /**
    * Returns true if the current request should be aborted.
    */
   PRBool IsRequestAborted()

@@ -1823,12 +1823,55 @@ nsresult sbBaseDevice::CreateAndDispatchEvent(PRUint32 aType,
   return DispatchEvent(deviceEvent, aAsync, nsnull);
 }
 
+nsresult
+sbBaseDevice::GenerateFilename(sbIMediaItem * aItem,
+                               nsACString & aFilename) {
+  nsresult rv;
+  nsCString filename;
+  nsCString extension;
+
+  nsCOMPtr<nsIURI> sourceContentURI;
+  rv = aItem->GetContentSrc(getter_AddRefs(sourceContentURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> sourceContentURL = do_QueryInterface(sourceContentURI, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    rv = sourceContentURL->GetFileName(filename);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = sourceContentURL->GetFileExtension(extension);
+    NS_ENSURE_SUCCESS(rv, rv);
+  } else {
+    // Last ditch effort to figure out the filename/extension
+    nsCString spec;
+    rv = sourceContentURI->GetSpec(spec);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRInt32 lastSlash = spec.RFind("/");
+    if (lastSlash == -1) {
+      lastSlash = 0;
+    }
+    PRInt32 lastPeriod = spec.RFind(".");
+    if (lastPeriod == -1 || lastPeriod < lastSlash) {
+      lastPeriod = spec.Length();
+    }
+    filename = Substring(spec, lastSlash + 1, lastPeriod - lastSlash - 1);
+    extension = Substring(spec, lastPeriod + 1, spec.Length() - lastPeriod - 1);
+  }
+  aFilename = filename;
+  if (!extension.IsEmpty()) {
+    aFilename += NS_LITERAL_CSTRING(".");
+    aFilename += extension;
+  }
+  return NS_OK;
+}
+
 /**
  * Returns the URI for the item based on the download folder
  */
-static nsresult
-RegenerateFromDownloadFolder(sbIMediaItem * aItem,
-                             nsIURI ** aURI)
+nsresult
+sbBaseDevice::RegenerateFromDownloadFolder(sbIMediaItem * aItem,
+                                           nsIURI ** aURI)
 {
   nsresult rv;
 
@@ -1870,50 +1913,22 @@ RegenerateFromDownloadFolder(sbIMediaItem * aItem,
     downloadFolderFile = do_QueryInterface(downloadDir, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
   nsCOMPtr<nsIURI> uri;
   rv = sbLibraryUtils::GetFileContentURI(downloadFolderFile,
                                          getter_AddRefs(uri));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIURI> sourceContentURI;
-  rv = aItem->GetContentSrc(getter_AddRefs(sourceContentURI));
+  // Have to use nsIURL's SetFileName on filename in case it's escaped
+  nsCString filename;
+  rv = GenerateFilename(aItem, filename);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCString filename;
-  nsCString extension;
-  nsCOMPtr<nsIURL> sourceContentURL = do_QueryInterface(sourceContentURI, &rv);
-  if (NS_SUCCEEDED(rv)) {
-    rv = sourceContentURL->GetFileName(filename);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = sourceContentURL->GetFileExtension(extension);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-  } else {
-    // Last ditch effort to figure out the filename/extension
-    nsCString spec;
-    rv = sourceContentURI->GetSpec(spec);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRInt32 lastSlash = spec.RFind("/");
-    if (lastSlash == -1) {
-      lastSlash = 0;
-    }
-    PRInt32 lastPeriod = spec.RFind(".");
-    if (lastPeriod == -1) {
-      lastPeriod = spec.Length();
-    }
-    filename = Substring(spec, lastSlash + 1, lastPeriod - lastSlash - 1);
-    extension = Substring(spec, lastPeriod + 1, spec.Length() - lastPeriod - 1);
-  }
   nsCOMPtr<nsIURL> downloadFolderURL =
     do_QueryInterface(uri, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = downloadFolderURL->SetFileName(filename);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = downloadFolderURL->SetFileExtension(extension);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = CallQueryInterface(downloadFolderURL, aURI);

@@ -720,8 +720,8 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
 }
 
 nsresult
-sbCDDevice::GenerateDefaultFilename(sbIMediaItem *aItem,
-                                    nsACString & aOutFilename)
+sbCDDevice::GenerateFilename(sbIMediaItem *aItem,
+                             nsACString & aOutFilename)
 {
   NS_ENSURE_ARG_POINTER(aItem);
 
@@ -828,6 +828,15 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   nsCOMPtr<nsIURI> musicFolderURI;
   rv = RegenerateMediaURL(destination, getter_AddRefs(musicFolderURI));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> musicFolderURL = do_QueryInterface(musicFolderURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCString extension;
+  rv = sbDeviceUtils::GetTranscodedFileExtension(mTranscodeProfile, extension);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  musicFolderURL->SetFileExtension(extension);
 
   // Ignore item update block
   {
