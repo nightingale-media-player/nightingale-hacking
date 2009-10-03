@@ -232,7 +232,7 @@ function SBDoFirstRun() {
       var mediaListView =
           LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
       gBrowser.loadMediaListViewWithFlags(mediaListView,
-                                          gBrowser.selectedTab,
+                                          gBrowser.mediaTab,
                                           null,
                                           nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
 
@@ -267,7 +267,7 @@ function SBDoFirstRun() {
         const nsIWebNavigation = Components.interfaces.nsIWebNavigation;
         var mediaListView = LibraryUtils.createStandardMediaListView(LibraryUtils.mainLibrary);
         gBrowser.loadMediaListViewWithFlags(mediaListView,
-                                            gBrowser.selectedTab,
+                                            gBrowser.mediaTab,
                                             null,
                                             nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
       }
