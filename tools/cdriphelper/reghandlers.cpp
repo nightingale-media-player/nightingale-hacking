@@ -133,7 +133,11 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   memset(sysDir, 0, pathStorage);
   memset(nameBuffer, 0, pathStorage);
 
-  hr = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, sysDir);
+  hr = SHGetFolderPath(NULL,               // HWND owner
+                       CSIDL_SYSTEM,       // folder (system32)
+                       NULL,               // access token
+                       SHGFP_TYPE_CURRENT, // flags
+                       sysDir);            // [out] path
 
   if (FAILED(hr) || hr == S_FALSE) {
     DoLogMessage(hr, _T("Get system directory"));
@@ -154,8 +158,12 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
     return RH_ERROR_QUERY_VALUE;
   }
   DWORD dllCount, bufferSize = sizeof(DWORD);
-  ret = RegQueryValueEx(hKeySharedDLLs, nameBuffer, NULL, NULL,
-                        (LPBYTE)&dllCount, &bufferSize);
+  ret = RegQueryValueEx(hKeySharedDLLs,    // key
+                        nameBuffer,        // name
+                        NULL,              // reserved
+                        NULL,              // type (ignored)
+                        (LPBYTE)&dllCount, // [out] data
+                        &bufferSize);      // sizeof(data)
   if (ret == ERROR_FILE_NOT_FOUND) {
     dllCount = 0;
   } else if (!LoggedSUCCEEDED(ret, _T("Get dll refcount"))) {
@@ -163,8 +171,12 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   }
   dllCount += value;
   if (dllCount != 0) {
-    ret = RegSetValueEx(hKeySharedDLLs, nameBuffer, NULL, REG_DWORD,
-                        (LPBYTE)&dllCount, sizeof(DWORD));
+    ret = RegSetValueEx(hKeySharedDLLs,
+                        nameBuffer,
+                        NULL,
+                        REG_DWORD,
+                        (LPBYTE)&dllCount,
+                        sizeof(DWORD));
   } else {
     ret = RegDeleteValue(hKeySharedDLLs, nameBuffer);
   }
@@ -340,7 +352,9 @@ int InstallAspiDriver(void) {
 
   // register the service
   { /* scope */
-    SC_HANDLE hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+    SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
+                                   NULL,                  // db (default)
+                                   SC_MANAGER_ALL_ACCESS);
     if (!hSCM) {
       DoLogMessage(GetLastError(), _T("Open service control manager"));
       return RH_ERROR_OPENKEY;
@@ -355,11 +369,11 @@ int InstallAspiDriver(void) {
                                        SERVICE_DEMAND_START,
                                        SERVICE_ERROR_NORMAL,
                                        filepath,
-                                       _T("PnP Filter"),
-                                       NULL,
-                                       NULL,
-                                       NULL,
-                                       NULL);
+                                       _T("PnP Filter"), // load order group
+                                       NULL,             // tag id
+                                       NULL,             // dependencies
+                                       NULL,             // start (logon) name
+                                       NULL);            // password
     if (hService) {
       CloseServiceHandle(hService);
     } else {
@@ -412,8 +426,12 @@ int RemoveAspiDriver(void) {
   if (result != RH_OK)
     return result;
   result = AdjustDllUseCount(STR_API_SYS_NAME, -1, &sysCount);
-  if (result != RH_OK)
+  if (result != RH_OK) {
+    // OMGWTFBBQ we failed to change the second one
+    // let's try to change the first one back (but ignore whether we succeeded)
+    AdjustDllUseCount(STR_API_DLL_NAME, 1);
     return result;
+  }
 
   if (dllCount > 0 || sysCount > 0) {
     // some other folks are using the driver
@@ -422,7 +440,9 @@ int RemoveAspiDriver(void) {
 
   // unregister the service
   { /* scope */
-    SC_HANDLE hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+    SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
+                                   NULL,                  // db (default)
+                                   SC_MANAGER_ALL_ACCESS);
     if (!hSCM) {
       DoLogMessage(GetLastError(), _T("Open service control manager"));
       return RH_ERROR_OPENKEY;
