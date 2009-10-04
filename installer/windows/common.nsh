@@ -60,6 +60,27 @@
 !macroend
 !define GetPathFromRegStr "!insertmacro GetPathFromRegStr"
 
+;
+; Bah; super-complicated function, so let's keep track of our registers here:
+; checkApp:
+;   $0 - result of nsProcess::FindProcess
+;   $1 - result of FindWindow() and KillProcess()
+; 
+; checkAgent:
+;   $0 - result of nsProcess::FindProcess
+;   $4 - space to allocate for the executable name
+;   $5 - negative(strlen($AgentEXE))
+;   $R1 - pBytesReturned from Psapi::EnumProcesses(); also the munged path of
+;         the executable that we match against
+;   $R2 - calculated number of processes returned from Psapi::EnumProcesses()
+;   $R4 - Counter to iterate through R2
+;   $R5 - The PID in the procIterate loop
+;   $R6 - Allocated memory to store the path of the executable
+;   $R7 - Return val from GetModuleFileNameEx 
+;   $R8 - (throw-away) return value of various System::Calls; also the process
+;         handle used to query the path of the executable
+;   $R9 - allocated memory for EnumProcesses()
+
 !macro CloseApp un
 Function ${un}CloseApp
 checkApp:
@@ -101,27 +122,100 @@ checkApp:
 checkAgent:
    ${nsProcess::FindProcess} "${AgentEXE}" $0
 
-   ${If} $0 == 0
-      ReadRegStr $2 HKLM $RootAppRegistryKey "InstallDir" 
-      DetailPrint "${DetailPrintQuitAgent}"
-      ExecWait '$2\${AgentEXE} --kill'
-      DetailPrint "${DetailPrintQuitAppWait}"
-      sleep ${SubApplicationWait}
-      ${nsProcess::FindProcess} "${AgentEXE}" $0
+   ;
+   ; This code largely based upon 
+   ; http://nsis.sourceforge.net/Get_a_list_of_running_processes
+   ;
 
-      ${If} $0 == 0
-         IfSilent exit
-         MessageBox MB_OK|MB_ICONSTOP "${AppKillFailureMessage}"
-         goto exit
+  
+   ; Initialize various loops variables that don't change outside of the loop
+   ; Allocate enough for a unicode string...
+   IntOp $4 ${NSIS_MAX_STRLEN} * 2
+   StrLen $5 ${AgentEXE}
+   IntOp $5 0 - $5
+   ${If} $0 == 0
+      System::Alloc ${NSIS_MAX_STRLEN}
+      Pop $R9
+      System::Call "Psapi::EnumProcesses(i R9, i ${NSIS_MAX_STRLEN}, *i .R1)i .R8"
+      StrCmp $R8 0 procHandleError
+
+      ; Divide by sizeof(DWORD) to get # of processes into $R2
+      IntOp $R2 $R1 / 4 
+
+      ; R4 is our counter variable
+      StrCpy $R4 0 
+
+      procIterate:
+         System::Call "*$R9(i .R5)" ; Get next PID
+         ; break if PID < 0, continue if PID = 0
+         IntCmp $R5 0 procNextIteration procIterateEnd 0 
+
+         ; "Magic" number 1040 is what 
+         ; PROCESS_QUERY_INFORMATION | PROCESS_VM_READ turns out to be; see:
+         ; http://msdn.microsoft.com/en-us/library/ms684880%28VS.85%29.aspx
+         System::Call "Kernel32::OpenProcess(i 1040, i 0, i R5)i .R8"
+         StrCmp $R8 0 procNextIteration
+         System::Alloc $4
+         Pop $R6
+
+         System::Call "Psapi::GetModuleFileNameEx(i R8, i 0, t .R6, i ${NSIS_MAX_STRLEN})i .R7"
+         System::Call "Kernel32::CloseHandle(i R8)"
+         StrCmp $R7 0 procNextIteration
+         ${If} $InstallerMode == "debug"
+            MessageBox MB_OK "GetModuleFileNameEx(pid $R5): rv: $R7, $R6"
+         ${EndIf}
+
+         ; Check to see if the process ($R6, with PID $R5) matches the agent
+         ; string
+
+         StrCpy $R1 $R6 "" $5
+
+         ; Looks like this is our agent...
+         ${If} $R1 == ${AgentEXE}
+            ${If} $InstallerMode == "debug"
+               MessageBox MB_OK "Found ${AgentEXE} process called $R6 with PID $R5"
+            ${EndIf}
+
+            DetailPrint "${DetailPrintQuitAgent}"
+            ExecWait '"$R6" --kill'
+            DetailPrint "${DetailPrintQuitAppWait}"
+            sleep ${SubApplicationWait}
+            ${nsProcess::FindProcess} "${AgentEXE}" $0
+            ${If} $0 == 0
+               IfSilent procIterateExit
+               MessageBox MB_OK|MB_ICONSTOP "${AppKillFailureMessage}"
+               goto procIterateExit
+            ${EndIf}
+            Goto procIterateEnd
+         ${EndIf}
+
+   procNextIteration:
+      System::Free $R6
+      IntOp $R4 $R4 + 1 ; Add 1 to our counter
+      IntOp $R9 $R9 + 4 ; Add sizeof(int) to our buffer address
+ 
+      IntCmp $R4 $R2 procIterateEnd procIterate procIterateEnd
+   procIterateEnd:
+      System::Free $R6
+      System::Free $R9
+      Goto out
+   procIterateExit:
+      System::Free $R6
+      System::Free $R9
+      Goto exit
+   procHandleError:
+      ${If} $InstallerMode == "debug"
+         MessageBox MB_OK "checkAgent: HandleError() called: $R4, $R6, $R5"
       ${EndIf}
+      Goto exit
    ${EndIf}
-   Goto end
+   Goto out
  
 exit:
    ${nsProcess::Unload}
    Quit
 
-end:
+out:
    ${nsProcess::Unload}
 FunctionEnd
 !macroend
