@@ -65,6 +65,10 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
 #XXX Mook : Temporary hack pending bug 7150 (proper static lib)
 CPP_EXTRA_INCLUDES += $(topsrcdir)/components/include \
                       $(NULL)

@@ -111,6 +111,10 @@ DYNAMIC_LIB_STATIC_IMPORTS = \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
 DYNAMIC_LIB_EXTRA_IMPORTS = glib-2.0 \
                             gpod \
                             plds4 \

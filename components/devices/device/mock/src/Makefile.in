@@ -79,6 +79,10 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
 IS_COMPONENT = 1
 
 include $(topsrcdir)/build/rules.mk

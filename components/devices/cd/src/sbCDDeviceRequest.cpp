@@ -32,6 +32,7 @@
 // Songbird imports.
 #include <sbArray.h>
 #include <sbDeviceUtils.h>
+#include <sbFileUtils.h>
 #include <sbIDeviceEvent.h>
 #include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
@@ -838,13 +839,24 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   musicFolderURL->SetFileExtension(extension);
 
+  // Create a unique media file and set it up for auto removal on error.
+  nsCOMPtr<nsIFile> mediaFile;
+  rv = CreateUniqueMediaFile(musicFolderURL,
+                             getter_AddRefs(mediaFile),
+                             getter_AddRefs(musicFolderURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+  sbAutoRemoveFile autoRemoveMediaFile(mediaFile);
+
   // Ignore item update block
   {
     // Prevent notification while we set the content source on the item
     sbCDAutoIgnoreItem autoUnignore(this, destination);
 
     // Update the content URI to point to where the item will be organized.
-    rv = destination->SetContentSrc(musicFolderURI);
+    nsCOMPtr<nsIURI> contentURI;
+    rv = sbLibraryUtils::GetContentURI(musicFolderURI,
+                                       getter_AddRefs(contentURI));
+    rv = destination->SetContentSrc(contentURI);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -958,10 +970,6 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   }
 
   if (listener->IsAborted()) {
-    // If aborted, remove the current file
-    rv = destFileSpec->Remove(PR_FALSE);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "Unable to remove file after aborting ripping");
     return NS_ERROR_ABORT;
   }
 
@@ -1005,10 +1013,6 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   // Check for transcode errors.
   if (status != sbIJobProgress::STATUS_SUCCEEDED) {
-    // If there was an error, remove any partial file
-    destFileSpec->Remove(PR_FALSE);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                     "Unable to remove file after error while ripping");
 
     // If this was the last item in the batch, report this rip as done.
     if (aRequest->batchIndex == aRequest->batchCount) {
@@ -1027,6 +1031,9 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
                                      NS_LITERAL_STRING("0"));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Clear auto-removal of media file.
+  autoRemoveMediaFile.forget();
 
   autoComplete.SetResult(NS_OK);
 

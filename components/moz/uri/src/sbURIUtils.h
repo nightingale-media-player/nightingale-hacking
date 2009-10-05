@@ -9,6 +9,7 @@
 #define SBURIUTILS_H_
 
 #include <nsStringAPI.h>
+#include <nsIFileURL.h>
 #include <nsIURI.h>
 #include <nsNetError.h>
 
@@ -44,4 +45,27 @@ sbGetFileExtensionFromURI(nsIURI* aURI, nsACString& _retval)
 }
 
 
+static inline nsresult
+sbInvalidateFileURLCache(nsIFileURL* aFileURL)
+{
+  NS_ENSURE_ARG_POINTER(aFileURL);
+
+  // Function variables.
+  nsresult rv;
+
+  // Touch the file URL scheme to invalidate the file URL cache.  Some file URL
+  // changes do not invalidate the cache.  For example, changing the file base
+  // name and reading the file URL file object will return a cached file object
+  // that does not contain the new file base name.  Reading and writing back the
+  // URI scheme invalidates the cache.
+  nsCAutoString scheme;
+  rv = aFileURL->GetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = aFileURL->SetScheme(scheme);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
 #endif /* SBURIUTILS_H_ */
+

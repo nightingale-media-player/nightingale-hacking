@@ -137,6 +137,10 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/moz/threads/src/sbMozThreads \
  $(NULL)
 
+# sbMozStreams must come after sbLibraryUtils
+DYNAMIC_LIB_STATIC_IMPORTS += components/moz/streams/src/sbMozStreams \
+                              $(NULL)
+
 ifneq (,$(filter-out linux solaris,$(SB_PLATFORM)))
    DYNAMIC_LIB_EXTRA_IMPORTS += unicharutil_external_s
 else

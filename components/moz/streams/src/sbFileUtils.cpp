@@ -35,8 +35,10 @@
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsNetCID.h>
+#include <nsNetUtil.h>
 
 #include <sbMemoryUtils.h>
+#include <sbProxiedComponentManager.h>
 
 /**
  * Helper functions to open a stream given a file path
@@ -197,5 +199,66 @@ sbConsumeStream(nsIInputStream *stream, PRUint32 maxCount, nsACString &result)
     }
 
     return rv;
+}
+
+inline
+nsCOMPtr<nsIIOService> GetIOService(nsresult & rv)
+{
+  // Get the IO service.
+  if (NS_IsMainThread()) {
+    return do_GetIOService(&rv);
+  }
+  return do_ProxiedGetService(NS_IOSERVICE_CONTRACTID, &rv);
+}
+
+nsresult
+sbNewFileURI(nsIFile* aFile,
+             nsIURI** aURI)
+{
+  NS_ENSURE_ARG_POINTER(aFile);
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsresult rv;
+
+  // Get the IO service.
+  nsCOMPtr<nsIIOService> ioService = GetIOService(rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Note that NewFileURI is broken on Linux when dealing with
+  // file names not in the filesystem charset; see bug 6227
+#if XP_UNIX && !XP_MACOSX
+  nsCOMPtr<nsILocalFile> localFile = do_QueryInterface(aFile, &rv);
+  if (NS_SUCCEEDED(rv)) {
+    // Use the local file persistent descriptor to form a URI spec.
+    nsCAutoString descriptor;
+    rv = localFile->GetPersistentDescriptor(descriptor);
+    if (NS_SUCCEEDED(rv)) {
+      // Escape the descriptor into a spec.
+      nsCOMPtr<nsINetUtil> netUtil =
+        do_CreateInstance("@mozilla.org/network/util;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCAutoString spec;
+      rv = netUtil->EscapeString(descriptor,
+                                 nsINetUtil::ESCAPE_URL_PATH,
+                                 spec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Add the "file:" scheme.
+      spec.Insert("file://", 0);
+
+      // Create the URI.
+      rv = ioService->NewURI(spec, nsnull, nsnull, aURI);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      return NS_OK;
+    }
+  }
+#endif
+
+  // Get a URI directly from the file.
+  rv = ioService->NewFileURI(aFile, aURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 

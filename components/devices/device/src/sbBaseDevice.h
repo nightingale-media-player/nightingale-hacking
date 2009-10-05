@@ -449,6 +449,21 @@ public:
                                     nsACString & aFilename);
 
   /**
+   *   Create a unique media file, starting with the file specified by aFileURI.
+   * aFileURI must QI to nsIFileURL.  If the specified file already exists,
+   * modify the file name and try again.
+   *   If aUniqueFile is not null, return the file object in aUniqueFile.
+   *   If aUniqueFileURI is not null, return the file URI in aUniqueFileURI.
+   *
+   * \param aFileURI First file URI to try creating.
+   * \param aUniqueFile Returned unique file object.
+   * \param aUniqueFileURI Returned URI of unique file.
+   */
+  nsresult CreateUniqueMediaFile(nsIURI  *aFileURI,
+                                 nsIFile **aUniqueFile,
+                                 nsIURI  **aUniqueFileURI);
+
+  /**
    * Generates a URI for the item
    * \param aItem The item we're generating a URI for
    * \param aFilename The URI that was generated

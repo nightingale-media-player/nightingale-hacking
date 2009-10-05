@@ -82,12 +82,14 @@
 #include <sbITranscodeManager.h>
 #include <sbITranscodeAlbumArt.h>
 #include <sbArray.h>
+#include <sbFileUtils.h>
 #include <sbLocalDatabaseCID.h>
-#include <sbPrefBranch.h>
 #include <sbMemoryUtils.h>
+#include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
+#include <sbURIUtils.h>
 #include <sbVariantUtils.h>
 
 #include "sbDeviceEnsureSpaceForWrite.h"
@@ -1866,6 +1868,93 @@ sbBaseDevice::GenerateFilename(sbIMediaItem * aItem,
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::CreateUniqueMediaFile(nsIURI  *aURI,
+                                    nsIFile **aUniqueFile,
+                                    nsIURI  **aUniqueURI)
+{
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsresult rv;
+
+  // Get a clone of the URI.
+  nsCOMPtr<nsIURI> uniqueURI;
+  rv = aURI->Clone(getter_AddRefs(uniqueURI));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the file URL.
+  nsCOMPtr<nsIFileURL> uniqueFileURL = do_QueryInterface(uniqueURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the file object, invalidating the cache beforehand.
+  nsCOMPtr<nsIFile> uniqueFile;
+  rv = sbInvalidateFileURLCache(uniqueFileURL);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = uniqueFileURL->GetFile(getter_AddRefs(uniqueFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Check if file already exists.
+  PRBool alreadyExists;
+  rv = uniqueFile->Exists(&alreadyExists);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Try different file names until a unique one is found.  Limit the number of
+  // unique names to try to the same limit as nsIFile.createUnique.
+  PRUint32 uniqueIndex = 1;
+  for (PRUint32 uniqueIndex = 1;
+       alreadyExists && (uniqueIndex < 10000);
+       ++uniqueIndex) {
+    // Get a clone of the URI.
+    rv = aURI->Clone(getter_AddRefs(uniqueURI));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the file URL.
+    uniqueFileURL = do_QueryInterface(uniqueURI, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the file base name.
+    nsCAutoString fileBaseName;
+    rv = uniqueFileURL->GetFileBaseName(fileBaseName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add a unique index to the file base name.
+    fileBaseName.Append(" (");
+    fileBaseName.AppendInt(uniqueIndex);
+    fileBaseName.Append(")");
+    rv = uniqueFileURL->SetFileBaseName(fileBaseName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the file object, invalidating the cache beforehand.
+    rv = sbInvalidateFileURLCache(uniqueFileURL);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = uniqueFileURL->GetFile(getter_AddRefs(uniqueFile));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Check if file already exists.
+    rv = uniqueFile->Exists(&alreadyExists);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Create file if it doesn't already exist.
+    if (!alreadyExists) {
+      rv = uniqueFile->Create(nsIFile::NORMAL_FILE_TYPE,
+                              SB_DEFAULT_FILE_PERMISSIONS);
+      if (rv == NS_ERROR_FILE_ALREADY_EXISTS) {
+        alreadyExists = PR_TRUE;
+        rv = NS_OK;
+      }
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  // Return results.
+  if (aUniqueFile)
+    uniqueFile.forget(aUniqueFile);
+  if (aUniqueURI)
+    uniqueURI.forget(aUniqueURI);
+
+  return NS_OK;
+}
+
 /**
  * Returns the URI for the item based on the download folder
  */
@@ -1989,12 +2078,8 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<nsIIOService> ioservice =
-      do_ProxiedGetService("@mozilla.org/network/io-service;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<nsIURI> mediaURI;
-  rv = ioservice->NewFileURI(mediaPath, getter_AddRefs(mediaURI));
+  rv = sbNewFileURI(mediaPath, getter_AddRefs(mediaURI));
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURL> mediaURL;

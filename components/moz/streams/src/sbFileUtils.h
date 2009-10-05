@@ -28,12 +28,12 @@
 #define SBFILEUTILS_H_
 
 #include <nsCOMPtr.h>
+#include <nsIFile.h>
 #include <nsIInputStream.h>
 #include <nsIOutputStream.h>
 #include <nsStringGlue.h>
 #include <sbMemoryUtils.h>
 
-class nsIFile;
 class nsIInputStream;
 class nsIOutputStream;
 class nsIURI;
@@ -75,11 +75,22 @@ nsresult
 sbConsumeStream(nsIInputStream *aSource, PRUint32 aMaxCount,
                 nsACString &aBuffer);
 
+/**
+ * Return in aURI a URI object for the file specified by aFile.  Avoids Songbird
+ * bug 6227 in nsIIOService.newFileURI.
+ *
+ * \param aFile File for which to get URI.
+ * \param aURI Returned file URI.
+ */
+nsresult sbNewFileURI(nsIFile* aFile,
+                      nsIURI** aURI);
+
 //
 // Auto-disposal class wrappers.
 //
 //   sbAutoInputStream          Wrapper to auto-close an input stream.
 //   sbAutoOutputStream         Wrapper to auto-close an output stream.
+//   sbAutoRemoveFile           Warpper to auto-remove an nsIFile.
 //
 
 SB_AUTO_NULL_CLASS(sbAutoInputStream,
@@ -88,6 +99,16 @@ SB_AUTO_NULL_CLASS(sbAutoInputStream,
 SB_AUTO_NULL_CLASS(sbAutoOutputStream,
                    nsCOMPtr<nsIOutputStream>,
                    mValue->Close());
+SB_AUTO_NULL_CLASS(sbAutoRemoveFile,
+                   nsCOMPtr<nsIFile>,
+                   mValue->Remove(PR_FALSE));
+
+
+/**
+ * Default file permissions.
+ */
+
+#define SB_DEFAULT_FILE_PERMISSIONS 0644
 
 
 #endif /* SBFILEUTILS_H_ */
