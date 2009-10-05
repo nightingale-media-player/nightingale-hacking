@@ -52,7 +52,9 @@ function LOG(aMessage) {
  *****************************************************************************/
 function MoveRenameJob(aItems, 
                        aPaths, 
-                       aService) {
+                       aService,
+                       aListener)
+{
   if (!aItems || !aPaths) {
     throw Components.results.NS_ERROR_INVALID_ARG;
   }
@@ -61,6 +63,7 @@ function MoveRenameJob(aItems,
   SBJobUtils.JobBase.call(this);
 
   this._owner = aService;
+  this._listener = aListener;
   this._mediaItems = ArrayConverter.JSArray(aItems);
   this._paths = aPaths;
   
@@ -89,6 +92,7 @@ MoveRenameJob.prototype = {
 
   // MoveRenameHelperService
   _owner: null,
+  _listener: null,
   
   _thread: null,
   _mediaItems: null,
@@ -104,6 +108,10 @@ MoveRenameJob.prototype = {
    */
   begin: function MoveRenameJob_begin() {
     var job = this;
+
+    // Add the specified job listener to the super class.
+    this.addJobProgressListener(this._listener);
+
     this._thread = new GeneratorThread(this._process());
     this._thread.period = 33;
     this._thread.maxPctCPU = 60;
@@ -333,6 +341,10 @@ MoveRenameJob.prototype = {
     this._status = Ci.sbIJobProgress.STATUS_SUCCEEDED;
     this._statusText = SBString("watchfolders.moverename.complete"); 
     this.notifyJobProgressListeners();
+
+    // Remove the job listener from the super class.
+    this.removeJobProgressListener(this._listener);
+    this._listener = null;
     
     this._owner.onJobComplete();
   }
@@ -360,13 +372,13 @@ MoveRenameHelper.prototype = {
   // List of pending jobs.  We only want to allow one to run at a time, 
   // since this can lock up the UI.
   _jobs: null,
-  
+ 
   /**
    * \brief Start a job for the given added/removed paths
    */
-  process: function MoveRenameHelper_process(aItems, aPaths) {
+  process: function MoveRenameHelper_process(aItems, aPaths, aListener) {
     dump("WatchFolders MoveRenameHelper_process\n");
-    var job = new MoveRenameJob(aItems, aPaths, this);
+    var job = new MoveRenameJob(aItems, aPaths, this, aListener);
     
     this._jobs.push(job);
     

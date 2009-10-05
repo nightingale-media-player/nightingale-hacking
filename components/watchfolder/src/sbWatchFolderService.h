@@ -28,10 +28,15 @@
 #define sbWatchFolderService_h_
 
 #include "sbWatchFolderPrefMgr.h"
+
 #include <sbIWatchFolderService.h>
 #include <sbIFileSystemWatcher.h>
 #include <sbIFileSystemListener.h>
 #include <sbILibrary.h>
+#include <sbIJobProgress.h>
+#include <sbILibraryUtils.h>
+#include <sbIMediaListListener.h>
+
 #include <nsITimer.h>
 #include <nsIComponentManager.h>
 #include <nsIGenericFactory.h>
@@ -42,10 +47,9 @@
 #include <nsStringAPI.h>
 #include <nsCOMPtr.h>
 #include <nsIIOService.h>
-#include <sbILibraryUtils.h>
-#include <sbIMediaListListener.h>
 #include <nsIDOMWindow.h>
 #include <nsUnicharUtils.h>
+
 #include <set>
 #include <map>
 
@@ -78,7 +82,8 @@ struct sbStringIgnoreCaseCompare
 class sbWatchFolderService : public sbIWatchFolderService,
                              public sbIFileSystemListener,
                              public sbIMediaListEnumerationListener,
-                             public nsITimerCallback
+                             public nsITimerCallback,
+                             public sbIJobProgressListener
 {
   friend class sbWatchFolderPrefMgr;
 
@@ -91,6 +96,7 @@ public:
   NS_DECL_SBIFILESYSTEMLISTENER
   NS_DECL_SBIMEDIALISTENUMERATIONLISTENER
   NS_DECL_NSITIMERCALLBACK
+  NS_DECL_SBIJOBPROGRESSLISTENER
 
   nsresult Init();
 
@@ -111,14 +117,14 @@ protected:
       : depth(aDepth), count(aCount) {}
   };
   typedef std::map<nsString, ignorePathData_t, sbStringIgnoreCaseCompare> sbStringMap;
-  
+
   typedef enum {
     eNone  = 0,
     eRemoval = 1,
     eChanged = 2,
     eMoveOrRename = 3,
   } EProcessType;
-  
+
   typedef enum {
     eNotSupported = 0,  // Service is not supported on current platform
     eDisabled     = 1,  // Service is disabled (by user pref)
@@ -128,7 +134,7 @@ protected:
 
 protected:
   //
-  // \brief Internal delayed startup handling method. 
+  // \brief Internal delayed startup handling method.
   //
   nsresult InitInternal();
 
@@ -143,9 +149,9 @@ protected:
   //        member resources that are being used to track changes.
   //
   nsresult StopWatchingFolder();
-  
+
   //
-  // \brief Set the startup delay timer. This method is used to postpone 
+  // \brief Set the startup delay timer. This method is used to postpone
   //        watchfolder bootstrapping.
   //
   nsresult SetStartupDelayTimer();
@@ -153,14 +159,14 @@ protected:
   //
   // \brief Set the standard event pump timer. This method should be called
   //        everytime a event is received.
-  //        NOTE: This method will not init the event pump timer if the 
+  //        NOTE: This method will not init the event pump timer if the
   //              |sbIFileSystemWatcher| has not started watching.
   //
   nsresult SetEventPumpTimer();
 
   //
   // \brief This method will handle processing all the normal events (i.e. not
-  //        delayed events). 
+  //        delayed events).
   //
   nsresult ProcessEventPaths();
 
@@ -170,7 +176,7 @@ protected:
   //
   nsresult HandleEventPathList(sbStringSet & aEventPathSet,
                                EProcessType aProcessType);
-  
+
   //
   // \brief Handle the set of added paths to the library.
   //
@@ -190,7 +196,7 @@ protected:
   // \brief Get a |nsIURI| instance for a given absolute path.
   //
   nsresult GetFilePathURI(const nsAString & aFilePath, nsIURI **aURIRetVal);
-  
+
   //
   // \brief Get the main Songbird window.
   //
@@ -201,7 +207,7 @@ protected:
   //        session.
   //
   nsresult HandleSessionLoadError();
-  
+
   //
   // \brief Handle the situation where the watcher reports that the root watch
   //        folder path is missing.
@@ -212,7 +218,7 @@ protected:
   // \brief Check to see if a given file path is on the ignored paths list.
   //        If found, decrements the times-to-ignore count as appropriate.
   //
-  nsresult DecrementIgnoredPathCount(const nsAString & aFilePath, 
+  nsresult DecrementIgnoredPathCount(const nsAString & aFilePath,
                                      PRBool *aIsIgnoredPath);
 
   //----------------------------------------------------------------------------

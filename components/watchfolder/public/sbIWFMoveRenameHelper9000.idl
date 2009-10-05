@@ -27,7 +27,7 @@
 #include "nsISupports.idl"
 
 interface nsIArray;
-interface sbIJobProgress;
+interface sbIJobProgressListener;
 
 /**
  * \interface sbIWFMoveRenameHelper9000 
@@ -43,7 +43,7 @@ interface sbIJobProgress;
  * This is a temporary helper for the watch folders only, and should  
  * not be used anywhere else. 
  */
-[scriptable, uuid(5a450350-fede-11dd-87af-0800200c9a66)]
+[scriptable, uuid(d46865e0-1dd1-11b2-bc5b-b0ab6abf03e8)]
 interface sbIWFMoveRenameHelper9000 : nsISupports
 {
 
@@ -55,9 +55,12 @@ interface sbIWFMoveRenameHelper9000 : nsISupports
    * \param aMediaItems an array media items that may have
    *        been moved or renamed
    * \param aAddedPaths an array of candidate nsIFile paths
+   * \param aListener Optional in-param to listen to when the
+   *                  opertion has finished.
    */
   void process(in nsIArray aMediaItems,
-               in nsIArray aNewPaths);
+               in nsIArray aNewPaths,
+               in sbIJobProgressListener aListener);
 };
 
 

@@ -44,7 +44,7 @@
 #define STARTUP_TIMER_DELAY      3000
 #define FLUSH_FS_WATCHER_DELAY   1000
 #define CHANGE_DELAY_TIMER_DELAY 30000
-#define EVENT_PUMP_TIMER_DELAY   500
+#define EVENT_PUMP_TIMER_DELAY   1000
 
 //------------------------------------------------------------------------------
 // PRLogging module

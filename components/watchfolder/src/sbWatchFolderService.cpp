@@ -60,11 +60,12 @@
 PRLogModuleInfo* gWatchFoldersLog = nsnull;
 #endif
 
-NS_IMPL_ISUPPORTS4(sbWatchFolderService,
+NS_IMPL_ISUPPORTS5(sbWatchFolderService,
                    sbIWatchFolderService,
                    sbIFileSystemListener,
                    sbIMediaListEnumerationListener,
-                   nsITimerCallback)
+                   nsITimerCallback,
+                   sbIJobProgressListener)
 
 sbWatchFolderService::sbWatchFolderService()
 {
@@ -256,7 +257,7 @@ sbWatchFolderService::StopWatchingFolder()
   if (mServiceState != eWatching) {
     return NS_OK;
   }
-  
+
   NS_ENSURE_STATE(mFileSystemWatcher);
 
   // Clear all event paths.
@@ -352,13 +353,13 @@ sbWatchFolderService::ProcessEventPaths()
     LOG(("sbWatchFolderService: possible move/rename detected"));
     rv = HandleEventPathList(mRemovedPaths, eMoveOrRename);
     NS_ENSURE_SUCCESS(rv, rv);
-  } 
+  }
   else {
     rv = HandleEventPathList(mRemovedPaths, eRemoval);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = ProcessAddedPaths();
-    NS_ENSURE_SUCCESS(rv, rv); 
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   rv = HandleEventPathList(mChangedPaths, eChanged);
@@ -436,12 +437,12 @@ sbWatchFolderService::ProcessAddedPaths()
 }
 
 nsresult
-sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet, 
+sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
                                                 nsIArray **aURIs)
 {
   NS_ENSURE_ARG_POINTER(aURIs);
-  nsresult rv; 
-  
+  nsresult rv;
+
   nsCOMPtr<nsIMutableArray> uriArray =
     do_CreateInstance("@mozilla.org/array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -472,7 +473,7 @@ sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
       }
     }
   }
-  
+
   nsCOMPtr<nsIArray> array = do_QueryInterface(uriArray, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   array.forget(aURIs);
@@ -609,7 +610,7 @@ sbWatchFolderService::HandleSessionLoadError()
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool shouldRescan = PR_FALSE;
-  prompter->Confirm(songbirdWindow, 
+  prompter->Confirm(songbirdWindow,
                     dialogTitle.BeginReading(),
                     dialogText.BeginReading(),
                     &shouldRescan);
@@ -665,7 +666,7 @@ sbWatchFolderService::HandleRootPathMissing()
 
   nsTArray<nsString> params;
   params.AppendElement(mWatchPath);
-  nsString dialogText = 
+  nsString dialogText =
     bundle.Format("watch_folder.root_path_missing.text", params);
 
   nsresult rv;
@@ -689,8 +690,8 @@ sbWatchFolderService::HandleRootPathMissing()
 }
 
 nsresult
-sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath, 
-                                                PRBool *aIsIgnoredPath) 
+sbWatchFolderService::DecrementIgnoredPathCount(const nsAString & aFilePath,
+                                                PRBool *aIsIgnoredPath)
 {
   NS_ENSURE_ARG_POINTER(aIsIgnoredPath);
 
@@ -882,7 +883,7 @@ NS_IMETHODIMP
 sbWatchFolderService::GetIsRunning(PRBool *aIsRunning)
 {
   NS_ENSURE_ARG_POINTER(aIsRunning);
-  *aIsRunning = (mServiceState == eWatching); 
+  *aIsRunning = (mServiceState == eWatching);
   return NS_OK;
 }
 
@@ -891,7 +892,7 @@ sbWatchFolderService::AddIgnorePath(const nsAString & aFilePath)
 {
   LOG(("sbWatchFolderService::AddIgnorePath %s",
         NS_LossyConvertUTF16toASCII(aFilePath).get()));
-  
+
   nsString filePath(aFilePath);
 
   sbStringMap::iterator it = mIgnorePaths.find(filePath);
@@ -1050,20 +1051,20 @@ sbWatchFolderService::OnWatcherError(PRUint32 aErrorType,
 NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::OnFileSystemChanged %s", 
+  LOG(("sbWatchFolderService::OnFileSystemChanged %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
- 
+
   // Don't bother with this change if it is currently being ignored.
   if (isIgnoredPath) {
     return NS_OK;
   }
 
   nsString filePath(aFilePath);
-  
+
   // The watcher will report all changes from the previous session before the
   // watcher has started. Don't set the timer until then.
   if (mHasWatcherStarted) {
@@ -1100,7 +1101,7 @@ sbWatchFolderService::OnFileSystemChanged(const nsAString & aFilePath)
 NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::OnFileSystemRemoved %s", 
+  LOG(("sbWatchFolderService::OnFileSystemRemoved %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
@@ -1121,13 +1122,13 @@ sbWatchFolderService::OnFileSystemRemoved(const nsAString & aFilePath)
 NS_IMETHODIMP
 sbWatchFolderService::OnFileSystemAdded(const nsAString & aFilePath)
 {
-  LOG(("sbWatchFolderService::OnFileSystemAdded %s", 
+  LOG(("sbWatchFolderService::OnFileSystemAdded %s",
     NS_LossyConvertUTF16toASCII(aFilePath).get()));
 
   PRBool isIgnoredPath = PR_FALSE;
   nsresult rv = DecrementIgnoredPathCount(aFilePath, &isIgnoredPath);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   if (!isIgnoredPath) {
     mAddedPaths.insert(nsString(aFilePath));
 
@@ -1200,7 +1201,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
                                  getter_AddRefs(jobProgress));
       NS_ENSURE_SUCCESS(rv, rv);
 
-    } 
+    }
     else if (mCurrentProcessType == eMoveOrRename) {
       // Try to detect move/rename
       nsCOMPtr<sbIWFMoveRenameHelper9000> helper =
@@ -1212,9 +1213,18 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
       NS_ENSURE_SUCCESS(rv, rv);
       mAddedPaths.clear();
 
-      rv = helper->Process(mEnumeratedMediaItems, uriArray);
+#ifdef PR_LOGGING
+      PRUint32 length;
+      rv = uriArray->GetLength(&length);
       NS_ENSURE_SUCCESS(rv, rv);
-    }  
+
+      LOG(("%s: Sending %i added item URL's to the move-rename helper",
+        __FUNCTION__, length));
+#endif
+
+      rv = helper->Process(mEnumeratedMediaItems, uriArray, this);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   else if (mCurrentProcessType == eMoveOrRename) {
     // If no items where found during the move or rename enumeration lookup
@@ -1246,7 +1256,7 @@ sbWatchFolderService::OnEnumerationEnd(sbIMediaList *aMediaList,
     rv = ProcessAddedPaths();
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
   rv = mEnumeratedMediaItems->Clear();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1281,15 +1291,17 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
 
   // Standard processing of removed and non-queued changed paths.
   else if (aTimer == mEventPumpTimer) {
-    // If no events have been received since the timer was armed, go ahead
-    // and process the events. If not, re-arm the timer.
     if (mShouldProcessEvents) {
+      // No events have been received since the event pump timer was armed. Go
+      // ahead and process the event paths now.
       rv = ProcessEventPaths();
       NS_ENSURE_SUCCESS(rv, rv);
 
       mEventPumpTimerIsSet = PR_FALSE;
     }
     else {
+      // Some event has happened since the last time the event pump timer was
+      // armed. Go ahead and wait another |EVENT_PUMP_TIMER_DELAY| milliseconds.
       LOG(("%s: arming event pump timer [%08x]",
             __FUNCTION__, mEventPumpTimer.get()));
       rv = mEventPumpTimer->InitWithCallback(this,
@@ -1307,6 +1319,29 @@ sbWatchFolderService::Notify(nsITimer *aTimer)
     NS_ENSURE_SUCCESS(rv, rv);
 
     mChangeDelayTimerIsSet = PR_FALSE;
+  }
+
+  return NS_OK;
+}
+
+//------------------------------------------------------------------------------
+// sbIJobProgressListener
+
+NS_IMETHODIMP
+sbWatchFolderService::OnJobProgress(sbIJobProgress *aJobProgress)
+{
+  NS_ENSURE_ARG_POINTER(aJobProgress);
+
+  PRUint16 status;
+  nsresult rv = aJobProgress->GetStatus(&status);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // This method is the callback for a move-rename process. Simply bump
+  // |mShouldProcessEvents| until the job completes. This prevents executing
+  // synchronous  move-rename jobs that could cause data loss.
+  if (status == sbIJobProgress::STATUS_RUNNING) {
+    rv = SetEventPumpTimer();
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
