@@ -307,6 +307,7 @@ FunctionEnd
 
    Function ${un}CommonInstallerInit
       StrCpy $UnpackMode ${FALSE}
+      StrCpy $CheckOSVersion ${TRUE}
       StrCpy $DistributionMode ${FALSE}
       StrCpy $DistributionName ${DefaultDistributionName}
       StrCpy $InstallerMode ${InstallerBuildMode}
@@ -347,6 +348,11 @@ FunctionEnd
       ${If} $0 != ""
          StrCpy $UnpackMode ${TRUE}
       ${EndIf}
+      ClearErrors
+
+      ${${un}GetOptions} $R1 "/NOOSVERSIONCHECK" $0
+      IfErrors +2 0
+         StrCpy $CheckOSVersion ${FALSE}
       ClearErrors
 
       ${${un}GetOptions} $R1 "/DIST" $0

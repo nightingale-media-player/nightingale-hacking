@@ -40,6 +40,7 @@ var RootAppRegistryKey
 var InstallerType
 var InstallerMode
 var UnpackMode
+var CheckOSVersion
 var DistributionMode
 var DistributionName
 var ForceInstallCdrip
