@@ -48,17 +48,12 @@ Cu.import("resource://app/jsmodules/StringUtils.jsm");
 
 var CDRipPrefsPane =
 {
-  warningShown: false,
   currentTranscodeProfileID: 0,
-  prefBranch: null,
 
+  /**
+   * \brief Load up the CD Rip Preferences Panel.
+   */
   doPaneLoad: function CDRipPrefsPane_doPaneLoad() {
-    CDRipPrefsPane.prefBranch = Cc["@mozilla.org/preferences-service;1"]
-                                  .getService(Ci.nsIPrefService)
-                                  .getBranch("songbird.cdrip.")
-                                  .QueryInterface(Ci.nsIPrefBranch2);
-    CDRipPrefsPane.prefBranch.addObserver("", CDRipPrefsPane, false);
-
     // Initialize the transcoding options:
     this.populateTranscodingProfiles();
 
@@ -93,59 +88,194 @@ var CDRipPrefsPane =
       }
     }
     
+    // Check to see if a device is currently ripping and update the UI
+    if (this.isAnyCDDeviceTranscoding())
+      this.addNotification();
+
+    // Setup listeners for the devices so we can notify the user when one is
+    // currently ripping.
+    this.setupListeners();
+    
     window.addEventListener("unload", CDRipPrefsPane.doPaneUnload, true);
   },
 
+  /**
+   * \brief Shutdown the panel.
+   */
   doPaneUnload: function CDRipPrefsPane_doPaneUnload() {
     window.removeEventListener("unload", CDRipPrefsPane.doPaneUnload, true);
-    CDRipPrefsPane.prefBranch.removeObserver("", CDRipPrefsPane);
+    this.shutdownListeners();
   },
 
-  observe: function CDRipPrefsPane_observe(subject, topic, data) {
-    // enumerate all devices and see if any of them are currently ripping
-    var deviceBusy = false;
-    
+  /**
+   * \brief Add a listener to a device if it is a CD device.
+   * \param aDevice device to add a listener to
+   */
+  addDeviceListener: function CDRipPrefPane_addDeviceListener(aDevice) {
+    var deviceType = aDevice.parameters.getProperty("DeviceType");
+    if (deviceType == "CD") {
+      var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.addEventListener(this);
+    }
+  },
+
+  /**
+   * \brief Remove a listener from a device if it is a CD device.
+   * \param aDevice device to remove a listener from
+   */
+  removeDeviceListener: function CDRipPrefPane_removeDeviceListener(aDevice) {
+    var deviceType = aDevice.parameters.getProperty("DeviceType");
+    if (deviceType == "CD") {
+      var deviceEventTarget = aDevice.QueryInterface(Ci.sbIDeviceEventTarget);
+      deviceEventTarget.removeEventListener(this);
+    }
+  },
+
+  /**
+   * \brief Add listeners for the devices so we can update the UI if a device
+   * starts ripping (only CD Devices)
+   */
+  setupListeners: function CDRipPrefPane_setupListeners() {
     var deviceMgr = 
       Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
         .getService(Ci.sbIDeviceManager2);
     var registrar = deviceMgr.QueryInterface(Ci.sbIDeviceRegistrar);
     for (var i=0; i<registrar.devices.length; i++) {
       var device = registrar.devices.queryElementAt(i, Ci.sbIDevice);
-      var deviceType = device.parameters.getProperty("DeviceType");
-      if (deviceType == "CD" && device.state != Ci.sbIDevice.STATE_IDLE)
-      {
-          deviceBusy = true;
-          break;
-      }
+      this.addDeviceListener(device);
     }
+    
+    // We also want to listen for devices being added/removed
+    deviceMgr.addEventListener(this);
+  },
 
-    if (subject instanceof Ci.nsIPrefBranch && !this.warningShown && deviceBusy)
-    {
-      var notifBox = document.getElementById("cdrip_notification_box");
-      notifBox.appendNotification(SBString("cdrip.prefpane.device_busy"),
-                                  "device_busy",
-                                  null,
-                                  notifBox["PRIORITY_WARNING_MEDIUM"],
-                                  []);
-      this.warningShown = true;
+  /**
+   * \brief Remove listeners for the devices we added (only CD Devices)
+   */
+  shutdownListeners: function CDRipPrefPane_setupListeners() {
+    var deviceMgr = 
+      Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+        .getService(Ci.sbIDeviceManager2);
+    var registrar = deviceMgr.QueryInterface(Ci.sbIDeviceRegistrar);
+    for (var i=0; i<registrar.devices.length; i++) {
+      var device = registrar.devices.queryElementAt(i, Ci.sbIDevice);
+      this.removeDeviceListener(device);
+    }
+    
+    // Remove our device manager listener to clean up.
+    deviceMgr.removeEventListener(this);
+  },
+
+  /**
+   * \brief Callback function when something happens on a device, we only
+   * listen to CD devices.
+   * \param aEvent Device event that occured.
+   * \sa sbIDeviceEvent
+   */
+  onDeviceEvent: function CDRipPrefsPane_onDeviceEvent(aEvent) {
+    switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_STATE_CHANGED:
+        var device = aEvent.origin.QueryInterface(Ci.sbIDevice);
+        if (device.state == Ci.sbIDevice.STATE_TRANSCODE) {
+          this.addNotification();
+        }
+        else if (!this.isAnyCDDeviceTranscoding()) {
+          // Remove the notifications if all cd devices are not busy
+          this.removeNotifications();
+        }
+      break;
+    
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED:
+        var device = aEvent.origin.QueryInterface(Ci.sbIDevice);
+        this.addDeviceListener(device);
+      break;
+    
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED:
+        var device = aEvent.origin.QueryInterface(Ci.sbIDevice);
+        this.removeDeviceListener(device);
+      break;
+    
+      default:
+      break;
     }
   },
 
-  providerChanged: function CDRipPrefsPane_providerChanged(ev) {
-    var provName = ev.target.value;
+  /**
+   * \brief Remove all the notifications in the cd rip panel.
+   */
+  removeNotifications: function CDRipPrefsPane_removeNotifications() {
+    // Get the current notification box for this window.
+    var notifBox = document.getElementById("cdrip_notification_box");
+    notifBox.removeAllNotifications(false);
+  },
+  
+  /**
+   * \brief Add a notification if one does not already exist
+   */
+  addNotification: function CDRipPrefsPane_addNotification() {
+    // Get the current notification box for this window.
+    var notifBox = document.getElementById("cdrip_notification_box");
+    if (notifBox.currentNotification) {
+      // Already one shown so abort
+      return;
+    }
+    notifBox.appendNotification(SBString("cdrip.prefpane.device_busy"),
+                                "device_busy",
+                                null,
+                                notifBox["PRIORITY_WARNING_MEDIUM"],
+                                []);
+  },
+
+  /**
+   * \brief Check if any CD Device is transcoding.
+   *  NOTE: This method will loop through all devices.
+   * \return True if any CD device is transcoding, False otherwise.
+   */
+  isAnyCDDeviceTranscoding: function CDRipPrefsPane_isAnyCDDeviceTranscoding() {
+    // enumerate all devices and see if any of the cd ones are currently busy
+    var deviceMgr =  Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                       .getService(Ci.sbIDeviceManager2);
+    var registrar = deviceMgr.QueryInterface(Ci.sbIDeviceRegistrar);
+    for (var i=0; i<registrar.devices.length; i++) {
+      var device = registrar.devices.queryElementAt(i, Ci.sbIDevice);
+      var deviceType = device.parameters.getProperty("DeviceType");
+      if (deviceType == "CD" && device.state == Ci.sbIDevice.STATE_TRANSCODE)
+      {
+        return true;
+      }
+    }
+    return false;
+  },
+
+  /**
+   * \brief Callback for when the user selects a different provider from the
+   * list
+   * \param aEvent Event information.
+   */
+  providerChanged: function CDRipPrefsPane_providerChanged(aEvent) {
+    var provName = aEvent.target.value;
     this.setProviderDescription(this.providerDescriptions[provName]);
   },
 
-  setProviderDescription: function CDRipPrefsPane_setProviderDescription(txt) {
+  /**
+   * \brief Set the provider description for the user
+   * \param aDescription Text change the description to.
+   */
+  setProviderDescription:
+                function CDRipPrefsPane_setProviderDescription(aDescription) {
     var provDescr = document.getElementById("provider-description");
     while (provDescr.firstChild)
       provDescr.removeChild(provDescr.firstChild);
-    provDescr.appendChild(document.createTextNode(txt));
+    provDescr.appendChild(document.createTextNode(aDescription));
   },
 
   //----------------------------------------------------------------------------
   // Transcoding and quality utils
 
+  /**
+   * \brief Add all the audio profiles to the pop up list for the user to
+   * select.
+   */
   populateTranscodingProfiles:
                          function CDRipPrefsPane_populateTranscodingProfiles() {
     var transcodeManager = 
@@ -206,8 +336,12 @@ var CDRipPrefsPane =
     }
   },
 
-  formatChanged: function CDRipPrefsPane_formatChanged(event) {
-    var selectedProfileID = event.target.value;
+  /**
+   * \brief Callback for when the user selects a new format to use.
+   * \param aEvent Event information
+   */
+  formatChanged: function CDRipPrefsPane_formatChanged(aEvent) {
+    var selectedProfileID = aEvent.target.value;
 
     // Update the quality settings based on the new format.
     var transcodeManager =
@@ -225,6 +359,9 @@ var CDRipPrefsPane =
     }
   },
 
+  /**
+   * \brief Updates the bitrates to display properly for the user.
+   */
   updateBitratePref: function CDRipPrefsPane_updateBitratePref() {
     // Since the displayable bitrate is always 1000 times smaller than what
     // the actual pref needs to be, simply update the prefs value with
@@ -234,6 +371,10 @@ var CDRipPrefsPane =
     qualityPref.value = parseInt(bitrateField.value * 1000);
   },
 
+  /**
+   * \brief Callback for when the user selects a new profile from the list.
+   * \param aTranscodeProfile New profile to use.
+   */
   onTranscodeProfileChanged:
       function CDRipPrefsPane_onTranscodeProfileChanged(aTranscodeProfile) {
 
@@ -278,8 +419,8 @@ var CDRipPrefsPane =
       var bitrate = defaultValue ? defaultBitrate : customizedBitrate;
       bitrateTextfield.value = (bitrate / 1000);
       this.updateBitratePref();
-
-    } else {
+    }
+    else {
       bitrateSettings.hidden = true;
     }
 
