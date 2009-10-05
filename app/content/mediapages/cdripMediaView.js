@@ -259,13 +259,11 @@ window.cdripController =
                              Ci.nsITimer.TYPE_ONE_SHOT);
         this.logoTimerEnabled = true;
       }
-      else {
-        // For now, nothing is visible
-        this._hideElement(RIP_STATUS_HBOX);
-      }
 
-      // Hide the action buttons while the lookup is going.
-      this._hideElement(RIP_STATUS_BUTTON_HBOX);
+      // Disable visible buttons
+      this._disableCommand(RIP_COMMAND_EJECT);
+      this._disableCommand(RIP_COMMAND_STARTRIP);
+      this._disableCommand(RIP_COMMAND_STOPRIP);
     }
     else {
       // If the logo timer isn't enabled, hide all of the lookup vendor
@@ -286,7 +284,8 @@ window.cdripController =
 
   _toggleLookupLabel: function cdripController_lookupLabel(show) {
     if (show) {
-      this._showElement(RIP_STATUS_HBOX);
+      this._showElement(RIP_STATUS_IMAGE_PRE_SPACER);
+      this._showElement(RIP_STATUS_IMAGE_POST_SPACER);
       this._showElement(RIP_STATUS_IMAGE_HBOX);
 
       this._setImageSrc(RIP_STATUS_IMAGE,
@@ -298,6 +297,8 @@ window.cdripController =
       this._showElement(RIP_STATUS_BUTTONS_PRE_SPACER);
     }
     else {
+      this._hideElement(RIP_STATUS_IMAGE_PRE_SPACER);
+      this._hideElement(RIP_STATUS_IMAGE_POST_SPACER);
       this._hideElement(RIP_STATUS_IMAGE_HBOX);
       this._hideElement(RIP_STATUS_LABEL_HBOX);
 
