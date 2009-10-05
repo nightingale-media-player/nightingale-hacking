@@ -1336,9 +1336,10 @@ sbWatchFolderService::OnJobProgress(sbIJobProgress *aJobProgress)
   nsresult rv = aJobProgress->GetStatus(&status);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // This method is the callback for a move-rename process. Simply bump
-  // |mShouldProcessEvents| until the job completes. This prevents executing
+  // This method is the callback for a move-rename process. Simply set the
+  // event timer until the job completes. This prevents executing
   // synchronous  move-rename jobs that could cause data loss.
+
   if (status == sbIJobProgress::STATUS_RUNNING) {
     rv = SetEventPumpTimer();
     NS_ENSURE_SUCCESS(rv, rv);
