@@ -521,22 +521,28 @@ sbCDDevice::ProxyCDLookup() {
   LOG(("Querying metadata lookup provider for disc"));
   nsCOMPtr<sbIMetadataLookupJob> job;
   rv = provider->QueryDisc(toc, getter_AddRefs(job));
-  NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup metadatajob!");
+  if (NS_SUCCEEDED(rv)) {
+    // Check the state of the job, if the state reflects success already, then
+    // just invoke the progress listener directly, otherwise add the listener
+    // to the job.
+    PRUint16 jobStatus;
+    rv = job->GetStatus(&jobStatus);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    if (jobStatus == sbIJobProgress::STATUS_SUCCEEDED ||
+        jobStatus == sbIJobProgress::STATUS_FAILED)
+    {
+      rv = this->OnJobProgress(job);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+    }
+    else {
+      rv = job->AddJobProgressListener((sbIJobProgressListener*)this);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+    }
+  }
+  else {
+    NS_WARNING("Could not lookup metadatajob. "
+               "no further processing will be done!");
 
-  // Check the state of the job, if the state reflects success already, then
-  // just invoke the progress listener directly, otherwise add the listener
-  // to the job.
-  PRUint16 jobStatus;
-  rv = job->GetStatus(&jobStatus);
-  NS_ENSURE_SUCCESS(rv, /* void */);
-  if (jobStatus == sbIJobProgress::STATUS_SUCCEEDED ||
-      jobStatus == sbIJobProgress::STATUS_FAILED)
-  {
-    rv = this->OnJobProgress(job);
-    NS_ENSURE_SUCCESS(rv, /* void */);
-  } else {
-    rv = job->AddJobProgressListener((sbIJobProgressListener*)this);
-    NS_ENSURE_SUCCESS(rv, /* void */);
   }
 }
 
@@ -560,7 +566,8 @@ sbCDDevice::AttemptCDLookup()
 
     rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
     NS_ENSURE_SUCCESS(rv, rv);
-  } else {
+  }
+  else {
     ProxyCDLookup();
   }
 

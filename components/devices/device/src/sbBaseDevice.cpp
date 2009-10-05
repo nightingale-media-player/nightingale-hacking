@@ -1838,9 +1838,10 @@ sbBaseDevice::GenerateFilename(sbIMediaItem * aItem,
 
   nsCOMPtr<nsIURL> sourceContentURL = do_QueryInterface(sourceContentURI, &rv);
   if (NS_SUCCEEDED(rv)) {
-    rv = sourceContentURL->GetFileName(filename);
+    rv = sourceContentURL->GetFileBaseName(filename);
     NS_ENSURE_SUCCESS(rv, rv);
-
+    // If the filename already contains the extension then don't ask the URI
+    // for it
     rv = sourceContentURL->GetFileExtension(extension);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {

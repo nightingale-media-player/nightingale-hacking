@@ -33,6 +33,7 @@
 #include <sbStandardProperties.h>
 #include <sbStringBundle.h>
 #include <sbStringUtils.h>
+#include <sbURIUtils.h>
 
 // Mozilla includes
 #include <nsCRT.h>
@@ -486,16 +487,27 @@ sbMediaFileManager::GetNewFilename(sbIMediaItem *aMediaItem,
   // Start clean
   aFilename.Truncate();
 
+  nsCString extension;
+
   // Get the previous filename extension
   nsCOMPtr<nsIURL> url(do_QueryInterface(aItemUri, &rv));
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsCString extension;
-  rv = url->GetFileExtension(extension);
-  NS_ENSURE_SUCCESS(rv, rv);
-  nsString fullExtension;
-  fullExtension.Insert(PRUnichar('.'), 0);
-  fullExtension.Append(NS_ConvertUTF8toUTF16(extension));
+  if (NS_FAILED(rv)) {
+    rv = sbGetFileExtensionFromURI(aItemUri, extension);
+    // Likely to fail on malformed URI's
+    if (NS_FAILED(rv)) {
+      return rv;
+    }
+  }
+  else {
+    rv = url->GetFileExtension(extension);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
+  nsString fullExtension;
+  if (!extension.IsEmpty()) {
+    fullExtension.Insert(PRUnichar('.'), 0);
+    fullExtension.Append(NS_ConvertUTF8toUTF16(extension));
+  }
   // Format the file name
   rv = GetFormattedFileFolder(mTrackNameConfig,
                               aMediaItem,
