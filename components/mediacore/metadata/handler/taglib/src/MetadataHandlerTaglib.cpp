@@ -70,6 +70,8 @@
 #include <nsIStandardURL.h>
 #include <nsICharsetDetector.h>
 #include <nsIUTF8ConverterService.h>
+#include <nsICharsetConverterManager.h>
+#include <nsIUnicodeDecoder.h>
 #include <nsIContentSniffer.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
@@ -2199,7 +2201,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
     
     if (tagString.isEmpty()) {
         // nothing needs guessing
-        _retval.AssignLiteral("utf-8");
+        _retval.AssignLiteral("UTF-8");
         return;
     }
 
@@ -2268,12 +2270,12 @@ void sbMetadataHandlerTaglib::GuessCharset(
         if (utf8Service) {
             nsCString dataUTF8;
             rv = utf8Service->ConvertStringToUTF8(raw,
-                                                  "utf-8",
+                                                  "UTF-8",
                                                   PR_FALSE,
                                                   dataUTF8);
             if (NS_SUCCEEDED(rv)) {
                 // this was utf8
-                _retval.AssignLiteral("utf-8");
+                _retval.AssignLiteral("UTF-8");
                 return;
             }
         }
@@ -2395,7 +2397,7 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
     // just leave the string as-is
     if (!aCharset || !*aCharset ||
         !aString.shouldGuessCharacterSet() ||
-        !strcmp("utf-8", aCharset) ||
+        !strcmp("UTF-8", aCharset) ||
         !strcmp("us-ascii", aCharset))
         
     {
@@ -2439,27 +2441,32 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
 #endif
 
     // convert via Mozilla
-    // TODO XXX This call takes 1/3 of our scan time right now!
-    nsCString raw(data.c_str(), data.length());
 
-    {
-      // Release the lock while we're using proxied services to avoid
-      // deadlocking with the main thread trying to grab the taglib lock
-      nsAutoUnlock lock(sTaglibLock);
+    nsresult rv;
+    nsCOMPtr<nsICharsetConverterManager> converterManager =
+        do_GetService(NS_CHARSETCONVERTERMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, aString);
 
-      nsCOMPtr<nsIUTF8ConverterService> utf8Service;
-      mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
-      if (utf8Service) {
-          nsCString converted;
-          nsresult rv = utf8Service->ConvertStringToUTF8(
-              raw, aCharset, PR_FALSE, converted);
-          if (NS_SUCCEEDED(rv))
-              return TagLib::String(converted.BeginReading(), TagLib::String::UTF8);
-      }
+    nsCOMPtr<nsIUnicodeDecoder> decoder;
+    rv = converterManager->GetUnicodeDecoderRaw(aCharset, getter_AddRefs(decoder));
+    NS_ENSURE_SUCCESS(rv, aString);
+
+    PRInt32 dataLen = data.length();
+    PRInt32 size;
+    rv = decoder->GetMaxLength(data.c_str(), dataLen, &size);
+    NS_ENSURE_SUCCESS(rv, aString);
+
+    TagLib::String strValue;
+    PRUnichar *wstr = reinterpret_cast< PRUnichar * >( NS_Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+    rv = decoder->Convert(data.c_str(), &dataLen, wstr, &size);
+    if (NS_SUCCEEDED(rv)) {
+      wstr[size] = '\0';
+      strValue = wstr;
     }
+    NS_Free(wstr);
+    NS_ENSURE_SUCCESS(rv, aString);
 
-    // failed to convert :(
-    return aString;
+    return strValue;
 }
 
 
