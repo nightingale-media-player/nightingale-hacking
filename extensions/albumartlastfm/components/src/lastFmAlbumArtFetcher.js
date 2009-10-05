@@ -1,29 +1,26 @@
 /*
-//
-// BEGIN SONGBIRD GPL
-//
-// This file is part of the Songbird web player.
-//
-// Copyright(c) 2005-2008 POTI, Inc.
-// http://songbirdnest.com
-//
-// This file may be licensed under the terms of of the
-// GNU General Public License Version 2 (the "GPL").
-//
-// Software distributed under the License is distributed
-// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-// express or implied. See the GPL for the specific language
-// governing rights and limitations.
-//
-// You should have received a copy of the GPL along with this
-// program. If not, go to http://www.gnu.org/licenses/gpl.html
-// or write to the Free Software Foundation, Inc.,
-// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-//
-// END SONGBIRD GPL
-//
-*/
-
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
 
 /* This XPCOM service knows how to ask Last.fm where to find art for 
  * music albums. 
@@ -36,7 +33,7 @@ const Cr = Components.results;
 const Cu = Components.utils;
 
 // The root of our preferences branch
-const PREF_BRANCH = "songbird.albumart.lastfm.";
+const PREF_BRANCH = "extensions.albumart.lastfm.";
 
 // Importing helper modules
 Cu.import('resource://app/jsmodules/sbProperties.jsm');
@@ -61,13 +58,16 @@ function sbLastFMAlbumArtFetcher() {
   // Use the last FM web api to make things easier.
   this._lastFMWebApi = Cc['@songbirdnest.com/Songbird/webservices/last-fm;1']
                          .getService(Ci.sbILastFmWebServices);
+  this._strings = Cc["@mozilla.org/intl/stringbundle;1"]
+                    .getService(Ci.nsIStringBundleService)
+                    .createBundle("chrome://albumartlastfm/locale/albumartlastfm.properties");
 };
 sbLastFMAlbumArtFetcher.prototype = {
   // XPCOM Magic
-  className: 'sbLastFMAlbumArtFetcher',
+  className: 'lastFMAlbumArtFetcher',
   classDescription: 'LastFM Album Cover Fetcher',
-  classID: Components.ID('{7386965b-f313-49d7-9b55-f9f9b9b51875}'),
-  contractID: '@songbirdnest.com/Songbird/album-art/lastfm-fetcher;1',
+  classID: Components.ID('{8569316f-13a0-44d8-9d08-800999ed1f1c}'),
+  contractID: '@songbirdnest.com/album-art/lastfm-fetcher;1',
   _xpcom_categories: [{
     category: "songbird-album-art-fetcher"
   }],
@@ -141,11 +141,11 @@ sbLastFMAlbumArtFetcher.prototype = {
   
   // These next few use the .properties file to get the information
   get name() {
-    return SBString(PREF_BRANCH + "name", null, null);
+    return SBString(PREF_BRANCH + "name", null, this._strings);
   },
   
   get description() {
-    return SBString(PREF_BRANCH + "description", null, null);
+    return SBString(PREF_BRANCH + "description", null, this._strings);
   },
   
   get isLocal() {

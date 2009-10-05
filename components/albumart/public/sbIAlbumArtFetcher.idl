@@ -130,8 +130,5 @@ interface sbIAlbumArtFetcher : nsISupports
 
 #define SB_METADATAALBUMARTFETCHER_CONTRACTID \
           "@songbirdnest.com/Songbird/album-art/metadata-fetcher;1"
-
-#define SB_LASTFMALBUMARTFETCHER_CONTRACTID \
-          "@songbirdnest.com/Songbird/album-art/lastfm-fetcher;1"
 %}C++
 

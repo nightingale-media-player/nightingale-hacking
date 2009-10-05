@@ -47,7 +47,7 @@ interface nsISimpleEnumerator;
 * (eg: sbIDeviceBase) may also specify a commands object to be shown when the
 * tables are displayed in a <sb-playlist> element.  This object's purpose is to
 * return abstract information that can be used by the playlist element to
-* autogenerate its xul button and menuitm elements.
+* autogenerate its xul button and menuitem elements.
 *
 * These objects ought to be created in javascript.  When a new playlist is
 * created, it will query sbIPlaylistCommandsManager for command objects, and the
