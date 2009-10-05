@@ -53,18 +53,7 @@ GENERATE_NSIS_MANIFEST = $(topsrcdir)/tools/scripts/generate-nsis-manifest.py
 
 GARBAGE += $(CURDIR)/nsis-install-manifest.txt \
            $(CURDIR)/nsis-uninstall-manifest.txt \
-           $(GEARWORKS_DIST_LIBS) \
            $(NULL)
-
-GEARWORKS_SYSTEM_LIBS = \
- $(DEPS_DIR)/private/gearworks-sdk/Drivers/x86/GearAspi.dll \
- $(DEPS_DIR)/private/gearworks-sdk/Drivers/x86/GearAspiWDM.sys \
- $(NULL)
-
-
-GEARWORKS_DIST_LIBS = $(foreach f, \
-                       $(GEARWORKS_SYSTEM_LIBS), \
-                       $(SONGBIRD_DISTDIR)/$(notdir $f))
 
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 include $(topsrcdir)/build/rules.mk
@@ -80,23 +69,13 @@ include $(topsrcdir)/build/rules.mk
 # deal with this is to call the preprocessor in the libs target ourselves.
 # Boo.
 #
-# Finally, we force-clean the gearworks libs out of the dist dir BEFORE
-# we auto-generate the manifests because we don't install them by default,
-# and if the manifests included them, we'd automatically install them (in the
-# incorrect place, mind you).
-#
-# We solve this by always removing them from the dist directory before
-# generating the manifest, generating the manifest, then re-adding them.
-#
 
 libs::
 	$(INSTALL_FILE) $(topsrcdir)/update/files-added-to-$(SB_PLATFORM) $(SONGBIRD_DISTDIR)/added-files
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/README.txt
 	$(topsrcdir)/tools/win32/unix2dos/unix2dos.exe $(SONGBIRD_DISTDIR)/TRADEMARK.txt
-	$(RM) $(GEARWORKS_DIST_LIBS)
 	$(GENERATE_NSIS_MANIFEST) -f -i .autoreg -d $(SONGBIRD_DISTDIR) -m install -o $(CURDIR)/nsis-install-manifest.txt
 	$(GENERATE_NSIS_MANIFEST) -f -i .autoreg -d $(SONGBIRD_DISTDIR) -m uninstall -o $(CURDIR)/nsis-uninstall-manifest.txt
 	$(PERL) $(MOZSDK_SCRIPTS_DIR)/preprocessor.pl $(ACDEFINES) $(RESOURCES_PPFLAGS) $(PPDEFINES) -- $(srcdir)/sb-filelist.nsi.in > $(CURDIR)/sb-filelist.nsi
-	$(INSTALL_PROG) $(GEARWORKS_SYSTEM_LIBS) $(SONGBIRD_DISTDIR)
 	cd $(SONGBIRD_DISTDIR) && $(DEPS_DIR)/nsis-2.45/makensis -NOCD -DBUILD_ID="$(SB_BUILD_ID)" -DARCH="$(SB_PLATFORM)-$(SB_ARCH)" -V3 $(srcdir)/songbird.nsi
 	$(MV) $(SONGBIRD_DISTDIR)/$(SB_INSTALLER_NAME) $(SB_INSTALLER_FINAL_DIR)/$(SB_INSTALLER_NAME)

@@ -37,6 +37,7 @@
 #define RH_ERROR_QUERY_VALUE         8
 #define RH_ERROR_SET_KEY             9
 #define RH_ERROR_INVALID_ARG         10
+#define RH_ERROR_COPYFILE_FAILED     11
 
 #define RH_SUCCESS_NOACTION          128
 

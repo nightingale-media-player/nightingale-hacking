@@ -33,6 +33,7 @@
 
 #include "reghandlers.h"
 #include "stringconvert.h"
+#include "toolslib.h"
 #include "debug.h"
 #include "error.h"
 #include "regparse.h"
@@ -75,6 +76,9 @@ LPCTSTR DRIVER_SUBKEY_STR = _T("UpperFilters");
 
 static const TCHAR GEARWORKS_REG_VALUE_STR[] = _T("GEARAspiWDM");
 static const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
+
+static const TCHAR GEARWORKS_ASPI_DRIVER[] = _T("GearAspi.dll");
+static const TCHAR GEARWORKS_ASPIWDM_DRIVER[] = _T("GearAspiWDM.sys");
 
 static const size_t DEFAULT_REG_BUFFER_SZ = 4096;
 
@@ -338,14 +342,101 @@ int AddFilteredDriver(LPCTSTR regSubKey,
   return RH_OK;
 }
 
+int InstallAspiDriverFiles(void) {
+  BOOL rv; 
+  HRESULT hr;
+
+  const size_t pathStorage = MAX_PATH + 1;
+  TCHAR existingDriverPath[pathStorage], newDriverPath[pathStorage],
+        windowsSystemDir[pathStorage];
+
+  // Ensure these are 0s from the start...
+  memset(existingDriverPath, 0, pathStorage);
+  memset(newDriverPath, 0, pathStorage);
+  memset(windowsSystemDir, 0, pathStorage);
+
+  tstring appDir = GetAppDirectory();
+
+  hr = SHGetFolderPath(NULL,
+                       CSIDL_SYSTEM,
+                       NULL,
+                       SHGFP_TYPE_CURRENT,
+                       windowsSystemDir);
+
+  if (FAILED(hr) || hr == S_FALSE) {
+    DoLogMessage(hr, _T("Get system directory"));
+    return RH_ERROR_QUERY_KEY;
+  }
+
+  windowsSystemDir[MAX_PATH] = _T('\0'); // never trust 
+
+  int len = _sntprintf(existingDriverPath, MAX_PATH, _T("%sdrivers\\%s"),
+            appDir.c_str(), GEARWORKS_ASPI_DRIVER);
+
+  if (len < 0) {
+    DebugMessage("Failed to construct GEARWORKS_ASPI_DRIVER source path");
+    return RH_ERROR_QUERY_VALUE;
+  }
+
+  len = _sntprintf(newDriverPath, MAX_PATH, _T("%s\\%s"), windowsSystemDir,
+                   GEARWORKS_ASPI_DRIVER);
+
+  if (len < 0) {
+    DebugMessage("Failed to construct GEARWORKS_ASPI_DRIVER dest path");
+    return RH_ERROR_QUERY_VALUE;
+  }
+  
+  rv = CopyFile(existingDriverPath,  // lpExistingFileName
+                newDriverPath,       // lpNewFileName
+                FALSE);              // bFailIfExists
+
+  if (!rv)
+    return RH_ERROR_COPYFILE_FAILED;
+
+  // Reset these...
+  memset(existingDriverPath, 0, pathStorage);
+  memset(newDriverPath, 0, pathStorage);
+
+  len = _sntprintf(existingDriverPath, MAX_PATH, _T("%sdrivers\\%s"),
+                   appDir.c_str(), GEARWORKS_ASPIWDM_DRIVER);
+
+  if (len < 0) {
+    DebugMessage("Failed to construct GEARWORKS_ASPIWDM_DRIVER source path");
+    return RH_ERROR_QUERY_VALUE;
+  }
+
+  len = _sntprintf(newDriverPath, MAX_PATH, _T("%s\\drivers\\%s"),
+                   windowsSystemDir, GEARWORKS_ASPIWDM_DRIVER);
+
+  if (len < 0) {
+    DebugMessage("Failed to construct GEARWORKS_ASPIWDM_DRIVER dest path");
+    return RH_ERROR_QUERY_VALUE;
+  }
+
+  rv = CopyFile(existingDriverPath,  // lpExistingFileName
+                newDriverPath,       // lpNewFileName
+                FALSE);              // bFailIfExists
+
+  if (!rv)
+    return RH_ERROR_COPYFILE_FAILED;
+
+  return RH_OK;
+}
+
+
 int InstallAspiDriver(void) {
   int finalRv = RH_OK;
 
   int rv;
-  
+
+  rv = InstallAspiDriverFiles();
+  if (rv != RH_OK)
+    return rv;
+ 
   rv = AdjustDllUseCount(STR_API_DLL_NAME, 1);
   if (rv != RH_OK)
     return rv;
+
   rv = AdjustDllUseCount(STR_API_SYS_NAME, 1);
   if (rv != RH_OK)
     return rv;
@@ -542,6 +633,8 @@ int RemoveAspiDriver(void) {
     free(data);
     delete [] newRegValue.value;
   }
+
+  // TODO DELETE GEARWORKS DRIVERS
 
   return result;
 }

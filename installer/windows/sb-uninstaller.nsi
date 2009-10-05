@@ -140,14 +140,10 @@ Function un.RemoveCdripRegistryKeys
 
    ${If} $0 == ${TRUE}
       ExecWait '"$INSTDIR\${CdripHelperEXE}" remove' $0
-      ${If} $0 = 0
-         Delete /REBOOTOK "$SYSDIR\${CdripApiDll}"
-         Delete /REBOOTOK "$SYSDIR\Drivers\${CdripApiSYS}"
-      ${EndIf}
+      SetRebootFlag true
    ${EndIf}
 
-   StrCpy $0 "$RootAppRegistryKey\${CdripRegKey}"
-   DeleteRegKey HKLM $0
+   DeleteRegKey HKLM "$RootAppRegistryKey\${CdripRegKey}"
 FunctionEnd
 
 Function un.RemoveAppRegistryKeys

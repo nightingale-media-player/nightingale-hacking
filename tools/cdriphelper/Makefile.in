@@ -34,6 +34,7 @@ CPP_SRCS = winmain.cpp \
            stringconvert.cpp \
            debug.cpp \
            regparse.cpp \
+           toolslib.cpp \
            $(NULL)
 
 #
@@ -65,4 +66,21 @@ SIMPLE_PROGRAM = cdriphelper$(BIN_SUFFIX)
 
 FINAL_TARGET = $(SONGBIRD_DISTDIR)
 
+ifeq (windows_1,$(SB_PLATFORM)_$(HAS_EXTRAS))
+   INSTALL_GEARWORKS_DRIVERS = 1
+endif
+
+GEARWORKS_SYSTEM_LIBS = \
+ $(DEPS_DIR)/private/gearworks-sdk/Drivers/x86/GearAspi.dll \
+ $(DEPS_DIR)/private/gearworks-sdk/Drivers/x86/GearAspiWDM.sys \
+ $(NULL)
+
+CREATEDIRS = $(SONGBIRD_DRIVERSDIR) \
+             $(NULL)
+
 include $(topsrcdir)/build/rules.mk
+
+libs::
+ifeq (1,$(INSTALL_GEARWORKS_DRIVERS))
+	$(INSTALL_PROG) $(GEARWORKS_SYSTEM_LIBS) $(SONGBIRD_DRIVERSDIR)
+endif

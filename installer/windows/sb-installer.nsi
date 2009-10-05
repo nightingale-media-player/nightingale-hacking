@@ -249,11 +249,6 @@ Function InstallCdrip
 
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
 
-   SetOutPath $SYSDIR
-   File ${CdripApiDll}
-   SetOutPath $SYSDIR\Drivers
-   File ${CdripApiSYS}
-
    ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
 
    ;SectionEnd
