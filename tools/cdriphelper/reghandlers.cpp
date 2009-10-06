@@ -175,7 +175,7 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
     return RH_ERROR_QUERY_VALUE;
   }
   dllCount += value;
-  if (dllCount != 0) {
+  if (dllCount > 0) {
     ret = RegSetValueEx(hKeySharedDLLs,
                         nameBuffer,
                         NULL,
@@ -442,6 +442,8 @@ int InstallAspiDriver(void) {
   if (rv != RH_OK)
     return rv;
 
+  // PreedTODO: should this be its own function, so install-mode can call it
+  // but recovery mode doesn't have to (and _should_ recovery mode)?
   // register the service
   { /* scope */
     SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
@@ -517,6 +519,49 @@ int InstallAspiDriver(void) {
   return finalRv;
 }
 
+LONG GetDriverInstallationCount(LPCTSTR installPath) {
+  HKEY installationCountHandle;
+
+  DWORD installationCount, currentKeyType;
+  DWORD dwordSize = sizeof(DWORD);
+
+  LONG rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+                         SONGBIRD_CDRIP_REG_KEY_ROOT,
+                         0,
+                         KEY_ALL_ACCESS,
+                         &installationCountHandle);
+
+  if (!LoggedSUCCEEDED(rv, 
+   _T("RegOpenKeyEx() in GetDriverInstallationCount failed:")))
+    return 0;
+
+  tstring appDir = GetAppDirectory(); 
+
+  rv = RegQueryValueEx(installationCountHandle,
+                       appDir.c_str(),
+                       0,
+                       &currentKeyType,
+                       (LPBYTE)&installationCount,
+                       &dwordSize);
+
+  RegCloseKey(installationCountHandle);
+
+  if (rv == ERROR_FILE_NOT_FOUND)
+    return 0;
+
+  if (!LoggedSUCCEEDED(rv, 
+      _T("GetDriverInstallationCount(): RegQueryValueEx() failed: "))) {
+    return 0; 
+  } 
+  else if (currentKeyType != REG_DWORD) {
+    DebugMessage("GetDriverInstallationCount(): invalid key type: %d", 
+                 currentKeyType);
+    return 0;
+  }
+
+  return installationCount;
+}
+
 int IncrementDriverInstallationCount(void) {
   HKEY installationCountHandle;
   DWORD keyCreationResult, installationCount, currentKeyType;
@@ -577,10 +622,15 @@ int RemoveAspiDriver(void) {
   int result = RH_OK;
   
   int dllCount, sysCount;
-  result = AdjustDllUseCount(STR_API_DLL_NAME, -1, &dllCount);
+
+  tstring appDir = GetAppDirectory(); 
+
+  int installationCount = GetDriverInstallationCount(appDir.c_str());
+
+  result = AdjustDllUseCount(STR_API_DLL_NAME, -installationCount, &dllCount);
   if (result != RH_OK)
     return result;
-  result = AdjustDllUseCount(STR_API_SYS_NAME, -1, &sysCount);
+  result = AdjustDllUseCount(STR_API_SYS_NAME, -installationCount, &sysCount);
   if (result != RH_OK) {
     // OMGWTFBBQ we failed to change the second one
     // let's try to change the first one back (but ignore whether we succeeded)
@@ -588,6 +638,9 @@ int RemoveAspiDriver(void) {
     return result;
   }
 
+  // PreedTODO: should this go after all the filter driver list munging?
+  // We should never destroy an existing Gearworks entry in the filter list,
+  // so removing the one(s) we added should be ok?
   if (dllCount > 0 || sysCount > 0) {
     // some other folks are using the driver
     return RH_SUCCESS_NOACTION;

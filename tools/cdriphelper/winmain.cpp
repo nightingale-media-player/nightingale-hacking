@@ -90,7 +90,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
   } else if ("repair" == mode) {
     OutputDebugString(_T("In Repair mode"));
-    result = RH_ERROR_NOIMPL;
+    result = InstallAspiDriver();
 
   } else {
     OutputDebugString(_T("Unknown mode"));
