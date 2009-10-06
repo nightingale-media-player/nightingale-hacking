@@ -453,6 +453,12 @@ private:
   void ProxyCDLookup();
 
   /**
+   * Show the user any errors that happened during transcoding.
+   * NOTE: This method will proxy to the main thread if it needs to.
+   */
+  nsresult QueryUserViewErrors();
+
+  /**
    * Method to trigger the user errors on the main thread.
    */
   void ProxyQueryUserViewErrors();
@@ -481,11 +487,6 @@ private:
    * Gets the bitrate property from the cached transcoding profile
    */
   nsresult GetBitrateFromProfile(PRUint32 * bitrate);
-
-  /**
-   * Method to perform any post rip operations.
-   */
-  nsresult OnRipCompleted();
 };
 
 #define SB_CD_DEVICE_AUTO_INVOKE(aName, aMethod)                              \

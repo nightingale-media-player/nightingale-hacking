@@ -1041,10 +1041,37 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   // We need to check if this is the last item to be ripped, if so check for
   // AutoEject.
   if (aRequest->batchIndex == aRequest->batchCount) {
+    nsresult rv2;
     mTranscodeProfile = nsnull;
 
-    nsresult rv2 = OnRipCompleted();
-    NS_ENSURE_SUCCESS(rv2, rv2);
+    // Dispatch the event to notify listeners that we've finished the rip job.
+    CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
+                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
+    if (status == sbIJobProgress::STATUS_SUCCEEDED) {
+      // Check the preferences to see if we should eject
+      if (mPrefAutoEject) {
+        // Since we successfully ripped all selected tracks and the user has
+        // the autoEject preference set, we can eject now.
+        rv2 = Eject();
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv2), "Could not eject the CD!");
+      }
+
+      // if the user wants a sound notification, then beep
+      if (mPrefNotifySound) {
+        nsCOMPtr<nsISound> soundInterface =
+                           do_CreateInstance("@mozilla.org/sound;1", &rv2);
+        NS_ENSURE_SUCCESS(rv2, rv2);
+
+        soundInterface->Beep();
+      }
+    }
+    else {
+      // The rip operation has completed, but there were a few errors during
+      // the transcode. Show those errors now.
+      rv2 = QueryUserViewErrors();
+      NS_ENSURE_SUCCESS(rv2, rv2);
+    }
   }
 
   return rv;
@@ -1088,35 +1115,6 @@ nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
 
     rv = propEnumerator->HasMoreElements(&more);
     NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbCDDevice::OnRipCompleted()
-{
-  nsresult rv;
-
-  // Dispatch the event to notify listeners that we've finished the rip job.
-  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
-                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
-
-  // Check the preferences to see if we should eject
-  if (mPrefAutoEject) {
-    // Since we successfully ripped all selected tracks and the user has
-    // the autoEject preference set, we can eject now.
-    rv = Eject();
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
-  }
-
-  // if the user wants a sound notification, then beep
-  if (mPrefNotifySound) {
-    nsCOMPtr<nsISound> soundInterface =
-                       do_CreateInstance("@mozilla.org/sound;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    soundInterface->Beep();
   }
 
   return NS_OK;

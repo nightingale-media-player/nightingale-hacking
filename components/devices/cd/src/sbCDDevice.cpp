@@ -793,28 +793,8 @@ sbCDDevice::Eject()
   nsresult rv;
 
   // Check for errors then query the user if they wish to see them first.
-  if (!NS_IsMainThread()) {
-    nsCOMPtr<nsIThreadManager> threadMgr =
-      do_GetService("@mozilla.org/thread-manager;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIThread> mainThread;
-    rv = threadMgr->GetMainThread(getter_AddRefs(mainThread));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIRunnable> runnable =
-      NS_NEW_RUNNABLE_METHOD(sbCDDevice, this, ProxyQueryUserViewErrors);
-    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
-
-    rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else {
-    ProxyQueryUserViewErrors();
-  }
-
-  //rv = sbDeviceUtils::QueryUserViewErrors(this);
-  //NS_ENSURE_SUCCESS(rv, rv);
+  rv = QueryUserViewErrors();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mCDDevice->Eject();
   NS_ENSURE_SUCCESS(rv, rv);
@@ -985,6 +965,34 @@ sbCDDevice::GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles)
 nsresult
 sbCDDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
 {
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::QueryUserViewErrors()
+{
+  nsresult rv;
+
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<nsIThreadManager> threadMgr =
+      do_GetService("@mozilla.org/thread-manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIThread> mainThread;
+    rv = threadMgr->GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbCDDevice, this, ProxyQueryUserViewErrors);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    ProxyQueryUserViewErrors();
+  }
+
   return NS_OK;
 }
 
