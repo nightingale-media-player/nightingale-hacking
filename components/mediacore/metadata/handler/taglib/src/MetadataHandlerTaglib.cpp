@@ -2784,10 +2784,6 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
 {
     nsresult                    result = NS_OK;
 
-    /* Do nothing if no metadata value available. */
-    if (value.isNull())
-        return (result);
-
     /* Add the metadata value. */
     nsAutoString strValue;
     ConvertCharset(value, charset, strValue);
