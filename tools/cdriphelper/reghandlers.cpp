@@ -535,10 +535,8 @@ LONG GetDriverInstallationCount(LPCTSTR installPath) {
    _T("RegOpenKeyEx() in GetDriverInstallationCount failed:")))
     return 0;
 
-  tstring appDir = GetAppDirectory(); 
-
   rv = RegQueryValueEx(installationCountHandle,
-                       appDir.c_str(),
+                       installPath,
                        0,
                        &currentKeyType,
                        (LPBYTE)&installationCount,
