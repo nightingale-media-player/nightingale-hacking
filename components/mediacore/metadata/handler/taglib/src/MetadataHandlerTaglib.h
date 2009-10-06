@@ -356,9 +356,10 @@ private:
         nsICharsetDetector          *aDetector,
         TagLib::String              &aContent);
 
-    TagLib::String ConvertCharset(
+    void ConvertCharset(
         TagLib::String              aString,
-        const char                  *aCharset);
+        const char                  *aCharset,
+        nsAString&                  aResult);
 
     void CompleteRead();
 
@@ -380,7 +381,8 @@ private:
 
     nsresult AddMetadataValue(
         const char                  *name,
-        TagLib::String              value);
+        TagLib::String              value,
+        const char                  *charset);
 
     nsresult AddMetadataValue(
         const char                  *name,

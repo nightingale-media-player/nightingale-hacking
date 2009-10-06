@@ -70,6 +70,8 @@
 #include <nsIStandardURL.h>
 #include <nsICharsetDetector.h>
 #include <nsIUTF8ConverterService.h>
+#include <nsICharsetConverterManager.h>
+#include <nsIUnicodeDecoder.h>
 #include <nsIContentSniffer.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
@@ -1787,8 +1789,7 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
   for (i = 0; i < numMetadataEntries; i++) {
     TagLib::ID3v2::FrameList frameList = frameListMap[ID3v2Map[i][0]];
     if(!frameList.isEmpty()) {
-      TagLib::String value = ConvertCharset(frameList.front()->toString(), aCharset);
-      AddMetadataValue(ID3v2Map[i][1], value);
+      AddMetadataValue(ID3v2Map[i][1], frameList.front()->toString(), aCharset);
     }
   }
 
@@ -1800,12 +1801,10 @@ void sbMetadataHandlerTaglib::ReadID3v2Tags(
       static_cast<TagLib::ID3v2::UrlLinkFrame*>(frameList.front());
     TagLib::String taglibURL = woaf->url();
     
-    AddMetadataValue(SB_PROPERTY_ORIGINPAGE,
-                     ConvertCharset(taglibURL, aCharset));
+    AddMetadataValue(SB_PROPERTY_ORIGINPAGE, taglibURL, aCharset);
     /* bug 10933 -- UrlLinkFrame does not support setText appropriately
     TagLib::String taglibTitle = woaf->text();
-    AddMetadataValue(SB_PROPERTY_ORIGINPAGETITLE,
-                     ConvertCharset(taglibTitle, aCharset));*/
+    AddMetadataValue(SB_PROPERTY_ORIGINPAGETITLE, taglibTitle, aCharset);*/
   }
   
   // If this is a local file, cache common album art in order to speed 
@@ -1890,7 +1889,7 @@ void sbMetadataHandlerTaglib::ReadAPETags(
     for (i = 0; i < numMetadataEntries; i++) {
       TagLib::APE::Item item = itemListMap[APEMap[i][0]];
       if (!item.isEmpty()) {
-        AddMetadataValue(APEMap[i][1], item.toString());
+        AddMetadataValue(APEMap[i][1], item.toString(), nsnull);
       }
     }
 }
@@ -2116,23 +2115,23 @@ PRBool sbMetadataHandlerTaglib::ReadFile(
   pTag = pTagFile->tag();
   if (pTag) {
     // yay random charset guessing!
-    AddMetadataValue(SB_PROPERTY_TRACKNAME,       ConvertCharset(pTag->title(), aCharset));
-    AddMetadataValue(SB_PROPERTY_ARTISTNAME,      ConvertCharset(pTag->artist(), aCharset));
-    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME, ConvertCharset(pTag->albumArtist(), aCharset));
-    AddMetadataValue(SB_PROPERTY_ALBUMNAME,       ConvertCharset(pTag->album(), aCharset));
-    AddMetadataValue(SB_PROPERTY_COMMENT,         ConvertCharset(pTag->comment(), aCharset));
-    AddMetadataValue(SB_PROPERTY_LYRICS,          ConvertCharset(pTag->lyrics(), aCharset));
-    AddMetadataValue(SB_PROPERTY_GENRE,           ConvertCharset(pTag->genre(), aCharset));
-    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    ConvertCharset(pTag->producer(), aCharset));
-    AddMetadataValue(SB_PROPERTY_COMPOSERNAME,    ConvertCharset(pTag->composer(), aCharset));
-    AddMetadataValue(SB_PROPERTY_CONDUCTORNAME,   ConvertCharset(pTag->conductor(), aCharset));
-    AddMetadataValue(SB_PROPERTY_LYRICISTNAME,    ConvertCharset(pTag->lyricist(), aCharset));
-    AddMetadataValue(SB_PROPERTY_RECORDLABELNAME, ConvertCharset(pTag->recordLabel(), aCharset));
-    AddMetadataValue(SB_PROPERTY_RATING,          ConvertCharset(pTag->rating(), aCharset));
-    AddMetadataValue(SB_PROPERTY_LANGUAGE,        ConvertCharset(pTag->language(), aCharset));
-    AddMetadataValue(SB_PROPERTY_KEY,             ConvertCharset(pTag->key(), aCharset));
-    AddMetadataValue(SB_PROPERTY_COPYRIGHT,       ConvertCharset(pTag->license(), aCharset));
-    AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,    ConvertCharset(pTag->licenseUrl(), aCharset));
+    AddMetadataValue(SB_PROPERTY_TRACKNAME,       pTag->title(), aCharset);
+    AddMetadataValue(SB_PROPERTY_ARTISTNAME,      pTag->artist(), aCharset);
+    AddMetadataValue(SB_PROPERTY_ALBUMARTISTNAME, pTag->albumArtist(), aCharset);
+    AddMetadataValue(SB_PROPERTY_ALBUMNAME,       pTag->album(), aCharset);
+    AddMetadataValue(SB_PROPERTY_COMMENT,         pTag->comment(), aCharset);
+    AddMetadataValue(SB_PROPERTY_LYRICS,          pTag->lyrics(), aCharset);
+    AddMetadataValue(SB_PROPERTY_GENRE,           pTag->genre(), aCharset);
+    AddMetadataValue(SB_PROPERTY_PRODUCERNAME,    pTag->producer(), aCharset);
+    AddMetadataValue(SB_PROPERTY_COMPOSERNAME,    pTag->composer(), aCharset);
+    AddMetadataValue(SB_PROPERTY_CONDUCTORNAME,   pTag->conductor(), aCharset);
+    AddMetadataValue(SB_PROPERTY_LYRICISTNAME,    pTag->lyricist(), aCharset);
+    AddMetadataValue(SB_PROPERTY_RECORDLABELNAME, pTag->recordLabel(), aCharset);
+    AddMetadataValue(SB_PROPERTY_RATING,          pTag->rating(), aCharset);
+    AddMetadataValue(SB_PROPERTY_LANGUAGE,        pTag->language(), aCharset);
+    AddMetadataValue(SB_PROPERTY_KEY,             pTag->key(), aCharset);
+    AddMetadataValue(SB_PROPERTY_COPYRIGHT,       pTag->license(), aCharset);
+    AddMetadataValue(SB_PROPERTY_COPYRIGHTURL,    pTag->licenseUrl(), aCharset);
     AddMetadataValue(SB_PROPERTY_YEAR,            (PRUint64)pTag->year());
     AddMetadataValue(SB_PROPERTY_TRACKNUMBER,     (PRUint64)pTag->track());
     AddMetadataValue(SB_PROPERTY_TOTALTRACKS,     (PRUint64)pTag->totalTracks());
@@ -2199,7 +2198,7 @@ void sbMetadataHandlerTaglib::GuessCharset(
     
     if (tagString.isEmpty()) {
         // nothing needs guessing
-        _retval.AssignLiteral("utf-8");
+        _retval.AssignLiteral("UTF-8");
         return;
     }
 
@@ -2268,12 +2267,12 @@ void sbMetadataHandlerTaglib::GuessCharset(
         if (utf8Service) {
             nsCString dataUTF8;
             rv = utf8Service->ConvertStringToUTF8(raw,
-                                                  "utf-8",
+                                                  "UTF-8",
                                                   PR_FALSE,
                                                   dataUTF8);
             if (NS_SUCCEEDED(rv)) {
                 // this was utf8
-                _retval.AssignLiteral("utf-8");
+                _retval.AssignLiteral("UTF-8");
                 return;
             }
         }
@@ -2382,20 +2381,23 @@ NS_IMETHODIMP sbMetadataHandlerTaglib::Notify(
     return NS_OK;
 }
 
-TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
-    TagLib::String              aString,
-    const char                  *aCharset)
+inline void toMozString(TagLib::String aString, nsAString& aResult)
 {
-    // if null, return an empty (non-null) string instead
-    if (aString.isNull()) {
-        return TagLib::String();
-    }
+  CopyUTF8toUTF16(nsDependentCString(aString.toCString(true)), aResult);
+}
+
+void sbMetadataHandlerTaglib::ConvertCharset(
+    TagLib::String              aString,
+    const char                  *aCharset,
+    nsAString&                  aResult)
+{
+    aResult.Truncate();
 
     // If UTF16 or ASCII, or we have no idea, 
     // just leave the string as-is
     if (!aCharset || !*aCharset ||
         !aString.shouldGuessCharacterSet() ||
-        !strcmp("utf-8", aCharset) ||
+        !strcmp("UTF-8", aCharset) ||
         !strcmp("us-ascii", aCharset))
         
     {
@@ -2403,7 +2405,9 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
              aCharset ? aCharset : "(null)",
              aString.shouldGuessCharacterSet()
              ));
-        return aString;
+
+        toMozString(aString, aResult);
+        return;
     }
 
     std::string data = aString.toCString(false);
@@ -2428,38 +2432,39 @@ TagLib::String sbMetadataHandlerTaglib::ConvertCharset(
                                                 size );
                 NS_ASSERTION(size == read, "Win32 Current Codepage conversion failed.");
 
-                wstr[size] = '\0';
-
-                TagLib::String strValue(wstr);
+                aResult.Assign(wstr, size);
                 NS_Free(wstr);
-                return strValue;
+                return;
             }
         }
     }
 #endif
 
     // convert via Mozilla
-    // TODO XXX This call takes 1/3 of our scan time right now!
-    nsCString raw(data.c_str(), data.length());
 
-    {
-      // Release the lock while we're using proxied services to avoid
-      // deadlocking with the main thread trying to grab the taglib lock
-      nsAutoUnlock lock(sTaglibLock);
+    nsresult rv;
+    nsCOMPtr<nsICharsetConverterManager> converterManager =
+        do_GetService(NS_CHARSETCONVERTERMANAGER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, toMozString(aString, aResult));
 
-      nsCOMPtr<nsIUTF8ConverterService> utf8Service;
-      mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
-      if (utf8Service) {
-          nsCString converted;
-          nsresult rv = utf8Service->ConvertStringToUTF8(
-              raw, aCharset, PR_FALSE, converted);
-          if (NS_SUCCEEDED(rv))
-              return TagLib::String(converted.BeginReading(), TagLib::String::UTF8);
-      }
+    nsCOMPtr<nsIUnicodeDecoder> decoder;
+    rv = converterManager->GetUnicodeDecoderRaw(aCharset, getter_AddRefs(decoder));
+    NS_ENSURE_SUCCESS(rv, toMozString(aString, aResult));
+
+    PRInt32 dataLen = data.length();
+    PRInt32 size;
+    rv = decoder->GetMaxLength(data.c_str(), dataLen, &size);
+    NS_ENSURE_SUCCESS(rv, toMozString(aString, aResult));
+
+    PRUnichar *wstr = reinterpret_cast< PRUnichar * >( NS_Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+    rv = decoder->Convert(data.c_str(), &dataLen, wstr, &size);
+    if (NS_SUCCEEDED(rv)) {
+      aResult.Assign(wstr, size);
     }
+    NS_Free(wstr);
+    NS_ENSURE_SUCCESS(rv, toMozString(aString, aResult));
 
-    // failed to convert :(
-    return aString;
+    return;
 }
 
 
@@ -2794,7 +2799,8 @@ PRBool sbMetadataHandlerTaglib::ReadOGAFile()
 
 nsresult sbMetadataHandlerTaglib::AddMetadataValue(
     const char                  *name,
-    TagLib::String              value)
+    TagLib::String              value,
+    const char                  *charset)
 {
     nsresult                    result = NS_OK;
 
@@ -2803,9 +2809,11 @@ nsresult sbMetadataHandlerTaglib::AddMetadataValue(
         return (result);
 
     /* Add the metadata value. */
+    nsAutoString strValue;
+    ConvertCharset(value, charset, strValue);
     result = mpMetadataPropertyArray->AppendProperty
                         (NS_ConvertASCIItoUTF16(name),
-                         NS_ConvertUTF8toUTF16(value.toCString(true)));
+                         strValue);
 
     return (result);
 }
