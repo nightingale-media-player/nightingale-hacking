@@ -127,6 +127,14 @@ void nsString_ReplaceSubstring(/* inout */ nsAString &aString,
 PRBool IsLikelyUTF8(const nsACString& aString);
 
 /**
+ * Returns true if the given string is UTF8
+ *
+ * Note that this actually decodes the UTF8 string so it is significantly
+ * slower than IsLikelyUTF8.
+ */
+PRBool IsUTF8(const nsACString& aString);
+
+/**
  * Split the string specified by aString into sub-strings using the delimiter
  * specified by aDelimiter and place the sub-strings in the array specified by
  * aStringArray.

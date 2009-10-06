@@ -30,6 +30,8 @@
 #include <nsDataHashtable.h>
 #include <nsIStringBundle.h>
 #include <nsIStringEnumerator.h>
+#include <nsICharsetConverterManager.h>
+#include <nsIUnicodeDecoder.h>
 #include <nsServiceManagerUtils.h>
 #include <sbIStringBundleService.h>
 #include <sbMemoryUtils.h>
@@ -273,6 +275,30 @@ PRBool IsLikelyUTF8(const nsACString& aString)
 
     bytesRemaining = next;
   }
+  return PR_TRUE;
+}
+
+PRBool IsUTF8(const nsACString& aString)
+{
+  nsresult rv = NS_OK;
+  nsCOMPtr<nsICharsetConverterManager> converterManager =
+      do_GetService(NS_CHARSETCONVERTERMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  nsCOMPtr<nsIUnicodeDecoder> decoder;
+  rv = converterManager->GetUnicodeDecoderRaw("UTF-8", getter_AddRefs(decoder));
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRInt32 dataLen = aString.Length();
+  PRInt32 size;
+  rv = decoder->GetMaxLength(aString.BeginReading(), dataLen, &size);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
+  PRUnichar *wstr = reinterpret_cast< PRUnichar * >( NS_Alloc( (size + 1) * sizeof( PRUnichar ) ) );
+  rv = decoder->Convert(aString.BeginReading(), &dataLen, wstr, &size);
+  NS_Free(wstr);
+  NS_ENSURE_SUCCESS(rv, PR_FALSE);
+
   return PR_TRUE;
 }
 

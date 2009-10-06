@@ -84,7 +84,6 @@
 #include <sbIMetadataHandler.h>
 #include <sbISeekableChannel.h>
 #include <sbITagLibChannelFileIOManager.h>
-#include <sbIProxiedServices.h>
 
 /* TagLib imports. */
 #include <fileref.h>
@@ -195,8 +194,6 @@ private:
 
     // Statics to help manage the single threading of taglib
     static PRLock* sTaglibLock;
-
-    nsCOMPtr<sbIProxiedServices> mProxiedServices;
 
     /* Inherited interfaces. */
 public:

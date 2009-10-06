@@ -69,7 +69,6 @@
 #include <nsIProtocolHandler.h>
 #include <nsIStandardURL.h>
 #include <nsICharsetDetector.h>
-#include <nsIUTF8ConverterService.h>
 #include <nsICharsetConverterManager.h>
 #include <nsIUnicodeDecoder.h>
 #include <nsIContentSniffer.h>
@@ -1686,10 +1685,6 @@ nsresult sbMetadataHandlerTaglib::Init()
     mpResourceProtocolHandler = do_QueryInterface(resHandler, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    mProxiedServices =
-      do_GetService("@songbirdnest.com/moz/proxied-services;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
     return (NS_OK);
 }
 
@@ -2256,26 +2251,11 @@ void sbMetadataHandlerTaglib::GuessCharset(
     //        exited for UTF16 and ASCII.
 
     // see if it's valid utf8; if yes, assume it _is_ indeed utf8
-    nsCString raw(tagString.toCString());
-    if (IsLikelyUTF8(raw)) {
-        // Drop taglib lock around proxied service usage; otherwise we can
-        // deadlock with the main thread trying to grab the taglib lock for
-        // another file
-        nsAutoUnlock lock(sTaglibLock);
-        nsCOMPtr<nsIUTF8ConverterService> utf8Service;
-        mProxiedServices->GetUtf8ConverterService(getter_AddRefs(utf8Service));
-        if (utf8Service) {
-            nsCString dataUTF8;
-            rv = utf8Service->ConvertStringToUTF8(raw,
-                                                  "UTF-8",
-                                                  PR_FALSE,
-                                                  dataUTF8);
-            if (NS_SUCCEEDED(rv)) {
-                // this was utf8
-                _retval.AssignLiteral("UTF-8");
-                return;
-            }
-        }
+    nsDependentCString raw(tagString.toCString());
+    if (IsLikelyUTF8(raw) && IsUTF8(raw)) {
+        // this is utf8
+        _retval.AssignLiteral("UTF-8");
+        return;
     }
 
     // the metadata is in some 8-bit encoding; try to guess
