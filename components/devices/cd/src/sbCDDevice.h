@@ -453,6 +453,19 @@ private:
   void ProxyCDLookup();
 
   /**
+   * Method to show a lookup dialog specified by the passed in dialog URI with
+   * the option to post metadata-lookup-complete and device-ready events.
+   * \param aLookupDialogURI The URI of the dialog to lookup.
+   * \param aLookupResultsEnum Optional in-param for specifiying multiple
+   *                           metadata lookup results.
+   * \param aShouldReportEvents If true, this method will report metadata
+   *                            lookup complete and device ready events.
+   */
+  nsresult ShowMetadataLookupDialog(const char *aLookupDialogURI,
+                                    nsISimpleEnumerator *aLookupResultsEnum,
+                                    PRBool aShouldReportEvents);
+
+  /**
    * Show the user any errors that happened during transcoding.
    * NOTE: This method will proxy to the main thread if it needs to.
    */

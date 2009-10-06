@@ -505,12 +505,19 @@ sbCDDevice::ProxyCDLookup() {
 
   // Get the metadata manager and the default provider
   nsCOMPtr<sbIMetadataLookupManager> mlm =
-    do_GetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1",
-                         &rv);
+    do_GetService("@songbirdnest.com/Songbird/MetadataLookup/manager;1", &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
+
   nsCOMPtr<sbIMetadataLookupProvider> provider;
   rv = mlm->GetDefaultProvider(getter_AddRefs(provider));
-  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  // If there isn't a default provider, go ahead and throw the "no-metadata
+  // found" dialog and return.
+  if (NS_FAILED(rv) || !provider) {
+    rv = ShowMetadataLookupDialog(NO_CD_INFO_FOUND_DIALOG_URI, nsnull, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    return;
+  }
 
   // Get our TOC
   nsCOMPtr<sbICDTOC> toc;
@@ -521,7 +528,7 @@ sbCDDevice::ProxyCDLookup() {
   LOG(("Querying metadata lookup provider for disc"));
   nsCOMPtr<sbIMetadataLookupJob> job;
   rv = provider->QueryDisc(toc, getter_AddRefs(job));
-  if (NS_SUCCEEDED(rv)) {
+  if (NS_SUCCEEDED(rv) && job) {
     // Check the state of the job, if the state reflects success already, then
     // just invoke the progress listener directly, otherwise add the listener
     // to the job.
@@ -540,10 +547,63 @@ sbCDDevice::ProxyCDLookup() {
     }
   }
   else {
-    NS_WARNING("Could not lookup metadatajob. "
-               "no further processing will be done!");
-
+    // If the metadata lookup provider failed to provide a job, fallback and
+    // show the "no-metadata found" dialog for the user.
+    rv = ShowMetadataLookupDialog(NO_CD_INFO_FOUND_DIALOG_URI, nsnull, PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, /* void */);
   }
+}
+
+nsresult
+sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
+                                     nsISimpleEnumerator *aLookupResultsEnum,
+                                     PRBool aShouldReportEvents)
+{
+  NS_ENSURE_ARG_POINTER(aLookupDialogURI);
+
+  // Only append the results to the arg array if a valid ptr was passed in.
+  nsresult rv;
+  nsCOMPtr<nsIDOMWindow> parentWindow;
+  nsCOMPtr<nsIDOMWindow> domWindow;
+  nsCOMPtr<nsIWindowWatcher> windowWatcher =
+    do_ProxiedGetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Build out the dialog arguments.
+  nsCOMPtr<nsIMutableArray> args = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Always send over the device's library.
+  rv = args->AppendElement(mDeviceLibrary, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Not all dialogs need metadata results dialogs.
+  if (aLookupResultsEnum) {
+    rv = args->AppendElement(aLookupResultsEnum, PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Throw up one of the metadata dialogs and prompt the user for
+  // the right artist/album info and populate each track with it.
+  rv = windowWatcher->OpenWindow(parentWindow,
+      aLookupDialogURI,
+      nsnull,
+      "centerscreen,chrome,modal,titlebar,resizable,scrollbars=yes",
+      args,
+      getter_AddRefs(domWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (aShouldReportEvents) {
+    // This method has been instructed to report events, do that now.
+    CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_METADATA_COMPLETE,
+                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
+                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+  }
+
+  return NS_OK;
 }
 
 nsresult
@@ -689,31 +749,13 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
       rv = curLibraryItem->SetProperties(curTrackPropArray);
       NS_ENSURE_SUCCESS(rv, rv);
     }
-  } else {
-    nsCOMPtr<nsIDOMWindow> parentWindow;
-    nsCOMPtr<nsIDOMWindow> domWindow;
-    nsCOMPtr<nsIWindowWatcher> windowWatcher =
-      do_ProxiedGetService("@mozilla.org/embedcomp/window-watcher;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIMutableArray> args = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = args->AppendElement(mDeviceLibrary, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = args->AppendElement(metadataResultsEnum, PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Throw up one of the metadata dialogs and prompt the user for
-    // the right artist/album info and populate each track with it.
-    rv = windowWatcher->OpenWindow(parentWindow,
-                                   (numResults == 0) ? NO_CD_INFO_FOUND_DIALOG_URI
-                                                     : MULTI_CD_INFO_FOUND_DIALOG_URI,
-                                   nsnull,
-                                   "centerscreen,chrome,modal,titlebar,resizable,scrollbars=yes",
-                                   args,
-                                   getter_AddRefs(domWindow));
+  }
+  else {
+    rv = ShowMetadataLookupDialog(
+        (numResults == 0) ? NO_CD_INFO_FOUND_DIALOG_URI
+                          : MULTI_CD_INFO_FOUND_DIALOG_URI,
+        metadataResultsEnum,
+        PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
