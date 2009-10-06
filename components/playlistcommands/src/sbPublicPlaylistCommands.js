@@ -627,6 +627,9 @@ PublicPlaylistCommands.prototype = {
                                        null,
                                        "library_cmd_checkall",
                                        plCmd_CheckAllVisibleCallback);
+      this.m_cmd_CheckAll.setCommandEnabledCallback(null,
+                                                    "library_cmd_checkall",
+                                                    plCmd_NOT(plCmd_IsMediaListReadOnly));
 
       this.m_cmd_UncheckAll = new PlaylistCommandsBuilder();
       this.m_cmd_UncheckAll.appendAction(
@@ -638,6 +641,9 @@ PublicPlaylistCommands.prototype = {
       this.m_cmd_UncheckAll.setCommandVisibleCallback(null,
                                     "library_cmd_uncheckall",
                                     plCmd_NOT(plCmd_CheckAllVisibleCallback));
+      this.m_cmd_UncheckAll.setCommandEnabledCallback(null,
+                                                      "library_cmd_uncheckall",
+                                                      plCmd_NOT(plCmd_IsMediaListReadOnly));
 
       // --------------------------------------------------------------------------
 
@@ -1548,6 +1554,13 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
   return (unwrap(aContext.playlist).mediaListView.selection.count != 0);
+}
+
+// Returns true when the library is not read only.
+function plCmd_IsMediaListReadOnly(aContext, aSubMenuId, aCommandId, aHost) {
+  return (unwrap(aContext.playlist).mediaListView
+                                   .mediaList
+                                   .getProperty(SBProperties.isReadOnly) == "1");
 }
 
 // Returns true when "select all" should be visible, per comment #1 in
