@@ -145,7 +145,8 @@ var LibraryUtils = {
   },
 
   createStandardMediaListView: function(aMediaList, aSearchString) {
-    var mediaListView = aMediaList.createView();
+    var mediaList = aMediaList.QueryInterface(Ci.sbIMediaList);
+    var mediaListView = mediaList.createView();
 
     // Get the sort for this list by parsing the list's column spec.  Then hit
     // the property manager to see if there is a special sort profile for this

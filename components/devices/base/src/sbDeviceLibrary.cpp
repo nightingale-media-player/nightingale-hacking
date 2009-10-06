@@ -223,6 +223,9 @@ sbDeviceLibrary::Finalize()
   if (NS_SUCCEEDED(rv))
     deviceEventTarget->RemoveEventListener(this);
 
+  if (mDeviceLibrary)
+    UnregisterDeviceLibrary();
+
   // Get and clear the device library.
   nsCOMPtr<sbILibrary> deviceLibrary;
   {
@@ -232,9 +235,6 @@ sbDeviceLibrary::Finalize()
     // remove the listeners
     mListeners.Clear();
   }
-
-  if (deviceLibrary)
-    UnregisterDeviceLibrary();
 
   // let go of the owner device
   mDevice = nsnull;
