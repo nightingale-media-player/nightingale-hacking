@@ -76,3 +76,7 @@ hbox > .notch-box {
   color: #d3d3d3 !important;
 }
 
+.encoding-format-list {
+  min-width: 4.5em;
+}
+

@@ -86,7 +86,7 @@
                 <xul:hbox>
                   <xul:label value="&device.settings.music.transcoding.format.label;"/>
                   <xul:menulist sbid="encoding-format-menu">
-                    <xul:menupopup sbid="encoding-format-list"/>
+                    <xul:menupopup sbid="encoding-format-list" class="encoding-format-list"/>
                   </xul:menulist>
                 </xul:hbox>
                 <xul:hbox sbid="transcoding-bitrate">
