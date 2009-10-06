@@ -734,16 +734,7 @@ window.cdripController =
       return null;
     }
 
-    // Get the libraries for device
-    var libraries = this._device.content.libraries;
-    if (libraries.length < 1) {
-      // Oh no, we have no libraries
-      Cu.reportError("Device " + this._device.id + " has no libraries!");
-      return null;
-    }
-
-    // Get the first library
-    var lib = libraries.queryElementAt(0, Ci.sbILibrary);
+    var lib = this._getDeviceLibrary();
     if (!lib) {
       Cu.reportError("Unable to get library for device: " + this._device.id);
       return null;
@@ -806,7 +797,7 @@ window.cdripController =
     return status;
   },
 
-  _getDeviceLibrary: function sbCDRipServicePaneService__getDeviceLibrary() {
+  _getDeviceLibrary: function cdripController_getDeviceLibrary() {
     if (!this._device) {
       return null;
     }

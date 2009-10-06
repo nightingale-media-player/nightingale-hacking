@@ -385,6 +385,13 @@ sbCDRipServicePaneService.prototype = {
     if (deviceType != "CD")
       return;
 
+    if (device.state == Ci.sbIDevice.STATE_TRANSCODE) {
+      this._toggleReadOnly(true, device);
+    }
+    else if (device.state == Ci.sbIDevice.STATE_IDLE) {
+      this._toggleReadOnly(false, device);
+    }
+
     if (typeof(this._deviceInfoList[deviceId]) != 'undefined') {
       var devNode = this._deviceInfoList[deviceId].svcPaneNode;
 
@@ -449,6 +456,20 @@ sbCDRipServicePaneService.prototype = {
     return deviceLibrary;
   },
   
+  /**
+   * Turn the read only flag for the library on or off. This allows us to disable
+   * changes to the CD Device library during a rip.
+   * \param aReadOnly - Mark as read only (Disable changes) if true.
+   * \param aDevice - CD Device to toggle read only.
+   */
+  _toggleReadOnly: function sbCDRipServicePaneService__toggleReadOnly(aReadOnly,
+                                                                      aDevice) {
+    var deviceLibrary = this._getDeviceLibrary(aDevice);
+    if (deviceLibrary)
+      deviceLibrary.setProperty(SBProperties.isReadOnly,
+                                (aReadOnly ? "1" : "0"));
+  },
+
   /**
    * Check for any ripped tracks that failed
    * \param aDevice - Device to check

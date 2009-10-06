@@ -1932,6 +1932,10 @@
             return;
           }
 
+          // Don't register click if the item isn't user editable
+          if (!item.userEditable)
+            return;
+
           // Get the coordinates of the cell that the mouse is over
           var coords = this._getCellCoords(evt, mouseOverRow, mouseOverCol);
 

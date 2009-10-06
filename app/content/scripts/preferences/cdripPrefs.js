@@ -104,7 +104,7 @@ var CDRipPrefsPane =
    */
   doPaneUnload: function CDRipPrefsPane_doPaneUnload() {
     window.removeEventListener("unload", CDRipPrefsPane.doPaneUnload, true);
-    this.shutdownListeners();
+    CDRipPrefsPane.shutdownListeners();
   },
 
   /**
