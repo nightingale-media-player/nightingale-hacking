@@ -78,7 +78,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
   } else if (mode == "upgrade") {
     OutputDebugString(_T("In Upgrade mode"));
-    result = RH_ERROR_NOIMPL;
+
+    if (!CheckAspiDriversInstalled())
+       result = InstallAspiDriver();
+    else
+       result = RH_SUCCESS_NOACTION;
 
   } else if ("remove" == mode) {
     OutputDebugString(_T("In Remove mode"));

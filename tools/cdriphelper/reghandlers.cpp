@@ -80,12 +80,13 @@ static const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
 static const TCHAR GEARWORKS_ASPI_DRIVER[] = _T("GearAspi.dll");
 static const TCHAR GEARWORKS_ASPIWDM_DRIVER[] = _T("GearAspiWDM.sys");
 
+static const TCHAR SONGBIRD_CDRIP_REG_KEY_ROOT[] = 
+ _T("Software\\Songbird\\CdripRefcount");
+
 static const size_t DEFAULT_REG_BUFFER_SZ = 4096;
 
-// The second arguments to these constructors look scary, but they're just
-// non-function call versions of _tcslen()
-
 #define ARRAY_LENGTH(x) (sizeof(x)/sizeof(x)[0])
+
 static const regValue_t GEARWORKS_REG_VALUE(GEARWORKS_REG_VALUE_STR,
  ARRAY_LENGTH(GEARWORKS_REG_VALUE_STR) - 1);
 
@@ -342,7 +343,7 @@ int AddFilteredDriver(LPCTSTR regSubKey,
   return RH_OK;
 }
 
-int InstallAspiDriverFiles(void) {
+LONG InstallAspiDriverFiles(void) {
   BOOL rv; 
   HRESULT hr;
 
@@ -477,12 +478,12 @@ int InstallAspiDriver(void) {
     CloseServiceHandle(hSCM);
   } /* end scope */
 
-  DebugMessage("Begin installation of key %S", KEY_DEVICE_CDROM);
+  DebugMessage("-- Begin installation of key %S", KEY_DEVICE_CDROM);
   rv = AddFilteredDriver(KEY_DEVICE_CDROM,
                          GEARWORKS_REG_VALUE,
                          driverLoc_t(driverLoc_t::INSERT_AFTER_NODE,
                                      &REDBOOK_REG_VALUE));
-  DebugMessage("Installation of key %S had rv %d", KEY_DEVICE_CDROM, rv);
+  DebugMessage("-- Installation of key %S had rv %d", KEY_DEVICE_CDROM, rv);
 
   if (rv != RH_OK)
     finalRv = rv;
@@ -506,7 +507,70 @@ int InstallAspiDriver(void) {
   if (rv != RH_OK)
     finalRv = rv;
 
+  // Record that we ran through an installation attempt
+  if (RH_OK == finalRv) {
+    rv = IncrementDriverInstallationCount();
+    if (rv != RH_OK)
+      finalRv = rv; 
+  }
+
   return finalRv;
+}
+
+int IncrementDriverInstallationCount(void) {
+  HKEY installationCountHandle;
+  DWORD keyCreationResult, installationCount, currentKeyType;
+  DWORD dwordSize = sizeof(DWORD);
+
+  LONG rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
+                           SONGBIRD_CDRIP_REG_KEY_ROOT,
+                           0,
+                           NULL,
+                           0,
+                           KEY_ALL_ACCESS,
+                           NULL,
+                           &installationCountHandle,
+                           &keyCreationResult);
+
+  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() for driver installation count:")))
+    return RH_ERROR_INIT_CREATEKEY;
+
+  tstring appDir = GetAppDirectory(); 
+
+  rv = RegQueryValueEx(installationCountHandle,
+                       appDir.c_str(),
+                       0,
+                       &currentKeyType,
+                       (LPBYTE)&installationCount,
+                       &dwordSize);
+
+  if (rv == ERROR_FILE_NOT_FOUND) {
+    installationCount = 1;
+  }
+  else {
+    if (currentKeyType != REG_DWORD) {
+      DebugMessage("Unexpected key type in installation refcount key: type %d",
+       currentKeyType);
+      RegCloseKey(installationCountHandle);
+      return RH_ERROR_UNKNOWN_KEY_TYPE;
+    }
+
+    installationCount++;
+  }
+                     
+  rv = RegSetValueEx(installationCountHandle,
+                     appDir.c_str(),
+                     0,
+                     REG_DWORD,
+                     (LPBYTE)&installationCount,
+                     sizeof(DWORD));
+
+  RegCloseKey(installationCountHandle);
+
+  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() for driver installation count:")))
+    return RH_ERROR_INIT_CREATEKEY;
+
+  return RH_OK;
 }
 
 int RemoveAspiDriver(void) {
@@ -634,7 +698,96 @@ int RemoveAspiDriver(void) {
     delete [] newRegValue.value;
   }
 
-  // TODO DELETE GEARWORKS DRIVERS
+  const size_t pathStorage = MAX_PATH + 1;
+  TCHAR existingDriverPath[pathStorage], windowsSystemDir[pathStorage];
+
+  // Ensure these are 0s from the start...
+  memset(existingDriverPath, 0, pathStorage);
+  memset(windowsSystemDir, 0, pathStorage);
+
+  HRESULT hr = SHGetFolderPath(NULL,
+                               CSIDL_SYSTEM,
+                               NULL,
+                               SHGFP_TYPE_CURRENT,
+                               windowsSystemDir);
+
+  if (FAILED(hr) || hr == S_FALSE) {
+    DoLogMessage(hr, _T("Get system directory"));
+    return RH_ERROR_QUERY_KEY;
+  }
+
+  windowsSystemDir[MAX_PATH] = _T('\0'); // never trust 
+
+  int len = _sntprintf(existingDriverPath, MAX_PATH, _T("%s\\%s"),
+            windowsSystemDir, GEARWORKS_ASPI_DRIVER);
+
+  if (len < 0) {
+    DebugMessage("Failed to construct GEARWORKS_ASPI_DRIVER path for delete");
+    return RH_ERROR_QUERY_VALUE;
+  }
+
+  if (!LoggedDeleteFile(existingDriverPath))
+    result = RH_ERROR_DELETEFILE_FAILED;
+
+  memset(existingDriverPath, 0, pathStorage);
+
+  len = _sntprintf(existingDriverPath, MAX_PATH, _T("%s\\drivers\\%s"),
+                   windowsSystemDir, GEARWORKS_ASPIWDM_DRIVER);
+
+  if (len < 0) {
+    DebugMessage("Failed to construct GEARWORKS_ASPIWDM_DRIVER path for delete");
+    return RH_ERROR_QUERY_VALUE;
+  }
+
+  if (!LoggedDeleteFile(existingDriverPath))
+    result = RH_ERROR_DELETEFILE_FAILED;
 
   return result;
+}
+
+BOOL LoggedDeleteFile(LPCTSTR file) {
+  DebugMessage("Attempting to delete %S", file);
+  BOOL rv = DeleteFile(file);
+
+  if (!rv)
+    DoLogMessage(GetLastError(), _T("DeleteFile() failed:"));
+
+  return rv;
+}
+
+LONG CheckAspiDriversInstalled(void) {
+  DWORD subKeyCount;
+  HKEY cdripKeyHandle;
+
+  int rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+                        SONGBIRD_CDRIP_REG_KEY_ROOT,
+                        NULL,
+                        KEY_READ,
+                        &cdripKeyHandle);
+
+  if (ERROR_FILE_NOT_FOUND == rv)
+    return RH_SUCCESS_CDRIP_NOT_INSTALLED;
+
+  rv = RegQueryInfoKey(cdripKeyHandle,  // hKey
+                       NULL,            // lpClass
+                       NULL,            // lpcClass
+                       NULL,            // lpReserved
+                       &subKeyCount,    // lpcSubKeys
+                       NULL,            // lpcMaxSubKeyLen
+                       NULL,            // lpcMaxClassLen,
+                       NULL,            // lpcValues
+                       NULL,            // lpcMaxValueNameLen
+                       NULL,            // lpcMaxValueLen
+                       NULL,            // lpcbSecurityDescriptor
+                       NULL);           // lpftLastWriteTime
+
+  RegCloseKey(cdripKeyHandle);
+
+  if (!(LoggedSUCCEEDED(rv, _T("RegQueryInfoKey on cdrip key failed:"))))
+    return RH_ERROR_QUERY_KEY;
+
+  if (subKeyCount > 0)
+    return RH_OK;
+
+  return RH_SUCCESS_CDRIP_NOT_INSTALLED;
 }

@@ -39,8 +39,11 @@ struct driverLoc_t {
 
 LPTSTR GetSystemErrorMessage(DWORD errNum);
 BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message);
+BOOL LoggedDeleteFile(LPCTSTR);
 int InstallAspiDriver(void);
 int RemoveAspiDriver(void);
 int AddFilteredDriver(LPCTSTR k, const regValue_t &nk, driverLoc_t l); 
+int IncrementDriverInstallationCount(void);
+LONG CheckAspiDriversInstalled(void);
 
 #endif /* _REGHANDLER_ERROR_H__ */
