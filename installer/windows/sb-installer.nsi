@@ -62,9 +62,7 @@ Section "-Application" Section1
          ExecWait '"$INSTDIR\${DistHelperEXE}" install'
       ${EndIf}
 
-      ${If} $ForceInstallCdrip == ${TRUE}
-          Call InstallCdrip
-      ${EndIf}
+      Call InstallCdrip
    ${EndIf}
 
    IfRebootFlag 0 noReboot
@@ -244,14 +242,10 @@ End:
 SectionEnd
 
 Function InstallCdrip
-   ;Section "${CdripSectionName}"
-   MessageBox MB_OK "Installing ${CdripSectionName} Functionality"
-
+   ; We theoretically should check the return value here, and maybe not set
+   ; this registry key?
    WriteRegStr HKLM $RootAppRegistryKey ${CdripRegKey} ${TRUE}
-
    ExecWait '"$INSTDIR\${CdripHelperEXE}" install'
-
-   ;SectionEnd
 FunctionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -63,7 +63,7 @@ Section "Uninstall"
       Call un.RemoveBrandingRegistryKeys
    ${EndIf}
 
-   Call un.RemoveCdripRegistryKeys
+   Call un.RemoveCdrip
    Call un.RemoveAppRegistryKeys
 
    !insertmacro un.UninstallFiles
@@ -135,7 +135,7 @@ Function un.RemoveBrandingRegistryKeys
    DeleteRegKey HKLM ${MuiStartmenupageRegKey}
 FunctionEnd
 
-Function un.RemoveCdripRegistryKeys
+Function un.RemoveCdrip
    ReadRegStr $0 HKLM $RootAppRegistryKey ${CdripRegKey}
 
    ${If} $0 == ${TRUE}
