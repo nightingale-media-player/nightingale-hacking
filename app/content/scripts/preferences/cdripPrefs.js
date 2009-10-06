@@ -363,6 +363,17 @@ var CDRipPrefsPane =
    * \brief Updates the bitrates to display properly for the user.
    */
   updateBitratePref: function CDRipPrefsPane_updateBitratePref() {
+    this._setDisplayedBitrate();
+
+    // If the user only changed the bitrate, we also need to save the format
+    // rather than falling back to defaults.
+    if (this.currentTranscodeProfileID) {
+      var profile = document.getElementById("rip_format_pref");
+      profile.value = this.currentTranscodeProfileID;
+    }
+  },
+
+  _setDisplayedBitrate: function CDRipPrefsPane__setDisplayedBitrate() {
     // Since the displayable bitrate is always 1000 times smaller than what
     // the actual pref needs to be, simply update the prefs value with
     // 1000x the size of the displayable bitrate.
@@ -418,7 +429,7 @@ var CDRipPrefsPane =
 
       var bitrate = defaultValue ? defaultBitrate : customizedBitrate;
       bitrateTextfield.value = (bitrate / 1000);
-      this.updateBitratePref();
+      this._setDisplayedBitrate();
     }
     else {
       bitrateSettings.hidden = true;
