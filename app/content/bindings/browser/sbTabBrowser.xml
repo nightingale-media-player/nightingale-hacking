@@ -463,9 +463,12 @@
         <parameter name="aTab"/>
         <parameter name="aPageURL"/>
         <parameter name="aFlags"/>
+        <parameter name="aLoadInBackground"/>
         <body>
           <![CDATA[
             var pageURL = this._getMediaPageURL(aMediaListView.mediaList, aPageURL);
+            var bgLoad = (aLoadInBackground != null) ? aLoadInBackground :
+                          this.mPrefs.getBoolPref("browser.tabs.loadInBackground");
             const sbIMediaListView = Components.interfaces.sbIMediaListView;
             if (!aMediaListView || !(aMediaListView instanceof sbIMediaListView)) {
               Components.utils.reportError(new Exception('Attempting to load invalid media list view',
@@ -474,7 +477,7 @@
               if (aTab) {
                 aTab.linkedBrowser.loadURIWithFlags(url, aFlags);
               } else {
-                this.loadOneTab(url, null, null, null, null, null);
+                this.loadOneTab(url, null, null, null, bgLoad, null);
               }
             }
             return this._loadMediaListViewInternal(pageURL,
@@ -482,7 +485,8 @@
                                                    null,
                                                    null,
                                                    aMediaListView,
-                                                   aFlags);
+                                                   aFlags,
+                                                   bgLoad);
           ]]>
         </body>
       </method>
@@ -494,6 +498,8 @@
            @param aCharset the charset (may be null)
            @param aMediaListView the media list view to load
            @param aFlags flags for the load (doesn't apply to new tabs)
+           @param aLoadInBackground specify to load this tab in the background
+                    uses loaInBackground pref if null.
            -->
       <method name="_loadMediaListViewInternal">
         <parameter name="aURI"/>
@@ -502,17 +508,21 @@
         <parameter name="aCharset"/>
         <parameter name="aMediaListView"/>
         <parameter name="aFlags"/>
+        <parameter name="aLoadInBackground"/>
         <body>
           <![CDATA[
             var tab = aTab;
             if (!aFlags) {
               aFlags = Components.interfaces.nsIWebNavigation.LOAD_FLAGS_NONE;
             }
+            var bgLoad = (aLoadInBackground != null) ? aLoadInBackground :
+                          this.mPrefs.getBoolPref("browser.tabs.loadInBackground");
             if (tab) {
               tab.linkedBrowser.loadURIWithFlags(aURI, aFlags, aReferrerURI, aCharset);
-              this.selectedTab = tab;
+              if (!bgLoad)
+                this.selectedTab = tab;
             } else {
-              tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, null, null);
+              tab = this.loadOneTab(aURI, aReferrerURI, aCharset, null, bgLoad, null);
             }
             tab._viewForPage = aMediaListView;
             if (tab._viewForPage)

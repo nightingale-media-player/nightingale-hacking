@@ -234,7 +234,8 @@ function SBDoFirstRun() {
       gBrowser.loadMediaListViewWithFlags(mediaListView,
                                           gBrowser.mediaTab,
                                           null,
-                                          nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
+                                          nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                                          true); // Load in the background
 
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
@@ -269,7 +270,8 @@ function SBDoFirstRun() {
         gBrowser.loadMediaListViewWithFlags(mediaListView,
                                             gBrowser.mediaTab,
                                             null,
-                                            nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY);
+                                            nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
+                                            true); // Load in the background
       }
     }
   }

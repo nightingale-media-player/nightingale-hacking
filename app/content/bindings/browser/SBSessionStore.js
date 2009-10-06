@@ -150,7 +150,7 @@ var SBSessionStore = {
         aTabBrowser.loadURI(PLACEHOLDER_URL, null, null, null, '_media');
         
         var firstrunURL = Application.prefs.getValue(PREF_FIRSTRUN_URL, "about:blank");
-        aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
+        selectedTab = aTabBrowser.loadOneTab(firstrunURL, null, null, null, true);
 
         Application.prefs.setValue(PREF_FIRSTRUN, true);
         Application.prefs.setValue(PREF_FIRSTRUN_SESSION, true);
