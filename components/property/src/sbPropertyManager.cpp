@@ -1213,7 +1213,7 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = RegisterBoolean(NS_LITERAL_STRING(SB_PROPERTY_SHOULDRIP),
                        NS_LITERAL_STRING("property.shouldrip"),
                        stringBundle,
-                       PR_FALSE, PR_TRUE, PR_FALSE, PR_FALSE);
+                       PR_FALSE, PR_TRUE, PR_FALSE, PR_FALSE, PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   //Whether a media file is DRM protected
@@ -1630,7 +1630,8 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
                                    PRBool aUserViewable,
                                    PRBool aUserEditable,
                                    PRBool aRemoteReadable,
-                                   PRBool aRemoteWritable)
+                                   PRBool aRemoteWritable,
+                                   PRBool aShouldSuppress)
 {
   LOG(( "sbPropertyManager::RegisterBoolean(%s)",
         NS_LossyConvertUTF16toASCII(aPropertyID).get() ));
@@ -1661,6 +1662,9 @@ sbPropertyManager::RegisterBoolean(const nsAString &aPropertyID,
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = booleanProperty->SetUserEditable(aUserEditable);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = booleanProperty->SetSuppressSelect(aShouldSuppress);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyInfo> propInfo =

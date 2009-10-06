@@ -62,6 +62,8 @@ public:
   nsresult Init();
 
   nsresult InitializeOperators();
+private:
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBRATINGPROPERTYINFO_H__ */

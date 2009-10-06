@@ -44,7 +44,7 @@
 [scriptable, uuid(159bd7ea-3e2c-4241-9e02-51733e83e8c7)]
 interface sbIClickablePropertyInfo : nsISupports
 {
-  readonly attribute boolean suppressSelect;
+  attribute boolean suppressSelect;
 
   boolean isDisabled(in AString aCurrentValue);
 

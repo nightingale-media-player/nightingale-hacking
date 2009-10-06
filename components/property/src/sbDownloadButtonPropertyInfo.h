@@ -69,7 +69,7 @@ private:
 
   nsString mLabel;
   nsString mRetryLabel;
-
+  PRBool   mSuppressSelect;
 };
 
 class sbDownloadButtonPropertyValue

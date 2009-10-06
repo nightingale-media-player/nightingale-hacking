@@ -67,6 +67,7 @@ private:
 
   PRBool mHasLabel;
   nsString mLabel;
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBSIMPLEBUTTONPROPERTYINFO_H__ */

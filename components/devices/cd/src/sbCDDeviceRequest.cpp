@@ -564,7 +564,7 @@ sbCDDevice::AttemptCDLookup()
       NS_NEW_RUNNABLE_METHOD(sbCDDevice, this, ProxyCDLookup);
     NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
 
-    rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
@@ -671,7 +671,9 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
                                                    SB_PROPERTY_TRACKNUMBER),
                                               indexStr,
                                               getter_AddRefs(tracks));
-      NS_ENSURE_SUCCESS(rv, rv);
+      if(NS_FAILED(rv)) {
+        continue;
+      }
 
       // we should only ever have 1 matching track
       PRUint32 length = 0;

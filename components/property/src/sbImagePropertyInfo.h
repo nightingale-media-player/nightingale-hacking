@@ -58,6 +58,8 @@ public:
   NS_IMETHOD Format(const nsAString& aValue, nsAString& _retval);
 
   nsresult Init();
+private:
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBIMAGEPROPERTYINFO_H__ */

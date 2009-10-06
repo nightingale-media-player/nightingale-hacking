@@ -65,6 +65,7 @@ public:
   
 private:
   nsString mUrlPropertyID;
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBIMAGELINKPROPERTYINFO_H__ */

@@ -132,7 +132,8 @@ private:
                            PRBool aUserViewable,
                            PRBool aUserEditable,
                            PRBool aRemoteReadable,
-                           PRBool aRemoteWritable);
+                           PRBool aRemoteWritable,
+                           PRBool aShouldSuppress = PR_TRUE);
 
   nsresult RegisterImageLink(const nsAString &aPropertyID,
                              const nsAString &aDisplayKey,

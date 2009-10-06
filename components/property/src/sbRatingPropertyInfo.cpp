@@ -55,6 +55,7 @@ sbRatingPropertyInfo::sbRatingPropertyInfo(const nsAString& aPropertyID,
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("rating");
+  mSuppressSelect = PR_TRUE;
 }
 
 nsresult
@@ -195,7 +196,14 @@ NS_IMETHODIMP
 sbRatingPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
-  *aSuppressSelect = PR_TRUE;
+  *aSuppressSelect = mSuppressSelect;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbRatingPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
+{
+  mSuppressSelect = aSuppressSelect;
   return NS_OK;
 }
 

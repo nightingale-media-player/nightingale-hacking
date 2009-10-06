@@ -123,6 +123,8 @@ PublicPlaylistCommands.prototype = {
   m_cmd_EditSmartPlaylist         : null, // edit  the smart playlist properties
   m_cmd_SmartPlaylistSep          : null, // a separator (its own object for visible cb)
   m_cmd_LookupCDInfo              : null, // look up cd information
+  m_cmd_CheckAll                  : null, // check all
+  m_cmd_UncheckAll                : null, // uncheck all
   
   // Commands that act on playlist themselves
   m_cmd_list_Remove               : null, // remove the selected playlist
@@ -612,6 +614,31 @@ PublicPlaylistCommands.prototype = {
                                                  "&command.shortcut.modifiers.lookupcdinfo",
                                                  true);
 
+      // ----------------------------------------------------------------------
+      // The Check/Uncheck All actions
+      // ----------------------------------------------------------------------
+      this.m_cmd_CheckAll = new PlaylistCommandsBuilder();
+      this.m_cmd_CheckAll.appendAction(null,
+                                       "library_cmd_checkall",
+                                       "&command.checkall",
+                                       "&command.tooltip.checkall",
+                                       plCmd_CheckAll_TriggerCallback);
+      this.m_cmd_CheckAll.setCommandVisibleCallback(
+                                       null,
+                                       "library_cmd_checkall",
+                                       plCmd_CheckAllVisibleCallback);
+
+      this.m_cmd_UncheckAll = new PlaylistCommandsBuilder();
+      this.m_cmd_UncheckAll.appendAction(
+                                    null,
+                                    "library_cmd_uncheckall",
+                                    "&command.uncheckall",
+                                    "&command.tooltip.uncheckall",
+                                    plCmd_UncheckAll_TriggerCallback);
+      this.m_cmd_UncheckAll.setCommandVisibleCallback(null,
+                                    "library_cmd_uncheckall",
+                                    plCmd_NOT(plCmd_CheckAllVisibleCallback));
+
       // --------------------------------------------------------------------------
 
       // Publish atomic commands
@@ -876,6 +903,14 @@ PublicPlaylistCommands.prototype = {
       // --------------------------------------------------------------------------
 
       this.m_cdDeviceLibraryCommands = new PlaylistCommandsBuilder();
+
+      this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_check",
+                                                    this.m_cmd_CheckAll);
+
+      this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
+                                                    "library_cmdobj_uncheck",
+                                                    this.m_cmd_UncheckAll);
 
       this.m_cdDeviceLibraryCommands.appendPlaylistCommands(null,
                                                     "library_cmdobj_edit",
@@ -1398,6 +1433,41 @@ function plCmd_LookupCDInfo_TriggerCallback(aContext, aSubMenuId, aCommandId, aH
   device.submitRequest(Ci.sbICDDeviceEvent.REQUEST_CDLOOKUP, bag);
 }
 
+// Given a playlist binding, grab all the items with the shouldRip property
+// set to aVal and set them to aNewVal
+function playlist_setRipProperty(aPlaylist, aVal, aNewVal) {
+  var mediaList = aPlaylist.mediaListView.mediaList;
+  mediaList.enumerateItemsByProperty(
+                   "http://songbirdnest.com/data/1.0#shouldRip",
+                   aVal,
+                   {
+                     onEnumerationBegin: function() { },
+                     onEnumeratedItem: function(aList, aItem) {
+                       aItem.setProperty(
+                         "http://songbirdnest.com/data/1.0#shouldRip",
+                         aNewVal);
+                       return Ci.sbIMediaListEnumerationListener.CONTINUE;
+                     },
+                     onEnumerationEnd: function() { }
+                   });
+  aPlaylist.refreshCommands(false);
+  return;
+}
+
+// Called when the select all cd info action is triggered
+function plCmd_CheckAll_TriggerCallback(aContext,
+                                         aSubMenuId, aCommandId, aHost) {
+  var pls = unwrap(aContext.playlist);
+  playlist_setRipProperty(pls, "0", "1");
+}
+
+function plCmd_UncheckAll_TriggerCallback(aContext,
+                                         aSubMenuId, aCommandId, aHost) {
+  var pls = unwrap(aContext.playlist);
+  playlist_setRipProperty(pls, "1", "0");
+  return;
+}
+
 // Called when the "burn to cd" action is triggered
 function plCmd_BurnToCD_TriggerCallback(aContext, aSubMenuId, aCommandId, aHost) {
   // if something is selected, trigger the burn event on the playlist
@@ -1467,10 +1537,10 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
     var watcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
                     .getService(Ci.nsIWindowWatcher);
     watcher.openWindow(aContext.window,
-                      "chrome://songbird/content/xul/smartPlaylist.xul",
-                      "_blank",
-                      "chrome,resizable=yes,dialog=yes,centerscreen,modal,titlebar=no",
-                      medialist);
+                       "chrome://songbird/content/xul/smartPlaylist.xul",
+                       "_blank",
+                       "chrome,resizable=yes,dialog=yes,centerscreen,modal,titlebar=no",
+                       medialist);
     unwrap(aContext.playlist).refreshCommands();
   }
 }
@@ -1478,6 +1548,32 @@ function plCmd_EditSmartPlaylist_TriggerCallback(aContext, aSubMenuId, aCommandI
 // Returns true when at least one track is selected in the playlist
 function plCmd_IsAnyTrackSelected(aContext, aSubMenuId, aCommandId, aHost) {
   return (unwrap(aContext.playlist).mediaListView.selection.count != 0);
+}
+
+// Returns true when "select all" should be visible, per comment #1 in
+// bug 18049: It should default to 'Check All' unless all tracks are
+// already checked, in which case it should say 'Uncheck All'. This means if the
+// playlist is partially checked the button should read 'Check All' and to
+// uncheck all tracks the user will need to click twice.
+function plCmd_CheckAllVisibleCallback(aContext, aSubMenuId, aCommandId, aHost)
+{
+  var returnValue;
+  var pls = unwrap(aContext.playlist);
+  var checkedItemCount = 0;
+
+  var mediaList = pls.mediaListView.mediaList;
+  mediaList.enumerateItemsByProperty(
+                   "http://songbirdnest.com/data/1.0#shouldRip",
+                   "1",
+                   {
+                     onEnumerationBegin: function() { },
+                     onEnumeratedItem: function(aList, aItem) {
+                       checkedItemCount++;
+                     },
+                     onEnumerationEnd: function() { }
+                   });
+  returnValue = mediaList.length != checkedItemCount;
+  return returnValue;
 }
 
 // Returns true when at least one track is selected in the playlist and none of the selected tracks have downloading forbidden

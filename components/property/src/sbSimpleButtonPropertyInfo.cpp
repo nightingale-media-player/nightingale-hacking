@@ -65,6 +65,7 @@ sbSimpleButtonPropertyInfo::sbSimpleButtonPropertyInfo(const nsAString& aPropert
   mRemoteReadable = aRemoteReadable;
   mRemoteWritable = aRemoteWritable;
   mType.AssignLiteral("button");
+  mSuppressSelect = PR_TRUE;
 }
 
 nsresult
@@ -142,7 +143,14 @@ NS_IMETHODIMP
 sbSimpleButtonPropertyInfo::GetSuppressSelect(PRBool* aSuppressSelect)
 {
   NS_ENSURE_ARG_POINTER(aSuppressSelect);
-  *aSuppressSelect = PR_TRUE;
+  *aSuppressSelect = mSuppressSelect;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbSimpleButtonPropertyInfo::SetSuppressSelect(PRBool aSuppressSelect)
+{
+  mSuppressSelect = aSuppressSelect;
   return NS_OK;
 }
 

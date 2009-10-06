@@ -59,6 +59,8 @@ public:
   NS_IMETHOD Sanitize(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD Format(const nsAString & aValue, nsAString & _retval);
   NS_IMETHOD MakeSearchable(const nsAString & aValue, nsAString & _retval);
+private:
+  PRBool mSuppressSelect;
 };
 
 #endif /* __SBBOOLEANPROPERTYINFO_H__ */

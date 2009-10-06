@@ -1856,7 +1856,7 @@
         <body>
 <![CDATA[
   window.updateCommands("tree-select");
-  this.refreshCommands(true);
+  this.refreshCommands(false);
   this.sendSelChangeEvent();
 ]]>
         </body>
