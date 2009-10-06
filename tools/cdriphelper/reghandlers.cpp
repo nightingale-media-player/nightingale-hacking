@@ -120,6 +120,9 @@ BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message) {
   return callSucceeded;
 }
 
+// Call AdjustDllUseCount with a value of 0 to query what the current key
+// would be (passing result would be useful for this operation, of course)
+
 LONG AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   HRESULT hr;
   LONG ret;
@@ -170,6 +173,15 @@ LONG AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   else if (!LoggedSUCCEEDED(ret, _T("Get dll refcount")))
     return RH_ERROR_QUERY_VALUE;
 
+  // If we're called with an "adjustment" value of 0, that's actually a
+  // Request to query the current value; see the header file for more info
+  if (0 == value) {
+    if (result)
+      *result = dllCount; 
+
+    return RH_OK;
+  }
+
   dllCount += value;
 
   if (dllCount > 0) {
@@ -189,7 +201,7 @@ LONG AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   RegCloseKey(hKeySharedDLLs);
 
   if (result)
-    *result = value;
+    *result = dllCount; 
 
   return RH_OK;
 }
@@ -424,6 +436,58 @@ LONG InstallAspiDriverFiles(void) {
 }
 
 
+LONG RepairAspiDriver(void) {
+  // We purposefully don't check many of the return values in this function; 
+  // Since we're in repair mode, we try to clean up as much as possible, but
+  // we're very verbose about with DebugMessage() about what happened, even
+  // if it did fail...
+  int finalRv = RH_OK;
+
+  int rv, currentDllCount;
+
+  rv = InstallAspiDriverFiles();
+  DebugMessage("-- RepairMode: InstallAspiDriverFiles() rv: %d", rv);
+
+  if (rv != RH_OK)
+    finalRv = rv;
+
+  rv = AdjustDllUseCount(STR_ASPI_DLL_NAME, 0, &currentDllCount);
+  DebugMessage("-- RepairMode: AdjustDllUseCount(STD_ASPI_DLL_NAME) rv: %d; currentDllCount: %d",
+               rv, currentDllCount);
+
+  if (rv != RH_OK || currentDllCount <= 0) {
+    rv = AdjustDllUseCount(STR_ASPI_DLL_NAME, 1);
+    DebugMessage("-- RepairMode: AdjustDllUseCount(STR_ASPI_DLL_NAME,1) rv: %d",
+                 rv);
+    if (rv != RH_OK)
+      finalRv = rv;
+  }
+
+  rv = AdjustDllUseCount(STR_ASPI_SYS_NAME, 0, &currentDllCount);
+  DebugMessage("-- RepairMode: AdjustDllUseCount(STD_ASPI_SYS_NAME) rv: %d; currentDllCount: %d",
+               rv, currentDllCount);
+
+  if (rv != RH_OK || currentDllCount <= 0) {
+    rv = AdjustDllUseCount(STR_ASPI_SYS_NAME, 1);
+    DebugMessage("-- RepairMode: AdjustDllUseCount(STR_ASPI_SYS_NAME,1) rv: %d",
+                 rv);
+    if (rv != RH_OK)
+      finalRv = rv;
+  }
+
+  rv = RegisterAspiService();
+  DebugMessage("-- RepairMode: RegisterAspiServices(): rv: %d", rv);
+  if (rv != RH_OK)
+    finalRv = rv;
+
+  rv = AddAspiFilteredDrivers();
+  DebugMessage("-- RepairMode: AddAspiFilteredDrivers(): rv: %d", rv);
+  if (rv != RH_OK)
+    finalRv = rv;
+
+  return finalRv;
+}
+
 LONG InstallAspiDriver(void) {
   int finalRv = RH_OK;
 
@@ -444,6 +508,16 @@ LONG InstallAspiDriver(void) {
   rv = RegisterAspiService();
   if (rv != RH_OK)
     return rv;
+
+  rv = AddAspiFilteredDrivers();
+  if (rv != RH_OK)
+    finalRv = rv;
+
+  return finalRv;
+}
+
+LONG AddAspiFilteredDrivers(void) {
+  int rv, finalRv;
 
   DebugMessage("-- Begin installation of key %S", KEY_DEVICE_CDROM);
   rv = AddFilteredDriver(KEY_DEVICE_CDROM,
@@ -473,13 +547,6 @@ LONG InstallAspiDriver(void) {
 
   if (rv != RH_OK)
     finalRv = rv;
-
-  // Record that we ran through an installation attempt
-  if (RH_OK == finalRv) {
-    rv = IncrementDriverInstallationCount();
-    if (rv != RH_OK)
-      finalRv = rv; 
-  }
 
   return finalRv;
 }
@@ -550,116 +617,15 @@ LONG UnregisterAspiService(void) {
   return RH_OK;
 }
 
-LONG GetDriverInstallationCount(LPCTSTR installPath) {
-  HKEY installationCountHandle;
-
-  DWORD installationCount, currentKeyType;
-  DWORD dwordSize = sizeof(DWORD);
-
-  LONG rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-                         SONGBIRD_CDRIP_REG_KEY_ROOT,
-                         0,
-                         KEY_ALL_ACCESS,
-                         &installationCountHandle);
-
-  if (!LoggedSUCCEEDED(rv, 
-   _T("RegOpenKeyEx() in GetDriverInstallationCount failed:")))
-    return 0;
-
-  rv = RegQueryValueEx(installationCountHandle,
-                       installPath,
-                       0,
-                       &currentKeyType,
-                       (LPBYTE)&installationCount,
-                       &dwordSize);
-
-  RegCloseKey(installationCountHandle);
-
-  if (rv == ERROR_FILE_NOT_FOUND)
-    return 0;
-
-  if (!LoggedSUCCEEDED(rv, 
-      _T("GetDriverInstallationCount(): RegQueryValueEx() failed: "))) {
-    return 0; 
-  } 
-  else if (currentKeyType != REG_DWORD) {
-    DebugMessage("GetDriverInstallationCount(): invalid key type: %d", 
-                 currentKeyType);
-    return 0;
-  }
-
-  return installationCount;
-}
-
-LONG IncrementDriverInstallationCount(void) {
-  HKEY installationCountHandle;
-  DWORD keyCreationResult, installationCount, currentKeyType;
-  DWORD dwordSize = sizeof(DWORD);
-
-  LONG rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
-                           SONGBIRD_CDRIP_REG_KEY_ROOT,
-                           0,
-                           NULL,
-                           0,
-                           KEY_ALL_ACCESS,
-                           NULL,
-                           &installationCountHandle,
-                           &keyCreationResult);
-
-  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() for driver installation count:")))
-    return RH_ERROR_INIT_CREATEKEY;
-
-  tstring appDir = GetAppDirectory(); 
-
-  rv = RegQueryValueEx(installationCountHandle,
-                       appDir.c_str(),
-                       0,
-                       &currentKeyType,
-                       (LPBYTE)&installationCount,
-                       &dwordSize);
-
-  if (rv == ERROR_FILE_NOT_FOUND) {
-    installationCount = 1;
-  }
-  else {
-    if (currentKeyType != REG_DWORD) {
-      DebugMessage("Unexpected key type in installation refcount key: type %d",
-       currentKeyType);
-      RegCloseKey(installationCountHandle);
-      return RH_ERROR_UNKNOWN_KEY_TYPE;
-    }
-
-    installationCount++;
-  }
-                     
-  rv = RegSetValueEx(installationCountHandle,
-                     appDir.c_str(),
-                     0,
-                     REG_DWORD,
-                     (LPBYTE)&installationCount,
-                     sizeof(DWORD));
-
-  RegCloseKey(installationCountHandle);
-
-  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() for driver installation count:")))
-    return RH_ERROR_INIT_CREATEKEY;
-
-  return RH_OK;
-}
-
 LONG RemoveAspiDriver(void) {
   int result = RH_OK;
   
   int dllCount, sysCount;
 
-  tstring appDir = GetAppDirectory(); 
-
-  int installationCount = GetDriverInstallationCount(appDir.c_str());
-
-  result = AdjustDllUseCount(STR_ASPI_DLL_NAME, -installationCount, &dllCount);
+  result = AdjustDllUseCount(STR_ASPI_DLL_NAME, -1, &dllCount);
   if (result != RH_OK)
     return result;
-  result = AdjustDllUseCount(STR_ASPI_SYS_NAME, -installationCount, &sysCount);
+  result = AdjustDllUseCount(STR_ASPI_SYS_NAME, -1, &sysCount);
   if (result != RH_OK) {
     // OMGWTFBBQ we failed to change the second one
     // let's try to change the first one back (but ignore whether we succeeded)
@@ -807,14 +773,26 @@ LONG RemoveAspiDriver(void) {
   return result;
 }
 
+// This function is a bit confusing; while it does delete files, it doesn't use
+// DeleteFile() (as it originally did) because these drivers are likely to be
+// in use when we're called; so, we have to instead use MoveFileEx()
 BOOL LoggedDeleteFile(LPCTSTR file) {
   DebugMessage("Attempting to delete %S", file);
-  BOOL rv = DeleteFile(file);
+  BOOL succeeded;
 
-  if (!rv)
-    DoLogMessage(GetLastError(), _T("DeleteFile() failed:"));
+  succeeded = DeleteFile(file);
 
-  return rv;
+  if (!succeeded) {
+    DoLogMessage(GetLastError(), _T("DeleteFile() failed: "));
+
+    succeeded = MoveFileEx(file,                          // lpExistingFileName
+                           NULL,                          // lpNewFileName
+                           MOVEFILE_DELAY_UNTIL_REBOOT);  // dwFlags
+    if (!succeeded)
+      DoLogMessage(GetLastError(), _T("MoveFileEx() failed: "));
+  }
+
+  return succeeded;
 }
 
 LONG CheckAspiDriversInstalled(void) {
