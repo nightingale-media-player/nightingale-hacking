@@ -176,7 +176,6 @@ var DPWCfg = {
       showIdleMessage: true,
       showProgress: true,
       updateBusy: true,
-      preparingOnIdle: true
     },
 
     /* Format. */
@@ -457,7 +456,7 @@ var DPW = {
 
     params = [ curItemIndex, totalItems ];
     
-    // If we're preparing to sync or transcode (indicated by an idle substate)
+    // If we're preparing to sync (indicated by an idle substate)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
     {

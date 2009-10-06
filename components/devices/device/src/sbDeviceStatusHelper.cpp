@@ -457,7 +457,7 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
   switch(mOperationType)
   {
     case OPERATION_TYPE_WRITE :
-      LOG(("sbDeviceStatusHelper::ItemStart write\n"));
+      LOG(("sbDeviceStatusHelper::ItemProgress write\n"));
       UpdateStatus(NS_LITERAL_STRING("writing"),
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
@@ -469,7 +469,7 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
       break;
 
     case OPERATION_TYPE_TRANSCODE :
-      LOG(("sbMSCSTatus::ItemStart transcode\n"));
+      LOG(("sbDeviceStatusHelper::ItemProgress transcode\n"));
       UpdateStatus(NS_LITERAL_STRING("transcoding"),
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
@@ -481,7 +481,7 @@ sbDeviceStatusHelper::ItemProgress(double aProgress)
       break;
 
     case OPERATION_TYPE_READ :
-      LOG(("sbDeviceStatusHelper::ItemStart read\n"));
+      LOG(("sbDeviceStatusHelper::ItemProcess read\n"));
       UpdateStatus(NS_LITERAL_STRING("reading"),
                    NS_LITERAL_STRING("InProgress"),
                    mItemNum,
