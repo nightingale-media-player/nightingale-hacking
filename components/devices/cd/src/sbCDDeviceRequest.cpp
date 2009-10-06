@@ -1018,59 +1018,36 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
   }
 #endif
 
-  // Check for transcode errors.
-  if (status != sbIJobProgress::STATUS_SUCCEEDED) {
-
-    // If this was the last item in the batch, report this rip as done.
-    if (aRequest->batchIndex == aRequest->batchCount) {
-      CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
-                             sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+  if (status == sbIJobProgress::STATUS_SUCCEEDED) {
+    // Show the item.
+    {
+      IgnoreMediaItem(aRequest->item);
+      sbCDAutoIgnoreItem autoUnignore(this, aRequest->item);
+      rv = aRequest->item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                                       NS_LITERAL_STRING("0"));
+      NS_ENSURE_SUCCESS(rv, rv);
     }
 
-    return NS_ERROR_FAILURE;
+    // Clear auto-removal of media file.
+    autoRemoveMediaFile.forget();
+
+    autoComplete.SetResult(NS_OK);
   }
-
-  // Show the item.
-  {
-    IgnoreMediaItem(aRequest->item);
-    sbCDAutoIgnoreItem autoUnignore(this, aRequest->item);
-    rv = aRequest->item->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                                     NS_LITERAL_STRING("0"));
-    NS_ENSURE_SUCCESS(rv, rv);
+  else {
+    // Return failure after cleaning up at the bottom of this method.
+    rv = NS_ERROR_FAILURE;
   }
-
-  // Clear auto-removal of media file.
-  autoRemoveMediaFile.forget();
-
-  autoComplete.SetResult(NS_OK);
 
   // We need to check if this is the last item to be ripped, if so check for
   // AutoEject.
   if (aRequest->batchIndex == aRequest->batchCount) {
     mTranscodeProfile = nsnull;
 
-    // Dispatch the event to notify listeners that we've finished the rip job.
-    CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
-                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
-
-    // Check the preferences to see if we should eject
-    if (mPrefAutoEject) {
-      // Since we successfully ripped all selected tracks and the user has
-      // the autoEject preference set, we can eject now.
-      rv = Eject();
-      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
-    }
-
-    // if the user wants a sound notification, then beep
-    if (mPrefNotifySound) {
-      nsCOMPtr<nsISound> soundInterface =
-                         do_CreateInstance("@mozilla.org/sound;1", &rv);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      soundInterface->Beep();
-    }
+    nsresult rv2 = OnRipCompleted();
+    NS_ENSURE_SUCCESS(rv2, rv2);
   }
-  return NS_OK;
+
+  return rv;
 }
 
 nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
@@ -1111,6 +1088,35 @@ nsresult sbCDDevice::GetBitrateFromProfile(PRUint32 *bitrate)
 
     rv = propEnumerator->HasMoreElements(&more);
     NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::OnRipCompleted()
+{
+  nsresult rv;
+
+  // Dispatch the event to notify listeners that we've finished the rip job.
+  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
+  // Check the preferences to see if we should eject
+  if (mPrefAutoEject) {
+    // Since we successfully ripped all selected tracks and the user has
+    // the autoEject preference set, we can eject now.
+    rv = Eject();
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
+  }
+
+  // if the user wants a sound notification, then beep
+  if (mPrefNotifySound) {
+    nsCOMPtr<nsISound> soundInterface =
+                       do_CreateInstance("@mozilla.org/sound;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    soundInterface->Beep();
   }
 
   return NS_OK;

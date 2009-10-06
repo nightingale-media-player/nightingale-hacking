@@ -452,6 +452,11 @@ private:
    */
   void ProxyCDLookup();
 
+  /**
+   * Method to trigger the user errors on the main thread.
+   */
+  void ProxyQueryUserViewErrors();
+
   /* Override base class to get all profiles, not just those we can write to
    * the CD (i.e. none) */
   nsresult GetSupportedTranscodeProfiles(nsIArray **aSupportedProfiles);
@@ -476,6 +481,11 @@ private:
    * Gets the bitrate property from the cached transcoding profile
    */
   nsresult GetBitrateFromProfile(PRUint32 * bitrate);
+
+  /**
+   * Method to perform any post rip operations.
+   */
+  nsresult OnRipCompleted();
 };
 
 #define SB_CD_DEVICE_AUTO_INVOKE(aName, aMethod)                              \
