@@ -23,6 +23,7 @@
  */
 
 #include <algorithm>
+#include <list>
 #include <vector>
 
 #include <windows.h>
@@ -283,6 +284,9 @@ LONG AddFilteredDriver(LPCTSTR regSubKey,
 
     regValueList_t regValues = ParseValues(oldRegValue, currentKeyType);
 
+    regValueList_t::iterator oldPosition =
+      find(regValues.begin(), regValues.end(), newKey);
+
     // We code it with a switch() because it works out elegantly in the
     // case that we were asked to insert after a particular element; if
     // that element doesn't exist in the list, the operation effectively
@@ -296,12 +300,20 @@ LONG AddFilteredDriver(LPCTSTR regSubKey,
           return RH_ERROR_INVALID_ARG;
         }
 
-        regValueList_t::iterator insertAfterNode = find(regValues.begin(),
-         regValues.end(), *insertionInfo.loc);
+        regValueList_t::iterator insertAfterNode =
+          find(regValues.begin(), regValues.end(), *insertionInfo.loc);
 
         // If we didn't find the node we were looking for, we default to 
         // inserting it up front
-        if (insertAfterNode != regValues.end()) {
+        if (insertAfterNode != regValues.end() && oldPosition < insertAfterNode ) {
+          if (oldPosition != regValues.end()) {
+            // somebody had the old value after the node we need to be before
+            // delete the old value
+            regValues.erase(oldPosition);
+            insertAfterNode = find(regValues.begin(),
+                                   regValues.end(),
+                                   *insertionInfo.loc);
+          }
           // insert() inserts to the node _before_; we want to be inserted
           // after that value, so increment the iterator; we shouldn't fall 
           // off the end because we test for that above.
@@ -313,20 +325,22 @@ LONG AddFilteredDriver(LPCTSTR regSubKey,
         /* ELSE FALL THROUGH */
       }
 
-      case driverLoc_t::INSERT_AT_FRONT: { 
-        regValues.push_front(newKey);
+      case driverLoc_t::INSERT_AT_FRONT: {
+        if (oldPosition == regValues.end()) {
+          regValues.insert(regValues.begin(), newKey);
+        }
         break;
       }
 
-      default: 
+      default:
         DebugMessage("AddFilteredDriver(): Invalid insertion disposition: %d",
                      insertionInfo.insertAt);
         free(data);
         return RH_ERROR_INVALID_ARG;
     }
 
-    multiSzBuffer_t newRegValue((LPBYTE)new char[DEFAULT_REG_BUFFER_SZ], 
-     DEFAULT_REG_BUFFER_SZ);
+    multiSzBuffer_t newRegValue((LPBYTE)new char[DEFAULT_REG_BUFFER_SZ],
+                                DEFAULT_REG_BUFFER_SZ);
 
     MakeMultiSzRegString(newRegValue, regValues);
 

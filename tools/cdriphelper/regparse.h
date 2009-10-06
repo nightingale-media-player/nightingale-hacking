@@ -24,7 +24,7 @@
  */
 
 #include <windows.h>
-#include <list>
+#include <vector>
 
 #ifndef _REGHELPER_REGPARSE_H__
 #define _REGHELPER_REGPARSE_H__
@@ -46,10 +46,11 @@ struct regValue_t {
   // insensitive, even if the strings we actually use to define the
   // regValue_t's have case.
   bool operator==(const regValue_t &rhs) const { 
-   return (0 == _tcsicmp(p, rhs.p)); } 
+    return (0 == _tcsicmp(p, rhs.p));
+  }
 };
 
-typedef std::list<regValue_t> regValueList_t;
+typedef std::vector<regValue_t> regValueList_t;
 
 regValueList_t ParseValues(const multiSzBuffer_t& data, DWORD regKeyType);
 void MakeMultiSzRegString(multiSzBuffer_t& data, const regValueList_t& values); 
