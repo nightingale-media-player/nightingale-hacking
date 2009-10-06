@@ -1191,25 +1191,11 @@ sbGUIDArrayValueEnumerator::HasMore(PRBool *_retval)
 NS_IMETHODIMP
 sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
 {
-  PRBool isValid = PR_TRUE;
-  nsresult rv = mArray->GetIsValid(&isValid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Array became invalid during enumeration, recalculate
-  // current index.
-  if(!isValid && mNextIndex > 0 && !mNextGUID.IsEmpty()) {
-    rv = mArray->GetFirstIndexByGuid(mNextGUID, &mNextIndex);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  rv = mArray->GetSortPropertyValueByIndex(mNextIndex, _retval);
+  nsresult rv = mArray->GetSortPropertyValueByIndex(mNextIndex, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mNextIndex++;
   
-  rv = mArray->GetGuidByIndex(mNextIndex, mNextGUID);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   return NS_OK;
 }
 
