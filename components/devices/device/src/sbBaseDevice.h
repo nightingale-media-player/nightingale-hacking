@@ -1189,6 +1189,22 @@ protected:
    */
   nsresult PrepareBatchForTranscoding(Batch & aBatch);
 
+  /**
+   * Remove all DRM items from the batch specified by aBatch and post an
+   * appropriate device error event.
+   *
+   * \param aBatch The batch from which to remove DRM items.
+   */
+  nsresult RemoveBatchDRMItems(Batch & aBatch);
+
+  /**
+   * Dispatch a DRM transcode error event for the media item specified by
+   * aMediaItem.
+   *
+   * \param aMediaItem The media item for which to dispatch an error event.
+   */
+  nsresult DispatchDRMTranscodeErrorEvent(sbIMediaItem * aMediaItem);
+
   /* Return an array of sbIImageFormatType describing all the supported
    * album art formats for the device.
    *

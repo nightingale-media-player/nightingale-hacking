@@ -4553,20 +4553,7 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   if (NS_SUCCEEDED(rv) && isDRMProtected.Equals(NS_LITERAL_STRING("1"))) {
-    // we can't have any transcoding profiles that support DRM
-    nsCOMPtr<nsIWritablePropertyBag2> bag =
-      do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"),
-                                   SBLocalizedString("transcode.file.drmprotected"));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("item"),
-                                     aMediaItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
-                                sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag));
+    rv = DispatchDRMTranscodeErrorEvent(aMediaItem);
     NS_ENSURE_SUCCESS(rv, rv);
 
     return NS_ERROR_NOT_AVAILABLE;
@@ -4797,6 +4784,74 @@ sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
 
     ++iter;
   }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::RemoveBatchDRMItems(Batch & aBatch)
+{
+  TRACE(("%s", __FUNCTION__));
+  nsresult rv;
+
+  if (aBatch.empty()) {
+    return NS_OK;
+  }
+
+  // Remove all DRM items from the batch.
+  Batch::iterator end = aBatch.end();
+  Batch::iterator next = aBatch.begin();
+  Batch::iterator iter;
+  while (next != end) {
+    // Check for abort.
+    if (IsRequestAbortedOrDeviceDisconnected()) {
+      return NS_ERROR_ABORT;
+    }
+
+    iter = next++;
+    TransferRequest * const request = *iter;
+    nsCOMPtr<sbIMediaItem> mediaItem = request->item;
+
+    nsAutoString isDRMProtected;
+    rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
+                                isDRMProtected);
+    if (rv != NS_ERROR_NOT_AVAILABLE) {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    if (NS_SUCCEEDED(rv) && isDRMProtected.Equals(NS_LITERAL_STRING("1"))) {
+      rv = DispatchDRMTranscodeErrorEvent(mediaItem);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      RemoveLibraryItems(iter, next);
+      aBatch.erase(iter);
+    }
+  }
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::DispatchDRMTranscodeErrorEvent(sbIMediaItem * aMediaItem)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+
+  nsresult rv;
+
+  nsCOMPtr<nsIWritablePropertyBag2> bag =
+    do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = bag->SetPropertyAsAString
+              (NS_LITERAL_STRING("message"),
+               SBLocalizedString("transcode.file.drmprotected"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("item"), aMediaItem);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_TRANSCODE_ERROR,
+                              sbNewVariant(NS_GET_IID(nsIPropertyBag2), bag));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
