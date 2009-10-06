@@ -54,6 +54,7 @@
 #include <nsIPrefService.h>
 
 #include "sbDatabaseResultStringEnumerator.h"
+#include "sbLocalDatabaseGUIDArray.h"
 #include "sbLocalDatabaseLibrary.h"
 #include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabaseSchemaInfo.h"
@@ -103,6 +104,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS2(sbLocalDatabasePropertyCache,
 sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 : mWritePendingCount(0),
   mCache(sbLocalDatabasePropertyCache::CACHE_SIZE),
+  mDependentGUIDArrayMonitor(nsnull),
   mMonitor(nsnull),
   mLibrary(nsnull),
   mSortInvalidateJob(nsnull)
@@ -117,6 +119,10 @@ sbLocalDatabasePropertyCache::sbLocalDatabasePropertyCache()
 
 sbLocalDatabasePropertyCache::~sbLocalDatabasePropertyCache()
 {
+  if (mDependentGUIDArrayMonitor) {
+    nsAutoMonitor::DestroyMonitor(mDependentGUIDArrayMonitor);
+  }
+
   if (mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
   }
@@ -151,6 +157,10 @@ sbLocalDatabasePropertyCache::Init(sbLocalDatabaseLibrary* aLibrary,
 
   mPropertyManager = do_GetService(SB_PROPERTYMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mDependentGUIDArrayMonitor = 
+    nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mDependentGUIDArrayMonitor");
+  NS_ENSURE_TRUE(mDependentGUIDArrayMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   mMonitor = nsAutoMonitor::NewMonitor("sbLocalDatabasePropertyCache::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
@@ -1365,6 +1375,33 @@ sbLocalDatabasePropertyCache::GetSetInvalidSortDataPref(
   return rv;
 }
 
+void 
+sbLocalDatabasePropertyCache::AddDependentGUIDArray(
+                                sbLocalDatabaseGUIDArray *aGUIDArray)
+{
+  NS_ENSURE_TRUE(aGUIDArray, /*void*/);
+
+  nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+  mDependentGUIDArraySet.insert(aGUIDArray);
+
+  return;
+}
+
+void
+sbLocalDatabasePropertyCache::RemoveDependentGUIDArray(
+                                sbLocalDatabaseGUIDArray *aGUIDArray)
+{
+  NS_ENSURE_TRUE(aGUIDArray, /*void*/);
+  nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+
+  guidarrayptr_set_t::iterator it = mDependentGUIDArraySet.find(aGUIDArray);
+  if(it != mDependentGUIDArraySet.end()) {
+    mDependentGUIDArraySet.erase(it);
+  }
+
+  return;
+}
+
 nsresult
 sbLocalDatabasePropertyCache::DispatchFlush() 
 {
@@ -1510,19 +1547,33 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
   NS_ENSURE_ARG_POINTER(aBag);
   nsAutoString guid(aGuid);
 
-  nsAutoMonitor mon(mMonitor);
+  {
+    nsAutoMonitor mon(mMonitor);
 
-  // If another bag for the same guid is already in the dirty list, then we
-  // risk losing information if we don't write out immediately.
-  if (mDirty.Get(guid, nsnull)) {
-    NS_WARNING("Property cache forcing Write() due to duplicate "
-               "guids in the dirty bag list.  This should be a rare event.");
-    nsresult rv = Write();
-    NS_ENSURE_SUCCESS(rv, rv);
+    // If another bag for the same guid is already in the dirty list, then we
+    // risk losing information if we don't write out immediately.
+    if (mDirty.Get(guid, nsnull)) {
+      NS_WARNING("Property cache forcing Write() due to duplicate "
+                 "guids in the dirty bag list.  This should be a rare event.");
+      nsresult rv = Write();
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    mDirty.Put(guid, aBag);
+    ++mWritePendingCount;
   }
 
-  mDirty.Put(guid, aBag);
-  ++mWritePendingCount;
+  // Invalidate dependent guid arrays.
+  {
+    nsAutoMonitor mon(mDependentGUIDArrayMonitor);
+    guidarrayptr_set_t::const_iterator cit = mDependentGUIDArraySet.begin();
+    guidarrayptr_set_t::const_iterator end = mDependentGUIDArraySet.end();
+    for(; cit != end; ++cit) {
+      nsresult rv = (*cit)->Invalidate();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+        "Failed to invalid GUID array, GUIDs may be stale.");
+    }
+  }
 
   return NS_OK;
 }

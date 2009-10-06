@@ -229,6 +229,7 @@ private:
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
   PRUint32 mLength;
   PRUint32 mNextIndex;
+  nsString mNextGUID;
 };
 
 #endif /* __SBLOCALDATABASEMEDIALISTBASE_H__ */

@@ -34,11 +34,17 @@
 interface sbILocalDatabaseResourcePropertyBag;
 interface sbIJobProgress;
 
+%{C++
+class sbLocalDatabaseGUIDArray;
+%}
+
+[ptr] native sbLocalDatabaseGUIDArrayPtr(sbLocalDatabaseGUIDArray);
+
 /**
  * \interface sbILocalDatabasePropertyCache
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(0e5c3c10-8ff8-11dd-ad8b-0800200c9a66)]
+[scriptable, uuid(76ab2d5f-36ae-4ba3-a870-a9b5dace9f6a)]
 interface sbILocalDatabasePropertyCache : nsISupports
 {
   readonly attribute boolean writePending;
@@ -81,4 +87,18 @@ interface sbILocalDatabasePropertyCache : nsISupports
   *    SBJobUtils.showProgressDialog(cache.invalidateSortData(), null, 0);
   */
   sbIJobProgress invalidateSortData();
+
+  /**
+   * \brief Add a dependent GUID Array
+   * \note [USER CODE SHOULD NEVER USE THIS METHOD]
+   */
+  [notxpcom] void 
+    addDependentGUIDArray(in sbLocalDatabaseGUIDArrayPtr aGUIDArray);
+
+  /**
+   * \brief Remove a dependent GUID Array
+   * \note [USER CODE SHOULD NEVER USE THIS METHOD]
+   */
+  [notxpcom] void 
+    removeDependentGUIDArray(in sbLocalDatabaseGUIDArrayPtr aGUIDArray);
 };

@@ -228,11 +228,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByPropertyInternal(const nsAString& 
 
   // Save off the guid array in case we need it.
   mCachedPartialArray = guidArray;
-
-  // Set up to invalidate the cached partial array if the library changes.
-  rv = mCachedPartialArray->SetInvalidateOnChangeLibrary(mLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);
-
+  
   // And make an enumerator to return the filtered items.
   sbGUIDArrayEnumerator enumerator(mLibrary, guidArray);
 
@@ -628,16 +624,25 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 {
   NS_ENSURE_ARG_POINTER(aEnumerationListener);
 
-  // If this is a different filter wipe our cached array
-  if (!aID.Equals(mLastID) || !aValue.Equals(mLastValue)) {
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // If our cached array is invalid, toss it.
+  PRBool guidArrayIsValid = PR_TRUE;
+  if (mCachedPartialArray) {
+    rv = mCachedPartialArray->GetIsValid(&guidArrayIsValid);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
+      "Failed to check if guid array is valid, array possibly out of date.");
+  }
+  
+  if (!aID.Equals(mLastID) || !aValue.Equals(mLastValue) ||
+      (mCachedPartialArray && !guidArrayIsValid)) {
     mCachedPartialArray = nsnull;
     mLastID = aID;
     mLastValue = aValue;
   }
+
   // A property id must be specified.
   NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
-
-  nsresult rv;
 
   // Get the sortable format of the value
   nsCOMPtr<sbIPropertyManager> propMan =
@@ -654,10 +659,8 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
   // Make a single-item string array to hold our property value.
   sbStringArray valueArray(1);
-  nsString* value = valueArray.AppendElement();
+  nsString* value = valueArray.AppendElement(aValue);
   NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
-
-  value->Assign(sortableValue);
 
   // Make a string enumerator for it.
   nsCOMPtr<nsIStringEnumerator> valueEnum =
@@ -705,7 +708,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
             rv = EnumerateItemsByPropertyInternal(aEnumerationListener);
           else
             rv = EnumerateItemsByPropertyInternal(aID, valueEnum,
-                                                aEnumerationListener);
+                                                  aEnumerationListener);
         }
         else {
           // The user cancelled the enumeration.
@@ -1148,7 +1151,7 @@ void sbLocalDatabaseMediaListBase::ClearCachedPartialArray()
 {
   mLastID.Truncate();
   mLastValue.Truncate();
-  mCachedPartialArray= nsnull;
+  mCachedPartialArray = nsnull;
 }
 
 NS_IMETHODIMP
@@ -1188,12 +1191,24 @@ sbGUIDArrayValueEnumerator::HasMore(PRBool *_retval)
 NS_IMETHODIMP
 sbGUIDArrayValueEnumerator::GetNext(nsAString& _retval)
 {
-  nsresult rv;
+  PRBool isValid = PR_TRUE;
+  nsresult rv = mArray->GetIsValid(&isValid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Array became invalid during enumeration, recalculate
+  // current index.
+  if(!isValid && mNextIndex > 0 && !mNextGUID.IsEmpty()) {
+    rv = mArray->GetFirstIndexByGuid(mNextGUID, &mNextIndex);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   rv = mArray->GetSortPropertyValueByIndex(mNextIndex, _retval);
   NS_ENSURE_SUCCESS(rv, rv);
 
   mNextIndex++;
+  
+  rv = mArray->GetGuidByIndex(mNextIndex, mNextGUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

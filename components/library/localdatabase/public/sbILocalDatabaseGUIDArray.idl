@@ -35,7 +35,6 @@ interface nsIStringEnumerator;
 interface nsIURI;
 interface sbILocalDatabasePropertyCache;
 interface sbIPropertyArray;
-interface sbILibrary;
 
 /**
  * \interface sbILocalDatabaseGUIDArrayListener
@@ -51,7 +50,7 @@ interface sbILocalDatabaseGUIDArrayListener : nsISupports
  * \interface sbILocalDatabaseGUIDArray
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(c3313148-1dd1-11b2-8cf4-e207b77051c8)]
+[scriptable, uuid(c29bdb6c-2d8a-4cc2-bc8c-5e77a8eea322)]
 interface sbILocalDatabaseGUIDArray : nsISupports
 {
   attribute AString databaseGUID;
@@ -67,6 +66,8 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   attribute unsigned long fetchSize;
 
   attribute boolean isDistinct;
+
+  readonly attribute boolean isValid;
   
   /**
    * \brief If the guid array is distinct, this value will cause the guid array 
@@ -80,12 +81,6 @@ interface sbILocalDatabaseGUIDArray : nsISupports
   attribute sbILocalDatabaseGUIDArrayListener listener;
 
   attribute sbILocalDatabasePropertyCache propertyCache;
-
-  /**
-   * \brief If invalidateOnChangeLibrary is set to a library, the guid array
-   *        will be invalidated whenever the library contents change.
-   */
-  attribute sbILibrary invalidateOnChangeLibrary;
   
   void addSort(in AString aProperty,
                in boolean aAscending);
@@ -162,4 +157,3 @@ interface sbILocalDatabaseGUIDArray : nsISupports
    */
   boolean containsGuid(in AString aGuid);
 };
-

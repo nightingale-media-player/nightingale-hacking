@@ -51,7 +51,7 @@
 #include "sbFixedInterfaceCache.h"
 #include "sbLocalDatabaseSQL.h"
 
-
+#include <set>
 
 struct PRLock;
 struct PRMonitor;
@@ -62,6 +62,7 @@ class sbIDatabasePreparedStatement;
 class sbLocalDatabaseLibrary;
 class sbIPropertyManager;
 class sbLocalDatabaseSortInvalidateJob;
+class sbLocalDatabaseGUIDArray;
 
 class sbLocalDatabasePropertyCache: public sbILocalDatabasePropertyCache,
                                     public nsIObserver
@@ -178,6 +179,11 @@ private:
   nsDataHashtableMT<nsUint32HashKey, nsString> mPropertyDBIDToID;
   nsDataHashtableMT<nsStringHashKey, PRUint32> mPropertyIDToDBID;
 
+  // Depedent GUID Array set and protecting monitor
+  PRMonitor* mDependentGUIDArrayMonitor;
+  typedef std::set<sbLocalDatabaseGUIDArray *> guidarrayptr_set_t;
+  guidarrayptr_set_t mDependentGUIDArraySet;
+  
   // Used to protect the cache and all of the resource property bags
   PRMonitor* mMonitor;
 

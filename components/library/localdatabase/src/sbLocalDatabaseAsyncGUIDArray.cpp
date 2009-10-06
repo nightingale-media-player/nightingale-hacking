@@ -423,6 +423,14 @@ sbLocalDatabaseAsyncGUIDArray::SetIsDistinct(PRBool aIsDistinct)
 }
 
 NS_IMETHODIMP
+sbLocalDatabaseAsyncGUIDArray::GetIsValid(PRBool *aIsValid)
+{
+  nsAutoMonitor monitor(mSyncMonitor);
+
+  return mInner->GetIsValid(aIsValid);
+}
+
+NS_IMETHODIMP
 sbLocalDatabaseAsyncGUIDArray::GetDistinctWithSortableValues(PRBool *aDistinctWithSortableValues)
 {
   nsAutoMonitor monitor(mSyncMonitor);
@@ -473,23 +481,6 @@ sbLocalDatabaseAsyncGUIDArray::SetPropertyCache(sbILocalDatabasePropertyCache* a
   nsAutoMonitor monitor(mSyncMonitor);
 
   return mInner->SetPropertyCache(aPropertyCache);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::GetInvalidateOnChangeLibrary
-                                 (sbILibrary** aInvalidateOnChangeLibrary)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->GetInvalidateOnChangeLibrary(aInvalidateOnChangeLibrary);
-}
-NS_IMETHODIMP
-sbLocalDatabaseAsyncGUIDArray::SetInvalidateOnChangeLibrary
-                                 (sbILibrary* aInvalidateOnChangeLibrary)
-{
-  nsAutoMonitor monitor(mSyncMonitor);
-
-  return mInner->SetInvalidateOnChangeLibrary(aInvalidateOnChangeLibrary);
 }
 
 NS_IMETHODIMP

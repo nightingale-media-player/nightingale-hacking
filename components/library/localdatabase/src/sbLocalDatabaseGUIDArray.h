@@ -49,14 +49,11 @@ class nsIWeakReference;
 class sbILibrary;
 class sbIPropertyManager;
 
-class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray,
-                                 public sbIMediaListListener,
-                                 public nsSupportsWeakReference
+class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray
 {
 public:
   NS_DECL_ISUPPORTS
   NS_DECL_SBILOCALDATABASEGUIDARRAY
-  NS_DECL_SBIMEDIALISTLISTENER
 
   sbLocalDatabaseGUIDArray();
 
@@ -169,10 +166,6 @@ private:
                            PRBool aSecondary);
   nsresult ClearSecondarySorts();
   
-  nsresult StartListeningForLibraryChanges();
-
-  nsresult StopListeningForLibraryChanges();
-
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 
@@ -251,10 +244,6 @@ private:
   // Paired property cache
   nsCOMPtr<sbILocalDatabasePropertyCache> mPropertyCache;
 
-  // Library for which to invalidate array when the library changes.
-  nsCOMPtr<sbILibrary> mInvalidateOnChangeLibrary;
-  PRBool mListeningToLibrary;
-
   // Map of guid -> first array index
   nsDataHashtable<nsStringHashKey, PRUint32> mGuidToFirstIndexMap;
 
@@ -290,7 +279,11 @@ public:
 private:
   nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
   nsCOMPtr<sbILocalDatabaseGUIDArray> mArray;
+  
   PRUint32 mNextIndex;
+  nsString mNextGUID;
+
+  PRUint32 mPreviousLength;
 };
 
 class sbGUIDArrayStringEnumerator : public nsIStringEnumerator
