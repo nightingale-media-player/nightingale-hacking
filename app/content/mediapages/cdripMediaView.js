@@ -164,7 +164,7 @@ window.cdripController =
     this._togglePlayerControls(false);
     if (this._device) {
       var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
-      eventTarget.addEventListener(this);
+      eventTarget.removeEventListener(this);
       this._device.removeEventListener(this);
     }
 
