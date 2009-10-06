@@ -42,12 +42,6 @@
   /* WARNING: live ammunition... */
   LPCTSTR KEY_SHARED_DLLS =
     _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\SharedDLLs");
-  LPCTSTR STR_API_DLL_NAME =
-  _T("GEARAspi.dll");
-  LPCTSTR STR_API_SYS_NAME =
-   _T("Drivers\\GEARAspiWDM.sys");
-  LPCTSTR STR_SERVICE_NAME =
-   _T("GEARAspiWDM");
   LPCTSTR KEY_DEVICE_CDROM =
    _T("SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E965-E325-11CE-BFC1-08002BE10318}");
   LPCTSTR KEY_DEVICE_TAPE =
@@ -58,12 +52,6 @@
   /* Safety is on; testing keys... */
   LPCTSTR KEY_SHARED_DLLS =
    _T("SOFTWARE\\Songbird\\gearworks-test\\SharedDLLs");
-  LPCTSTR STR_API_DLL_NAME =
-   _T("GEARAspi.dll");
-  LPCTSTR STR_API_SYS_NAME =
-   _T("Drivers\\GEARAspiWDM.sys");
-  LPCTSTR STR_SERVICE_NAME =
-   _T("GEARAspiWDM");
   LPCTSTR KEY_DEVICE_CDROM =
    _T("SOFTWARE\\Songbird\\gearworks-test\\dkey1");
   LPCTSTR KEY_DEVICE_TAPE =
@@ -74,16 +62,20 @@
 
 LPCTSTR DRIVER_SUBKEY_STR = _T("UpperFilters");
 
+LPCTSTR STR_ASPI_DLL_NAME = _T("GEARAspi.dll");
+LPCTSTR STR_ASPI_SYS_NAME = _T("Drivers\\GEARAspiWDM.sys");
+LPCTSTR STR_ASPI_SYS_BASENAME = _T("GEARAspiWDM.sys");
+LPCTSTR STR_ASPI_SERVICE_NAME = _T("GEARAspiWDM");
+
 static const TCHAR GEARWORKS_REG_VALUE_STR[] = _T("GEARAspiWDM");
 static const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
-
-static const TCHAR GEARWORKS_ASPI_DRIVER[] = _T("GearAspi.dll");
-static const TCHAR GEARWORKS_ASPIWDM_DRIVER[] = _T("GearAspiWDM.sys");
 
 static const TCHAR SONGBIRD_CDRIP_REG_KEY_ROOT[] = 
  _T("Software\\Songbird\\CdripRefcount");
 
 static const size_t DEFAULT_REG_BUFFER_SZ = 4096;
+
+static const size_t PATH_STORAGE = MAX_PATH + 1;
 
 #define ARRAY_LENGTH(x) (sizeof(x)/sizeof(x)[0])
 
@@ -107,7 +99,8 @@ LPTSTR GetSystemErrorMessage(DWORD errNum) {
   if (!fmRv) {
     DebugMessage("GetSystemErrorMessage() failed; errno was %d", errno);
     return NULL;
-  } else {
+  }
+  else {
     return returnString;
   }
 }
@@ -127,16 +120,15 @@ BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message) {
   return callSucceeded;
 }
 
-int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
+LONG AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   HRESULT hr;
   LONG ret;
-  const size_t pathStorage = MAX_PATH + 1;
 
-  TCHAR sysDir[pathStorage], nameBuffer[pathStorage];
+  TCHAR sysDir[PATH_STORAGE], nameBuffer[PATH_STORAGE];
 
   // Ensure these are 0s from the start...
-  memset(sysDir, 0, pathStorage);
-  memset(nameBuffer, 0, pathStorage);
+  memset(sysDir, 0, PATH_STORAGE);
+  memset(nameBuffer, 0, PATH_STORAGE);
 
   hr = SHGetFolderPath(NULL,               // HWND owner
                        CSIDL_SYSTEM,       // folder (system32)
@@ -158,23 +150,28 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
 
   // adjust the refcount
   int len = _sntprintf(nameBuffer, MAX_PATH, _T("%s\\%s"), sysDir, dllName);
+
   if (len < 0) {
     DebugMessage("Failed to get DLL name");
     return RH_ERROR_QUERY_VALUE;
   }
+
   DWORD dllCount, bufferSize = sizeof(DWORD);
+
   ret = RegQueryValueEx(hKeySharedDLLs,    // key
                         nameBuffer,        // name
                         NULL,              // reserved
                         NULL,              // type (ignored)
                         (LPBYTE)&dllCount, // [out] data
                         &bufferSize);      // sizeof(data)
-  if (ret == ERROR_FILE_NOT_FOUND) {
+
+  if (ret == ERROR_FILE_NOT_FOUND)
     dllCount = 0;
-  } else if (!LoggedSUCCEEDED(ret, _T("Get dll refcount"))) {
+  else if (!LoggedSUCCEEDED(ret, _T("Get dll refcount")))
     return RH_ERROR_QUERY_VALUE;
-  }
+
   dllCount += value;
+
   if (dllCount > 0) {
     ret = RegSetValueEx(hKeySharedDLLs,
                         nameBuffer,
@@ -185,6 +182,7 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   } else {
     ret = RegDeleteValue(hKeySharedDLLs, nameBuffer);
   }
+
   if (!LoggedSUCCEEDED(ret, _T("Set dll refcount")))
     return RH_ERROR_SETVALUE;
 
@@ -196,7 +194,7 @@ int AdjustDllUseCount(LPCTSTR dllName, int value, int* result = NULL) {
   return RH_OK;
 }
 
-int AddFilteredDriver(LPCTSTR regSubKey,
+LONG AddFilteredDriver(LPCTSTR regSubKey,
                       const regValue_t &newKey,
                       const driverLoc_t insertionInfo) {
 
@@ -257,7 +255,8 @@ int AddFilteredDriver(LPCTSTR regSubKey,
     rv = RegCloseKey(keyHandle);
     LoggedSUCCEEDED(rv, _T("RegCloseKey() failed"));
 
-  } else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
+  }
+  else if (REG_OPENED_EXISTING_KEY == keyCreationResult) {
     OutputDebugString(_T("Opened old key"));
 
     if (currentKeyType != REG_SZ &&
@@ -336,7 +335,8 @@ int AddFilteredDriver(LPCTSTR regSubKey,
     LoggedSUCCEEDED(rv, _T("RegCloseKey() failed"));
     free(data);
     delete [] newRegValue.value;
-  } else {
+  }
+  else {
     OutputDebugString(_T("Unknown creationResult"));
   }
 
@@ -347,14 +347,13 @@ LONG InstallAspiDriverFiles(void) {
   BOOL rv; 
   HRESULT hr;
 
-  const size_t pathStorage = MAX_PATH + 1;
-  TCHAR existingDriverPath[pathStorage], newDriverPath[pathStorage],
-        windowsSystemDir[pathStorage];
+  TCHAR existingDriverPath[PATH_STORAGE], newDriverPath[PATH_STORAGE],
+        windowsSystemDir[PATH_STORAGE];
 
   // Ensure these are 0s from the start...
-  memset(existingDriverPath, 0, pathStorage);
-  memset(newDriverPath, 0, pathStorage);
-  memset(windowsSystemDir, 0, pathStorage);
+  memset(existingDriverPath, 0, PATH_STORAGE);
+  memset(newDriverPath, 0, PATH_STORAGE);
+  memset(windowsSystemDir, 0, PATH_STORAGE);
 
   tstring appDir = GetAppDirectory();
 
@@ -372,18 +371,18 @@ LONG InstallAspiDriverFiles(void) {
   windowsSystemDir[MAX_PATH] = _T('\0'); // never trust 
 
   int len = _sntprintf(existingDriverPath, MAX_PATH, _T("%sdrivers\\%s"),
-            appDir.c_str(), GEARWORKS_ASPI_DRIVER);
+            appDir.c_str(), STR_ASPI_DLL_NAME);
 
   if (len < 0) {
-    DebugMessage("Failed to construct GEARWORKS_ASPI_DRIVER source path");
+    DebugMessage("Failed to construct STR_ASPI_DLL_NAME source path");
     return RH_ERROR_QUERY_VALUE;
   }
 
   len = _sntprintf(newDriverPath, MAX_PATH, _T("%s\\%s"), windowsSystemDir,
-                   GEARWORKS_ASPI_DRIVER);
+                   STR_ASPI_DLL_NAME);
 
   if (len < 0) {
-    DebugMessage("Failed to construct GEARWORKS_ASPI_DRIVER dest path");
+    DebugMessage("Failed to construct STR_ASPI_DLL_NAME dest path");
     return RH_ERROR_QUERY_VALUE;
   }
   
@@ -395,22 +394,22 @@ LONG InstallAspiDriverFiles(void) {
     return RH_ERROR_COPYFILE_FAILED;
 
   // Reset these...
-  memset(existingDriverPath, 0, pathStorage);
-  memset(newDriverPath, 0, pathStorage);
+  memset(existingDriverPath, 0, PATH_STORAGE);
+  memset(newDriverPath, 0, PATH_STORAGE);
 
   len = _sntprintf(existingDriverPath, MAX_PATH, _T("%sdrivers\\%s"),
-                   appDir.c_str(), GEARWORKS_ASPIWDM_DRIVER);
+                   appDir.c_str(), STR_ASPI_SYS_BASENAME);
 
   if (len < 0) {
-    DebugMessage("Failed to construct GEARWORKS_ASPIWDM_DRIVER source path");
+    DebugMessage("Failed to construct STR_ASPI_SYS_BASENAME source path");
     return RH_ERROR_QUERY_VALUE;
   }
 
-  len = _sntprintf(newDriverPath, MAX_PATH, _T("%s\\drivers\\%s"),
-                   windowsSystemDir, GEARWORKS_ASPIWDM_DRIVER);
+  len = _sntprintf(newDriverPath, MAX_PATH, _T("%s\\%s"),
+                   windowsSystemDir, STR_ASPI_SYS_NAME);
 
   if (len < 0) {
-    DebugMessage("Failed to construct GEARWORKS_ASPIWDM_DRIVER dest path");
+    DebugMessage("Failed to construct STR_ASPI_SYS_NAME dest path");
     return RH_ERROR_QUERY_VALUE;
   }
 
@@ -425,7 +424,7 @@ LONG InstallAspiDriverFiles(void) {
 }
 
 
-int InstallAspiDriver(void) {
+LONG InstallAspiDriver(void) {
   int finalRv = RH_OK;
 
   int rv;
@@ -434,51 +433,17 @@ int InstallAspiDriver(void) {
   if (rv != RH_OK)
     return rv;
  
-  rv = AdjustDllUseCount(STR_API_DLL_NAME, 1);
+  rv = AdjustDllUseCount(STR_ASPI_DLL_NAME, 1);
   if (rv != RH_OK)
     return rv;
 
-  rv = AdjustDllUseCount(STR_API_SYS_NAME, 1);
+  rv = AdjustDllUseCount(STR_ASPI_SYS_NAME, 1);
   if (rv != RH_OK)
     return rv;
 
-  // PreedTODO: should this be its own function, so install-mode can call it
-  // but recovery mode doesn't have to (and _should_ recovery mode)?
-  // register the service
-  { /* scope */
-    SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
-                                   NULL,                  // db (default)
-                                   SC_MANAGER_ALL_ACCESS);
-    if (!hSCM) {
-      DoLogMessage(GetLastError(), _T("Open service control manager"));
-      return RH_ERROR_OPENKEY;
-    }
-    TCHAR filepath[MAX_PATH+1];
-    _sntprintf(filepath, MAX_PATH, _T("System32\\%s"), STR_API_SYS_NAME);
-    SC_HANDLE hService = CreateService(hSCM,
-                                       STR_SERVICE_NAME,
-                                       _T("GEAR ASPI Filter Driver"),
-                                       SC_MANAGER_ALL_ACCESS,
-                                       SERVICE_KERNEL_DRIVER,
-                                       SERVICE_DEMAND_START,
-                                       SERVICE_ERROR_NORMAL,
-                                       filepath,
-                                       _T("PnP Filter"), // load order group
-                                       NULL,             // tag id
-                                       NULL,             // dependencies
-                                       NULL,             // start (logon) name
-                                       NULL);            // password
-    if (hService) {
-      CloseServiceHandle(hService);
-    } else {
-      DWORD lastError = GetLastError();
-      if (lastError != ERROR_SERVICE_EXISTS) {
-        DoLogMessage(GetLastError(), _T("Create service"));
-        return RH_ERROR_SET_KEY;
-      }
-    }
-    CloseServiceHandle(hSCM);
-  } /* end scope */
+  rv = RegisterAspiService();
+  if (rv != RH_OK)
+    return rv;
 
   DebugMessage("-- Begin installation of key %S", KEY_DEVICE_CDROM);
   rv = AddFilteredDriver(KEY_DEVICE_CDROM,
@@ -517,6 +482,72 @@ int InstallAspiDriver(void) {
   }
 
   return finalRv;
+}
+ 
+// register the service
+LONG RegisterAspiService(void) { 
+  SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
+                                 NULL,                  // db (default)
+                                 SC_MANAGER_ALL_ACCESS);
+  if (!hSCM) {
+    DoLogMessage(GetLastError(), _T("Open service control manager"));
+    return RH_ERROR_OPENKEY;
+  }
+
+  TCHAR filepath[PATH_STORAGE];
+  _sntprintf(filepath, MAX_PATH, _T("System32\\%s"), STR_ASPI_SYS_NAME);
+  SC_HANDLE hService = CreateService(hSCM,
+                                     STR_ASPI_SERVICE_NAME,
+                                     _T("GEAR ASPI Filter Driver"),
+                                     SC_MANAGER_ALL_ACCESS,
+                                     SERVICE_KERNEL_DRIVER,
+                                     SERVICE_DEMAND_START,
+                                     SERVICE_ERROR_NORMAL,
+                                     filepath,
+                                     _T("PnP Filter"), // load order group
+                                     NULL,             // tag id
+                                     NULL,             // dependencies
+                                     NULL,             // start (logon) name
+                                     NULL);            // password
+  if (hService) {
+    CloseServiceHandle(hService);
+  }
+  else {
+    DWORD lastError = GetLastError();
+    if (lastError != ERROR_SERVICE_EXISTS) {
+      DoLogMessage(GetLastError(), _T("Create service"));
+      return RH_ERROR_SET_KEY;
+    }
+  }
+  CloseServiceHandle(hSCM);
+
+  return RH_OK;
+}
+
+LONG UnregisterAspiService(void) {
+  SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
+                                 NULL,                  // db (default)
+                                 SC_MANAGER_ALL_ACCESS);
+  if (!hSCM) {
+    DoLogMessage(GetLastError(), _T("Open service control manager"));
+    return RH_ERROR_OPENKEY;
+  }
+  SC_HANDLE hService = OpenService(hSCM,
+                                   STR_ASPI_SERVICE_NAME,
+                                   SC_MANAGER_ALL_ACCESS);
+  if (hService) {
+    DeleteService(hService);
+  }
+  else {
+    DWORD lastError = GetLastError();
+    if (lastError != ERROR_INVALID_NAME) {
+      DoLogMessage(GetLastError(), _T("Delete service"));
+      return RH_ERROR_SET_KEY;
+    }
+  }
+
+  CloseServiceHandle(hSCM);
+  return RH_OK;
 }
 
 LONG GetDriverInstallationCount(LPCTSTR installPath) {
@@ -560,7 +591,7 @@ LONG GetDriverInstallationCount(LPCTSTR installPath) {
   return installationCount;
 }
 
-int IncrementDriverInstallationCount(void) {
+LONG IncrementDriverInstallationCount(void) {
   HKEY installationCountHandle;
   DWORD keyCreationResult, installationCount, currentKeyType;
   DWORD dwordSize = sizeof(DWORD);
@@ -616,7 +647,7 @@ int IncrementDriverInstallationCount(void) {
   return RH_OK;
 }
 
-int RemoveAspiDriver(void) {
+LONG RemoveAspiDriver(void) {
   int result = RH_OK;
   
   int dllCount, sysCount;
@@ -625,14 +656,14 @@ int RemoveAspiDriver(void) {
 
   int installationCount = GetDriverInstallationCount(appDir.c_str());
 
-  result = AdjustDllUseCount(STR_API_DLL_NAME, -installationCount, &dllCount);
+  result = AdjustDllUseCount(STR_ASPI_DLL_NAME, -installationCount, &dllCount);
   if (result != RH_OK)
     return result;
-  result = AdjustDllUseCount(STR_API_SYS_NAME, -installationCount, &sysCount);
+  result = AdjustDllUseCount(STR_ASPI_SYS_NAME, -installationCount, &sysCount);
   if (result != RH_OK) {
     // OMGWTFBBQ we failed to change the second one
     // let's try to change the first one back (but ignore whether we succeeded)
-    AdjustDllUseCount(STR_API_DLL_NAME, 1);
+    AdjustDllUseCount(STR_ASPI_DLL_NAME, 1);
     return result;
   }
 
@@ -644,29 +675,10 @@ int RemoveAspiDriver(void) {
     return RH_SUCCESS_NOACTION;
   }
 
-  // unregister the service
-  { /* scope */
-    SC_HANDLE hSCM = OpenSCManager(NULL,                  // machine (local)
-                                   NULL,                  // db (default)
-                                   SC_MANAGER_ALL_ACCESS);
-    if (!hSCM) {
-      DoLogMessage(GetLastError(), _T("Open service control manager"));
-      return RH_ERROR_OPENKEY;
-    }
-    SC_HANDLE hService = OpenService(hSCM,
-                                     STR_SERVICE_NAME,
-                                     SC_MANAGER_ALL_ACCESS);
-    if (hService) {
-      DeleteService(hService);
-    } else {
-      DWORD lastError = GetLastError();
-      if (lastError != ERROR_INVALID_NAME) {
-        DoLogMessage(GetLastError(), _T("Delete service"));
-        return RH_ERROR_SET_KEY;
-      }
-    }
-    CloseServiceHandle(hSCM);
-  } /* end scope */
+  result = UnregisterAspiService();
+
+  if (result != RH_OK)
+    DoLogMessage(result, _T("UnregisterAspiService() returned: "));
 
   std::list<LPCTSTR> regKeysToMunge;
   regKeysToMunge.push_back(KEY_DEVICE_CDROM);
@@ -749,12 +761,11 @@ int RemoveAspiDriver(void) {
     delete [] newRegValue.value;
   }
 
-  const size_t pathStorage = MAX_PATH + 1;
-  TCHAR existingDriverPath[pathStorage], windowsSystemDir[pathStorage];
+  TCHAR existingDriverPath[PATH_STORAGE], windowsSystemDir[PATH_STORAGE];
 
   // Ensure these are 0s from the start...
-  memset(existingDriverPath, 0, pathStorage);
-  memset(windowsSystemDir, 0, pathStorage);
+  memset(existingDriverPath, 0, PATH_STORAGE);
+  memset(windowsSystemDir, 0, PATH_STORAGE);
 
   HRESULT hr = SHGetFolderPath(NULL,
                                CSIDL_SYSTEM,
@@ -770,7 +781,7 @@ int RemoveAspiDriver(void) {
   windowsSystemDir[MAX_PATH] = _T('\0'); // never trust 
 
   int len = _sntprintf(existingDriverPath, MAX_PATH, _T("%s\\%s"),
-            windowsSystemDir, GEARWORKS_ASPI_DRIVER);
+            windowsSystemDir, STR_ASPI_DLL_NAME);
 
   if (len < 0) {
     DebugMessage("Failed to construct GEARWORKS_ASPI_DRIVER path for delete");
@@ -780,10 +791,10 @@ int RemoveAspiDriver(void) {
   if (!LoggedDeleteFile(existingDriverPath))
     result = RH_ERROR_DELETEFILE_FAILED;
 
-  memset(existingDriverPath, 0, pathStorage);
+  memset(existingDriverPath, 0, PATH_STORAGE);
 
-  len = _sntprintf(existingDriverPath, MAX_PATH, _T("%s\\drivers\\%s"),
-                   windowsSystemDir, GEARWORKS_ASPIWDM_DRIVER);
+  len = _sntprintf(existingDriverPath, MAX_PATH, _T("%s\\%s"),
+                   windowsSystemDir, STR_ASPI_SYS_NAME);
 
   if (len < 0) {
     DebugMessage("Failed to construct GEARWORKS_ASPIWDM_DRIVER path for delete");

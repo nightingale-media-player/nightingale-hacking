@@ -37,13 +37,20 @@ struct driverLoc_t {
   driverLoc_t(insert_type_t _i) : insertAt(_i), loc(NULL) {}
 };
 
+// Helper functions
 LPTSTR GetSystemErrorMessage(DWORD errNum);
 BOOL LoggedSUCCEEDED(LONG rv, LPCTSTR message);
 BOOL LoggedDeleteFile(LPCTSTR);
-int InstallAspiDriver(void);
-int RemoveAspiDriver(void);
-int AddFilteredDriver(LPCTSTR k, const regValue_t &nk, driverLoc_t l); 
-int IncrementDriverInstallationCount(void);
+
+// Handlers
+LONG InstallAspiDriver(void);
+LONG RemoveAspiDriver(void);
+
+// Handler support functions
 LONG CheckAspiDriversInstalled(void);
+LONG AddFilteredDriver(LPCTSTR k, const regValue_t &nk, driverLoc_t l); 
+LONG IncrementDriverInstallationCount(void);
+LONG RegisterAspiService(void);
+LONG UnregisterAspiService(void);
 
 #endif /* _REGHANDLER_ERROR_H__ */
