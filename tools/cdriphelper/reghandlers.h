@@ -47,15 +47,20 @@ LONG InstallAspiDriver(void);
 LONG RemoveAspiDriver(void);
 
 // Handler support functions
-LONG CheckAspiDriversInstalled(void);
+LONG CheckAspiDriversInstalled(LPCTSTR installationDir);
 LONG AddFilteredDriver(LPCTSTR k, const regValue_t &nk, driverLoc_t l); 
 LONG AddAspiFilteredDrivers();
 LONG RegisterAspiService(void);
 LONG UnregisterAspiService(void);
 
+// This records whether or not we've ever tried to install the driver for
+// this particular installation path
+enum install_type_t { DRIVER_INSTALLED, DRIVER_REMOVED };
+LONG RecordAspiDriverInstallState(LPCTSTR path, install_type_t recordAction);
+
 // Calling AdjustDllUseCount() with a value of 0 to query what the current key
 // would be (passing result would be useful for this operation, of course)
 
-LONG AdjustDllUseCount(LPCTSTR dllName, int valuu , int * result);
+LONG AdjustDllUseCount(LPCTSTR dllName, int value, int * result);
 
 #endif /* _REGHANDLER_ERROR_H__ */

@@ -45,6 +45,7 @@
 #include "stringconvert.h"
 #include "error.h"
 #include "reghandlers.h"
+#include "toolslib.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   // don't use any of the args, because we want to be Unicode-compatible
@@ -79,7 +80,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   } else if (mode == "upgrade") {
     OutputDebugString(_T("In Upgrade mode"));
 
-    if (!CheckAspiDriversInstalled())
+    tstring appDir = GetAppDirectory();
+    if (!CheckAspiDriversInstalled(appDir.c_str()))
        result = InstallAspiDriver();
     else
        result = RH_SUCCESS_NOACTION;

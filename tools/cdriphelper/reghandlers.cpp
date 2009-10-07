@@ -71,8 +71,9 @@ LPCTSTR STR_ASPI_SERVICE_NAME = _T("GEARAspiWDM");
 static const TCHAR GEARWORKS_REG_VALUE_STR[] = _T("GEARAspiWDM");
 static const TCHAR REDBOOK_REG_VALUE_STR[] = _T("redbook");
 
+// Careful; if you change this, you have to change it in the uninstaller!
 static const TCHAR SONGBIRD_CDRIP_REG_KEY_ROOT[] = 
- _T("Software\\Songbird\\CdripRefcount");
+ _T("Software\\Songbird\\CdripDriverInstallations");
 
 static const size_t DEFAULT_REG_BUFFER_SZ = 4096;
 
@@ -499,6 +500,9 @@ LONG RepairAspiDriver(void) {
   if (rv != RH_OK)
     finalRv = rv;
 
+  tstring appDir = GetAppDirectory();
+  RecordAspiDriverInstallState(appDir.c_str(), DRIVER_INSTALLED);
+
   return finalRv;
 }
 
@@ -526,6 +530,9 @@ LONG InstallAspiDriver(void) {
   rv = AddAspiFilteredDrivers();
   if (rv != RH_OK)
     finalRv = rv;
+
+  tstring appDir = GetAppDirectory();
+  RecordAspiDriverInstallState(appDir.c_str(), DRIVER_INSTALLED);
 
   return finalRv;
 }
@@ -648,9 +655,13 @@ LONG RemoveAspiDriver(void) {
     return result;
   }
 
-  // PreedTODO: should this go after all the filter driver list munging?
-  // We should never destroy an existing Gearworks entry in the filter list,
-  // so removing the one(s) we added should be ok?
+  // We do this early on so that we don't have to deal with the various places
+  // that we return() out of this function; the fact that we called this
+  // Remove() function for this installatiopn is generally good enough for
+  // our purposes
+  tstring appDir = GetAppDirectory();
+  RecordAspiDriverInstallState(appDir.c_str(), DRIVER_REMOVED);
+
   if (dllCount > 0 || sysCount > 0) {
     // some other folks are using the driver
     return RH_SUCCESS_NOACTION;
@@ -810,8 +821,72 @@ BOOL LoggedDeleteFile(LPCTSTR file) {
   return succeeded;
 }
 
-LONG CheckAspiDriversInstalled(void) {
-  DWORD subKeyCount;
+LONG RecordAspiDriverInstallState(LPCTSTR installationPath,
+                                  install_type_t recordAction) {
+
+  HKEY installationFlagHandle;
+  DWORD keyCreationResult, currentKeyType;
+  DWORD dwordSize = sizeof(DWORD);
+
+  LONG rv = RegCreateKeyEx(HKEY_LOCAL_MACHINE,
+                           SONGBIRD_CDRIP_REG_KEY_ROOT,
+                           0,
+                           NULL,
+                           0,
+                           KEY_ALL_ACCESS,
+                           NULL,
+                           &installationFlagHandle,
+                           &keyCreationResult);
+
+  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() for driver installation count:")))
+    return RH_ERROR_INIT_CREATEKEY;
+
+  if (recordAction == DRIVER_REMOVED) {
+    rv = RegDeleteValue(installationFlagHandle,
+                        installationPath);
+
+    RegCloseKey(installationFlagHandle);
+
+    // We handle the RegDeleteKey() in the uninstaller...
+    if (!LoggedSUCCEEDED(rv, _T("RegDeleteValue() for driver installation count:")))
+      return RH_ERROR_DELETEKEY_FAILED; 
+    else   
+      return RH_OK;
+  }
+
+  // We don't execute any of this if we're called in DRIVER_REMOVED mode
+  DWORD installationFlag = 1;
+  rv = RegQueryValueEx(installationFlagHandle,
+                       installationPath,
+                       0,
+                       &currentKeyType,
+                       (LPBYTE)&installationFlag,
+                       &dwordSize);
+
+  if (SUCCEEDED(rv) && currentKeyType != REG_DWORD) {
+    DebugMessage("Unexpected key type in installation flag key: type %d",
+     currentKeyType);
+  }
+
+  rv = RegSetValueEx(installationFlagHandle,
+                     installationPath,
+                     0,
+                     REG_DWORD,
+                     (LPBYTE)&installationFlag,
+                     sizeof(DWORD));
+
+  RegCloseKey(installationFlagHandle);
+
+  if (!LoggedSUCCEEDED(rv, _T("RegCreateKeyEx() for driver installation flag:")))
+    return RH_ERROR_INIT_CREATEKEY;
+
+  return RH_OK;
+}
+
+LONG CheckAspiDriversInstalled(LPCTSTR installationPath) {
+  DWORD cdripInstalled = 0;
+  DWORD currentKeyType;
+  DWORD dwordSize = sizeof(DWORD);
   HKEY cdripKeyHandle;
 
   int rv = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
@@ -823,26 +898,25 @@ LONG CheckAspiDriversInstalled(void) {
   if (ERROR_FILE_NOT_FOUND == rv)
     return RH_SUCCESS_CDRIP_NOT_INSTALLED;
 
-  rv = RegQueryInfoKey(cdripKeyHandle,  // hKey
-                       NULL,            // lpClass
-                       NULL,            // lpcClass
-                       NULL,            // lpReserved
-                       &subKeyCount,    // lpcSubKeys
-                       NULL,            // lpcMaxSubKeyLen
-                       NULL,            // lpcMaxClassLen,
-                       NULL,            // lpcValues
-                       NULL,            // lpcMaxValueNameLen
-                       NULL,            // lpcMaxValueLen
-                       NULL,            // lpcbSecurityDescriptor
-                       NULL);           // lpftLastWriteTime
+  rv = RegQueryValueEx(cdripKeyHandle,
+                       installationPath,
+                       0,
+                       &currentKeyType,
+                       (LPBYTE)cdripInstalled,
+                       &dwordSize);
 
   RegCloseKey(cdripKeyHandle);
 
-  if (!(LoggedSUCCEEDED(rv, _T("RegQueryInfoKey on cdrip key failed:"))))
-    return RH_ERROR_QUERY_KEY;
-
-  if (subKeyCount > 0)
-    return RH_OK;
+  if (SUCCEEDED(rv)) {
+    if (currentKeyType != REG_DWORD) { 
+      DebugMessage("CheckAspiDriversInstalled(): invalid key type: %d",  
+                  currentKeyType); 
+      return RH_SUCCESS_CDRIP_NOT_INSTALLED;
+    } 
+    else if (1 == cdripInstalled) {
+      return RH_OK;
+    }
+  }
 
   return RH_SUCCESS_CDRIP_NOT_INSTALLED;
 }

@@ -144,6 +144,7 @@ Function un.RemoveCdrip
    ${EndIf}
 
    DeleteRegKey HKLM "$RootAppRegistryKey\${CdripRegKey}"
+   DeleteRegKey /ifempty HKLM "${RootAppRegistryKeyBase}\${CdripDriverInstallations}"
 FunctionEnd
 
 Function un.RemoveAppRegistryKeys
