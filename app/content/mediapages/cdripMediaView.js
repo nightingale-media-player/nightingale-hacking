@@ -250,25 +250,30 @@ window.cdripController =
     if (show) {
       var manager = Cc["@songbirdnest.com/Songbird/MetadataLookup/manager;1"]
                       .getService(Ci.sbIMetadataLookupManager);
-      var provider = manager.defaultProvider;
-      var providerLogo = provider.logoURL;
-      var providerName = provider.name;
-      var providerURL = provider.infoURL;
+      try {
+        var provider = manager.defaultProvider;
+        var providerLogo = provider.logoURL;
+        var providerName = provider.name;
+        var providerURL = provider.infoURL;
+
+        if (providerLogo) {
+          this._showLookupVendorInfo(providerLogo, providerName, providerURL);
+
+          // Arm the logo timer.
+          this._logoTimer.init(this,
+                               LOGO_DISPLAY_MIN_TIMER,
+                               Ci.nsITimer.TYPE_ONE_SHOT);
+          this.logoTimerEnabled = true;
+        }
+      }
+      catch (e) {
+        Cu.reportError(e);
+      }
 
       // Arm the lookup delay timer now.
       this._lookupDelayTimer.init(this,
                                   LOOKUP_MESSAGE_DELAY_TIMER,
                                   Ci.nsITimer.TYPE_ONE_SHOT);
-
-      if (providerLogo) {
-        this._showLookupVendorInfo(providerLogo, providerName, providerURL);
-
-        // Arm the logo timer.
-        this._logoTimer.init(this,
-                             LOGO_DISPLAY_MIN_TIMER,
-                             Ci.nsITimer.TYPE_ONE_SHOT);
-        this.logoTimerEnabled = true;
-      }
 
       // Disable visible buttons
       this._disableCommand(RIP_COMMAND_EJECT);

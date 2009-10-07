@@ -514,6 +514,7 @@ sbCDDevice::ProxyCDLookup() {
   // If there isn't a default provider, go ahead and throw the "no-metadata
   // found" dialog and return.
   if (NS_FAILED(rv) || !provider) {
+    mStatus.ChangeState(STATE_IDLE);  // ignore result, show dialog regardless
     rv = ShowMetadataLookupDialog(NO_CD_INFO_FOUND_DIALOG_URI, nsnull, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, /* void */);
     return;
@@ -549,6 +550,7 @@ sbCDDevice::ProxyCDLookup() {
   else {
     // If the metadata lookup provider failed to provide a job, fallback and
     // show the "no-metadata found" dialog for the user.
+    mStatus.ChangeState(STATE_IDLE);  // ignore result, show dialog regardless
     rv = ShowMetadataLookupDialog(NO_CD_INFO_FOUND_DIALOG_URI, nsnull, PR_TRUE);
     NS_ENSURE_SUCCESS(rv, /* void */);
   }
