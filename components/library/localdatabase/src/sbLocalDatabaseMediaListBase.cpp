@@ -627,19 +627,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   // If our cached array is invalid, toss it.
-  PRBool guidArrayIsValid = PR_TRUE;
-  if (mCachedPartialArray) {
-    rv = mCachedPartialArray->GetIsValid(&guidArrayIsValid);
-    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
-      "Failed to check if guid array is valid, array possibly out of date.");
-  }
-  
-  if (!aID.Equals(mLastID) || !aValue.Equals(mLastValue) ||
-      (mCachedPartialArray && !guidArrayIsValid)) {
-    mCachedPartialArray = nsnull;
-    mLastID = aID;
-    mLastValue = aValue;
-  }
+  ClearCachedPartialArray();
 
   // A property id must be specified.
   NS_ENSURE_TRUE(!aID.IsEmpty(), NS_ERROR_INVALID_ARG);
@@ -659,7 +647,7 @@ sbLocalDatabaseMediaListBase::EnumerateItemsByProperty(const nsAString& aID,
 
   // Make a single-item string array to hold our property value.
   sbStringArray valueArray(1);
-  nsString* value = valueArray.AppendElement(aValue);
+  nsString* value = valueArray.AppendElement(sortableValue);
   NS_ENSURE_TRUE(value, NS_ERROR_OUT_OF_MEMORY);
 
   // Make a string enumerator for it.
