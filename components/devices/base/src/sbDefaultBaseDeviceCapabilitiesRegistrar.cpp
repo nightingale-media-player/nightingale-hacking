@@ -237,12 +237,58 @@ sbDefaultBaseDeviceCapabilitiesRegistrar::
                                     audioFormatType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  /* We could add a default image (album art) format here too. However, we don't
-     - we have no information about what the device might actually support. With
-     no formats declared, we simply don't change the album art at all (so if the
-     format/size IS supported by the device, it'll work fine).
-     Specific devices should override this with device-specific information.
-   */
+  /* We also specify a wide-ranging JPEG support type. This is used for album
+     art. Devices that don't do album art at all aren't hurt by this, and every
+     device that DOES do album art is capable of handling JPEG. */
+  nsCOMPtr<sbIImageFormatType> imageFormatType =
+    do_CreateInstance(SB_IIMAGEFORMATTYPE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Assume by default that anything from 16x16 to 2048x2048 is supported,
+  // and have a default size of 200x200 
+  // These are pretty arbitrary choices!
+
+  /* Minimum and maximum width/height we permit for album art images */
+  const PRInt32 defaultMinImageDimension = 16;
+  const PRInt32 defaultMaxImageDimension = 2048;
+
+  /* Default width/height for images if we have to transcode */
+  const PRInt32 defaultImageWidth = 200;
+  const PRInt32 defaultImageHeight = 200;
+
+  nsCOMPtr<sbIDevCapRange> imageRange =
+    do_CreateInstance(SB_IDEVCAPRANGE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = imageRange->Initialize(defaultMinImageDimension,
+                              defaultMaxImageDimension,
+                              1);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIMutableArray> imageSizes =
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIImageSize> defaultImageSize =
+    do_CreateInstance(SB_IMAGESIZE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = defaultImageSize->Initialize(defaultImageWidth, defaultImageHeight);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = imageSizes->AppendElement(defaultImageSize, PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = imageFormatType->Initialize(NS_LITERAL_CSTRING("image/jpeg"),
+                                   imageSizes,
+                                   imageRange,
+                                   imageRange);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aCapabilities->AddFormatType(NS_LITERAL_STRING("image/jpeg"),
+                                    imageFormatType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

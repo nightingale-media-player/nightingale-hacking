@@ -4862,7 +4862,10 @@ AddAlbumArtFormats(sbIDeviceCapabilities *aCapabilities,
     nsCOMPtr<nsISupports> formatType;
     rv = aCapabilities->GetFormatType(NS_ConvertASCIItoUTF16(formats[i]),
             getter_AddRefs(formatType));
-    NS_ENSURE_SUCCESS(rv, rv);
+    /* There might be no corresponding format object for this type, if so, just
+       ignore it */
+    if (NS_FAILED (rv))
+      continue;
 
     nsCOMPtr<sbIImageFormatType> constraints =
         do_QueryInterface(formatType, &rv);

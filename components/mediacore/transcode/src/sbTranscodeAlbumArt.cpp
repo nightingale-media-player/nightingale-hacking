@@ -43,6 +43,7 @@
 #include <nsIBinaryInputStream.h>
 
 #include <imgITools.h>
+#include <imgIEncoder.h>
 #include <nsComponentManagerUtils.h>
 #include <nsTArray.h>
 #include <nsThreadUtils.h>
@@ -359,6 +360,24 @@ sbTranscodeAlbumArt::GetNeedsAlbumArtConversion(PRBool *aNeedsConversion)
   return NS_OK;
 }
 
+static nsresult HaveEncoderForFormat(nsCString mimeType, PRBool *haveEncoder)
+{
+  nsresult rv;
+  nsCString encoderCID = NS_LITERAL_CSTRING(
+          "@mozilla.org/image/encoder;2?type=");
+  encoderCID.Append(mimeType);
+
+  nsCOMPtr<imgIEncoder> encoder = do_CreateInstance(encoderCID.get(), &rv);
+  if (NS_SUCCEEDED(rv)) {
+    *haveEncoder = PR_TRUE;
+  }
+  else {
+    *haveEncoder = PR_FALSE;
+  }
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbTranscodeAlbumArt::GetTargetFormat(
         nsACString & aMimeType, PRInt32 *aWidth, PRInt32 *aHeight)
@@ -372,9 +391,10 @@ sbTranscodeAlbumArt::GetTargetFormat(
 
      1. If the input width and height are both supported for some format, choose
         the first such format.
-     2. Otherwise, choose the first format. Then, select the smallest
-        explicitly-listed size larger than the input image (unless there are
-        none, in which case use the largest explicit size).
+     2. Otherwise, choose the first format that we have an encoder for. 
+        Then, select the smallest explicitly-listed size larger than the
+        input image (unless there are none, in which case use the largest
+        explicit size).
 
      Note: if the input aspect ratio is not the same as the output aspect ratio,
            we do not correctly maintain the image aspect ratio by putting black
@@ -395,6 +415,15 @@ sbTranscodeAlbumArt::GetTargetFormat(
     rv = format->GetImageFormat(formatMimeType);
     NS_ENSURE_SUCCESS (rv, rv);
 
+    PRBool haveEncoder;
+    rv = HaveEncoderForFormat(formatMimeType, &haveEncoder);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Skip this if we don't have an encoder for it.
+    if (!haveEncoder) {
+      continue;
+    }
+
     PRBool valid;
     rv = IsValidSizeForFormat(format, &valid);
     NS_ENSURE_SUCCESS (rv, rv);
@@ -408,16 +437,35 @@ sbTranscodeAlbumArt::GetTargetFormat(
   }
 
   // 2: resize required.
-  nsCOMPtr<sbIImageFormatType> format;
-  rv = mImageFormats->QueryElementAt(0, NS_GET_IID(sbIImageFormatType),
-          getter_AddRefs(format));
-  NS_ENSURE_SUCCESS (rv, rv);
+  nsCOMPtr<sbIImageFormatType> chosenformat;
+  for (PRUint32 i = 0; i < numFormats; i++) {
+    nsCOMPtr<sbIImageFormatType> format;
+    rv = mImageFormats->QueryElementAt(i, NS_GET_IID(sbIImageFormatType),
+            getter_AddRefs(format));
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    nsCString formatMimeType;
+    rv = format->GetImageFormat(formatMimeType);
+    NS_ENSURE_SUCCESS (rv, rv);
+
+    PRBool haveEncoder;
+    rv = HaveEncoderForFormat(formatMimeType, &haveEncoder);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (haveEncoder) {
+      chosenformat = format;
+      break;
+    }
+  }
+
+  if (!chosenformat)
+    return NS_ERROR_FAILURE;
 
   nsCOMPtr<nsIArray> explicitSizes;
-  rv = format->GetSupportedExplicitSizes(getter_AddRefs(explicitSizes));
+  rv = chosenformat->GetSupportedExplicitSizes(getter_AddRefs(explicitSizes));
   NS_ENSURE_SUCCESS (rv, rv);
 
-  rv = format->GetImageFormat(aMimeType);
+  rv = chosenformat->GetImageFormat(aMimeType);
   NS_ENSURE_SUCCESS (rv, rv);
 
   PRInt32 bestWidth = 0;
