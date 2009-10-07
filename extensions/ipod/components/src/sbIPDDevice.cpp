@@ -461,9 +461,11 @@ sbIPDDevice::SyncLibraries()
  * Determine if a media item can be transferred to the device
  */
 NS_IMETHODIMP
-sbIPDDevice::SupportsMediaItem(sbIMediaItem *aMediaItem, PRBool *_retval)
+sbIPDDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
+                               PRBool        aReportErrors,
+                               PRBool*       _retval)
 {
-  return sbBaseDevice::SupportsMediaItem(aMediaItem, _retval);
+  return sbBaseDevice::SupportsMediaItem(aMediaItem, aReportErrors, _retval);
 }
 
 //

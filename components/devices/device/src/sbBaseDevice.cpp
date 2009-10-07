@@ -2396,6 +2396,27 @@ sbBaseDevice::GetDeviceSettingsDocument
   return NS_OK;
 }
 
+nsresult
+sbBaseDevice::SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
+                                   PRBool        aReportErrors,
+                                   PRBool*       _retval)
+{
+  NS_ENSURE_ARG_POINTER(aMediaItem);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+
+  // DRM is not supported by default.  Subclasses can override this.
+  if (aReportErrors) {
+    rv = DispatchTranscodeErrorEvent
+           (aMediaItem, SBLocalizedString("transcode.file.drmprotected"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  *_retval = PR_FALSE;
+
+  return NS_OK;
+}
+
 //------------------------------------------------------------------------------
 //
 // Device properties services.
@@ -4473,7 +4494,9 @@ sbBaseDevice::RegisterDeviceCapabilities(sbIDeviceCapabilities * aCapabilities)
 }
 
 NS_IMETHODIMP
-sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval)
+sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
+                                PRBool        aReportErrors,
+                                PRBool*       _retval)
 {
   nsresult rv;
 
@@ -4481,9 +4504,13 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval)
   rv = aMediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
                                isDRMProtected);
   if (NS_SUCCEEDED(rv) && isDRMProtected.EqualsLiteral("1")) {
-    // we can't have any transcoding profiles that support DRM
-    *_retval = PR_FALSE;
-    return NS_OK;
+    PRBool supported;
+    rv = SupportsMediaItemDRM(aMediaItem, aReportErrors, &supported);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!supported) {
+      *_retval = PR_FALSE;
+      return NS_OK;
+    }
   }
 
   // TODO: In the future, GetFormatTypeForItem should return a big complex
@@ -4498,6 +4525,12 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval)
                                            sampleRate);
   // Check for expected error, unable to find format type
   if (rv == NS_ERROR_NOT_AVAILABLE) {
+    if (aReportErrors) {
+      rv = DispatchTranscodeErrorEvent
+             (aMediaItem, SBLocalizedString("transcode.file.notsupported"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     // If we can't even figure out what the format type is
     // we don't support it.
     *_retval = PR_FALSE;
@@ -4525,6 +4558,12 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval)
 
   // No profile available means we don't support this file.
   if (rv == NS_ERROR_NOT_AVAILABLE) {
+    if (aReportErrors) {
+      rv = DispatchTranscodeErrorEvent
+             (aMediaItem, SBLocalizedString("transcode.file.notsupported"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     *_retval = PR_FALSE;
     return NS_OK;
   }
@@ -4553,9 +4592,7 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     NS_ENSURE_SUCCESS(rv, rv);
   }
   if (NS_SUCCEEDED(rv) && isDRMProtected.Equals(NS_LITERAL_STRING("1"))) {
-    rv = DispatchDRMTranscodeErrorEvent(aMediaItem);
-    NS_ENSURE_SUCCESS(rv, rv);
-
+    // Transcoding from DRM formats is not supported.
     return NS_ERROR_NOT_AVAILABLE;
   }
 
@@ -4789,49 +4826,8 @@ sbBaseDevice::PrepareBatchForTranscoding(Batch & aBatch)
 }
 
 nsresult
-sbBaseDevice::RemoveBatchDRMItems(Batch & aBatch)
-{
-  TRACE(("%s", __FUNCTION__));
-  nsresult rv;
-
-  if (aBatch.empty()) {
-    return NS_OK;
-  }
-
-  // Remove all DRM items from the batch.
-  Batch::iterator end = aBatch.end();
-  Batch::iterator next = aBatch.begin();
-  Batch::iterator iter;
-  while (next != end) {
-    // Check for abort.
-    if (IsRequestAbortedOrDeviceDisconnected()) {
-      return NS_ERROR_ABORT;
-    }
-
-    iter = next++;
-    TransferRequest * const request = *iter;
-    nsCOMPtr<sbIMediaItem> mediaItem = request->item;
-
-    nsAutoString isDRMProtected;
-    rv = mediaItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISDRMPROTECTED),
-                                isDRMProtected);
-    if (rv != NS_ERROR_NOT_AVAILABLE) {
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-    if (NS_SUCCEEDED(rv) && isDRMProtected.Equals(NS_LITERAL_STRING("1"))) {
-      rv = DispatchDRMTranscodeErrorEvent(mediaItem);
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      RemoveLibraryItems(iter, next);
-      aBatch.erase(iter);
-    }
-  }
-
-  return NS_OK;
-}
-
-nsresult
-sbBaseDevice::DispatchDRMTranscodeErrorEvent(sbIMediaItem * aMediaItem)
+sbBaseDevice::DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
+                                          const nsAString& aErrorMessage)
 {
   TRACE(("%s", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aMediaItem);
@@ -4842,9 +4838,7 @@ sbBaseDevice::DispatchDRMTranscodeErrorEvent(sbIMediaItem * aMediaItem)
     do_CreateInstance("@mozilla.org/hash-property-bag;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = bag->SetPropertyAsAString
-              (NS_LITERAL_STRING("message"),
-               SBLocalizedString("transcode.file.drmprotected"));
+  rv = bag->SetPropertyAsAString(NS_LITERAL_STRING("message"), aErrorMessage);
   NS_ENSURE_SUCCESS(rv, rv);
   rv = bag->SetPropertyAsInterface(NS_LITERAL_STRING("item"), aMediaItem);
   NS_ENSURE_SUCCESS(rv, rv);

@@ -785,13 +785,6 @@ LibraryUtils.canEditMetadata = function (aItem) {
  */
 LibraryUtils.EnumeratorDuplicateFilter = function(aLibrary) {
   this._library = aLibrary;
-  try {
-    this._library = this._library.QueryInterface(Ci.sbIDeviceLibrary);
-    this.isDeviceLibrary = true;
-  }
-  catch (e) {
-    // That's fine, we just don't have a device library.
-  }
 }
 
 LibraryUtils.EnumeratorDuplicateFilter.prototype = {
@@ -810,10 +803,6 @@ LibraryUtils.EnumeratorDuplicateFilter.prototype = {
   mediaItemCount: 0,
   duplicateCount: 0,
   
-  // Used for reporting the number of unsupported items.
-  isDeviceLibrary: false,
-  unsupportedCount: 0,
-
   _library: null,
   
   /**
@@ -842,14 +831,6 @@ LibraryUtils.EnumeratorDuplicateFilter.prototype = {
     if (this._library.getDuplicate(mediaItem)) {
       this.duplicateCount++;
       isDuplicate = true;
-    }
-
-    if (this.isDeviceLibrary) {
-      if (!this._library.device.supportsMediaItem(mediaItem)) {
-        this.unsupportedCount++;
-        this.mediaItemCount--;
-        return false;
-      }
     }
 
     // Remove duplicates if specified.

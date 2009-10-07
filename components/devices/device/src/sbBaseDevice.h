@@ -199,7 +199,9 @@ public:
   NS_IMETHOD SyncLibraries(void);
   NS_IMETHOD Format(void);
   NS_IMETHOD GetSupportsReformat(PRBool *_retval);
-  NS_IMETHOD SupportsMediaItem(sbIMediaItem* aMediaItem, PRBool *_retval);
+  NS_IMETHOD SupportsMediaItem(sbIMediaItem* aMediaItem,
+                               PRBool        aReportErrors,
+                               PRBool*       _retval);
 
 public:
   sbBaseDevice();
@@ -665,6 +667,19 @@ protected:
   nsresult GetDeviceSettingsDocument
              (nsTArray<PRUint8>&     aDeviceSettingsContent,
               class nsIDOMDocument** aDeviceSettingsDocument);
+
+  /**
+   * Return true in _retval if DRM is supported for the media item specified by
+   * aMediaItem; return false otherwise.  If aReportErrors is true and DRM is
+   * not supported, report a device error.
+   *
+   * \param aMediaItem    Media item to check.
+   * \param aReportErrors If true, report device errors.
+   * \param _retval       Returned true if DRM is supported.
+   */
+  virtual nsresult SupportsMediaItemDRM(sbIMediaItem* aMediaItem,
+                                        PRBool        aReportErrors,
+                                        PRBool*       _retval);
 
 
   //----------------------------------------------------------------------------
@@ -1190,20 +1205,14 @@ protected:
   nsresult PrepareBatchForTranscoding(Batch & aBatch);
 
   /**
-   * Remove all DRM items from the batch specified by aBatch and post an
-   * appropriate device error event.
-   *
-   * \param aBatch The batch from which to remove DRM items.
-   */
-  nsresult RemoveBatchDRMItems(Batch & aBatch);
-
-  /**
-   * Dispatch a DRM transcode error event for the media item specified by
-   * aMediaItem.
+   * Dispatch a transcode error event for the media item specified by aMediaItem
+   * with the error message specified by aErrorMessage.
    *
    * \param aMediaItem The media item for which to dispatch an error event.
+   * \param aErrorMessage Error event message.
    */
-  nsresult DispatchDRMTranscodeErrorEvent(sbIMediaItem * aMediaItem);
+  nsresult DispatchTranscodeErrorEvent(sbIMediaItem*    aMediaItem,
+                                       const nsAString& aErrorMessage);
 
   /* Return an array of sbIImageFormatType describing all the supported
    * album art formats for the device.

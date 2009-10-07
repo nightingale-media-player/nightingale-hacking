@@ -62,6 +62,7 @@ var deviceErrorMonitorConfig = {
 
 function deviceErrorMonitor () {
   this._initialized = false;
+  this._listenerList = [];
   var obsSvc = Cc['@mozilla.org/observer-service;1']
                  .getService(Ci.nsIObserverService);
 
@@ -79,6 +80,7 @@ deviceErrorMonitor.prototype = {
 
   // Internal properties
   _deviceList: [],
+  _listenerList: null,
   _sbStrings: null,
   
   // Internal functions
@@ -193,6 +195,25 @@ deviceErrorMonitor.prototype = {
                                                         [aErrorMsg, mediaURL],
                                                         2);
         this._deviceList[devIndex].errorList.push(errorString);
+
+        this._notifyListeners(device);
+      }
+    }
+  },
+
+  /**
+   * \brief Notify listeners that an error has been logged for the device
+   *        specified by aDevice.
+   *
+   * \param aDevice device for which error was logged.
+   */
+  _notifyListeners: function deviceErrorMonitor__notifyListeners(aDevice) {
+    // Call listeners in reverse order so they may remove themselves.
+    for (var i = this._listenerList.length - 1; i >= 0; i--) {
+      try {
+        this._listenerList[i].onDeviceError(aDevice);
+      } catch (ex) {
+        Cu.reportError(ex);
       }
     }
   },
@@ -251,6 +272,27 @@ deviceErrorMonitor.prototype = {
     if (devIndex > -1) {
       this._deviceList[devIndex].errorList = [];
     }
+  },
+
+  /**
+   * \brief Adds a listener for new device errors.
+   *
+   * \param aListener listener to call when a device error is logged.
+   */
+  addListener: function deviceErrorMonitor_addListener(aListener) {
+    if (this._listenerList.indexOf(aListener) < 0)
+      this._listenerList.push(aListener);
+  },
+
+  /**
+   * \brief Removes a listener for new device errors.
+   *
+   * \param aListener listener to remove.
+   */
+  removeListener: function deviceErrorMonitor_addListener(aListener) {
+    var listenerIndex = this._listenerList.indexOf(aListener);
+    if (listenerIndex >= 0)
+      this._listenerList.splice(listenerIndex, 1);
   },
 
   // sbIDeviceEventListener

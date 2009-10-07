@@ -418,6 +418,16 @@ sbIPDDevice::ReqHandleWriteTrack(TransferRequest* aRequest)
                         aRequest->batchCount);
   sbAutoStatusItemFailure autoItemStatus(mIPDStatus);
 
+  // Remove unsupported media items and report errors.
+  PRBool supported;
+  rv = SupportsMediaItem(aRequest->item, PR_TRUE, &supported);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+  if (!supported) {
+    rv = DeleteItem(aRequest->list, aRequest->item);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    return;
+  }
+
   // Upload track.
   rv = UploadTrack(aRequest->item);
   NS_ENSURE_SUCCESS(rv, /* void */);

@@ -175,7 +175,7 @@ var DPWCfg = {
       canBeCompleted: true,
       showIdleMessage: true,
       showProgress: true,
-      updateBusy: true,
+      updateBusy: true
     },
 
     /* Format. */
@@ -284,6 +284,12 @@ var DPW = {
     // Initialize the device services.
     this._deviceInitialize();
 
+    // Start listening for new device errors.
+    var deviceErrorMonitor =
+          Cc["@songbirdnest.com/device/error-monitor-service;1"]
+            .getService(Ci.sbIDeviceErrorMonitor);
+    deviceErrorMonitor.addListener(this);
+
     // Get the device operation total items and current item index data remotes.
     var createDataRemote = new Components.Constructor(
                                     "@songbirdnest.com/Songbird/DataRemote;1",
@@ -312,6 +318,12 @@ var DPW = {
    */
 
   finalize: function DPW_finalize() {
+    // Stop listening for device errors.
+    var deviceErrorMonitor =
+          Cc["@songbirdnest.com/device/error-monitor-service;1"]
+            .getService(Ci.sbIDeviceErrorMonitor);
+    deviceErrorMonitor.removeListener(this);
+
     // Finalize the device services.
     this._deviceFinalize();
 
@@ -568,6 +580,29 @@ var DPW = {
     return document.getAnonymousElementByAttribute(this._widget,
                                                    "sbid",
                                                    aElementID);
+  },
+
+
+  //----------------------------------------------------------------------------
+  //
+  // Device progress sbIDeviceErrorMonitorListener services.
+  //
+  //----------------------------------------------------------------------------
+
+  /**
+   * \brief Called when a device error is logged for the device specified by
+   *        aDevice.
+   *
+   * \param aDevice device for which error was logged.
+   */
+
+  onDeviceError: function DPW_onDeviceError(aDevice) {
+    // Ignore all but the bound device.
+    if (aDevice.id != this._deviceID)
+      return;
+
+    // Update the UI.
+    this._update();
   },
 
 

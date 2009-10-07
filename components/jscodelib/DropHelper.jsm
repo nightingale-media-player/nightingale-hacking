@@ -613,8 +613,33 @@ var InternalDropHandler = {
         dupFilter.removeDuplicates = true;
       }
 
-      // Create a filtered item enumerator.
-      var func = function(aElement) { return dupFilter.filter(aElement); };
+      // If the library is a device library, get the device object.
+      var libraryDevice = null;
+      try {
+        var deviceLibrary =
+              targetList.library.QueryInterface(Ci.sbIDeviceLibrary);
+        libraryDevice = deviceLibrary.device;
+      } catch (ex) {
+        libraryDevice = null;
+      }
+
+      // Create a filtered item enumerator that filters duplicates and counts
+      // unsupported items for device libraries.
+      var totalUnsupported = 0;
+      var func = function(aElement) {
+        var includeItem = dupFilter.filter(aElement);
+
+        if (includeItem && libraryDevice) {
+          try {
+            var mediaItem = aElement.QueryInterface(Ci.sbIMediaItem);
+            if (!libraryDevice.supportsMediaItem(mediaItem))
+              totalUnsupported++;
+          } catch (ex) {
+          }
+        }
+
+        return includeItem;
+      };
       var filteredItems = new SBFilteredEnumerator(items, func);
 
       // Create an enumerator that wraps the enumerator we were handed.
@@ -654,13 +679,14 @@ var InternalDropHandler = {
       } else {
         targetList.addSome(unwrapper);
       }
-      
+
       var totalImported = dupFilter.mediaItemCount - dupFilter.duplicateCount;
       var totalDups = dupFilter.duplicateCount;
       var totalInserted = dupFilter.mediaItemCount;
-      var totalUnsupported = dupFilter.unsupportedCount;
-      if (dupFilter.removeCopies)
+      if (dupFilter.removeDuplicates)
         totalInserted = totalImported;
+      totalImported -= totalUnsupported;
+      totalInserted -= totalUnsupported;
 
       this._dropComplete(aListener,
                          targetList,

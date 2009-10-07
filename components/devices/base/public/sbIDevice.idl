@@ -46,7 +46,7 @@ interface sbIMediaItem;
  *
  * The main interface to all device objects
  */
-[scriptable, uuid(ab8b1094-1dd1-11b2-954f-e3eb25232beb)]
+[scriptable, uuid(374a66f2-1dd2-11b2-b97b-e8055d0d2466)]
 interface sbIDevice : nsISupports
 {
   /**
@@ -230,9 +230,15 @@ interface sbIDevice : nsISupports
    * A supported file is either 
    *   a) natively supported, or
    *   b) transcodable into one,
-   * and is _NEVER_ DRM protected.
+   * and is either
+   *   a) not DRM protected, or
+   *   b) is DRM protected and supported by the device
+   *
+   * If a media item cannot be stored on the device and aReportErrors is true,
+   * report an unsupported media item as a device error.
    */
-  boolean supportsMediaItem(in sbIMediaItem aMediaItem);
+  boolean supportsMediaItem(in sbIMediaItem aMediaItem,
+                            [optional] in boolean aReportErrors);
 
   /**
    * Eject device.

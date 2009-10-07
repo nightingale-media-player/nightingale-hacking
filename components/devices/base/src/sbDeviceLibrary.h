@@ -327,25 +327,4 @@ private:
   PRLock* mLock;
 };
 
-class sbSupportedMediaItemsEnumerator : public nsISimpleEnumerator
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISIMPLEENUMERATOR
-
-  sbSupportedMediaItemsEnumerator(nsISimpleEnumerator* aMediaItemsEnumerator,
-                                  sbIDevice* aDevice) :
-    mMediaItemsEnumerator(aMediaItemsEnumerator),
-    mDevice(aDevice) {};
-
-  ~sbSupportedMediaItemsEnumerator() {};
-
-private:
-  nsCOMPtr<nsISimpleEnumerator> mMediaItemsEnumerator;
-  nsCOMPtr<sbIMediaItem> mNextItem;
-  nsCOMPtr<sbIDevice> mDevice;
-
-  nsresult FindNext(sbIMediaItem **_retval);
-};
-
 #endif /* __SBDEVICELIBRARY_H__ */
