@@ -84,5 +84,9 @@
 ./components/DropHelper.jsm
 ./components/DOMUtils.jsm
 ./components/ArrayConverter.jsm
+./components/sbLocalDatabaseDynamicPlaylist.js
+./components/DeviceDeviceTester.xpt
+./components/sbDeviceDeviceTester.so
+./components/sbDeviceEventTester.so
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar

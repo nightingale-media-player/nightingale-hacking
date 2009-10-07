@@ -293,5 +293,11 @@
 ./components/DropHelper.jsm
 ./components/DOMUtils.jsm
 ./components/ArrayConverter.jsm
+./components/sbDeviceDeviceTester.dll
+./components/sbDeviceEventTester.dll
+./components/DeviceDeviceTester.xpt
+./components/sbLocalDatabaseDynamicPlaylist.js
+./components/sbWindowsMediaCore.xpt
+./components/sbQuickTimeMediaCore.xpt
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar

@@ -306,6 +306,11 @@
 ./Contents/Resources/components/DropHelper.jsm
 ./Contents/Resources/components/DOMUtils.jsm
 ./Contents/Resources/components/ArrayConverter.jsm
+./Contents/Resources/components/sbLocalDatabaseDynamicPlaylist.js
+./Contents/Resources/components/sbQuickTimeMediacore.xpt
+./Contents/Resources/components/DeviceDeviceTester.xpt
+./Contents/Resources/components/sbDeviceDeviceTester.dylib
+./Contents/Resources/components/sbDeviceEventTester.dylib
 ./Contents/Resources/chrome/rubberducky.manifest
 ./Contents/Resources/chrome/rubberducky.jar
 ./Contents/MacOS/libtag_c.dylib

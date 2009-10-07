@@ -24,3 +24,7 @@
 .\gstreamer\encode-profiles\flac.xml
 .\gstreamer\encode-profiles\
 .\gstreamer\
+.\drivers\GearAspiWDM.sys
+.\drivers\GearAspi.dll
+.\drivers\
+.\cdriphelper.exe
