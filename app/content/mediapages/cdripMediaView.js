@@ -913,6 +913,8 @@ function CDRipLibraryListener(aCallback, aPlaylistObject)
   this._mCallback = aCallback;
   this._mPlaylist = aPlaylistObject;
   this._mTreeBoxObject = aPlaylistObject.tree.boxObject;
+
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm", this);
 }
 
 CDRipLibraryListener.prototype =
