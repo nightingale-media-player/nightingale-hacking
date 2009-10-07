@@ -742,7 +742,7 @@ window.cdripController =
 
     // Listen to changes for readonly status.
     this._libraryListener =
-      new CDRipLibraryListener(this, this._playlist.tree.boxObject);
+      new CDRipLibraryListener(this, this._playlist);
     var flags = Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED;
     this._mediaListView.mediaList.addListener(this._libraryListener,
                                               false,
@@ -908,16 +908,18 @@ MediaPageImpl.prototype = {
 //
 //==============================================================================
 
-function CDRipLibraryListener(aCallback, aTreeBoxObject)
+function CDRipLibraryListener(aCallback, aPlaylistObject)
 {
   this._mCallback = aCallback;
-  this._mTreeBoxObject = aTreeBoxObject;
+  this._mPlaylist = aPlaylistObject;
+  this._mTreeBoxObject = aPlaylistObject.tree.boxObject;
 }
 
 CDRipLibraryListener.prototype =
 {
   _mCallback: null,
   _mTreeBoxObject: null,
+  _mPlaylist: null,
 
   //----------------------------------------------------------------------------
   // sbIMediaListListener
@@ -939,6 +941,7 @@ CDRipLibraryListener.prototype =
     for (var i = 0; i < aProperties.length; i++) {
       if (aProperties.getPropertyAt(i).id == SBProperties.isReadOnly) {
         this._mTreeBoxObject.invalidate();
+        this._mPlaylist.refreshCommands(false);
         break;
       }
     }
