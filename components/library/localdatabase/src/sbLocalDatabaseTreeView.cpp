@@ -1024,7 +1024,7 @@ sbLocalDatabaseTreeView::SetSort(const nsAString& aProperty, PRBool aDirection)
 
     rv = newSort->SetStrict(PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
-    
+
     rv = newSort->AppendProperty(aProperty,
                                   aDirection ?
                                     NS_LITERAL_STRING("a") :
@@ -1321,7 +1321,7 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
   NS_ASSERTION(properties, "properties is null");
 
   nsresult rv;
-  
+
   //////////////////////////////////////////////////////////////////////////
   // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
   // cause events to be fired, or use synchronous proxies, as you risk    //
@@ -1339,6 +1339,32 @@ sbLocalDatabaseTreeView::GetPlayingProperty(PRUint32 aIndex,
     }
   }
 
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseTreeView::GetIsListReadOnly(PRBool *aOutIsReadOnly)
+{
+  NS_ENSURE_ARG_POINTER(aOutIsReadOnly);
+
+  nsresult rv;
+
+  //////////////////////////////////////////////////////////////////////////
+  // WARNING: This method is called during Paint. DO NOT MODIFY THE TREE, //
+  // cause events to be fired, or use synchronous proxies, as you risk    //
+  // crashing in recursive painting/frame construction.                   //
+  //////////////////////////////////////////////////////////////////////////
+
+  nsCOMPtr<sbIMediaList> mediaList;
+  rv = mMediaListView->GetMediaList(getter_AddRefs(mediaList));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString isReadOnly;
+  rv = mediaList->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ISREADONLY),
+                              isReadOnly);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  *aOutIsReadOnly = isReadOnly.EqualsLiteral("1");
   return NS_OK;
 }
 
@@ -1614,7 +1640,7 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
   // cause events to be fired, or use synchronous proxies, as you risk    //
   // crashing in recursive painting/frame construction.                   //
   //////////////////////////////////////////////////////////////////////////
-  
+
 #ifdef PR_LOGGING
   PRInt32 colIndex = -1;
   col->GetIndex(&colIndex);
@@ -1676,6 +1702,14 @@ sbLocalDatabaseTreeView::GetCellProperties(PRInt32 row,
       rv = TokenizeProperties(NS_LITERAL_STRING("disabled"), properties);
       NS_ENSURE_SUCCESS(rv, rv);
     }
+  }
+
+  // If the current medialist is readonly, be set the "readonly" property.
+  PRBool isMediaListReadOnly;
+  rv = GetIsListReadOnly(&isMediaListReadOnly);
+  if (NS_SUCCEEDED(rv) && isMediaListReadOnly) {
+    rv = TokenizeProperties(NS_LITERAL_STRING("readonly"), properties);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   return NS_OK;
@@ -1996,7 +2030,7 @@ sbLocalDatabaseTreeView::SetTree(nsITreeBoxObject *tree)
       do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreEventListener*, this), &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsCOMPtr<sbIMediacoreEventTarget> target = 
+    nsCOMPtr<sbIMediacoreEventTarget> target =
       do_QueryReferent(mMediacoreManager, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2156,7 +2190,7 @@ sbLocalDatabaseTreeView::SetCellText(PRInt32 row,
     rv = item->SetProperty(bind, value);
     // We need to handle the ILLEGAL_VALUE case specially or the
     // tree.xml::stopEditing() errors out and leaves the inline
-    // editor showing on deselect. 
+    // editor showing on deselect.
     if (rv == NS_ERROR_ILLEGAL_VALUE) {
       // We do not notify any observers that the cell has been edited
       // in the event of illegal data, however, we don't want to throw
@@ -2296,7 +2330,7 @@ sbLocalDatabaseTreeView::GetObserver(sbIMediaListViewTreeViewObserver** aObserve
 // sbIMediacoreEventListener
 // -----------------------------------------------------------------------------
 NS_IMETHODIMP
-sbLocalDatabaseTreeView::OnMediacoreEvent(sbIMediacoreEvent *aEvent) 
+sbLocalDatabaseTreeView::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_ARG_POINTER(aEvent);
 
@@ -2326,7 +2360,7 @@ sbLocalDatabaseTreeView::OnMediacoreEvent(sbIMediacoreEvent *aEvent)
 
 // -----------------------------------------------------------------------------
 // Event Listener Handlers
-// -----------------------------------------------------------------------------                            
+// -----------------------------------------------------------------------------
 nsresult
 sbLocalDatabaseTreeView::OnStop()
 {
@@ -2347,7 +2381,7 @@ sbLocalDatabaseTreeView::OnTrackChange()
 {
   nsresult rv = NS_ERROR_UNEXPECTED;
 
-  nsCOMPtr<sbIMediacoreManager> manager = 
+  nsCOMPtr<sbIMediacoreManager> manager =
     do_QueryReferent(mMediacoreManager, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -2436,7 +2470,7 @@ sbLocalDatabaseTreeView::OnTrackChange(sbIMediaListView *aView,
 }
 
 nsresult
-sbLocalDatabaseTreeView::OnTrackIndexChange(sbIMediacoreEvent *aEvent) 
+sbLocalDatabaseTreeView::OnTrackIndexChange(sbIMediacoreEvent *aEvent)
 {
   NS_ENSURE_ARG_POINTER(aEvent);
 
@@ -2481,8 +2515,8 @@ sbLocalDatabaseTreeView::OnCurrentIndexChanged()
     PRBool treeIsSelected;
     rv = mRealSelection->IsSelected(currentIndex, &treeIsSelected);
     NS_ENSURE_SUCCESS(rv, rv);
-   
-    // If this row is not selected, do a toggle, which 
+
+    // If this row is not selected, do a toggle, which
     // will fire a select event and set the current index
     if (!treeIsSelected) {
       rv = mRealSelection->ToggleSelect(currentIndex);

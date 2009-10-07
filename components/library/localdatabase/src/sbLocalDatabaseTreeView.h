@@ -201,6 +201,8 @@ private:
   nsresult GetPlayingProperty(PRUint32 aIndex,
                               nsISupportsArray* properties);
 
+  nsresult GetIsListReadOnly(PRBool *aOutIsReadOnly);
+
   nsresult GetBag(PRUint32 aIndex,
                   sbILocalDatabaseResourcePropertyBag** aBag);
 

@@ -259,6 +259,14 @@ In-cell Checkbox
 {
   background-position:center -18px !important;
 }
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox checked readonly )
+{
+  background-position:center -36px !important;
+}
+.sb-playlist-tree > treechildren::-moz-tree-cell( checkbox unchecked readonly )
+{
+  background-position:center -54px !important;
+}
 
 
 .sb-playlist-tree > treechildren::-moz-tree-image( http-songbirdnest-com-data-1-0-artistDetailImage, image link ) {

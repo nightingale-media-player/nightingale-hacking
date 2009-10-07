@@ -30,6 +30,8 @@ Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
 Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
@@ -116,6 +118,8 @@ window.cdripController =
   logoTimerEnabled: false,
   _lookupDelayTimer: null,
 
+  _libraryListener: null,
+
   onLoad: function cdripController_onLoad() {
     // Add our device listener to listen for lookup notification events
     this._device = this._getDevice();
@@ -170,6 +174,12 @@ window.cdripController =
 
     this._transcodePrefBranch.removeObserver("", this, false);
     this._transcodePrefBranch = null;
+
+    // Cleanup the medialist listener
+    this._mediaListView.mediaList.removeListener(this._libraryListener,
+                                                 false,
+                                                 flags);
+    this._libraryListener = null;
   },
 
   onDeviceEvent: function cdripController_onDeviceEvent(aEvent) {
@@ -724,6 +734,14 @@ window.cdripController =
 
     // Set up the playlist widget
     this._playlist.bind(this._mediaListView, cmds);
+
+    // Listen to changes for readonly status.
+    this._libraryListener =
+      new CDRipLibraryListener(this, this._playlist.tree.boxObject);
+    var flags = Ci.sbIMediaList.LISTENER_FLAGS_ITEMUPDATED;
+    this._mediaListView.mediaList.addListener(this._libraryListener,
+                                              false,
+                                              flags);
   },
 
   /**
@@ -877,3 +895,72 @@ MediaPageImpl.prototype = {
     return false;
   }
 }
+
+//==============================================================================
+//
+// @brief sbIMediaListListener class for validating the playlist tree when the
+//        readonly state changes.
+//
+//==============================================================================
+
+function CDRipLibraryListener(aCallback, aTreeBoxObject)
+{
+  this._mCallback = aCallback;
+  this._mTreeBoxObject = aTreeBoxObject;
+}
+
+CDRipLibraryListener.prototype =
+{
+  _mCallback: null,
+  _mTreeBoxObject: null,
+
+  //----------------------------------------------------------------------------
+  // sbIMediaListListener
+
+  onItemAdded: function(aMediaList, aMediaItem, aIndex) {
+    return true;  // ignore
+  },
+
+  onBeforeItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+    return true;  // ignore
+  },
+
+  onAfterItemRemoved: function(aMediaList, aMediaItem, aIndex) {
+    return true;  // ignore
+  },
+
+  onItemUpdated: function(aMediaList, aMediaItem, aProperties) {
+    // Check for the |isReadOnly| property.
+    for (var i = 0; i < aProperties.length; i++) {
+      if (aProperties.getPropertyAt(i).id == SBProperties.isReadOnly) {
+        this._mTreeBoxObject.invalidate();
+        break;
+      }
+    }
+
+    return true;
+  },
+
+  onItemMoved: function(aMediaList, aFromIndex, aToIndex) {
+    return true;  // ignore.
+  },
+
+  onBeforeListCleared: function(aMediaList) {
+    return true;  // ignore.
+  },
+
+  onListCleared: function(aMediaList) {
+   return true;  // ignore
+  },
+
+  onBatchBegin: function(aMediaList) {
+    // ignore
+  },
+
+  onBatchEnd: function(aMediaList) {
+    // ignore
+  },
+
+  QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListListener])
+};
+
