@@ -310,7 +310,7 @@ $(XPIDL_TYPELIBS): %.xpt: %.idl
 # (single file) as XPIDL_MODULE, there's no reason to run xpt_link on them.
 # (In fact, this creates a circular make dependency that gets dropped, but 
 # xpt_link clobbers the file in the process of trying to link it, and 
-# fails anyway.
+# fails anyway.)
 
 # Allow the makefile to explicitely overide the xpts they want linked, but most
 # every consumer wants the default behavior ("all of them").
@@ -764,7 +764,7 @@ endif #} STATIC_LIB
 # SIMPLE_PROGRAM_FLAGS - an override to the default linker flags
 # SIMPLE_PROGRAM_EXTRA_FLAGS - a list of additional flags to pass to the linker
 
-ifdef SIMPLE_PROGRAM
+ifdef SIMPLE_PROGRAM # {
 
 ifneq (,$(STATIC_LIB)$(DYNAMIC_LIB))
    $(error SIMPLE_PROGRAM cannot be specified together with DYNAMIC_LIB or STATIC_LIB)
@@ -822,10 +822,21 @@ endif
 
 OUR_SIMPLE_PROGRAM_OUT = $(LDFLAGS_OUT_PREFIX)$@$(LDFLAGS_OUT_SUFFIX)
 
+# The manifest goo is in shell because $(wildcard) wouldn't do what we wanted,
+# when we wanted; we should probably clean this up and make it a function
+# or something, though, because we do largely the same thing in 
+# dependencies/Makefile.in
+
 $(OUR_SIMPLE_PROGRAM): $(OUR_SIMPLE_PROGRAM_OBJS)
 	$(LD) $(OUR_SIMPLE_PROGRAM_OUT) $(OUR_SIMPLE_PROGRAM_FLAGS) $(OUR_SIMPLE_PROGRAM_LINKER_PATHS) $(OUR_SIMPLE_PROGRAM_OBJS) $(OUR_LINKER_IMPORTS)
-
+ifneq (,$(MSMANIFEST_TOOL))
+	@if test -f $(srcdir)/$@.manifest ; then \
+      echo $(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(srcdir)/$@.manifest" -OUTPUTRESOURCE:$@\;1 ; \
+      $(MSMANIFEST_TOOL) -NOLOGO -MANIFEST "$(srcdir)/$@.manifest" -OUTPUTRESOURCE:$@\;1 ; \
+   fi
 endif
+
+endif # } ifdef SIMPLE_PROGRAM 
 
 #------------------------------------------------------------------------------
 # Rules for pre-processed resources
