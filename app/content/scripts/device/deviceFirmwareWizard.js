@@ -32,6 +32,7 @@
 */
 
 Components.utils.import("resource://app/jsmodules/DOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 
 if (typeof(Cc) == "undefined")
@@ -58,6 +59,7 @@ var deviceFirmwareWizard = {
   _initialized: false,
   
   _repairDescriptionNode: null,
+  _activeDataRemote: "firmware.wizard.active",
 
   get wizardElem() {
     if (!this._wizardElem)
@@ -461,6 +463,7 @@ var deviceFirmwareWizard = {
     this._wizardElem.canRewind = true;
 
     this._initialized = true;
+    SBDataSetBoolValue(this._activeDataRemote, true);
     
     // in repair mode, skip check for update and download firmware
     var self = this;
@@ -499,6 +502,8 @@ var deviceFirmwareWizard = {
     if (this._domEventListenerSet)
       this._domEventListenerSet.removeAll();
     this._domEventListenerSet = null;
+    
+    SBDataSetBoolValue(this._activeDataRemote, false);
   },
   
   _handleBrowserCollapse: function deviceFirmwareWizard__handleBrowserCollapse(aEvent) {

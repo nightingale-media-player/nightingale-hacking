@@ -25,6 +25,9 @@
 */
 
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+Components.utils.import("resource://app/jsmodules/SBTimer.jsm");
+Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
 const Ci = Components.interfaces;
@@ -35,6 +38,8 @@ const NS_QUIT_APPLICATION_GRANTED_TOPIC = "quit-application-granted";
 const NS_TIMER_CALLBACK_TOPIC           = "timer-callback";
 const SB_FINAL_UI_STARTUP_TOPIC         = "final-ui-startup";
 const SB_TIMER_MANAGER_PREFIX           = "songbird-device-firmware-update-";
+
+const FIRMWARE_WIZARD_ACTIVE_DATAREMOTE = "firmware.wizard.active";
 
 function DEBUG(msg) {
   return;
@@ -243,6 +248,24 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
       if (device.getPreference("firmware.update.enabled")) {
         this._registerTimer(device);
       }
+      
+      // if we have a firmware handler for this device, we'll
+      // also check to see if it's recovery mode and ask the 
+      // user if they wish to repair it if it is.
+      if (this._deviceFirmwareUpdater.hasHandler(device)) {
+        var handler = this._deviceFirmwareUpdater.getHandler(device);
+        handler.bind(device, null);
+        
+        var recoveryMode = handler.recoveryMode;
+        handler.unbind();
+        
+        // Also check to make sure we're not currently updating
+        // other firmware, if so, don't do anything for this device
+        if (recoveryMode && 
+            !SBDataGetBoolValue(FIRMWARE_WIZARD_ACTIVE_DATAREMOTE)) {
+          this._promptForRepair(device);
+        }
+      }
     }
     break;
 
@@ -342,6 +365,30 @@ function sbDeviceFirmwareAutoCheckForUpdate__unregisterTimer(aDevice) {
     this._timerManager.registerTimer(SB_TIMER_MANAGER_PREFIX + id,
                                      null,
                                      -1);
+  }
+}
+
+sbDeviceFirmwareAutoCheckForUpdate.prototype._promptForRepair = 
+function sbDeviceFirmwareAutoCheckForUpdate__promptForRepair(aDevice) {
+  var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
+                         .getService(Ci.nsIWindowMediator);
+  var songbirdWindow = windowMediator.getMostRecentWindow("Songbird:Main");  
+
+  var prompter = Cc['@songbirdnest.com/Songbird/Prompter;1']
+                   .getService(Components.interfaces.sbIPrompter);
+  var confirmed = 
+    prompter.confirm(songbirdWindow,
+                     SBString('device.firmware.corrupt.title'),
+                     SBFormattedString('device.firmware.corrupt.message',
+                     [aDevice.name]));
+  if (confirmed) {
+    WindowUtils.openModalDialog
+                (songbirdWindow,
+                 "chrome://songbird/content/xul/device/deviceFirmwareWizard.xul",
+                 "device_firmware_dialog",
+                 "",
+                 [ "mode=repair", aDevice ],
+                 null);  
   }
 }
 
