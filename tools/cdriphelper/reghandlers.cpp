@@ -531,7 +531,8 @@ LONG InstallAspiDriver(void) {
 }
 
 LONG AddAspiFilteredDrivers(void) {
-  int rv, finalRv;
+  int rv; 
+  int finalRv = RH_OK;
 
   DebugMessage("-- Begin installation of key %S", KEY_DEVICE_CDROM);
   rv = AddFilteredDriver(KEY_DEVICE_CDROM,
