@@ -27,14 +27,20 @@
 #ifndef __SB_GSTREAMERMEDIACOREFACTORY_H__
 #define __SB_GSTREAMERMEDIACOREFACTORY_H__
 
+#include <nsAutoPtr.h>
+#include <nsIObserver.h>
 #include <sbIMediacoreFactory.h>
 
 #include <sbBaseMediacoreFactory.h>
 
-class sbGStreamerMediacoreFactory : public sbBaseMediacoreFactory
+class sbMediacoreCapabilities;
+
+class sbGStreamerMediacoreFactory : public sbBaseMediacoreFactory,
+                                    public nsIObserver
 {
 public:
   NS_DECL_ISUPPORTS_INHERITED
+  NS_DECL_NSIOBSERVER
   NS_FORWARD_SBIMEDIACOREFACTORY(sbBaseMediacoreFactory::)
 
   sbGStreamerMediacoreFactory();
@@ -52,6 +58,9 @@ public:
 
 protected:
   virtual ~sbGStreamerMediacoreFactory();
+  virtual nsresult Shutdown();
+
+  nsRefPtr<sbMediacoreCapabilities> mCapabilities;
 
 };
 
