@@ -102,7 +102,7 @@ void nsString_ReplaceChar(/* inout */ nsAString& aString,
                           const nsAString& aOldChars,
                           const PRUnichar aNewChar);
 
-void 
+void
 nsCString_ReplaceChars(nsACString& aOldString,
                        const nsACString& aOldChars,
                        const char aNewChar);
@@ -291,7 +291,6 @@ S sbAppendStringArray(S & aTarget,
   // Calc the final length from the original string + length of all the
   // separators
   PRUint32 finalLength = stringLength + (separatorLength * (aStringArray.Length() - 1));
-  PRUint32 index;
   for (PRUint32 index = 0; index < length; ++index) {
     finalLength += aStringArray[index].Length();
   }
