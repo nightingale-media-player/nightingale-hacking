@@ -173,10 +173,10 @@ nsresult sbFileMetadataService::Shutdown()
   mInitialized = PR_FALSE;
 
   // Cancel the jobs.  No risk of additional jobs as mJobArray is locked.
-  for (PRUint32 i=0; i < mJobArray.Length(); i++) {
+  for (PRInt32 i = mJobArray.Length() - 1; i >= 0; --i) {
     rv = mJobArray[i]->Cancel();
     NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a metadata job");
-    mJobArray.RemoveElementAt(i); 
+    mJobArray.RemoveElementAt(i);
   }
   NS_ASSERTION(0 == mJobArray.Length(), 
     "Metadata jobs remaining after stopping the manager");
@@ -339,7 +339,9 @@ sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
   rv = mBackgroundThreadProcessor->Start();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  NS_ADDREF(*_retval = job);
+  rv = CallQueryInterface(job.get(), _retval);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
   return NS_OK;
 }
 

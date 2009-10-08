@@ -666,6 +666,7 @@ sbAlbumArtFetcherSet::NextFetcher()
     TRACE(("%s[%.8x] - No more fetchers", __FUNCTION__, this));
     if (mListener) {
       mListener->OnSearchComplete(mMediaItems);
+      mListener = nsnull;
     }
     // Shutdown since we are done.
     mShutdown = PR_TRUE;
@@ -692,7 +693,9 @@ sbAlbumArtFetcherSet::NextFetcher()
   // Notify listeners that we have moved on to the next fetcher
   mFetcher = do_CreateInstance(fetcherContractID.get(), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  mListener->OnChangeFetcher(mFetcher);
+  if (mListener) {
+    mListener->OnChangeFetcher(mFetcher);
+  }
 
   // Set the source list to what we have.
   rv = mFetcher->SetAlbumArtSourceList(mAlbumArtSourceList);

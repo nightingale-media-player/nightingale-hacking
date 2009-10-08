@@ -28,12 +28,7 @@
  * \brief Test file
  */
 
-var SB_NS = "http://songbirdnest.com/data/1.0#";
-var SB_PROP_ISSUBSCRIPTION       = SB_NS + "isSubscription";
-var SB_PROP_SUBSCRIPTIONURL      = SB_NS + "subscriptionURL";
-var SB_PROP_SUBSCRIPTIONINTERVAL = SB_NS + "subscriptionInterval";
-var SB_PROP_TRACKNAME            = SB_NS + "trackName";
-var SB_PROP_DESTINATION          = SB_NS + "destination"
+Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 function runTest () {
   testRegistration();
@@ -79,10 +74,10 @@ function testRegistration() {
   var list = dps.createList(library1, uri, 60, dest);
 
   assertTrue(list.QueryInterface(Ci.sbIDynamicMediaList));
-  assertEqual(list.getProperty(SB_PROP_ISSUBSCRIPTION), "1");
-  assertEqual(list.getProperty(SB_PROP_SUBSCRIPTIONURL), uri.spec);
-  assertEqual(list.getProperty(SB_PROP_SUBSCRIPTIONINTERVAL), "60");
-  assertEqual(list.getProperty(SB_PROP_DESTINATION), newFileURI(dest).spec);
+  assertEqual(list.getProperty(SBProperties.isSubscription), "1");
+  assertEqual(list.getProperty(SBProperties.base + "subscriptionURL"), uri.spec);
+  assertEqual(list.getProperty(SBProperties.base + "subscriptionInterval"), "60");
+  assertEqual(list.getProperty(SBProperties.destination), newFileURI(dest).spec);
 
   var scheduled = dps.scheduledLists.getNext();
   assertTrue(scheduled, list);
@@ -144,11 +139,20 @@ function testUpdate() {
 
     // Check the contents of the list
     assertEqual(list.length, 2);
-    // XXXsteve These seem a bit too time sensitive right now
-    //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
-    //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
 
-    // Updat the playlist file and update again
+    // try to wait for a bit until we succeed at getting the track names
+    for (sleepCount = 0; sleepCount < 20; ++sleepCount) {
+      if (list.getItemByIndex(0).getProperty(SBProperties.trackName) == "test1 title" &&
+          list.getItemByIndex(1).getProperty(SBProperties.trackName) == "test2 title")
+      {
+        break;
+      }
+      sleep(1000);
+    }
+    assertEqual(list.getItemByIndex(0).getProperty(SBProperties.trackName), "test1 title");
+    assertEqual(list.getItemByIndex(1).getProperty(SBProperties.trackName), "test2 title");
+
+    // Update the playlist file and update again
     writeFile(playlistFile, playlist2);
     list.update();
 
@@ -159,10 +163,19 @@ function testUpdate() {
 
     // Check the contents of the list
     assertEqual(list.length, 3);
-    // XXXsteve These seem a bit too time sensitive right now
-    //assertEqual(list.getItemByIndex(0).getProperty(SB_PROP_TRACKNAME), "test1 title");
-    //assertEqual(list.getItemByIndex(1).getProperty(SB_PROP_TRACKNAME), "test2 title");
-    //assertEqual(list.getItemByIndex(2).getProperty(SB_PROP_TRACKNAME), "test3 title");
+    // try to wait for a bit until we succeed at getting the track names
+    for (sleepCount = 0; sleepCount < 20; ++sleepCount) {
+      if (list.getItemByIndex(0).getProperty(SBProperties.trackName) == "test1 title" &&
+          list.getItemByIndex(1).getProperty(SBProperties.trackName) == "test2 title" &&
+          list.getItemByIndex(2).getProperty(SBProperties.trackName) == "test3 title")
+      {
+        break;
+      }
+      sleep(1000);
+    }
+    assertEqual(list.getItemByIndex(0).getProperty(SBProperties.trackName), "test1 title");
+    assertEqual(list.getItemByIndex(1).getProperty(SBProperties.trackName), "test2 title");
+    assertEqual(list.getItemByIndex(2).getProperty(SBProperties.trackName), "test3 title");
 
     // TODO: How can we check to see if these files were downloaded?
   }
