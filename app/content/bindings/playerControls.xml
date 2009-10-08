@@ -1687,6 +1687,17 @@
 
     <implementation>
       <constructor>
+        if (typeof(TimeFormatter) == "undefined") {
+          Components.utils.import("resource://app/jsmodules/sbTimeFormatter.jsm");
+          if (!TimeFormatter)
+            throw new Error("Import of TimeFormatter module failed");
+        }
+        if (typeof(StorageFormatter) == "undefined") {
+          Components.utils.import("resource://app/jsmodules/sbStorageFormatter.jsm");
+          if (!StorageFormatter)
+            throw new Error("Import of StorageFormatter module failed");
+        }
+
         this.setInterval();
       </constructor>
 
@@ -1744,6 +1755,26 @@
                 // display media list length
                 displayValue = SBFormattedCountString("faceplate.itemsformat",
                                                       length, [ length ], "");
+
+                try {
+                  var item = null;
+                  var uri = null;
+                  var totalDuration = 0;
+                  var totalSize = 0;
+                  for ( var i = 0; i < length; i++) {
+                    item = mediaListView.getItemByIndex(i);
+                    totalDuration += item.getProperty(SBProperties.duration)/1000000;
+
+                    uri = item.contentSrc;
+                    if (uri instanceof Components.interfaces.nsIFileURL)
+                      totalSize += uri.file.fileSize;
+                  }
+
+                  displayValue += ", " + TimeFormatter.formatSingle(totalDuration) +
+                                  ", " + StorageFormatter.format(totalSize);
+                } catch(e) {
+                  Components.utils.reportError(e);
+                }
               }
             }
             label.setAttribute('value', displayValue);
