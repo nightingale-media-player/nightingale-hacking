@@ -466,6 +466,18 @@ private:
                                     PRBool aShouldReportEvents);
 
   /**
+   * This method performs any cleanup work and informs the user if there were
+   * any errors during the rip.
+   * NOTE: This method will proxy to the main thread if it needs to.
+   */
+  nsresult HandleRipEnd();
+
+  /**
+   * Method to trigger cd-rip rip complete cleanup work on the main thread.
+   */
+  void ProxyHandleRipEnd();
+
+  /**
    * Show the user any errors that happened during transcoding.
    * NOTE: This method will proxy to the main thread if it needs to.
    */

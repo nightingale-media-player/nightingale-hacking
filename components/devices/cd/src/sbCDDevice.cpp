@@ -40,6 +40,7 @@
 #include <nsServiceManagerUtils.h>
 #include <nsThreadUtils.h>
 #include <nsILocalFile.h>
+#include <nsISound.h>
 
 #include <sbAutoRWLock.h>
 #include <sbDeviceContent.h>
@@ -52,6 +53,8 @@
 #include <sbStandardDeviceProperties.h>
 #include <sbVariantUtils.h>
 #include <sbStringUtils.h>
+#include <sbIDeviceErrorMonitor.h>
+
 
 /*
  * To log this module, set the following environment variable:
@@ -967,6 +970,77 @@ nsresult
 sbCDDevice::CheckAccess(sbIDeviceLibrary* aDevLib)
 {
   return NS_OK;
+}
+
+nsresult
+sbCDDevice::HandleRipEnd()
+{
+  nsresult rv;
+
+  if (!NS_IsMainThread()) {
+    nsCOMPtr<nsIThreadManager> threadMgr =
+      do_GetService("@mozilla.org/thread-manager;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIThread> mainThread;
+    rv = threadMgr->GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIRunnable> runnable =
+      NS_NEW_RUNNABLE_METHOD(sbCDDevice, this, ProxyHandleRipEnd);
+    NS_ENSURE_TRUE(runnable, NS_ERROR_FAILURE);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_NORMAL);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    ProxyQueryUserViewErrors();
+  }
+
+  return NS_OK;
+}
+
+void
+sbCDDevice::ProxyHandleRipEnd()
+{
+  // Dispatch the event to notify listeners that we've finished the rip job.
+  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDRIP_COMPLETED,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
+  // Check to see if any errors occurred during the transcode.
+  nsresult rv;
+  nsCOMPtr<sbIDeviceErrorMonitor> errMonitor =
+      do_GetService("@songbirdnest.com/device/error-monitor-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  PRBool hasErrors;
+  rv = errMonitor->DeviceHasErrors(this, &hasErrors);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  if (hasErrors) {
+    // The rip operation has completed, but there were a few errors during
+    // the transcode. Show those errors now.
+    rv = sbDeviceUtils::QueryUserViewErrors(this);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not show user view errors!");
+  }
+  else {
+    // Check the preferences to see if we should eject
+    if (mPrefAutoEject) {
+      // Since we successfully ripped all selected tracks and the user has
+      // the autoEject preference set, we can eject now.
+      rv = Eject();
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not eject the CD!");
+    }
+
+    // if the user wants a sound notification, then beep
+    if (mPrefNotifySound) {
+      nsCOMPtr<nsISound> soundInterface =
+        do_CreateInstance("@mozilla.org/sound;1", &rv);
+      NS_ENSURE_SUCCESS(rv, /* void */);
+
+      soundInterface->Beep();
+    }
+  }
 }
 
 nsresult
