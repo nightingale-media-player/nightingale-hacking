@@ -179,6 +179,7 @@ int CommandDeleteFile(std::string aFile, bool aRecursive) {
 }
 
 int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& aArgs) {
+  tstring executable(FilterSubstitution(ConvertUTF8toUTFn(aExecutable)));
   tstring arg(_T(" \""));
   std::vector<std::string>::const_iterator it, end = aArgs.end();
   for (it = aArgs.begin(); it < end; ++it) {
@@ -189,10 +190,12 @@ int CommandExecuteFile(std::string aExecutable, const std::vector<std::string>& 
   arg.erase(arg.length() - 2);  // remove the excess quote at the end
                                 // if no args, comeletely earses the string
   
-  DebugMessage("<%s> <%s>", aExecutable.c_str(), arg.c_str());
+  DebugMessage("<%s> <%s>",
+               ConvertUTFnToUTF8(executable).c_str(),
+               ConvertUTFnToUTF8(arg).c_str());
   HINSTANCE hInst = ::ShellExecuteW(NULL,
                                     L"open",
-                                    ConvertUTF8ToUTF16(aExecutable).c_str(),
+                                    executable.c_str(),
                                     arg.c_str(),
                                     NULL,
                                     SW_SHOWDEFAULT);
