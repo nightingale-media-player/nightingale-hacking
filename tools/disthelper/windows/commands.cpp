@@ -217,7 +217,7 @@ tstring FilterSubstitution(tstring aString) {
     tstring variable = result.substr(start + 1, end - 1);
     if (variable == _T("APPDIR")) {
       tstring appdir = GetAppDirectory();
-      DebugMessage("AppDir: %s", appdir.c_str());
+      DebugMessage("AppDir: %S", appdir.c_str());
       result.replace(start, end-start+1, appdir);
       start += appdir.length();
       continue;
