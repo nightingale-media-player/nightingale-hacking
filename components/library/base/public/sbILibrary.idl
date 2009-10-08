@@ -78,7 +78,7 @@ interface sbIBatchCreateMediaItemsListener : nsISupports
 *
 * \sa sbIMediaItem, sbIMediaList
 */
-[scriptable, uuid(1d72cf9e-9e5d-4a0d-8b4b-90f7efc014d4)]
+[scriptable, uuid(99cf6e50-1dd1-11b2-8a31-97c1942f84e4)]
 interface sbILibrary : sbIMediaList
 {
   /**
@@ -229,6 +229,23 @@ interface sbILibrary : sbIMediaList
   nsIArray batchCreateMediaItems(in nsIArray aURIArray,
                                  [optional] in nsIArray aPropertyArrayArray,
                                  [optional] in boolean aAllowDuplicates);
+
+  /**
+   * \brief Create many media items from a list of URIs, disallowing duplicates,
+   *        and return which items were created.
+   * \param aURIArray nsIArray of nsIURI objects
+   * \param aPropertyArrayArray Optional array of sbIPropertyArray.  If
+   *        specified, the properties specified at each array index will be
+   *        used in the creation of the new media item at the same array index.
+   * \param aResultItemArray nsIArray of sbIMediaItem objects that were created
+   *        (or found).
+   * \return nsIArray of nsIVariant objects of type VTYPE_BOOL indicating which
+   *         items were newly created.
+   */
+  nsIArray batchCreateMediaItemsIfNotExist
+             (in nsIArray aURIArray,
+              [optional] in nsIArray aPropertyArrayArray,
+              [optional] out nsIArray aResultItemArray);
 
   /**
    * \brief Asychronously create many media items from a list of URIs

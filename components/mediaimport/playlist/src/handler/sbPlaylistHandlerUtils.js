@@ -123,26 +123,41 @@ function SB_AddItems(aItems, aMediaList, aAddDistinctOnly) {
   // If any items are to be added, add them in a batch
   if (aItems.length > 0) {
 
-    var uris = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"].createInstance(Ci.nsIMutableArray);
+    // Create the array of media item content URIs.
+    var uris = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                 .createInstance(Ci.nsIMutableArray);
+    var libraryUtils = Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+                         .getService(Ci.sbILibraryUtils);
     aItems.forEach(function(e) {
-      uris.appendElement(e.uri, false);
+      uris.appendElement(libraryUtils.getContentURI(e.uri), false);
     });
 
-    var added = aMediaList.library.batchCreateMediaItems(uris, null, true);
-    for (var i = 0; i < added.length; i++) {
-      aItems[i].item = added.queryElementAt(i, Ci.sbIMediaItem);
+    // Create the media items.
+    var resultItems = {};
+    var created = aMediaList.library.batchCreateMediaItemsIfNotExist
+                                       (uris,
+                                        null,
+                                        resultItems);
+    resultItems = resultItems.value;
+
+    for (var i = 0; i < aItems.length; i++) {
+      aItems[i].item = resultItems.queryElementAt(i, Ci.sbIMediaItem);
+      if (created.queryElementAt(i, Ci.nsIVariant))
+        aItems[i].created = true;
     }
   }
 
-  // Set the properties on all the items
+  // Set the properties on all the newly created items
   aMediaList.runInBatchMode(function() {
     aItems.forEach(function(e) {
-      for (var prop in e.properties) {
-        try {
-          e.item.setProperty(prop, e.properties[prop]);
-        }
-        catch(e) {
-          Components.utils.reportError(e);
+      if (e.created) {
+        for (var prop in e.properties) {
+          try {
+            e.item.setProperty(prop, e.properties[prop]);
+          }
+          catch(e) {
+            Components.utils.reportError(e);
+          }
         }
       }
     });

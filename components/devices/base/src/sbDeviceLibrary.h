@@ -70,6 +70,7 @@
   NS_IMETHOD Optimize(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Optimize(); } \
   NS_IMETHOD Flush(void) { return !_to ? NS_ERROR_NULL_POINTER : _to->Flush(); } \
   NS_IMETHOD BatchCreateMediaItems(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItems(aURIArray, aPropertyArrayArray, aAllowDuplicates, _retval); } \
+  NS_IMETHOD BatchCreateMediaItemsIfNotExist(nsIArray *aURIArray, nsIArray *aPropertyArrayArray, nsIArray **aResultItemArray, nsIArray **_retval) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsIfNotExist(aURIArray, aPropertyArrayArray, aResultItemArray, _retval); } \
   NS_IMETHOD BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListener *aListener, nsIArray *aURIArray, nsIArray *aPropertyArrayArray, PRBool aAllowDuplicates) { return !_to ? NS_ERROR_NULL_POINTER : _to->BatchCreateMediaItemsAsync(aListener, aURIArray, aPropertyArrayArray, aAllowDuplicates); } 
 
 // These are the methods from sbLibrary that we're going to

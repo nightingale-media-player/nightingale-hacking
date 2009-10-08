@@ -99,6 +99,7 @@
 #include <sbStandardProperties.h>
 #include <sbSQLBuilderCID.h>
 #include <sbTArrayStringEnumerator.h>
+#include <sbVariantUtils.h>
 #include <nsIVariant.h>
 #include <nsUnicharUtils.h>
 
@@ -1650,15 +1651,20 @@ sbLocalDatabaseLibrary::ContainsCopy(sbIMediaItem* aMediaItem,
 }
 
 nsresult
-sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
-                                            nsIArray* aPropertyArrayArray,
-                                            nsStringArray** aFilteredURIs,
-                                            nsIArray** aFilteredPropertyArrayArray)
+sbLocalDatabaseLibrary::FilterExistingItems
+                          (nsStringArray* aURIs,
+                           nsIArray* aPropertyArrayArray,
+                           nsTArray<PRUint32>* aFilteredIndexArray,
+                           nsStringArray** aFilteredURIs,
+                           nsIArray** aFilteredPropertyArrayArray)
 {
   TRACE(("LocalDatabaseLibrary[0x%.8x] - FilterExistingItems()", this));
 
   NS_ENSURE_ARG_POINTER(aURIs);
   NS_ENSURE_ARG_POINTER(aFilteredURIs);
+
+  if (aFilteredIndexArray)
+    aFilteredIndexArray->Clear();
 
   PRUint32 length = aURIs->Count();
   // If the incoming array is empty, do nothing
@@ -1752,6 +1758,12 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
     *aFilteredURIs = aURIs;
     if (aPropertyArrayArray)
       NS_IF_ADDREF(*aFilteredPropertyArrayArray = aPropertyArrayArray);
+    if (aFilteredIndexArray) {
+      for (PRUint32 i = 0; i < length; i++) {
+        NS_ENSURE_TRUE(aFilteredIndexArray->AppendElement(i),
+                       NS_ERROR_OUT_OF_MEMORY);
+      }
+    }
     return NS_OK;
   }
   // Remove any found URIs from the unique list since they are duplicates
@@ -1778,6 +1790,11 @@ sbLocalDatabaseLibrary::FilterExistingItems(nsStringArray* aURIs,
     nsAutoString uriSpec;
     aURIs->StringAt(i, uriSpec);
     if (uniques.GetEntry(uriSpec)) {
+      if (aFilteredIndexArray) {
+        NS_ENSURE_TRUE(aFilteredIndexArray->AppendElement(i),
+                       NS_ERROR_OUT_OF_MEMORY);
+      }
+
       PRBool success = filteredURIs->AppendString(uriSpec);
       NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
 
@@ -2510,6 +2527,7 @@ sbLocalDatabaseLibrary::CreateMediaItemInternal(nsIURI* aUri,
 
     rv = FilterExistingItems(strArray,
                              nsnull,
+                             nsnull,
                              getter_Transfers(filtered),
                              nsnull);
 
@@ -3105,8 +3123,36 @@ sbLocalDatabaseLibrary::BatchCreateMediaItems(nsIArray* aURIArray,
 
   TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItems()", this));
 
-  return BatchCreateMediaItemsInternal(aURIArray, aPropertyArrayArray,
-                                       aAllowDuplicates, nsnull, _retval);
+  return BatchCreateMediaItemsInternal(aURIArray,
+                                       aPropertyArrayArray,
+                                       aAllowDuplicates,
+                                       nsnull,
+                                       nsnull,
+                                       _retval);
+}
+
+/**
+ * See sbILibrary
+ */
+NS_IMETHODIMP
+sbLocalDatabaseLibrary::BatchCreateMediaItemsIfNotExist
+                          (nsIArray* aURIArray,
+                           nsIArray* aPropertyArrayArray,
+                           nsIArray** aResultItemArray,
+                           nsIArray** _retval)
+{
+  NS_ENSURE_ARG_POINTER(aURIArray);
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsIfNotExist()",
+         this));
+
+  return BatchCreateMediaItemsInternal(aURIArray,
+                                       aPropertyArrayArray,
+                                       PR_FALSE,
+                                       _retval,
+                                       nsnull,
+                                       aResultItemArray);
 }
 
 /**
@@ -3123,14 +3169,19 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsAsync(sbIBatchCreateMediaItemsListe
 
   TRACE(("LocalDatabaseLibrary[0x%.8x] - BatchCreateMediaItemsAsync()", this));
 
-  return BatchCreateMediaItemsInternal(aURIArray, aPropertyArrayArray,
-                                       aAllowDuplicates, aListener, nsnull);
+  return BatchCreateMediaItemsInternal(aURIArray,
+                                       aPropertyArrayArray,
+                                       aAllowDuplicates,
+                                       nsnull,
+                                       aListener,
+                                       nsnull);
 }
 
 nsresult
 sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
                                                       nsIArray* aPropertyArrayArray,
                                                       PRBool aAllowDuplicates,
+                                                      nsIArray** aMediaItemCreatedArray,
                                                       sbIBatchCreateMediaItemsListener* aListener,
                                                       nsIArray** _retval)
 {
@@ -3149,6 +3200,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
 
   nsAutoPtr<nsStringArray> filteredArray;
   nsCOMPtr<nsIArray> filteredPropertyArrayArray;
+  nsTArray<PRUint32> createdMediaItemIndexArray;
   if (aAllowDuplicates) {
     filteredArray = strArray.forget();
     filteredPropertyArrayArray = aPropertyArrayArray;
@@ -3156,6 +3208,7 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
   else {
     rv = FilterExistingItems(strArray,
                              aPropertyArrayArray,
+                             &createdMediaItemIndexArray,
                              getter_Transfers(filteredArray),
                              getter_AddRefs(filteredPropertyArrayArray));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -3222,7 +3275,78 @@ sbLocalDatabaseLibrary::BatchCreateMediaItemsInternal(nsIArray* aURIArray,
     NS_ENSURE_SUCCESS(rv, rv);
 
     // Return the array of media items
-    NS_ADDREF(*_retval = array);
+    if (aMediaItemCreatedArray) {
+      // Create the list of all items and the list of which items were created.
+      nsCOMPtr<nsIMutableArray> allItems =
+        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+                          &rv);
+      nsCOMPtr<nsIMutableArray> mediaItemCreatedArray =
+        do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1",
+                          &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Fill in the lists for the created media items.
+      for (PRUint32 i = 0; i < createdMediaItemIndexArray.Length(); i++) {
+        // Get the full item list index of the created media item.
+        PRUint32 createdMediaItemIndex = createdMediaItemIndexArray[i];
+
+        // Get the created media item.
+        nsCOMPtr<sbIMediaItem> mediaItem = do_QueryElementAt(array, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Add the created media item to the list of all items.
+        rv = allItems->ReplaceElementAt(mediaItem,
+                                        createdMediaItemIndex,
+                                        PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Set the media item as created in the created list.
+        rv = mediaItemCreatedArray->ReplaceElementAt
+               (sbNewVariant(PR_TRUE, nsIDataType::VTYPE_BOOL),
+                createdMediaItemIndex,
+                PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      // Fill in the lists for the existing media items.
+      PRUint32 length;
+      rv = aURIArray->GetLength(&length);
+      NS_ENSURE_SUCCESS(rv, rv);
+      for (PRUint32 i = 0; i < length; i++) {
+        // Skip items that were newly created.
+        if (createdMediaItemIndexArray.Contains(i))
+          continue;
+
+        // Get the media item from its URI (same as CreateMediaItemIfNotExist).
+        nsCOMPtr<sbIMediaItem> mediaItem;
+        nsString               guid;
+        nsCOMPtr<nsIURI>       uri = do_QueryElementAt(aURIArray, i, &rv);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = GetGuidFromContentURI(uri, guid);
+        NS_ENSURE_SUCCESS(rv, rv);
+        rv = GetMediaItem(guid, getter_AddRefs(mediaItem));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Add the item to the list of all items.
+        rv = allItems->ReplaceElementAt(mediaItem, i, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        // Set the media item as not created in the created list.
+        rv = mediaItemCreatedArray->ReplaceElementAt
+               (sbNewVariant(PR_FALSE, nsIDataType::VTYPE_BOOL),
+                i,
+                PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      rv = CallQueryInterface(allItems, _retval);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = CallQueryInterface(mediaItemCreatedArray, aMediaItemCreatedArray);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      NS_ADDREF(*_retval = array);
+    }
   }
 
   return NS_OK;

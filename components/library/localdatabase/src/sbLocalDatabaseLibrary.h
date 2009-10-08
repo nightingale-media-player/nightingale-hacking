@@ -327,6 +327,7 @@ private:
 
   nsresult FilterExistingItems(nsStringArray* aURIs,
                                nsIArray* aPropertyArrayArray,
+                               nsTArray<PRUint32>* aFilteredIndexArray,
                                nsStringArray** aFilteredURIs,
                                nsIArray** aFilteredPropertyArrayArray);
 
@@ -345,6 +346,7 @@ private:
   nsresult BatchCreateMediaItemsInternal(nsIArray* aURIArray,
                                          nsIArray* aPropertyArrayArray,
                                          PRBool aAllowDuplicates,
+                                         nsIArray** aMediaItemCreatedArray,
                                          sbIBatchCreateMediaItemsListener* aListener,
                                          nsIArray** _retval);
 
