@@ -176,9 +176,7 @@ window.cdripController =
     this._transcodePrefBranch = null;
 
     // Cleanup the medialist listener
-    this._mediaListView.mediaList.removeListener(this._libraryListener,
-                                                 false,
-                                                 flags);
+    this._mediaListView.mediaList.removeListener(this._libraryListener);
     this._libraryListener = null;
   },
 
