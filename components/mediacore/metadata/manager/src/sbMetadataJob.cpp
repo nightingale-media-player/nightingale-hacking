@@ -93,6 +93,9 @@ typedef sbStringSet::iterator sbStringSetIter;
 extern PRLogModuleInfo* gMetadataLog;
 #define TRACE(args) PR_LOG(gMetadataLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gMetadataLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
 #else
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
@@ -132,13 +135,13 @@ sbMetadataJob::sbMetadataJob() :
   mInLibraryBatch(PR_FALSE),
   mStringBundle(nsnull)
 {
-  TRACE(("sbMetadataJob[0x%.8x] - ctor", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   MOZ_COUNT_CTOR(sbMetadataJob);
 }
 
 sbMetadataJob::~sbMetadataJob()
 {
-  TRACE(("sbMetadataJob[0x%.8x] - dtor", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   MOZ_COUNT_DTOR(sbMetadataJob);
   
   // Make extra sure we aren't in a library batch
@@ -157,15 +160,18 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
                              nsIStringEnumerator* aRequiredProperties,
                              JobType aJobType)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMediaItemsArray);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::Init: MUST NOT INIT OFF OF MAIN THREAD!");
   nsresult rv;
 
+  NS_ENSURE_FALSE(mBackgroundItemsLock, NS_ERROR_ALREADY_INITIALIZED);
   mBackgroundItemsLock = nsAutoLock::NewLock(
       "sbMetadataJob background item lock");
   NS_ENSURE_TRUE(mBackgroundItemsLock, NS_ERROR_OUT_OF_MEMORY);
-              
+
+  NS_ENSURE_FALSE(mProcessedBackgroundItemsLock, NS_ERROR_ALREADY_INITIALIZED);
   mProcessedBackgroundItemsLock = nsAutoLock::NewLock(
       "sbMetadataJob processed background items lock");
   NS_ENSURE_TRUE(mProcessedBackgroundItemsLock, NS_ERROR_OUT_OF_MEMORY);
@@ -239,6 +245,7 @@ nsresult sbMetadataJob::Init(nsIArray *aMediaItemsArray,
 
 nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMediaItemsArray);
   NS_ENSURE_STATE(mLibrary);
   NS_ASSERTION(NS_IsMainThread(), \
@@ -387,6 +394,7 @@ nsresult sbMetadataJob::AppendMediaItems(nsIArray *aMediaItemsArray)
 nsresult 
 sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::SetUpHandlerForJobItem is main thread only!");  
@@ -452,12 +460,13 @@ sbMetadataJob::SetUpHandlerForJobItem(sbMetadataJobItem* aJobItem)
 nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly, 
                                       sbMetadataJobItem** aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::GetQueuedItem\n"));
   nsresult rv;
 
   // Make sure the job is still running
   if (mStatus != sbIJobProgress::STATUS_RUNNING) {
+    TRACE(("%s[%.8x]: not running", __FUNCTION__, this));
     return NS_ERROR_NOT_AVAILABLE;
   }
 
@@ -472,7 +481,9 @@ nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly,
     if (mNextMainThreadIndex < mMainThreadJobItems.Length()) {
       mMainThreadJobItems[mNextMainThreadIndex++].swap(item);
     } else {
-      TRACE(("sbMetadataJob::GetQueuedItem - NOT_AVAILABLE\n"));
+      TRACE(("%s[%.8x] - NOT_AVAILABLE (%i/%i)\n",
+             __FUNCTION__, this,
+             mNextMainThreadIndex, mMainThreadJobItems.Length()));
       return NS_ERROR_NOT_AVAILABLE;
     }
   } else {
@@ -485,7 +496,9 @@ nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly,
     if (mNextBackgroundThreadIndex < mBackgroundThreadJobItems.Length()) {
       mBackgroundThreadJobItems[mNextBackgroundThreadIndex++].swap(item);
     } else {
-      TRACE(("sbMetadataJob::GetQueuedItem - NOT_AVAILABLE\n"));
+      TRACE(("%s[%.8x] - background NOT_AVAILABLE (%i/%i)\n",
+             __FUNCTION__, this,
+             mNextBackgroundThreadIndex, mBackgroundThreadJobItems.Length()));
       return NS_ERROR_NOT_AVAILABLE;
     }
   }
@@ -503,7 +516,8 @@ nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly,
     }
     NS_ENSURE_SUCCESS(rv, rv);
   }
-  
+
+  TRACE(("%s[%.8x]: got %.8x", __FUNCTION__, this, item.get()));  
   item.forget(aJobItem);
   return NS_OK;
 }
@@ -512,11 +526,11 @@ nsresult sbMetadataJob::GetQueuedItem(PRBool aMainThreadOnly,
 nsresult sbMetadataJob::PutProcessedItem(sbMetadataJobItem* aJobItem)
 {
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::PutProcessedItem\n"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   
   // Make sure the job is still running
   if (mStatus != sbIJobProgress::STATUS_RUNNING) {
-    LOG(("sbMetadataJob::PutProcessedItem ignored. Job canceled\n"));
+    LOG(("%s[%.8x] ignored. Job canceled\n", __FUNCTION__, this));
     return NS_OK;
   }
   
@@ -534,8 +548,8 @@ nsresult sbMetadataJob::PutProcessedItem(sbMetadataJobItem* aJobItem)
 
 nsresult sbMetadataJob::PrepareWriteItem(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::PrepareWriteItem\n"));
   NS_ASSERTION(mJobType == TYPE_WRITE, \
                "sbMetadataJob::PrepareWriteItem called during a read job");
   nsresult rv;
@@ -559,8 +573,8 @@ nsresult sbMetadataJob::PrepareWriteItem(sbMetadataJobItem *aJobItem)
 
 nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::HandleProcessedItem\n"));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::HandleProcessedItem is main thread only!");
   nsresult rv;
@@ -598,6 +612,7 @@ nsresult sbMetadataJob::HandleProcessedItem(sbMetadataJobItem *aJobItem)
 
 nsresult sbMetadataJob::HandleWrittenItem(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   nsCOMPtr<sbIMediaItem> item;
@@ -633,8 +648,8 @@ nsresult sbMetadataJob::HandleWrittenItem(sbMetadataJobItem *aJobItem)
 
 nsresult sbMetadataJob::DeferProcessedItemHandling(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::DeferProcessedItemHandling\n"));
 
   // Even if there is no other work to do, everything
   // needs to be completed on the main thread 
@@ -647,7 +662,7 @@ nsresult sbMetadataJob::DeferProcessedItemHandling(sbMetadataJobItem *aJobItem)
   // lock the array before updating the status, and we
   // don't want a race condition.
   if (mStatus != sbIJobProgress::STATUS_RUNNING) {
-    LOG(("sbMetadataJob::DeferProcessedItemHandling - Job canceled\n"));
+    LOG(("%s[%.8x] - Job canceled\n", __FUNCTION__, this));
     return NS_OK;
   }
         
@@ -667,8 +682,8 @@ nsresult sbMetadataJob::DeferProcessedItemHandling(sbMetadataJobItem *aJobItem)
 
 nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::CopyPropertiesToMediaItem - starting\n"));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::CopyPropertiesToMediaItem is main thread only!");
   nsresult rv;
@@ -790,7 +805,7 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
 /* onChangeFetcher(in sbIAlbumArtFetcher aFetcher); */
 NS_IMETHODIMP sbMetadataJob::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 {
-  TRACE(("sbMetadataJob::OnChangeFetcher"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Ignoring this, it should only be metadata fetching by default
   return NS_OK;
 }
@@ -799,7 +814,7 @@ NS_IMETHODIMP sbMetadataJob::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 NS_IMETHODIMP sbMetadataJob::OnTrackResult(nsIURI*       aImageLocation,
                                            sbIMediaItem* aMediaItem)
 {
-  TRACE(("sbMetadataJob::OnTrackResult"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
@@ -822,7 +837,7 @@ NS_IMETHODIMP sbMetadataJob::OnTrackResult(nsIURI*       aImageLocation,
 NS_IMETHODIMP sbMetadataJob::OnAlbumResult(nsIURI*    aImageLocation,
                                            nsIArray*  aMediaItems)
 {
-  TRACE(("sbMetadataJob::OnAlbumResult"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // We only called FetchAlbumArtForTrack so we should not get this.
   return NS_OK;
 }
@@ -830,6 +845,7 @@ NS_IMETHODIMP sbMetadataJob::OnAlbumResult(nsIURI*    aImageLocation,
 /* onSearchComplete(in nsIArray aMediaItems); */
 NS_IMETHODIMP sbMetadataJob::OnSearchComplete(nsIArray* aMediaItems)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // We don't write back here since we are in the import and don't want to take
   // to much time.
   return NS_OK;
@@ -837,8 +853,8 @@ NS_IMETHODIMP sbMetadataJob::OnSearchComplete(nsIArray* aMediaItems)
 
 nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::ReadAlbumArtwork - starting\n"));
   nsresult rv;
 
   if (!mArtFetcher) {
@@ -868,8 +884,7 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
   rv = mArtFetcher->FetchAlbumArtForTrack(item, this);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  TRACE(("sbMetadataJob::ReadAlbumArtwork - finished rv %08x\n",
-        rv));
+  TRACE(("%s[%.8x] - finished rv %08x\n", __FUNCTION__, this, rv));
 
   return NS_OK;
 }
@@ -877,8 +892,8 @@ nsresult sbMetadataJob::ReadAlbumArtwork(sbMetadataJobItem *aJobItem)
 
 nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbMetadataJob::HandleFailedItem\n"));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::HandleFailedItem is main thread only!");
   nsresult rv;
@@ -928,7 +943,7 @@ nsresult sbMetadataJob::HandleFailedItem(sbMetadataJobItem *aJobItem)
 
 nsresult sbMetadataJob::BatchCompleteItems() 
 {
-  TRACE(("sbMetadataJob::BatchCompleteItems[0x%.8x]", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::BatchCompleteItems is main thread only!");
   nsresult rv = NS_OK;
@@ -983,7 +998,7 @@ nsresult sbMetadataJob::BatchCompleteItems()
 /* static */
 nsresult sbMetadataJob::RunLibraryBatch(nsISupports* aUserData)
 {
-  TRACE(("sbMetadataJob::RunLibraryBatch[0x%.8x]"));
+  TRACE(("%s [static]", __FUNCTION__));
   NS_ENSURE_ARG_POINTER(aUserData);
   sbMetadataJob* thisJob = static_cast<sbMetadataJob*>(
         static_cast<sbIJobProgress*>(aUserData));
@@ -992,7 +1007,7 @@ nsresult sbMetadataJob::RunLibraryBatch(nsISupports* aUserData)
 
 nsresult sbMetadataJob::BatchCompleteItemsCallback()
 {
-  TRACE(("sbMetadataJob::BatchCompleteItemsCallback[0x%.8x]", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv = NS_OK;
   
   // Ok, phew, we're finally inside a library batch.
@@ -1025,7 +1040,7 @@ nsresult sbMetadataJob::BatchCompleteItemsCallback()
 
 nsresult sbMetadataJob::BeginLibraryBatch() 
 {
-  TRACE(("sbMetadataJob::BeginLibraryBatch[0x%.8x]", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mLibrary);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::BeginLibraryBatch is main thread only!");
@@ -1051,7 +1066,7 @@ nsresult sbMetadataJob::BeginLibraryBatch()
 
 nsresult sbMetadataJob::EndLibraryBatch() 
 {
-  TRACE(("sbMetadataJob::EndLibraryBatch[0x%.8x]", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mLibrary);  
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::EndLibraryBatch is main thread only!");
@@ -1075,7 +1090,7 @@ nsresult sbMetadataJob::EndLibraryBatch()
 
 nsresult sbMetadataJob::OnJobProgress() 
 {
-  TRACE(("sbMetadataJob::OnJobProgress[0x%.8x]", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::OnJobProgress is main thread only!");
   nsresult rv = NS_OK;
@@ -1133,6 +1148,7 @@ nsresult sbMetadataJob::OnJobProgress()
 
 nsresult sbMetadataJob::GetType(JobType* aJobType)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aJobType );
   *aJobType = mJobType;
   return NS_OK;
@@ -1147,6 +1163,7 @@ nsresult sbMetadataJob::GetType(JobType* aJobType)
 /* readonly attribute unsigned short status; */
 NS_IMETHODIMP sbMetadataJob::GetStatus(PRUint16* aStatus)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aStatus );
   *aStatus = mStatus;
   return NS_OK;
@@ -1155,6 +1172,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatus(PRUint16* aStatus)
 /* readonly attribute unsigned AString statusText; */
 NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::GetStatusText is main thread only!");
   nsresult rv = NS_OK;
@@ -1225,6 +1243,7 @@ NS_IMETHODIMP sbMetadataJob::GetStatusText(nsAString& aText)
 /* readonly attribute AString titleText; */
 NS_IMETHODIMP sbMetadataJob::GetTitleText(nsAString& aText)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
   
   // If we haven't figured out a title yet, get one from the 
@@ -1253,6 +1272,7 @@ NS_IMETHODIMP sbMetadataJob::GetTitleText(nsAString& aText)
 /* readonly attribute unsigned long progress; */
 NS_IMETHODIMP sbMetadataJob::GetProgress(PRUint32* aProgress)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aProgress );
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::GetProgress is main thread only!");
@@ -1264,6 +1284,7 @@ NS_IMETHODIMP sbMetadataJob::GetProgress(PRUint32* aProgress)
 /* readonly attribute unsigned long total; */
 NS_IMETHODIMP sbMetadataJob::GetTotal(PRUint32* aTotal)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aTotal );
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::GetTotal is main thread only!");
@@ -1275,6 +1296,7 @@ NS_IMETHODIMP sbMetadataJob::GetTotal(PRUint32* aTotal)
 /* readonly attribute unsigned long errorCount; */
 NS_IMETHODIMP sbMetadataJob::GetErrorCount(PRUint32* aCount)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER( aCount );
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::GetErrorCount is main thread only!");
@@ -1288,6 +1310,7 @@ NS_IMETHODIMP sbMetadataJob::GetErrorCount(PRUint32* aCount)
 /* nsIStringEnumerator getErrorMessages(); */
 NS_IMETHODIMP sbMetadataJob::GetErrorMessages(nsIStringEnumerator** aMessages)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMessages);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::GetProgress is main thread only!");
@@ -1308,6 +1331,7 @@ NS_IMETHODIMP sbMetadataJob::GetErrorMessages(nsIStringEnumerator** aMessages)
 NS_IMETHODIMP
 sbMetadataJob::AddJobProgressListener(sbIJobProgressListener *aListener)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aListener);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::AddJobProgressListener is main thread only!");
@@ -1325,6 +1349,7 @@ sbMetadataJob::AddJobProgressListener(sbIJobProgressListener *aListener)
 NS_IMETHODIMP
 sbMetadataJob::RemoveJobProgressListener(sbIJobProgressListener* aListener)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aListener);
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::RemoveJobProgressListener is main thread only!");
@@ -1349,6 +1374,7 @@ sbMetadataJob::RemoveJobProgressListener(sbIJobProgressListener* aListener)
 /* readonly attribute DOMString crop; */
 NS_IMETHODIMP sbMetadataJob::GetCrop(nsAString & aCrop)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   aCrop.AssignLiteral("center");
   return NS_OK;
 }
@@ -1360,6 +1386,7 @@ NS_IMETHODIMP sbMetadataJob::GetCrop(nsAString & aCrop)
 /* boolean canCancel; */
 NS_IMETHODIMP sbMetadataJob::GetCanCancel(PRBool* _retval)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   *_retval = PR_TRUE;
   return NS_OK;
 }
@@ -1367,6 +1394,7 @@ NS_IMETHODIMP sbMetadataJob::GetCanCancel(PRBool* _retval)
 /* void cancel(); */
 NS_IMETHODIMP sbMetadataJob::Cancel()
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), \
     "sbMetadataJob::Cancel is main thread only!");
 
@@ -1418,6 +1446,7 @@ NS_IMETHODIMP sbMetadataJob::Cancel()
 nsresult sbMetadataJob::CreateDefaultItemName(sbIMediaItem* aItem,
                                               nsAString& retval)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), 
     "sbMetadataJob::CreateDefaultItemName is main thread only!");
   NS_ENSURE_ARG_POINTER(aItem);
@@ -1455,6 +1484,7 @@ sbMetadataJob::AppendToPropertiesIfValid(sbIPropertyManager* aPropertyManager,
                                          const nsAString& aID,
                                          const nsAString& aValue)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(aPropertyManager, "aPropertyManager is null");
   NS_ASSERTION(aProperties, "aProperties is null");
 
@@ -1478,6 +1508,7 @@ sbMetadataJob::AppendToPropertiesIfValid(sbIPropertyManager* aPropertyManager,
 nsresult
 sbMetadataJob::GetFileSize(sbIMediaItem* aMediaItem, PRInt64* aFileSize)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMediaItem);
   NS_ENSURE_ARG_POINTER(aFileSize);
   NS_ASSERTION(NS_IsMainThread(), "GetFileSize is main thread only!");
@@ -1507,6 +1538,8 @@ sbMetadataJob::GetFileSize(sbIMediaItem* aMediaItem, PRInt64* aFileSize)
 nsresult 
 sbMetadataJob::LocalizeString(const nsAString& aName, nsAString& aValue)
 {
+  TRACE(("%s[%.8x] (%s)", __FUNCTION__, this,
+         NS_LossyConvertUTF16toASCII(aName).get()));
   nsresult rv = NS_OK;
   
   if (!mStringBundle) {

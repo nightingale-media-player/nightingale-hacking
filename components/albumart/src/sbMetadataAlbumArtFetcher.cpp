@@ -62,7 +62,27 @@
 #include <nsISimpleEnumerator.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
+#include <prlog.h>
 
+
+/**
+ * To log this module, set the following environment variable:
+ *   NSPR_LOG_MODULES=sbMetadataAlbumArtFetcher:5
+ * Use the following to output to a file:
+ *   NSPR_LOG_FILE=path/to/file.log
+ */
+#include "prlog.h"
+#ifdef PR_LOGGING
+static PRLogModuleInfo* gMetadataAlbumArtFetcherLog = nsnull;
+#define TRACE(args) PR_LOG(gMetadataAlbumArtFetcherLog, PR_LOG_DEBUG, args)
+#define LOG(args)   PR_LOG(gMetadataAlbumArtFetcherLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
+#else
+#define TRACE(args) /* nothing */
+#define LOG(args)   /* nothing */
+#endif /* PR_LOGGING */
 
 //------------------------------------------------------------------------------
 //
@@ -88,6 +108,7 @@ NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
                                                  sbIAlbumArtListener* aListener)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItems);
   nsresult rv;
@@ -130,6 +151,7 @@ NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
                                                  sbIAlbumArtListener* aListener)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
@@ -153,6 +175,8 @@ sbMetadataAlbumArtFetcher::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::Shutdown()
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
+  mAlbumArtService = nsnull;
   return NS_OK;
 }
 
@@ -168,6 +192,7 @@ sbMetadataAlbumArtFetcher::Shutdown()
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetShortName(nsAString& aShortName)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   aShortName.AssignLiteral("metadata");
   return NS_OK;
 }
@@ -182,6 +207,7 @@ sbMetadataAlbumArtFetcher::GetShortName(nsAString& aShortName)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetName(nsAString& aName)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   sbStringBundle stringBundle;
   aName.Assign(stringBundle.Get("songbird.albumart.metadata.name"));
   return NS_OK;
@@ -196,6 +222,7 @@ sbMetadataAlbumArtFetcher::GetName(nsAString& aName)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetDescription(nsAString& aDescription)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   sbStringBundle stringBundle;
   aDescription.Assign(stringBundle.Get("songbird.albumart.metadata.description"));
   return NS_OK;
@@ -209,6 +236,7 @@ sbMetadataAlbumArtFetcher::GetDescription(nsAString& aDescription)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetIsLocal(PRBool* aIsLocal)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsLocal);
   *aIsLocal = PR_TRUE;
   return NS_OK;
@@ -221,6 +249,7 @@ sbMetadataAlbumArtFetcher::GetIsLocal(PRBool* aIsLocal)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   NS_ENSURE_STATE(mPrefService);
   
@@ -236,6 +265,7 @@ sbMetadataAlbumArtFetcher::GetIsEnabled(PRBool* aIsEnabled)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mPrefService);
   return mPrefService->SetBoolPref("songbird.albumart.metadata.enabled",
                                    aIsEnabled);
@@ -248,6 +278,7 @@ sbMetadataAlbumArtFetcher::SetIsEnabled(PRBool aIsEnabled)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetPriority(PRInt32* aPriority)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aPriority);
   NS_ENSURE_STATE(mPrefService);
   
@@ -263,6 +294,7 @@ sbMetadataAlbumArtFetcher::GetPriority(PRInt32* aPriority)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::SetPriority(PRInt32 aPriority)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_STATE(mPrefService);
   return mPrefService->SetIntPref("songbird.albumart.metadata.priority",
                                   aPriority);
@@ -276,6 +308,7 @@ sbMetadataAlbumArtFetcher::SetPriority(PRInt32 aPriority)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aAlbumArtSourceList);
   NS_ADDREF(*aAlbumArtSourceList = mAlbumArtSourceList);
   return NS_OK;
@@ -284,6 +317,7 @@ sbMetadataAlbumArtFetcher::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
 NS_IMETHODIMP
 sbMetadataAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   mAlbumArtSourceList = aAlbumArtSourceList;
   return NS_OK;
 }
@@ -301,6 +335,12 @@ sbMetadataAlbumArtFetcher::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
 
 sbMetadataAlbumArtFetcher::sbMetadataAlbumArtFetcher()
 {
+  #ifdef PR_LOGGING
+    if (!gMetadataAlbumArtFetcherLog) {
+      gMetadataAlbumArtFetcherLog = PR_NewLogModule("sbMetadataAlbumArtFetcher");
+    }
+  #endif
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
 }
 
 
@@ -310,6 +350,7 @@ sbMetadataAlbumArtFetcher::sbMetadataAlbumArtFetcher()
 
 sbMetadataAlbumArtFetcher::~sbMetadataAlbumArtFetcher()
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
 }
 
 
@@ -320,6 +361,7 @@ sbMetadataAlbumArtFetcher::~sbMetadataAlbumArtFetcher()
 nsresult
 sbMetadataAlbumArtFetcher::Initialize()
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   // Get the album art service.
@@ -362,6 +404,7 @@ sbMetadataAlbumArtFetcher::GetMetadataHandler
                              (nsIURI*              aContentSrcURI,
                               sbIMetadataHandler** aMetadataHandler)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ASSERTION(aContentSrcURI, "aContentSrcURI is null");
   NS_ASSERTION(aMetadataHandler, "aMetadataHandler is null");
@@ -408,6 +451,7 @@ nsresult
 sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
                                            sbIAlbumArtListener* aListener)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
 
@@ -461,6 +505,7 @@ sbMetadataAlbumArtFetcher::GetImageForItem(sbIMediaItem*        aMediaItem,
 
   // Cache album art image.
   nsCOMPtr<nsIURI> cacheURI;
+  NS_ENSURE_TRUE(mAlbumArtService, NS_ERROR_NOT_INITIALIZED);
   rv = mAlbumArtService->CacheImage(mimeType,
                                     data,
                                     dataLength,

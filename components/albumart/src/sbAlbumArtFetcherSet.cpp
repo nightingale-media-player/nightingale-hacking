@@ -71,6 +71,9 @@
 static PRLogModuleInfo* gAlbumArtFetcherSetLog = nsnull;
 #define TRACE(args) PR_LOG(gAlbumArtFetcherSetLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gAlbumArtFetcherSetLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif /* __GNUC__ */
 #else
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
@@ -105,8 +108,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbAlbumArtFetcherSet,
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetFetcherType(PRUint32* aType)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetFetcherType = %d",
-          mType));
+  TRACE(("%s[%.8x] = %d", __FUNCTION__, this, mType));
   NS_ENSURE_ARG_POINTER(aType);
   *aType = mType;
   return NS_OK;
@@ -115,14 +117,13 @@ sbAlbumArtFetcherSet::GetFetcherType(PRUint32* aType)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetFetcherType(PRUint32 aType)
 {
-  TRACE(("sbAlbumArtFetcherSet::SetFetcherType = %d",
-          aType));
+  TRACE(("%s[%.8x] = %d", __FUNCTION__, this, aType));
   nsresult rv;
   
   // If this has changed we need to reload the fetcher list
   if (aType != mType) {
     mType = aType;
-    TRACE(("sbAlbumArtFetcherSet::SetFetcherType - Reloading fetcher list."));
+    TRACE(("%s - Reloading fetcher list.", __FUNCTION__));
     rv = mAlbumArtService->GetFetcherList(mType,
                                           PR_FALSE,
                                           getter_AddRefs(mFetcherList));
@@ -149,7 +150,7 @@ NS_IMETHODIMP
 sbAlbumArtFetcherSet::FetchAlbumArtForAlbum(nsIArray*            aMediaItems,
                                             sbIAlbumArtListener* aListener)
 {
-  TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForAlbum"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::FetchAlbumArtForAlbum is main thread only!");
   // Validate arguments.
@@ -190,7 +191,7 @@ NS_IMETHODIMP
 sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
                                             sbIAlbumArtListener* aListener)
 {
-  TRACE(("sbAlbumArtFetcherSet::FetchAlbumArtForTrack"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::FetchAlbumArtForTrack is main thread only!");
   // Validate arguments.
@@ -225,7 +226,7 @@ sbAlbumArtFetcherSet::FetchAlbumArtForTrack(sbIMediaItem*        aMediaItem,
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::Shutdown()
 {
-  TRACE(("sbAlbumArtFetcherSet::Shutdown"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::Shutdown is main thread only!");
   if (mFetcher) {
@@ -251,7 +252,7 @@ sbAlbumArtFetcherSet::Shutdown()
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetShortName(nsAString& aShortName)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetShortName"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   aShortName.AssignLiteral("set");
   return NS_OK;
 }
@@ -265,7 +266,7 @@ sbAlbumArtFetcherSet::GetShortName(nsAString& aShortName)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetName(nsAString& aName)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetName"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   aName.AssignLiteral("set");
   return NS_OK;
 }
@@ -278,7 +279,7 @@ sbAlbumArtFetcherSet::GetName(nsAString& aName)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetDescription(nsAString& aDescription)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetDescription"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   aDescription.AssignLiteral("set");
   return NS_OK;
 }
@@ -292,7 +293,7 @@ sbAlbumArtFetcherSet::GetDescription(nsAString& aDescription)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetIsLocal(PRBool* aIsLocal)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetIsLocal"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsLocal);
   *aIsLocal = mType == sbIAlbumArtFetcherSet::TYPE_LOCAL;
   return NS_OK;
@@ -306,7 +307,7 @@ sbAlbumArtFetcherSet::GetIsLocal(PRBool* aIsLocal)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetIsEnabled(PRBool* aIsEnabled)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetIsEnabled"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aIsEnabled);
   *aIsEnabled = PR_TRUE;
   return NS_OK;
@@ -315,7 +316,7 @@ sbAlbumArtFetcherSet::GetIsEnabled(PRBool* aIsEnabled)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetIsEnabled(PRBool aIsEnabled)
 {
-  TRACE(("sbAlbumArtFetcherSet::SetIsEnabled"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   return NS_OK;
 }
 
@@ -327,7 +328,7 @@ sbAlbumArtFetcherSet::SetIsEnabled(PRBool aIsEnabled)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetPriority(PRInt32* aPriority)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetPriority"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aPriority);
   *aPriority = -1;
   return NS_OK;
@@ -336,7 +337,7 @@ sbAlbumArtFetcherSet::GetPriority(PRInt32* aPriority)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetPriority(PRInt32 aPriority)
 {
-  TRACE(("sbAlbumArtFetcherSet::SetPriority"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   return NS_OK;
 }
 
@@ -347,7 +348,7 @@ sbAlbumArtFetcherSet::SetPriority(PRInt32 aPriority)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
 {
-  TRACE(("sbAlbumArtFetcherSet::GetFoundAlbumArt"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aAlbumArtSourceList);
   NS_ADDREF(*aAlbumArtSourceList = mAlbumArtSourceList);
   return NS_OK;
@@ -356,7 +357,7 @@ sbAlbumArtFetcherSet::GetAlbumArtSourceList(nsIArray** aAlbumArtSourceList)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::SetAlbumArtSourceList(nsIArray* aAlbumArtSourceList)
 {
-  TRACE(("sbAlbumArtFetcherSet::SetAlbumArtSourceList"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   mAlbumArtSourceList = aAlbumArtSourceList;
   return NS_OK;
 }
@@ -388,7 +389,7 @@ sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
     gAlbumArtFetcherSetLog = PR_NewLogModule("sbAlbumArtFetcherSet");
   }
 #endif
-  TRACE(("sbAlbumArtFetcherSet[0x%.8x] - ctor", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   MOZ_COUNT_CTOR(sbAlbumArtFetcherSet);
 }
 
@@ -399,7 +400,7 @@ sbAlbumArtFetcherSet::sbAlbumArtFetcherSet() :
 
 sbAlbumArtFetcherSet::~sbAlbumArtFetcherSet()
 {
-  TRACE(("sbAlbumArtFetcherSet[0x%.8x] - dtor", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   MOZ_COUNT_DTOR(sbAlbumArtFetcherSet);
 
   // Make sure to shutdown
@@ -414,7 +415,7 @@ sbAlbumArtFetcherSet::~sbAlbumArtFetcherSet()
 nsresult
 sbAlbumArtFetcherSet::Initialize()
 {
-  TRACE(("sbAlbumArtFetcherSet::Intialize"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   // Create our timer
@@ -465,7 +466,8 @@ sbAlbumArtFetcherSet::Notify(nsITimer* aTimer)
 
   if (aTimer == mTimeoutTimer) {
     // We have taken too long to find album art so skip this fetcher.
-    TRACE(("sbAlbumArtFetcherSet::Notify - Timeout exceeded so moving to next fetcher"));
+    TRACE(("%s[%.8x] - Timeout exceeded so moving to next fetcher",
+           __FUNCTION__, this));
     mTimeoutTimer->Cancel();
     return TryNextFetcher();
   }
@@ -482,7 +484,7 @@ sbAlbumArtFetcherSet::Notify(nsITimer* aTimer)
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::OnChangeFetcher(sbIAlbumArtFetcher* aFetcher)
 {
-  TRACE(("sbAlbumArtFetcherSet::OnChangeFetcher"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   return NS_OK;
 }
 
@@ -491,14 +493,15 @@ NS_IMETHODIMP
 sbAlbumArtFetcherSet::OnTrackResult(nsIURI*        aImageLocation,
                                     sbIMediaItem*  aMediaItem)
 {
-  TRACE(("sbAlbumArtFetcherSet::OnResult"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItem);
   nsresult rv;
 
   if (!aImageLocation) {
     // Indicate that a fetch failed so we can try the next fetcher
-    TRACE(("No image found, marking mFoundAllArtwork as FALSE"));
+    TRACE(("%s[%.8x] - No image found, marking mFoundAllArtwork as FALSE",
+           __FUNCTION__, this));
     mFoundAllArtwork = PR_FALSE;
   } else {
     // Check if this is a local file and warn if not
@@ -518,7 +521,7 @@ NS_IMETHODIMP
 sbAlbumArtFetcherSet::OnAlbumResult(nsIURI*   aImageLocation,
                                     nsIArray* aMediaItems)
 {
-  TRACE(("sbAlbumArtFetcherSet::OnAlbumResult"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   // Validate arguments.
   NS_ENSURE_ARG_POINTER(aMediaItems);
   nsresult rv;
@@ -543,7 +546,7 @@ sbAlbumArtFetcherSet::OnAlbumResult(nsIURI*   aImageLocation,
 NS_IMETHODIMP
 sbAlbumArtFetcherSet::OnSearchComplete(nsIArray* aMediaItems)
 {
-  TRACE(("sbAlbumArtFetcherSet::OnSearchComplete"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   // Cancel the timer since we have a response.
@@ -581,6 +584,7 @@ sbAlbumArtFetcherSet::OnSearchComplete(nsIArray* aMediaItems)
 nsresult
 sbAlbumArtFetcherSet::CheckLocalImage(nsIURI* aImageLocation)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aImageLocation);
   nsresult rv;
   nsCOMPtr<nsIFileURL> localFile = do_QueryInterface(aImageLocation, &rv);
@@ -603,6 +607,7 @@ sbAlbumArtFetcherSet::CheckLocalImage(nsIURI* aImageLocation)
 nsresult
 sbAlbumArtFetcherSet::TryNextFetcher()
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
   
   // Get how many fetchers are available
@@ -628,7 +633,7 @@ sbAlbumArtFetcherSet::TryNextFetcher()
 nsresult
 sbAlbumArtFetcherSet::NextFetcher()
 {
-  TRACE(("sbAlbumArtFetcherSet::NextFetcher"));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(SB_IsMainThread(mThreadManager), \
     "sbAlbumArtFetcherSet::NextFetcher is main thread only!");
   nsresult rv;
@@ -658,7 +663,7 @@ sbAlbumArtFetcherSet::NextFetcher()
   NS_ENSURE_SUCCESS(rv, rv);
 
   if (currentFetcherIndex >= fetcherListCount) {
-    TRACE(("sbAlbumArtFetcherSet::NextFetcher - No more fetchers"));
+    TRACE(("%s[%.8x] - No more fetchers", __FUNCTION__, this));
     if (mListener) {
       mListener->OnSearchComplete(mMediaItems);
     }
@@ -667,9 +672,8 @@ sbAlbumArtFetcherSet::NextFetcher()
     return NS_OK;
   }
 
-  TRACE(("sbAlbumArtFetcherSet::NextFetcher - Querying fetcher at index %d of %d",
-          (currentFetcherIndex + 1),
-          fetcherListCount));
+  TRACE(("%s[%.8x] - Querying fetcher at index %d of %d",
+         __FUNCTION__, this, (currentFetcherIndex + 1), fetcherListCount));
 
   // Get the next fetcher
   nsCAutoString fetcherContractID;
@@ -682,8 +686,8 @@ sbAlbumArtFetcherSet::NextFetcher()
   rv = fetcherContractIDVariant->GetAsACString(fetcherContractID);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  TRACE(("sbAlbumArtFetcherSet::NextFetcher - Trying fetcher %s",
-         fetcherContractID.get()));
+  TRACE(("%s[%.8x] - Trying fetcher %s",
+         __FUNCTION__, this, fetcherContractID.get()));
 
   // Notify listeners that we have moved on to the next fetcher
   mFetcher = do_CreateInstance(fetcherContractID.get(), &rv);

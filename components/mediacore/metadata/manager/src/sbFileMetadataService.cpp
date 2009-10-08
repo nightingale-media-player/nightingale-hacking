@@ -64,6 +64,9 @@
 extern PRLogModuleInfo* gMetadataLog;
 #define TRACE(args) PR_LOG(gMetadataLog, PR_LOG_DEBUG, args)
 #define LOG(args)   PR_LOG(gMetadataLog, PR_LOG_WARN, args)
+#ifdef __GNUC__
+#define __FUNCTION__ __PRETTY_FUNCTION__
+#endif
 #else
 #define TRACE(args) /* nothing */
 #define LOG(args)   /* nothing */
@@ -87,13 +90,13 @@ sbFileMetadataService::sbFileMetadataService() :
   mCrashTracker(nsnull)
 {
   MOZ_COUNT_CTOR(sbFileMetadataService);
-  TRACE(("sbFileMetadataService[0x%.8x] - ctor", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
 }
 
 sbFileMetadataService::~sbFileMetadataService()
 {
   MOZ_COUNT_DTOR(sbFileMetadataService);
-  TRACE(("sbFileMetadataService[0x%.8x] - dtor", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   
   if (mJobLock) {
     nsAutoLock::DestroyLock(mJobLock); 
@@ -102,7 +105,7 @@ sbFileMetadataService::~sbFileMetadataService()
 
 nsresult sbFileMetadataService::Init()
 {
-  TRACE(("sbFileMetadataService[0x%.8x] - Init() - starting up", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
   
   /////////////////////////////////////////////////////////
@@ -136,7 +139,7 @@ nsresult sbFileMetadataService::Init()
 
 nsresult sbFileMetadataService::Shutdown()
 {
-  TRACE(("sbFileMetadataService[0x%.8x] Shutdown", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), 
     "\n\n\nsbFileMetadataService::Shutdown IS MAIN THREAD ONLY!!!!111\n\n\n");
   nsresult rv;
@@ -196,6 +199,7 @@ NS_IMETHODIMP
 sbFileMetadataService::Read(nsIArray* aMediaItemsArray,
                             sbIJobProgress** _retval)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   return ProxiedStartJob(aMediaItemsArray,
                          nsnull,
                          sbMetadataJob::TYPE_READ,
@@ -207,6 +211,7 @@ sbFileMetadataService::Write(nsIArray* aMediaItemsArray,
                              nsIStringEnumerator* aRequiredProperties,
                              sbIJobProgress** _retval)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   return ProxiedStartJob(aMediaItemsArray,
                          aRequiredProperties,
                          sbMetadataJob::TYPE_WRITE,
@@ -220,12 +225,12 @@ sbFileMetadataService::ProxiedStartJob(nsIArray* aMediaItemsArray,
                                        sbMetadataJob::JobType aJobType,
                                        sbIJobProgress** _retval)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv = NS_OK;  
   
   // Make sure StartJob is called on the main thread
   if (!NS_IsMainThread()) {
-    LOG(("sbFileMetadataService[0x%.8x] proxying main thread StartJob()",
-         this));
+    LOG(("%s[%.8x] proxying main thread StartJob()", __FUNCTION__, this));
     nsCOMPtr<nsIThread> target;
     rv = NS_GetMainThread(getter_AddRefs(target));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -257,7 +262,7 @@ sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
                                 sbMetadataJob::JobType aJobType,
                                 sbIJobProgress** _retval)
 {
-  TRACE(("sbFileMetadataService[0x%.8x] StartJob", this));
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aMediaItemsArray);
   NS_ENSURE_ARG_POINTER(_retval);
   NS_ENSURE_TRUE(mInitialized, NS_ERROR_NOT_INITIALIZED);
@@ -342,8 +347,8 @@ sbFileMetadataService::StartJob(nsIArray* aMediaItemsArray,
 nsresult sbFileMetadataService::GetQueuedJobItem(PRBool aMainThreadOnly,
                                                 sbMetadataJobItem** aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbFileMetadataService[0x%.8x] GetQueuedJobItem", this));
   nsresult rv = NS_OK;
   
   nsAutoLock lock(mJobLock);
@@ -416,8 +421,8 @@ nsresult sbFileMetadataService::GetQueuedJobItem(PRBool aMainThreadOnly,
 
 nsresult sbFileMetadataService::PutProcessedJobItem(sbMetadataJobItem* aJobItem)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ENSURE_ARG_POINTER(aJobItem);
-  TRACE(("sbFileMetadataService[0x%.8x] PutProcessedJobItem", this));
   nsresult rv;
   
   // Forward results on to original job
@@ -446,7 +451,7 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
                               const char *aTopic,
                               const PRUnichar *aData)
 {
-  TRACE(("sbFileMetadataService[0x%.8x] - Observe Callback", this));
+  TRACE(("%s[%.8x] (%s)", __FUNCTION__, this, aTopic));
   nsresult rv;
 
   //
@@ -471,7 +476,7 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
   // Notification Timer
   //
   } else if (!strcmp(NS_TIMER_CALLBACK_TOPIC, aTopic)) {
-    TRACE(("sbFileMetadataService[0x%.8x] - Notification Timer Callback", this));
+    TRACE(("%s[%.8x] - Notification Timer Callback", __FUNCTION__, this));
         
     // Snapshot the job array so that we don't leave
     // things locked while we call onJobProgress and
@@ -502,8 +507,7 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
       // This is stupid-ish. Could just remove items one by one
       // as they complete.
       if (allComplete) {
-        TRACE(("sbFileMetadataService[0x%.8x] - Notification - All Complete", 
-              this));
+        TRACE(("%s[%.8x] - Notification - All Complete", __FUNCTION__, this));
         rv = mNotificationTimer->Cancel();
         NS_ASSERTION(NS_SUCCEEDED(rv), "Failed to cancel a notification timer");
         mRunning = PR_FALSE;
@@ -536,6 +540,7 @@ sbFileMetadataService::Observe(nsISupports *aSubject,
  */
 nsresult sbFileMetadataService::EnsureWritePermitted()
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   nsresult rv;
 
   PRBool enableWriting = PR_FALSE;
@@ -600,6 +605,7 @@ nsresult sbFileMetadataService::EnsureWritePermitted()
 
 nsresult sbFileMetadataService::UpdateDataRemotes(PRInt64 aJobCount)
 {
+  TRACE(("%s[%.8x]", __FUNCTION__, this));
   NS_ASSERTION(NS_IsMainThread(), 
     "sbFileMetadataService::UpdateDataRemotes is main thread only!");
   nsresult rv = NS_OK;
