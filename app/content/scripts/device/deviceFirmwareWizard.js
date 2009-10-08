@@ -100,6 +100,7 @@ var deviceFirmwareWizard = {
     }
 
     this._deviceFirmwareUpdater.cancel(this._device);
+    
     return true;
   },
   
@@ -495,6 +496,10 @@ var deviceFirmwareWizard = {
 
   _finalize: function deviceFirmwareWizard__finalize() {
     this._deviceFirmwareUpdater.finalizeUpdate(this._device);
+    
+    let deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                          .getService(Ci.sbIDeviceManager2);
+    deviceManager.removeEventListener(this);
   
     this._device = null;
     this._deviceFirmwareUpdater = null;
