@@ -2,11 +2,11 @@
 <item-tests>
   <item-test
     property="#contentURL"
-    value="file:///H:/Media/Music/Aus/2006-06-25%20(Abstract,%20Techno,%20Punk).mp3"
+    value="file:///h:/media/music/aus/2006-06-25%20(abstract,%20techno,%20punk).mp3"
   >
     <assert-property-value
       name="#contentURL"
-      value="file:///H:/Media/Music/Aus/2006-06-25%20(Abstract,%20Techno,%20Punk).mp3"
+      value="file:///h:/media/music/aus/2006-06-25%20(abstract,%20techno,%20punk).mp3"
     />
     <assert-property-value
       name="#trackName"

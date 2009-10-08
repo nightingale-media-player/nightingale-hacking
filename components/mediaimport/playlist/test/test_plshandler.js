@@ -121,11 +121,11 @@ function runTest () {
   assertEqual(mediaList.library.length, 4);
   handler.read(file, mediaList, false);
   assertEqual(mediaList.length, 6);
-  assertEqual(mediaList.library.length, 7);
+  assertEqual(mediaList.library.length, 4);
 
   // Should not change the list
   handler.read(file, mediaList, true);
-  assertEqual(mediaList.library.length, 7);
+  assertEqual(mediaList.library.length, 4);
   assertEqual(mediaList.length, 6);
 }
 
