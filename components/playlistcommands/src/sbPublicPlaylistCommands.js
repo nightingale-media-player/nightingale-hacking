@@ -613,6 +613,10 @@ PublicPlaylistCommands.prototype = {
                                                  "&command.shortcut.keycode.lookupcdinfo",
                                                  "&command.shortcut.modifiers.lookupcdinfo",
                                                  true);
+      this.m_cmd_LookupCDInfo.setCommandEnabledCallback(null,
+                                                        "library_cmd_lookupcdinfo",
+                                                        plCmd_NOT(plCmd_IsMediaListReadOnly));
+
 
       // ----------------------------------------------------------------------
       // The Check/Uncheck All actions
