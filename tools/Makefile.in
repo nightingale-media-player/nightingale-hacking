@@ -32,7 +32,6 @@ include $(DEPTH)/build/autodefs.mk
 # XXX Mook: disthelper only works on Windows for now
 ifeq (windows,$(SB_PLATFORM))
    SUBDIRS += disthelper \
-              cdriphelper \
               $(NULL)
 endif
 
@@ -40,6 +39,12 @@ endif
 # vendor-binaries that we can't redistrib
 ifeq (_1,$(filter-out windows macosx,$(SB_PLATFORM))_$(HAS_EXTRAS))
    SUBDIRS += itunesagent
+endif
+
+# CDRipHelper is Win32-only and (for now) requires extra goo in
+# vendor-binaries that we can't redistrib
+ifeq (windows_1,$(SB_PLATFORM)_$(HAS_EXTRAS))
+   SUBDIRS += cdriphelper
 endif
 
 include $(topsrcdir)/build/rules.mk

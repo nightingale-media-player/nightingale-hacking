@@ -1,4 +1,5 @@
 #filter substitution
+; komode: le=unix language=nsis codepage=utf8 tab=8 notabs indent=3
 ;
 ;=BEGIN SONGBIRD GPL
 ; 
