@@ -252,7 +252,8 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
       // if we have a firmware handler for this device, we'll
       // also check to see if it's recovery mode and ask the 
       // user if they wish to repair it if it is.
-      if (this._deviceFirmwareUpdater.hasHandler(device)) {
+      if (this._deviceFirmwareUpdater.hasHandler(device) &&
+          !SBDataGetBoolValue(FIRMWARE_WIZARD_ACTIVE_DATAREMOTE)) {
         var handler = this._deviceFirmwareUpdater.getHandler(device);
         handler.bind(device, null);
         
@@ -261,8 +262,7 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
         
         // Also check to make sure we're not currently updating
         // other firmware, if so, don't do anything for this device
-        if (recoveryMode && 
-            !SBDataGetBoolValue(FIRMWARE_WIZARD_ACTIVE_DATAREMOTE)) {
+        if (recoveryMode) {
           this._promptForRepair(device);
         }
       }
