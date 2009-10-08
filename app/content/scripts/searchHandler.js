@@ -511,16 +511,21 @@ const gSearchHandler = {
    * with the given query.
    */
   _doSongbirdSearch: function SearchHandler__doSongbirdSearch(query) {    
+    // treat white-space only queries as empty queries
+    var _query = query;
+    if (/^\s*$/.test(_query))
+      _query = "";
+
     if (!this._isMediaPageShowing()) {
       // create a view into the main library with the requested search
       var library = LibraryUtils.mainLibrary;
-      var view = LibraryUtils.createStandardMediaListView(library, query);
+      var view = LibraryUtils.createStandardMediaListView(library, _query);
 
       // load that view
       gBrowser.loadMediaList(library, null, null, view);
     } else {
     // If we are showing a media page, then just set the query directly 
-      this._setMediaPageSearch(query);
+      this._setMediaPageSearch(_query);
     }
   },
   
