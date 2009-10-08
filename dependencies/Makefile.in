@@ -460,18 +460,46 @@ ADD_MANIFEST_COMMAND = \
   "$(DEPS_DIR)/runtime/$(SB_CONFIGURATION)/Microsoft.VC80.CRT.manifest" \
   -OUTPUTRESOURCE:$(call normalizepath, $(SONGBIRD_XULRUNNERDIR))/$$f\;1 ;
 
-GARBAGE += $(SONGBIRD_XULRUNNERDIR)
+GARBAGE += $(SONGBIRD_XULRUNNERDIR) \
+           $(SONGBIRD_XR_EXTENSIONS) \
+           $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
 
-# The find is address the fact that for some reason, the XR tarballs all have
-# the group (!!?) writeble bit set; other than that, perms seem plausible; see
-# bug 12013 and bug 17086.
+# Move all known extensions from XULRUNNERDIR/extensions to
+#  SONGBIRD_EXTENSIONSDIR
+#
+# We are explicit about which XR extensions we "ship", namely
+#   DOM inspector
+#   venkman
+#
+# We delete all other extensions, and we _ALWAYS_ delete for release builds; 
+# see bug 17874
+#
+
+XULRUNNER_SHIPPED_EXTENSIONS = inspector@mozilla.org \
+                               {f13b157f-b174-47e7-a34d-4815ddfdfeb8} \
+                               $(NULL)
+
+XULRUNNER_EXTENSION_ROOTDIR = $(SONGBIRD_XULRUNNERDIR)/extensions
+
+XULRUNNER_EXTENSION_DIRS = $(foreach e, \
+                            $(XULRUNNER_SHIPPED_EXTENSIONS), \
+                            $(XULRUNNER_EXTENSION_ROOTDIR)/$e)
+
+SONGBIRD_XR_EXTENSIONS = $(foreach e, \
+                           $(XULRUNNER_SHIPPED_EXTENSIONS), \
+                           $(SONGBIRD_EXTENSIONSDIR)/$e)
+
+## See comment above about, re: the specifics of this export::'s logic.
 export::
 	$(TAR) -j -x -p -f $(XULRUNNER_DIR)/xulrunner.tar.bz2 -C $(SONGBIRD_XULRUNNERDIR)
-
-# Move all extensions from XULRUNNERDIR/extensions to SONGBIRD_EXTENSIONSDIR
+	$(RM) -r $(SONGBIRD_XR_EXTENSIONS)
+ifneq (1,$(SONGBIRD_OFFICIAL))
+	$(MV) $(XULRUNNER_EXTENSION_DIRS) $(SONGBIRD_EXTENSIONSDIR)
+endif 
+	$(RM) -r $(XULRUNNER_EXTENSION_ROOTDIR)
 
 libs::
 	$(MV) -f $(SONGBIRD_XR_STUB) $(SONGBIRD_XR_STUB_DIR)
