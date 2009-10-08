@@ -34,8 +34,16 @@
 <?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
 <?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css"
                  type="text/css"?>
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/deviceErrorDialog.css"
+                 type="text/css"?>
 
-<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+<!-- Import external definitions. -->
+<!DOCTYPE overlay [
+  <!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+  <!ENTITY % textcontextDTD SYSTEM "chrome://global/locale/textcontext.dtd">
+  %songbirdDTD;
+  %textcontextDTD;
+]>
 
 <!-- ***************************************************************************
  *
@@ -52,7 +60,6 @@
  *       listLabel              Label that goes above the listbox.
  *       errorMsg               Message displayed above the listbox.
  *       showAgainMsg           Message displayed beside check box.
- *       maxRows                Maximum number of rows to show at a time.
  *       allowDisable           Allow user to disable dialog box.
  *   objects                    nsISupports parameters.
  *     nsIDevice                Device object.
@@ -80,6 +87,29 @@
    *
    ************************************************************************* -->
 
+  <script type="application/x-javascript"
+          src="chrome://global/content/globalOverlay.js"/>
+
+  <commandset id="selectEditMenuItems">
+    <command id="cmd_copy" oncommand="goDoCommand('cmd_copy')" disabled="true"/>
+    <command id="cmd_selectAll" oncommand="goDoCommand('cmd_selectAll')"/>
+  </commandset>
+
+  <popupset id="contentAreaContextSet">
+    <popup id="contentAreaContextMenu"
+           onpopupshowing="goUpdateCommand('cmd_copy')">
+      <menuitem id="context-copyselected"
+                label="&copySelectionCmd.label;"
+                accesskey="&copySelectionCmd.accesskey;"
+                command="cmd_copy"
+                disabled="true"/>
+      <menuitem id="context-selectall"
+                label="&selectAllCmd.label;"
+                accesskey="&selectAllCmd.accesskey;"
+                command="cmd_selectAll"/>
+    </popup>
+  </popupset>
+
   <!-- Use Songbird window region. -->
   <windowregion/>
 
@@ -95,10 +125,10 @@
 
     <!-- Unsupported media list. -->
     <sb-closable-box id="errors_box">
-      <vbox id="errors_grid_box">
-        <grid>
-          <rows id="errors_rows" />
-        </grid>
+      <vbox id="errors_desc_box" flex="1">
+        <description class="device_error_desc"
+                     id="device_error_desc"
+                     context="contentAreaContextMenu" tabindex="-1"/>
       </vbox>
     </sb-closable-box>
 
@@ -195,7 +225,6 @@
                                     [ errorItems.length,
                                       this._getDeviceFriendlyName() ]);
         this._options.showAgainMsg = SBString("device.error.dialog.enable");
-        this._options.maxRows = 9;
         this._options.allowDisable = false;
 
         var options = dialogPB.GetString(0);
@@ -228,8 +257,8 @@
         var windowTitle = document.getElementById('dialog-titlebar');
         windowTitle.title = this._options.windowTitle;
 
-        // Fill the unsupported media tree.
-        var rows = document.getElementById("errors_rows");
+        // Fill the text content for description.
+        var desc = document.getElementById("device_error_desc");
         for (var i = 0; i < errorItems.length; i++) {
           var errorDetail;
           try {
@@ -239,37 +268,8 @@
             errorDetail = SBString("device.error.dialog.unknown_error");
           }
 
-          // Add the error to the tree.
-          var row = document.createElement("row");
-          var label = document.createElement("label");
-          label.setAttribute("value", errorDetail);
-          row.appendChild(label);
-          rows.appendChild(row);
+          desc.textContent += errorDetail + "\n";
         }
-
-        // This is kind of janky.  Horizontal scrolling on listboxes and
-        // richlistboxes seems to have issues.  h.scrolling on a tree works
-        // but you have to explicitly set the treecol width to a specific value
-        // larger than the greatest width of a treeitem label value, which we
-        // can't know since we're populating them dynamically.... hence this
-        // solution of using a grid.  We can get the computed style of the label
-        // to determine its height and set the height of the vbox accordingly.
-        // Totally janky, and hopefully someday the platform will provide a
-        // better way of doing a horizontally scrolling listbox. :(
-
-        // Set the max height of the errors to show
-        // Get the height of the first row
-        var labelStyle = document.defaultView.getComputedStyle(
-                                rows.firstChild.firstChild, null);
-        var rowHeight = labelStyle.getPropertyValue("line-height") + 4;
-
-        // Set the number of device error tree rows.
-        var numRows = errorItems.length;
-        if (numRows > this._options.maxRows)
-          numRows = this._options.maxRows;
-        var vbox = document.getElementById("errors_grid_box");
-        var newHeight = numRows * parseInt(rowHeight) + 20;
-        vbox.style.height = newHeight + "px";
 
         // Show the dialog enable checkbox.
         if (this._options.allowDisable) {
