@@ -15,7 +15,9 @@
 
   <audio>
     <type>vorbis</type>
-    <property name="bitrate" type="int" min="45000" max="500000" default="128000"/>
+    <!-- Max is set to 250000 because that's the maximum the gstreamer element
+         will accept. -->
+    <property name="bitrate" type="int" min="45000" max="250000" default="128000"/>
   </audio>
 </profile>
 
