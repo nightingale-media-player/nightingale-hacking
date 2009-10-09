@@ -58,7 +58,6 @@
 
 class nsIPrefBranch;
 
-class sbAutoIgnoreWatchFolderPath;
 class sbBaseDeviceLibraryListener;
 class sbDeviceBaseLibraryCopyListener;
 class sbBaseDeviceMediaListListener;
@@ -1309,15 +1308,6 @@ protected:
   {
     return NS_OK;
   }
-  /**
-   * Creates an ignore auto object that will cause the watch folder to ignore
-   * the path while it's being created. If this is not a file URI this will
-   * return nothing and not fail.
-   */
-  nsresult
-  IgnoreWatchFolderPath(nsIURI * aURI,
-                        sbAutoIgnoreWatchFolderPath ** aIgnorePath);
-
 };
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
