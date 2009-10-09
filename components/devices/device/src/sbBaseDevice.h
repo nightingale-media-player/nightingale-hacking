@@ -1253,7 +1253,12 @@ protected:
                                      PRUint32 *aOutLimitPercentage);
   /**
    * This iterates over the transfer requests and removes the Songbird library
-   * items that were created for the requests.
+   * items that were created for the requests. REQUEST_WRITE entries come from
+   * items being added to the device the library. Those items are hidden when
+   * created, so they need to be removed if they weren't copied successfully.
+   * REQUEST_READ items are create when items are copy from the device to
+   * another library. Those items are created hidden and need to be deleted
+   * if they aren't successfully copied.
    * \param iter Starting point of the requests
    * \param end Typical iteration end point (1 past the last item)
    */
@@ -1264,11 +1269,15 @@ protected:
       nsRefPtr<sbBaseDevice::TransferRequest> request = *iter;
       // If this is a request that adds an item to the device we need to remove
       // it from the device since it never was copied
-      if (request->type == sbBaseDevice::TransferRequest::REQUEST_WRITE) {
-        if (request->list && request->item) {
-          nsresult rv = DeleteItem(request->list, request->item);
-          NS_ENSURE_SUCCESS(rv, rv);
+      switch (request->type) {
+        case sbBaseDevice::TransferRequest::REQUEST_WRITE:
+        case sbBaseDevice::TransferRequest::REQUEST_READ: {
+          if (request->list && request->item) {
+            nsresult rv = DeleteItem(request->list, request->item);
+            NS_ENSURE_SUCCESS(rv, rv);
+          }
         }
+        break;
       }
       ++iter;
     }
