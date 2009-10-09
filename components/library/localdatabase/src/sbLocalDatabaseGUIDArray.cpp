@@ -28,6 +28,7 @@
 #include "sbLocalDatabaseQuery.h"
 #include "sbLocalDatabaseMediaItem.h"
 #include "sbLocalDatabasePropertyCache.h"
+#include "sbLocalDatabaseResourcePropertyBag.h"
 #include "sbLocalDatabaseSchemaInfo.h"
 
 #include <DatabaseQuery.h>
@@ -351,6 +352,43 @@ nsresult sbLocalDatabaseGUIDArray::ClearSecondarySorts() {
       i--;
     }
   }
+  return NS_OK;
+}
+
+nsresult 
+sbLocalDatabaseGUIDArray::MayInvalidate(const nsAString &aGUID, 
+                                        sbLocalDatabaseResourcePropertyBag *aBag)
+{
+  PRUint32 propertyDBID = 0;
+  nsresult rv = NS_ERROR_UNEXPECTED;
+
+  // Go through the filters and see if we should invalidate
+  PRUint32 filterCount = mFilters.Length();
+  for (PRUint32 index = 0; index < filterCount; index++) {
+    const FilterSpec& refSpec = mFilters.ElementAt(index);
+
+    rv = mPropertyCache->GetPropertyDBID(refSpec.property, &propertyDBID);
+    if(NS_FAILED(rv)) {
+      continue;
+    }
+
+    if(aBag->IsPropertyDirty(propertyDBID)) {
+      // Return right away, no use in continuing if we're invalid.
+      return Invalidate();
+    }
+  }
+
+  // Go through the properties we use to sort to see if we should invalidate.
+  PRUint32 sortCount = mSorts.Length();
+  for (PRUint32 index = 0; index < sortCount; index++) {
+    const SortSpec& sortSpec = mSorts.ElementAt(index);
+
+    if(aBag->IsPropertyDirty(sortSpec.propertyId)) {
+      // Return right away, no use in continuing if we're invalid.
+      return Invalidate();
+    }
+  }
+
   return NS_OK;
 }
 

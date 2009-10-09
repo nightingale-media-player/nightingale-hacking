@@ -48,6 +48,7 @@ class nsIURI;
 class nsIWeakReference;
 class sbILibrary;
 class sbIPropertyManager;
+class sbLocalDatabaseResourcePropertyBag;
 
 class sbLocalDatabaseGUIDArray : public sbILocalDatabaseGUIDArray
 {
@@ -56,6 +57,10 @@ public:
   NS_DECL_SBILOCALDATABASEGUIDARRAY
 
   sbLocalDatabaseGUIDArray();
+
+  nsresult MayInvalidate(const nsAString &aGUID, 
+                         sbLocalDatabaseResourcePropertyBag *aBag);
+
 
   struct FilterSpec {
     nsString property;
@@ -165,7 +170,7 @@ private:
                            PRBool aAscending, 
                            PRBool aSecondary);
   nsresult ClearSecondarySorts();
-  
+
   // Cached property manager
   nsCOMPtr<sbIPropertyManager> mPropMan;
 

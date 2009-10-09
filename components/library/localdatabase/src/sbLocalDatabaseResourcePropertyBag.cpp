@@ -376,6 +376,16 @@ sbLocalDatabaseResourcePropertyBag::PutValue(PRUint32 aPropertyID,
   return NS_OK;
 }
 
+PRBool 
+sbLocalDatabaseResourcePropertyBag::IsPropertyDirty(PRUint32 aPropertyDBID)
+{
+  if(mDirty.IsInitialized() && mDirty.GetEntry(aPropertyDBID)) {
+    return PR_TRUE;
+  }
+
+  return PR_FALSE;
+}
+
 nsresult
 sbLocalDatabaseResourcePropertyBag::EnumerateDirty(nsTHashtable<nsUint32HashKey>::Enumerator aEnumFunc,
                                                    void *aClosure,

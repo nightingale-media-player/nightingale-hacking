@@ -1569,7 +1569,7 @@ sbLocalDatabasePropertyCache::AddDirty(const nsAString &aGuid,
     guidarrayptr_set_t::const_iterator cit = mDependentGUIDArraySet.begin();
     guidarrayptr_set_t::const_iterator end = mDependentGUIDArraySet.end();
     for(; cit != end; ++cit) {
-      nsresult rv = (*cit)->Invalidate();
+      nsresult rv = (*cit)->MayInvalidate(guid, aBag);
       NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), 
         "Failed to invalid GUID array, GUIDs may be stale.");
     }
