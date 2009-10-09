@@ -722,7 +722,7 @@ sbiTunesImporter::Import(const nsAString & aLibFilePath,
 NS_IMETHODIMP 
 sbiTunesImporter::SetListener(sbILibraryImporterListener *aListener)
 {
-  NS_WARN_IF_FALSE(mListener == nsnull, "Listener was previously set");
+  NS_WARN_IF_FALSE(mListener == nsnull && aListener, "Listener was previously set");
   
   mListener = aListener;
   

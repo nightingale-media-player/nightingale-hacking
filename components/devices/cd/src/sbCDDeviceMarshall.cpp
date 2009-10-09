@@ -430,6 +430,7 @@ sbCDDeviceMarshall::BeginMonitoring()
   nsresult rv;
 
   NS_ENSURE_STATE(mCDDeviceService);
+  NS_ASSERTION(IsMonitoring(), "BeginMonitoring() called after StopMonitoring()!");
 
   rv = mCDDeviceService->RegisterListener(this);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -449,6 +450,7 @@ sbCDDeviceMarshall::StopMonitoring()
     rv = mCDDeviceService->RemoveListener(this);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  ClearMonitoringFlag();
   return NS_OK;
 }
 

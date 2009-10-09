@@ -615,8 +615,10 @@ sbAlbumArtService::Finalize()
   nsresult rv;
 
   if (!mInitialized) {
-    NS_WARNING("Finalize called when service was not initialized!");
     // Not initialized or already finalized.
+    // note that this is expected, since this gets called both on library
+    // manager shutdown and when component manager releases services
+    // SB_LIBRARY_MANAGER_BEFORE_SHUTDOWN_TOPIC and when the component manager releases services
     return;
   }
 
