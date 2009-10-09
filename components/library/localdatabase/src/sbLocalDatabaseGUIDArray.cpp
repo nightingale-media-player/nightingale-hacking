@@ -261,9 +261,14 @@ sbLocalDatabaseGUIDArray::GetListener(sbILocalDatabaseGUIDArrayListener** aListe
 NS_IMETHODIMP
 sbLocalDatabaseGUIDArray::SetListener(sbILocalDatabaseGUIDArrayListener* aListener)
 {
-  nsresult rv;
+  nsresult rv = NS_OK;
 
-  mListener = do_GetWeakReference(aListener, &rv);
+  if (aListener) {
+    mListener = do_GetWeakReference(aListener, &rv);
+  }
+  else {
+    mListener = nsnull;
+  }
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
