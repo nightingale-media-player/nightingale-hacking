@@ -89,6 +89,8 @@ sbLocalDatabaseMediaListViewSelection::Init(sbILibrary* aLibrary,
 {
   NS_ASSERTION(aArray, "aArray is null");
 
+  nsresult rv;
+
   mLibrary = aLibrary;
   mListGUID = aListGUID;
   mArray = aArray;
@@ -99,6 +101,8 @@ sbLocalDatabaseMediaListViewSelection::Init(sbILibrary* aLibrary,
 
   if (aState) {
     mCurrentIndex     = aState->mCurrentIndex;
+    rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+    NS_ENSURE_SUCCESS(rv, rv);
     mSelectionIsAll   = aState->mSelectionIsAll;
 
     if (!mSelectionIsAll) {
@@ -116,8 +120,19 @@ sbLocalDatabaseMediaListViewSelection::ConfigurationChanged()
   nsresult rv = mArray->GetLength(&mLength);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if (mCurrentIndex >=0 && (PRUint32) mCurrentIndex > mLength) {
-    mCurrentIndex = mLength - 1;
+  // Get the new current index from the current unique ID.
+  if (!mCurrentUID.IsEmpty()) {
+    PRUint32 index;
+    rv = GetIndexForUniqueId(mCurrentUID, &index);
+    if (NS_SUCCEEDED(rv)) {
+      mCurrentIndex = index;
+    } else if (rv == NS_ERROR_NOT_AVAILABLE) {
+      mCurrentIndex = -1;
+    } else {
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  } else {
+    mCurrentIndex = -1;
   }
 
   return NS_OK;
@@ -174,7 +189,10 @@ NS_IMETHODIMP
 sbLocalDatabaseMediaListViewSelection::SetCurrentIndex(PRInt32 aCurrentIndex)
 {
   NS_ENSURE_ARG_RANGE(aCurrentIndex, -1, (PRInt32) mLength - 1);
+  nsresult rv;
   mCurrentIndex = aCurrentIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
   NOTIFY_LISTENERS(OnCurrentIndexChanged, ());
   return NS_OK;
 }
@@ -324,6 +342,8 @@ sbLocalDatabaseMediaListViewSelection::Select(PRInt32 aIndex)
   nsresult rv;
 
   mCurrentIndex = aIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = AddToSelection(aIndex);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -346,6 +366,8 @@ sbLocalDatabaseMediaListViewSelection::SelectOnly(PRInt32 aIndex)
   nsresult rv;
 
   mCurrentIndex = aIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   mSelection.Clear();
   mSelectionIsAll = PR_FALSE;
@@ -405,6 +427,8 @@ sbLocalDatabaseMediaListViewSelection::Toggle(PRInt32 aIndex)
   nsresult rv;
 
   mCurrentIndex = aIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If have an all selection, fill the selection with everything but the
   // toggled index
@@ -452,6 +476,8 @@ sbLocalDatabaseMediaListViewSelection::Clear(PRInt32 aIndex)
   nsresult rv;
 
   mCurrentIndex = aIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If have an all selection, fill the selection with everything but the
   // range we're clearing
@@ -499,6 +525,8 @@ sbLocalDatabaseMediaListViewSelection::SelectRange(PRInt32 aStartIndex,
   }
 
   mCurrentIndex = aEndIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRInt32 start = PR_MIN(aStartIndex, aEndIndex);
   PRInt32 end   = PR_MAX(aStartIndex, aEndIndex);
@@ -529,6 +557,8 @@ sbLocalDatabaseMediaListViewSelection::ClearRange(PRInt32 aStartIndex,
   nsresult rv;
 
   mCurrentIndex = aEndIndex;
+  rv = GetUniqueIdForIndex(mCurrentIndex, mCurrentUID);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // If have an all selection, fill the selection with everything but the
   // range we're clearing
@@ -566,6 +596,7 @@ sbLocalDatabaseMediaListViewSelection::SelectNone()
   mSelection.Clear();
   mSelectionIsAll = PR_FALSE;
   mCurrentIndex = -1;
+  mCurrentUID.Truncate();
 
   NOTIFY_LISTENERS(OnSelectionChanged, ());
 
@@ -688,6 +719,43 @@ sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRUint32 aIndex,
   rv = mArray->GetRowidByIndex(aIndex, &rowid);
   NS_ENSURE_SUCCESS(rv, rv);
   AppendInt(aId, rowid);
+
+  return NS_OK;
+}
+
+nsresult
+sbLocalDatabaseMediaListViewSelection::GetUniqueIdForIndex(PRInt32    aIndex,
+                                                           nsAString& aId)
+{
+  if (aIndex < 0) {
+    aId.Truncate();
+    return NS_OK;
+  }
+  return GetUniqueIdForIndex(static_cast<PRUint32>(aIndex), aId);
+}
+
+nsresult
+sbLocalDatabaseMediaListViewSelection::GetIndexForUniqueId
+                                         (const nsAString& aId,
+                                          PRUint32*        aIndex)
+{
+  nsresult rv;
+
+  // Split the unique ID into its components.
+  nsTArray<nsString> idComponentList;
+  nsString_Split(aId, NS_LITERAL_STRING("|"), idComponentList);
+  if (idComponentList.Length() < 3)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Get the row ID.
+  PRUint64 rowid = nsString_ToUint64(idComponentList[2], &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the index from the row ID.
+  rv = mArray->GetIndexByRowid(rowid, aIndex);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return NS_ERROR_NOT_AVAILABLE;
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

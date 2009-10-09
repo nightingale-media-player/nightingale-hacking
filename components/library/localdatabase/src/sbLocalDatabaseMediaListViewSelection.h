@@ -68,6 +68,11 @@ private:
 
   nsresult GetUniqueIdForIndex(PRUint32 aIndex, nsAString& aId);
 
+  nsresult GetUniqueIdForIndex(PRInt32 aIndex, nsAString& aId);
+
+  nsresult GetIndexForUniqueId(const nsAString& aId,
+                               PRUint32*        aIndex);
+
   static void DelayedSelectNotification(nsITimer* aTimer, void* aClosure);
 
   nsresult AddToSelection(PRUint32 aIndex);
@@ -93,6 +98,7 @@ private:
   sbSelectionList mSelection;
   PRBool mSelectionIsAll;
   PRInt32 mCurrentIndex;
+  nsString mCurrentUID;
 
   nsCOMPtr<sbILibrary> mLibrary;
   nsString mListGUID;

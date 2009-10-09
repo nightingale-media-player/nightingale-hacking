@@ -2069,7 +2069,9 @@ sbMediacoreSequencer::UpdateItemUIDIndex()
 
     mNeedsRecalculate = PR_FALSE;
 
-    PRInt64 currentItemIndex = mCurrentItemIndex;
+    PRInt64 currentItemIndex = sbIMediacoreSequencer::AUTO_PICK_INDEX;
+    if (!mPositionInvalidated)
+      currentItemIndex = mCurrentItemIndex;
     rv = RecalculateSequence(&currentItemIndex);
     NS_ENSURE_SUCCESS(rv, rv);
 
