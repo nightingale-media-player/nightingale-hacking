@@ -149,6 +149,10 @@ interface sbIDeviceEvent : nsISupports
 
   // file that you were trying to transfer is missing
   const unsigned long EVENT_DEVICE_FILE_MISSING        = EVENT_DEVICE_BASE + 37;
+  
+  // events for device scans
+  const unsigned long EVENT_DEVICE_SCAN_START          = EVENT_DEVICE_BASE + 38;
+  const unsigned long EVENT_DEVICE_SCAN_END            = EVENT_DEVICE_BASE + 39;
   /**
    * 
    */

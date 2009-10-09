@@ -356,6 +356,11 @@ sbCDDeviceMarshall::DiscoverDevices()
   rv = mCDDeviceService->GetNbDevices(&deviceCount);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Dispatch the scan start event.
+  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_START,
+                                      nsnull,
+                                      static_cast<sbIDeviceMarshall *>(this));
+
   for (PRInt32 i = 0; i < deviceCount; i++) {
     nsCOMPtr<sbICDDevice> curDevice;
     rv = mCDDeviceService->GetDevice(i, getter_AddRefs(curDevice));
@@ -367,6 +372,11 @@ sbCDDeviceMarshall::DiscoverDevices()
     rv = AddDevice(curDevice);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not add a CD Device!");
   }
+
+  // Dispatch the scan end event.
+  CreateAndDispatchDeviceManagerEvent(sbIDeviceEvent::EVENT_DEVICE_SCAN_END,
+                                      nsnull,
+                                      static_cast<sbIDeviceMarshall *>(this));
 
   return NS_OK;
 }

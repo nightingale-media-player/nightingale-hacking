@@ -40,6 +40,10 @@ Cu.import("resource://app/jsmodules/sbProperties.jsm");
 const CDRIPNS = 'http://songbirdnest.com/rdf/servicepane/cdrip#';
 const SPNS = 'http://songbirdnest.com/rdf/servicepane#';
 
+// For some device events we need to check if they are from the CD Device
+// marshall and not others.
+const CDDEVICEMARSHALLNAME = "sbCDDeviceMarshall";
+
 var sbCDRipServicePaneServiceConfig = {
   className:      "Songbird CD Rip Device Support Module",
   cid:            Components.ID("{9925b565-5c19-4feb-87a8-413d86570cd9}"),
@@ -87,6 +91,8 @@ sbCDRipServicePaneService.prototype = {
   _servicePaneSvc:        null,
 
   _deviceInfoList:        [],
+  
+  _deviceScanInProgress:  false,
   
   // ************************************
   // sbIServicePaneService implementation
@@ -209,14 +215,6 @@ sbCDRipServicePaneService.prototype = {
     this._deviceEventListener = deviceEventListener;
     this._deviceManagerSvc.addEventListener(deviceEventListener);
     
-    this._createConnectedDevices();
-
-    // Initialize the device info list.
-    var deviceEnum = this._deviceManagerSvc.devices.enumerate();
-    while (deviceEnum.hasMoreElements()) {
-      this._addDevice(deviceEnum.getNext().QueryInterface(Ci.sbIDevice));
-    }
-
     // load the cd-device context menu document
     this._deviceContextMenuDoc =
           DOMUtils.loadDocument
@@ -285,11 +283,24 @@ sbCDRipServicePaneService.prototype = {
     function sbCDRipServicePaneService_processDeviceManagerEvent(aDeviceEvent) {
 
     switch(aDeviceEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SCAN_START:
+        var marshall = aDeviceEvent.origin.QueryInterface(Ci.sbIDeviceMarshall);
+        if (marshall.name == CDDEVICEMARSHALLNAME)
+          this._deviceScanInProgress = true;
+        break;
+      
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_SCAN_END:
+        var marshall = aDeviceEvent.origin.QueryInterface(Ci.sbIDeviceMarshall);
+        if (marshall.name == CDDEVICEMARSHALLNAME)
+          this._deviceScanInProgress = false;
+        break;
+      
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ADDED:
         var result = this._addDeviceFromEvent(aDeviceEvent);
 
         // if we successfully added the device, switch the media tab
-        // to the CD rip view
+        // to the CD rip view as long as this is not during the initial scan
+        // of CD Devices.
         if (result)
           this._loadCDViewFromEvent(aDeviceEvent);
         break;
@@ -361,6 +372,11 @@ sbCDRipServicePaneService.prototype = {
    */
   _loadCDViewFromEvent:
       function sbCDRipServicePaneService_loadCDViewFromEvent(aDeviceEvent) {
+
+    // We only want to do this if it is not during a device scan (usually at
+    // startup).
+    if (this._deviceScanInProgress)
+      return;
 
     var device = aDeviceEvent.data.QueryInterface(Ci.sbIDevice);
     var url = this._cfg.devMgrURL + "?device-id=" + device.id;
@@ -619,21 +635,6 @@ sbCDRipServicePaneService.prototype = {
 
       // Remove device info list entry.
       delete this._deviceInfoList[devId];
-    }
-  },
-
-  /**
-   * \brief Create all CD Devices that already exist.
-   */
-  _createConnectedDevices: function sbCDRipServicePaneService_createConnectedDevices() {
-    var devices = ArrayConverter.JSArray(this._deviceManagerSvc.devices);
-    for each (device in devices) {
-      try {
-        this._addDevice(device);
-      }
-      catch(e) {
-        Components.utils.reportError(e);
-      }
     }
   }
 };
