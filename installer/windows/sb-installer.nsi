@@ -423,11 +423,24 @@ Function .onInit
 
    Call CommonInstallerInit
 
+   ; If we install, uninstall, and install again without rebooting, the cdrip
+   ; service will fail to install because it's marked for deletion; check that 
+   ; here and ask the user to reboot before we install.
+   ${If} $UnpackMode != ${TRUE}
+      ReadRegDWORD $0 HKLM "${CdripServiceRegKey}" "DeleteFlag"
+      ${If} $0 == "1"
+         MessageBox MB_YESNO|MB_ICONQUESTION "${PreInstallRebootNow}" /SD IDNO IDNO noReboot
+         Reboot
+      noReboot:
+         Quit
+      ${EndIf} 
+   ${EndIf} 
+
    ; Version checks! This is not in CommonInstallerInit, because we always 
    ; want the uninstaller to be able to run.
 
    ${If} $UnpackMode != ${TRUE}
-      ${If} $CheckOSVersion != ${FALSE}
+      ${If} $CheckOSVersion == ${TRUE}
          ${If} ${AtLeastWinXP}
             ${If} ${IsWinXP}
                ${Unless} ${AtLeastServicePack} 2

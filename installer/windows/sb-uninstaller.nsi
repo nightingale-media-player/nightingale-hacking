@@ -72,11 +72,6 @@ Section "Uninstall"
 
    ; Refresh desktop.
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
-
-   IfRebootFlag 0 noReboot
-      MessageBox MB_YESNO|MB_ICONQUESTION "${UninstallRebootNow}" /SD IDNO IDNO noReboot
-      Reboot
-   noReboot:
 SectionEnd
 
 
@@ -140,6 +135,11 @@ Function un.RemoveCdrip
 
    ${If} $0 == ${TRUE}
       ExecWait '"$INSTDIR\${CdripHelperEXE}" remove' $0
+      ${If} $InstallerMode == "debug"
+         MessageBox MB_OK "$INSTDIR\${CdripHelperEXE} returned $0"
+      ${EndIf}
+      ; If we uninstall the CD-rip drivers, we always prompt for a reboot
+      ; because... hey... it's windows...
       SetRebootFlag true
    ${EndIf}
 

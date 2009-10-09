@@ -46,6 +46,7 @@
 #include "error.h"
 #include "reghandlers.h"
 #include "toolslib.h"
+#include "debug.h"
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
   // don't use any of the args, because we want to be Unicode-compatible
@@ -98,6 +99,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     OutputDebugString(_T("Unknown mode"));
     result = RH_ERROR_USER;
   }
+
+  DebugMessage("%S returning %d", argvw[0], result);
 
   LocalFree(argvw);
   return result;
