@@ -795,11 +795,6 @@ sbCDDevice::Eject()
   NS_ENSURE_TRUE(mCDDevice, NS_ERROR_UNEXPECTED);
 
   nsresult rv;
-
-  // Check for errors then query the user if they wish to see them first.
-  rv = QueryUserViewErrors();
-  NS_ENSURE_SUCCESS(rv, rv);
-
   rv = mCDDevice->Eject();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -994,7 +989,7 @@ sbCDDevice::HandleRipEnd()
     NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
-    ProxyQueryUserViewErrors();
+    ProxyHandleRipEnd();
   }
 
   return NS_OK;
@@ -1022,6 +1017,11 @@ sbCDDevice::ProxyHandleRipEnd()
     // the transcode. Show those errors now.
     rv = sbDeviceUtils::QueryUserViewErrors(this);
     NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not show user view errors!");
+
+    // Now that we've shown the errors for the user, clear out the errors
+    // for this device.
+    rv = errMonitor->ClearErrorsForDevice(this);
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not clear the device errors!");
   }
   else {
     // Check the preferences to see if we should eject
