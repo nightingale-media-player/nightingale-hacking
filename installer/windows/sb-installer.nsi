@@ -36,8 +36,6 @@ ShowInstDetails hide
 Section "-Application" Section1
    SectionIn 1 RO
 
-   Call CloseApp
-
    ${If} ${AtLeastWinVista}
       StrCpy $LinkIconFile ${VistaIcon}
    ${Else}
@@ -369,8 +367,18 @@ Function CallUninstaller
    Exch $0
    Push $1
    System::Call 'Kernel32::SetEnvironmentVariableA(t, t) i("SB_INSTALLER_NOMUTEX", "1").r1'
-   ExecWait '"$0\${FileUninstallEXE}" /S _?=$0'
-   Delete $0\${FileUninstallEXE}
+   ExecWait '"$0\${FileUninstallEXE}" /S _?=$0' $1
+   DetailPrint '"$0\${FileUninstallEXE}" /S _?=$0 returned $1'
+
+   ; We use this key existing as a reasonable hueristic about whether the
+   ; installer really did anything (and didn't bail out because it needed
+   ; input while in silent mode).
+   EnumRegKey $1 HKLM "$RootAppRegistryKey" 0
+
+   ${If} $1 == ""
+      Delete $0\${FileUninstallEXE}
+   ${EndIf}
+
    RMDir $0
    Pop $1
    Pop $0
@@ -423,19 +431,6 @@ Function .onInit
 
    Call CommonInstallerInit
 
-   ; If we install, uninstall, and install again without rebooting, the cdrip
-   ; service will fail to install because it's marked for deletion; check that 
-   ; here and ask the user to reboot before we install.
-   ${If} $UnpackMode != ${TRUE}
-      ReadRegDWORD $0 HKLM "${CdripServiceRegKey}" "DeleteFlag"
-      ${If} $0 == "1"
-         MessageBox MB_YESNO|MB_ICONQUESTION "${PreInstallRebootNow}" /SD IDNO IDNO noReboot
-         Reboot
-      noReboot:
-         Quit
-      ${EndIf} 
-   ${EndIf} 
-
    ; Version checks! This is not in CommonInstallerInit, because we always 
    ; want the uninstaller to be able to run.
 
@@ -470,9 +465,27 @@ confirmUnsupportedWinVersion:
 
 overrideVersionCheck:
 
+   Call CloseApp
+
    ${If} $UnpackMode != ${TRUE} 
       ${If} $InstallerType != "nightly"
          Call PreviousInstallationCheck
       ${EndIf}
    ${EndIf}
+
+   ; If we install, uninstall, and install again without rebooting, the cdrip
+   ; service will fail to install because it's marked for deletion; check that 
+   ; here and ask the user to reboot before we install.
+   ;
+   ; We have to do this down here because PreviousInstallationCheck could call
+   ; the uninstaller, which puts us in exactly this situation.
+   ${If} $UnpackMode != ${TRUE}
+      ReadRegDWORD $0 HKLM "${CdripServiceRegKey}" "DeleteFlag"
+      ${If} $0 == "1"
+         MessageBox MB_YESNO|MB_ICONQUESTION "${PreInstallRebootNow}" /SD IDNO IDNO noReboot
+         Reboot
+      noReboot:
+         Quit
+      ${EndIf} 
+   ${EndIf} 
 FunctionEnd
