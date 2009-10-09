@@ -359,6 +359,50 @@
                                      .replace(/:\d+$/, '');  /* and the line number info */
 
             /**
+             * Creates a property dropdown menulist with an optional separator
+             * @param aVal the initial dropdown value
+             * @param aSeparatorValue optional separator value.  If null, no
+             *                        separator is added
+             * @param aParentElement parent of dropdown
+             * @param aInsertBeforeElement element to insert dropdown before
+             */
+            function makePropertyDropDown(aVal,
+                                          aSeparatorValue,
+                                          aParentElement,
+                                          aInsertBeforeElement) {
+              let menulist = document.createElement("menulist");
+              if (self.hasAttribute("propertyCategory")) {
+                menulist.setAttribute("propertyCategory",
+                                      self.getAttribute("propertyCategory"))
+              }
+              menulist.style.MozBinding =
+                               "url(" + myURL + "#propertiesMenuList)";
+              let menuContainer = document.createElement("vbox");
+              menuContainer.appendChild(menulist);
+
+              if (aSeparatorValue) {
+                // separator
+                let vbox = makeSeparator(aSeparatorValue);
+
+                // remove link
+                let removeLink = makeRemoveLink(menulist, vbox);
+                menuContainer.appendChild(removeLink);
+
+                aParentElement.insertBefore(vbox, aInsertBeforeElement);
+                self._children.push(vbox);
+              }
+
+              aParentElement.insertBefore(menuContainer, aInsertBeforeElement);
+              self._children.push(menuContainer);
+              if (aVal) {
+                menulist.setAttribute("value", aVal);
+              } else {
+                menulist.selectedIndex = 0;
+              }
+              ++self._controlsCount;
+            }
+
+            /**
              * Creates a separator block, with a possibly-editable textbox 
              * @param aVal the initial text to go into the separator
              * @return the separator block constructed
@@ -428,30 +472,10 @@
             let values = this._getValueArray();
             for (let idx = 0; idx < values.length; idx += 2) {
               // make a property dropdown
-              let val = values[idx];
-              let menulist = document.createElement("menulist");
-              if (this.hasAttribute("propertyCategory")) {
-                menulist.setAttribute("propertyCategory",
-                                      this.getAttribute("propertyCategory"));
-              }
-              menulist.setAttribute("value", val);
-              menulist.style.MozBinding = "url(" + myURL + "#propertiesMenuList)";
-              let menuContainer = document.createElement("vbox");
-              menuContainer.appendChild(menulist);
-              if (idx > 0) {
-                // separator (not generated for first property)
-                let vbox = makeSeparator(values[idx - 1]);
-                
-                // remove link (not generated for first property)
-                let removeLink = makeRemoveLink(menulist, vbox);
-                menuContainer.appendChild(removeLink);
-
-                hbox.insertBefore(vbox, childVbox);
-                this._children.push(vbox);
-              }
-              hbox.insertBefore(menuContainer, childVbox);
-              this._children.push(menuContainer);
-              ++self._controlsCount;
+              makePropertyDropDown(values[idx],
+                                   idx > 0 ? values[idx - 1] : null,
+                                   hbox,
+                                   childVbox);
             }
             // make the "add property" pseudo-separator
             self._addlink = document.createElement("label");
@@ -465,22 +489,10 @@
                 // do not do anything if we are disabled.
                 return;
               }
-              // add a new menulist
-              let menulist = document.createElement("menulist");
-              menulist.style.MozBinding =
-                                        "url(" + myURL + "#propertiesMenuList)";
-              let menuContainer = document.createElement("vbox");
-              menuContainer.appendChild(menulist);
-              ++self._controlsCount;
-              let vbox = makeSeparator(self.defaultSeparator);
-              let removeLink = makeRemoveLink(menulist, vbox);
-              menuContainer.appendChild(removeLink);
-
-              hbox.insertBefore(vbox, self._lastSeparator);
-              self._children.push(vbox);
-              hbox.insertBefore(menuContainer, self._lastSeparator);
-              self._children.push(menuContainer);
-              menulist.selectedIndex = 0;
+              makePropertyDropDown(null,
+                                   self.defaultSeparator,
+                                   hbox,
+                                   self._lastSeparator);
               self._updateAddLink();
 
               // update this.value
