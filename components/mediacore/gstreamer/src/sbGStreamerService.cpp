@@ -24,6 +24,7 @@
 //
 */
 #include "sbGStreamerService.h"
+#include "sbGStreamerMediacoreUtils.h"
 #include <gst/pbutils/descriptions.h>
 #include <glib/gutils.h>
 
@@ -347,6 +348,9 @@ sbGStreamerService::Init()
 #endif
 
   gst_init(NULL, NULL);
+
+  // Register our custom tags.
+  RegisterCustomTags();
 
   return NS_OK;
 }

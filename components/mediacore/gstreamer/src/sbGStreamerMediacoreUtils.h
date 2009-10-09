@@ -41,6 +41,12 @@
 
 #include <gst/gst.h>
 
+/* Custom GStreamer tag names. Must match those used in the various gstreamer
+   muxers/taggers we have.
+ */
+#define SB_GST_TAG_GRACENOTE_TAGID         "gracenote-tagid"
+#define SB_GST_TAG_GRACENOTE_EXTENDED_DATA "gracenote-extdata"
+
 GstTagList *ConvertPropertyArrayToTagList(sbIPropertyArray *properties);
 
 nsresult ConvertTagListToPropertyArray(GstTagList *taglist, 
@@ -70,6 +76,10 @@ nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
  */
 const char *
 FindMatchingElementName(const char *srcCapsString, const char *typeName);
+
+/* Register any the custom tags we need to use */
+void
+RegisterCustomTags();
 
 #endif // _SB_GSTREAMERMEDIACOREUTILS_H_
 

@@ -99,6 +99,12 @@ static PRLogModuleInfo* gGStreamerMediacoreUtils =
 // GST_TAG_ENCODER
 // GST_TAG_ENCODER_VERSION
 
+// Property names for Gracenote properties
+// These must match the definitions in 
+// extras/extensions/gracenote/src/sbGracenoteDefines.h
+#define SB_GN_PROP_EXTENDEDDATA "http://gracenote.com/pos/1.0#extendedData"
+#define SB_GN_PROP_TAGID        "http://gracenote.com/pos/1.0#tagId"
+
 PRBool
 ConvertSinglePropertyToTag(sbIProperty *property,
         GstTagList *taglist)
@@ -168,6 +174,13 @@ ConvertSinglePropertyToTag(sbIProperty *property,
             durationNanos, NULL);
     return PR_TRUE;
   }
+
+  /* Custom stuff we're contractually obligated to include. There's no clean
+     way to do this. */
+  TAG_CONVERT_STRING (SB_GN_PROP_TAGID,
+                      SB_GST_TAG_GRACENOTE_TAGID);
+  TAG_CONVERT_STRING (SB_GN_PROP_EXTENDEDDATA,
+                      SB_GST_TAG_GRACENOTE_EXTENDED_DATA);
 
   // If we get here, we failed to convert it.
   return PR_FALSE;
@@ -534,5 +547,14 @@ FindMatchingElementName(const char *srcCapsString, const char *typeName)
     return NULL;
 
   return gst_plugin_feature_get_name (GST_PLUGIN_FEATURE (bestfactory));
+}
+
+void
+RegisterCustomTags()
+{
+  gst_tag_register (SB_GST_TAG_GRACENOTE_TAGID, GST_TAG_FLAG_META,
+                  G_TYPE_STRING, "GN TagID", "Gracenote Tag ID", NULL);
+  gst_tag_register (SB_GST_TAG_GRACENOTE_EXTENDED_DATA, GST_TAG_FLAG_META,
+                  G_TYPE_STRING, "GN ExtData", "Gracenote Extended Data", NULL);
 }
 
