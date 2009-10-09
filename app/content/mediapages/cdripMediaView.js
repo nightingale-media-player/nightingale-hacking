@@ -162,6 +162,12 @@ window.cdripController =
 
     // Now that we are all initialized we can act like a regular media page.
     window.mediaPage = new MediaPageImpl();
+
+    // Now enable the buttons, they're disabled to prevent clicking on them
+    // before all the device information has been wired up.
+    this._enableCommand(RIP_COMMAND_EJECT);
+    this._enableCommand(RIP_COMMAND_STARTRIP);
+    this._enableCommand(RIP_COMMAND_STOPRIP);
   },
 
   onUnload: function cdripController_onUnload() {

@@ -49,10 +49,13 @@
 
   <commandset>
     <command id="sb-cdrip-eject-command"
+             disabled="true"
              oncommand="window.cdripController._ejectDevice();" />
     <command id="sb-cdrip-startrip-command"
+             disabled="true"
              oncommand="window.cdripController._startRip();" />
     <command id="sb-cdrip-stoprip-command"
+             disabled="true"
              oncommand="window.cdripController._stopRip();" />
   </commandset>
 
