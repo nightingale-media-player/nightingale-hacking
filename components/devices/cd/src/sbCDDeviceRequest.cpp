@@ -38,6 +38,7 @@
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediaManagementService.h>
+#include <sbITranscodeAlbumArt.h>
 #include <sbLibraryUtils.h>
 #include <sbPrefBranch.h>
 #include <sbProxiedComponentManager.h>
@@ -972,6 +973,30 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
 
   rv = proxiedJob->SetMetadata(metadata);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbITranscodeAlbumArt> albumArt = do_CreateInstance(
+          SONGBIRD_TRANSCODEALBUMART_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIArray> imageFormats = do_CreateInstance(
+          SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Failure in album art transcoding is not fatal, we just skip the
+  // art in that case.
+
+  // When passed a zero-length array of imageFormats, this just passes through
+  // the image data when we ask for the transcoded art.
+  rv = albumArt->Init(aRequest->item, imageFormats);
+  if (NS_SUCCEEDED(rv)) {
+    nsCOMPtr<nsIInputStream> imageStream;
+    rv = albumArt->GetTranscodedArt(getter_AddRefs(imageStream));
+    if (imageStream && NS_SUCCEEDED(rv)) {
+      rv = proxiedJob->SetMetadataImage(imageStream);
+      if (NS_FAILED(rv))
+        NS_WARNING("Setting metadata image failed");
+    }
+  }
 
   typedef sbTranscodeProgressListener::StatusProperty StatusProperty;
 
