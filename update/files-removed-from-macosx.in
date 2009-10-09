@@ -244,6 +244,7 @@
 ./Contents/Resources/lib/liboil-0.3.dylib
 ./Contents/Resources/lib/libiconv.dylib
 ./Contents/Resources/lib/libcharset.dylib
+./Contents/Resources/lib/sbQuickTimeMediacore.dylib
 ./Contents/Resources/gst-plugins/libgstqtwrapper.so
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
 ./Contents/Resources/gst-plugins/libgstflxdec.so
@@ -311,6 +312,8 @@
 ./Contents/Resources/components/DeviceDeviceTester.xpt
 ./Contents/Resources/components/sbDeviceDeviceTester.dylib
 ./Contents/Resources/components/sbDeviceEventTester.dylib
+./Contents/Resources/components/sbLastFmAlbumArtFetcher.js
+./Contents/Resources/components/sbMetadataLookupFreeDB.js
 ./Contents/Resources/chrome/rubberducky.manifest
 ./Contents/Resources/chrome/rubberducky.jar
 ./Contents/MacOS/libtag_c.dylib

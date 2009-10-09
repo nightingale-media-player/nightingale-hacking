@@ -88,5 +88,7 @@
 ./components/DeviceDeviceTester.xpt
 ./components/sbDeviceDeviceTester.so
 ./components/sbDeviceEventTester.so
+./components/sbLastFmAlbumArtFetcher.js
+./components/sbMetadataLookupFreeDB.js
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar

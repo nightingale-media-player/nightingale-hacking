@@ -235,6 +235,8 @@
 ./lib/libvorbisfile-3.dll
 ./lib/libvorbisenc-2.dll
 ./lib/libvorbis-0.dll
+./lib/sbQuickTimeMediacore.dll
+./lib/sbWindowsMediacore.dll
 ./gst-plugins/gstqtwrapper.dll
 ./gst-plugins/gstnavigationtest.dll
 ./gst-plugins/gstflxdec.dll
@@ -299,5 +301,7 @@
 ./components/sbLocalDatabaseDynamicPlaylist.js
 ./components/sbWindowsMediaCore.xpt
 ./components/sbQuickTimeMediaCore.xpt
+./components/sbLastFmAlbumArtFetcher.js
+./components/sbMetadataLookupFreeDB.js
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar
