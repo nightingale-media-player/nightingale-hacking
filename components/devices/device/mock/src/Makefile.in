@@ -66,10 +66,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
 DYNAMIC_LIB = sbDeviceDeviceTester
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
+                            sbWatchFolderUtils \
                             $(NULL)
 
 
-DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/devices/base/src/
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/devices/base/src/ \
+                                 $(DEPTH)/components/watchfolder/utils/ \
                                  $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
