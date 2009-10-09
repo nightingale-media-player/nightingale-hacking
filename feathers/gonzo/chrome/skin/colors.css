@@ -57,22 +57,16 @@ treecol > label {
   /* :-( need this for aligning the text */
   padding-bottom:1px !important;
 }
-listheader,
-treecol,
-treechildren::-moz-tree-cell {
-  /** used for reordering columns **/
-  border-left:1px solid transparent;
-  /** /used for reordering columns **/
-  padding:0px 4px;
+treecol {
+  /** 1px of the left padding is replaced by border when reordering columns **/
+  padding: 0px 4px 0px 5px;
 }
 treechildren::-moz-tree-cell {
-   /** used for reordering columns **/
-  border-right:1px solid transparent;
-  border-left:1px solid transparent;
-  /** /used for reordering columns **/
+  /** 1px of the left/right padding is replaced by border when reordering columns **/
+  padding: 0px 5px;
 }
 listheader {
-  border-left:none !important;
+  padding: 0px 4px;
 }
 
 

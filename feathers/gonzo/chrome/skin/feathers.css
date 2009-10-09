@@ -169,10 +169,12 @@ treecol > label {
 treecol[insertafter="true"],
 treechildren::-moz-tree-cell( insertafter ) {
   border-right: 1px solid rgb(131,131,131);
+  padding-right: 4px;
 }
 treecol[insertbefore="true"],
 treechildren::-moz-tree-cell( insertbefore ) {
   border-left: 1px solid rgb(131,131,131);
+  padding-left: 4px;
 }
 richlistitem {
   border-bottom: 1px solid rgb(131,131,131);
