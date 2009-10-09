@@ -27,6 +27,7 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Components.utils.import("resource://app/jsmodules/SBTimer.jsm");
+Components.utils.import("resource://app/jsmodules/SBUtils.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
 
@@ -263,7 +264,11 @@ function sbDeviceFirmwareAutoCheckForUpdate_onDeviceEvent(aEvent) {
         // Also check to make sure we're not currently updating
         // other firmware, if so, don't do anything for this device
         if (recoveryMode) {
-          this._promptForRepair(device);
+          var self = this;
+          SBUtils.deferFunction(
+            function() { 
+              self._promptForRepair(device); 
+            });
         }
       }
     }
