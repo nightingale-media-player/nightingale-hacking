@@ -565,6 +565,7 @@ sbAlbumArtFetcherSet::OnSearchComplete(nsIArray* aMediaItems)
 
     if (mListener) {
       mListener->OnSearchComplete(aMediaItems);
+      mListener = nsnull;
     }
   } else {
     // Missing images so try next fetcher for items that failed
