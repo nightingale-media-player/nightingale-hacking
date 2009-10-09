@@ -802,8 +802,13 @@ window.cdripController =
     var errorCount = 0;
     try {
       // Get all the did not successfully ripped tracks
-      var rippedItems = deviceLibrary.getItemsByProperty(SBProperties.cdRipStatus,
-                                                         "3|100");
+      var propArray =
+        Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
+          .createInstance(Ci.sbIMutablePropertyArray);
+      propArray.appendProperty(SBProperties.cdRipStatus, "3|100");
+      propArray.appendProperty(SBProperties.shouldRip, "1");
+      
+      var rippedItems = deviceLibrary.getItemsByProperties(propArray);
       errorCount = rippedItems.length;
     }
     catch (err) {
