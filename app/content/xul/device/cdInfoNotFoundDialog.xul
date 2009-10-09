@@ -222,9 +222,9 @@
 
         if (!aItem.getProperty(SBProperties.trackName)) {
           // Only pad the track count to two digits since a CD can only have
-          // up to 99 tracks on it.
+          // up to 99 tracks on it. Don't pad if there are < 10 tracks.
           var curTrackNum = this._curTrackIndex++;
-          if (curTrackNum < 10) {
+          if (curTrackNum < 10 && this._deviceLibrary.length >= 10) {
             curTrackNum = "0" + curTrackNum;
           }
           aItem.setProperty(SBProperties.trackName,
