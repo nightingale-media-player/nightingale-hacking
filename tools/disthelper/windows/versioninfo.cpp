@@ -57,6 +57,12 @@ struct stringData_t {
 };
 typedef std::map<std::wstring, stringData_t> stringMap_t;
 
+/* macros for pointer alignment */
+/* align down to 32 bit */
+#define ALIGN32_DOWN(x) ((ULONG_PTR)(x) & ~3)
+/* align up to 32 bit */
+#define ALIGN32_UP(x) (((ULONG_PTR)(x) + 3) & ~3)
+
 int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
 
   int result = DH_ERROR_UNKNOWN;
@@ -135,6 +141,8 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
   }
   // this is even offset into the structure, yay!
   stringFileInfoBuffer -= 0x22;
+  // but we have to round it down to be 32bit-aligned
+  stringFileInfoBuffer = (LPSTR)ALIGN32_DOWN(stringFileInfoBuffer);
   if (stringFileInfoBuffer < sourceData) {
     OutputDebugString(_T("Unexpected StringFileInfo buffer"));
     result = DH_ERROR_PARSE;
@@ -209,12 +217,24 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     }
     std::wstring key(buffer, keyLength - 1);
     // Remove additional trailing nulls
+    #if DEBUG
+    {
+      std::string debugBuffer("KEY: ");
+      for (std::wstring::const_iterator it = key.begin(); it != key.end(); ++it) {
+        char hexBuffer[0x10];
+        _snprintf(hexBuffer, sizeof(hexBuffer)/sizeof(hexBuffer[0]), "%04X", *it);
+        debugBuffer.append(hexBuffer);
+      }
+      ::OutputDebugStringA(debugBuffer.c_str());
+    }
+    #endif
     std::wstring::size_type firstNull = key.find(L'\0');
     if (firstNull != std::wstring::npos) {
       key.erase(firstNull);
     }
     buffer += keyLength;
-    buffer = (LPCWSTR)(((ULONG_PTR)buffer + 3) & ~3); // round up to multiple of 4 bytes = 32 bits
+    // the pointer must be 32-bit aligned
+    buffer = (LPCWSTR)ALIGN32_UP(buffer);
     if ((char*)buffer + valueLength * sizeof(std::wstring::value_type) >
         (char*)sourceData + sourceSize) {
       OutputDebugString(_T("Invalid string value length"));
@@ -292,6 +312,26 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     // StringTable->wLength
     *(WORD*)(newdata + stringTableOffset) = newSize + 0x18; // account for header size too
   }
+
+  #if DEBUG
+  {
+    ::OutputDebugStringA("RESULT DATA: ");
+    std::string debugBuffer("000ef120 ");
+    for (unsigned long i = 0; i < headerSize + newSize + tailerSize; ++i) {
+      char hexBuffer[0x10];
+      _snprintf(hexBuffer, sizeof(hexBuffer)/sizeof(hexBuffer[0]),
+                "%02X ", (unsigned char)newdata[i]);
+      debugBuffer.append(hexBuffer);
+      if (i % 0x10 == 0x10 - 1) {
+        ::OutputDebugStringA(debugBuffer.c_str());
+        _snprintf(hexBuffer, sizeof(hexBuffer)/sizeof(hexBuffer[0]),
+                  "%08x ", 0x000ef120 + i + 1);
+        debugBuffer.assign(hexBuffer);
+      }
+    }
+    ::OutputDebugStringA(debugBuffer.c_str());
+  }
+  #endif
 
   // write the new data
   updateRes = BeginUpdateResource(executableName.c_str(), FALSE);
