@@ -1312,6 +1312,8 @@ protected:
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
 
+void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch);
+
 /**
  * This class provides an nsIRunnable interface that may be used to dispatch
  * and process device request added events.

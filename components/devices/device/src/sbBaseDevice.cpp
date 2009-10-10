@@ -495,16 +495,34 @@ void SBUpdateBatchCounts(T        batchEnd,
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch)
 {
-  // Get the batch end.  Do nothing if batch is empty.
-  sbBaseDevice::Batch::iterator batchEnd = aBatch.end();
-  if (batchEnd == aBatch.begin())
+  // Do nothing if batch is empty.
+  if (aBatch.empty())
     return;
+
+  // Get the batch end.
+  sbBaseDevice::Batch::iterator batchEnd = aBatch.end();
 
   // Update the batch counts.
   SBUpdateBatchCounts(--batchEnd,
                       aBatch.begin(),
                       aBatch.size(),
                       (*(aBatch.begin()))->batchID);
+}
+
+void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
+{
+  // Do nothing if batch is empty.
+  if (aBatch.empty())
+    return;
+
+  // Get the batch begin.
+  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
+  PRUint32 index = 1;
+  sbBaseDevice::TransferRequest *request = nsnull;
+  for (; batchBegin != aBatch.end(); batchBegin++) {
+    request = batchBegin->get();
+    request->batchIndex = index++;
+  }
 }
 
 nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
