@@ -295,7 +295,7 @@ sbMediaManagementService::Observe(nsISupports *aSubject,
       NS_NEW_RUNNABLE_METHOD(sbMediaManagementService, this, ShutdownProcessActionThread);
     NS_ENSURE_TRUE(runnable, NS_ERROR_OUT_OF_MEMORY);
 
-    rv = mPerformActionThread->Dispatch(runnable, nsIEventTarget::DISPATCH_NORMAL);
+    rv = mPerformActionThread->Dispatch(runnable, nsIEventTarget::DISPATCH_SYNC);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mPerformActionThread->Shutdown();
