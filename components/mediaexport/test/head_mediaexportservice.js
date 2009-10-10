@@ -75,9 +75,9 @@ function newAppRelativeFile( path ) {
 }
 
 function newFileURI(file) {
-  var ioService = Cc["@mozilla.org/network/io-service;1"].
-                  getService(Ci.nsIIOService);
-  return ioService.newFileURI(file);
+  return Cc["@songbirdnest.com/Songbird/library/Manager;1"]
+           .getService(Ci.sbILibraryUtils)
+           .getFileContentURI(file);
 }
 
 function newURI(spec) {
