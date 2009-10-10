@@ -395,7 +395,7 @@
               aParentElement.insertBefore(menuContainer, aInsertBeforeElement);
               self._children.push(menuContainer);
               if (aVal) {
-                menulist.setAttribute("value", aVal);
+                menulist.value = aVal;
               } else {
                 menulist.selectedIndex = 0;
               }
