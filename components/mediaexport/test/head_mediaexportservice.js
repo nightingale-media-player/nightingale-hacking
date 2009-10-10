@@ -80,6 +80,13 @@ function newFileURI(file) {
            .getFileContentURI(file);
 }
 
+function newTestFileURI(aFileName) {
+  var fileClone = TEST_FILES.clone();
+  fileClone.append(aFileName);
+
+  return newFileURI(fileClone);
+}
+
 function newURI(spec) {
   var ioService = Cc["@mozilla.org/network/io-service;1"].
                   getService(Ci.nsIIOService);

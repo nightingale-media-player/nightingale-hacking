@@ -69,15 +69,14 @@ TestController.prototype =
     this._mainLibrary = LibraryUtils.mainLibrary;
 
     // Create a the URI's for the tracks to add to the library.
-    var rootUri = newFileURI(TEST_FILES).spec.toLowerCase();
-    this._tracks[0] = rootUri + "one.mp3";
-    this._tracks[1] = rootUri + "two.mp3";
-    this._tracks[2] = rootUri + "three.mp3";
+    this._tracks[0] = newTestFileURI("one.mp3").spec;
+    this._tracks[1] = newTestFileURI("two.mp3").spec;
+    this._tracks[2] = newTestFileURI("three.mp3").spec;
 
     // Create another set of fake mediaitems.
-    this._tracks2[0] = rootUri + "four.mp3";
-    this._tracks2[1] = rootUri + "five.mp3";
-    this._tracks2[2] = rootUri + "six.mp3";
+    this._tracks2[0] = newTestFileURI("four.mp3").spec;
+    this._tracks2[1] = newTestFileURI("five.mp3").spec;
+    this._tracks2[2] = newTestFileURI("six.mp3").spec;
 
     // Get the file-system paths for the URI's created above.
     var ioService = Cc["@mozilla.org/network/io-service;1"]
