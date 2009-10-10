@@ -898,9 +898,18 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
 }
 
 function SBGetArtworkOpen() {
+  var browser = SBGetBrowser();
+  var view = null;
+  if (browser && browser.currentMediaPage) {
+    view = browser.currentMediaPage.mediaListView;
+  }
+  
+  if (!view)
+    return;
+
   var artworkScanner = Cc["@songbirdnest.com/Songbird/album-art/scanner;1"]
                          .createInstance(Ci.sbIAlbumArtScanner);
-  artworkScanner.scanListForArtwork(null); // defaults to main library
+  artworkScanner.scanListForArtwork(view.mediaList);
   SBJobUtils.showProgressDialog(artworkScanner, window, 0);  
 }
 

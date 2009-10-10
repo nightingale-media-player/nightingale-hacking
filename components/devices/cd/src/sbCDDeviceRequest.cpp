@@ -34,6 +34,7 @@
 #include <sbDeviceUtils.h>
 #include <sbFileUtils.h>
 #include <sbIDeviceEvent.h>
+#include <sbIAlbumArtScanner.h>
 #include <sbIJobCancelable.h>
 #include <sbIJobProgress.h>
 #include <sbIMediacoreEventTarget.h>
@@ -760,6 +761,14 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
         PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Now that we have the main metadata lets start an artwork scan
+  nsCOMPtr<sbIAlbumArtScanner> artworkScanner =
+    do_CreateInstance("@songbirdnest.com/Songbird/album-art/scanner;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  rv = artworkScanner->ScanListForArtwork(mDeviceLibrary);
+  NS_ENSURE_SUCCESS(rv, rv);  
 
   // Now that the metadata has been sorted out, post the metadata lookup
   // complete event.

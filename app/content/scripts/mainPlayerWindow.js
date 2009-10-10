@@ -170,7 +170,6 @@ var gSongbirdWindowController =
       case "cmd_metadata":
       case "cmd_editmetadata":
       case "cmd_viewmetadata":
-      case "cmd_getartwork":
       case "cmd_reveal":
       case "cmd_find_current_track":
       case "cmd_exportmedia":
@@ -179,6 +178,7 @@ var gSongbirdWindowController =
       case "cmd_control_next":
       case "cmd_control_previous":
         return true;
+      case "cmd_getartwork":
       case "cmd_delete":
         return (this._getVisiblePlaylist() != null);
       case "cmd_volume_down":
@@ -226,7 +226,7 @@ var gSongbirdWindowController =
         return false;
       }
       case "cmd_getartwork":
-        return true;
+        return (view != null);
       case "cmd_exportmedia":
         var exportService = Cc["@songbirdnest.com/media-export-service;1"]
                               .getService(Ci.sbIMediaExportService);

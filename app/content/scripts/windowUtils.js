@@ -1063,6 +1063,7 @@ function goUpdateGlobalContentMenuItems()
   goUpdateCommand("cmd_find");
   goUpdateCommand("cmd_findAgain");
   goUpdateCommand("cmd_print");
+  goUpdateCommand("cmd_getartwork");
   goUpdateCommand("cmd_control_previous");
   goUpdateCommand("cmd_control_next");
   goUpdateCommand("cmd_exportmedia");
