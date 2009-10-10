@@ -641,12 +641,10 @@ sbLibraryImporterManager.prototype = {
           "songbird.library_importer.import_tracks", false);
     var importPlaylists = Application.prefs.getValue(
           "songbird.library_importer.import_playlists", false);
-    var importSmartPlaylists = Application.prefs.getValue(
-          "songbird.library_importer.import_smartplaylists", false);
 
     // Do nothing if not auto-importing, or if this is first run.
     if (!this.defaultLibraryImporter || firstRunDoImportLibrary ||
-        (!importTracks && !importPlaylists && !importSmartPlaylists))
+        (!importTracks && !importPlaylists))
       return;
 
     // Wait until the main Songbird window is ready before initiating

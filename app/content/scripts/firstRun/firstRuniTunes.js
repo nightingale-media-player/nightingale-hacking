@@ -176,9 +176,6 @@ firstRuniTunesSvc.prototype = {
                         importEnabled);
     Application.prefs.setValue("songbird.library_importer.import_playlists",
                         importEnabled);
-    Application.prefs.setValue
-                        ("songbird.library_importer.import_smartplaylists",
-                         importEnabled);
 
     // Get the iTunes export settings.
     var exportCheckbox = this._getElement("itunes_export_checkbox");

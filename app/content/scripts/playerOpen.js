@@ -448,9 +448,7 @@ try
           "songbird.library_importer.import_tracks", false);
     var importPlaylists = Application.prefs.getValue(
           "songbird.library_importer.import_playlists", false);
-    var importSmartPlaylists = Application.prefs.getValue(
-          "songbird.library_importer.import_smartplaylists", false);
-    if (!importTracks && !importPlaylists && !importSmartPlaylists)
+    if (!importTracks && !importPlaylists)
       return null;
 
     // Present the import library dialog.
