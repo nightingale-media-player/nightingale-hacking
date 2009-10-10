@@ -174,6 +174,11 @@ var deviceFirmwareWizard = {
                     browser.setAttribute("src", handler.resetInstructionsLocation.spec);
                   }
                 }
+                else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
+                  setTimeout(function() {
+                      self.wizardElem.goTo("device_firmware_wizard_check_error_page");
+                    }, 0);
+                }
               }
             };
             
