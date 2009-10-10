@@ -6,8 +6,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Amazon.js \
-                          $(srcdir)/Flickr.js \
+EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Flickr.js \
                           $(srcdir)/GoogleBlogs.js \
                           $(srcdir)/HypeM.js \
                           $(srcdir)/Info.js \

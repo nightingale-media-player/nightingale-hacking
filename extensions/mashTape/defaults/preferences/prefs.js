@@ -13,7 +13,7 @@ pref("extensions.mashTape.expanded", false);
 pref("extensions.mashTape.debug", false);
 
 // The list of "previous" providers
-pref("extensions.mashTape.providers.all_previous", "{3814ef10-7a19-11dd-ad8b-0800200c9a66},{a7780910-8c10-11dd-ad8b-0800200c9a66},{e0f43860-6a5c-11dd-ad8b-0800200c9a66},{a86cc290-6990-11dd-ad8b-0800200c9a66},{ad43af30-7a1c-11dd-ad8b-0800200c9a66},{7792e470-75ec-11dd-ad8b-0800200c9a66},{68551fc0-6a50-11dd-ad8b-0800200c9a66},{96a0c280-b4d3-11dd-ad8b-0800200c9a66}");
+pref("extensions.mashTape.providers.all_previous", "{3814ef10-7a19-11dd-ad8b-0800200c9a66},{a7780910-8c10-11dd-ad8b-0800200c9a66},{e0f43860-6a5c-11dd-ad8b-0800200c9a66},{a86cc290-6990-11dd-ad8b-0800200c9a66},{ad43af30-7a1c-11dd-ad8b-0800200c9a66},{7792e470-75ec-11dd-ad8b-0800200c9a66},{68551fc0-6a50-11dd-ad8b-0800200c9a66}");
 
 // Last.fm/Freebase/MusicBrainz
 pref("extensions.mashTape.info.enabled", true);
@@ -22,7 +22,7 @@ pref("extensions.mashTape.info.autolocalise", true);
 
 // Amazon album reviews
 pref("extensions.mashTape.review.enabled", true);
-pref("extensions.mashTape.review.providers", "{96a0c280-b4d3-11dd-ad8b-0800200c9a66}");
+pref("extensions.mashTape.review.providers", "");
 
 // Hype Machine, Google Blog Search
 pref("extensions.mashTape.rss.enabled", true);
