@@ -289,6 +289,10 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   // Log progress.
   LOG(("Exit sbCDDevice::ReqHandleMount\n"));
 
+  // Indicate that the Device is now ready.
+  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
+                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
   return NS_OK;
 }
 
@@ -607,8 +611,6 @@ sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
     // This method has been instructed to report events, do that now.
     CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_METADATA_COMPLETE,
                            sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
-    CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
-                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
   }
 
   return NS_OK;
@@ -778,10 +780,6 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   // Now that the metadata has been sorted out, post the metadata lookup
   // complete event.
   CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_METADATA_COMPLETE,
-                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
-
-  // Indicate that the device is now ready.
-  CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
 
   return NS_OK;
