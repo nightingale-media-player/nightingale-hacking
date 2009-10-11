@@ -163,7 +163,12 @@ var deviceFirmwareWizard = {
             let listener = {
               device: self._device,
               onDeviceEvent: function(aEvent) {
-                if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END) {
+                // Even if there's an error we should have the information
+                // necessary to continue. All firmware handlers are required
+                // to provide a basic set of reset instructions and a basic
+                // firmware for recovery.
+                if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_END ||
+                   aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
                   let handler = self._deviceFirmwareUpdater.getActiveHandler(this.device);
 
                   let label = document.getElementById("device_firmware_wizard_recovery_mode_label");
@@ -173,11 +178,6 @@ var deviceFirmwareWizard = {
                     let browser = document.getElementById("device_firmware_wizard_recovery_mode_browser");
                     browser.setAttribute("src", handler.resetInstructionsLocation.spec);
                   }
-                }
-                else if(aEvent.type == Ci.sbIDeviceEvent.EVENT_FIRMWARE_CFU_ERROR) {
-                  setTimeout(function() {
-                      self.wizardElem.goTo("device_firmware_wizard_check_error_page");
-                    }, 0);
                 }
               }
             };

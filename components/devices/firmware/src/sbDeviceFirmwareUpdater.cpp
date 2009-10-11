@@ -1021,7 +1021,8 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
         rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_RUNNING);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      else if(eventType == sbIDeviceEvent::EVENT_FIRMWARE_CFU_END &&
+      else if((eventType == sbIDeviceEvent::EVENT_FIRMWARE_CFU_END ||
+               eventType == sbIDeviceEvent::EVENT_FIRMWARE_CFU_ERROR) &&
               status == sbDeviceFirmwareHandlerStatus::STATUS_RUNNING) {
         rv = handlerStatus->SetStatus(sbDeviceFirmwareHandlerStatus::STATUS_FINISHED);
         NS_ENSURE_SUCCESS(rv, rv);
@@ -1031,9 +1032,6 @@ sbDeviceFirmwareUpdater::OnDeviceEvent(sbIDeviceEvent *aEvent)
         // Check to see if the device requires recovery mode
         rv = RequiresRecoveryMode(device, handler);
         NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        // XXXAus: Abort!
       }
     }
     break;
