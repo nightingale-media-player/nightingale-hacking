@@ -808,10 +808,8 @@ window.cdripController =
     }
 
     var deviceNeedsLookupPref = "songbird.cdrip." + lib.guid + ".needsLookup";
-    Cu.reportError("Checking for lookup: " + deviceNeedsLookupPref);
     if (Application.prefs.has(deviceNeedsLookupPref)) {
       var shouldLookup = Application.prefs.getValue(deviceNeedsLookupPref, false);
-      Cu.reportError("Do lookup? " + shouldLookup);
       if (shouldLookup) {
         Application.prefs.setValue(deviceNeedsLookupPref, false);
         sbCDDeviceUtils.doCDLookUp(this._device);
