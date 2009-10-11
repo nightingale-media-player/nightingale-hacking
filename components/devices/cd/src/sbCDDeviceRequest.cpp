@@ -139,6 +139,11 @@ sbCDDevice::ReqHandleRequestAdded()
   mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
                                             PR_FALSE);
 
+  // Get the deviceLibraryGuid for preferences.
+  nsString deviceLibraryGuid;
+  rv = mDeviceLibrary->GetGuid(deviceLibraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // If the batch isn't empty, process the batch
   while (!requestBatch.empty()) {
     // Process each request in the batch
@@ -164,11 +169,11 @@ sbCDDevice::ReqHandleRequestAdded()
           rv = ReqHandleMount(request);
           NS_ENSURE_SUCCESS(rv, rv);
 
-          // Now that the device library has been built and the device has
-          // been mounted, it's now time to start lookup by submitting a new
-          // request for cd lookup.
-          rv = PushRequest(sbICDDeviceEvent::REQUEST_CDLOOKUP, nsnull, nsnull);
-          NS_ENSURE_SUCCESS(rv, rv);
+          // Set a pref to indicate to the media view that it needs to perform
+          // a lookup once the view has been loaded.
+          deviceLibraryGuid.AppendLiteral(".needsLookup");
+          prefBranch.SetBoolPref(NS_ConvertUTF16toUTF8(deviceLibraryGuid).get(),
+                                 PR_TRUE);
         break;
 
         case TransferRequest::REQUEST_READ :

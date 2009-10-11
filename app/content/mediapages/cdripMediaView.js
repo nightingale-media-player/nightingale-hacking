@@ -109,6 +109,7 @@ window.cdripController =
     // The device we are working with
   _device:        null,
   _deviceID:      null,
+  _deviceLibrary: null,
   // Transcoding pref branch
   _transcodePrefBranch: null,
 
@@ -130,6 +131,9 @@ window.cdripController =
       browser.getTabForDocument(document).backWithDefault();
       return;
     }
+    
+    // This will set this._deviceLibrary
+    this._getDeviceLibrary();
 
     // Update the header information
     this._updateHeaderView();
@@ -140,11 +144,8 @@ window.cdripController =
     this._lookupDelayTimer = Cc["@mozilla.org/timer;1"]
                                .createInstance(Ci.nsITimer);
 
-    if (this._device.state == Ci.sbICDDeviceEvent.STATE_LOOKINGUPCD) {
-      this._toggleLookupNotification(true);
-    } else {
-      this._toggleLookupNotification(false);
-    }
+    this._toggleLookupNotification(false);
+    
     var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
     eventTarget.addEventListener(this);
 
@@ -168,6 +169,9 @@ window.cdripController =
     this._enableCommand(RIP_COMMAND_EJECT);
     this._enableCommand(RIP_COMMAND_STARTRIP);
     this._enableCommand(RIP_COMMAND_STOPRIP);
+    
+    // Check if we need to preform a look up on this disc.
+    this._checkIfNeedsLookup();
   },
 
   onUnload: function cdripController_onUnload() {
@@ -788,6 +792,32 @@ window.cdripController =
       filters.appendSearch(["*"], 1);
     }
   },
+  
+  /**
+   * Checks the main library of the device to see if it needs a lookup.
+   */
+  _checkIfNeedsLookup: function cdripController_checkIfNeedsLookup() {
+    if (!this._device) {
+      return;
+    }
+
+    var lib = this._getDeviceLibrary();
+    if (!lib) {
+      Cu.reportError("Unable to get library for device: " + this._device.id);
+      return;
+    }
+
+    var deviceNeedsLookupPref = "songbird.cdrip." + lib.guid + ".needsLookup";
+    Cu.reportError("Checking for lookup: " + deviceNeedsLookupPref);
+    if (Application.prefs.has(deviceNeedsLookupPref)) {
+      var shouldLookup = Application.prefs.getValue(deviceNeedsLookupPref, false);
+      Cu.reportError("Do lookup? " + shouldLookup);
+      if (shouldLookup) {
+        Application.prefs.setValue(deviceNeedsLookupPref, false);
+        sbCDDeviceUtils.doCDLookUp(this._device);
+      }
+    }
+  },
 
   //----------------------------------------------------------------------------
   // Transcode job status helpers
@@ -830,6 +860,9 @@ window.cdripController =
   },
 
   _getDeviceLibrary: function cdripController_getDeviceLibrary() {
+    if (this._deviceLibrary)
+      return this._deviceLibrary;
+    
     if (!this._device) {
       return null;
     }
@@ -843,13 +876,13 @@ window.cdripController =
     }
 
     // Get the requested library
-    var deviceLibrary = libraries.queryElementAt(0, Ci.sbIMediaList);
-    if (!deviceLibrary) {
+    this._deviceLibrary = libraries.queryElementAt(0, Ci.sbIMediaList);
+    if (!this._deviceLibrary) {
       Cu.reportError("Unable to get library for device: " + aDevice.id);
       return null;
     }
 
-    return deviceLibrary;
+    return this._deviceLibrary;
   },
 
   /**
