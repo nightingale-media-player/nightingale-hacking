@@ -99,7 +99,9 @@ var deviceFirmwareWizard = {
       return false;
     }
 
-    this._deviceFirmwareUpdater.cancel(this._device);
+    if(this._currentOperation != "complete") {
+      this._deviceFirmwareUpdater.cancel(this._device);
+    }
     
     return true;
   },
@@ -349,6 +351,9 @@ var deviceFirmwareWizard = {
         
         if(this._wizardMode == "repair") {
           descStr = SBString("device.firmware.repair.complete.desc");
+          
+          // Automatically close the wizard when in repair mode.
+          this.doFinish();
         }
         else {
           descStr = SBString("device.firmware.wizard.complete.desc");
