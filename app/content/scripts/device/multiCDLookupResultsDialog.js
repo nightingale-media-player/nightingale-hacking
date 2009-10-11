@@ -141,8 +141,8 @@ var multiCDDialog = {
     var index = this._jobResultIndexMap.indexOf(0, job);
     var tracks = this._jobTracksMap[index];
     // album detail calls should only ever have one result
-    var enum = job.getMetadataResults();
-    var result = enum.getNext().QueryInterface(Ci.sbIMetadataAlbumDetail);
+    var enumDetails = job.getMetadataResults();
+    var result = enumDetails.getNext().QueryInterface(Ci.sbIMetadataAlbumDetail);
     tracks.setTrackTitles(ArrayConverter.JSArray(result.tracks).map(getname));
     this._metadataResults[index] = result;
   },
@@ -249,7 +249,7 @@ var multiCDDialog = {
       // Only pad the track count to two digits since a CD can only have
       // up to 99 tracks on it.
       var curTrackNum = this._curTrackIndex++;
-      if (curTrackNum < 10) {
+      if (curTrackNum < 10 && this.library.length >= 10) {
         curTrackNum = "0" + curTrackNum;
       }
       aItem.setProperty(SBProperties.trackName,
