@@ -62,11 +62,10 @@ var deviceErrorMonitorConfig = {
 
 function deviceErrorMonitor () {
   this._initialized = false;
-  this._listenerList = [];
   var obsSvc = Cc['@mozilla.org/observer-service;1']
                  .getService(Ci.nsIObserverService);
 
-  // We want to wait untill profile-after-change to initialize
+  // We want to wait until profile-after-change to initialize
   obsSvc.addObserver(this, 'profile-after-change', false);
   obsSvc.addObserver(this, 'quit-application', false);
 }
@@ -80,7 +79,7 @@ deviceErrorMonitor.prototype = {
 
   // Internal properties
   _deviceList: [],
-  _listenerList: null,
+  _listenerList: [],
   _sbStrings: null,
   
   // Internal functions
@@ -137,8 +136,6 @@ deviceErrorMonitor.prototype = {
   _removeDevice: function deviceErrorMonitor__removeDevice(aDevice) {
     var devIndex = this._findDeviceIndex(aDevice);
     if (devIndex > -1) {
-
-      var device = this._deviceList[devIndex].device;
       this._deviceList.splice(devIndex, 1);
     }
   },
@@ -150,8 +147,8 @@ deviceErrorMonitor.prototype = {
    * \returns index in _deviceList aDevice is located
    */
   _findDeviceIndex: function deviceErrorMonitor__findDeviceIndex(aDevice) {
-    for (var i = 0; i < this._deviceList.length; i++) {
-      if (this._deviceList[i].device == aDevice) {
+    for (var i = 0; i < this._deviceList.length; ++i) {
+      if (this._deviceList[i].device.id.equals(aDevice.id)) {
         return i;
       }
     }
@@ -308,7 +305,7 @@ deviceErrorMonitor.prototype = {
         this._removeDevice(device);
       break;
     
-      // An error has occured, we need to store it for later
+      // An error has occurred, we need to store it for later
       case Ci.sbIDeviceEvent.EVENT_DEVICE_ACCESS_DENIED:
         this._logError(aDeviceEvent,
                        SBString("device.error.access_denied"));

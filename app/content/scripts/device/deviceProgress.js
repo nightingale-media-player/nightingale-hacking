@@ -245,6 +245,7 @@ var DPW = {
   _idleLabel: null,
   _idleErrorsLabel: null,
   _idleBox: null,
+  _deviceErrorMonitor : null,
 
 
   /**
@@ -284,12 +285,11 @@ var DPW = {
     // Initialize the device services.
     this._deviceInitialize();
 
+    this._deviceErrorMonitor =
+                          Cc["@songbirdnest.com/device/error-monitor-service;1"]
+                            .getService(Ci.sbIDeviceErrorMonitor);
     // Start listening for new device errors.
-    var deviceErrorMonitor =
-          Cc["@songbirdnest.com/device/error-monitor-service;1"]
-            .getService(Ci.sbIDeviceErrorMonitor);
-    deviceErrorMonitor.addListener(this);
-
+    this._deviceErrorMonitor.addListener(this);
     // Get the device operation total items and current item index data remotes.
     var createDataRemote = new Components.Constructor(
                                     "@songbirdnest.com/Songbird/DataRemote;1",
@@ -319,11 +319,10 @@ var DPW = {
 
   finalize: function DPW_finalize() {
     // Stop listening for device errors.
-    var deviceErrorMonitor =
-          Cc["@songbirdnest.com/device/error-monitor-service;1"]
-            .getService(Ci.sbIDeviceErrorMonitor);
-    deviceErrorMonitor.removeListener(this);
-
+    if (this._deviceErrorMonitor) {
+      this._deviceErrorMonitor.removeListener(this);
+      this._deviceErrorMonitor = null;
+    }
     // Finalize the device services.
     this._deviceFinalize();
 
@@ -406,10 +405,7 @@ var DPW = {
     var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
     if (oInfo.showIdleMessage) {
       var key = "device.status.progress_complete_" + oInfo.localeSuffix;
-      var deviceErrorMonitor =
-          Cc["@songbirdnest.com/device/error-monitor-service;1"]
-            .getService(Ci.sbIDeviceErrorMonitor);
-      if (deviceErrorMonitor.deviceHasErrors(this._device)) {
+      if (this._deviceErrorMonitor.deviceHasErrors(this._device)) {
         key += "_errors";
         this._idleErrorsLabel.hidden = false;
       } else {
@@ -468,7 +464,7 @@ var DPW = {
 
     params = [ curItemIndex, totalItems ];
     
-    // If we're preparing to sync (indicated by an idle substate)
+    // If we're preparing to sync (indicated by an idle sub)
     // then show the preparing label
     if (operationInfo.preparingOnIdle && (substate == Ci.sbIDevice.STATE_IDLE))
     {
@@ -657,12 +653,15 @@ var DPW = {
 
   _displayErrors: function DPW__displayErrors() {
     try {
-      var deviceErrorMonitor =
-            Cc["@songbirdnest.com/device/error-monitor-service;1"]
-              .getService(Ci.sbIDeviceErrorMonitor);
-      if (deviceErrorMonitor.deviceHasErrors(this._device)) {
-        var errorItems = deviceErrorMonitor.getErrorsForDevice(this._device);
+      if (this._deviceErrorMonitor.deviceHasErrors(this._device)) {
+        var errorItems = 
+          this._deviceErrorMonitor.getErrorsForDevice(this._device);
         var oInfo = this._getOperationInfo(this._lastCompletedEventOperation);
+        // If the previous state is IDLE, we're probably in the middle of an
+        // operation
+        if (this._lastCompletedEventOperation == Ci.sbIDevice.STATE_IDLE) {
+          oInfo = this._getOperationInfo(this._lastEventOperation);
+        }
         WindowUtils.openModalDialog
           (window,
            "chrome://songbird/content/xul/device/deviceErrorDialog.xul",
@@ -751,9 +750,7 @@ var DPW = {
   _checkForErrors: function DPW__checkForErrors() {
     this._progressTextLabel.removeAttribute("error");
     try {
-      var deviceErrorMonitor = Cc["@songbirdnest.com/device/error-monitor-service;1"]
-                                 .getService(Ci.sbIDeviceErrorMonitor);
-      var hasErrors = deviceErrorMonitor.deviceHasErrors(this._device);
+      var hasErrors = this._deviceErrorMonitor.deviceHasErrors(this._device);
       this._progressTextLabel.setAttribute("error", hasErrors);
       if (hasErrors) {
         this._progressInfoBox.hidden = false;
@@ -766,9 +763,7 @@ var DPW = {
 
   _clearDeviceErrors: function DPW__clearDeviceErrors() {
     try {
-      var deviceErrorMonitor = Cc["@songbirdnest.com/device/error-monitor-service;1"]
-                                 .getService(Ci.sbIDeviceErrorMonitor);
-      deviceErrorMonitor.clearErrorsForDevice(this._device);
+      this._deviceErrorMonitor.clearErrorsForDevice(this._device);
       this._idleErrorsLabel.hidden = true;
     } catch (err) {
       Cu.reportError(err);

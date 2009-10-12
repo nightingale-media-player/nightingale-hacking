@@ -255,10 +255,15 @@ sbBaseDeviceLibraryListener::OnItemAdded(sbIMediaList *aMediaList,
                               aMediaItem, aMediaList, aIndex);
     NS_ENSURE_SUCCESS(rv, rv);
   } else {
+    IgnoreMediaItem(aMediaItem);
     // Hide the item. It is the responsibility of the device to make the item
     // visible when the transfer is successful.
     rv = aMediaItem->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
                                  NS_LITERAL_STRING("1"));
+    NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+                     "Failed to hide newly added item");
+
+    UnignoreMediaItem(aMediaItem);
 
     rv = mDevice->PushRequest(sbBaseDevice::TransferRequest::REQUEST_WRITE,
                               aMediaItem, aMediaList, aIndex);
