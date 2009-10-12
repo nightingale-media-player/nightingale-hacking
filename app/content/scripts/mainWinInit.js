@@ -221,6 +221,11 @@ function SBDoFirstRun() {
   // Run first-run directory scan.
   job = SBFirstRunScanDirectories() || job;
 
+  // determine whether to load the media library in the background by preference
+  // so it can be overriden by partners in the distribution.ini
+  var loadMLInBackground =
+          Application.prefs.getValue("songbird.firstrun.load_ml_in_background", false);
+
   // If we are scanning directories or importing a library, 
   // track the progress and show the library on completion.
   // This is done to simplify the display, avoid some bugs,
@@ -235,7 +240,7 @@ function SBDoFirstRun() {
                                           gBrowser.mediaTab,
                                           null,
                                           nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
-                                          true); // Load in the background
+                                          loadMLInBackground);
 
       // Set up the smart playlists after import is complete
       // (improves performance slightly)
@@ -271,7 +276,7 @@ function SBDoFirstRun() {
                                             gBrowser.mediaTab,
                                             null,
                                             nsIWebNavigation.LOAD_FLAGS_REPLACE_HISTORY,
-                                            true); // Load in the background
+                                            loadMLInBackground);
       }
     }
   }

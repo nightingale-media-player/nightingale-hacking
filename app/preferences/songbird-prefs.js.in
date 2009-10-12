@@ -481,3 +481,7 @@ pref("songbird.library_exporter.start_agent", true);
 // CD Rip default prefs:
 pref("songbird.cdrip.oncomplete.autoeject", false);
 pref("songbird.cdrip.oncomplete.notifysound", false);
+
+// First run Media Library loading
+pref("songbird.firstrun.load_ml_in_background", false);
+
