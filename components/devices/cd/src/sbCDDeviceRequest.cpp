@@ -139,11 +139,6 @@ sbCDDevice::ReqHandleRequestAdded()
   mPrefNotifySound = prefBranch.GetBoolPref(PREF_CDDEVICE_NOTIFYSOUND,
                                             PR_FALSE);
 
-  // Get the deviceLibraryGuid for preferences.
-  nsString deviceLibraryGuid;
-  rv = mDeviceLibrary->GetGuid(deviceLibraryGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   // If the batch isn't empty, process the batch
   while (!requestBatch.empty()) {
     // Process each request in the batch
@@ -168,12 +163,6 @@ sbCDDevice::ReqHandleRequestAdded()
           mStatus.ChangeState(STATE_MOUNTING);
           rv = ReqHandleMount(request);
           NS_ENSURE_SUCCESS(rv, rv);
-
-          // Set a pref to indicate to the media view that it needs to perform
-          // a lookup once the view has been loaded.
-          deviceLibraryGuid.AppendLiteral(".needsLookup");
-          prefBranch.SetBoolPref(NS_ConvertUTF16toUTF8(deviceLibraryGuid).get(),
-                                 PR_TRUE);
         break;
 
         case TransferRequest::REQUEST_READ :
@@ -286,13 +275,24 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   // Cancel auto-disconnect.
   autoDisconnect.forget();
 
-  // Log progress.
-  LOG(("Exit sbCDDevice::ReqHandleMount\n"));
+  nsString deviceLibraryGuid;
+  rv = mDeviceLibrary->GetGuid(deviceLibraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set a pref to indicate to the media view that it needs to perform
+  // a lookup once the view has been loaded.
+  deviceLibraryGuid.AppendLiteral(".needsLookup");
+
+  sbPrefBranch prefBranch(PREF_CDDEVICE_RIPBRANCH, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  prefBranch.SetBoolPref(NS_ConvertUTF16toUTF8(deviceLibraryGuid).get(),
+                         PR_TRUE);
 
   // Indicate that the Device is now ready.
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
 
+  LOG(("Exit sbCDDevice::ReqHandleMount\n"));
   return NS_OK;
 }
 

@@ -192,6 +192,10 @@ window.cdripController =
 
   onDeviceEvent: function cdripController_onDeviceEvent(aEvent) {
     switch (aEvent.type) {
+      case Ci.sbIDeviceEvent.EVENT_DEVICE_READY:
+        this._checkIfNeedsLookup();
+        break;
+
       // START CD LOOKUP
       case Ci.sbICDDeviceEvent.EVENT_CDLOOKUP_INITIATED:
         this._toggleLookupNotification(true);
