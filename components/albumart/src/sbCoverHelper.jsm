@@ -472,8 +472,14 @@ var sbCoverHelper = {
    * \brief Sets up a media list to get artwork for each of the items passed in.
    * \param aItemList A nsIArray or nsISimpleEnumerator of sbIMediaItem items.
    * \param aWindow Window to bind to, this can be null.
+   * \param aLibrary The library that these items are from. Optional, default
+   *                 to the main library.
    */
-  getArtworkForItems: function(aItemList, aWindow) {
+  getArtworkForItems: function(aItemList, aWindow, aLibrary) {
+    var library = aLibrary;
+    if (!library)
+      library = LibraryUtils.mainLibrary;
+
     var mediaItems = aItemList;
     if (aItemList instanceof Ci.nsIArray) {
       mediaItems = aItemList.enumerate();
@@ -487,16 +493,15 @@ var sbCoverHelper = {
       Cu.reportError("getArtworkForItems: No items to get artwork for.");
       return;
     }
-    
+
     // Create a hidden playlist temporarily
     var listProperties =
       Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
         .createInstance(Ci.sbIPropertyArray);
     listProperties.appendProperty(SBProperties.hidden, "1");
     listProperties.appendProperty(SBProperties.mediaListName, "Get Artwork");
-    var getArtworkMediaList = LibraryUtils.mainLibrary
-                                          .createMediaList("simple",
-                                                           listProperties);
+    var getArtworkMediaList = library.createMediaList("simple",
+                                                      listProperties);
     // Add all the items to our new hidden temporary playlist
     getArtworkMediaList.addSome(mediaItems);
 
@@ -508,7 +513,7 @@ var sbCoverHelper = {
     var jobProgressListener = {
       onJobProgress: function(aJobProgress) {
         if (aJobProgress.status != Ci.sbIJobProgress.STATUS_RUNNING) {
-          LibraryUtils.mainLibrary.remove(getArtworkMediaList);
+          library.remove(getArtworkMediaList);
           // Remove ourselves so that we do not get called multiple times.
           artworkScanner.removeJobProgressListener(jobProgressListener);
         }

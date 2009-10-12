@@ -783,18 +783,8 @@ window.cdripController =
    * Configure the playlist filter lists
    */
   _clearFilterLists: function cdripController_clearFilterLists() {
-    // Don't use filters for this version. We'll clear them out.
-    var filters = this._mediaListView.cascadeFilterSet;
-
-    for (var i = filters.length - 1; i > 0; i--) {
-     filters.remove(i);
-    }
-    if (filters.length == 0 || !filters.isSearch(0)) {
-      if (filters.length == 1) {
-        filters.remove(0);
-      }
-      filters.appendSearch(["*"], 1);
-    }
+    this._mediaListView.filterConstraint =
+      LibraryUtils.standardFilterConstraint;
   },
   
   /**

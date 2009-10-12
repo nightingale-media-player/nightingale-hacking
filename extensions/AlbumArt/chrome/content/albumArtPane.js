@@ -924,10 +924,12 @@ var AlbumArt = {
   onGetArtwork: function AlbumArt_onGetArtwork() {
     if (AlbumArt._currentState == STATE_SELECTED) {
       // Now Selected
+      var library = AlbumArt._mediaListView.mediaList.library;
       sbCoverHelper.getArtworkForItems(AlbumArt._mediaListView
                                                .selection
                                                .selectedMediaItems,
-                                       window);
+                                       window,
+                                       library);
     } else {
       // Now playing
       var item = AlbumArt.getNowPlayingItem();
@@ -937,7 +939,7 @@ var AlbumArt = {
         var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
                     .createInstance(Ci.nsISupportsInterfacePointer);
         sip.data = ArrayConverter.nsIArray([item]);
-        sbCoverHelper.getArtworkForItems(sip.data, window);
+        sbCoverHelper.getArtworkForItems(sip.data, window, item.library);
       }
     }
   },

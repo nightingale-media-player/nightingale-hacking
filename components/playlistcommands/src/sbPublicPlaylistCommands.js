@@ -1407,7 +1407,8 @@ function plCmd_GetArtwork_TriggerCallback(aContext, aSubMenuId, aCommandId, aHos
     sbCoverHelper.getArtworkForItems(playlist.mediaListView
                                              .selection
                                              .selectedMediaItems,
-                                     null);
+                                     null,
+                                     playlist.library);
   }
 }
 
