@@ -470,16 +470,30 @@ var DPW = {
     {
       localeKey = "device.status.progress_preparing_" + operationLocaleSuffix;
     } else if (operation == Ci.sbIDevice.STATE_TRANSCODE) {
-      params[2] = SBFormattedString(
-        "device.status.progress_header_transcoding_percent_complete",
-        [this._itemProgress.intValue]);
-      localeKey = "device.status.progress_header_transcoding";
+      var progress = this._itemProgress.intValue;
+      if (progress < 0) {
+        // We use a negative value to indicate unknown progress
+        localeKey = "device.status.progress_header_transcoding_unknown";
+      }
+      else {
+        params[2] = SBFormattedString(
+	  "device.status.progress_header_transcoding_percent_complete",
+	  [this._itemProgress.intValue]);
+        localeKey = "device.status.progress_header_transcoding";
+      }
     } else if (operation == Ci.sbIDevice.STATE_SYNCING && 
                substate == Ci.sbIDevice.STATE_TRANSCODE) {
-      params[2] = SBFormattedString(
-        "device.status.progress_header_transcoding_percent_complete",
-        [this._itemProgress.intValue]);
-      localeKey = "device.status.progress_header_transcoding_syncing";
+      var progress = this._itemProgress.intValue;
+      if (progress < 0) {
+        // We use a negative value to indicate unknown progress
+        localeKey = "device.status.progress_header_transcoding_syncing_unknown";
+      }
+      else {
+        params[2] = SBFormattedString(
+	  "device.status.progress_header_transcoding_percent_complete",
+	  [this._itemProgress.intValue]);
+        localeKey = "device.status.progress_header_transcoding_syncing";
+      }
     } else {
       localeKey = "device.status.progress_header_" + operationLocaleSuffix;
     }
@@ -488,7 +502,6 @@ var DPW = {
     this._progressTextLabel.value =
            SBFormattedString(localeKey, params , "");           
   },
-
 
   //----------------------------------------------------------------------------
   //
