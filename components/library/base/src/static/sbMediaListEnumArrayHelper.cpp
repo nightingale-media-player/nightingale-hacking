@@ -45,7 +45,8 @@ nsresult
 sbMediaListEnumArrayHelper::New()
 {
   nsresult rv;
-  mItemsArray = do_CreateInstance("@mozilla.org/array;1", &rv);
+  mItemsArray = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
   return NS_OK;
 }

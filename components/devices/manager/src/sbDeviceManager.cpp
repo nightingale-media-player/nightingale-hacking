@@ -240,7 +240,8 @@ NS_IMETHODIMP sbDeviceManager::GetControllers(nsIArray * *aControllers)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  nsCOMPtr<nsIMutableArray> array = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> array = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 count;

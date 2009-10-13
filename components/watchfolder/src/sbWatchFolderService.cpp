@@ -444,7 +444,7 @@ sbWatchFolderService::GetURIArrayForStringPaths(sbStringSet & aPathsSet,
   nsresult rv;
 
   nsCOMPtr<nsIMutableArray> uriArray =
-    do_CreateInstance("@mozilla.org/array;1", &rv);
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIMediacoreTypeSniffer> typeSniffer =
@@ -632,7 +632,7 @@ sbWatchFolderService::HandleSessionLoadError()
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsIMutableArray> dirArray =
-      do_CreateInstance("@mozilla.org/array;1", &rv);
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
 
     rv = dirArray->AppendElement(watchPathFile, PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1149,7 +1149,8 @@ sbWatchFolderService::OnEnumerationBegin(sbIMediaList *aMediaList,
 {
   if (!mEnumeratedMediaItems) {
     nsresult rv;
-    mEnumeratedMediaItems = do_CreateInstance("@mozilla.org/array;1", &rv);
+    mEnumeratedMediaItems = 
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 

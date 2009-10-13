@@ -956,7 +956,7 @@ var ExternalDropHandler = {
     var xpiArray = {};
     var xpiCount = 0;
 
-    var uriList = this._Cc["@mozilla.org/array;1"]
+    var uriList = this._Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
                       .createInstance(this._Ci.nsIMutableArray);
 
     var ioService = this._Cc["@mozilla.org/network/io-service;1"]

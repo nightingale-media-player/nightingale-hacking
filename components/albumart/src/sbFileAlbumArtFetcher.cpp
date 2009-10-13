@@ -529,7 +529,9 @@ sbFileAlbumArtFetcher::FindAlbumArtFile(sbIMediaItem*        aMediaItem,
     }
     
     // Create an array to cache the image entries we find
-    entriesToBeCached = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+    entriesToBeCached = 
+      do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
   // Search the media item content source directory entries for an album art

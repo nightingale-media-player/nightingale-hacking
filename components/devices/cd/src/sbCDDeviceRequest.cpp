@@ -584,7 +584,8 @@ sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Build out the dialog arguments.
-  nsCOMPtr<nsIMutableArray> args = do_CreateInstance(NS_ARRAY_CONTRACTID, &rv);
+  nsCOMPtr<nsIMutableArray> args = 
+    do_CreateInstance("@songbirdnest.com/moz/xpcom/threadsafe-array;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   // Always send over the device's library.

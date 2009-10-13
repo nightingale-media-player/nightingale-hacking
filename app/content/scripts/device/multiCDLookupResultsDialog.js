@@ -63,7 +63,8 @@ var multiCDDialog = {
 
     this._jobTracksMap = [];
     this._jobResultIndexMap =
-         Cc["@mozilla.org/array;1"].createInstance(Ci.nsIMutableArray);
+         Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+           .createInstance(Ci.nsIMutableArray);
 
     for (i in this._metadataResults)
     {

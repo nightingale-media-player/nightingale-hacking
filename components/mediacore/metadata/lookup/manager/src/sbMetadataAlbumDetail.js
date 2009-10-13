@@ -34,8 +34,8 @@ Cu.import("resource://app/jsmodules/WindowUtils.jsm");
 Cu.import("resource://app/jsmodules/SBTimer.jsm");
 
 function sbMLAlbumDetail() {
-  this._tracks = Cc["@mozilla.org/array;1"]
-    .createInstance(Ci.nsIMutableArray);
+  this._tracks = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
+                   .createInstance(Ci.nsIMutableArray);
 
   this._properties =
     Cc["@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1"]
