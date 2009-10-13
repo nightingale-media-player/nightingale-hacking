@@ -66,6 +66,7 @@ Section "Uninstall"
    Call un.RemoveCdrip
    Call un.RemoveAppRegistryKeys
 
+   ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro un.UninstallFiles
 
    Call un.CleanVirtualStore

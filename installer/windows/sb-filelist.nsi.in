@@ -67,6 +67,15 @@
    
    ; Remove uninstaller
    Delete $INSTDIR\${FileUninstallEXE}
+
+   ; Remove the distribution directory; we unconditionally run this removal,
+   ; since a) that's what we originally did, but also we now run disthelper
+   ; even in non-dist cases (songbird.ini), and since it's just a no-op if
+   ; the directory isn't there, "It's just easier that way."
+   ; This dir doesn't make it into the auto-generated file manifest because
+   ; it's not technically an "app" directory; so, it's not created, and doesn't
+   ; exist when we run the manifest generation tool.
+   RMDir /r $INSTDIR\distribution
  
    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
    ;; I commented this out, because I don't think we *truly* want to do this. 

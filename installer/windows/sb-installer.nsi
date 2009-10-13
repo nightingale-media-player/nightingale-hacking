@@ -42,6 +42,7 @@ Section "-Application" Section1
       StrCpy $LinkIconFile ${PreferredIcon}
    ${EndIf}
 
+   ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro InstallFiles
 
    ${If} $UnpackMode == ${FALSE}
