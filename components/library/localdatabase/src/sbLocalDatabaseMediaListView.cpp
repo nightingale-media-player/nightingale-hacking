@@ -1826,6 +1826,12 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
+  // Clear selection if requested
+  if (aClearTreeSelection) {
+    rv = mSelection->SelectNone();
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   // Invalidate the view array
   rv = Invalidate();
   NS_ENSURE_SUCCESS(rv, rv);
