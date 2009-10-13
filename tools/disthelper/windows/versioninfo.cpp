@@ -57,11 +57,11 @@ struct stringData_t {
 };
 typedef std::map<std::wstring, stringData_t> stringMap_t;
 
-/* macros for pointer alignment */
+/* macros for rounding to 32-bit aligned boundaries */
 /* align down to 32 bit */
-#define ALIGN32_DOWN(x) ((ULONG_PTR)(x) & ~3)
+#define ROUND_DOWN_4(x) ((ULONG_PTR)(x) & ~3)
 /* align up to 32 bit */
-#define ALIGN32_UP(x) (((ULONG_PTR)(x) + 3) & ~3)
+#define ROUND_UP_4(x) (((ULONG_PTR)(x) + 3) & ~3)
 
 int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
 
@@ -72,7 +72,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
   WORD newSize = 0;  // size of array of strings (excluding StringTable header)
   LPCSTR tailer(NULL);
   WORD stringTableOffset(0), // offset from start to StringTable
-       stringFileInfoEndOffset(0), // size of data _after_ StringFileInfo
+       dataAfterStringFileInfoSize(0), // size of data _after_ StringFileInfo
        headerSize(0), // size of everything up to first string
        tailerSize(0); // to start of relevant StringTable
   HANDLE updateRes(NULL);
@@ -139,10 +139,18 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     result = DH_ERROR_PARSE;
     goto CLEANUP;
   }
-  // this is even offset into the structure, yay!
-  stringFileInfoBuffer -= 0x22;
-  // but we have to round it down to be 32bit-aligned
-  stringFileInfoBuffer = (LPSTR)ALIGN32_DOWN(stringFileInfoBuffer);
+
+  /* The pointer returned points to start of the StringTable data (or padding).
+   * We want to find the start of the StringFileInfo structure; this is found at
+   * -34 bytes in this case (6 bytes, plus 14 characters for "StringFileInfo")
+   * without a null terminator; there may also be random bits of padding involved
+   *
+   * This is using undocumented behaviour and really should be rewritten; see
+   * bug 18353
+   */
+  stringFileInfoBuffer -= (sizeof(L"StringFileInfo") - sizeof(L""))
+                          + sizeof(WORD) * 3;
+  stringFileInfoBuffer = (LPSTR)ROUND_DOWN_4(stringFileInfoBuffer);
   if (stringFileInfoBuffer < sourceData) {
     OutputDebugString(_T("Unexpected StringFileInfo buffer"));
     result = DH_ERROR_PARSE;
@@ -157,7 +165,16 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     result = DH_ERROR_PARSE;
     goto CLEANUP;
   }
-  stringFileInfoEndOffset = sourceSize - ((stringFileInfoBuffer - sourceData) + stringFileInfoLength);
+  /* Calculate the size of the data after the StringFileInfo block; note that
+   * this data will need to be aligned on a 4-byte boundary, therefore we need
+   * to round up the size of the StringFileInfo block.  (The offset to the start
+   * of the StringFileInfo block is already aligned.)
+   *
+   * this really needs to go away (see bug 18353)
+   */
+  dataAfterStringFileInfoSize = sourceSize -
+                                ((stringFileInfoBuffer - sourceData) +
+                                 ROUND_UP_4(stringFileInfoLength));
 
   LPSTR stringTableBuffer;
   UINT stringTableLength;
@@ -234,7 +251,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
     }
     buffer += keyLength;
     // the pointer must be 32-bit aligned
-    buffer = (LPCWSTR)ALIGN32_UP(buffer);
+    buffer = (LPCWSTR)ROUND_UP_4(buffer);
     if ((char*)buffer + valueLength * sizeof(std::wstring::value_type) >
         (char*)sourceData + sourceSize) {
       OutputDebugString(_T("Invalid string value length"));
@@ -245,7 +262,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
 
     stringData[key] = stringData_t(value, type, structLength);
 
-    structLength = (structLength + 3) & ~3; // round up to multiple of 4 bytes = 32 bits
+    structLength = ROUND_UP_4(structLength);
     stringTableNext += structLength;
   }
 
@@ -260,7 +277,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
       std::wstring value = ConvertUTF8ToUTF16(it->second);
       WORD length = 3 * sizeof(WORD) + /* struct length + value length + type */
                     (key.length() + 1) * sizeof(WCHAR);
-      length = (length + 3) & ~3; // round to 4 bytes = 32 bits
+      length = ROUND_UP_4(length);
       length += (value.length() + 1) * sizeof(WCHAR);
       stringData[key] = stringData_t(value, 1, length);
     }
@@ -271,7 +288,7 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
                                 end(stringData.end());
     for(stringMap_t::const_iterator it = begin; it != end; ++it) {
       WORD paddedSize = it->second.size;
-      paddedSize = (paddedSize + 3) & ~3; // round to 4 bytes = 32 bits
+      paddedSize = ROUND_UP_4(paddedSize);
       newSize += paddedSize;
     }
     newdata = (LPSTR)malloc(headerSize + newSize + tailerSize);
@@ -293,22 +310,22 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
       pOut += it->first.length() * sizeof(WCHAR);
       *(WCHAR*)pOut = '\0';
       pOut += sizeof(WCHAR);
-      pOut = (LPSTR)((ULONG_PTR)(pOut + 3) & ~3); // round to 32 bits
+      pOut = (LPSTR)ROUND_UP_4(pOut);
       memcpy(pOut, it->second.value.data(), length * sizeof(WCHAR));
       pOut += length * sizeof(WCHAR);
       *(WCHAR*)pOut = '\0';
       pOut += sizeof(WCHAR);
-      pOut = (LPSTR)((ULONG_PTR)(pOut + 3) & ~3); // round to 32 bits
+      pOut = (LPSTR)ROUND_UP_4(pOut);
     }
 
     // fix up the size info
     WORD totalSize = headerSize + newSize + tailerSize;
     // VS_VERSIONINFO->wLength
     *(WORD*)(newdata) = totalSize;
-    WORD stringFileInfoStartOffset = stringFileInfoBuffer - sourceData;
+    WORD dataBeforeStringFileInfoSize = stringFileInfoBuffer - sourceData;
     // StringFileInfo->wLength
-    *(WORD*)(newdata + stringFileInfoStartOffset) =
-      totalSize - stringFileInfoEndOffset - stringFileInfoStartOffset;
+    *(WORD*)(newdata + dataBeforeStringFileInfoSize) =
+      totalSize - dataAfterStringFileInfoSize - dataBeforeStringFileInfoSize;
     // StringTable->wLength
     *(WORD*)(newdata + stringTableOffset) = newSize + 0x18; // account for header size too
   }
