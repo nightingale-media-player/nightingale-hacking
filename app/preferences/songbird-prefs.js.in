@@ -464,9 +464,10 @@ pref("songbird.dbengine.cacheSize", 200);
 //pref("songbird.dbengine.web@library.songbirdnest.com.pageSize", 1024);
 //pref("songbird.dbengine.web@library.songbirdnest.com.cacheSize", 160);
 
+//
+// Manage Files Preferences
+//
 
-
-// library management
 pref("songbird.media_management.library.enabled", false);
 // songbird.media_management.library.format.dir has no default due to platform-
 // specific directory separator character
@@ -475,6 +476,8 @@ pref("songbird.media_management.library.copy", true);
 pref("songbird.media_management.library.move", true);
 pref("songbird.media_management.library.delete", true);
 pref("songbird.media_management.library.rename", true);
+// pad track numbers by default.
+pref("songbird.media_management.library.pad_track_num", true);
 
 pref("songbird.library_exporter.start_agent", true);
 
