@@ -31,7 +31,6 @@ Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/sbCDDeviceUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
-Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 
 if (typeof(Cc) == "undefined")
   var Cc = Components.classes;
@@ -175,6 +174,10 @@ window.cdripController =
   },
 
   onUnload: function cdripController_onUnload() {
+    // Cleanup the medialist listener
+    this._mediaListView.mediaList.removeListener(this._libraryListener);
+    this._libraryListener = null;
+
     this._togglePlayerControls(false);
     if (this._device) {
       var eventTarget = this._device.QueryInterface(Ci.sbIDeviceEventTarget);
@@ -184,10 +187,6 @@ window.cdripController =
 
     this._transcodePrefBranch.removeObserver("", this, false);
     this._transcodePrefBranch = null;
-
-    // Cleanup the medialist listener
-    this._mediaListView.mediaList.removeListener(this._libraryListener);
-    this._libraryListener = null;
   },
 
   onDeviceEvent: function cdripController_onDeviceEvent(aEvent) {
@@ -526,6 +525,11 @@ window.cdripController =
     var mainWin = Cc["@mozilla.org/appshell/window-mediator;1"]
                      .getService(Ci.nsIWindowMediator)
                      .getMostRecentWindow("Songbird:Main");
+    if (!mainWin) {
+      // Shutdown sequence? Don't do anything
+      return;
+    }
+
     for (var i in this.disableTags) {
       var elements = mainWin.document.getElementsByTagName(this.disableTags[i]);
       for (var j=0; j<elements.length; j++) {
@@ -947,8 +951,6 @@ function CDRipLibraryListener(aCallback, aPlaylistObject)
   this._mCallback = aCallback;
   this._mPlaylist = aPlaylistObject;
   this._mTreeBoxObject = aPlaylistObject.tree.boxObject;
-
-  Components.utils.import("resource://app/jsmodules/sbProperties.jsm", this);
 }
 
 CDRipLibraryListener.prototype =
