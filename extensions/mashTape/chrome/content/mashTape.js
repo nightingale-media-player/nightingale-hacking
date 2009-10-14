@@ -887,16 +887,18 @@ mashTape.update = function(artist, album, track) {
 		}
 	}
 
-	mashTape.resetReviewFrame();
-	mashTape.updateEnabledProviders("review");
-	if (Application.prefs.getValue("extensions.mashTape.review.enabled", true))
-	{
-		for (var i=0; i<mashTape.enabledProviders["review"].length; i++) {
-			var clsid = mashTape.enabledProviders["review"][i];
-			var prov = CcID[clsid].createInstance(Ci.sbIMashTapeReviewProvider);
-			var callback = new mashTape.displayCallback(uid);
-			prov.queryFull(artist, album, track, callback);
-			mashTape.pendingCallbacks["review"].pending++;
+	if (mashTape.providers["review"].length > 0) {
+		mashTape.resetReviewFrame();
+		mashTape.updateEnabledProviders("review");
+		if (Application.prefs.getValue("extensions.mashTape.review.enabled", true))
+		{
+			for (var i=0; i<mashTape.enabledProviders["review"].length; i++) {
+				var clsid = mashTape.enabledProviders["review"][i];
+				var prov = CcID[clsid].createInstance(Ci.sbIMashTapeReviewProvider);
+				var callback = new mashTape.displayCallback(uid);
+				prov.queryFull(artist, album, track, callback);
+				mashTape.pendingCallbacks["review"].pending++;
+			}
 		}
 	}
 
