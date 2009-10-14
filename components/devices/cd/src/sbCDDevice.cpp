@@ -28,8 +28,10 @@
 
 #include "sbCDLog.h"
 
+#include <nsArrayUtils.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIClassInfoImpl.h>
+#include <nsICryptoHash.h>
 #include <nsIFileURL.h>
 #include <nsIGenericFactory.h>
 #include <nsIPropertyBag2.h>
@@ -867,9 +869,32 @@ sbCDDevice::Mount()
   // Set the main device library.
   mDeviceLibrary = deviceLibrary;
 
-  // Clear the library out
-  rv = mDeviceLibrary->Clear();
+  // Get the current CD disc hash.
+  nsAutoString cdDiscHash;
+  rv = GetCDDiscHash(mCDDevice, cdDiscHash);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the previous CD disc hash.
+  nsAutoString prevCDDiscHash;
+  rv = mDeviceLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
+                                   prevCDDiscHash);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    prevCDDiscHash.Truncate();
+    rv = NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Clear the library out if the CD disc hash is changing.
+  if (!cdDiscHash.Equals(prevCDDiscHash)) {
+    rv = mDeviceLibrary->Clear();
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                     SBVoidString());
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
+                                     SBVoidString());
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // hide the device library.
   rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
@@ -1077,3 +1102,68 @@ sbCDDevice::ProxyQueryUserViewErrors()
   nsresult rv = sbDeviceUtils::QueryUserViewErrors(this);
   NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not show user view errors!");
 }
+
+nsresult
+sbCDDevice::GetCDDiscHash(sbICDDevice* aCDDevice,
+                          nsAString&   aCDDiscHash)
+{
+  // Validate arguments.
+  NS_ENSURE_ARG_POINTER(aCDDevice);
+
+  // Function variables.
+  nsresult rv;
+
+  // Create a hash object.
+  nsCOMPtr<nsICryptoHash>
+    cryptoHash = do_CreateInstance("@mozilla.org/security/hash;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cryptoHash->Init(nsICryptoHash::MD5);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the disc TOC.
+  nsCOMPtr<sbICDTOC> toc;
+  rv = mCDDevice->GetDiscTOC(getter_AddRefs(toc));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the disc tracks.
+  nsCOMPtr<nsIArray> tracks;
+  rv = toc->GetTracks(getter_AddRefs(tracks));
+  NS_ENSURE_SUCCESS(rv, rv);
+  PRUint32 trackCount;
+  rv = tracks->GetLength(&trackCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Add each track offset to the hash.
+  for (PRUint32 i = 0; i < trackCount; i++) {
+    // Get the next track.
+    nsCOMPtr<sbICDTOCEntry> track = do_QueryElementAt(tracks, i, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Get the track offset.
+    PRInt32 frameOffset;
+    rv = track->GetFrameOffset(&frameOffset);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Add the track offset to the hash.
+    rv = cryptoHash->Update(reinterpret_cast<PRUint8 const *>(&frameOffset),
+                            sizeof(PRInt32));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // Add the lead out track offset to the hash.
+  PRInt32 leadOutOffset;
+  rv = toc->GetLeadOutTrackOffset(&leadOutOffset);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = cryptoHash->Update(reinterpret_cast<PRUint8 const *>(&leadOutOffset),
+                          sizeof(PRInt32));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Return results.
+  nsCString cdDiscHash;
+  rv = cryptoHash->Finish(PR_TRUE, cdDiscHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aCDDiscHash.Assign(NS_ConvertASCIItoUTF16(cdDiscHash));
+
+  return NS_OK;
+}
+

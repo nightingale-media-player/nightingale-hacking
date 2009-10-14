@@ -448,6 +448,19 @@ private:
   nsresult AttemptCDLookup();
 
   /**
+   * Complete the CD lookup job specified by aJob.  If aJob is null, complete as
+   * if the lookup did not return any results.
+   * \param aJob CD lookup job.
+   */
+  nsresult CompleteCDLookup(sbIJobProgress *aJob);
+
+  /**
+   * Handle the update request specified by aRequest.
+   * \param aRequest Update request to handle.
+   */
+  nsresult ReqHandleUpdate(TransferRequest * aRequest);
+
+  /**
    * Method to trigger the CD lookup request.
    */
   void ProxyCDLookup();
@@ -487,6 +500,15 @@ private:
    * Method to trigger the user errors on the main thread.
    */
   void ProxyQueryUserViewErrors();
+
+  /**
+   * Compute and return in aCDDiscHash a hash of the TOC for the CD specified by
+   * aCDDevice.
+   * \param aCDDevice Device for which to compute hash.
+   * \param aCDDiscHash Computed hash.
+   */
+  nsresult GetCDDiscHash(sbICDDevice* aCDDevice,
+                         nsAString&   aCDDiscHash);
 
   /* Override base class to get all profiles, not just those we can write to
    * the CD (i.e. none) */

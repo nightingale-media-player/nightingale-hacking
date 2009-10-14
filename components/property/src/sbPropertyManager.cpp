@@ -1013,6 +1013,18 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
   rv = AddPropertyInfo(propertyInfo);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // CD disc hash.
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
+                    EmptyString(),
+                    stringBundle,
+                    PR_FALSE,
+                    PR_FALSE,
+                    0,
+                    PR_FALSE,
+                    PR_FALSE,
+                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Go To Source
   nsRefPtr<sbOriginPageImagePropertyBuilder> iBuilder = new sbOriginPageImagePropertyBuilder();
   NS_ENSURE_TRUE(iBuilder, NS_ERROR_OUT_OF_MEMORY);

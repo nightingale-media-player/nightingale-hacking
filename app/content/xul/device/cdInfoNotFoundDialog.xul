@@ -187,8 +187,9 @@
         this._artistValue = document.getElementById("artist-textbox").value;
         this._albumValue = document.getElementById("album-textbox").value;
 
-        // Update the device friendly name to use the album name.
-        this._device.properties.friendlyName = this._albumValue;
+        // Update the device library album name.
+        this._deviceLibrary.setProperty(SBProperties.albumName,
+                                        this._albumValue);
 
         this._setEmptyOnly = false;
         this._deviceLibrary.enumerateAllItems(this);

@@ -255,6 +255,11 @@ sbCDDevice::ReqHandleRequestAdded()
           NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lookup CD data!");
           break;
 
+        case TransferRequest::REQUEST_UPDATE:
+          rv = ReqHandleUpdate(request);
+          NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not update CD data!");
+          break;
+
         default :
           NS_WARNING("Unsupported request type.");
           break;
@@ -328,24 +333,19 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   rv = mDeviceStatistics->AddLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Update the device library CD disc hash.
+  nsAutoString cdDiscHash;
+  rv = GetCDDiscHash(mCDDevice, cdDiscHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
+                                   cdDiscHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update status and clear auto-failure.
   autoStatus.SetResult(NS_OK);
 
   // Cancel auto-disconnect.
   autoDisconnect.forget();
-
-  nsString deviceLibraryGuid;
-  rv = mDeviceLibrary->GetGuid(deviceLibraryGuid);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Set a pref to indicate to the media view that it needs to perform
-  // a lookup once the view has been loaded.
-  deviceLibraryGuid.AppendLiteral(".needsLookup");
-
-  sbPrefBranch prefBranch(PREF_CDDEVICE_RIPBRANCH, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  prefBranch.SetBoolPref(NS_ConvertUTF16toUTF8(deviceLibraryGuid).get(),
-                         PR_TRUE);
 
   // Indicate that the Device is now ready.
   CreateAndDispatchEvent(sbIDeviceEvent::EVENT_DEVICE_READY,
@@ -374,6 +374,40 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   SB_CD_DEVICE_AUTO_INVOKE
     (AutoIgnoreMediaListListeners,
      SetIgnoreMediaListListeners(PR_FALSE)) autoIgnoreMediaListListeners(this);
+
+  // Get the current CD disc hash.
+  nsAutoString cdDiscHash;
+  rv = GetCDDiscHash(mCDDevice, cdDiscHash);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the previous CD disc hash.
+  nsAutoString prevCDDiscHash;
+  rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CDDISCHASH),
+                             prevCDDiscHash);
+  if (rv == NS_ERROR_NOT_AVAILABLE) {
+    prevCDDiscHash.Truncate();
+    rv = NS_OK;
+  }
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If the previous CD is being remounted, just set the friendly name and
+  // return.
+  if (cdDiscHash.Equals(prevCDDiscHash)) {
+    nsAutoString albumName;
+    rv = aLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                               albumName);
+    if (NS_SUCCEEDED(rv) && !albumName.IsEmpty()) {
+      rv = mProperties->SetFriendlyName(albumName);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    else {
+      rv = mProperties->SetFriendlyName
+                          (SBLocalizedString("cdrip.lookup.default_albumname"));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
+  }
 
   // Mark the entire device library items as unavailable.
   rv = sbDeviceUtils::BulkSetProperty
@@ -406,6 +440,17 @@ sbCDDevice::UpdateDeviceLibrary(sbIDeviceLibrary* aLibrary)
   PRUint32 mediaItemCount;
   rv = mediaItemList->GetLength(&mediaItemCount);
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Set a pref to indicate to the media view that it needs to perform a lookup
+  // once the view has been loaded.
+  sbPrefBranch prefBranch(PREF_CDDEVICE_RIPBRANCH, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  nsString deviceLibraryGuid;
+  rv = mDeviceLibrary->GetGuid(deviceLibraryGuid);
+  NS_ENSURE_SUCCESS(rv, rv);
+  deviceLibraryGuid.AppendLiteral(".needsLookup");
+  prefBranch.SetBoolPref(NS_ConvertUTF16toUTF8(deviceLibraryGuid).get(),
+                         PR_TRUE);
 
   return NS_OK;
 }
@@ -580,11 +625,10 @@ sbCDDevice::ProxyCDLookup() {
   nsCOMPtr<sbIMetadataLookupProvider> provider;
   rv = mlm->GetDefaultProvider(getter_AddRefs(provider));
 
-  // If there isn't a default provider, go ahead and throw the "no-metadata
-  // found" dialog and return.
+  // If there isn't a default provider, complete the CD lookup as if no results
+  // were available and return.
   if (NS_FAILED(rv) || !provider) {
-    mStatus.ChangeState(STATE_IDLE);  // ignore result, show dialog regardless
-    rv = ShowMetadataLookupDialog(NO_CD_INFO_FOUND_DIALOG_URI, nsnull, PR_TRUE);
+    rv = CompleteCDLookup(nsnull);
     NS_ENSURE_SUCCESS(rv, /* void */);
     return;
   }
@@ -617,10 +661,9 @@ sbCDDevice::ProxyCDLookup() {
     }
   }
   else {
-    // If the metadata lookup provider failed to provide a job, fallback and
-    // show the "no-metadata found" dialog for the user.
-    mStatus.ChangeState(STATE_IDLE);  // ignore result, show dialog regardless
-    rv = ShowMetadataLookupDialog(NO_CD_INFO_FOUND_DIALOG_URI, nsnull, PR_TRUE);
+    // If the metadata lookup provider failed to provide a job, complete CD
+    // lookup as if no results were available.
+    rv = CompleteCDLookup(nsnull);
     NS_ENSURE_SUCCESS(rv, /* void */);
   }
 }
@@ -708,40 +751,31 @@ sbCDDevice::AttemptCDLookup()
   return NS_OK;
 }
 
-/*****
- * sbIJobProgressListener
- *****/
-NS_IMETHODIMP
-sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
+nsresult
+sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
 {
-  NS_ENSURE_ARG_POINTER(aJob);
-
   nsresult rv;
-  PRUint16 jobStatus;
-  rv = aJob->GetStatus(&jobStatus);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Ignore still-running jobs
-  if (jobStatus == sbIJobProgress::STATUS_RUNNING)
-    return NS_OK;
 
   rv = mStatus.ChangeState(STATE_IDLE);
-  aJob->RemoveJobProgressListener(this);
-
-  nsCOMPtr<sbIMetadataLookupJob> metalookupJob = do_QueryInterface(aJob, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint16 numResults = 0;
-  rv = metalookupJob->GetMlNumResults(&numResults);
-  NS_ENSURE_SUCCESS(rv, rv);
-
   nsCOMPtr<nsISimpleEnumerator> metadataResultsEnum;
-  rv = metalookupJob->GetMetadataResults(getter_AddRefs(metadataResultsEnum));
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (aJob) {
+    aJob->RemoveJobProgressListener(this);
 
-  // Dispatch the event to notify listeners that we've finished cdlookup
-  CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_COMPLETED,
-                         sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+    nsCOMPtr<sbIMetadataLookupJob> metalookupJob = do_QueryInterface(aJob, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = metalookupJob->GetMlNumResults(&numResults);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = metalookupJob->GetMetadataResults(getter_AddRefs(metadataResultsEnum));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // Dispatch the event to notify listeners that we've finished cdlookup
+    CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_COMPLETED,
+                           sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+  }
 
   LOG(("Number of metadata lookup results found: %d", numResults));
   // 3 cases to match up
@@ -764,7 +798,7 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
       do_QueryInterface(curItem, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    // Update the device friendly name with the new album name.
+    // Update the device library and friendly name with the new album name.
     nsCOMPtr<sbIMutablePropertyArray> albumProperties;
     rv = albumDetail->GetProperties(getter_AddRefs(albumProperties));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -772,6 +806,10 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
     nsString albumName;
     rv = albumProperties->GetPropertyValue(
         NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME), albumName);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = mDeviceLibrary->SetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                     albumName);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = mProperties->SetFriendlyName(albumName);
@@ -829,7 +867,21 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
         (numResults == 0) ? NO_CD_INFO_FOUND_DIALOG_URI
                           : MULTI_CD_INFO_FOUND_DIALOG_URI,
         metadataResultsEnum,
-        PR_FALSE);
+        aJob ? PR_FALSE : PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  // If the device library album name is not set, set the device friendly name
+  // to the default album name.
+  nsAutoString albumName;
+  rv = mDeviceLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                                   albumName);
+  if ((rv == NS_ERROR_NOT_AVAILABLE) || albumName.IsEmpty()) {
+    rv = mProperties->SetFriendlyName
+                        (SBLocalizedString("cdrip.lookup.default_albumname"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -845,6 +897,53 @@ sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
   // complete event.
   CreateAndDispatchEvent(sbICDDeviceEvent::EVENT_CDLOOKUP_METADATA_COMPLETE,
                          sbNewVariant(NS_ISUPPORTS_CAST(sbIDevice*, this)));
+
+  return NS_OK;
+}
+
+nsresult
+sbCDDevice::ReqHandleUpdate(TransferRequest * aRequest)
+{
+  nsresult rv;
+
+  // See if the updated item is the device library.
+  nsCOMPtr<sbILibrary> library = do_QueryInterface(aRequest->item);
+
+  // Set the device friendly name to the album name if the library was updated.
+  //XXXeps should only do this if the album name changed.
+  if (library) {
+    nsAutoString albumName;
+    rv = library->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
+                              albumName);
+    if (NS_SUCCEEDED(rv) && !albumName.IsEmpty()) {
+      rv = mProperties->SetFriendlyName(albumName);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+
+  return NS_OK;
+}
+
+/*****
+ * sbIJobProgressListener
+ *****/
+NS_IMETHODIMP
+sbCDDevice::OnJobProgress(sbIJobProgress *aJob)
+{
+  NS_ENSURE_ARG_POINTER(aJob);
+
+  nsresult rv;
+  PRUint16 jobStatus;
+  rv = aJob->GetStatus(&jobStatus);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Ignore still-running jobs
+  if (jobStatus == sbIJobProgress::STATUS_RUNNING)
+    return NS_OK;
+
+  // Complete the CD lookup
+  rv = CompleteCDLookup(aJob);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
