@@ -871,12 +871,14 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // If the device library album name is not set, set the device friendly name
+  // If the device library album name is unknown, set the device friendly name
   // to the default album name.
   nsAutoString albumName;
+  PRBool       albumNameUnknown = PR_FALSE;
   rv = mDeviceLibrary->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_ALBUMNAME),
                                    albumName);
   if ((rv == NS_ERROR_NOT_AVAILABLE) || albumName.IsEmpty()) {
+    albumNameUnknown = PR_TRUE;
     rv = mProperties->SetFriendlyName
                         (SBLocalizedString("cdrip.lookup.default_albumname"));
     NS_ENSURE_SUCCESS(rv, rv);
@@ -885,13 +887,15 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Now that we have the main metadata lets start an artwork scan
-  nsCOMPtr<sbIAlbumArtScanner> artworkScanner =
-    do_CreateInstance("@songbirdnest.com/Songbird/album-art/scanner;1", &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  rv = artworkScanner->ScanListForArtwork(mDeviceLibrary);
-  NS_ENSURE_SUCCESS(rv, rv);  
+  // If the album name is known, start an artwork scan.
+  if (!albumNameUnknown) {
+    nsCOMPtr<sbIAlbumArtScanner> artworkScanner =
+      do_CreateInstance("@songbirdnest.com/Songbird/album-art/scanner;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = artworkScanner->ScanListForArtwork(mDeviceLibrary);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   // Now that the metadata has been sorted out, post the metadata lookup
   // complete event.
