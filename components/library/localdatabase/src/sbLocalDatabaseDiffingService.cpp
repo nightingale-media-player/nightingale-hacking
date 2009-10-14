@@ -442,14 +442,14 @@ sbLocalDatabaseDiffingService::CreatePropertyChangesFromProperties(
       }
       // Check if the duration is the same in seconds, that's good enough
       else if (propertyId.EqualsLiteral(SB_PROPERTY_DURATION)) {
-        PRUint32 const sourceDuration = propertyValue.ToInteger(&rv, 10);
+        PRUint64 const sourceDuration = nsString_ToUint64(propertyValue, &rv);
         if (NS_SUCCEEDED(rv)) {
           PRUint64 const destDuration =
             nsString_ToUint64(propertyDestinationValue, &rv);
           // If the duration was parsed and the difference less than a second
           // then treat it as unchanged
           if (NS_SUCCEEDED(rv)
-              && abs(sourceDuration - destDuration) < PR_USEC_PER_SEC) {
+              && labs(sourceDuration - destDuration) < PR_USEC_PER_SEC) {
             continue;
           }
         }
