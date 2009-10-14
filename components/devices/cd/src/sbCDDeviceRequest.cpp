@@ -150,6 +150,8 @@ sbCDDevice::ReqHandleRequestAdded()
         rv = RemoveLibraryItems(iter, end);
         NS_ENSURE_SUCCESS(rv, rv);
 
+        // Don't keep a cached profile after an abort.
+        mTranscodeProfile = nsnull;
         return NS_ERROR_ABORT;
       }
 
@@ -222,6 +224,9 @@ sbCDDevice::ReqHandleRequestAdded()
     // If one of the above operatons returned |NS_ERROR_ABORT|, we need to
     // bail out of this method.
     if (rv == NS_ERROR_ABORT) {
+      // Don't keep a cached profile after an abort.
+      mTranscodeProfile = nsnull;
+
       return rv;
     }
 
