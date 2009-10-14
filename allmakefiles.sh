@@ -81,7 +81,7 @@ update
 echo "allmakefiles.sh: finding makefiles..."
 cd ../
 # Find all Makefile.in file paths, then strip the leading ./ and the trailing .in
-MAKEFILES_auto=`find $SCANNED_MAKEFILE_DIRS -name Makefile.in | perl -e "while (<>) { s/^\.\///; s/\.in\n\$/ /; print;}"`
+MAKEFILES_auto=`find $SCANNED_MAKEFILE_DIRS -name .svn -prune -or -name Makefile.in -print | perl -pe "s/^\.\///; s/\.in\n\$/ /;"`
 cd compiled
 echo "allmakefiles.sh: done"
 
