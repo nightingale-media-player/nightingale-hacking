@@ -82,7 +82,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     OutputDebugString(_T("In Upgrade mode"));
 
     tstring appDir = GetAppDirectory();
-    if (!CheckAspiDriversInstalled(appDir.c_str()))
+    if (CheckAspiDriversInstalled(appDir.c_str()) != RH_OK)
        result = InstallAspiDriver();
     else
        result = RH_SUCCESS_NOACTION;
