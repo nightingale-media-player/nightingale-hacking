@@ -92,6 +92,60 @@ SB_AUTO_CLASS2(sbCDAutoIgnoreItem,
                mValue->UnignoreMediaItem(mValue2),
                mValue = nsnull);
 
+//
+// Auto-sbCDAutoDeviceLocker unlocking class.
+//
+//   sbCDAutoDeviceUnlock   Wrapper class to automatically lock and unlock
+//                          a device.
+//
+class sbCDAutoDeviceLocker
+{
+public:
+  sbCDAutoDeviceLocker(sbICDDevice *aCDDevice)
+    : mCDDevice(aCDDevice)
+  {
+    // Only lock the device if it isn't already locked.
+    if (mCDDevice) {
+      nsresult rv;
+      PRBool isLocked = PR_FALSE;
+      rv = mCDDevice->GetIsDeviceLocked(&isLocked);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+          "Could not get the device lock state!");
+
+      if (!isLocked) {
+        rv = mCDDevice->LockDevice();
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lock the cd device!");
+      }
+      else {
+        // Set the device to |nsnull| here so we don't unlock a device that
+        // we didn't lock.
+        mCDDevice = nsnull;
+      }
+    }
+  }
+
+  virtual ~sbCDAutoDeviceLocker()
+  {
+    // Only unlock the device if it is already locked.
+    if (mCDDevice) {
+      nsresult rv;
+      PRBool isLocked = PR_FALSE;
+      rv = mCDDevice->GetIsDeviceLocked(&isLocked);
+      NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
+          "Could not get the device lock state!");
+
+      if (isLocked) {
+        rv = mCDDevice->UnlockDevice();
+        NS_WARN_IF_FALSE(NS_SUCCEEDED(rv), "Could not lock the cd device!");
+      }
+    }
+  }
+
+private:
+  nsCOMPtr<sbICDDevice> mCDDevice;
+};
+
+//------------------------------------------------------------------------------
 
 nsresult
 sbCDDevice::ReqHandleRequestAdded()
@@ -587,6 +641,10 @@ sbCDDevice::ShowMetadataLookupDialog(const char *aLookupDialogURI,
   NS_ENSURE_SUCCESS(rv, rv);
   rv = windowWatcher->GetActiveWindow(getter_AddRefs(parentWindow));
   NS_ENSURE_SUCCESS(rv, rv);
+
+  // Prevent the device from being ejected while the metadata results dialog
+  // is getting shown. See bug 18354.
+  sbCDAutoDeviceLocker cdDeviceLocker(mCDDevice);
 
   // Build out the dialog arguments.
   nsCOMPtr<nsIMutableArray> args = 
