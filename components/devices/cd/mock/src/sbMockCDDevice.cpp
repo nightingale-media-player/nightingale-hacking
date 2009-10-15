@@ -363,14 +363,6 @@ sbMockCDDevice::GetDiscTOC(sbICDTOC * *aDiscTOC)
 }
 
 NS_IMETHODIMP
-sbMockCDDevice::SetDiscTOC(sbICDTOC * aDiscTOC)
-{
-  mTOC = aDiscTOC;
-  mDiscInserted = PR_TRUE;
-  return NS_OK;
-}
-
-NS_IMETHODIMP
 sbMockCDDevice::GetDiscType(PRUint32 *aDiscType)
 {
   *aDiscType = mDiscType;
@@ -391,6 +383,9 @@ sbMockCDDevice::Eject()
 
   return NS_OK;
 }
+
+//------------------------------------------------------------------------------
+// sbIMockCDDevice
 
 NS_IMETHODIMP
 sbMockCDDevice::Initialize(nsAString const & aName,
@@ -427,6 +422,14 @@ sbMockCDDevice::SetEjected(PRBool aEjected)
 {
   mEjected = aEjected;
 
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbMockCDDevice::SetDiscTOC(sbICDTOC * aDiscTOC)
+{
+  mTOC = aDiscTOC;
+  mDiscInserted = PR_TRUE;
   return NS_OK;
 }
 

@@ -149,7 +149,7 @@ interface sbICDDeviceEvent : sbIDeviceEvent
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(63ec6cfe-1dd2-11b2-81d2-8b303f4f6ada)]
+[scriptable, uuid(9D51DC46-3038-430A-94C5-C98C0C3301E2)]
 interface sbICDDevice : nsISupports
 {
   //
@@ -187,7 +187,7 @@ interface sbICDDevice : nsISupports
   //
   // @brief returns the table of contents of the current CD in the drive
   //
-  attribute sbICDTOC discTOC;
+  readonly attribute sbICDTOC discTOC;
 
   //
   // @brief returns the disc type of the CD in the drive ("audio" or "data")

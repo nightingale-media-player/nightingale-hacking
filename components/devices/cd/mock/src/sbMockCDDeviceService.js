@@ -253,7 +253,7 @@ sbMockCDService.prototype =
         break;
     }
 
-    curCDDevice.discTOC = mockMediaTOC;
+    curCDDevice.setDiscTOC(mockMediaTOC);
     this._onMediaInserted(curCDDevice);
   },
 

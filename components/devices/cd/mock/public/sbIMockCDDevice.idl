@@ -32,12 +32,12 @@
 #include "nsISupports.idl"
 
 interface sbIMockCDDeviceController;
-
+interface sbICDTOC;
 
 /**
  * The Mock TOC interface to setup the TOC object
  */
-[scriptable, uuid(a19f61ee-1dd1-11b2-ae3d-9a561c640054)]
+[scriptable, uuid(1A6C307B-2C9B-45A7-9849-0B95C2247020)]
 interface sbIMockCDTOC : nsISupports
 {
   /**
@@ -90,6 +90,12 @@ interface sbIMockCDDevice : nsISupports
    * denotes whether the disc has been ejected
    */
   attribute boolean ejected;
+
+  /**
+   * Set the TOC of the mock device.
+   * \param aTOC The TOC instance to assign to the mock device.
+   */
+  void setDiscTOC(in sbICDTOC aTOC);
 };
 
 %{C++

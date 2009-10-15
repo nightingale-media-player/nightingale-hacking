@@ -121,7 +121,7 @@ function sbCreateDevice(deviceName, toc)
                       false,
                       null);
   if (toc) {
-    cdDevice.discTOC = toc;
+    cdDevice.setDiscTOC(toc);
   }
   var deviceParams = new Object;
   deviceParams["sbICDDevice"] = cdDevice;
