@@ -204,6 +204,14 @@ sbCDDevice::ReqHandleRequestAdded()
         rv = RemoveLibraryItems(iter, end);
         NS_ENSURE_SUCCESS(rv, rv);
 
+        PRBool isDeviceLocked = PR_FALSE;
+        rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
+        NS_ENSURE_SUCCESS(rv, rv);
+        if (isDeviceLocked) {
+          rv = mCDDevice->UnlockDevice();
+          NS_ENSURE_SUCCESS(rv, rv);
+        }
+
         // Don't keep a cached profile after an abort.
         mTranscodeProfile = nsnull;
         return NS_ERROR_ABORT;
@@ -223,19 +231,6 @@ sbCDDevice::ReqHandleRequestAdded()
 
         case TransferRequest::REQUEST_READ :
           mStatus.ChangeState(STATE_TRANSCODE);
-
-          // Ensure that the device is locked during a read operation.
-          {
-            PRBool isDeviceLocked = PR_FALSE;
-            rv = mCDDevice->GetIsDeviceLocked(&isDeviceLocked);
-            NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                "Could not get device lock state!");
-            if (!isDeviceLocked) {
-              rv = mCDDevice->LockDevice();
-              NS_WARN_IF_FALSE(NS_SUCCEEDED(rv),
-                  "Could not lock the cd device!");
-            }
-          }
 
           rv = ReqHandleRead(request);
           if (rv != NS_ERROR_ABORT) {
@@ -1010,6 +1005,9 @@ sbCDDevice::ReqHandleRead(TransferRequest * aRequest)
                                      (&mStatus,
                                       sbDeviceStatusHelper::OPERATION_TYPE_READ,
                                       aRequest);
+
+  // Ensure that the device is locked during a read operation.
+  sbCDAutoDeviceLocker autoDeviceLocker(mCDDevice);
 
   mStatus.ItemStart(aRequest->list,
                     aRequest->item,
