@@ -200,6 +200,7 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mViewSelection(nsnull),
  mArrayLength(0),
  mManageSelection(PR_FALSE),
+ mHaveSavedSelection(PR_FALSE),
  mMouseState(sbILocalDatabaseTreeView::MOUSE_STATE_NONE),
  mMouseStateRow(-1),
  mSelectionIsAll(PR_FALSE),
@@ -324,6 +325,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
 
   PRBool success = mSelectionList.Init();
   NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+  mHaveSavedSelection = PR_FALSE;
 
   if (aState) {
 #ifdef DEBUG
@@ -347,6 +349,7 @@ sbLocalDatabaseTreeView::Init(sbLocalDatabaseMediaListView* aMediaListView,
       if (!mSelectionIsAll) {
         aState->mSelectionList.EnumerateRead(SB_CopySelectionListCallback,
                                              &mSelectionList);
+        mHaveSavedSelection = PR_TRUE;
       }
     }
   }
@@ -679,6 +682,10 @@ sbLocalDatabaseTreeView::SaveSelectionList()
   NS_ASSERTION(mManageSelection,
                "SaveSelectionList() called but we're not managing selection");
 
+  // Do nothing if selection already saved
+  if (mHaveSavedSelection)
+    return NS_OK;
+
   // If the current selection is everything, don't save anything
   if (mSelectionIsAll) {
     return NS_OK;
@@ -688,6 +695,8 @@ sbLocalDatabaseTreeView::SaveSelectionList()
                                    &mSelectionList);
 
   NS_ENSURE_SUCCESS(rv, rv);
+
+  mHaveSavedSelection = PR_TRUE;
 
   return NS_OK;
 }
@@ -709,7 +718,8 @@ sbLocalDatabaseTreeView::RestoreSelection()
   if (mSelectionIsAll) {
     rv = mRealSelection->Select(0);
     NS_ENSURE_SUCCESS(rv, rv);
-  } else {
+  }
+  else if (mHaveSavedSelection) {
     // Start with an empty selection
     rv = mRealSelection->ClearSelection();
     NS_ENSURE_SUCCESS(rv, rv);
@@ -745,7 +755,9 @@ sbLocalDatabaseTreeView::RestoreSelection()
     // GetSelectedValues (it'll think those values are still selected). So force
     // the array to be empty now.
     mSelectionList.Clear();
+    mHaveSavedSelection = PR_FALSE;
   }
+
   return NS_OK;
 }
 
@@ -872,6 +884,7 @@ sbLocalDatabaseTreeView::ClearSelectionList() {
                "ClearSelectionList() called but we're not managing selection");
 
   mSelectionList.Clear();
+  mHaveSavedSelection = PR_FALSE;
 }
 
 nsresult
@@ -1210,6 +1223,17 @@ sbLocalDatabaseTreeView::OnBeforeInvalidate()
     nsresult rv = SaveSelectionList();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbLocalDatabaseTreeView::OnAfterInvalidate()
+{
+  nsresult rv;
+
+  rv = Rebuild();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

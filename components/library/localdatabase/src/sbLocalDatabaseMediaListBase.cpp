@@ -1150,6 +1150,12 @@ sbLocalDatabaseMediaListBase::OnBeforeInvalidate()
   }
   return NS_OK;
 }
+
+NS_IMETHODIMP
+sbLocalDatabaseMediaListBase::OnAfterInvalidate()
+{
+  return NS_OK;
+}
 NS_IMPL_ISUPPORTS1(sbGUIDArrayValueEnumerator, nsIStringEnumerator)
 
 sbGUIDArrayValueEnumerator::sbGUIDArrayValueEnumerator(sbILocalDatabaseGUIDArray* aArray) :

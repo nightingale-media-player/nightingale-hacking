@@ -658,8 +658,9 @@ sbLocalDatabaseGUIDArray::Invalidate()
     return NS_OK;
   }
 
+  nsresult rv;
+
   if (mListener) {
-    nsresult rv;
     nsCOMPtr<sbILocalDatabaseGUIDArrayListener> listener =
       do_QueryReferent(mListener, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -678,6 +679,16 @@ sbLocalDatabaseGUIDArray::Invalidate()
   }
 
   mValid = PR_FALSE;
+
+  if (mListener) {
+    nsCOMPtr<sbILocalDatabaseGUIDArrayListener>
+      listener = do_QueryReferent(mListener, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (listener) {
+      listener->OnAfterInvalidate();
+    }
+  }
 
   return NS_OK;
 }

@@ -40,10 +40,12 @@ interface sbIPropertyArray;
  * \interface sbILocalDatabaseGUIDArrayListener
  * \brief [USER CODE SHOULD NOT REFERENCE THIS CLASS]
  */
-[scriptable, uuid(d76560b0-b2e7-4935-9d51-1c53a0cfb1a0)]
+[scriptable, uuid(e12181c0-1dd1-11b2-a410-dbc8dda39b6d)]
 interface sbILocalDatabaseGUIDArrayListener : nsISupports
 {
   void onBeforeInvalidate();
+
+  void onAfterInvalidate();
 };
 
 /**

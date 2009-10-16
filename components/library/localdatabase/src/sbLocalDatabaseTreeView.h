@@ -249,6 +249,7 @@ private:
 
   // Saved list of selected rows and associated guids used to restore selection
   // between rebuilds
+  PRBool mHaveSavedSelection;
   sbSelectionList mSelectionList;
 
   // Mouse state

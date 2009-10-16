@@ -164,7 +164,7 @@ sbPropertyArray::QueryElementAt(PRUint32 aIndex,
                                 const nsIID& aIID,
                                 void** _retval)
 {
-  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoLock lock(mArrayLock);
@@ -267,7 +267,7 @@ sbPropertyArray::AppendElement(nsISupports* aElement,
 NS_IMETHODIMP
 sbPropertyArray::RemoveElementAt(PRUint32 aIndex)
 {
-  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
 
   nsAutoLock lock(mArrayLock);
   PRBool success = mArray.RemoveObjectAt(aIndex);
@@ -318,7 +318,7 @@ sbPropertyArray::ReplaceElementAt(nsISupports* aElement,
                                   PRBool aWeak)
 {
   NS_ENSURE_ARG_POINTER(aElement);
-  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
 
   // No support for weak references here
   NS_ENSURE_FALSE(aWeak, NS_ERROR_NOT_IMPLEMENTED);
@@ -429,7 +429,7 @@ NS_IMETHODIMP
 sbPropertyArray::GetPropertyAt(PRUint32 aIndex,
                                sbIProperty** _retval)
 {
-  NS_ENSURE_ARG_MAX(aIndex, (PRUint32) PR_MAX(0, mArray.Count() - 1));
+  NS_ENSURE_ARG(aIndex < static_cast<PRUint32>(mArray.Count()));
   NS_ENSURE_ARG_POINTER(_retval);
 
   nsAutoLock lock(mArrayLock);
