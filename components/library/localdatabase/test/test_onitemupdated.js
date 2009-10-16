@@ -66,5 +66,7 @@ function runTest () {
   prop = listener.properties.getPropertyAt(0);
   assertEqual(prop.id, SB_PROP_ARTISTNAME);
   assertEqual(prop.value, value);
+
+  library.removeListener(listener);
 }
 
