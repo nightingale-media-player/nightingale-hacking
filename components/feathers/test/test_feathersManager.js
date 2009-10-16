@@ -28,6 +28,7 @@
  * \brief FeathersManager test file
  */
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 // Default layouts/skin, read in from the preferences.
 // Used in |previousSkinName()| and |previousLayoutURL()|.
@@ -95,21 +96,19 @@ function restoreDataRemotes() {
 
 
 
-
 /**
- * Generic description object that works for skins and layouts
+ * Creates a generic description object that works for skins and layouts
  */
-function FeathersDescription() {
-  this.wrappedJSObject = this;
-};
-FeathersDescription.prototype = {
-  QueryInterface: function(iid) {
-    if (!iid.equals(Components.interfaces.sbISkinDescription) &&
-        !iid.equals(Components.interfaces.sbILayoutDescription)) 
-      throw Components.results.NS_ERROR_NO_INTERFACE;
-    return this;
-  }
-};
+function newFeathersDescription() {
+  // NOT a constructor because the feathers manager holds on to things for
+  // way too long; by carefully staying out of the scope, we reduce the set of
+  // objects being held via the XPCOM interface (in particular, the global)
+  var o = new Object();
+  o.wrappedJSObject = o;
+  o.QueryInterface = XPCOMUtils.generateQI([Ci.sbISkinDescription,
+                                            Ci.sbILayoutDescription]);
+  return o;
+}
 
 
 /**
@@ -272,32 +271,32 @@ function testDefaultRevert() {
 function submitFeathers()
 {
   // Make some skins
-  var skin = new FeathersDescription();
+  var skin = newFeathersDescription();
   skin.name = "Blue Skin";
   skin.internalName = "blue/1.0";
   skins.push(skin);
   feathersManager.registerSkin(skin);
 
-  skin = new FeathersDescription();
+  skin = newFeathersDescription();
   skin.name = "Red Skin";
   skin.internalName = "red/1.0";
   skins.push(skin);
   feathersManager.registerSkin(skin);
 
-  skin = new FeathersDescription();
+  skin = newFeathersDescription();
   skin.name = "Orange Skin";
   skin.internalName = "orange/1.0";
   skins.push(skin);
   feathersManager.registerSkin(skin);
   
   // Make some layouts
-  var layout = new FeathersDescription();
+  var layout = newFeathersDescription();
   layout.name = "Big Layout";
   layout.url = "chrome://biglayout/content/mainwin.xul";
   layouts.push(layout);
   feathersManager.registerLayout(layout);
   
-  layout = new FeathersDescription();
+  layout = newFeathersDescription();
   layout.name = "Mini Layout";
   layout.url = "chrome://minilayout/content/mini.xul";
   layouts.push(layout);
