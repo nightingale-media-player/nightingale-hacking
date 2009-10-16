@@ -57,7 +57,6 @@
           sbid="filter_tree"
           flex="1"
           onselect="_onFilterListSelect(event);"
-          ondblclick="_onFilterListDblClick(event);"
           ondraggesture="_onFilterListDragGesture(event);"
           ondragover="_onFilterListDragOver(event)"
           ondrop="_onFilterListDrop(event);"
@@ -67,7 +66,7 @@
           <xul:treecols sbid="treeColumns" 
                         type="sb-contextpicker" 
                         xbl:inherits="class"/>
-          <xul:treechildren/>
+          <xul:treechildren ondblclick="_onFilterListDblClick(event);" />
         </xul:tree>
       </xul:stack>
     </content>
@@ -377,6 +376,7 @@
       </method>
 
       <method name="_onFilterListDblClick">
+        <parameter name="event"/>
         <body>
           <![CDATA[
            var mm = 
@@ -390,9 +390,9 @@
            }
 
            // Send a play event and hope someone cares
-           var event = document.createEvent("Events");
-           event.initEvent("Play", true, true);
-           this.dispatchEvent(event);
+           var playEvent = document.createEvent("Events");
+           playEvent.initEvent("Play", true, true);
+           this.dispatchEvent(playEvent);
           ]]>
         </body>
       </method>
