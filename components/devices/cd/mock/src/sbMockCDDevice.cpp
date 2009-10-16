@@ -170,16 +170,8 @@ private:
   PRInt32 mLeadOutTrackOffset;
 };
 
+
 NS_IMPL_THREADSAFE_ISUPPORTS2(sbMockCDTOC, sbICDTOC, sbIMockCDTOC)
-
-NS_IMETHODIMP
-sbMockCDTOC::GetStatus(PRUint16 *aStatus)
-{
-  NS_ENSURE_ARG_POINTER(aStatus);
-
-  *aStatus = sbICDTOC::STATUS_OK;
-  return NS_OK;
-}
 
 NS_IMETHODIMP
 sbMockCDTOC::GetFirstTrackIndex(PRInt32 *aFirstTrackIndex)

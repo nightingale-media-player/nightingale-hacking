@@ -61,26 +61,9 @@ interface sbICDTOCEntry : nsISupports
 //
 //------------------------------------------------------------------------------
 
-[scriptable, uuid(F6099663-F880-4886-A487-42616B6B88AC)]
+[scriptable, uuid(3b3b290a-1dd2-11b2-aabc-9439b224f085)]
 interface sbICDTOC : nsISupports
 {
-  //
-  // @brief All is OK
-  //
-  const unsigned short STATUS_OK = 0x00;
-
-  //
-  // @brief Error happened
-  //
-  const unsigned short STATUS_ERROR = 0x01;
-
-  //
-  // @brief No disc is present in the drive
-  //
-  const unsigned short STATUS_NODISC = 0x02;
-
-  readonly attribute unsigned short status;
-
   //
   // @brief First track index (this value is used for CD database lookup)
   //
