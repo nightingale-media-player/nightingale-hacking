@@ -111,6 +111,7 @@ function runTest() {
       assertEqual(this.onPlaylistCount, 0, "Invalid playlist count for error situation");
       assertEqual(this.onPlaylistsCompleteCount, 0, "Invalid playlist complete count for error situation");
       assertEqual(this.onErrorCount, 1, "Invalid error count for error situation");
+      parser.finalize();
       testFinished();
     },
     onProgress : function() { /* nothing */ },
