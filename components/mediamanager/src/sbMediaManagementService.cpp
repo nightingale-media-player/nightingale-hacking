@@ -792,14 +792,23 @@ sbMediaManagementService::QueueItem(sbIMediaItem* aItem, PRUint32 aOperation)
   }
   #endif
 
-  // Check if we should remove this item
-  nsAutoString deleteFromDisk;
-  rv = aItem->GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#deleteFromDisk"),
-                          deleteFromDisk);
-  NS_ENSURE_SUCCESS(rv, rv);
-  if (!deleteFromDisk.Equals(NS_LITERAL_STRING("1"))) {
-    // No need to queue an item we are not asked to remove from disk.
-    return NS_OK;
+  if (aOperation & sbIMediaFileManager::MANAGE_DELETE) {
+    // Check if we _really_ should remove this item (see bug 17272)
+    nsAutoString deleteFromDisk;
+    rv = aItem->GetProperty(NS_LITERAL_STRING("http://songbirdnest.com/data/1.0#deleteFromDisk"),
+                            deleteFromDisk);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!deleteFromDisk.Equals(NS_LITERAL_STRING("1"))) {
+      #if PR_LOGGING
+        nsString src;
+        rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL), src);
+        TRACE(("%s: item %s not really marked for deletion",
+               __FUNCTION__,
+               src.get()));
+      #endif
+      // No need to queue an item we are not asked to remove from disk.
+      return NS_OK;
+    }
   }
 
   { /* scope */
