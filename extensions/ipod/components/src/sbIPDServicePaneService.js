@@ -830,8 +830,17 @@ IPD_SPS.prototype = {
    */
 
   _removeDevLib: function IPD_SPS__removeDevLib(aLibrary) {
+    // Get the library GUID.  This may fail if the library has already been
+    // removed.  In that case, just return.
+    var libraryGUID;
+    try {
+      libraryGUID = aLibrary.guid;
+    } catch (ex) {
+      return;
+    }
+
     // Remove the device library from the device library map.
-    delete this._devLibMap[aLibrary.guid];
+    delete this._devLibMap[libraryGUID];
 
     // Remove the device library listener.
     aLibrary.removeListener(this);

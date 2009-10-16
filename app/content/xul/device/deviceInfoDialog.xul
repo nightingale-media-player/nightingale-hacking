@@ -46,6 +46,7 @@
  type="songbird"
  buttons="accept"
  onload="DeviceInfoDlg.onLoad();"
+ onunload="DeviceInfoDlg.onUnload();"
  ondialogaccept="onExit();"
 >
 
@@ -127,6 +128,11 @@
         // Get the device ID.
         var deviceID = this._device.id;
 
+        // Listen for device events.
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        deviceManager.addEventListener(this);
+
         // Set the device info element device ID.
         var deviceInfoElem = document.getElementById("device_info");
         deviceInfoElem.setAttribute("device-id", deviceID);
@@ -141,6 +147,44 @@
         // directly.
         var dialogTitlebar = document.getElementById("dialog-titlebar");
         dialogTitlebar.title = title;
+      },
+
+
+      /**
+       * \brief Handle unload events.
+       */
+
+      onUnload: function DeviceInfoDlg_onUnload() {
+        // Remove device event listener.
+        var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
+                              .getService(Ci.sbIDeviceManager2);
+        deviceManager.removeEventListener(this);
+      },
+
+
+      //------------------------------------------------------------------------
+      //
+      // sbIDeviceEventListener functions.
+      //
+      //------------------------------------------------------------------------
+
+      /**
+       * \brief Handle the device event specified by aEvent.
+       *
+       * \param aEvent              Device event.
+       */
+
+      onDeviceEvent: function DeviceInfoDlg_onDeviceEvent(aEvent) {
+        switch(aEvent.type) {
+          case Ci.sbIDeviceEvent.EVENT_DEVICE_REMOVED :
+            // Close dialog if device is removed.
+            if (aEvent.data == this._device)
+              window.close();
+            break;
+
+          default :
+            break;
+        }
       },
 
 
