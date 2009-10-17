@@ -265,6 +265,8 @@ sbCDDevice::ReqHandleRequestAdded()
       }
     }
 
+    PRBool isAborted = (rv == NS_ERROR_ABORT);
+
     // If the device is currently locked, unlock it here.
     // Always unlock before checking the result of the read request.
     PRBool isDeviceLocked = PR_FALSE;
@@ -277,11 +279,10 @@ sbCDDevice::ReqHandleRequestAdded()
 
     // If one of the above operatons returned |NS_ERROR_ABORT|, we need to
     // bail out of this method.
-    if (rv == NS_ERROR_ABORT) {
+    if (isAborted) {
       // Don't keep a cached profile after an abort.
       mTranscodeProfile = nsnull;
-
-      return rv;
+      return NS_ERROR_ABORT;
     }
 
     // Complete the current request and forget auto-completion.
