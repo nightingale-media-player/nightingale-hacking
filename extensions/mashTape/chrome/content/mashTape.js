@@ -175,7 +175,7 @@ mashTape.init = function(e) {
 	var tabpanels = document.getElementById("mashTape-tabpanels");
 	mashTape.displayPane.enableTabs(tabpanels);
 
-	mashTape.iframeLoadCount = 8;
+	mashTape.iframeLoadCount = 0;
 
 	// Setup the display pane maximise button
 	var dpHeader = mashTape.displayPane.tabBar.parentNode;
@@ -240,6 +240,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		// Set a reference to our artist info iframe so we can update it later
 		mashTape.infoFrame = iframe;
@@ -283,6 +284,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		thispanel.actualContent.appendChild(iframe);
 		mashTape.reviewIndexFrame = iframe;
@@ -307,6 +309,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		// Set a reference to our Review iframe so we can update it later
 		// XXX will need to keep track of frames per provider if the user sets
@@ -350,6 +353,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		thispanel.actualContent.appendChild(iframe);
 		mashTape.rssIndexFrame = iframe;
@@ -374,6 +378,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		// Set a reference to our RSS iframe so we can update it later
 		// XXX will need to keep track of frames per provider if the user sets
@@ -413,6 +418,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		mashTape.photoFrame = iframe;
 		thispanel.actualContent.appendChild(iframe);
@@ -454,6 +460,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		thispanel.actualContent.appendChild(iframe);
 		mashTape.flashIndexFrame = iframe;
@@ -480,6 +487,7 @@ mashTape.init = function(e) {
 		// completed loading so we can fire the first update
 		iframe.addEventListener("DOMContentLoaded",
 				mashTape.iframeLoadListener, false);
+	        ++mashTape.iframeLoadCount;
 
 		thispanel.actualContent.appendChild(iframe);
 
