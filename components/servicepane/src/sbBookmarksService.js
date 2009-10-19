@@ -186,8 +186,7 @@ function sbBookmarks_importBookmarks() {
       // we tried, but it's time to give up till the next time the player starts
       // but first, let's create some default bookmarks to get us through
       var default_bookmarks = [
-        {name:'Add-ons', url:'http://addons.songbirdnest.com/'},
-        {name:'Directory', url:'http://birdhouse.songbirdnest.com/directory'}];
+        {name:'Add-ons', url:'http://addons.songbirdnest.com/'}];
       for (var i=0; i<default_bookmarks.length; i++) {
         var bm = default_bookmarks[i];
         var bnode = sps.getNode(bm.url);
