@@ -54,9 +54,13 @@ interface sbIMediaList;
  * \sa sbIJobCancelable
  */
 
-[scriptable, uuid(425be366-9652-4567-bd18-ec2014106e31)]
+[scriptable, uuid(f191a970-2e62-4b51-b495-1875ef7991ef)]
 interface sbIAlbumArtScanner : nsISupports
 {
+  /**
+   * \brief If true, update any artwork already present in media items.
+   */
+  attribute boolean updateArtwork;
 
   /* \brief Try to fetch album art for items in the given Media List.
    * \param aMediaList the list we should scan, null will default to the main

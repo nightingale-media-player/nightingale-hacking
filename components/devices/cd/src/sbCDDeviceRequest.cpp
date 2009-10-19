@@ -889,6 +889,10 @@ sbCDDevice::CompleteCDLookup(sbIJobProgress *aJob)
       do_CreateInstance("@songbirdnest.com/Songbird/album-art/scanner;1", &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Update any artwork already present.
+    rv = artworkScanner->SetUpdateArtwork(PR_TRUE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
     rv = artworkScanner->ScanListForArtwork(mDeviceLibrary);
     NS_ENSURE_SUCCESS(rv, rv);
   }

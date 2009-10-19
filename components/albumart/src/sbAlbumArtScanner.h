@@ -154,6 +154,9 @@ private:
   // Our fetcher set for scanning for album art
   nsCOMPtr<sbIAlbumArtFetcherSet>          mFetcherSet;
 
+  // sbIAlbumArtScanner variables
+  PRBool                                   mUpdateArtwork;
+
   // sbIJobProgress variables
   PRUint16                                 mStatus;
   nsTArray<nsString>                       mErrorMessages;

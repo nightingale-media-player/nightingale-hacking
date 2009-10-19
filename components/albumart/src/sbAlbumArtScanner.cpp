@@ -156,8 +156,8 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
-  // Now create a view and get the filter set so that we can filter/sort the items
-  // Create the view
+  // Now create a view and get the filter set so that we can filter/sort the
+  // items
   rv = mediaList->CreateView(nsnull, getter_AddRefs(mMediaListView));
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -267,6 +267,31 @@ sbAlbumArtScanner::ScanListForArtwork(sbIMediaList* aMediaList)
   NS_ENSURE_SUCCESS(rv, rv);
 
   return rv;
+}
+
+//
+// Getters/setters.
+//
+
+/**
+ * \brief If true, update any artwork already present in media items.
+ */
+
+NS_IMETHODIMP
+sbAlbumArtScanner::GetUpdateArtwork(PRBool* _retval)
+{
+  TRACE(("%s[%.8x] = %d", __FUNCTION__, this, mUpdateArtwork));
+  NS_ENSURE_ARG_POINTER(_retval);
+  *_retval = mUpdateArtwork;
+  return NS_OK;
+}
+
+NS_IMETHODIMP
+sbAlbumArtScanner::SetUpdateArtwork(PRBool aUpdateArtwork)
+{
+  TRACE(("%s[%.8x] = %d", __FUNCTION__, this, aUpdateArtwork));
+  mUpdateArtwork = aUpdateArtwork;
+  return NS_OK;
 }
 
 //------------------------------------------------------------------------------
@@ -597,6 +622,7 @@ sbAlbumArtScanner::OnSearchComplete(nsIArray* aMediaItems)
 
 sbAlbumArtScanner::sbAlbumArtScanner() :
   mIntervalTimerValue(ALBUMART_SCANNER_INTERVAL),
+  mUpdateArtwork(PR_FALSE),
   mStatus(sbIJobProgress::STATUS_RUNNING),
   mCompletedItemCount(0),
   mTotalItemCount(0),
@@ -818,14 +844,16 @@ sbAlbumArtScanner::GetNextAlbumItems()
       }
     }
 
-    // If this item already has album art then we can just skip it.
-    nsString primaryImageUrl;
-    rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
-                           primaryImageUrl);
-    if (NS_FAILED(rv) || !primaryImageUrl.IsEmpty()) {
-      // Move on to the next item
-      mCompletedItemCount++;
-      continue;
+    // If not updating artwork, skip items that already have album art.
+    if (!mUpdateArtwork) {
+      nsString primaryImageUrl;
+      rv = item->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_PRIMARYIMAGEURL),
+                             primaryImageUrl);
+      if (NS_FAILED(rv) || !primaryImageUrl.IsEmpty()) {
+        // Move on to the next item
+        mCompletedItemCount++;
+        continue;
+      }
     }
   
     rv = mCurrentAlbumItemList->AppendElement(NS_ISUPPORTS_CAST(sbIMediaItem *,
