@@ -54,7 +54,9 @@ private:
                               GstElementFactory* aFactory,
                               sbIGStreamerInspectHandler* aHandler);
 
-  ~sbGStreamerService();
+  nsresult GetGStreamerRegistryFile(nsIFile **aOutRegistryFile);
+
+  virtual ~sbGStreamerService();
 };
 
 #endif // _SB_GSTREAMER_SERVICE_H_

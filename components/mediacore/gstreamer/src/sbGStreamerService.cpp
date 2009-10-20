@@ -41,6 +41,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsXULAppAPI.h>
 #include <nsISimpleEnumerator.h>
+#include <nsIObserverService.h>
 
 #if XP_WIN
 #include <windows.h>
@@ -318,14 +319,7 @@ sbGStreamerService::Init()
 
     // Set registry path
     nsCOMPtr<nsIFile> registryPath;
-    rv = directorySvc->Get(NS_APP_USER_PROFILE_50_DIR,
-                           NS_GET_IID(nsIFile),
-                           getter_AddRefs(registryPath));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-0.10"));
-    NS_ENSURE_SUCCESS(rv, rv);
-    rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
+    rv = GetGStreamerRegistryFile(getter_AddRefs(registryPath));
     NS_ENSURE_SUCCESS(rv, rv);
 
     nsString registryPathStr;
@@ -351,6 +345,19 @@ sbGStreamerService::Init()
 
   // Register our custom tags.
   RegisterCustomTags();
+
+  // Listen to any extension manager events to ensure that any protocol handlers
+  // that could potentially come from an extension are recognized.
+  // See |Observe()| for more information.
+  nsCOMPtr<nsIObserverService> observerService =
+    do_GetService("@mozilla.org/observer-service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = observerService->AddObserver(this, "em-action-requested", PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = observerService->AddObserver(this,
+                                    "quit-application-requested",
+                                    PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
@@ -529,11 +536,70 @@ sbGStreamerService::InspectFactoryPads(GstElement* aElement,
   return NS_OK;
 }
 
+nsresult
+sbGStreamerService::GetGStreamerRegistryFile(nsIFile **aOutRegistryFile)
+{
+  NS_ENSURE_ARG_POINTER(aOutRegistryFile);
+  *aOutRegistryFile = nsnull;
+
+  nsresult rv;
+  nsCOMPtr<nsIProperties> directorySvc =
+    do_GetService("@mozilla.org/file/directory_service;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIFile> registryPath;
+  rv = directorySvc->Get(NS_APP_USER_PROFILE_50_DIR,
+                         NS_GET_IID(nsIFile),
+                         getter_AddRefs(registryPath));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = registryPath->Append(NS_LITERAL_STRING("gstreamer-0.10"));
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = registryPath->Append(NS_LITERAL_STRING("registry.bin"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  registryPath.forget(aOutRegistryFile);
+  return NS_OK;
+}
+
 // nsIObserver
 NS_IMETHODIMP
 sbGStreamerService::Observe(nsISupports *aSubject,
                             const char *aTopic,
                             const PRUnichar *aData)
 {
+  nsresult rv;
+  if (!strcmp(aTopic, "em-action-requested")) {
+    nsCOMPtr<nsIFile> registryPath;
+    rv = GetGStreamerRegistryFile(getter_AddRefs(registryPath));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool exists = PR_FALSE;
+    rv = registryPath->Exists(&exists);
+    if (NS_SUCCEEDED(rv) && exists) {
+      // To ensure that any new protocol handlers that might have been packaged
+      // in an extension are picked up by gstreamer, delete the registry file
+      // now. When Songbird restarts the gstreamer registry will be re-generated
+      // automatically. This isn't the most ideal solution but it's the best
+      // case scenario without having to do some major refactoring of the
+      // mediacore startup sequence.
+      // See bug 18216 for the juicy details.
+      rv = registryPath->Remove(PR_FALSE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+  }
+  else if (!strcmp(aTopic, "quit-application-requested")) {
+    // Cleanup listeners
+    nsCOMPtr<nsIObserverService> observerService =
+      do_GetService("@mozilla.org/observer-service;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = observerService->RemoveObserver(this, aTopic);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = observerService->RemoveObserver(this, "em-action-requested");
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
   return NS_OK;
 }
