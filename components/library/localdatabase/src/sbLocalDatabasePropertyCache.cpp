@@ -985,15 +985,15 @@ nsresult DirtyPropertyEnumerator::Process(PRUint32 aDirtyPropertyKey)
     // First, account for Top Level Properties.
     nsCOMPtr<sbIDatabasePreparedStatement> topLevelPropertyUpdate;
     if (!mIsLibrary) {
-      PRBool success = mCache->mMediaItemsUpdatePreparedStatements.Get(aDirtyPropertyKey,
-                                                                       getter_AddRefs(topLevelPropertyUpdate));
+      success = mCache->mMediaItemsUpdatePreparedStatements.Get(aDirtyPropertyKey,
+                                                                getter_AddRefs(topLevelPropertyUpdate));
     }
     else {
-      PRBool success = mCache->mLibraryMediaItemUpdatePreparedStatements.Get(aDirtyPropertyKey,
-                                                                             getter_AddRefs(topLevelPropertyUpdate));
+      success = mCache->mLibraryMediaItemUpdatePreparedStatements.Get(aDirtyPropertyKey,
+                                                                      getter_AddRefs(topLevelPropertyUpdate));
     }
-
     NS_ENSURE_TRUE(success, NS_ERROR_UNEXPECTED);
+
     rv = mQuery->AddPreparedStatement(topLevelPropertyUpdate);
     NS_ENSURE_SUCCESS(rv,rv);
 
