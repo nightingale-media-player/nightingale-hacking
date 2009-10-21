@@ -395,8 +395,19 @@ int CommandSetVersionInfo(std::string aExecutable, IniEntry_t& aSection) {
   void *initialData = sourceData;
   int initialDataSize = reinterpret_cast<char*>(stringTableBuffer) -
                         reinterpret_cast<char*>(sourceData);
+
+  /* This is a bit tricky. The stringTableLength may (on input) not be a
+     multiple of four. So stringTableBuffer + stringTableLength might point
+     at some padding. If instead we round this up to a multiple of 4, we get
+     a pointer to the actual _data_ following our string table.
+
+     However, we don't re-introduce this padding (if required) on the way out
+     - because of the specific way we build the string table itself, we end up
+     including the padding in there, so the string table itself is always a
+     multiple of four.
+   */
   void *followingData = reinterpret_cast<char*>(stringTableBuffer) +
-                        stringTableLength;
+                        ROUND_UP_4 (stringTableLength);
   int followingDataSize = reinterpret_cast<char*>(sourceData) + sourceSize -
                           reinterpret_cast<char*>(followingData);
 
