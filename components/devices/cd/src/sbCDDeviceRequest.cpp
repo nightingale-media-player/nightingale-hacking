@@ -329,6 +329,12 @@ sbCDDevice::ReqHandleMount(TransferRequest* aRequest)
   rv = mDeviceStatistics->AddLibrary(mDeviceLibrary);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Set the library as an album.
+  rv = mDeviceLibrary->SetProperty
+                         (NS_LITERAL_STRING(SB_PROPERTY_ISALBUM),
+                          NS_LITERAL_STRING("1"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
   // Update the device library CD disc hash.
   nsAutoString cdDiscHash;
   rv = GetCDDiscHash(mCDDevice, cdDiscHash);

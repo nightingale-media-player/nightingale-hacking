@@ -303,7 +303,7 @@ var AlbumArt = {
                      albumArtSelectedImage,
                      albumArtNotSelectedBox,
                      albumArtSelectedDragBox,
-                     (AlbumArt._mediaListView.selection.count > 0));
+                     (AlbumArt.getSelection().count > 0));
   },
   
   /**
@@ -561,7 +561,7 @@ var AlbumArt = {
    * \param aNewImageUrl - new string url of file to set cover to on each item.
    */
   setSelectionsCover: function AlbumArt_setSelectionsCover(aNewImageUrl) {
-    var selection = AlbumArt._mediaListView.selection;
+    var selection = AlbumArt.getSelection();
     var multipleItems = false;
     
     // First check through all the items to see if they are the same or not
@@ -690,6 +690,30 @@ var AlbumArt = {
 
     // Clear the now selected media item.
     AlbumArt._nowSelectedMediaItem = null;
+  },
+
+  /**
+   * \brief This will get the current media item selection.
+   * \return Current media item selection.
+   */
+  getSelection: function AlbumArt_getSelection() {
+    // Get the media list view selection.
+    var selection = AlbumArt._mediaListView.selection;
+
+    // If nothing is selected, and the current media list is an album media
+    // list, return a selection of all media list view items.
+    if (selection.count == 0) {
+      var mediaList = AlbumArt._mediaListView.mediaList;
+      if (mediaList.getProperty(SBProperties.isAlbum) == "1") {
+        var mediaListViewClone = AlbumArt._mediaListView.clone();
+        mediaListViewClone.selection.selectAll();
+        if (mediaListViewClone.selection.count > 0)
+          mediaListViewClone.selection.currentIndex = 0;
+        return mediaListViewClone.selection;
+      }
+    }
+
+    return selection;
   },
 
   /**
@@ -925,8 +949,7 @@ var AlbumArt = {
     if (AlbumArt._currentState == STATE_SELECTED) {
       // Now Selected
       var library = AlbumArt._mediaListView.mediaList.library;
-      sbCoverHelper.getArtworkForItems(AlbumArt._mediaListView
-                                               .selection
+      sbCoverHelper.getArtworkForItems(AlbumArt.getSelection()
                                                .selectedMediaItems,
                                        window,
                                        library);
@@ -961,7 +984,7 @@ var AlbumArt = {
    */
   onSelectionChanged: function AlbumArt_onSelectionChanged() {
     // Get the new now selected media item
-    var selection = AlbumArt._mediaListView.selection;
+    var selection = AlbumArt.getSelection();
     var curImageUrl = null;
     var item = selection.currentMediaItem;
     

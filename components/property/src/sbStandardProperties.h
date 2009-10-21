@@ -114,6 +114,7 @@
 #define SB_PROPERTY_SHOULDRIP                 "http://songbirdnest.com/data/1.0#shouldRip"
 /* boolean: true if the media is DRM protected; false/empty otherwise */
 #define SB_PROPERTY_ISDRMPROTECTED            "http://songbirdnest.com/data/1.0#isDRMProtected"
+#define SB_PROPERTY_ISALBUM                   "http://songbirdnest.com/data/1.0#isAlbum"
 
 // Device library specific properties
 #define SB_PROPERTY_DEVICE_PERSISTENT_ID      "http://songbirdnest.com/data/1.0#deviceId"
