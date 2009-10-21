@@ -185,7 +185,8 @@ sbLocalDatabaseMediaListView::sbLocalDatabaseMediaListView(sbLocalDatabaseLibrar
   mDefaultSortProperty(aDefaultSortProperty),
   mMediaListId(aMediaListId),
   mListenerTableLock(nsnull),
-  mInvalidatePending(PR_FALSE)
+  mInvalidatePending(PR_FALSE),
+  mInitializing(PR_FALSE)
 {
   NS_ASSERTION(aLibrary, "aLibrary is null");
   NS_ASSERTION(aMediaList, "aMediaList is null");
@@ -246,7 +247,7 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
 
   nsCOMPtr<sbILocalDatabaseMediaListViewState> state;
   if (aState) {
-    state = do_QueryInterface(aState, &rv);
+    state = do_QueryInterface(aState, &rv);;
     NS_ENSURE_SUCCESS(rv, NS_ERROR_INVALID_ARG);
   }
 
@@ -310,10 +311,15 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
   rv = CreateQueries();
   NS_ENSURE_SUCCESS(rv, rv);
 
+  mInitializing = PR_TRUE;
+
   nsRefPtr<sbLocalDatabaseMediaListViewSelectionState> selectionState;
-  nsCOMPtr<sbIMutablePropertyArray> sort;
   if (state) {
+    nsCOMPtr<sbIMutablePropertyArray> sort;
     rv = state->GetSort(getter_AddRefs(sort));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = SetSort(sort);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = state->GetSearch(getter_AddRefs(mViewSearch));
@@ -325,8 +331,24 @@ sbLocalDatabaseMediaListView::Init(sbIMediaListViewState* aState)
     rv = state->GetSelection(getter_AddRefs(selectionState));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+  else {
+    nsCOMPtr<sbIMutablePropertyArray> sort;
+    sort = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = SetSortInternal(sort);
+    rv = sort->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = sort->AppendProperty(mDefaultSortProperty, NS_LITERAL_STRING("a"));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = SetSort(sort);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  mInitializing = PR_FALSE;
+
+  rv = UpdateListener(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsString guid;
@@ -1097,12 +1119,17 @@ sbLocalDatabaseMediaListView::UpdateListener(PRBool aRemoveListener)
 {
   nsresult rv;
 
+  // Do nothing if initializing
+  if (mInitializing) {
+    return NS_OK;
+  }
+
   nsCOMPtr<sbIMediaListListener> listener =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediaListListener*, this));
 
   if (aRemoveListener) {
     rv = mMediaList->RemoveListener(listener);
-    return rv;
+    NS_ENSURE_SUCCESS(rv, rv);
   }
 
 /*
@@ -1125,7 +1152,9 @@ sbLocalDatabaseMediaListView::UpdateListener(PRBool aRemoveListener)
                                PR_TRUE,
                                sbIMediaList::LISTENER_FLAGS_ALL,
                                nsnull);
-  return rv;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
 }
 
 void
@@ -1368,47 +1397,11 @@ sbLocalDatabaseMediaListView::GetCurrentSort(sbIPropertyArray** aCurrentSort)
 NS_IMETHODIMP
 sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
 {
+  NS_ENSURE_ARG_POINTER(aSort);
+
   nsresult rv;
-  rv = SetSortInternal(aSort);
+  rv = ClonePropertyArray(aSort, getter_AddRefs(mViewSort));
   NS_ENSURE_SUCCESS(rv, rv);
-
-  // Invalidate the view array
-  rv = Invalidate();
-  NS_ENSURE_SUCCESS(rv, rv);
-}
-
-NS_IMETHODIMP
-sbLocalDatabaseMediaListView::SetSortInternal(sbIPropertyArray* aSort)
-{
-  nsresult rv;
-
-  if (aSort)
-  {
-    rv = ClonePropertyArray(aSort, getter_AddRefs(mViewSort));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-  else
-  {
-    mViewSort = do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = mViewSort->SetStrict(PR_FALSE);
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
-
-  nsCOMPtr<nsIArray> array = do_QueryInterface(mViewSort, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  PRUint32 length;
-  rv = array->GetLength(&length);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  if (!length)
-  {
-    rv = mViewSort->AppendProperty(mDefaultSortProperty,
-                                   NS_LITERAL_STRING("a"));
-    NS_ENSURE_SUCCESS(rv, rv);
-  }
 
   rv = UpdateViewArrayConfiguration(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1434,9 +1427,23 @@ sbLocalDatabaseMediaListView::ClearSort()
     rv = array->Clear();
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = SetSort(nsnull);
+    nsCOMPtr<sbIMutablePropertyArray> propertyArray =
+      do_QueryInterface(mViewSort, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propertyArray->SetStrict(PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = propertyArray->AppendProperty(mDefaultSortProperty,
+                                       NS_LITERAL_STRING("a"));
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  rv = UpdateViewArrayConfiguration(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = UpdateListener();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   // And notify listeners
   NotifyListenersSortChanged();
@@ -1652,6 +1659,11 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
 {
   nsresult rv;
 
+  // Do nothing if initializing
+  if (mInitializing) {
+    return NS_OK;
+  }
+
   rv = mArray->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
@@ -1819,6 +1831,10 @@ sbLocalDatabaseMediaListView::UpdateViewArrayConfiguration(PRBool aClearTreeSele
     rv = mSelection->SelectNone();
     NS_ENSURE_SUCCESS(rv, rv);
   }
+
+  // Invalidate the view array
+  rv = Invalidate();
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }
