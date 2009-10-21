@@ -163,6 +163,8 @@ private:
 
   void NotifyListenersInternal(ListenerFunc aListenerFunc);
 
+  nsresult SetSortInternal(sbIPropertyArray* aSort);
+
 private:
   nsRefPtr<sbLocalDatabaseLibrary> mLibrary;
 
@@ -217,10 +219,6 @@ private:
 
   // True when we should invalidate when batching ends
   PRPackedBool mInvalidatePending;
-
-  // If true, changing the sort/search/filter will not update the view array
-  // configuration or listener settings
-  PRPackedBool mInitializing;
 
   nsRefPtr<sbLocalDatabaseMediaListViewSelection> mSelection;
   /**
