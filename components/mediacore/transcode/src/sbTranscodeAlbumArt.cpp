@@ -115,6 +115,7 @@ sbTranscodeAlbumArt::Init(sbIMediaItem *aItem, nsIArray *aImageFormats)
                             imageURI,
                             NS_PROXY_SYNC | NS_PROXY_ALWAYS,
                             getter_AddRefs(proxiedURI));
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRBool isResource;
   rv = proxiedURI->SchemeIs("resource", &isResource);
