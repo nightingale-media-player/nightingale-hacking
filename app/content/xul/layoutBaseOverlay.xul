@@ -327,6 +327,10 @@
                   key="faceplate.playing"
                   attribute="label"
                   onchange="return (value == '0' ? '&menu.control.play;' : '&menu.control.pause;')" />
+        <observes type="dataremote"
+                  key="faceplate.playing"
+                  attribute="accesskey"
+                  onchange="return (value == '0' ? '&menu.control.play.accesskey;' : '&menu.control.pause.accesskey;')" />
       </broadcaster>
       <broadcaster id="controlModeShuffle" >
         <observes type="dataremote"

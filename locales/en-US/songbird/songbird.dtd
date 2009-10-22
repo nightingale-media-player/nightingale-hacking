@@ -259,6 +259,7 @@
 
 <!ENTITY menu.controls.accesskey      "C" >
 <!ENTITY menu.control.play.accesskey  "P" >
+<!ENTITY menu.control.pause.accesskey "P" >
 <!ENTITY menu.control.next.accesskey  "N" >
 <!ENTITY menu.control.prev.accesskey  "R" >
 <!ENTITY menu.control.shuf.accesskey  "S" >
