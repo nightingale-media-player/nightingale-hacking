@@ -55,6 +55,8 @@ window.mediaPage = {
     // The sb-playlist XBL binding
   _playlist: null, 
     
+    // Collection of splitters  
+  _splitters: [],
   
   /** 
    * Gets the sbIMediaListView that this page is displaying
@@ -266,7 +268,6 @@ window.mediaPage = {
     var cfs = this.mediaListView.cascadeFilterSet;
     var length = cfs.length;
     var filters = [];
-    this._splitters = [];
     
     for (var i = 0; i < length; i++) {
       // If this is a search then keep going.
