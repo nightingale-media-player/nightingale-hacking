@@ -125,7 +125,7 @@ sbLocalDatabaseCascadeFilterSet::Init(sbLocalDatabaseLibrary* aLibrary,
   rv = mProtoArray->ClearSorts();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AppendDefaultFilters(mProtoArray);
+  rv = ApplyConstraintFilters(mProtoArray);
   NS_ENSURE_SUCCESS(rv, rv);
 
   rv = mProtoArray->SetIsDistinct(PR_TRUE);
@@ -937,7 +937,7 @@ sbLocalDatabaseCascadeFilterSet::ConfigureArray(PRUint32 aIndex)
   rv = fs.array->ClearFilters();
   NS_ENSURE_SUCCESS(rv, rv);
 
-  rv = AppendDefaultFilters(fs.array);
+  rv = ApplyConstraintFilters(fs.array);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<sbIPropertyManager> propMan =
@@ -1116,32 +1116,78 @@ sbLocalDatabaseCascadeFilterSet::UpdateListener(PRBool aRemoveListener)
 }
 
 nsresult
-sbLocalDatabaseCascadeFilterSet::AppendDefaultFilters(sbILocalDatabaseGUIDArray* aArray)
+sbLocalDatabaseCascadeFilterSet::ApplyConstraintFilters(sbILocalDatabaseGUIDArray* aArray)
 {
   nsresult rv;
 
-  // Set the filter not to show lists or hidden items
-  nsAutoTArray<nsString, 1> values;
-  nsString* appended = values.AppendElement(NS_LITERAL_STRING("0"));
-  NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
+  nsCOMPtr<sbILibraryConstraint> constraint;
 
-  nsCOMPtr<nsIStringEnumerator> valuesEnum =
-    new sbTArrayStringEnumerator(&values);
-  NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
+  // ask the media list view for the constraints
+  if (mMediaListView) {
+    rv = mMediaListView->GetFilterConstraint(getter_AddRefs(constraint));
+    if (NS_FAILED(rv)) {
+      constraint = nsnull;
+    }
+  }
 
-  rv = aArray->AddFilter(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
-                         valuesEnum,
-                         PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
+  if (!constraint) {
+    // no constraints set, use the standard
+    nsAutoTArray<nsString, 1> values;
+    nsString* appended = values.AppendElement(NS_LITERAL_STRING("0"));
+    NS_ENSURE_TRUE(appended, NS_ERROR_OUT_OF_MEMORY);
 
-  valuesEnum = new sbTArrayStringEnumerator(&values);
-  NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
+    nsCOMPtr<nsIStringEnumerator> valuesEnum =
+      new sbTArrayStringEnumerator(&values);
+    NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
 
-  rv = aArray->AddFilter(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
-                         valuesEnum,
-                         PR_FALSE);
-  NS_ENSURE_SUCCESS(rv, rv);
-  
+    rv = aArray->AddFilter(NS_LITERAL_STRING(SB_PROPERTY_ISLIST),
+                           valuesEnum,
+                           PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+   
+    valuesEnum = new sbTArrayStringEnumerator(&values);
+    NS_ENSURE_TRUE(valuesEnum, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = aArray->AddFilter(NS_LITERAL_STRING(SB_PROPERTY_HIDDEN),
+                           valuesEnum,
+                           PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  }
+  else {
+
+    nsCOMPtr<nsISimpleEnumerator> groupEnum;
+    rv = constraint->GetGroups(getter_AddRefs(groupEnum));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool hasMore;
+    while (NS_SUCCEEDED(groupEnum->HasMoreElements(&hasMore)) && hasMore) {
+      nsCOMPtr<nsISupports> groupSupports;
+      rv = groupEnum->GetNext(getter_AddRefs(groupSupports));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCOMPtr<sbILibraryConstraintGroup> group(do_QueryInterface(groupSupports));
+      NS_ENSURE_TRUE(group, NS_ERROR_NO_INTERFACE);
+
+      nsCOMPtr<nsIStringEnumerator> propEnum;
+      rv = group->GetProperties(getter_AddRefs(propEnum));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      while (NS_SUCCEEDED(propEnum->HasMore(&hasMore)) && hasMore) {
+        nsString prop;
+        rv = propEnum->GetNext(prop);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<nsIStringEnumerator> valueEnum;
+        rv = group->GetValues(prop, getter_AddRefs(valueEnum));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = aArray->AddFilter(prop, valueEnum, PR_FALSE);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+    }
+  }
+
   return NS_OK;
 }
 

@@ -128,7 +128,7 @@ private:
 
   nsresult UpdateListener(PRBool aRemoveListener = PR_TRUE);
 
-  nsresult AppendDefaultFilters(sbILocalDatabaseGUIDArray* aArray);
+  nsresult ApplyConstraintFilters(sbILocalDatabaseGUIDArray* aArray);
 
   // This callback is meant to be used with mListeners.
   // aUserData should be a sbICascadeFilterSetListener pointer.
