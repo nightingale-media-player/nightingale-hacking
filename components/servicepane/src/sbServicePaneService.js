@@ -757,20 +757,31 @@ function ServicePaneService_getNodesByAttributeNS(aNamespace, aName, aValue) {
 
 ServicePaneService.prototype.sortNode =
 function ServicePaneService_sortNode(aNode) {
-  // move node to the end of the service pane.
-  this._root.appendChild(aNode);
-
-  // sort the node by its weight.
+  // Determine the correct position of the node by its weight
   var value = parseInt(aNode.getAttributeNS(SP, 'Weight'));
-  while (aNode.previousSibling) {
-    var prev_value =
-        parseInt(aNode.previousSibling.getAttributeNS(SP, 'Weight'));
-    if (prev_value > value) {
-      this._root.insertBefore(aNode, aNode.previousSibling);
-    } else {
+  var insertBefore = null;
+  var prevNode = null;
+  var enumerator = this._root.childNodes;
+  while (enumerator.hasMoreElements()) {
+    var current = enumerator.getNext();
+    var currentValue = parseInt(current.getAttributeNS(SP, 'Weight'));
+    if (currentValue > value) {
+      insertBefore = current;
       break;
     }
+    prevNode = current;
   }
+
+  if (prevNode && prevNode.id == aNode.id) {
+    // The node is already in the right place, nothing to do
+    return;
+  }
+
+  // Add the node
+  if (insertBefore)
+    this._root.insertBefore(aNode, insertBefore);
+  else
+    this._root.appendChild(aNode);
 }
 
 ServicePaneService.prototype.save =
