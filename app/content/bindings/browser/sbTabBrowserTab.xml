@@ -628,6 +628,10 @@
                 self.outerPlaylistShowing = true;
               }
               self.scanProgress = job.progress/job.total;
+
+              var event = document.createEvent("Events");
+              event.initEvent("ScanProgressChange", true, false);
+              self.dispatchEvent(event);
             }
           });
 

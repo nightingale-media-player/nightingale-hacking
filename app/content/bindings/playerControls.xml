@@ -1685,7 +1685,10 @@
       </xul:hbox>
     </content>
 
-    <implementation>
+    <implementation implements="nsIDOMEventListener,
+                                sbIMediaListViewListener,
+                                sbIMediaListListener,
+                                nsISupportsWeakReference">
       <constructor>
         if (typeof(TimeFormatter) == "undefined") {
           Components.utils.import("resource://app/jsmodules/sbTimeFormatter.jsm");
@@ -1698,32 +1701,67 @@
             throw new Error("Import of StorageFormatter module failed");
         }
 
-        this.setInterval();
+        this.addListeners();
       </constructor>
 
       <destructor>
-        clearInterval( this._interval );
+        this.removeListeners();
       </destructor>
 
-      <method name="setInterval">
+      <method name="addListeners">
         <body>
           <![CDATA[
-            this._interval = setInterval( this.onInterval, 1000, this );
+            var browser = window.gBrowser;
+            if (browser) {
+              browser.addEventListener("TabContentChange", this, false);
+              browser.tabContainer.addEventListener("ScanProgressChange",
+                                                    this, false);
+            }
+            else {
+              let self = this;
+              window.addEventListener("load",
+                                      function() self.addListeners(), false);
+            }
           ]]>
         </body>
       </method>
 
-      <method name="onInterval">
-        <parameter name="that"/>
+      <method name="removeListeners">
         <body>
           <![CDATA[
-            // Look at what I do to have the correct 'this' pointer!  Woo!
-            that.doInterval();
+            var browser = window.gBrowser;
+            if (browser) {
+              browser.removeEventListener("TabContentChange", this, false);
+              browser.tabContainer.removeEventListener("ScanProgressChange",
+                                                       this, false);
+            }
+
+            if (this.previousMediaListView) {
+              this.previousMediaListView.removeListener(this);
+              this.previousMediaListView.mediaList.removeListener(this);
+            }
           ]]>
         </body>
       </method>
 
-      <method name="doInterval">
+      <field name="updateDisplayTimeout">null</field>
+      <method name="updateDisplayAsync">
+        <body>
+          <![CDATA[
+            // If we have changes following up in quick succession,
+            // only update once and asynchronously
+            if (this.updateDisplayTimeout)
+              window.clearTimeout(this.updateDisplayTimeout);
+
+            this.updateDisplayTimeout = window.setTimeout(function(that) {
+              that.updateDisplayTimeout = null;
+              that.updateDisplay();
+            }, 1000, this);
+          ]]>
+        </body>
+      </method>
+
+      <method name="updateDisplay">
         <body>
           <![CDATA[
             var label = document.getAnonymousElementByAttribute(this, "sbid", "label");
@@ -1764,10 +1802,7 @@
                   for ( var i = 0; i < length; i++) {
                     item = mediaListView.getItemByIndex(i);
                     totalDuration += item.getProperty(SBProperties.duration)/1000000;
-
-                    uri = item.contentSrc;
-                    if (uri instanceof Components.interfaces.nsIFileURL)
-                      totalSize += uri.file.fileSize;
+                    totalSize += item.contentLength;
                   }
 
                   displayValue += ", " + TimeFormatter.formatSingle(totalDuration) +
@@ -1778,6 +1813,108 @@
               }
             }
             label.setAttribute('value', displayValue);
+          ]]>
+        </body>
+      </method>
+
+      <field name="previousMediaListView">null</field>
+
+      <!-- nsIDOMEventListener -->
+      <method name="handleEvent">
+        <parameter name="event"/>
+        <body>
+          <![CDATA[
+            if (event.type == "TabContentChange") {
+              var browser = window.gBrowser;
+              var mediaListView = (browser ? browser.currentMediaListView : null);
+              if (mediaListView == this.previousMediaListView)
+                return;
+
+              if (this.previousMediaListView) {
+                this.previousMediaListView.removeListener(this);
+                this.previousMediaListView.mediaList.removeListener(this);
+              }
+              if (mediaListView) {
+                const sbIML = Components.interfaces.sbIMediaList;
+                mediaListView.addListener(this, true);
+                mediaListView.mediaList.addListener(this, true,
+                                                    sbIML.LISTENER_FLAGS_ITEMADDED |
+                                                    sbIML.LISTENER_FLAGS_AFTERITEMREMOVED |
+                                                    sbIML.LISTENER_FLAGS_LISTCLEARED |
+                                                    sbIML.LISTENER_FLAGS_BATCHEND);
+              }
+              this.previousMediaListView = mediaListView;
+
+              if (mediaListView)
+                this.updateDisplayAsync();
+              else
+                this.updateDisplay();
+            }
+            else if (event.type == "ScanProgressChange") {
+              // Scan status needs to be updated synchronously
+              if (window.gBrowser && event.target == window.gBrowser.mCurrentTab)
+                this.updateDisplay();
+            }
+          ]]>
+        </body>
+      </method>
+
+      <!-- sbIMediaListViewListener -->
+      <method name="onFilterChanged">
+        <parameter name="changedView"/>
+        <body>
+          <![CDATA[
+            this.updateDisplayAsync();
+          ]]>
+        </body>
+      </method>
+      <method name="onSearchChanged">
+        <parameter name="changedView"/>
+        <body>
+          <![CDATA[
+            this.updateDisplayAsync();
+          ]]>
+        </body>
+      </method>
+      <method name="onSortChanged">
+        <parameter name="changedView"/>
+        <body/>
+      </method>
+
+      <!-- sbIMediaListListener -->
+      <method name="onItemAdded">
+        <parameter name="mediaList"/>
+        <parameter name="mediaItem"/>
+        <parameter name="index"/>
+        <body>
+          <![CDATA[
+            this.updateDisplayAsync();
+          ]]>
+        </body>
+      </method>
+      <method name="onAfterItemRemoved">
+        <parameter name="mediaList"/>
+        <parameter name="mediaItem"/>
+        <parameter name="index"/>
+        <body>
+          <![CDATA[
+            this.updateDisplayAsync();
+          ]]>
+        </body>
+      </method>
+      <method name="onListCleared">
+        <parameter name="mediaList"/>
+        <body>
+          <![CDATA[
+            this.updateDisplayAsync();
+          ]]>
+        </body>
+      </method>
+      <method name="onBatchEnd">
+        <parameter name="mediaList"/>
+        <body>
+          <![CDATA[
+            this.updateDisplayAsync();
           ]]>
         </body>
       </method>
