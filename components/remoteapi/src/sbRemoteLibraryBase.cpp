@@ -159,7 +159,13 @@ public:
                             mediaList,
                             getter_AddRefs(wrappedList));
       NS_ENSURE_SUCCESS(rv, rv);
-      mCallback->OnCreated(wrappedList);
+      mCallback->OnCreated(wrappedList); // ignore the return value
+
+      /* The observer is only ever called on playlist creation, so we don't
+       * need to hang on to the callback; clear it out now to help reduce
+       * leakage (this lets things be GCed earlier).
+       */
+      mCallback = nsnull;
     }
 
     return NS_OK;
