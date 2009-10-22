@@ -613,6 +613,7 @@
         <parameter name="aDefaultLocation"/>
         <parameter name="aMediaListView"/>
         <parameter name="aPageURL"/>
+        <parameter name="aForcePageURL"/>
         <body>
           <![CDATA[
             // If we weren't passed a view, create one
@@ -620,7 +621,9 @@
               aMediaListView = LibraryUtils.createStandardMediaListView(aMediaList);
             }
 
-            aPageURL = this._getMediaPageURL(aMediaList, aPageURL);
+            if (!aForcePageURL) {
+              aPageURL = this._getMediaPageURL(aMediaList, aPageURL);
+            }
 
             // if no default location specified, load in the media tab (if available)
             var defaultLocation = aDefaultLocation;

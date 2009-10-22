@@ -102,7 +102,8 @@ var SBSessionStore = {
             urls.push({
                 listGUID: mediaList.guid,
                 libraryGUID: mediaList.library.guid,
-                pageURL: tab.linkedBrowser.currentURI.spec
+                pageURL: tab.linkedBrowser.currentURI.spec,
+                isOnlyView: tab.mediaPage.isOnlyView
               });
           }
         // For all other pages, just keep the URI
@@ -246,7 +247,7 @@ var SBSessionStore = {
             // not available, just go to the library.
             var list = LibraryUtils.mainLibrary;
           }
-          newTab = aTabBrowser.loadMediaList(list, null, location, null, url);
+          newTab = aTabBrowser.loadMediaList(list, null, location, null, url, tab.isOnlyView);
           
         // Otherwise just reload the URL
         } else {

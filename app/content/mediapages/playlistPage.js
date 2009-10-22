@@ -77,6 +77,12 @@ window.mediaPage = {
       throw new Error("mediaListView may only be set once.  Please reload the page");
     }
   },
+
+
+  /**
+   * Called to check whether this page is the only possible view for the data.
+   */
+  get isOnlyView() false,
     
     
   /** 

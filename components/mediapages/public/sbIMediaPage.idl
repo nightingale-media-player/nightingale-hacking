@@ -45,7 +45,7 @@ interface nsIDragSession;
  *
  * \sa sbIMediaListView, sbIMediaList, playlistPage.xul
  */
-[scriptable, uuid(b9e3c190-d35e-11dc-95ff-0800200c9a66)]
+[scriptable, uuid(0f1e6280-bed3-11de-8a39-0800200c9a66)]
 interface sbIMediaPage : nsISupports
 {
 
@@ -60,6 +60,12 @@ interface sbIMediaPage : nsISupports
    * Note that the mediaListView should not be set again after load.
    */
   attribute sbIMediaListView mediaListView;
+
+  /**
+   * \brief Should be true if the media page is the only allowed view for
+   *        the data.
+   */
+  readonly attribute PRBool isOnlyView;
 
   /**
    * \brief Tell the page to make the MediaItem at the given index visible and highlighted.

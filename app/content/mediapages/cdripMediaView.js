@@ -927,6 +927,8 @@ MediaPageImpl.prototype = {
   },
   set mediaListView(value) {},
 
+  get isOnlyView() true,
+
   highlightItem: function(aIndex) {
     window.cdripController._playlist.highlightItem(aIndex);
   },

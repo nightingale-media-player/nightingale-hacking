@@ -291,7 +291,8 @@
             return; // Do nothing until loading is complete.  This avoids flickering.
           }
 
-          if (gBrowser.currentMediaPage || mediaPageURL) {
+          var mediaPage = gBrowser.currentMediaPage;
+          if ((mediaPage && !mediaPage.isOnlyView) || mediaPageURL) {
             button.setAttribute("disabled", "false");
           }
           else {
