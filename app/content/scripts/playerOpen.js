@@ -235,8 +235,27 @@ try
      // Use a nsIURI because it is safer and contains the scheme etc...
       var ios = Components.classes["@mozilla.org/network/io-service;1"]
                           .getService(Components.interfaces.nsIIOService);
+      var url = url_open_data.URL;
+      var uri = null;
+      var isLocal = false;
+
+      if (getPlatformString() == "Windows_NT") {
+        // Handle the URL starts with something like "c:\"
+        isLocal = /^.:/.test(url);
+      } else {
+        // URL starts with "/" on MacOS/Linux/OpenSolaris
+        isLocal = (url[0] == '/');
+      }
+
       try {
-        var uri = ios.newURI(url_open_data.URL, null, null);
+        if (isLocal) {
+          var file = Components.classes["@mozilla.org/file/local;1"]
+                               .createInstance(Ci.nsILocalFile);
+          file.initWithPath(url);
+          uri = ios.newFileURI(file);
+        } else {
+          uri = ios.newURI(url, null, null);
+        }
       }
       catch(e) {
         // Bad URL :(
