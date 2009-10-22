@@ -66,10 +66,10 @@ Section "Uninstall"
    Call un.RemoveCdrip
    Call un.RemoveAppRegistryKeys
 
+   Call un.CleanVirtualStore
+
    ; This macro is hiding in sb-filelist.nsi.in
    !insertmacro un.UninstallFiles
-
-   Call un.CleanVirtualStore
 
    ; Refresh desktop.
    System::Call "shell32::SHChangeNotify(i, i, i, i) v (0x08000000, 0, 0, 0)"
