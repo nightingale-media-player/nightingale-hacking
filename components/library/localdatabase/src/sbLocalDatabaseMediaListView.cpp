@@ -1363,7 +1363,7 @@ sbLocalDatabaseMediaListView::GetCurrentSort(sbIPropertyArray** aCurrentSort)
   return NS_OK;
 }
 
-NS_IMETHODIMP
+nsresult
 sbLocalDatabaseMediaListView::SetSort(sbIPropertyArray* aSort)
 {
   nsresult rv;
