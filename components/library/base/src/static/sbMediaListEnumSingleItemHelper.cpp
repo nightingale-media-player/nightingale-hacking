@@ -64,6 +64,8 @@ sbMediaListEnumSingleItemHelper::OnEnumerationBegin(sbIMediaList *aMediaList,
                                                     PRUint16 *_retval)
 {
   NS_ENSURE_ARG_POINTER(_retval);
+  mItem = nsnull;
+  mList = nsnull;
   *_retval = sbIMediaListEnumerationListener::CONTINUE;
   return NS_OK;
 }

@@ -247,6 +247,12 @@ CPlaylistReaderManager.prototype =
 
   read: function(aFile, aMediaList, aContentType, aAddDistinctOnly)
   {
+    if (!this.originalURI) {
+      var ioService = Cc["@mozilla.org/network/io-service;1"]
+                        .getService(Ci.nsIIOService);
+      this.originalURI = ioService.newFileURI(aFile);
+    }
+
     var theExtension = this.getFileExtension(aFile);
     for (var r in this.m_Readers)
     {

@@ -32,10 +32,11 @@
 #include <pratom.h>
 #include <nsServiceManagerUtils.h>
 #include <nsComponentManagerUtils.h>
+#include <nsStringAPI.h>
+#include <sbMemoryUtils.h>
 
 #include <sbILibrary.h>
 #include <sbILibraryManager.h>
-#include <nsStringAPI.h>
 
 class sbIMediaItem;
 class sbILibrary;
@@ -177,6 +178,22 @@ nsresult GetMainLibraryId(nsAString & aLibraryId) {
   
   return mainLibrary->GetGuid(aLibraryId);
 }
+
+//
+// Auto-disposal class wrappers.
+//
+//   sbAutoRemoveMediaItem      Wrapper to auto-remove a media item from its
+//                              library.
+//
+
+SB_AUTO_NULL_CLASS(sbAutoRemoveMediaItem,
+                   nsCOMPtr<sbIMediaItem>,
+                   {
+                     nsCOMPtr<sbILibrary> library;
+                     nsresult rv = mValue->GetLibrary(getter_AddRefs(library));
+                     if (NS_SUCCEEDED(rv))
+                       library->Remove(mValue);
+                   });
 
 #endif // __SBLIBRARYUTILS_H__
 
