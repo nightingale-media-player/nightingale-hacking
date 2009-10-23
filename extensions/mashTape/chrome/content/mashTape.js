@@ -84,6 +84,34 @@ mashTape.log = function(msg) {
 	mtUtils.log("mashTape", msg);
 }
 
+mashTape.controlDisplayPane = function(url) {
+        var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
+                      .getService(Ci.nsIWindowMediator)
+                      .getMostRecentWindow('Songbird:Main').window.document;
+        var splitterId = mashTape.displayPane.getAttribute("splitter");
+        var dpSplitter = mainDoc.getElementById(splitterId);
+
+        if ((gBrowser &&
+             gBrowser.currentMediaListView &&
+             gBrowser.selectedTab == gBrowser.mediaTab) ||
+             url.spec.indexOf("chrome://shoutcast-radio/") == 0)
+        {
+                // expose the mashTape display pane
+                mashTape.displayPane.collapsed = false;
+                if (mashTape.expanded) {
+                        dpSplitter.setAttribute("collapse", "before");
+                        dpSplitter.setAttribute("state", "collapsed");
+                }
+        } else {
+                // collapse the mashTape display pane
+                mashTape.displayPane.collapsed = true;
+                if (mashTape.expanded) {
+                        dpSplitter.setAttribute("collapse", "after");
+                        dpSplitter.setAttribute("state", "open");
+                }
+        }
+},
+
 /*
  * Initialisation routine to get our various providers and initialise our
  * tab panels
@@ -105,6 +133,8 @@ mashTape.init = function(e) {
 			.getService(Ci.sbIDisplayPaneManager);
 	var dpInstantiator = displayPaneMgr.getInstantiatorForWindow(window);
 	mashTape.displayPane = dpInstantiator.displayPane;
+
+	mashTape.controlDisplayPane(gBrowser.currentURI);
 
 	// Load our strings
 	mashTape.strings = Components.classes["@mozilla.org/intl/stringbundle;1"]
@@ -2426,30 +2456,7 @@ mashTape.locationListener = {
 		if (typeof(mashTape) == "undefined") {
 			return;
 		}
-		var mainDoc = Cc['@mozilla.org/appshell/window-mediator;1']
-			.getService(Ci.nsIWindowMediator)
-			.getMostRecentWindow('Songbird:Main').window.document;
-		var splitterId = mashTape.displayPane.getAttribute("splitter");
-		var dpSplitter = mainDoc.getElementById(splitterId);
-
-		if ((gBrowser.currentMediaListView &&
-					gBrowser.selectedTab == gBrowser.mediaTab) ||
-	  			url.spec.indexOf("chrome://shoutcast-radio/") == 0)
-		{
-			// expose the mashTape display pane
-			mashTape.displayPane.collapsed = false;
-			if (mashTape.expanded) {
-				dpSplitter.setAttribute("collapse", "before");
-				dpSplitter.setAttribute("state", "collapsed");
-			}
-		} else {
-			// collapse the mashTape display pane
-			mashTape.displayPane.collapsed = true;
-			if (mashTape.expanded) {
-				dpSplitter.setAttribute("collapse", "after");
-				dpSplitter.setAttribute("state", "open");
-			}
-		}
+		mashTape.controlDisplayPane(url);
 	},
 	onProgressChange: function() {return 0;},
 	onStatusChange: function() {return 0;},
