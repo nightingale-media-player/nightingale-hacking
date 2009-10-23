@@ -120,9 +120,15 @@ private:
   
   /**
    * Processes video capabilities specified under the video node
-   * \param aVideNode The vidoe DOM node to process
+   * \param aVideoNode The video DOM node to process
    */
   nsresult ProcessVideo(nsIDOMNode * aVideoNode);
+
+  /**
+   * Processes playlist capabilities specified under the playlist node
+   * \param aPlaylistNode The playlist DOM node to process
+   */
+  nsresult ProcessPlaylist(nsIDOMNode * aPlaylistNode);
 };
 
 #endif /* SBDEVICEXMLCAPABILITIES_H_ */

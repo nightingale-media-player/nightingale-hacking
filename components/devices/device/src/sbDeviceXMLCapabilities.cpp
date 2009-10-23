@@ -148,16 +148,20 @@ sbDeviceXMLCapabilities::ProcessDeviceCaps(nsIDOMNode * aDevCapNode)
       rv = domNode->GetNodeName(name);
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if (name.EqualsLiteral("audio")) {
+      if (name.Equals(NS_LITERAL_STRING("audio"))) {
         rv = ProcessAudio(domNode);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      else if (name.EqualsLiteral("image")) {
+      else if (name.Equals(NS_LITERAL_STRING("image"))) {
         rv = ProcessImage(domNode);
         NS_ENSURE_SUCCESS(rv, rv);
       }
-      else if (name.EqualsLiteral("video")) {
+      else if (name.Equals(NS_LITERAL_STRING("video"))) {
         rv = ProcessVideo(domNode);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else if (name.Equals(NS_LITERAL_STRING("playlist"))) {
+        rv = ProcessPlaylist(domNode);
         NS_ENSURE_SUCCESS(rv, rv);
       }
     }
@@ -619,3 +623,58 @@ sbDeviceXMLCapabilities::ProcessVideo(nsIDOMNode * aVideoNode)
   // XXX TODO Implement once we do videos
   return NS_OK;
 }
+
+nsresult
+sbDeviceXMLCapabilities::ProcessPlaylist(nsIDOMNode * aPlaylistNode)
+{
+  NS_ENSURE_ARG_POINTER(aPlaylistNode);
+
+  nsCOMPtr<nsIDOMNodeList> domNodes;
+  nsresult rv = aPlaylistNode->GetChildNodes(getter_AddRefs(domNodes));
+  NS_ENSURE_SUCCESS(rv, rv);
+  if (!domNodes) {
+    return NS_OK;
+  }
+
+  PRUint32 nodeCount;
+  rv = domNodes->GetLength(&nodeCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if (nodeCount == 0) {
+    return NS_OK;
+  }
+  //XXXeps it shouldn't be specific to audio. MEDIA_PLAYBACK???
+  rv = AddFunctionType(sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = AddContentType(sbIDeviceCapabilities::FUNCTION_AUDIO_PLAYBACK,
+                      sbIDeviceCapabilities::CONTENT_PLAYLIST);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMNode> domNode;
+  for (PRUint32 nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+    rv = domNodes->Item(nodeIndex, getter_AddRefs(domNode));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsString name;
+    rv = domNode->GetNodeName(name);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    if (!name.EqualsLiteral("format")) {
+      continue;
+    }
+
+    sbDOMNodeAttributes attributes(domNode);
+
+    nsString mimeType;
+    rv = attributes.GetValue(NS_LITERAL_STRING("mime"),
+                             mimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = AddFormat(sbIDeviceCapabilities::CONTENT_PLAYLIST, mimeType);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  return NS_OK;
+}
+

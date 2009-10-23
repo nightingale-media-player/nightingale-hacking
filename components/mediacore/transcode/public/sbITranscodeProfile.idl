@@ -40,11 +40,11 @@ interface nsIFile;
  *       
  * \sa sbITranscodeJob
  */
-[scriptable, uuid(fcab13ea-56f1-403e-9aa9-fc3b6281b69e)]
+[scriptable, uuid(ec495b79-aeb3-4257-8aa6-a803603bc67c)]
 interface sbITranscodeProfile : nsISupports
 {
   // Types of transcode profile.
-  const unsigned long TRANSCODE_TYPE_UKNOWN = 0;
+  const unsigned long TRANSCODE_TYPE_UNKNOWN = 0;
   const unsigned long TRANSCODE_TYPE_AUDIO = 1;
   const unsigned long TRANSCODE_TYPE_VIDEO = 2;
   const unsigned long TRANSCODE_TYPE_AUDIO_VIDEO = 3;

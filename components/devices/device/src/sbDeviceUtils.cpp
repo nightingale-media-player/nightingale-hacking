@@ -892,41 +892,44 @@ sbDeviceUtilsQueryUserSpaceExceeded::Query(sbIDevice*        aDevice,
 sbExtensionToContentFormatEntry_t const
 MAP_FILE_EXTENSION_CONTENT_FORMAT[] = {
   /* audio */
-  { "mp3",  "audio/mpeg",      "id3",  "mp3",    sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wma",  "audio/x-ms-wma",  "asf",  "wmav2",  sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aac",  "audio/aac",       "mov",  "aac",    sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "m4a",  "audio/aac",       "mov",  "aac",    sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aa",   "audio/audible",   "",     "",       sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "oga",  "application/ogg", "ogg",  "flac",   sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "ogg",  "application/ogg", "ogg",  "vorbis", sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "flac", "audio/x-flac",    "",     "flac",   sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "wav",  "audio/x-wav",     "wav",  "pcm-int",sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aiff", "audio/x-aiff",    "aiff", "pcm-int",sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
-  { "aif",  "audio/x-aiff",    "aiff", "pcm-int",sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "mp3",  "audio/mpeg",      "id3",  "mp3",    sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wma",  "audio/x-ms-wma",  "asf",  "wmav2",  sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aac",  "audio/aac",       "mov",  "aac",    sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "m4a",  "audio/aac",       "mov",  "aac",    sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aa",   "audio/audible",   "",     "",       sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "oga",  "application/ogg", "ogg",  "flac",   sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "ogg",  "application/ogg", "ogg",  "vorbis", sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "flac", "audio/x-flac",    "",     "flac",   sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "wav",  "audio/x-wav",     "wav",  "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aiff", "audio/x-aiff",    "aiff", "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
+  { "aif",  "audio/x-aiff",    "aiff", "pcm-int",sbIDeviceCapabilities::CONTENT_AUDIO, sbITranscodeProfile::TRANSCODE_TYPE_AUDIO },
 
   /* video */
-  { "mp4",  "video/mp4",       "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "mpg",  "video/mpeg",      "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "mpeg", "video/mpeg",      "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "wmv",  "video/x-ms-wmv",  "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "avi",  "video/x-msvideo", "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "3gp",  "video/3gpp",      "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "3g2",  "video/3gpp",      "",    "",      sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "mp4",  "video/mp4",       "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "mpg",  "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "mpeg", "video/mpeg",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "wmv",  "video/x-ms-wmv",  "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "avi",  "video/x-msvideo", "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "3gp",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "3g2",  "video/3gpp",      "",    "",      sbIDeviceCapabilities::CONTENT_VIDEO, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
 
   /* images */
-  { "png",  "image/png",      "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "jpg",  "image/jpeg",     "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "gif",  "image/gif",      "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "bmp",  "image/bmp",      "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "ico",  "image/x-icon",   "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "tiff", "image/tiff",     "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "tif",  "image/tiff",     "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "wmf",  "application/x-msmetafile", "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "jp2",  "image/jp2",      "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "jpx",  "image/jpx",      "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "fpx",  "application/vnd.netfpx", "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "pcd",  "image/x-photo-cd", "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
-  { "pict", "image/pict",     "", "", sbITranscodeProfile::TRANSCODE_TYPE_VIDEO }
+  { "png",  "image/png",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "jpg",  "image/jpeg",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "gif",  "image/gif",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "bmp",  "image/bmp",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "ico",  "image/x-icon",   "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "tiff", "image/tiff",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "tif",  "image/tiff",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "wmf",  "application/x-msmetafile", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "jp2",  "image/jp2",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "jpx",  "image/jpx",      "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "fpx",  "application/vnd.netfpx", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "pcd",  "image/x-photo-cd", "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+  { "pict", "image/pict",     "", "", sbIDeviceCapabilities::CONTENT_IMAGE, sbITranscodeProfile::TRANSCODE_TYPE_VIDEO },
+
+  /* playlists */
+  { "m3u",  "audio/x-mpegurl", "", "", sbIDeviceCapabilities::CONTENT_PLAYLIST, sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN }
 };
 
 PRUint32 const MAP_FILE_EXTENSION_CONTENT_FORMAT_LENGTH =
@@ -998,11 +1001,69 @@ sbDeviceUtils::GetFormatTypeForItem(
                           contentURL);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 const lastDot = contentURL.RFind(NS_LITERAL_STRING("."));
+  // Get the format type.
+  rv = GetFormatTypeForURL(contentURL, aFormatType);
+  if (rv == NS_ERROR_NOT_AVAILABLE)
+    return rv;
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the bit rate.
+  nsString bitRate;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE), bitRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aBitRate = ParseBitRate(bitRate);
+
+  // Get the sample rate.
+  nsString sampleRate;
+  rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
+                          sampleRate);
+  NS_ENSURE_SUCCESS(rv, rv);
+  aSampleRate = ParseSampleRate(sampleRate);
+
+  return NS_OK;
+}
+
+/**
+ * Returns the formatting information for a URI
+ * \param aURI The URI we want the format stuff for
+ * \param aFormatType the formatting map entry for the URI
+ */
+/* static */ nsresult
+sbDeviceUtils::GetFormatTypeForURI
+                 (nsIURI*                            aURI,
+                  sbExtensionToContentFormatEntry_t& aFormatType)
+{
+  TRACE(("%s", __FUNCTION__));
+  NS_ENSURE_ARG_POINTER(aURI);
+
+  nsresult rv;
+
+  // Get the URI spec.
+  nsCAutoString uriSpec;
+  rv = aURI->GetSpec(uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Get the format type.
+  return GetFormatTypeForURL(NS_ConvertUTF8toUTF16(uriSpec), aFormatType);
+}
+
+/**
+ * Returns the formatting information for a URL
+ * \param aURL The URL we want the format stuff for
+ * \param aFormatType the formatting map entry for the URL
+ */
+/* static */ nsresult
+sbDeviceUtils::GetFormatTypeForURL
+                 (const nsAString&                   aURL,
+                  sbExtensionToContentFormatEntry_t& aFormatType)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  PRInt32 const lastDot = aURL.RFind(NS_LITERAL_STRING("."));
   if (lastDot != -1) {
-    nsDependentSubstring fileExtension(contentURL,
+    nsDependentSubstring fileExtension(aURL,
                                        lastDot + 1,
-                                       contentURL.Length() - lastDot - 1);
+                                       aURL.Length() - lastDot - 1);
     for (PRUint32 index = 0;
          index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
          ++index) {
@@ -1013,23 +1074,40 @@ sbDeviceUtils::GetFormatTypeForItem(
                __FUNCTION__, entry.Extension, entry.MimeType,
                entry.ContainerFormat, entry.Codec));
         aFormatType = entry;
-        nsString bitRate;
-        rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_BITRATE),
-                                      bitRate);
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        aBitRate = ParseBitRate(bitRate);
-
-        nsString sampleRate;
-        rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_SAMPLERATE),
-                                      sampleRate);
-        NS_ENSURE_SUCCESS(rv, rv);
-        aSampleRate = ParseSampleRate(sampleRate);
-
         return NS_OK;
       }
     }
   }
+
+  return NS_ERROR_NOT_AVAILABLE;
+}
+
+/**
+ * Returns the formatting information for a MIME type
+ * \param aMimeType The MIME type we want the format stuff for
+ * \param aFormatType the formatting map entry for the MIME type
+ */
+/* static */ nsresult
+sbDeviceUtils::GetFormatTypeForMimeType
+                 (const nsAString&                   aMimeType,
+                  sbExtensionToContentFormatEntry_t& aFormatType)
+{
+  TRACE(("%s", __FUNCTION__));
+
+  for (PRUint32 index = 0;
+       index < NS_ARRAY_LENGTH(MAP_FILE_EXTENSION_CONTENT_FORMAT);
+       ++index) {
+    sbExtensionToContentFormatEntry_t const & entry =
+      MAP_FILE_EXTENSION_CONTENT_FORMAT[index];
+    if (aMimeType.EqualsLiteral(entry.MimeType)) {
+      TRACE(("%s: ext %s type %s container %s codec %s",
+             __FUNCTION__, entry.Extension, entry.MimeType,
+             entry.ContainerFormat, entry.Codec));
+      aFormatType = entry;
+      return NS_OK;
+    }
+  }
+
   return NS_ERROR_NOT_AVAILABLE;
 }
 
@@ -1275,7 +1353,8 @@ sbDeviceUtils::DoesItemNeedTranscoding(
   nsresult rv = aDevice->GetCapabilities(getter_AddRefs(devCaps));
   NS_ENSURE_SUCCESS(rv, rv);
 
-  PRInt32 const devCapContentType = TranscodeToCapsContentTypeMap[aFormatType.Type];
+  PRInt32 const devCapContentType =
+                  TranscodeToCapsContentTypeMap[aFormatType.TranscodeType];
 
   nsString itemContainerFormat;
   itemContainerFormat.AssignLiteral(aFormatType.ContainerFormat);

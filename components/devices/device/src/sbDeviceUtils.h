@@ -50,7 +50,8 @@ struct sbExtensionToContentFormatEntry_t {
   char const * MimeType;
   char const * ContainerFormat;
   char const * Codec;
-  PRUint32 Type;
+  PRUint32 ContentType;
+  PRUint32 TranscodeType;
 };
 
 /**
@@ -231,6 +232,30 @@ public:
                      sbExtensionToContentFormatEntry_t & aFormatType,
                      PRUint32 & aBitRate,
                      PRUint32 & aSampleRate);
+
+  /**
+   * \brief For a URI, get format information describing it (extension,
+   *        mime type, etc.
+   */
+  static nsresult GetFormatTypeForURI
+                    (nsIURI*                            aURI,
+                     sbExtensionToContentFormatEntry_t& aFormatType);
+
+  /**
+   * \brief For a URL, get format information describing it (extension,
+   *        mime type, etc.
+   */
+  static nsresult GetFormatTypeForURL
+                    (const nsAString&                   aURL,
+                     sbExtensionToContentFormatEntry_t& aFormatType);
+
+  /**
+   * \brief For a MIME type, get format information describing it (extension,
+   *        mime type, etc.
+   */
+  static nsresult GetFormatTypeForMimeType
+                    (const nsAString&                   aMimeType,
+                     sbExtensionToContentFormatEntry_t& aFormatType);
 
   /**
    * \brief Determine if an item needs transcoding

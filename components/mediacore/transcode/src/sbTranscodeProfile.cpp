@@ -32,7 +32,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbTranscodeProfile, sbITranscodeProfile)
 
 sbTranscodeProfile::sbTranscodeProfile() :
   mPriority(0),
-  mType(sbITranscodeProfile::TRANSCODE_TYPE_UKNOWN)
+  mType(sbITranscodeProfile::TRANSCODE_TYPE_UNKNOWN)
 {
   /* member initializers and constructor code */
 }

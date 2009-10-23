@@ -4572,7 +4572,8 @@ sbBaseDevice::SupportsMediaItem(sbIMediaItem* aMediaItem,
   // the file) but is there a transcoding profile available that will
   // work?
   nsCOMPtr<sbITranscodeProfile> profile;
-  rv = SelectTranscodeProfile(formatType.Type, getter_AddRefs(profile));
+  rv = SelectTranscodeProfile(formatType.TranscodeType,
+                              getter_AddRefs(profile));
 
   // No profile available means we don't support this file.
   if (rv == NS_ERROR_NOT_AVAILABLE) {
@@ -4642,7 +4643,7 @@ sbBaseDevice::FindTranscodeProfile(sbIMediaItem * aMediaItem,
     return NS_OK;
   }
 
-  rv = SelectTranscodeProfile(formatType.Type, aProfile);
+  rv = SelectTranscodeProfile(formatType.TranscodeType, aProfile);
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
