@@ -121,6 +121,14 @@
                                          xbl:inherits="device-id"/>
           </xul:hbox>
 
+          <!-- Manually Manage check box -->
+          <xul:checkbox sbid="sync_manual_checkbox"
+                        class="device-manual-checkbox"/>
+          <xul:sb-device-toggle-mgmt-command bindelem="prev"
+                                             xbl:inherits="device-id"/>
+          
+          <xul:toolbarseparator />
+          
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
                       class="device-progress-button"/>

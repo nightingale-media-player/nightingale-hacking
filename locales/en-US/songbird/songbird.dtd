@@ -432,6 +432,8 @@
 <!ENTITY command.device.renamedevice.accesskey          "R">
 <!ENTITY command.device.devicesync                      "Sync">
 <!ENTITY command.device.devicesync.accesskey            "S">
+<!ENTITY command.device.manual_manage                   "Manually Manage Device">
+<!ENTITY command.device.manual_manage.accesskey         "M">
 <!-- CD Device entities -->
 <!ENTITY command.device.rip                             "Rip CD">
 <!ENTITY command.device.rip.accesskey                   "R">

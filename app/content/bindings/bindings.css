@@ -514,6 +514,10 @@ sb-device-sync-cancel-command {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-sync-cancel-command");
 }
 
+sb-device-toggle-mgmt-command {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-toggle-mgmt-command");
+}
+
 /**
  * CD Device Commands
  */

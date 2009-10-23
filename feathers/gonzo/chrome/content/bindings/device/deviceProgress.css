@@ -100,3 +100,7 @@ Imported by bindings.css or directly into feathers.
   padding:0;
   margin:0;
 }
+
+.device-manual-checkbox[checked="false"] label {
+  color: rgb(101, 101, 101);
+}

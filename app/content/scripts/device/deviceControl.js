@@ -281,6 +281,10 @@ deviceControlWidget.prototype = {
       case "rescan" :
         sbCDDeviceUtils.doCDLookUp(this._device);
         break;
+      
+      case "toggle-mgmt" :
+        this._toggleManagement();
+        break;
 
       default :
         break;
@@ -305,7 +309,34 @@ deviceControlWidget.prototype = {
     }
   },
 
-
+  /**
+   * Toggle the Management Flag for the default (first) device library.
+   */
+  
+  _toggleManagement: function deviceControlWidget__toggleManagement() {
+    if (this._deviceLibrary.mgmtType != Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL) {
+      // Manual Mode
+      this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_MANUAL;
+    }
+    else {
+      // One of the SYNC modes
+      // Read the stored sync playlist list preferences.
+      var storedSyncPlaylistList = this._deviceLibrary.getSyncPlaylistList();
+      if (storedSyncPlaylistList.length > 0) {
+        // The user has selected some playlists previously so default to
+        // SYNC_PLAYLISTS
+        this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_PLAYLISTS;
+      }
+      else {
+        // If no playlists selected then set to SYNC_ALL
+        this._deviceLibrary.mgmtType = Ci.sbIDeviceLibrary.MGMT_TYPE_SYNC_ALL;
+      }
+    }
+    
+    // Ensure our UI is all updated properly.
+    this._update(true);
+  },
+  
   /**
    * Rename the device.
    */
@@ -555,6 +586,7 @@ deviceControlWidget.prototype = {
     this._updateAttribute("disabled", updateAttributeList);
     this._updateAttribute("label", updateAttributeList);
     this._updateAttribute("hidden", updateAttributeList);
+    this._updateAttribute("checked", updateAttributeList);
 
     // Update bound element attributes.
     if (this._boundElem != this._widget) {

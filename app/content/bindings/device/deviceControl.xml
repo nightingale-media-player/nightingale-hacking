@@ -614,5 +614,29 @@
     </content>
   </binding> <!-- sb-device-rescan-command -->
   
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device toggle management type command widget.
+   *
+   *   This widget implements the command to toggle the management type.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-toggle-mgmt-command">
+    <content>
+      <xul:sb-device-control xbl:inherits="bindelem,device-id,label,accesskey"
+                             bindforward="parent"
+                             listentodevice="true"
+                             label="&command.device.manual_manage;"
+                             accesskey="&command.device.manual_manage.accesskey;"
+                             checked_default="true"
+                             checked_mgmt_not_manual="false"
+                             action="toggle-mgmt"/>
+    </content>
+  </binding> <!-- sb-device-toggle-mgmt-command -->
+  
+  
 </bindings>
 

@@ -69,7 +69,7 @@ var DeviceSyncWidget = {
   // Device sync object fields.
   //
   //   _widget                  Device sync widget.
-  //   _deviceLibrary           Device library we are working wth.
+  //   _deviceLibrary           Device library we are working with.
   //   _isIdle                  Flag for state of device.
   //
 
@@ -615,8 +615,7 @@ var DeviceSyncWidget = {
       readPrefs.mgmtType.value = this._deviceLibrary.mgmtType;
       
       /* Read the stored sync playlist list preferences. */
-      storedSyncPlaylistList =
-                        this._deviceLibrary.getSyncPlaylistList(this.mDeviceID);
+      storedSyncPlaylistList = this._deviceLibrary.getSyncPlaylistList();
 
       /* Clear and read the sync playlist list preferences. */
       syncPlaylistList = readPrefs.syncPlaylistList;
