@@ -357,9 +357,9 @@ var RadioDirectory = {
 			var checkListeners =
 				Application.prefs.getValue(shoutcastCheckListeners, false);
 
-			var trackArray = Cc["@mozilla.org/array;1"]
+			var trackArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
 					.createInstance(Ci.nsIMutableArray);
-			var propertiesArray = Cc["@mozilla.org/array;1"]
+			var propertiesArray = Cc["@songbirdnest.com/moz/xpcom/threadsafe-array;1"]
 					.createInstance(Ci.nsIMutableArray);
 			for (var i=0; i<stationList.length; i++) {
 				var station = stationList[i];
