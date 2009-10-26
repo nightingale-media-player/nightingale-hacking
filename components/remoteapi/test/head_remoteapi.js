@@ -206,11 +206,12 @@ function ContinuingWebProgressListener(url, func) {
   this._func = func;
 }
 
+var scope = this;
 ContinuingWebProgressListener.prototype.onStateChange =
 function(aProgress, aRequest, aFlag, aStatus)
 {
   if(aFlag & Ci.nsIWebProgressListener.STATE_STOP && aRequest.name == this._url) {
-    this._func.apply();
+    this._func.apply(scope);
   }
 }
 

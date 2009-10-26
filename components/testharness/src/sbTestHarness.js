@@ -303,60 +303,63 @@ sbTestHarness.prototype = {
         // script loader takes a nsIURI object
         var scriptUri = null;
 
+        // the scope to load the test into
+        var scope = { __proto__ : (function()this)(),
+                      _test_name: "sbTestHarness"};
+        scope.wrappedJSObject = scope;
+
         // top level head file to always load
         if (this.mHeadSongbird.exists()) {
           scriptUri = ioService.newFileURI(this.mHeadSongbird);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         // load the component head script
         if (compHeadFile.exists()) {
           scriptUri = ioService.newFileURI(compHeadFile);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         // load the test head script
         if (testHeadFile.exists()) {
           scriptUri = ioService.newFileURI(testHeadFile);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         // _test_name defined in the head_songbird.js file and is used in tail_songbird.js
-        _test_name = testComp + " - " + testBase;
+        scope._test_name = testComp + " - " + testBase;
 
         // load the test script
         if (testFile.exists()) {
-          log("*** [" + _test_name + "] - Testing...");
+          log("*** [" + scope._test_name + "] - Testing...");
           scriptUri = ioService.newFileURI(testFile);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         // top level tail file to always load - calls run_test()
         if (this.mTailSongbird.exists()) {
           // load the cleanup script
           scriptUri = ioService.newFileURI(this.mTailSongbird);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         // load the test tail script
         if (testTailFile.exists()) {
           // load the cleanup script
           scriptUri = ioService.newFileURI(testTailFile);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         // load the component tail script
         if (compTailFile.exists()) {
           // load the cleanup script
           scriptUri = ioService.newFileURI(compTailFile);
-          jsLoader.loadSubScript( scriptUri.spec, null );
+          jsLoader.loadSubScript( scriptUri.spec, scope );
         }
 
         this.mTestCount++;
-
-        // reset the name
-        _test_name = "sbTestHarness";
-
+        scope = null;
+        Components.utils.forceGC();
       }
     }
 
