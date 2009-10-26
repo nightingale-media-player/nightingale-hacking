@@ -238,7 +238,6 @@ var DPW = {
   _progressInfoBox: null,
   _syncButton: null,
   _cancelButtonBox: null,
-  _ejectInfoButtons: null,
   _finishButton: null,
   _progressMeter: null,
   _progressTextLabel: null,
@@ -269,7 +268,6 @@ var DPW = {
     // Get some widget elements.
     this._progressInfoBox  = this._getElement("progress_information_box");
     this._syncButton       = this._getElement("sync_operation_button");
-    this._ejectInfoButtons = this._getElement("ejectinfo_button_box");
     this._cancelButtonBox = this._getElement("cancel_operation_box");
     this._finishButton = this._getElement("finish_progress_button");
     this._progressMeter = this._getElement("progress_meter");
@@ -333,7 +331,6 @@ var DPW = {
     this._progressInfoBox = null;
     this._idleBox = null;
     this._syncButton   = null;
-    this._ejectInfoButtons = null;
     this._cancelButtonBox = null;
     this._finishButton = null;
     this._progressMeter = null;
@@ -386,7 +383,6 @@ var DPW = {
 
     // Only show sync button if not showing progress.
     this._syncButton.hidden = this._showProgress;
-    this._ejectInfoButtons.hidden = this._showProgress;
 
     // Set cancel and hide button hidden property.  The device cancel command
     // widget automatically hides/shows itself depending upon the device state.

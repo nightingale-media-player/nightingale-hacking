@@ -94,6 +94,17 @@ Imported by bindings.css or directly into feathers.
 .more-info-button > .button-box > label {
   display:none !important;
 }
+.eject-info-buttons > groupbox {
+  border: none !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  background-color: transparent !important;
+}
+.eject-info-buttons > groupbox > .groupbox-body {
+  padding: 0px !important;
+}
 
 sb-device-battery {
   margin:0 4px;

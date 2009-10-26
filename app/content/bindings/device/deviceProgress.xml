@@ -106,21 +106,6 @@
         </xul:hbox>
 
         <xul:hbox pack="center" class="dev-progress-button-box">
-          <!-- Eject button. -->
-          <xul:hbox sbid="ejectinfo_button_box" hidden="true">
-            <xul:button sbid="more_info_button"
-                        class="more-info-button"
-                        showid="moreinfo" />
-            <xul:sb-device-get-info-command bindelem="prev"
-                                            xbl:inherits="device-id"/>
-
-            <xul:button sbid="eject_button"
-                        class="eject-button"
-                        showid="eject" />
-            <xul:sb-device-eject-command bindelem="prev"
-                                         xbl:inherits="device-id"/>
-          </xul:hbox>
-
           <!-- Manually Manage check box -->
           <xul:checkbox sbid="sync_manual_checkbox"
                         class="device-manual-checkbox"/>
