@@ -169,7 +169,11 @@
         // Set the default device name textbox value.
         var setupNameTextboxElem =
               document.getElementById("setup_name_textbox");
-        setupNameTextboxElem.value = productName;
+        var friendlyName = this._device.properties.friendlyName;
+        if (friendlyName)
+          setupNameTextboxElem.value = friendlyName;
+        else
+          setupNameTextboxElem.value = productName;
 
         // Set the default sync value.
         var setupSyncCheckbox = document.getElementById("setup_sync_checkbox");
