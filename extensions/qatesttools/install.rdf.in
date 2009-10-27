@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 /*
  *=BEGIN SONGBIRD GPL
  *
@@ -54,10 +54,10 @@
         <songbird:showOnInstall>false</songbird:showOnInstall>
       </Description>
     </songbird:displayPane>
-    
+
     <em:id>@EXTENSION_UUID@</em:id>
-    <em:name>mock-cd-controller</em:name>
-    <em:description>Mock CD device controller.</em:description>
+    <em:name>QA Test Tools</em:name>
+    <em:description>QA test tools.</em:description>
     <em:creator>@SB_VENDOR@</em:creator>
     <em:contributor>r3dv3lv3t (Original Author)</em:contributor>
     <em:version>@EXTENSION_VER@</em:version>
