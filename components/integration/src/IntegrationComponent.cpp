@@ -44,13 +44,15 @@
 #endif
 #else
 #include "win32/sbNativeWindowManager.h"
+// XXXAus: this will be in all platforms when they are implemented.
+#include "win32/sbScreenSaverSuppressor.h"
 #endif
 
 #ifdef XP_WIN
+#include "GlobalHotkeys.h"
 #include "WindowMinMax.h"
 #include "WindowResizeHook.h"
 #include "WindowRegion.h"
-#include "GlobalHotkeys.h"
 #include "WindowLayer.h"
 #endif
 
@@ -66,6 +68,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowResizeHook)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowRegion)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CGlobalHotkeys)
 NS_GENERIC_FACTORY_CONSTRUCTOR(CWindowLayer)
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 #endif
 
 #ifdef XP_MACOSX
@@ -122,6 +125,14 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_WINDOWLAYER_CID,
     SONGBIRD_WINDOWLAYER_CONTRACTID,
     CWindowLayerConstructor
+  },
+
+  {
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CLASSNAME,
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CID,
+    SB_BASE_SCREEN_SAVER_SUPPRESSOR_CONTRACTID,
+    sbScreenSaverSuppressorConstructor,
+    sbScreenSaverSuppressor::RegisterSelf
   },
 #endif
 #ifdef XP_MACOSX
