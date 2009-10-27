@@ -258,9 +258,9 @@ sbGStreamerMediacore::ReadPreferences()
   nsresult rv;
 
   rv = mPrefs->GetBoolPref("songbird.mediacore.gstreamer.disablevideo", 
-	&mVideoDisabled);
+	                       &mVideoDisabled);
   if (rv == NS_ERROR_UNEXPECTED)
-    mVideoDisabled = PR_TRUE;
+    mVideoDisabled = PR_FALSE;
   else
     NS_ENSURE_SUCCESS(rv, rv);
 

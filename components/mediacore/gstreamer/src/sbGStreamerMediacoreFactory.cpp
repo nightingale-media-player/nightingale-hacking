@@ -69,6 +69,7 @@ static PRLogModuleInfo* gGStreamerMediacoreFactory =
 
 #define BLACKLIST_EXTENSIONS_PREF "songbird.mediacore.gstreamer.blacklistExtensions"
 #define VIDEO_EXTENSIONS_PREF "songbird.mediacore.gstreamer.videoExtensions"
+#define VIDEO_DISABLED_PREF "songbird.mediacore.gstreamer.disablevideo"
 
 NS_IMPL_ISUPPORTS_INHERITED2(sbGStreamerMediacoreFactory,
                              sbBaseMediacoreFactory,
@@ -306,12 +307,22 @@ sbGStreamerMediacoreFactory::OnGetCapabilities(
     rv = caps->SetAudioExtensions(audioExtensions);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = caps->SetVideoExtensions(videoExtensions);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // Only audio playback for today.
+    // Audio playback is always allowed.
     rv = caps->SetSupportsAudioPlayback(PR_TRUE);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    PRBool videoDisabled = PR_FALSE;
+    rv = rootPrefBranch->GetBoolPref(
+                                    "songbird.mediacore.gstreamer.disablevideo",
+                                    &videoDisabled);
+    NS_ENSURE_SUCCESS(rv, rv);
+    if (!videoDisabled) {
+      rv = caps->SetVideoExtensions(videoExtensions);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      rv = caps->SetSupportsVideoPlayback(PR_TRUE);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
 
     mCapabilities = caps;
   }

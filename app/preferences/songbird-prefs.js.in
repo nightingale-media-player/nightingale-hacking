@@ -280,7 +280,7 @@ pref("songbird.mediacore.normalization.preferredGain", "album");
 // Playback History
 pref("songbird.mediacore.playback.history.enabled", true);
 
-pref("songbird.mediascan.enableVideoImporting", false);
+pref("songbird.mediascan.enableVideoImporting", true);
 
 //
 // Metadata prefs
@@ -426,8 +426,8 @@ pref("songbird.columnpicker.allowSecondaryProperties", false);
 // If showing secondary properties, also show unlocalized ones ?
 pref("songbird.columnpicker.allowUnlocalizedSecondaryProperties", false);
 
-// disable video display
-pref("songbird.mediacore.gstreamer.disablevideo", true);
+// video can be disabled in gstreamer (but is on by default)
+pref("songbird.mediacore.gstreamer.disablevideo", false);
 
 // playlist double click speed
 pref("songbird.playlist.doubleclickspeed", 500);
