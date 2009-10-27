@@ -244,6 +244,7 @@ var DPW = {
   _idleLabel: null,
   _idleErrorsLabel: null,
   _idleBox: null,
+  _syncManualBox: null,
   _deviceErrorMonitor : null,
 
 
@@ -275,6 +276,7 @@ var DPW = {
     this._idleBox = this._getElement("idle_box");
     this._idleLabel = this._getElement("idle_label");
     this._idleErrorsLabel = this._getElement("idle_errors_label");
+    this._syncManualBox = this._getElement("sync_manual_box");
 
     // Initialize object fields.
     this._deviceID = this._widget.deviceID;
@@ -337,6 +339,7 @@ var DPW = {
     this._progressTextLabel = null;
     this._idleLabel = null;
     this._idleErrorLabel = null;
+    this._syncManualBox = null;
   },
 
 
@@ -383,6 +386,7 @@ var DPW = {
 
     // Only show sync button if not showing progress.
     this._syncButton.hidden = this._showProgress;
+    this._syncManualBox.hidden = this._showProgress;
 
     // Set cancel and hide button hidden property.  The device cancel command
     // widget automatically hides/shows itself depending upon the device state.

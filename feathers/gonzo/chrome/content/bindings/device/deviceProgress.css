@@ -94,6 +94,9 @@ Imported by bindings.css or directly into feathers.
   min-width:60px;
 }
 
+.device-progress-manage-separator {
+  margin: 0px 17px 0px 17px !important;
+}
 
 .content-controls > radiogroup {
   border:none;

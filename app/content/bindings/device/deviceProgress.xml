@@ -107,12 +107,14 @@
 
         <xul:hbox pack="center" class="dev-progress-button-box">
           <!-- Manually Manage check box -->
-          <xul:checkbox sbid="sync_manual_checkbox"
-                        class="device-manual-checkbox"/>
-          <xul:sb-device-toggle-mgmt-command bindelem="prev"
-                                             xbl:inherits="device-id"/>
-          
-          <xul:toolbarseparator />
+          <xul:hbox sbid="sync_manual_box">
+            <xul:checkbox sbid="sync_manual_checkbox"
+                          class="device-manual-checkbox"/>
+            <xul:sb-device-toggle-mgmt-command bindelem="prev"
+                                               xbl:inherits="device-id"/>
+            
+            <xul:toolbarseparator class="device-progress-manage-separator"/>
+          </xul:hbox>
           
           <!-- Sync device operation button. -->
           <xul:button sbid="sync_operation_button"
