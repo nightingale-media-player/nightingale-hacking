@@ -54,6 +54,11 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-legend-box {
   margin-top:4px;
+  margin-right:8px;
+  -moz-box-pack: start;
+}
+.device-capacity-legend-box > sb-device-capacity-legend {
+  padding-right: 18px;
 }
 
 #device_capacity {
@@ -62,10 +67,6 @@ Imported by bindings.css or directly into feathers.
 
 .device-capacity-bar-box {
   height: 20px;
-}
-
-.device-capacity-legend-box > * {
-  margin-right:8px;
 }
 
 .device-capacity-legend-color-box {

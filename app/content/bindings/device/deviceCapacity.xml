@@ -108,7 +108,6 @@
         <xul:hbox sbid="device-cap-legend-box"
                   class="device-capacity-legend-box"
                   hidden="false"
-                  pack="end"
                   hideid="legend">
           <xul:sb-device-capacity-legend sbid="device-capacity-legend-music"
                                          type="music"
