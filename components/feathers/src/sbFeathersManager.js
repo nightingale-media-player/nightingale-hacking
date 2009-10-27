@@ -584,6 +584,15 @@ FeathersManager.prototype = {
     }
 
 
+    // Register our agent sheet for form styling
+    var styleSheetService = Cc["@mozilla.org/content/style-sheet-service;1"]
+                              .getService(Ci.nsIStyleSheetService);
+    var styleSheetURI = Cc["@mozilla.org/network/io-service;1"]
+                          .getService(Ci.nsIIOService)
+                          .newURI("chrome://songbird/skin/formsImport.css",
+                                  null, null);
+    styleSheetService.loadAndRegisterSheet(styleSheetURI,
+                                           styleSheetService.AGENT_SHEET);
 
     // Make dataremotes to persist feathers settings
     var createDataRemote =  new Components.Constructor(
