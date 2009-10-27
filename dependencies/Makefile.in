@@ -150,33 +150,53 @@ ifdef MEDIA_CORE_GST #{
                             gstaudiotestsrc \
                             gstdecodebin \
                             gstdecodebin2 \
+                            gstffmpegcolorspace \
+                            gstgdp \
                             gstogg \
                             gstplaybin \
                             gstqueue2 \
+                            gsttheora \
                             gsttypefindfunctions \
+                            gstvideorate \
+                            gstvideoscale \
+                            gstvideotestsrc \
                             gstvolume \
                             gstvorbis \
                             $(NULL)
 
    GST_PLUGINS_GOOD_NAMES = gstalaw \
+                            gstalpha \
+                            gstalphacolor \
                             gstapetag \
                             gstaudiofx \
                             gstauparse \
                             gstautodetect \
+                            gstavi \
                             gstcutter \
+                            gsteffectv \
                             gstequalizer \
                             gstflac \
+                            gstgamma \
+                            gstgoom \
                             gsticydemux \
                             gstid3demux \
                             gstlevel \
+                            gstmatroska \
                             gstmulaw \
+                            gstmultifile \
                             gstmultipart \
                             gstqtdemux \
                             gstreplaygain \
                             gstrtp \
                             gstrtsp \
+                            gstsmpte \
                             gstspectrum \
                             gstudp \
+                            gstvideobalance \
+                            gstvideobox \
+                            gstvideocrop \
+                            gstvideoflip \
+                            gstvideomixer \
                             gstwavenc \
                             gstwavparse \
                             $(NULL)
@@ -203,13 +223,16 @@ ifdef MEDIA_CORE_GST #{
    endif
 
    ifeq (windows,$(SB_PLATFORM)) #{
-      GST_PLUGINS_GOOD_NAMES += gstdirectsoundsink \
+      GST_PLUGINS_GOOD_NAMES += gstdirectdrawsink \
+                                gstdirectsoundsink \
                                 $(NULL)
 
       GST_PLUGINS_BAD_NAMES += gstacmmp3dec \
                                gstdmoenc \
                                gstqtaudiowrapper \
+                               gstqtvideowrapper \
                                gstdshowdecwrapper \
+                               gstdshowvideosink \
                                $(NULL)
 
       GLIB = $(addprefix $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/bin/lib, \

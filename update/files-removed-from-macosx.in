@@ -249,28 +249,6 @@
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
 ./Contents/Resources/gst-plugins/libgstflxdec.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
-# Start gstreamer plugins removed because they're video-only
-./Contents/Resources/gst-plugins/libgstffmpegcolorspace.so
-./Contents/Resources/gst-plugins/libgstgdp.so
-./Contents/Resources/gst-plugins/libgsttheora.so
-./Contents/Resources/gst-plugins/libgstvideorate.so
-./Contents/Resources/gst-plugins/libgstvideoscale.so
-./Contents/Resources/gst-plugins/libgstvideotestsrc.so
-./Contents/Resources/gst-plugins/libgstalpha.so
-./Contents/Resources/gst-plugins/libgstalphacolor.so
-./Contents/Resources/gst-plugins/libgstavi.so
-./Contents/Resources/gst-plugins/libgsteffectv.so
-./Contents/Resources/gst-plugins/libgstgamma.so
-./Contents/Resources/gst-plugins/libgstgoom.so
-./Contents/Resources/gst-plugins/libgstmatroska.so
-./Contents/Resources/gst-plugins/libgstmultifile.so
-./Contents/Resources/gst-plugins/libgstsmpte.so
-./Contents/Resources/gst-plugins/libgstvideobalance.so
-./Contents/Resources/gst-plugins/libgstvideobox.so
-./Contents/Resources/gst-plugins/libgstvideocrop.so
-./Contents/Resources/gst-plugins/libgstvideoflip.so
-./Contents/Resources/gst-plugins/libgstvideomixer.so
-# End gstreamer plugins removed because they're video-only
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/chrome.manifest

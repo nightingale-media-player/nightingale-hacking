@@ -34,28 +34,6 @@
 ./gst-plugins/libgstnavigationtest.so
 ./gst-plugins/libgstflxdec.so
 ./gst-plugins/libgstdebug.so
-# Start gstreamer plugins removed because they're video-only
-./gst-plugins/libgstffmpegcolorspace.so
-./gst-plugins/libgstgdp.so
-./gst-plugins/libgsttheora.so
-./gst-plugins/libgstvideorate.so
-./gst-plugins/libgstvideoscale.so
-./gst-plugins/libgstvideotestsrc.so
-./gst-plugins/libgstalpha.so
-./gst-plugins/libgstalphacolor.so
-./gst-plugins/libgstavi.so
-./gst-plugins/libgsteffectv.so
-./gst-plugins/libgstgamma.so
-./gst-plugins/libgstgoom.so
-./gst-plugins/libgstmatroska.so
-./gst-plugins/libgstmultifile.so
-./gst-plugins/libgstsmpte.so
-./gst-plugins/libgstvideobalance.so
-./gst-plugins/libgstvideobox.so
-./gst-plugins/libgstvideocrop.so
-./gst-plugins/libgstvideoflip.so
-./gst-plugins/libgstvideomixer.so
-# End gstreamer plugins removed because they're video-only
 ./extensions/rubberducky@songbirdnest.com/install.rdf
 ./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./extensions/rubberducky@songbirdnest.com/chrome/

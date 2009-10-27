@@ -243,31 +243,6 @@
 ./gst-plugins/gstdebug.dll
 ./gst-plugins/gstacmenc.dll
 ./gst-plugins/dshowdecwrapper.dll
-# Start gstreamer plugins removed because they're video-only
-./gst-plugins/gstffmpegcolorspace.dll
-./gst-plugins/gstgdp.dll
-./gst-plugins/gsttheora.dll
-./gst-plugins/gstvideorate.dll
-./gst-plugins/gstvideoscale.dll
-./gst-plugins/gstvideotestsrc.dll
-./gst-plugins/gstalpha.dll
-./gst-plugins/gstalphacolor.dll
-./gst-plugins/gstavi.dll
-./gst-plugins/gsteffectv.dll
-./gst-plugins/gstgamma.dll
-./gst-plugins/gstgoom.dll
-./gst-plugins/gstmatroska.dll
-./gst-plugins/gstmultifile.dll
-./gst-plugins/gstsmpte.dll
-./gst-plugins/gstvideobalance.dll
-./gst-plugins/gstvideobox.dll
-./gst-plugins/gstvideocrop.dll
-./gst-plugins/gstvideoflip.dll
-./gst-plugins/gstvideomixer.dll
-./gst-plugins/gstdirectdrawsink.dll
-./gst-plugins/gstqtvideowrapper.dll
-./gst-plugins/gstdshowvideosink.dll
-# End gstreamer plugins removed because they're video-only
 ./extensions/rubberducky@songbirdnest.com/install.rdf
 ./extensions/rubberducky@songbirdnest.com/chrome/rubberducky.jar
 ./extensions/rubberducky@songbirdnest.com/chrome/
