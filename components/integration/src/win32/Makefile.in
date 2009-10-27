@@ -51,6 +51,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/integration/public \
                      $(MOZSDK_INCLUDE_DIR)/layout \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/webbrwsr \
+                     $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 
@@ -65,6 +66,7 @@ CPP_SRCS = MultiMonitor.cpp \
            WindowResizeHook.cpp \
            GlobalHotkeys.cpp \
            sbNativeWindowManager.cpp \
+           sbScreenSaverSuppressor.cpp \
            $(NULL)
 
 # From ..
@@ -72,6 +74,7 @@ CPP_SRCS += NativeWindowFromNode.cpp \
             WindowCloak.cpp \
             WindowLayer.cpp \
             IntegrationComponent.cpp \
+            sbBaseScreenSaverSuppressor.cpp \
             $(NULL)
 
 IS_COMPONENT = 1
