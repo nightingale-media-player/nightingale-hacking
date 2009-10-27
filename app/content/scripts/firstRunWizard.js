@@ -154,7 +154,12 @@ var firstRunWizard = {
     }
 
     // Indicate that the wizard is complete and whether it should be restarted.
-    window.arguments[0].onComplete(this.restartWizard);
+    try { 
+      this._firstRunData.onComplete(this.restartWizard);
+    }
+    catch (e) {
+      throw("Unrecoverable error, failed to complete first run wizard. -- " + e);
+    }
 
     // Finalize the services.
     this._finalize();
@@ -317,6 +322,17 @@ var firstRunWizard = {
     var _this = this;
     var func = function(aEvent) { return _this.doQuit(aEvent); }
     this._domEventListenerSet.add(this.wizardElem, "extra1", func, false);
+
+    // Grap the param block
+    var dialogPB = 
+      window.arguments[0].QueryInterface(Ci.nsIDialogParamBlock);
+
+    // Unwrap the object coming from the application startup service
+    this._firstRunData = 
+      dialogPB.objects
+              .queryElementAt(0, Ci.nsISupportsInterfacePointer)
+              .data
+              .wrappedJSObject;
 
     // Services are now initialized.
     this._initialized = true;

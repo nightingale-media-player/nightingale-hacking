@@ -487,7 +487,7 @@
   <!-- Jumpto file dialog support -->
   <script type="application/x-javascript" 
   src="chrome://songbird/content/scripts/jumpToFile.js" />
-
+  
   <!-- Sanitizer Support (moz) -->
   <script type="application/x-javascript" 
   src="chrome://browser/content/sanitize.js" />
@@ -504,6 +504,9 @@
   <script type="application/x-javascript"
   src="chrome://songbird/content/scripts/updateOnceAfterFirstRun.js" />
 
+  <!-- 0.6 Feedback Delegate, manages prompting the user for a survey -->
+  <script type="application/x-javascript"
+   src="chrome://songbird/content/scripts/feedbackDelegate.js" />
 
   <!-- ********************************************************************* -->
   <!-- **                                                                 ** -->

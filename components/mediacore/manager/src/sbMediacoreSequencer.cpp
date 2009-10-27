@@ -1582,32 +1582,38 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
     rv = managerVideoWindow->GetVideoWindow(getter_AddRefs(xulElement));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    if(NS_IsMainThread()) {
-      // No proxy required from the main thread.
-      rv = videoWindow->SetVideoWindow(xulElement);
-      NS_ENSURE_SUCCESS(rv, rv);
+    // sbIMediacoreVideoWindow may return null for the video window
+    // if none is set at the time. This is not an error.
+    if(xulElement) {
+
+      if(NS_IsMainThread()) {
+        // No proxy required from the main thread.
+        rv = videoWindow->SetVideoWindow(xulElement);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+      else {
+        // We have to proxy this call because it may use DOM elements from another
+        // thread and as well all know, DOM elements are not thread-safe.
+        nsCOMPtr<nsIThread> eventTarget;
+        rv = NS_GetMainThread(getter_AddRefs(eventTarget));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        nsCOMPtr<sbIMediacoreVideoWindow> proxiedVideoWindow;
+        rv = do_GetProxyForObject(eventTarget,
+          NS_GET_IID(sbIMediacoreVideoWindow),
+          videoWindow,
+          NS_PROXY_SYNC,
+          getter_AddRefs(proxiedVideoWindow));
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        rv = proxiedVideoWindow->SetVideoWindow(xulElement);
+        NS_ENSURE_SUCCESS(rv, rv);
+      }
+
+      // XXXAus: Set Fullscreen here to maintain fullscreen state across
+      //         items being played?
+
     }
-    else {
-      // We have to proxy this call because it may use DOM elements from another
-      // thread and as well all know, DOM elements are not thread-safe.
-      nsCOMPtr<nsIThread> eventTarget;
-      rv = NS_GetMainThread(getter_AddRefs(eventTarget));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      nsCOMPtr<sbIMediacoreVideoWindow> proxiedVideoWindow;
-      rv = do_GetProxyForObject(eventTarget,
-        NS_GET_IID(sbIMediacoreVideoWindow),
-        videoWindow,
-        NS_PROXY_SYNC,
-        getter_AddRefs(proxiedVideoWindow));
-      NS_ENSURE_SUCCESS(rv, rv);
-
-      rv = proxiedVideoWindow->SetVideoWindow(xulElement);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    // XXXAus: Set Fullscreen here to maintain fullscreen state across
-    //         items being played?
   }
 
   // Fire before track change event

@@ -90,6 +90,7 @@ tier_componentsall_dirs = \
    components/update \
    components/webservices \
    components/mediaexport \
+   components/appstartup \
    $(NULL)
 
 tier_appbase_dirs = \

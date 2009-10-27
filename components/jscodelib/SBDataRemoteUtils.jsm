@@ -39,6 +39,7 @@
 
 EXPORTED_SYMBOLS =
 [
+  "SB_NewDataRemote",
   "SBDataGetStringValue",
   "SBDataGetIntValue",
   "SBDataGetBoolValue",

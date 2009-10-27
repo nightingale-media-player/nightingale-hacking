@@ -48,7 +48,6 @@ spacer {
   visibility:collapse;
 }
 
-/** TODO add hook to xul at app/content/xul/songbird.xul **/
 /** TODO rm background image from this file **/
 #video_window sb-sys-titlebar {
   min-height:22px;

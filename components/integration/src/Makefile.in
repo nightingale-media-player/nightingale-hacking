@@ -31,7 +31,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js
+SONGBIRD_COMPONENTS = $(srcdir)/sbHotkeyActions.js \
+                      $(srcdir)/sbGlobalHotkeys.js \
+                      $(NULL)
 
 # XXX Mook: for now everybody else is linux (including solaris)
 ifeq (windows,$(SB_PLATFORM))

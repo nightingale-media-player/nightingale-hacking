@@ -1,8 +1,5 @@
 #filter substitution
 // Songbird Default Prefs.
-
-// DON'T CHANGE THIS.  This is not "bones".
-pref("toolkit.defaultChromeURI", "chrome://songbird/content/xul/songbird.xul");
 pref("toolkit.defaultChromeFeatures", "chrome,modal=no,toolbar=no,popup=no,titlebar=no");
 
 // This is only used by the MAC version

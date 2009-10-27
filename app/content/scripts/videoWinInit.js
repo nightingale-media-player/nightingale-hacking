@@ -57,7 +57,13 @@ window.addEventListener("unload", videoWinInit.onUnload, false);
 // Video Window Initialization.  Setup all the cores based upon the runtime platform
 //
 var songbird_playingVideo; // global for DataRemote
-const sb_playing_video_changed = { observe: function ( aSubject, aTopic, aData ) { SBPlayingVideoChanged(aData); } } // observer for DataRemote
+
+// observer for DataRemote
+const sb_playing_video_changed = { 
+  observe: function ( aSubject, aTopic, aData ) { 
+    SBPlayingVideoChanged(aData); 
+  } 
+} 
 
 /**
  * \brief Initialize the Video window.

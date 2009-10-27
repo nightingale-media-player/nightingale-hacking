@@ -40,6 +40,8 @@ Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 
 const Ci = Components.interfaces;
 const Cc = Components.classes; 
+const Cr = Components.results;
+const Cu = Components.utils;
 
 const CONTRACTID = "@songbirdnest.com/songbird/feathersmanager;1";
 const CLASSNAME = "Songbird Feathers Manager Service Interface";
@@ -49,6 +51,10 @@ const IID = Ci.sbIFeathersManager;
 
 const RDFURI_ADDON_ROOT               = "urn:songbird:addon:root" 
 const PREFIX_NS_SONGBIRD              = "http://www.songbirdnest.com/2007/addon-metadata-rdf#";
+
+// This DataRemote is required to indicate to the feather manager
+// that it is currently running in test mode. 
+const DATAREMOTE_TESTMODE = "__testmode__";
 
 //
 // Default feather/layout/skin preference prefs.
@@ -88,7 +94,8 @@ const PREF_FEATHERS_MANAGER_HAS_STARTED  = "songbird.feathersmanager.hasStarted"
 const WINDOWTYPE_SONGBIRD_PLAYER      = "Songbird:Main";
 const WINDOWTYPE_SONGBIRD_CORE        = "Songbird:Core";
 
-Components.utils.import("resource://app/jsmodules/RDFHelper.jsm");
+Cu.import("resource://app/jsmodules/RDFHelper.jsm");
+Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 
 /**
  * /class ArrayEnumerator
@@ -1092,18 +1099,14 @@ FeathersManager.prototype = {
       this.switchFeathers(this._defaultLayoutURL, this._defaultSkinName);
       return;
     }
-    
-    
-    var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
-                                   .getService(Ci.nsIWindowMediator);
 
-    // The core window (plugin host) is the only window which cannot be shut down
-    var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
-
-    // If no core window exists, then we are probably in test mode.
-    // Therefore do nothing.
-    if (coreWindow == null) {
-      dump("FeathersManager.openPlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
+    // Check to see if we are in test mode, if so, we don't actually
+    // want to open the window as it will break the testing we're 
+    // attempting to do.    
+    if(SBDataGetBoolValue(DATAREMOTE_TESTMODE)) {
+      // Indicate to the console and jsconsole that we are test mode.
+      dump("FeathersManager.openPlayerWindow: In Test Mode\n");
+      Cu.reportError("FeathersManager.openPlayerWindow: In Test Mode\n");
       return;
     }
 
@@ -1132,7 +1135,14 @@ FeathersManager.prototype = {
     this._setChromeEnabled(showChrome);
     
     // Open the new player window
-    var newMainWin = coreWindow.open(this.currentLayoutURL, "", chromeFeatures);
+    var windowWatcher = Cc["@mozilla.org/embedcomp/window-watcher;1"]
+                          .getService(Ci.nsIWindowWatcher);
+                          
+    var newMainWin = windowWatcher.openWindow(null,
+                                              this.currentLayoutURL, 
+                                              "", 
+                                              chromeFeatures,
+                                              null);
     newMainWin.focus();
   },
   
@@ -1183,26 +1193,26 @@ FeathersManager.prototype = {
    * Close all player windows (except the plugin host)
    */
   _closePlayerWindow: function _closePlayerWindow() {
-    var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
-                                   .getService(Ci.nsIWindowMediator);
-
-    // The core window (plugin host) is the only window which cannot be shut down
-    var coreWindow = windowMediator.getMostRecentWindow(WINDOWTYPE_SONGBIRD_CORE);  
-    
-    // If no core window exists, then we are probably in test mode.
-    // Therefore do nothing.
-    if (coreWindow == null) {
-      dump("FeathersManager._closePlayerWindow: unable to find window of type Songbird:Core. Test mode?\n");
+    // Check to see if we are in test mode, if so, we don't actually
+    // want to open the window as it will break the testing we're 
+    // attempting to do.    
+    if(SBDataGetBoolValue(DATAREMOTE_TESTMODE)) {
+      // Indicate to the console and jsconsole that we are test mode.
+      dump("FeathersManager.openPlayerWindow: In Test Mode\n");
+      Cu.reportError("FeathersManager.openPlayerWindow: In Test Mode\n");
       return;
     }
+
+    var windowMediator = Cc["@mozilla.org/appshell/window-mediator;1"]
+                                   .getService(Ci.nsIWindowMediator);
 
     // Close all open windows other than the core, dominspector, and venkman.
     // This is needed in order to reset window chrome settings.
     var playerWindows = windowMediator.getEnumerator(null);
     while (playerWindows.hasMoreElements()) {
       var window = playerWindows.getNext();
-      
-      if (window != coreWindow) {
+
+      if (window) {
         
         // Don't close domi or other debug windows... that's just annoying
         var isDebugWindow = false;
@@ -1250,8 +1260,8 @@ FeathersManager.prototype = {
       prefs.setCharPref("toolkit.defaultChromeFeatures",
               defaultChromeFeatures.replace(titlebarRegEx, replacement));
     } catch (e) {
-      Components.utils.reportError("FeathersManager._setChromeEnabled: Error setting " + 
-                                   "defaultChromeFeatures pref! " + e.toString);
+      Cu.reportError("FeathersManager._setChromeEnabled: Error setting " + 
+                     "defaultChromeFeatures pref!\n" + e);
     }
   },      
       

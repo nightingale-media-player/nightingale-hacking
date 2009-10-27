@@ -75,8 +75,6 @@ document.addEventListener("sb-overlay-load", SBPostOverlayLoad, false);
  */
 function SBInitialize()
 {
-  dump("SBInitialize *** \n");
-  
   try
   {
     windowPlacementSanityChecks();

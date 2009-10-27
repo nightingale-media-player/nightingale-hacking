@@ -33,12 +33,18 @@
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+const Cu = Components.utils;
 
 const SONGBIRD_CLH_CONTRACTID = "@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird";
 const SONGBIRD_CLH_CID = Components.ID("{128badd1-aa05-4508-87cc-f3cb3e9b5499}");
 const SONGBIRD_CLH_CLASSNAME = "Songbird Command Line Handler";
 // "m" for ordinary priority see sbICommandLineHandler.idl
 const SONGBIRD_CLH_CATEGORY= "m-songbird-clh";
+
+// Command Line Startup Topic that's used to notify that the application
+// has parsed the command line. This enables the Application Startup Service
+// to initialize the application after we've parsed out the command line.
+const COMMAND_LINE_TOPIC  = "sb-command-line-startup";
 
 function _debugPrint(msg) {
   if (/@ 0x/(__LOCATION__)) {
@@ -63,7 +69,7 @@ function checkUri(aURI, aURL) {
         return aURI;
   }
   catch (e) {
-    Components.utils.reportError(e);
+    Cu.reportError(e);
   }
 
   // We have interpreted the argument as a relative file URI, but the file
@@ -76,7 +82,7 @@ function checkUri(aURI, aURL) {
     aURI = urifixup.createFixupURI(aURL, 0);
   }
   catch (e) {
-    Components.utils.reportError(e);
+    Cu.reportError(e);
   }
 
   return aURI;
@@ -122,7 +128,7 @@ sbCommandLineHandler.prototype = {
 
     if (cmdLine.handleFlag("register-extensions", false)) {
       _debugPrint("aborting due to handle of register-extensions");
-      throw Components.results.NS_ERROR_ABORT;
+      throw Cr.NS_ERROR_ABORT;
     }
 
     try {
@@ -132,7 +138,18 @@ sbCommandLineHandler.prototype = {
       }
     }
     catch (e) {
-      Components.utils.reportError(e);
+      Cu.reportError(e);
+    }
+
+    // Notify observers of COMMAND_LINE_TOPIC that the command line
+    // has been parsed and the application is ready to be started up.
+    var observerService = Cc["@mozilla.org/observer-service;1"]
+                            .getService(Ci.nsIObserverService);
+    try {
+      observerService.notifyObservers (cmdLine, COMMAND_LINE_TOPIC, null);
+    } 
+    catch (e) {
+      Cu.reportError(e);
     }
 
     var tests = null;
