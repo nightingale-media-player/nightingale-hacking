@@ -325,7 +325,8 @@ sbAppStartupService.prototype =
         
         data.perfTest = perfTest;
         
-        // Bah, we need to wrap the object so it crosses boundries properly.
+        // Bah, we need to wrap the object so it crosses 
+        // xpconnect boundaries properly.
         var sip = Cc["@mozilla.org/supports-interface-pointer;1"]
                     .createInstance(Ci.nsISupportsInterfacePointer);
         sip.data = data;
@@ -480,8 +481,8 @@ sbAppStartupService.prototype =
                 .createInstance(Ci.nsIWindowsRegKey);
 
     wrk.create(wrk.ROOT_KEY_CURRENT_USER,
-                          "Software\\Classes\\songbird",
-                          wrk.ACCESS_WRITE);
+               "Software\\Classes\\songbird",
+               wrk.ACCESS_WRITE);
     wrk.writeStringValue("", "URL:Songbird protocol");
     wrk.writeStringValue("URL Protocol", "");
 

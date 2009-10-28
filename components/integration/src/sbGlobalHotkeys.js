@@ -253,8 +253,7 @@ sbDefaultGlobalHotkeyService.prototype =
 
         QueryInterface : XPCOMUtils.generateQI([Ci.sbIGlobalHotkeyCallback,
                                                 Ci.sbICommandLineFlagHandler,
-                                                Ci.nsISupportsWeakReference,
-                                                Ci.nsISupports])
+                                                Ci.nsISupportsWeakReference])
       };
     }
 

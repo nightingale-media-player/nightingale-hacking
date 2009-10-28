@@ -1105,8 +1105,8 @@ FeathersManager.prototype = {
     // attempting to do.    
     if(SBDataGetBoolValue(DATAREMOTE_TESTMODE)) {
       // Indicate to the console and jsconsole that we are test mode.
-      dump("FeathersManager.openPlayerWindow: In Test Mode\n");
-      Cu.reportError("FeathersManager.openPlayerWindow: In Test Mode\n");
+      dump("FeathersManager.openPlayerWindow: In Test Mode, no window will be open!\n");
+      Cu.reportError("FeathersManager.openPlayerWindow: In Test Mode, no window will be open\n");
       return;
     }
 
