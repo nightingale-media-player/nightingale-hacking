@@ -206,8 +206,8 @@ sbLocalDatabaseTreeView::sbLocalDatabaseTreeView() :
  mSelectionIsAll(PR_FALSE),
  mFakeAllRow(PR_FALSE),
  mIsListeningToPlayback(PR_FALSE),
- mPreviousFirstVisibleRow(NOT_SET),
- mPreviousLastVisibleRow(NOT_SET)
+ mFirstCachedRow(NOT_SET),
+ mLastCachedRow(NOT_SET)
 {
 #ifdef PR_LOGGING
   if (!gLocalDatabaseTreeViewLog) {
@@ -595,11 +595,23 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
       // Calculate the number of rows we're going process
       PRInt32 length = last - first + 1;
 
+      if (mFirstCachedRow != NOT_SET && mFirstCachedRow > first) {
+        // User scrolled up, make sure to cache at least a page
+        first = std::max(std::min(first, mFirstCachedRow - length + 1),
+                         0);
+      }
+      if (mLastCachedRow != NOT_SET && mLastCachedRow < last) {
+        // User scrolled down, make sure to cache at least a page
+        last = std::min(std::max(last, mLastCachedRow + length - 1),
+                        (PRInt32)mArrayLength + (mFakeAllRow ? 1 : 0) - 1);
+      }
+      length = last - first + 1;
+
       PRInt32 intersectStart;
       PRInt32 intersectEnd;
       // Get the intersection between the current first and last and previous
       PRBool const intersects = intersection(first, last,
-                                             mPreviousFirstVisibleRow, mPreviousLastVisibleRow,
+                                             mFirstCachedRow, mLastCachedRow,
                                              intersectStart, intersectEnd);
       // If they intersect then remove the intersecting rows from the length
       if (intersects) {
@@ -614,7 +626,7 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
              row++) {
 
           // Skip the fake row and any row's we have already cached
-          if ((row >= mPreviousFirstVisibleRow && row <= mPreviousLastVisibleRow) ||
+          if ((row >= mFirstCachedRow && row <= mLastCachedRow) ||
               (mFakeAllRow && row == 0)) {
             continue;
           }
@@ -631,9 +643,10 @@ sbLocalDatabaseTreeView::GetCellPropertyValue(PRInt32 aIndex,
                                                mGuidWorkArray.AsCharArray()),
                                              mGuidWorkArray.Length());
         NS_ENSURE_SUCCESS(rv, rv);
+
+        mFirstCachedRow = first;
+        mLastCachedRow = last;
       }
-      mPreviousFirstVisibleRow = first;
-      mPreviousLastVisibleRow = last;
     }
   }
 
@@ -1217,7 +1230,7 @@ sbLocalDatabaseTreeView::OnBeforeInvalidate()
 {
   // array modified so reset everything
   mGuidWorkArray.Reset();
-  mPreviousLastVisibleRow = mPreviousFirstVisibleRow = NOT_SET;
+  mLastCachedRow = mFirstCachedRow = NOT_SET;
 
   if (mManageSelection) {
     nsresult rv = SaveSelectionList();

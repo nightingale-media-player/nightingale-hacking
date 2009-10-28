@@ -277,8 +277,8 @@ private:
 
   static PRInt32 const NOT_SET = -1;
 
-  PRInt32 mPreviousFirstVisibleRow;
-  PRInt32 mPreviousLastVisibleRow;
+  PRInt32 mFirstCachedRow;
+  PRInt32 mLastCachedRow;
   /**
    * Nested class used to hold guid strings so that we can efficiently pass it
    * off to a function. This is used for the tree views and the number of items
