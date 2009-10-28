@@ -228,10 +228,7 @@
       <method name="registerDevice">
         <body><![CDATA[
           if (this._registerURI != null) {
-            var protocolSvc = 
-              Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                        .getService(Ci.nsIExternalProtocolService);
-             protocolSvc.loadURI(this._registerURI);
+            this._openURL(this._registerURI);
           }
         ]]></body>
       </method>
@@ -298,10 +295,7 @@
       <method name="support">
         <body><![CDATA[
           if (this._customerSupportLocation != null) {
-            var protocolSvc = 
-              Components.classes["@mozilla.org/uriloader/external-protocol-service;1"]
-                        .getService(Ci.nsIExternalProtocolService);
-             protocolSvc.loadURI(this._customerSupportLocation);
+            this._openURL(this._customerSupportLocation);
           }
         ]]></body>
       </method>
@@ -467,6 +461,23 @@
         <body>
           return document.getAnonymousElementByAttribute(this, "tool", aID);
         </body>
+      </method>
+
+      <method name="_openURL">
+        <parameter name="aURL"/>
+        <body><![CDATA[
+          var browser = null;
+          if (typeof SBGetBrowser == 'function') {
+            browser = SBGetBrowser();
+          }
+            
+          if (browser) {
+            browser.loadURI(aURL.spec, null, null, null);
+          } 
+          else {
+            SBBrowserOpenURLInNewWindow(aURL.spec);
+          }
+        ]]></body>
       </method>
 
     </implementation>
