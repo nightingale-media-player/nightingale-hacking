@@ -34,19 +34,19 @@
 <window
   id="video_window"
   hidechrome="true"
-  title="Video Window"  
+  title="&videowindow.title;"  
   windowtype="Songbird:Core"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
-  <!-- Scripts needed by the inline js that loads/runs before onload() -->
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/windowUtils.js"/>
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
 
-  <!-- The videoWinInit.js module sets up window event handlers for onload and onunload to auto-init/deinit --> 
+  <!-- The videoWinInit.js module sets up window event handlers 
+       for onload and onunload to auto-init/deinit --> 
   <script type="application/x-javascript" 
    src="chrome://songbird/content/scripts/videoWinInit.js"/>   
 
@@ -55,7 +55,7 @@
   <sb-sys-outer-frame flex="1">
     <sb-sys-titlebar type="hide"/>
 
-    <!-- This is for Mac -->    
+    <!-- This is for Mac -->
     <menubar id="video_menu" hidden="false" >
       <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" hidden="true"/>
     </menubar>
