@@ -154,12 +154,7 @@ var firstRunWizard = {
     }
 
     // Indicate that the wizard is complete and whether it should be restarted.
-    try { 
-      this._firstRunData.onComplete(this.restartWizard);
-    }
-    catch (e) {
-      throw("Unrecoverable error, failed to complete first run wizard. -- " + e);
-    }
+    this._firstRunData.onComplete(this.restartWizard);
 
     // Finalize the services.
     this._finalize();
