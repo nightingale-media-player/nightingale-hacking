@@ -176,7 +176,6 @@ ifdef MEDIA_CORE_GST #{
                             gsteffectv \
                             gstequalizer \
                             gstflac \
-                            gstgamma \
                             gstgoom \
                             gsticydemux \
                             gstid3demux \
