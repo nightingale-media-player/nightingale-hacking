@@ -456,3 +456,48 @@ function assertSetsEqual(s1, s2) {
   }
 }
 
+// assert the equality of the contents of two files
+function assertFilesEqual(aFile1, aFile2, aMessage) {
+  if (!testFilesEqual(aFile1, aFile2)) {
+    var msg = (aMessage != null) ? ( " : " +  aMessage ) : "";
+    doThrow(aFile1.path + " != " + aFile2.path + " " + msg);
+  }
+}
+
+function testFilesEqual(aFile1, aFile2) {
+  if (!aFile1.exists() || !aFile2.exists())
+    return false;
+
+  var fileStream1 = Cc["@mozilla.org/network/file-input-stream;1"]
+                       .createInstance(Ci.nsIFileInputStream);
+  var scriptableFileStream1 = Cc["@mozilla.org/scriptableinputstream;1"]
+                                .createInstance(Ci.nsIScriptableInputStream);
+  fileStream1.init(aFile1, -1, 0, 0);
+  scriptableFileStream1.init(fileStream1);
+
+  var fileStream2 = Cc["@mozilla.org/network/file-input-stream;1"]
+                       .createInstance(Ci.nsIFileInputStream);
+  var scriptableFileStream2 = Cc["@mozilla.org/scriptableinputstream;1"]
+                                .createInstance(Ci.nsIScriptableInputStream);
+  fileStream2.init(aFile2, -1, 0, 0);
+  scriptableFileStream2.init(fileStream2);
+
+  var filesEqual = true;
+  do {
+    var data1 = scriptableFileStream1.read(4096);
+    var data2 = scriptableFileStream2.read(4096);
+
+    if (data1 != data2) {
+      filesEqual = false;
+      break;
+    }
+  } while(data1.length > 0);
+
+  fileStream1.close();
+  scriptableFileStream1.close();
+  fileStream2.close();
+  scriptableFileStream2.close();
+
+  return filesEqual;
+}
+

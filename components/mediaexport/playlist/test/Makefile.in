@@ -22,21 +22,20 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS += playlist
+SONGBIRD_TEST_COMPONENT = playlistwriter
 
-# preedTODO still true?
-# The extras flag is set when we are building with the private vendor-binaries.
-# We have to filter out this directory because we can't redistrub some of 
-# the external headers that the agent uses.
-ifeq (_1,$(filter-out windows macosx,$(SB_PLATFORM))_$(HAS_EXTRAS))
-   SUBDIRS += agent
-endif
+SONGBIRD_TESTS = $(srcdir)/head_playlistwriter.js \
+                 $(srcdir)/test_m3uhandler.js \
+                 $(srcdir)/test_manager.js \
+                 $(srcdir)/files/test.m3u \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
+
