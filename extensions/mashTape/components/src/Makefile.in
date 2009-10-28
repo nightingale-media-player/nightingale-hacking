@@ -6,21 +6,17 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Flickr.js \
-                          $(srcdir)/GoogleBlogs.js \
-                          $(srcdir)/HypeM.js \
-                          $(srcdir)/Info.js \
-                          $(srcdir)/SmugMug.js \
-                          $(srcdir)/Wikipedia.js \
-                          $(srcdir)/YouTube.js \
-                          $(srcdir)/mashTapeManager.js \
-                          $(NULL)
+IS_EXTENSION = 1
 
-# put this in our staging directory
-EXTENSION_STAGE_DIR = ../../.xpistage
-
-# into components/ 
-SONGBIRD_COMPONENTS = $(EXTRA_SCRIPT_COMPONENTS)
+SONGBIRD_COMPONENTS = $(srcdir)/Flickr.js \
+                      $(srcdir)/GoogleBlogs.js \
+                      $(srcdir)/HypeM.js \
+                      $(srcdir)/Info.js \
+                      $(srcdir)/SmugMug.js \
+                      $(srcdir)/Wikipedia.js \
+                      $(srcdir)/YouTube.js \
+                      $(srcdir)/mashTapeManager.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

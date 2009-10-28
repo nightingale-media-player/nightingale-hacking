@@ -37,14 +37,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/Songkick.js \
-                          $(NULL)
+IS_EXTENSION = 1
 
-# put this in our staging directory
-EXTENSION_STAGE_DIR = ../../.xpistage
-
-# into components/ 
-SONGBIRD_COMPONENTS = $(EXTRA_SCRIPT_COMPONENTS)
+SONGBIRD_COMPONENTS = $(srcdir)/Songkick.js \
+                      $(NULL)
 
 include $(topsrcdir)/build/rules.mk
 

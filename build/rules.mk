@@ -72,11 +72,34 @@ ifdef SONGBIRD_TEST_COMPONENT
    endif
 endif
 
+ifdef IS_EXTENSION # {
+
+#------------------------------------------------------------------------------
+# Get our extension config, if we're an extension.
+#------------------------------------------------------------------------------
+   DEFAULT_EXTENSION_CONFIG ?= extension-config.mk
+
+   ifndef SB_EXTENSION_CONFIG
+      ifneq (,$(wildcard $(srcdir)/extension-config.mk))
+         OUR_EXTENSION_AT_TOPSRCDIR = 1
+         export SB_EXTENSION_CONFIG = $(srcdir)/$(DEFAULT_EXTENSION_CONFIG)
+      else
+         export SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(DEFAULT_EXTENSION_CONFIG))
+         ifeq (,$(SB_EXTENSION_CONFIG))
+            $(error Could not file extension configuration .mk file. Bailing...)
+         endif
+      endif
+   endif
+
+   include $(SB_EXTENSION_CONFIG)
+
+	# Allow extension-config.mk to override this
+   EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(EXTENSION_NAME)/.xpistage
+
 #------------------------------------------------------------------------------
 # Redefine these file locations when building extensions
 #------------------------------------------------------------------------------
 
-ifdef EXTENSION_STAGE_DIR
    OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
    SONGBIRD_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
    SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_STAGE_DIR)/components
@@ -88,7 +111,7 @@ ifdef EXTENSION_STAGE_DIR
    SONGBIRD_SCRIPTSDIR = $(OUR_EXTENSION_STAGE_DIR)/scripts
    SONGBIRD_JSMODULESDIR = $(OUR_EXTENSION_STAGE_DIR)/jsmodules
    APP_DIST_DIRS = $(NULL)
-endif
+endif # } IS_EXTENSION
 
 ###############################################################################
 
@@ -1059,13 +1082,13 @@ endif
 
 ifdef EXTENSION_VER
    ifeq (_,$(SONGBIRD_OFFICIAL)_$(SONGBIRD_NIGHTLY))
-      OUR_EXTENSION_VER := $(EXTENSION_VER)+dev-$(shell date +%Y%m%d%H%M)
+      OUR_EXTENSION_VER = $(EXTENSION_VER)+dev-$(OUR_EXTENSION_VER_DEVDATE)
    else
       OUR_EXTENSION_VER = $(EXTENSION_VER).$(SB_BUILD_NUMBER)
    endif
 endif
 
-ifdef EXTENSION_NAME
+ifdef EXTENSION_NAME # {
    # We include branding.mk here to get the branding defines to add to the
    # preprocessor call for install.rdf.in, if any
    include $(topsrcdir)/$(SONGBIRD_BRANDING_DIR)/branding.mk
@@ -1076,45 +1099,47 @@ ifdef EXTENSION_NAME
    EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
    EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
 
-   ifndef INSTALL_RDF
-      # The notdir is because this is to check if these files exist, but
-      # we have to do in the srcdir; but we really only want the file name
-      POSSIBLE_INSTALL_RDF = $(notdir $(wildcard $(srcdir)/install.rdf))
-      POSSIBLE_INSTALL_RDF_IN = $(notdir $(wildcard $(srcdir)/install.rdf.in))
+   ifdef OUR_EXTENSION_AT_TOPSRCDIR
+      ifndef INSTALL_RDF
+         # The notdir is because this is to check if these files exist, but
+         # we have to do in the srcdir; but we really only want the file name
+         POSSIBLE_INSTALL_RDF = $(notdir $(wildcard $(srcdir)/install.rdf))
+         POSSIBLE_INSTALL_RDF_IN = $(notdir $(wildcard $(srcdir)/install.rdf.in))
 
-      ifneq (,$(POSSIBLE_INSTALL_RDF))
-         INSTALL_RDF = $(POSSIBLE_INSTALL_RDF)
+         ifneq (,$(POSSIBLE_INSTALL_RDF))
+            INSTALL_RDF = $(POSSIBLE_INSTALL_RDF)
+         endif
+         ifneq (,$(POSSIBLE_INSTALL_RDF_IN))
+            INSTALL_RDF = $(POSSIBLE_INSTALL_RDF_IN)
+         endif
       endif
-      ifneq (,$(POSSIBLE_INSTALL_RDF_IN))
-         INSTALL_RDF = $(POSSIBLE_INSTALL_RDF_IN)
+
+      ifeq (,$(INSTALL_RDF))
+         $(error Could not detect an install.rdf; set it explicitily using INSTALL_RDF)
       endif
-   endif
 
-   ifeq (,$(INSTALL_RDF))
-      $(error Could not detect an install.rdf; set it explicitily using INSTALL_RDF)
-   endif
-
-   ifeq (.in,$(suffix $(strip $(INSTALL_RDF))))
-      OUR_INSTALL_RDF = $(patsubst %.in,%,$(strip $(INSTALL_RDF)))
-      OUR_INSTALL_RDF_IN = $(strip $(srcdir)/$(INSTALL_RDF))
-      ALL_TRASH += $(OUR_INSTALL_RDF)
-   else
-      OUR_INSTALL_RDF = $(strip $(srcdir)/$(INSTALL_RDF))
-      OUR_INSTALL_RDF_IN =
-   endif
-
-   ifdef XPI_NAME
-      OUR_XPI_NAME = $(strip $(XPI_NAME))
-      ALL_TRASH += $(EXTENSION_DIR)/$(OUR_XPI_NAME)
-   else
-      ifdef EXTENSION_NO_BINARY_COMPONENTS
-         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug).xpi
+      ifeq (.in,$(suffix $(strip $(INSTALL_RDF))))
+         OUR_INSTALL_RDF = $(patsubst %.in,%,$(strip $(INSTALL_RDF)))
+         OUR_INSTALL_RDF_IN = $(strip $(srcdir)/$(INSTALL_RDF))
+         ALL_TRASH += $(OUR_INSTALL_RDF)
       else
-         OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug).xpi
+         OUR_INSTALL_RDF = $(strip $(srcdir)/$(INSTALL_RDF))
+         OUR_INSTALL_RDF_IN =
       endif
-      ALL_TRASH += $(EXTENSION_DIR)/$(wildcard $(OUR_EXTENSION_NAME)*.xpi)
+
+      ifdef XPI_NAME
+         OUR_XPI_NAME = $(strip $(XPI_NAME))
+         ALL_TRASH += $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+      else
+         ifdef EXTENSION_NO_BINARY_COMPONENTS
+            OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)$(DEBUG:%=-debug).xpi
+         else
+            OUR_XPI_NAME = $(OUR_EXTENSION_NAME)-$(OUR_EXTENSION_VER)-$(SB_PLATFORM)-$(SB_ARCH)$(DEBUG:%=-debug).xpi
+         endif
+         ALL_TRASH += $(EXTENSION_DIR)/$(wildcard $(OUR_EXTENSION_NAME)*.xpi)
+      endif
    endif
-endif
+endif # } EXTENSION_NAME
 
 # Installation of the extension is automatic for debug builds; this can be
 # overriden, of course
@@ -1144,34 +1169,38 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 # directory of the extension. You can override this by setting EXTENSION_LICENSE
 # in the extension's Makefile
 
-export:: $(if $(EXTENSION_NAME), $(OUR_INSTALL_RDF))
+export:: $(if $(EXTENSION_NAME), $(if $(OUR_EXTENSION_AT_TOPSRCDIR), $(OUR_INSTALL_RDF)))
 ifdef EXTENSION_NAME
 	$(MKDIR_APP) $(EXTENSION_STAGE_DIR)
 endif
 
 libs:: $(if $(EXTENSION_NAME), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef EXTENSION_NAME
-	@echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME)
-	$(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME)
-	$(INSTALL_FILE) $(OUR_INSTALL_RDF) $(EXTENSION_STAGE_DIR)/install.rdf
-   ifneq (,$(EXTENSION_LICENSE))
-	   $(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
-   endif
-	cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).tmp *
-	$(MKDIR_APP) $(EXTENSION_DIR)
-	$(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).tmp $(EXTENSION_DIR)/$(OUR_XPI_NAME)
-   ifeq (1,$(INSTALL_EXTENSION))
-	   $(MKDIR_APP) $(SONGBIRD_EXTENSIONSDIR)
-	   $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
-	   $(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+   ifdef OUR_EXTENSION_AT_TOPSRCDIR
+	   @echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+	   $(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+	   $(INSTALL_FILE) $(OUR_INSTALL_RDF) $(EXTENSION_STAGE_DIR)/install.rdf
+      ifneq (,$(EXTENSION_LICENSE))
+	      $(INSTALL_FILE) $(EXTENSION_LICENSE) $(EXTENSION_STAGE_DIR)
+      endif
+	   cd $(EXTENSION_STAGE_DIR) && $(ZIP) -qr ../$(OUR_XPI_NAME).tmp *
+	   $(MKDIR_APP) $(EXTENSION_DIR)
+	   $(MV) -f $(EXTENSION_STAGE_DIR)/../$(OUR_XPI_NAME).tmp $(EXTENSION_DIR)/$(OUR_XPI_NAME)
+      ifeq (1,$(INSTALL_EXTENSION))
+	      $(MKDIR_APP) $(SONGBIRD_EXTENSIONSDIR)
+	      $(RM) -r $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+	      $(CP) -r -f -p $(EXTENSION_STAGE_DIR) $(SONGBIRD_EXTENSIONSDIR)/$(EXTENSION_UUID)
+      endif
    endif
 endif
 
 
 ifdef EXTENSION_NAME
-   ALL_TRASH += $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
-                $(EXTENSION_STAGE_DIR) \
-                $(NULL)
+   ifdef OUR_EXTENSION_AT_TOPSRCDIR
+      ALL_TRASH += $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
+                   $(EXTENSION_STAGE_DIR) \
+                   $(NULL)
+   endif
 endif
 
 #------------------------------------------------------------------------------

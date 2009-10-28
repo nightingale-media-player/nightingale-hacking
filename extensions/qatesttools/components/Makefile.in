@@ -29,11 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+IS_EXTENSION = 1
+
 SONGBIRD_COMPONENTS = \
  $(topsrcdir)/components/mediacore/metadata/lookup/testprovider/src/sbMetadataLookupTestProvider.js \
  $(NULL)
-
-EXTENSION_STAGE_DIR = ../.xpistage
 
 include $(topsrcdir)/build/rules.mk
 

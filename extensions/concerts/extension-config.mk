@@ -26,23 +26,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
 
-DEPTH = ../..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+EXTENSION_NAME = concerts
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_NO_BINARY_COMPONENTS = 1
 
-include $(DEPTH)/build/autodefs.mk
-
-IS_EXTENSION = 1
-
-SUBDIRS = chrome \
-          components \
-          modules \
-          defaults \
-          $(NULL)
-
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(NULL)
-
-include $(topsrcdir)/build/rules.mk
+EXTENSION_VER = 0.2.6pre
+EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
+EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)

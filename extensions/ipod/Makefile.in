@@ -28,6 +28,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+IS_EXTENSION = 1
+
 ifeq (,$(filter windows macosx linux,$(SB_PLATFORM)))
    $(error The iPod extension can only be built on windows, linux or macosx)
 endif
@@ -36,14 +38,6 @@ SUBDIRS = components/ComponentLoader \
           components/public \
           components/src \
           $(NULL)
-
-EXTENSION_NAME = ipod
-EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
-EXTENSION_STAGE_DIR = ./.xpistage
-
-EXTENSION_VER = 3.0.16pre
-EXTENSION_MIN_VER = $(SB_BINARY_EXTENSION_MIN_VER)
-EXTENSION_MAX_VER = $(SB_BINARY_EXTENSION_MAX_VER)
 
 JAR_MANIFEST = jar.mn
 

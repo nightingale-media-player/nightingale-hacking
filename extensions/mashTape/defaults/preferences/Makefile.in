@@ -6,12 +6,9 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-EXTRA_SCRIPT_COMPONENTS = $(srcdir)/prefs.js \
-                          $(NULL)
+IS_EXTENSION = 1
 
-EXTENSION_STAGE_DIR = ../../.xpistage
+SONGBIRD_PREFERENCES += $(srcdir)/prefs.js \
+                        $(NULL)
 
 include $(topsrcdir)/build/rules.mk
-
-libs::
-	$(INSTALL_FILE) $(EXTRA_SCRIPT_COMPONENTS) $(SONGBIRD_PREFERENCESDIR)
