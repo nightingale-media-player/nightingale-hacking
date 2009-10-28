@@ -28,7 +28,11 @@
 #include "sbIScreenSaverSuppressor.h"
 
 #include <nsIObserver.h>
+
 #include <nsAutoLock.h>
+#include <nsComponentManagerUtils.h>
+#include <nsCOMPtr.h>
+#include <nsStringGlue.h>
 
 class nsIComponentManager;
 class nsIFile;
@@ -58,6 +62,8 @@ public:
 
 protected:
   PRInt32       mSuppress;
+  PRPackedBool  mUserSetting;
+  PRPackedBool  mHasUserSetting;
 };
 
 #define SB_BASE_SCREEN_SAVER_SUPPRESSOR_DESC \

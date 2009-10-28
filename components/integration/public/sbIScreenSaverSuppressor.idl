@@ -35,6 +35,8 @@ interface sbIScreenSaverSuppressor : nsISupports
    *        True indicates the screen saver is suppressed.
    * \param aSuppress - True will suppress the screen saver, false
    *                    will unsuppress it.
+   * \retval Suppression count. When the count reaches 0 
+   *         the screen saver is unsuppressed.
    */
   long suppress(in boolean aSuppress);
 };

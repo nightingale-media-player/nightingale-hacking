@@ -24,7 +24,13 @@
 
 #include "sbScreenSaverSuppressor.h"
 
+// Include windows.h first because it's required for nsWindowsRegKey.h
 #include <windows.h>
+
+#include <nsWindowsRegKey.h>
+
+#define SCREENSAVER_ENABLED   "1"
+#define SCREENSAVER_DISABLED  "0"
 
 NS_IMPL_ISUPPORTS_INHERITED0(sbScreenSaverSuppressor, 
                              sbBaseScreenSaverSuppressor)
@@ -40,5 +46,60 @@ sbScreenSaverSuppressor::~sbScreenSaverSuppressor()
 /*virtual*/ nsresult
 sbScreenSaverSuppressor::OnSuppress(PRBool aSuppress)
 {
+  NS_NAMED_LITERAL_STRING(regKeyPath, "Control Panel\\Desktop");
+  NS_NAMED_LITERAL_STRING(regKeyValueName, "ScreenSaveActive");
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<nsIWindowsRegKey> regKey = 
+    do_CreateInstance(NS_WINDOWSREGKEY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = regKey->Open(nsIWindowsRegKey::ROOT_KEY_CURRENT_USER, 
+                    regKeyPath, 
+                    nsIWindowsRegKey::ACCESS_QUERY_VALUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsString currentUserValue;
+  rv = regKey->ReadStringValue(regKeyValueName, currentUserValue);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = regKey->Close();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(aSuppress) {
+    // Only suppress if we need to.
+    if(currentUserValue.EqualsLiteral(SCREENSAVER_ENABLED)) {
+      BOOL success = SystemParametersInfoW(SPI_SETSCREENSAVEACTIVE, 
+                                           FALSE, 
+                                           NULL, 
+                                           0);
+      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+    }
+
+    // Push user setting so we can restore it for the login session.
+    if(!mHasUserSetting) {
+      mHasUserSetting = PR_TRUE;
+      mUserSetting = currentUserValue.EqualsLiteral(SCREENSAVER_ENABLED);
+    }
+  }
+  else {
+    // No user setting, nothing to restore.
+    if(!mHasUserSetting) {
+      return NS_OK;
+    }
+
+    // Only unsuppress if we need to.
+    if(mUserSetting) {
+      BOOL success = SystemParametersInfoW(SPI_SETSCREENSAVEACTIVE,
+                                           TRUE,
+                                           NULL,
+                                           0);
+      NS_ENSURE_TRUE(success, NS_ERROR_FAILURE);
+
+      mHasUserSetting = PR_FALSE;
+      mUserSetting = PR_FALSE;
+    }
+  }
+
   return NS_OK;
 }

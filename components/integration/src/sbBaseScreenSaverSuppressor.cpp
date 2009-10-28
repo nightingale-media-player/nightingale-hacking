@@ -54,6 +54,8 @@ NS_IMPL_ISUPPORTS1(sbBaseScreenSaverSuppressor,
 
 sbBaseScreenSaverSuppressor::sbBaseScreenSaverSuppressor()
 : mSuppress(0)
+, mUserSetting(PR_FALSE)
+, mHasUserSetting(PR_FALSE)
 {
   #ifdef PR_LOGGING
     if (!gBaseScreenSaverSuppressor)
