@@ -471,16 +471,19 @@ sbMediaManagementJob::FindNextItem(sbMediaManagementJobItem** _retval)
     mCompletedItemCount++;
   
     nsString propValue;
-    
     NS_NAMED_LITERAL_STRING(PROP_HIDDEN, SB_PROPERTY_HIDDEN);
+    NS_NAMED_LITERAL_STRING(PROP_TYPE, SB_PROPERTY_CONTENTTYPE);
       
     PRBool isHidden =
       (NS_SUCCEEDED(nextItem->GetProperty(PROP_HIDDEN, propValue)) &&
        propValue.EqualsLiteral("1"));
     nsCOMPtr<sbIMediaList> itemAsList = do_QueryInterface(nextItem);
+    PRBool isVideo =
+      (NS_SUCCEEDED(nextItem->GetProperty(PROP_TYPE, propValue)) &&
+       propValue.EqualsLiteral("video"));
   
-    if (isHidden || itemAsList) {
-      // We don't organize lists or hidden items, try the next one
+    if (isHidden || itemAsList || isVideo) {
+      // We don't organize lists, hidden items or videos, try the next one
       continue;
     }
 
