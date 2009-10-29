@@ -60,7 +60,7 @@ while (<STDIN>)
     # and filter out things that definitely
     # shouldn't go in the jar
     @files_list = split(/\n/,
-       `find $source_path/* -name ".svn*" -a -prune -o -type f ! -name ".*" ! -name "*.in" ! -name "jar.mn" ! -name "*.vcproj" ! -name "_EXCLUDE" ! -name "*.user"  ! -name "Thumbs.db" ! -name "*.rej" ! -name "*.orig" ! -name "*.ncb" ! -name "*.diff" ! -name "*.patch" ! -name "*.vpj" ! -name "*~" -a -print`);
+       `find $source_path/* -name ".svn*" -a -prune -o -type f ! -name ".*" ! -name "*.in" ! -name "*.mk" ! -name "jar.mn" ! -name "*.vcproj" ! -name "_EXCLUDE" ! -name "*.user"  ! -name "Thumbs.db" ! -name "*.rej" ! -name "*.orig" ! -name "*.ncb" ! -name "*.diff" ! -name "*.patch" ! -name "*.vpj" ! -name "*~" -a -print`);
                             
     # Create a jar manifest line for each file 
     foreach $file (@files_list) {

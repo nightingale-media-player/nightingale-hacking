@@ -29,12 +29,8 @@ VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
-# where we are putting the extension while we're building it
-EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/lastfm/.xpistage
+IS_EXTENSION = 1
 
 JAR_MANIFEST = jar.mn.in
-
-# and put it into our extension stage directory
-JAR_TARGET_DIR = $(EXTENSION_STAGE_DIR)/chrome
 
 include $(topsrcdir)/build/rules.mk

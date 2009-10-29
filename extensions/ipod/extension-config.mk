@@ -20,36 +20,10 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 #=END SONGBIRD GPL
-#
 
-DEPTH = ../../../..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+EXTENSION_NAME = ipod
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 
-include $(DEPTH)/build/autodefs.mk
-
-IS_EXTENSION = 1
-
-CPP_SRCS = sbComponentLoader.cpp \
-           $(NULL)
-
-CPP_EXTRA_INCLUDES = $(srcdir) \
-                     $(MOZSDK_INCLUDE_DIR)/necko \
-                     $(MOZSDK_INCLUDE_DIR)/pref \
-                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
-                     $(MOZSDK_IDL_DIR) \
-                     $(NULL)
-
-DYNAMIC_LIB = ComponentLoader
-
-DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
-                            $(NULL)
-
-ifeq (macosx,$(SB_PLATFORM))
-   DYNAMIC_LIB_EXTRA_FLAGS = -mmacosx-version-min=10.4
-endif
-
-IS_COMPONENT = 1
-
-include $(topsrcdir)/build/rules.mk
+EXTENSION_VER = 3.0.15pre
+EXTENSION_MIN_VER = $(SB_BINARY_EXTENSION_MIN_VER)
+EXTENSION_MAX_VER = $(SB_BINARY_EXTENSION_MAX_VER)

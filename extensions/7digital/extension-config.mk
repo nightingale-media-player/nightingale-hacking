@@ -22,22 +22,14 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+EXTENSION_NAME = 7digital
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_BUILD_ID = $(EXTENSION_NAME)-$(EXTENSION_VER)
 
-include $(DEPTH)/build/autodefs.mk
+EXTENSION_NO_BINARY_COMPONENTS = 1
 
-IS_EXTENSION = 1
-
-SUBDIRS = chrome \
-          components \
-          $(NULL)
-
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(NULL)
-
-include $(topsrcdir)/build/rules.mk
+# NOTE: 7digital versioning should match Songbird versioning for sanity and fun
+EXTENSION_VER = $(SB_MILESTONE)
+EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
+EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
 

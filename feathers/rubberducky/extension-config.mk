@@ -22,22 +22,20 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+# the name of the extension - used to name the XPI file.
+EXTENSION_NAME = rubberducky
+# the uuid of the extension - used internally by songbird to identify the
+# extension.
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+# where is the extension we're building (right here)
+EXTENSION_DIR  = .
+# where do we want to build it into (over there)
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/feathers/$(EXTENSION_NAME)/.xpistage
 
-include $(DEPTH)/build/autodefs.mk
+EXTENSION_NO_BINARY_COMPONENTS = 1
 
-IS_EXTENSION = 1
+EXTENSION_VER = 2.2.4pre
+EXTENSION_MIN_VER = $(SB_MILESTONE)
+EXTENSION_MAX_VER = $(SB_MILESTONE)
 
-SUBDIRS = chrome \
-          components \
-          $(NULL)
-
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(NULL)
-
-include $(topsrcdir)/build/rules.mk
-
+XPI_NAME = $(EXTENSION_NAME).xpi

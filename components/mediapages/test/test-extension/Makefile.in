@@ -29,14 +29,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-SUBDIRS = chrome
+IS_EXTENSION = 1
 
-EXTENSION_NAME = mediapage-test-stub
-EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
-EXTENSION_DIR  = .
-EXTENSION_STAGE_DIR = ./.xpistage
-
-XPI_NAME = $(EXTENSION_NAME)
+SUBDIRS = chrome \
+          $(NULL)
 
 INSTALL_EXTENSION = 1
 
