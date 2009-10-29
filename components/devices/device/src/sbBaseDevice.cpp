@@ -91,6 +91,7 @@
 #include <sbStringUtils.h>
 #include <sbURIUtils.h>
 #include <sbVariantUtils.h>
+#include <sbWatchFolderUtils.h>
 
 #include "sbDeviceEnsureSpaceForWrite.h"
 #include "sbDeviceLibrary.h"
@@ -5076,6 +5077,40 @@ sbBaseDevice::GetProductNameBase(char const * aDefaultModelNumberString,
 
   // Return results.
   aProductName.Assign(productName);
+
+  return NS_OK;
+}
+
+nsresult
+sbBaseDevice::IgnoreWatchFolderPath(nsIURI * aURI,
+                                    sbAutoIgnoreWatchFolderPath ** aIgnorePath)
+{
+  nsresult rv;
+  // Setup the ignore rule w/ the watch folder service.
+  nsRefPtr<sbAutoIgnoreWatchFolderPath> autoWFPathIgnore =
+    new sbAutoIgnoreWatchFolderPath();
+  NS_ENSURE_TRUE(autoWFPathIgnore, NS_ERROR_OUT_OF_MEMORY);
+
+  nsCOMPtr<nsIFileURL> destURL =
+    do_QueryInterface(aURI, &rv);
+  if (NS_FAILED(rv)) {
+    return NS_OK;
+  }
+
+  nsCOMPtr<nsIFile> destFile;
+  rv = destURL->GetFile(getter_AddRefs(destFile));
+  if (NS_FAILED(rv)) {
+    return NS_OK;
+  }
+
+  nsString destPath;
+  rv = destFile->GetPath(destPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = autoWFPathIgnore->Init(destPath);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  autoWFPathIgnore.forget(aIgnorePath);
 
   return NS_OK;
 }

@@ -80,6 +80,7 @@ DYNAMIC_LIB_STATIC_IMPORTS += \
  components/library/base/src/static/sbLibraryUtils \
  components/moz/strings/src/sbMozStringUtils \
  components/moz/threads/src/sbMozThreads \
+ components/watchfolder/utils/sbWatchFolderUtils \
  $(NULL)
 
 # sbMozStreams must come after sbLibraryUtils

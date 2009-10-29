@@ -69,7 +69,7 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
                             $(NULL)
 
 
-DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/devices/base/src/
+DYNAMIC_LIB_IMPORT_EXTRA_PATHS = $(DEPTH)/components/devices/base/src/ \
                                  $(NULL)
 
 DYNAMIC_LIB_STATIC_IMPORTS += \
