@@ -29,6 +29,4 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 include $(topsrcdir)/build/rules.mk

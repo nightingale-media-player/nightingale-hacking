@@ -6,7 +6,7 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
+EXTENSION_STAGE_DIR = ../.xpistage
 
 MT_MODULES_DIR = $(EXTENSION_STAGE_DIR)/modules
 

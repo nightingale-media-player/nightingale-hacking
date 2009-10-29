@@ -29,7 +29,8 @@ VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
+# where we are putting the extension while we're building it
+EXTENSION_STAGE_DIR = ../.xpistage 
 
 JAR_MANIFEST = jar.mn.in
 

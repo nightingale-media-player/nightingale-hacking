@@ -29,12 +29,19 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 SUBDIRS = components \
           defaults \
           chrome \
           $(NULL)
+
+EXTENSION_NAME = audioscrobbler
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
+EXTENSION_STAGE_DIR = ./.xpistage
+EXTENSION_NO_BINARY_COMPONENTS = 1
+
+EXTENSION_VER = 1.0.1pre
+EXTENSION_MIN_VER = $(SB_JSONLY_EXTENSION_MIN_VER)
+EXTENSION_MAX_VER = $(SB_JSONLY_EXTENSION_MAX_VER)
 
 CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
              $(SONGBIRD_PREFERENCESDIR) \

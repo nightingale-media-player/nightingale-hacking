@@ -27,11 +27,9 @@ topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@ \
         @srcdir@/$(SB_PLATFORM) \
-        @top_srcdir@/components/devices/base/src
+		  @top_srcdir@/components/devices/base/src
 
 include $(DEPTH)/build/autodefs.mk
-
-IS_EXTENSION = 1
 
 CPP_SRCS = MLEVL.cpp \
            QTAtomReader.cpp \
@@ -132,9 +130,9 @@ DYNAMIC_LIB_DEPENDENCIES = \
 
 ifeq (macosx,$(SB_PLATFORM))
    CPP_EXTRA_INCLUDES += \
-    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-2.0 \
+	 $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/include/glib-2.0 \
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/glib-2.0/include \
-    $(NULL)
+	 $(NULL)
 
 
    DYNAMIC_LIB_IMPORT_EXTRA_PATHS += $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib
@@ -143,7 +141,7 @@ ifeq (macosx,$(SB_PLATFORM))
     $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/lib/libintl$(DLL_SUFFIX) \
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/libglib-2.0$(DLL_SUFFIX) \
     $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib/libgobject-2.0$(DLL_SUFFIX) \
-    $(NULL)
+	 $(NULL)
 
    DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 
@@ -192,7 +190,7 @@ ifeq (windows,$(SB_PLATFORM))
     $(NULL)
 
    DYNAMIC_LIB_IMPORT_EXTRA_PATHS += \
-    $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib
+	 $(DEPS_DIR)/glib/$(SB_CONFIGURATION)/lib
 
    DYNAMIC_LIB_DEPENDENCIES += \
     $(DEPS_DIR)/gettext/$(SB_CONFIGURATION)/bin/intl$(DLL_SUFFIX) \
@@ -209,6 +207,7 @@ EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbIPDEventHandler.js \
                           $(srcdir)/sbIPDServicePaneService.js \
                           $(NULL)
 
+EXTENSION_STAGE_DIR = ../../.xpistage
 EXTENSION_LIB_DIR = $(EXTENSION_STAGE_DIR)/libraries
 
 CREATEDIRS = $(EXTENSION_LIB_DIR) 

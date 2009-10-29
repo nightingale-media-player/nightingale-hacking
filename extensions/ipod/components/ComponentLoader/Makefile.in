@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 CPP_SRCS = sbComponentLoader.cpp \
            $(NULL)
 
@@ -49,6 +47,8 @@ DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \
 ifeq (macosx,$(SB_PLATFORM))
    DYNAMIC_LIB_EXTRA_FLAGS = -mmacosx-version-min=10.4
 endif
+
+EXTENSION_STAGE_DIR = ../../.xpistage
 
 IS_COMPONENT = 1
 

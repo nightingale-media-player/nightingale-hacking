@@ -6,10 +6,12 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
+EXTRA_SCRIPT_COMPONENTS = $(srcdir)/sbLastFm.js \
+                          $(srcdir)/sbLastFmProtocol.js \
+                          $(NULL)
 
-SONGBIRD_COMPONENTS = $(srcdir)/sbLastFm.js \
-                      $(srcdir)/sbLastFmProtocol.js \
-                      $(NULL)
+EXTENSION_STAGE_DIR = ../.xpistage
+
+SONGBIRD_COMPONENTS += $(EXTRA_SCRIPT_COMPONENTS)
 
 include $(topsrcdir)/build/rules.mk

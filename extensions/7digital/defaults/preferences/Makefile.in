@@ -30,10 +30,10 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 EXTRA_SCRIPT_COMPONENTS = $(srcdir)/prefs.js \
                           $(NULL)
+
+EXTENSION_STAGE_DIR = ../../.xpistage
 
 include $(topsrcdir)/build/rules.mk
 

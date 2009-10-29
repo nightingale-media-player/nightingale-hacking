@@ -29,11 +29,11 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 XPIDL_SRCS = sbILastFmWebServices.idl \
              $(NULL)
 
 XPIDL_MODULE = sbLastFm.xpt
+
+EXTENSION_STAGE_DIR = ../.xpistage
 
 include $(topsrcdir)/build/rules.mk

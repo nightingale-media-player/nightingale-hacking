@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 XPIDL_EXTRA_INCLUDES = $(topsrcdir)/components/devices/base/public \
                        $(NULL)
 

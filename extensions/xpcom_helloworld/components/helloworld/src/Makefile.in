@@ -29,8 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 # compile these C++ files
 CPP_SRCS = sbHelloWorldModule.cpp \
            sbHelloWorld.cpp \
@@ -58,5 +56,8 @@ endif
 ifeq ($(SB_PLATFORM), macosx)
    DYNAMIC_LIB_EXTRA_IMPORTS += mozjs
 endif
+
+# put this in our staging directory
+EXTENSION_STAGE_DIR = $(SONGBIRD_OBJDIR)/extensions/xpcom_helloworld/.xpistage
 
 include $(topsrcdir)/build/rules.mk

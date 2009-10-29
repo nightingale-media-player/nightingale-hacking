@@ -29,7 +29,6 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
 
 # Only install the unit test when in debug mode.
 # This is to keep the build farm happy, as the add-on

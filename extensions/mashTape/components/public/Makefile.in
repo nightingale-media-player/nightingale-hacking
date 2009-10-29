@@ -6,14 +6,15 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-IS_EXTENSION = 1
-
 # compile these IDL files
 XPIDL_SRCS = mashTape.idl \
              $(NULL)
 
 # into this xpt (an xpt is like a compiled IDL read at runtime)
 XPIDL_MODULE = mashTape.xpt
+
+# and put it into the extension
+EXTENSION_STAGE_DIR = ../../.xpistage
 
 include $(topsrcdir)/build/rules.mk
 
