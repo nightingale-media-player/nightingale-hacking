@@ -164,4 +164,13 @@ ifneq (,$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    endif
 endif
 
-.PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols
+test_distdir_manifest:
+	@cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(SORT) -n > $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
+	@$(DIFF) -q $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST) $(topsrcdir)/update/$(DISTDIR_MANIFEST)
+	@echo Distdir manifests are OK. No added or deleted files detected.
+
+distdir_manifest:
+	@echo Making distdir manifest in $(topsrcdir)/update...
+	cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(SORT) -n > $(topsrcdir)/update/$(DISTDIR_MANIFEST)
+
+.PHONY: buildsymbols uploadsymbols do_uploadsymbols stripsymbols do_stripsymbols test_distdir_manifest distdir_manifest

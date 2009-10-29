@@ -428,6 +428,8 @@ if test -z "$CHMOD"; then AC_MSG_ERROR(Chmod not found); fi
 AC_CHECK_PROGS(CP, ${CP} gnucp gcp cp)
 if test -z "$CP"; then AC_MSG_ERROR(Cp not found); fi
 
+AC_CHECK_PROGS(DIFF, ${DIFF} gdiff diff, "")
+
 AC_CHECK_PROG(GZIP, gzip, gzip)
 
 AC_CHECK_PROG(GUNZIP, gunzip, gunzip)
@@ -459,6 +461,8 @@ AC_CHECK_PROG(RM, rm, rm)
 if test -z "$RM"; then AC_MSG_ERROR(Rm not found); fi
 
 AC_CHECK_PROGS(SHA1SUM, ${SHA1SUM} gsha1sum sha1sum, "")
+
+AC_CHECK_PROGS(SORT, ${SORT} sort, "")
 
 AC_CHECK_PROGS(TAR, ${TAR} gtar tar)
 
