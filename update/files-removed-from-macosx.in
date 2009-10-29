@@ -247,6 +247,7 @@
 ./Contents/Resources/lib/sbQuickTimeMediacore.dylib
 ./Contents/Resources/gst-plugins/libgstqtwrapper.so
 ./Contents/Resources/gst-plugins/libgstnavigationtest.so
+./Contents/Resources/gst-plugins/libgstgamma.so
 ./Contents/Resources/gst-plugins/libgstflxdec.so
 ./Contents/Resources/gst-plugins/libgstdebug.so
 ./Contents/Resources/extensions/rubberducky@songbirdnest.com/install.rdf

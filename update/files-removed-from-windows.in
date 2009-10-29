@@ -239,7 +239,9 @@
 ./lib/sbWindowsMediacore.dll
 ./gst-plugins/gstqtwrapper.dll
 ./gst-plugins/gstnavigationtest.dll
+./gst-plugins/gstgamma.dll
 ./gst-plugins/gstflxdec.dll
+./gst-plugins/gstdirectdrawsink.dll
 ./gst-plugins/gstdebug.dll
 ./gst-plugins/gstacmenc.dll
 ./gst-plugins/dshowdecwrapper.dll

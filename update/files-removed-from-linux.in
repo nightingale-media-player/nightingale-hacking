@@ -32,6 +32,7 @@
 ./lib/sbGStreamer.so
 ./lib/liboil-0.3.so
 ./gst-plugins/libgstnavigationtest.so
+./gst-plugins/libgstgamma.so
 ./gst-plugins/libgstflxdec.so
 ./gst-plugins/libgstdebug.so
 ./extensions/rubberducky@songbirdnest.com/install.rdf
