@@ -851,7 +851,8 @@ function SBExtensionsManagerOpen( parentWindow )
 }
 
 function SBTrackEditorOpen( initialTab, parentWindow ) {
-  if (!parentWindow) parentWindow = window;
+  if (!parentWindow)
+    parentWindow = window;
   var browser;
   if (typeof SBGetBrowser == 'function') 
     browser = SBGetBrowser();
@@ -895,20 +896,12 @@ function SBTrackEditorOpen( initialTab, parentWindow ) {
           // no track is selected, can't invoke the track editor on nothing !
           return;
         }
-         
-        // xxxlone> note that the track editor is modal, so the window will 
-        // never exist. the code is left here in case we ever change back to
-        // a modeless track editor.
-        var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"]
-                           .getService(Components.interfaces.nsIWindowMediator);
-        var theTE = wm.getMostRecentWindow("Songbird:TrackEditor");
-        if (theTE) {
-          theTE.focus();
-        } else {
-          SBOpenModalDialog("chrome://songbird/content/xul/trackEditor.xul", 
-                            "Songbird:TrackEditor", "chrome,centerscreen", 
-                            initialTab, parentWindow);
-        }
+
+        var isVideo = view.selection.currentMediaItem.getProperty(SBProperties.contentType) == "video";
+        SBOpenModalDialog((isVideo ? "chrome://songbird/content/xul/trackEditorVideo.xul"
+                                   : "chrome://songbird/content/xul/trackEditor.xul"),
+                          "Songbird:TrackEditor", "chrome,centerscreen", 
+                          initialTab, parentWindow);
       }
     }
   }

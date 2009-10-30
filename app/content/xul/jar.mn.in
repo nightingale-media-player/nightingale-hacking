@@ -20,6 +20,7 @@ songbird.jar:
 % overlay chrome://mozapps/content/downloads/unknownContentType.xul          chrome://songbird/content/xul/unknownContentTypeOverlay.xul
 @include_all_to content/songbird/xul/
 * content/songbird/xul/trackEditor.xul                                       (trackEditor.xul)
+* content/songbird/xul/trackEditorVideo.xul                                  (trackEditorVideo.xul)
 * content/songbird/xul/layoutWithBrowserOverlay.xul                          (layoutWithBrowserOverlay.xul)
 % override chrome://browser/content/browser.xul                                       chrome://songbird/content/xul/browserCompatibilityStub.xul
 % overlay chrome://songbird/content/xul/layoutBaseOverlay.xul                chrome://songbird/content/xul/linuxMenuOverlay.xul OS=Linux

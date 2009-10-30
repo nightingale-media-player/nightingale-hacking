@@ -189,8 +189,8 @@
       <grid id="info-tab">
         
         <columns>
-          <column id="info_left_column" flex="1"/>
-          <column id="info_right_column"/>
+          <column class="info_left_column" flex="1"/>
+          <column class="info_right_column"/>
         </columns>
         
         <rows>

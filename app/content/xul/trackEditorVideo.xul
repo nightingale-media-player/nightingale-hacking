@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<!--
+/*
+ //
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2008 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<?xml-stylesheet href="chrome://songbird-dialogs/skin/trackEditor.css" type="text/css"?>
+<?xml-stylesheet href="chrome://global/skin" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/skin/songbird.css" type="text/css"?>
+<?xml-stylesheet href="chrome://songbird/content/bindings/bindings.css" type="text/css"?>
+
+<!DOCTYPE dialog [
+<!ENTITY % brandDTD SYSTEM "chrome://branding/locale/brand.dtd">
+<!ENTITY % songbirdDTD SYSTEM "chrome://songbird/locale/songbird.dtd">
+%brandDTD;
+%songbirdDTD;
+]>
+
+<dialog xmlns:html="http://www.w3.org/1999/xhtml"
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        id="track_editor"
+        windowtype="Songbird:TrackEditor"
+        title="&trackeditor.title;"
+        type="songbird"
+        onload="TrackEditor.onLoadTrackEditor();"
+        onunload="TrackEditor.onUnloadTrackEditor();"
+        ondialogaccept="TrackEditor.closeAndApply();"
+        height="580"
+        width="500"
+        hidechrome="true"
+        buttons="none"
+        persist="screenX screenY width height"
+        wheelvolume="false">
+
+  <!-- Notification box used to warn when editing multiple tracks, etc. -->
+  <hbox id="notification_box" align="center" pack="center" class="dialog-notification">
+    <description id="notification_text" class="dialog-notification-text" />
+  </hbox>
+
+  <tabbox flex="1" persist="selectedIndex" id="trackeditor-tabbox" mousethrough="never">
+    <tabs id="trackeditor-tabs" hidden="true">
+      <tab label="&trackeditor.tab.edit.title;" id="edit"/>
+    </tabs>
+
+    <tabpanels id="trackeditor-tabpanels" flex="1">
+      <vbox id="info-tab">
+        <grid>
+          <columns>
+            <column class="info_left_column" flex="1"/>
+            <column class="info_right_column"/>
+          </columns>
+
+          <rows>
+            <label id="infotab_trackname_label"
+                   property-type="label"
+                   property="http://songbirdnest.com/data/1.0#trackName"/>
+            <!-- need a box wrapping element around the textbox, otherwise it
+                 flexes vertically, stretching it weirdly -->
+            <box>
+              <textbox id="infotab_trackname_textbox"
+                       property="http://songbirdnest.com/data/1.0#trackName"
+                       flex="1"/>
+            </box>
+
+            <row>
+              <label property-type="label" property="http://songbirdnest.com/data/1.0#genre"/>
+              <label property-type="label" property="http://songbirdnest.com/data/1.0#rating"/>
+            </row>
+            <row>
+              <textbox id="genredropdown"
+                       property="http://songbirdnest.com/data/1.0#genre"
+                       type="autocomplete" flex="1"
+                       autocompletesearch="library-distinct-properties"/>
+              <sb-rating property="http://songbirdnest.com/data/1.0#rating"/>
+            </row>
+
+            <row>
+              <label property-type="label" property="http://songbirdnest.com/data/1.0#keywords"/>
+              <label property-type="label" property="http://songbirdnest.com/data/1.0#year"/>
+            </row>
+            <row>
+              <textbox property="http://songbirdnest.com/data/1.0#keywords"
+                       type="autocomplete" flex="1"
+                       autocompletesearch="library-distinct-properties"/>
+              <textbox property="http://songbirdnest.com/data/1.0#year"
+                       type="autocomplete" flex="1"
+                       class="long-number-input"
+                       autocompletesearch="library-distinct-properties"/>
+            </row>
+          </rows>
+        </grid>
+
+        <vbox>
+          <label property-type="label" property="http://songbirdnest.com/data/1.0#description"/>
+          <vbox class="multiline-container" flex="1">
+            <textbox id="comment_textbox"
+                     multiline="true" flex="1"
+                     property="http://songbirdnest.com/data/1.0#description"/>
+          </vbox>
+
+          <label property-type="label" property="http://songbirdnest.com/data/1.0#showName"/>
+          <textbox property="http://songbirdnest.com/data/1.0#showName" flex="1"/>
+        </vbox>
+
+        <grid>
+          <columns>
+            <column class="info_left_column"/>
+            <column class="info_right_column"/>
+          </columns>
+
+          <rows>
+            <row>
+              <label property-type="label" property="http://songbirdnest.com/data/1.0#seasonNumber"/>
+              <label property-type="label" property="http://songbirdnest.com/data/1.0#episodeNumber"/>
+            </row>
+            <row>
+              <textbox class="long-number-input" property="http://songbirdnest.com/data/1.0#seasonNumber"/>
+              <textbox class="long-number-input" property="http://songbirdnest.com/data/1.0#episodeNumber"/>
+            </row>
+          </rows>
+        </grid>
+      </vbox>
+    </tabpanels>
+  </tabbox>
+
+  <hbox class="dialog-button-box">
+    <button id="prev_button"
+            label="&trackeditor.prev.button.label;"
+            accesskey="&trackeditor.prev.accesskey;"
+            tooltiptext="&tooltip.control.back;"
+            command="trackeditor-prev-cmd"/>
+    <button id="next_button"
+            label="&trackeditor.next.button.label;"
+            accesskey="&trackeditor.next.accesskey;"
+            tooltiptext="&tooltip.control.fwd;"
+            command="trackeditor-next-cmd"/>
+    <spacer flex="1"/>
+#ifndef XP_MACOSX
+    <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
+#endif
+    <button id="cancel_button" label="&window.cancel;" oncommand="window.close()"/>
+#ifdef XP_MACOSX
+    <button id="ok_button" label="&window.ok;" oncommand="TrackEditor.closeAndApply();"/>
+#endif
+  </hbox>
+
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditorState.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditorWidgets.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditorWidgetAlbumArtwork.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/trackEditor.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/sbDataRemoteUtils.js" />
+  <script type="application/x-javascript"
+          src="chrome://songbird/content/scripts/windowUtils.js" />
+  <script src="chrome://global/content/nsDragAndDrop.js"/>
+
+  <keyset id="trackEditorKeys">
+    <key id="trackeditor-prev-key" key="&trackeditor.prev.key;"
+         modifiers="accel" command="trackeditor-prev-cmd"/>
+    <key id="trackeditor-next-key" key="&trackeditor.next.key;"
+         modifiers="accel" command="trackeditor-next-cmd"/>
+  </keyset>
+
+  <commandset id="trackEditorCommands">
+    <command id="trackeditor-prev-cmd" oncommand="TrackEditor.prev();"/>
+    <command id="trackeditor-next-cmd" oncommand="TrackEditor.next();"/>
+  </commandset>
+
+</dialog>

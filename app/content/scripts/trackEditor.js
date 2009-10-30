@@ -144,7 +144,7 @@ var TrackEditor = {
       if (element.tagName == "label" ||
           (element.tagName == "textbox" && /\bplain\b/(element.className)))
       {
-        var property = element.getAttribute("property")
+        var property = element.getAttribute("property");
         var propertyInfo = this._propertyManager.getPropertyInfo(property);
         
         if (element.getAttribute("property-type") != "label" &&

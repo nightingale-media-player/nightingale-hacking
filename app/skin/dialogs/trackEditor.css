@@ -46,14 +46,14 @@ See app/content/xul/trackEditor.xul
 #info-tab {
   padding:8px 8px 0 8px!important;
 }
-#info_right_column {
+.info_right_column {
   margin-left: 10px;
 }
 
 /* Labels */
 #infotab_trackname_label,
-#info_left_column > label,
-#info_right_column > label {
+.info_left_column > label,
+.info_right_column > label {
   padding:0;
   margin:5px 0 0 4px !important;
 }
