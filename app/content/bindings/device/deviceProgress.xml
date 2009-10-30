@@ -59,53 +59,13 @@
     <content>
 
       <xul:hbox sbid="device_progress_box"
-                class="generic-bar device-progress-box"
+                class="device-progress-box"
                 flex="1">
 
-        <!-- Device operation progress box. -->
-        <xul:vbox sbid="progress_information_box"
-                  class="device-progress-information-box"
+        <xul:hbox sbid="progress_idle_box"
                   flex="1"
-                  hidden="true">
-
-          <!-- Progress text 1 label. -->
-          <xul:label sbid="progress_text_label"
-                     crop="end"
-                     error="false"
-                     action="show_errors"
-                     onclick="DPW.onAction(event);"
-                     class="dev-progress-text1-label"
-                     flex="1" />
-
-          <!-- Operation progress meter. -->
-          <xul:progressmeter sbid="progress_meter" 
-                             class="device-progressmeter"
-                             mode="determined"/>
-
-        </xul:vbox>
- 
-        <xul:hbox sbid="idle_box"
-                  flex="1"
-                  align="center"
-                  hidden="true">
-          <xul:label sbid="idle_label"
-                     crop="end"
-                     class="dev-progress-idle-label"
-                     flex="0" />
-
-          <xul:label sbid="idle_errors_label"
-                     crop="end"
-                     class="dev-progress-idle-label text-link"
-                     hidden="true"
-                     action="show_errors"
-                     onclick="DPW.onAction(event);"
-                     value="&device.error.dialog.link;"
-                     flex="0" />
-
-          <xul:spacer sbid="progress_spacer" flex="1" />
-        </xul:hbox>
-
-        <xul:hbox pack="center" class="dev-progress-button-box">
+                  class="device-progress-idle-box"
+                  hidden="false">
           <!-- Manually Manage check box -->
           <xul:hbox sbid="sync_manual_box">
             <xul:checkbox sbid="sync_manual_checkbox"
@@ -120,7 +80,35 @@
           <xul:button sbid="sync_operation_button"
                       class="device-progress-button"/>
           <xul:sb-device-sync-command bindelem="prev" xbl:inherits="device-id"/>
+        </xul:hbox>
 
+        <xul:hbox sbid="progress_information_box"
+                  class="device-progress-information-box"
+                  hidden="true">
+          <!-- Device operation progress box. -->
+          <xul:vbox sbid="progress_information_vbox"
+                    class="device-progress-information-vbox"
+                    flex="1">
+  
+            <!-- Progress text label. -->
+            <xul:label sbid="progress_text_label"
+                       crop="end"
+                       class="dev-progress-text-label"
+                       flex="1" />
+  
+            <!-- Operation progress meter. -->
+            <xul:progressmeter sbid="progress_meter" 
+                               class="device-progressmeter"
+                               mode="determined"/>
+  
+            <!-- Sub Progress label. -->
+            <xul:label sbid="sub_progress_text_label"
+                       crop="end"
+                       class="dev-sub-progress-text-label"
+                       flex="1" />
+  
+          </xul:vbox>
+ 
           <!-- Cancel device operation button. -->
           <xul:box sbid="cancel_operation_box">
             <xul:button sbid="cancel_operation_button"

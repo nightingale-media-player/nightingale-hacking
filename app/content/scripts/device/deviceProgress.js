@@ -273,9 +273,8 @@ var DPW = {
     this._finishButton = this._getElement("finish_progress_button");
     this._progressMeter = this._getElement("progress_meter");
     this._progressTextLabel = this._getElement("progress_text_label");
-    this._idleBox = this._getElement("idle_box");
-    this._idleLabel = this._getElement("idle_label");
-    this._idleErrorsLabel = this._getElement("idle_errors_label");
+    this._subProgressTextLabel = this._getElement("sub_progress_text_label")
+    this._idleBox = this._getElement("progress_idle_box");
     this._syncManualBox = this._getElement("sync_manual_box");
 
     // Initialize object fields.
@@ -407,19 +406,14 @@ var DPW = {
       var key = "device.status.progress_complete_" + oInfo.localeSuffix;
       if (this._deviceErrorMonitor.deviceHasErrors(this._device)) {
         key += "_errors";
-        this._idleErrorsLabel.hidden = false;
-      } else {
-        this._idleErrorsLabel.hidden = true;
       }
-      this._idleLabel.value = SBFormattedString(key,
+      this._progressTextLabel.value = SBFormattedString(key,
                                                 [ this._totalItems.intValue ],
                                                 "");
-    } else {
-      this._idleLabel.value = SBString("device.status.progress_complete", "");
     }
 
-    // Set to no longer show progress.
-    this._showProgress = false;
+    this._subProgressTextLabel.value =
+                                SBString("device.status.progress_footer_idle");
   },
 
 
@@ -777,7 +771,6 @@ var DPW = {
   _clearDeviceErrors: function DPW__clearDeviceErrors() {
     try {
       this._deviceErrorMonitor.clearErrorsForDevice(this._device);
-      this._idleErrorsLabel.hidden = true;
     } catch (err) {
       Cu.reportError(err);
     }

@@ -39,71 +39,63 @@ Imported by bindings.css or directly into feathers.
 *******************************************************************************
 */
 
+/*
+ * Main outer box for the progress widget
+ */
 .device-progress-box {
-  background: transparent;
-  padding: 8px 12px 8px 12px;
+  -moz-box-pack: end;
+  -moz-box-align: center;
 }
-
 .device-progress-button {
-/*  -moz-box-flex: 1;*/
+  max-height: 25px !important;
 }
 
 /*
-.device-progress-information-box {
-  min-width: 240px;
+ * Idle box (shows manual checkbox and sync button)
+ */
+.device-progress-idle-box {
+  -moz-box-pack: end;
 }
-*/
-.dev-progress-text1-label {
+.device-progress-manage-separator {
+  margin: 0px 17px 0px 17px !important;
+}
+.content-controls > radiogroup {
+  border:none;
+  padding:0;
+  margin:0;
+}
+.device-manual-checkbox[checked="false"] label {
+  color: rgb(101, 101, 101);
+}
+
+
+/*
+ * Progress information box (shows labels and progress bar)
+ */
+.device-progress-information-box {
+  padding: 10px 10px 10px 10px;
+  border: 1px solid rgb( 138, 138, 138 );
+  background-color: rgb( 241, 241, 241 );
+  -moz-box-pack: end;
+  -moz-box-align: center;
+}
+.dev-progress-text-label {
   font-size:10px;
   font-weight:bold;
 /**TODO: fix hack to center the text**/
   padding-top:1px;
   padding-bottom:3px;
 }
-.dev-progress-text2-label {
+.dev-sub-progress-text-label {
   font-size:10px;
   /**TODO: fix hack to center the text**/
   padding-top:4px;
 }
-.dev-progress-text1-label,
-.dev-progress-text2-label {
+.dev-progress-text-label,
+.dev-sub-progress-text-label {
   margin:0px;
 }
-
-
-
-.dev-progress-text1-label[error="true"] {
- background-image:url('chrome://songbird/skin/device/device-progress-error.png');
- background-position:right center;
- background-repeat:no-repeat;
- padding-right:18px;
- cursor: pointer;
-}
-
-
 .device-progressmeter {
   min-width: 200px;
   margin:0px;
-}
-
-.device-progress-button {
-}
-
-
-.dev-progress-button-box {
-  min-width:60px;
-}
-
-.device-progress-manage-separator {
-  margin: 0px 17px 0px 17px !important;
-}
-
-.content-controls > radiogroup {
-  border:none;
-  padding:0;
-  margin:0;
-}
-
-.device-manual-checkbox[checked="false"] label {
-  color: rgb(101, 101, 101);
 }
