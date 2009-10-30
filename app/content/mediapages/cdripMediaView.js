@@ -893,12 +893,14 @@ window.cdripController =
     // Get the device for this media view
     var deviceManager = Cc["@songbirdnest.com/Songbird/DeviceManager;2"]
                           .getService(Ci.sbIDeviceManager2);
-    var device = deviceManager.getDevice(Components.ID(this._deviceID));
-    if (!device) {
+
+    try {
+      return deviceManager.getDevice(Components.ID(this._deviceID));
+    } catch (x) {
       Cu.reportError("Device: " + this._deviceID + " does not exist");
-      return null;
     }
-    return device;
+
+    return null;
   },
 
   /**
