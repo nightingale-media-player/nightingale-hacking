@@ -164,10 +164,17 @@ ifneq (,$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    endif
 endif
 
+GARBAGE += $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
+
 test_distdir_manifest:
 	@cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(SORT) -n > $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
-	@$(DIFF) -q $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST) $(topsrcdir)/update/$(DISTDIR_MANIFEST)
-	@echo Distdir manifests are OK. No added or deleted files detected.
+	@if test -z "$$($(DIFF) -q $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST) $(topsrcdir)/update/$(DISTDIR_MANIFEST))"; then \
+      echo Distdir manifests are OK. No added or deleted files detected.; \
+   else \
+      echo Distdir manifests DO NOT MATCH. Differences: ; \
+      $(DIFF) -u $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST) $(topsrcdir)/update/$(DISTDIR_MANIFEST); \
+		exit -1; \
+   fi
 
 distdir_manifest:
 	@echo Making distdir manifest in $(topsrcdir)/update...
