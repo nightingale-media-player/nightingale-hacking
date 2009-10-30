@@ -127,11 +127,11 @@ protected:
   static nsresult ThrowJSException( JSContext *cx,
                                     const nsACString &aExceptionMsg );
 
-  static JSBool JS_DLL_CALLBACK AddHelper( JSContext *cx,
-                                           JSObject *obj,
-                                           uintN argc,
-                                           jsval *argv,
-                                           jsval *rval );
+  static JSBool AddHelper( JSContext *cx,
+                           JSObject *obj,
+                           uintN argc,
+                           jsval *argv,
+                           jsval *rval );
 
   nsCOMPtr<nsISecurityCheckedComponent> mSecurityMixin;
 

@@ -279,7 +279,7 @@ sbRemoteMediaListBase::ThrowJSException( JSContext *cx,
  *
  */
 // static
-JSBool JS_DLL_CALLBACK
+JSBool
 sbRemoteMediaListBase::AddHelper( JSContext *cx,
                                   JSObject *obj,
                                   uintN argc,
