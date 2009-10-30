@@ -36,7 +36,7 @@ interface sbIMediacoreEventTarget;
  * \interface sbIMediacoreEvent
  * \brief Definition of the sbIMediacoreEvent interface.
  */
-[scriptable, uuid(d9d03746-6990-497c-85a9-718af44c2dac)]
+[scriptable, uuid(6c2ca1a1-f626-4724-aa43-403534459631)]
 interface sbIMediacoreEvent : nsISupports
 {
   const unsigned long UNINTIALIZED    = 0x00000000;
@@ -103,6 +103,18 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is the new sequence.
    */
   const unsigned long SEQUENCE_CHANGE     = 0x00001505;
+  /**
+   * \brief Sequence end. 
+   *
+   * This event will be fired by the sequencer when it runs
+   * out of items to play from it's sequence. This event will
+   * not be fired when the sequence repeats because of repeat
+   * one or repeat all being turned on.
+   *
+   * \note This event should only be fired by the sequencer.
+   * \note data is null for this event.
+   */
+  const unsigned long SEQUENCE_END        = 0x00001507;
 
   // End Sequencer Events
 
@@ -150,6 +162,17 @@ interface sbIMediacoreEvent : nsISupports
    * \note data is null.
    */
   const unsigned long STREAM_STOP     = 0x00004003;
+
+  // Video specific events
+
+  /**
+   * \brief Video size has changed.
+   * \note data is an sbIVideoSize object.
+   * \see sbIVideoSize
+   */
+  const unsigned long VIDEO_SIZE_CHANGED = 0x00005000;
+
+  // End video specifc events
 
   /**
    * \brief Plugin missing for requested format.

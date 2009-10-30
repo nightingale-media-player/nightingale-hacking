@@ -46,9 +46,31 @@ Cu.import("resource://app/jsmodules/SBUtils.jsm");
 var videoWindowController = {
   // Internal data
   _mediacoreManager: null,
+  _shouldDismissSelf: false,
   
   // sbIMediacoreEventListener
   onMediacoreEvent: function vwc_onMediacoreEvent(aEvent) {
+    switch(aEvent.type) {
+      case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE: {
+        this._handleBeforeTrackChange(aEvent);
+      }
+      break;
+      
+      case Ci.sbIMediacoreEvent.TRACK_CHANGE_: {
+        this._handleTrackChange(aEvent);
+      }
+      break;
+      
+      case Ci.sbIMediacoreEvent.SEQUENCE_END: {
+        this._handleSequenceEnd(aEvent);
+      }
+      break;
+      
+      case Ci.sbIMediacoreEvent.VIDEO_SIZE_CHANGED: {
+        this._handleVideoSizeChanged(aEvent);
+      }
+      break;
+    }
   },
   
   // Internal functions
@@ -63,6 +85,36 @@ var videoWindowController = {
   _shutdown: function vwc__shutdown() {
     this._mediacoreManager.removeListener(this);
     this._mediacoreManager = null;
+  },
+  
+  _handleBeforeTrackChange: function vwc__handleBeforeTrackChange(aEvent) {
+    var mediaItem = aEvent.data;
+    
+    // If the next item is not video, we will dismiss 
+    // the window on track change.
+    if(mediaItem.contentType != "video") {
+      this._shouldDismiss = true;
+    }
+  },
+  
+  _handleTrackChange: function vwc__handleTrackChange(aEvent) {
+    if(this._shouldDismiss) {
+      this._dismissSelf();
+      this._shouldDismiss = false;
+    }
+  },
+  
+  _handleSequenceEnd: function vwc__handleSequenceEnd(aEvent) {
+    this._dismissSelf();
+  },
+  
+  _handleVideoSizeChanged: function vwc__handleVideoSizeChanged(aEvent) {
+    // XXXAus: This will be implemented when we add support for 
+    //         'actual size'. See bug 18056.
+  },
+  
+  _dismissSelf: function vwc__dismissSelf() {
+    setTimeout(function() { window.close(); }, 0);
   },
 };
 
