@@ -98,7 +98,12 @@ function runTest () {
     availability: 'availability',
     albumArtistName: 'albumartistname',
     cdRipStatus: 'cdrip_status',
-    shouldRip: 'shouldrip'
+    shouldRip: 'shouldrip',
+    keywords: 'keywords',
+    description: 'description',
+    showName: 'showName',
+    episodeNumber: 'episodeNumber',
+    seasonNumber: 'seasonNumber',
   };
 
   // list of properties with localization keys, but not in SBProperties.jsm

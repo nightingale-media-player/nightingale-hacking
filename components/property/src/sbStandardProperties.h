@@ -135,4 +135,11 @@
 // iTunes Import/export related properties
 #define SB_PROPERTY_ITUNES_GUID "http://songbirdnest.com/data/1.0#iTunesGUID"
 
+// Video properties
+#define SB_PROPERTY_KEYWORDS                  "http://songbirdnest.com/data/1.0#keywords"
+#define SB_PROPERTY_DESCRIPTION               "http://songbirdnest.com/data/1.0#description"
+#define SB_PROPERTY_SHOWNAME                  "http://songbirdnest.com/data/1.0#showName"
+#define SB_PROPERTY_EPISODENUMBER             "http://songbirdnest.com/data/1.0#episodeNumber"
+#define SB_PROPERTY_SEASONNUMBER              "http://songbirdnest.com/data/1.0#seasonNumber"
+
 #endif /* __SB_STANDARD_PROPERTIES_H__ */

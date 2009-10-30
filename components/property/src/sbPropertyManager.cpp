@@ -1240,6 +1240,31 @@ NS_METHOD sbPropertyManager::CreateSystemProperties()
                        PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // video properties
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_KEYWORDS),
+                    NS_LITERAL_STRING("property.keywords"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_DESCRIPTION),
+                    NS_LITERAL_STRING("property.description"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterText(NS_LITERAL_STRING(SB_PROPERTY_SHOWNAME),
+                    NS_LITERAL_STRING("property.showName"),
+                    stringBundle, PR_TRUE, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull, PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_EPISODENUMBER),
+                      NS_LITERAL_STRING("property.episodeNumber"),
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = RegisterNumber(NS_LITERAL_STRING(SB_PROPERTY_SEASONNUMBER),
+                      NS_LITERAL_STRING("property.seasonNumber"),
+                      stringBundle, PR_TRUE, PR_TRUE, 1, PR_TRUE, 0, PR_FALSE, PR_TRUE, PR_TRUE, nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
 }

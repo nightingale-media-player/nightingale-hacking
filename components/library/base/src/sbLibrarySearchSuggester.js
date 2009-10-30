@@ -67,9 +67,9 @@ gDefaultValues[SBProperties.genre] = [
   "Classical", "Comedy", "Country", "Dance", "Easy Listening", "World",
   "Electronic", "Folk", "Hip Hop/Rap", "Holiday", "House", "Industrial",
   "Jazz", "New Age", "Nerdcore", "Podcast", "Pop", "Reggae", "Religious",
-  "Rock", "Science", "Soundtrack", "Techno", "Trance", "Unclassifiable"
+  "Rock", "Science", "Soundtrack", "Techno", "Trance",
+  "TV", "Film", "Music Video", "Home Movie", "Unclassifiable",
 ];
-
 
 /**
  * AutoCompleteResult contains the results returned by the Suggest

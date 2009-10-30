@@ -36,9 +36,14 @@ function SmartPlaylistPropertyRegistrar() {
   this._maps = {};
 
   var context = "default";
+
+  // it'd be nice to have currying as a generic operation
+  function register(id, width, direction)
+  {
+    this.registerPropertyToContext(context, SBProperties[id], width, direction);
+  }
   
-  for each (var item in 
-    [
+  var props = [
      ["albumName",       220, "a"],
      ["albumArtistName", 220, "a"],
      ["artistName",      220, "a"],
@@ -64,15 +69,17 @@ function SmartPlaylistPropertyRegistrar() {
      ["duration",         55, "d"],
      ["trackName",       220, "a"],
      ["trackNumber",      40, "d"],
-     ["year",             50, "d"]
-    ]) {
-    var propertyID = item[0];
-    var defaultColumnWidth = item[1];
-    var defaultSortDirection = item[2];
-    this.registerPropertyToContext(context, 
-                                   SBProperties[propertyID],
-                                   defaultColumnWidth,
-                                   defaultSortDirection);
+     ["year",             50, "d"],
+     ["keywords",        220, "a"],
+     ["description",     220, "a"],
+     ["showName",        220, "a"],
+     ["episodeNumber",    40, "a"],
+     ["seasonNumber",     40, "a"],
+  ];
+
+  for each (p in props)
+  {
+    register.apply(this, p);
   }
   
   this.registerPropertyToContext(context,
