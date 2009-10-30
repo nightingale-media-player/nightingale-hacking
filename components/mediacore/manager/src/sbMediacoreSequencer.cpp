@@ -1565,57 +1565,6 @@ sbMediacoreSequencer::Setup(nsIURI *aURI /*= nsnull*/)
   mCore = do_QueryElementAt(chain, mChainIndex, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  // Set Video Window if core supports it.
-  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
-    do_QueryInterface(mCore, &rv);
-
-  if(NS_SUCCEEDED(rv) && videoWindow) {
-    nsCOMPtr<sbIMediacoreManager> mediacoreManager =
-      do_QueryReferent(mMediacoreManager, &rv);
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<sbIMediacoreVideoWindow> managerVideoWindow;
-    rv = mediacoreManager->GetVideo(getter_AddRefs(managerVideoWindow));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    nsCOMPtr<nsIDOMXULElement> xulElement;
-    rv = managerVideoWindow->GetVideoWindow(getter_AddRefs(xulElement));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    // sbIMediacoreVideoWindow may return null for the video window
-    // if none is set at the time. This is not an error.
-    if(xulElement) {
-
-      if(NS_IsMainThread()) {
-        // No proxy required from the main thread.
-        rv = videoWindow->SetVideoWindow(xulElement);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-      else {
-        // We have to proxy this call because it may use DOM elements from another
-        // thread and as well all know, DOM elements are not thread-safe.
-        nsCOMPtr<nsIThread> eventTarget;
-        rv = NS_GetMainThread(getter_AddRefs(eventTarget));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        nsCOMPtr<sbIMediacoreVideoWindow> proxiedVideoWindow;
-        rv = do_GetProxyForObject(eventTarget,
-          NS_GET_IID(sbIMediacoreVideoWindow),
-          videoWindow,
-          NS_PROXY_SYNC,
-          getter_AddRefs(proxiedVideoWindow));
-        NS_ENSURE_SUCCESS(rv, rv);
-
-        rv = proxiedVideoWindow->SetVideoWindow(xulElement);
-        NS_ENSURE_SUCCESS(rv, rv);
-      }
-
-      // XXXAus: Set Fullscreen here to maintain fullscreen state across
-      //         items being played?
-
-    }
-  }
-
   // Fire before track change event
   if(item) {
     nsCOMPtr<nsIVariant> variant = sbNewVariant(item).get();

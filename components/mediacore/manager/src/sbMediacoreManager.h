@@ -29,6 +29,8 @@
 
 #include <nsAutoPtr.h>
 #include <nsIClassInfo.h>
+#include <nsIDOMEvent.h>
+#include <nsIDOMEventListener.h>
 #include <nsIDOMXULElement.h>
 #include <nsInterfaceHashtable.h>
 #include <nsIObserver.h>
@@ -144,5 +146,22 @@ protected:
   nsCOMPtr<sbIDataRemote> mDataRemoteFaceplateMute;
 
   PRPackedBool mFullscreen;
+  
+  PRMonitor* mVideoWindowMonitor;
   nsCOMPtr<nsIDOMXULElement> mVideoWindow;
+};
+
+class sbMediacoreVideoWindowListener : public nsIDOMEventListener
+{
+public:
+  NS_DECL_ISUPPORTS
+  NS_DECL_NSIDOMEVENTLISTENER
+
+  sbMediacoreVideoWindowListener();
+  virtual ~sbMediacoreVideoWindowListener();
+
+  PRBool IsWindowReady();
+
+protected:
+  PRPackedBool mWindowReady;
 };

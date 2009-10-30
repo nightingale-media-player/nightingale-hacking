@@ -60,7 +60,7 @@
  * set and the default waitForWindow is false.
  */
 
-[scriptable, uuid(b3369b4b-83d6-4dca-bab8-2ac0c706f7c0)]
+[scriptable, uuid(ec7e9f72-3386-421b-99c6-5f149fd79950)]
 interface sbIPrompter : nsIPromptService
 {
   /**
@@ -75,10 +75,13 @@ interface sbIPrompter : nsIPromptService
   attribute boolean waitForWindow;
 
   /**
-   * Open a dialog window with with the chrome URL specified by aUrl and parent
+   * Open a dialog window with the chrome URL specified by aUrl and parent
    * specified by aParent.  The window name is specified by aName and the window
    * options are specified by aOptions.  Additional window arguments may be
    * provided in aExtraArguments.
+   *
+   * Default window options for openDialog are the following:
+   *   "centerscreen,chrome,modal,titlebar".
    *
    * \param aParent             Parent window.
    * \param aUrl                URL of window chrome.
@@ -88,6 +91,26 @@ interface sbIPrompter : nsIPromptService
    */
 
   nsIDOMWindow openDialog(in nsIDOMWindow aParent,
+                          in DOMString    aUrl,
+                          in DOMString    aName,
+                          in DOMString    aOptions,
+                          in nsISupports  aExtraArgument);
+
+  /**
+   * Open a window with the chrome URL specified by aUrl and parent specified
+   * by aParent. The window name is specified by aName and the window options are
+   * specified by aOptions. Additional window arguments may be provided in 
+   * aExtraArguments.
+   *
+   * There are no default options for openWindow.
+   *
+   * \param aParent             Parent window.
+   * \param aUrl                URL of window chrome.
+   * \param aName               Window name.
+   * \param aOptions            Window options.
+   * \param aExtraArguments     Extra window arguments.
+   */
+  nsIDOMWindow openWindow(in nsIDOMWindow aParent,
                           in DOMString    aUrl,
                           in DOMString    aName,
                           in DOMString    aOptions,

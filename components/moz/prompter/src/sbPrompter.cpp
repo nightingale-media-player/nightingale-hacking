@@ -75,7 +75,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS3(sbPrompter,
 //------------------------------------------------------------------------------
 
 /**
- * Open a dialog window with with the chrome URL specified by aUrl and parent
+ * Open a dialog window with the chrome URL specified by aUrl and parent
  * specified by aParent.  The window name is specified by aName and the window
  * options are specified by aOptions.  Additional window arguments may be
  * provided in aExtraArguments.
@@ -159,6 +159,82 @@ sbPrompter::OpenDialog(nsIDOMWindow*    aParent,
   return NS_OK;
 }
 
+/**
+ * Open a window with the chrome URL specified by aUrl and parent specified
+ * by aParent. The window name is specified by aName and the window options are
+ * specified by aOptions. Additional window arguments may be provided in 
+ * aExtraArguments.
+ *
+ * There are no default options for openWindow.
+ *
+ * \param aParent             Parent window.
+ * \param aUrl                URL of window chrome.
+ * \param aName               Window name.
+ * \param aOptions            Window options.
+ * \param aExtraArguments     Extra window arguments.
+ */
+NS_IMETHODIMP
+sbPrompter::OpenWindow(nsIDOMWindow*    aParent,
+                       const nsAString& aUrl,
+                       const nsAString& aName,
+                       const nsAString& aOptions,
+                       nsISupports*     aExtraArgument,
+                       nsIDOMWindow**   _retval)
+{
+  nsresult rv;
+
+  // If not on main thread, proxy to it.
+  if (!NS_IsMainThread()) {
+    // Get a main thread proxy.
+    nsCOMPtr<sbIPrompter> prompter;
+    rv = GetProxiedPrompter(getter_AddRefs(prompter));
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+    // Call proxied prompter until a window is available.
+    while (1) {
+      // Call the proxied prompter.
+      rv = prompter->OpenDialog(aParent,
+                                aUrl,
+                                aName,
+                                aOptions,
+                                aExtraArgument,
+                                _retval);
+      if (rv != NS_ERROR_NOT_AVAILABLE)
+        NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+      if (NS_SUCCEEDED(rv))
+        break;
+
+      // Wait for a window to be available.
+      rv = mSBWindowWatcher->WaitForWindow(mParentWindowType);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
+    return NS_OK;
+  }
+
+  // Get the parent window.
+  nsCOMPtr<nsIDOMWindow> parent = aParent;
+  if (!parent) {
+    rv = GetParent(getter_AddRefs(parent));
+    NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+  }
+
+  // If configured to wait for the desired window and the window is not
+  // available, return a not available error indication.
+  if (mWaitForWindow && !mParentWindowType.IsEmpty() && !parent)
+    return NS_ERROR_NOT_AVAILABLE;
+
+  // Open the dialog.
+  rv = mWindowWatcher->OpenWindow(parent,
+                                  NS_ConvertUTF16toUTF8(aUrl).get(),
+                                  NS_ConvertUTF16toUTF8(aName).get(),
+                                  NS_ConvertUTF16toUTF8(aOptions).get(),
+                                  aExtraArgument,
+                                  _retval);
+  NS_ENSURE_SUCCESS(rv, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
 
 //
 // Getters/setters.

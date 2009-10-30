@@ -33,22 +33,22 @@
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 <window
   id="video_window"
+  onload="videoWindowController._initialize();" 
+  onunload="videoWindowController._shutdown();" 
   hidechrome="true"
-  title="&videowindow.title;"  
+  title="&videowindow.title;"
   windowtype="Songbird:Core"
   xmlns:html="http://www.w3.org/1999/xhtml"
   xmlns:rdf="http://www.w3.org/TR/WD-rdf-syntax#"
   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 >
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/windowUtils.js"/>
-  <script type="application/x-javascript" 
+  <script type="application/x-javascript"
    src="chrome://songbird/content/scripts/sbDataRemoteUtils.js"/>
+  <script type="application/x-javascript"
+   src="chrome://songbird/content/scripts/windowUtils.js"/>
 
-  <!-- The videoWinInit.js module sets up window event handlers 
-       for onload and onunload to auto-init/deinit --> 
-  <script type="application/x-javascript" 
-   src="chrome://songbird/content/scripts/videoWinInit.js"/>   
+  <script type="application/x-javascript"
+   src="chrome://songbird/content/scripts/videoWindow.js"/>
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
   

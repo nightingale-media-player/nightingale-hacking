@@ -29,10 +29,16 @@
 
 #include <nsIAppStartupNotifier.h>
 #include <nsIClassInfoImpl.h>
+#include <nsIDOMDocument.h>
+#include <nsIDOMElement.h>
+#include <nsIDOMEventTarget.h>
+#include <nsIDOMWindow.h>
+#include <nsIDOMXULElement.h>
 #include <nsIMutableArray.h>
 #include <nsIObserverService.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsISupportsPrimitives.h>
+#include <nsIThread.h>
 
 #include <nsArrayUtils.h>
 #include <nsAutoLock.h>
@@ -40,6 +46,7 @@
 #include <nsComponentManagerUtils.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
+#include <nsThreadUtils.h>
 
 #include <prprf.h>
 
@@ -53,8 +60,13 @@
 #include <sbIMediacoreVolumeControl.h>
 #include <sbIMediacoreVotingParticipant.h>
 
+#include <sbIPrompter.h>
+#include <sbIWindowWatcher.h>
+
 #include <sbBaseMediacoreEventTarget.h>
 #include <sbMediacoreVotingChain.h>
+
+#include <sbProxiedComponentManager.h>
 
 #include "sbMediacoreDataRemotes.h"
 #include "sbMediacoreSequencer.h"
@@ -79,6 +91,15 @@
   sbBaseMediacoreMultibandEqualizer::EQUALIZER_BANDS_10
 
 #define SB_EQUALIZER_DEFAULT_BAND_GAIN  (0.0)
+
+/* primary video window chrome url */
+#define SB_PVW_CHROME_URL "chrome://songbird/content/xul/videoWindow.xul"
+/* primary video window name, this doesn't need to be localizable */
+#define SB_PVW_NAME "VideoWindow"
+/* primary video window element id */
+#define SB_PVW_ELEMENT_ID "video-box"
+/* number of events we'll process while waiting for the video window */
+static PRUint32 SB_MAX_WAIT_PVW = 50;
 
 /**
  * To log this module, set the following environment variable:
@@ -126,6 +147,7 @@ sbMediacoreManager::sbMediacoreManager()
 , mLastCore(0)
 , mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
 , mFullscreen(PR_FALSE)
+, mVideoWindowMonitor(nsnull)
 {
   // mBaseEventTarget being null is handled on access
   NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
@@ -144,6 +166,10 @@ sbMediacoreManager::~sbMediacoreManager()
 
   if(mMonitor) {
     nsAutoMonitor::DestroyMonitor(mMonitor);
+  }
+
+  if(mVideoWindowMonitor) {
+    nsAutoMonitor::DestroyMonitor(mVideoWindowMonitor);
   }
 }
 
@@ -198,6 +224,10 @@ sbMediacoreManager::Init()
 
   mMonitor = nsAutoMonitor::NewMonitor("sbMediacoreManager::mMonitor");
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  mVideoWindowMonitor = 
+    nsAutoMonitor::NewMonitor("sbMediacoreManager::mVideoWindowMonitor");
+  NS_ENSURE_TRUE(mVideoWindowMonitor, NS_ERROR_OUT_OF_MEMORY);
 
   PRBool success = mCores.Init(SB_CORE_HASHTABLE_SIZE);
   NS_ENSURE_TRUE(success, NS_ERROR_OUT_OF_MEMORY);
@@ -1123,19 +1153,168 @@ sbMediacoreManager::SetSequencer(
 }
 
 NS_IMETHODIMP
-sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow **aVideo)
+sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate, 
+                                          PRUint32 aWidthHint, 
+                                          PRUint32 aHeightHint, 
+                                          sbIMediacoreVideoWindow **aVideo)
 {
   TRACE(("sbMediacoreManager[0x%x] - GetVideoWindow", this));
-  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mVideoWindowMonitor, NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(aVideo);
 
   nsresult rv = NS_ERROR_UNEXPECTED;
+  *aVideo = nsnull;
+
+  PRBool hintValid = PR_FALSE;
+  if(aWidthHint > 0 && aHeightHint > 0) {
+    hintValid = PR_TRUE;
+  }
+
+  {
+    nsAutoMonitor mon(mVideoWindowMonitor);
+
+    if(mVideoWindow) {
+      nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
+        do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      videoWindow.forget(aVideo);
+
+      return NS_OK;
+    }
+
+    if(!aCreate) {
+      return NS_OK;
+    }
+  }
+
+  nsCOMPtr<sbIPrompter> prompter = 
+    do_GetService(SONGBIRD_PROMPTER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prompter->SetParentWindowType(NS_LITERAL_STRING("Songbird:Main"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = prompter->SetWaitForWindow(PR_TRUE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIDOMWindow> domWindow;
+  rv = prompter->OpenWindow(nsnull, 
+                            NS_LITERAL_STRING(SB_PVW_CHROME_URL), 
+                            NS_LITERAL_STRING(SB_PVW_NAME), 
+                            NS_LITERAL_STRING("chrome"), 
+                            nsnull,
+                            getter_AddRefs(domWindow));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // If we're not on the main thread, we'll have to proxy calls
+  // to quite a few objects.
+  PRBool mainThread = NS_IsMainThread();
+  nsCOMPtr<nsIThread> target;
+  
+  rv = NS_GetMainThread(getter_AddRefs(target));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Now we have to wait for the window to finish loading before we
+  // continue. If we don't let it finish loading we will never be
+  // able to find the correct element in the window.
+  if(!mainThread) {
+    // If we're not on the main thread we can use the songbird window
+    // watcher to wait for a window of type "Songbird:Core" to come up.
+    nsCOMPtr<sbIWindowWatcher> windowWatcher = 
+      do_GetService(SB_WINDOWWATCHER_CONTRACTID, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = windowWatcher->WaitForWindow(NS_LITERAL_STRING("Songbird:Core"));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    // On the main thread, we'll have to add a listener to the window 
+    // and process events on the main thread while we wait for the video
+    // window to finish loading.
+    nsRefPtr<sbMediacoreVideoWindowListener> videoWindowListener;
+    NS_NEWXPCOM(videoWindowListener, sbMediacoreVideoWindowListener);
+    NS_ENSURE_TRUE(videoWindowListener, NS_ERROR_OUT_OF_MEMORY);
+
+    nsCOMPtr<nsIDOMEventTarget> domTarget = do_QueryInterface(domWindow, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = domTarget->AddEventListener(NS_LITERAL_STRING("DOMContentLoaded"), 
+                                     videoWindowListener, 
+                                     PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    PRUint32 count = 0;
+    PRBool processed = PR_FALSE;
+
+    while(!videoWindowListener->IsWindowReady() && 
+          count <= SB_MAX_WAIT_PVW) {
+      rv = target->ProcessNextEvent(PR_FALSE, &processed);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      count++;
+    }
+
+    rv = domTarget->RemoveEventListener(NS_LITERAL_STRING("DOMContentLoaded"),
+                                        videoWindowListener,
+                                        PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    // If the window isn't ready yet, error out.
+    NS_ENSURE_TRUE(videoWindowListener->IsWindowReady(), NS_ERROR_FAILURE);
+  }
+
+  if(!mainThread) {
+    nsCOMPtr<nsIDOMWindow> grip;
+    domWindow.swap(grip);
+
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIDOMWindow),
+                              grip,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(domWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<nsIDOMDocument> domDoc;
+
+  rv = domWindow->GetDocument(getter_AddRefs(domDoc));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(!mainThread) {
+    nsCOMPtr<nsIDOMDocument> grip;
+    domDoc.swap(grip);
+
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIDOMDocument),
+                              grip,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(domDoc));
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsCOMPtr<nsIDOMElement> domElement;
+  rv = domDoc->GetElementById(NS_LITERAL_STRING(SB_PVW_ELEMENT_ID),
+                              getter_AddRefs(domElement));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(domElement, NS_ERROR_UNEXPECTED);
+
+  nsCOMPtr<nsIDOMXULElement> domXulElement = 
+    do_QueryInterface(domElement, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  {
+    nsAutoMonitor mon(mVideoWindowMonitor);
+    domXulElement.swap(mVideoWindow);
+  }
+
   nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
     do_QueryInterface(NS_ISUPPORTS_CAST(sbIMediacoreManager *, this), &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
   videoWindow.forget(aVideo);
-
+  
   return NS_OK;
 }
 
@@ -1645,4 +1824,42 @@ NS_IMETHODIMP
 sbMediacoreManager::RemoveListener(sbIMediacoreEventListener *aListener)
 {
   return mBaseEventTarget ? mBaseEventTarget->RemoveListener(aListener) : NS_ERROR_NULL_POINTER;
+}
+
+//-----------------------------------------------------------------------------
+// sbMediacoreVideoWindowListener class 
+//-----------------------------------------------------------------------------
+NS_IMPL_THREADSAFE_ADDREF(sbMediacoreVideoWindowListener)
+NS_IMPL_THREADSAFE_RELEASE(sbMediacoreVideoWindowListener)
+NS_IMPL_QUERY_INTERFACE1(sbMediacoreVideoWindowListener,
+                         nsIDOMEventListener)
+
+sbMediacoreVideoWindowListener::sbMediacoreVideoWindowListener()
+: mWindowReady(PR_FALSE)
+{
+}
+
+sbMediacoreVideoWindowListener::~sbMediacoreVideoWindowListener()
+{
+}
+
+NS_IMETHODIMP
+sbMediacoreVideoWindowListener::HandleEvent(nsIDOMEvent *aEvent)
+{
+  nsString eventType;
+  
+  nsresult rv = aEvent->GetType(eventType);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  if(eventType.EqualsLiteral("DOMContentLoaded")) {
+    mWindowReady = PR_TRUE;
+  }
+  
+  return NS_OK;
+}
+
+PRBool 
+sbMediacoreVideoWindowListener::IsWindowReady()
+{
+  return mWindowReady;
 }

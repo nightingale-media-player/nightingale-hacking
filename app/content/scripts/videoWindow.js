@@ -30,28 +30,48 @@
  * \internal
  */
 
-//
-// Module specific auto-init/deinit support
-//
-var videoWinInit = {};
-videoWinInit.init_once = 0;
-videoWinInit.deinit_once = 0;
-videoWinInit.onLoad = function()
-{
-  if (videoWinInit.init_once++) { dump("WARNING: videoWinInit double init!!\n"); return; }
-  // Videowin, initialize thyself.
-  SBVideoInitialize();
-}
-videoWinInit.onUnload = function()
-{
-  if (videoWinInit.deinit_once++) { dump("WARNING: videoWinInit double deinit!!\n"); return; }
-  window.removeEventListener("load", videoWinInit.onLoad, false);
-  window.removeEventListener("unload", videoWinInit.onUnload, false);
-  SBVideoDeinitialize();
-}
+if (typeof(Cc) == "undefined")
+  var Cc = Components.classes;
+if (typeof(Ci) == "undefined")
+  var Ci = Components.interfaces;
+if (typeof(Cr) == "undefined")
+  var Cr = Components.results;
+if (typeof(Cu) == "undefined")
+  var Cu = Components.utils;
 
-window.addEventListener("load", videoWinInit.onLoad, false);
-window.addEventListener("unload", videoWinInit.onUnload, false);
+Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
+Cu.import("resource://app/jsmodules/SBUtils.jsm");
+  
+var videoWindowController = {
+  // Internal data
+  _mediacoreManager: null,
+  
+  // sbIMediacoreEventListener
+  onMediacoreEvent: function vwc_onMediacoreEvent(aEvent) {
+  },
+  
+  // Internal functions
+  _initialize: function vwc__initialize() {
+    this._mediacoreManager = 
+      Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
+        .getService(Ci.sbIMediacoreManager);
+    
+    this._mediacoreManager.addListener(this);
+  },
+  
+  _shutdown: function vwc__shutdown() {
+    this._mediacoreManager.removeListener(this);
+    this._mediacoreManager = null;
+  },
+};
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// XXXAus: All of the code below will get blown away. I'm just keeping it
+//         here for now because it's useful reference.
+//
+///////////////////////////////////////////////////////////////////////////////
 
 //
 // Video Window Initialization.  Setup all the cores based upon the runtime platform
@@ -120,7 +140,7 @@ function SBVideoInitialize()
                        .getService(Components.interfaces.sbIMediacoreManager);
     
     var box = document.getElementById("video-box");
-    mm.video.videoWindow = box;
+    //mm.video.videoWindow = box;
     
     if (platform == "Darwin") {
       var quitMenuItem = document.getElementById("menu_FileQuitItem");

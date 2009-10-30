@@ -44,7 +44,7 @@ interface sbIMediacoreSequencer;
 
 interface sbIMediacoreVideoWindow;
 
-[scriptable, uuid(83373eeb-72c7-4612-93eb-3ea6a0a84eb6)]
+[scriptable, uuid(fc319c36-e6b5-4201-b433-ff3f0dac1e53)]
 interface sbIMediacoreManager : nsISupports
 {
   /**
@@ -76,10 +76,21 @@ interface sbIMediacoreManager : nsISupports
   attribute sbIMediacoreSequencer sequencer;
 
   /**
-   * \brief The primary video window that will be used by all cores to 
-   *        display video when it's available. 
+   * Get (or create) the primary video window
+   *
+   * @param aCreate Create the window if it does not exist.
+   * @param aWidthHint (Optional) Width of the video that will be shown
+   * @param aHeightHint (Optional) Height of the video that will be shown
+   * @note Both width and height hints have to be non-zero if you wish them to 
+   *       be used to size the video window upon creation. If you do not use
+   *       the hints, the video window will rely on a VIDEO_SIZE_CHANGED event
+   *       to size itself properly.
+   * @note This method will return null if aCreate is false and there is no
+   *       video window available.
    */
-  readonly attribute sbIMediacoreVideoWindow video;
+  sbIMediacoreVideoWindow getPrimaryVideoWindow(in boolean aCreate,
+                                                [optional] in unsigned long aWidthHint,
+                                                [optional] in unsigned long aHeightHint);
 
   /**
    * Create a new event
