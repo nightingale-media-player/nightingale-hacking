@@ -52,6 +52,7 @@
 #include <sbIMediacoreTypeSniffer.h>
 #include <nsThreadUtils.h>
 #include <nsXULAppAPI.h>
+#include <nsXPCOMCIDInternal.h>
 #include <nsIXULRuntime.h>
 #include <prlog.h>
 
