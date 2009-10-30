@@ -37,6 +37,7 @@ include $(DEPTH)/build/autodefs.mk
 SUBDIRS = strings \
           distribution \
           clipboard \
+          dirprovider \
           domevents \
           filedownloader \
           fileutils \
