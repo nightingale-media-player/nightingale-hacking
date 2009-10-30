@@ -246,6 +246,12 @@ public:
   {
     return NS_ERROR_NOT_IMPLEMENTED;
   }
+
+  NS_IMETHOD PostCreatePrototype( JSContext * cx,
+                                  JSObject * proto )
+  {
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
 };
 
 #endif // __SB_XPCSCRIPTABLE_STUB_H__
