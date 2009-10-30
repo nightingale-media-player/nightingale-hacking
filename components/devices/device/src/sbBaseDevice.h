@@ -42,15 +42,18 @@
 #include <nsDataHashtable.h>
 #include <nsIRunnable.h>
 #include <nsISupportsImpl.h>
+#include <nsIThread.h>
 #include <nsITimer.h>
 #include <nsIFile.h>
 #include <nsIURL.h>
 #include <nsTArray.h>
 #include <prlock.h>
 
+#include <sbAutoRWLock.h>
 #include <sbILibraryChangeset.h>
 #include <sbIMediaItem.h>
 #include <sbIMediaList.h>
+#include <sbITranscodeManager.h>
 
 #include <sbMemoryUtils.h>
 
@@ -476,6 +479,39 @@ public:
                                nsIURI ** aURI);
 
   /**
+   * Initialize device requests.
+   */
+  nsresult InitializeRequestThread();
+
+  /**
+   * Finalize device requests.
+   */
+  void FinalizeRequestThread();
+
+  /**
+   * Stop processing device requests.
+   */
+  void ShutdownRequestThread();
+
+  /**
+   * Start processing device requests.
+   */
+  nsresult ReqProcessingStart();
+
+  /**
+   * Stop processing device requests.
+   */
+  nsresult ReqProcessingStop();
+
+  /**
+   * Return true if the active request should abort; otherwise, return false.
+   *
+   * \return PR_TRUE              Active request should abort.
+   *         PR_FALSE             Active request should not abort.
+   */
+  PRBool ReqAbortActive();
+
+  /**
    * Returns true if the current request should be aborted.
    */
   PRBool IsRequestAborted()
@@ -564,6 +600,24 @@ protected:
   PRLock*  mPreferenceLock;
   PRUint32 mMusicLimitPercent;
   nsCOMPtr<nsIArray> mTranscodeProfiles;
+
+  //   mConnected               True if device is connected.
+  //   mConnectLock             Connect lock.
+  //   mReqAddedEvent           Request added event object.
+  //   mReqThread               Request processing thread.
+  //   mReqWaitMonitor          Monitor used by the request thread to wait for
+  //                            various events.
+  //   mReqStopProcessing       Non-zero if request processing should stop.
+  //   mIsHandlingRequests      True if requests are being handled.
+  //   mTranscodeManager        Transcoding manager
+  PRRWLock* mConnectLock;
+  PRBool mConnected;
+  nsCOMPtr<nsIRunnable> mReqAddedEvent;
+  nsCOMPtr<nsIThread> mReqThread;
+  PRMonitor* mReqWaitMonitor;
+  PRInt32 mReqStopProcessing;
+  PRInt32 mIsHandlingRequests;
+  nsCOMPtr<sbITranscodeManager> mTranscodeManager;
 
   // cache data for media management preferences
   struct OrganizeData {
@@ -1390,6 +1444,26 @@ private:
 SB_AUTO_NULL_CLASS(sbAutoDeviceCompleteCurrentRequest,
                    sbBaseDevice*,
                    mValue->CompleteCurrentRequest());
+
+/**
+ * Auto class to reset isRequestHandling flag
+ */
+class sbDeviceAutoRequestHandling
+{
+public:
+  sbDeviceAutoRequestHandling(PRInt32 & aIsHandlingRequests) :
+    mIsHandlingRequests(aIsHandlingRequests) {
+    PR_AtomicSet(&mIsHandlingRequests, 1);
+  }
+  ~sbDeviceAutoRequestHandling() {
+    NS_ASSERTION(mIsHandlingRequests,
+                 "mIsHandlingRequest reset outside "
+                 "of sbMSCAutoRequestHandling");
+    PR_AtomicSet(&mIsHandlingRequests, 0);
+  }
+private:
+  PRInt32 & mIsHandlingRequests;
+};
 
 #endif /* __SBBASEDEVICE__H__ */
 

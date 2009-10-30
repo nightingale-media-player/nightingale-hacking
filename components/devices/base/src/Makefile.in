@@ -62,6 +62,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/dataremote/public \
                      $(topsrcdir)/components/devices/device/src \
                      $(topsrcdir)/components/moz/strings/src \
                      $(topsrcdir)/components/moz/threads/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \

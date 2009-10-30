@@ -355,7 +355,11 @@ sbBaseDevice::sbBaseDevice() :
   mPerTrackOverhead(DEFAULT_PER_TRACK_OVERHEAD),
   mCapabilitiesRegistrarType(sbIDeviceCapabilitiesRegistrar::NONE),
   mPreferenceLock(nsnull),
-  mMusicLimitPercent(100)
+  mMusicLimitPercent(100),
+  mConnected(PR_FALSE),
+  mReqWaitMonitor(nsnull),
+  mReqStopProcessing(0),
+  mIsHandlingRequests(PR_FALSE)
 {
 #ifdef PR_LOGGING
   if (!gBaseDeviceLog) {
@@ -374,6 +378,10 @@ sbBaseDevice::sbBaseDevice() :
 
   mPreferenceLock = nsAutoLock::NewLock(__FILE__ "::mPreferenceLock");
   NS_ASSERTION(mPreferenceLock, "Failed to allocate preference lock");
+
+  mConnectLock = PR_NewRWLock(PR_RWLOCK_RANK_NONE,
+                              __FILE__"::mConnectLock");
+  NS_ASSERTION(mConnectLock, "Failed to allocate connection lock");
 
   // the typical case is 1 library per device
   PRBool success = mOrganizeLibraryPrefs.Init(1);
@@ -395,6 +403,10 @@ sbBaseDevice::~sbBaseDevice()
 
   if (mPreviousStateLock)
     nsAutoLock::DestroyLock(mPreviousStateLock);
+
+  if (mConnectLock)
+    PR_DestroyRWLock(mConnectLock);
+  mConnectLock = nsnull;
 }
 
 NS_IMETHODIMP sbBaseDevice::SyncLibraries()
@@ -2110,6 +2122,118 @@ sbBaseDevice::RegenerateMediaURL(sbIMediaItem *aItem,
   NS_ENSURE_SUCCESS(rv, rv);
 
   return NS_OK;
+}
+
+nsresult
+sbBaseDevice::InitializeRequestThread()
+{
+  nsresult rv;
+
+  // Clear the stop request processing flag.
+  PR_AtomicSet(&mReqStopProcessing, 0);
+
+  // Get the transcode manager.
+  mTranscodeManager =
+    do_ProxiedGetService
+      ("@songbirdnest.com/Songbird/Mediacore/TranscodeManager;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the request wait monitor.
+  mReqWaitMonitor =
+    nsAutoMonitor::NewMonitor("sbDeviceBase::mReqWaitMonitor");
+  NS_ENSURE_TRUE(mReqWaitMonitor, NS_ERROR_OUT_OF_MEMORY);
+
+  // Create the request added event object.
+  rv = sbDeviceReqAddedEvent::New(this, getter_AddRefs(mReqAddedEvent));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Create the request processing thread.
+  rv = NS_NewThread(getter_AddRefs(mReqThread), nsnull);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+
+void
+sbBaseDevice::FinalizeRequestThread()
+{
+  // Remove object references.
+  mReqThread = nsnull;
+  mReqAddedEvent = nsnull;
+  mTranscodeManager = nsnull;
+
+  // Dispose of the request wait monitor.
+  if (mReqWaitMonitor) {
+    nsAutoMonitor::DestroyMonitor(mReqWaitMonitor);
+    mReqWaitMonitor = nsnull;
+  }
+}
+
+nsresult
+sbBaseDevice::ReqProcessingStart()
+{
+  // Operate under the connect lock.
+  sbAutoReadLock autoConnectLock(mConnectLock);
+  NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
+
+  // Process any queued requests.
+  ProcessRequest();
+
+  return NS_OK;
+}
+
+void
+sbBaseDevice::ShutdownRequestThread()
+{
+  // Get the current thread and wait if we get it, otherwise just shutdown
+  nsCOMPtr<nsIThread> thread;
+  nsresult rv = ::NS_GetCurrentThread(getter_AddRefs(thread));
+  if (NS_SUCCEEDED(rv)) {
+    // Wait for the thread to shutdown before shutting it down.
+    // See bug 18429 for the proxying issues this caused
+    while (::PR_AtomicAdd(&mIsHandlingRequests, 0)) {
+      PRBool processed;
+      // Process the next event and if all is OK then check and wait
+      rv = thread->ProcessNextEvent(PR_TRUE, &processed);
+      if (NS_FAILED(rv)) {
+        break;
+      }
+    }
+  }
+  mReqThread->Shutdown();
+}
+
+nsresult
+sbBaseDevice::ReqProcessingStop()
+{
+  {
+    // Operate under the connect lock.
+    sbAutoReadLock autoConnectLock(mConnectLock);
+    NS_ENSURE_TRUE(mConnected, NS_ERROR_NOT_AVAILABLE);
+  }
+
+  // Set the stop processing requests flag.
+  PR_AtomicSet(&mReqStopProcessing, 1);
+
+  // Notify the request thread of the abort.
+  {
+    nsAutoMonitor monitor(mReqWaitMonitor);
+    monitor.Notify();
+  }
+
+  // Shutdown the request processing thread.
+  ShutdownRequestThread();
+  return NS_OK;
+}
+
+PRBool
+sbBaseDevice::ReqAbortActive()
+{
+  // Abort if request processing has been stopped.
+  if (PR_AtomicAdd(&mReqStopProcessing, 0))
+    return PR_TRUE;
+
+  return IsRequestAbortedOrDeviceDisconnected();
 }
 
 template <class T>
@@ -5126,7 +5250,7 @@ NS_IMPL_THREADSAFE_ISUPPORTS1(sbDeviceReqAddedEvent, nsIRunnable)
 
 //------------------------------------------------------------------------------
 //
-// MSC device request added event nsIRunnable services.
+// Device request added event nsIRunnable services.
 //
 //------------------------------------------------------------------------------
 
@@ -5145,7 +5269,7 @@ sbDeviceReqAddedEvent::Run()
 
 
 /**
- * Create a new sbMSCReqAddedEvent object for the device specified by aDevice
+ * Create a new sbDeviceReqAddedEvent object for the device specified by aDevice
  * and return it in aEvent.
  *
  * \param aDevice               Device for which to create event.

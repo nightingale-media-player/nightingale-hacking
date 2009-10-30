@@ -49,6 +49,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(DEPTH)/components/devices/device/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/devices/base/src \
@@ -57,6 +58,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/device/mock/public \
                      $(topsrcdir)/components/library/base/src/static \
                      $(topsrcdir)/components/library/localdatabase/src \
                      $(topsrcdir)/components/moz/strings/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/pref \

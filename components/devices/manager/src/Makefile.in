@@ -46,10 +46,12 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(DEPTH)/components/devices/marshall/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/library/localdatabase/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/moz/prompter/public \
                      $(DEPTH)/components/property/public \
                      $(topsrcdir)/components/devices/base/src \
                      $(topsrcdir)/components/devices/device/src \
+                     $(topsrcdir)/components/moz/xpcom/src \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/necko \

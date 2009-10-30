@@ -67,6 +67,7 @@ CPP_EXTRA_INCLUDES = $(srcdir) \
                      $(DEPTH)/components/devices/marshall/public \
                      $(DEPTH)/components/library/base/public \
                      $(DEPTH)/components/mediacore/base/public \
+                     $(DEPTH)/components/mediacore/transcode/public \
                      $(DEPTH)/components/property/public \
                      $(DEPTH)/components/playlistplayback/public \
                      $(DEPTH)/components/moz/prompter/public \
