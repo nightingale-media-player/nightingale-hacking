@@ -38,7 +38,6 @@
 #include <nsIObserverService.h>
 #include <nsIProxyObjectManager.h>
 #include <nsServiceManagerUtils.h>
-#include <nsStringEnumerator.h>
 #include <nsIThreadManager.h>
 #include <nsThreadUtils.h>
 #include <nsUnicharUtils.h>

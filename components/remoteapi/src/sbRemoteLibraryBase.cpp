@@ -64,7 +64,6 @@
 #include <nsEventDispatcher.h>
 #include <nsNetUtil.h>
 #include <nsServiceManagerUtils.h>
-#include <nsStringEnumerator.h>
 #include <nsStringGlue.h>
 #include <nsTArray.h>
 #include <nsTHashtable.h>
