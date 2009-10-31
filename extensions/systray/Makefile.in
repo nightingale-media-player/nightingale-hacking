@@ -29,20 +29,8 @@ VPATH = @srcdir@
   
 include $(DEPTH)/build/autodefs.mk
 
+IS_EXTENSION = 1
+
 SUBDIRS = chrome components
-
-# the name of the extension - used to name the XPI file.
-EXTENSION_NAME = songbird-systray
-# the uuid of the extension - used internally by songbird to identify the
-# extension.
-EXTENSION_UUID = $(EXTENSION_NAME)@extensions.mook.moz.googlepages.com
-# where is the extension we're building (right here)
-EXTENSION_DIR  = .
-# where do we want to build it into (over there)
-EXTENSION_STAGE_DIR = ./.xpistage
-
-EXTENSION_VER = 0.0.1a
-EXTENSION_MIN_VER = $(SB_MILESTONE)
-EXTENSION_MAX_VER = $(SB_MILESTONE)
 
 include $(topsrcdir)/build/rules.mk

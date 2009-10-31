@@ -35,6 +35,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
+IS_EXTENSION = 1
+
 # ~= mozilla build system's REQUIRES
 EXTRA_CPP_INCLUDES = widget \
                      appshell \
@@ -100,9 +102,6 @@ IS_COMPONENT = 1
 # build a library - DLL_SUFFIX is the platform-specific file extensions for
 # dynamic libraries (.so on unix, .dll on windows, etc)
 DYNAMIC_LIB = systray
-
-# put this in our staging directory
-EXTENSION_STAGE_DIR = ../../.xpistage
 
 CREATEDIRS += $(EXTENSION_STAGE_DIR)/components/libs
 
