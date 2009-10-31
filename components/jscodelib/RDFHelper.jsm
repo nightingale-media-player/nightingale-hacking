@@ -151,6 +151,7 @@ function RDFHelper(aRdf, aDatasource, aResource, aNamespaces) {
       }*/
       
       // memoize the result to avoid n^2 iterations
+      delete that[alias];
       that[alias] = ary;
       return ary;
     }
