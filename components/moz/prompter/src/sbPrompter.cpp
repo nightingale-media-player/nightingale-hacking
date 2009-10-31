@@ -193,7 +193,7 @@ sbPrompter::OpenWindow(nsIDOMWindow*    aParent,
     // Call proxied prompter until a window is available.
     while (1) {
       // Call the proxied prompter.
-      rv = prompter->OpenDialog(aParent,
+      rv = prompter->OpenWindow(aParent,
                                 aUrl,
                                 aName,
                                 aOptions,
