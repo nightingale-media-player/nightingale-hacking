@@ -116,7 +116,9 @@ sbBaseMediacoreMultibandEqualizer::~sbBaseMediacoreMultibandEqualizer()
     nsAutoMonitor::DestroyMonitor(mMonitor);
   }
 
-  mBands.Clear();
+  if (mBands.IsInitialized()) {
+    mBands.Clear();
+  }
 }
 
 nsresult 
@@ -298,6 +300,8 @@ sbBaseMediacoreMultibandEqualizer::GetBands(nsISimpleEnumerator * *aBands)
 {
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - GetBands", this));
 
+  NS_ENSURE_TRUE(mBands.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
+
   nsresult rv = NS_ERROR_UNEXPECTED;
 
   nsAutoMonitor mon(mMonitor);
@@ -366,6 +370,7 @@ sbBaseMediacoreMultibandEqualizer::GetBand(PRUint32 aBandIndex, sbIMediacoreEqua
   TRACE(("sbBaseMediacoreMultibandEqualizer[0x%x] - GetBand", this));
 
   NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_TRUE(mBands.IsInitialized(), NS_ERROR_NOT_INITIALIZED);
   NS_ENSURE_ARG_POINTER(_retval);
   nsresult rv = NS_ERROR_UNEXPECTED;
 
