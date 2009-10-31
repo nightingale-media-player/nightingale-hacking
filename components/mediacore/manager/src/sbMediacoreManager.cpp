@@ -98,8 +98,6 @@
 #define SB_PVW_NAME "VideoWindow"
 /* primary video window element id */
 #define SB_PVW_ELEMENT_ID "video-box"
-/* number of events we'll process while waiting for the video window */
-static PRUint32 SB_MAX_WAIT_PVW = 50;
 
 /**
  * To log this module, set the following environment variable:
@@ -1239,23 +1237,18 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     nsCOMPtr<nsIDOMEventTarget> domTarget = do_QueryInterface(domWindow, &rv);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    rv = domTarget->AddEventListener(NS_LITERAL_STRING("DOMContentLoaded"), 
+    rv = domTarget->AddEventListener(NS_LITERAL_STRING("resize"), 
                                      videoWindowListener, 
                                      PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    PRUint32 count = 0;
     PRBool processed = PR_FALSE;
-
-    while(!videoWindowListener->IsWindowReady() && 
-          count <= SB_MAX_WAIT_PVW) {
+    while(!videoWindowListener->IsWindowReady()) {
       rv = target->ProcessNextEvent(PR_FALSE, &processed);
       NS_ENSURE_SUCCESS(rv, rv);
-
-      count++;
     }
 
-    rv = domTarget->RemoveEventListener(NS_LITERAL_STRING("DOMContentLoaded"),
+    rv = domTarget->RemoveEventListener(NS_LITERAL_STRING("resize"),
                                         videoWindowListener,
                                         PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
@@ -1851,7 +1844,7 @@ sbMediacoreVideoWindowListener::HandleEvent(nsIDOMEvent *aEvent)
   nsresult rv = aEvent->GetType(eventType);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  if(eventType.EqualsLiteral("DOMContentLoaded")) {
+  if(eventType.EqualsLiteral("resize")) {
     mWindowReady = PR_TRUE;
   }
   

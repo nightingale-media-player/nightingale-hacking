@@ -2509,6 +2509,17 @@ sbMediacoreSequencer::Stop() {
 
   mSeenPlaying = PR_FALSE;
 
+  nsCOMPtr<sbIMediacoreEvent> event;
+  rv = sbMediacoreEvent::CreateEvent(sbIMediacoreEvent::SEQUENCE_END,
+                                     nsnull,
+                                     nsnull,
+                                     mCore,
+                                     getter_AddRefs(event));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = DispatchMediacoreEvent(event);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   return NS_OK;
 }
 

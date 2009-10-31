@@ -53,7 +53,7 @@
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
   
   <sb-sys-outer-frame flex="1">
-    <sb-sys-titlebar type="hide"/>
+    <sb-sys-titlebar />
 
     <!-- This is for Mac -->
     <menubar id="video_menu" hidden="false" >

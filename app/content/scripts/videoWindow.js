@@ -25,8 +25,8 @@
  */
 
 /**
- * \file videoWinInit.js
- * \brief Video window initialization and shutdown functions.
+ * \file videoWindow.js
+ * \brief Video window controller.
  * \internal
  */
 
@@ -121,161 +121,10 @@ var videoWindowController = {
 ///////////////////////////////////////////////////////////////////////////////
 //
 // XXXAus: All of the code below will get blown away. I'm just keeping it
-//         here for now because it's useful reference.
+//         here for now because it's useful reference. It doesn't actually
+//         get used as you can see. :)
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-//
-// Video Window Initialization.  Setup all the cores based upon the runtime platform
-//
-var songbird_playingVideo; // global for DataRemote
-
-// observer for DataRemote
-const sb_playing_video_changed = { 
-  observe: function ( aSubject, aTopic, aData ) { 
-    SBPlayingVideoChanged(aData); 
-  } 
-} 
-
-/**
- * \brief Initialize the Video window.
- * \note Do not call this more than once.
- * \internal
- */
-function SBVideoInitialize()
-{
-  dump("SBVideoInitialize\n");
-  try
-  {
-    // Cook up the mac pseudo-chrome.
-    try {
-      fixOSXWindow("cheezy_window_top", "app_title");
-    }
-    catch (e) { }
-
-    // Create and bind DataRemote
-    songbird_playingVideo = SB_NewDataRemote( "faceplate.playingvideo", null );
-    songbird_playingVideo.bindObserver( sb_playing_video_changed, true );
-
-    // Set our window constraints
-    setVideoMinMaxCallback();
-
-    // Trap ALTF4
-    window.addEventListener("keydown", videoCheckAltF4, true);
-
-    windowPlacementSanityChecks();
-
-    var platform;
-    try {
-      var sysInfo =
-        Components.classes["@mozilla.org/system-info;1"]
-                  .getService(Components.interfaces.nsIPropertyBag2);
-      platform = sysInfo.getProperty("name");
-    }
-    catch (e) {
-      dump("System-info not available, trying the user agent string.\n");
-      var user_agent = navigator.userAgent;
-      if (user_agent.indexOf("Windows") != -1)
-        platform = "Windows_NT";
-      else if (user_agent.indexOf("Mac OS X") != -1)
-        platform = "Darwin";
-      else if (user_agent.indexOf("Linux") != -1)
-        platform = "Linux";
-      else if (user_agent.indexOf("SunOS") != -1)
-        platform = "SunOS";
-    }
-
-    //
-    // Initialize the video window on the mediacore manager.
-    //
-    var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-                       .getService(Components.interfaces.sbIMediacoreManager);
-    
-    var box = document.getElementById("video-box");
-    //mm.video.videoWindow = box;
-    
-    if (platform == "Darwin") {
-      var quitMenuItem = document.getElementById("menu_FileQuitItem");
-      quitMenuItem.removeAttribute("hidden");
-    }
-    
-    // If we are a top level window, hide us.
-    if ( window.parent == window && document.__dont_hide_video_window != true) {
-      SBHideCoreWindow();
-    }
-  }
-  catch( e ) {
-    alert("SBVideoInitialize\n" + e); 
-    throw(e);
-  }
-}
-
-/**
- * \brief Deinitialize the Video window.
- * \note Do not call this more than once.
- * \internal
- */
-function SBVideoDeinitialize()
-{
-  // Stop trapping altf4
-  window.removeEventListener("keydown", videoCheckAltF4, true);
-  // Reset window constraints
-  resetVideoMinMaxCallback();
-  // Unbind the playing video watcher. (used by the code that uncloaks the video window)
-  songbird_playingVideo.unbind();
-  songbird_playingVideo = null;
-  // Save position before closing, in case the window has been moved, but its position hasnt been saved yet (the window is still up)
-}
-
-/**
- * \brief Contains logic that needs to be applied when the currently playing video changes.
- * \internal
- */
-function SBPlayingVideoChanged(value)
-{
-  var windowCloak =
-    Components.classes["@songbirdnest.com/Songbird/WindowCloak;1"]
-              .getService(Components.interfaces.sbIWindowCloak);
-
-  if (value == 1) {
-    windowCloak.uncloak(window);
-    window.focus();
-  }
-  else {
-    // restore window if it was maximized before cloaking it
-    restoreWindow();
-    // hide window.
-    SBHideCoreWindow();
-  }
-}
-
-/**
- * \brief Handler for the specific UI event from the video window.
- * \internal
- */
-function onHideButtonClick()
-{
-  // Stop video playback
-  try {
-    var mm = Components.classes["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
-               .getService(Components.interfaces.sbIMediacoreManager);
-    mm.playbackControl.stop();
-  } catch (e) {}
-
-  SBHideCoreWindow();
-}
-
-/**
- * \brief Save Video window position and hide it.
- * \deprecated Does not work anymore.
- * \internal
- */
-function SBHideCoreWindow()
-{
-  // Save position before cloaking, because if we close the app after 
-  // the window has been cloaked, we can't record its position
-  onHide();
-}
 
 var SBVideoMinMaxCB =
 {
@@ -371,16 +220,5 @@ function resetVideoMinMaxCallback() {
   catch (err) {
     // No component
     dump("Error. No WindowMinMax component available." + err + "\n");
-  }
-}
-
-/**
- * \brief Check for ALT+F4 key combo, close window.
- */
-function videoCheckAltF4(evt)
-{
-  if (evt.keyCode == evt.VK_F4 && evt.altKey)
-  {
-    onHideButtonClick();
   }
 }

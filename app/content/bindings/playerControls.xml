@@ -1052,7 +1052,7 @@
       <method name="playbackStop">
         <body>
           <![CDATA[
-            this.mm.playbackControl.stop();
+            this.mm.sequencer.stop();
           ]]>
         </body>
       </method>
