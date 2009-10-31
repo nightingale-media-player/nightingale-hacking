@@ -32,7 +32,7 @@
 <bindings xmlns="http://www.mozilla.org/xbl"
           xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
           xmlns:xbl="http://www.mozilla.org/xbl">
-  <binding id="draggable" extends="xul:vbox">
+  <binding id="draggable">
     <!-- Apparently, the only way to stop dragging a titlebar is hide it. -->
     <content>
       <xul:stack mousethrough="always" flex="1">

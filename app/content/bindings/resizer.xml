@@ -34,7 +34,7 @@
           xmlns:xbl="http://www.mozilla.org/xbl">
 
           
-  <binding id="sb-native-resizer" extends="xul:box">
+  <binding id="sb-native-resizer">
     <content mousethrough="never">
       <xul:spacer flex="1" />
     </content>
