@@ -22,22 +22,11 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../..
-topsrcdir = @top_srcdir@
-srcdir = @srcdir@
-VPATH = @srcdir@
+EXTENSION_NAME = albumart
+EXTENSION_UUID = $(EXTENSION_NAME)@songbirdnest.com
 
-include $(DEPTH)/build/autodefs.mk
+EXTENSION_VER = 1.0.6pre
+EXTENSION_MIN_VER = $(SB_MILESTONE)
+EXTENSION_MAX_VER = $(SB_MILESTONE)
 
-IS_EXTENSION = 1
-
-SUBDIRS = chrome \
-          components \
-          defaults \
-          $(NULL)
-
-CREATEDIRS = $(SONGBIRD_COMPONENTSDIR) \
-             $(SONGBIRD_PREFERENCESDIR) \
-             $(NULL)
-
-include $(topsrcdir)/build/rules.mk
+EXTENSION_NO_BINARY_COMPONENTS = 1

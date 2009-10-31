@@ -29,10 +29,8 @@ VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-# put this in our staging directory
-EXTENSION_STAGE_DIR = ../../.xpistage
+IS_EXTENSION = 1
 
-# into components/ 
 SONGBIRD_COMPONENTS = $(srcdir)/lastFmAlbumArtFetcher.js \
                       $(NULL)
 
