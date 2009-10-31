@@ -39,7 +39,6 @@ const API_URL = 'http://ws.audioscrobbler.com/2.0/';
 // Import some helper scripts
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/sbProperties.jsm");
-Cu.import("resource://gre/modules/JSON.jsm");
 
 // XPCOM Constants
 const CONTRACTID = "@songbirdnest.com/Songbird/webservices/last-fm;1";

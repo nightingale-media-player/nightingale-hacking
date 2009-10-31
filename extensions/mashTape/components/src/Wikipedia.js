@@ -1,11 +1,11 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-Components.utils.import("resource://gre/modules/JSON.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+var JSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 
 const DESCRIPTION = "mashTape Provider: Wikipedia Artist Info Provider";
 const CID         = "{a7780910-8c10-11dd-ad8b-0800200c9a66}";
@@ -46,7 +46,7 @@ function ArtistInfo() {
 				return;
 			if (this.status != 200)
 				return;
-			var results = JSON.fromString(this.responseText);
+			var results = JSON.decode(this.responseText);
 			if (results.responseStatus == 200) {
 				var text = results.responseData.translatedText.split("|");
 				wikipedia = text[0].replace(/^[\s]*/, '').replace(/[\s]*$/, '');

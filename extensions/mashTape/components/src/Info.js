@@ -1,11 +1,11 @@
 Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-Components.utils.import("resource://gre/modules/JSON.jsm");
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
+var JSON = Cc["@mozilla.org/dom/json;1"].createInstance(Ci.nsIJSON);
 
 const DESCRIPTION = "mashTape Provider: UberMash Artist Info Provider";
 const CID         = "{7792e470-75ec-11dd-ad8b-0800200c9a66}";
@@ -190,7 +190,7 @@ ArtistInfo.prototype = {
 			if (this.readyState != 4)
 				return;
 			if (this.status == 200) {
-				var results = JSON.fromString(this.responseText);
+				var results = JSON.decode(this.responseText);
 			
 				if (typeof(results.qMembers.result) == 'undefined' ||
 						results.qMembers.result.length == 0)
