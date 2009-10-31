@@ -166,14 +166,20 @@ endif
 
 GARBAGE += $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
 
+# Set the LANG variable, since that impacts how sort works, but only if we're
+# doing distdir_manifest stuff...
+ifneq (,$(filter %distdir_manifest, $(MAKECMDGOALS)))
+   export LANG = C
+endif
+
 test_distdir_manifest:
 	@cd $(SONGBIRD_DISTDIR) && $(FIND) . -type f | $(SORT) -n > $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST)
-	@if test -z "$$($(DIFF) -q $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST) $(topsrcdir)/update/$(DISTDIR_MANIFEST))"; then \
+	@if test -z "$$($(DIFF) -q $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST))"; then \
       echo Distdir manifests are OK. No added or deleted files detected.; \
    else \
       echo Distdir manifests DO NOT MATCH. Differences: ; \
-      $(DIFF) -u $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST) $(topsrcdir)/update/$(DISTDIR_MANIFEST); \
-		exit -1; \
+      $(DIFF) -u $(topsrcdir)/update/$(DISTDIR_MANIFEST) $(SONGBIRD_OBJDIR)/$(DISTDIR_MANIFEST); \
+      exit -1; \
    fi
 
 distdir_manifest:
