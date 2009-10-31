@@ -756,6 +756,7 @@ sbPlaybackHistoryService::CreateDefaultQuery(sbIDatabaseQuery **aQuery)
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<sbIDatabaseQuery> query = 
     do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   rv = query->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -903,6 +904,7 @@ sbPlaybackHistoryService::CreateEntriesFromResultSet(sbIDatabaseResult *aResult,
   nsresult rv = NS_ERROR_UNEXPECTED;
   nsCOMPtr<nsIMutableArray> mutableArray = 
     do_CreateInstance(SB_THREADSAFE_ARRAY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
 
   PRUint32 rowCount = 0;
   rv = aResult->GetRowCount(&rowCount);
