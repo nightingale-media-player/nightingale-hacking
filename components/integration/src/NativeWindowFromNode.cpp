@@ -35,7 +35,7 @@
 #include "nsIInterfaceRequestorUtils.h"
 #include "nsIDOMNode.h"
 
-#include <xpcom/nsCOMPtr.h>
+#include <nsCOMPtr.h>
 #include "nsIServiceManager.h"
 #include "nsIDOMDocument.h"
 #include "nsIDOMDocumentView.h"

@@ -29,23 +29,23 @@
 #include <nspr.h>
 #include "sbMetadataManager.h"
 
-#include <xpcom/nsAutoLock.h>
-#include <xpcom/nsXPCOM.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsAutoPtr.h>
-#include <xpcom/nsMemory.h>
-#include <xpcom/nsILocalFile.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsComponentManagerUtils.h>
-#include <xpcom/nsIComponentRegistrar.h>
-#include <xpcom/nsISupportsPrimitives.h>
+#include <nsAutoLock.h>
+#include <nsXPCOM.h>
+#include <nsCOMPtr.h>
+#include <nsAutoPtr.h>
+#include <nsMemory.h>
+#include <nsILocalFile.h>
+#include <nsServiceManagerUtils.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIComponentRegistrar.h>
+#include <nsISupportsPrimitives.h>
 
-#include <necko/nsIURI.h>
-#include <necko/nsIFileStreams.h>
-#include <necko/nsIFileURL.h>
-#include <necko/nsIIOService.h>
+#include <nsIURI.h>
+#include <nsIFileStreams.h>
+#include <nsIFileURL.h>
+#include <nsIIOService.h>
 
-#include <necko/nsNetUtil.h>
+#include <nsNetUtil.h>
 
 #include <nsStringGlue.h>
 

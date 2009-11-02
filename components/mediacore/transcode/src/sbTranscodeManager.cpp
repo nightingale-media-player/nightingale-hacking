@@ -26,14 +26,14 @@
 
 #include "sbTranscodeManager.h"
 
-#include <xpcom/nsAutoLock.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsAutoPtr.h>
+#include <nsAutoLock.h>
+#include <nsCOMPtr.h>
+#include <nsAutoPtr.h>
 
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsComponentManagerUtils.h>
-#include <xpcom/nsIComponentRegistrar.h>
-#include <xpcom/nsISupportsPrimitives.h>
+#include <nsServiceManagerUtils.h>
+#include <nsComponentManagerUtils.h>
+#include <nsIComponentRegistrar.h>
+#include <nsISupportsPrimitives.h>
 
 #include <nsStringGlue.h>
 #include <nsISimpleEnumerator.h>

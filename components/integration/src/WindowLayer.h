@@ -47,7 +47,7 @@ namespace std
 
 #include "IWindowLayer.h"
 #include <list>
-#include <xpcom/nsClassHashtable.h>
+#include <nsClassHashtable.h>
 
 #include "../NativeWindowFromNode.h"
 

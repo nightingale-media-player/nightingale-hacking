@@ -56,6 +56,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/devices/base/public \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
+                     $(MOZSDK_INCLUDE_DIR)/pref \
                      $(NULL)
 
 COMPONENTS_OBJDIR = $(SONGBIRD_OBJDIR)/components

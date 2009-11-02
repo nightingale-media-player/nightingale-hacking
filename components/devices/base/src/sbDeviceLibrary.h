@@ -41,7 +41,7 @@
 #include <sbILocalDatabaseSimpleMediaList.h>
 #include <sbIPropertyArray.h>
 
-#include <pref/nsIPrefBranch.h>
+#include <nsIPrefBranch.h>
 #include <prlock.h>
 
 #include "sbDeviceLibraryHelpers.h"

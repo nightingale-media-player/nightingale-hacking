@@ -43,7 +43,7 @@
 #include <nsIPrefService.h>
 #include <nsIPropertyBag2.h>
 #include <nsIStringBundle.h>
-#include <unicharutil/nsUnicharUtils.h>
+#include <nsUnicharUtils.h>
 
 #define PERMISSIONS_FILE  0644
 

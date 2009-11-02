@@ -86,6 +86,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/property/public \
                      $(MOZSDK_INCLUDE_DIR)/places \
                      $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(MOZSDK_INCLUDE_DIR)/necko \
+                     $(MOZSDK_INCLUDE_DIR)/xpcom \
                      $(MOZSDK_IDL_DIR) \
                      $(NULL)
 

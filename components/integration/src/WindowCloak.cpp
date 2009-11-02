@@ -31,14 +31,14 @@
 
 #include "WindowCloak.h"
 
-#include <dom/nsIDOMWindow.h>
-#include <dom/nsPIDOMWindow.h>
-#include <docshell/nsIDocShell.h>
-#include <docshell/nsIDocShellTreeItem.h>
-#include <docshell/nsIDocShellTreeOwner.h>
-#include <webbrwsr/nsIEmbeddingSiteWindow.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsIInterfaceRequestorUtils.h>
+#include <nsIDOMWindow.h>
+#include <nsPIDOMWindow.h>
+#include <nsIDocShell.h>
+#include <nsIDocShellTreeItem.h>
+#include <nsIDocShellTreeOwner.h>
+#include <nsIEmbeddingSiteWindow.h>
+#include <nsCOMPtr.h>
+#include <nsIInterfaceRequestorUtils.h>
 
 sbWindowCloak::~sbWindowCloak()
 {

@@ -36,9 +36,9 @@
 
 #include <prlog.h>
 #include <prmem.h>
-#include <xpcom/nsMemory.h>
-#include <xpcom/nsXPCOM.h>
-#include <xpcom/nsServiceManagerUtils.h>
+#include <nsMemory.h>
+#include <nsXPCOM.h>
+#include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 
 #include <nsAutoLock.h>

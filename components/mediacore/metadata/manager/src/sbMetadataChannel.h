@@ -35,7 +35,7 @@
 // INCLUDES ===================================================================
 #include <nscore.h>
 #include <nsStringGlue.h>
-#include <xpcom/nsMemory.h>
+#include <nsMemory.h>
 #include <nsIChannelEventSink.h>
 #include <nsIInterfaceRequestor.h>
 #include <nsCOMPtr.h>

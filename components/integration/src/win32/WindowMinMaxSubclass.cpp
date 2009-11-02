@@ -39,10 +39,10 @@
 #include "MultiMonitor.h"
 #endif
 
-#include <xpcom/nscore.h>
-#include <xpcom/nsCOMPtr.h>
-#include <xpcom/nsXPCOM.h>
-#include <xpcom/nsComponentManagerUtils.h>
+#include <nscore.h>
+#include <nsCOMPtr.h>
+#include <nsXPCOM.h>
+#include <nsComponentManagerUtils.h>
 #include <nsServiceManagerUtils.h>
 #include <nsStringGlue.h>
 

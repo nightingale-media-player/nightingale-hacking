@@ -33,8 +33,8 @@
 #include <nspr.h>
 #include <nscore.h>
 #include <nsComponentManagerUtils.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsIObserverService.h>
+#include <nsServiceManagerUtils.h>
+#include <nsIObserverService.h>
 #include <nsArrayUtils.h>
 #include <nsIPrefBranch.h>
 #include <nsIPromptService.h>

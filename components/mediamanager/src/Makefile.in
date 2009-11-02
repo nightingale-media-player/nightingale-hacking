@@ -58,6 +58,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/mediamanager/public \
                      $(MOZSDK_INCLUDE_DIR)/dom \
                      $(MOZSDK_INCLUDE_DIR)/windowwatcher \
                      $(MOZSDK_INCLUDE_DIR)/intl \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(NULL)
 
 DYNAMIC_LIB_EXTRA_IMPORTS = plds4 \

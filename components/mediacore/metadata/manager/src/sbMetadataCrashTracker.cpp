@@ -36,8 +36,8 @@
 #include <nspr.h>
 #include <nscore.h>
 #include <nsAutoLock.h>
-#include <xpcom/nsServiceManagerUtils.h>
-#include <xpcom/nsCRTGlue.h>
+#include <nsServiceManagerUtils.h>
+#include <nsCRTGlue.h>
 #include <nsIFile.h>
 #include <nsIFileURL.h>
 #include <nsAutoPtr.h>
@@ -45,8 +45,8 @@
 #include <nsNetUtil.h>
 #include <nsIURI.h>
 #include <nsIIOService.h>
-#include <pref/nsIPrefService.h>
-#include <pref/nsIPrefBranch2.h>
+#include <nsIPrefService.h>
+#include <nsIPrefBranch2.h>
 #include <nsIInputStream.h>
 #include <nsILineInputStream.h>
 

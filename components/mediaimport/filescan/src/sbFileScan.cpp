@@ -35,11 +35,11 @@
 #include "prmem.h"
 #include "prlog.h"
 
-#include <xpcom/nsMemory.h>
-#include <xpcom/nsAutoLock.h>     // for nsAutoMonitor
-#include <necko/nsIIOService.h>
-#include <necko/nsIURI.h>
-#include <unicharutil/nsUnicharUtils.h>
+#include <nsMemory.h>
+#include <nsAutoLock.h>     // for nsAutoMonitor
+#include <nsIIOService.h>
+#include <nsIURI.h>
+#include <nsUnicharUtils.h>
 #include <nsISupportsPrimitives.h>
 #include <nsArrayUtils.h>
 #include <nsThreadUtils.h>

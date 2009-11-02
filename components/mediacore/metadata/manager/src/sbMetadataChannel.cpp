@@ -32,10 +32,10 @@
 #include <nsIInputStream.h>
 #include <nsIResumableChannel.h>
 #include <nsIChannel.h>
-#include <necko/nsIURI.h>
-#include <necko/nsIFileStreams.h>
-#include <necko/nsIIOService.h>
-#include <necko/nsNetUtil.h>
+#include <nsIURI.h>
+#include <nsIFileStreams.h>
+#include <nsIIOService.h>
+#include <nsNetUtil.h>
 
 #include "sbMetadataChannel.h"
 

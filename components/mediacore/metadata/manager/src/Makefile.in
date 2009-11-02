@@ -72,6 +72,8 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/albumart/public \
                      $(MOZSDK_INCLUDE_DIR)/appshell \
                      $(MOZSDK_INCLUDE_DIR)/intl \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/xpcom \
+                     $(MOZSDK_INCLUDE_DIR)/unicharutil \
                      $(MOZSDK_IDL_DIR) \
                      $(topsrcdir)/components/dbengine/src \
                      $(topsrcdir)/components/include \

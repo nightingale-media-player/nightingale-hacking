@@ -62,7 +62,7 @@
 #include <nsIIOService.h>
 #include <nsMemory.h>
 #include <nsServiceManagerUtils.h>
-#include <unicharutil/nsUnicharUtils.h>
+#include <nsUnicharUtils.h>
 #include <nsIMutableArray.h>
 
 //------------------------------------------------------------------------------

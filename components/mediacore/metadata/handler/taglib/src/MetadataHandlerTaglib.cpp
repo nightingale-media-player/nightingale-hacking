@@ -60,7 +60,7 @@
 #include "sbPropertiesCID.h"
 
 /* Mozilla imports. */
-#include <necko/nsIURI.h>
+#include <nsIURI.h>
 #include <nsComponentManagerUtils.h>
 #include <nsIFile.h>
 #include <nsIMIMEService.h>
@@ -77,7 +77,7 @@
 #include <nsStringGlue.h>
 #include <prlog.h>
 #include <prprf.h>
-#include <unicharutil/nsUnicharUtils.h>
+#include <nsUnicharUtils.h>
 #include <nsMemory.h>
 
 #include <flacfile.h>

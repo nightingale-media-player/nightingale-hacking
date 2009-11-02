@@ -36,7 +36,7 @@
 
 #include "IWindowCloak.h"
 
-#include <xpcom/nsClassHashtable.h>
+#include <nsClassHashtable.h>
 
 // DEFINES ====================================================================
 #define SONGBIRD_WINDOWCLOAK_CONTRACTID                   \

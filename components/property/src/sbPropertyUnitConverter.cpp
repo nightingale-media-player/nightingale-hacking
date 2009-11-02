@@ -27,7 +27,7 @@
 // Base class for property unit converters (sbIPropertyUnitConverter)
 
 #include "sbPropertyUnitConverter.h"
-#include <xpcom/nsServiceManagerUtils.h>
+#include <nsServiceManagerUtils.h>
 #include <sbLockUtils.h>
 #include <nsCOMPtr.h>
 #include "nsEnumeratorUtils.h"

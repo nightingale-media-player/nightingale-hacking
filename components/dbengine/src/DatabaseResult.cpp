@@ -31,7 +31,7 @@
 
 #include "DatabaseResult.h"
 #include <prmem.h>
-#include <xpcom/nsMemory.h>
+#include <nsMemory.h>
 
 #include <nsStringGlue.h>
 

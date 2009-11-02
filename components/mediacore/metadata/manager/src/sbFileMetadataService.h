@@ -38,7 +38,7 @@
 #include <nsStringGlue.h>
 #include <nsITimer.h>
 #include <nsCOMPtr.h>
-#include <xpcom/nsIObserver.h>
+#include <nsIObserver.h>
 #include <nsIStringBundle.h>
 #include <nsTArray.h>
 #include <nsAutoPtr.h>
