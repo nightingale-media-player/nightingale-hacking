@@ -47,6 +47,7 @@ var videoWindowController = {
   // Internal data
   _mediacoreManager: null,
   _shouldDismissSelf: false,
+  _ssp: null,
   
   // sbIMediacoreEventListener
   onMediacoreEvent: function vwc_onMediacoreEvent(aEvent) {
@@ -80,11 +81,16 @@ var videoWindowController = {
         .getService(Ci.sbIMediacoreManager);
     
     this._mediacoreManager.addListener(this);
+    
+    this._ssp = Cc["@songbirdnest.com/Songbird/ScreenSaverSuppressor;1"]
+                  .getService(Ci.sbIScreenSaverSuppressor);
+    this._ssp.suppress(true);
   },
   
   _shutdown: function vwc__shutdown() {
     this._mediacoreManager.removeListener(this);
     this._mediacoreManager = null;
+    this._ssp = null;
   },
   
   _handleBeforeTrackChange: function vwc__handleBeforeTrackChange(aEvent) {
@@ -114,6 +120,7 @@ var videoWindowController = {
   },
   
   _dismissSelf: function vwc__dismissSelf() {
+    this._ssp.suppress(false);
     setTimeout(function() { window.close(); }, 0);
   },
 };
