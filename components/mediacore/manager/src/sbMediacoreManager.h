@@ -103,6 +103,9 @@ public:
 
   nsresult CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex, 
                                             sbIDataRemote **aRemote);
+
+  nsresult VideoWindowUnloaded();
+
 protected:
   virtual ~sbMediacoreManager();
 
@@ -160,8 +163,11 @@ public:
   sbMediacoreVideoWindowListener();
   virtual ~sbMediacoreVideoWindowListener();
 
+  nsresult Init(sbMediacoreManager *aManager, nsIDOMEventTarget *aTarget);
   PRBool IsWindowReady();
 
 protected:
-  PRPackedBool mWindowReady;
+  PRPackedBool                  mWindowReady;
+  nsRefPtr<sbMediacoreManager>  mManager;
+  nsCOMPtr<nsIDOMEventTarget>        mTarget;
 };

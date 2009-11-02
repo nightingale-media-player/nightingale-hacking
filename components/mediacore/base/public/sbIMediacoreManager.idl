@@ -88,9 +88,10 @@ interface sbIMediacoreManager : nsISupports
    * @note This method will return null if aCreate is false and there is no
    *       video window available.
    */
-  sbIMediacoreVideoWindow getPrimaryVideoWindow(in boolean aCreate,
-                                                [optional] in unsigned long aWidthHint,
-                                                [optional] in unsigned long aHeightHint);
+  sbIMediacoreVideoWindow 
+      getPrimaryVideoWindow(in boolean aCreate,
+                            [optional] in unsigned long aWidthHint,
+                            [optional] in unsigned long aHeightHint);
 
   /**
    * Create a new event

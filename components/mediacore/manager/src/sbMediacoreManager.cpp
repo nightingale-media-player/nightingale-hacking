@@ -823,6 +823,14 @@ sbMediacoreManager::CreateDataRemoteForEqualizerBand(PRUint32 aBandIndex,
   return NS_OK;
 }
 
+nsresult 
+sbMediacoreManager::VideoWindowUnloaded()
+{
+  nsAutoMonitor mon(mVideoWindowMonitor);
+  mVideoWindow = nsnull;
+  return NS_OK;
+}
+
 // ----------------------------------------------------------------------------
 // sbBaseMediacoreVolumeControl overrides
 // ----------------------------------------------------------------------------
@@ -1225,6 +1233,39 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
 
     rv = windowWatcher->WaitForWindow(NS_LITERAL_STRING("Songbird:Core"));
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMWindow> grip;
+    domWindow.swap(grip);
+
+    rv = do_GetProxyForObject(target,
+                              NS_GET_IID(nsIDOMWindow),
+                              grip,
+                              NS_PROXY_SYNC,
+                              getter_AddRefs(domWindow));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMEventTarget> domTarget = do_QueryInterface(domWindow, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMEventTarget> proxiedDomTarget;
+    rv = do_GetProxyForObject(target, 
+                              NS_GET_IID(nsIDOMEventTarget), 
+                              domTarget, 
+                              NS_PROXY_SYNC, 
+                              getter_AddRefs(proxiedDomTarget));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsRefPtr<sbMediacoreVideoWindowListener> videoWindowListener;
+    NS_NEWXPCOM(videoWindowListener, sbMediacoreVideoWindowListener);
+    NS_ENSURE_TRUE(videoWindowListener, NS_ERROR_OUT_OF_MEMORY);
+
+    rv = videoWindowListener->Init(this, domTarget);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = proxiedDomTarget->AddEventListener(NS_LITERAL_STRING("unload"), 
+                                            videoWindowListener, 
+                                            PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   else {
     // On the main thread, we'll have to add a listener to the window 
@@ -1235,6 +1276,9 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
     NS_ENSURE_TRUE(videoWindowListener, NS_ERROR_OUT_OF_MEMORY);
 
     nsCOMPtr<nsIDOMEventTarget> domTarget = do_QueryInterface(domWindow, &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    rv = videoWindowListener->Init(this, domTarget);
     NS_ENSURE_SUCCESS(rv, rv);
 
     rv = domTarget->AddEventListener(NS_LITERAL_STRING("resize"), 
@@ -1255,17 +1299,10 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
 
     // If the window isn't ready yet, error out.
     NS_ENSURE_TRUE(videoWindowListener->IsWindowReady(), NS_ERROR_FAILURE);
-  }
 
-  if(!mainThread) {
-    nsCOMPtr<nsIDOMWindow> grip;
-    domWindow.swap(grip);
-
-    rv = do_GetProxyForObject(target,
-                              NS_GET_IID(nsIDOMWindow),
-                              grip,
-                              NS_PROXY_SYNC,
-                              getter_AddRefs(domWindow));
+    rv = domTarget->AddEventListener(NS_LITERAL_STRING("unload"), 
+                                     videoWindowListener, 
+                                     PR_FALSE);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -1836,16 +1873,40 @@ sbMediacoreVideoWindowListener::~sbMediacoreVideoWindowListener()
 {
 }
 
+nsresult 
+sbMediacoreVideoWindowListener::Init(sbMediacoreManager *aManager, 
+                                     nsIDOMEventTarget *aTarget)
+{
+  NS_ENSURE_ARG_POINTER(aManager);
+  NS_ENSURE_ARG_POINTER(aTarget);
+
+  mManager = aManager;
+  mTarget = aTarget;
+
+  return NS_OK;
+}
+
 NS_IMETHODIMP
 sbMediacoreVideoWindowListener::HandleEvent(nsIDOMEvent *aEvent)
 {
+  NS_ENSURE_TRUE(mManager, NS_ERROR_NOT_INITIALIZED);
+
   nsString eventType;
-  
   nsresult rv = aEvent->GetType(eventType);
   NS_ENSURE_SUCCESS(rv, rv);
 
   if(eventType.EqualsLiteral("resize")) {
     mWindowReady = PR_TRUE;
+  }
+  else if(eventType.EqualsLiteral("unload")) {
+    rv = mManager->VideoWindowUnloaded();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsIDOMEventListener> grip(this);
+    rv = mTarget->RemoveEventListener(NS_LITERAL_STRING("unload"), 
+                                      this, 
+                                      PR_FALSE);
+    NS_ENSURE_SUCCESS(rv, rv);
   }
   
   return NS_OK;
