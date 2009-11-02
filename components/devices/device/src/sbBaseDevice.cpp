@@ -538,6 +538,262 @@ void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
   }
 }
 
+/**
+ * Static helper class for convenience
+ */
+class sbBaseDeviceRequestDupeCheck
+{
+public:
+   typedef sbBaseDevice::TransferRequest TransferRequest;
+  /**
+   * This compares two items, handling null values, returning true if they are
+   * equal
+   */
+  static bool CompareItems(sbIMediaItem * aLeft, sbIMediaItem * aRight)
+  {
+    PRBool same = PR_FALSE;
+    // They're the same if neither is specified or both are and they are "equal"
+    return (!aLeft && !aRight) ||
+           (aLeft && aRight && NS_SUCCEEDED(aLeft->Equals(aRight, &same)) &&
+            same);
+  }
+
+  /**
+     * This compares both the list and item of aRequest and mRequest
+     * \param aRequest the other request to be compared
+     * \return ture if the two requests refer to the same itema and list
+     */
+  static bool CompareRequestItems(TransferRequest * aRequest1,
+                                  TransferRequest * aRequest2)
+  {
+    return CompareItems(aRequest1->item, aRequest2->item) &&
+           CompareItems(aRequest1->list, aRequest2->list);
+  }
+
+  /**
+   * This is the primary function that does the work. It compares the two
+   * requests and if they are a dupe returns true in aIsDupe. The return value
+   * is whether the caller should continue through the queue or not.
+   * \param aQueueRequest the request that is on the queue
+   * \param aNewRequest The request that is about to be added to the queue
+   * \param aIsDupe out parameter denoting whether the new request is a dupe
+   *                of the request on the queue
+   * \return Returns false if the caller should stop and not continue with
+   *         the rest of the items on the queue. For instance if we see
+   *         new playlist request and we have a delete request we're adding
+   *         for that same playlist, then it's not a dupe, but there's no
+   *         need to look further.
+   */
+  static bool DupeCheck(TransferRequest * aQueueRequest,
+                        TransferRequest * aNewRequest,
+                        bool & aIsDupe);
+};
+
+bool sbBaseDeviceRequestDupeCheck::DupeCheck(TransferRequest * aQueueRequest,
+                                             TransferRequest * aNewRequest,
+                                             bool & aIsDupe)
+{
+  // Check the type of the request being added
+  switch (aNewRequest->type) {
+    case TransferRequest::REQUEST_BATCH_BEGIN:
+    case TransferRequest::REQUEST_BATCH_END:
+      // Bail early on these, never are dupes
+      return true;
+    case TransferRequest::REQUEST_WRITE: {
+      // is this a write to a playlist?
+      if (aNewRequest->IsPlaylist()) {
+        // And the request on queue is a playlist operation
+        if (aQueueRequest->IsPlaylist()) {
+          switch (aQueueRequest->type) {
+
+            // If the queue request is a playlist operation for the same
+            // playlist dupe it
+            case TransferRequest::REQUEST_WRITE:
+            case TransferRequest::REQUEST_MOVE:
+            case TransferRequest::REQUEST_DELETE:
+              aIsDupe = CompareItems(aNewRequest->list, aQueueRequest->list);
+              return aIsDupe;
+            default:
+              return false;
+          }
+        }
+
+        // queue request wasn't a playlist operation so check for creation,
+        // deletion, and updating of playlists
+        switch (aQueueRequest->type) {
+          // If we find a delete playlist, look no further, but it is not a dupe
+          case TransferRequest::REQUEST_DELETE:
+            aIsDupe = false;
+            return CompareItems(aNewRequest->list, aQueueRequest->item);
+
+          // If we find a new playlist request for the same playlist dupe it
+          case TransferRequest::REQUEST_NEW_PLAYLIST:
+
+          // If we find an update playlist request for the same playlist
+          // dupe it
+          case TransferRequest::REQUEST_UPDATE:
+            aIsDupe = CompareItems(aNewRequest->list, aQueueRequest->item);
+            return aIsDupe;
+
+          default:
+            return false;
+        }
+      }
+
+      // Not a playlist operation, if it's the same item and
+      // type then dupe it
+      aIsDupe = (aQueueRequest->type == TransferRequest::REQUEST_WRITE) &&
+                CompareRequestItems(aQueueRequest, aNewRequest);
+      return aIsDupe;
+    }
+    case TransferRequest::REQUEST_DELETE: {
+      // If we're dealing with a remove item from playlist
+      if (aNewRequest->IsPlaylist()) {
+        // If the playlist on the queue is the same as this one
+        if (CompareItems(aNewRequest->list, aQueueRequest->list)) {
+          switch (aQueueRequest->type) {
+            case TransferRequest::REQUEST_MOVE:
+            case TransferRequest::REQUEST_DELETE:
+            case TransferRequest::REQUEST_UPDATE:
+            case TransferRequest::REQUEST_WRITE: {
+              aIsDupe = true;
+              return true;
+            }
+            default:
+              return false;
+            break;
+          }
+        }
+        return false;
+      }
+      // If the item we're deleting has a previous request in the queue
+      // remove it unless it's another delete then dupe it
+      if (CompareRequestItems(aQueueRequest, aNewRequest)) {
+        switch (aQueueRequest->type) {
+          case TransferRequest::REQUEST_NEW_PLAYLIST:
+          case TransferRequest::REQUEST_WRITE:
+          case TransferRequest::REQUEST_UPDATE:
+            // Stop, but not a dupe
+            return true;
+          case TransferRequest::REQUEST_DELETE:
+            aIsDupe = true;
+            return true;
+          default:
+            return false;
+        }
+      }
+      return false;
+    }
+    case TransferRequest::REQUEST_NEW_PLAYLIST: {
+      // If we have new playlist request for the same item dupe this one
+      if (aQueueRequest->type == aNewRequest->type) {
+         aIsDupe = CompareItems(aNewRequest->item, aQueueRequest->item);
+         return aIsDupe;
+      }
+      // If we find a delete request for this new playlist then we want to
+      // stop looking in the queue
+      return (aQueueRequest->type == TransferRequest::REQUEST_DELETE) &&
+             CompareItems(aNewRequest->item, aQueueRequest->item);
+    }
+    case TransferRequest::REQUEST_MOVE: {
+      if (aNewRequest->IsPlaylist()) {
+        switch (aQueueRequest->type) {
+          // Move after creation is unnecessary, dupe it
+          case TransferRequest::REQUEST_NEW_PLAYLIST:
+            aIsDupe = CompareItems(aNewRequest->list, aNewRequest->item);
+            return aIsDupe;
+          // Move after writing is unnecessary, dupe it
+          case TransferRequest::REQUEST_WRITE:
+            aIsDupe = aNewRequest->IsPlaylist() &&
+                   CompareItems(aNewRequest->list, aQueueRequest->list);
+            return aIsDupe;
+          // Move after update is unnecessary, dupe it
+          case TransferRequest::REQUEST_UPDATE: {
+            aIsDupe = CompareItems(aNewRequest->list, aQueueRequest->item);
+            return aIsDupe;
+          }
+          default:
+            return false;
+        }
+      }
+      return false;
+    }
+    case TransferRequest::REQUEST_UPDATE: {
+      // If the queue item is a playlist operation then this request can
+      // be treated as a dupe
+      if (aQueueRequest->IsPlaylist()) {
+        aIsDupe = CompareItems(aNewRequest->item, aQueueRequest->list);
+        return aIsDupe;
+      }
+      switch (aQueueRequest->type) {
+        case TransferRequest::REQUEST_WRITE:
+        case TransferRequest::REQUEST_NEW_PLAYLIST:
+        case TransferRequest::REQUEST_UPDATE:
+          aIsDupe = CompareRequestItems(aQueueRequest, aNewRequest);
+          return aIsDupe;
+
+        case TransferRequest::REQUEST_DELETE:
+          aIsDupe = CompareRequestItems(aQueueRequest, aNewRequest);
+          return aIsDupe;
+
+        default:
+          return false;
+      }
+    }
+    case TransferRequest::REQUEST_EJECT:
+    case TransferRequest::REQUEST_FORMAT:
+    case TransferRequest::REQUEST_MOUNT:
+    case TransferRequest::REQUEST_READ:
+    case TransferRequest::REQUEST_SUSPEND:
+    case TransferRequest::REQUEST_SYNC:
+    case TransferRequest::REQUEST_WIPE:
+    default: {
+      aIsDupe = CompareRequestItems(aQueueRequest, aNewRequest) &&
+                aNewRequest->type == aQueueRequest->type;
+      return aIsDupe;
+    }
+}
+}
+
+bool sbBaseDevice::IsRequestDuplicate(TransferRequestQueue & aQueue,
+                                      TransferRequest * aRequest) {
+  if (aQueue.empty()) {
+    return false;
+  }
+  // reverse search through the queue for a comparable request
+  TransferRequestQueue::reverse_iterator rend = aQueue.rend();
+  bool isDuplicate = false;
+  TransferRequestQueue::reverse_iterator iter;
+  for (iter = aQueue.rbegin();
+       iter != rend;
+       ++iter) {
+    if (!sbBaseDeviceRequestDupeCheck::DupeCheck(iter->get(),
+                                                  aRequest,
+                                                  isDuplicate)) {
+      break;
+    }
+  }
+  // If we found a duplicate playlist request, we may need to change it to
+  // update request. Currently all devices recreate playlists on any
+  // modification.
+  if (iter != rend && isDuplicate && aRequest->IsPlaylist()) {
+    nsRefPtr<TransferRequest> request = *iter;
+    // If the previous request was a write or move then change it to an update
+    switch (request->type) {
+      case TransferRequest::REQUEST_WRITE:
+      case TransferRequest::REQUEST_MOVE: {
+        request->type = TransferRequest::REQUEST_UPDATE;
+        request->item = request->list;
+        nsCOMPtr<sbILibrary> library;
+        request->list->GetLibrary(getter_AddRefs(library));
+        request->list = library;
+      }
+      break;
+    }
+  }
+  return isDuplicate;
+}
+
 nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
 {
   NS_ENSURE_ARG_POINTER(aRequest);
@@ -562,7 +818,7 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
     {
       return NS_ERROR_ABORT;
     }
-    /* decide where this request will be inserted */
+    // decide where this request will be inserted
     // figure out which queue we're looking at
     PRInt32 priority = aRequest->priority;
     TransferRequestQueue& queue = mRequests[priority];
@@ -571,6 +827,11 @@ nsresult sbBaseDevice::PushRequest(TransferRequest *aRequest)
       CheckRequestBatch(queue.begin(), queue.end());
     #endif /* DEBUG */
 
+    // If we have received a similar request for this item we can ignore this
+    // one
+    if (IsRequestDuplicate(queue, aRequest)) {
+      return NS_OK;
+    }
     // initialize some properties of the request
     aRequest->itemTransferID = mLastTransferID++;
     aRequest->batchIndex = 1;

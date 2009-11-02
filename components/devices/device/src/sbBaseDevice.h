@@ -1371,6 +1371,14 @@ protected:
   nsresult
   IgnoreWatchFolderPath(nsIURI * aURI,
                         sbAutoIgnoreWatchFolderPath ** aIgnorePath);
+  /**
+   * Determines if a request already exists that is similar to one being
+   * submitted
+   * \param aQueue is the queue to check for a duplicate
+   * \param aRequest is the request we're checking duplicates of
+   */
+  bool IsRequestDuplicate(TransferRequestQueue & aQueue,
+                          TransferRequest * aRequest);
 };
 
 void SBUpdateBatchCounts(sbBaseDevice::Batch& aBatch);
