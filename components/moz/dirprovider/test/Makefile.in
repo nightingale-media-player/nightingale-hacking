@@ -22,21 +22,16 @@
 #=END SONGBIRD GPL
 #
 
-DEPTH = ../../..
+DEPTH = ../../../..
 topsrcdir = @top_srcdir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
 include $(DEPTH)/build/autodefs.mk
 
-DISABLE_IMPLICIT_SUBDIRS = 1
+SONGBIRD_TEST_COMPONENT = dirprovider
 
-# Right now, only Windows directories are supplied, don't compile
-# this component on non-Windows platforms.
-ifeq (windows,$(SB_PLATFORM))
-  SUBDIRS = src \
-            test \
-            $(NULL)
-endif
+SONGBIRD_TESTS = $(srcdir)/test_dirprovider.js \
+                 $(NULL)
 
 include $(topsrcdir)/build/rules.mk
