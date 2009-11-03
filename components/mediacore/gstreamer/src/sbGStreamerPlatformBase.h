@@ -29,17 +29,19 @@
 
 #include <nsCOMPtr.h>
 #include <nsIBoxObject.h>
+#include <nsIWidget.h>
 
 #include <gst/gst.h>
 #include <gst/interfaces/xoverlay.h>
 
 #include "sbIGstPlatformInterface.h"
 
+class sbGStreamerMediacore;
+
 class BasePlatformInterface : public sbIGstPlatformInterface
 {
 public:
-  BasePlatformInterface ();
-  BasePlatformInterface (nsIBoxObject *aVideoBox);
+  BasePlatformInterface (sbGStreamerMediacore *aCore);
   virtual ~BasePlatformInterface ();
 
   // Implementation of (some parts of) the sbIGstPlatformInterface interface
@@ -50,9 +52,9 @@ public:
   void SetDisplayAspectRatio(int aNumerator, int aDenominator);
   virtual void PrepareVideoWindow(GstMessage *aMessage);
 
-  void SetVideoBox(nsIBoxObject *aVideoBox);
-
 protected:
+  virtual nsresult SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget);
+
   // Set the display area available for rendering the video to
   void SetDisplayArea(int x, int y, int width, int height);
   // Resize the video to an appropriate (aspect-ratio preserving) subrectangle
@@ -86,10 +88,13 @@ protected:
   // The box object for the video display area, access to this object
   // is proxied to the main thread.
   nsCOMPtr<nsIBoxObject> mVideoBox; 
-
+  // The widget corresponding to this box object, also main-thread only.
+  nsCOMPtr<nsIWidget> mWidget;
 
   GstElement *mVideoSink;        // The GStreamer video sink we created
   GstElement *mAudioSink;        // The GStreamer audio sink we created
+
+  sbGStreamerMediacore *mCore;   // The core associated with this object.
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_BASE_H_

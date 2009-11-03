@@ -25,9 +25,13 @@
 */
 
 #include "sbGStreamerPlatformWin32.h"
+#include "sbGStreamerMediacore.h"
 
 #include <prlog.h>
 #include <nsDebug.h>
+
+#include <nsIThread.h>
+#include <nsThreadUtils.h>
 
 /**
  * To log this class, set the following environment variable in a debug build:
@@ -80,8 +84,8 @@ Win32PlatformInterface::VideoWindowProc(HWND hWnd, UINT message,
   return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-Win32PlatformInterface::Win32PlatformInterface()
-: BasePlatformInterface()
+Win32PlatformInterface::Win32PlatformInterface(sbGStreamerMediacore *aCore)
+: BasePlatformInterface(aCore)
 , mWindow(NULL)
 , mFullscreenWindow(NULL)
 , mParentWindow(NULL)
@@ -89,13 +93,17 @@ Win32PlatformInterface::Win32PlatformInterface()
 
 }
 
-Win32PlatformInterface::Win32PlatformInterface(nsIBoxObject *aVideoBox, 
-        HWND aParent) : 
-    BasePlatformInterface(aVideoBox),
-    mWindow(NULL),
-    mFullscreenWindow(NULL),
-    mParentWindow(aParent)
+nsresult
+Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
+                                    nsIWidget *aWidget)
 {
+  // First let the superclass do its thing.
+  nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  mParentWindow = (HWND)aWidget->GetNativeData(NS_NATIVE_WIDGET);
+  NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
+
   WNDCLASS WndClass;
 
   ::ZeroMemory(&WndClass, sizeof (WNDCLASS));
@@ -118,7 +126,7 @@ Win32PlatformInterface::Win32PlatformInterface(nsIBoxObject *aVideoBox,
           WS_CHILD,                           // window style
           0, 0,                               // X,Y offset
           0, 0,                               // Width, height
-          aParent,                            // Parent window
+          mParentWindow,                      // Parent window
           NULL,                               // Menu, or child identifier
           WndClass.hInstance,                 // Module handle
           NULL);                              // Extra parameter
@@ -198,7 +206,9 @@ Win32PlatformInterface::UnFullScreen()
 void Win32PlatformInterface::MoveVideoWindow(int x, int y,
         int width, int height)
 {
-  ::SetWindowPos(mWindow, NULL, x, y, width, height, SWP_NOZORDER);
+  if (mWindow) {
+    ::SetWindowPos(mWindow, NULL, x, y, width, height, SWP_NOZORDER);
+  }
 }
 
 
@@ -257,6 +267,28 @@ Win32PlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
    * too, so the windows videosink implements it too.
    * So, we use the GstXOverlay interface to set the window handle here 
    */
-  gst_x_overlay_set_xwindow_id(aXOverlay, (glong)mWindow);
-  LOG(("Set xoverlay %p to HWND %x\n", aXOverlay, mWindow));
+  nsresult rv;
+
+  if (!mWindow) {
+    // If we haven't already had a window explicitly set on us, then request
+    // one from the mediacore manager. This needs to be main-thread, as it does
+    // DOM stuff internally.
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIRunnable> runnable = 
+        NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
+                                mCore,
+                                RequestVideoWindow);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
+
+  if (mWindow) {
+    gst_x_overlay_set_xwindow_id(aXOverlay, (glong)mWindow);
+
+    LOG(("Set xoverlay %p to HWND %x\n", aXOverlay, mWindow));
+  }
 }

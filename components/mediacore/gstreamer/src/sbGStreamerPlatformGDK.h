@@ -35,13 +35,14 @@
 
 #include "sbIGstPlatformInterface.h"
 #include "sbGStreamerPlatformBase.h"
+#include "sbGStreamerMediacore.h"
 
 #include <nsIBoxObject.h>
 
 class GDKPlatformInterface : public BasePlatformInterface
 {
 public:
-  GDKPlatformInterface (nsIBoxObject *aVideoBox, GdkWindow *aWin);
+  GDKPlatformInterface (sbGStreamerMediacore *aCore);
 
   // Implementation of the rest of sbIGstPlatformInterface interface
   GstElement * SetVideoSink (GstElement *aVideoSink);
@@ -53,6 +54,7 @@ protected:
   void SetXOverlayWindowID (GstXOverlay *aXOverlay);
   void FullScreen();
   void UnFullScreen();
+  nsresult SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget);
 
 private:
   // Callback for GDK events.

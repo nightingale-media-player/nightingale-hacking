@@ -55,7 +55,7 @@ static PRLogModuleInfo* gGStreamerPlatformBase =
 
 #endif /* PR_LOGGING */
 
-BasePlatformInterface::BasePlatformInterface()
+BasePlatformInterface::BasePlatformInterface(sbGStreamerMediacore *aCore)
 : sbIGstPlatformInterface()
 ,  mDisplayWidth(0)
 ,  mDisplayHeight(0)
@@ -67,21 +67,7 @@ BasePlatformInterface::BasePlatformInterface()
 ,  mVideoBox(NULL)
 ,  mVideoSink(NULL)
 ,  mAudioSink(NULL)
-{
-}
-
-BasePlatformInterface::BasePlatformInterface(nsIBoxObject *aVideoBox) 
-: sbIGstPlatformInterface()
-,  mDisplayWidth(0)
-,  mDisplayHeight(0)
-,  mDisplayX(0)
-,  mDisplayY(0)
-,  mDARNum(1)
-,  mDARDenom(1)
-,  mFullscreen(false)
-,  mVideoBox(aVideoBox)
-,  mVideoSink(NULL)
-,  mAudioSink(NULL)
+,  mCore(aCore)
 {
 }
 
@@ -121,21 +107,31 @@ BasePlatformInterface::ResizeToWindow()
 {
   // Only resize based on our XUL element if we're not in fullscreen mode.
   if (!mFullscreen) {
+    LOG(("Resizing video to fit window in non-fullscreen mode"));
     PRInt32 x, y, width, height;
 
-    mVideoBox->GetX(&x);
-    mVideoBox->GetY(&y);
-    mVideoBox->GetWidth(&width);
-    mVideoBox->GetHeight(&height);
+    if (mVideoBox) {
+      mVideoBox->GetX(&x);
+      mVideoBox->GetY(&y);
+      mVideoBox->GetWidth(&width);
+      mVideoBox->GetHeight(&height);
 
-    SetDisplayArea(x, y, width, height);
-    ResizeVideo();
+      SetDisplayArea(x, y, width, height);
+      ResizeVideo();
+    }
+    else {
+      LOG(("Not resizing video: no video box"));
+    }
+  }
+  else {
+    LOG(("Not resizing video: in fullscreen mode"));
   }
 }
 
 void
 BasePlatformInterface::SetDisplayArea(int x, int y, int width, int height)
 {
+  LOG(("Display area set to %d,%d %d,%d", x, y, width, height));
   mDisplayX = x;
   mDisplayY = y;
   mDisplayWidth = width;
@@ -212,8 +208,14 @@ BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   ResizeToWindow();
 }
 
-void 
-BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox)
+nsresult
+BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 {
+  NS_ENSURE_ARG_POINTER(aVideoBox);
+  NS_ENSURE_ARG_POINTER(aWidget);
+
   mVideoBox = aVideoBox;
+  mWidget = aWidget;
+
+  return NS_OK;
 }

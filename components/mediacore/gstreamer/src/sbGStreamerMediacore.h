@@ -124,6 +124,8 @@ public:
   virtual nsresult AddAudioFilter(GstElement *aElement);
   virtual nsresult RemoveAudioFilter(GstElement *aElement);
 
+  void RequestVideoWindow();
+
 protected:
   virtual ~sbGStreamerMediacore();
 
@@ -178,9 +180,8 @@ protected:
   // Protects all access to mPipeline
   PRMonitor*  mMonitor;
 
-  PRBool mHaveVideoWindow; // true if we have a video window and a 
-                           // platform-integration backend that can use it 
-                           // (preconditions for video to be enabled)
+  PRBool mIsVideoSupported; // true if we have support for video on the current
+                            // platform
 
   GstElement *mPipeline;
   nsAutoPtr<sbIGstPlatformInterface> mPlatformInterface;

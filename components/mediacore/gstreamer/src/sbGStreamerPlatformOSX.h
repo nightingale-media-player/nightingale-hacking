@@ -37,7 +37,7 @@
 class OSXPlatformInterface : public BasePlatformInterface
 {
 public:
-  OSXPlatformInterface (nsIBoxObject *aVideoBox, void *aParentView);
+  OSXPlatformInterface (sbGStreamerMediacore *aCore);
   virtual ~OSXPlatformInterface();
 
   // Implementation of the rest of sbIGstPlatformInterface interface
@@ -56,6 +56,8 @@ protected:
   void SetXOverlayWindowID (GstXOverlay *aXOverlay) {}
   void FullScreen() {}
   void UnFullScreen() {}
+
+  nsresult SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget);
 
   void RemoveView();
 

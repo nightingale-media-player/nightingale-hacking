@@ -68,6 +68,7 @@
 #include <sbMediacoreError.h>
 #include <sbProxiedComponentManager.h>
 
+#include <sbIMediacoreManager.h>
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
 #include <sbStandardProperties.h>
@@ -157,7 +158,7 @@ NS_IMPL_THREADSAFE_CI(sbGStreamerMediacore)
 
 sbGStreamerMediacore::sbGStreamerMediacore() :
     mMonitor(nsnull),
-    mHaveVideoWindow(PR_FALSE),
+    mIsVideoSupported(PR_FALSE),
     mPipeline(nsnull),
     mPlatformInterface(nsnull),
     mBaseEventTarget(new sbBaseMediacoreEventTarget(this)),
@@ -231,6 +232,24 @@ sbGStreamerMediacore::Init()
 
   rv = InitPreferences();
   NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<sbIMediacore> core = do_QueryInterface(
+          NS_ISUPPORTS_CAST(sbIMediacore *, this), &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+#if defined (MOZ_WIDGET_GTK2)
+  mIsVideoSupported = PR_TRUE;
+  mPlatformInterface = new GDKPlatformInterface(this);
+#elif defined (XP_WIN)
+  mIsVideoSupported = PR_TRUE;
+  mPlatformInterface = new Win32PlatformInterface(this);
+#elif defined (XP_MACOSX)
+  mIsVideoSupported = PR_TRUE;
+  mPlatformInterface = new OSXPlatformInterface(this);
+#else
+  LOG(("No video backend available for this platform"));
+  mIsVideoSupported = PR_FALSE;
+#endif
 
   return NS_OK;
 }
@@ -760,7 +779,7 @@ sbGStreamerMediacore::CreatePlaybackPipeline()
   // Configure what to output - we want audio only, unless video
   // is turned on
   flags = 0x2 | 0x10; // audio | soft-volume
-  if (mHaveVideoWindow && !mVideoDisabled) {
+  if (!mVideoDisabled && mIsVideoSupported) {
     // Enable video only if we're set up for it is turned off. Also enable
     // text (subtitles), which require a video window to display.
     flags |= 0x1 | 0x4; // video | text
@@ -1252,6 +1271,32 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
     default:
       LOG(("Got message: %s", gst_message_type_get_name(msg_type)));
       break;
+  }
+}
+
+/* Main-thread only! */
+void sbGStreamerMediacore::RequestVideoWindow()
+{
+  nsresult rv;
+
+  nsCOMPtr<sbIMediacoreManager> mediacoreManager =
+      do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow;
+  rv = mediacoreManager->GetPrimaryVideoWindow(PR_TRUE, 0, 0,
+                                               getter_AddRefs(videoWindow));
+  NS_ENSURE_SUCCESS(rv, /* void */);
+
+  if (videoWindow != NULL) {
+    nsCOMPtr<nsIDOMXULElement> videoDOMElement;
+    rv = videoWindow->GetVideoWindow(getter_AddRefs(videoDOMElement));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    /* Set our video window. This will ensure that SetVideoBox
+       is called on the platform interface, so it can then use that. */
+    rv = SetVideoWindow(videoDOMElement);
+    NS_ENSURE_SUCCESS(rv, /* void */);
   }
 }
 
@@ -1947,25 +1992,12 @@ sbGStreamerMediacore::SetVideoWindow(nsIDOMXULElement *aVideoWindow)
 
   NS_WARN_IF_FALSE(NS_IsMainThread(), "Wrong Thread!");
 
-  mHaveVideoWindow = PR_TRUE;
   mVideoWindow = aVideoWindow;
 
-#if defined (MOZ_WIDGET_GTK2)
-  GdkWindow *native = GDK_WINDOW(widget->GetNativeData(NS_NATIVE_WIDGET));
-  LOG(("Found native window %x", native));
-  mPlatformInterface = new GDKPlatformInterface(boxObject, native);
-#elif defined (XP_WIN)
-  HWND native = (HWND)widget->GetNativeData(NS_NATIVE_WIDGET);
-  LOG(("Found native window %x", native));
-  mPlatformInterface = new Win32PlatformInterface(boxObject, native);
-#elif defined (XP_MACOSX)
-  void * native = (void *)widget->GetNativeData(NS_NATIVE_WIDGET);
-  LOG(("Found native window %x", native));
-  mPlatformInterface = new OSXPlatformInterface(boxObject, native);
-#else
-  LOG(("No video backend available for this platform"));
-  mHaveVideoWindow = PR_FALSE;
-#endif
+  if (mPlatformInterface) {
+    rv = mPlatformInterface->SetVideoBox(boxObject, widget);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   return NS_OK;
 }

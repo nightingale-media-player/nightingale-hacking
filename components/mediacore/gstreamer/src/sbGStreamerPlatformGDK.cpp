@@ -25,6 +25,7 @@
 */
 
 #include "sbGStreamerPlatformGDK.h"
+#include "sbGStreamerMediacore.h"
 
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
@@ -82,28 +83,12 @@ GDKPlatformInterface::gdk_event_filter(GdkXEvent *gdk_xevent,
   return GDK_FILTER_CONTINUE;
 }
 
-GDKPlatformInterface::GDKPlatformInterface(nsIBoxObject *aVideoBox, 
-        GdkWindow *aParent) : 
-    BasePlatformInterface(aVideoBox),
+GDKPlatformInterface::GDKPlatformInterface(sbGStreamerMediacore *aCore) :
+    BasePlatformInterface(aCore),
     mWindow(NULL),
-    mParentWindow(aParent),
+    mParentWindow(NULL),
     mFullscreenWindow(NULL)
 {
-  // Create the video window, initially with zero size.
-  GdkWindowAttr attributes;
- 
-  attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.x = 0;
-  attributes.y = 0;
-  attributes.width = 0;
-  attributes.height = 0;
-  attributes.wclass = GDK_INPUT_OUTPUT;
-  attributes.event_mask = GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | 
-                          GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK;
-
-  mWindow = gdk_window_new(mParentWindow, &attributes, GDK_WA_X | GDK_WA_Y);
-
-  gdk_window_show(mWindow);
 }
 
 void
@@ -207,8 +192,11 @@ GDKPlatformInterface::SetDefaultCursor()
 void 
 GDKPlatformInterface::MoveVideoWindow(int x, int y, int width, int height)
 {
-  gdk_window_move_resize(mWindow, x, y, width, height);
-}
+  if (mWindow) {
+    LOG(("Moving video window to %d,%d, size %d,%d", x, y, width, height));
+    gdk_window_move_resize(mWindow, x, y, width, height);
+  }
+} 
 
 GstElement *
 GDKPlatformInterface::SetVideoSink(GstElement *aVideoSink)
@@ -268,10 +256,62 @@ GDKPlatformInterface::SetAudioSink(GstElement *aAudioSink)
   return mAudioSink;
 }
 
+nsresult
+GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
+{
+  // First let the superclass do its thing.
+  nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  mParentWindow = GDK_WINDOW(aWidget->GetNativeData(NS_NATIVE_WIDGET));
+  NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
+
+  // Create the video window, initially with zero size.
+  GdkWindowAttr attributes;
+ 
+  attributes.window_type = GDK_WINDOW_CHILD;
+  attributes.x = 0;
+  attributes.y = 0;
+  attributes.width = 0;
+  attributes.height = 0;
+  attributes.wclass = GDK_INPUT_OUTPUT;
+  attributes.event_mask = GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | 
+                          GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK;
+
+  mWindow = gdk_window_new(mParentWindow, &attributes, GDK_WA_X | GDK_WA_Y);
+  NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
+
+  gdk_window_show(mWindow);
+
+  return NS_OK;
+}
+
 void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
 {
-  XID window = GDK_WINDOW_XWINDOW(mWindow);
-  gst_x_overlay_set_xwindow_id(aXOverlay, window);
-  LOG(("Set xoverlay %d to windowid %d\n", aXOverlay, window));
+  nsresult rv;
+
+  if (!mWindow) {
+    // If we haven't already had a window explicitly set on us, then request
+    // one from the mediacore manager. This needs to be main-thread, as it does
+    // DOM stuff internally.
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIRunnable> runnable = 
+        NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
+                                mCore,
+                                RequestVideoWindow);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
+
+  if (mWindow) {
+    XID window = GDK_WINDOW_XWINDOW(mWindow);
+    gst_x_overlay_set_xwindow_id(aXOverlay, window);
+
+    LOG(("Set xoverlay %d to windowid %x\n", aXOverlay, window));
+  }
 }
 

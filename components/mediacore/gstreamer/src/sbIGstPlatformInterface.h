@@ -29,6 +29,9 @@
 
 #include <gst/gst.h>
 
+#include <nsIBoxObject.h>
+#include <nsIWidget.h>
+
 /* Internal interface to platform-specific aspects.
  * TODO: Currently this only handles the video windows, we'll probably need
  * to add more bits later.
@@ -67,6 +70,10 @@ public:
   // Called when a video window is required by the gstreamer element, so
   // that any necessary setup can be done.
   virtual void PrepareVideoWindow(GstMessage *aMessage) = 0;
+
+  /* Set the video box and the underlying video widget */
+  virtual nsresult SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget) = 0;
+
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_INTERFACE_H_

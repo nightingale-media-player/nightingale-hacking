@@ -38,8 +38,7 @@
 class Win32PlatformInterface : public BasePlatformInterface
 {
 public:
-  Win32PlatformInterface ();
-  Win32PlatformInterface (nsIBoxObject *aVideoBox, HWND aWin);
+  Win32PlatformInterface (sbGStreamerMediacore *aCore);
   
   virtual ~Win32PlatformInterface ();
 
@@ -53,6 +52,8 @@ protected:
   void SetXOverlayWindowID(GstXOverlay *aXOverlay);
   void FullScreen();
   void UnFullScreen();
+
+  nsresult SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget);
 
 private:
   HWND mWindow;           // The video window we're rendering into

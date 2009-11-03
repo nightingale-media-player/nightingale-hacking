@@ -61,10 +61,9 @@ static PRLogModuleInfo* gGStreamerPlatformOSX =
 
 #endif /* PR_LOGGING */
 
-OSXPlatformInterface::OSXPlatformInterface(nsIBoxObject *aVideoBox, 
-        void *aParentView): 
-    BasePlatformInterface(aVideoBox),
-    mParentView(aParentView),
+OSXPlatformInterface::OSXPlatformInterface(sbGStreamerMediacore *aCore) :
+    BasePlatformInterface(aCore),
+    mParentView(NULL),
     mVideoView(NULL)
 {
 }
@@ -127,9 +126,40 @@ OSXPlatformInterface::SetAudioSink(GstElement *aAudioSink)
   return mAudioSink;
 }
 
+nsresult
+OSXPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
+{
+  // First let the superclass do its thing.
+  nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
+  NS_ENSURE_SUCCESS(rv, rv);
+  
+  mParentView = (void *)(aWidget->GetNativeData(NS_NATIVE_WIDGET));
+  NS_ENSURE_TRUE(mParentView != NULL, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
 void
 OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 {
+  // Firstly, if we don't already have a video view set up, request a video
+  // window, and set up the appropriate parent view.
+  if (!mParentView) {
+    nsCOMPtr<nsIThread> mainThread;
+    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIRunnable> runnable = 
+        NS_NEW_RUNNABLE_METHOD (sbGStreamerMediacore,
+                                mCore,
+                                RequestVideoWindow);
+
+    rv = mainThread->Dispatch(runnable, NS_DISPATCH_SYNC);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+  }
+
+  // Now we can deal with setting this up...
+
   /* This message has an 'nsview' element containing a pointer to
      the NSView that the video is drawn into. Grab the NSView */
   NSView *view;
