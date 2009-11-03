@@ -71,7 +71,7 @@ endif
 
 # XXX Mook: NOT installed by default yet, this shouldn't go anywhere,
 # just a build check
-ifeq (windows,$(SB_PLATFORM))
+ifeq (windows_,$(SB_PLATFORM)_$(SONGBIRD_NIGHTLY)$(SONGBIRD_OFFICIAL))
    DEFAULT_EXTENSIONS += systray
 endif
 
