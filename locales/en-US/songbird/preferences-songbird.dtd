@@ -5,7 +5,7 @@
 <!ENTITY prefWindow.manageMedia.generalDescription.p2 "Turning Manage Files OFF — Existing tracks will remain in their current &brandShortName; Music library folder. Subsequent imported tracks will not be copied.">
 
 <!-- Media Management entities -->
-<!ENTITY prefWindow.manageMedia.enablebox.description.pre "Advanced users can control how Songbird organizes music files on their
+<!ENTITY prefWindow.manageMedia.enablebox.description.pre "Advanced users can control how &brandShortName; organizes music files on their
 computer.  Manage Files mode will copy music files to a directory structure
 based on the settings below.">
 <!ENTITY prefWindow.manageMedia.enablebox.warning     "This cannot be undone.">
