@@ -25,6 +25,7 @@
 */
 
 #include "sbGStreamerPlatformOSX.h"
+#include "sbGStreamerMediacore.h"
 
 #include <prlog.h>
 #include <nsDebug.h>
@@ -146,7 +147,7 @@ OSXPlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
   // window, and set up the appropriate parent view.
   if (!mParentView) {
     nsCOMPtr<nsIThread> mainThread;
-    rv = NS_GetMainThread(getter_AddRefs(mainThread));
+    nsresult rv = NS_GetMainThread(getter_AddRefs(mainThread));
     NS_ENSURE_SUCCESS(rv, /* void */);
 
     nsCOMPtr<nsIRunnable> runnable = 
