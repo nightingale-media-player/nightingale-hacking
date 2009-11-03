@@ -27,6 +27,7 @@
 #include "sbGStreamerMediacoreUtils.h"
 
 #include <nsIRunnable.h>
+#include <nsINetUtil.h>
 
 #include <nsAutoPtr.h>
 #include <nsThreadUtils.h>
@@ -434,7 +435,16 @@ GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
       params.AppendElement(bundle.Get("mediacore.error.unknown_resource"));
     }
     else {
-      params.AppendElement(aResource);
+      // Unescape the resource.
+      nsCOMPtr<nsINetUtil> netUtil =
+        do_CreateInstance("@mozilla.org/network/util;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCString unescapedResource;
+      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(aResource),
+                                   nsINetUtil::ESCAPE_ALL, unescapedResource);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      params.AppendElement(NS_ConvertUTF8toUTF16(unescapedResource));
     }
 
     errorMessage = bundle.Format(stringName, params);

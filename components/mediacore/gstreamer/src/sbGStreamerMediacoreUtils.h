@@ -63,6 +63,9 @@ GstBusSyncReply SyncToAsyncDispatcher(GstBus* bus, GstMessage* message,
 
 /* Get a mediacore error from the gstreamer error. The error string may include
    a reference to a filename or URI; if so the string aResource will be used
+
+   \param aResource  the URI string points to the file that has error.
+                     Will be unescaped in the processing.
  */
 nsresult GetMediacoreErrorFromGstError(GError *gerror, nsString aResource,
         sbIMediacoreError **_retval);
