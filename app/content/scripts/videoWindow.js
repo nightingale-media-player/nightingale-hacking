@@ -49,6 +49,18 @@ var videoWindowController = {
   _shouldDismissSelf: false,
   _ssp: null,
   
+  _actualSizeDataRemote: null,
+  _windowNeedsResize: false,
+  
+  _ignoreResize: false,
+  
+  _videoSize: null,
+  
+  get ACTUAL_SIZE_DR_KEY() {
+    const dataRemoteKey = "videowindow.actualsize";
+    return dataRemoteKey;
+  },
+  
   // sbIMediacoreEventListener
   onMediacoreEvent: function vwc_onMediacoreEvent(aEvent) {
     switch(aEvent.type) {
@@ -74,6 +86,15 @@ var videoWindowController = {
     }
   },
   
+  // nsIObserver
+  observe: function vwc_observe(aSubject, aTopic, aData) {
+    if(aTopic == this.ACTUAL_SIZE_DR_KEY &&
+       this._actualSizeDataRemote.boolValue == true) {
+      // XXXAus: Handle resizing to actual size if actual size was
+      //         turned on.
+    }
+  },
+  
   // Internal functions
   _initialize: function vwc__initialize() {
     this._mediacoreManager = 
@@ -85,12 +106,25 @@ var videoWindowController = {
     this._ssp = Cc["@songbirdnest.com/Songbird/ScreenSaverSuppressor;1"]
                   .getService(Ci.sbIScreenSaverSuppressor);
     this._ssp.suppress(true);
+    
+    this._actualSizeDataRemote = SB_NewDataRemote(this.ACTUAL_SIZE_DR_KEY);
+    this._actualSizeDataRemote.bindObserver(this);
+    
+    // We need to ignore the first resize.
+    this._ignoreResize = true;
+    window.addEventListener("resize", this._onResize, false);
   },
   
   _shutdown: function vwc__shutdown() {
+    window.removeEventListener("resize", this._onResize, false);
+    
+    this._actualSizeDataRemote.unbind();
+    
     this._mediacoreManager.removeListener(this);
     this._mediacoreManager = null;
     this._ssp = null;
+    this._actualSizeDataRemote = null;
+    this._videoSize = null;
   },
   
   _handleBeforeTrackChange: function vwc__handleBeforeTrackChange(aEvent) {
@@ -117,6 +151,27 @@ var videoWindowController = {
   _handleVideoSizeChanged: function vwc__handleVideoSizeChanged(aEvent) {
     // XXXAus: This will be implemented when we add support for 
     //         'actual size'. See bug 18056.
+    if(this._actualSizeDataRemote.boolValue == true) {
+      // XXXAus: Call magic resize here.
+    }
+    
+    // XXXAus: we also probably always want to save the last one so that 
+    //         if the user turns on actual size, we can resize to the right 
+    //         thing.
+    //this._videoSize = aEvent.data.QueryInterface(Ci.sbIVideoBox);
+  },
+  
+  _onResize: function vwc__onResize(aEvent) {
+    // Any resize by the user disables actual size except when the resize event
+    // is sent because the window is being shown for the first time, or we are
+    // attempting to size it using the sizing hint.
+    if(this._ignoreResize) {
+      this._ignoreResize = false;
+      return;
+    }
+    
+    // Actual size is now disabled.
+    this._actualSizeDataRemote.boolValue = false;
   },
   
   _dismissSelf: function vwc__dismissSelf() {
