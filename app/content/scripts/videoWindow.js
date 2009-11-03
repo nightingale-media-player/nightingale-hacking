@@ -53,6 +53,7 @@ var videoWindowController = {
   _windowNeedsResize: false,
   
   _ignoreResize: false,
+  _resizeListener: null,
   
   _videoSize: null,
   
@@ -112,11 +113,18 @@ var videoWindowController = {
     
     // We need to ignore the first resize.
     this._ignoreResize = true;
-    window.addEventListener("resize", this._onResize, false);
+    
+    var self = this;
+    this._resizeListener = function(aEvent) {
+      self._onResize(aEvent);
+    };
+    
+    window.addEventListener("resize", this._resizeListener, false);
   },
   
   _shutdown: function vwc__shutdown() {
-    window.removeEventListener("resize", this._onResize, false);
+    window.removeEventListener("resize", this._resizeListener, false);
+    this._resizeListener = null;
     
     this._actualSizeDataRemote.unbind();
     
