@@ -283,6 +283,12 @@ GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
     NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
 
     gdk_window_show(mWindow);
+
+    // If we're running on GTK+ 2.17.X or later, the GdkWindow here may not
+    // correspond to a real X window.
+    // To ensure that it is, we need to call gdk_x11_drawable_get_xid() here
+    // (we're called from the main thread here, so this is safe).
+    mWindowXID = gdk_x11_drawable_get_xid (mWindow);
   }
   else {
     // hide, unparent, and then destroy our private window
@@ -291,6 +297,7 @@ GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
     gdk_window_destroy(mWindow);
 
     mWindow = nsnull;
+    mWindowXID = 0;
     mParentWindow = nsnull;
   }
 
@@ -318,11 +325,10 @@ void GDKPlatformInterface::SetXOverlayWindowID(GstXOverlay *aXOverlay)
     NS_ENSURE_SUCCESS(rv, /* void */);
   }
 
-  if (mWindow) {
-    XID window = GDK_WINDOW_XWINDOW(mWindow);
-    gst_x_overlay_set_xwindow_id(aXOverlay, window);
+  if (mWindowXID) {
+    gst_x_overlay_set_xwindow_id(aXOverlay, mWindowXID);
 
-    LOG(("Set xoverlay %d to windowid %x\n", aXOverlay, window));
+    LOG(("Set xoverlay %d to windowid %x\n", aXOverlay, mWindowXID));
   }
 }
 

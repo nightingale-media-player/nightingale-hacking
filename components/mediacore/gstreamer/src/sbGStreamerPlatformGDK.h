@@ -70,6 +70,8 @@ private:
   GdkWindow*  mParentWindow;     // Our parent (XUL) window
   GdkWindow*  mFullscreenWindow; // Fullscreen window (if we're fullscreen) that
                                  // we reparent our video window to, or NULL.
+  XID         mWindowXID;        // XID for the actual X window underlying the
+                                 // mWindow object.
 };
 
 #endif // _SB_GSTREAMER_PLATFORM_GDK_H_
