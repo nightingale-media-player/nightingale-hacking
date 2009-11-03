@@ -103,6 +103,8 @@ IS_COMPONENT = 1
 # dynamic libraries (.so on unix, .dll on windows, etc)
 DYNAMIC_LIB = systray
 
-CREATEDIRS += $(EXTENSION_STAGE_DIR)/components/libs
+CREATEDIRS += $(SONGBIRD_COMPONENTSDIR) \
+              $(OUR_EXTENSION_STAGE_DIR)/components/libs \
+              $(NULL)
 
 include $(topsrcdir)/build/rules.mk
