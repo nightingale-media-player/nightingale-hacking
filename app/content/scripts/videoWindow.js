@@ -57,7 +57,7 @@ var videoWindowController = {
       }
       break;
       
-      case Ci.sbIMediacoreEvent.TRACK_CHANGE_: {
+      case Ci.sbIMediacoreEvent.TRACK_CHANGE: {
         this._handleTrackChange(aEvent);
       }
       break;
