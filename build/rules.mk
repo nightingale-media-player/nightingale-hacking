@@ -106,7 +106,16 @@ ifdef IS_EXTENSION # {
 
    OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
    SONGBIRD_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
-   SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_STAGE_DIR)/components
+
+   ifeq (1,$(EXTENSION_NO_BINARY_COMPONENTS))
+      SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_STAGE_DIR)/components
+   else
+      # Allow overriding EXTENSION_ARCH (to nothing) to force installation
+      # of binary components into /components
+      SONGBIRD_COMPONENTSDIR = \
+       $(OUR_EXTENSION_STAGE_DIR)/$(if $(EXTENSION_ARCH),platform/$(EXTENSION_ARCH)/)components
+   endif
+
    SONGBIRD_DEFAULTSDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults
    SONGBIRD_LIBDIR = $(OUR_EXTENSION_STAGE_DIR)/lib
    SONGBIRD_PREFERENCESDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults/preferences
