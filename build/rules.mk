@@ -77,26 +77,26 @@ ifdef IS_EXTENSION # {
 #------------------------------------------------------------------------------
 # Get our extension config, if we're an extension.
 #------------------------------------------------------------------------------
-   DEFAULT_EXTENSION_CONFIG ?= extension-config.mk
+   SB_EXTENSION_CONFIG ?= extension-config.mk
 
-   ifndef SB_EXTENSION_CONFIG
-      ifneq (,$(wildcard $(srcdir)/extension-config.mk))
-         OUR_EXTENSION_AT_TOPSRCDIR = 1
-         export SB_EXTENSION_CONFIG = $(srcdir)/$(DEFAULT_EXTENSION_CONFIG)
-      else
-         export SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(DEFAULT_EXTENSION_CONFIG))
-         ifeq (,$(SB_EXTENSION_CONFIG))
-            $(error Could not file extension configuration .mk file. Bailing...)
-         endif
+   ifneq (,$(wildcard $(srcdir)/$(SB_EXTENSION_CONFIG)))
+      OUR_EXTENSION_MAKE_IN_ROOTSRCDIR = 1
+      export OUR_SB_EXTENSION_CONFIG = $(srcdir)/$(SB_EXTENSION_CONFIG)
+   endif
+
+   ifndef OUR_SB_EXTENSION_CONFIG
+      export OUR_SB_EXTENSION_CONFIG := $(shell $(topsrcdir)/tools/scripts/find-extension-config.py -d $(srcdir) -f $(SB_EXTENSION_CONFIG))
+      ifeq (,$(OUR_SB_EXTENSION_CONFIG))
+         $(error Could not file extension configuration .mk file. Bailing...)
       endif
    endif
 
-   include $(SB_EXTENSION_CONFIG)
+   include $(OUR_SB_EXTENSION_CONFIG)
 
    # Allow extension-config.mk to override this
    EXTENSION_STAGE_DIR ?= $(SONGBIRD_OBJDIR)/extensions/$(EXTENSION_NAME)/.xpistage
 
-   ifeq (1,$(OUR_EXTENSION_AT_TOPSRCDIR))
+   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       export OUR_EXTENSION_VER_DEVDATE := $(shell date +%Y%m%d%H%M)
    endif
 
@@ -1103,7 +1103,7 @@ ifdef IS_EXTENSION # {
    EXTENSION_DIR ?= $(SONGBIRD_OBJDIR)/xpi-stage/$(OUR_EXTENSION_NAME)
    EXTENSION_LICENSE ?= $(wildcard $(srcdir)/LICENSE)
 
-   ifdef OUR_EXTENSION_AT_TOPSRCDIR
+   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       ifndef INSTALL_RDF
          # The notdir is because this is to check if these files exist, but
          # we have to do in the srcdir; but we really only want the file name
@@ -1173,14 +1173,14 @@ $(OUR_INSTALL_RDF): $(OUR_INSTALL_RDF_IN)
 # directory of the extension. You can override this by setting EXTENSION_LICENSE
 # in the extension's Makefile
 
-export:: $(if $(IS_EXTENSION), $(if $(OUR_EXTENSION_AT_TOPSRCDIR), $(OUR_INSTALL_RDF)))
+export:: $(if $(IS_EXTENSION), $(if $(OUR_EXTENSION_MAKE_IN_ROOTSRCDIR), $(OUR_INSTALL_RDF)))
 ifdef IS_EXTENSION
 	$(MKDIR_APP) $(EXTENSION_STAGE_DIR)
 endif
 
 libs:: $(if $(IS_EXTENSION), $(OUR_SUBDIRS) $(if $(JAR_MANIFEST),$(OUR_JAR_MN)))
 ifdef IS_EXTENSION
-   ifdef OUR_EXTENSION_AT_TOPSRCDIR
+   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
 	   @echo packaging $(EXTENSION_DIR)/$(OUR_XPI_NAME)
 	   $(RM) -f $(EXTENSION_DIR)/$(OUR_XPI_NAME)
 	   $(INSTALL_FILE) $(OUR_INSTALL_RDF) $(EXTENSION_STAGE_DIR)/install.rdf
@@ -1200,7 +1200,7 @@ endif
 
 
 ifdef IS_EXTENSION
-   ifdef OUR_EXTENSION_AT_TOPSRCDIR
+   ifdef OUR_EXTENSION_MAKE_IN_ROOTSRCDIR
       ALL_TRASH += $(if $(OUR_INSTALL_RDF_IN), $(OUR_INSTALL_RDF)) \
                    $(EXTENSION_STAGE_DIR) \
                    $(NULL)
