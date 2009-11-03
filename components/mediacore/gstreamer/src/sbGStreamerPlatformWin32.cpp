@@ -101,40 +101,51 @@ Win32PlatformInterface::SetVideoBox(nsIBoxObject *aBoxObject,
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  mParentWindow = (HWND)aWidget->GetNativeData(NS_NATIVE_WIDGET);
-  NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
+  if (aWidget) {
+    mParentWindow = (HWND)aWidget->GetNativeData(NS_NATIVE_WIDGET);
+    NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
 
-  WNDCLASS WndClass;
+    WNDCLASS WndClass;
 
-  ::ZeroMemory(&WndClass, sizeof (WNDCLASS));
+    ::ZeroMemory(&WndClass, sizeof (WNDCLASS));
 
-  WndClass.style = CS_HREDRAW | CS_VREDRAW;
-  WndClass.hInstance = GetModuleHandle(NULL);
-  WndClass.lpszClassName = SB_VIDEOWINDOW_CLASSNAME;
-  WndClass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
-  WndClass.cbClsExtra = 0;
-  WndClass.cbWndExtra = 0;
-  WndClass.lpfnWndProc = VideoWindowProc;
-  WndClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+    WndClass.style = CS_HREDRAW | CS_VREDRAW;
+    WndClass.hInstance = GetModuleHandle(NULL);
+    WndClass.lpszClassName = SB_VIDEOWINDOW_CLASSNAME;
+    WndClass.hbrBackground = (HBRUSH) GetStockObject(BLACK_BRUSH);
+    WndClass.cbClsExtra = 0;
+    WndClass.cbWndExtra = 0;
+    WndClass.lpfnWndProc = VideoWindowProc;
+    WndClass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
  
-  ::RegisterClass(&WndClass);
+    ::RegisterClass(&WndClass);
 
-  mWindow = ::CreateWindowEx(
-          0,                                  // extended window style
-          SB_VIDEOWINDOW_CLASSNAME,           // Class name
-          L"Songbird GStreamer Video Window", // Window name
-          WS_CHILD,                           // window style
-          0, 0,                               // X,Y offset
-          0, 0,                               // Width, height
-          mParentWindow,                      // Parent window
-          NULL,                               // Menu, or child identifier
-          WndClass.hInstance,                 // Module handle
-          NULL);                              // Extra parameter
+    mWindow = ::CreateWindowEx(
+            0,                                  // extended window style
+            SB_VIDEOWINDOW_CLASSNAME,           // Class name
+            L"Songbird GStreamer Video Window", // Window name
+            WS_CHILD,                           // window style
+            0, 0,                               // X,Y offset
+            0, 0,                               // Width, height
+            mParentWindow,                      // Parent window
+            NULL,                               // Menu, or child identifier
+            WndClass.hInstance,                 // Module handle
+            NULL);                              // Extra parameter
 
-  ::SetWindowLongPtr(mWindow, GWLP_USERDATA, (LONG)this);
+    ::SetWindowLongPtr(mWindow, GWLP_USERDATA, (LONG)this);
 
-  // Display our normal window 
-  ::ShowWindow(mWindow, SW_SHOWNORMAL);
+    // Display our normal window 
+    ::ShowWindow(mWindow, SW_SHOWNORMAL);
+  }
+  else {
+    // Hide, unparent, then destroy our video window
+    ::ShowWindow(mWindow, SW_HIDE);
+    ::SetParent(mWindow, NULL);
+    ::DestroyWindow(mWindow);
+
+    mWindow = NULL;
+    mParentWindow = NULL;
+  }
 }
 
 Win32PlatformInterface::~Win32PlatformInterface ()

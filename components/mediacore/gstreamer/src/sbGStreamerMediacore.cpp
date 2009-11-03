@@ -2072,6 +2072,13 @@ sbGStreamerMediacore::HandleEvent(nsIDOMEvent* aEvent)
     target->RemoveEventListener(NS_LITERAL_STRING("hide"), this, PR_FALSE);
 
     mDOMWindow = nsnull;
+    mVideoWindow = nsnull;
+
+    if (mPlatformInterface) {
+      // Clear the video box/widget used by the platform-specific code.
+      nsresult rv = mPlatformInterface->SetVideoBox(nsnull, nsnull);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   }
   else if(eventType.EqualsLiteral("resize") &&
           mPlatformInterface) {

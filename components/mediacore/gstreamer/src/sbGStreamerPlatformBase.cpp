@@ -211,9 +211,6 @@ BasePlatformInterface::PrepareVideoWindow(GstMessage *aMessage)
 nsresult
 BasePlatformInterface::SetVideoBox(nsIBoxObject *aVideoBox, nsIWidget *aWidget)
 {
-  NS_ENSURE_ARG_POINTER(aVideoBox);
-  NS_ENSURE_ARG_POINTER(aWidget);
-
   mVideoBox = aVideoBox;
   mWidget = aWidget;
 

@@ -262,26 +262,37 @@ GDKPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
   // First let the superclass do its thing.
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  mParentWindow = GDK_WINDOW(aWidget->GetNativeData(NS_NATIVE_WIDGET));
-  NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
 
-  // Create the video window, initially with zero size.
-  GdkWindowAttr attributes;
+  if (aWidget) {
+    mParentWindow = GDK_WINDOW(aWidget->GetNativeData(NS_NATIVE_WIDGET));
+    NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
+
+    // Create the video window, initially with zero size.
+    GdkWindowAttr attributes;
  
-  attributes.window_type = GDK_WINDOW_CHILD;
-  attributes.x = 0;
-  attributes.y = 0;
-  attributes.width = 0;
-  attributes.height = 0;
-  attributes.wclass = GDK_INPUT_OUTPUT;
-  attributes.event_mask = GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | 
-                          GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK;
+    attributes.window_type = GDK_WINDOW_CHILD;
+    attributes.x = 0;
+    attributes.y = 0;
+    attributes.width = 0;
+    attributes.height = 0;
+    attributes.wclass = GDK_INPUT_OUTPUT;
+    attributes.event_mask = GDK_EXPOSURE_MASK | GDK_POINTER_MOTION_MASK | 
+                            GDK_BUTTON_PRESS_MASK | GDK_KEY_PRESS_MASK;
 
-  mWindow = gdk_window_new(mParentWindow, &attributes, GDK_WA_X | GDK_WA_Y);
-  NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
+    mWindow = gdk_window_new(mParentWindow, &attributes, GDK_WA_X | GDK_WA_Y);
+    NS_ENSURE_TRUE(mParentWindow != NULL, NS_ERROR_FAILURE);
 
-  gdk_window_show(mWindow);
+    gdk_window_show(mWindow);
+  }
+  else {
+    // hide, unparent, and then destroy our private window
+    gdk_window_hide(mWindow);
+    gdk_window_reparent(mWindow, NULL, 0, 0);
+    gdk_window_destroy(mWindow);
+
+    mWindow = nsnull;
+    mParentWindow = nsnull;
+  }
 
   return NS_OK;
 }
