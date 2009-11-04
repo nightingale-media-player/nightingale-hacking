@@ -359,7 +359,7 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
   // Find out if we should download the tracking after adding. Only download if
   //   -- the list being added to is in the main library (isTargetMain).
   //   -- the 2nd arg is set to something true and is not a mediaitem
-  PRBool shouldDownload = PR_FALSE;
+  JSBool shouldDownload = JS_FALSE;
   if ( 1 < argc ) {
     LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[1] exists, make sure it's not an item"));
     if ( JSVAL_IS_OBJECT( argv[1] ) ) {
@@ -380,7 +380,9 @@ sbRemoteMediaListBase::AddHelper( JSContext *cx,
     }
 
     LOG_LIST(("sbRemoteMediaListBase::AddHelper() - argv[1] exists, is not a mediaitem"));
-    shouldDownload = JSVAL_TO_BOOLEAN( argv[1] );
+    if (!JS_ValueToBoolean(cx, argv[1], &shouldDownload)) {
+      shouldDownload = JS_FALSE;
+    }
 
     if ( shouldDownload && !isTargetMain ) {
       // not targetting main library, no download
