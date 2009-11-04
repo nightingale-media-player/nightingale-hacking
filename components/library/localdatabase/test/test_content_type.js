@@ -119,7 +119,14 @@ try{
 function testItem(aItem, aContentType) {
   __defineGetter__("contentType",
                    function () aItem.getProperty(SBProperties.contentType));
-  assertEqual(aContentType, contentType, "contentType not set on created item");
+  if (aItem.library == aItem && null === aContentType) {
+    // the library may have the content type be empty instead of null :(
+    assertTrue(null === contentType || "" === contentType,
+               "library content type is \"" + contentType + "\" instead of null");
+  }
+  else {
+    assertEqual(aContentType, contentType, "contentType not set on created item");
+  }
   aItem.setProperty(SBProperties.contentType, null);
   assertEqual(null, contentType, "contentType not cleared on explicit setting");
 }
