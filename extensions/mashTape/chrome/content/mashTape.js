@@ -820,6 +820,9 @@ mashTape.playingObserver = {
  * Called when a tab has no given data to display
  */
 mashTape.noDataTab = function(providerType) {
+  if (typeof(mashTape.tabPanels[providerType]) == "undefined")
+    return;
+    
 	var panel = mashTape.tabPanels[providerType];
 	var deck = mashTape.tabPanels[providerType].firstChild;
 	deck.selectedIndex = 0;

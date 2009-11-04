@@ -96,11 +96,34 @@
   <binding id="sb-sys-close-button" extends="chrome://songbird/content/bindings/playerControls.xml#sb-button-base">
     <handlers>
       <!-- Close the window or close the app -->
-      <handler event="command" action="( event.target.getAttribute('type') == 'dialog' ) ? document.documentElement.cancelDialog() : quitApp();"/>
+      <handler event="command">
+        <![CDATA[
+        // Dialogs get canceled.
+        if (event.target.getAttribute('type') == 'dialog') {
+          document.documentElement.cancelDialog();
+          return;
+        }
+        
+        // Normal windows just get closed.
+        if(this.getAttribute('type') == 'window') {
+          setTimeout(function() { window.close(); }, 0);
+          return;
+        }
+        
+        // Default is to act as the main application title bar close
+        // button. Clicking it causes the application to quit.
+        quitApp();
+        ]]>
+      </handler>
     </handlers>
     <implementation>
       <constructor>
-        this.setAttribute("tooltiptext", "&tooltip.exit;")
+        if (this.getAttribute("type") == "window") {
+          this.setAttribute("tooltiptext", "&tooltip.close;")
+        }
+        else {
+          this.setAttribute("tooltiptext", "&tooltip.exit;")
+        }
         <![CDATA[
           if ( this.getAttribute("hidden") != "true" ) // not hidden already
             this._visibilityBinding = SBDataBindElementAttribute( "accessibility.enabled", this, "hidden", true );

@@ -34,6 +34,7 @@
 <window
   id="video_window"
   onload="videoWindowController._initialize();" 
+  onclose="return videoWindowController._close();" 
   onunload="videoWindowController._shutdown();" 
   hidechrome="true"
   title="&videowindow.title;"
@@ -53,7 +54,7 @@
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
   
   <sb-sys-outer-frame flex="1">
-    <sb-sys-titlebar />
+    <sb-sys-titlebar type="window"/>
 
     <!-- This is for Mac -->
     <menubar id="video_menu" hidden="false" >

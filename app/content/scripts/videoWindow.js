@@ -122,6 +122,11 @@ var videoWindowController = {
     window.addEventListener("resize", this._resizeListener, false);
   },
   
+  _close: function vwc__close() {
+    this._mediacoreManager.sequencer.stop();
+    return true;
+  },
+  
   _shutdown: function vwc__shutdown() {
     window.removeEventListener("resize", this._resizeListener, false);
     this._resizeListener = null;
