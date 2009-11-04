@@ -96,21 +96,24 @@ ifdef IS_EXTENSION # {
 #------------------------------------------------------------------------------
 # Redefine these file locations when building extensions
 #------------------------------------------------------------------------------
-
    OUR_EXTENSION_STAGE_DIR = $(strip $(EXTENSION_STAGE_DIR))
-   SONGBIRD_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
 
    ifeq (1,$(EXTENSION_NO_BINARY_COMPONENTS))
-      SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_STAGE_DIR)/components
+      OUR_EXTENSION_COMPONENT_PREFIX = $(OUR_EXTENSION_STAGE_DIR)
    else
-      # Allow overriding EXTENSION_ARCH (to nothing) to force installation
-      # of binary components into /components
-      SONGBIRD_COMPONENTSDIR = \
-       $(OUR_EXTENSION_STAGE_DIR)/$(if $(EXTENSION_ARCH),platform/$(EXTENSION_ARCH)/)components
+      # Allow extensions to override EXTENSION_ARCH (to nothing) to force 
+      # installation of binary components into /components
+      ifeq (,$(EXTENSION_ARCH))
+         OUR_EXTENSION_COMPONENT_PREFIX = $(OUR_EXTENSION_STAGE_DIR)
+      else
+         OUR_EXTENSION_COMPONENT_PREFIX = $(OUR_EXTENSION_STAGE_DIR)/platform/$(EXTENSION_ARCH)
+      endif
    endif
 
+   SONGBIRD_CHROMEDIR = $(OUR_EXTENSION_STAGE_DIR)/chrome
+   SONGBIRD_COMPONENTSDIR = $(OUR_EXTENSION_COMPONENT_PREFIX)/components
    SONGBIRD_DEFAULTSDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults
-   SONGBIRD_LIBDIR = $(OUR_EXTENSION_STAGE_DIR)/lib
+   SONGBIRD_LIBDIR = $(OUR_EXTENSION_COMPONENT_PREFIX)/lib
    SONGBIRD_PREFERENCESDIR = $(OUR_EXTENSION_STAGE_DIR)/defaults/preferences
    SONGBIRD_PLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/plugins
    SONGBIRD_SEARCHPLUGINSDIR = $(OUR_EXTENSION_STAGE_DIR)/searchplugins
