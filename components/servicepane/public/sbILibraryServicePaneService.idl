@@ -34,12 +34,13 @@
 interface sbIServicePaneNode;
 interface sbILibrary;
 interface sbILibraryResource;
+interface sbIMediaListView;
 
 /**
  * \interface sbILibraryServicePaneService
  * \brief Provides information about libraries and medialists needed by the service pane
  */
-[scriptable, uuid(15928572-66fc-4eb8-a430-a5bac5bf350e)]
+[scriptable, uuid(03a32d24-edc2-4d26-99a3-b16859193a42)]
 interface sbILibraryServicePaneService : nsISupports {
 
   /* \brief Suggest a library for creating a new media list
@@ -58,6 +59,10 @@ interface sbILibraryServicePaneService : nsISupports {
    * node appropriately, show it by changing the hidden attribute to false
    * (node.hidden = false).
    *
+   * The result is a service pane folder node, containing video, music, etc.
+   * sub-nodes.  You may wish to hide irrelevant nodes before showing the parent
+   * node.
+   *
    * \param aLibrary an sbILibrary.
    * \return a service pane node that represents the given library, null
    *         if aLibrary is not an sbILibrary.
@@ -67,10 +72,21 @@ interface sbILibraryServicePaneService : nsISupports {
   /* \brief Attempt to get a service pane node for the given library resource
    *
    * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
-   * \return a service pane node that represents the given resource, if one exists
+   * \return a service pane node that represents the given resource, if one
+   *         exists. Note that in the case that more than one node related to a
+   *         given library exists, it is not specified which node will be
+   *         returned. However, nodes that are not hidden will be preferred.
    */
   sbIServicePaneNode getNodeForLibraryResource (in sbILibraryResource aResource);
 
+  /**
+   * \brief Attempt to get a service pane node for the given media list view
+   *
+   * \param aMediaListView the view for which to get the service pane node
+   * \returns a service pane node that represents the given media list view
+   *          or null if the node cannot be found
+   */
+  sbIServicePaneNode getNodeFromMediaListView (in sbIMediaListView aMediaListView);
 
   /* \brief Attempt to get a library resource for the given service pane node.
    *

@@ -34,6 +34,10 @@ if (typeof(Cu) == "undefined")
 if (typeof(Cr) == "undefined")
   var Cr = Components.results;
 
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
+Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 
 /**
  * Media Page Controller
@@ -93,17 +97,22 @@ window.mediaPage = {
    * been externally set.  
    */
   onLoad:  function(e) {
-    
-    // Make sure we have the javascript modules we're going to use
-    Cu.import("resource://app/jsmodules/sbProperties.jsm");
-    Cu.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-    Cu.import("resource://app/jsmodules/kPlaylistCommands.jsm");
-    Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
-    
     if (!this._mediaListView) {
       Components.utils.reportError("playlistPage.xul did not receive  " + 
                                    "a mediaListView before the onload event!");
       return;
+    }
+
+    var servicePaneNode =
+      Cc["@songbirdnest.com/servicepane/library;1"]
+        .getService(Ci.sbILibraryServicePaneService)
+        .getNodeFromMediaListView(this._mediaListView);
+    if (servicePaneNode) {
+      document.title = servicePaneNode.displayName;
+    }
+    else {
+      // failed to find the node, stick with the media list name
+      document.title = this._mediaListView.mediaList.name;
     }
 
     this._playlist = document.getElementById("playlist");

@@ -49,9 +49,18 @@ interface sbILibraryConstraintGroup;
  * - Multiple groups may be intersected with each other
  *
  */
-[scriptable, uuid(2890d9a4-68b5-4b7a-8f88-3cd05d05416c)]
+[scriptable, uuid(3da5df89-9718-4c5e-9494-0d6116ab2bdd)]
 interface sbILibraryConstraintBuilder : nsISupports
 {
+  /**
+   * \brief Attempt to parse a serialized constraint description.  This expects
+   *        a string as serialized by sbILibraryConstraint::toString().
+   * \param aSerializedConstraint the serialized string of the constraints
+   * \throws NS_ERROR_ALREADY_INITIALIZED if constraints already exist
+   * \throws NS_ERROR_ILLEGAL_VALUE if the string could not be unserialized
+   */
+  sbILibraryConstraintBuilder parseFromString(in AString aSerializedConstraint);
+
   /**
    * \brief Add an existing constraint to the builder
    * \param aConstraint The constraint to add

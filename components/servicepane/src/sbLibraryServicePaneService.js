@@ -32,8 +32,11 @@ const Cc = Components.classes;
 const Ci = Components.interfaces;
 const Cr = Components.results;
 
+Components.utils.import("resource://gre/modules/XPCOMUtils.jsm");
+
 Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
 Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
 Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 Components.utils.import("resource://app/jsmodules/WindowUtils.jsm");
@@ -94,20 +97,29 @@ function sbLibraryServicePane() {
   this._batch = {}; // we'll keep the batch counters in here
   this._refreshPending = false;
 }
+
+//////////////////////////
+// nsISupports / XPCOM  //
+//////////////////////////
+
 sbLibraryServicePane.prototype.QueryInterface =
-function sbLibraryServicePane_QueryInterface(iid) {
-  if (!iid.equals(Ci.nsISupports) &&
-    !iid.equals(Ci.nsIObserver) &&
-    !iid.equals(Ci.sbIServicePaneModule) &&
-    !iid.equals(Ci.sbILibraryServicePaneService) &&
-    !iid.equals(Ci.sbILibraryManagerListener) &&
-    !iid.equals(Ci.sbIMediaListListener)) {
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  }
-  return this;
-}
+  XPCOMUtils.generateQI([Ci.nsIObserver,
+                         Ci.sbIServicePaneModule,
+                         Ci.sbILibraryServicePaneService,
+                         Ci.sbILibraryManagerListener,
+                         Ci.sbIMediaListListener]);
 
-
+sbLibraryServicePane.prototype.classID =
+  Components.ID("{64ec2154-3733-4862-af3f-9f2335b14821}");
+sbLibraryServicePane.prototype.classDescription =
+  "Songbird Library Service Pane Service";
+sbLibraryServicePane.prototype.contractID =
+  CONTRACTID;
+sbLibraryServicePane.prototype._xpcom_categories = [{
+  category: 'service-pane',
+  entry: '0library', // we want this to load first
+  value: CONTRACTID
+}];
 //////////////////////////
 // sbIServicePaneModule //
 //////////////////////////
@@ -624,13 +636,7 @@ function sbLibraryServicePane_onDragGesture(aNode, aTransferable) {
     source: list.library,
     count: 1,
     list: list,
-    QueryInterface: function(iid) {
-      if (iid.equals(Components.interfaces.sbIMediaListTransferContext) ||
-          iid.equals(Components.interfaces.nsISupports)) {
-        return this;
-      }
-      throw Components.results.NS_NOINTERFACE;
-    }
+    QueryInterface: XPCOMUtils.generateQI([Ci.sbIMediaListTransferContext])
   };
   
   // register the source context
@@ -768,13 +774,13 @@ function sbLibraryServicePane_createNodeForLibrary(aLibrary) {
   return null;
 }
 
-/* \brief Attempt to get a service pane node for the given library resource
- *
- * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
- * \return a service pane node that represents the given resource, if one exists
+/**
+ * \brief Get the URN for a resource, to be used to look up the service pane node
+ * \param aResource to resource to get the service pane URN for
+ * \returns The expected URN for the resource
  */
-sbLibraryServicePane.prototype.getNodeForLibraryResource =
-function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
+sbLibraryServicePane.prototype._getURNForLibraryResource =
+function sbLibraryServicePane_getURNForLibraryResource(aResource) {
   //logcall(arguments);
 
   // Must be initialized
@@ -782,13 +788,11 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
     throw Components.results.NS_ERROR_NOT_INITIALIZED;
   }
 
-  var node;
-
-  // If this is a library, make a library node
+  // If this is a library, get the library URN
   if (aResource instanceof Ci.sbILibrary) {
-    node = this._servicePane.getNode(this._libraryURN(aResource));
+    return this._libraryURN(aResource);
 
-  // If this is a mediaitem, make a mediaitem node
+  // If this is a mediaitem, get an item urn
   } else if (aResource instanceof Ci.sbIMediaItem) {
     // Check if this is a storage list for an outer list
     var outerListGuid = aResource.getProperty(SBProperties.outerGUID);
@@ -799,8 +803,9 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
         aResource = outerList;
       }
     }
-    // Look for the node
-    node = this._servicePane.getNode(this._itemURN(aResource));
+    // cacluate the URN for the item
+    return this._itemURN(aResource);
+
   // Else we don't know what to do, so
   // the arg must be invalid
   } else {
@@ -810,6 +815,92 @@ function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
   return node;
 }
 
+/* \brief Attempt to get a service pane node for the given library resource
+ *
+ * \param aResource an sbIMediaItem, sbIMediaItem, or sbILibrary
+ * \return a service pane node that represents the given resource, if one
+ *         exists. Note that in the case that more than one node related to a
+ *         given library exists, it is not specified which node will be
+ *         returned. However, nodes that are not hidden will be preferred.
+ */
+sbLibraryServicePane.prototype.getNodeForLibraryResource =
+function sbLibraryServicePane_getNodeForLibraryResource(aResource) {
+  //logcall(arguments);
+
+  var urn = this._getURNForLibraryResource(aResource);
+  var node = this._servicePane.getNode(urn);
+  var hiddenNode = null;
+  if (node && node.hasAttributeNS(LSP, "LibraryGUID")) {
+    // this is a library node (and not a dummy playlist container)
+    if (!node.hidden) {
+      return node;
+    }
+    // this is a hidden node; not as good, but might be useful as a last-ditch
+    hiddenNode = node;
+  }
+  for each (let type in ["audio", "video", "podcast"]) {
+    let constrainedURN = urn + ":constraint(" + type + ")";
+    node = this._servicePane.getNode(urn);
+    if (!node.hidden) {
+      return node;
+    }
+    // this node is hidden; remember it if nothing better comes along
+    hiddenNode = hiddenNode || node;
+  }
+  return hiddenNode;
+}
+
+/**
+ * \brief Attempt to get a service pane node for the given media list view
+ *
+ * \param aMediaListView the view for which to get the service pane node
+ * \returns a service pane node that represents the given media list view
+ */
+sbLibraryServicePane.prototype.getNodeFromMediaListView =
+function sbLibraryServicePane_getNodeFromMediaListView(aMediaListView) {
+  //logcall(arguments);
+
+  // get the base URN...
+  var baseURN = this._getURNForLibraryResource(aMediaListView.mediaList);
+
+  if ((aMediaListView instanceof Ci.sbIFilterableMediaListView) &&
+      aMediaListView.filterConstraint)
+  {
+    // try to add constraints
+    var urn = baseURN;
+
+    // stash off the properties involved in the standard constraints,
+    // so that we don't look at them
+    var standardConstraintProperties = {};
+    const standardConstraint = LibraryUtils.standardFilterConstraint
+    for (let group in ArrayConverter.JSEnum(standardConstraint.groups)) {
+      group.QueryInterface(Ci.sbILibraryConstraintGroup);
+      for (let prop in ArrayConverter.JSEnum(group.properties)) {
+        standardConstraintProperties[prop] = true;
+      }
+    }
+
+    for (let group in ArrayConverter.JSEnum(aMediaListView.filterConstraint.groups)) {
+      group.QueryInterface(Ci.sbILibraryConstraintGroup);
+      for (let prop in ArrayConverter.JSEnum(group.properties)) {
+        if (prop in standardConstraintProperties) {
+          continue;
+        }
+        for (let value in ArrayConverter.JSEnum(group.getValues(prop))) {
+          urn += ":constraint(" + value + ")";
+        }
+      }
+    }
+
+    let node = this._servicePane.getNode(urn);
+    if (node) {
+      return node;
+    }
+  }
+
+  // lookup by constraints failed, use the base URN
+  return this._servicePane.getNode(baseURN);
+}
 
 /* \brief Attempt to get a library resource for the given service pane node.
  *
@@ -987,7 +1078,7 @@ function sbLibraryServicePane__processListsInLibrary(aLibrary) {
 sbLibraryServicePane.prototype._libraryAdded =
 function sbLibraryServicePane__libraryAdded(aLibrary) {
   //logcall(arguments);
-  var node = this._ensureLibraryNodeExists(aLibrary);
+  var node = this._ensureLibraryNodeExists(aLibrary, true);
 
   // Listen to changes in the library so that we can display new playlists
   var filter = SBProperties.createArray([[SBProperties.hidden, null],
@@ -1113,11 +1204,12 @@ function sbLibraryServicePane__getItemGUIDForURN(aID) {
 sbLibraryServicePane.prototype._getLibraryGUIDForURN =
 function sbLibraryServicePane__getLibraryGUIDForURN(aID) {
   //logcall(arguments);
-  var index = aID.indexOf(URN_PREFIX_LIBRARY);
-  if (index >= 0) {
-    return aID.slice(URN_PREFIX_LIBRARY.length);
+  if (aID.substring(0, URN_PREFIX_LIBRARY.length) != URN_PREFIX_LIBRARY) {
+    return null;
   }
-  return null;
+  var id = aID.slice(URN_PREFIX_LIBRARY.length);
+  id = id.replace(/:constraint\(.*?\)/g, '');
+  return id;
 }
 
 
@@ -1169,82 +1261,204 @@ function sbLibraryServicePane__getLibraryForURN(aID) {
 
 
 /**
- * Get the service pane node for the given library,
- * creating one if none exists.
+ * Ensure the library nodes for the given library exists, then return the
+ * container node
+ * @param aMove true to force move the nodes into the container if they
+ *              already exist elsewhere
  */
 sbLibraryServicePane.prototype._ensureLibraryNodeExists =
-function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary) {
+function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
   //logcall(arguments);
+  var self = this;
 
-  // Get the Node.
-  var id = this._libraryURN(aLibrary);
-  var node = this._servicePane.getNode(id);
-  var newnode = false;
-  if (!node) {
-    // Create the node
-    node = this._servicePane.addNode(id, this._servicePane.root, true);
-    newnode = true;
+  /**
+   * Find or create a library node for the given library, for the given
+   * constraint type
+   * @param aLibrary the library to find / create a node for
+   * @param aConstraintType the type of library node, e.g. "audio", "video",
+   *                        "podcast" - if not given, no constraint applies
+   * @returns the node (old or new) for the library of the given type
+   */
+  function makeNodeFromLibrary(aLibrary, aConstraintType, aParentNode) {
+    const K_DEFAULT_WEIGHTS = {
+      // weights to use by default, for a given constraint type
+      "audio": 100,
+      "video": 200
+    };
+
+    var id = self._libraryURN(aLibrary);
+    if (aConstraintType) {
+      // add a constraint only if the constraint type was specified
+      id += ":constraint(" + aConstraintType + ")";
+    }
+    var node = self._servicePane.getNode(id);
+    var newnode = false;
+    if (!node) {
+      // Create the node
+      node = self._servicePane.addNode(id, aParentNode, true);
+      newnode = true;
+    }
+    var customType = aLibrary.getProperty(SBProperties.customType);
+
+    // Refresh the information just in case it is supposed to change
+    // Don't set name if it hasn't changed to avoid a UI redraw
+    if (node.name != aLibrary.name) {
+      node.name = aLibrary.name;
+    }
+    node.url = null;
+    node.contractid = CONTRACTID;
+    node.editable = false;
+    node.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+
+    // Set properties for styling purposes
+    self._mergeProperties(node,
+                          ["library",
+                           "libraryguid-" + aLibrary.guid,
+                           aLibrary.type,
+                           customType]);
+    // Save the type of media list so that we can group by type
+    node.setAttributeNS(LSP, "ListType", aLibrary.type)
+    // Save the guid of the library
+    node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
+    // and save it as the list guid
+    node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
+    // Save the customType for use by metrics.
+    node.setAttributeNS(LSP, "ListCustomType", customType);
+    // Save the customType for use by metrics.
+    node.setAttributeNS(LSP, "LibraryCustomType", customType);
+
+    if (aConstraintType) {
+        self._mergeProperties(node, [aConstraintType]);
+        var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                        .createInstance(Ci.sbILibraryConstraintBuilder);
+        builder.includeConstraint(LibraryUtils.standardFilterConstraint);
+        builder.intersect();
+        builder.include(SBProperties.contentType, aConstraintType);
+        node.setAttributeNS(SP,
+                            "mediaListViewConstraints",
+                            builder.get());
+        if (aConstraintType in K_DEFAULT_WEIGHTS) {
+          node.setAttributeNS(SP,
+                              "Weight",
+                              K_DEFAULT_WEIGHTS[aConstraintType]);
+        }
+    }
+
+    if (newnode) {
+      // Position the node in the tree
+      self._insertNodeAfter(aParentNode, node);
+    }
+    return node;
   }
 
   var customType = aLibrary.getProperty(SBProperties.customType);
 
+  if (customType == 'web') {
+    // the web library has no video/audio split, nor a parent, so we need to
+    // special case it here and return early
+    let node = makeNodeFromLibrary(aLibrary, null, self._servicePane.root);
+
+    // Set the weight of the web library
+    node.setAttributeNS(SP, 'Weight', 5);
+    node.hidden = false;
+    return node;
+  }
+
+  // make the parent node
+  var id = self._libraryURN(aLibrary);
+  var parentNode = self._servicePane.getNode(id);
+  var newNode = false;
+  if (!parentNode) {
+    // Create the node
+    parentNode = self._servicePane.addNode(id, self._servicePane.root, true);
+    newNode = true;
+  }
   // Refresh the information just in case it is supposed to change
   // Don't set name if it hasn't changed to avoid a UI redraw
-  if (node.name != aLibrary.name) {
-    node.name = aLibrary.name;
+  if (parentNode.name != aLibrary.name) {
+    parentNode.name = aLibrary.name;
   }
-  node.url = null;
-  node.contractid = CONTRACTID;
-  node.editable = false;
-  node.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+
+  // uncomment this to cause clicks on the container node to load an unfiltered
+  // library.  we need to think more about the ramifications for UE before
+  // turning this on, so it's off for now.
+  // (see also below on the migration part)
+  //parentNode.contractid = CONTRACTID;
+
+  // properties that should exist on the parent container node
+  const K_PARENT_PROPS = ["folder", "library-container"];
+
+  parentNode.url = null;
+  parentNode.editable = false;
+  parentNode.setAttributeNS(SP, 'Weight', -4);
+  self._mergeProperties(parentNode, K_PARENT_PROPS);
+  if (newNode) {
+    // always create them as hidden
+    parentNode.hidden = true;
+  }
 
   if (aLibrary == this._libraryManager.mainLibrary) {
+    var node = null;
+    // note that |node| should be the audio node at the end of this loop,
+    // for use by the migrate-from-before-split-views step
+    for each (let type in ["video", "audio"]) {
+      node = makeNodeFromLibrary(aLibrary, type, parentNode);
+      node.name = '&servicesource.library.' + type;
+      if (aMove || !node.parentNode) {
+        this._insertNodeAfter(parentNode, node);
+      }
+    }
+    this._servicePane.sortNode(parentNode);
+
+    if (newNode) {
+      parentNode.hidden = false;
+      this._insertLibraryNode(parentNode, aLibrary);
+    }
+    else if (parentNode.properties.split(/\s/).indexOf('library') != -1) {
+      // this came from before we had split views for the libraries
+      // we need to migrate
+      parentNode.hidden = false;
+      let oldProps = parentNode.properties.split(/\s+/);
+      let newProps = oldProps.filter(function(val) K_PARENT_PROPS.indexOf(val) == -1);
+      this._mergeProperties(node, newProps);
+      parentNode.properties = K_PARENT_PROPS.join(" ");
+
+      // properties we know we want to delete
+      for each (let i in ["url", "image", "tooltip", "contractid",
+                          "dndDragTypes", "dndAcceptNear", "dndAcceptIn"])
+      {
+        parentNode[i] = null;
+      }
+    }
+
     // the main library uses a separate Playlists and Podcasts folder
     this._ensurePlaylistFolderExists();
     this._ensurePodcastFolderExists();
 
-    // Set the weight of the main library
-    node.setAttributeNS(SP, 'Weight', -4);
-    
     // if the iTunes folder exists, then make it visible
     var fnode = this._servicePane.getNode('SB:iTunes');
     if (fnode)
       fnode.hidden = false;
-  } if (customType == 'web') {
-    // Set the weight of the web library
-    node.setAttributeNS(SP, 'Weight', 5);
-    node.hidden = true;
-  } else {
-    // other libraries store the playlists under them, but only
-    // assign the default value if they do not specifically tell
-    // us not to do so
-    
-    if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
-      node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
   }
-  // Set properties for styling purposes
-  this._mergeProperties(node,
-                        ["library",
-                         "libraryguid-" + aLibrary.guid,
-                         aLibrary.type,
-                         customType]);
-  // Save the type of media list so that we can group by type
-  node.setAttributeNS(LSP, "ListType", aLibrary.type)
-  // Save the guid of the library
-  node.setAttributeNS(LSP, "LibraryGUID", aLibrary.guid);
-  // and save it as the list guid
-  node.setAttributeNS(LSP, "ListGUID", aLibrary.guid);
-  // Save the customType for use by metrics.
-  node.setAttributeNS(LSP, "ListCustomType", customType);
-  // Save the customType for use by metrics.
-  node.setAttributeNS(LSP, "LibraryCustomType", customType);
+  else {
+    for each (let type in ["video", "audio"]) {
+      let node = makeNodeFromLibrary(aLibrary, type, parentNode);
+      node.name = '&servicesource.library.' + type;
+      if (aMove || !node.parentNode) {
+        this._insertNodeAfter(parentNode, node);
+      }
 
-  if (newnode) {
-    // Position the node in the tree
-    this._insertLibraryNode(node, aLibrary);
+      // other libraries store the playlists under them, but only
+      // assign the default value if they do not specifically tell
+      // us not to do so
+
+      if (node.getAttributeNS(SP,'dndCustomAccept') != 'true')
+        node.dndAcceptIn = 'text/x-sb-playlist-'+aLibrary.guid;
+    }
+    this._servicePane.sortNode(parentNode);
   }
 
-  return node;
+  return parentNode;
 }
 
 
@@ -1558,6 +1772,7 @@ function sbLibraryServicePane__insertMediaListNode(aNode, aMediaList) {
           if (self._matchNode(aNode, typeObject.conditions))
             return typeObject.type;
         }
+        return null;
       }
 
       // make sure the playlist folder exists
@@ -1938,7 +2153,6 @@ function sbLibraryServicePane_onBatchEnd(aMediaList) {
 
 }
 
-
 sbLibraryServicePane.prototype._initLibraryManager =
 function sbLibraryServicePane__initLibraryManager() {
   // get the library manager
@@ -1951,6 +2165,7 @@ function sbLibraryServicePane__initLibraryManager() {
 
   this._addAllLibraries();
 }
+
 /////////////////
 // nsIObserver //
 /////////////////
@@ -1981,87 +2196,4 @@ function sbLibraryServicePane_observe(subject, topic, data) {
 // XPCOM //
 ///////////
 
-/**
- * /brief XPCOM initialization code
- */
-function makeGetModule(CONSTRUCTOR, CID, CLASSNAME, CONTRACTID, CATEGORIES) {
-  return function (comMgr, fileSpec) {
-    return {
-      registerSelf : function (compMgr, fileSpec, location, type) {
-        compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.registerFactoryLocation(CID,
-                        CLASSNAME,
-                        CONTRACTID,
-                        fileSpec,
-                        location,
-                        type);
-        if (CATEGORIES && CATEGORIES.length) {
-          var catman =  Cc["@mozilla.org/categorymanager;1"]
-              .getService(Ci.nsICategoryManager);
-          for (var i=0; i<CATEGORIES.length; i++) {
-            var e = CATEGORIES[i];
-            catman.addCategoryEntry(e.category, e.entry, e.value,
-              true, true);
-          }
-        }
-      },
-
-      getClassObject : function (compMgr, cid, iid) {
-        if (!cid.equals(CID)) {
-          throw Cr.NS_ERROR_NO_INTERFACE;
-        }
-
-        if (!iid.equals(Ci.nsIFactory)) {
-          throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-        }
-
-        return this._factory;
-      },
-
-      _factory : {
-        createInstance : function (outer, iid) {
-          if (outer != null) {
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-          }
-          return (new CONSTRUCTOR()).QueryInterface(iid);
-        }
-      },
-
-      unregisterSelf : function (compMgr, location, type) {
-        compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.unregisterFactoryLocation(CID, location);
-        if (CATEGORIES && CATEGORIES.length) {
-          var catman =  Cc["@mozilla.org/categorymanager;1"]
-              .getService(Ci.nsICategoryManager);
-          for (var i=0; i<CATEGORIES.length; i++) {
-            var e = CATEGORIES[i];
-            catman.deleteCategoryEntry(e.category, e.entry, true);
-          }
-        }
-      },
-
-      canUnload : function (compMgr) {
-        return true;
-      },
-
-      QueryInterface : function (iid) {
-        if ( !iid.equals(Ci.nsIModule) ||
-             !iid.equals(Ci.nsISupports) )
-          throw Cr.NS_ERROR_NO_INTERFACE;
-        return this;
-      }
-
-    };
-  }
-}
-
-var NSGetModule = makeGetModule (
-  sbLibraryServicePane,
-  Components.ID("{64ec2154-3733-4862-af3f-9f2335b14821}"),
-  "Songbird Library Service Pane Service",
-  CONTRACTID,
-  [{
-    category: 'service-pane',
-    entry: '0library', // we want this to load first
-    value: CONTRACTID
-  }]);
+var NSGetModule = XPCOMUtils.generateNSGetModule([sbLibraryServicePane]);

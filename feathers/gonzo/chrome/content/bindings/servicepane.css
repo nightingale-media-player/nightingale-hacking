@@ -59,6 +59,13 @@ Imported by bindings.css or directly into feathers.
   list-style-image: url(chrome://songbird/skin/service-pane/icon-library.png) ;
 }
 
+.servicepane-tree > treechildren::-moz-tree-image( library video ),
+.locationbar-image[properties~="library"][properties~="video"],
+.alltabs-item.menuitem-iconic[properties~="library"][properties~="video"],
+.tabbrowser-tab[properties~="library"][properties~="video"] > .tab-image-middle > .tab-icon > .tab-icon-image {
+  list-style-image: url(chrome://songbird/skin/service-pane/icon-video.png) ;
+}
+
 .servicepane-tree > treechildren::-moz-tree-image( birdhouse ) {
   list-style-image: url(chrome://songbird/skin/service-pane/icon-birdhouse.png) ;
 }

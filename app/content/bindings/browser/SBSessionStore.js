@@ -98,13 +98,35 @@ var SBSessionStore = {
         // so that the page can be restored correctly
         if (tab.mediaPage) {
           if (tab.mediaPage.mediaListView) {
-            var mediaList = tab.mediaPage.mediaListView.mediaList;
-            urls.push({
-                listGUID: mediaList.guid,
-                libraryGUID: mediaList.library.guid,
-                pageURL: tab.linkedBrowser.currentURI.spec,
-                isOnlyView: tab.mediaPage.isOnlyView
-              });
+            var view = tab.mediaPage.mediaListView;
+            var mediaList = view.mediaList;
+            var data = {
+              listGUID: mediaList.guid,
+              libraryGUID: mediaList.library.guid,
+              pageURL: tab.linkedBrowser.currentURI.spec,
+              isOnlyView: tab.mediaPage.isOnlyView
+            };
+            if (view instanceof Ci.sbIFilterableMediaListView) {
+              data.constraints = [];
+              for (var group in ArrayConverter.JSEnum(view.filterConstraint.groups)) {
+                if (!(group instanceof Ci.sbILibraryConstraintGroup)) {
+                  // this shouldn't happen... but let's be nice and not die
+                  continue;
+                }
+                let propArray = [];
+                for (let prop in ArrayConverter.JSEnum(group.properties)) {
+                  propArray.push([prop,
+                                  ArrayConverter.JSArray(group.getValues(prop))]);
+                }
+                data.constraints.push(propArray);
+              }
+              if (!data.constraints.length) {
+                // no constraints; this shouldn't ever happen either (we should
+                // have the standard not hidden one), but let's not die
+                delete data.constraints;
+              }
+            }
+            urls.push(data);
           }
         // For all other pages, just keep the URI
         } else {
@@ -247,8 +269,18 @@ var SBSessionStore = {
             // not available, just go to the library.
             var list = LibraryUtils.mainLibrary;
           }
-          newTab = aTabBrowser.loadMediaList(list, null, location, null, url, tab.isOnlyView);
-          
+
+          let view = LibraryUtils.createStandardMediaListView(list);
+          if ("constraints" in tab) {
+            view.filterConstraint = LibraryUtils.createConstraint(tab.constraints);
+          }
+          newTab = aTabBrowser.loadMediaList(list,
+                                             null,
+                                             location,
+                                             view,
+                                             url,
+                                             tab.isOnlyView);
+
         // Otherwise just reload the URL
         } else {
           LOG("loading plain url: " + url);

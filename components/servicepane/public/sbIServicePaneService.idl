@@ -46,7 +46,7 @@ interface nsIStringBundle;
  * \interface sbIServicePaneNode
  * \brief The interface to interact with a particular node in the service pane
  */
-[scriptable, uuid(d730af19-1b0b-4679-9f22-b41caa4ec59a)]
+[scriptable, uuid(fb37abd9-8f53-4352-9ca2-5fa17295b01c)]
 interface sbIServicePaneNode : nsISupports
 {
   /* \brief the uri of this node as an RDF resource */
@@ -62,8 +62,10 @@ interface sbIServicePaneNode : nsISupports
   attribute AString url;
   /* \brief the URL of the image to display in the tree */
   attribute AString image;
-  /* \brief the name to display in the tree */
+  /* \brief the unlocalized text for the name of the node */
   attribute AString name;
+  /* \brief the localized text to display in the tree (set via name) */
+  readonly attribute AString displayName;
   /* \brief the tooltip to display when the user hovers over the node in the tree */
   attribute AString tooltip;
   /* \brief should the node be hidden in the tree ? */

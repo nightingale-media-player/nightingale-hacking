@@ -645,7 +645,25 @@
               .getService(Components.interfaces.sbILibraryServicePaneService);
             var mediaList = libraryServicePane.getLibraryResourceForNode(node);
             if (mediaList) {
-              var tab = this.browser.loadMediaList(mediaList, event, "_media");
+              const NS_SP = "http://songbirdnest.com/rdf/servicepane#";
+              var view = LibraryUtils.createStandardMediaListView(mediaList);
+              if (node.hasAttributeNS(NS_SP, "mediaListViewConstraints")) {
+                // set up the constraints
+                var builder = Cc["@songbirdnest.com/Songbird/Library/ConstraintBuilder;1"]
+                                .createInstance(Ci.sbILibraryConstraintBuilder);
+                try {
+                  builder.parseFromString(node.getAttributeNS(NS_SP,
+                                                              "mediaListViewConstraints"));
+                  view.filterConstraint = builder.get();
+                } catch (e) {
+                  // boo, the constraints are bad, use standard instead
+                  view.filterConstraint = LibraryUtils.standardFilterConstraint;
+                }
+              }
+              var tab = this.browser.loadMediaList(mediaList,
+                                                   event,
+                                                   "_media",
+                                                   view);
               this.browser.selectedTab = tab;
 
               // Record list type metrics for some reason.
@@ -659,10 +677,21 @@
               } catch(e) { Components.utils.reportError(e); }
 
             } else {
-              /* FIXME: implement non-go-to-url behaviour */
-              Components.utils.reportError(
-                "ServicePane.loadSelectedNode: unable to " + 
-                "handle the selected node");
+              // we have no handler for this service pane node load
+              // dispatch an event people can listen for and don't report
+              let event = document.createEvent("XULCommandEvent");
+              event.QueryInterface(Components.interfaces.nsIDOMXULCommandEvent);
+              event.initCommandEvent("servicepane-loadnode",
+                                     event.bubble,
+                                     false,
+                                     event.view,
+                                     event.detail,
+                                     event.ctrlKey,
+                                     event.altKey,
+                                     event.shiftKey,
+                                     event.metaKey,
+                                     event);
+              this.dispatchEvent(event);
             }
           }
         ]]></body>

@@ -27,17 +27,50 @@
 #include "sbLibraryConstraints.h"
 #include "sbLibraryCID.h"
 
+#include <nsAutoPtr.h>
 #include <nsArrayEnumerator.h>
 #include <nsCOMArray.h>
 #include <nsIClassInfoImpl.h>
+#include <nsINetUtil.h>
 #include <nsIObjectInputStream.h>
 #include <nsIObjectOutputStream.h>
 #include <nsIProgrammingLanguage.h>
 #include <nsIStringEnumerator.h>
 #include <nsMemory.h>
+#include <nsServiceManagerUtils.h>
 
 #include <sbTArrayStringEnumerator.h>
 #include <sbStringUtils.h>
+
+/**
+ * == Constraint / Constraint Group String Serialization Format ==
+ *
+ * Whitespace is significant in the constraint serialization format.
+ *
+ * The constraint serialization is a JSON-style array,
+ * constraint := '[' constraint-group ( ', ' constraint-group )* ']'
+ *
+ * The constraint group serialzation is a JSON-style object,
+ * constraint-group := '{' constraint-entry ( ', ' constraint-entry )* '}'
+ * constraint-entry := '"' property-name '": ' property-values
+ *
+ * The property name is assumed to not contain quotation mark characters
+ * (which are invalid in URIs).  Any other characters are taken literally; this
+ * may result in invalid property names being used if the input is not correct.
+ * See sbIPropertyManager and sbStandardProperties.h.
+ *
+ * The property values serialization is a JSON-style string array,
+ * property-values := '[' '"' escaped-value '"' ( ', "' escaped-value '"' )* ']'
+ * where escaped-value is the value of the constraint, as escaped via
+ * nsINetUtils::escapeString() with nsINetUtils::ESCAPE_XALPHAS on the UTF-8
+ * encoding of the string.
+ *
+ * Sample (standard) constraint:
+ * [{"http://songbirdnest.com/data/1.0#isList": ["0"]}, {"http://songbirdnest.com/data/1.0#hidden": ["0"]}]
+ *
+ * Sample constraint with escaped value:
+ * [{"http://songbirdnest.com/data/1.0#genre": ["%E6%B8%AC%20%E8%A9%A6"]}]
+ */
 
 /*
  * sbLibraryConstraintBuilder
@@ -45,6 +78,119 @@
 NS_IMPL_ISUPPORTS1(sbLibraryConstraintBuilder,
                    sbILibraryConstraintBuilder)
 
+
+static inline nsresult CheckStringAndSkip(const nsAString & aSource,
+                                          PRInt32 & offset,
+                                          const nsAString & aSubstring)
+{
+  if (!Substring(aSource, offset, aSubstring.Length()).Equals(aSubstring)) {
+    return NS_ERROR_ILLEGAL_VALUE;
+  }
+  offset += aSubstring.Length();
+  return NS_OK;
+}
+
+/* sbILibraryConstraintBuilder parseFromString (in AString aSerializedConstraint); */
+NS_IMETHODIMP
+sbLibraryConstraintBuilder::ParseFromString(const nsAString & aConstraint,
+                                            sbILibraryConstraintBuilder **_retval)
+{
+  NS_ENSURE_ARG_POINTER(_retval);
+
+  nsresult rv;
+  PRInt32 offset = 0, next;
+
+  rv = EnsureConstraint();
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRUint32 groupCount;
+  rv = mConstraint->GetGroupCount(&groupCount);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  NS_ENSURE_TRUE(groupCount == 1, NS_ERROR_ALREADY_INITIALIZED);
+
+  nsCOMPtr<sbILibraryConstraintGroup> group;
+  rv = mConstraint->GetGroup(0, getter_AddRefs(group));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIStringEnumerator> props;
+  rv = group->GetProperties(getter_AddRefs(props));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool hasMore;
+  rv = props->HasMore(&hasMore);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_FALSE(hasMore, NS_ERROR_ALREADY_INITIALIZED);
+
+  nsCOMPtr<nsINetUtil> netUtil =
+    do_GetService("@mozilla.org/network/util;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = CheckStringAndSkip(aConstraint, offset, NS_LITERAL_STRING("[{\""));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  do {
+    // find the leading " at the end of the of property name
+    next = aConstraint.FindChar(PRUnichar('"'), offset);
+    if (next < 0) {
+      return NS_ERROR_ILLEGAL_VALUE;
+    }
+    // get the property name
+    nsString property(Substring(aConstraint, offset, next - offset));
+    offset = next + 1;
+
+    // check for the start of the values
+    rv = CheckStringAndSkip(aConstraint, offset, NS_LITERAL_STRING(": [\""));
+    NS_ENSURE_SUCCESS(rv, rv);
+
+    nsAutoPtr<sbStringArray> array = new sbStringArray;
+    NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
+
+    while (true) {
+      // look for the " at the end of the value
+      next = aConstraint.FindChar(PRUnichar('"'), offset);
+      if (next < 0) {
+        return NS_ERROR_ILLEGAL_VALUE;
+      }
+      nsString value(Substring(aConstraint, offset, next - offset));
+      // we need to unescape the string
+      nsCString unescapedValue;
+      rv = netUtil->UnescapeString(NS_ConvertUTF16toUTF8(value),
+                                   nsINetUtil::ESCAPE_XALPHAS,
+                                   unescapedValue);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsString* added = array->AppendElement(NS_ConvertUTF8toUTF16(unescapedValue));
+      NS_ENSURE_TRUE(added, NS_ERROR_OUT_OF_MEMORY);
+      offset = next + 1;
+      if (Substring(aConstraint, offset, 1).EqualsLiteral("]")) {
+        // end of the values
+        ++offset;
+        break;
+      }
+      rv = CheckStringAndSkip(aConstraint, offset, NS_LITERAL_STRING(", \""));
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+    
+    rv = mConstraint->AddToCurrent(property, array);
+    NS_ENSURE_SUCCESS(rv, rv);
+    array.forget();
+
+    // check for end of group
+    if (Substring(aConstraint, offset).EqualsLiteral("}]")) {
+      // end of the group
+      break;
+    }
+    rv = CheckStringAndSkip(aConstraint, offset, NS_LITERAL_STRING("}, {\""));
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = mConstraint->Intersect();
+    NS_ENSURE_SUCCESS(rv, rv);
+
+  } while (true);
+  NS_ENSURE_TRUE(offset == aConstraint.Length() - 2, NS_ERROR_ILLEGAL_VALUE);
+
+  NS_ADDREF(*_retval = this);
+  return NS_OK;
+}
 
 NS_IMETHODIMP
 sbLibraryConstraintBuilder::IncludeConstraint(sbILibraryConstraint* aConstraint,
@@ -343,14 +489,12 @@ sbLibraryConstraint::ToString(nsAString& _retval)
 
   PRUint32 length = mConstraint.Length();
   for (PRUint32 i = 0; i < length; i++) {
-    buff.AppendLiteral("[");
 
     nsString temp;
     nsresult rv = mConstraint[i]->ToString(temp);
     NS_ENSURE_SUCCESS(rv, rv);
 
     buff.Append(temp);
-    buff.AppendLiteral("]");
     if (i + 1 < length) {
       buff.AppendLiteral(", ");
     }
@@ -653,23 +797,35 @@ NS_IMETHODIMP
 sbLibraryConstraintGroup::ToString(nsAString& _retval)
 {
   NS_ENSURE_STATE(mInitialized);
-  nsString buff;
+  nsString buff(NS_LITERAL_STRING("{"));
+  nsCString cbuff;
+  nsresult rv;
 
   nsAutoTArray<nsString, 10> properties;
   mConstraintGroup.EnumerateRead(AddKeysToArrayCallback, &properties);
 
+  nsCOMPtr<nsINetUtil> netUtil =
+    do_GetService("@mozilla.org/network/util;1", &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   PRUint32 propertyCount = properties.Length();
   for (PRUint32 i = 0; i < propertyCount; i++) {
+    buff.AppendLiteral("\"");
     buff.Append(properties[i]);
-    buff.AppendLiteral(": [");
+    buff.AppendLiteral("\": [");
     sbStringArray* values;
     PRBool success = mConstraintGroup.Get(properties[i], &values);
     NS_ENSURE_SUCCESS(success, NS_ERROR_UNEXPECTED);
     PRUint32 valueCount = values->Length();
     for (PRUint32 j = 0; j < valueCount; j++) {
-      buff.AppendLiteral("'");
-      buff.Append(values->ElementAt(j));
-      buff.AppendLiteral("'");
+      buff.AppendLiteral("\"");
+      // we need to escape all quotes in the values
+      rv = netUtil->EscapeString(NS_ConvertUTF16toUTF8(values->ElementAt(j)),
+                                 nsINetUtil::ESCAPE_XALPHAS,
+                                 cbuff);
+      NS_ENSURE_SUCCESS(rv, rv);
+      buff.Append(NS_ConvertUTF8toUTF16(cbuff));
+      buff.AppendLiteral("\"");
 
       if (j + 1 < valueCount) {
         buff.AppendLiteral(", ");
@@ -677,11 +833,12 @@ sbLibraryConstraintGroup::ToString(nsAString& _retval)
     }
     buff.AppendLiteral("]");
 
-    if (i + 1 < valueCount) {
+    if (i + 1 < propertyCount) {
       buff.AppendLiteral(", ");
     }
   }
 
+  buff.AppendLiteral("}");
   _retval = buff;
 
   return NS_OK;

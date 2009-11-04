@@ -124,9 +124,9 @@ ServicePaneNode.prototype.setAttributeNS = function (aNamespace, aName, aValue) 
   }
 }
 
-ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
+ServicePaneNode.prototype._getAttributeNS = function (aNamespace, aName, aDS) {
   var property = RDFSVC.GetResource(aNamespace+aName);
-  var target = this._dataSource.GetTarget(this.resource, property, true);
+  var target = aDS.GetTarget(this.resource, property, true);
   if (target) {
     var value = target.QueryInterface(Ci.nsIRDFLiteral).Value
     return value;
@@ -134,6 +134,21 @@ ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
     return null;
   }
 }
+ServicePaneNode.prototype.getAttributeNS = function (aNamespace, aName) {
+  return this._getAttributeNS(aNamespace, aName, this._dataSource);
+};
+/**
+ * This is the same as .getAttributeNS, but used with the localization-wrapped
+ * datasource instead, so the string will be localized to the display value if
+ * appropriate.
+ */
+ServicePaneNode.prototype._getLocalizedAttributeNS = function (aNamespace, aName) {
+  // this could be better :(
+  var ds = Cc['@songbirdnest.com/servicepane/service;1']
+             .getService(Ci.sbIServicePaneService)
+             .dataSource;
+  return this._getAttributeNS(aNamespace, aName, ds);
+};
 
 ServicePaneNode.prototype.hasAttributeNS =
   function SPN_hasAttributeNS(aNamespace, aName)
@@ -199,6 +214,9 @@ ServicePaneNode.prototype.__defineGetter__ ('name', function () {
   return this.getAttributeNS(NC,'Name'); })
 ServicePaneNode.prototype.__defineSetter__ ('name', function (aValue) {
   this.setAttributeNS(NC,'Name', aValue); });
+
+ServicePaneNode.prototype.__defineGetter__ ('displayName', function () {
+  return this._getLocalizedAttributeNS(NC,'Name'); });
 
 ServicePaneNode.prototype.__defineGetter__ ('tooltip', function () {
   return this.getAttributeNS(NC,'Description'); })

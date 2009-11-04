@@ -130,6 +130,18 @@ window.cdripController =
       browser.getTabForDocument(document).backWithDefault();
       return;
     }
+
+    var servicePaneNode =
+      Cc["@songbirdnest.com/servicepane/library;1"]
+        .getService(Ci.sbILibraryServicePaneService)
+        .getNodeFromMediaListView(this._mediaListView);
+    if (servicePaneNode) {
+      document.title = servicePaneNode.displayName;
+    }
+    else {
+      // failed to find the node, stick with the media list name
+      document.title = this._mediaListView.mediaList.name;
+    }
     
     // This will set this._deviceLibrary
     this._getDeviceLibrary();

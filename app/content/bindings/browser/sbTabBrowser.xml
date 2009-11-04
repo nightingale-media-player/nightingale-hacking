@@ -265,31 +265,13 @@
 
             if (!title) {
               if (browser.currentURI.spec) {
-              
-                //XXXAus: Looks like we have a chrome URL. Let's try and see if it has 
-                //a pretty name registered with the service pane so that we can match what
-                //the location bar will have (ie, Library, not chrome://songbird[...]).
-                if (browser.currentURI.scheme == "chrome") {
-                  // If we have a servicepane node, use it for the title
-                  var servicePaneNode = aTab.servicePaneNode
-                  if (servicePaneNode && servicePaneNode.name) {
-                    title = servicePaneNode.name;
-                  }
+                // There is no title, fall back to the URI of the page
+                try {
+                  title = this.mURIFixup.createExposableURI(browser.currentURI).spec;
+                } catch(ex) {
+                  title = browser.currentURI.spec;
                 }
-              
-                //XXXAus: Looks like the service pane didn't have a pretty name for 
-                //this chrome URI. Let's fallback to using the URI itself. This also
-                //works for all other types of schemes (http, ftp, etc).
-                if (!title) {
-                  try {
-                    title = this.mURIFixup.createExposableURI(browser.currentURI).spec;
-                  } catch(ex) {
-                    title = browser.currentURI.spec;
-                  }
-                }
-              }
 
-              if (title && title != "about:blank") {
                 // At this point, we now have a URI.
                 // Let's try to unescape it using a character set
                 // in case the URI is not ASCII.
@@ -301,9 +283,12 @@
                 } catch(ex) { /* Do nothing. */ }
 
                 crop = "center";
+              }
 
-              } else // Still no title?  Fall back to our untitled string.
+              if (!title || browser.currentURI.spec == "about:blank") {
+                // still no title, use the localized text for untitled
                 title = this.mStringBundle.getString("tabs.untitled");
+              }
             }
 
             aTab.label = title;

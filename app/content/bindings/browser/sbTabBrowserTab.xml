@@ -460,11 +460,10 @@
           // If we couldnt find a node for the URL, try
           // looking it up by media list
           if (!servicePaneNode && this.mediaListView) {
-            var mediaList = this.mediaListView.mediaList;
             var libraryServicePane = 
               Components.classes['@songbirdnest.com/servicepane/library;1']
               .getService(Components.interfaces.sbILibraryServicePaneService);
-            servicePaneNode = libraryServicePane.getNodeForLibraryResource(mediaList);
+            servicePaneNode = libraryServicePane.getNodeFromMediaListView(this.mediaListView);
           }
 
           return servicePaneNode;
@@ -772,6 +771,12 @@
             return;
           }
 
+          // the service pane updates are allowed to happen even if the location
+          // didn't really change (due to media list views with different
+          // constraints looking like they are the same url)
+          this.servicePaneNode = this._findServicePaneNode();
+          this.applyPropertiesFromServicePaneNode();
+
           // Do nothing if location has not really changed (e.g., only the "#"
           // ref changed) and the window is not being reloaded.
           var selectedBrowser = getBrowser().selectedBrowser;
@@ -860,11 +865,6 @@
               this._viewForPage = viewMap.getView( browser, entry );
             }
           }
-
-          this.servicePaneNode = this._findServicePaneNode();
-
-          this.applyPropertiesFromServicePaneNode();
-          
         ]]></body>
       </method>
 

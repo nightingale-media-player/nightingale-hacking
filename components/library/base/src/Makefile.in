@@ -50,6 +50,7 @@ CPP_EXTRA_INCLUDES = $(DEPTH)/components/library/base/public \
                      $(topsrcdir)/components/library/base/src \
                      $(topsrcdir)/components/property/src \
                      $(MOZSDK_INCLUDE_DIR)/embedcomponents \
+                     $(MOZSDK_INCLUDE_DIR)/necko \
                      $(MOZSDK_INCLUDE_DIR)/pref \
                      $(MOZSDK_INCLUDE_DIR)/rdf \
                      $(NULL)

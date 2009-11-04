@@ -42,7 +42,9 @@ const DEVICESP_NS = "http://songbirdnest.com/rdf/device-servicepane#";
 const URN_PREFIX_DEVICE = "urn:device:";
 const DEVICE_NODE_WEIGHT = -2
 
+Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.import("resource://app/jsmodules/DOMUtils.jsm");
+Cu.import("resource://app/jsmodules/sbProperties.jsm");
 
 /**
  * Given the arguments var of a function, dump the
@@ -74,16 +76,25 @@ function sbDeviceServicePane() {
   // use the default stringbundle to translate tree nodes
   this.stringbundle = null;
 }
-sbDeviceServicePane.prototype.QueryInterface =
-function sbDeviceServicePane_QueryInterface(iid) {
-  if (!iid.equals(Ci.nsISupports) &&
-    !iid.equals(Ci.sbIServicePaneModule) &&
-    !iid.equals(Ci.sbIDeviceServicePaneService)) {
-    throw Components.results.NS_ERROR_NO_INTERFACE;
-  }
-  return this;
-}
 
+//////////////////////////
+// XPCOM Support        //
+//////////////////////////
+sbDeviceServicePane.prototype.QueryInterface =
+  XPCOMUtils.generateQI([Ci.sbIServicePaneModule,
+                         Ci.sbIDeviceServicePaneService]);
+sbDeviceServicePane.prototype.classDescription =
+  "Songbird Device Service Pane Service";
+sbDeviceServicePane.prototype.classID =
+  Components.ID("{845c31ee-c30e-4fb6-9667-0b10e58c7069}");
+sbDeviceServicePane.prototype.contractID =
+  CONTRACTID;
+sbDeviceServicePane.prototype._xpcom_categories = [
+  {
+    category: 'service-pane',
+    entry: 'device', // we want this to load first
+    value: CONTRACTID
+  }];
 
 //////////////////////////
 // sbIServicePaneModule //
@@ -243,26 +254,59 @@ function sbDeviceServicePane_createNodeForDevice2(aDevice) {
 
 sbDeviceServicePane.prototype.createLibraryNodeForDevice =
 function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
-  // Create the library node.
-  var libraryNode = this._libraryServicePane.createNodeForLibrary(aLibrary);
-  if (!libraryNode)
-    return null;
 
-  // Set up the device library node info.
-  libraryNode.setAttributeNS(DEVICESP_NS, "device-id", aDevice.id);
-  libraryNode.setAttributeNS(DEVICESP_NS, "deviceNodeType", "library");
-
-  // Move the library node to be the first child of the device node.
   var deviceNode = this.getNodeForDevice(aDevice);
-  if (deviceNode) {
-    var firstChild = deviceNode.firstChild;
-    if (!firstChild)
-      deviceNode.appendChild(libraryNode);
-    else if (firstChild.id != libraryNode.id)
-      deviceNode.insertBefore(libraryNode, firstChild);
+
+  // Create the library nodes.
+  var parentNode = this._libraryServicePane.createNodeForLibrary(aLibrary);
+
+  // Move the library nodes to be the first child of the device node.
+  var functions = aDevice.capabilities.getSupportedFunctionTypes({});
+  const CAPS_MAP = {
+      "audio": Ci.sbIDeviceCapabilities.FUNCTION_AUDIO_PLAYBACK,
+      "video": Ci.sbIDeviceCapabilities.FUNCTION_VIDEO_PLAYBACK
+    };
+  function hasCaps(cap) {
+    return functions.indexOf(CAPS_MAP[cap]) != -1;
   }
 
-  return libraryNode;
+  var libraryNode = null, audioNode = null;
+  if (deviceNode) {
+    Cu.reportError("found device node for " + aDevice);
+    while (parentNode.lastChild) {
+      libraryNode = parentNode.lastChild;
+      let props = libraryNode.properties.split(/\s/);
+      props = props.filter(function(val) val in CAPS_MAP);
+      // there should only be one anyway...
+      // assert(props.length < 2);
+      Cu.reportError(props);
+      if (!hasCaps(props[0])) {
+        parentNode.removeChild(libraryNode);
+        continue;
+      }
+      if (props[0] == "audio") {
+        audioNode = libraryNode;
+      }
+      libraryNode.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
+      var firstChild = deviceNode.firstChild;
+      if (!firstChild) {
+        Cu.reportError('appending first child');
+        deviceNode.appendChild(libraryNode);
+      }
+      else {
+        Cu.reportError('inserting');
+        deviceNode.insertBefore(libraryNode, firstChild);
+      }
+    }
+  }
+  else {
+    Components.utils.reportError("MISSING DEVICE for " + aDevice);
+  }
+  if (parentNode.parentNode) {
+    // remove the dummy container node
+    //parentNode.parentNode.removeChild(parentNode);
+  }
+  return audioNode;
 }
 
 sbDeviceServicePane.prototype.getNodeForDevice =
@@ -311,87 +355,4 @@ function sbDeviceServicePane__deviceURN2(aDevice) {
 // XPCOM //
 ///////////
 
-/**
- * /brief XPCOM initialization code
- */
-function makeGetModule(CONSTRUCTOR, CID, CLASSNAME, CONTRACTID, CATEGORIES) {
-  return function (comMgr, fileSpec) {
-    return {
-      registerSelf : function (compMgr, fileSpec, location, type) {
-        compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.registerFactoryLocation(CID,
-                        CLASSNAME,
-                        CONTRACTID,
-                        fileSpec,
-                        location,
-                        type);
-        if (CATEGORIES && CATEGORIES.length) {
-          var catman =  Cc["@mozilla.org/categorymanager;1"]
-              .getService(Ci.nsICategoryManager);
-          for (var i=0; i<CATEGORIES.length; i++) {
-            var e = CATEGORIES[i];
-            catman.addCategoryEntry(e.category, e.entry, e.value,
-              true, true);
-          }
-        }
-      },
-
-      getClassObject : function (compMgr, cid, iid) {
-        if (!cid.equals(CID)) {
-          throw Cr.NS_ERROR_NO_INTERFACE;
-        }
-
-        if (!iid.equals(Ci.nsIFactory)) {
-          throw Cr.NS_ERROR_NOT_IMPLEMENTED;
-        }
-
-        return this._factory;
-      },
-
-      _factory : {
-        createInstance : function (outer, iid) {
-          if (outer != null) {
-            throw Cr.NS_ERROR_NO_AGGREGATION;
-          }
-          return (new CONSTRUCTOR()).QueryInterface(iid);
-        }
-      },
-
-      unregisterSelf : function (compMgr, location, type) {
-        compMgr.QueryInterface(Ci.nsIComponentRegistrar);
-        compMgr.unregisterFactoryLocation(CID, location);
-        if (CATEGORIES && CATEGORIES.length) {
-          var catman =  Cc["@mozilla.org/categorymanager;1"]
-              .getService(Ci.nsICategoryManager);
-          for (var i=0; i<CATEGORIES.length; i++) {
-            var e = CATEGORIES[i];
-            catman.deleteCategoryEntry(e.category, e.entry, true);
-          }
-        }
-      },
-
-      canUnload : function (compMgr) {
-        return true;
-      },
-
-      QueryInterface : function (iid) {
-        if ( !iid.equals(Ci.nsIModule) ||
-             !iid.equals(Ci.nsISupports) )
-          throw Cr.NS_ERROR_NO_INTERFACE;
-        return this;
-      }
-
-    };
-  }
-}
-
-var NSGetModule = makeGetModule (
-  sbDeviceServicePane,
-  Components.ID("{845c31ee-c30e-4fb6-9667-0b10e58c7069}"),
-  "Songbird Device Service Pane Service",
-  CONTRACTID,
-  [{
-    category: 'service-pane',
-    entry: 'device', // we want this to load first
-    value: CONTRACTID
-  }]);
+var NSGetModule = XPCOMUtils.generateNSGetModule([sbDeviceServicePane]);
