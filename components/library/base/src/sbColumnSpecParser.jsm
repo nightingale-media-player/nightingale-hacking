@@ -30,17 +30,28 @@ EXPORTED_SYMBOLS = ["ColumnSpecParser"];
 const Cc = Components.classes;
 const Ci = Components.interfaces;
 
-var Application = null;
+// FUEL is not built-in in JSMs
+__defineGetter__("Application", function() {
+  delete Application;
+  Application = Cc["@mozilla.org/fuel/application;1"]
+                  .getService(Ci.fuelIApplication);
+  return Application;
+})
 
-function ColumnSpecParser(aMediaList, aPlaylist, aMask) {
+/**
+ * Construct a column spec parser and read the column specification immediately
+ *
+ * @param aMediaList The media list to find columns to display for
+ * @param aPlaylist the playlist binding
+ * @param aMask a bitfield containing the source to look for; see the
+ *              ColumnSpecParser.ORIGIN_* constants
+ * @param [optional] aConstraint the media type constraint to use, if any
+ */
+function ColumnSpecParser(aMediaList, aPlaylist, aMask, aConstraint) {
 
-  if (!Application) {
-    // XXXsteve FUEL is not available in jsm
-    Application = Cc["@mozilla.org/fuel/application;1"]
-                    .getService(Ci.fuelIApplication);
+  if (!aMask) {
+    aMask = ~0 >>> 0;
   }
-  
-  if (!aMask) aMask = 0xFFFFFFFF;
 
   // Our new "column spec" is a whitespace separated string that looks like
   // this:
@@ -50,84 +61,134 @@ function ColumnSpecParser(aMediaList, aPlaylist, aMask) {
   // The width and sort direction are optional.
 
   // Try to get this info from the following places:
-  //      1: "columnSpec" property on the medialist
-  //      2: Preference indicated by XUL "useColumnSpecPreference" attribute
-  //      3: "defaultColumnSpec" property on the medialist
-  //      4: "defaultColumnSpec" property on the medialist library
-  //      5: "columnSpec" property on the medialist library
-  //      6: XUL "columnSpec" attribute
-  //      7: Our last-ditch hardcoded list
+  //      1: "columnSpec+(constraint)" property on the media list
+  //      2: if a constraint is given, preference indicated by
+  //         XUL "useColumnSpecPreference" attribute
+  //      3: "defaultColumnSpec+(constraint)" property on the medialist
+  //      4: "columnSpec+(constraint)" property on the medialist library
+  //      5: "defaultColumnSpec+(constraint)" property on the medialist library
+  //      6: "columnSpec" property on the medialist
+  //      7: Preference indicated by XUL "useColumnSpecPreference" attribute
+  //      8: "defaultColumnSpec" property on the medialist
+  //      9: "columnSpec" property on the medialist library
+  //     10: "defaultColumnSpec" property on the medialist library
+  //     11: XUL "columnSpec" attribute
+  //     12: Our last-ditch hardcoded list
 
-  var columns;
+  // use a function so we can do early returns from it
+  var self = this;
+  function getColumns() {
+    var cols = null;
 
-  if (aMask & this.ORIGIN_PROPERTY) {
-    columns =
-      this._getColumnMap(aMediaList.getProperty(SBProperties.columnSpec),
-                         this.ORIGIN_PROPERTY);
-  }
-  
-  if (aMask & this.ORIGIN_PREFERENCES) {
-    if ((!columns || !columns.columnMap.length) &&
-        aPlaylist &&
-        aPlaylist.hasAttribute("useColumnSpecPreference")) {
-      var pref = aPlaylist.getAttribute("useColumnSpecPreference");
+    /**
+     * check for a column spec, with a given constraint
+     * @param aPossibleConstraint the constraint to use; may be empty string
+     *                            to look for a column spec with no constraints
+     * @param aFlag the flag to be added to the column spec origin
+     * @return the parsed column spec, or null if not found
+     */
+    function checkWithConstraint(aPossibleConstraint, aFlag) {
 
-      try {
-        if (Application.prefs.has(pref)) {
-          columns =
-              this._getColumnMap(Application.prefs.get(pref).value,
-                                 this.ORIGIN_PREFERENCES);
+      if (aMask & self.ORIGIN_PROPERTY) {
+        let prop = aMediaList.getProperty(SBProperties.columnSpec +
+                                            aPossibleConstraint);
+        cols = self._getColumnMap(prop, self.ORIGIN_PROPERTY | aFlag);
+        if (cols && cols.columnMap.length) {
+          return cols;
         }
-      } catch (e) {}
+      }
+
+      // we explicitly do not want to support using constraints with attributes
+      // hence we also don't add the flag, since no constraint would be used
+      if (aMask & self.ORIGIN_PREFERENCES) {
+        if (aPlaylist && aPlaylist.hasAttribute("useColumnSpecPreference")) {
+          let pref = aPlaylist.getAttribute("useColumnSpecPreference");
+          cols = self._getColumnMap(Application.prefs.getValue(pref, null),
+                                    self.ORIGIN_PREFERENCES);
+          if (cols && cols.columnMap.length) {
+            return cols;
+          }
+        }
+      }
+
+      if (aMask & self.ORIGIN_MEDIALISTDEFAULT) {
+        let prop = aMediaList.getProperty(SBProperties.defaultColumnSpec +
+                                            aPossibleConstraint);
+        cols = self._getColumnMap(prop, self.ORIGIN_MEDIALISTDEFAULT | aFlag);
+        if (cols && cols.columnMap.length) {
+          return cols;
+        }
+      }
+
+      if (aMask & self.ORIGIN_LIBRARY) {
+        let prop = aMediaList.library
+                             .getProperty(SBProperties.columnSpec +
+                                            aPossibleConstraint)
+        cols = self._getColumnMap(prop, self.ORIGIN_LIBRARY | aFlag);
+        if (cols && cols.columnMap.length) {
+          return cols;
+        }
+      }
+
+      if (aMask & self.ORIGIN_LIBRARYDEFAULT) {
+        let prop = aMediaList.library
+                             .getProperty(SBProperties.defaultColumnSpec +
+                                            aPossibleConstraint);
+        cols = self._getColumnMap(prop, self.ORIGIN_LIBRARYDEFAULT | aFlag);
+        if (cols && cols.columnMap.length) {
+          return cols;
+        }
+      }
+      return null;
+    }
+
+    if (aConstraint) {
+      cols = checkWithConstraint("+(" + aConstraint + ")",
+                                 self.ORIGIN_ONLY_CONSTRAINT);
+      if (cols && cols.columnMap.length) {
+        return cols;
+      }
+    }
+
+    cols = checkWithConstraint("", 0);
+    if (cols && cols.columnMap.length) {
+      return cols;
+    }
+
+    if (aMask & self.ORIGIN_ATTRIBUTE) {
+      if (aPlaylist) {
+        cols = self._getColumnMap(aPlaylist.getAttribute("columnSpec"),
+                                  self.ORIGIN_ATTRIBUTE);
+      }
+      if (cols && cols.columnMap.length) {
+        return cols;
+      }
+    }
+
+    // nope, can't find anything at all; use hard coded fallback
+    switch (aConstraint) {
+      case "video":
+        return self._getColumnMap([SBProperties.trackName, 229, "a",
+                                   SBProperties.duration, 45,
+                                   SBProperties.genre, 101,
+                                   SBProperties.year, 45,
+                                   SBProperties.rating, 78,
+                                   SBProperties.comment, 307,
+                                  ].join(" "),
+                                  this.ORIGIN_DEFAULT);
+      default:
+        return self._getColumnMap([SBProperties.trackName, 229,
+                                   SBProperties.duration, 45,
+                                   SBProperties.artistName, 137, "a",
+                                   SBProperties.albumName, 215,
+                                   SBProperties.genre, 101,
+                                   SBProperties.rating, 78,
+                                  ].join(" "),
+                                  this.ORIGIN_DEFAULT);
     }
   }
 
-  if (aMask & this.ORIGIN_MEDIALISTDEFAULT) {
-    if (!columns || !columns.columnMap.length) {
-      columns =
-        this._getColumnMap(aMediaList
-                             .getProperty(SBProperties.defaultColumnSpec),
-                             this.ORIGIN_MEDIALISTDEFAULT);
-    }
-  }
-  
-  if (aMask & this.ORIGIN_LIBRARYDEFAULT) {
-    if (!columns || !columns.columnMap.length) {
-      columns =
-        this._getColumnMap(aMediaList
-                             .library
-                             .getProperty(SBProperties.defaultColumnSpec),
-                           this.ORIGIN_LIBRARYDEFAULT);
-    }
-  }
-
-  if (aMask & this.ORIGIN_LIBRARY) {
-    if (!columns || !columns.columnMap.length) {
-      columns =
-        this._getColumnMap(aMediaList
-                             .library
-                             .getProperty(SBProperties.columnSpec),
-                           this.ORIGIN_LIBRARY);
-    }
-  }
-
-  if (aMask & this.ORIGIN_ATTRIBUTE) {
-    if ((!columns || !columns.columnMap.length) && aPlaylist) {
-      columns = this._getColumnMap(aPlaylist.getAttribute("columnSpec"),
-                                   this.ORIGIN_ATTRIBUTE);
-    }
-  }
-
-  if (!columns.columnMap.length) {
-    columns =
-      ColumnSpecParser.parseColumnSpec(SBProperties.trackName + " 229 " +
-                                       SBProperties.duration + " 45 " +
-                                       SBProperties.artistName + " 137 a " +
-                                       SBProperties.albumName + " 215 " +
-                                       SBProperties.genre + " 101 " +
-                                       SBProperties.rating + " 78");
-    this._columnSpecOrigin = this.ORIGIN_DEFAULT;
-  }
+  var columns = getColumns();
 
   if (!columns || !columns.columnMap.length) {
     throw new Error("Couldn't get columnMap!");
@@ -141,13 +202,17 @@ ColumnSpecParser.prototype = {
   _columns: null,
   _columnSpecOrigin: null,
 
-  ORIGIN_PROPERTY: 1,
-  ORIGIN_PREFERENCES: 2,
-  ORIGIN_MEDIALISTDEFAULT: 4,
-  ORIGIN_LIBRARYDEFAULT: 8,
-  ORIGIN_LIBRARY: 16,
-  ORIGIN_ATTRIBUTE: 32,
-  ORIGIN_DEFAULT: 64,
+  ORIGIN_PROPERTY:         1 << 0,
+  ORIGIN_PREFERENCES:      1 << 1,
+  ORIGIN_MEDIALISTDEFAULT: 1 << 2,
+  ORIGIN_LIBRARYDEFAULT:   1 << 3,
+  ORIGIN_LIBRARY:          1 << 4,
+  ORIGIN_ATTRIBUTE:        1 << 5,
+  ORIGIN_DEFAULT:          1 << 6,
+
+  // add this bit mask to enable only column spec sources that depend on the
+  // constraint given
+  ORIGIN_ONLY_CONSTRAINT:  1 << 31,
 
   get columnMap() {
     return this._columns.columnMap;

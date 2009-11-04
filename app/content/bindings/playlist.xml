@@ -103,31 +103,11 @@
       <constructor>
 <![CDATA[
   this._destroyed = false;
-  if (typeof(SBProperties) == "undefined") {
-    Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-    if (!SBProperties)
-      throw new Error("Import of sbProperties module failed");
-  }
-  if (typeof(DNDUtils) == "undefined") {
-    Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
-    if (!DNDUtils)
-      throw new Error("Import of DropHelper module failed");
-  }
-  if (typeof(ColumnSpecParser) == "undefined") {
-    Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
-    if (!ColumnSpecParser)
-      throw new Error("Import of ColumnSpecParser module failed");
-  }
-  if (typeof(SBJobUtils) == "undefined") {
-    Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
-    if (!SBJobUtils)
-      throw new Error("Import of SBJobUtils module failed");
-  }
-  if (typeof(ArrayConverter) == "undefined") {
-    Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-    if (!ArrayConverter)
-      throw new Error("Import of ArrayConverter module failed");
-  }
+  Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+  Components.utils.import("resource://app/jsmodules/DropHelper.jsm");
+  Components.utils.import("resource://app/jsmodules/sbColumnSpecParser.jsm");
+  Components.utils.import("resource://app/jsmodules/SBJobUtils.jsm");
+  Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
   Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
   
   // Attach event handler closures
@@ -360,6 +340,41 @@
         </setter>
       </property>
 
+      <!--
+        - The media type for this media list; may be null (for mixed)
+        -->
+      <property name="_mediaType">
+        <getter>
+          <![CDATA[
+            if (!this.mediaListView) {
+              return null;
+            }
+            if (!(this.mediaListView instanceof this._Ci.sbIFilterableMediaListView)) {
+              return null;
+            }
+            var constraint = this.mediaListView.filterConstraint;
+            if (!constraint) {
+              return null;
+            }
+            for (let group in ArrayConverter.JSEnum(constraint.groups)) {
+              if (!(group instanceof this._Ci.sbILibraryConstraintGroup )) {
+                continue;
+              }
+              if (!group.hasProperty(SBProperties.contentType)) {
+                continue;
+              }
+              let types =
+                ArrayConverter.JSArray(group.getValues(SBProperties.contentType));
+              if (types.length == 1) {
+                return types[0];
+              }
+              return null;
+            }
+            return null;
+          ]]>
+        </getter>
+      </property>
+
       <!-- Holds the text value of the cell that was right clicked -->
       <field name="context_term">""</field>
 
@@ -460,15 +475,8 @@
            be used as the default -->      
       <field name="_suppressSaveAsDefaultColumnSpec">false</field>
 
-      <!-- Where the columnSpec came from. Possible values:
-        0: undefined
-        1: "contentSpec" property on the medialist
-        2: Preference indicated by "useColumnSpecPreference" attribute
-        3: "defaultColumnSpec" property on the medialist
-        4: "defaultColumnSpec" property on the medialist library
-        5: "contentSpec" property on the medialist library
-        6: XUL "columnSpec" attribute
-        7: Our last-ditch hardcoded list
+      <!-- Where the columnSpec came from. For possible values, see
+        sbColumnSpecParser.jsm ORIGIN_* constants
       -->
       <field name="_columnSpecOrigin">0</field>
 
@@ -891,7 +899,7 @@
         <body>
 <![CDATA[
   var medialist = this.mediaListView.mediaList;
-  var parser = new ColumnSpecParser(medialist, this);
+  var parser = new ColumnSpecParser(medialist, this, null, this._mediaType);
 
   // read the current column specs
   var columnMap = parser.columnMap;
@@ -903,7 +911,8 @@
                          this,
                          parser.ORIGIN_MEDIALISTDEFAULT |
                          parser.ORIGIN_LIBRARYDEFAULT |
-                         parser.ORIGIN_DEFAULT);
+                         parser.ORIGIN_DEFAULT,
+                         this._mediaType);
 
   var defaultColumns = defaultSpecParser.columnMap;
   var defaultColumnsMap = {};
@@ -914,9 +923,11 @@
   this._removeAllChildren(this._treecols);
 
   // If the columns were initialized from some defaults..
-  if ( this._columnSpecOrigin != parser.ORIGIN_PROPERTY && 
-       this._columnSpecOrigin != parser.ORIGIN_PREFERENCES &&
-       this._columnSpecOrigin != parser.ORIGIN_ATTRIBUTE )
+  if ( this._columnSpecOrigin & ~(
+         parser.ORIGIN_PROPERTY |
+         parser.ORIGIN_PREFERENCES |
+         parser.ORIGIN_ATTRIBUTE |
+         parser.ORIGIN_ONLY_CONSTRAINT ) )
   {
 
     // Make sure we save the spec for this playlist.
@@ -928,7 +939,7 @@
     // to tweak the column spec a little
     
     if ( !(medialist instanceof Components.interfaces.sbILibrary) && 
-         (this._columnSpecOrigin != parser.ORIGIN_MEDIALISTDEFAULT)) 
+         !(this._columnSpecOrigin & parser.ORIGIN_MEDIALISTDEFAULT)) 
     {
 
       // All playlists should have an ordinal column
@@ -1509,9 +1520,14 @@
     throw new Error("No columns enumerated");
   }
 
+  let property = SBProperties.columnSpec;
+  if (this._mediaType) {
+    property += "+(" + this._mediaType + ")";
+  }
+
   var mediaList = this.mediaListView.mediaList;
   this.ignoreColumnSpecUpdate = true;
-  mediaList.setProperty(SBProperties.columnSpec, columnSpec);
+  mediaList.setProperty(property, columnSpec);
   this.ignoreColumnSpecUpdate = false;
   
   dump("\n\nplaylist.xml saving column spec: " + columnSpec + "\n\n");
