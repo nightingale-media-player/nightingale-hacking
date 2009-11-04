@@ -143,7 +143,7 @@ sbLibraryConstraintBuilder::ParseFromString(const nsAString & aConstraint,
     rv = CheckStringAndSkip(aConstraint, offset, NS_LITERAL_STRING(": [\""));
     NS_ENSURE_SUCCESS(rv, rv);
 
-    nsAutoPtr<sbStringArray> array = new sbStringArray;
+    nsAutoPtr<sbStringArray> array(new sbStringArray);
     NS_ENSURE_TRUE(array, NS_ERROR_OUT_OF_MEMORY);
 
     while (true) {
