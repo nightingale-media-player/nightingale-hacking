@@ -835,10 +835,16 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
 {
   NS_ASSERTION(aItem, "aItem is null");
 
-  if (!aProperties)
-    return NS_OK;
-
   nsresult rv;
+  nsCOMPtr<sbIPropertyArray> properties(aProperties);
+
+  if (!properties) {
+    // we still need to pass in an empty property array so we can add missing
+    // properties as well
+    properties =
+      do_CreateInstance("@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
 
   nsString url;
   rv = aItem->GetProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTURL),
@@ -847,7 +853,7 @@ sbLocalDatabaseLibrary::SetDefaultItemProperties(sbIMediaItem* aItem,
 
   nsCOMPtr<sbIPropertyArray> filteredProperties;
 
-  rv = GetFilteredPropertiesForNewItem(aProperties,
+  rv = GetFilteredPropertiesForNewItem(properties,
                                        getter_AddRefs(filteredProperties));
   NS_ENSURE_SUCCESS(rv, rv);
 

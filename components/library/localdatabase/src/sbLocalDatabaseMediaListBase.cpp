@@ -320,6 +320,7 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
     do_CreateInstance(SB_MUTABLEPROPERTYARRAY_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  PRBool hasContentType = PR_FALSE;
   PRUint32 length;
   rv = aProperties->GetLength(&length);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -344,6 +345,16 @@ sbLocalDatabaseMediaListBase::GetFilteredPropertiesForNewItem(sbIPropertyArray* 
 
     rv = mutableArray->AppendProperty(id, value);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    if (id.EqualsLiteral(SB_PROPERTY_CONTENTTYPE)) {
+      hasContentType = PR_TRUE;
+    }
+  }
+
+  if (!hasContentType) {
+    // no content type given; assume audio
+    rv = mutableArray->AppendProperty(NS_LITERAL_STRING(SB_PROPERTY_CONTENTTYPE),
+                                      NS_LITERAL_STRING("audio"));
   }
 
   NS_ADDREF(*_retval = mutableArray);
