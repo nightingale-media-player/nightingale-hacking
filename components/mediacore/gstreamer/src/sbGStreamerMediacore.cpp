@@ -1955,13 +1955,29 @@ sbGStreamerMediacore::VoteWithChannel(nsIChannel *aChannel, PRUint32 *_retval)
 NS_IMETHODIMP
 sbGStreamerMediacore::GetFullscreen(PRBool *aFullscreen)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  NS_ENSURE_ARG_POINTER(aFullscreen);
+
+  if (mPlatformInterface) {
+    *aFullscreen = mPlatformInterface->GetFullscreen();
+    return NS_OK;
+  }
+  else {
+    // Not implemented for this platform
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
 }
 
 NS_IMETHODIMP
 sbGStreamerMediacore::SetFullscreen(PRBool aFullscreen)
 {
-  return NS_ERROR_NOT_IMPLEMENTED;
+  if (mPlatformInterface) {
+    mPlatformInterface->SetFullscreen(aFullscreen);
+    return NS_OK;
+  }
+  else {
+    // Not implemented for this platform
+    return NS_ERROR_NOT_IMPLEMENTED;
+  }
 }
 
 NS_IMETHODIMP
