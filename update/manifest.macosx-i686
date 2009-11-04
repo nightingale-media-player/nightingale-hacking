@@ -100,7 +100,6 @@
 ./components/sbGlobalHotkeys.js
 ./components/sbHotkeyActions.js
 ./components/sbIMediacoreErrorHandler.xpt
-./components/sbIPDDevice.xpt
 ./components/sbIURIImportService.xpt
 ./components/sbIntegration.dylib
 ./components/sbIntegration.xpt

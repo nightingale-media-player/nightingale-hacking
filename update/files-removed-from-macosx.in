@@ -293,6 +293,7 @@
 ./Contents/Resources/components/sbDeviceEventTester.dylib
 ./Contents/Resources/components/sbLastFmAlbumArtFetcher.js
 ./Contents/Resources/components/sbMetadataLookupFreeDB.js
+./Contents/Resources/components/sbIPDDevice.xpt
 ./Contents/Resources/chrome/rubberducky.manifest
 ./Contents/Resources/chrome/rubberducky.jar
 ./Contents/MacOS/libtag_c.dylib

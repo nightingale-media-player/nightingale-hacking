@@ -102,7 +102,6 @@
 ./components/sbGlobalHotkeys.js
 ./components/sbHotkeyActions.js
 ./components/sbIMediacoreErrorHandler.xpt
-./components/sbIPDDevice.xpt
 ./components/sbIURIImportService.xpt
 ./components/sbIntegration.dll
 ./components/sbIntegration.xpt
@@ -243,9 +242,6 @@
 ./extensions/albumart@songbirdnest.com/install.rdf
 ./extensions/cd-rip@songbirdnest.com/chrome.manifest
 ./extensions/cd-rip@songbirdnest.com/chrome/cd-rip.jar
-./extensions/cd-rip@songbirdnest.com/components/gearworks_libs.txt
-./extensions/cd-rip@songbirdnest.com/components/sbGearworksCD.xpt
-./extensions/cd-rip@songbirdnest.com/components/sbGearworksStub.dll
 ./extensions/cd-rip@songbirdnest.com/install.rdf
 ./extensions/cd-rip@songbirdnest.com/lib/GEARLicense.glf
 ./extensions/cd-rip@songbirdnest.com/lib/gcdrdll.cfg
@@ -255,6 +251,9 @@
 ./extensions/cd-rip@songbirdnest.com/lib/gwlangen.dll
 ./extensions/cd-rip@songbirdnest.com/lib/gwrks32.dll
 ./extensions/cd-rip@songbirdnest.com/lib/sbGearworksCD.dll
+./extensions/cd-rip@songbirdnest.com/platform/WINNT_x86-msvc/components/gearworks_libs.txt
+./extensions/cd-rip@songbirdnest.com/platform/WINNT_x86-msvc/components/sbGearworksCD.xpt
+./extensions/cd-rip@songbirdnest.com/platform/WINNT_x86-msvc/components/sbGearworksStub.dll
 ./extensions/displaypane-test-stub@songbirdnest.com/chrome.manifest
 ./extensions/displaypane-test-stub@songbirdnest.com/chrome/testDisplayPane.jar
 ./extensions/displaypane-test-stub@songbirdnest.com/install.rdf
@@ -274,9 +273,9 @@
 ./extensions/mediapage-test-stub@songbirdnest.com/install.rdf
 ./extensions/mtp@songbirdnest.com/chrome.manifest
 ./extensions/mtp@songbirdnest.com/chrome/mtp.jar
-./extensions/mtp@songbirdnest.com/components/mtpDeviceServicePaneService.js
-./extensions/mtp@songbirdnest.com/components/sbMTPWin32.dll
 ./extensions/mtp@songbirdnest.com/install.rdf
+./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/mtpDeviceServicePaneService.js
+./extensions/mtp@songbirdnest.com/platform/WINNT_x86-msvc/components/sbMTPWin32.dll
 ./extensions/rubberducky-dependencies@songbirdnest.com/chrome.manifest
 ./extensions/rubberducky-dependencies@songbirdnest.com/chrome/rubberducky-dependencies.jar
 ./extensions/rubberducky-dependencies@songbirdnest.com/install.rdf
@@ -471,6 +470,7 @@
 ./testharness/devicemanager/test_device_registrar.js
 ./testharness/devicemanager/test_event_target.js
 ./testharness/directoryimport/test_directoryimport.js
+./testharness/dirprovider/test_dirprovider.js
 ./testharness/displaypanes/test_displaypanes.js
 ./testharness/domeventutils/test_eventwrapper.js
 ./testharness/feathers/test_feathersManager.js

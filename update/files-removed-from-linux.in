@@ -69,5 +69,6 @@
 ./components/sbDeviceEventTester.so
 ./components/sbLastFmAlbumArtFetcher.js
 ./components/sbMetadataLookupFreeDB.js
+./components/sbIPDDevice.xpt
 ./chrome/rubberducky.manifest
 ./chrome/rubberducky.jar
