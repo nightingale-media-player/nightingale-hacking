@@ -4444,9 +4444,15 @@ sbBatchCreateHelper::NotifyAndGetItems(nsIArray** _retval)
       if (mPropertiesArray) {
         properties = do_QueryElementAt(mPropertiesArray, i, &rv);
         NS_ENSURE_SUCCESS(rv, rv);
-        rv = mLibrary->SetDefaultItemProperties(mediaItem, properties);
+      } else {
+        // we still need to pass in an empty property array so we can add missing
+        // properties as well
+        properties =
+          do_CreateInstance("@songbirdnest.com/Songbird/Properties/MutablePropertyArray;1", &rv);
         NS_ENSURE_SUCCESS(rv, rv);
       }
+      rv = mLibrary->SetDefaultItemProperties(mediaItem, properties);
+      NS_ENSURE_SUCCESS(rv, rv);
 
       rv = array->AppendElement(mediaItem, PR_FALSE);
       NS_ENSURE_SUCCESS(rv, rv);
