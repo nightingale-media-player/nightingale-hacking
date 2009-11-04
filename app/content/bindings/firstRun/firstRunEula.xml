@@ -70,6 +70,8 @@
           <!-- EULA browser. -->
           <xul:browser anonid="eula_browser"
                        class="sb-first-run-eula-browser"
+                       type="content"
+                       disablehistory="true"
                        src="chrome://songbird/content/html/eula.html"/>
 
           <!-- Accept EULA checkbox. -->
