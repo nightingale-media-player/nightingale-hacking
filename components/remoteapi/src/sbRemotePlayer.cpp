@@ -1565,8 +1565,10 @@ sbRemotePlayer::FireMediaItemStatusEventToContent( const nsAString &aClass,
   // make our custom media item wrapper event
   nsRefPtr<sbRemoteMediaItemStatusEvent>
                           remoteEvent(new sbRemoteMediaItemStatusEvent(this) );
-  remoteEvent->Init();
-  remoteEvent->InitEvent( event, aMediaItem, aStatus );
+  rv = remoteEvent->Init();
+  NS_ENSURE_SUCCESS( rv, rv );
+  rv = remoteEvent->InitEvent( event, aMediaItem, aStatus );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Fire an event to the chrome system.
   PRBool dummy;
@@ -2493,7 +2495,8 @@ sbRemotePlayer::DispatchSecurityEvent( nsIDOMDocument *aDoc,
   rv = aPlayer->GetSiteScope( getter_AddRefs( scopeURI ) );
   NS_ENSURE_SUCCESS( rv, rv );
 
-  securityEvent->InitEvent( event, scopeURI, category, aCategoryID, aHasAccess );
+  rv = securityEvent->InitEvent( event, scopeURI, category, aCategoryID, aHasAccess );
+  NS_ENSURE_SUCCESS( rv, rv );
 
   // Fire an event to the chrome system.
   PRBool dummy;
