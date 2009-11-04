@@ -450,7 +450,7 @@
   
     <content>
       <xul:hbox id="sb-commands-toolbar-bkg" class="sb-commands-toolbar-bkg" sbid="background" flex="1">
-        <xul:hbox id="sb-commands-toolbar" class="sb-commands-toolbar" sbid="parent" flex="1" oncommand="onToolbarCommand( event )" style="h-overflow: hidden;">
+        <xul:hbox id="sb-commands-toolbar" class="sb-commands-toolbar" sbid="parent" flex="1" oncommand="onToolbarCommand( event )">
         </xul:hbox>
       </xul:hbox>
     </content>

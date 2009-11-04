@@ -479,10 +479,9 @@ sbWindowsAutoPlayService.prototype = {
    * Start Windows AutoPlay command line event processing.
    */
 
-  _startCommandLine:
-    function sbWindowsAutoPlayService__startCommandLine() {
+  _startCommandLine: function sbWindowsAutoPlayService__startCommandLine() {
     // Get the Songbird command line manager.
-    commandLineManager =
+    var commandLineManager =
       Cc["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"]
         .getService(Ci.sbICommandLineManager);
 
@@ -498,8 +497,7 @@ sbWindowsAutoPlayService.prototype = {
    * Stop Windows AutoPlay command line event processing.
    */
 
-  _stopCommandLine:
-    function sbWindowsAutoPlayService__stopCommandLine() {
+  _stopCommandLine: function sbWindowsAutoPlayService__stopCommandLine() {
     // Get the Songbird command line manager.
     commandLineManager =
       Cc["@songbirdnest.com/commandlinehandler/general-startup;1?type=songbird"]

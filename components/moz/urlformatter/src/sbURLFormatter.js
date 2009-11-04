@@ -138,8 +138,11 @@ sbURLFormatterService.prototype = {
 
         // Mac universal build should report a different ABI than either macppc
         // or mactel.
-        var macutils = Components.classes["@mozilla.org/xpcom/mac-utils;1"]
-                                      .getService(Components.interfaces.nsIMacUtils);
+        var macutils = null;
+        if ("@mozilla.org/xpcom/mac-utils;1" in Cc) {
+          macutils = Cc["@mozilla.org/xpcom/mac-utils;1"]
+                       .getService(Ci.nsIMacUtils);
+        }
       
         if (macutils && macutils.isUniversalBinary)
           abi = "Universal-gcc3";

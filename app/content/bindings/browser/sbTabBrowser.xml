@@ -43,18 +43,12 @@
           <![CDATA[
         window.gBrowser = this;
 
-        if (!window.SBProperties)
-          Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
-        if (!window.kPlaylistCommands) 
-          Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
-        if (!window.LibraryUtils) 
-          Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
-        if (!window.ArrayConverter) 
-          Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
-        if (!window.XPCOMUtils) 
-          Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
-        if (!window.URLUtils)
-          Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/sbProperties.jsm");
+        Components.utils.import("resource://app/jsmodules/kPlaylistCommands.jsm");
+        Components.utils.import("resource://app/jsmodules/sbLibraryUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/ArrayConverter.jsm");
+        Components.utils.import("resource://app/jsmodules/XPCOMUtils.jsm");
+        Components.utils.import("resource://app/jsmodules/URLUtils.jsm");
 
         // we moved the strip container to the tabs binding
         // this must happen before the addProgressListener call below to properly

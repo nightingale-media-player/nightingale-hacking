@@ -24,8 +24,6 @@
  *=END SONGBIRD GPL
  */
 -->
-<?xml-stylesheet href="chrome://mockcdcontroller/skin/overlay.css" type="text/css"?>
-<!DOCTYPE overlay SYSTEM "chrome://mockcdcontroller/locale/overlay.dtd">
 <overlay id="mockcdcontroller-menu-overlay"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
   
