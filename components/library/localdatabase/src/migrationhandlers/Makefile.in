@@ -45,6 +45,7 @@ SONGBIRD_COMPONENTS = $(srcdir)/sbMigrate061to070.js \
                       $(srcdir)/sbMigrate12pre1To12pre1b.js \
                       $(srcdir)/sbMigrate12To13pre.js \
                       $(srcdir)/sbMigrate13to14.wmaprotected.js \
+                      $(srcdir)/sbMigrate14to15pre0.contentType.js \
                       $(NULL)
                       
 include $(topsrcdir)/build/rules.mk

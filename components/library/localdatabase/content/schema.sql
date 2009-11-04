@@ -32,6 +32,7 @@ create index idx_media_items_content_url on media_items (content_url);
 create index idx_media_items_media_list_type_id on media_items (media_list_type_id);
 create index idx_media_items_is_list on media_items (is_list);
 create index idx_media_items_hidden_media_list_type_id on media_items (hidden, media_list_type_id);
+create index idx_media_items_content_mime_type on media_items(content_mime_type);
 
 create table library_media_item (
   guid text unique not null, /* implicit index creation */
@@ -121,7 +122,7 @@ insert into media_list_types (type, factory_contractid) values ('simple', '@song
 /*  sbLocalDatabaseMigration._latestSchemaVersion and                         */
 /*  testMigration.latestSchemaVersion to match this value                     */
 /**************************************************************************** */
-insert into library_metadata (name, value) values ('version', '21');
+insert into library_metadata (name, value) values ('version', '22');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */
