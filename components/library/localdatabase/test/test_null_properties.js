@@ -89,34 +89,34 @@ function testResource(library, guid) {
   assertEqual(r4.getProperty(nullprop), null);
 
   // try with a top level property
-  r.setProperty(SBProperties.contentType, null);
+  r.setProperty(SBProperties.hash, null);
   assertEqual(r.getProperties().length, originalLength);
-  assertEqual(r.getProperty(SBProperties.contentType), null);
+  assertEqual(r.getProperty(SBProperties.hash), null);
   library.flush();
 
   var library5 = createLibrary("test_null_properties", null, false);
   var r5 = library5.getItemByGuid(guid);
   assertEqual(r5.getProperties().length, originalLength);
-  assertEqual(r5.getProperty(SBProperties.contentType), null);
+  assertEqual(r5.getProperty(SBProperties.hash), null);
 
-  r.setProperty(SBProperties.contentType, "");
+  r.setProperty(SBProperties.hash, "");
   assertEqual(r.getProperties().length, originalLength + 1);
-  assertEqual(r.getProperty(SBProperties.contentType), "");
+  assertEqual(r.getProperty(SBProperties.hash), "");
 
   var library6 = createLibrary("test_null_properties", null, false);
   var r6 = library6.getItemByGuid(guid);
   assertEqual(r6.getProperties().length, originalLength + 1);
-  assertEqual(r6.getProperty(SBProperties.contentType), "");
+  assertEqual(r6.getProperty(SBProperties.hash), "");
 
-  r.setProperty(SBProperties.contentType, null);
+  r.setProperty(SBProperties.hash, null);
   assertEqual(r.getProperties().length, originalLength);
-  assertEqual(r.getProperty(SBProperties.contentType), null);
+  assertEqual(r.getProperty(SBProperties.hash), null);
   library.flush();
 
   var library7 = createLibrary("test_null_properties", null, false);
   var r7 = library7.getItemByGuid(guid);
   assertEqual(r7.getProperties().length, originalLength);
-  assertEqual(r7.getProperty(SBProperties.contentType), null);
+  assertEqual(r7.getProperty(SBProperties.hash), null);
 
 }
 
