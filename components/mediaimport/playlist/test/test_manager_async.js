@@ -48,7 +48,7 @@ function runTest () {
   listener.observer = {
     observe: function(aSubject, aTopic, aData) {
       assertMediaList(mediaList, getFile("absolute_remote_localhost_result.xml"), port);
-      server.stop();
+      server.stop(function() {});
       // Prevent closure from leaking
       listener.observer = null;
       testFinished();

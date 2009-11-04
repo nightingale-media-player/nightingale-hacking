@@ -179,7 +179,7 @@ function setupBrowser(page, port, continueFunction) {
 }
 
 function endRemoteAPITest(e) {
-  testServer.stop();
+  testServer.stop(function() {});
   endWindowTest(e);
 }
 

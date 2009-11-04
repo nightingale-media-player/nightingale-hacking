@@ -180,7 +180,7 @@ function testUpdate() {
     // TODO: How can we check to see if these files were downloaded?
   }
   finally {
-    server.stop();
+    server.stop(function() {});
 
     libraryManager.unregisterLibrary(library1);
   }

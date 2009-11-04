@@ -194,10 +194,8 @@ function jobFinished() {
     // So testing is complete
     gFileMetadataService = null;
     
-    gServer.stop();
-    
   } finally {
-   gServer.stop();
+   gServer.stop(function() {});
   }
   
   testFinished(); 

@@ -166,11 +166,7 @@ function testIsAvailable( ioItem ) {
     function() {
       testAvailable( testlib, "http://localhost:" + gServerPort + "/test_not_available.mp3", "false", 
         function() {
-          testAvailable( testlib, "http://localhost:" + gServerPort + "/test1.mp3", "true", 
-            function() {
-              gServer.stop();
-            }
-          );
+          testAvailable( testlib, "http://localhost:" + gServerPort + "/test1.mp3", "true", null);
         }
       );
     }
@@ -286,7 +282,7 @@ function runTest () {
     sleep(5000);
   }
   finally {
-    gServer.stop();
+    gServer.stop(function() {});
   }
 }
 
