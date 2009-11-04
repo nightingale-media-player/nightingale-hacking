@@ -73,6 +73,8 @@
 #include <sbIMediaItem.h>
 #include <sbStandardProperties.h>
 
+#include "nsNetUtil.h"
+
 #include <algorithm>
 
 #ifdef MOZ_WIDGET_GTK2
@@ -1175,8 +1177,40 @@ void sbGStreamerMediacore::HandleErrorMessage(GstMessage *message)
   
   if (!mHasSeenError) {
     // Create and dispatch an error event. 
-    rv = GetMediacoreErrorFromGstError(gerror,
-            NS_ConvertUTF8toUTF16(mCurrentUri), getter_AddRefs(error));
+    nsCOMPtr<nsIURI> uri;
+    rv = GetUri(getter_AddRefs(uri));
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    nsCOMPtr<nsIFileURL> url = do_QueryInterface(uri, &rv);
+    if (NS_SUCCEEDED(rv))
+    {
+      nsCOMPtr<nsIFile> file;
+      nsString path;
+
+      rv = url->GetFile(getter_AddRefs(file));
+      if (NS_SUCCEEDED(rv))
+      {
+        rv = file->GetPath(path);
+
+        if (NS_SUCCEEDED(rv))
+          rv = GetMediacoreErrorFromGstError(gerror, path, getter_AddRefs(error));
+      }
+    }
+
+    if (NS_FAILED(rv)) // not an else, so that it serves as a fallback
+    {
+      nsCString temp;
+      nsString spec;
+
+      rv = uri->GetSpec(temp);
+      if (NS_SUCCEEDED(rv))
+        spec = NS_ConvertUTF8toUTF16(temp);
+      else
+        spec = NS_ConvertUTF8toUTF16(mCurrentUri);
+
+      rv = GetMediacoreErrorFromGstError(gerror, spec, getter_AddRefs(error));
+    }
+
     NS_ENSURE_SUCCESS(rv, /* void */);
 
     DispatchMediacoreEvent(sbIMediacoreEvent::ERROR_EVENT, nsnull, error);
