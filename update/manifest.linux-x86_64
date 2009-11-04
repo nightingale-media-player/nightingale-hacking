@@ -160,6 +160,7 @@
 ./components/sbMigrate12To13pre.js
 ./components/sbMigrate12pre1To12pre1b.js
 ./components/sbMigrate13to14.wmaprotected.js
+./components/sbMigrate14to15pre0.contentType.js
 ./components/sbMockCDDevice.so
 ./components/sbMockCDDevice.xpt
 ./components/sbMockCDDeviceService.js
@@ -478,6 +479,7 @@
 ./testharness/localdatabaselibrary/test_bug7950.js
 ./testharness/localdatabaselibrary/test_bulkproperties.js
 ./testharness/localdatabaselibrary/test_cascadefilterset.js
+./testharness/localdatabaselibrary/test_content_type.js
 ./testharness/localdatabaselibrary/test_dblocation.js
 ./testharness/localdatabaselibrary/test_distinct.js
 ./testharness/localdatabaselibrary/test_filterable.js
@@ -494,6 +496,7 @@
 ./testharness/localdatabaselibrary/test_library_batchcreate.js
 ./testharness/localdatabaselibrary/test_library_batchcreateasync.js
 ./testharness/localdatabaselibrary/test_library_batchcreateifnotexist.js
+./testharness/localdatabaselibrary/test_library_constraints.js
 ./testharness/localdatabaselibrary/test_library_copy_listener.js
 ./testharness/localdatabaselibrary/test_library_diffing.js
 ./testharness/localdatabaselibrary/test_library_getmedialists.js

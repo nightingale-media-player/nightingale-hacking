@@ -27,5 +27,4 @@
 .\drivers\GearAspiWDM.sys
 .\drivers\GearAspi.dll
 .\drivers\
-.\components\sbDirectoryProvider.dll
 .\cdriphelper.exe
