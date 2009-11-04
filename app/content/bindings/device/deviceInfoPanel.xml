@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device operation info panel widget.
+   *
+   *   This widget displays information of all the sync operations being done
+   * on a device. This bar will separate each type of operation (Music, Video,
+   * etc) into panels that provide extra information about that operation. The
+   * extra information can be errors, current operation, and completion messages.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-info-panel"
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+      <xul:sb-info-panelbar sbid="device_info_panel_bar"
+                            orient="horizontal"
+                            smoothscroll="true"
+                            starthidden="true"/>
+    </content>
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        /* Import external services. */
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the device info services. */
+        DIPW.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device info panel services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        var                         jsLoader;
+
+        /* Get the Javascript sub-script loader services. */
+        jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService
+                                (Components.interfaces.mozIJSSubScriptLoader);
+
+        /* Import the device info panel services. */
+        if (typeof(DIPW) == "undefined") {
+          jsLoader.loadSubScript
+                 ("chrome://songbird/content/scripts/device/deviceInfoPanel.js",
+                  null);
+        }
+      ]]></body></method>
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device info panel services. */
+        DIPW.finalize(this);
+        DIPW.initialize(this);
+        ]]></handler>
+    </handlers>
+
+  </binding>
+</bindings>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+//
+// BEGIN SONGBIRD GPL
+//
+// This file is part of the Songbird web player.
+//
+// Copyright(c) 2005-2009 POTI, Inc.
+// http://songbirdnest.com
+//
+// This file may be licensed under the terms of of the
+// GNU General Public License Version 2 (the "GPL").
+//
+// Software distributed under the License is distributed
+// on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
+// express or implied. See the GPL for the specific language
+// governing rights and limitations.
+//
+// You should have received a copy of the GPL along with this
+// program. If not, go to http://www.gnu.org/licenses/gpl.html
+// or write to the Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+//
+// END SONGBIRD GPL
+//
+ */
+-->
+
+<!-- Import external definitions. -->
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd">
+
+<bindings
+      xmlns="http://www.mozilla.org/xbl"
+      xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <!-- *************************************************************************
+   *****************************************************************************
+   *
+   * Device operation info panel widget.
+   *
+   *   This widget displays information of all the sync operations being done
+   * on a device. This bar will separate each type of operation (Music, Video,
+   * etc) into panels that provide extra information about that operation. The
+   * extra information can be errors, current operation, and completion messages.
+   *
+   *****************************************************************************
+   ************************************************************************* -->
+
+  <binding id="sb-device-info-panel"
+     extends="chrome://songbird/content/bindings/device/deviceControl.xml#sb-device-control">
+
+    <!-- ***********************************************************************
+     *
+     * Content.
+     *
+     *********************************************************************** -->
+
+    <content>
+      <xul:sb-info-panelbar sbid="device_info_panel_bar"
+                            orient="horizontal"
+                            smoothscroll="true"
+                            starthidden="true"/>
+    </content>
+
+    <!-- ***********************************************************************
+     *
+     * Implementation.
+     *
+     *********************************************************************** -->
+
+    <implementation>
+
+      <!--
+       * constructor
+       *
+       *   This method constructs the widget.
+       -->
+
+      <constructor> <![CDATA[
+        /* Import external services. */
+        this.importExternalServices();
+      ]]></constructor>
+
+
+      <!--
+       * destructor
+       *
+       *   This method destroys the widget.
+       -->
+
+      <destructor> <![CDATA[
+        /* Finalize the device info services. */
+        DIPW.finalize(this);
+      ]]></destructor>
+
+
+      <!-- *********************************************************************
+       *
+       * Internal device info panel services.
+       *
+       ********************************************************************* -->
+
+      <!--
+       * importExternalServices
+       *
+       *   This function imports external services.
+       -->
+
+      <method name="importExternalServices"><body><![CDATA[
+        var                         jsLoader;
+
+        /* Get the Javascript sub-script loader services. */
+        jsLoader = Components.classes["@mozilla.org/moz/jssubscript-loader;1"]
+                             .getService
+                                (Components.interfaces.mozIJSSubScriptLoader);
+
+        /* Import the device info panel services. */
+        if (typeof(DIPW) == "undefined") {
+          jsLoader.loadSubScript
+                 ("chrome://songbird/content/scripts/device/deviceInfoPanel.js",
+                  null);
+        }
+      ]]></body></method>
+    </implementation>
+
+
+    <!-- ***********************************************************************
+     *
+     * Handlers.
+     *
+     *********************************************************************** -->
+
+    <handlers>
+      <handler event="deviceBound"><![CDATA[
+        /* Re-initialize the device info panel services. */
+        DIPW.finalize(this);
+        DIPW.initialize(this);
+        ]]></handler>
+    </handlers>
+
+  </binding>
+</bindings>

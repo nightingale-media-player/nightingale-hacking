@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ *=BEGIN SONGBIRD GPL
+ *
+ * This file is part of the Songbird web player.
+ *
+ * Copyright(c) 2005-2009 POTI, Inc.
+ * http://www.songbirdnest.com
+ *
+ * This file may be licensed under the terms of of the
+ * GNU General Public License Version 2 (the ``GPL'').
+ *
+ * Software distributed under the License is distributed
+ * on an ``AS IS'' basis, WITHOUT WARRANTY OF ANY KIND, either
+ * express or implied. See the GPL for the specific language
+ * governing rights and limitations.
+ *
+ * You should have received a copy of the GPL along with this
+ * program. If not, go to http://www.gnu.org/licenses/gpl.html
+ * or write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *=END SONGBIRD GPL
+ */
+-->
+
+<!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
+
+<bindings xmlns="http://www.mozilla.org/xbl"
+          xmlns:xul="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+          xmlns:xbl="http://www.mozilla.org/xbl">
+
+  <binding id="infoPanelBar">
+    <content mousethrough="never">
+      <xul:arrowscrollbox class="info-panel-bar-scrollbox"
+                          sbid="sb-panel-bar-scrollbox"
+                          xbl:inherits="orient,smoothscroll"
+                          flex="1"/>
+    </content>
+
+    <implementation type="application/x-javascript" >
+
+      <!-- This is the root of our panel children we create -->
+      <field name="panelRoot">
+        document.getAnonymousElementByAttribute(this,
+                                                "sbid",
+                                                "sb-panel-bar-scrollbox");
+      </field>
+      <!-- Variables used for slide animation -->
+      <field name="slideSteps">4</field>
+      <field name="_timer">null</field>
+
+      <!-- Current state of this panel bar -->
+      <field name="_shown">false</field>
+
+      <!-- Store the active panel here so we don't have to search each time -->
+      <field name="_activePanelIndex">-1</field>
+
+      <!-- How many panels we have in this bar -->
+      <property name="panelCount"
+                readonly="true"
+                onget="return this.panelRoot.childNodes.length"/>
+
+      <!-- Are we shown or not -->
+      <property name="isShown"
+                readonly="true"
+                onget="return this._shown"/>
+
+      <constructor>
+        <![CDATA[
+          // By default we will start shown
+          if (this.hasAttribute("starthidden")) {
+            this._shown = !this.getAttribute("starthidden");
+          }
+        ]]>
+      </constructor>
+
+      <destructor>
+        <![CDATA[
+          // Make sure we clean up.
+          if (this._timer) {
+            clearInterval(this._timer);
+            this._timer = null;
+          }
+        ]]>
+      </destructor>
+
+      <!-- Append a new panel to the bar -->
+      <method name="appendPanel">
+        <parameter name="aPanelLabel"/>
+        <parameter name="aPanelImage"/>
+        <parameter name="aActive"/>
+        <body><![CDATA[
+          var XULNS = "http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul";
+          var panel = document.createElementNS(XULNS, "sb-info-panel");
+          panel.setAttribute("label", aPanelLabel);
+          panel.setAttribute("icon", aPanelImage);
+          this.panelRoot.appendChild(panel);
+
+          // Make this active if specified or if it is the only one.
+          if (aActive || this.panelCount == 1) {
+            this.activePanelIndex = (this.panelCount -1);
+          }
+
+          return panel;
+        ]]></body>
+      </method>
+
+      <!-- Set or Get the current active panel index -->
+      <property name="activePanelIndex">
+        <getter><![CDATA[
+          return this._activePanelIndex;
+        ]]></getter>
+        <setter><![CDATA[
+          // Ensure we are in range
+          if (this.panelCount <= 0) return -1;
+          if (val < 0)
+            val = 0;
+          else if (val >= this.panelCount)
+            val = (this.panelCount - 1);
+
+          // Get a valid panel
+          var panel = this.getPanelAtIndex(val);
+          if (!panel) {
+            return -1;
+          }
+
+          // Set this one active and make sure it is visible
+          this._activePanelIndex = val;
+          this.ensurePanelVisible(panel);
+          this.updateAllPanels();
+
+          return val;
+        ]]></setter>
+      </property>
+
+      <!-- Ensure a panel is visible in the scroll box -->
+      <method name="ensurePanelVisible">
+        <parameter name="aPanel"/>
+        <body><![CDATA[
+          this.panelRoot.ensureElementIsVisible(aPanel);
+        ]]></body>
+      </method>
+
+      <!-- Get the panel at a specified index -->
+      <method name="getPanelAtIndex">
+        <parameter name="index"/>
+        <body><![CDATA[
+          return this.panelRoot.childNodes.item(index);
+        ]]></body>
+      </method>
+
+      <!-- Get the active panel -->
+      <method name="getActivePanel">
+        <body><![CDATA[
+          return this.panelRoot.childNodes.item(this._activePanelIndex);
+        ]]></body>
+      </method>
+
+      <!-- Remove a panel at a specified index, this will set the previous
+           panel to active if the removed one was and there are more panels -->
+      <method name="removePanelAt">
+        <parameter name="index"/>
+        <body><![CDATA[
+          var remove = this.getPanelAtIndex(index);
+          if (remove) {
+            // If this was the active panel and we still have some then try to
+            // make the previous panel active.
+            if (index == this._activePanelIndex && (this.panelCount > 1))
+              this.activePanelIndex = (index - 1);
+
+            this.panelRoot.removeChild(remove);
+            this.updateAllPanels();
+          }
+        ]]></body>
+      </method>
+
+      <!-- Remove all the panels -->
+      <method name="removeAllPanels">
+        <body><![CDATA[
+          while (this.panelRoot.hasChildNodes())
+            this.panelRoot.removeChild(this.panelRoot.firstChild);
+          this._activePanel = -1;
+        ]]></body>
+      </method>
+
+      <!-- Update all the panels information -->
+      <method name="updateAllPanels">
+        <body><![CDATA[
+          var activeIndex = this._activePanelIndex;
+          var curIndex = 0;
+
+          // Update each panel
+          Array.forEach(this.panelRoot.childNodes, function (aPanel) {
+            aPanel.active = (activeIndex == curIndex);
+            aPanel.index = curIndex++;
+          });
+        ]]></body>
+      </method>
+
+      <!-- Animate function for sliding in or out
+          \param slideIn - True to slide in, false to slide out
+          \note this will re-slide if panel is already in end position -->
+      <method name="_animate">
+        <parameter name="slideIn"/>
+        <body><![CDATA[
+          // Clear any current timers
+          if (this._timer) {
+            clearInterval(this._timer);
+            this._timer = null;
+          }
+
+          // Setup some starting values
+          var height = this.boxObject.height;
+          var slideSteps = Application.prefs
+                                      .getValue("songbird.infoPanel.steps",
+                                                4);
+          var change = (slideIn ? 1 : -1) * (height / slideSteps);
+          var margin = (slideIn ? (height * -1) : 0);
+
+          var opacitychange = change / height;
+
+          // This is the function that gets called on an interval to slide the
+          // panel in or out.
+          function slide(self) {
+            // increase or decrease our margin for this step.
+            margin += change;
+
+            if ((slideIn && margin >= 0) ||
+                (!slideIn && margin <= -height)) {
+              // We are done animating
+              self.style.marginTop = (slideIn ? "0px" : -height + "px");
+              self.style.opacity = (slideIn ? 1 : 0);
+              // Clean up timers
+              clearInterval(self._timer);
+              self._timer = null;
+            }
+            else {
+              // Keep animating by moving the margin and changing the opacity
+              self.style.marginTop = margin.toFixed(4) + "px";
+              if (opacitychange && Number(self.style.opacity) < 1)
+                self.style.opacity =
+                  Number(self.style.opacity) + opacitychange;
+            }
+          }
+
+          var interval = Application.prefs
+                                    .getValue("songbird.infoPanel.interval", 50);
+          this.style.opacity = (slideIn ? 0 : 1);
+          this.style.marginTop = margin + "px";
+
+          // Start an interval timer to slide the bar in or out.
+          this._timer = setInterval(slide, interval, this);
+        ]]></body>
+      </method>
+
+      <!-- Wrapper functions for the animation -->
+      <method name="animateIn">
+        <body><![CDATA[
+          this._animate(true);
+        ]]></body>
+      </method>
+
+      <method name="animateOut">
+        <body><![CDATA[
+          this._animate(false);
+        ]]></body>
+      </method>
+    </implementation>
+
+  </binding>
+
+  <binding id="infoPanel">
+    <content mousethrough="never">
+      <!-- Separator line -->
+      <xul:vbox class="info-panel-separator"
+                pack="center">
+        <xul:image class="info-panel-separator-image"
+                   src="chrome://songbird/skin/info-bar/separator.png"/>
+      </xul:vbox>
+
+      <xul:vbox class="info-panel-outter">
+        <!-- Top content -->
+        <xul:hbox class="info-panel-content" sbid="sb-content-panel">
+          <xul:spacer class="info-panel-spacer" />
+          <xul:box class="info-panel-icon-box" align="center" pack="center">
+            <xul:image class="info-panel-icon" xbl:inherits="src=icon" />
+          </xul:box>
+          <xul:box class="info-panel-label-box" align="center">
+            <xul:label class="info-panel-label" xbl:inherits="value=label" />
+          </xul:box>
+        </xul:hbox>
+        <!-- Bottom (active indicator) -->
+        <xul:hbox class="info-panel-bottom">
+          <xul:box class="info-panel-active" />
+          <xul:spacer class="info-panel-bottom-spacer" flex="1" />
+        </xul:hbox>
+      </xul:vbox>
+    </content>
+
+    <implementation type="application/x-javascript" >
+
+      <!-- Index of this panel in the list of panels -->
+      <property name="index">
+        <getter><![CDATA[
+          return this.getAttribute("index");
+        ]]></getter>
+        <setter><![CDATA[
+          this.setAttribute("index", val);
+        ]]></setter>
+      </property>
+
+      <!-- Indicates if this panel is active, used for css changes -->
+      <property name="active">
+        <getter><![CDATA[
+          return this.hasAttribute("active");
+        ]]></getter>
+        <setter><![CDATA[
+          if (val)
+            this.setAttribute("active", true);
+          else
+            this.removeAttribute("active");
+        ]]></setter>
+      </property>
+
+      <!-- Set the icon of the panel -->
+      <property name="icon">
+        <getter><![CDATA[
+          if (this.hasAttribute("icon"))
+            return this.getAttribute("icon");
+          else
+            return null;
+        ]]></getter>
+        <setter><![CDATA[
+          this.setAttribute("icon", val);
+        ]]></setter>
+      </property>
+
+      <!-- Set the label of the panel -->
+      <property name="label">
+        <getter><![CDATA[
+          if (this.hasAttribute("label"))
+            return this.getAttribute("label");
+          else
+            return null;
+        ]]></getter>
+        <setter><![CDATA[
+          this.setAttribute("label", val);
+        ]]></setter>
+      </property>
+
+    </implementation>
+
+  </binding>
+
+</bindings>

@@ -573,6 +573,10 @@ sb-device-management {
   -moz-binding: url("chrome://songbird/content/bindings/device/deviceMediaManagement.xml#sb-device-management");
 }
 
+sb-device-info-panel {
+  -moz-binding: url("chrome://songbird/content/bindings/device/deviceInfoPanel.xml#sb-device-info-panel");
+}
+
 sb-rating {
   -moz-binding: url("chrome://songbird/content/bindings/ratingsControl.xml#sb-rating");
 }
@@ -585,6 +589,15 @@ treecols[type="sb-contextpicker"] {
    -moz-binding: url('chrome://songbird/content/bindings/contextTreeCols.xml#treecols-context')
 }
 
+/* Information Panels */
+
+sb-info-panelbar {
+  -moz-binding: url('chrome://songbird/content/bindings/infoPanels.xml#infoPanelBar');
+}
+
+sb-info-panel {
+  -moz-binding: url('chrome://songbird/content/bindings/infoPanels.xml#infoPanel');
+}
 
 /* Add-on bundle bindings */
 

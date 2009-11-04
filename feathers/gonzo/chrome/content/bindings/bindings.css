@@ -65,7 +65,8 @@ For more information, see:
 @import url(displayPane.css);
 @import url(equalizer.css);
 @import url(cdripMediaView.css);
-@import url(faceplate.css); 
+@import url(faceplate.css);
+@import url(infoPanels.css);
 @import url(miniplayer.css); 
 @import url(observesDataRemote.css); 
 @import url(playerControls.css); 

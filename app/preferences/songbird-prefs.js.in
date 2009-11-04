@@ -485,3 +485,6 @@ pref("songbird.cdrip.oncomplete.notifysound", false);
 // First run Media Library loading
 pref("songbird.firstrun.load_ml_in_background", false);
 
+// Information Panel default settings
+pref("songbird.infoPanel.interval", 50);
+pref("songbird.infoPanel.steps", 4);
