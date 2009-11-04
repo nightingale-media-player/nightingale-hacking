@@ -80,6 +80,7 @@ SONGBIRD_TESTS = $(srcdir)/test_guidarray_length.js \
                  $(srcdir)/test_fts.js \
                  $(srcdir)/test_migration.js \
                  $(srcdir)/test_content_type.js \
+                 $(srcdir)/test_library_constraints.js \
                  $(srcdir)/head_localdatabaselibrary.js \
                  $(srcdir)/media_items.txt \
                  $(srcdir)/resource_properties.txt \
