@@ -65,13 +65,6 @@ endif
 # Right now this system is not compatible with parallel make.
 .NOTPARALLEL: all clean libs export
 
-ifdef SONGBIRD_TEST_COMPONENT
-   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(strip $(SONGBIRD_TEST_COMPONENT))
-   ifdef SB_ENABLE_TESTS
-      APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
-   endif
-endif
-
 ifdef IS_EXTENSION # {
 
 #------------------------------------------------------------------------------
@@ -125,6 +118,13 @@ ifdef IS_EXTENSION # {
    SONGBIRD_JSMODULESDIR = $(OUR_EXTENSION_STAGE_DIR)/jsmodules
    APP_DIST_DIRS = $(NULL)
 endif # } IS_EXTENSION
+
+ifdef SONGBIRD_TEST_COMPONENT
+   SONGBIRD_TEST_COMPONENT_DIR = $(SONGBIRD_TESTSDIR)/$(strip $(SONGBIRD_TEST_COMPONENT))
+   ifdef SB_ENABLE_TESTS
+      APP_DIST_DIRS += $(SONGBIRD_TEST_COMPONENT_DIR)
+   endif
+endif
 
 ###############################################################################
 
@@ -287,7 +287,7 @@ endif
 libs:: $(SONGBIRD_TESTS)
 ifdef SB_ENABLE_TESTS
    ifneq (,$(SONGBIRD_TEST_COMPONENT_DIR))
-	   $(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TEST_COMPONENT_DIR)
+	   $(INSTALL_FILE) $(SONGBIRD_TESTS) $(SONGBIRD_TEST_COMPONENT_DIR)/
    endif
 endif
 
