@@ -206,7 +206,7 @@ var videoWindowController = {
       }
     }
     
-    this._contextMenu.openPopupAtScreen(aEvent.clientX, aEvent.clientY, true);
+    this._contextMenu.openPopupAtScreen(aEvent.screenX, aEvent.screenY, true);
     
     return true;
   },
