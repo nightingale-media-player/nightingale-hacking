@@ -44,8 +44,6 @@ public:
 protected:
   virtual ~sbVideoBox();
 
-  PRLock*  mLock;
-
   PRUint32 mPARNumerator;
   PRUint32 mPARDenominator;
 
