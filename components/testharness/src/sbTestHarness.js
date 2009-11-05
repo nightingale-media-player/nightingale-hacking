@@ -170,17 +170,28 @@ sbTestHarness.prototype = {
     
     var compReg = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
     
-    var em = Cc["@mozilla.org/extensions/manager;1"].
-             getService(Ci.nsIExtensionManager);
-    
+    var em = Cc["@mozilla.org/extensions/manager;1"]
+               .getService(Ci.nsIExtensionManager);
+    var appInfo = Cc["@mozilla.org/xre/app-info;1"]
+                    .getService(Ci.nsIXULRuntime);
+
     var itemList = em.getItemList(Ci.nsIUpdateItem.TYPE_EXTENSION, {});
     for each (var item in itemList) {
       var installLocation = em.getInstallLocation(item.id);
       var dir = installLocation.getItemLocation(item.id);
       dir.append("components");
-      if (!dir.exists())
-        continue;
-      compReg.autoRegister(dir);
+      if (dir.exists()) {
+        compReg.autoRegister(dir);
+      }
+
+      // also try to register in the platform-specific directory
+      dir = installLocation.getItemLocation(item.id);
+      dir.append("platform");
+      dir.append(appInfo.OS + "_" + appInfo.XPCOMABI);
+      dir.append("components");
+      if (dir.exists()) {
+        compReg.autoRegister(dir);
+      }
     }
   },
 
