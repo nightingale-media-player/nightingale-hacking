@@ -1360,7 +1360,7 @@ function sbLibraryServicePane__ensureLibraryNodeExists(aLibrary, aMove) {
 
     // Set the weight of the web library
     node.setAttributeNS(SP, 'Weight', 5);
-    node.hidden = false;
+    node.hidden = true;
     return node;
   }
 
