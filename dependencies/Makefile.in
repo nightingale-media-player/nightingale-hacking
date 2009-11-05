@@ -187,6 +187,7 @@ ifdef MEDIA_CORE_GST #{
                             gstqtdemux \
                             gstreplaygain \
                             gstrtp \
+                            gstrtpmanager \
                             gstrtsp \
                             gstsmpte \
                             gstspectrum \
