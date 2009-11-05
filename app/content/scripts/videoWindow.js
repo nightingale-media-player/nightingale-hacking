@@ -52,6 +52,9 @@ var videoWindowController = {
   _actualSizeDataRemote: null,
   _windowNeedsResize: false,
   
+  _contextMenu: null,
+  _contextMenuListener: null,
+  
   _ignoreResize: false,
   _resizeListener: null,
   
@@ -120,6 +123,14 @@ var videoWindowController = {
     };
     
     window.addEventListener("resize", this._resizeListener, false);
+    
+    this._contextMenuListener = function(aEvent) {
+      return self._onContextMenu(aEvent);
+    };
+    
+    window.addEventListener("contextmenu", this._contextMenuListener, false);
+    
+    this._contextMenu = document.getElementById("video-context-menu");
   },
   
   _close: function vwc__close() {
@@ -130,6 +141,9 @@ var videoWindowController = {
   _shutdown: function vwc__shutdown() {
     window.removeEventListener("resize", this._resizeListener, false);
     this._resizeListener = null;
+    
+    window.removeEventListener("contextmenu", this._contextMenuListener, false);
+    this._contextMenuListener = null;
     
     this._actualSizeDataRemote.unbind();
     
@@ -164,7 +178,8 @@ var videoWindowController = {
   _handleVideoSizeChanged: function vwc__handleVideoSizeChanged(aEvent) {
     // XXXAus: This will be implemented when we add support for 
     //         'actual size'. See bug 18056.
-    if(this._actualSizeDataRemote.boolValue == true) {
+    if(this._actualSizeDataRemote.boolValue == true &&
+       this._mediacoreManager.video.fullscreen == false) {
       // XXXAus: Call magic resize here.
     }
     
@@ -172,6 +187,28 @@ var videoWindowController = {
     //         if the user turns on actual size, we can resize to the right 
     //         thing.
     //this._videoSize = aEvent.data.QueryInterface(Ci.sbIVideoBox);
+  },
+  
+  _onContextMenu: function vwc__onContextMenu(aEvent) {
+    for each (var node in this._contextMenu.childNodes) {
+      switch(node.id) {
+        case "actualsize": {
+          node.setAttribute("checked", 
+                            this._actualSizeDataRemote.boolValue);
+        }
+        break;
+        
+        case "fullscreen": {
+          node.setAttribute("checked",
+                            this._mediacoreManager.video.fullscreen);
+        }
+        break;
+      }
+    }
+    
+    this._contextMenu.openPopupAtScreen(aEvent.clientX, aEvent.clientY, true);
+    
+    return true;
   },
   
   _onResize: function vwc__onResize(aEvent) {
@@ -185,6 +222,16 @@ var videoWindowController = {
     
     // Actual size is now disabled.
     this._actualSizeDataRemote.boolValue = false;
+  },
+  
+  _onToggleActualSize: function vwc__onToggleActualSize() {
+    var toggle = !this._actualSizeDataRemote.boolValue;
+    this._actualSizeDataRemote.boolValue = toggle;
+  },
+  
+  _onToggleFullscreen: function vwc__onToggleFullscreen() {
+    var video = this._mediacoreManager.video;
+    video.fullscreen = !video.fullscreen;
   },
   
   _dismissSelf: function vwc__dismissSelf() {

@@ -52,13 +52,22 @@
    src="chrome://songbird/content/scripts/videoWindow.js"/>
 
   <stringbundle id="songbird_strings" src="chrome://songbird/locale/songbird.properties"/>
-  
+
+  <menupopup id="video-context-menu">
+    <menuitem label="&videowindow.actualsize;" id="actualsize"
+			oncommand="videoWindowController._onToggleActualSize();" />
+    <menuitem label="&videowindow.fullscreen;" id="fullscreen"
+			oncommand="videoWindowController._onToggleFullscreen();" />
+  </menupopup>
+
   <sb-sys-outer-frame flex="1">
     <sb-sys-titlebar type="window"/>
 
     <!-- This is for Mac -->
     <menubar id="video_menu" hidden="false" >
-      <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" hidden="true"/>
+      <menuitem id="menu_FileQuitItem" label="&menu.file.exit;" 
+                accesskey="&menu.file.exit.accesskey;" oncommand="quitApp();" 
+                hidden="true"/>
     </menubar>
 
     <hbox flex="1" id="video-box">

@@ -1130,6 +1130,31 @@ sbMediacoreManager::GetStatus(sbIMediacoreStatus * *aStatus)
 }
 
 NS_IMETHODIMP
+sbMediacoreManager::GetVideo(sbIMediacoreVideoWindow * *aVideo)
+{
+  TRACE(("sbMediacoreManager[0x%x] - GetVideo", this));
+  NS_ENSURE_TRUE(mMonitor, NS_ERROR_NOT_INITIALIZED);
+  NS_ENSURE_ARG_POINTER(aVideo);
+
+  *aVideo = nsnull;
+
+  nsAutoMonitor mon(mMonitor);
+
+  if(!mPrimaryCore) {
+    return NS_OK;
+  }
+
+  nsresult rv = NS_ERROR_UNEXPECTED;
+  nsCOMPtr<sbIMediacoreVideoWindow> videoWindow =
+    do_QueryInterface(mPrimaryCore, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  videoWindow.forget(aVideo);
+
+  return NS_OK;
+}
+
+NS_IMETHODIMP
 sbMediacoreManager::GetSequencer(
                       sbIMediacoreSequencer * *aSequencer)
 {

@@ -44,7 +44,7 @@ interface sbIMediacoreSequencer;
 
 interface sbIMediacoreVideoWindow;
 
-[scriptable, uuid(fc319c36-e6b5-4201-b433-ff3f0dac1e53)]
+[scriptable, uuid(404c03dc-6553-4cf5-a356-fcee07ee0ab3)]
 interface sbIMediacoreManager : nsISupports
 {
   /**
@@ -63,6 +63,8 @@ interface sbIMediacoreManager : nsISupports
 
   readonly attribute sbIMediacoreCapabilities    capabilities;
   readonly attribute sbIMediacoreStatus          status;
+  
+  readonly attribute sbIMediacoreVideoWindow     video;
 
   /**
    * The current sequencer used to generate and manage playback sequences.
