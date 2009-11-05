@@ -923,6 +923,27 @@
         this.remote_length = SBDataBindElementAttribute( "metadata.length", this, "maxpos" );
        
         this.trackingPosition = 0;
+        this.scrubbingPosition = false;
+        this.seekInProgress = false;
+        this.wasPlayingBeforeSeek = false;
+        this.hasVideo = false;
+
+        this.eventListener = {
+          that: this,
+          onMediacoreEvent: function(aEvent) {
+            if (aEvent.type == aEvent.STREAM_PAUSE) {
+              this.that.seekInProgress = false;
+            }
+            else if (aEvent.type == aEvent.STREAM_HAS_VIDEO) {
+              this.that.hasVideo = true;
+            }
+            else if (aEvent.type == aEvent.TRACK_CHANGE) {
+              this.that.hasVideo = false;
+            }
+          }
+        }
+
+        this.mm.addListener(this.eventListener);
       ]]>
     </constructor>
     <destructor>
@@ -937,6 +958,7 @@
           this.remote_length = null;
         }
         
+        this.mm.removeListener(this.eventListener);
         this.mm = null;
       ]]>
     </destructor>
@@ -944,7 +966,37 @@
     <method name="onTrackSeekbar">
       <body>
         <![CDATA[
-          this.trackingPosition = 1;
+          if (!this.trackingPosition) {
+            this.trackingPosition = 1;
+
+            // We do scrubbing for video only.
+            if (this.hasVideo) {
+              this.scrubbingPosition = true;
+              if (this.mm.status.state ==
+                  Components.interfaces.sbIMediacoreStatus.STATUS_PLAYING) {
+                this.wasPlayingBeforeSeek = true;
+              }
+              else {
+                this.wasPlayingBeforeSeek = false;
+              }
+              this.mm.playbackControl.pause();
+            }
+          }
+
+          // Seek while tracking if we're scrubbing. Don't start a seek
+          // unless the previous one completed, otherwise we never make
+          // any progress...
+          if (this.scrubbingPosition && !this.seekInProgress) {
+            try {
+              this.mm.playbackControl.position = this.progress_value;
+              this.seekInProgress = true;
+            } catch(e) {
+              // Seeking failed; disable scrubbing.
+              this.scrubbingPosition = false;
+              if (this.wasPlayingBeforeSeek)
+                this.mm.playbackControl.play();
+            }
+          }
         ]]>
       </body>
     </method>
@@ -955,6 +1007,15 @@
           // Setting the position may fail if the format doesn't support
           // seeking or if http resuming does not work.
           this.mm.playbackControl.position = this.value;
+
+          this.seekInProgress = false;
+          if (this.scrubbingPosition) {
+            this.scrubbingPosition = false;
+            if (this.wasPlayingBeforeSeek) {
+              this.mm.playbackControl.play();
+            }
+
+          }
         }
         catch(e) {
           Components.utils.reportError(e);
