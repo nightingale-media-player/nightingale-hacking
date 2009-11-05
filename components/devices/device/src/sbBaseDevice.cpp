@@ -538,6 +538,58 @@ void SBUpdateBatchIndex(sbBaseDevice::Batch& aBatch)
   }
 }
 
+void SBCreateSubBatchIndex(sbBaseDevice::Batch& aBatch)
+{
+  // Do nothing if batch is empty.
+  if (aBatch.empty())
+    return;
+
+  // Get the batch begin.
+  sbBaseDevice::Batch::iterator batchBegin = aBatch.begin();
+  sbBaseDevice::Batch::iterator lastBegin = batchBegin;
+  sbBaseDevice::TransferRequest *request = nsnull;
+  PRUint32 index = 0;
+  PRBool firstTranscoding = PR_TRUE;
+  for (; batchBegin != aBatch.end(); ++batchBegin) {
+    request = batchBegin->get();
+    if (firstTranscoding && request->needsTranscoding) {
+      sbBaseDevice::TransferRequest *req = nsnull;
+      for (; lastBegin != batchBegin; ++lastBegin) {
+        req = lastBegin->get();
+        req->batchCount = index;
+      }
+      index = 0;
+      // Only the first needsTranscoding works.
+      firstTranscoding = PR_FALSE;
+    }
+    request->batchIndex = ++index;
+  }
+
+  // No item needs transcoding
+  if (firstTranscoding)
+    return;
+
+  // Update the batch count for the batch.
+  for (; lastBegin != batchBegin; ++lastBegin) {
+    request = lastBegin->get();
+    request->batchCount = index;
+  }
+}
+
+/**
+ * Put the transcode items at the end.
+ * Used by ReqHandleWriteBatch to reorder the transcoding items to the back.
+ * this is equivalent to all the items needing transcoding being assigned a
+ * value of 0 and items not needing transcoding being assigned a value of 1
+ * and then performing a stable sort.
+ */
+bool needsTranscodingToBack(nsRefPtr<sbBaseDevice::TransferRequest> const &p1,
+                            nsRefPtr<sbBaseDevice::TransferRequest> const &p2)
+{
+  return (!p1->needsTranscoding && p2->needsTranscoding);
+  // p1 < p2 iff (p1 !transcode && p2 transcode)
+}
+
 /**
  * Static helper class for convenience
  */
