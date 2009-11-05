@@ -187,6 +187,7 @@ ifdef MEDIA_CORE_GST #{
                             gstqtdemux \
                             gstreplaygain \
                             gstrtp \
+                            gstrtpmanager \
                             gstrtsp \
                             gstsmpte \
                             gstspectrum \
@@ -207,7 +208,6 @@ ifdef MEDIA_CORE_GST #{
    GST_PLUGINS_BAD_NAMES = gstaiffparse \
                            gstadpcmdec \
                            gstid3tag \
-                           gstrtpmanager \
                            gstsdpelem \
                            gstselector \
                            gstmozillasrc \
