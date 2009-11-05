@@ -46,6 +46,14 @@
       </Description>
     </songbird:mediaPage>
 
+    <songbird:mediaPage>
+      <Description>
+        <songbird:contentTitle>Media Page Test (Video Match)</songbird:contentTitle>
+        <songbird:contentUrl>chrome://songbird-test-media-page/content/testMediaPage.xul?video</songbird:contentUrl>
+        <songbird:match>contentType:video</songbird:match>
+      </Description>
+    </songbird:mediaPage>
+
     <em:hidden>true</em:hidden>
     <em:appManaged>true</em:appManaged>
   </Description>

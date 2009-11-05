@@ -26,6 +26,7 @@
 
 #include "nsISupports.idl"
 
+interface sbILibraryConstraint;
 interface sbIMediaList; 
 interface sbIMediaPageInfo;
 interface sbIMediaListMatch;
@@ -36,7 +37,7 @@ interface nsISimpleEnumerator;
 * \brief The medialist page manager, used to register, unregister,
 * enumerate, set and retrieve page/medialists associations
 */
-[scriptable, uuid(c41af2f6-8716-4e9e-bc5a-cf8dd8d67a41)]
+[scriptable, uuid(e4ff017e-1dd1-11b2-bef2-a2a583e02a39)]
 interface sbIMediaPageManager : nsISupports
 {
   /**
@@ -61,9 +62,11 @@ interface sbIMediaPageManager : nsISupports
    * not specified, the entire list of registered pages is returned.
    *
    * \param aList (optional) The medialist for which the list of available matching pages is being requested
+   * \param aConstraint (optional) A library constrain used as an additional matching criteria
    * \return An nsISimpleEnumerator containing a list of sbIMediaPageInfo interfaces
    */
-  nsISimpleEnumerator getAvailablePages([optional] in sbIMediaList aList);
+  nsISimpleEnumerator getAvailablePages([optional] in sbIMediaList aList,
+                                        [optional] in sbILibraryConstraint aConstraint);
 
   /**
    * \brief Get the active page for a medialist.
@@ -82,8 +85,10 @@ interface sbIMediaPageManager : nsISupports
    * exists or no longer matches the medialist.
    *
    * \param aList The medialist for which the active page is being requested
+   * \param aConstraint (optional) A library constrain used as an additional matching criteria
    */
-  sbIMediaPageInfo getPage(in sbIMediaList aList); 
+  sbIMediaPageInfo getPage(in sbIMediaList aList,
+                           [optional] in sbILibraryConstraint aConstraint);
 
   /**
    * \brief Set the active page for a medialist
@@ -130,12 +135,16 @@ interface sbIMediaPageInfo: nsISupports
                      function(aList) { return (aList.type == "simple"); } );
 * \endcode
 */
-[scriptable, function, uuid(2d185072-2dd1-40bc-a3fd-5599ca873503)]
+[scriptable, function, uuid(802efbaa-1dd2-11b2-96d5-b6792a2b14bf)]
 interface sbIMediaListMatch: nsISupports
 {
   /**
    * \brief Callback method used to perform the test on the medialist
+   *
+   * \param aList the media list to attempt to match
+   * \param aConstraint (optional) A library constrain used as an additional matching criteria
    */
-  PRBool match(in sbIMediaList aList);
+  PRBool match(in sbIMediaList aList,
+               [optional] in sbILibraryConstraint aConstraint);
 };
 

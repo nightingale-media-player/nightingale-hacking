@@ -111,7 +111,7 @@ MediaPageManager.prototype = {
     throw new Error("Page " + aPageInfo.contentTitle + " not found in unregisterPage");
   },
   
-  getAvailablePages: function(aList) {
+  getAvailablePages: function(aList, aConstraint) {
     this._ensureMediaPageRegistration();
     // If no list is provided, return the entire set
     if (!aList) {
@@ -121,7 +121,7 @@ MediaPageManager.prototype = {
     var tempArray = [];
     for (var i in this._pageInfoArray) {
       var pageInfo = this._pageInfoArray[i];
-      if (pageInfo.matchInterface.match(aList)) {
+      if (pageInfo.matchInterface.match(aList, aConstraint)) {
         tempArray.push(pageInfo);
       }
     }
@@ -130,7 +130,7 @@ MediaPageManager.prototype = {
     return ArrayConverter.enumerator(tempArray); 
   },
   
-  getPage: function(aList) {
+  getPage: function(aList, aConstraint) {
     this._ensureMediaPageRegistration();
 
     // use the outermost list
@@ -144,7 +144,7 @@ MediaPageManager.prototype = {
     if (savedPageURL && savedPageURL != "") {
       // Check that the saved url is still registered 
       // and still supports this list
-      var pageInfo = this._checkPageForList(aList, savedPageURL);
+      var pageInfo = this._checkPageForList(aList, aConstraint, savedPageURL);
       if (pageInfo) return pageInfo;
     }
     
@@ -153,7 +153,7 @@ MediaPageManager.prototype = {
     if (defaultPageURL && defaultPageURL != "") {
       // Check that the saved url is still registered 
       // and still supports this list
-      var pageInfo = this._checkPageForList(aList, defaultPageURL);
+      var pageInfo = this._checkPageForList(aList, aConstraint, defaultPageURL);
       if (pageInfo) return pageInfo;
     }
     
@@ -172,7 +172,7 @@ MediaPageManager.prototype = {
       // that matches.
       for (var i in this._pageInfoArray) {
         var pageInfo = this._pageInfoArray[i];
-        if (pageInfo.matchInterface.match(aList)) {
+        if (pageInfo.matchInterface.match(aList, aConstraint)) {
           return pageInfo;
         }
       }
@@ -208,11 +208,11 @@ MediaPageManager.prototype = {
   
   // internal. checks that a url is registered in the list of pages, and that 
   // its matching test succeeds for a given list
-  _checkPageForList: function(aList, aUrl) {
+  _checkPageForList: function(aList, aConstraint, aUrl) {
     for (var i in this._pageInfoArray) {
       var pageInfo = this._pageInfoArray[i];
       if (pageInfo.contentUrl != aUrl) continue;
-      if (!pageInfo.matchInterface.match(aList)) continue;
+      if (!pageInfo.matchInterface.match(aList, aConstraint)) continue;
       return pageInfo;
     }
     return null;
@@ -246,7 +246,7 @@ MediaPageManager.prototype = {
     }
 
     // the default page matches everything    
-    var matchAll = {match: function(mediaList) { return(true); }};
+    var matchAll = {match: function() true};
 
     // Register the playlist with filters
     this._defaultFilteredPlaylistPage =
@@ -261,7 +261,7 @@ MediaPageManager.prototype = {
         matchAll);
   },
   
-} // MediaPageManager.prototype
+}; // MediaPageManager.prototype
 
 
 
@@ -402,17 +402,17 @@ var MediaPageMetadataReader = {
   
   _createMatchFunction: function(matchList) {
     // create a match function that uses the match options
-    var matchFunction = function(mediaList) {
+    var matchFunction = function(mediaList, aConstraint) {
       // just in case someone's passing in bad values
       if(!mediaList) {
         return false;
       }
-      
+
       // check each <match/>'s values
       // if any one set works, this is a good media page for the list
       for (var m in matchList) {
         match = matchList[m];
-        
+
         // first, see if we just want to opt out of this match
         // our definition of an opt-out-able list is:
         // one that is so unspecific as to only target by "type"
@@ -429,23 +429,41 @@ var MediaPageMetadataReader = {
             return false;
           }
         }
-        
+
         var thisListMatches = true;
         for (var i in match) {
-          // Use getProperty notation if the desired field is not
-          // specified as a true JS property on the object.
-          // TODO: This should be improved.
-          var comparisonValue;
-          if (mediaList[i] == undefined) {
-            comparisonValue = mediaList.getProperty(SBProperties[i]);
-            // this is somewhat icky
+          switch(i) {
+            case "contentType":
+              // this is set on the constraint instead
+              if (aConstraint) {
+                for (let group in ArrayConverter.JSEnum(aConstraint.groups)) {
+                  if (!(group instanceof Ci.sbILibraryConstraintGroup)) {
+                    continue;
+                  }
+                  if (!group.hasProperty(SBProperties.contentType)) {
+                    continue;
+                  }
+                  let contentTypes =
+                    ArrayConverter.JSArray(group.getValues(SBProperties.contentType));
+                  if (contentTypes.indexOf(match[i]) == -1) {
+                    thisListMatches = false;
+                    break;
+                  }
+                }
+              }
+              break;
+            default:
+              if (i in mediaList) {
+                thisListMatches &= (match[i] == mediaList[i]);
+              }
+              else {
+                // Use getProperty notation if the desired field is not
+                // specified as a true JS property on the object.
+                // TODO: This should be improved.
+                thisListMatches &= (match[i] == mediaList.getProperty(SBProperties[i]));
+              }
           }
-          else {
-            comparisonValue = mediaList[i];
-          }
-
-          if (match[i] != comparisonValue) {
-            thisListMatches = false;
+          if (!thisListMatches) {
             break;
           }
         }
@@ -453,12 +471,12 @@ var MediaPageMetadataReader = {
           return true;
         }
       }
-      
+
       // arriving here means none of the <match>
       // elements fit the medialist passed in
       return false;
     }
-    
+
     return matchFunction;
   },
   

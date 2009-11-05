@@ -272,14 +272,12 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
 
   var libraryNode = null, audioNode = null;
   if (deviceNode) {
-    Cu.reportError("found device node for " + aDevice);
     while (parentNode.lastChild) {
       libraryNode = parentNode.lastChild;
       let props = libraryNode.properties.split(/\s/);
       props = props.filter(function(val) val in CAPS_MAP);
       // there should only be one anyway...
       // assert(props.length < 2);
-      Cu.reportError(props);
       if (!hasCaps(props[0])) {
         parentNode.removeChild(libraryNode);
         continue;
@@ -290,11 +288,9 @@ function sbDeviceServicePane_createLibraryNodeForDevice(aDevice, aLibrary) {
       libraryNode.hidden = (aLibrary.getProperty(SBProperties.hidden) == "1");
       var firstChild = deviceNode.firstChild;
       if (!firstChild) {
-        Cu.reportError('appending first child');
         deviceNode.appendChild(libraryNode);
       }
       else {
-        Cu.reportError('inserting');
         deviceNode.insertBefore(libraryNode, firstChild);
       }
     }

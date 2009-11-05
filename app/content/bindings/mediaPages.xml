@@ -146,8 +146,9 @@
             this._addToMenu(mediaPagesMenu);
             return;
           }
-          
-          var ml = gBrowser.currentMediaPage.mediaListView.mediaList;
+
+          var view = gBrowser.currentMediaPage.mediaListView;
+          var ml = view.mediaList;
 
           // these properties are used to customize the menu based on the space you
           // want to allocate for it
@@ -170,30 +171,35 @@
             this._addToMenu(mediaPagesMenu);
           }
 
-          var pages = mgr.getAvailablePages(ml);
+          // the media page manager can use a constraint if we have one
+          var constraint = null;
+          if (view instanceof Components.interfaces.sbIFilterableMediaListView) {
+            constraint = view.filterConstraint;
+          }
+          var pages = mgr.getAvailablePages(ml, constraint);
           
           // Trim the media list GUID from the querystring so that we can
           // match it to the list of pages.  The guid is added by the
           // tab browser so that each page instance shows up in the history
           // service. This is unfortunate.   
           var currentPageURL = gBrowser.currentURI
-                                      .spec.replace(/[\?&]libraryGUID.*$/, "");
+                                       .spec.replace(/[\?&]libraryGUID.*$/, "");
 
           
           // Attach a menuitem for each compatible layout
           while (pages.hasMoreElements()) {
             var page = pages.getNext()
             page.QueryInterface(Components.interfaces.sbIMediaPageInfo);
-            
+
             var item = this._makeMenuItem(page);
-            
+
             if (page.contentUrl == currentPageURL) {
               item.setAttribute("checked", "true");
             }
             else {
               item.setAttribute("checked", "false");
             }
-         
+
             if ( hideTitle ) { 
               // we hide the title for the popup menu, so add it directly 
               this._addToMenu(item);
@@ -201,7 +207,7 @@
               mediaPagesPopup.appendChild(item);
             }
           }
-          
+
           // If the current window has a browser/servicepane, then add a link
           // to get more media pages.
           // NOTE: This is brittle. Please change this once we have a proper API.
