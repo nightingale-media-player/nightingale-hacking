@@ -524,7 +524,7 @@ sbLocalDatabaseSmartMediaList::Init(sbIMediaItem *aItem)
   
   rv = observerService->AddObserver(this, LIBRARY_MANAGER_BEFORE_SHUTDOWN, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Register self for "before delete" so we can delete our storage list
   nsCOMPtr<sbIMediaList> libraryList = do_QueryInterface(library, &rv);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -1854,9 +1854,19 @@ sbLocalDatabaseSmartMediaList::AddCriterionForCondition(sbISQLSelectBuilder* aBu
     // MakeSortable may fail if the value fails to validate, but since a smart
     // playlist may look for substrings instead of full valid values, it is not
     // fatal to fail to make sortable, when that fails we just use the value
-    // that we were given as is.
+    // that we were given as is and escape it properly.
     if (NS_FAILED(rv)) {
-      value = leftValue;
+      nsCOMPtr<nsINetUtil> netUtil =
+        do_CreateInstance("@mozilla.org/network/util;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCAutoString spec;
+      rv = netUtil->EscapeString(NS_ConvertUTF16toUTF8(leftValue),
+                                 nsINetUtil::ESCAPE_URL_PATH,
+                                 spec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      value = NS_ConvertUTF8toUTF16(spec);
     }
   }
 
@@ -2327,36 +2337,36 @@ sbLocalDatabaseSmartMediaList::AddSelectColumnAndJoin(sbISQLSelectBuilder* aBuil
     // media_item_id match with left table media_item_id
     nsCOMPtr<sbISQLBuilderCriterion> criterion_media_item;
     rv = aBuilder->CreateMatchCriterionTable(aBaseTableAlias,
-                                            kMediaItemId,
-                                            sbISQLBuilder::MATCH_EQUALS,
-                                            kSelectAlias,
-                                            kMediaItemId,
-                                            getter_AddRefs(criterion_media_item)); 
+                                             kMediaItemId,
+                                             sbISQLBuilder::MATCH_EQUALS,
+                                             kSelectAlias,
+                                             kMediaItemId,
+                                             getter_AddRefs(criterion_media_item)); 
     NS_ENSURE_SUCCESS(rv, rv);
 
  
     // select.property_id match with select property db id
     nsCOMPtr<sbISQLBuilderCriterion> criterion_property_id;
     rv = aBuilder->CreateMatchCriterionLong(kSelectAlias,
-                                           kPropertyId,
-                                           sbISQLBuilder::MATCH_EQUALS,
-                                           propertyDBID,
-                                           getter_AddRefs(criterion_property_id));
+                                            kPropertyId,
+                                            sbISQLBuilder::MATCH_EQUALS,
+                                            propertyDBID,
+                                            getter_AddRefs(criterion_property_id));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // combine the two conditions with AND
     nsCOMPtr<sbISQLBuilderCriterion> join_criterion;
     rv = aBuilder->CreateAndCriterion(criterion_media_item, 
-                                     criterion_property_id, 
-                                     getter_AddRefs(join_criterion));
+                                      criterion_property_id, 
+                                      getter_AddRefs(join_criterion));
     NS_ENSURE_SUCCESS(rv, rv);
 
     // create a left outer join with these conditions, so we get null values
     // for items that do not have the property we're looking for.
     rv = aBuilder->AddJoinWithCriterion(sbISQLBuilder::JOIN_LEFT_OUTER,
-                                       kResourceProperties,
-                                       kSelectAlias,
-                                       join_criterion);
+                                        kResourceProperties,
+                                        kSelectAlias,
+                                        join_criterion);
     NS_ENSURE_SUCCESS(rv, rv);
 
     if (aAddOrderBy) {

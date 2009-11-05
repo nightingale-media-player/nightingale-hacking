@@ -122,7 +122,7 @@ insert into media_list_types (type, factory_contractid) values ('simple', '@song
 /*  sbLocalDatabaseMigration._latestSchemaVersion and                         */
 /*  testMigration.latestSchemaVersion to match this value                     */
 /**************************************************************************** */
-insert into library_metadata (name, value) values ('version', '22');
+insert into library_metadata (name, value) values ('version', '23');
 
 /**************************************************************************** */
 /*  XXXkreeger: !! WARNING !! When changing this schema, the |ANALYZE| data   */

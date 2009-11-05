@@ -96,7 +96,15 @@ SmartMediaListsUpdater.prototype = {
                 .getService(Ci.nsIObserverService);
 
     if (topic == "songbird-library-manager-ready") {
+      // To register on final-ui-startup directly will break the library
+      // sort data rebuilding during library migration for unknown reason.
+      // Workaround by registering on songbird-library-manager-ready first.
       obs.removeObserver(this, "songbird-library-manager-ready");
+      obs.addObserver(this, "final-ui-startup", false); 
+    } else if (topic == "final-ui-startup") {
+      // Smart Playlist Update should happen after rebuild of sortable value.
+      // So wait for final-ui-startup to do the real update.
+      obs.removeObserver(this, "final-ui-startup");
       obs.addObserver(this, "songbird-library-manager-before-shutdown", false);
       this.initialize();
     } else if (topic == "songbird-library-manager-before-shutdown") {
@@ -410,7 +418,7 @@ SmartMediaListsUpdater.prototype = {
     var now = new Date().getTime();
     if (!this._timerInitTime) this._timerInitTime = now;
     this._timer.cancel();
-    if (this.batchCount == 0 && 
+    if (this._batchCount == 0 && 
         now - this._timerInitTime > this._maxInitialDelay) {
       this.notify(this._timer);
     } else {

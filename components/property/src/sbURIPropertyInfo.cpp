@@ -27,6 +27,7 @@
 #include "sbURIPropertyInfo.h"
 
 #include <nsAutoPtr.h>
+#include <nsIFileURL.h>
 
 #include <nsServiceManagerUtils.h>
 #include <nsNetUtil.h>
@@ -215,40 +216,57 @@ NS_IMETHODIMP sbURIPropertyInfo::Format(const nsAString & aValue, nsAString & _r
     rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
     NS_ENSURE_SUCCESS(rv, rv);
 
-    sbSimpleAutoLock lock(mURISchemeConstraintLock);
-    if(!mURISchemeConstraint.IsEmpty()) {
-      NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
-      PRBool valid = PR_FALSE;
+    {
+      // Unlock when we're done with mURISchemeConstraint.
+      sbSimpleAutoLock lock(mURISchemeConstraintLock);
+      if (!mURISchemeConstraint.IsEmpty()) {
+        NS_ConvertUTF16toUTF8 narrow(mURISchemeConstraint);
+        PRBool valid = PR_FALSE;
 
-      rv = uri->SchemeIs(narrow.get(), &valid);
+        rv = uri->SchemeIs(narrow.get(), &valid);
+        NS_ENSURE_SUCCESS(rv, rv);
+
+        if (!valid) {
+          return NS_ERROR_FAILURE;
+        }
+      }
+    }
+
+    nsCOMPtr<nsIFileURL> url = do_QueryInterface(uri, &rv);
+    if (NS_SUCCEEDED(rv)) {
+      // Get the file path from file url
+      nsCOMPtr<nsIFile> file;
+      rv = url->GetFile(getter_AddRefs(file));
       NS_ENSURE_SUCCESS(rv, rv);
 
-      if (!valid) {
-        return NS_ERROR_FAILURE;
-      } 
-    } 
-    nsCAutoString spec;
-    rv = uri->GetSpec(escapedSpec);
-    NS_ENSURE_SUCCESS(rv, rv);
+      nsString path;
+      rv = file->GetPath(path);
+      NS_ENSURE_SUCCESS(rv, rv);
+      // path won't be escaped.
+      _retval = path;
+      return NS_OK;
+    } else {
+      rv = uri->GetSpec(escapedSpec);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
   } else {
     CopyUTF16toUTF8(aValue, escapedSpec);
   }
-  
+
   nsCOMPtr<nsINetUtil> netUtil =
     do_GetService("@mozilla.org/network/util;1", &rv);
   NS_ENSURE_SUCCESS(rv, rv);
-  
-  // don't unescape any ASCII; this covers all of the reserved characters
-  // (RFC 3987 section 3.2)
+
+  // Unescape the spec for display purposes.
   nsCString unescapedSpec;
   rv = netUtil->UnescapeString(escapedSpec,
-                               nsINetUtil::ESCAPE_URL_ONLY_NONASCII,
+                               nsINetUtil::ESCAPE_ALL,
                                unescapedSpec);
   NS_ENSURE_SUCCESS(rv, rv);
-  
+
   // Encode bidirectional formatting characters.
   // (RFC 3987 sections 3.2 and 4.1 paragraph 6)
-  
+
   PRInt32 offset = 0;
   char buffer[] = {'%','E','2','%','8','0','%','x','x'}; //escaped string
   while ((offset = unescapedSpec.Find(NS_LITERAL_CSTRING("\xE2\x80"), offset)) != -1) {
@@ -300,9 +318,39 @@ NS_IMETHODIMP sbURIPropertyInfo::MakeSortable(const nsAString & aValue, nsAStrin
     rv = NS_NewURI(getter_AddRefs(uri), aValue, nsnull, nsnull, mIOService);
     NS_ENSURE_SUCCESS(rv, rv);
 
+    // Get file path
     nsCAutoString spec;
     rv = uri->GetSpec(spec);
     NS_ENSURE_SUCCESS(rv, rv);
+
+    nsCOMPtr<nsILocalFile> localFile =
+        do_CreateInstance("@mozilla.org/file/local;1", &rv);
+    NS_ENSURE_SUCCESS(rv, rv);
+    rv = localFile->InitWithPath(NS_ConvertUTF8toUTF16(spec));
+    if (NS_SUCCEEDED(rv)) {
+      // MakeSortable is called by smart playlist builder. The return value
+      // will be compared with the top level property contentURL.
+      // So update file path to file url so it can be matched.
+      nsCOMPtr<nsIFile> file = do_QueryInterface(localFile, &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      nsCOMPtr<nsIURI> fileUri;
+      rv = mIOService->NewFileURI(file, getter_AddRefs(fileUri));
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      nsCAutoString escapedSpec;
+      rv = fileUri->GetSpec(escapedSpec);
+      NS_ENSURE_SUCCESS(rv, rv);
+
+      // Need to unescape the value after URI tweak.
+      nsCOMPtr<nsINetUtil> netUtil =
+        do_GetService("@mozilla.org/network/util;1", &rv);
+      NS_ENSURE_SUCCESS(rv, rv);
+      rv = netUtil->UnescapeString(escapedSpec,
+                                   nsINetUtil::ESCAPE_ALL,
+                                   spec);
+      NS_ENSURE_SUCCESS(rv, rv);
+    }
+
     NS_ConvertUTF8toUTF16 wide(spec);
     _retval = wide;
   } else {
