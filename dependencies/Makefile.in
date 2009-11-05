@@ -187,7 +187,6 @@ ifdef MEDIA_CORE_GST #{
                             gstqtdemux \
                             gstreplaygain \
                             gstrtp \
-                            gstrtpmanager \
                             gstrtsp \
                             gstsmpte \
                             gstspectrum \
@@ -364,8 +363,9 @@ ifdef MEDIA_CORE_GST #{
        $(addprefix $(DEPS_DIR)/gst-plugins-ugly/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
        $(addsuffix .so, $(GST_PLUGINS_UGLY_NAMES)))
 
-GST_PLUGINS_BAD = $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
-                    $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
+      GST_PLUGINS_BAD = \
+	   $(addprefix $(DEPS_DIR)/gst-plugins-bad/$(SB_CONFIGURATION)/lib/gstreamer-0.10/lib, \
+       $(addsuffix .so, $(GST_PLUGINS_BAD_NAMES)))
 
       SONGBIRD_LIB += $(GLIB) \
                       $(LIBICONV) \
