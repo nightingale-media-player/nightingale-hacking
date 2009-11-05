@@ -449,11 +449,15 @@ function assertArraysEqual(a1, a2) {
 
 // assert the equality of two unordered sets, represnted as JS arrays
 function assertSetsEqual(s1, s2) {
-  assertEqual(s1.length, s2.length, "sets are different lengths");
-  for (var i=0; i<s1.length; i++) {
+  for (var i = 0; i < s1.length; i++) {
     assertTrue(s2.indexOf(s1[i]) >= 0,
                "set 1 member " + s1[i] + " not in set 2");
   }
+  for (var i = 0; i < s2.length; i++) {
+    assertTrue(s1.indexOf(s2[i]) >= 0,
+               "set 2 member " + s2[i] + " not in set 1");
+  }
+  assertEqual(s1.length, s2.length, "sets are different lengths");
 }
 
 // assert the equality of the contents of two files
