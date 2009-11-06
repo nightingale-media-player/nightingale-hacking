@@ -72,6 +72,7 @@
 #include <sbIGStreamerService.h>
 #include <sbIMediaItem.h>
 #include <sbStandardProperties.h>
+#include <sbVideoBox.h>
 
 #include "nsNetUtil.h"
 
@@ -1378,6 +1379,20 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
   }
 
   mGaplessDisabled = PR_TRUE;
+
+  // Send VIDEO_SIZE_CHANGED event
+  nsRefPtr<sbVideoBox> videoBox;
+  NS_NEWXPCOM(videoBox, sbVideoBox);
+  NS_ENSURE_TRUE(videoBox, /*void*/);
+
+  nsresult rv = videoBox->Init(videoWidth, 
+                               videoHeight, 
+                               pixelAspectRatioN, 
+                               pixelAspectRatioD);
+  NS_ENSURE_SUCCESS(rv, /*void*/);
+
+  DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED, 
+                         sbNewVariant(videoBox).get());
 }
 
 void

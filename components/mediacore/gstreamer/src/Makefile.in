@@ -33,6 +33,7 @@ CPP_SRCS += sbBaseMediacore.cpp \
             sbMediacoreEvent.cpp \
             sbMediacoreEqualizerBand.cpp \
             sbMediacoreError.cpp \
+            sbVideoBox.cpp \
             $(NULL)
 
 ifeq (windows,$(SB_PLATFORM))
