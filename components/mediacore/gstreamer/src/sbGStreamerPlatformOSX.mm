@@ -134,8 +134,14 @@ OSXPlatformInterface::SetVideoBox (nsIBoxObject *aBoxObject, nsIWidget *aWidget)
   nsresult rv = BasePlatformInterface::SetVideoBox (aBoxObject, aWidget);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  mParentView = (void *)(aWidget->GetNativeData(NS_NATIVE_WIDGET));
-  NS_ENSURE_TRUE(mParentView != NULL, NS_ERROR_FAILURE);
+  if (aWidget) {
+    mParentView = (void *)(aWidget->GetNativeData(NS_NATIVE_WIDGET));
+    NS_ENSURE_TRUE(mParentView != NULL, NS_ERROR_FAILURE);
+  }
+  else {
+    RemoveView();
+    mParentView = NULL;
+  }
 
   return NS_OK;
 }
@@ -216,7 +222,7 @@ void OSXPlatformInterface::RemoveView()
     mVideoView = NULL;
 
     // Remove the old view, if there was one.
-    [view performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:NO];
+    [view performSelectorOnMainThread:@selector(removeFromSuperview) withObject:nil waitUntilDone:YES];
 
     [pool release];
   }
