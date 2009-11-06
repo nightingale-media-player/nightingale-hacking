@@ -107,9 +107,15 @@ var videoWindowController = {
     
     this._mediacoreManager.addListener(this);
     
-    this._ssp = Cc["@songbirdnest.com/Songbird/ScreenSaverSuppressor;1"]
-                  .getService(Ci.sbIScreenSaverSuppressor);
-    this._ssp.suppress(true);
+    try {
+      this._ssp = Cc["@songbirdnest.com/Songbird/ScreenSaverSuppressor;1"]
+                    .getService(Ci.sbIScreenSaverSuppressor);
+    } catch(e) {
+      // No SSP on this platform.
+    }
+
+    if (this._ssp)
+      this._ssp.suppress(true);
     
     this._actualSizeDataRemote = SB_NewDataRemote(this.ACTUAL_SIZE_DR_KEY);
     this._actualSizeDataRemote.bindObserver(this);
@@ -125,6 +131,7 @@ var videoWindowController = {
     window.addEventListener("resize", this._resizeListener, false);
     
     this._contextMenuListener = function(aEvent) {
+    //  alert("Context menu requested");
       return self._onContextMenu(aEvent);
     };
     
@@ -235,7 +242,8 @@ var videoWindowController = {
   },
   
   _dismissSelf: function vwc__dismissSelf() {
-    this._ssp.suppress(false);
+    if (this._ssp) 
+      this._ssp.suppress(false);
     setTimeout(function() { window.close(); }, 0);
   },
 };
