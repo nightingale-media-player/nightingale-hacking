@@ -595,8 +595,6 @@ treechildren::-moz-tree-twisty(open) {
   background-repeat:repeat-x;
   background-position:center top !important;
 
-  list-style-image: url("chrome://songbird/skin/nav-bar/button-search.png");
-
   -moz-border-radius:0px !important;
 
   border-left:none !important;
