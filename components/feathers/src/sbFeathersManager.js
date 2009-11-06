@@ -781,7 +781,7 @@ FeathersManager.prototype = {
   registerLayout: function registerLayout(layoutDesc) {
     LayoutDescription.verify(layoutDesc);
 
-    if (this._layouts[layoutDesc.url] == null) {
+    if (!(layoutDesc.url in this._layouts)) {
       this._layoutCount++;
     }
     this._layouts[layoutDesc.url] = layoutDesc;
@@ -794,7 +794,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */
   unregisterLayout: function unregisterLayout(layoutDesc) {
-    if (this._layouts[layoutDesc.url]) {
+    if (layoutDesc.url in this._layouts) {
       delete this._layouts[layoutDesc.url];
       this._layoutCount--;
       
@@ -807,7 +807,7 @@ FeathersManager.prototype = {
    * \sa sbIFeathersManager
    */    
   getLayoutDescription: function getLayoutDescription(url) {
-    return this._layouts[url];
+    return (url in this._layouts ? this._layouts[url] : null);
   }, 
 
   
