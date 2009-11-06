@@ -1,0 +1,5 @@
+.info-panel-bar-scrollbox {
+  background-image:url('chrome://songbird/skin/base-elements/bg-generic-bar-dark.png');
+  background-repeat:repeat-x;
+  background-position:center top;
+}

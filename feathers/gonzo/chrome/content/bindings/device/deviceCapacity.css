@@ -62,7 +62,8 @@ Imported by bindings.css or directly into feathers.
 }
 
 #device_capacity {
-  margin:4px 5px 4px 5px;
+  padding: 0px;
+  margin: 0px;
 }
 
 .device-capacity-bar-box {

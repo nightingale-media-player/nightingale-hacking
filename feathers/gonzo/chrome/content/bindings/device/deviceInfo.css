@@ -51,7 +51,13 @@ Imported by bindings.css or directly into feathers.
 }
 
 #info_box {
-  padding-top: 15px;
+  padding: 25px 0px 10px 0px;
+  margin: 0px;
+}
+
+#overall_device_info_box {
+  padding: 0px 25px 17px 25px;
+  margin: 0px;
 }
 
 #overall_device_info_box .device-name-label,
