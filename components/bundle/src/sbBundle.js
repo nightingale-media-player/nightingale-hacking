@@ -215,7 +215,7 @@ Bundle.prototype = {
   },
   
   getInstallaListenerIndex: function(aListener) {
-    for (var i=0;i<this._installlisteners.length;i++) if (this._datalisteners[i] == aListener) return i;
+    for (var i = 0; i < this._installlisteners.length; i++) if (this._datalisteners[i] == aListener) return i;
     return -1;
   },
   
@@ -226,20 +226,21 @@ Bundle.prototype = {
   onLoad: function() {
     this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_SUCCESS;
     this.getExtensionList();
-    for (var i=0;i<this._datalisteners.length;i++) this._datalisteners[i].onDownloadComplete(this);
+    for (var i = 0; i < this._datalisteners.length; i++) this._datalisteners[i].onDownloadComplete(this);
   },
 
   onError: function() {
     this._status = SONGBIRD_BUNDLE_IID.BUNDLE_DATA_STATUS_ERROR;
-    for (var i=0;i<this._datalisteners.length;i++) this._datalisteners[i].onError(this);
+    for (var i = 0; i < this._datalisteners.length; i++) this._datalisteners[i].onError(this);
   },
   
   getDataNodes: function(bundledocument) {
     if (!bundledocument) return null;
     var datablocknodes = bundledocument.childNodes;
     
-    for (var i=0;i<datablocknodes.length;i++) {
-      if (datablocknodes[i].tagName == "SongbirdInstallBundle") {
+    for (var i = 0; i < datablocknodes.length; i++) {
+      if (datablocknodes[i].nodeType == Ci.nsIDOMNode.ELEMENT_NODE &&
+          datablocknodes[i].tagName == "SongbirdInstallBundle") {
         this._bundleversion = datablocknodes[i].getAttribute("version")
 /*
         // Sample code to generate some elements for testing.
@@ -280,8 +281,9 @@ Bundle.prototype = {
       if (bundledocument) {
         var nodes = this.getDataNodes(bundledocument);
         if (nodes) {
-          for (var i=0;i<nodes.length;i++) {
-            if (nodes[i].tagName == "XPI") {
+          for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].nodeType == Ci.nsIDOMNode.ELEMENT_NODE &&
+                nodes[i].tagName == "XPI") {
               var inst = nodes[i].getAttribute("default");
               this._extlist.push(Array(nodes[i], (inst=="true" || inst=="1")));
             }
