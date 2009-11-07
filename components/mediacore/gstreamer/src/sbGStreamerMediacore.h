@@ -44,6 +44,7 @@
 #include <sbIMediacoreVotingParticipant.h>
 #include <sbIMediacoreEventTarget.h>
 #include <sbIMediacoreError.h>
+#include <sbIVideoBox.h>
 
 #include <sbIPropertyArray.h>
 
@@ -218,6 +219,10 @@ protected:
   // the video box
   nsCOMPtr<nsIDOMXULElement> mVideoWindow;
   nsCOMPtr<nsIDOMWindow> mDOMWindow;
+
+  // The size of the video we're actually playing. If NULL, we're not currently
+  // playing video (or we don't yet know the size).
+  nsCOMPtr<sbIVideoBox> mVideoSize;
 
   // Various things read from preferences
   PRBool mVideoDisabled; // Whether video is disabled via prefs

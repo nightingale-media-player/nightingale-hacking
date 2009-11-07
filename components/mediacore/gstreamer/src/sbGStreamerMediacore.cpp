@@ -679,6 +679,7 @@ sbGStreamerMediacore::DestroyPipeline()
   mPlayingGaplessly = PR_FALSE;
   mAbortingPlayback = PR_FALSE;
   mHasReachedPlaying = PR_FALSE;
+  mVideoSize = NULL;
 
   return NS_OK;
 }
@@ -1313,13 +1314,32 @@ void sbGStreamerMediacore::HandleMessage (GstMessage *message)
 void sbGStreamerMediacore::RequestVideoWindow()
 {
   nsresult rv;
+  PRUint32 videoWidth = 0;
+  PRUint32 videoHeight = 0;
 
   nsCOMPtr<sbIMediacoreManager> mediacoreManager =
       do_GetService(SB_MEDIACOREMANAGER_CONTRACTID, &rv);
   NS_ENSURE_SUCCESS(rv, /* void */);
 
+  if (mVideoSize) {
+    rv = mVideoSize->GetWidth(&videoWidth);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    rv = mVideoSize->GetHeight(&videoHeight);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    PRUint32 parNum, parDenom;
+    rv = mVideoSize->GetParNumerator(&parNum);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+    rv = mVideoSize->GetParDenominator(&parDenom);
+    NS_ENSURE_SUCCESS(rv, /* void */);
+
+    // We adjust width rather than height as adjusting height tends to make
+    // interlacing artifacts worse.
+    videoWidth = videoWidth * parNum / parDenom;
+  }
+
   nsCOMPtr<sbIMediacoreVideoWindow> videoWindow;
-  rv = mediacoreManager->GetPrimaryVideoWindow(PR_TRUE, 0, 0,
+  rv = mediacoreManager->GetPrimaryVideoWindow(PR_TRUE, videoWidth, videoHeight,
                                                getter_AddRefs(videoWindow));
   NS_ENSURE_SUCCESS(rv, /* void */);
 
@@ -1393,6 +1413,9 @@ sbGStreamerMediacore::OnVideoCapsSet(GstCaps *caps)
 
   DispatchMediacoreEvent(sbIMediacoreEvent::VIDEO_SIZE_CHANGED, 
                          sbNewVariant(videoBox).get());
+
+  mVideoSize = do_QueryInterface(videoBox, &rv);
+  NS_ENSURE_SUCCESS(rv, /*void*/);
 }
 
 void
