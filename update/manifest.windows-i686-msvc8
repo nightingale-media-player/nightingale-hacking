@@ -164,6 +164,7 @@
 ./components/sbMigrate12To13pre.js
 ./components/sbMigrate12pre1To12pre1b.js
 ./components/sbMigrate13to14.wmaprotected.js
+./components/sbMigrate14to15pre.smartplaylist.js
 ./components/sbMigrate14to15pre0.contentType.js
 ./components/sbMockCDDevice.dll
 ./components/sbMockCDDevice.xpt
