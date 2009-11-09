@@ -379,7 +379,7 @@ var manageMediaPrefsPane = {
       // Need to check if the user chose a usable folder for the managed folder.
       var managedFolder = document.getElementById("manage_media_library_file");
       if (!managedFolder || !managedFolder.file) {
-        showErrorNotification(SBString("prefs.media_management.error.no_path"));
+        showErrorNotification(SBString("prefs.media_management.error.no_path2"));
         return false;
       }
       var dir = managedFolder.file;

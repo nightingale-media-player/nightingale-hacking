@@ -905,8 +905,8 @@ sbMediaManagementService::ReportError()
   TRACE(("%s", __FUNCTION__));
 
   sbStringBundle bundle;
-  nsString dialogTitle = bundle.Get("mediamanager.import_manage_error.title");
-  nsString dialogText = bundle.Get("mediamanager.import_manage_error.text");
+  nsString dialogTitle = bundle.Get("mediamanager.import_manage_error.title2");
+  nsString dialogText = bundle.Get("mediamanager.import_manage_error.text2");
 
   nsresult rv;
   nsCOMPtr<sbIPrompter> prompter =

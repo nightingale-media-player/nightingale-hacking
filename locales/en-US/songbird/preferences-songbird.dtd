@@ -30,4 +30,4 @@ based on the settings below.">
 <!ENTITY prefWindow.manageMedia.preview.more.label    "More...">
 <!ENTITY prefWindow.manageMedia.preview.reveal.label  "Show Source File...">
 <!ENTITY prefWindow.manageMedia.preview.item.direction "normal">
-<!ENTITY prefWindow.manageMedia.preview.description.label "These changes will occur when you commit the Media Management preferences:">
+<!ENTITY prefWindow.manageMedia.preview.description.label2 "These changes will occur when you commit the File Management preferences:">

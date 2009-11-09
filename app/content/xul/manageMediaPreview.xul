@@ -66,7 +66,7 @@
 
   <notificationbox id="preview_notificationbox" flex="1">
     <label id="preview_description"
-           value="&prefWindow.manageMedia.preview.description.label;"/>
+           value="&prefWindow.manageMedia.preview.description.label2;"/>
     <richlistbox id="preview_listbox" flex="1" seltype="single"/>
     <richlistitem id="preview_listitem_template" collapsed="true"
                   style="display:block;" class="preview_listitem"
