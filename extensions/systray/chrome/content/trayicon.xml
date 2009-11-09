@@ -29,7 +29,7 @@
           }
         }
         
-        if (this.alwaysshow)
+        if (this.alwaysShow)
           this.showIcon();
          
         // add event handlers for window events
@@ -50,7 +50,7 @@
           false);
         window.removeEventListener("unload", this._handleUnload, false);
 
-        if (this.alwaysshow)
+        if (this.alwaysShow)
           this.hideIcon();
         
         this._stopMenuItem.unbind();
@@ -121,7 +121,7 @@
       <property
         name="image"
         onset="this.setAttribute('image', val);
-               if (this.alwaysshow || this._isHidden) this.showIcon();
+               if (this.alwaysShow || this._isHidden) this.showIcon();
                return val;"
         onget="return this.getAttribute('image');"
       />
