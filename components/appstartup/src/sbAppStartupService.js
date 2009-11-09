@@ -380,7 +380,7 @@ sbAppStartupService.prototype =
    *        after first-run add-ons have been installed.
    */
   _initRestarter: function () {
-    this._dataRemoteAppRestart = SB_NewDataRemote( "restart.restartnow", null );
+    this._dataRemoteAppRestart = SBNewDataRemote( "restart.restartnow", null );
     this._dataRemoteAppRestart.boolValue = false;
     
     this._dataRemoteAppRestartHandler = {
@@ -533,14 +533,14 @@ sbAppStartupService.prototype =
 
     // saw some strange issues with using the shortcut get/set versions of our
     //   dataremote global methods so actually creating the dataremotes.
-    var reportedCrash = SB_NewDataRemote( "crashlog.reported", null );
-    var dirtyExit = SB_NewDataRemote( "crashlog.dirtyExit", null );
+    var reportedCrash = SBNewDataRemote( "crashlog.reported", null );
+    var dirtyExit = SBNewDataRemote( "crashlog.dirtyExit", null );
     if ( dirtyExit.boolValue ) {
       // we are reporting the crash, save that knowledge
       reportedCrash.boolValue = true;
 
-      var crashNum = SB_NewDataRemote( "crashlog.num", null );
-      var uptime = SB_NewDataRemote( "crashlog.uptime", null );
+      var crashNum = SBNewDataRemote( "crashlog.num", null );
+      var uptime = SBNewDataRemote( "crashlog.uptime", null );
 
       // send the uptime for this past crash
       // metrics key = crashlog.app.# = minute.
@@ -588,11 +588,11 @@ sbAppStartupService.prototype =
 
     // we shut down cleanly, let AppStart know that -- for some reason
     // SBDataSetBoolValue didn't work here, create the dataremote entirely.
-    var dirtyExit = SB_NewDataRemote( "crashlog.dirtyExit", null );
+    var dirtyExit = SBNewDataRemote( "crashlog.dirtyExit", null );
     dirtyExit.boolValue = false;
 
     // increment uptime since last crash
-    var uptime = SB_NewDataRemote( "crashlog.uptime", null );
+    var uptime = SBNewDataRemote( "crashlog.uptime", null );
     uptime.intValue = uptime.intValue + minutes;
   },
 

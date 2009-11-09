@@ -397,11 +397,11 @@ sbDefaultGlobalHotkeyService.prototype =
     }
     
     this._dataRemoteHotkeysChanged = 
-      SB_NewDataRemote("globalhotkeys.changed", null);
+      SBNewDataRemote("globalhotkeys.changed", null);
     this._dataRemoteHotkeysChanged.bindObserver(this._dataRemoteObserver, true);
 
     this._dataRemoteHotkeysEnabled = 
-      SB_NewDataRemote("globalhotkeys.enabled", null);
+      SBNewDataRemote("globalhotkeys.enabled", null);
     this._dataRemoteHotkeysEnabled.bindObserver(this._dataRemoteObserver, true);
   },
   

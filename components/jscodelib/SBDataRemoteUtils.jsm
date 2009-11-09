@@ -39,7 +39,7 @@
 
 EXPORTED_SYMBOLS =
 [
-  "SB_NewDataRemote",
+  "SBNewDataRemote",
   "SBDataGetStringValue",
   "SBDataGetIntValue",
   "SBDataGetBoolValue",
@@ -110,6 +110,8 @@ if (typeof(Cu) == "undefined")
  * \param aRoot - OPTIONAL - If present this defines a prefix to the key
  *
  * \return - A data remote object.
+ * \internal
+ * \note This function is not exported.
  */
 
 function SB_NewDataRemote( aKey, aRoot )
@@ -118,6 +120,18 @@ function SB_NewDataRemote( aKey, aRoot )
                      .createInstance(Ci.sbIDataRemote);
   dataRemote.init( aKey, aRoot );
   return dataRemote;
+}
+
+/**
+ * \brief Create a new data remote object
+ * \param aKey - The string identifier for the data to watch
+ * \param aRoot - OPTIONAL - If present this defines a prefix to the key
+ *
+ * \return - A data remote object.
+ */
+function SBNewDataRemote( aKey, aRoot )
+{
+  return SB_NewDataRemote( aKey, aRoot );
 }
 
 /**
