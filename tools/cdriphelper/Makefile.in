@@ -44,8 +44,9 @@ CPP_SRCS = winmain.cpp \
 ## CPP_EXTRA_DEFS += -DRH_REGKEY_ENGAGE_SAFETY=1
 #
 
-# we force include mozilla-config.h; otherwise this is not necessary
+# we force include mozilla-config.h/xpcom-config.h; otherwise this is not necessary
 CPP_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+               $(MOZSDK_INCLUDE_DIR)/xpcom \
                $(srcdir)
                $(NULL)
 

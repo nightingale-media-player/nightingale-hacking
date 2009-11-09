@@ -540,7 +540,9 @@ endif
 #                    compiler
 #
 
-C_DEFAULT_INCLUDES = $(NULL)
+C_DEFAULT_INCLUDES = $(MOZSDK_INCLUDE_DIR) \
+                     $(MOZSDK_INCLUDE_DIR)/xpcom \
+                     $(NULL)
 
 ifdef C_FLAGS
    OUR_C_FLAGS = $(C_FLAGS)

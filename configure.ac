@@ -687,7 +687,7 @@ case "$SB_PLATFORM" in
     fi
 
     # We always want to include "mozilla-config.h"
-    MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -FI \"mozilla-config.h\" -FI \"xpcom/xpcom-config.h\""
+    MSVC_COMPILER_FLAGS="$MSVC_COMPILER_FLAGS -FI \"mozilla-config.h\" -FI \"xpcom-config.h\""
 
     MSVC_LINKER_FLAGS="-NOLOGO -INCREMENTAL:NO -SUBSYSTEM:WINDOWS -MACHINE:X86 -DEBUG"
     if test "$enable_debug" != "yes"; then
