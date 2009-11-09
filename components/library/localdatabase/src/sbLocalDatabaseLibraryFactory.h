@@ -27,6 +27,7 @@
 #ifndef __SBLOCALDATABASELIBRARYFACTORY_H__
 #define __SBLOCALDATABASELIBRARYFACTORY_H__
 
+#include <sbIDatabaseQuery.h>
 #include <sbILibraryFactory.h>
 
 #include <nsCOMPtr.h>
@@ -69,6 +70,11 @@ public:
 
 private:
   nsresult InitalizeLibrary(nsIFile* aDatabaseFile, const nsAString &aResourceGUID);
+
+  nsresult UpdateLibrary(nsIFile* aDatabaseFile);
+
+  nsresult SetQueryDatabaseFile(sbIDatabaseQuery* aQuery,
+                                nsIFile*          aDatabaseFile);
 
 private:
   nsInterfaceHashtable<nsHashableHashKey, nsIWeakReference> mCreatedLibraries;

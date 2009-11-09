@@ -40,7 +40,6 @@
 #include <nsIUnicharInputStream.h>
 #include <nsIUUIDGenerator.h>
 #include <nsIWritablePropertyBag2.h>
-#include <sbIDatabaseQuery.h>
 #include <sbIDatabaseResult.h>
 #include <sbILibrary.h>
 #include <sbILocalDatabasePropertyCache.h>
@@ -290,9 +289,14 @@ sbLocalDatabaseLibraryFactory::CreateLibraryFromDatabase(nsIFile* aDatabase,
     mCreatedLibraries.Remove(hashable);
   }
   
-  // If the database file does not exist, create and initalize it
+  // If the database file does not exist, create and initalize it.  Otherwise,
+  // update it.
   if (!exists) {
     rv = InitalizeLibrary(aDatabase, aResourceGUID);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+  else {
+    rv = UpdateLibrary(aDatabase);
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -365,43 +369,7 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
   rv = query->SetAsyncQuery(PR_FALSE);
   NS_ENSURE_SUCCESS(rv, rv);
 
-  nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  // Figure out a GUID based on the filename. All our database files use the
-  // '.db' extension, so if someone requests another extension then that's just
-  // too bad.
-  nsCOMPtr<nsIURI> fileURI;
-  rv = NS_NewFileURI(getter_AddRefs(fileURI), aDatabaseFile, ioService);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCOMPtr<nsIURL> fileURL = do_QueryInterface(fileURI, &rv);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  nsCAutoString fileBaseName;
-  rv = fileURL->GetFileBaseName(fileBaseName);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseGUID(NS_ConvertUTF8toUTF16(fileBaseName));
-  NS_ENSURE_SUCCESS(rv, rv);
-
-#ifdef DEBUG
-  // Warn anyone if they passed in an extension other than '.db'.
-  nsCAutoString fileExtension;
-  rv = fileURL->GetFileExtension(fileExtension);
-  if (NS_SUCCEEDED(rv)) {
-    if (!fileExtension.IsEmpty() &&
-        !fileExtension.Equals("db", CaseInsensitiveCompare)) {
-      NS_WARNING("All database files are forced to use the '.db' extension.");
-    }
-  }
-#endif
-  // Set the parent directory as the location for the new database file.
-  nsCOMPtr<nsIURI> parentURI;
-  rv = NS_NewFileURI(getter_AddRefs(parentURI), parentDirectory, ioService);
-  NS_ENSURE_SUCCESS(rv, rv);
-
-  rv = query->SetDatabaseLocation(parentURI);
+  rv = SetQueryDatabaseFile(query, aDatabaseFile);
   NS_ENSURE_SUCCESS(rv, rv);
 
   nsCOMPtr<nsIURI> schemaURI;
@@ -510,6 +478,10 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
   nsString now;
   sbLocalDatabaseLibrary::GetNowString(now);
 
+  nsCOMPtr<nsIURI> fileURI;
+  rv = NS_NewFileURI(getter_AddRefs(fileURI), aDatabaseFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
   nsCString uriSpec;
   rv = fileURI->GetSpec(uriSpec);
   NS_ENSURE_SUCCESS(rv, rv);
@@ -573,6 +545,55 @@ sbLocalDatabaseLibraryFactory::InitalizeLibrary(nsIFile* aDatabaseFile,
   return NS_OK;
 }
 
+nsresult
+sbLocalDatabaseLibraryFactory::UpdateLibrary(nsIFile* aDatabaseFile)
+{
+  nsresult rv;
+  PRInt32 dbOk;
+
+  nsCOMPtr<sbIDatabaseQuery> query =
+    do_CreateInstance(SONGBIRD_DATABASEQUERY_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->SetAsyncQuery(PR_FALSE);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = SetQueryDatabaseFile(query, aDatabaseFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Update some library media item properties
+  nsCOMPtr<sbISQLUpdateBuilder> update =
+    do_CreateInstance(SB_SQLBUILDER_UPDATE_CONTRACTID, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = update->SetTableName(NS_LITERAL_STRING("library_media_item"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> fileURI;
+  rv = NS_NewFileURI(getter_AddRefs(fileURI), aDatabaseFile);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString uriSpec;
+  rv = fileURI->GetSpec(uriSpec);
+  NS_ENSURE_SUCCESS(rv, rv);
+  rv = update->AddAssignmentString(NS_LITERAL_STRING("content_url"),
+                                   NS_ConvertUTF8toUTF16(uriSpec));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsAutoString sql;
+  rv = update->ToString(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->AddQuery(sql);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = query->Execute(&dbOk);
+  NS_ENSURE_SUCCESS(rv, rv);
+  NS_ENSURE_TRUE(dbOk == 0, NS_ERROR_FAILURE);
+
+  return NS_OK;
+}
+
 already_AddRefed<nsILocalFile>
 sbLocalDatabaseLibraryFactory::GetFileForGUID(const nsAString& aGUID)
 {
@@ -601,3 +622,60 @@ sbLocalDatabaseLibraryFactory::GetGUIDFromFile(nsILocalFile* aFile,
 
   aGUID.Assign(StringHead(filename, filename.Length() - 3));
 }
+
+nsresult
+sbLocalDatabaseLibraryFactory::SetQueryDatabaseFile
+                                 (sbIDatabaseQuery* aQuery,
+                                  nsIFile*          aDatabaseFile)
+{
+  NS_ENSURE_ARG_POINTER(aQuery);
+  NS_ENSURE_ARG_POINTER(aDatabaseFile);
+
+  nsresult rv;
+
+  nsCOMPtr<nsIIOService> ioService = do_GetIOService(&rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  // Figure out a GUID based on the filename. All our database files use the
+  // '.db' extension, so if someone requests another extension then that's just
+  // too bad.
+  nsCOMPtr<nsIURI> fileURI;
+  rv = NS_NewFileURI(getter_AddRefs(fileURI), aDatabaseFile, ioService);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURL> fileURL = do_QueryInterface(fileURI, &rv);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCAutoString fileBaseName;
+  rv = fileURL->GetFileBaseName(fileBaseName);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->SetDatabaseGUID(NS_ConvertUTF8toUTF16(fileBaseName));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+#ifdef DEBUG
+  // Warn anyone if they passed in an extension other than '.db'.
+  nsCAutoString fileExtension;
+  rv = fileURL->GetFileExtension(fileExtension);
+  if (NS_SUCCEEDED(rv)) {
+    if (!fileExtension.IsEmpty() &&
+        !fileExtension.Equals("db", CaseInsensitiveCompare)) {
+      NS_WARNING("All database files are forced to use the '.db' extension.");
+    }
+  }
+#endif
+  // Set the parent directory as the location for the library database file.
+  nsCOMPtr<nsIFile> parentDirectory;
+  rv = aDatabaseFile->GetParent(getter_AddRefs(parentDirectory));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  nsCOMPtr<nsIURI> parentURI;
+  rv = NS_NewFileURI(getter_AddRefs(parentURI), parentDirectory, ioService);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = aQuery->SetDatabaseLocation(parentURI);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  return NS_OK;
+}
+

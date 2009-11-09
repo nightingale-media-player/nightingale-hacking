@@ -390,25 +390,8 @@ sbDeviceLibrary::CreateDeviceLibrary(const nsAString &aDeviceIdentifier,
   }
   else {
     //No preferred database location, fetch default location.
-    rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR,
-      getter_AddRefs(libraryFile));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    rv = libraryFile->Append(NS_LITERAL_STRING("db"));
-    NS_ENSURE_SUCCESS(rv, rv);
-
-    PRBool exists = PR_FALSE;
-    rv = libraryFile->Exists(&exists);
-    NS_ENSURE_SUCCESS(rv, rv);
-    if(!exists) {
-      rv = libraryFile->Create(nsIFile::DIRECTORY_TYPE, 0700);
-      NS_ENSURE_SUCCESS(rv, rv);
-    }
-
-    nsAutoString filename(aDeviceIdentifier);
-    filename.AppendLiteral(".db");
-
-    rv = libraryFile->Append(filename);
+    rv = GetDefaultDeviceLibraryDatabaseFile(aDeviceIdentifier,
+                                             getter_AddRefs(libraryFile));
     NS_ENSURE_SUCCESS(rv, rv);
   }
 
@@ -553,6 +536,43 @@ sbDeviceLibrary::UnregisterDeviceLibrary()
   NS_ENSURE_SUCCESS(rv, rv);
 
   return libraryManager->UnregisterLibrary(this);
+}
+
+/* static */ nsresult
+sbDeviceLibrary::GetDefaultDeviceLibraryDatabaseFile
+                   (const nsAString& aDeviceIdentifier,
+                    nsIFile**        aDBFile)
+{
+  NS_ENSURE_ARG_POINTER(aDBFile);
+
+  nsresult rv;
+
+  // Fetch default device library database file location.
+  nsCOMPtr<nsIFile> libraryFile;
+  rv = NS_GetSpecialDirectory(NS_APP_USER_PROFILE_50_DIR,
+                              getter_AddRefs(libraryFile));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  rv = libraryFile->Append(NS_LITERAL_STRING("db"));
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  PRBool exists = PR_FALSE;
+  rv = libraryFile->Exists(&exists);
+  NS_ENSURE_SUCCESS(rv, rv);
+  if(!exists) {
+    rv = libraryFile->Create(nsIFile::DIRECTORY_TYPE, 0700);
+    NS_ENSURE_SUCCESS(rv, rv);
+  }
+
+  nsAutoString filename(aDeviceIdentifier);
+  filename.AppendLiteral(".db");
+
+  rv = libraryFile->Append(filename);
+  NS_ENSURE_SUCCESS(rv, rv);
+
+  libraryFile.forget(aDBFile);
+
+  return NS_OK;
 }
 
 nsresult
