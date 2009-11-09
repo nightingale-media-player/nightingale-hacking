@@ -43,7 +43,7 @@
             src="chrome://songbird/content/scripts/preferences/hotKeys.js"/>
 
     <groupbox id="hotkeys-groupbox">
-      <description id="hotkeys-info" style="white-space: -moz-pre-wrap;">&hotkeys.info;</description>
+      <description id="hotkeys-info" style="white-space: pre-wrap;">&hotkeys.info;</description>
       <checkbox id="hotkeys.enabled" label="&hotkeys.useglobalhotkeys;" accesskey="&hotkeys.useglobalhotkeys.accesskey;" oncommand="gHotkeysPane.onEnableDisable();"/>
       <listbox id="hotkey.list" onselect="gHotkeysPane.onSelectHotkey();">
         <listhead>
