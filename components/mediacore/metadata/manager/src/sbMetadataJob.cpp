@@ -771,7 +771,7 @@ nsresult sbMetadataJob::CopyPropertiesToMediaItem(sbMetadataJobItem *aJobItem)
   rv = GetFileSize(item, &fileSize);
   if (NS_SUCCEEDED(rv)) {
     nsAutoString contentLength;
-    contentLength.AppendInt(fileSize);
+    AppendInt(contentLength, fileSize);
     rv = AppendToPropertiesIfValid(propMan,
                                    newProps,
                                    NS_LITERAL_STRING(SB_PROPERTY_CONTENTLENGTH),

@@ -146,6 +146,7 @@ sbMediacoreManager::sbMediacoreManager()
 , mBaseEventTarget(new sbBaseMediacoreEventTarget(this))
 , mFullscreen(PR_FALSE)
 , mVideoWindowMonitor(nsnull)
+, mLastVideoWindow(0)
 {
   // mBaseEventTarget being null is handled on access
   NS_WARN_IF_FALSE(mBaseEventTarget, "mBaseEventTarget is null, may be out of memory");
@@ -1229,11 +1230,18 @@ sbMediacoreManager::GetPrimaryVideoWindow(PRBool aCreate,
   rv = prompter->SetWaitForWindow(PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
 
+  // Make a unique window name. This circumvents race conditions that can 
+  // occur while a window is requested and the video window is currently 
+  // closing by avoiding reuse of the closing window.
+  nsString windowName;
+  windowName.AssignLiteral(SB_PVW_NAME);
+  windowName.AppendInt(mLastVideoWindow++);
+
   nsCOMPtr<nsIDOMWindow> domWindow;
   rv = prompter->OpenWindow(nsnull, 
                             NS_LITERAL_STRING(SB_PVW_CHROME_URL), 
-                            NS_LITERAL_STRING(SB_PVW_NAME), 
-                            NS_LITERAL_STRING("chrome"), 
+                            windowName, 
+                            NS_LITERAL_STRING("chrome,centerscreen"), 
                             nsnull,
                             getter_AddRefs(domWindow));
   NS_ENSURE_SUCCESS(rv, rv);

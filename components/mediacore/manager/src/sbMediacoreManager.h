@@ -152,6 +152,7 @@ protected:
   
   PRMonitor* mVideoWindowMonitor;
   nsCOMPtr<nsIDOMXULElement> mVideoWindow;
+  PRUint32 mLastVideoWindow;
 };
 
 class sbMediacoreVideoWindowListener : public nsIDOMEventListener

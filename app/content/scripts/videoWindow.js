@@ -44,7 +44,10 @@ Cu.import("resource://app/jsmodules/SBDataRemoteUtils.jsm");
 Cu.import("resource://app/jsmodules/SBUtils.jsm");
   
 var videoWindowController = {
+  //////////////////////////////////////////////////////////////////////////////
   // Internal data
+  //////////////////////////////////////////////////////////////////////////////
+
   _mediacoreManager: null,
   _shouldDismissSelf: false,
   _ssp: null,
@@ -57,15 +60,24 @@ var videoWindowController = {
   
   _ignoreResize: false,
   _resizeListener: null,
+  _showing: false,
   
-  _videoSize: null,
+  _videoBox: null,
+  _videoElement: null,
   
+  //////////////////////////////////////////////////////////////////////////////
+  // Getters/Setters
+  //////////////////////////////////////////////////////////////////////////////
+
   get ACTUAL_SIZE_DR_KEY() {
     const dataRemoteKey = "videowindow.actualsize";
     return dataRemoteKey;
   },
   
+  //////////////////////////////////////////////////////////////////////////////
   // sbIMediacoreEventListener
+  //////////////////////////////////////////////////////////////////////////////
+
   onMediacoreEvent: function vwc_onMediacoreEvent(aEvent) {
     switch(aEvent.type) {
       case Ci.sbIMediacoreEvent.BEFORE_TRACK_CHANGE: {
@@ -90,16 +102,22 @@ var videoWindowController = {
     }
   },
   
+  //////////////////////////////////////////////////////////////////////////////
   // nsIObserver
+  //////////////////////////////////////////////////////////////////////////////
+  
   observe: function vwc_observe(aSubject, aTopic, aData) {
     if(aTopic == this.ACTUAL_SIZE_DR_KEY &&
-       this._actualSizeDataRemote.boolValue == true) {
-      // XXXAus: Handle resizing to actual size if actual size was
-      //         turned on.
+       this._actualSizeDataRemote.boolValue == true &&
+       this._videoBox) {
+      this._resizeFromVideoBox(this._videoBox);
     }
   },
   
-  // Internal functions
+  //////////////////////////////////////////////////////////////////////////////
+  // Init/Shutdown
+  //////////////////////////////////////////////////////////////////////////////
+
   _initialize: function vwc__initialize() {
     this._mediacoreManager = 
       Cc["@songbirdnest.com/Songbird/Mediacore/Manager;1"]
@@ -117,7 +135,7 @@ var videoWindowController = {
     if (this._ssp)
       this._ssp.suppress(true);
     
-    this._actualSizeDataRemote = SB_NewDataRemote(this.ACTUAL_SIZE_DR_KEY);
+    this._actualSizeDataRemote = SBNewDataRemote(this.ACTUAL_SIZE_DR_KEY);
     this._actualSizeDataRemote.bindObserver(this);
     
     // We need to ignore the first resize.
@@ -138,6 +156,7 @@ var videoWindowController = {
     window.addEventListener("contextmenu", this._contextMenuListener, false);
     
     this._contextMenu = document.getElementById("video-context-menu");
+    this._videoElement = document.getElementById("video-box");
   },
   
   _close: function vwc__close() {
@@ -158,17 +177,168 @@ var videoWindowController = {
     this._mediacoreManager = null;
     this._ssp = null;
     this._actualSizeDataRemote = null;
-    this._videoSize = null;
+    this._videoBox = null;
+    this._videoElement = null;
+  },
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Actual Size Resizing Methods
+  //////////////////////////////////////////////////////////////////////////////
+  _resizeFromVideoBox: function vwc__resizeFromVideoBox(aVideoBox) {
+    
+    var actualWidth = aVideoBox.width;
+    var actualHeight = aVideoBox.height * aVideoBox.parNumerator / 
+                       aVideoBox.parDenominator;
+    
+    this._resizeFromWidthAndHeight(actualWidth, actualHeight);
   },
   
+  _resizeFromWidthAndHeight: function vwc__resizeFromWidthAndHeight(aWidth, 
+                                                                    aHeight) {
+    function log(str) {
+      //dump("_resizeFromWidthAndHeight: " + str + "\n");
+    }
+
+    log("Width: " + aWidth);
+    log("Height: " + aHeight);
+    
+    var screen = window.screen;
+    var availHeight = screen.availHeight;
+    var availWidth = screen.availWidth;
+    
+    log("Screen: " + screen);
+    log("Available Width: " + availWidth);
+    log("Available Height: " + availHeight);
+    log("Window X: " + window.screenX);
+    log("Window Y: " + window.screenY);
+    
+    var fullWidth = false;
+    var deltaWidth = 0;
+    
+    var fullHeight = false;
+    var deltaHeight = 0;
+    
+    var boxObject = this._videoElement.boxObject;
+    var orient = (aWidth < aHeight) ? "portrait" : "landscape";
+    
+    log("Video Orientation: " + orient);
+    
+    log("Video Element Width: " + boxObject.width);
+    log("Video Element Height: " + boxObject.height);
+    
+    var decorationsWidth = window.outerWidth - boxObject.width;
+    var decorationsHeight = window.outerHeight - boxObject.height;
+    
+    log("Decorations Width: " + decorationsWidth);
+    log("Decorations Height: " + decorationsHeight);
+    
+    // Doesn't fit width wise, get the ideal width.
+    if(aWidth > boxObject.width) {
+      let delta = aWidth - boxObject.width;
+      
+      log("Initial Delta Width: " + delta);
+      
+      // We're making the window bigger. Make sure it fits on the screen
+      // width wise.
+      let available = availWidth - window.outerWidth - window.screenX;
+      
+      log("Current Available Width: " + available);
+      
+      if(available > delta) {
+        // Looks like we have room.
+        deltaWidth = delta;
+        fullWidth = true;
+      }
+      else {
+        // Not enough room for the size we want, just use the available size.
+        deltaWidth = available;
+      }
+    }
+    else {
+      // No need to cap anything in this case since the 
+      // window is already bigger.
+      deltaWidth = aWidth - boxObject.width;
+    }
+
+    
+    // Doesn't fit height wise, get the ideal height.
+    if(aHeight > boxObject.height) {
+      let delta = aHeight - boxObject.height;
+      
+      log("Initial Delta Height: " + delta);
+      
+      // We're making the window bigger. Make sure it fits on the screen
+      // height wise.
+      let available = availHeight - window.outerHeight - window.screenY;
+      
+      log("Current Available Height: " + available);
+      
+      if(available >= delta) {
+        // Looks like we have room.
+        deltaHeight = delta;
+        fullHeight = true;
+      }
+      else {
+        // Not enough room for the size we want, just use the available size.
+        deltaHeight = available;
+      }
+    }
+    else {
+      // Negative delta, we're resizing smaller.
+      deltaHeight = aHeight - boxObject.height;
+    }
+    
+    log("Final Delta Width: " + deltaWidth);
+    log("Final Delta Height: " + deltaHeight);
+    
+    // Try and resize in a somewhat proportional manner. Yes, this makes 
+    // everything square currently but it ensures that we don't resize
+    // in a useless way.
+    if(orient == "landscape" && deltaHeight > deltaWidth && !fullWidth) {
+      deltaHeight = deltaWidth;
+    }
+    else if(orient == "portrait" && deltaWidth > deltaHeight && !fullHeight) {
+      deltaWidth = deltaHeight;
+    }
+    
+    // We have to ignore this resize so that we don't disable actual size.
+    // This doesn't actually prevent the window from getting resized, it just
+    // prevents the actual size data remote from being set to false.
+    this._ignoreResize = true;
+    
+    // Resize it!
+    window.resizeBy(deltaWidth, deltaHeight);
+    
+    log("New Video Element Width: " + boxObject.width);
+    log("New Video Element Height: " + boxObject.height);
+  },
+  
+  _moveToCenter: function vwc__moveToCenter() {
+    var posX = (window.screen.availWidth - window.outerWidth) / 2;
+    var posY = (window.screen.availHeight - window.outerHeight) / 2;
+    
+    window.moveTo(posX, posY);
+  },
+  
+  //////////////////////////////////////////////////////////////////////////////
+  // Mediacore Event Handling
+  //////////////////////////////////////////////////////////////////////////////
+  
   _handleBeforeTrackChange: function vwc__handleBeforeTrackChange(aEvent) {
-    var mediaItem = aEvent.data;
+    var mediaItem = aEvent.data.QueryInterface(Ci.sbIMediaItem);
+    
+    dump("_handleBeforeTrackChange: " + mediaItem + "\n");
+    dump("_handleBeforeTrackChange: " + mediaItem.contentType + "\n");
     
     // If the next item is not video, we will dismiss 
     // the window on track change.
     if(mediaItem.contentType != "video") {
-      this._shouldDismiss = true;
+      //this._shouldDismiss = true;
+      this._dismissSelf();
     }
+    
+    // Clear cached video box.
+    this._videoBox = null;
   },
   
   _handleTrackChange: function vwc__handleTrackChange(aEvent) {
@@ -183,18 +353,30 @@ var videoWindowController = {
   },
   
   _handleVideoSizeChanged: function vwc__handleVideoSizeChanged(aEvent) {
-    // XXXAus: This will be implemented when we add support for 
-    //         'actual size'. See bug 18056.
+    var videoBox = aEvent.data.QueryInterface(Ci.sbIVideoBox);
+
+    // If actual size is enabled and we are not in fullscreen we can
+    // go ahead and 'actual size' the video.    
     if(this._actualSizeDataRemote.boolValue == true &&
        this._mediacoreManager.video.fullscreen == false) {
-      // XXXAus: Call magic resize here.
+      // Size it!
+      this._resizeFromVideoBox(videoBox);
+      
+      // Window needs to be centered.
+      if(this._needsMove) {
+        this._moveToCenter();
+        this._needsMove = false;
+      }
     }
     
-    // XXXAus: we also probably always want to save the last one so that 
-    //         if the user turns on actual size, we can resize to the right 
-    //         thing.
-    //this._videoSize = aEvent.data.QueryInterface(Ci.sbIVideoBox);
+    // We also probably always want to save the last one so that if the user 
+    // turns on actual size, we can resize to the right thing.
+    this._videoBox = videoBox;
   },
+
+  //////////////////////////////////////////////////////////////////////////////
+  // UI Event Handling
+  //////////////////////////////////////////////////////////////////////////////
   
   _onContextMenu: function vwc__onContextMenu(aEvent) {
     for each (var node in this._contextMenu.childNodes) {
@@ -224,6 +406,14 @@ var videoWindowController = {
     // attempting to size it using the sizing hint.
     if(this._ignoreResize) {
       this._ignoreResize = false;
+      
+      // First time window is being shown, it will be moved to the center
+      // of the screen.
+      if(!this._showing) {
+        this._needsMove = true;
+        this._showing = true;
+      }
+      
       return;
     }
     
@@ -244,6 +434,7 @@ var videoWindowController = {
   _dismissSelf: function vwc__dismissSelf() {
     if (this._ssp) 
       this._ssp.suppress(false);
+    
     setTimeout(function() { window.close(); }, 0);
   },
 };
