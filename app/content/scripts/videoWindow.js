@@ -186,9 +186,9 @@ var videoWindowController = {
   //////////////////////////////////////////////////////////////////////////////
   _resizeFromVideoBox: function vwc__resizeFromVideoBox(aVideoBox) {
     
-    var actualWidth = aVideoBox.width;
-    var actualHeight = aVideoBox.height * aVideoBox.parNumerator / 
-                       aVideoBox.parDenominator;
+    var actualHeight = aVideoBox.height;
+    var actualWidth = aVideoBox.width * aVideoBox.parNumerator / 
+                      aVideoBox.parDenominator;
     
     this._resizeFromWidthAndHeight(actualWidth, actualHeight);
   },
