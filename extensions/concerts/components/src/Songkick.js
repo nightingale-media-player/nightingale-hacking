@@ -365,7 +365,7 @@ Songkick.prototype = {
 			// For batch addition
 			this._db.resetQuery();
 			var artistsAdded = false;
-			for (artist in this._batchArtistsAdded) {
+			for (let artist in this._batchArtistsAdded) {
 				this._db.addQuery("UPDATE playing_at " +
 						"SET libraryArtist=1,anyLibraryArtist=1 " +
 						"WHERE artistid = " +
@@ -381,7 +381,7 @@ Songkick.prototype = {
 			}
 
 			// For batch removal
-			for (artist in this._batchArtistsRemoved) {
+			for (let artist in this._batchArtistsRemoved) {
 				debugLog("onBatchEnd", "Reseting for " + artist);
 				this.resetTourDataForArtist(list, artist);
 			}
@@ -639,7 +639,7 @@ Songkick.prototype = {
 
 		// Iterate over each concert and add them to the database
 		debugLog("processConcerts", "Beginning concert loop");
-		for (i in x.Concert) {
+		for (let i in x.Concert) {
 			var concert = x.Concert[i];
 			this.progress(this.strProcessing + " " + (1+parseInt(i)) +
 						" " + this.strOf + " " + concertLength,
@@ -664,7 +664,7 @@ Songkick.prototype = {
 			var libraryArtistFound = 0;
 			// Iterate over each artist, and add them to the database
 			var artists = concert.Artists.Artist;
-			for (j in artists) {
+			for (let j in artists) {
 				artistDbq.resetQuery();
 				var artist = artists[j].Name.toString();
 				var artistURL = artists[j].SkArtistPage;
@@ -700,7 +700,7 @@ Songkick.prototype = {
 					ticketsAvail + "')";
 			dbq.addQuery(query);
 
-			for (artistid in artistList) {
+			for (let artistid in artistList) {
 				dbq.addQuery("insert into playing_at values (" +
 						concertID + "," + artistid + "," + libraryArtistFound
 						+ "," + artistList[artistid] + ")");
@@ -785,7 +785,7 @@ Songkick.prototype = {
 		// on tour status flag for all tracks in the library that match
 		// the artist
 		debugLog("processConcerts", "setting new library on tour properties");
-		for (artistName in artistsOnTour) {
+		for (let artistName in artistsOnTour) {
 			try {
 				var itemEnum = mainLib.getItemsByProperty(
 						SBProperties.artistName, artistName).enumerate();
@@ -859,7 +859,7 @@ Songkick.prototype = {
 		var countries = new Array();
 		if (ret == 0) {
 			var result = this._db.getResultObject();
-			for (i=0; i<result.getRowCount(); i++) {
+			for (let i=0; i<result.getRowCount(); i++) {
 				var id = result.getRowCellByColumn(i, "id");
 				var name = result.getRowCellByColumn(i, "name");
 				countries.push({"id": id, "name": name});
@@ -874,7 +874,7 @@ Songkick.prototype = {
 		var states = new Array();
 		if (ret == 0) {
 			var result = this._db.getResultObject();
-			for (i=0; i<result.getRowCount(); i++) {
+			for (let i=0; i<result.getRowCount(); i++) {
 				var id = result.getRowCellByColumn(i, "id");
 				var name = result.getRowCellByColumn(i, "name");
 				states.push({"id": id, "name": name});
@@ -889,7 +889,7 @@ Songkick.prototype = {
 		var cities = new Array();
 		if (ret == 0) {
 			var result = this._db.getResultObject();
-			for (i=0; i<result.getRowCount(); i++) {
+			for (let i=0; i<result.getRowCount(); i++) {
 				var id = result.getRowCellByColumn(i, "id");
 				var name = result.getRowCellByColumn(i, "name");
 				cities.push({"id": id, "name": name});
@@ -1149,7 +1149,7 @@ Songkick.prototype = {
 		xmlData = xmlData.replace('<?xml version="1.0" encoding="UTF-8"?>', "");
 		var x = new XML(xmlData);
 		debugLog("processLocations", "# countries:" + x..Country.length());
-		for (i=0; i<x..Country.length(); i++) {
+		for (let i=0; i<x..Country.length(); i++) {
 			var countryId = x..Country[i].@id;
 			var countryName = x..Country[i].@name;
 			var query = "insert into countries values " +
@@ -1157,14 +1157,14 @@ Songkick.prototype = {
 			this._db.addQuery(query);
 			debugLog("processLocations", "# states:" +
 					x..Country[i].State.length());
-			for (j=0; j<x..Country[i].State.length(); j++) {
+			for (let j=0; j<x..Country[i].State.length(); j++) {
 				var stateId = x..Country[i].State[j].@id;
 				var stateName = x..Country[i].State[j].@name;
 				var query = "insert into states values " +
 						"(" + stateId + ", " + countryId + ", '" +
 						stateName + "')";
 				this._db.addQuery(query);
-				for (k=0; k<x..Country[i].State[j].City.length(); k++) {
+				for (let k=0; k<x..Country[i].State[j].City.length(); k++) {
 					var cityId = x..Country[i].State[j].City[k].@id;
 					var cityName =
 						x..Country[i].State[j].City[k].@name.toString();
@@ -1318,7 +1318,7 @@ skArtistConcertEnumerator.prototype = {
 		}
 		var results = this._artistDb.getResultObject();
 		var artists = new Array();
-		for (i=0; i<results.getRowCount(); i++) {
+		for (let i=0; i<results.getRowCount(); i++) {
 			var artistName = results.getRowCellByColumn(i, "name");
 			var artistURL = results.getRowCellByColumn(i, "artistURL");
 			artists.push({name:artistName, url:artistURL});

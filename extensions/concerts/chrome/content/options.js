@@ -81,7 +81,7 @@ var ConcertOptions = {
 			// Multiple states
 			stateDropdown.disabled = false;
 			var idx = 0;
-			for (i=0; i<this._states.length; i++) {
+			for (let i=0; i<this._states.length; i++) {
 				stateDropdown.appendItem(this._states[i].name,
 						this._states[i].id);
 				if (this._states[i].id == selectedState)
@@ -99,7 +99,7 @@ var ConcertOptions = {
 		var citiesDropdown = document.getElementById("menulist-city");
 		citiesDropdown.removeAllItems();
 		var idx = 0;
-		for (i=0; i<cities.length; i++) {
+		for (let i=0; i<cities.length; i++) {
 			citiesDropdown.appendItem(cities[i].name, cities[i].id);
 			if (cities[i].id == selectedCity)
 				idx = i;

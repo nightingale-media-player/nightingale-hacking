@@ -439,7 +439,7 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 	if (groupBy == "artist" || groupBy == "venue") {
 		// Reset the letter indices
 		var letters = document.getElementById("box-index-letter").childNodes;
-		for (letter in letters) {
+		for (let letter in letters) {
 			letters[letter].className="index-letter";
 		}
 
@@ -460,7 +460,7 @@ ConcertTicketing.browseConcerts = function(ticketingObj) {
 		// Populate the calendar indices
 		var myDate = new Date();
 		myDate.setDate(1);
-		for (i=0; i<6; i++) {
+		for (let i=0; i<6; i++) {
 			var mon = myDate.getMonth();
 			var year = myDate.getFullYear();
 			var dateStr = myDate.toLocaleFormat("%b %Y");
@@ -945,7 +945,7 @@ ConcertTicketing.createRowArtistView = function(concert, mainAnchor) {
 	otherArtistsCol.className = "artists";
 	var first = true;
 	var artists = concert.artists;
-	for (i in artists) {
+	for (let i in artists) {
 		if (artists[i].name == concert.artistname) {
 			mainAnchor.setAttribute("href",
 					this.appendCityParam(artists[i].url));
@@ -1079,7 +1079,7 @@ ConcertTicketing.createColumnGCal = function(concert) {
 	var url = "http://www.google.com/calendar/event?action=TEMPLATE";
 	url += "&text=" + escape(concert.title);
 	url += "&details=";
-	for (artist in concert.artists) {
+	for (let artist in concert.artists) {
 		url += escape(concert.artists[artist].name) + ",";
 	}
 	// trim the last ,
@@ -1121,7 +1121,7 @@ ConcertTicketing.createColumnArtists = function(concert) {
 	var first = true;
 	var headlinerFound = false;
 	var headlinerNode;
-	for (i in artists) {
+	for (let i in artists) {
 		// Comma separate the list of artists
 		var commaNode = null;
 		if (!first) {
