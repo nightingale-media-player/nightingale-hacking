@@ -385,8 +385,9 @@ sbAppStartupService.prototype =
     
     this._dataRemoteAppRestartHandler = {
       observe: function ( aSubject, aTopic, aData ) { 
-        // XXXAus: RESTART!!!
-        //setTimeout("restartApp();", 0); 
+        var appStartup = Components.classes["@mozilla.org/toolkit/app-startup;1"]
+                                   .getService(Components.interfaces.nsIAppStartup);
+        appStartup.quit(appStartup.eAttemptQuit | appStartup.eRestart);
       }
     };
     
