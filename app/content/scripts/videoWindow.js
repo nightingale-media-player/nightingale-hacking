@@ -190,13 +190,18 @@ var videoWindowController = {
     var actualWidth = aVideoBox.width * aVideoBox.parNumerator / 
                       aVideoBox.parDenominator;
     
-    this._resizeFromWidthAndHeight(actualWidth, actualHeight);
+    this._resizeFromWidthAndHeight(actualWidth, 
+                                   actualHeight, 
+                                   aVideoBox.parNumerator, 
+                                   aVideoBox.parDenominator);
   },
   
   _resizeFromWidthAndHeight: function vwc__resizeFromWidthAndHeight(aWidth, 
-                                                                    aHeight) {
+                                                                    aHeight,
+                                                                    aPARNum,
+                                                                    aPARDen) {
     function log(str) {
-      //dump("_resizeFromWidthAndHeight: " + str + "\n");
+      dump("_resizeFromWidthAndHeight: " + str + "\n");
     }
 
     log("Width: " + aWidth);
@@ -258,6 +263,7 @@ var videoWindowController = {
       // No need to cap anything in this case since the 
       // window is already bigger.
       deltaWidth = aWidth - boxObject.width;
+      fullWidth = true;
     }
 
     
@@ -286,25 +292,37 @@ var videoWindowController = {
     else {
       // Negative delta, we're resizing smaller.
       deltaHeight = aHeight - boxObject.height;
+      fullHeight = true;
     }
     
     log("Final Delta Width: " + deltaWidth);
     log("Final Delta Height: " + deltaHeight);
+    log("Full Width: " + fullWidth);
+    log("Full Height: " + fullHeight);
     
-    // Try and resize in a somewhat proportional manner. Yes, this makes 
-    // everything square currently but it ensures that we don't resize
-    // in a useless way.
+    // Try and resize in a somewhat proportional manner. 
     if(orient == "landscape" && deltaHeight > deltaWidth && !fullWidth) {
-      deltaHeight = deltaWidth;
+      let mul = aPARDen / aPARNum;
+      if((aPARDen / aPARNum) == 1) {
+        mul = aHeight / aWidth;
+      }
+      deltaHeight = Math.round(deltaWidth * mul);
     }
     else if(orient == "portrait" && deltaWidth > deltaHeight && !fullHeight) {
-      deltaWidth = deltaHeight;
+      let mul = aPARNum / aPARDen;
+      if((aPARNum / aPARDen) == 1) {
+        mul = aWidth / aHeight;
+      }
+      deltaWidth = Math.round(deltaHeight * mul);
     }
     
     // We have to ignore this resize so that we don't disable actual size.
     // This doesn't actually prevent the window from getting resized, it just
     // prevents the actual size data remote from being set to false.
     this._ignoreResize = true;
+
+    log("Final Delta Width (With aspect ratio compensation): " + deltaWidth);
+    log("Final Delta Height (With aspect ratio compensation): " + deltaHeight);
     
     // Resize it!
     window.resizeBy(deltaWidth, deltaHeight);
