@@ -136,6 +136,14 @@ var videoWindowController = {
       this._ssp.suppress(true);
     
     this._actualSizeDataRemote = SBNewDataRemote(this.ACTUAL_SIZE_DR_KEY);
+    
+    // Catch un-initialized actual size data remote value and default
+    // to true in the case where it has no value yet.
+    if(this._actualSizeDataRemote.stringValue == null ||
+       this._actualSizeDataRemote.stringValue == "") {
+      this._actualSizeDataRemote.boolValue = true;
+    }
+
     this._actualSizeDataRemote.bindObserver(this);
     
     // We need to ignore the first resize.
@@ -201,7 +209,7 @@ var videoWindowController = {
                                                                     aPARNum,
                                                                     aPARDen) {
     function log(str) {
-      dump("_resizeFromWidthAndHeight: " + str + "\n");
+      //dump("_resizeFromWidthAndHeight: " + str + "\n");
     }
 
     log("Width: " + aWidth);
