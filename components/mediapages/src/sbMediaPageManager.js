@@ -411,7 +411,7 @@ var MediaPageMetadataReader = {
       // check each <match/>'s values
       // if any one set works, this is a good media page for the list
       for (var m in matchList) {
-        match = matchList[m];
+        let match = matchList[m];
 
         // first, see if we just want to opt out of this match
         // our definition of an opt-out-able list is:
