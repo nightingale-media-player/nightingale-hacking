@@ -1102,6 +1102,7 @@ function dsTranslator(inner, sps) {
   this.properties[NC+'Name'] = true;
   this.stringBundleService = Cc['@mozilla.org/intl/stringbundle;1']
       .getService(Ci.nsIStringBundleService);
+  this._observers = [];
 }
 dsTranslator.prototype = {
   // impl methods
@@ -1178,6 +1179,9 @@ dsTranslator.prototype = {
 
   // nsISupports
   QueryInterface: function QueryInterface(iid) {
+    if (iid.equals(Ci.nsIRDFObserver)) {
+      return this;
+    }
     return this.inner.QueryInterface(iid);
   },
 
@@ -1225,8 +1229,6 @@ dsTranslator.prototype = {
   Change: function Change(a,b,c,d) { this.inner.Change(a,b,c,d); },
   Move: function Move(a,b,c,d) { this.inner.Move(a,b,c,d); },
   HasAssertion: function HasAssertion(a,b,c,d) { return this.inner.HasAssertion(a,b,c,d); },
-  AddObserver: function AddObserver(a) { this.inner.AddObserver(a); },
-  RemoveObserver: function RemoveObserver(a) { this.inner.RemoveObserver(a); },
   ArcLabelsIn: function ArcLabelsIn(a) { return this.inner.ArcLabelsIn(a); },
   ArcLabelsOut: function ArcLabelsOut(a) { return this.inner.ArcLabelsOut(a); },
   GetAllResources: function GetAllResources() { return this.inner.GetAllResourvces(); },
@@ -1238,6 +1240,35 @@ dsTranslator.prototype = {
   hasArcOut: function hasArcOut(a,b) { this.inner.hasArcOut(a,b); },
   beginUpdateBatch: function beginUpdateBatch() { this.inner.beginUpdateBatch(); },
   endUpdateBatch: function endUpdateBatch() { this.inner.endUpdateBatch(); },
+
+  // nsIRDFDataSource - observers
+  _observers: [],
+  AddObserver: function AddObserver(a) {
+    if (this._observers.length == 0)
+      this.inner.AddObserver(this);
+    this._observers.push(a);
+  },
+  RemoveObserver: function RemoveObserver(a) {
+    this._observers = this._observers.filter(function(e) e != a);
+    if (this._observers.length < 1)
+      this.inner.removeObserver(this);
+  },
+
+  // nsIRDFObserver
+  _callObserver: function(name, args) {
+    this._observers.forEach(function(callback) {
+      args = [this].concat(Array.prototype.concat.apply([], args).slice(1));
+      try {
+        callback[name].apply(callback, args);
+      } catch(e) { /* ignore all errors */ }
+    }, this);
+  },
+  onAssert:           function() {this._callObserver("onAssert",           arguments)},
+  onUnassert:         function() {this._callObserver("onUnassert",         arguments)},
+  onChange:           function() {this._callObserver("onChange",           arguments)},
+  onMove:             function() {this._callObserver("onMove",             arguments)},
+  onBeginUpdateBatch: function() {this._callObserver("onBeginUpdateBatch", arguments)},
+  onEndUpdateBatch:   function() {this._callObserver("onEndUpdateBatch",   arguments)},
 
   // nsIRDFRemoteDataSource
   get loaded() { return this.inner.loaded; },
