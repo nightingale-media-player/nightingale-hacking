@@ -62,6 +62,7 @@ CMM_SRCS = NativeWindowFromNode.mm \
            IntegrationComponent.mm \
            WindowCloak.mm \
            sbMacAppDelegate.mm \
+           sbMacWindowMoveService.mm \
            $(NULL)
 
 ifdef DEBUG

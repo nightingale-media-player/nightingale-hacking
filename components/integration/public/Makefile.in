@@ -38,6 +38,7 @@ XPIDL_SRCS = IWindowCloak.idl \
              sbIHotkeyActions.idl \
              sbINativeWindowManager.idl \
              sbIScreenSaverSuppressor.idl \
+             sbIWindowMoveService.idl \
              $(NULL)
              
 XPIDL_MODULE = sbIntegration.xpt

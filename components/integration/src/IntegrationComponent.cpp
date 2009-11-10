@@ -39,6 +39,7 @@
 #ifdef XP_MACOSX
 #include "macosx/sbNativeWindowManager.h"
 #include "macosx/sbMacAppDelegate.h"
+#include "macosx/sbMacWindowMoveService.h"
 #else
 #include "linux/sbNativeWindowManager.h"
 #endif
@@ -57,6 +58,14 @@
 #endif
 
 
+#define SB_WINDOWMOVE_SERVICE_CONTRACTID \
+  "@songbirdnest.com/integration/window-move-resize-service;1"
+#define SB_WINDOWMOVE_SERVICE_CLASSNAME \
+  "Songbird Window Move/Resize Service"
+#define SB_WINDOWMOVE_SERVICE_CID \
+  {0x4f8fecc6, 0x1dd2, 0x11b2, {0x90, 0x3a, 0xf3, 0x47, 0x1b, 0xfd, 0x3a, 0x60}}
+
+
 
 NS_GENERIC_FACTORY_CONSTRUCTOR(sbWindowCloak)
 
@@ -73,6 +82,7 @@ NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbScreenSaverSuppressor, Init);
 
 #ifdef XP_MACOSX
 NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacAppDelegateManager, Init);
+NS_GENERIC_FACTORY_CONSTRUCTOR_INIT(sbMacWindowMoveService, Init);
 #endif
 
 static nsModuleComponentInfo sbIntegration[] =
@@ -142,6 +152,12 @@ static nsModuleComponentInfo sbIntegration[] =
     SONGBIRD_MACAPPDELEGATEMANAGER_CONTRACTID,
     sbMacAppDelegateManagerConstructor,
     sbMacAppDelegateManager::RegisterSelf
+  },
+  {
+    SB_WINDOWMOVE_SERVICE_CLASSNAME,
+    SB_WINDOWMOVE_SERVICE_CID,
+    SB_WINDOWMOVE_SERVICE_CONTRACTID,
+    sbMacWindowMoveServiceConstructor
   },
 #endif
 };
