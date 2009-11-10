@@ -123,88 +123,6 @@ void LogError(char const * aType,
 }
 #endif /* PR_LOGGING */
 
-/**
- * Stream listener class that allows us process UI requests while parsing the stream
- */
-class sbiTunesImporterStreamListener : public nsIStreamListener
-{
-public:
-  NS_DECL_ISUPPORTS
-  NS_DECL_NSISTREAMLISTENER
-  NS_DECL_NSIREQUESTOBSERVER
-  sbiTunesImporterStreamListener(nsISAXXMLReader * aReader);
-
-private:
-  ~sbiTunesImporterStreamListener();
-
-  nsISAXXMLReaderPtr mReader;
-};
-
-NS_IMPL_ISUPPORTS2(sbiTunesImporterStreamListener, nsIStreamListener,
-                                                   nsIRequestObserver)
-
-sbiTunesImporterStreamListener::sbiTunesImporterStreamListener(nsISAXXMLReader * aReader) :
-  mReader(aReader) {
-}
-
-sbiTunesImporterStreamListener::~sbiTunesImporterStreamListener() 
-{
-}
-
-/**
- *  void onDataAvailable (in nsIRequest aRequest, 
- *                       in nsISupports aContext, 
- *                       in nsIInputStream aInputStream, 
- *                       in unsigned long aOffset, 
- *                       in unsigned long aCount);
- */
-NS_IMETHODIMP 
-sbiTunesImporterStreamListener::OnDataAvailable(nsIRequest *aRequest, 
-                                                nsISupports *aContext, 
-                                                nsIInputStream *aInputStream, 
-                                                PRUint32 aOffset, 
-                                                PRUint32 aCount)
-{
-  NS_ENSURE_ARG_POINTER(aRequest);
-  NS_ENSURE_ARG_POINTER(aInputStream);
-  NS_PRECONDITION(mReader, "mReader not initialized");
-  
-  nsresult rv =  mReader->OnDataAvailable(aRequest,
-                                          aContext,
-                                          aInputStream,
-                                          aOffset,
-                                          aCount);
-
-  NS_ENSURE_SUCCESS(rv, rv);
-  
-  return NS_OK;
-}
-
-// nsIRequestObserver
-
-/* void onStartRequest (in nsIRequest aRequest, in nsISupports aContext); */
-NS_IMETHODIMP
-sbiTunesImporterStreamListener::OnStartRequest(nsIRequest *aRequest,
-                                               nsISupports *aContext)
-{
-  NS_ENSURE_ARG_POINTER(aRequest);
-  NS_PRECONDITION(mReader, "mReader not initialized");
-  
-  return mReader->OnStartRequest(aRequest, aContext);
-}
-
-/* void onStopRequest (in nsIRequest aRequest, in nsISupports aContext, in nsresult aStatusCode); */
-NS_IMETHODIMP
-sbiTunesImporterStreamListener::OnStopRequest(nsIRequest *aRequest,
-                                              nsISupports *aContext,
-                                              nsresult aStatusCode)
-{
-  NS_ENSURE_ARG_POINTER(aRequest);
-  NS_PRECONDITION(mReader, "mReader not initialized");
-  
-  return mReader->OnStopRequest(aRequest, aContext, aStatusCode);
-}
-
 NS_IMPL_THREADSAFE_ISUPPORTS3(sbiTunesXMLParser,
     sbIiTunesXMLParser,
     nsISAXContentHandler,
@@ -259,7 +177,7 @@ NS_IMETHODIMP sbiTunesXMLParser::Parse(nsIInputStream * aiTunesXMLStream,
   rv = mPump->Init(aiTunesXMLStream, -1, -1, 0, 0, PR_TRUE);
   NS_ENSURE_SUCCESS(rv, rv);
   
-  nsCOMPtr<nsIStreamListener> streamListener = new sbiTunesImporterStreamListener(mSAXReader);
+  nsCOMPtr<nsIStreamListener> streamListener = do_QueryInterface(reader);
   rv = mPump->AsyncRead(streamListener, nsnull);
   
   NS_ENSURE_SUCCESS(rv, rv);
