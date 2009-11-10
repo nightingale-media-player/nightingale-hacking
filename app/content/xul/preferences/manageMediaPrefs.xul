@@ -75,7 +75,7 @@
         <caption label="&prefWindow.manageMedia.title;"/>
         <description class="para">
           &prefWindow.manageMedia.enablebox.description.pre;
-          <span class="emphasis">&prefWindow.manageMedia.enablebox.warning;</span>
+          <description class="emphasis">&prefWindow.manageMedia.enablebox.warning;</description>
           &prefWindow.manageMedia.enablebox.description.post; 
         </description>
 	<hbox>
