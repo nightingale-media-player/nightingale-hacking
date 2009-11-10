@@ -35,13 +35,13 @@
 Components.utils.import("resource://app/jsmodules/StringUtils.jsm");
 
 if (typeof(Cc) == "undefined")
-  var Cc = Components.classes;
+  window.Cc = Components.classes;
 if (typeof(Ci) == "undefined")
-  var Ci = Components.interfaces;
+  window.Ci = Components.interfaces;
 if (typeof(Cu) == "undefined")
-  var Cu = Components.utils;
+  window.Cu = Components.utils;
 if (typeof(Cr) == "undefined")
-  var Cr = Components.results;
+  window.Cr = Components.results;
  
 
 /**
