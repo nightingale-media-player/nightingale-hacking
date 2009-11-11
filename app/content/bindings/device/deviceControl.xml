@@ -415,10 +415,9 @@
          accesskey="&menu.file.new.accesskey;"
          action="new_playlist"
          listentodevice="true"
-         disabled_default="remove_attribute"
-         disabled_readonly="true"
-         hidden_default="true"
-         hidden_supports_playlist="remove_attribute"/>
+         disabled_default="true"
+         disabled_supports_playlist="remove_attribute"
+         disabled_readonly="true"/>
     </content>
   </binding>
 
