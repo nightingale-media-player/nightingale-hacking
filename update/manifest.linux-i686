@@ -1021,7 +1021,6 @@
 ./xulrunner/res/viewsource.css
 ./xulrunner/run-mozilla.sh
 ./xulrunner/shlibsign
-./xulrunner/ssltunnel
 ./xulrunner/updater
 ./xulrunner/updater.ini
 ./xulrunner/xpcshell

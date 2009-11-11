@@ -1053,7 +1053,6 @@
 ./xulrunner/softokn3.dll
 ./xulrunner/sqlite3.dll
 ./xulrunner/ssl3.dll
-./xulrunner/ssltunnel.exe
 ./xulrunner/updater.exe
 ./xulrunner/updater.ini
 ./xulrunner/xpcom.dll
