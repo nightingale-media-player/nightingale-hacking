@@ -32,7 +32,6 @@
 
 <!DOCTYPE window SYSTEM "chrome://songbird/locale/songbird.dtd" >
 <window id="video_osd_controls_win"
-        height="70" width="302"
         windowtype="Songbird:Core"
         hidechrome="true"
         xmlns:html="http://www.w3.org/1999/xhtml"
@@ -44,93 +43,99 @@
   <script type="application/x-javascript"
           src="chrome://songbird/content/scripts/windowUtils.js"/>
 
-  <hbox flex="1">
-    <hbox id="osd_border_left" />
+  <vbox id="osd_main_vbox" flex="1" >
+    <spacer flex="1" />
 
-    <hbox id="osd_controls_hbox" flex="1">
+    <hbox>
+      <hbox id="osd_wrapper_hbox" pack="center" flex="1">
+        <hbox id="osd_border_left" />
 
-      <vbox flex="1">
-        <hbox id="osd_controls_top_hbox" flex="1">
+        <hbox id="osd_controls_hbox" flex="1">
 
-          <stack flex="1">
-            <!-- Volume Control Widget -->
-            <hbox flex="1">
-              <vbox id="osd_vol_control_hbox" flex="0" pack="start">
-                <vbox>
-                  <sb-player-volume-slider id="osd_volume_slider"
-                                           flex="1"
-                                           orient="horizontal"
-                                           maxpos="100"
-                                           minbutton="true" />
-                </vbox>
-              </vbox>
+          <vbox flex="1" pack="center">
+            <hbox id="osd_controls_top_hbox" flex="1">
 
-              <!-- Spacer between the two boxes -->
-              <spacer flex="1" />
+              <stack flex="1">
+                <!-- Volume Control Widget -->
+                <hbox flex="1">
+                  <vbox id="osd_vol_control_hbox" flex="0" pack="start">
+                    <vbox>
+                      <sb-player-volume-slider id="osd_volume_slider"
+                                               flex="1"
+                                               orient="horizontal"
+                                               maxpos="100"
+                                               minbutton="true" />
+                    </vbox>
+                  </vbox>
 
-              <!-- Full screen button box -->
-              <vbox id="osd_fullscreen_control_hbox" flex="0" pack="start">
-                <button id="full_screen_button" />
-              </vbox>
-            </hbox>
-          
-            <!-- Center aligned player controls -->
-            <hbox pack="center" flex="1" mousethrough="always">
-              <vbox pack="start">
-                <hbox pack="start">
-                  <sb-player-back-button id="osd_play_back_button"
-                                         class="sb-player-button"/>
-                  <sb-player-playpause-button id="play_pause_button"
-                                              popupanchor="topleft"
-                                              popupalign="bottomleft"
-                                              class="sb-player-button"/>
-                  <sb-player-forward-button id="osd_play_fwd_button"
-                                            class="sb-player-button"/>
+                  <!-- Spacer between the two boxes -->
+                  <spacer flex="1" />
+
+                  <!-- Full screen button box -->
+                  <vbox id="osd_fullscreen_control_hbox" flex="0" pack="start">
+                    <button id="full_screen_button" />
+                  </vbox>
                 </hbox>
-              </vbox>
+
+                <!-- Center aligned player controls -->
+                <hbox pack="center" flex="1" mousethrough="always">
+                  <vbox pack="start">
+                    <hbox pack="start">
+                      <sb-player-back-button id="osd_play_back_button"
+                                             class="sb-player-button"/>
+                      <sb-player-playpause-button id="play_pause_button"
+                                                  popupanchor="topleft"
+                                                  popupalign="bottomleft"
+                                                  class="sb-player-button"/>
+                      <sb-player-forward-button id="osd_play_fwd_button"
+                                                class="sb-player-button"/>
+                    </hbox>
+                  </vbox>
+                </hbox>
+              </stack>
+
             </hbox>
-          </stack>
-        
+
+            <hbox id="osd_controls_bottom_hbox" mousethrough="always">
+
+              <hbox flex="1"
+                    id="osd_seekinfo_hbox"
+                    align="center"
+                    pack="center">
+
+                <stack id="osd_seekbar_stack" flex="1">
+                  <hbox flex="1" class="hook">
+                    <hbox class="left"/>
+                    <hbox class="middle" flex="1"/>
+                    <hbox class="right"/>
+                  </hbox>
+
+                  <hbox flex="1" class="notches">
+                    <hbox flex="1"/>
+                    <hbox flex="1"/>
+                    <hbox flex="1"/>
+                    <hbox flex="1"/>
+                  </hbox>
+
+                  <sb-player-seek-slider class="osd_seekbar"
+                                         flex="1"
+                                         orient="horizontal"
+                                         maxpos="100"/>
+
+                </stack>
+
+                <sb-player-timeelapsed-label class="osd-faceplate-text"
+                                             align="right"/>
+              </hbox>
+
+            </hbox>
+          </vbox>
+
         </hbox>
 
-        <hbox id="osd_controls_bottom_hbox" mousethrough="always">
-        
-          <hbox flex="1"
-                id="osd_seekinfo_hbox"
-                align="center"
-                pack="center">
-            
-            <stack id="osd_seekbar_stack" flex="1">
-              <hbox flex="1" class="hook">
-                <hbox class="left"/>
-                <hbox class="middle" flex="1"/>
-                <hbox class="right"/>
-              </hbox>
-              
-              <hbox flex="1" class="notches">
-                <hbox flex="1"/>
-                <hbox flex="1"/>
-                <hbox flex="1"/>
-                <hbox flex="1"/>
-              </hbox>
-              
-              <sb-player-seek-slider class="osd_seekbar"
-                                     flex="1"
-                                     orient="horizontal"
-                                     maxpos="100"/>
-              
-            </stack>
-            
-            <sb-player-timeelapsed-label class="osd-faceplate-text"
-                                         align="right"/>
-          </hbox>
-
-        
-        </hbox>
-      </vbox>
-
+        <hbox id="osd_border_right" />
+      </hbox>
     </hbox>
 
-    <hbox id="osd_border_right" />
-  </hbox>
+  </vbox>
 </window>

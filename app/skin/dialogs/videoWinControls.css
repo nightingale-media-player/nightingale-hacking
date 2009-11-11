@@ -29,12 +29,20 @@
 
 #video_osd_controls_win {
   background-color: transparent !important;
+  width: 320px;
+  height: 240px;
 }
 
 /*
 //------------------------------------------------------------------------------
 // Borders and main background elements
 */
+
+#osd_wrapper_hbox {
+  padding-bottom: 12px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
 
 #osd_border_left {
   background-image: url("chrome://songbird/skin/video/osd-base-l.png");
